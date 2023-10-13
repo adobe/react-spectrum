@@ -14,6 +14,7 @@ import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React, {RefObject} from 'react';
 import {SpectrumStepListProps} from '@react-types/steplist';
+import {StepListContext} from './StepListContext';
 import {StepListItem} from './StepListItem';
 import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
@@ -30,13 +31,22 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
   let {listProps} = useStepList(props, state, domRef);
 
   const {isDisabled, isEmphasized, isReadOnly} = props;
-  const stepListItems = [...state.collection].map((item) => (<StepListItem
-    key={item.key}
-    isDisabled={isDisabled}
-    isEmphasized={isEmphasized}
-    isReadOnly={isReadOnly}
-    item={item}
-    state={state} />)
+  const stepListItems = [...state.collection].map((item) => (
+    <li
+      key={item.key}
+      className={
+        classNames(
+          styles,
+          'spectrum-Steplist-item'
+        )
+      }>
+      <StepListItem
+        key={item.key}
+        isDisabled={isDisabled}
+        isEmphasized={isEmphasized}
+        isReadOnly={isReadOnly}
+        item={item} />
+    </li>)
   );
   return (
     <ol
@@ -51,7 +61,9 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
         'spectrum-Steplist--xlarge': size === 'XL',
         'spectrum-Steplist--vertical': orientation === 'vertical'
       })}>
-      {stepListItems}
+      <StepListContext.Provider value={state}>
+        {stepListItems}
+      </StepListContext.Provider>
     </ol>
   );
 }

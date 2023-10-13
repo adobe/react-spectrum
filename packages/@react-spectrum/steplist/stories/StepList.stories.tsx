@@ -19,13 +19,13 @@ import {StepList} from '../';
 import {useAsyncList} from '@react-stately/data';
 
 const options = [{
-  key: 'cat', value: 'Cat'
+  key: 'details', value: 'Details'
 }, {
-  key: 'dog', value: 'Dog'
+  key: 'select-offers', value: 'Select offers'
 }, {
-  key: 'monkey', value: 'Monkey'
+  key: 'fallback-offer', value: 'Fallback offer'
 }, {
-  key: 'skunk', value: 'Skunk'
+  key: 'summary', value: 'Summary'
 }];
 
 export default {
@@ -89,7 +89,7 @@ function AsyncStepListItems(props: SpectrumStepListProps<object>) {
   });
   return (
     <StepList {...props} items={list.items}>
-      {(item: PokeMon) => <Item key={item.name}>{item.name}</Item>}
+      {(item: PokeMon) => <Item href="adobe.com" key={item.name}>{item.name}</Item>}
     </StepList>
   );
 }

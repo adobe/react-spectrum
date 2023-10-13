@@ -15,9 +15,13 @@ governing permissions and limitations under the License.
 :root {
   --spectrum-steplist-incomplete-marker-color: var(--spectrum-global-color-gray-400);
   /* The color of the complete marker */
-  --spectrum-steplist-complete-marker-color: var(--spectrum-global-color-gray-700);
+  --spectrum-steplist-complete-marker-color: var(--spectrum-global-color-gray-600);
   /* The color of the selected marker */
-  --spectrum-steplist-current-marker-color: var(--spectrum-global-color-gray-900);
+  --spectrum-steplist-current-marker-color: var(--spectrum-global-color-gray-800);
+  /* The readonly label color */
+  --spectrum-steplist-read-only-label-color: var(--spectrum-global-color-gray-400);
+  /* The readonly marker color */
+  --spectrum-steplist-read-only-marker-color: var(--spectrum-global-color-gray-300);
 
   /* The diameter of the marker */
   --spectrum-steplist-marker-diameter-small: 8px;
@@ -40,13 +44,13 @@ governing permissions and limitations under the License.
 
   /* Distance between chevron and previous/next link */
   --spectrum-steplist-chevron-link-gap-small: 6px;
-  --spectrum-steplist-chevron-link-gap-medium: 12px;
+  --spectrum-steplist-chevron-link-gap-medium: 16px;
   --spectrum-steplist-chevron-link-gap-large: 16px;
   --spectrum-steplist-chevron-link-gap-xlarge: 24px;
 
   /* Distance between number bullet and label */
   --spectrum-steplist-number-label-gap-small: 6px;
-  --spectrum-steplist-number-label-gap-medium: 8px;
+  --spectrum-steplist-number-label-gap-medium: 10px;
   --spectrum-steplist-number-label-gap-large: 12px;
   --spectrum-steplist-number-label-gap-xlarge: 16px;
 
@@ -60,24 +64,16 @@ governing permissions and limitations under the License.
   margin: 0;
   display: flex;
   flex-wrap: nowrap;
-  overflow: hidden;
-}
-
-.spectrum-Steplist-marker-focus {
-  padding: var(--spectrum-steplist-marker-border-width);
-  border-width: var(--spectrum-steplist-marker-border-width);
-  border-color: transparent;
-  border-style: solid;
-  border-radius: 100%;
 }
 
 .spectrum-Steplist-item {
   display: grid;
   justify-items: center;
   align-items: start;
+  min-width: 0;
   grid-template-rows: auto;
   grid-template-areas:
-    "chevron link";
+    "link chevron";
   .spectrum-Steplist-segment {
     grid-area: chevron;
     height: 100%;
@@ -86,15 +82,42 @@ governing permissions and limitations under the License.
     flex-direction: column;
   }
 
+  &.focus-ring {
+    outline: 2px;
+    outline-offset: 2px;
+  }
+
   .spectrum-Steplist-chevron {
     &.is-reversed {
       transform: scale(-1);
     }
   }
+}
 
-  /* Focus */
-  &.is-focused {
-    outline: none;
+.spectrum-Steplist-link {
+  grid-area: link;
+  cursor: default;
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  grid-template-areas: "number label";
+  text-decoration: none;
+  outline: none;
+
+  .spectrum-Steplist-marker {
+    grid-area: number;
+    box-sizing: border-box; /* So we can stroke nicely */
+    border-radius: 50%;
+    border-style: solid;
+    border-width: var(--spectrum-steplist-marker-border-width);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  .spectrum-Steplist-label {
+    grid-area: label;
   }
 
   /* Completed State */
@@ -110,84 +133,66 @@ governing permissions and limitations under the License.
       border: none;
     }
   }
-  &.is-navigable .spectrum-Steplist-link {
-    cursor: pointer;
-  }
   &.is-hovered {
-    &.is-navigable .spectrum-Steplist-marker {
+    &.is-completed .spectrum-Steplist-marker {
       border: none;
     }
   }
-}
 
-.spectrum-Steplist-link {
-  grid-area: link;
-  display: grid;
-  justify-items: center;
-  align-items: center;
-  grid-template-areas: "number label";
-
-  .spectrum-Steplist-marker {
-    grid-area: number;
-    outline: none;
-    box-sizing: border-box; /* So we can stroke nicely */
-    border-style: solid;
-    border-width: var(--spectrum-steplist-marker-border-width);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-weight: bold;
-  }
-  .spectrum-Steplist-label {
-    grid-area: label;
+  &.is-completed {
+    cursor: pointer;
   }
 }
 
 /* Small size */
 .spectrum-Steplist--small {
   line-height: calc(var(--spectrum-steplist-marker-diameter-small) + (var(--spectrum-steplist-marker-border-width) * 4));
-  column-gap: calc(var(--spectrum-steplist-chevron-link-gap-small) + (var(--spectrum-steplist-marker-border-width) * 2));
-  font-size: var(--spectrum-global-dimension-font-size-50);
+  /* column-gap: calc(var(--spectrum-steplist-chevron-link-gap-small) + (var(--spectrum-steplist-marker-border-width) * 2)); */
+  column-gap: 9px;
+  font-size: var(--spectrum-global-dimension-font-size-75);
 
   .spectrum-Steplist-item {
-    grid-template-columns: var(--spectrum-steplist-marker-box-width-small) auto;
-    grid-column-gap: var(--spectrum-steplist-chevron-link-gap-small);
+    grid-template-columns: auto;
+    /* grid-column-gap: var(--spectrum-steplist-chevron-link-gap-small); */
+    grid-column-gap: 9px;
   }
   .spectrum-Steplist-link {
-    grid-column-gap: var(--spectrum-steplist-number-label-gap-small);
+    /* grid-column-gap: var(--spectrum-steplist-number-label-gap-small); */
+    grid-column-gap: 9px;
 
     .spectrum-Steplist-marker {
       line-height: var(--spectrum-steplist-marker-diameter-small);
       width: var(--spectrum-steplist-marker-diameter-small);
       height: var(--spectrum-steplist-marker-diameter-small);
-      border-radius: var(--spectrum-steplist-marker-diameter-small);
       font-size: 0;
     }
   }
   .spectrum-Steplist-chevron {
-    transform: scale(0.9);
+    transform: scale(0.75);
   }
 }
 
 /* Medium size */
 .spectrum-Steplist--medium {
   line-height: calc(var(--spectrum-steplist-marker-diameter-medium) + (var(--spectrum-steplist-marker-border-width) * 4));
-  column-gap: calc(var(--spectrum-steplist-chevron-link-gap-medium) + (var(--spectrum-steplist-marker-border-width) * 2));
-  font-size: var(--spectrum-global-dimension-font-size-75);
+  /* column-gap: calc(var(--spectrum-steplist-chevron-link-gap-medium) + (var(--spectrum-steplist-marker-border-width) * 2)); */
+  column-gap: 16px;
+  font-size: var(--spectrum-global-dimension-font-size-100);
 
   .spectrum-Steplist-item {
-    grid-template-columns: var(--spectrum-steplist-marker-box-width-medium) auto;
+    grid-template-columns: auto;
     grid-column-gap: var(--spectrum-steplist-chevron-link-gap-medium);
   }
+
   .spectrum-Steplist-link {
-    grid-column-gap: var(--spectrum-steplist-number-label-gap-medium);
+    /* grid-column-gap: 10px; */
+    grid-column-gap: 10px;
 
     .spectrum-Steplist-marker {
       line-height: var(--spectrum-steplist-marker-diameter-medium);
       width: var(--spectrum-steplist-marker-diameter-medium);
       height: var(--spectrum-steplist-marker-diameter-medium);
-      border-radius: var(--spectrum-steplist-marker-diameter-medium);
-      font-size: var(--spectrum-global-dimension-font-size-50);
+      font-size: var(--spectrum-global-dimension-font-size-75);
     }
   }
 }
@@ -196,11 +201,16 @@ governing permissions and limitations under the License.
 .spectrum-Steplist--large {
   line-height: calc(var(--spectrum-steplist-marker-diameter-large) + (var(--spectrum-steplist-marker-border-width) * 4));
   column-gap: calc(var(--spectrum-steplist-chevron-link-gap-large) + (var(--spectrum-steplist-marker-border-width) * 2));
-  font-size: var(--spectrum-global-dimension-font-size-150);
+  font-size: var(--spectrum-global-dimension-font-size-200);
 
   .spectrum-Steplist-item {
-    grid-template-columns: var(--spectrum-steplist-marker-box-width-large) auto;
-    grid-column-gap: var(--spectrum-steplist-chevron-link-gap-large);
+    grid-template-columns: auto;
+    /* grid-column-gap: var(--spectrum-steplist-chevron-link-gap-large); */
+    grid-column-gap: 20px;
+
+    .spectrum-Steplist-marker {
+      color: var(--spectrum-global-color-gray-600);
+    }
   }
   .spectrum-Steplist-link {
     grid-column-gap: var(--spectrum-steplist-number-label-gap-large);
@@ -209,7 +219,6 @@ governing permissions and limitations under the License.
       line-height: var(--spectrum-steplist-marker-diameter-large);
       width: var(--spectrum-steplist-marker-diameter-large);
       height: var(--spectrum-steplist-marker-diameter-large);
-      border-radius: var(--spectrum-steplist-marker-diameter-large);
       font-size: var(--spectrum-global-dimension-font-size-100);
     }
   }
@@ -221,22 +230,28 @@ governing permissions and limitations under the License.
 /* xlarge size */
 .spectrum-Steplist--xlarge {
   line-height: calc(var(--spectrum-steplist-marker-diameter-xlarge) + (var(--spectrum-steplist-marker-border-width) * 4));
-  column-gap: calc(var(--spectrum-steplist-chevron-link-gap-xlarge) + (var(--spectrum-steplist-marker-border-width) * 2));
-  font-size: var(--spectrum-global-dimension-font-size-200);
+  /* column-gap: calc(var(--spectrum-steplist-chevron-link-gap-xlarge) + (var(--spectrum-steplist-marker-border-width) * 2)); */
+  column-gap: 24px;
+  font-size: var(--spectrum-global-dimension-font-size-300);
 
   .spectrum-Steplist-item {
-    grid-template-columns: var(--spectrum-steplist-marker-box-width-xlarge) auto;
-    grid-column-gap: var(--spectrum-steplist-chevron-link-gap-xlarge);
+    grid-template-columns: auto;
+    /* grid-column-gap: var(--spectrum-steplist-chevron-link-gap-xlarge); */
+    grid-column-gap: 24px;
+
+    .spectrum-Steplist-marker {
+      color: var(--spectrum-global-color-gray-600);
+    }
   }
   .spectrum-Steplist-link {
-    grid-column-gap: var(--spectrum-steplist-number-label-gap-xlarge);
+    /* grid-column-gap: var(--spectrum-steplist-number-label-gap-xlarge); */
+    grid-column-gap: 14px;
 
     .spectrum-Steplist-marker {
       line-height: var(--spectrum-steplist-marker-diameter-xlarge);
       width: var(--spectrum-steplist-marker-diameter-xlarge);
       height: var(--spectrum-steplist-marker-diameter-xlarge);
-      border-radius: var(--spectrum-steplist-marker-diameter-xlarge);
-      font-size: var(--spectrum-global-dimension-font-size-150);
+      font-size: var(--spectrum-global-dimension-font-size-200);
     }
   }
   .spectrum-Steplist-chevron {
@@ -246,7 +261,7 @@ governing permissions and limitations under the License.
 
 
 /* First step overrides */
-.spectrum-Steplist-item:first-child {
+.spectrum-Steplist-item:last-child {
   grid-template-areas: "link";
   grid-template-columns: auto;
   .spectrum-Steplist-segment {
@@ -261,13 +276,32 @@ governing permissions and limitations under the License.
   flex-direction: column;
   gap: 0;
   .spectrum-Steplist-item {
-    grid-template-areas: "line ."
-                         "link link";
-    justify-items: left;
-    &.is-completed, &.is-selected {
-      .spectrum-Steplist-segment {
-        border-left-style: solid;
-      }
+    grid-template-areas: "link link"
+                         "line .";
+    justify-items: start;
+    .spectrum-Steplist-segment.is-completed {
+      border-color: var(--spectrum-global-color-gray-400);
+      border-left-style: solid;
+    }
+  }
+  &.spectrum-Steplist--small {
+    .spectrum-Steplist-item {
+      grid-template-columns: 8px auto;
+    }
+  }
+  &.spectrum-Steplist--medium {
+    .spectrum-Steplist-item {
+      grid-template-columns: 16px auto;
+    }
+  }
+  &.spectrum-Steplist--large {
+    .spectrum-Steplist-item {
+      grid-template-columns: 24px auto;
+    }
+  }
+  &.spectrum-Steplist--xlarge {
+    .spectrum-Steplist-item {
+      grid-template-columns: 32px auto;
     }
   }
   .spectrum-Steplist-chevron {
@@ -280,6 +314,7 @@ governing permissions and limitations under the License.
     box-sizing: content-box;
     height: var(--spectrum-steplist-vertical-separation);
     width: 0;
+    border-color: var(--spectrum-global-color-gray-300);
     border-width: 0;
     border-left-width: 2px;
     border-left-style: dashed;

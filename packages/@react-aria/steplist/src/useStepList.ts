@@ -11,58 +11,40 @@
  */
 
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {SpectrumStepListProps, StepListAria, StepListState} from '@react-types/steplist';
-import {StepListKeyboardDelegate} from './StepListKeyboardDelegate';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useSelectableCollection} from '@react-aria/selection';
+import {SpectrumStepListProps} from '@react-types/steplist';
+import {StepListState} from '@react-stately/steplist';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useSelectableList} from '@react-aria/selection';
+
+interface StepListAria {
+  listProps: HTMLAttributes<HTMLElement>
+}
 
 export function useStepList<T>(props: SpectrumStepListProps<T>, state: StepListState<T>, ref: RefObject<HTMLOListElement>): StepListAria {
   let {
-    isDisabled,
-    'aria-label': ariaLabel,
-    orientation = 'horizontal',
-    keyboardActivation = 'automatic'
+    'aria-label': ariaLabel
   } = props;
-  let allKeys = [...state.collection.getKeys()];
-
-  if (!allKeys.some(key => !state.disabledKeys.has(key))) {
-    isDisabled = true;
-  }
-
-  let {
-    collection,
-    selectionManager: manager,
-    disabledKeys
-  } = state;
-  let {direction} = useLocale();
-  let delegate = useMemo(() => new StepListKeyboardDelegate(
-    collection,
-    direction,
-    orientation,
-    disabledKeys), [collection, disabledKeys, orientation, direction]);
-
-  let {collectionProps} = useSelectableCollection({
-    ref,
-    selectionManager: manager,
-    keyboardDelegate: delegate,
-    selectOnFocus: keyboardActivation === 'automatic',
-    disallowEmptySelection: true,
-    scrollRef: ref
+  let {listProps} = useSelectableList({
+    ...props,
+    ...state,
+    allowsTabNavigation: true,
+    ref
   });
 
   const strings = useLocalizedStringFormatter(intlMessages);
-  const listProps: HTMLAttributes<HTMLElement> = {
-    ...mergeProps(collectionProps, filterDOMProps(props)),
-    'aria-orientation': orientation,
-    'aria-label': ariaLabel || strings.format('steplist'),
-    'aria-disabled': isDisabled
+  const stepListProps: HTMLAttributes<HTMLElement> = {
+    ...mergeProps(listProps, filterDOMProps(props)),
+    'aria-label': ariaLabel || strings.format('steplist')
   };
 
   return {
-    listProps
+    listProps: {
+      ...stepListProps,
+      tabIndex: undefined
+    }
   };
 }
 

@@ -10,34 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMProps, Node, Orientation, SingleSelection, StyleProps} from '@react-types/shared';
-import {HTMLAttributes, Key} from 'react';
-import {SingleSelectListState} from '@react-stately/list';
+import {AriaLabelingProps, CollectionBase, DOMProps, Orientation, SingleSelection, StyleProps} from '@react-types/shared';
+import {Key} from 'react';
 
-interface AriaStepListBase {
-  /**
-   * Whether tabs are activated automatically on focus or manually.
-   * @default 'automatic'
-   */
-  keyboardActivation?: 'automatic' | 'manual',
-  /**
-   * The orientation of the tabs.
-   * @default 'horizontal'
-   */
-  orientation?: Orientation,
-  /**
-   * Whether the Tabs are disabled.
-   * Shows that a selection exists, but is not available in that circumstance.
-   */
-  isDisabled?: boolean
-}
-
-export interface SingleSelectListProps<T> extends CollectionBase<T>, SingleSelection {
-  /** Filter function to generate a filtered list of nodes. */
-  filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>
-}
-
-interface StepListProps<T> extends CollectionBase<T>, SingleSelection, SingleSelectListProps<T> {
+interface StepListProps<T> extends CollectionBase<T>, SingleSelection {
   /** The key of the last completed step (controlled). */
   lastCompletedStep?: Key,
   /** The key of the initially last completed step (uncontrolled). */
@@ -50,37 +26,15 @@ interface StepListProps<T> extends CollectionBase<T>, SingleSelection, SingleSel
   isReadOnly?: boolean
 }
 
-interface AriaStepListProps<T> extends StepListProps<T>, AriaStepListBase, AriaLabelingProps, DOMProps {}
+interface AriaStepListProps<T> extends StepListProps<T>, AriaLabelingProps, DOMProps {}
 
 interface SpectrumStepListProps<T> extends AriaStepListProps<T>, StyleProps {
   isEmphasized?: boolean,
+  orientation?: Orientation,
   size: 'S' | 'M' | 'L' | 'XL'
 }
 
-interface StepListState<T> extends SingleSelectListState<T> {
-  readonly lastCompletedStep?: Key,
-  setLastCompletedStep(key: Key): void,
-  isCompleted(key: Key): boolean,
-  isNavigable(key: Key): boolean
-}
-
-interface StepListAria {
-  listProps: HTMLAttributes<HTMLElement>
-}
-
-interface StepListItemProps<T> {
-  isDisabled: boolean,
-  isEmphasized: boolean,
-  isReadOnly: boolean,
-  state: StepListState<T>,
-  item: Node<T>
-}
-
-interface StepListItemAria {
-  /** Props for the step link element. */
-  stepProps: HTMLAttributes<HTMLElement>,
-  /** Props for the visually hidden element indicating the step state. */
-  stepStateProps?: HTMLAttributes<HTMLElement>,
-  /** Text content for the visually hidden message indicating the status of the step state. */
-  stepStateText?: String
+interface StepListItemProps {
+  isDisabled?: boolean,
+  key: Key
 }

@@ -14,7 +14,9 @@ import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import intlMessages from '../intl';
 import {mergeProps} from '@react-aria/utils';
-import React, {useRef} from 'react';
+import {Node} from '@react-types/shared';
+import React, {Fragment, useContext, useRef} from 'react';
+import {StepListContext} from './StepListContext';
 import {StepListItemProps} from '@react-types/steplist';
 import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
 import {useHover} from '@react-aria/interactions';
@@ -22,24 +24,31 @@ import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useStepListItem} from '@react-aria/steplist';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-export function StepListItem<T>(props: StepListItemProps<T>) {
+interface SpectrumStepListItemProps<T> extends StepListItemProps {
+  isEmphasized: boolean,
+  isReadOnly: boolean,
+  item: Node<T>
+}
+
+export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
   let {
     isDisabled,
     isEmphasized,
-    item,
-    state
+    item
   } = props;
+  let {key} = item;
+  const itemKey = item.key;
 
-  let ref = useRef<HTMLLIElement>();
+  let ref = useRef();
   let {direction} = useLocale();
-  let {stepProps, stepStateProps} = useStepListItem({...props}, state, ref);
+  let state = useContext(StepListContext);
+  const isCompleted = state.isCompleted(itemKey);
+  const isItemDisabled = isDisabled || !isCompleted || state.disabledKeys.has(itemKey);
+  console.log(`key: ${key}, isItemDisabled: ${isItemDisabled}`);
+  let {stepProps, stepStateProps} = useStepListItem({...props, key, isDisabled: isItemDisabled}, state, ref);
 
   let {hoverProps, isHovered} = useHover(props);
-  const itemKey = item.key;
-  const isCompleted = state.isCompleted(itemKey);
   const isSelected = state.selectedKey === itemKey;
-  const isNavigable = state.isNavigable(itemKey);
-  const isItemDisabled = state.disabledKeys.has(itemKey);
 
   let stepStateText = '';
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -53,39 +62,40 @@ export function StepListItem<T>(props: StepListItemProps<T>) {
   }
 
   return (
-    <FocusRing within focusRingClass={classNames(styles, 'is-keyboard-focused')} focusClass={classNames(styles, 'is-focused')}>
-      <li
-        ref={ref}
-        {...mergeProps(hoverProps, stepProps)}
-        className={classNames(
-          styles,
-          'spectrum-Steplist-item',
-          {
-            'is-selected': isSelected,
-            'is-disabled': !isSelected && (isDisabled || isItemDisabled),
-            'is-hovered': isHovered,
-            'is-emphasized': isEmphasized && isSelected,
-            'is-completed': isCompleted,
-            'is-navigable': isNavigable
-          }
-        )}>
-        {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-        <a className={classNames(styles, 'spectrum-Steplist-link')} >
+    <Fragment>
+      <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>      
+        <a
+          ref={ref}
+          {...mergeProps(hoverProps, stepProps)}
+          className={classNames(
+            styles,
+            'spectrum-Steplist-link',
+            {
+              'is-selected': isSelected,
+              'is-disabled': isItemDisabled,
+              'is-hovered': isHovered,
+              'is-emphasized': isEmphasized && isSelected,
+              'is-completed': isCompleted
+            }
+          )}>
           <VisuallyHidden {...stepStateProps}>{stepStateText}</VisuallyHidden>
+          <span className={classNames(styles, 'spectrum-Steplist-marker')}>{(item.index || 0) + 1}</span>
           <span className={classNames(styles, 'spectrum-Steplist-label')}>
             {item.rendered}
           </span>
-          <span className={classNames(styles, 'spectrum-Steplist-marker-focus')}>
-            <span className={classNames(styles, 'spectrum-Steplist-marker')}>{(item.index || 0) + 1}</span>
-          </span>
         </a>
-        <span className={classNames(styles, 'spectrum-Steplist-segment')} >
-          <ChevronRightMedium
-            UNSAFE_className={classNames(styles, 'spectrum-Steplist-chevron', {
-              'is-reversed': direction === 'rtl'
-            })} />
-        </span>
-      </li>
-    </FocusRing>
+      </FocusRing>
+      <span
+        className={classNames(
+          styles,
+          'spectrum-Steplist-segment', {
+            'is-completed': isCompleted
+          })} >
+        <ChevronRightMedium
+          UNSAFE_className={classNames(styles, 'spectrum-Steplist-chevron', {
+            'is-reversed': direction === 'rtl'
+          })} />
+      </span>
+    </Fragment>
   );
 }

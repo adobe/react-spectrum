@@ -10,22 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaStepListProps, StepListState} from '@react-types/steplist';
+import {AriaStepListProps} from '@react-types/steplist';
 import {Collection, Node} from '@react-types/shared';
 import {Key, useEffect, useMemo} from 'react';
+import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {useControlledState} from '@react-stately/utils';
-import {useSingleSelectListState} from '@react-stately/list';
+
+export interface StepListState<T> extends SingleSelectListState<T> {
+  readonly lastCompletedStep?: Key,
+  setLastCompletedStep(key: Key): void,
+  isCompleted(key: Key): boolean
+}
 
 export function useStepListState<T extends object>(props: AriaStepListProps<T>): StepListState<T> {
   let state = useSingleSelectListState<T>(props);
 
   let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key>(props.lastCompletedStep, props.defaultLastCompletedStep, props.onLastCompletedStepChange);
+  console.log(lastCompletedStep);
   const {setSelectedKey: realSetSelectedKey, selectedKey, collection} = state;
-  const {prevKeyMap, indexMap} = useMemo(() => buildKeysMaps(collection), [collection]);
+  const {indexMap, keysLinkedList} = useMemo(() => buildKeysMaps(collection), [collection]);
   const disabledKeys = useMemo(() => new Set(props.disabledKeys), [props.disabledKeys]);
   const selectedIdx = indexMap.get(selectedKey);
   if (selectedIdx > 0 && selectedIdx > (indexMap.get(lastCompletedStep) ?? -1) + 1) {
-    setLastCompletedStep(prevKeyMap.get(selectedKey));
+    setLastCompletedStep(keysLinkedList.get(selectedKey));
   }
 
   useEffect(() => {
@@ -45,16 +52,16 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
     if (step === undefined) {
       return false;
     }
+
+    if (props.isDisabled || disabledKeys.has(step) || props.isReadOnly) {
+      return false;
+    }
+
     return indexMap.get(step) <= indexMap.get(lastCompletedStep);
   }
 
-  function isNavigable(step: Key) {
-    return !props.isDisabled && !disabledKeys.has(step) && !props.isReadOnly &&
-    (isCompleted(step) || isCompleted(prevKeyMap.get(step)));
-  }
-
   function setSelectedKey(key: Key) {
-    const prevKey = prevKeyMap.get(key);
+    const prevKey = keysLinkedList.get(key);
     if (prevKey && !isCompleted(prevKey)) {
       setLastCompletedStep(prevKey);
     }
@@ -65,24 +72,23 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
     ...state,
     setSelectedKey,
     setLastCompletedStep,
-    isCompleted,
-    isNavigable
+    isCompleted
   };
 }
 
-function buildKeysMaps<T>(coll: Collection<Node<T>>): { indexMap: Map<Key, number>, prevKeyMap: Map<Key, Key> } {
+function buildKeysMaps<T>(coll: Collection<Node<T>>): { indexMap: Map<Key, number>, keysLinkedList: Map<Key, Key> } {
   const indexMap = new Map<Key, number>();
-  const prevKeyMap = new Map<Key, Key>();
+  const keysLinkedList = new Map<Key, Key>();
   let i = 0;
   let prev: Node<T> = undefined;
   for (const item of coll) {
     indexMap.set(item.key, i);
-    prevKeyMap.set(item.key, prev?.key);
+    keysLinkedList.set(item.key, prev?.key);
     prev = item;
     i++;
   }
   return {
     indexMap,
-    prevKeyMap
+    keysLinkedList
   };
 }

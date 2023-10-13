@@ -13,14 +13,14 @@ governing permissions and limitations under the License.
 .spectrum-Steplist {
   /* Default Label Style is 'incomplete' */
   .spectrum-Steplist-label {
-    color: var(--spectrum-steplist-incomplete-label-text-color)
+    color: var(--spectrum-global-color-gray-600);
   }
 
   /* Default Marker Style is 'incomplete' */
   .spectrum-Steplist-marker {
     border-color: var(--spectrum-steplist-incomplete-marker-color);
     color: transparent;
-
+    
   }
 
   /* Default Line Style is 'incomplete' */
@@ -31,53 +31,82 @@ governing permissions and limitations under the License.
   }
 
   .spectrum-Steplist-item {
-    /* Step Completed */
-    &.is-completed {
-      .spectrum-Steplist-label {
-        color: var(--spectrum-steplist-complete-label-text-color)
+    .spectrum-Steplist-link {
+      /* Step Completed */
+      &.is-completed {
+        .spectrum-Steplist-label {
+          color: var(--spectrum-global-color-gray-600);
+        }
+        .spectrum-Steplist-marker {
+          background-color: var(--spectrum-steplist-complete-marker-color)
+        }
       }
-      .spectrum-Steplist-marker {
-        background-color: var(--spectrum-steplist-complete-marker-color)
-      }
-    }
 
-    /* Step Selected aka Current */
-    &.is-selected {
-      .spectrum-Steplist-label {
-        color: var(--spectrum-steplist-current-label-text-color)
+      /* Step Selected aka Current */
+      &.is-selected {
+        .spectrum-Steplist-label {
+          color: var(--spectrum-steplist-current-label-text-color)
+        }
+        .spectrum-Steplist-marker {
+          background-color: var(--spectrum-steplist-current-marker-color)
+        }
       }
-      .spectrum-Steplist-marker {
-        background-color: var(--spectrum-steplist-current-marker-color)
-      }
-    }
 
-    &.is-completed,
-    &.is-selected {
-      .spectrum-Steplist-marker {
-        color: var(--spectrum-global-color-gray-50);
-      }
-    }
-    &.is-hovered {
-      &.is-navigable {
+      &.is-completed,
+      &.is-selected {
         .spectrum-Steplist-marker {
           color: var(--spectrum-global-color-gray-50);
         }
       }
-    }
-    /* Steplist emphasized*/
-    &.is-emphasized {
-      .spectrum-Steplist-label {
-        color: var(--spectrum-global-color-blue-500)
+      &.is-hovered {
+        &.is-completed {
+          .spectrum-Steplist-marker {
+            color: var(--spectrum-global-color-gray-50);
+          }
+        }
       }
-      .spectrum-Steplist-marker {
-        background-color: var(--spectrum-global-color-blue-500)
+
+      &.is-read-only {
+        .spectrum-Steplist-label {
+          color: var(--spectrum-steplist-disabled-label-color);
+        }
+
+        .spectrum-Steplist-marker {
+          border-color: var(--spectrum-steplist-disabled-marker-color);
+        }
+      }
+      &.is-read-only.is-completed {
+        .spectrum-Steplist-marker {
+          background-color: var(--spectrum-steplist-disabled-marker-color);
+        }
+      }
+      /* Steplist emphasized*/
+      &.is-emphasized {
+        .spectrum-Steplist-label {
+          color: var(--spectrum-global-color-blue-400)
+        }
+        .spectrum-Steplist-marker {
+          background-color: var(--spectrum-global-color-blue-400)
+        }
+      }
+      &.focus-ring {
+        outline: none;
+
+        .spectrum-Steplist-label {
+          color: var(--spectrum-global-color-blue-400);
+        }
+        .spectrum-Steplist-marker {
+          outline: solid 2px var(--spectrum-global-color-blue-400);
+          outline-offset: 2px;
+          z-index: 999;
+        }
       }
     }
   }
 
   /* Interactivity Styles */
   &.spectrum-Steplist--interactive {
-    .spectrum-Steplist-item {
+    .spectrum-Steplist-link {
       /* Step Focused */
       &.is-keyboard-focused {
         .spectrum-Steplist-marker-focus {
@@ -85,7 +114,7 @@ governing permissions and limitations under the License.
         }
       }
       &.is-hovered {
-        &.is-navigable {
+        &.is-completed {
           .spectrum-Steplist-marker {
             background-color: var(--spectrum-steplist-current-marker-color)
           }
@@ -93,12 +122,12 @@ governing permissions and limitations under the License.
       }
       /* Steplist emphasized*/
       &.is-emphasized {
-        &.is-navigable {
+        &.is-completed {
           .spectrum-Steplist-label {
-            color: var(--spectrum-global-color-blue-500)
+            color: var(--spectrum-global-color-blue-400)
           }
           .spectrum-Steplist-marker {
-            background-color: var(--spectrum-global-color-blue-500)
+            background-color: var(--spectrum-global-color-blue-400)
           }
         }
       }
