@@ -210,31 +210,3 @@ export const IgnoreRestoreFocus = {
 export const FocusableFirstInScope = {
   render: () => <FocusableFirstInScopeExample />
 };
-
-export const RemovableFocus = {
-  render: () => <FocusScopeUnmounting />
-};
-
-function FocusScopeUnmounting() {
-  let [open, setOpen] = useState(true);
-  let [mount1, setMount1] = useState(false);
-  let [mount2, setMount2] = useState(false);
-
-  return (
-    <div>
-      <input />
-      <button onClick={() => setMount1(true)}>mount first</button>
-      {open && mount1 && (
-      <FocusScope restoreFocus id="parent">
-        <input />
-        <button onClick={() => setMount2(true)}>mount second</button>
-        {mount2 && (
-          <FocusScope restoreFocus id="child">
-            <button onClick={() => setOpen(false)}>Unmount</button>
-          </FocusScope>
-        )}
-      </FocusScope>
-      )}
-    </div>
-  )
-}

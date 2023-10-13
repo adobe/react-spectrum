@@ -13,20 +13,15 @@
 
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
-import {ActionButton, Button} from '@react-spectrum/button';
+import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
-import {Content} from '@react-spectrum/view';
-import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {Divider} from '@react-spectrum/divider';
 import {FocusExample} from '../stories/ListViewActions.stories';
-import {FocusScope} from '@react-aria/focus';
-import {Heading, Text} from '@react-spectrum/text';
 import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
-import React, {useState} from 'react';
+import React from 'react';
 import {renderEmptyState} from '../stories/ListView.stories';
-import {screen} from '@testing-library/dom';
 import {theme} from '@react-spectrum/theme-default';
+import {Text} from '@react-spectrum/text';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
