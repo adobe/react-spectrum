@@ -65,6 +65,21 @@ module.exports = {
       'jsdoc/require-jsdoc': OFF,
       'jsdoc/require-description': OFF
     }
+  }, {
+    files: ['packages/@react-aria/interactions/**/*.ts', 'packages/@react-aria/interactions/**/*.tsx'],
+    rules: {
+      'no-restricted-globals': [
+        WARN,
+        {
+          'name': 'window',
+          'message': 'Use getOwnerWindow from @react-aria/utils instead.'
+        },
+        {
+          'name': 'document',
+          'message': 'Use getOwnerDocument from @react-aria/utils instead.'
+        }
+      ]
+    }
   }],
   env: {
     'browser': true,
