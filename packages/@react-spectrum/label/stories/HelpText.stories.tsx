@@ -119,6 +119,15 @@ function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
   let [value, setValue] = useState('');
   let [valid, setValid] = useState<string | undefined>(undefined);
 
+  let validState;
+  if (value.length) {
+    validState = 'invalid';
+  } else if (valid === 'valid') {
+    validState = 'valid';
+  } else {
+    validState = undefined;
+  }
+
   return (
     <Flex
       direction="column"
@@ -127,8 +136,7 @@ function TextFieldWithValidationState(props: SpectrumTextFieldProps) {
         {...props}
         value={value}
         onChange={setValue}
-        // eslint-disable-next-line
-        validationState={value.length ? 'invalid' : (valid === 'valid' ? 'valid' : undefined)} />
+        validationState={validState} />
       <RadioGroup
         label="Valid State"
         value={valid ? valid : ''}

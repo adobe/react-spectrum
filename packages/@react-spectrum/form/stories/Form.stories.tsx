@@ -37,7 +37,7 @@ import {Switch} from '@react-spectrum/switch';
 import {TagGroup} from '@react-spectrum/tag';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import {ValidationState} from '@react-types/shared/src';
+import {ValidationState} from '@react-types/shared';
 import {Well} from '@react-spectrum/well';
 
 export default {
