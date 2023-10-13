@@ -93,7 +93,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
   });
 
   usePreventScroll({
-    isDisabled: isNonModal || !state.isOpen
+    isDisabled: isNonModal
   });
 
   useLayoutEffect(() => {

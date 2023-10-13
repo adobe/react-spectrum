@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { defaultTheme, Provider } from "@adobe/react-spectrum";
-import { Label, Radio, RadioGroup } from "react-aria-components";
+import { Label, Radio, RadioGroup, Button } from "react-aria-components";
 import User from "@spectrum-icons/workflow/User";
 import UserGroup from "@spectrum-icons/workflow/UserGroup";
 import Building from "@spectrum-icons/workflow/Building";
@@ -21,6 +21,15 @@ export function App() {
             <label for="test-input">Native input</label>
             <input id="test-input" className="border focus:bg-gray-200 focus:outline-none focus:border-blue-600 hover:border-blue-300" />
             <p>For the purpose of ensuring Tailwind's default selectors still work for non-RAC elements when using the plugin.</p>
+          </div>
+        </div>
+        <div className="flex justify-center">
+          <div className="flex flex-col">
+            <Button className="flex flex-col justify-center bg-white dark:bg-black border rounded group/button p-160 m-160 focus:outline-none focus-visible:ring">
+              <div className="w-full">Test Button</div>
+              <div className="w-full invisible group-hover/button:visible">Group is hovered</div>
+            </Button>
+            <p>For the purpose of testing named groups.</p>
           </div>
         </div>
       </div>

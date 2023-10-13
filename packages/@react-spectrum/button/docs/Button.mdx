@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/button';
-import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, VersionBadge} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/button/package.json';
 
 ```jsx import
@@ -83,8 +83,8 @@ function Example() {
   );
 }
 ```
-{/*
-## Pending
+
+## Pending <VersionBadge version="beta" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
 
 Buttons can indicate that a quick progress task is taking place (e.g., saving settings on a server). After a 1 second delay, an indeterminate spinner will be displayed in place of the button label and icon. You can trigger this behavior with the `isPending` prop. Button events are disabled while `isPending` is true.
 
@@ -103,11 +103,10 @@ function Example() {
   };
 
   return (
-    <Button variant="primary" UNSTABLE_isPending={isLoading} onPress={handlePress}>Click me!</Button>
+    <Button variant="primary" isPending={isLoading} onPress={handlePress}>Click me!</Button>
   );
 }
 ```
-*/}
 
 ## Props
 

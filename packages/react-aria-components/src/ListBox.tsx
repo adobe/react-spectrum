@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
+import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {CollectionDocumentContext, CollectionPortal, CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {ContextValue, forwardRefType, HiddenContext, Provider, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
@@ -59,7 +59,7 @@ export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
   dragAndDropHooks?: DragAndDropHooks,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: () => ReactNode,
+  renderEmptyState?: (props: ListBoxRenderProps) => ReactNode,
   /**
    * Whether the items are arranged in a stack or grid.
    * @default 'stack'
@@ -130,16 +130,18 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
   let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let {direction} = useLocale();
   let {disabledBehavior, disabledKeys} = selectionManager;
+  let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let keyboardDelegate = useMemo(() => (
     props.keyboardDelegate || new ListKeyboardDelegate({
       collection,
+      collator,
       ref: listBoxRef,
       disabledKeys: disabledBehavior === 'selection' ? new Set<React.Key>() : disabledKeys,
       layout,
       orientation,
       direction
     })
-  ), [collection, listBoxRef, disabledBehavior, disabledKeys, orientation, direction, props.keyboardDelegate, layout]);
+  ), [collection, collator, listBoxRef, disabledBehavior, disabledKeys, orientation, direction, props.keyboardDelegate, layout]);
 
   let {listBoxProps} = useListBox({
     ...props,
@@ -211,18 +213,19 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let renderValues = {
+    isDropTarget: isRootDropTarget,
+    isEmpty: state.collection.size === 0,
+    isFocused,
+    isFocusVisible,
+    layout: props.layout || 'stack',
+    state
+  };
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-ListBox',
-    values: {
-      isDropTarget: isRootDropTarget,
-      isEmpty: state.collection.size === 0,
-      isFocused,
-      isFocusVisible,
-      layout: props.layout || 'stack',
-      state
-    }
+    values: renderValues
   });
 
   let emptyState: JSX.Element | null = null;
@@ -232,7 +235,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
         // eslint-disable-next-line
         role="option"
         style={{display: 'contents'}}>
-        {props.renderEmptyState()}
+        {props.renderEmptyState(renderValues)}
       </div>
     );
   }

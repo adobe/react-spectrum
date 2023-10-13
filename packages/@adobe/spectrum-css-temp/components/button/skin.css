@@ -420,6 +420,13 @@ governing permissions and limitations under the License.
   }
 }
 
+@media (forced-colors: active) {
+  .spectrum-Button--pending.is-disabled {
+    /* Force the border for WHCM */
+    border-color: var(--spectrum-high-contrast-gray-text);
+  }
+}
+
 .spectrum-ActionButton {
   background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-background-color));
   border-color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-border-color));
