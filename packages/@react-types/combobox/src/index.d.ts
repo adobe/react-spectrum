@@ -71,5 +71,6 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
    * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
    * @default 'text'
    */
-  formValue?: 'text' | 'key'
+  formValue?: 'text' | 'key',
+  container?: HTMLElement,
 }

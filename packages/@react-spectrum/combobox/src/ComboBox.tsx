@@ -76,7 +76,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     onLoadMore,
     allowsCustomValue,
     name,
-    formValue = 'text'
+    formValue = 'text',
+    container
   } = props;
   if (allowsCustomValue) {
     formValue = 'text';
@@ -168,7 +169,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         placement={`${direction} end`}
         hideArrow
         isNonModal
-        shouldFlip={shouldFlip}>
+        shouldFlip={shouldFlip}
+        container={container}>
         <ListBoxBase
           {...listBoxProps}
           ref={listBoxRef}
