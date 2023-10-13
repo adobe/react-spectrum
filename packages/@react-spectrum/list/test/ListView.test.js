@@ -20,8 +20,8 @@ import {Item, ListView} from '../src';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {renderEmptyState} from '../stories/ListView.stories';
-import {theme} from '@react-spectrum/theme-default';
 import {Text} from '@react-spectrum/text';
+import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
