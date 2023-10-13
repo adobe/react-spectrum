@@ -129,6 +129,22 @@ the `id` of the labeling element instead.
 In order to internationalize a SearchAutocomplete, a localized string should be passed to the `label` or `aria-label` prop.
 When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
 
+## Links
+
+By default, interacting with an item in a SearchAutocomplete updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Interacting with link items navigates to the provided URL and does not update the input value.
+
+```tsx example
+<SearchAutocomplete label="Tech company websites">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</SearchAutocomplete>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Sections
 SearchAutocomplete supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.

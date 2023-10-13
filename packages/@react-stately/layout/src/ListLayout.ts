@@ -36,7 +36,8 @@ export interface LayoutNode {
   layoutInfo: LayoutInfo,
   header?: LayoutInfo,
   children?: LayoutNode[],
-  validRect: Rect
+  validRect: Rect,
+  index?: number
 }
 
 const DEFAULT_HEIGHT = 48;

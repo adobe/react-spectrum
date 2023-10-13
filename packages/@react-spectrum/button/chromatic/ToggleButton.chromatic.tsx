@@ -14,7 +14,6 @@ import {classNames} from '@react-spectrum/utils';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat, View} from '@adobe/react-spectrum';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {ToggleButton} from '../';
 
@@ -28,31 +27,66 @@ let states = [
   {UNSAFE_className: classNames(styles, 'focus-ring')}
 ];
 
-let combinations = generatePowerset(states, (merged) => merged.isDisabled && merged.UNSAFE_className);
+let combinations = generatePowerset(
+  states,
+  (merged) => merged.isDisabled && merged.UNSAFE_className
+);
 
-storiesOf('Button/ToggleButton', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add('all possible states', () => (
+export default {
+  title: 'Button/ToggleButton',
+  parameters: {
+    providerSwitcher: {status: 'positive'}
+  }
+};
+
+export const AllPossibleStates = () => (
+  <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+    {combinations.map((c) => (
+      <ToggleButton {...c}>Button</ToggleButton>
+    ))}
+  </Grid>
+);
+
+AllPossibleStates.story = {
+  name: 'all possible states'
+};
+
+export const StaticColorWhite = () => (
+  <View backgroundColor="static-blue-700" padding="size-1000">
     <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
-      {combinations.map(c => <ToggleButton {...c}>Button</ToggleButton>)}
+      {combinations.map((c) => (
+        <ToggleButton {...c} staticColor="white">
+          Button
+        </ToggleButton>
+      ))}
     </Grid>
-  ))
-  .add('staticColor = white', () => (
-    <View backgroundColor="static-blue-700" padding="size-1000">
-      <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
-        {combinations.map(c => <ToggleButton {...c} staticColor="white">Button</ToggleButton>)}
-      </Grid>
-    </View>
-  ))
-  .add('staticColor = black', () => (
-    <View backgroundColor="static-yellow-400" padding="size-1000">
-      <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
-        {combinations.map(c => <ToggleButton {...c} staticColor="black">Button</ToggleButton>)}
-      </Grid>
-    </View>
-  ))
-  .add('Arabic', () => (
+  </View>
+);
+
+StaticColorWhite.story = {
+  name: 'staticColor = white'
+};
+
+export const StaticColorBlack = () => (
+  <View backgroundColor="static-yellow-400" padding="size-1000">
     <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
-      {combinations.map(c => <ToggleButton {...c}>زر</ToggleButton>)}
+      {combinations.map((c) => (
+        <ToggleButton {...c} staticColor="black">
+          Button
+        </ToggleButton>
+      ))}
     </Grid>
-  ));
+  </View>
+);
+
+StaticColorBlack.story = {
+  name: 'staticColor = black'
+};
+
+export const Arabic = () => (
+  <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
+    {combinations.map((c) => (
+      <ToggleButton {...c}>زر</ToggleButton>
+    ))}
+  </Grid>
+);

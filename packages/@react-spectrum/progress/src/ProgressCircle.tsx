@@ -24,6 +24,7 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
     minValue = 0,
     maxValue = 100,
     size = 'M',
+    staticColor,
     variant,
     isIndeterminate = false,
     'aria-label': ariaLabel,
@@ -69,7 +70,9 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
             'spectrum-CircleLoader--indeterminate': isIndeterminate,
             'spectrum-CircleLoader--small': size === 'S',
             'spectrum-CircleLoader--large': size === 'L',
-            'spectrum-CircleLoader--overBackground': variant === 'overBackground'
+            'spectrum-CircleLoader--overBackground': variant === 'overBackground',
+            'spectrum-CircleLoader--staticWhite': staticColor === 'white',
+            'spectrum-CircleLoader--staticBlack': staticColor === 'black'
           },
           styleProps.className
         )

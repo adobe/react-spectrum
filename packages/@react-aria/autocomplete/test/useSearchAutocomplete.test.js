@@ -59,7 +59,7 @@ describe('useSearchAutocomplete', function () {
     expect(inputProps['aria-controls']).toBeFalsy();
     expect(inputProps['aria-activedescendant']).toBeFalsy();
     expect(listBoxProps.id).toBeTruthy();
-    expect(listBoxProps['aria-labelledby']).toBe(`${labelProps.id} ${listBoxProps.id}`);
+    expect(listBoxProps['aria-labelledby']).toBe(`${listBoxProps.id} ${labelProps.id}`);
   });
 
   it('calls open and toggle with the expected parameters when arrow down/up is pressed', function () {

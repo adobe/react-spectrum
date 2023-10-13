@@ -79,7 +79,7 @@ export const StaticWhite: ActionButtonStory = {
       {renderWithIcon(args)}
     </View>
   ),
-  storyName: 'staticColor: white'
+  name: 'staticColor: white'
 };
 
 export const StaticBlack: ActionButtonStory = {
@@ -89,7 +89,7 @@ export const StaticBlack: ActionButtonStory = {
       {renderWithIcon(args)}
     </View>
   ),
-  storyName: 'staticColor: black'
+  name: 'staticColor: black'
 };
 
 function render(props = {}) {

@@ -11,14 +11,19 @@
  */
 
 import {Checkbox, CheckboxGroup} from '../';
+import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 describe('CheckboxGroup', () => {
-  it('handles defaults', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  it('handles defaults', async () => {
     let onChangeSpy = jest.fn();
     let {getByRole, getAllByRole, getByLabelText} = render(
       <Provider theme={theme}>
@@ -48,7 +53,7 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[2].checked).toBe(false);
 
     let dragons = getByLabelText('Dragons');
-    userEvent.click(dragons);
+    await user.click(dragons);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(['dragons']);
 
@@ -214,7 +219,7 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[2]).toHaveAttribute('aria-readonly', 'true');
   });
 
-  it('should not update state for readonly checkbox', () => {
+  it('should not update state for readonly checkbox', async () => {
     let groupOnChangeSpy = jest.fn();
     let checkboxOnChangeSpy = jest.fn();
     let {getAllByRole, getByLabelText} = render(
@@ -230,7 +235,7 @@ describe('CheckboxGroup', () => {
     let checkboxes = getAllByRole('checkbox');
     let dragons = getByLabelText('Dragons');
 
-    userEvent.click(dragons);
+    await user.click(dragons);
 
     expect(groupOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);
@@ -290,7 +295,7 @@ describe('CheckboxGroup', () => {
   it('does not add aria-invalid to every checkbox by default', () => {
     let {getAllByRole} = render(
       <Provider theme={theme}>
-        <CheckboxGroup label="Favorite Pet" validationState="invalid">
+        <CheckboxGroup label="Favorite Pet" isInvalid>
           <Checkbox value="dogs">Dogs</Checkbox>
           <Checkbox value="cats">Cats</Checkbox>
           <Checkbox value="dragons">Dragons</Checkbox>
@@ -304,12 +309,12 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[2]).not.toHaveAttribute('aria-invalid');
   });
 
-  it('supports validationState on individual checkboxes', () => {
+  it('supports invalid state on individual checkboxes', () => {
     let {getAllByRole} = render(
       <Provider theme={theme}>
         <CheckboxGroup label="Agree to the following">
-          <Checkbox value="terms" validationState="invalid">Terms and conditions</Checkbox>
-          <Checkbox value="cookies" validationState="invalid">Cookies</Checkbox>
+          <Checkbox value="terms" isInvalid>Terms and conditions</Checkbox>
+          <Checkbox value="cookies" isInvalid>Cookies</Checkbox>
           <Checkbox value="privacy">Privacy policy</Checkbox>
         </CheckboxGroup>
       </Provider>
@@ -358,7 +363,7 @@ describe('CheckboxGroup', () => {
   it('should support error message', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
-        <CheckboxGroup label="Favorite Pet" errorMessage="Error message" validationState="invalid">
+        <CheckboxGroup label="Favorite Pet" errorMessage="Error message" isInvalid>
           <Checkbox value="dogs">Dogs</Checkbox>
           <Checkbox value="cats">Cats</Checkbox>
           <Checkbox value="dragons">Dragons</Checkbox>
@@ -371,5 +376,40 @@ describe('CheckboxGroup', () => {
 
     let description = document.getElementById(group.getAttribute('aria-describedby'));
     expect(description).toHaveTextContent('Error message');
+  });
+
+  it('supports form reset', async () => {
+    function Test() {
+      let [value, setValue] = React.useState(['dogs']);
+      return (
+        <Provider theme={theme}>
+          <form>
+            <CheckboxGroup name="pets" label="Pets" value={value} onChange={setValue}>
+              <Checkbox value="dogs">Dogs</Checkbox>
+              <Checkbox value="cats">Cats</Checkbox>
+              <Checkbox value="dragons">Dragons</Checkbox>
+            </CheckboxGroup>
+            <input type="reset" data-testid="reset" />
+          </form>
+        </Provider>
+      );
+    }
+
+    let {getAllByRole, getByTestId} = render(<Test />);
+    let checkboxes = getAllByRole('checkbox');
+
+    expect(checkboxes[0]).toBeChecked();
+    expect(checkboxes[1]).not.toBeChecked();
+    expect(checkboxes[2]).not.toBeChecked();
+    await user.click(checkboxes[1]);
+    expect(checkboxes[0]).toBeChecked();
+    expect(checkboxes[1]).toBeChecked();
+    expect(checkboxes[2]).not.toBeChecked();
+
+    let button = getByTestId('reset');
+    await user.click(button);
+    expect(checkboxes[0]).toBeChecked();
+    expect(checkboxes[1]).not.toBeChecked();
+    expect(checkboxes[2]).not.toBeChecked();
   });
 });

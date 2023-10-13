@@ -10,24 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let TestSlider = ({sliderProps, thumbProps, trackProps}) => (
+let TestSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (
   <Slider {...sliderProps}>
     <Label>Opacity</Label>
-    <SliderOutput />
+    <SliderOutput {...outputProps} />
     <SliderTrack {...trackProps}>
       <SliderThumb {...thumbProps} />
     </SliderTrack>
   </Slider>
 );
 
-let renderSlider = (sliderProps, thumbProps, trackProps) => render(<TestSlider {...{sliderProps, thumbProps, trackProps}} />);
+let renderSlider = (sliderProps, thumbProps, trackProps, outputProps) => render(<TestSlider {...{sliderProps, thumbProps, trackProps, outputProps}} />);
 
 describe('Slider', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a button with default class', () => {
     let {getByRole} = renderSlider();
     let group = getByRole('group');
@@ -46,11 +51,29 @@ describe('Slider', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} = renderSlider({'data-foo': 'bar'}, {'data-bar': 'foo'}, {'data-test': 'test'});
+    let {getByRole} = renderSlider({'data-foo': 'bar'}, {'data-bar': 'foo'}, {'data-test': 'test'}, {'data-output': 'output'});
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-foo', 'bar');
     expect(group.querySelector('.react-aria-SliderThumb')).toHaveAttribute('data-bar', 'foo');
     expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
+    expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-output', 'output');
+  });
+
+  it('should support render props', () => {
+    let {getByTestId} = render(
+      <Slider orientation="vertical">
+        {({orientation}) => (
+          <div className={`slider-${orientation}`} data-testid="wrapper">
+            <Label>Opacity</Label>
+            <SliderOutput />
+            <SliderTrack>
+              <SliderThumb />
+            </SliderTrack>
+          </div>
+        )}
+      </Slider>
+    );
+    expect(getByTestId('wrapper')).toHaveClass('slider-vertical');
   });
 
   it('should support slot', () => {
@@ -65,7 +88,7 @@ describe('Slider', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = renderSlider({}, {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`});
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
@@ -73,12 +96,12 @@ describe('Slider', () => {
     expect(thumb).not.toHaveAttribute('data-focus-visible');
     expect(thumb).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(slider);
     expect(thumb).toHaveAttribute('data-focus-visible', 'true');
     expect(thumb).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(thumb).not.toHaveAttribute('data-focus-visible');
     expect(thumb).not.toHaveClass('focus');
   });
@@ -99,18 +122,18 @@ describe('Slider', () => {
     expect(thumb).not.toHaveClass('dragging');
   });
 
-  it('should support hover state', () => {
+  it('should support hover state', async () => {
     let {getByRole} = renderSlider({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`});
     let thumb = getByRole('slider').closest('.thumb');
 
     expect(thumb).not.toHaveAttribute('data-hovered');
     expect(thumb).not.toHaveClass('hovered');
 
-    userEvent.hover(thumb);
+    await user.hover(thumb);
     expect(thumb).toHaveAttribute('data-hovered', 'true');
     expect(thumb).toHaveClass('hovered');
 
-    userEvent.unhover(thumb);
+    await user.unhover(thumb);
     expect(thumb).not.toHaveAttribute('data-hovered');
     expect(thumb).not.toHaveClass('hovered');
   });
@@ -144,10 +167,10 @@ describe('Slider', () => {
       <Slider defaultValue={[30, 60]}>
         <Label>Test</Label>
         <SliderOutput>
-          {(state) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
+          {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
         </SliderOutput>
         <SliderTrack>
-          {(state) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
+          {({state}) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
         </SliderTrack>
       </Slider>
     );

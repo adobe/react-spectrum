@@ -17,7 +17,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {ColumnSize} from '@react-types/table';
 import {ControllingResize} from '../stories/ControllingResize';
-import {fireEvent, installPointerEvent, triggerTouch} from '@react-spectrum/test-utils';
+import {fireEvent, installPointerEvent, pointerMap, triggerTouch} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Provider} from '@react-spectrum/provider';
 import React, {Key} from 'react';
@@ -80,8 +80,10 @@ let rerender = (tree, children, scale: Scale = 'medium') => {
 };
 describe('TableViewSizing', function () {
   let offsetWidth, offsetHeight;
+  let user;
 
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
@@ -301,7 +303,7 @@ describe('TableViewSizing', function () {
       });
 
       // To test https://github.com/adobe/react-spectrum/issues/1885
-      it('should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled', function () {
+      it('should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled', async function () {
         function ControlledSelection(props) {
           let [selectedKeys, setSelectedKeys] = React.useState<Set<Key> | 'all'>(new Set([]));
           return (
@@ -324,7 +326,7 @@ describe('TableViewSizing', function () {
         act(() => {jest.runAllTimers();});
         let row = tree.getAllByRole('row')[2];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        userEvent.click(within(row).getByRole('checkbox'));
+        await user.click(within(row).getByRole('checkbox'));
         act(() => {jest.runAllTimers();});
         expect(row).toHaveAttribute('aria-selected', 'true');
 
@@ -1046,7 +1048,7 @@ describe('TableViewSizing', function () {
           </TableView>
         );
 
-        userEvent.tab();
+        await user.tab();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
@@ -1152,7 +1154,7 @@ describe('TableViewSizing', function () {
           </TableView>
         );
 
-        userEvent.tab();
+        await user.tab();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
@@ -1234,7 +1236,7 @@ describe('TableViewSizing', function () {
           </TableView>
         );
 
-        userEvent.tab();
+        await user.tab();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
@@ -1284,7 +1286,7 @@ describe('TableViewSizing', function () {
           </TableView>
         );
 
-        userEvent.tab();
+        await user.tab();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
@@ -1305,7 +1307,7 @@ describe('TableViewSizing', function () {
 
         expect(document.activeElement).toBe(resizer);
 
-        userEvent.tab();
+        await user.tab();
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
         // TODO: should call with null or the currently calculated widths?
         // might be hard to call with current values
@@ -1334,7 +1336,7 @@ describe('TableViewSizing', function () {
           </TableView>
         );
 
-        userEvent.tab();
+        await user.tab();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
@@ -1355,7 +1357,7 @@ describe('TableViewSizing', function () {
         let resizer = tree.getByRole('slider');
         expect(document.activeElement).toBe(resizer);
 
-        userEvent.tab({shift: true});
+        await user.tab({shift: true});
         expect(onResizeEnd).toHaveBeenCalledTimes(1);
         expect(onResizeEnd).toHaveBeenCalledWith(new Map<string, ColumnSize>([['foo', 600], ['bar', '1fr'], ['baz', '1fr']]));
         expect(document.activeElement).toBe(resizableHeader);
@@ -1393,7 +1395,7 @@ describe('TableViewSizing', function () {
   });
 
   describe('updating columns', function () {
-    it('should support removing columns', function () {
+    it('should support removing columns', async function () {
       let tree = render(<HidingColumns />);
 
       let checkbox = tree.getByLabelText('Net Budget') as HTMLInputElement;
@@ -1413,7 +1415,7 @@ describe('TableViewSizing', function () {
         expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
       }
 
-      userEvent.click(checkbox);
+      await user.click(checkbox);
       expect(checkbox.checked).toBe(false);
 
       act(() => {jest.runAllTimers();});
@@ -1431,13 +1433,13 @@ describe('TableViewSizing', function () {
       }
     });
 
-    it('should support adding columns', function () {
+    it('should support adding columns', async function () {
       let tree = render(<HidingColumns />);
 
       let checkbox = tree.getByLabelText('Net Budget') as HTMLInputElement;
       expect(checkbox.checked).toBe(true);
 
-      userEvent.click(checkbox);
+      await user.click(checkbox);
       expect(checkbox.checked).toBe(false);
 
       act(() => {jest.runAllTimers();});
@@ -1446,7 +1448,7 @@ describe('TableViewSizing', function () {
       let columns = within(table).getAllByRole('columnheader');
       expect(columns).toHaveLength(5);
 
-      userEvent.click(checkbox);
+      await user.click(checkbox);
       expect(checkbox.checked).toBe(true);
 
       act(() => {jest.runAllTimers();});
@@ -1465,7 +1467,7 @@ describe('TableViewSizing', function () {
       }
     });
 
-    it('should update the row widths when removing and adding columns', function () {
+    it('should update the row widths when removing and adding columns', async function () {
       function compareWidths(row, b) {
         let newWidth = row.childNodes[1].style.width;
         expect(parseInt(newWidth, 10)).toBeGreaterThan(parseInt(b, 10));
@@ -1486,24 +1488,24 @@ describe('TableViewSizing', function () {
       let targetCheckbox = tree.getByLabelText('Target OTP') as HTMLInputElement;
       let reachCheckbox = tree.getByLabelText('Reach') as HTMLInputElement;
 
-      userEvent.click(audienceCheckbox);
+      await user.click(audienceCheckbox);
       expect(audienceCheckbox.checked).toBe(false);
       act(() => {jest.runAllTimers();});
       oldWidth = compareWidths(rows[1], oldWidth);
 
-      userEvent.click(budgetCheckbox);
+      await user.click(budgetCheckbox);
       expect(budgetCheckbox.checked).toBe(false);
       act(() => {jest.runAllTimers();});
       oldWidth = compareWidths(rows[1], oldWidth);
 
-      userEvent.click(targetCheckbox);
+      await user.click(targetCheckbox);
       expect(targetCheckbox.checked).toBe(false);
       act(() => {jest.runAllTimers();});
       oldWidth = compareWidths(rows[1], oldWidth);
 
       // This previously failed, the first column wouldn't update its width
       // when the 2nd to last column was removed
-      userEvent.click(reachCheckbox);
+      await user.click(reachCheckbox);
       expect(reachCheckbox.checked).toBe(false);
       act(() => {jest.runAllTimers();});
       oldWidth = compareWidths(rows[1], oldWidth);
@@ -1511,7 +1513,7 @@ describe('TableViewSizing', function () {
       expect(columns).toHaveLength(2);
 
       // Re-add the column and check that the width decreases
-      userEvent.click(audienceCheckbox);
+      await user.click(audienceCheckbox);
       expect(audienceCheckbox.checked).toBe(true);
       act(() => {jest.runAllTimers();});
       expect(parseInt((rows[1].childNodes[1] as HTMLElement).style.width, 10)).toBeLessThan(parseInt(oldWidth, 10));
@@ -1608,17 +1610,14 @@ describe('TableViewSizing', function () {
       expect((rows[0].childNodes[1] as HTMLElement).style.width).toBe('39px');
     });
 
-    it('renders table with headerless column with tooltip', function () {
+    it('renders table with headerless column with tooltip', async function () {
       let {getByRole} = renderTable({}, 'large');
       let grid = getByRole('grid');
       expect(grid).toBeVisible();
       expect(grid).toHaveAttribute('aria-label', 'Table');
       expect(grid).toHaveAttribute('data-testid', 'test');
-      let headers = within(grid).getAllByRole('columnheader');
-      let headerlessColumn = headers[1];
-      act(() => {
-        headerlessColumn.focus();
-      });
+      await user.tab();
+      await user.keyboard('{ArrowUp}{ArrowRight}');
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
     });

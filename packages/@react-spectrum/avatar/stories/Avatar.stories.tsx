@@ -11,11 +11,11 @@
  */
 
 import {Avatar} from '../';
-import {Meta, Story} from '@storybook/react';
-import React from 'react';
+import {Meta} from '@storybook/react';
 import {SpectrumAvatarProps} from '@react-types/avatar';
 
-const SRC_URL_1 = 'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
+const SRC_URL_1 =
+  'https://mir-s3-cdn-cf.behance.net/project_modules/disp/690bc6105945313.5f84bfc9de488.png';
 const SRC_URL_2 = 'https://i.imgur.com/xIe7Wlb.png';
 
 const meta: Meta<SpectrumAvatarProps> = {
@@ -25,22 +25,22 @@ const meta: Meta<SpectrumAvatarProps> = {
 
 export default meta;
 
-const AvatarTemplate: Story<SpectrumAvatarProps> = (args) => (
-  <Avatar {...args} />
-);
+export const Default = {
+  args: {src: SRC_URL_1},
+  name: 'default'
+};
 
-export const Default = AvatarTemplate.bind({});
-Default.args = {src: SRC_URL_1};
-Default.storyName = 'default';
+export const Disabled = {
+  args: {isDisabled: true, src: SRC_URL_1},
+  name: 'isDisabled'
+};
 
-export const Disabled = AvatarTemplate.bind({});
-Disabled.args = {isDisabled: true, src: SRC_URL_1};
-Disabled.storyName = 'isDisabled';
+export const WithAltText = {
+  args: {alt: 'Pensive', src: SRC_URL_2},
+  name: 'with alt text'
+};
 
-export const WithAltText = AvatarTemplate.bind({});
-WithAltText.args = {alt: 'Pensive', src: SRC_URL_2};
-WithAltText.storyName = 'with alt text';
-
-export const CustomSize = AvatarTemplate.bind({});
-CustomSize.args = {...WithAltText.args, size: 'avatar-size-700'};
-CustomSize.storyName = 'with custom size';
+export const CustomSize = {
+  args: {...WithAltText.args, size: 'avatar-size-700'},
+  name: 'with custom size'
+};

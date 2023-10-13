@@ -15,8 +15,8 @@ import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useCallback, useEffect, useRef} from 'react';
-import {useGlobalListeners} from '@react-aria/utils';
+import {useEffect, useRef} from 'react';
+import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
@@ -56,8 +56,6 @@ export function useSpinButton(
     onIncrementToMax
   } = props;
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
-  const propsRef = useRef(props);
-  propsRef.current = props;
 
   const clearAsync = () => clearTimeout(_async.current);
 
@@ -137,10 +135,10 @@ export function useSpinButton(
     }
   }, [textValue]);
 
-  const onIncrementPressStart = useCallback(
+  const onIncrementPressStart = useEffectEvent(
     (initialStepDelay: number) => {
       clearAsync();
-      propsRef.current.onIncrement();
+      onIncrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
@@ -150,15 +148,13 @@ export function useSpinButton(
         },
         initialStepDelay
       );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [onIncrement, maxValue, value]
+    }
   );
 
-  const onDecrementPressStart = useCallback(
+  const onDecrementPressStart = useEffectEvent(
     (initialStepDelay: number) => {
       clearAsync();
-      propsRef.current.onDecrement();
+      onDecrement();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
@@ -168,9 +164,7 @@ export function useSpinButton(
         },
         initialStepDelay
       );
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [onDecrement, minValue, value]
+    }
   );
 
   let cancelContextMenu = (e) => {

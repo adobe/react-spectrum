@@ -49,7 +49,7 @@ governing permissions and limitations under the License.
     background-color: var(--spectrum-sidenav-item-background-color-down);
   }
 
-  &:focus-ring {
+  &:focus-visible {
     background-color: var(--spectrum-sidenav-item-background-color-key-focus);
     color: var(--spectrum-sidenav-item-text-color-key-focus);
 

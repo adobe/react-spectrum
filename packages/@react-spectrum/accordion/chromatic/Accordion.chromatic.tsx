@@ -11,7 +11,7 @@
  */
 
 import {Accordion, Item} from '../';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumAccordionProps} from '@react-types/accordion';
 
@@ -22,8 +22,7 @@ const meta: Meta<SpectrumAccordionProps<object>> = {
 
 export default meta;
 
-
-const Template = <T extends object>(): Story<SpectrumAccordionProps<T>> => (args) => (
+const Template = (args) => (
   <Accordion {...args}>
     <Item key="files" title="Your files">
       files
@@ -37,12 +36,16 @@ const Template = <T extends object>(): Story<SpectrumAccordionProps<T>> => (args
   </Accordion>
 );
 
+export const Default = {
+  render: Template
+};
 
-export const Default = Template().bind({});
-Default.args = {};
+export const ExpandedKeys = {
+  render: Template,
+  args: {defaultExpandedKeys: ['shared']}
+};
 
-export const ExpandedKeys = Template().bind({});
-ExpandedKeys.args = {defaultExpandedKeys: ['shared']};
-
-export const DisabledKeys = Template().bind({});
-DisabledKeys.args = {disabledKeys: ['shared']};
+export const DisabledKeys = {
+  render: Template,
+  args: {disabledKeys: ['shared']}
+};

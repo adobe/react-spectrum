@@ -12,8 +12,8 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
-import {DOMAttributes, TextInputDOMProps} from '@react-types/shared';
-import {filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useId} from '@react-aria/utils';
+import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
+import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps} from '@react-types/shared';
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,
@@ -25,20 +25,19 @@ import {
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
-import {useFocus, useFocusWithin} from '@react-aria/interactions';
+import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {
   useLocalizedStringFormatter,
   useNumberFormatter
 } from '@react-aria/i18n';
-import {useScrollWheel} from '@react-aria/interactions';
 import {useSpinButton} from '@react-aria/spinbutton';
 
 export interface NumberFieldAria {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the group wrapper around the input and stepper buttons. */
-  groupProps: DOMAttributes,
+  groupProps: GroupDOMAttributes,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the increment button, to be passed to [useButton](useButton.html). */
@@ -67,6 +66,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     maxValue,
     autoFocus,
     validationState,
+    isInvalid,
     label,
     formatOptions,
     onBlur = () => {},
@@ -176,20 +176,31 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   }
 
   let onChange = value => {
-    state.setInputValue(value);
+    if (state.validate(value)) {
+      state.setInputValue(value);
+    }
   };
 
   let domProps = filterDOMProps(props);
+  let onKeyDownEnter = useCallback((e) => {
+    if (e.key === 'Enter') {
+      commit();
+    } else {
+      e.continuePropagation();
+    }
+  }, [commit]);
 
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
     ...otherProps,
     ...domProps,
+    name: undefined,
     label,
     autoFocus,
     isDisabled,
     isReadOnly,
     isRequired,
     validationState,
+    isInvalid,
     value: inputValue,
     defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
@@ -202,11 +213,13 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onBlur,
     onFocus,
     onFocusChange,
-    onKeyDown,
+    onKeyDown: useMemo(() => chain(onKeyDownEnter, onKeyDown), [onKeyDownEnter, onKeyDown]),
     onKeyUp,
     description,
     errorMessage
   }, state, inputRef);
+
+  useFormReset(inputRef, state.numberValue, state.setNumberValue);
 
   let inputProps = mergeProps(
     spinButtonProps,
@@ -288,10 +301,10 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   return {
     groupProps: {
+      ...focusWithinProps,
       role: 'group',
       'aria-disabled': isDisabled,
-      'aria-invalid': validationState === 'invalid' ? 'true' : undefined,
-      ...focusWithinProps
+      'aria-invalid': isInvalid || validationState === 'invalid' ? 'true' : undefined
     },
     labelProps,
     inputProps,

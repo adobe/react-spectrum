@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@react-spectrum/test-utils';
 import {AriaCheckboxGroupItemProps, AriaCheckboxGroupProps} from '@react-types/checkbox';
 import {CheckboxGroupState, useCheckboxGroupState} from '@react-stately/checkbox';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {useCheckboxGroup, useCheckboxGroupItem} from '../';
 import userEvent from '@testing-library/user-event';
@@ -38,7 +38,12 @@ function CheckboxGroup({groupProps, checkboxProps}: {groupProps: AriaCheckboxGro
 }
 
 describe('useCheckboxGroup', () => {
-  it('handles defaults', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  it('handles defaults', async () => {
     let onChangeSpy = jest.fn();
     let {getByRole, getAllByRole, getByLabelText} = render(
       <CheckboxGroup
@@ -50,7 +55,7 @@ describe('useCheckboxGroup', () => {
         ]} />
     );
 
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
     expect(checkboxGroup).toBeInTheDocument();
     expect(checkboxes.length).toBe(3);
@@ -68,7 +73,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[2].checked).toBeFalsy();
 
     let dragons = getByLabelText('Dragons');
-    userEvent.click(dragons);
+    await user.click(dragons);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(['dragons']);
 
@@ -119,7 +124,7 @@ describe('useCheckboxGroup', () => {
           {value: 'dragons', children: 'Dragons'}
         ]} />
     );
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
 
     let labelId = checkboxGroup.getAttribute('aria-labelledby');
     expect(labelId).toBeDefined();
@@ -137,7 +142,7 @@ describe('useCheckboxGroup', () => {
           {value: 'dragons', children: 'Dragons'}
         ]} />
     );
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
 
     expect(checkboxGroup).toHaveAttribute('aria-label', 'My Favorite Pet');
   });
@@ -153,12 +158,12 @@ describe('useCheckboxGroup', () => {
           {value: 'dragons', children: 'Dragons'}
         ]} />
     );
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
 
     expect(checkboxGroup).toHaveAttribute('data-testid', 'favorite-pet');
   });
 
-  it('sets aria-disabled and makes checkboxes disabled when isDisabled is true', () => {
+  it('sets aria-disabled and makes checkboxes disabled when isDisabled is true', async () => {
     let groupOnChangeSpy = jest.fn();
     let checkboxOnChangeSpy = jest.fn();
     let {getAllByRole, getByRole, getByLabelText} = render(
@@ -171,7 +176,7 @@ describe('useCheckboxGroup', () => {
         ]} />
     );
 
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
     expect(checkboxGroup).toHaveAttribute('aria-disabled', 'true');
 
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
@@ -180,7 +185,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[2]).toHaveAttribute('disabled');
     let dragons = getByLabelText('Dragons');
 
-    act(() => {userEvent.click(dragons);});
+    await user.click(dragons);
 
     expect(groupOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);
@@ -198,7 +203,7 @@ describe('useCheckboxGroup', () => {
         ]} />
     );
 
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
     expect(checkboxGroup).not.toHaveAttribute('aria-disabled');
 
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
@@ -218,7 +223,7 @@ describe('useCheckboxGroup', () => {
         ]} />
     );
 
-    let checkboxGroup = getByRole('group', {exact: true});
+    let checkboxGroup = getByRole('group');
     expect(checkboxGroup).not.toHaveAttribute('aria-disabled');
 
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
@@ -227,7 +232,7 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[2]).not.toHaveAttribute('disabled');
   });
 
-  it('sets aria-readonly="true" on each checkbox', () => {
+  it('sets aria-readonly="true" on each checkbox', async () => {
     let groupOnChangeSpy = jest.fn();
     let checkboxOnChangeSpy = jest.fn();
     let {getAllByRole, getByLabelText} = render(
@@ -247,14 +252,14 @@ describe('useCheckboxGroup', () => {
     expect(checkboxes[2].checked).toBeFalsy();
     let dragons = getByLabelText('Dragons');
 
-    act(() => {userEvent.click(dragons);});
+    await user.click(dragons);
 
     expect(groupOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxes[2].checked).toBeFalsy();
   });
 
-  it('should not update state for readonly checkbox', () => {
+  it('should not update state for readonly checkbox', async () => {
     let groupOnChangeSpy = jest.fn();
     let checkboxOnChangeSpy = jest.fn();
     let {getAllByRole, getByLabelText} = render(
@@ -270,7 +275,7 @@ describe('useCheckboxGroup', () => {
     let checkboxes = getAllByRole('checkbox') as HTMLInputElement[];
     let dragons = getByLabelText('Dragons');
 
-    userEvent.click(dragons);
+    await user.click(dragons);
 
     expect(groupOnChangeSpy).toHaveBeenCalledTimes(0);
     expect(checkboxOnChangeSpy).toHaveBeenCalledTimes(0);

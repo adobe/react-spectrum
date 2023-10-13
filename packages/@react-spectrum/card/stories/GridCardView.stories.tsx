@@ -73,6 +73,7 @@ function renderEmptyState() {
   );
 }
 
+// TODO: accessibility failures regarding article element with role="gridcell", will need to double check when we pick CardView back up
 export default {
   title: 'CardView/Grid layout',
   component: CardView,

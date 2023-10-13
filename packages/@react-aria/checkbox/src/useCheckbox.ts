@@ -25,7 +25,9 @@ export interface CheckboxAria {
   /** Whether the checkbox is disabled. */
   isDisabled: boolean,
   /** Whether the checkbox is read only. */
-  isReadOnly: boolean
+  isReadOnly: boolean,
+  /** Whether the checkbox is invalid. */
+  isInvalid: boolean
 }
 
 /**
@@ -37,7 +39,7 @@ export interface CheckboxAria {
  * @param inputRef - A ref for the HTML input element.
  */
 export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
-  let {inputProps, isSelected, isPressed, isDisabled, isReadOnly} = useToggle(props, state, inputRef);
+  let {inputProps, isSelected, isPressed, isDisabled, isReadOnly, isInvalid} = useToggle(props, state, inputRef);
 
   let {isIndeterminate} = props;
   useEffect(() => {
@@ -56,6 +58,7 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     isSelected,
     isPressed,
     isDisabled,
-    isReadOnly
+    isReadOnly,
+    isInvalid
   };
 }

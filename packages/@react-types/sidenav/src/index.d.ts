@@ -11,8 +11,8 @@
  */
 
 import {AriaLabelingProps, CollectionBase, DOMProps, Expandable, MultipleSelection, Node, StyleProps} from '@react-types/shared';
-import {HTMLAttributes, ReactNode} from 'react';
-import {ReusableView} from '@react-stately/virtualizer';
+import {HTMLAttributes, Key, ReactNode} from 'react';
+import {LayoutInfo, Size} from '@react-stately/virtualizer';
 
 export interface SideNavProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {
   shouldFocusWrap?: boolean
@@ -27,8 +27,14 @@ export interface SpectrumSideNavItemProps<T> extends HTMLAttributes<HTMLElement>
   item: Node<T>
 }
 
+interface IVirtualizer {
+  updateItemSize(key: Key, size: Size): void
+}
+
 export interface SideNavSectionProps<T> {
-  reusableView: ReusableView<Node<T>, unknown>,
-  header: ReusableView<Node<T>, unknown>,
+  layoutInfo: LayoutInfo,
+  headerLayoutInfo: LayoutInfo,
+  virtualizer: IVirtualizer,
+  item: Node<T>,
   children?: ReactNode
 }

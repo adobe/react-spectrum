@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaTabPanelProps, SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, Node, Orientation} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {DOMProps, DOMRef, Node, Orientation, StyleProps} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {ListCollection} from '@react-stately/list';
-import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import React, {
   Key,
   MutableRefObject,
   ReactElement,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -28,7 +29,6 @@ import React, {
   useState
 } from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
-import {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
 import styles from '@adobe/spectrum-css-temp/components/tabs/vars.css';
 import {TabListState, useTabListState} from '@react-stately/tabs';
 import {Text} from '@react-spectrum/text';
@@ -36,7 +36,6 @@ import {useCollection} from '@react-stately/collections';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
-import {useResizeObserver} from '@react-aria/utils';
 import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 
 interface TabsContext<T> {
@@ -161,19 +160,18 @@ function Tab<T>(props: TabProps<T>) {
   let {item, state} = props;
   let {key, rendered} = item;
 
-  let ref = useRef<HTMLDivElement>();
+  let ref = useRef<any>();
   let {tabProps, isSelected, isDisabled} = useTab({key}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
     ...props
   });
-  let domProps = filterDOMProps(item.props);
-  delete domProps.id;
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <div
-        {...mergeProps(tabProps, hoverProps, domProps)}
+      <ElementType
+        {...mergeProps(tabProps, hoverProps)}
         ref={ref}
         className={classNames(
           styles,
@@ -198,7 +196,7 @@ function Tab<T>(props: TabProps<T>) {
             ? <Text>{rendered}</Text>
             : rendered}
         </SlotProvider>
-      </div>
+      </ElementType>
     </FocusRing>
   );
 }
@@ -337,7 +335,7 @@ export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
   const {tabState, tabProps} = useContext(TabContext);
   const {tabListState} = tabState;
 
-  const factory = nodes => new ListCollection(nodes);
+  const factory = useCallback(nodes => new ListCollection(nodes), []);
   const collection = useCollection({items: tabProps.items, ...props}, factory, {suppressTextValueWarning: true});
   const selectedItem = tabListState ? collection.getItem(tabListState.selectedKey) : null;
 
@@ -348,8 +346,12 @@ export function TabPanels<T>(props: SpectrumTabPanelsProps<T>) {
   );
 }
 
+interface TabPanelProps extends AriaTabPanelProps, StyleProps {
+  children?: ReactNode
+}
+
 // @private
-function TabPanel<T>(props: SpectrumTabPanelsProps<T>) {
+function TabPanel(props: TabPanelProps) {
   const {tabState, tabPanelProps: ctxTabPanelProps} = useContext(TabContext);
   const {tabListState} = tabState;
   let ref = useRef();
@@ -399,12 +401,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
     setPickerNode(node.current);
   }, [ref]);
 
-  let items = [...state.collection].map((item) => ({
-    rendered: item.rendered,
-    textValue: item.textValue,
-    id: item.key
-  }));
-
+  let items = [...state.collection];
   let pickerProps = {
     'aria-labelledby': ariaLabeledBy,
     'aria-label': ariaLabel
@@ -450,7 +447,7 @@ function TabPicker<T>(props: TabPickerProps<T>) {
           disabledKeys={state.disabledKeys}
           onSelectionChange={state.setSelectedKey}
           UNSAFE_className={classNames(styles, 'spectrum-Tabs-picker')}>
-          {item => <Item textValue={item.textValue}>{item.rendered}</Item>}
+          {item => <Item {...item.props}>{item.rendered}</Item>}
         </Picker>
         {pickerNode && <TabLine orientation="horizontal" selectedTab={pickerNode} selectedKey={state.selectedKey} />}
       </SlotProvider>

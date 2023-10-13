@@ -1,3 +1,4 @@
 {
-  "remove": "Etiketi kaldırmak için Boşluk veya Sil tuşlarından birine basın."
+  "removeButtonLabel": "Kaldır",
+  "removeDescription": "Etiketi kaldırmak için Sil tuşuna basın."
 }

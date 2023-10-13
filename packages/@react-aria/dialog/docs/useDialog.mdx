@@ -171,7 +171,7 @@ function ModalTrigger({label, children, ...props}) {
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state);
 
   return <>
-    <Button {...triggerProps}>Open Dialog</Button>
+    <Button {...triggerProps}>{label}</Button>
     {state.isOpen &&
       <Modal state={state}>
         {React.cloneElement(children(state.close), overlayProps)}

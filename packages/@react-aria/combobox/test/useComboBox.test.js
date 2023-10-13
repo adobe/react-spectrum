@@ -70,7 +70,7 @@ describe('useComboBox', function () {
     expect(inputProps['aria-controls']).toBeFalsy();
     expect(inputProps['aria-activedescendant']).toBeFalsy();
     expect(listBoxProps.id).toBeTruthy();
-    expect(listBoxProps['aria-labelledby']).toBe(`${labelProps.id} ${listBoxProps.id}`);
+    expect(listBoxProps['aria-labelledby']).toBe(`${listBoxProps.id} ${labelProps.id}`);
     expect(buttonProps.id).toBeTruthy();
     expect(buttonProps.excludeFromTabOrder).toBeTruthy();
     expect(buttonProps['aria-haspopup']).toBeTruthy();

@@ -258,7 +258,10 @@ class DragSession {
       return;
     }
 
-    let dropTarget = this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+    let dropTarget =
+      this.validDropTargets.find(target => target.element === e.target as HTMLElement) ||
+      this.validDropTargets.find(target => target.element.contains(e.target as HTMLElement));
+
     if (!dropTarget) {
       if (this.currentDropTarget) {
         this.currentDropTarget.element.focus();
@@ -478,7 +481,6 @@ class DragSession {
       }
     }
 
-
     if (item !== this.currentDropItem) {
       if (item && typeof this.currentDropTarget.onDropTargetEnter === 'function') {
         this.currentDropTarget.onDropTargetEnter(item?.target);
@@ -487,7 +489,7 @@ class DragSession {
       item?.element.focus();
       this.currentDropItem = item;
 
-      // Annouce first drop target after drag start announcement finishes.
+      // Announce first drop target after drag start announcement finishes.
       // Otherwise, it will never get announced because drag start announcement is assertive.
       if (!this.initialFocused) {
         announce(item?.element.getAttribute('aria-label'), 'polite');
@@ -498,6 +500,7 @@ class DragSession {
 
   end() {
     this.teardown();
+    endDragging();
 
     if (typeof this.dragTarget.onDragEnd === 'function') {
       let target = this.currentDropTarget && this.dropOperation !== 'cancel' ? this.currentDropTarget : this.dragTarget;
@@ -526,10 +529,10 @@ class DragSession {
     }
 
     this.setCurrentDropTarget(null);
-    endDragging();
   }
 
   cancel() {
+    this.setCurrentDropTarget(null);
     this.end();
     if (!this.dragTarget.element.closest('[aria-hidden="true"]')) {
       this.dragTarget.element.focus();

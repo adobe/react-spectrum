@@ -12,8 +12,7 @@
 
 import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, useDefaultProps} from './utils';
-import {isInvalid} from './utils';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useControlledState} from '@react-stately/utils';
 import {useState} from 'react';
@@ -29,9 +28,9 @@ export interface DatePickerStateOptions<T extends DateValue> extends DatePickerP
 
 export interface DatePickerState extends OverlayTriggerState {
   /** The currently selected date. */
-  value: DateValue,
+  value: DateValue | null,
   /** Sets the selected date. */
-  setValue(value: DateValue): void,
+  setValue(value: DateValue | null): void,
   /**
    * The date portion of the value. This may be set prior to `value` if the user has
    * selected a date but has not yet selected a time.
@@ -54,8 +53,13 @@ export interface DatePickerState extends OverlayTriggerState {
   isOpen: boolean,
   /** Sets whether the calendar popover is open. */
   setOpen(isOpen: boolean): void,
-  /** The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props. */
+  /**
+   * The current validation state of the date picker, based on the `validationState`, `minValue`, and `maxValue` props.
+   * @deprecated Use `isInvalid` instead.
+   */
   validationState: ValidationState,
+  /** Whether the date picker is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
+  isInvalid: boolean,
   /** Formats the selected value using the given options. */
   formatValue(locale: string, fieldOptions: FieldOptions): string
 }
@@ -114,16 +118,17 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
   };
 
   let selectTime = (newValue: TimeValue) => {
-    if (selectedDate) {
+    if (selectedDate && newValue) {
       commitValue(selectedDate, newValue);
     } else {
       setSelectedTime(newValue);
     }
   };
 
-  let validationState: ValidationState = props.validationState ||
-    (isInvalid(value, props.minValue, props.maxValue) ? 'invalid' : null) ||
-    (value && props.isDateUnavailable?.(value) ? 'invalid' : null);
+  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' ||
+    isInvalid(value, props.minValue, props.maxValue) ||
+    value && props.isDateUnavailable?.(value);
+  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
     value,
@@ -146,6 +151,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       overlayState.setOpen(isOpen);
     },
     validationState,
+    isInvalid: isValueInvalid,
     formatValue(locale, fieldOptions) {
       if (!dateValue) {
         return '';

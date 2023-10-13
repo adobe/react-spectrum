@@ -11,12 +11,17 @@
  */
 
 import {Button, Dialog, DialogTrigger, Heading, Modal, ModalOverlay, OverlayArrow, Popover} from '../';
+import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('Dialog', () => {
-  it('works with modal', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
+  it('works with modal', async () => {
     let {getByRole} = render(
       <DialogTrigger>
         <Button>Delete…</Button>
@@ -34,7 +39,7 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
-    userEvent.click(button);
+    await user.click(button);
 
     let dialog = getByRole('alertdialog');
     let heading = getByRole('heading');
@@ -45,12 +50,12 @@ describe('Dialog', () => {
     expect(dialog.closest('.react-aria-ModalOverlay')).toBeInTheDocument();
 
     let close = within(dialog).getByRole('button');
-    userEvent.click(close);
+    await user.click(close);
 
     expect(dialog).not.toBeInTheDocument();
   });
 
-  it('works with modal and custom underlay', () => {
+  it('works with modal and custom underlay', async () => {
     let {getByRole} = render(
       <DialogTrigger>
         <Button>Delete…</Button>
@@ -70,7 +75,7 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
-    userEvent.click(button);
+    await user.click(button);
 
     let dialog = getByRole('alertdialog');
     let heading = getByRole('heading');
@@ -81,12 +86,12 @@ describe('Dialog', () => {
     expect(dialog.closest('.underlay')).toHaveAttribute('data-test', 'underlay');
 
     let close = within(dialog).getByRole('button');
-    userEvent.click(close);
+    await user.click(close);
 
     expect(dialog).not.toBeInTheDocument();
   });
 
-  it('has dismiss button when isDismissable', () => {
+  it('has dismiss button when isDismissable', async () => {
     let {getByRole, getByLabelText} = render(
       <DialogTrigger>
         <Button>Delete…</Button>
@@ -104,17 +109,17 @@ describe('Dialog', () => {
     );
 
     let button = getByRole('button');
-    userEvent.click(button);
+    await user.click(button);
 
     let dialog = getByRole('alertdialog');
 
     let dismiss = getByLabelText('Dismiss');
-    userEvent.click(dismiss);
+    await user.click(dismiss);
 
     expect(dialog).not.toBeInTheDocument();
   });
 
-  it('works with popover', () => {
+  it('works with popover', async () => {
     let {getByRole} = render(
       <DialogTrigger>
         <Button aria-label="Help">?⃝</Button>
@@ -133,7 +138,7 @@ describe('Dialog', () => {
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('data-pressed');
 
-    userEvent.click(button);
+    await user.click(button);
 
     expect(button).toHaveAttribute('data-pressed');
 
@@ -150,8 +155,75 @@ describe('Dialog', () => {
     expect(arrow).toHaveStyle('position: absolute');
     expect(arrow).toHaveAttribute('data-test', 'arrow');
 
-    userEvent.click(document.body);
+    await user.click(document.body);
 
     expect(dialog).not.toBeInTheDocument();
+  });
+
+  it('should support render props', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button aria-label="Help">?⃝</Button>
+        <Popover>
+          <Dialog>
+            {({close}) => (
+              <>
+                <Heading>Help</Heading>
+                <p>For help accessing your account, please contact support.</p>
+                <Button onPress={() => close()}>Dismiss</Button>
+              </>
+            )}
+          </Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+
+    let dismiss = within(dialog).getByRole('button');
+
+    await user.click(dismiss);
+
+    expect(dialog).not.toBeInTheDocument();
+  });
+
+  it('should support Modal being used standalone', async () => {
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(
+      <Modal isDismissable isOpen onOpenChange={onOpenChange}>
+        <Dialog>A modal</Dialog>
+      </Modal>
+    );
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveTextContent('A modal');
+
+    await user.click(document.body);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('isOpen and defaultOpen should override state from context', async () => {
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(<>
+      <DialogTrigger>
+        <Button />
+        <Modal isDismissable isOpen onOpenChange={onOpenChange}>
+          <Dialog>A modal</Dialog>
+        </Modal>
+      </DialogTrigger>
+    </>);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveTextContent('A modal');
+
+    await user.click(document.body);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 });

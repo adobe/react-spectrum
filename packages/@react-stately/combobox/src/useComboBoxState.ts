@@ -61,11 +61,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
   let [showAllItems, setShowAllItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
-  let [inputValue, setInputValue] = useControlledState(
-    props.inputValue,
-    props.defaultInputValue ?? '',
-    props.onInputChange
-  );
 
   let onSelectionChange = (key) => {
     if (props.onSelectionChange) {
@@ -85,6 +80,12 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     onSelectionChange,
     items: props.items ?? props.defaultItems
   });
+
+  let [inputValue, setInputValue] = useControlledState(
+    props.inputValue,
+    props.defaultInputValue ?? collection.getItem(selectedKey)?.textValue ?? '',
+    props.onInputChange
+  );
 
   // Preserve original collection so we can show all items on demand
   let originalCollection = collection;
@@ -170,7 +171,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     setInputValue(itemText);
   };
 
-  let isInitialRender = useRef(true);
   let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
   let lastSelectedKeyText = useRef(collection.getItem(selectedKey)?.textValue ?? '');
   // intentional omit dependency array, want this to happen on every render
@@ -219,11 +219,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       }
     }
 
-    // If it is the intial render and inputValue isn't controlled nor has an intial value, set input to match current selected key if any
-    if (isInitialRender.current && (props.inputValue === undefined && props.defaultInputValue === undefined)) {
-      resetInputValue();
-    }
-
     // If the selectedKey changed, update the input value.
     // Do nothing if both inputValue and selectedKey are controlled.
     // In this case, it's the user's responsibility to update inputValue in onSelectionChange.
@@ -248,7 +243,6 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       }
     }
 
-    isInitialRender.current = false;
     lastSelectedKey.current = selectedKey;
     lastSelectedKeyText.current = selectedItemText;
   });
@@ -284,6 +278,16 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
   };
 
+  const commitValue = () => {
+    if (allowsCustomValue) {
+      const itemText = collection.getItem(selectedKey)?.textValue ?? '';
+      (inputValue === itemText) ? commitSelection() : commitCustomValue();
+    } else {
+      // Reset inputValue and close menu
+      commitSelection();
+    }
+  };
+
   let commit = () => {
     if (triggerState.isOpen && selectionManager.focusedKey != null) {
       // Reset inputValue and close menu here if the selected key is already the focused key. Otherwise
@@ -293,22 +297,9 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       } else {
         setSelectedKey(selectionManager.focusedKey);
       }
-    } else if (allowsCustomValue) {
-      commitCustomValue();
     } else {
-      // Reset inputValue and close menu if no item is focused but user triggers a commit
-      commitSelection();
+      commitValue();
     }
-  };
-
-  let close = () => {
-    let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-    if (allowsCustomValue && inputValue !== itemText) {
-      commitCustomValue();
-    } else {
-      commitSelection();
-    }
-    closeMenu();
   };
 
   let setFocused = (isFocused: boolean) => {
@@ -317,7 +308,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
         open(null, 'focus');
       }
     } else if (shouldCloseOnBlur) {
-      close();
+      commitValue();
     }
 
     setFocusedState(isFocused);
@@ -339,7 +330,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     ...triggerState,
     toggle,
     open,
-    close,
+    close: commitValue,
     selectionManager,
     selectedKey,
     setSelectedKey,
@@ -364,10 +355,12 @@ function filterNodes<T>(collection: Collection<Node<T>>, nodes: Iterable<Node<T>
   for (let node of nodes) {
     if (node.type === 'section' && node.hasChildNodes) {
       let filtered = filterNodes(collection, getChildNodes(node, collection), inputValue, filter);
-      if ([...filtered].length > 0) {
+      if ([...filtered].some(node => node.type === 'item')) {
         filteredNode.push({...node, childNodes: filtered});
       }
-    } else if (node.type !== 'section' && filter(node.textValue, inputValue)) {
+    } else if (node.type === 'item' && filter(node.textValue, inputValue)) {
+      filteredNode.push({...node});
+    } else if (node.type !== 'item') {
       filteredNode.push({...node});
     }
   }

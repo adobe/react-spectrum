@@ -18,16 +18,29 @@ governing permissions and limitations under the License.
 
 .spectrum-Tags {
   display: inline;
+
+  &:focus-visible {
+    outline: none;
+  }
+
+  &.focus-ring {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--spectrum-tag-border-color-key-focus);
+    /* Allows us to use a box-shadow for the focus ring. Should not cause layout shifts since it is within a container. */
+    display: block;
+  }
 }
 
 .spectrum-Tags-container {
-  /* Aligns tags with label. */
-  margin-inline-start: calc(calc(var(--spectrum-taggroup-tag-gap-x) / 2) * -1);
-  margin-inline-end: calc(var(--spectrum-taggroup-tag-gap-x) / 2);
+  &:not(.spectrum-Tags-container--empty) {
+    /* Aligns tags with label. */
+    margin-inline-start: calc(calc(var(--spectrum-taggroup-tag-gap-x) / 2) * -1);
+    margin-inline-end: calc(var(--spectrum-taggroup-tag-gap-x) / 2);
+  }
 }
 
 .spectrum-Tag {
-  @inherit: %spectrum-FocusRing;
+  composes: spectrum-FocusRing;
   --spectrum-focus-ring-border-radius: var(--spectrum-tag-border-radius);
   --spectrum-focus-ring-border-size: var(--spectrum-tag-border-size);
 
@@ -35,6 +48,7 @@ governing permissions and limitations under the License.
   align-items: center;
   box-sizing: border-box;
   position: relative;
+  cursor: default;
 
   margin: var(--spectrum-tag-margin);
   padding-inline-start: calc(var(--spectrum-tag-padding-x) - var(--spectrum-tag-border-size));
@@ -52,7 +66,12 @@ governing permissions and limitations under the License.
     box-shadow var(--spectrum-global-animation-duration-100) ease-in-out,
     background-color var(--spectrum-global-animation-duration-100) ease-in-out;
 
+  &[data-href] {
+    cursor: pointer;
+  }
+
   &.is-disabled {
+    cursor: default;
     pointer-events: none;
   }
 
@@ -87,7 +106,6 @@ governing permissions and limitations under the License.
     margin-inline-end: var(--spectrum-tag-padding-x);
     flex: 1 1 auto;
     font-size: var(--spectrum-tag-text-size);
-    cursor: default;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -125,4 +143,8 @@ governing permissions and limitations under the License.
   &:not(.spectrum-Tags-fieldWrapper--positionSide) {
     display: grid;
   }
+}
+
+.spectrum-Tags-empty-state {
+  min-height: var(--spectrum-tag-height);
 }

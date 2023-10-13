@@ -34,6 +34,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     autoFocus,
     children,
     validationState,
+    isInvalid,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -57,7 +58,8 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
       // Only pass isRequired and validationState to react-aria if they came from
       // the props for this individual checkbox, and not from the group via context.
       isRequired: originalProps.isRequired,
-      validationState: originalProps.validationState
+      validationState: originalProps.validationState,
+      isInvalid: originalProps.isInvalid
     }, groupState, inputRef)
     // eslint-disable-next-line react-hooks/rules-of-hooks
     : useCheckbox(props, useToggleState(props), inputRef);
@@ -90,7 +92,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
             'is-checked': inputProps.checked,
             'is-indeterminate': isIndeterminate,
             'spectrum-Checkbox--quiet': !isEmphasized,
-            'is-invalid': validationState === 'invalid',
+            'is-invalid': isInvalid || validationState === 'invalid',
             'is-disabled': isDisabled,
             'is-hovered': isHovered
           },

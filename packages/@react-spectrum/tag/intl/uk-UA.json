@@ -1,5 +1,6 @@
 {
   "actions": "Дії",
   "hideButtonLabel": "Показувати менше",
+  "noTags": "Немає",
   "showAllButtonLabel": "Показати всі ({tagCount, number})"
 }

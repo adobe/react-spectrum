@@ -12,11 +12,11 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, SpectrumHelpTextProps, StyleProps} from '@react-types/shared';
+import {DOMRef, SpectrumFieldValidation, SpectrumHelpTextProps, StyleProps, Validation} from '@react-types/shared';
 import React, {HTMLAttributes} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/helptext/vars.css';
 
-interface HelpTextProps extends SpectrumHelpTextProps, StyleProps {
+interface HelpTextProps extends SpectrumHelpTextProps, Omit<Validation, 'validationState'>, SpectrumFieldValidation, StyleProps {
   /** Props for the help text description element. */
   descriptionProps?: HTMLAttributes<HTMLElement>,
   /** Props for the help text error message element. */
@@ -28,13 +28,14 @@ function HelpText(props: HelpTextProps, ref: DOMRef<HTMLDivElement>) {
     description,
     errorMessage,
     validationState,
+    isInvalid,
     isDisabled,
     showErrorIcon,
     descriptionProps,
     errorMessageProps
   } = props;
   let domRef = useDOMRef(ref);
-  let isErrorMessage = errorMessage && validationState === 'invalid';
+  let isErrorMessage = errorMessage && (isInvalid || validationState === 'invalid');
   let {styleProps} = useStyleProps(props);
 
   return (

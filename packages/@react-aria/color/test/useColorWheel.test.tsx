@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {ColorWheelProps} from '@react-types/color';
 import {parseColor, useColorWheelState} from '@react-stately/color';
 import React, {useRef} from 'react';
@@ -50,12 +50,11 @@ function ColorWheel(props: ColorWheelProps) {
 
 describe('useColorWheel', () => {
   let onChangeSpy = jest.fn();
+  let user;
 
   beforeAll(() => {
-    // @ts-ignore
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
-    // @ts-ignore
-    jest.useFakeTimers('legacy');
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -75,7 +74,7 @@ describe('useColorWheel', () => {
     expect(slider).toHaveAttribute('value', '0');
   });
 
-  it('the slider is focusable', () => {
+  it('the slider is focusable', async () => {
     let {getAllByRole, getByRole} = render(<div>
       <button>A</button>
       <ColorWheel />
@@ -84,17 +83,17 @@ describe('useColorWheel', () => {
     let slider = getByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(slider);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(slider);
   });
 
-  it('disabled', () => {
+  it('disabled', async () => {
     let {getAllByRole, getByRole} = render(<div>
       <button>A</button>
       <ColorWheel isDisabled />
@@ -104,11 +103,11 @@ describe('useColorWheel', () => {
     let [buttonA, buttonB] = getAllByRole('button');
     expect(slider).toHaveAttribute('disabled');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttonA);
   });
 

@@ -10,42 +10,79 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSelectProps, HiddenSelect, useSelect} from 'react-aria';
+import {AriaSelectProps, HiddenSelect, useFocusRing, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {createContext, ForwardedRef, HTMLAttributes, ReactNode, useCallback, useContext, useRef, useState} from 'react';
-import {ItemRenderProps, useCollection} from './Collection';
+import {CollectionDocumentContext, ItemRenderProps, useCollectionDocument} from './Collection';
+import {ContextValue, forwardRefType, Hidden, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import {LabelContext} from './Label';
-import {ListBoxContext, ListBoxProps} from './ListBox';
+import {ListBoxContext, ListStateContext} from './ListBox';
+import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {forwardRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {SelectState, useSelectState} from 'react-stately';
 import {TextContext} from './Text';
-import {useResizeObserver} from '@react-aria/utils';
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<SelectState<T>>, SlotProps {}
-
-interface SelectValueContext {
-  state: SelectState<unknown>,
-  valueProps: HTMLAttributes<HTMLElement>
+export interface SelectRenderProps {
+  /**
+   * Whether the select is focused, either via a mouse or keyboard.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the select is keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * Whether the select is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the select is currently open.
+   * @selector [data-open]
+   */
+  isOpen: boolean,
+  /**
+   * Whether the select is invalid.
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean,
+  /**
+   * Whether the select is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean
 }
 
+export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'items'>, RenderProps<SelectRenderProps>, SlotProps {}
+
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
-const InternalSelectContext = createContext<SelectValueContext | null>(null);
+export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
 
 function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SelectContext);
-  let [listBoxProps, setListBoxProps] = useState<ListBoxProps<any>>({children: []});
-
-  let {portal, collection} = useCollection({
-    items: props.items ?? listBoxProps.items,
-    children: listBoxProps.children
-  });
+  let {collection, document} = useCollectionDocument();
   let state = useSelectState({
     ...props,
     collection,
     children: undefined
   });
+
+  let {isFocusVisible, focusProps} = useFocusRing({within: true});
+
+  // Only expose a subset of state to renderProps function to avoid infinite render loop
+  let renderPropsState = useMemo(() => ({
+    isOpen: state.isOpen,
+    isFocused: state.isFocused,
+    isFocusVisible,
+    isDisabled: props.isDisabled || false,
+    isInvalid: props.isInvalid || false,
+    isRequired: props.isRequired || false
+  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, props.isInvalid, props.isRequired]);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -57,7 +94,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     menuProps,
     descriptionProps,
     errorMessageProps
-  } = useSelect({...props, label}, state, buttonRef);
+  } = useSelect({...removeDataAttributes(props), label}, state, buttonRef);
 
   // Make menu width match input + button
   let [buttonWidth, setButtonWidth] = useState<string | null>(null);
@@ -74,48 +111,76 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: renderPropsState,
     defaultClassName: 'react-aria-Select'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
-    <Provider
-      values={[
-        [InternalSelectContext, {state, valueProps}],
-        [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
-        [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
-        [PopoverContext, {
-          state,
-          triggerRef: buttonRef,
-          preserveChildren: true,
-          placement: 'bottom start',
-          style: {'--trigger-width': buttonWidth} as React.CSSProperties
-        }],
-        [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...menuProps}],
-        [TextContext, {
-          slots: {
-            description: descriptionProps,
-            errorMessage: errorMessageProps
-          }
-        }]
-      ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
-      {portal}
-      <HiddenSelect
-        state={state}
-        triggerRef={buttonRef}
-        label={label}
-        name={props.name} />
-    </Provider>
+    <>
+      {/* Render a hidden copy of the children so that we can build the collection even when the popover is not open.
+        * This should always come before the real DOM content so we have built the collection by the time it renders during SSR. */}
+      <Hidden>
+        <Provider
+          values={[
+            [SelectContext, props],
+            [SelectStateContext, state],
+            [CollectionDocumentContext, document]
+          ]}>
+          {renderProps.children}
+        </Provider>
+      </Hidden>
+      <Provider
+        values={[
+          [SelectContext, props],
+          [SelectStateContext, state],
+          [SelectValueContext, valueProps],
+          [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
+          [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
+          [OverlayTriggerStateContext, state],
+          [PopoverContext, {
+            triggerRef: buttonRef,
+            placement: 'bottom start',
+            style: {'--trigger-width': buttonWidth} as React.CSSProperties
+          }],
+          [ListBoxContext, menuProps],
+          [ListStateContext, state],
+          [TextContext, {
+            slots: {
+              description: descriptionProps,
+              errorMessage: errorMessageProps
+            }
+          }]
+        ]}>
+        <div
+          {...DOMProps}
+          {...renderProps}
+          {...focusProps}
+          ref={ref}
+          slot={props.slot || undefined}
+          data-focused={state.isFocused || undefined}
+          data-focus-visible={isFocusVisible || undefined}
+          data-open={state.isOpen || undefined}
+          data-disabled={props.isDisabled || undefined}
+          data-invalid={props.isInvalid || undefined}
+          data-required={props.isRequired || undefined} />
+        <HiddenSelect
+          state={state}
+          triggerRef={buttonRef}
+          label={label}
+          name={props.name}
+          isDisabled={props.isDisabled} />
+      </Provider>
+    </>
   );
 }
 
 /**
  * A select displays a collapsible list of options and allows a user to select one of them.
  */
-const _Select = (forwardRef as forwardRefType)(Select);
+const _Select = /*#__PURE__*/ (forwardRef as forwardRefType)(Select);
 export {_Select as Select};
 
 export interface SelectValueRenderProps<T> {
@@ -132,9 +197,16 @@ export interface SelectValueRenderProps<T> {
 
 export interface SelectValueProps<T extends object> extends Omit<HTMLAttributes<HTMLElement>, keyof RenderProps<unknown>>, RenderProps<SelectValueRenderProps<T>> {}
 
+export const SelectValueContext = createContext<ContextValue<SelectValueProps<any>, HTMLSpanElement>>(null);
+
 function SelectValue<T extends object>(props: SelectValueProps<T>, ref: ForwardedRef<HTMLSpanElement>) {
-  let {state, valueProps} = useContext(InternalSelectContext)!;
-  let rendered = state.selectedItem?.rendered;
+  [props, ref] = useContextProps(props, ref, SelectValueContext);
+  let state = useContext(SelectStateContext)!;
+  let {placeholder} = useSlottedContext(SelectContext)!;
+  let selectedItem = state.selectedKey != null
+    ? state.collection.getItem(state.selectedKey)
+    : null;
+  let rendered = selectedItem?.rendered;
   if (typeof rendered === 'function') {
     // If the selected item has a function as a child, we need to call it to render to JSX.
     let fn = rendered as (s: ItemRenderProps) => ReactNode;
@@ -150,20 +222,23 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
     });
   }
 
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+
   let renderProps = useRenderProps({
     ...props,
-    // TODO: localize this.
-    defaultChildren: rendered || 'Select an item',
+    defaultChildren: rendered || placeholder || stringFormatter.format('selectPlaceholder'),
     defaultClassName: 'react-aria-SelectValue',
     values: {
       selectedItem: state.selectedItem?.value as T ?? null,
       selectedText: state.selectedItem?.textValue ?? null,
-      isPlaceholder: !state.selectedItem
+      isPlaceholder: !selectedItem
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+
   return (
-    <span ref={ref} {...valueProps} {...renderProps} data-placeholder={!state.selectedItem || undefined}>
+    <span ref={ref} {...DOMProps} {...renderProps} data-placeholder={!selectedItem || undefined}>
       {/* clear description and error message slots */}
       <TextContext.Provider value={undefined}>
         {renderProps.children}
@@ -176,5 +251,5 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
  * SelectValue renders the current value of a Select, or a placeholder if no value is selected.
  * It is usually placed within the button element.
  */
-const _SelectValue = (forwardRef as forwardRefType)(SelectValue);
+const _SelectValue = /*#__PURE__*/ (forwardRef as forwardRefType)(SelectValue);
 export {_SelectValue as SelectValue};

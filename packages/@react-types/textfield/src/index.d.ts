@@ -19,6 +19,7 @@ import {
   HelpTextProps,
   InputBase,
   LabelableProps,
+  SpectrumFieldValidation,
   SpectrumLabelableProps,
   SpectrumTextInputBase,
   StyleProps,
@@ -44,7 +45,7 @@ export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, F
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
 }
 
-export interface SpectrumTextFieldProps extends SpectrumTextInputBase, AriaTextFieldProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumTextFieldProps extends SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps {
   /** An icon to display at the start of the input. */
   icon?: ReactElement | null,
   /** Whether the input should be displayed with a quiet style. */

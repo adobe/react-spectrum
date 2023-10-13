@@ -11,8 +11,9 @@
  */
 
 import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DatePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, Text} from 'react-aria-components';
+import {CalendarDate} from '@internationalized/date';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestDatePicker = (props) => (
@@ -44,7 +45,11 @@ let TestDatePicker = (props) => (
 );
 
 describe('DatePicker', () => {
-  it('provides slots', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+  it('provides slots', async () => {
     let {getByRole, getAllByRole} = render(<TestDatePicker />);
 
     let group = getByRole('group');
@@ -69,7 +74,7 @@ describe('DatePicker', () => {
       expect(segment).toHaveAttribute('data-type');
     }
 
-    userEvent.click(button);
+    await user.click(button);
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveAttribute('class', 'react-aria-Dialog');
@@ -92,12 +97,72 @@ describe('DatePicker', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should apply isPressed state to button when expanded', () => {
+  it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestDatePicker />);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
+  });
+
+  it('should support data-open state', async () => {
+    let {getByRole} = render(<TestDatePicker />);
+    let datePicker = document.querySelector('.react-aria-DatePicker');
+    let button = getByRole('button');
+
+    expect(datePicker).not.toHaveAttribute('data-open');
+    await user.click(button);
+    expect(datePicker).toHaveAttribute('data-open');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <DatePicker minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
+        {({isInvalid}) => (
+          <>
+            <Label>Birth date</Label>
+            <Group data-validation-state={isInvalid ? 'invalid' : null}>
+              <DateInput>
+                {(segment) => <DateSegment segment={segment} />}
+              </DateInput>
+              <Button>▼</Button>
+            </Group>
+            <Popover>
+              <Dialog>
+                <Calendar>
+                  <header>
+                    <Button slot="previous">◀</Button>
+                    <Heading />
+                    <Button slot="next">▶</Button>
+                  </header>
+                  <CalendarGrid>
+                    {(date) => <CalendarCell date={date} />}
+                  </CalendarGrid>
+                </Calendar>
+              </Dialog>
+            </Popover>
+          </>
+        )}
+      </DatePicker>
+    );
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('data-validation-state', 'invalid');
+  });
+
+  it('should support form value', () => {
+    render(<TestDatePicker name="birthday" value={new CalendarDate(2020, 2, 3)} />);
+    let input = document.querySelector('input[name=birthday]');
+    expect(input).toHaveValue('2020-02-03');
+  });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <TestDatePicker data-testid="date-picker" />
+    );
+    let outerEl = getAllByTestId('date-picker');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-DatePicker');
   });
 });

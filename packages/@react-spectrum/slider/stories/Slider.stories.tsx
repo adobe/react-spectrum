@@ -19,114 +19,170 @@ import {Heading} from '@react-spectrum/text';
 import React from 'react';
 import {Slider} from '../';
 import {SpectrumSliderProps} from '@react-types/slider';
-import {storiesOf} from '@storybook/react';
 
 let message = 'Your browser may not support this set of format options.';
 
-storiesOf('Slider', module)
-  .addDecorator(story => (
-    <ErrorBoundary message={message}>{story()}</ErrorBoundary>
-  ))
-  .addParameters({
-    args: {
-      label: 'Label',
-      isDisabled: false,
-      labelPosition: 'top'
-    },
-    argTypes: {
-      labelPosition: {
-        control: {
-          type: 'radio',
-          options: ['top', 'side']
-        }
+export default {
+  title: 'Slider',
+  decorators: [(story) => <ErrorBoundary message={message}>{story()}</ErrorBoundary>],
+  args: {
+    label: 'Label',
+    isDisabled: false,
+    labelPosition: 'top'
+  },
+  argTypes: {
+    labelPosition: {
+      control: {
+        type: 'radio',
+        options: ['top', 'side']
       }
     }
-  })
-  .add(
-    'Default',
-    args => render({...args, label: null, 'aria-label': 'Label'})
-  )
-  .add(
-    'label',
-    args => render(args)
-  )
-  .add(
-    'multitouch',
-    args => (<Flex direction="column" gap="size-1000">
-      {render({...args, label: 'Label'})}
-      {render({...args, label: 'Label'})}
-    </Flex>)
-  )
-  .add(
-    'custom width',
-    args => render({...args, width: '300px'})
-  )
-  .add(
-    'custom width small',
-    args => render({...args, width: '30px'})
-  )
-  .add(
-    'label overflow',
-    args => render({...args, label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '300px'})
-  )
-  .add(
-    'showValueLabel: false',
-    args => render({...args, showValueLabel: false})
-  )
-  .add(
-    'formatOptions percent',
-    args => render({...args, minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}})
-  )
-  .add(
-    'formatOptions centimeter',
-    // @ts-ignore TODO why is "unit" even missing? How well is it supported?
-    args => render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}})
-  )
-  .add(
-    'custom valueLabel',
-    args => render({...args, getValueLabel: state => `A ${state} B`})
-  )
-  .add(
-    'custom valueLabel with label overflow',
-    args => render({...args, label: 'This is a rather long label for this narrow slider element.', getValueLabel: state => `A ${state} B`})
-  )
-  .add(
-    'min/max',
-    args => render({...args, minValue: 30, maxValue: 70})
-  )
-  .add(
-    'step',
-    args => render({...args, minValue: 0, maxValue: 100, step: 5})
-  )
-  .add(
-    'isFilled: true',
-    args => render({...args, isFilled: true})
-  )
-  .add(
-    'fillOffset',
-    args => render({...args, label: 'Exposure', isFilled: true, fillOffset: 0, defaultValue: 0, minValue: -7, maxValue: 5})
-  )
-  .add(
-    'trackGradient',
-    args => render({...args, trackGradient: ['blue', 'red']})
-  )
-  .add(
-    'trackGradient with fillOffset',
-    args => render({...args, trackGradient: ['blue', 'red'], isFilled: true, fillOffset: 50})
-  )
-  .add(
-    'contextual help',
-    args => render({...args, contextualHelp: (
+  }
+};
+
+export const Default = (args) => render({...args, label: null, 'aria-label': 'Label'});
+export const Label = (args) => render(args);
+
+Label.story = {
+  name: 'label'
+};
+
+export const Multitouch = (args) => (
+  <Flex direction="column" gap="size-1000">
+    {render({...args, label: 'Label'})}
+    {render({...args, label: 'Label'})}
+  </Flex>
+);
+
+Multitouch.story = {
+  name: 'multitouch'
+};
+
+export const CustomWidth = (args) => render({...args, width: '300px'});
+
+CustomWidth.story = {
+  name: 'custom width'
+};
+
+export const CustomWidthSmall = (args) => render({...args, width: '30px'});
+
+CustomWidthSmall.story = {
+  name: 'custom width small'
+};
+
+export const LabelOverflow = (args) =>
+  render({
+    ...args,
+    label: 'This is a rather long label for this narrow slider element.',
+    maxValue: 1000,
+    width: '300px'
+  });
+
+LabelOverflow.story = {
+  name: 'label overflow'
+};
+
+export const ShowValueLabelFalse = (args) => render({...args, showValueLabel: false});
+
+ShowValueLabelFalse.story = {
+  name: 'showValueLabel: false'
+};
+
+export const FormatOptionsPercent = (args) =>
+  render({...args, minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}});
+
+FormatOptionsPercent.story = {
+  name: 'formatOptions percent'
+};
+
+export const FormatOptionsCentimeter = (args) => // @ts-ignore TODO why is "unit" even missing? How well is it supported?
+  render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}});
+
+FormatOptionsCentimeter.story = {
+  name: 'formatOptions centimeter'
+};
+
+export const CustomValueLabel = (args) =>
+  render({...args, getValueLabel: (state) => `A ${state} B`});
+
+CustomValueLabel.story = {
+  name: 'custom valueLabel'
+};
+
+export const CustomValueLabelWithLabelOverflow = (args) =>
+  render({
+    ...args,
+    label: 'This is a rather long label for this narrow slider element.',
+    getValueLabel: (state) => `A ${state} B`
+  });
+
+CustomValueLabelWithLabelOverflow.story = {
+  name: 'custom valueLabel with label overflow'
+};
+
+export const MinMax = (args) => render({...args, minValue: 30, maxValue: 70});
+
+MinMax.story = {
+  name: 'min/max'
+};
+
+export const Step = (args) => render({...args, minValue: 0, maxValue: 100, step: 5});
+
+Step.story = {
+  name: 'step'
+};
+
+export const IsFilledTrue = (args) => render({...args, isFilled: true});
+
+IsFilledTrue.story = {
+  name: 'isFilled: true'
+};
+
+export const FillOffset = (args) =>
+  render({
+    ...args,
+    label: 'Exposure',
+    isFilled: true,
+    fillOffset: 0,
+    defaultValue: 0,
+    minValue: -7,
+    maxValue: 5
+  });
+
+FillOffset.story = {
+  name: 'fillOffset'
+};
+
+export const TrackGradient = (args) => render({...args, trackGradient: ['blue', 'red']});
+
+TrackGradient.story = {
+  name: 'trackGradient'
+};
+
+export const TrackGradientWithFillOffset = (args) =>
+  render({...args, trackGradient: ['blue', 'red'], isFilled: true, fillOffset: 50});
+
+TrackGradientWithFillOffset.story = {
+  name: 'trackGradient with fillOffset'
+};
+
+export const _ContextualHelp = (args) =>
+  render({
+    ...args,
+    contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
-    )})
-  );
-  // .add(
-  //   '* orientation: vertical',
-  //   args => render({...args, orientation: 'vertical'})
-  // );
+    )
+  });
+
+_ContextualHelp.story = {
+  name: 'contextual help'
+};
 
 function render(props: SpectrumSliderProps = {}) {
   if (props.onChange == null) {

@@ -12,6 +12,7 @@
 
 import {AriaTabProps} from '@react-types/tabs';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {generateId} from './utils';
 import {RefObject} from 'react';
 import {TabListState} from '@react-stately/tabs';
@@ -37,7 +38,7 @@ export function useTab<T>(
   state: TabListState<T>,
   ref: RefObject<FocusableElement>
 ): TabAria {
-  let {key, isDisabled: propsDisabled} = props;
+  let {key, isDisabled: propsDisabled, shouldSelectOnPressUp} = props;
   let {selectionManager: manager, selectedKey} = state;
 
   let isSelected = key === selectedKey;
@@ -47,26 +48,30 @@ export function useTab<T>(
     selectionManager: manager,
     key,
     ref,
-    isDisabled
+    isDisabled,
+    shouldSelectOnPressUp,
+    linkBehavior: 'selection'
   });
 
   let tabId = generateId(state, key, 'tab');
   let tabPanelId = generateId(state, key, 'tabpanel');
   let {tabIndex} = itemProps;
 
+  let item = state.collection.getItem(key);
+  let domProps = filterDOMProps(item?.props, {isLink: !!item?.props?.href});
+  delete domProps.id;
+
   return {
-    tabProps: {
-      ...itemProps,
+    tabProps: mergeProps(domProps, itemProps, {
       id: tabId,
       'aria-selected': isSelected,
       'aria-disabled': isDisabled || undefined,
       'aria-controls': isSelected ? tabPanelId : undefined,
       tabIndex: isDisabled ? undefined : tabIndex,
       role: 'tab'
-    },
+    }),
     isSelected,
     isDisabled,
     isPressed
   };
 }
-

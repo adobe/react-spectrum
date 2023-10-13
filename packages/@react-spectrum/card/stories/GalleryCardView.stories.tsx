@@ -32,11 +32,10 @@ import {
 import {CardView, GalleryLayout} from '../';
 import {ComponentStoryObj} from '@storybook/react';
 import {GalleryLayoutOptions} from '../src/GalleryLayout';
-import React from 'react';
+import React, {useMemo} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {useCollator} from '@react-aria/i18n';
-import {useMemo} from 'react';
 
 let itemsLowVariance = [
   {width: 1001, height: 381, src: 'https://i.imgur.com/Z7AzH2c.jpg', id: 1, title: 'Bob 1'},
@@ -79,6 +78,7 @@ let itemsNoThinImages = [
   {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 21, title: 'Bob 5'}
 ];
 
+// TODO: accessibility failures regarding article element with role="gridcell", will need to double check when we pick CardView back up
 export default {
   title: 'CardView/Gallery layout',
   component: CardView,

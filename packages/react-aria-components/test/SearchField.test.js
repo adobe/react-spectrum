@@ -40,7 +40,7 @@ describe('SearchField', () => {
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
-  
+
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Clear search');
   });
@@ -55,5 +55,37 @@ describe('SearchField', () => {
     let searchbox = getByRole('searchbox');
     expect(searchbox.closest('.react-aria-SearchField')).toHaveAttribute('slot', 'test');
     expect(searchbox).toHaveAttribute('aria-label', 'test');
+  });
+
+  it('should support render props', () => {
+    let {getByRole} = render(
+      <SearchField defaultValue="test">
+        {({state}) => (
+          <>
+            <Label>Test</Label>
+            <Input />
+            <Button>x</Button>
+            <Text slot="description">You are looking for "{state.value}"</Text>
+          </>
+        )}
+      </SearchField>
+    );
+
+    let searchbox = getByRole('searchbox');
+    let description = document.getElementById(searchbox.getAttribute('aria-describedby'));
+    expect(description).toHaveTextContent('You are looking for "test"');
+  });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <SearchField data-testid="search-field">
+        <Label>Search</Label>
+        <Input />
+        <Button>✕</Button>
+      </SearchField>
+    );
+    let outerEl = getAllByTestId('search-field');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-SearchField');
   });
 });

@@ -13,7 +13,7 @@
 // needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rulesdir/sort-imports
-import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '../';
@@ -39,7 +39,11 @@ let mediaQueryMinMedium = '(min-width: 768px)';
 let mediaQueryMinLarge = '(min-width: 1024px)';
 
 describe('Provider', () => {
+  let user;
   let matchMedia;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   beforeEach(() => {
     matchMedia = new MatchMediaMock();
   });
@@ -68,7 +72,7 @@ describe('Provider', () => {
     expect(provider.classList.contains('spectrum--dark')).toBeTruthy();
   });
 
-  it('Provider passes props to children', () => {
+  it('Provider passes props to children', async () => {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = render(
       <Provider theme={theme} isReadOnly>
@@ -83,10 +87,8 @@ describe('Provider', () => {
     expect(switchComponent).toHaveAttribute('aria-readonly', 'true');
     expect(checkbox).toHaveAttribute('aria-readonly', 'true');
 
-    act(() => {
-      userEvent.click(checkbox);
-      userEvent.click(switchComponent);
-    });
+    await user.click(checkbox);
+    await user.click(switchComponent);
 
     expect(onChangeSpy).not.toHaveBeenCalled();
     onChangeSpy.mockClear();

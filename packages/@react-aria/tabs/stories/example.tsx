@@ -14,15 +14,29 @@ import React from 'react';
 import {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 import {useTabListState} from '@react-stately/tabs';
 
-export function Tabs(props) {
+export function Tabs({shouldSelectOnPressUp, ...props}) {
   let state = useTabListState(props);
   let ref = React.useRef();
   let {tabListProps} = useTabList(props, state, ref);
   return (
     <div style={{height: '150px'}}>
-      <div {...tabListProps} ref={ref} style={{display: 'flex', borderBottom: '1px solid grey', borderLeft: '10px solid grey', borderRight: '20px solid grey', maxWidth: '400px', overflow: 'auto'}}>
+      <div
+        {...tabListProps}
+        ref={ref}
+        style={{
+          display: 'flex',
+          borderBottom: '1px solid grey',
+          borderLeft: '10px solid grey',
+          borderRight: '20px solid grey',
+          maxWidth: '400px',
+          overflow: 'auto'
+        }}>
         {[...state.collection].map((item) => (
-          <Tab key={item.key} item={item} state={state} />
+          <Tab
+            key={item.key}
+            item={item}
+            state={state}
+            shouldSelectOnPressUp={shouldSelectOnPressUp} />
         ))}
       </div>
       <TabPanel key={state.selectedItem?.key} state={state} />
@@ -30,10 +44,10 @@ export function Tabs(props) {
   );
 }
 
-function Tab({item, state}) {
+function Tab({shouldSelectOnPressUp, item, state}) {
   let {key, rendered} = item;
   let ref = React.useRef();
-  let {tabProps} = useTab({key}, state, ref);
+  let {tabProps} = useTab({key, shouldSelectOnPressUp}, state, ref);
   let isSelected = state.selectedKey === key;
   let isDisabled = state.disabledKeys.has(key);
   return (

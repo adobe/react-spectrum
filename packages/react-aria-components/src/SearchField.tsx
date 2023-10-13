@@ -12,22 +12,37 @@
 
 import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {SearchFieldState, useSearchFieldState} from 'react-stately';
 import {TextContext} from './Text';
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage'>, RenderProps<SearchFieldState>, SlotProps {}
-
 export interface SearchFieldRenderProps {
   /**
    * Whether the search field is empty.
    * @selector [data-empty]
    */
-  isEmpty: boolean
+  isEmpty: boolean,
+  /**
+   * Whether the search field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the search field is invalid.
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean,
+  /**
+   * State of the search field.
+   */
+  state: SearchFieldState
 }
+
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<SearchFieldRenderProps>, SlotProps {}
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
@@ -37,22 +52,33 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   let [labelRef, label] = useSlot();
   let state = useSearchFieldState(props);
   let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
-    ...props,
+    ...removeDataAttributes(props),
     label
   }, state, inputRef);
 
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: {
+      isEmpty: state.value === '',
+      isDisabled: props.isDisabled || false,
+      isInvalid: props.isInvalid || false,
+      state
+    },
     defaultClassName: 'react-aria-SearchField'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <div
+      {...DOMProps}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
-      data-empty={state.value === '' || undefined}>
+      slot={props.slot || undefined}
+      data-empty={state.value === '' || undefined}
+      data-disabled={props.isDisabled || undefined}
+      data-invalid={props.isInvalid || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
@@ -74,5 +100,5 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
 /**
  * A search field allows a user to enter and clear a search query.
  */
-const _SearchField = forwardRef(SearchField);
+const _SearchField = /*#__PURE__*/ (forwardRef as forwardRefType)(SearchField);
 export {_SearchField as SearchField};

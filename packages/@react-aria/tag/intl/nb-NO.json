@@ -1,3 +1,4 @@
 {
-  "remove": "Trykk på mellomrom eller Slett for å fjerne taggen."
+  "removeButtonLabel": "Fjern",
+  "removeDescription": "Trykk på Slett for å fjerne taggen."
 }

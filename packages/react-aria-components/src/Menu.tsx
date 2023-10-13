@@ -12,20 +12,21 @@
 
 
 import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
-import {BaseCollection, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollection} from './Collection';
+import {BaseCollection, CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeRefs} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
 import {KeyboardContext} from './Keyboard';
+import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
+import {PressResponder} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
-const InternalMenuContext = createContext<TreeState<unknown> | null>(null);
+export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
@@ -44,10 +45,12 @@ export function MenuTrigger(props: MenuTriggerProps) {
     <Provider
       values={[
         [MenuContext, menuProps],
-        [ButtonContext, {...menuTriggerProps, ref, isPressed: state.isOpen}],
-        [PopoverContext, {state, triggerRef: ref, placement: 'bottom start'}]
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {triggerRef: ref, placement: 'bottom start'}]
       ]}>
-      {props.children}
+      <PressResponder {...menuTriggerProps} ref={ref} isPressed={state.isOpen}>
+        {props.children}
+      </PressResponder>
     </Provider>
   );
 }
@@ -102,12 +105,12 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
       {...filterDOMProps(props)}
       {...menuProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       style={props.style}
       className={props.className ?? 'react-aria-Menu'}>
       <Provider
         values={[
-          [InternalMenuContext, state],
+          [MenuStateContext, state],
           [SeparatorContext, {elementType: 'div'}]
         ]}>
         {children}
@@ -119,7 +122,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
 /**
  * A menu displays a list of actions or options that a user can choose.
  */
-const _Menu = (forwardRef as forwardRefType)(Menu);
+const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
 interface MenuSectionProps<T> extends StyleProps {
@@ -127,7 +130,7 @@ interface MenuSectionProps<T> extends StyleProps {
 }
 
 function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
-  let state = useContext(InternalMenuContext)!;
+  let state = useContext(MenuStateContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
     heading,
@@ -162,18 +165,11 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
       {...filterDOMProps(otherProps)}
       {...groupProps}
       className={className || section.props?.className || 'react-aria-Section'}
-      style={style || section.props?.style}>
+      style={style || section.props?.style}
+      ref={section.props.ref}>
       {children}
     </section>
   );
-}
-
-export interface MenuItemRenderProps extends ItemRenderProps {
-  /**
-   * Whether the item is currently selected.
-   * @selector [aria-checked=true]
-   */
-   isSelected: boolean
 }
 
 interface MenuItemProps<T> {
@@ -181,8 +177,8 @@ interface MenuItemProps<T> {
 }
 
 function MenuItem<T>({item}: MenuItemProps<T>) {
-  let state = useContext(InternalMenuContext)!;
-  let ref = useRef<HTMLDivElement>(null);
+  let state = useContext(MenuStateContext)!;
+  let ref = useObjectRef<any>(item.props.ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
   let props: ItemProps<T> = item.props;
@@ -201,15 +197,20 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
     }
   });
 
+  let ElementType: React.ElementType = props.href ? 'a' : 'div';
+
   return (
-    <div
+    <ElementType
       {...mergeProps(menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
+      data-disabled={states.isDisabled || undefined}
       data-hovered={states.isFocused || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
-      data-pressed={states.isPressed || undefined}>
+      data-pressed={states.isPressed || undefined}
+      data-selected={states.isSelected || undefined}
+      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
       <Provider
         values={[
           [TextContext, {
@@ -222,6 +223,6 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
         ]}>
         {renderProps.children}
       </Provider>
-    </div>
+    </ElementType>
   );
 }

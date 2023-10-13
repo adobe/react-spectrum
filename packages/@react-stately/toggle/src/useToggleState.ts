@@ -13,6 +13,8 @@
 import {ToggleProps} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
 
+export interface ToggleStateOptions extends Omit<ToggleProps, 'children'> {}
+
 export interface ToggleState {
   /** Whether the toggle is selected. */
   readonly isSelected: boolean,
@@ -27,7 +29,7 @@ export interface ToggleState {
 /**
  * Provides state management for toggle components like checkboxes and switches.
  */
-export function useToggleState(props: ToggleProps = {}): ToggleState {
+export function useToggleState(props: ToggleStateOptions = {}): ToggleState {
   let {isReadOnly} = props;
 
   // have to provide an empty function so useControlledState doesn't throw a fit

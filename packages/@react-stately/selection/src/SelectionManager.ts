@@ -402,7 +402,7 @@ export class SelectionManager implements MultipleSelectionManager {
    * Selects all items in the collection.
    */
   selectAll() {
-    if (this.selectionMode === 'multiple') {
+    if (!this.isSelectAll && this.selectionMode === 'multiple') {
       this.state.setSelectedKeys('all');
     }
   }
@@ -490,5 +490,9 @@ export class SelectionManager implements MultipleSelectionManager {
 
   isDisabled(key: Key) {
     return this.state.disabledKeys.has(key) && this.state.disabledBehavior === 'all';
+  }
+
+  isLink(key: Key) {
+    return !!this.collection.getItem(key)?.props?.href;
   }
 }

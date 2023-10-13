@@ -19,7 +19,7 @@ import styles from '@adobe/spectrum-css-temp/components/barloader/vars.css';
 import {useProgressBar} from '@react-aria/progress';
 
 function ProgressBar(props: SpectrumProgressBarProps, ref: DOMRef<HTMLDivElement>) {
-  let {variant, ...otherProps} = props;
+  let {staticColor, variant, ...otherProps} = props;
   const {
     progressBarProps,
     labelProps
@@ -35,7 +35,9 @@ function ProgressBar(props: SpectrumProgressBarProps, ref: DOMRef<HTMLDivElement
         classNames(
           styles,
           {
-            'spectrum-BarLoader--overBackground': variant === 'overBackground'
+            'spectrum-BarLoader--overBackground': variant === 'overBackground',
+            'spectrum-BarLoader--staticWhite': staticColor === 'white',
+            'spectrum-BarLoader--staticBlack': staticColor === 'black'
           }
         )
       } />

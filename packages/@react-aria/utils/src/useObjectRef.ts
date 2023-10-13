@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {MutableRefObject, useRef} from 'react';
-import {useLayoutEffect} from './';
+import {MutableRefObject, useMemo, useRef} from 'react';
 
 /**
  * Offers an object ref for a given callback ref or an object ref. Especially
@@ -24,31 +23,17 @@ import {useLayoutEffect} from './';
  */
 export function useObjectRef<T>(forwardedRef?: ((instance: T | null) => void) | MutableRefObject<T | null> | null): MutableRefObject<T> {
   const objRef = useRef<T>();
-
-  /**
-   * We're using `useLayoutEffect` here instead of `useEffect` because we want
-   * to make sure that the `ref` value is up to date before other places in the
-   * the execution cycle try to read it.
-   */
-  useLayoutEffect(() => {
-    if (!forwardedRef) {
-      return;
-    }
-
-    if (typeof forwardedRef === 'function') {
-      forwardedRef(objRef.current);
-    } else {
-      forwardedRef.current = objRef.current;
-    }
-
-    return () => {
+  return useMemo(() => ({
+    get current() {
+      return objRef.current;
+    },
+    set current(value) {
+      objRef.current = value;
       if (typeof forwardedRef === 'function') {
-        forwardedRef(null);
-      } else {
-        forwardedRef.current = null;
+        forwardedRef(value);
+      } else if (forwardedRef) {
+        forwardedRef.current = value;
       }
-    };
-  }, [forwardedRef]);
-
-  return objRef;
+    }
+  }), [forwardedRef]);
 }

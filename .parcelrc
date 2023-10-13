@@ -22,6 +22,6 @@
   },
   "optimizers": {
     "*.html": ["parcel-optimizer-ssg", "..."],
-    "*.css": ["@parcel/optimizer-css"]
+    "*.js": ["@parcel/optimizer-terser"]
   }
 }

@@ -36,36 +36,31 @@ category: Navigation
 ## Example
 
 ```tsx example
-<Link><a href="https://www.imdb.com/title/tt6348138/" target="_blank">The missing link.</a></Link>
+<Link href="https://www.imdb.com/title/tt6348138/" target="_blank">The missing link.</Link>
 ```
 
 ## Content
 
-Links accept content as children.
-If the child is a native anchor element, or a link component used with a client side router, the Link component will add spectrum styles and event handlers to that element.
-Actual navigation will be handled by the wrapped element.
+
+Links accept content as children. If the link has an href prop, it will be rendered as an `<a>` element.
 
 ```tsx example
-<Link><a href="https://www.adobe.com" target="_blank">Adobe.com</a></Link>
+<Link href="https://adobe.com" target="_blank">Adobe.com</Link>
 ```
 
-To use in [React Router](https://reactrouter.com/en/main)
+### JavaScript handled links
 
-```tsx
-import {Link} from '@react-spectrum/link';
-import {Link as RouterLink} from 'react-router-dom';
+When a `<Link`> does not have an `href` prop, it is rendered as a `<span role="link">` instead of an `<a>`. Events will need to be handled in JavaScript with the `onPress` prop.
 
-<Link><RouterLink to="/next-page">Next Page</RouterLink></Link>
-```
-
-If the content is plain text, it will be styled and exposed to assistive technologies as a link.
-Events will need to be handled in JavaScript with the `onPress` prop.
 Note: this will not behave like a native link. Browser features like context menus and open in new tab will not apply.
 
 ```tsx example
-<Link onPress={() => alert('pressed!')}>A label</Link>
+<Link onPress={() => alert('Pressed link')}>Adobe</Link>
 ```
 
+### Client side routing
+
+The `<Link>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ### Internationalization
 
@@ -73,15 +68,13 @@ In order to internationalize a link, a localized string should be passed to the 
 
 ### Accessibility
 
-For string-typed `children`, the link component will expose the accessible role to assistive technology as a "link".
+When an `href` is not provided, the link component will expose the accessible role to assistive technology as a "link".
 
 ```tsx example
 <Link onPress={e => alert(`clicked "${e.target.textContent}" Link`)}>
   I forgot my password
 </Link>
 ```
-
-For other children, use an element of semantic meaning, or use a [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) where appropriate.
 
 Be mindful of what the experience is for users navigating with screen readers. Make sure to give enough context about where the link will take the user.
 

@@ -12,7 +12,7 @@
 
 import {Calendar, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {useRef} from 'react';
+import {useState} from 'react';
 
 export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
   return value != null && (
@@ -28,7 +28,8 @@ interface FormatterOptions {
   granularity?: DatePickerProps<any>['granularity'],
   maxGranularity?: 'year' | 'month' | DatePickerProps<any>['granularity'],
   hourCycle?: 12 | 24,
-  showEra?: boolean
+  showEra?: boolean,
+  shouldForceLeadingZeros?: boolean
 }
 
 const DEFAULT_FIELD_OPTIONS: FieldOptions = {
@@ -40,11 +41,21 @@ const DEFAULT_FIELD_OPTIONS: FieldOptions = {
   second: '2-digit'
 };
 
+const TWO_DIGIT_FIELD_OPTIONS: FieldOptions = {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
 export function getFormatOptions(
   fieldOptions: FieldOptions,
   options: FormatterOptions
 ): Intl.DateTimeFormatOptions {
-  fieldOptions = {...DEFAULT_FIELD_OPTIONS, ...fieldOptions};
+  let defaultFieldOptions = options.shouldForceLeadingZeros ? TWO_DIGIT_FIELD_OPTIONS : DEFAULT_FIELD_OPTIONS;
+  fieldOptions = {...defaultFieldOptions, ...fieldOptions};
   let granularity = options.granularity || 'minute';
   let keys = Object.keys(fieldOptions);
   let startIdx = keys.indexOf(options.maxGranularity ?? 'year');
@@ -130,19 +141,25 @@ export function createPlaceholderDate(placeholderValue: DateValue, granularity: 
 
 export function useDefaultProps(v: DateValue, granularity: Granularity): [Granularity, string] {
   // Compute default granularity and time zone from the value. If the value becomes null, keep the last values.
-  let lastValue = useRef(v);
-  if (v) {
-    lastValue.current = v;
-  }
-
-  v = lastValue.current;
   let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
-  granularity = granularity || (v && 'minute' in v ? 'minute' : 'day');
+  let defaultGranularity: Granularity = (v && 'minute' in v ? 'minute' : 'day');
 
   // props.granularity must actually exist in the value if one is provided.
-  if (v && !(granularity in v)) {
+  if (v && granularity && !(granularity in v)) {
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
 
-  return [granularity, defaultTimeZone];
+  let [lastValue, setLastValue] = useState<[Granularity, string]>([defaultGranularity, defaultTimeZone]);
+
+  // If the granularity or time zone changed, update the last value.
+  if (v && (lastValue[0] !== defaultGranularity || lastValue[1] !== defaultTimeZone)) {
+    setLastValue([defaultGranularity, defaultTimeZone]);
+  }
+
+  if (!granularity) {
+    granularity = v ? defaultGranularity : lastValue[0];
+  }
+
+  let timeZone = v ? defaultTimeZone : lastValue[1];
+  return [granularity, timeZone];
 }

@@ -16,9 +16,9 @@ import {useShallowRender} from './Collection';
 
 export const HeaderContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
-function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
-  [props, ref] = useContextProps(props, ref, HeaderContext);
-  let shallow = useShallowRender('header', props, ref);
+function Header(originalProps: HTMLAttributes<HTMLElement>, originalRef: ForwardedRef<HTMLElement>) {
+  let [props, ref] = useContextProps(originalProps, originalRef, HeaderContext);
+  let shallow = useShallowRender('header', originalProps, originalRef);
   if (shallow) {
     return shallow;
   }

@@ -46,9 +46,8 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
-import {useFilter} from '@react-aria/i18n';
+import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useLayoutEffect} from '@react-aria/utils';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -74,8 +73,14 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     direction = 'bottom',
     isQuiet,
     loadingState,
-    onLoadMore
+    onLoadMore,
+    allowsCustomValue,
+    name,
+    formValue = 'text'
   } = props;
+  if (allowsCustomValue) {
+    formValue = 'text';
+  }
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let isAsync = loadingState != null;
@@ -95,7 +100,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       allowsEmptyCollection: isAsync
     }
   );
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout(state, loadingState === 'loadingMore');
 
   let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps} = useComboBox(
     {
@@ -105,7 +110,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
       popoverRef: unwrappedPopoverRef,
       listBoxRef,
       inputRef: inputRef,
-      menuTrigger
+      menuTrigger,
+      name: formValue === 'text' ? name : undefined
     },
     state
   );
@@ -151,6 +157,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           triggerProps={buttonProps}
           triggerRef={buttonRef} />
       </Field>
+      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
       <Popover
         state={state}
         UNSAFE_style={style}
@@ -172,7 +179,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           layout={layout}
           state={state}
           shouldUseVirtualFocus
-          isLoading={loadingState === 'loadingMore'}
+          isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(comboboxStyles, 'no-results')}>

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
@@ -27,18 +27,15 @@ import userEvent from '@testing-library/user-event';
 describe('DialogTrigger', function () {
   let warnMock;
   let windowSpy;
+  let user;
+
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-  });
-  afterAll(() => {
-    jest.clearAllMocks();
-    jest.useRealTimers();
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
   });
 
   beforeEach(() => {
     windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
     if (process.env.STRICT_MODE) {
       warnMock = jest.spyOn(global.console, 'warn').mockImplementation();
     }
@@ -54,8 +51,6 @@ describe('DialogTrigger', function () {
         jest.runAllTimers();
       });
     }
-
-    window.requestAnimationFrame.mockRestore();
 
     if (process.env.STRICT_MODE && warnMock.mock.calls.length > 0) {
       expect(warnMock).toHaveBeenCalledTimes(1);
@@ -285,7 +280,7 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     act(() => {button.focus();});
     fireEvent.focusIn(button);
-    userEvent.click(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -910,7 +905,7 @@ describe('DialogTrigger', function () {
 
     expect(document.activeElement).toBe(innerInput);
 
-    userEvent.click(document.body);
+    await user.click(document.body);
 
     act(() => {
       jest.runAllTimers();
@@ -977,7 +972,7 @@ describe('DialogTrigger', function () {
 
     let innerInput = getByLabelText('inner input');
     expect(getByLabelText('inner input')).toBeVisible();
-    userEvent.click(innerInput);
+    await user.click(innerInput);
 
     expect(document.activeElement).toBe(innerInput);
   });
@@ -1016,15 +1011,14 @@ describe('DialogTrigger', function () {
       expect(outerDialog).toBeVisible();
     }); // wait for animation
     let innerButton = getByTestId('innerButton');
-    // Focus manually - userEvent.tab is buggy when starting from an element with tabIndex="-1"
-    act(() => innerButton.focus());
+    await user.tab();
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
     act(() => {
       jest.runAllTimers();
     });
-    userEvent.tab();
+    await user.tab();
     act(() => {
       jest.runAllTimers();
     });

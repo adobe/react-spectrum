@@ -91,7 +91,9 @@ export function useColorField(
   useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
 
   let onChange = value => {
-    state.setInputValue(value);
+    if (state.validate(value)) {
+      state.setInputValue(value);
+    }
   };
 
   let {labelProps, inputProps} = useFormattedTextField(

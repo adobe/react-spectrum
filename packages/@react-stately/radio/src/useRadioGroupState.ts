@@ -32,11 +32,17 @@ export interface RadioGroupState {
   /** Whether the radio group is required. */
   readonly isRequired: boolean,
 
-  /** Whether the radio group is valid or invalid. */
+  /**
+   * Whether the radio group is valid or invalid.
+   * @deprecated Use `isInvalid` instead.
+   */
   readonly validationState: ValidationState | null,
 
+  /** Whether the radio group is invalid. */
+  readonly isInvalid: boolean,
+
   /** The currently selected value. */
-  readonly selectedValue: string | null,
+  readonly selectedValue: string | null | undefined,
 
   /** Sets the selected value. */
   setSelectedValue(value: string): void,
@@ -59,7 +65,7 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
   // Preserved here for backward compatibility. React Aria now generates the name instead of stately.
   let name = useMemo(() => props.name || `radio-group-${instance}-${++i}`, [props.name]);
   let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
-  let [lastFocusedValue, setLastFocusedValue] = useState(null);
+  let [lastFocusedValue, setLastFocusedValue] = useState<string | null>(null);
 
   let setSelectedValue = (value) => {
     if (!props.isReadOnly && !props.isDisabled) {
@@ -69,13 +75,14 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
 
   return {
     name,
-    selectedValue,
+    selectedValue: selectedValue,
     setSelectedValue,
     lastFocusedValue,
     setLastFocusedValue,
     isDisabled: props.isDisabled || false,
     isReadOnly: props.isReadOnly || false,
     isRequired: props.isRequired || false,
-    validationState: props.validationState || null
+    validationState: props.validationState || null,
+    isInvalid: props.isInvalid || props.validationState === 'invalid'
   };
 }

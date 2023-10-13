@@ -10,17 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-import {RefObject, useCallback} from 'react';
-import {ReusableView, Size} from '@react-stately/virtualizer';
+import {Key, RefObject, useCallback} from 'react';
+import {LayoutInfo, Size} from '@react-stately/virtualizer';
 import {useLayoutEffect} from '@react-aria/utils';
 
-interface VirtualizerItemOptions<T extends object, V> {
-  reusableView: ReusableView<T, V>,
+interface IVirtualizer {
+  updateItemSize(key: Key, size: Size): void
+}
+
+export interface VirtualizerItemOptions {
+  layoutInfo: LayoutInfo,
+  virtualizer: IVirtualizer,
   ref: RefObject<HTMLElement>
 }
 
-export function useVirtualizerItem<T extends object, V>(options: VirtualizerItemOptions<T, V>) {
-  let {reusableView: {layoutInfo, virtualizer}, ref} = options;
+export function useVirtualizerItem(options: VirtualizerItemOptions) {
+  let {layoutInfo, virtualizer, ref} = options;
 
   let updateSize = useCallback(() => {
     let size = getSize(ref.current);

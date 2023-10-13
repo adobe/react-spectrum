@@ -11,7 +11,7 @@
  */
 
 import {Breadcrumbs, Item} from '../';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 
@@ -22,8 +22,7 @@ const meta: Meta<SpectrumBreadcrumbsProps<object>> = {
 
 export default meta;
 
-
-const Template = <T extends object>(): Story<SpectrumBreadcrumbsProps<T>> => (args) => (
+const Template = (args) => (
   <Breadcrumbs {...args}>
     <Item key="Folder 1">The quick brown fox jumps over</Item>
     <Item key="Folder 2">My Documents</Item>
@@ -35,21 +34,37 @@ const Template = <T extends object>(): Story<SpectrumBreadcrumbsProps<T>> => (ar
   </Breadcrumbs>
 );
 
+export const Default = {
+  render: Template
+};
 
-export const Default = Template().bind({});
-Default.args = {};
+export const IsMultiline = {
+  render: Template,
+  args: {isMultiline: true}
+};
 
-export const IsMultiline = Template().bind({});
-IsMultiline.args = {isMultiline: true};
+export const SizeS = {
+  render: Template,
+  args: {size: 'S'}
+};
 
-export const SizeS = Template().bind({});
-SizeS.args = {size: 'S'};
+export const SizeM = {
+  render: Template,
+  args: {size: 'M'}
+};
 
-export const SizeM = Template().bind({});
-SizeM.args = {size: 'M'};
+export const Truncated = {
+  render: Template,
+  decorators: [
+    (Story) => (
+      <div style={{width: '100px'}}>
+        <Story />
+      </div>
+    )
+  ]
+};
 
-export const Truncated = Template().bind({});
-Truncated.decorators = [(Story) => <div style={{width: '100px'}}><Story /></div>];
-
-export const ShowRoot = Template().bind({});
-ShowRoot.args = {showRoot: true};
+export const ShowRoot = {
+  render: Template,
+  args: {showRoot: true}
+};

@@ -40,7 +40,6 @@ export interface RadioGroupAria {
 export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState): RadioGroupAria {
   let {
     name,
-    validationState,
     isReadOnly,
     isRequired,
     isDisabled,
@@ -127,7 +126,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       // https://www.w3.org/TR/wai-aria-1.2/#radiogroup
       role: 'radiogroup',
       onKeyDown,
-      'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-invalid': state.isInvalid || undefined,
       'aria-errormessage': props['aria-errormessage'],
       'aria-readonly': isReadOnly || undefined,
       'aria-required': isRequired || undefined,

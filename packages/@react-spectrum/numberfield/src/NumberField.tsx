@@ -16,6 +16,7 @@ import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
+import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
 import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
@@ -24,7 +25,6 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
-import {useNumberFieldState} from '@react-stately/numberfield';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
@@ -96,7 +96,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         incrementProps={incrementButtonProps}
         decrementProps={decrementButtonProps}
         className={className}
-        style={style} />
+        style={style}
+        state={state} />
     </Field>
   );
 }
@@ -109,7 +110,8 @@ interface NumberFieldInputProps extends SpectrumNumberFieldProps {
   incrementProps: AriaButtonProps,
   decrementProps: AriaButtonProps,
   className?: string,
-  style?: React.CSSProperties
+  style?: React.CSSProperties,
+  state: NumberFieldState
 }
 
 const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: NumberFieldInputProps, ref: RefObject<HTMLElement>) {
@@ -125,7 +127,9 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
     isQuiet,
     isDisabled,
     hideStepper,
-    validationState
+    validationState,
+    name,
+    state
   } = props;
   let showStepper = !hideStepper;
 
@@ -172,6 +176,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
           <StepButton direction="down" isQuiet={isQuiet} {...decrementProps} />
         </>
         }
+        {name && <input type="hidden" name={name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
       </div>
     </FocusRing>
   );

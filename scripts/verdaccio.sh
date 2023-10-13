@@ -116,6 +116,18 @@ then
   mv next-build-stats.txt ../../$verdaccio_path/publish-stats
   mv out ../../$verdaccio_path/next
 
+  # Install/build RAC Tailwind app
+  cd ../../examples/rac-tailwind
+  yarn install
+  yarn build --public-url ./
+  mv dist ../../$verdaccio_path/rac-tailwind
+
+  # Install/build RAC + Spectrum + Tailwind app
+  cd ../../examples/rac-spectrum-tailwind
+  yarn install
+  yarn build --public-url ./
+  mv dist ../../$verdaccio_path/rac-spectrum-tailwind
+
   cd ../..
 
   # Get the tarball size of each published package.

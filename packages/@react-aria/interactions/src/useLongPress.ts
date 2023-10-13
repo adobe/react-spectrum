@@ -69,6 +69,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
   let {pressProps} = usePress({
     isDisabled,
     onPressStart(e) {
+      e.continuePropagation();
       if (e.pointerType === 'mouse' || e.pointerType === 'touch') {
         if (onLongPressStart) {
           onLongPressStart({

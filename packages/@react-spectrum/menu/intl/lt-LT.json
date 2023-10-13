@@ -1,3 +1,5 @@
 {
-  "moreActions": "Daugiau veiksmų"
+  "backButton": "Grįžti į {prevMenuButton}",
+  "moreActions": "Daugiau veiksmų",
+  "unavailable": "Nepasiekiama, norėdami gauti daugiau informacijos, išskleiskite"
 }

@@ -8,16 +8,7 @@
   );
 }
 
-%spectrum-ColorControl-handle--focused {
-  /* Bigger handle when focused */
-  width: calc(var(--spectrum-colorhandle-size) * 2);
-  height: calc(var(--spectrum-colorhandle-size) * 2);
-
-  margin-left: calc(-1 * var(--spectrum-colorhandle-size));
-  margin-top: calc(-1 * var(--spectrum-colorhandle-size));
-}
-
-%spectrum-ColorControl-hiddenField {
+.spectrum-ColorControl-hiddenField {
   opacity: 0.0001;
   position: absolute;
   top: 0;
@@ -76,10 +67,6 @@
 
   &.is-focused {
     z-index: 2;
-
-    .spectrum-ColorSlider-handle {
-      @extend %spectrum-ColorControl-handle--focused;
-    }
   }
 
   &.is-disabled {
@@ -111,7 +98,7 @@
 }
 
 .spectrum-ColorSlider-slider {
-  @extend %spectrum-ColorControl-hiddenField;
+  composes: spectrum-ColorControl-hiddenField;
 }
 
 .spectrum-ColorSlider-labelContainer {

@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionStateBase, SingleSelection} from '@react-types/shared';
+import {CollectionStateBase, Node, SingleSelection} from '@react-types/shared';
 import {Key, useMemo} from 'react';
 import {ListState, useListState} from './useListState';
-import {Node} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
 
 export interface SingleSelectListProps<T> extends CollectionStateBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
@@ -28,7 +27,7 @@ export interface SingleSelectListState<T> extends ListState<T> {
   readonly selectedKey: Key,
 
   /** Sets the selected key. */
-  setSelectedKey(key: Key): void,
+  setSelectedKey(key: Key | null): void,
 
   /** The value of the currently selected item. */
   readonly selectedItem: Node<T>
@@ -48,7 +47,7 @@ export function useSingleSelectListState<T extends object>(props: SingleSelectLi
     allowDuplicateSelectionEvents: true,
     selectedKeys,
     onSelectionChange: (keys: Set<Key>) => {
-      let key = keys.values().next().value;
+      let key = keys.values().next().value ?? null;
 
       // Always fire onSelectionChange, even if the key is the same
       // as the current key (useControlledState does not).

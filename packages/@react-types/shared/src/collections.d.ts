@@ -11,8 +11,9 @@
  */
 
 import {Key, ReactElement, ReactNode} from 'react';
+import {LinkDOMProps} from './dom';
 
-export interface ItemProps<T> {
+export interface ItemProps<T> extends LinkDOMProps {
   /** Rendered contents of the item or child items. */
   children: ReactNode,
   /** Rendered contents of the item if `children` contains child items. */

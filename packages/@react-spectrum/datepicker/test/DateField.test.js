@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render as render_, within} from '@react-spectrum/test-utils';
-import {CalendarDate} from '@internationalized/date';
+import {act, fireEvent, pointerMap, render as render_, within} from '@react-spectrum/test-utils';
+import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {DateField} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -36,6 +36,10 @@ function render(el) {
 }
 
 describe('DateField', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   describe('labeling', function () {
     it('should support labeling', function () {
       let {getAllByRole, getByText} = render(<DateField label="Date" />);
@@ -49,7 +53,7 @@ describe('DateField', function () {
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
         let segmentId = segment.getAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `${label.id} ${segmentId}`);
+        expect(segment).toHaveAttribute('aria-labelledby', `${segmentId} ${label.id}`);
       }
     });
 
@@ -63,7 +67,7 @@ describe('DateField', function () {
       let segments = getAllByRole('spinbutton');
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
-        expect(segment.getAttribute('aria-label').startsWith('Birth date ')).toBe(true);
+        expect(segment.getAttribute('aria-label').endsWith(' Birth date')).toBe(true);
         expect(segment).not.toHaveAttribute('aria-labelledby');
       }
     });
@@ -79,7 +83,7 @@ describe('DateField', function () {
       for (let segment of segments) {
         expect(segment).toHaveAttribute('id');
         let segmentId = segment.getAttribute('id');
-        expect(segment).toHaveAttribute('aria-labelledby', `foo ${segmentId}`);
+        expect(segment).toHaveAttribute('aria-labelledby', `${segmentId} foo`);
       }
     });
 
@@ -235,7 +239,7 @@ describe('DateField', function () {
       onKeyUpSpy.mockClear();
     });
 
-    it('should focus field and switching segments via tab does not change focus', function () {
+    it('should focus field and switching segments via tab does not change focus', async function () {
       let {getAllByRole} = render(<DateField label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
 
@@ -243,52 +247,54 @@ describe('DateField', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
 
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[1]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should call blur when focus leaves', function () {
+    it('should call blur when focus leaves', async function () {
       let {getAllByRole} = render(<DateField label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
+      // workaround bug in userEvent.tab(). hidden inputs aren't focusable.
+      document.querySelector('input[type=hidden]').tabIndex = -1;
 
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[1]).toHaveFocus();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[2]).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(0);
 
-      userEvent.tab();
+      await user.tab();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should trigger right arrow key event for segment navigation', function () {
+    it('should trigger right arrow key event for segment navigation', async function () {
       let {getAllByRole} = render(<DateField label="Date" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
       let segments = getAllByRole('spinbutton');
 
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
@@ -298,6 +304,52 @@ describe('DateField', function () {
       expect(segments[1]).toHaveFocus();
       expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe('forms', () => {
+    it('supports form values', () => {
+      let {rerender} = render(<DateField name="date" label="Date" value={new CalendarDate(2020, 2, 3)} />);
+      let input = document.querySelector('input[name=date]');
+      expect(input).toHaveValue('2020-02-03');
+
+      rerender(<DateField name="date" label="Date" value={new CalendarDateTime(2020, 2, 3, 8, 30)} />);
+      expect(input).toHaveValue('2020-02-03T08:30:00');
+
+      rerender(<DateField name="date" label="Date" value={new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 12, 24, 45)} />);
+      expect(input).toHaveValue('2020-02-03T12:24:45-08:00[America/Los_Angeles]');
+    });
+
+    it('supports form reset', async () => {
+      function Test() {
+        let [value, setValue] = React.useState(new CalendarDate(2020, 2, 3));
+        return (
+          <form>
+            <DateField name="date" label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+      }
+
+      let {getByTestId, getByRole, getAllByRole} = render(<Test />);
+      let group = getByRole('group');
+      let input = document.querySelector('input[name=date]');
+      let segments = getAllByRole('spinbutton');
+
+      let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+      expect(getDescription()).toBe('Selected Date: February 3, 2020');
+
+      expect(input).toHaveValue('2020-02-03');
+      expect(input).toHaveAttribute('name', 'date');
+      fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
+      expect(getDescription()).toBe('Selected Date: March 3, 2020');
+      expect(input).toHaveValue('2020-03-03');
+
+      let button = getByTestId('reset');
+      await user.click(button);
+      expect(getDescription()).toBe('Selected Date: February 3, 2020');
+      expect(input).toHaveValue('2020-02-03');
     });
   });
 });

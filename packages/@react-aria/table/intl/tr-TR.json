@@ -4,6 +4,7 @@
   "columnSize": "{value} piksel",
   "descending": "azalan sırada",
   "descendingSort": "{columnName} sütuna göre azalan düzende sırala",
+  "resizerDescription": "Yeniden boyutlandırmak için Enter'a basın",
   "select": "Seç",
   "selectAll": "Tümünü Seç",
   "sortable": "Sıralanabilir sütun"

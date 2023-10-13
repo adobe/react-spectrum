@@ -4,6 +4,7 @@ import {
   DOMProps,
   FocusableDOMProps,
   FocusableProps,
+  InputDOMProps,
   LabelableProps,
   LabelPosition,
   Orientation,
@@ -52,7 +53,7 @@ export interface SliderThumbProps extends FocusableProps, Validation, LabelableP
   orientation?: Orientation,
   /** Whether the Thumb is disabled. */
   isDisabled?: boolean,
-  /** 
+  /**
    * Index of the thumb within the slider.
    * @default 0
    */
@@ -60,7 +61,7 @@ export interface SliderThumbProps extends FocusableProps, Validation, LabelableP
 }
 
 export interface AriaSliderProps<T = number | number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}
-export interface AriaSliderThumbProps extends SliderThumbProps, DOMProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface AriaSliderThumbProps extends SliderThumbProps, DOMProps, FocusableDOMProps, InputDOMProps, AriaLabelingProps, AriaValidationProps {}
 
 export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<T>, StyleProps {
   /**
@@ -82,7 +83,7 @@ export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<
   contextualHelp?: ReactNode
 }
 
-export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
+export interface SpectrumSliderProps extends SpectrumBarSliderBase<number>, InputDOMProps {
   /**
    * Whether a fill color is shown between the start of the slider and the current value.
    * @see https://spectrum.adobe.com/page/slider/#Fill.
@@ -102,4 +103,13 @@ export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
   trackGradient?: string[]
 }
 
-export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>> { }
+export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>> {
+  /**
+   * The name of the start input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  startName?: string,
+  /**
+   * The name of the end input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  endName?: string
+}

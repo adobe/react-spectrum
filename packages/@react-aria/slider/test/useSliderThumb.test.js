@@ -56,7 +56,7 @@ describe('useSliderThumb', () => {
 
       let {inputProps, labelProps} = result.current.props;
       let labelId = result.current.groupProps.id;
-      expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelId} ${labelProps.id}`, id: labelProps.htmlFor});
+      expect(inputProps).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 200, 'aria-labelledby': `${labelProps.id} ${labelId}`, id: labelProps.htmlFor});
     });
     it('should have the right labels with Slider thumb aria-label', () => {
       let result = renderHook(() => {
@@ -89,8 +89,8 @@ describe('useSliderThumb', () => {
       let {inputProps: inputProps0} = result.current.props0;
       let {inputProps: inputProps1} = result.current.props1;
       let labelId = result.current.groupProps.id;
-      expect(inputProps0).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 70, 'aria-label': 'thumb0',  'aria-labelledby': `${labelId} ${inputProps0.id}`});
-      expect(inputProps1).toMatchObject({type: 'range', step: 2, value: 70, min: 50, max: 200, 'aria-label': 'thumb1', 'aria-labelledby': `${labelId} ${inputProps1.id}`});
+      expect(inputProps0).toMatchObject({type: 'range', step: 2, value: 50, min: 10, max: 70, 'aria-label': 'thumb0',  'aria-labelledby': `${inputProps0.id} ${labelId}`});
+      expect(inputProps1).toMatchObject({type: 'range', step: 2, value: 70, min: 50, max: 200, 'aria-label': 'thumb1', 'aria-labelledby': `${inputProps1.id} ${labelId}`});
     });
   });
 

@@ -4,6 +4,7 @@
   "columnSize": "{value} pixlar",
   "descending": "fallande",
   "descendingSort": "sorterat på kolumn {columnName} i fallande ordning",
+  "resizerDescription": "Tryck på Retur för att börja ändra storlek",
   "select": "Markera",
   "selectAll": "Markera allt",
   "sortable": "sorterbar kolumn"

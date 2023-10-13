@@ -32,7 +32,7 @@ export interface SingleSelectionState extends FocusState {
   /** The currently selected key in the collection. */
   readonly selectedKey: Key,
   /** Sets the selected key in the collection. */
-  setSelectedKey(key: Key): void
+  setSelectedKey(key: Key | null): void
 }
 
 export interface MultipleSelectionState extends FocusState {
@@ -103,5 +103,7 @@ export interface MultipleSelectionManager extends FocusState {
   /** Returns whether the given key is non-interactive, i.e. both selection and actions are disabled. */
   isDisabled(key: Key): boolean,
   /** Sets the selection behavior for the collection. */
-  setSelectionBehavior(selectionBehavior: SelectionBehavior): void
+  setSelectionBehavior(selectionBehavior: SelectionBehavior): void,
+  /** Returns whether the given key is a hyperlink. */
+  isLink(key: Key): boolean
 }

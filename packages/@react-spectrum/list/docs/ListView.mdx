@@ -14,7 +14,7 @@ import Anatomy from './anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import docs from 'docs:@react-spectrum/list';
 import dndDocs from 'docs:@react-spectrum/dnd';
-import {HeaderInfo, PropTable, PageDescription, TypeLink, VersionBadge} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/list/package.json';
 
@@ -337,14 +337,14 @@ In the highlight selection style, however, clicking a row with the mouse _replac
 modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier
 keys may not be available.
 
-These selection styles implement the behaviors defined in [Aria Practices](https://w3c.github.io/aria-practices/#listbox_kbd_interaction).
+These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
 
 ```tsx example
 // Using the same list as above
 <PokemonList selectionStyle="highlight" aria-label="Highlight selection ListView" />
 ```
 
-### Row actions
+## Row actions
 
 ListView supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the ListView performs actions by default when clicking or tapping a row.
 Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the ListView is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
@@ -359,6 +359,23 @@ This behavior is slightly different in the highlight selection style, where sing
   <PokemonList selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} aria-label="Highlight selection ListView with row actions" width="size-2400" />
 </Flex>
 ```
+
+### Links
+
+Items in a ListView may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionStyle`.
+
+```tsx example
+<ListView aria-label="Links" selectionMode="multiple">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</ListView>
+```
+
+#### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Drag and drop
 
@@ -1024,6 +1041,69 @@ function DragIntoListDefaultCopy() {
 
 ```tsx example
 <DragIntoListDefaultCopy />
+```
+
+### Custom drag previews
+
+Use the `renderPreview` prop to provide a custom drag preview. `keys` and `draggedKey` are passed to this function, where `keys` includes all the keys of the items being dragged, and `draggedKey` is the key of the item the user initiated the drag from.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {View} from '@react-spectrum/view';
+
+function CustomDragPreviewExample() {
+  let list = useListData({
+    initialItems: [
+      {id: '1', type: 'file', name: 'Adobe Photoshop'},
+      {id: '2', type: 'file', name: 'Adobe XD'},
+      {id: '3', type: 'file', name: 'Adobe InDesign'},
+      {id: '4', type: 'file', name: 'Adobe AfterEffects'}
+    ]
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map(key => {
+      let item = list.getItem(key);
+      return {
+        'custom-app-type': JSON.stringify(item),
+        'text/plain': item.name
+      };
+    }),
+    /*- begin highlight -*/
+    renderPreview: (keys, draggedKey) => (
+      <View backgroundColor="gray-50" padding="size-100" borderRadius="medium" borderWidth="thin" borderColor="blue-500">
+        <strong>Custom Preview</strong>
+        <div>Keys: [{[...keys].join(', ')}]</div>
+        <div>Dragged: {draggedKey}</div>
+      </View>
+    )
+    /*- end highlight -*/
+  });
+
+  return (
+    <ListView
+      aria-label="Draggable ListView with custom drag preview"
+      selectionMode="multiple"
+      width="size-3600"
+      height="size-2400"
+      dragAndDropHooks={dragAndDropHooks}
+      items={list.items}>
+      {item => (
+        <Item textValue={item.name}>
+          {item.name}
+        </Item>
+      )}
+    </ListView>
+  );
+}
+```
+
+</details>
+
+```tsx example
+<CustomDragPreviewExample />
 ```
 
 ## Props

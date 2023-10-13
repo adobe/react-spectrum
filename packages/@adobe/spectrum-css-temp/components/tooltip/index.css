@@ -20,7 +20,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Tooltip {
-  @inherit: %spectrum-overlay;
+  composes: spectrum-overlay;
 
   position: relative;
 
@@ -42,10 +42,6 @@ governing permissions and limitations under the License.
   word-break: break-word;
   -webkit-font-smoothing: antialiased;
 
-  &.is-open {
-    @inherit: %spectrum-overlay--open;
-  }
-
   & {
     cursor: default;
     -webkit-user-select: none;
@@ -57,6 +53,10 @@ governing permissions and limitations under the License.
   p {
     margin: 0;
   }
+}
+
+.is-open {
+  composes: spectrum-overlay--open;
 }
 
 .spectrum-Tooltip-tip {
@@ -82,45 +82,49 @@ governing permissions and limitations under the License.
 
 .spectrum-Tooltip--right {
   margin-left: var(--spectrum-tooltip-target-offset);
-  &.is-open {
-    @inherit: %spectrum-overlay--right--open;
-  }
   .spectrum-Tooltip-tip {
     right: 100%;
     transform: rotate(90deg);
   }
 }
 
+.is-open--right {
+  composes: spectrum-overlay--right--open;
+}
+
 .spectrum-Tooltip--left {
   margin-right: var(--spectrum-tooltip-target-offset);
-  &.is-open {
-    @inherit: %spectrum-overlay--left--open;
-  }
   .spectrum-Tooltip-tip {
     left: 100%;
     transform: rotate(-90deg);
   }
 }
 
+.is-open--left {
+  composes: spectrum-overlay--left--open;
+}
+
 .spectrum-Tooltip--top {
   margin-bottom: var(--spectrum-tooltip-target-offset);
-  &.is-open {
-    @inherit: %spectrum-overlay--top--open;
-  }
   .spectrum-Tooltip-tip {
     top: 100%;
   }
 }
 
+.is-open--top {
+  composes: spectrum-overlay--top--open;
+}
+
 .spectrum-Tooltip--bottom {
   margin-top: var(--spectrum-tooltip-target-offset);
-  &.is-open {
-    @inherit: %spectrum-overlay--bottom--open;
-  }
   .spectrum-Tooltip-tip {
     bottom: 100%;
     transform: rotate(-180deg);
   }
+}
+
+.is-open--bottom {
+  composes: spectrum-overlay--bottom--open;
 }
 
 .spectrum-Tooltip--bottom,

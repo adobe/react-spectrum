@@ -32,6 +32,9 @@ keywords: [search field, input]
 <HeaderInfo
   packageData={packageData}
   componentNames={['SearchField']}
+  sourceData={[
+  {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/search-field/'}
+  ]}
   since="3.0.0" />
 
 ## Example
@@ -72,6 +75,14 @@ function Example() {
     </Flex>
   );
 }
+```
+
+### HTML forms
+
+SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<SearchField label="Email" name="email" type="email" />
 ```
 
 ## Labeling

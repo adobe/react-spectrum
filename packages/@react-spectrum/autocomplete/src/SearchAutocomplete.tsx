@@ -94,9 +94,9 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
       defaultSelectedKey: undefined
     }
   );
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout(state, loadingState === 'loadingMore');
 
-  let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
+  let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchAutocomplete(
     {
       ...props,
       keyboardDelegate: layout,
@@ -133,7 +133,12 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
 
   return (
     <>
-      <Field {...props} labelProps={labelProps} ref={domRef}>
+      <Field
+        {...props}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        labelProps={labelProps}
+        ref={domRef}>
         <SearchAutocompleteInput
           {...props}
           isOpen={state.isOpen}
@@ -162,7 +167,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           layout={layout}
           state={state}
           shouldUseVirtualFocus
-          isLoading={loadingState === 'loadingMore'}
+          isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(searchAutocompleteStyles, 'no-results')}>

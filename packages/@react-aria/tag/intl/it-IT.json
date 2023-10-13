@@ -1,3 +1,4 @@
 {
-  "remove": "Premi la barra spaziatrice o CANC per rimuovere il tag."
+  "removeButtonLabel": "Rimuovi",
+  "removeDescription": "Premi Elimina per rimuovere il tag."
 }

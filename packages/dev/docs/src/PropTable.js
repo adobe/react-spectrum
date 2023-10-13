@@ -81,14 +81,14 @@ export function PropTable({component, links, style}) {
   return (
     <div style={style}>
       <TypeContext.Provider value={links}>
-        <InterfaceType properties={ungrouped} showRequired showDefault isComponent name={component.name} />
+        <InterfaceType properties={ungrouped} showRequired isComponent name={component.name} />
         {Object.keys(groups).map((group, i) => (
           <details key={i}>
             <summary className={typographyStyles['spectrum-Heading4']}>
               <ChevronRight size="S" />
               {group}
             </summary>
-            <InterfaceType properties={groups[group]} showRequired showDefault isComponent name={component.name} />
+            <InterfaceType properties={groups[group]} showRequired isComponent name={component.name} />
           </details>
         ))}
       </TypeContext.Provider>

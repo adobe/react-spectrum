@@ -68,6 +68,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+ColorField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a hex color string.
+
+```tsx example
+<ColorField label="Color" name="color" />
+```
+
 ## Labeling
 
 A visual label should be provided for the ColorField using the `label` prop. If the ColorField is required, the `isRequired` and
