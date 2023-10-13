@@ -366,6 +366,10 @@ main {
   align-items: center;
 }
 
+main.noToc {
+  margin-right: 0;
+}
+
 main.examplePage {
   margin: 0;
 }

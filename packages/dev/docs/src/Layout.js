@@ -517,7 +517,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
       <div style={{isolation: 'isolate'}}>
         <header className={docStyles.pageHeader} />
         <Nav currentPageName={currentPage.name} pages={pages} />
-        <main>
+        <main className={toc.length === 0 ? docStyles.noToc : null}>
           <MDXProvider components={mdxComponents}>
             <ImageContext.Provider value={publicUrl}>
               <LinkProvider>
