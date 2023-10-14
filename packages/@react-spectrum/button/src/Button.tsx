@@ -98,18 +98,19 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     staticColor = 'white';
   }
 
-
-  const getLabelFromChildren = ():string => {
+  /**
+   * Parse the children of the button to determine the text to return
+   * for the pending spinner aria-label.
+   * @returns A string that ends in a "pending", localized.
+   */
+  function getLabelFromChildren(): string {
     // Text for spinner aria-label could come from one or more of:
     // - child string
     // - aria-label of button props
     // - child Text component
     // - child icon aria-label
     // - could be absent
-
-    console.log('kids', children);
-
-    let label = [];
+    let label: string[] = [];
 
     // string child
     if (typeof children === 'string') {
@@ -117,28 +118,23 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     }
 
     // aria-label on button
-    // Might need to skip this one as it would still be on the button and adding pending might announce ok
-    // Test how it announces
+    // Todo: Test how it announces in SRs
     if (props['aria-label']) {
       label.push(props['aria-label']);
     }
 
-    // Is this really the best I can do?
-    if (
-      Object.prototype.hasOwnProperty.call(children, 'props') &&
-      Object.prototype.hasOwnProperty.call(children['props'], 'children') &&
-      typeof children['props']['children'] === 'string'
-    ) {
-      label.push(children['props']['children']);
-    }
-    if (
-      Object.prototype.hasOwnProperty.call(children, 'props') &&
-      Object.prototype.hasOwnProperty.call(children['props'], 'aria-label')
-    ) {
-      label.push(children['props']['aria-label']);
+    if (React.isValidElement(children)) {
+      // Text wrapped in an component or element
+      if (typeof children?.props?.children === 'string') {
+        label.push(children.props.children);
+      }
+      // Icon with aria-label
+      if (children?.props['aria-label']) {
+        label.push(children['props']['aria-label']);
+      }
     }
 
-    // loop multiple children looking for text and aria-labels
+    // loop multiple children looking for text and/or aria-labels
     if (Array.isArray(children)) {
       children.forEach((child) => {
         // Text component with string child
@@ -152,9 +148,10 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       });
     }
 
+    // Append pending. If nothing matched above, will still get 'pending' as the label.
     label.push(stringFormatter.format('pending'));
     return label.join(' ');
-  };
+  }
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>

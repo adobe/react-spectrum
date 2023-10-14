@@ -274,6 +274,14 @@ function Pending(props) {
         </PendingButtonContainerComponent>
 
         <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent
+            {...props}
+            aria-label="Aria label on button">
+            <Bell />
+          </PendingButtonComponent>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
           <PendingButtonOnClickComponent
             {...props}>
             <Text>with onClick</Text>
