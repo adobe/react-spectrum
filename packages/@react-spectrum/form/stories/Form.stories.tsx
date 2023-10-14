@@ -364,6 +364,7 @@ FormWithReset.story = {
   name: 'form with reset'
 };
 
+
 export const _FormWithSubmit = () => <FormWithSubmit />;
 
 _FormWithSubmit.story = {
@@ -400,7 +401,7 @@ WithTranslations.story = {
 function render(props: any = {}) {
   return (
     <Form {...props}>
-      <CheckboxGroup defaultValue={['dragons']} label="Pets">
+      <CheckboxGroup defaultValue={['dragons']} label="Pets" validate={v => v.includes('dogs') ? 'No dogs' : null}>
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>
@@ -451,6 +452,12 @@ function render(props: any = {}) {
         <Item key="5">Cool Tag 5</Item>
         <Item key="6">Cool Tag 6</Item>
       </TagGroup>
+      {props.showSubmit && (
+        <ButtonGroup>
+          <Button variant="primary" type="submit">Submit</Button>
+          <Button variant="secondary" type="reset">Reset</Button>
+        </ButtonGroup>
+      )}
     </Form>
   );
 }
@@ -680,6 +687,43 @@ function FormWithSubmit() {
       <Button variant="cta" type="submit" isDisabled={formStatus === 'valid'}>Submit</Button>
       <Button variant="secondary" type="reset" onPress={reset}>Reset</Button>
       <Status formStatus={formStatus} />
+    </Form>
+  );
+}
+
+export const NativeValidation = () => render({
+  isRequired: true,
+  validationBehavior: 'native',
+  showSubmit: true,
+  onSubmit: (e) => {
+    e.preventDefault();
+    action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
+  }
+});
+
+export function ServerValidation() {
+  let [serverErrors, setServerErrors] = useState<any>({});
+  let onSubmit = async (e) => {
+    e.preventDefault();
+    let formData = new FormData(e.target);
+    if (formData.get('firstName') === 'Foo') {
+      setServerErrors({
+        firstName: 'Invalid first name'
+      });
+    } else {
+      action('onSubmit')(Object.fromEntries(formData.entries()));
+      setServerErrors({});
+    }
+  };
+
+  return (
+    <Form validationBehavior="native" isRequired onSubmit={onSubmit} validationErrors={serverErrors}>
+      <TextField name="firstName" label="First Name (server errors on 'Foo')" />
+      <TextField name="lastName" label="Last Name (client errors on 'Bar')" validate={v => v === 'Bar' ? 'Invalid last name' : null} />
+      <ButtonGroup>
+        <Button variant="primary" type="submit">Submit</Button>
+        <Button variant="secondary" type="reset">Reset</Button>
+      </ButtonGroup>
     </Form>
   );
 }

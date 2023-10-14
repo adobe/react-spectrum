@@ -11,13 +11,14 @@
  */
 
 import {AriaToggleProps} from '@react-types/checkbox';
-import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useFormReset, useFormValidation} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
+import {ValidationResult} from '@react-types/shared';
 
-export interface ToggleAria {
+export interface ToggleAria extends ValidationResult {
   /**
    * Props to be spread on the input element.
    */
@@ -47,8 +48,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    validationState = 'valid',
-    isInvalid
+    validationBehavior = 'aria'
   } = props;
 
   let onChange = (e) => {
@@ -75,13 +75,16 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   useFormReset(ref, state.isSelected, state.setSelected);
 
+  let {isInvalid, errors, validationDetails} = useFormValidation(props, state.isSelected, ref);
+
   return {
     inputProps: mergeProps(domProps, {
-      'aria-invalid': isInvalid || validationState === 'invalid' || undefined,
+      'aria-invalid': isInvalid || undefined,
       'aria-errormessage': props['aria-errormessage'],
       'aria-controls': props['aria-controls'],
       'aria-readonly': isReadOnly || undefined,
-      'aria-required': isRequired || undefined,
+      'aria-required': (isRequired && validationBehavior === 'aria') || undefined,
+      required: isRequired && validationBehavior === 'native',
       onChange,
       disabled: isDisabled,
       ...(value == null ? {} : {value}),
@@ -93,6 +96,8 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     isPressed,
     isDisabled,
     isReadOnly,
-    isInvalid: isInvalid || validationState === 'invalid'
+    isInvalid,
+    errors,
+    validationDetails
   };
 }

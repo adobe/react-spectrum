@@ -35,7 +35,9 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     validationState,
     isInvalid,
     description,
-    errorMessage,
+    errorMessage = e => e.errors.join(' '),
+    errors,
+    validationDetails,
     isDisabled,
     showErrorIcon,
     contextualHelp,
@@ -50,7 +52,19 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let hasHelpText = !!description || errorMessage && (isInvalid || validationState === 'invalid');
+  let errorMessageString = null;
+  if (typeof errorMessage === 'function') {
+    errorMessageString = isInvalid != null && errors != null && validationDetails != null
+      ? errorMessage({
+        isInvalid,
+        errors,
+        validationDetails
+      })
+      : null;
+  } else {
+    errorMessageString = errorMessage;
+  }
+  let hasHelpText = !!description || errorMessageString && (isInvalid || validationState === 'invalid');
   let contextualHelpId = useId();
 
   let fallbackLabelPropsId = useId();
@@ -83,7 +97,7 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
       description={description}
-      errorMessage={errorMessage}
+      errorMessage={errorMessageString}
       validationState={validationState}
       isInvalid={isInvalid}
       isDisabled={isDisabled}

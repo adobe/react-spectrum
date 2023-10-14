@@ -12,7 +12,8 @@
 
 import {CheckboxGroupProps} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
-import {ValidationState} from '@react-types/shared';
+import {useEffect, useMemo, useRef, useState} from 'react';
+import {ValidationResult, ValidationState} from '@react-types/shared';
 
 export interface CheckboxGroupState {
   /** Current selected values. */
@@ -28,10 +29,25 @@ export interface CheckboxGroupState {
    * The current validation state of the checkbox group.
    * @deprecated Use `isInvalid` instead.
    */
-  readonly validationState: ValidationState,
+  readonly validationState: ValidationState | null,
 
   /** Whether the checkbox group is invalid. */
   readonly isInvalid: boolean,
+
+  /** A list of group level validation error messages resulting from the `validate` prop. */
+  readonly groupValidationErrors: string[],
+
+  /** The aggregated error messages for the group and all checkboxes. */
+  readonly validationErrors: string[],
+
+  /** The aggregated validation details for all checkboxes in the group. */
+  readonly validationDetails: ValidityState,
+
+  /**
+   * Whether the checkboxes in the group are required.
+   * This changes to false once at least one item is selected.
+   */
+  readonly isRequired: boolean,
 
   /** Returns whether the given value is selected. */
   isSelected(value: string): boolean,
@@ -46,7 +62,10 @@ export interface CheckboxGroupState {
   removeValue(value: string): void,
 
   /** Toggles a value in the set of selected values. */
-  toggleValue(value: string): void
+  toggleValue(value: string): void,
+
+  /** Sets whether one of the checkboxes is invalid. */
+  setInvalid(value: string, validation: ValidationResult): void
 }
 
 /**
@@ -55,6 +74,32 @@ export interface CheckboxGroupState {
  */
 export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxGroupState {
   let [selectedValues, setValue] = useControlledState(props.value, props.defaultValue || [], props.onChange);
+  let [invalidValues, setInvalidValues] = useState(new Map<string, ValidationResult>());
+  let isRequired = props.isRequired && selectedValues.length === 0;
+
+  let {validate, onValidationChange} = props;
+  let groupValidationErrors = useMemo(() => {
+    if (typeof validate === 'function') {
+      let e = validate(selectedValues);
+      if (e && typeof e !== 'boolean') {
+        return Array.isArray(e) ? e : [e];
+      }
+    }
+
+    return [];
+  }, [validate, selectedValues]);
+
+  // Aggregate errors from all invalid checkboxes for checkbox group level validation.
+  let aggregatedValidation = useMemo(() => aggregateValidation(invalidValues), [invalidValues]);
+  let isInvalid = props.isInvalid || props.validationState === 'invalid' || aggregatedValidation.isInvalid;
+
+  let lastValidation = useRef(aggregatedValidation);
+  useEffect(() => {
+    if (aggregatedValidation !== lastValidation.current) {
+      lastValidation.current = aggregatedValidation;
+      onValidationChange?.(aggregatedValidation);
+    }
+  });
 
   const state: CheckboxGroupState = {
     value: selectedValues,
@@ -96,9 +141,59 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         setValue(selectedValues.concat(value));
       }
     },
-    validationState: props.validationState,
-    isInvalid: props.isInvalid || props.validationState === 'invalid'
+    setInvalid(value, validation) {
+      setInvalidValues(invalidValues => {
+        let s = new Map(invalidValues);
+        if (validation.isInvalid) {
+          s.set(value, validation);
+        } else {
+          s.delete(value);
+        }
+
+        return s;
+      });
+    },
+    validationState: props.validationState ?? (isInvalid ? 'invalid' : null),
+    isInvalid,
+    groupValidationErrors,
+    isRequired,
+    validationErrors: aggregatedValidation.errors,
+    validationDetails: aggregatedValidation.validationDetails
   };
 
   return state;
+}
+
+function aggregateValidation(invalidValues: Map<string, ValidationResult>): ValidationResult {
+  let errors = new Set<string>();
+  let isInvalid = invalidValues.size > 0;
+  let validationDetails = {
+    badInput: false,
+    customError: false,
+    patternMismatch: false,
+    rangeOverflow: false,
+    rangeUnderflow: false,
+    stepMismatch: false,
+    tooLong: false,
+    tooShort: false,
+    typeMismatch: false,
+    valueMissing: false,
+    valid: !isInvalid
+  };
+
+  for (let v of invalidValues.values()) {
+    for (let e of v.errors) {
+      errors.add(e);
+    }
+
+    // Only these properties apply for checkboxes.
+    validationDetails.valueMissing ||= v.validationDetails.valueMissing;
+    validationDetails.customError ||= v.validationDetails.customError;
+  }
+
+  return {
+    isInvalid,
+    errors: [...errors],
+    validationDetails
+  };
 }

@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, createValidationResult, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {Button} from '@react-spectrum/button';
 import {Checkbox, CheckboxGroup} from '../';
-import {pointerMap, render, within} from '@react-spectrum/test-utils';
+import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -411,5 +413,453 @@ describe('CheckboxGroup', () => {
     expect(checkboxes[0]).toBeChecked();
     expect(checkboxes[1]).not.toBeChecked();
     expect(checkboxes[2]).not.toBeChecked();
+  });
+
+  describe('validation', () => {
+    describe('validationBehavior=native', () => {
+      it('supports group level isRequired', async () => {
+        let onValidationChange = jest.fn();
+        let {getAllByRole, getByRole, getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <CheckboxGroup label="Agree to the following" isRequired validationBehavior="native" onValidationChange={onValidationChange}>
+                <Checkbox value="terms">Terms and conditions</Checkbox>
+                <Checkbox value="cookies">Cookies</Checkbox>
+                <Checkbox value="privacy">Privacy policy</Checkbox>
+              </CheckboxGroup>
+            </Form>
+          </Provider>
+        );
+
+        let group = getByRole('group');
+        expect(group).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).not.toHaveBeenCalled();
+
+        let checkboxes = getAllByRole('checkbox');
+        for (let input of checkboxes) {
+          expect(input).toHaveAttribute('required');
+          expect(input).not.toHaveAttribute('aria-required');
+          expect(input.validity.valid).toBe(false);
+        }
+
+        act(() => getByTestId('form').checkValidity());
+        expect(onValidationChange).toHaveBeenCalledTimes(1);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Constraints not satisfied'], 'valueMissing'));
+
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+        await user.click(checkboxes[0]);
+        for (let input of checkboxes) {
+          expect(input).not.toHaveAttribute('required');
+          expect(input).not.toHaveAttribute('aria-required');
+          expect(input.validity.valid).toBe(true);
+        }
+
+        expect(group).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).toHaveBeenCalledTimes(2);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+      });
+
+      it('supports checkbox level isRequired', async () => {
+        let onValidationChange = jest.fn();
+        let {getAllByRole, getByRole, getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <CheckboxGroup label="Agree to the following" validationBehavior="native" onValidationChange={onValidationChange}>
+                <Checkbox value="terms" isRequired>Terms and conditions</Checkbox>
+                <Checkbox value="cookies" isRequired>Cookies</Checkbox>
+                <Checkbox value="privacy">Privacy policy</Checkbox>
+              </CheckboxGroup>
+            </Form>
+          </Provider>
+        );
+
+        let group = getByRole('group');
+        expect(group).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).not.toHaveBeenCalled();
+
+        let checkboxes = getAllByRole('checkbox');
+        for (let input of checkboxes.slice(0, 2)) {
+          expect(input).toHaveAttribute('required');
+          expect(input).not.toHaveAttribute('aria-required');
+          expect(input.validity.valid).toBe(false);
+        }
+        expect(checkboxes[2]).not.toHaveAttribute('required');
+        expect(checkboxes[2]).not.toHaveAttribute('aria-required');
+        expect(checkboxes[2].validity.valid).toBe(true);
+
+        act(() => getByTestId('form').checkValidity());
+        expect(onValidationChange).toHaveBeenCalledTimes(1);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Constraints not satisfied'], 'valueMissing'));
+
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+        await user.click(checkboxes[0]);
+        expect(checkboxes[0].validity.valid).toBe(true);
+        expect(checkboxes[1].validity.valid).toBe(false);
+        expect(group).toHaveAttribute('aria-describedby');
+
+        await user.click(checkboxes[1]);
+        expect(checkboxes[1].validity.valid).toBe(true);
+        expect(group).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).toHaveBeenCalledTimes(3);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+      });
+
+      it('supports group level validate function', async () => {
+        let onValidationChange = jest.fn();
+        let {getAllByRole, getByRole, getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <CheckboxGroup label="Agree to the following" validationBehavior="native" validate={v => v.length < 3 ? 'You must accept all terms' : null} onValidationChange={onValidationChange}>
+                <Checkbox value="terms">Terms and conditions</Checkbox>
+                <Checkbox value="cookies">Cookies</Checkbox>
+                <Checkbox value="privacy">Privacy policy</Checkbox>
+              </CheckboxGroup>
+            </Form>
+          </Provider>
+        );
+
+        let group = getByRole('group');
+        expect(group).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).not.toHaveBeenCalled();
+
+        let checkboxes = getAllByRole('checkbox');
+        for (let input of checkboxes) {
+          expect(input).not.toHaveAttribute('required');
+          expect(input).not.toHaveAttribute('aria-required');
+          expect(input.validity.valid).toBe(false);
+        }
+
+        act(() => getByTestId('form').checkValidity());
+        expect(onValidationChange).toHaveBeenCalledTimes(1);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept all terms']));
+
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(['You must accept all terms']);
+
+        await user.click(checkboxes[0]);
+        expect(group).toHaveAttribute('aria-describedby');
+        for (let input of checkboxes) {
+          expect(input.validity.valid).toBe(false);
+        }
+
+        await user.click(checkboxes[1]);
+        expect(group).toHaveAttribute('aria-describedby');
+        for (let input of checkboxes) {
+          expect(input.validity.valid).toBe(false);
+        }
+
+        await user.click(checkboxes[2]);
+        expect(group).not.toHaveAttribute('aria-describedby');
+        for (let input of checkboxes) {
+          expect(input.validity.valid).toBe(true);
+        }
+
+        expect(onValidationChange).toHaveBeenCalledTimes(2);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+      });
+
+      it('supports checkbox level validate function', async () => {
+        let onValidationChange = jest.fn();
+        let {getAllByRole, getByRole, getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <CheckboxGroup label="Agree to the following" validationBehavior="native" onValidationChange={onValidationChange}>
+                <Checkbox value="terms" validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
+                <Checkbox value="cookies" validate={v => !v ? 'You must accept the cookies.' : null}>Cookies</Checkbox>
+                <Checkbox value="privacy">Privacy policy</Checkbox>
+              </CheckboxGroup>
+            </Form>
+          </Provider>
+        );
+
+        let group = getByRole('group');
+        expect(group).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).not.toHaveBeenCalled();
+
+        let checkboxes = getAllByRole('checkbox');
+        expect(checkboxes[0].validity.valid).toBe(false);
+        expect(checkboxes[1].validity.valid).toBe(false);
+        expect(checkboxes[2].validity.valid).toBe(true);
+
+        act(() => getByTestId('form').checkValidity());
+        expect(onValidationChange).toHaveBeenCalledTimes(1);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept the terms.', 'You must accept the cookies.']));
+
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept the terms. You must accept the cookies.');
+
+        await user.click(checkboxes[0]);
+        expect(checkboxes[0].validity.valid).toBe(true);
+        expect(checkboxes[1].validity.valid).toBe(false);
+
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept the cookies.');
+        expect(onValidationChange).toHaveBeenCalledTimes(2);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept the cookies.']));
+
+        await user.click(checkboxes[1]);
+        expect(checkboxes[0].validity.valid).toBe(true);
+        expect(checkboxes[1].validity.valid).toBe(true);
+        expect(group).not.toHaveAttribute('aria-describedby');
+
+        expect(onValidationChange).toHaveBeenCalledTimes(3);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+      });
+
+      it('combines group and checkbox level validation messages', async () => {
+        let onValidationChange = jest.fn();
+        let {getAllByRole, getByRole, getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <CheckboxGroup label="Agree to the following" validationBehavior="native" validate={v => v.length < 3 ? 'You must accept all terms.' : null} onValidationChange={onValidationChange}>
+                <Checkbox value="terms" validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
+                <Checkbox value="cookies" validate={v => !v ? 'You must accept the cookies.' : null}>Cookies</Checkbox>
+                <Checkbox value="privacy">Privacy policy</Checkbox>
+              </CheckboxGroup>
+            </Form>
+          </Provider>
+        );
+
+        let group = getByRole('group');
+        expect(group).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).not.toHaveBeenCalled();
+
+        let checkboxes = getAllByRole('checkbox');
+        act(() => getByTestId('form').checkValidity());
+        expect(onValidationChange).toHaveBeenCalledTimes(1);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept all terms.', 'You must accept the terms.', 'You must accept the cookies.']));
+
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept all terms. You must accept the terms. You must accept the cookies.');
+
+        await user.click(checkboxes[0]);
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept all terms. You must accept the cookies.');
+        expect(onValidationChange).toHaveBeenCalledTimes(2);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept all terms.', 'You must accept the cookies.']));
+
+        await user.click(checkboxes[1]);
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept all terms.');
+        expect(onValidationChange).toHaveBeenCalledTimes(3);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept all terms.']));
+
+        await user.click(checkboxes[2]);
+        expect(group).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).toHaveBeenCalledTimes(4);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+      });
+
+      it('supports server validation', async () => {
+        function Test() {
+          let [serverErrors, setServerErrors] = React.useState({});
+          let onSubmit = e => {
+            e.preventDefault();
+            setServerErrors({
+              terms: 'You must accept the terms.'
+            });
+          };
+
+          return (
+            <Provider theme={theme}>
+              <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                <CheckboxGroup name="terms" label="Agree to the following" validationBehavior="native">
+                  <Checkbox value="terms">Terms and conditions</Checkbox>
+                  <Checkbox value="cookies">Cookies</Checkbox>
+                  <Checkbox value="privacy">Privacy policy</Checkbox>
+                </CheckboxGroup>
+                <Button type="submit">Submit</Button>
+              </Form>
+            </Provider>
+          );
+        }
+
+        let {getAllByRole, getByRole} = render(<Test />);
+
+        let group = getByRole('group');
+        expect(group).not.toHaveAttribute('aria-describedby');
+
+        await user.click(getByRole('button'));
+
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept the terms.');
+
+        let checkboxes = getAllByRole('checkbox');
+        for (let input of checkboxes) {
+          expect(input.validity.valid).toBe(false);
+        }
+
+        await user.click(checkboxes[0]);
+        expect(group).not.toHaveAttribute('aria-describedby');
+        for (let input of checkboxes) {
+          expect(input.validity.valid).toBe(true);
+        }
+      });
+
+      it('supports customizing native error messages', async () => {
+        let {getByRole, getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <CheckboxGroup label="Agree to the following" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please select at least one item' : null}>
+                <Checkbox value="terms">Terms and conditions</Checkbox>
+                <Checkbox value="cookies">Cookies</Checkbox>
+                <Checkbox value="privacy">Privacy policy</Checkbox>
+              </CheckboxGroup>
+            </Form>
+          </Provider>
+        );
+
+        let group = getByRole('group');
+        expect(group).not.toHaveAttribute('aria-describedby');
+
+        act(() => getByTestId('form').checkValidity());
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please select at least one item');
+      });
+    });
+
+    describe('validationBehavior=aria', () => {
+      it('supports group level validate function', async () => {
+        let onValidationChange = jest.fn();
+        let {getAllByRole, getByRole} = render(
+          <Provider theme={theme}>
+            <CheckboxGroup label="Agree to the following" validate={v => v.length < 3 ? 'You must accept all terms' : null} onValidationChange={onValidationChange}>
+              <Checkbox value="terms">Terms and conditions</Checkbox>
+              <Checkbox value="cookies">Cookies</Checkbox>
+              <Checkbox value="privacy">Privacy policy</Checkbox>
+            </CheckboxGroup>
+          </Provider>
+        );
+
+        let group = getByRole('group');
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept all terms');
+        expect(onValidationChange).toHaveBeenCalledTimes(1);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept all terms']));
+
+        let checkboxes = getAllByRole('checkbox');
+        for (let input of checkboxes) {
+          expect(input).toHaveAttribute('aria-invalid', 'true');
+          expect(input.validity.valid).toBe(true);
+        }
+
+        await user.click(checkboxes[0]);
+        expect(group).toHaveAttribute('aria-describedby');
+
+        await user.click(checkboxes[1]);
+        expect(group).toHaveAttribute('aria-describedby');
+
+        await user.click(checkboxes[2]);
+        expect(group).not.toHaveAttribute('aria-describedby');
+
+        expect(onValidationChange).toHaveBeenCalledTimes(4);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+      });
+
+      it('supports checkbox level validate function', async () => {
+        let onValidationChange = jest.fn();
+        let {getAllByRole, getByRole} = render(
+          <Provider theme={theme}>
+            <CheckboxGroup label="Agree to the following" onValidationChange={onValidationChange}>
+              <Checkbox value="terms" validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
+              <Checkbox value="cookies" validate={v => !v ? 'You must accept the cookies.' : null}>Cookies</Checkbox>
+              <Checkbox value="privacy">Privacy policy</Checkbox>
+            </CheckboxGroup>
+          </Provider>
+        );
+
+        let checkboxes = getAllByRole('checkbox');
+        for (let input of checkboxes) {
+          if (input.value !== 'privacy') {
+            expect(input).toHaveAttribute('aria-invalid', 'true');
+          }
+          expect(input.validity.valid).toBe(true);
+        }
+
+        let group = getByRole('group');
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept the terms. You must accept the cookies.');
+        expect(onValidationChange).toHaveBeenCalledTimes(1);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept the terms.', 'You must accept the cookies.']));
+
+        await user.click(checkboxes[0]);
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept the cookies.');
+        expect(onValidationChange).toHaveBeenCalledTimes(2);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept the cookies.']));
+
+        await user.click(checkboxes[1]);
+        expect(group).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).toHaveBeenCalledTimes(3);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+      });
+
+      it('combines group and checkbox level validation messages', async () => {
+        let onValidationChange = jest.fn();
+        let {getAllByRole, getByRole} = render(
+          <Provider theme={theme}>
+            <CheckboxGroup label="Agree to the following" validate={v => v.length < 3 ? 'You must accept all terms.' : null} onValidationChange={onValidationChange}>
+              <Checkbox value="terms" validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
+              <Checkbox value="cookies" validate={v => !v ? 'You must accept the cookies.' : null}>Cookies</Checkbox>
+              <Checkbox value="privacy">Privacy policy</Checkbox>
+            </CheckboxGroup>
+          </Provider>
+        );
+
+        let group = getByRole('group');
+        let checkboxes = getAllByRole('checkbox');
+        for (let input of checkboxes) {
+          expect(input).toHaveAttribute('aria-invalid', 'true');
+        }
+
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept all terms. You must accept the terms. You must accept the cookies.');
+        expect(onValidationChange).toHaveBeenCalledTimes(1);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept all terms.', 'You must accept the terms.', 'You must accept the cookies.']));
+
+        await user.click(checkboxes[0]);
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept all terms. You must accept the cookies.');
+
+        await user.click(checkboxes[1]);
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept all terms.');
+
+        await user.click(checkboxes[2]);
+        expect(group).not.toHaveAttribute('aria-describedby');
+        expect(onValidationChange).toHaveBeenCalledTimes(4);
+        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+      });
+
+      it('supports server validation', async () => {
+        let {getAllByRole, getByRole} = render(
+          <Provider theme={theme}>
+            <Form validationErrors={{terms: 'You must accept the terms'}}>
+              <CheckboxGroup name="terms" label="Agree to the following">
+                <Checkbox value="terms">Terms and conditions</Checkbox>
+                <Checkbox value="cookies">Cookies</Checkbox>
+                <Checkbox value="privacy">Privacy policy</Checkbox>
+              </CheckboxGroup>
+            </Form>
+          </Provider>
+        );
+
+        let group = getByRole('group');
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept the terms');
+
+        let checkboxes = getAllByRole('checkbox');
+        for (let input of checkboxes) {
+          expect(input).toHaveAttribute('aria-invalid', 'true');
+        }
+
+        await user.click(checkboxes[0]);
+        expect(group).not.toHaveAttribute('aria-describedby');
+      });
+    });
   });
 });
