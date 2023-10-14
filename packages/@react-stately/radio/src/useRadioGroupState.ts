@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {isEqualValidation, useControlledState, useValidate, VALID_VALIDITY_STATE} from '@react-stately/utils';
 import {RadioGroupProps} from '@react-types/radio';
-import {useControlledState} from '@react-stately/utils';
-import {useMemo, useState} from 'react';
-import {ValidationState} from '@react-types/shared';
+import {useMemo, useRef, useState} from 'react';
+import {ValidationResult, ValidationState} from '@react-types/shared';
 
 export interface RadioGroupState {
   /**
@@ -41,6 +41,15 @@ export interface RadioGroupState {
   /** Whether the radio group is invalid. */
   readonly isInvalid: boolean,
 
+  /** A list of group level validation error messages resulting from the `validate` prop. */
+  readonly groupValidationErrors: string[],
+
+  /** The error messages for the radio group. */
+  readonly validationErrors: string[],
+
+  /** The validation details for the radio group. */
+  readonly validationDetails: ValidityState,
+
   /** The currently selected value. */
   readonly selectedValue: string | null | undefined,
 
@@ -51,7 +60,9 @@ export interface RadioGroupState {
   readonly lastFocusedValue: string | null,
 
   /** Sets the last focused value. */
-  setLastFocusedValue(value: string): void
+  setLastFocusedValue(value: string): void,
+
+  setValidation(validation: ValidationResult): void
 }
 
 let instance = Math.round(Math.random() * 10000000000);
@@ -66,12 +77,22 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
   let name = useMemo(() => props.name || `radio-group-${instance}-${++i}`, [props.name]);
   let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
   let [lastFocusedValue, setLastFocusedValue] = useState<string | null>(null);
+  let [validation, setValidation] = useState({
+    isInvalid: false,
+    errors: [],
+    validationDetails: VALID_VALIDITY_STATE
+  });
 
   let setSelectedValue = (value) => {
     if (!props.isReadOnly && !props.isDisabled) {
       setSelected(value);
     }
   };
+
+  let {validate, onValidationChange} = props;
+  let groupValidationErrors = useValidate(validate, selectedValue);
+  let isInvalid = props.isInvalid || props.validationState === 'invalid' || validation.isInvalid;
+  let lastValidation = useRef(validation);
 
   return {
     name,
@@ -82,7 +103,18 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
     isDisabled: props.isDisabled || false,
     isReadOnly: props.isReadOnly || false,
     isRequired: props.isRequired || false,
-    validationState: props.validationState || null,
-    isInvalid: props.isInvalid || props.validationState === 'invalid'
+    validationState: props.validationState || (isInvalid ? 'invalid' : null),
+    isInvalid,
+    groupValidationErrors,
+    validationErrors: validation.errors,
+    validationDetails: validation.validationDetails,
+    setValidation(e) {
+      if (!isEqualValidation(lastValidation.current, e)) {
+        lastValidation.current = e;
+        setValidation(e);
+        onValidationChange?.(e);
+        return e;
+      }
+    }
   };
 }

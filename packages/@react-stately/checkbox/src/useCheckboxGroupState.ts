@@ -11,7 +11,7 @@
  */
 
 import {CheckboxGroupProps} from '@react-types/checkbox';
-import {useControlledState} from '@react-stately/utils';
+import {useControlledState, useValidate, VALID_VALIDITY_STATE} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationResult, ValidationState} from '@react-types/shared';
 
@@ -78,16 +78,7 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
   let isRequired = props.isRequired && selectedValues.length === 0;
 
   let {validate, onValidationChange} = props;
-  let groupValidationErrors = useMemo(() => {
-    if (typeof validate === 'function') {
-      let e = validate(selectedValues);
-      if (e && typeof e !== 'boolean') {
-        return Array.isArray(e) ? e : [e];
-      }
-    }
-
-    return [];
-  }, [validate, selectedValues]);
+  let groupValidationErrors = useValidate(validate, selectedValues);
 
   // Aggregate errors from all invalid checkboxes for checkbox group level validation.
   let aggregatedValidation = useMemo(() => aggregateValidation(invalidValues), [invalidValues]);
@@ -168,16 +159,7 @@ function aggregateValidation(invalidValues: Map<string, ValidationResult>): Vali
   let errors = new Set<string>();
   let isInvalid = invalidValues.size > 0;
   let validationDetails = {
-    badInput: false,
-    customError: false,
-    patternMismatch: false,
-    rangeOverflow: false,
-    rangeUnderflow: false,
-    stepMismatch: false,
-    tooLong: false,
-    tooShort: false,
-    typeMismatch: false,
-    valueMissing: false,
+    ...VALID_VALIDITY_STATE,
     valid: !isInvalid
   };
 

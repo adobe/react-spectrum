@@ -11,9 +11,9 @@
  */
 
 import {AriaRadioProps} from '@react-types/radio';
-import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
-import {InputHTMLAttributes, RefObject} from 'react';
-import {radioGroupDescriptionIds, radioGroupErrorMessageIds, radioGroupNames} from './utils';
+import {filterDOMProps, mergeProps, useFormReset, useFormValidation} from '@react-aria/utils';
+import {InputHTMLAttributes, RefObject, useCallback} from 'react';
+import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
@@ -80,22 +80,34 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     tabIndex = undefined;
   }
 
+  let {name, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;
+
+  useFormValidation({
+    name,
+    validationBehavior,
+    validate: useCallback(() => state.groupValidationErrors, [state.groupValidationErrors]),
+    onValidationChange(e) {
+      state.setValidation(e);
+    }
+  }, state.selectedValue, ref);
+
   useFormReset(ref, state.selectedValue, state.setSelectedValue);
 
   return {
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
-      name: radioGroupNames.get(state),
+      name,
       tabIndex,
       disabled: isDisabled,
+      required: state.isRequired && validationBehavior === 'native',
       checked,
       value,
       onChange,
       'aria-describedby': [
         props['aria-describedby'],
-        state.isInvalid ? radioGroupErrorMessageIds.get(state) : null,
-        radioGroupDescriptionIds.get(state)
+        state.isInvalid ? errorMessageId : null,
+        descriptionId
       ].filter(Boolean).join(' ') || undefined
     }),
     isDisabled,

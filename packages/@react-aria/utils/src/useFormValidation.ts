@@ -11,6 +11,7 @@
  */
 
 import {createContext, RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import {CUSTOM_VALIDITY_STATE, isEqualValidation, useValidate, VALID_VALIDITY_STATE} from '@react-stately/utils';
 import {useEffectEvent} from './useEffectEvent';
 import {Validation, ValidationErrors, ValidationResult} from '@react-types/shared';
 
@@ -34,26 +35,16 @@ export function useFormValidation<T>(props: FormValidationProps<T>, value: T, re
   let controlledError: ValidationResult | null = isInvalid ? {
     isInvalid: true,
     errors: [],
-    validationDetails: CUSTOM_VALIDATION_DETAILS
+    validationDetails: CUSTOM_VALIDITY_STATE
   } : null;
 
   // Perform custom client side validation.
-  let clientErrors = useMemo(() => {
-    if (typeof validate === 'function') {
-      let error = validate(value);
-      if (error && typeof error !== 'boolean') {
-        return Array.isArray(error) ? error : [error];
-      }
-    }
-
-    return [];
-  }, [value, validate]);
-
+  let clientErrors = useValidate(validate, value);
   let clientError: ValidationResult | null = useMemo(() => {
     return clientErrors.length ? {
       isInvalid: true,
       errors: clientErrors,
-      validationDetails: CUSTOM_VALIDATION_DETAILS
+      validationDetails: CUSTOM_VALIDITY_STATE
     } : null;
   }, [clientErrors]);
 
@@ -97,7 +88,7 @@ export function useFormValidation<T>(props: FormValidationProps<T>, value: T, re
     return serverErrorMessages.length && !isServerErrorCleared ? {
       isInvalid: true,
       errors: serverErrorMessages,
-      validationDetails: CUSTOM_VALIDATION_DETAILS
+      validationDetails: CUSTOM_VALIDITY_STATE
     } : null;
   }, [isServerErrorCleared, serverErrorMessages]);
 
@@ -128,7 +119,7 @@ export function useFormValidation<T>(props: FormValidationProps<T>, value: T, re
       }
     } else {
       let e = serverError || clientError || DEFAULT_VALIDITY;
-      if (e !== lastError.current) {
+      if (!controlledError && e !== lastError.current) {
         lastError.current = e;
         onValidationChange?.(e);
       }
@@ -138,10 +129,12 @@ export function useFormValidation<T>(props: FormValidationProps<T>, value: T, re
   // Track native element validity for built in validation (e.g. required).
   let [nativeValidity, setNativeValidity] = useState(DEFAULT_VALIDITY);
   let updateNativeValidity = e => {
-    // Use serverError/clientError if set so we get the original (separate) error messages.
-    e = serverError || clientError || e;
-    setNativeValidity(e);
-    onValidationChange?.(e);
+    if (!controlledError) {
+      // Use serverError/clientError if set so we get the original (separate) error messages.
+      e = serverError || clientError || e;
+      setNativeValidity(e);
+      onValidationChange?.(e);
+    }
   };
 
   useInputValidity(validationBehavior === 'native' ? ref : null, updateNativeValidity);
@@ -153,29 +146,9 @@ export function useFormValidation<T>(props: FormValidationProps<T>, value: T, re
   }
 }
 
-const DEFAULT_VALIDATION_DETAILS: ValidityState = {
-  badInput: false,
-  customError: false,
-  patternMismatch: false,
-  rangeOverflow: false,
-  rangeUnderflow: false,
-  stepMismatch: false,
-  tooLong: false,
-  tooShort: false,
-  typeMismatch: false,
-  valueMissing: false,
-  valid: true
-};
-
-const CUSTOM_VALIDATION_DETAILS: ValidityState = {
-  ...DEFAULT_VALIDATION_DETAILS,
-  customError: true,
-  valid: false
-};
-
 const DEFAULT_VALIDITY: ValidationResult = {
   isInvalid: false,
-  validationDetails: DEFAULT_VALIDATION_DETAILS,
+  validationDetails: VALID_VALIDITY_STATE,
   errors: []
 };
 
@@ -198,16 +171,6 @@ function getValidity(input: HTMLInputElement | HTMLTextAreaElement | HTMLSelectE
   };
 }
 
-function isEqual(a: ValidityState, b: ValidityState) {
-  for (let key in a) {
-    if (b[key] !== a[key]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
 function useInputValidity(
   inputRef: RefObject<ValidatableElement> | null,
   onValidationChange?: (value: ValidationResult) => void
@@ -215,10 +178,7 @@ function useInputValidity(
   let validation = useRef(DEFAULT_VALIDITY);
   let updateValidation = useEffectEvent((newValidation: ValidationResult) => {
     // Ignore duplicate events.
-    if (
-      validation.current.errors[0] === newValidation.errors[0] &&
-      isEqual(validation.current.validationDetails, newValidation.validationDetails)
-    ) {
+    if (isEqualValidation(validation.current, newValidation)) {
       return;
     }
 
