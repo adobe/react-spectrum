@@ -1198,14 +1198,12 @@ describe('ListView', function () {
         expect(announce).toHaveBeenLastCalledWith('Bar selected.');
         expect(announce).toHaveBeenCalledTimes(1);
 
-        fireEvent.keyDown(row, {key: 'Space'});
-        fireEvent.keyUp(row, {key: 'Space'});
+        await user.keyboard('{Space}');
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledTimes(0);
         expect(announce).toHaveBeenCalledTimes(1);
 
-        fireEvent.keyDown(row, {key: 'Enter'});
-        fireEvent.keyUp(row, {key: 'Enter'});
+        await user.keyboard('{Enter}');
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledWith('bar');
