@@ -19,7 +19,10 @@ import {SpectrumColorAreaProps} from '@react-types/color';
 
 const meta: Meta<SpectrumColorAreaProps> = {
   title: 'ColorArea',
-  component: ColorArea
+  component: ColorArea,
+  parameters: {
+    chromatic: {delay: 300}
+  }
 };
 
 export default meta;

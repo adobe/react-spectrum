@@ -35,7 +35,8 @@ let combinations = generatePowerset(
 export default {
   title: 'Button/ToggleButton',
   parameters: {
-    providerSwitcher: {status: 'positive'}
+    providerSwitcher: {status: 'positive'},
+    chromatic: {delay: 300}
   }
 };
 
