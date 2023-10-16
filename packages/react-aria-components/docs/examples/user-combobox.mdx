@@ -110,7 +110,7 @@ function ComboBoxExample() {
             {item => (
               <ListBoxItem textValue={item.name}>
                 <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
-                {item.name}
+                <span className="truncate">{item.name}</span>
               </ListBoxItem>
             )}
           </ListBox>
@@ -128,9 +128,11 @@ function ListBoxItem(props: ItemProps & {children: React.ReactNode}) {
       {({ isSelected }) => (
         <>
           <span className="flex-1 flex items-center gap-3 truncate font-normal group-selected:font-medium">{props.children}</span>
-          <span className="w-5 flex items-center text-sky-600 group-focus:text-white">
-            {isSelected && <CheckIcon size="S" />}
-          </span>
+          {isSelected &&
+            <span className="w-5 flex items-center text-sky-600 group-focus:text-white">
+              <CheckIcon size="S" />
+            </span>
+          }
         </>
       )}
     </Item>
