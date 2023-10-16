@@ -103,20 +103,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     didCommit.current = true;
   }, [state]);
 
-  useEffect(() => {
-    // After the value is committed, check if the value changed and emit a native "change" event
-    // for form validation to pick up. Wait until the end of the microtask so that all later
-    // useEffects have already run.
-    queueMicrotask(() => {
-      if (didCommit.current) {
-        didCommit.current = false;
-        if (state.numberValue !== valueOnFocus.current) {
-          inputRef.current?.dispatchEvent(new Event('change', {bubbles: true}));
-        }
-      }
-    });
-  });
-
   let {focusProps} = useFocus({
     onFocus: () => {
       valueOnFocus.current = state.numberValue;
@@ -330,6 +316,17 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     allowFocusWhenDisabled: true,
     isDisabled: !state.canDecrement,
     onPressStart: onButtonPressStart
+  });
+
+  // After the value is committed, check if the value changed and emit a native "change" event for form validation to pick up.
+  // NOTE: This useEffect must be last so that form validation effects have already run.
+  useEffect(() => {
+    if (didCommit.current) {
+      didCommit.current = false;
+      if (state.numberValue !== valueOnFocus.current) {
+        inputRef.current?.dispatchEvent(new Event('change', {bubbles: true}));
+      }
+    }
   });
 
   return {
