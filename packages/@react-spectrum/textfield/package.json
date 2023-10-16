@@ -41,6 +41,7 @@
     "@react-aria/interactions": "^3.19.0",
     "@react-aria/textfield": "^3.12.1",
     "@react-aria/utils": "^3.21.0",
+    "@react-spectrum/form": "^3.6.6",
     "@react-spectrum/label": "^3.15.0",
     "@react-spectrum/utils": "^3.11.0",
     "@react-stately/utils": "^3.8.0",

@@ -38,6 +38,7 @@
   "dependencies": {
     "@react-aria/searchfield": "^3.5.6",
     "@react-spectrum/button": "^3.14.0",
+    "@react-spectrum/form": "^3.6.6",
     "@react-spectrum/textfield": "^3.10.6",
     "@react-spectrum/utils": "^3.11.0",
     "@react-stately/searchfield": "^3.4.6",
