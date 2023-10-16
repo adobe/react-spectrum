@@ -21,7 +21,7 @@ const meta: Meta<SpectrumColorAreaProps> = {
   title: 'ColorArea',
   component: ColorArea,
   parameters: {
-    chromatic: {delay: 300}
+    chromatic: {delay: 1000}
   }
 };
 
