@@ -22,7 +22,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.8.3",
     "@react-aria/utils": "^3.21.0",
     "@react-stately/utils": "^3.8.0",
     "@react-types/shared": "^3.21.0",
