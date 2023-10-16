@@ -13,13 +13,15 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaNumberFieldProps} from '@react-types/numberfield';
 import {chain, filterDOMProps, isAndroid, isIOS, isIPhone, mergeProps, useFormReset, useId} from '@react-aria/utils';
-import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps} from '@react-types/shared';
+import {DOMAttributes, GroupDOMAttributes, TextInputDOMProps, ValidationResult} from '@react-types/shared';
 import {
   InputHTMLAttributes,
   LabelHTMLAttributes,
   RefObject,
   useCallback,
+  useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 // @ts-ignore
@@ -33,7 +35,7 @@ import {
 } from '@react-aria/i18n';
 import {useSpinButton} from '@react-aria/spinbutton';
 
-export interface NumberFieldAria {
+export interface NumberFieldAria extends ValidationResult {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the group wrapper around the input and stepper buttons. */
@@ -67,6 +69,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     autoFocus,
     validationState,
     isInvalid,
+    validate,
+    validationBehavior = 'aria',
     label,
     formatOptions,
     onBlur = () => {},
@@ -85,15 +89,38 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     decrement,
     decrementToMin,
     numberValue,
-    inputValue,
-    commit
+    inputValue
   } = state;
 
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let inputId = useId(id);
 
+  let valueOnFocus = useRef(state.numberValue);
+  let didCommit = useRef(false);
+  let commit = useCallback(() => {
+    state.commit();
+    didCommit.current = true;
+  }, [state]);
+
+  useEffect(() => {
+    // After the value is committed, check if the value changed and emit a native "change" event
+    // for form validation to pick up. Wait until the end of the microtask so that all later
+    // useEffects have already run.
+    queueMicrotask(() => {
+      if (didCommit.current) {
+        didCommit.current = false;
+        if (state.numberValue !== valueOnFocus.current) {
+          inputRef.current?.dispatchEvent(new Event('change', {bubbles: true}));
+        }
+      }
+    });
+  });
+
   let {focusProps} = useFocus({
+    onFocus: () => {
+      valueOnFocus.current = state.numberValue;
+    },
     onBlur: () => {
       // Set input value to normalized valid value
       commit();
@@ -190,10 +217,9 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
   }, [commit]);
 
-  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
+  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps, ...validation} = useFormattedTextField({
     ...otherProps,
     ...domProps,
-    name: undefined,
     label,
     autoFocus,
     isDisabled,
@@ -201,6 +227,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     isRequired,
     validationState,
     isInvalid,
+    validate: useCallback(() => validate?.(state.numberValue), [state.numberValue, validate]),
+    validationBehavior,
     value: inputValue,
     defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
@@ -235,9 +263,14 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       'aria-valuenow': null,
       'aria-valuetext': null,
       autoCorrect: 'off',
-      spellCheck: 'false'
+      spellCheck: 'false',
+      name: null
     }
   );
+
+  if (validationBehavior === 'native') {
+    inputProps['aria-required'] = undefined;
+  }
 
   let onButtonPressStart = (e) => {
     // If focus is already on the input, keep it there so we don't hide the
@@ -311,6 +344,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     incrementButtonProps,
     decrementButtonProps,
     errorMessageProps,
-    descriptionProps
+    descriptionProps,
+    ...validation
   };
 }

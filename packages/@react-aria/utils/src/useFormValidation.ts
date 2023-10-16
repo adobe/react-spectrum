@@ -53,20 +53,20 @@ export function useFormValidation<T>(props: FormValidationProps<T>, value: T, re
   useEffect(() => {
     let input = ref.current!;
     let form = input.form;
-    let onReset = () => setServerErrorCleared(true);
-    let onChange = (e) => {
+    let onChange = () => setServerErrorCleared(true);
+    let onFormChange = (e) => {
       // Clear if any input with the same name is updated (e.g. in a checkbox/radio group).
       if (e.target.name === name) {
         setServerErrorCleared(true);
       }
     };
     input.addEventListener('change', onChange);
-    form?.addEventListener('change', onChange);
-    form?.addEventListener('reset', onReset);
+    form?.addEventListener('change', onFormChange);
+    form?.addEventListener('reset', onChange);
     return () => {
       input.removeEventListener('change', onChange);
-      form?.removeEventListener('change', onChange);
-      form?.removeEventListener('reset', onReset);
+      form?.removeEventListener('change', onFormChange);
+      form?.removeEventListener('reset', onChange);
     };
   }, [ref, name]);
 

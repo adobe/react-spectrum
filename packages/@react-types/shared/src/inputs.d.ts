@@ -16,6 +16,7 @@ export type ValidationState = 'valid' | 'invalid';
 
 export type ValidationError = string | string[];
 export type ValidationErrors = Record<string, ValidationError>;
+export type ValidationFunction<T> = (value: T) => ValidationError | true | null | undefined;
 
 export interface Validation<T> {
   /** Whether user input is required on the input before form submission. */
@@ -37,7 +38,7 @@ export interface Validation<T> {
    * if `validationBehavior="native"`. For realtime validation, use the `isInvalid`
    * prop instead.
    */
-  validate?: (value: T) => ValidationError | true | null | undefined,
+  validate?: ValidationFunction<T>,
   /**
    * Handler that is called when input validation changes.
    */
