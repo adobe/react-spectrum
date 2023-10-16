@@ -44,7 +44,6 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
   let state = useContext(StepListContext);
   const isCompleted = state.isCompleted(itemKey);
   const isItemDisabled = isDisabled || !isCompleted || state.disabledKeys.has(itemKey);
-  console.log(`key: ${key}, isItemDisabled: ${isItemDisabled}`);
   let {stepProps, stepStateProps} = useStepListItem({...props, key, isDisabled: isItemDisabled}, state, ref);
 
   let {hoverProps, isHovered} = useHover(props);

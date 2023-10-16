@@ -26,7 +26,6 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
   let state = useSingleSelectListState<T>(props);
 
   let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key>(props.lastCompletedStep, props.defaultLastCompletedStep, props.onLastCompletedStepChange);
-  console.log(lastCompletedStep);
   const {setSelectedKey: realSetSelectedKey, selectedKey, collection} = state;
   const {indexMap, keysLinkedList} = useMemo(() => buildKeysMaps(collection), [collection]);
   const disabledKeys = useMemo(() => new Set(props.disabledKeys), [props.disabledKeys]);

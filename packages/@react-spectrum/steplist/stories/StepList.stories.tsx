@@ -11,12 +11,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Button} from '@react-spectrum/button';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Item} from '@react-stately/collections';
-import React from 'react';
+import React, {useMemo, useState} from 'react';
 import {SpectrumStepListProps} from '@react-types/steplist';
 import {StepList} from '../';
-import {useAsyncList} from '@react-stately/data';
+import {View} from '@react-spectrum/view';
 
 const options = [{
   key: 'details', value: 'Details'
@@ -78,56 +80,11 @@ function DefaultStepList(props: SpectrumStepListProps<object>) {
   );
 }
 
-function AsyncStepListItems(props: SpectrumStepListProps<object>) {
-  type PokeMon = { name: string };
-  let list = useAsyncList<PokeMon>({
-    async load({signal}) {
-      let res = await fetch('https://pokeapi.co/api/v2/pokemon', {signal});
-      let json = await res.json();
-      return {items: json.results.slice(0, 8)};
-    }
-  });
-  return (
-    <StepList {...props} items={list.items}>
-      {(item: PokeMon) => <Item href="adobe.com" key={item.name}>{item.name}</Item>}
-    </StepList>
-  );
-}
-
 export type DefaultStory = ComponentStoryObj<typeof DefaultStepList>;
 export type StepListStory = ComponentStoryObj<typeof StepList>;
-export type AsyncItemsStory = ComponentStoryObj<typeof AsyncStepListItems>;
 
 export const Default: DefaultStory = {
   render: (args) => <DefaultStepList {...args} />
-};
-
-export const Vertical: StepListStory = {
-  args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
-    orientation: 'vertical'
-  },
-  name: 'Vertical'
-};
-
-export const IsReadOnly: DefaultStory = {
-  args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
-    defaultSelectedKey: options[1].key,
-    defaultLastCompletedStep: options[1].key,
-    isReadOnly: true
-  },
-  name: 'isReadOnly'
-};
-
-export const Disabled: StepListStory = {
-  args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
-    defaultSelectedKey: options[1].key,
-    defaultLastCompletedStep: options[1].key,
-    isEmphasized: true
-  },
-  name: 'isEmphasized'
 };
 
 export const DisabledKeys: StepListStory = {
@@ -140,66 +97,56 @@ export const DisabledKeys: StepListStory = {
   name: 'disabledKeys'
 };
 
-export const SelectedKey: StepListStory = {
-  args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
-    selectedKey: options[1].key
-  },
-  name: 'selectedKey'
+export const WithButtonsDefault: StepListStory = {
+  render: (args) => <WithButtons {...args} />,
+  name: 'With buttons'
 };
 
-export const AsyncItems: AsyncItemsStory = {
-  render: (args) => <AsyncStepListItems {...args} />,
-  name: 'Async Items'
+export const WithButtonsControlled: StepListStory = {
+  render: (args) => <WithButtons lastCompletedStep="select-offers" {...args} />,
+  name: 'With buttons (Controlled)'
 };
 
-export const SmallSize: StepListStory = {
-  args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
-    size: 'S'
-  },
-  name: 'Small Size'
+export const WithButtonsDefaultCompletedStep: StepListStory = {
+  render: (args) => <WithButtons defaultLastCompletedStep="select-offers" {...args} />,
+  name: 'With buttons (Default completed step)'
 };
 
-export const SmallSizeVertical: StepListStory = {
-  args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
-    orientation: 'vertical',
-    size: 'S'
-  },
-  name: 'Small Size Vertical'
-};
+function WithButtons(args) {
+  let [stepNumber, setStepNumber] = useState(1);
+  const keys = useMemo(() => options.map(o => o.key), []);
 
-export const LargeSize: StepListStory = {
-  args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
-    size: 'L'
-  },
-  name: 'Large Size'
-};
-
-export const LargeSizeVertical: StepListStory = {
-  args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
-    orientation: 'vertical',
-    size: 'L'
-  },
-  name: 'Large Size Vertical'
-};
-
-export const ExtraLargeSize: StepListStory = {
-  args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
-    size: 'XL'
-  },
-  name: 'Extra Large Size'
-};
-
-export const ExtraLargeSizeVertical: StepListStory = {
-  args: {
-    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
-    orientation: 'vertical',
-    size: 'XL'
-  },
-  name: 'Extra Large Size Vertical'
-};
+  return (
+    <View>
+      <StepList
+        {...args}
+        onSelectionChange={(key) => {
+          console.log(key);
+          let index = options.findIndex(o => o.key === key);
+          console.log(index);
+          setStepNumber(Math.max(index + 1, 1));
+        }}
+        selectedKey={keys[stepNumber - 1]}>
+        {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+      </StepList>
+      <View marginTop="size-300">
+        <ButtonGroup>
+          <Button
+            variant="secondary"
+            onPress={() => {
+              setStepNumber(Math.max(stepNumber - 1, 1));
+            }}>Back</Button>
+          <Button
+            isDisabled={args.lastCompletedStep && keys.indexOf(args.lastCompletedStep) === stepNumber - 1}
+            variant="cta"
+            onPress={() => {
+              const newStepNumber = stepNumber + 1;
+              setStepNumber(Math.min(newStepNumber, keys.length));
+            }}>
+            Next
+          </Button>
+        </ButtonGroup>
+      </View>
+    </View>
+  );
+}

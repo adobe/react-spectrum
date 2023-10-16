@@ -31,23 +31,6 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
   let {listProps} = useStepList(props, state, domRef);
 
   const {isDisabled, isEmphasized, isReadOnly} = props;
-  const stepListItems = [...state.collection].map((item) => (
-    <li
-      key={item.key}
-      className={
-        classNames(
-          styles,
-          'spectrum-Steplist-item'
-        )
-      }>
-      <StepListItem
-        key={item.key}
-        isDisabled={isDisabled}
-        isEmphasized={isEmphasized}
-        isReadOnly={isReadOnly}
-        item={item} />
-    </li>)
-  );
   return (
     <ol
       {...listProps}
@@ -62,7 +45,23 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
         'spectrum-Steplist--vertical': orientation === 'vertical'
       })}>
       <StepListContext.Provider value={state}>
-        {stepListItems}
+        {[...state.collection].map((item) => (
+          <li
+            key={item.key}
+            className={
+              classNames(
+                styles,
+                'spectrum-Steplist-item'
+              )
+            }>
+            <StepListItem
+              key={item.key}
+              isDisabled={isDisabled}
+              isEmphasized={isEmphasized}
+              isReadOnly={isReadOnly}
+              item={item} />
+          </li>)
+        )}
       </StepListContext.Provider>
     </ol>
   );
