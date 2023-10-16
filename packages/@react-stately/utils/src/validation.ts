@@ -33,12 +33,13 @@ export const CUSTOM_VALIDITY_STATE: ValidityState = {
   valid: false
 };
 
-export function isEqualValidation(a: ValidationResult, b: ValidationResult): boolean {
+export function isEqualValidation(a: ValidationResult | null, b: ValidationResult | null): boolean {
   if (a === b) {
     return true;
   }
 
-  return a.isInvalid === b.isInvalid
+  return a && b
+    && a.isInvalid === b.isInvalid
     && a.errors.length === b.errors.length
     && a.errors.every((a, i) => a === b.errors[i])
     && Object.entries(a.validationDetails).every(([k, v]) => b.validationDetails[k] === v);

@@ -113,13 +113,13 @@ export function useFormValidation<T>(props: FormValidationProps<T>, value: T, re
       }
 
       // Report server errors immediately.
-      if (serverError !== lastError.current && ref.current) {
+      if (!isEqualValidation(serverError, lastError.current) && ref.current) {
         lastError.current = serverError;
         updateNativeValidity(getNativeValidity(ref.current));
       }
     } else {
       let e = serverError || clientError || DEFAULT_VALIDITY;
-      if (!controlledError && e !== lastError.current) {
+      if (!controlledError && !isEqualValidation(e, lastError.current)) {
         lastError.current = e;
         onValidationChange?.(e);
       }

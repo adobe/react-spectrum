@@ -17,14 +17,17 @@ import {
   LabelHTMLAttributes,
   RefObject,
   useCallback,
+  useEffect,
+  useRef,
   useState
 } from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';
+import {ValidationResult} from '@react-types/shared';
 
-export interface ColorFieldAria {
+export interface ColorFieldAria extends ValidationResult {
   /** Props for the label element. */
   labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
@@ -43,13 +46,14 @@ export function useColorField(
   let {
     isDisabled,
     isReadOnly,
-    isRequired
+    isRequired,
+    validate,
+    validationBehavior = 'aria'
   } = props;
 
   let {
     colorValue,
     inputValue,
-    commit,
     increment,
     decrement,
     incrementToMax,
@@ -96,27 +100,56 @@ export function useColorField(
     }
   };
 
-  let {labelProps, inputProps} = useFormattedTextField(
+  let {labelProps, inputProps, ...validation} = useFormattedTextField(
     mergeProps(props, {
       id: inputId,
       value: inputValue,
       defaultValue: undefined,
+      validate: useCallback(() => validate?.(state.colorValue), [state.colorValue, validate]),
       type: 'text',
       autoComplete: 'off',
       onChange
     }), state, ref);
 
+  let valueOnFocus = useRef(state.colorValue);
+  let didCommit = useRef(false);
+  let commit = useCallback(() => {
+    state.commit();
+    didCommit.current = true;
+  }, [state]);
+
+  inputProps = mergeProps(inputProps, spinButtonProps, focusWithinProps, {
+    role: 'textbox',
+    'aria-valuemax': null,
+    'aria-valuemin': null,
+    'aria-valuenow': null,
+    'aria-valuetext': null,
+    autoCorrect: 'off',
+    spellCheck: 'false',
+    onFocus: () => {
+      valueOnFocus.current = state.colorValue;
+    },
+    onBlur: commit
+  });
+
+  // After the value is committed, check if the value changed and emit a native "change" event for form validation to pick up.
+  // NOTE: This useEffect must be last so that form validation effects have already run.
+  useEffect(() => {
+    if (didCommit.current) {
+      didCommit.current = false;
+      if (state.colorValue !== valueOnFocus.current) {
+        ref.current?.dispatchEvent(new Event('change', {bubbles: true}));
+      }
+    }
+  });
+
+  if (validationBehavior === 'native') {
+    inputProps['aria-required'] = undefined;
+  }
+
   return {
     labelProps,
-    inputProps: mergeProps(inputProps, spinButtonProps, focusWithinProps, {
-      role: 'textbox',
-      'aria-valuemax': null,
-      'aria-valuemin': null,
-      'aria-valuenow': null,
-      'aria-valuetext': null,
-      autoCorrect: 'off',
-      spellCheck: 'false',
-      onBlur: commit
-    })
+    inputProps,
+    ...validation
   };
 }
