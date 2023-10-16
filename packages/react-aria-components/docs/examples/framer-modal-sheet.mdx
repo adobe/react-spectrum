@@ -45,12 +45,6 @@ body > div {
   transform-origin: center 0;
   overflow: auto;
   height: 100vh;
-
-  /* main {
-    min-height: unset;
-    height: calc(100% - var(--margin-top));
-    overflow: auto;
-  } */
 }
 ```
 
@@ -130,7 +124,7 @@ function Sheet() {
             className="fixed inset-0 z-10"
             style={{ backgroundColor: bg as any }}>
             <MotionModal
-              className="bg-[--page-background] absolute bottom-0 w-full rounded-t-xl shadow-lg"
+              className="bg-[--page-background] absolute bottom-0 w-full rounded-t-xl shadow-lg will-change-transform"
               initial={{ y: h }}
               animate={{ y: 0 }}
               exit={{ y: h }}
