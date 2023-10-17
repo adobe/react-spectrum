@@ -48,20 +48,25 @@ async function build() {
           name.startsWith('postcss') ||
           name.startsWith('@adobe') ||
           name === 'sharp' ||
-          name === 'recast'
+          name === 'recast' ||
+          name === 'framer-motion' ||
+          name === 'tailwindcss-animate' ||
+          name === 'tailwindcss' ||
+          name === 'autoprefixer'
         )
     ),
     dependencies: {
       '@adobe/react-spectrum': 'latest',
       'react-aria': 'latest',
       'react-stately': 'latest',
-      'react-aria-components': 'latest'
+      'react-aria-components': 'latest',
+      'tailwindcss-react-aria-components': 'latest'
     },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
-      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
+      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package'
     },
     '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
