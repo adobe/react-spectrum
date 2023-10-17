@@ -84,9 +84,7 @@ import {GridList, Item, Button} from 'react-aria-components';
 ```
 
 ```css
-@layer gridlist;
-@layer gridlist.layout, gridlist.hcm;
-@layer gridlist.layout {
+@layer gridlist {
   .react-aria-GridList {
     --highlight-background: slateblue;
     --highlight-foreground: white;
@@ -231,9 +229,7 @@ import {GridList, Item, Button} from 'react-aria-components';
       --background-color: var(--highlight-background);
     }
   }
-}
 
-@layer gridlist.hcm {
   @media (forced-colors: active) {
     .react-aria-GridList {
       forced-color-adjust: none;

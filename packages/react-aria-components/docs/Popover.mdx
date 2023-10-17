@@ -64,9 +64,7 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 ```
 
 ```css
-@layer popover;
-@layer popover.layout, popover.hcm;
-@layer popover.layout {
+@layer popover {
   .react-aria-Popover {
     --background-color: var(--page-background);
     --border-color: var(--spectrum-global-color-gray-400);
@@ -126,6 +124,13 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
   .react-aria-Dialog {
     outline: none;
   }
+
+  @media (forced-colors: active) {
+    .react-aria-Popover {
+      --background-color: Canvas;
+      --border-color: ButtonBorder;
+    }
+  }
 }
 
 @keyframes slide {
@@ -137,15 +142,6 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
   to {
     transform: translateY(0);
     opacity: 1;
-  }
-}
-
-@layer popover.hcm {
-  @media (forced-colors: active) {
-    .react-aria-Popover {
-      --background-color: Canvas;
-      --border-color: ButtonBorder;
-    }
   }
 }
 ```

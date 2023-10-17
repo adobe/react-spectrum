@@ -76,9 +76,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 ```
 
 ```css
-@layer select;
-@layer select.layout, select.hcm;
-@layer select.layout {
+@layer select {
   .react-aria-Select {
     --border-color: var(--spectrum-alias-border-color);
     --border-color-disabled: var(--spectrum-alias-border-color-disabled);
@@ -204,21 +202,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       }
     }
   }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@layer select.hcm {
   @media (forced-colors: active) {
     .react-aria-Select {
       --border-color: ButtonBorder;
@@ -231,6 +214,18 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
         background: transparent;
       }
     }
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 ```

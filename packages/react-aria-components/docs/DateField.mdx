@@ -57,9 +57,7 @@ import {DateField, Label, DateInput, DateSegment} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer datefield;
-@layer datefield.layout, datefield.hcm;
-@layer datefield.layout {
+@layer datefield {
   .react-aria-DateInput {
     --field-border: var(--spectrum-global-color-gray-400);
     --field-background: var(--spectrum-global-color-gray-50);
@@ -130,9 +128,7 @@ import {DateField, Label, DateInput, DateSegment} from 'react-aria-components';
       color: var(--text-color-invalid);
     }
   }
-}
 
-@layer datefield.hcm {
   @media (forced-colors: active) {
     .react-aria-DateField {
       --text-color-invalid: LinkText;

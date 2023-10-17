@@ -77,9 +77,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 ```
 
 ```css
-@layer combobox;
-@layer combobox.layout, combobox.hcm;
-@layer combobox.layout {
+@layer combobox {
   .react-aria-ComboBox {
     --border-color: var(--spectrum-alias-border-color);
     --border-color-disabled: var(--spectrum-alias-border-color-disabled);
@@ -183,21 +181,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
       }
     }
   }
-}
 
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@layer combobox.hcm {
   @media (forced-colors: active) {
     .react-aria-ComboBox {
       --border-color: ButtonBorder;
@@ -212,6 +196,18 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
         }
       }
     }
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 ```

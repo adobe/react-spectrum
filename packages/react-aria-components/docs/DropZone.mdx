@@ -66,9 +66,7 @@ function Example() {
 ```
 
 ```css
-@layer dropzone;
-@layer dropzone.layout, dropzone.hcm;
-@layer dropzone.layout {
+@layer dropzone {
   .react-aria-DropZone {
     --border-color: var(--spectrum-alias-border-color);
     --border-color-pressed: var(--spectrum-alias-border-color-focus);
@@ -102,9 +100,7 @@ function Example() {
       box-shadow: 0 0 0 1px var(--focus-ring-color);
     }
   }
-}
 
-@layer dropzone.hcm {
   @media (forced-colors: active) {
     .react-aria-DropZone {
       forced-color-adjust: none;

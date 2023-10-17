@@ -57,9 +57,7 @@ import {Meter, Label} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer meter;
-@layer meter.layout, meter.hcm;
-@layer meter.layout {
+@layer meter {
   .react-aria-Meter {
     --bar-color: var(--spectrum-global-color-gray-500);
     --fill-color: forestgreen;
@@ -90,9 +88,7 @@ import {Meter, Label} from 'react-aria-components';
       height: 100%;
     }
   }
-}
 
-@layer meter.hcm {
   @media (forced-colors: active) {
     .react-aria-Meter {
       --bar-color: ButtonFace;

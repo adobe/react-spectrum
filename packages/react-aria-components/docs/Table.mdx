@@ -97,9 +97,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 ```
 
 ```css
-@layer table;
-@layer table.layout, table.hcm;
-@layer table.layout {
+@layer table {
   .react-aria-Table {
     --highlight-background: slateblue;
     --highlight-foreground: white;
@@ -264,9 +262,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     --checkmark-color: slateblue;
     --background-color: var(--highlight-background);
   }
-}
 
-@layer table.hcm {
   @media (forced-colors: active) {
     .react-aria-Table {
       forced-color-adjust: none;

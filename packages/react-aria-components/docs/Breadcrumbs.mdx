@@ -56,9 +56,7 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer breadcrumbs;
-@layer breadcrumbs.layout, breadcrumbs.hcm;
-@layer breadcrumbs.layout {
+@layer breadcrumbs {
   .react-aria-Breadcrumbs {
     display: flex;
     align-items: center;
@@ -112,9 +110,7 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
       }
     }
   }
-}
 
-@breadcrumbs.hcm {
   @media (forced-colors: active) {
     .react-aria-Link {
       --focus-ring-color: Highlight;

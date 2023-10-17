@@ -74,9 +74,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 ```
 
 ```css
-@layer tabs;
-@layer tabs.layout, tabs.hcm;
-@layer tabs.layout {
+@layer tabs {
   .react-aria-Tabs {
     --highlight-color: slateblue;
     --text-color: var(--spectrum-global-color-gray-700);
@@ -160,9 +158,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
       box-shadow: inset 0 0 0 2px var(--highlight-color);
     }
   }
-}
 
-@layer tabs.hcm {
   @media (forced-colors: active) {
     .react-aria-Tabs {
       forced-color-adjust: none;

@@ -63,9 +63,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
 ```
 
 ```css
-@layer slider;
-@layer slider.layout, slider.hcm;
-@layer slider.layout {
+@layer slider {
   .react-aria-Slider {
     --label-color: var(--spectrum-alias-text-color);
     --track-color: gray;
@@ -170,9 +168,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
       }
     }
   }
-}
 
-@layer slider.hcm {
   @media (forced-colors: active) {
     .react-aria-Slider {
       forced-color-adjust: none;

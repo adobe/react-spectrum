@@ -61,9 +61,7 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
 ```
 
 ```css
-@layer tooltip;
-@layer tooltip.layout, tooltip.hcm;
-@layer tooltip.layout {
+@layer tooltip {
   .react-aria-Tooltip {
     box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
     border-radius: 4px;
@@ -115,21 +113,6 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
       animation: slide 200ms reverse ease-in;
     }
   }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@layer tooltip.hcm {
   @media (forced-colors: active) {
     .react-aria-Tooltip {
       border: 1px solid ButtonBorder;
@@ -141,6 +124,18 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
         stroke: ButtonBorder;
       }
     }
+  }
+}
+
+@keyframes slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 ```

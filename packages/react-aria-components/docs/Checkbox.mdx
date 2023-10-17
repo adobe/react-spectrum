@@ -57,9 +57,7 @@ import {Checkbox} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer checkbox;
-@layer checkbox.layout, checkbox.hcm;
-@layer checkbox.layout {
+@layer checkbox {
   .react-aria-Checkbox {
     --label-color: var(--spectrum-alias-text-color);
     --deselected-color: gray;
@@ -128,8 +126,7 @@ import {Checkbox} from 'react-aria-components';
       }
     }
   }
-}
-@layer checkbox.hcm {
+
   @media (forced-colors: active) {
     .react-aria-Checkbox {
       forced-color-adjust: none;
@@ -266,7 +263,7 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer checkbox.layout {
+@layer checkbox {
   .react-aria-Checkbox {
     &[data-invalid] {
       .checkbox {
@@ -305,7 +302,7 @@ Checkboxes can be disabled using the `isDisabled` prop.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer checkbox.layout {
+@layer checkbox {
   .react-aria-Checkbox {
     &[data-disabled] {
       opacity: 0.4;

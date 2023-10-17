@@ -65,9 +65,7 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
 ```
 
 ```css
-@layer taggroup;
-@layer taggroup.layout, taggroup.hcm;
-@layer taggroup.layout {
+@layer taggroup {
   .react-aria-TagGroup {
     --border-color: var(--spectrum-gray-600);
     --border-color-hovered: var(--spectrum-gray-900);
@@ -146,9 +144,7 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
       }
     }
   }
-}
 
-@layer taggroup.hcm {
   @media (forced-colors: active) {
     .react-aria-TagGroup {
       forced-color-adjust: none;

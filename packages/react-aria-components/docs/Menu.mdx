@@ -69,9 +69,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
 ```
 
 ```css
-@layer menu;
-@layer menu.layout, menu.hcm;
-@layer menu.layout {
+@layer menu {
   .react-aria-Menu {
     --highlight-background: slateblue;
     --highlight-foreground: white;
@@ -174,9 +172,7 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
       padding: 0px;
     }
   }
-}
 
-@layer menu.hcm {
   @media (forced-colors: active) {
     .react-aria-Menu {
       forced-color-adjust: none;

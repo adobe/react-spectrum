@@ -58,9 +58,7 @@ import {ProgressBar, Label} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer progressbar;
-@layer progressbar.layout, progressbar.hcm;
-@layer progressbar.layout {
+@layer progressbar {
   .react-aria-ProgressBar {
     --bar-color: var(--spectrum-global-color-gray-500);
     --circle-color: var(--bar-color);
@@ -100,19 +98,6 @@ import {ProgressBar, Label} from 'react-aria-components';
       }
     }
   }
-
-  @keyframes indeterminate {
-    from {
-      transform: translateX(-100%);
-    }
-
-    to {
-      transform: translateX(250px);
-    }
-  }
-}
-
-@layer progressbar.hcm {
   @media (forced-colors: active) {
     .react-aria-ProgressBar {
       --bar-color: ButtonFace;
@@ -124,6 +109,16 @@ import {ProgressBar, Label} from 'react-aria-components';
         box-sizing: border-box;
       }
     }
+  }
+}
+
+@keyframes indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(250px);
   }
 }
 ```

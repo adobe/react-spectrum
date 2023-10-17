@@ -50,9 +50,7 @@ import {Button} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer button;
-@layer button.theme, button.hcm;
-@layer button.theme {
+@layer button {
   .react-aria-Button {
     --border-color: var(--spectrum-alias-border-color);
     --border-color-pressed: var(--spectrum-alias-border-color-down);
@@ -92,9 +90,7 @@ import {Button} from 'react-aria-components';
       color: var(--text-color-disabled);
     }
   }
-}
 
-@layer button.hcm {
   @media (forced-colors: active) {
     .react-aria-Button {
       forced-color-adjust: none;

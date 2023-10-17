@@ -57,9 +57,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer searchfield;
-@layer searchfield.layout, searchfield.hcm;
-@layer searchfield.layout {
+@layer searchfield {
   .react-aria-SearchField {
     --field-border: var(--spectrum-alias-border-color);
     --field-border-disabled: var(--spectrum-alias-border-color-disabled);
@@ -142,9 +140,7 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
       display: none;
     }
   }
-}
 
-@layer searchfield.hcm {
   @media (forced-colors: active) {
     .react-aria-SearchField {
       --field-border: ButtonBorder;

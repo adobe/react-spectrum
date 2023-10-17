@@ -50,9 +50,7 @@ import {ToggleButton} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer togglebutton;
-@layer togglebutton.layout, togglebutton.hcm;
-@layer togglebutton.layout {
+@layer togglebutton {
   .react-aria-ToggleButton {
     --deselected-border-color: var(--spectrum-global-color-gray-400);
     --deselected-border-color-pressed: var(--spectrum-global-color-gray-500);
@@ -101,9 +99,7 @@ import {ToggleButton} from 'react-aria-components';
       opacity: 0.4;
     }
   }
-}
 
-@layer togglebutton.hcm {
   @media (forced-colors: active) {
     .react-aria-ToggleButton {
       forced-color-adjust: none;

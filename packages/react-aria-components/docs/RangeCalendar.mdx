@@ -64,9 +64,7 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
 ```
 
 ```css
-@layer rangecalendar;
-@layer rangecalendar.layout, rangecalendar.hcm;
-@layer rangecalendar.layout {
+@layer rangecalendar {
   .react-aria-RangeCalendar {
     --highlight-background: slateblue;
     --highlight-foreground: white;
@@ -172,9 +170,7 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
       color: var(--text-color-invalid);
     }
   }
-}
 
-@layer rangecalendar.hcm {
   @media (forced-colors: active) {
     .react-aria-RangeCalendar {
       forced-color-adjust: none;

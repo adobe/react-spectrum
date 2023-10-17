@@ -52,9 +52,7 @@ import {Link} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer link;
-@layer link.layout, link.hcm;
-@layer link.layout {
+@layer link {
   .react-aria-Link {
     --focus-ring-color: slateblue;
     --text-color: var(--spectrum-global-color-blue-600);
@@ -90,9 +88,7 @@ import {Link} from 'react-aria-components';
       border: 2px solid var(--focus-ring-color);
     }
   }
-}
 
-@layer link.hcm {
   @media (forced-colors: active) {
     .react-aria-Link {
       --focus-ring-color: Highlight;

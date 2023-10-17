@@ -64,9 +64,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
 ```
 
 ```css
-@layer calendar;
-@layer calendar.layout, calendar.hcm;
-@layer calendar.layout {
+@layer calendar {
   .react-aria-Calendar {
     --highlight-background: slateblue;
     --highlight-foreground: white;
@@ -153,9 +151,7 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
       color: var(--text-color-invalid);
     }
   }
-}
 
-@layer calendar.hcm {
   @media (forced-colors: active) {
     .react-aria-Calendar {
       forced-color-adjust: none;

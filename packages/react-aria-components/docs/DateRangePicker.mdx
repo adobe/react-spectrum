@@ -88,9 +88,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 ```
 
 ```css
-@layer daterangepicker;
-@layer daterangepicker.layout, daterangepicker.hcm;
-@layer daterangepicker.layout {
+@layer daterangepicker {
   .react-aria-DateRangePicker {
     --field-border: var(--spectrum-global-color-gray-400);
     --field-background: var(--spectrum-global-color-gray-50);
@@ -185,9 +183,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     padding: unset;
     border: unset;
   }
-}
 
-@layer daterangepicker.hcm {
   @media (forced-colors: active) {
     .react-aria-DateRangePicker {
       forced-color-adjust: none;

@@ -53,9 +53,7 @@ import {TextField, Label, Group, Input, Button} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer group;
-@layer group.layout, group.hcm;
-@layer group.layout {
+@layer group {
   .react-aria-Group {
     --field-border: var(--spectrum-alias-border-color);
     --field-border-hovered: var(--spectrum-alias-border-color-hover);
@@ -139,9 +137,7 @@ import {TextField, Label, Group, Input, Button} from 'react-aria-components';
       box-shadow: 0 0 0 1px var(--focus-ring-color);
     }
   }
-}
 
-@layer group.hcm {
   @media (forced-colors: active) {
     .react-aria-TextField {
       --field-border: ButtonBorder;

@@ -56,9 +56,7 @@ import {TextField, Label, Input} from 'react-aria-components';
 ```
 
 ```css
-@layer textfield;
-@layer textfield.layout, textfield.hcm;
-@layer textfield.layout {
+@layer textfield {
   .react-aria-TextField {
     --field-border: var(--spectrum-alias-border-color);
     --field-border-disabled: var(--spectrum-alias-border-color-disabled);
@@ -107,9 +105,7 @@ import {TextField, Label, Input} from 'react-aria-components';
       color: var(--invalid-color);
     }
   }
-}
 
-@layer textfield.hcm {
   @media (forced-colors: active) {
     .react-aria-TextField {
       --field-border: ButtonBorder;

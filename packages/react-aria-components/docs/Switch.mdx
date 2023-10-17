@@ -54,9 +54,7 @@ import {Switch} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer switch;
-@layer switch.layout, switch.hcm;
-@layer switch.layout {
+@layer switch {
   .react-aria-Switch {
     --label-color: var(--spectrum-alias-text-color);
     --deselected-color: gray;
@@ -128,9 +126,7 @@ import {Switch} from 'react-aria-components';
       opacity: 0.4;
     }
   }
-}
 
-@layer switch.hcm {
   @media (forced-colors: active) {
     .react-aria-Switch {
       forced-color-adjust: none;

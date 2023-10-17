@@ -66,9 +66,7 @@ import {ListBox, Item} from 'react-aria-components';
 ```
 
 ```css
-@layer listbox;
-@layer listbox.layout, listbox.hcm;
-@layer listbox.layout {
+@layer listbox {
   .react-aria-ListBox {
     --highlight-background: slateblue;
     --highlight-foreground: white;
@@ -150,9 +148,7 @@ import {ListBox, Item} from 'react-aria-components';
       }
     }
   }
-}
 
-@layer listbox.hcm {
   @media (forced-colors: active) {
     .react-aria-ListBox {
       forced-color-adjust: none;

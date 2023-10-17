@@ -58,9 +58,7 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer radiogroup;
-@layer radiogroup.layout, radiogroup.hcm;
-@layer radiogroup.layout {
+@layer radiogroup {
   .react-aria-RadioGroup {
     display: flex;
     flex-direction: column;
@@ -142,9 +140,7 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
       opacity: 0.4;
     }
   }
-}
 
-@layer radiogroup.hcm {
   @media (forced-colors: active) {
     .react-aria-Radio {
       forced-color-adjust: none;
