@@ -23,8 +23,6 @@ import {StepList} from '../';
 import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
 
-
-
 const options = [{
   key: 'details', value: 'Details'
 }, {
