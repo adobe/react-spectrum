@@ -102,7 +102,6 @@ function Input(props, ref) {
     'spectrum-Textfield-input',
     {
       'is-disabled': isDisabled,
-      'is-invalid': isInvalid,
       'is-focused': isFocused
     },
     classNames(datepickerStyles, 'react-spectrum-DateField-Input'),
