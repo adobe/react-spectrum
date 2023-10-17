@@ -107,7 +107,7 @@ export const Default: ToolbarStory = {
   args: {
     children: (
       <>
-        <ActionGroup items={items1} aria-label="manage">
+        <ActionGroup items={items1} aria-label="manage" selectionMode="single">
           {(item) => {
             let Icon = item.icon;
             return (
@@ -119,7 +119,7 @@ export const Default: ToolbarStory = {
           }}
         </ActionGroup>
         <Divider />
-        <ActionGroup items={items2} aria-label="view">
+        <ActionGroup items={items2} aria-label="view" selectionMode="single">
           {(item) => {
             let Icon = item.icon;
             return <Item key={item.id} textValue={item.textValue}><Icon aria-label={item.textValue} /></Item>;

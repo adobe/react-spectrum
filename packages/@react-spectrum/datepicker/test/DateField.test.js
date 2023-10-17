@@ -39,6 +39,7 @@ describe('DateField', function () {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
   });
   describe('labeling', function () {
     it('should support labeling', function () {
@@ -221,6 +222,21 @@ describe('DateField', function () {
       for (let segment of segments) {
         expect(segment).toHaveAttribute('aria-disabled', 'true');
       }
+    });
+
+    it('Shows as invalid if an unavailable date is given', async function () {
+      let tree = render(
+        <DateField
+          aria-label="Enter date between jan 1 and jan 8, 1980"
+          isDateUnavailable={(date) => {
+            return date.compare(new CalendarDate(1980, 1, 1)) >= 0
+              && date.compare(new CalendarDate(1980, 1, 8)) <= 0;
+          }}
+          errorMessage="Date unavailable." />
+      );
+      await user.tab();
+      await user.keyboard('01011980');
+      expect(tree.getByText('Date unavailable.')).toBeInTheDocument();
     });
   });
 
