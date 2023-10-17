@@ -31,13 +31,14 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
   let {listProps} = useStepList(props, state, domRef);
 
   const {isDisabled, isEmphasized, isReadOnly} = props;
+
   return (
     <ol
       {...listProps}
       {...styleProps}
       ref={domRef}
       className={classNames(styles, 'spectrum-Steplist', styleProps.className, {
-        'spectrum-Steplist--interactive': !isReadOnly,
+        'spectrum-Steplist--interactive': !isReadOnly && !isDisabled,
         'spectrum-Steplist--small': size === 'S',
         'spectrum-Steplist--medium': size === 'M',
         'spectrum-Steplist--large': size === 'L',

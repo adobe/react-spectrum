@@ -13,20 +13,19 @@ governing permissions and limitations under the License.
 .spectrum-Steplist {
   /* Default Label Style is 'incomplete' */
   .spectrum-Steplist-label {
-    color: var(--spectrum-global-color-gray-600);
+    color: var(--spectrum-steplist-default-color);
   }
 
   /* Default Marker Style is 'incomplete' */
   .spectrum-Steplist-marker {
-    border-color: var(--spectrum-steplist-incomplete-marker-color);
+    border-color: var(--spectrum-steplist-border-color);
     color: transparent;
-    
   }
 
   /* Default Line Style is 'incomplete' */
   .spectrum-Steplist-segment {
     .spectrum-Steplist-chevron {
-      color: var(--spectrum-steplist-incomplete-marker-color);
+      color: var(--spectrum-steplist-border-color);
     }
   }
 
@@ -34,21 +33,18 @@ governing permissions and limitations under the License.
     .spectrum-Steplist-link {
       /* Step Completed */
       &.is-completed {
-        .spectrum-Steplist-label {
-          color: var(--spectrum-global-color-gray-600);
-        }
         .spectrum-Steplist-marker {
-          background-color: var(--spectrum-steplist-complete-marker-color)
+          background-color: var(--spectrum-steplist-default-color)
         }
       }
 
       /* Step Selected aka Current */
       &.is-selected {
         .spectrum-Steplist-label {
-          color: var(--spectrum-steplist-current-label-text-color)
+          color: var(--spectrum-steplist-current-color)
         }
         .spectrum-Steplist-marker {
-          background-color: var(--spectrum-steplist-current-marker-color)
+          background-color: var(--spectrum-steplist-current-color)
         }
       }
 
@@ -58,47 +54,34 @@ governing permissions and limitations under the License.
           color: var(--spectrum-global-color-gray-50);
         }
       }
-      &.is-hovered {
-        &.is-completed {
-          .spectrum-Steplist-marker {
-            color: var(--spectrum-global-color-gray-50);
-          }
-        }
-      }
 
-      &.is-read-only {
-        .spectrum-Steplist-label {
-          color: var(--spectrum-steplist-disabled-label-color);
-        }
-
-        .spectrum-Steplist-marker {
-          border-color: var(--spectrum-steplist-disabled-marker-color);
-        }
-      }
-      &.is-read-only.is-completed {
-        .spectrum-Steplist-marker {
-          background-color: var(--spectrum-steplist-disabled-marker-color);
-        }
-      }
       /* Steplist emphasized*/
       &.is-emphasized {
         .spectrum-Steplist-label {
-          color: var(--spectrum-global-color-blue-400)
+          color: var(--spectrum-steplist-emphasized-color)
         }
         .spectrum-Steplist-marker {
-          background-color: var(--spectrum-global-color-blue-400)
+          background-color: var(--spectrum-steplist-emphasized-color)
         }
       }
       &.focus-ring {
         outline: none;
 
-        .spectrum-Steplist-label {
-          color: var(--spectrum-global-color-blue-400);
-        }
         .spectrum-Steplist-marker {
-          outline: solid 2px var(--spectrum-global-color-blue-400);
+          outline: solid 2px var(--spectrum-steplist-emphasized-color);
           outline-offset: 2px;
           z-index: 999;
+        }
+      }
+
+      &.is-disabled {
+        .spectrum-Steplist-label {
+          color: var(--spectrum-alias-text-color-disabled);
+        }
+        &.is-completed {
+          .spectrum-Steplist-marker {
+            background-color: var(--spectrum-steplist-disabled-marker-color);
+          }
         }
       }
     }
@@ -107,18 +90,25 @@ governing permissions and limitations under the License.
   /* Interactivity Styles */
   &.spectrum-Steplist--interactive {
     .spectrum-Steplist-link {
+      &.is-hovered {
+        &.is-completed:not(.is-disabled) {
+          .spectrum-Steplist-label {
+            color: var(--spectrum-steplist-current-color)
+          }
+          .spectrum-Steplist-marker {
+            background-color: var(--spectrum-steplist-current-color);
+            color: var(--spectrum-global-color-gray-50);
+          }
+        }
+      }
       /* Step Focused */
       &.is-keyboard-focused {
         .spectrum-Steplist-marker-focus {
           border-color: var(--spectrum-steplist-current-marker-color-key-focus)
         }
       }
-      &.is-hovered {
-        &.is-completed {
-          .spectrum-Steplist-marker {
-            background-color: var(--spectrum-steplist-current-marker-color)
-          }
-        }
+      &:not(.is-selected):not([aria-disabled]) {
+        cursor: pointer;
       }
       /* Steplist emphasized*/
       &.is-emphasized {

@@ -13,15 +13,18 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 :root {
-  --spectrum-steplist-incomplete-marker-color: var(--spectrum-global-color-gray-400);
-  /* The color of the complete marker */
-  --spectrum-steplist-complete-marker-color: var(--spectrum-global-color-gray-600);
-  /* The color of the selected marker */
-  --spectrum-steplist-current-marker-color: var(--spectrum-global-color-gray-800);
-  /* The readonly label color */
-  --spectrum-steplist-read-only-label-color: var(--spectrum-global-color-gray-400);
-  /* The readonly marker color */
-  --spectrum-steplist-read-only-marker-color: var(--spectrum-global-color-gray-300);
+  /* The color of step text */
+  --spectrum-steplist-default-color: var(--spectrum-global-color-gray-600);
+  /* The default border color */
+  --spectrum-steplist-border-color: var(--spectrum-global-color-gray-400);
+  /* The color of the selected step */
+  --spectrum-steplist-current-color: var(--spectrum-global-color-gray-800);
+  /* The color of the emphasized step */
+  --spectrum-steplist-emphasized-color: var(--spectrum-global-color-blue-400);
+  /* The color of the disabled step label */
+  --spectrum-steplist-disabled-label-color: var(--spectrum-global-color-gray-400);
+  /* The color of the disabled step marker */
+  --spectrum-steplist-disabled-marker-color: var(--spectrum-global-color-gray-300);
 
   /* The diameter of the marker */
   --spectrum-steplist-marker-diameter-small: 8px;
@@ -36,26 +39,20 @@ governing permissions and limitations under the License.
   /* The height of the line */
   --spectrum-steplist-segment-height: 2px;
 
-  /* The width of the marker including borders */
-  --spectrum-steplist-marker-box-width-small: calc(var(--spectrum-steplist-marker-diameter-small) + var(--spectrum-steplist-marker-total-border-width));
-  --spectrum-steplist-marker-box-width-medium: calc(var(--spectrum-steplist-marker-diameter-medium) + var(--spectrum-steplist-marker-total-border-width));
-  --spectrum-steplist-marker-box-width-large: calc(var(--spectrum-steplist-marker-diameter-large) + var(--spectrum-steplist-marker-total-border-width));
-  --spectrum-steplist-marker-box-width-xlarge: calc(var(--spectrum-steplist-marker-diameter-xlarge) + var(--spectrum-steplist-marker-total-border-width));
+  /* Distance between step list items */
+  --spectrum-steplist-chevron-gap-small: 10px;
+  --spectrum-steplist-chevron-gap-medium: 16px;
+  --spectrum-steplist-chevron-gap-large: 20px;
+  --spectrum-steplist-chevron-gap-xlarge: 24px;
 
-  /* Distance between chevron and previous/next link */
-  --spectrum-steplist-chevron-link-gap-small: 6px;
-  --spectrum-steplist-chevron-link-gap-medium: 16px;
-  --spectrum-steplist-chevron-link-gap-large: 16px;
-  --spectrum-steplist-chevron-link-gap-xlarge: 24px;
-
-  /* Distance between number bullet and label */
-  --spectrum-steplist-number-label-gap-small: 6px;
-  --spectrum-steplist-number-label-gap-medium: 10px;
-  --spectrum-steplist-number-label-gap-large: 12px;
-  --spectrum-steplist-number-label-gap-xlarge: 16px;
+  /* Distance between marker and label */
+  --spectrum-steplist-marker-label-gap-small: 10px;
+  --spectrum-steplist-marker-label-gap-medium: 12px;
+  --spectrum-steplist-marker-label-gap-large: 14px;
+  --spectrum-steplist-marker-label-gap-xlarge: 16px;
 
   /* The distance between steps in vertical  */
-  --spectrum-steplist-vertical-separation: 28px;
+  --spectrum-steplist-vertical-separation: 32px;
 
 }
 
@@ -74,13 +71,6 @@ governing permissions and limitations under the License.
   grid-template-rows: auto;
   grid-template-areas:
     "link chevron";
-  .spectrum-Steplist-segment {
-    grid-area: chevron;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-  }
 
   &.focus-ring {
     outline: 2px;
@@ -110,6 +100,7 @@ governing permissions and limitations under the License.
     border-radius: 50%;
     border-style: solid;
     border-width: var(--spectrum-steplist-marker-border-width);
+    color: transparent;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -138,27 +129,20 @@ governing permissions and limitations under the License.
       border: none;
     }
   }
-
-  &.is-completed {
-    cursor: pointer;
-  }
 }
 
 /* Small size */
 .spectrum-Steplist--small {
-  line-height: calc(var(--spectrum-steplist-marker-diameter-small) + (var(--spectrum-steplist-marker-border-width) * 4));
-  /* column-gap: calc(var(--spectrum-steplist-chevron-link-gap-small) + (var(--spectrum-steplist-marker-border-width) * 2)); */
-  column-gap: 9px;
   font-size: var(--spectrum-global-dimension-font-size-75);
+  gap: var(--spectrum-steplist-chevron-gap-small);
+  line-height: var(--spectrum-steplist-marker-diameter-small);
 
   .spectrum-Steplist-item {
+    gap: var(--spectrum-steplist-chevron-gap-small);
     grid-template-columns: auto;
-    /* grid-column-gap: var(--spectrum-steplist-chevron-link-gap-small); */
-    grid-column-gap: 9px;
   }
   .spectrum-Steplist-link {
-    /* grid-column-gap: var(--spectrum-steplist-number-label-gap-small); */
-    grid-column-gap: 9px;
+    gap: var(--spectrum-steplist-marker-label-gap-small);
 
     .spectrum-Steplist-marker {
       line-height: var(--spectrum-steplist-marker-diameter-small);
@@ -174,19 +158,17 @@ governing permissions and limitations under the License.
 
 /* Medium size */
 .spectrum-Steplist--medium {
-  line-height: calc(var(--spectrum-steplist-marker-diameter-medium) + (var(--spectrum-steplist-marker-border-width) * 4));
-  /* column-gap: calc(var(--spectrum-steplist-chevron-link-gap-medium) + (var(--spectrum-steplist-marker-border-width) * 2)); */
-  column-gap: 16px;
   font-size: var(--spectrum-global-dimension-font-size-100);
+  gap: var(--spectrum-steplist-chevron-gap-medium);
+  line-height: var(--spectrum-steplist-marker-diameter-medium);
 
   .spectrum-Steplist-item {
+    gap: var(--spectrum-steplist-chevron-gap-medium);
     grid-template-columns: auto;
-    grid-column-gap: var(--spectrum-steplist-chevron-link-gap-medium);
   }
 
   .spectrum-Steplist-link {
-    /* grid-column-gap: 10px; */
-    grid-column-gap: 10px;
+    gap: var(--spectrum-steplist-marker-label-gap-medium);
 
     .spectrum-Steplist-marker {
       line-height: var(--spectrum-steplist-marker-diameter-medium);
@@ -199,21 +181,29 @@ governing permissions and limitations under the License.
 
 /* large size */
 .spectrum-Steplist--large {
-  line-height: calc(var(--spectrum-steplist-marker-diameter-large) + (var(--spectrum-steplist-marker-border-width) * 4));
-  column-gap: calc(var(--spectrum-steplist-chevron-link-gap-large) + (var(--spectrum-steplist-marker-border-width) * 2));
   font-size: var(--spectrum-global-dimension-font-size-200);
+  gap: var(--spectrum-steplist-chevron-gap-large);
+  line-height: var(--spectrum-steplist-marker-diameter-large);
 
   .spectrum-Steplist-item {
+    gap: var(--spectrum-steplist-chevron-gap-large);
     grid-template-columns: auto;
-    /* grid-column-gap: var(--spectrum-steplist-chevron-link-gap-large); */
-    grid-column-gap: 20px;
 
     .spectrum-Steplist-marker {
-      color: var(--spectrum-global-color-gray-600);
+      color: var(--spectrum-steplist-default-color);
+    }
+
+    .spectrum-Steplist-link {
+      &.is-disabled:not(.is-completed) {
+        .spectrum-Steplist-marker {
+          border-color: var(--spectrum-steplist-disabled-marker-color);
+          color: var(--spectrum-alias-text-color-disabled);
+        }
+      }
     }
   }
   .spectrum-Steplist-link {
-    grid-column-gap: var(--spectrum-steplist-number-label-gap-large);
+    gap: var(--spectrum-steplist-marker-label-gap-large);
 
     .spectrum-Steplist-marker {
       line-height: var(--spectrum-steplist-marker-diameter-large);
@@ -229,23 +219,29 @@ governing permissions and limitations under the License.
 
 /* xlarge size */
 .spectrum-Steplist--xlarge {
-  line-height: calc(var(--spectrum-steplist-marker-diameter-xlarge) + (var(--spectrum-steplist-marker-border-width) * 4));
-  /* column-gap: calc(var(--spectrum-steplist-chevron-link-gap-xlarge) + (var(--spectrum-steplist-marker-border-width) * 2)); */
-  column-gap: 24px;
   font-size: var(--spectrum-global-dimension-font-size-300);
+  gap: var(--spectrum-steplist-chevron-gap-xlarge);
+  line-height: var(--spectrum-steplist-marker-diameter-xlarge);
 
   .spectrum-Steplist-item {
+    gap: var(--spectrum-steplist-chevron-gap-xlarge);
     grid-template-columns: auto;
-    /* grid-column-gap: var(--spectrum-steplist-chevron-link-gap-xlarge); */
-    grid-column-gap: 24px;
 
     .spectrum-Steplist-marker {
-      color: var(--spectrum-global-color-gray-600);
+      color: var(--spectrum-steplist-default-color);
+    }
+
+    .spectrum-Steplist-link {
+      &.is-disabled:not(.is-completed) {
+        .spectrum-Steplist-marker {
+          border-color: var(--spectrum-steplist-disabled-marker-color);
+          color: var(--spectrum-alias-text-color-disabled);
+        }
+      }
     }
   }
   .spectrum-Steplist-link {
-    /* grid-column-gap: var(--spectrum-steplist-number-label-gap-xlarge); */
-    grid-column-gap: 14px;
+    gap: var(--spectrum-steplist-marker-label-gap-xlarge);
 
     .spectrum-Steplist-marker {
       line-height: var(--spectrum-steplist-marker-diameter-xlarge);
@@ -274,15 +270,16 @@ governing permissions and limitations under the License.
 /* vertical version */
 .spectrum-Steplist--vertical {
   flex-direction: column;
-  gap: 0;
+  gap: 2px;
   .spectrum-Steplist-item {
     grid-template-areas: "link link"
                          "line .";
     justify-items: start;
     .spectrum-Steplist-segment.is-completed {
-      border-color: var(--spectrum-global-color-gray-400);
+      border-color: var(--spectrum-steplist-border-color);
       border-left-style: solid;
     }
+    gap: 2px;
   }
   &.spectrum-Steplist--small {
     .spectrum-Steplist-item {
@@ -314,7 +311,7 @@ governing permissions and limitations under the License.
     box-sizing: content-box;
     height: var(--spectrum-steplist-vertical-separation);
     width: 0;
-    border-color: var(--spectrum-global-color-gray-300);
+    border-color: var(--spectrum-steplist-border-color);
     border-width: 0;
     border-left-width: 2px;
     border-left-style: dashed;

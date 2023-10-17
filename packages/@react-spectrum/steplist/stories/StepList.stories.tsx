@@ -14,11 +14,16 @@ import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Flex} from '@react-spectrum/layout';
 import {Item} from '@react-stately/collections';
-import React, {useMemo, useState} from 'react';
+import {Picker} from '@react-spectrum/picker';
+import React, {Key, useMemo, useState} from 'react';
 import {SpectrumStepListProps} from '@react-types/steplist';
 import {StepList} from '../';
+import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
+
+
 
 const options = [{
   key: 'details', value: 'Details'
@@ -34,7 +39,7 @@ export default {
   title: 'StepList',
   component: StepList,
   args: {
-    onSelectionChange: action('onAction')
+    onSelectionChange: action('onSelectionChange')
   },
   argTypes: {
     children: {
@@ -43,14 +48,10 @@ export default {
       }
     },
     isEmphasized: {
-      control: {
-        type: 'boolean'
-      }
+      control: 'boolean'
     },
     isReadOnly: {
-      control: {
-        type: 'boolean'
-      }
+      control: 'boolean'
     },
     onSelectionChange: {
       table: {
@@ -87,6 +88,11 @@ export const Default: DefaultStory = {
   render: (args) => <DefaultStepList {...args} />
 };
 
+export const DefaultCompleted: DefaultStory = {
+  render: (args) => <DefaultStepList {...args} defaultLastCompletedStep="summary" defaultSelectedKey="summary" />,
+  name: 'Default - Completed'
+};
+
 export const DisabledKeys: StepListStory = {
   args: {
     children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
@@ -99,54 +105,90 @@ export const DisabledKeys: StepListStory = {
 
 export const WithButtonsDefault: StepListStory = {
   render: (args) => <WithButtons {...args} />,
-  name: 'With buttons'
-};
-
-export const WithButtonsControlled: StepListStory = {
-  render: (args) => <WithButtons lastCompletedStep="select-offers" {...args} />,
-  name: 'With buttons (Controlled)'
+  name: 'Control Selected Key'
 };
 
 export const WithButtonsDefaultCompletedStep: StepListStory = {
-  render: (args) => <WithButtons defaultLastCompletedStep="select-offers" {...args} />,
-  name: 'With buttons (Default completed step)'
+  render: (args) => (
+    <WithButtons
+      defaultLastCompletedStep="select-offers"
+      defaultSelectedKey="fallback-offer"
+      {...args} />
+  ),
+  name: 'Control Selected Key with Default Completed Step'
 };
 
 function WithButtons(args) {
-  let [stepNumber, setStepNumber] = useState(1);
   const keys = useMemo(() => options.map(o => o.key), []);
+  const initialStepNumberKey = args.defaultSelectedKey || args.defaultLastCompletedStep || keys[0];
+  let [stepNumber, setStepNumber] = useState(keys.indexOf(initialStepNumberKey) + 1);
+  let [lastCompletedStepText, setLastCompletedStepText] = useState(args.defaultLastCompletedStep);
 
   return (
     <View>
       <StepList
         {...args}
         onSelectionChange={(key) => {
-          console.log(key);
           let index = options.findIndex(o => o.key === key);
-          console.log(index);
+          args.onSelectionChange(key);
           setStepNumber(Math.max(index + 1, 1));
         }}
+        onLastCompletedStepChange={(key) => setLastCompletedStepText(key)}
         selectedKey={keys[stepNumber - 1]}>
         {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
       </StepList>
-      <View marginTop="size-300">
+      <Flex marginTop="size-300">
         <ButtonGroup>
           <Button
+            isDisabled={stepNumber === 1}
             variant="secondary"
-            onPress={() => {
-              setStepNumber(Math.max(stepNumber - 1, 1));
-            }}>Back</Button>
+            onPress={() => setStepNumber(stepNumber - 1)}>
+            Back
+          </Button>
           <Button
-            isDisabled={args.lastCompletedStep && keys.indexOf(args.lastCompletedStep) === stepNumber - 1}
+            isDisabled={stepNumber === keys.length}
             variant="cta"
-            onPress={() => {
-              const newStepNumber = stepNumber + 1;
-              setStepNumber(Math.min(newStepNumber, keys.length));
-            }}>
+            onPress={() => setStepNumber(stepNumber + 1)}>
             Next
           </Button>
         </ButtonGroup>
-      </View>
+        {lastCompletedStepText && (
+        <View marginStart="size-300">
+          <Text>
+            Last Completed Step: {lastCompletedStepText}
+          </Text>
+        </View>
+        )}
+      </Flex>
+    </View>
+  );
+}
+
+export const ControlledStory: StepListStory = {
+  render: (args) => <Controlled {...args} selectedKey="details" />,
+  name: 'Controlled'
+};
+
+function Controlled(args) {
+  const [lastCompletedStep, setLastCompletedStep] = useState<Key>(args.lastCompletedStep);
+  const [selectedKey, setSelectedKey] = useState<Key>(args.selectedKey);
+
+  return (
+    <View>
+      <StepList
+        {...args}
+        lastCompletedStep={lastCompletedStep}
+        selectedKey={selectedKey}>
+        {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+      </StepList>
+      <Flex marginTop="size-300">
+        <Picker label="lastCompletedStep" onSelectionChange={setLastCompletedStep} selectedKey={lastCompletedStep}>
+          {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+        </Picker>
+        <Picker label="selectedKey" onSelectionChange={setSelectedKey} selectedKey={selectedKey}>
+          {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
+        </Picker>
+      </Flex>
     </View>
   );
 }

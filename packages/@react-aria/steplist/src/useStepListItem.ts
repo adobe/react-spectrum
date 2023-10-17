@@ -30,10 +30,10 @@ interface StepListItemAria {
 }
 
 export function useStepListItem<T>(props: AriaStepListItemProps, state: StepListState<T>, ref: RefObject<HTMLElement>): StepListItemAria {
-  const {isDisabled: propsDisabled, key} = props;
+  const {key} = props;
   let {selectionManager: manager, selectedKey} = state;
 
-  let isDisabled = propsDisabled || state.disabledKeys.has(key);
+  let isDisabled = !state.isSelectable(key);
 
   let {itemProps} = useSelectableItem({
     isDisabled,
@@ -44,11 +44,25 @@ export function useStepListItem<T>(props: AriaStepListItemProps, state: StepList
 
   const isSelected = selectedKey === key;
 
+  let onKeyDown = (event) => {
+    const {key: eventKey} = event;
+
+    if (eventKey === 'ArrowDown' || eventKey === 'ArrowUp') {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    itemProps.onKeyDown(event);
+  };
+
   return {
     stepProps: {
       ...itemProps,
+      onKeyDown,
+      role: 'link',
       'aria-current': isSelected ? 'step' : undefined,
-      tabIndex: 0
+      'aria-disabled': isDisabled ? true : undefined,
+      tabIndex: !isDisabled && !isSelected ? 0 : undefined
     }
   };
 }

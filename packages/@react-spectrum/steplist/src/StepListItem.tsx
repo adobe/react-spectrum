@@ -43,8 +43,9 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
   let {direction} = useLocale();
   let state = useContext(StepListContext);
   const isCompleted = state.isCompleted(itemKey);
-  const isItemDisabled = isDisabled || !isCompleted || state.disabledKeys.has(itemKey);
-  let {stepProps, stepStateProps} = useStepListItem({...props, key, isDisabled: isItemDisabled}, state, ref);
+  const isItemDisabled = isDisabled || state.disabledKeys.has(itemKey);
+  const isItemInteractive = state.isSelectable(itemKey);
+  let {stepProps, stepStateProps} = useStepListItem({...props, key, isDisabled: isItemInteractive}, state, ref);
 
   let {hoverProps, isHovered} = useHover(props);
   const isSelected = state.selectedKey === itemKey;
@@ -70,7 +71,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
             styles,
             'spectrum-Steplist-link',
             {
-              'is-selected': isSelected,
+              'is-selected': isSelected && !isItemDisabled,
               'is-disabled': isItemDisabled,
               'is-hovered': isHovered,
               'is-emphasized': isEmphasized && isSelected,

@@ -19,7 +19,8 @@ import {useControlledState} from '@react-stately/utils';
 export interface StepListState<T> extends SingleSelectListState<T> {
   readonly lastCompletedStep?: Key,
   setLastCompletedStep(key: Key): void,
-  isCompleted(key: Key): boolean
+  isCompleted(key: Key): boolean,
+  isSelectable(key: Key): boolean
 }
 
 export function useStepListState<T extends object>(props: AriaStepListProps<T>): StepListState<T> {
@@ -52,11 +53,20 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
       return false;
     }
 
+    return indexMap.get(step) <= indexMap.get(lastCompletedStep);
+  }
+
+  function isSelectable(step: Key) {
     if (props.isDisabled || disabledKeys.has(step) || props.isReadOnly) {
       return false;
     }
 
-    return indexMap.get(step) <= indexMap.get(lastCompletedStep);
+    if (isCompleted(step)) {
+      return true;
+    }
+
+    const prevStep = keysLinkedList.get(step);
+    return isCompleted(prevStep);
   }
 
   function setSelectedKey(key: Key) {
@@ -71,7 +81,8 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
     ...state,
     setSelectedKey,
     setLastCompletedStep,
-    isCompleted
+    isCompleted,
+    isSelectable
   };
 }
 
