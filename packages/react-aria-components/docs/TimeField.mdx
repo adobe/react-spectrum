@@ -58,29 +58,6 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
 @import './DateField.mdx';
 ```
 
-```css
-@layer timefield {
-  .react-aria-TimeField {
-    --text-color-invalid: var(--spectrum-global-color-red-600);
-
-    [slot=description] {
-      font-size: 12px;
-    }
-
-    [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--text-color-invalid);
-    }
-  }
-
-  @media (forced-colors: active) {
-    .react-aria-TimeField {
-      --text-color-invalid: LinkText;
-    }
-  }
-}
-```
-
 </details>
 
 ## Features
@@ -300,6 +277,34 @@ This example only accepts times between 9 AM and 5 PM.
   /*- end highlight -*/
   defaultValue={new Time(8)} />
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+  ```css
+@layer timefield {
+  .react-aria-TimeField {
+    --text-color-invalid: var(--spectrum-global-color-red-600);
+
+    [slot=description] {
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--text-color-invalid);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-TimeField {
+      --text-color-invalid: LinkText;
+    }
+  }
+}
+  ```
+
+</details>
 
 ### Help text
 

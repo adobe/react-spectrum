@@ -94,10 +94,6 @@ import {ToggleButton} from 'react-aria-components';
       border-color: var(--selected-color);
       box-shadow: 0 0 0 1px var(--selected-color);
     }
-
-    &[data-disabled] {
-      opacity: 0.4;
-    }
   }
 
   @media (forced-colors: active) {
@@ -112,13 +108,6 @@ import {ToggleButton} from 'react-aria-components';
       --selected-color-pressed: Highlight;
       --text-color: ButtonText;
       --text-color-selected: HighlightText;
-
-      &[data-disabled] {
-        opacity: 1;
-        --deselected-border-color: GrayText;
-        --selected-color: GrayText;
-        --text-color: GrayText;
-      }
     }
   }
 }
@@ -174,6 +163,32 @@ A `ToggleButton` can be disabled using the `isDisabled` prop.
 ```tsx example
 <ToggleButton isDisabled>Pin</ToggleButton>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer togglebutton {
+  .react-aria-ToggleButton {
+    &[data-disabled] {
+      opacity: 0.4;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-ToggleButton {
+      &[data-disabled] {
+        opacity: 1;
+        --deselected-border-color: GrayText;
+        --selected-color: GrayText;
+        --text-color: GrayText;
+      }
+    }
+  }
+}
+```
+
+</details>
 
 ## Props
 

@@ -407,6 +407,36 @@ By default, tabs are horizontally oriented. The `orientation` prop can be set to
 </Tabs>
 ```
 
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer tabs {
+  .react-aria-Tabs {
+
+    &[data-orientation=horizontal] {
+      flex-direction: column;
+    }
+  }
+
+  .react-aria-TabList {
+    display: flex;
+
+    &[data-orientation=vertical] {
+      flex-direction: column;
+      border-right: 1px solid gray;
+
+      .react-aria-Tab {
+        border-right: 3px solid var(--border-color, transparent);
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ## Disabled
 
 All tabs can be disabled using the `isDisabled` prop.
@@ -423,6 +453,24 @@ All tabs can be disabled using the `isDisabled` prop.
   <TabPanel id="gamepad">Gamepad Settings</TabPanel>
 </Tabs>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer tabs {
+  .react-aria-Tab {
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+      &[data-selected] {
+        --border-color: var(--text-color-disabled);
+      }
+    }
+  }
+}
+```
+
+</details>
 
 ### Disabled items
 

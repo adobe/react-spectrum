@@ -81,15 +81,6 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
     flex-direction: column;
     gap: 2px;
     font-size: small;
-
-    [slot=description] {
-      font-size: 12px;
-    }
-
-    [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--invalid-color);
-    }
   }
 
   .react-aria-TagList {
@@ -124,10 +115,6 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
         color: var(--text-color-selected);
       }
 
-      &[data-disabled] {
-        opacity: 0.4;
-      }
-
       [slot=remove] {
         background: none;
         border: none;
@@ -157,13 +144,6 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
       --remove-button-color-hovered: Highlight;
       --focus-ring-color: Highlight;
       --invalid-color: LinkText;
-
-      .react-aria-Tag[data-disabled] {
-        opacity: 1;
-        --border-color: GrayText;
-        --border-color-hovered: GrayText;
-        --text-color: GrayText;
-      }
     }
   }
 }
@@ -390,29 +370,57 @@ Tags may be links to another page or website. This can be achieved by passing th
 
 The `<Tag>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
- ## Disabled tags
+## Disabled tags
 
- TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
- corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
- to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
- See [Collections](../react-stately/collections.html) for more details.
+TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
+corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
+to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
+See [Collections](../react-stately/collections.html) for more details.
 
- ```tsx example
- <MyTagGroup
-   label="Sandwich contents"
-   selectionMode="multiple"
-   ///- begin highlight -///
-   disabledKeys={['tuna']}
-   ///- end highlight -///
- >
-   <MyTag id="lettuce">Lettuce</MyTag>
-   <MyTag id="tomato">Tomato</MyTag>
-   <MyTag id="cheese">Cheese</MyTag>
-   <MyTag id="tuna">Tuna Salad</MyTag>
-   <MyTag id="egg">Egg Salad</MyTag>
-   <MyTag id="ham">Ham</MyTag>
- </MyTagGroup>
- ```
+```tsx example
+<MyTagGroup
+ label="Sandwich contents"
+ selectionMode="multiple"
+ ///- begin highlight -///
+ disabledKeys={['tuna']}
+ ///- end highlight -///
+>
+  <MyTag id="lettuce">Lettuce</MyTag>
+  <MyTag id="tomato">Tomato</MyTag>
+  <MyTag id="cheese">Cheese</MyTag>
+  <MyTag id="tuna">Tuna Salad</MyTag>
+  <MyTag id="egg">Egg Salad</MyTag>
+  <MyTag id="ham">Ham</MyTag>
+</MyTagGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer taggroup {
+  .react-aria-TagList {
+    .react-aria-Tag {
+      &[data-disabled] {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-TagGroup {
+      .react-aria-Tag[data-disabled] {
+        opacity: 1;
+        --border-color: GrayText;
+        --border-color-hovered: GrayText;
+        --text-color: GrayText;
+      }
+    }
+  }
+}
+  ```
+
+</details>
 
 ## Empty state
 
@@ -449,6 +457,26 @@ The `description` slot can be used to associate additional help text with a `Tag
   {/*- end highlight -*/}
 </TagGroup>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer taggroup {
+  .react-aria-TagGroup {
+    [slot=description] {
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--invalid-color);
+    }
+  }
+}
+```
+
+</details>
 
 ### Error message
 
