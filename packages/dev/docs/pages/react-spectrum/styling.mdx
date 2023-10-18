@@ -76,7 +76,6 @@ import {Picker, Item} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import {Example} from '@react-spectrum/docs/src/ThemeSwitcher';
 import {useState} from 'react';
-import ReactDOM from 'react-dom';
 import dnaDocs from 'docs:@react-types/shared/src/dna.d.ts';
 
 function DimensionViewer() {
@@ -104,7 +103,7 @@ function DimensionViewer() {
   );
 }
 
-ReactDOM.render(<DimensionViewer />, document.getElementById('dimension-viewer'));
+ReactDOM.createRoot(document.getElementById('dimension-viewer')).render(<DimensionViewer />);
 ```
 
 <div id="dimension-viewer" />
@@ -220,7 +219,7 @@ function ColorViewer() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('color-viewer')).render(<ColorViewer />)
+ReactDOM.createRoot(document.getElementById('color-viewer')).render(<ColorViewer />);
 ```
 
 <div id="color-viewer" />
