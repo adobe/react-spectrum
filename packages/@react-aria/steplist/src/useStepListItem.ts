@@ -11,8 +11,8 @@
  */
 
 import {HTMLAttributes, RefObject} from 'react';
-// @ts-ignore
-import {StepListItemProps, StepListState} from '@react-types/steplist';
+import {StepListItemProps} from '@react-types/steplist';
+import {StepListState} from '@react-stately/steplist';
 import {useSelectableItem} from '@react-aria/selection';
 
 interface AriaStepListItemProps extends StepListItemProps {
