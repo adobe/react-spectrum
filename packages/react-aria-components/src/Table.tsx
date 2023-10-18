@@ -1040,7 +1040,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
   let props = item.props as RowProps<unknown>;
   let isDragging = dragState && dragState.isDragging(item.key);
-  let { children, ...restProps } = props;
+  let {children:_, ...restProps} = props;
   let renderProps = useRenderProps({
     ...restProps,
     id: undefined,
