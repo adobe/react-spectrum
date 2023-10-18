@@ -21,7 +21,7 @@ import highlightCss from './syntax-highlight.css';
 import {Modal} from '@react-spectrum/overlays';
 import {Pressable, usePress} from '@react-aria/interactions';
 import React, {useRef, useState} from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import {ThemeProvider} from './ThemeSwitcher';
 import {useLayoutEffect} from '@react-aria/utils';
 
@@ -35,7 +35,7 @@ for (let link of links) {
 
   let container = document.createElement('span');
 
-  ReactDOM.render(
+  ReactDOM.createRoot(container).render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <DialogTrigger type="popover">
         <Pressable>
@@ -46,7 +46,7 @@ for (let link of links) {
         <LinkPopover id={link.dataset.link} />
       </DialogTrigger>
     </ThemeProvider>
-  , container);
+  );
 
   link.parentNode.replaceChild(container, link);
 }
@@ -75,7 +75,7 @@ for (let image of images) {
   let container = document.createElement('span');
   let url = image.src.replace(/.*\/\/[^/]*/, '');
 
-  ReactDOM.render(
+  ReactDOM.createRoot(container).render(
     <ThemeProvider UNSAFE_className={docsStyle.inlineProvider}>
       <ImageModal>
         <button className={docsStyle.expandableImageButton}>
@@ -86,7 +86,7 @@ for (let image of images) {
         </div>
       </ImageModal>
     </ThemeProvider>
-  , container);
+  );
 
   image.parentNode.replaceChild(container, image);
 }
