@@ -10,43 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Accordion, Item} from '../';
 import {Meta} from '@storybook/react';
-import React from 'react';
 import {SpectrumAccordionProps} from '@react-types/accordion';
+import {Template} from './Accordion.chromatic';
 
 const meta: Meta<SpectrumAccordionProps<object>> = {
-  title: 'Accordion',
-  component: Accordion,
-  excludeStories: ['Template']
+  title: 'Accordion'
 };
 
 export default meta;
 
-export const Template = (args) => (
-  <Accordion {...args}>
-    <Item key="files" title="Your files">
-      files
-    </Item>
-    <Item key="shared" title="Shared with you">
-      shared
-    </Item>
-    <Item key="last" title="Last item">
-      last
-    </Item>
-  </Accordion>
-);
-
 export const Default = {
-  render: Template
-};
-
-export const ExpandedKeys = {
   render: Template,
-  args: {defaultExpandedKeys: ['shared']}
-};
-
-export const DisabledKeys = {
-  render: Template,
-  args: {disabledKeys: ['shared']}
+  args: {defaultExpandedKeys: ['shared'], disabledKeys: ['last']}
 };

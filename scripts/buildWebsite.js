@@ -146,6 +146,12 @@ async function build() {
     }
   }
 
+  // Patch react-aria-components package.json for example CSS.
+  let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
+  let json = JSON.parse(fs.readFileSync(p));
+  json.sideEffects = ['*.css'];
+  fs.writeFileSync(p, JSON.stringify(json, false, 2));
+
   // TEMP HACK: Patch textfield css to workaround parcel bug
   fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));
   let tfpath = path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'module.js');
