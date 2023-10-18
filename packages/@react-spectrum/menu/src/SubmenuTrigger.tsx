@@ -34,14 +34,13 @@ export interface SpectrumSubmenuTriggerProps extends Omit<SubmenuTriggerProps, '
 // TODO: got rid of user provided ref support since it doesn't really make sense for submenus IMO
 function SubmenuTrigger(props: SubmenuTriggerProps) {
   let triggerRef = useRef<HTMLDivElement>();
-  let menuRef = useRef<HTMLDivElement>();
   let {
     children,
     targetKey
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, rootMenuTriggerState, state} = useMenuStateContext();
+  let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let subMenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
   let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({

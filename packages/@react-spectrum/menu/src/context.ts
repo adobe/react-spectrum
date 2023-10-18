@@ -54,6 +54,7 @@ export interface MenuStateContextValue<T> {
   popoverContainerRef?: RefObject<HTMLElement>,
   trayContainerRef?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLDivElement>,
+  submenu?: RefObject<HTMLDivElement>,
   rootMenuTriggerState?: MenuTriggerState
 }
 

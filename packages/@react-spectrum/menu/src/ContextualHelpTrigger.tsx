@@ -67,9 +67,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let [, content] = props.children as [ReactElement, ReactElement];
 
   let isMobile = useIsMobileDevice();
-
   let onBlurWithin = (e) => {
-    if (e.relatedTarget && popoverRef.current && (!popoverRef.current?.UNSAFE_getDOMNode().contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
+    if (e.relatedTarget && popoverRef.current && (!popoverRef?.current?.UNSAFE_getDOMNode()?.contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
       if (subMenuTriggerState.isOpen) {
         subMenuTriggerState.close();
       }
@@ -147,7 +146,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     <>
       <SubmenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...subMenuTriggerProps}}>{trigger}</SubmenuTriggerContext.Provider>
       <SlotProvider slots={slots}>
-        {overlay}
+        {subMenuTriggerState.isOpen && overlay}
       </SlotProvider>
     </>
   );
