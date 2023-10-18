@@ -101,14 +101,6 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
       border-radius: 6px;
       border: 2px solid var(--focus-ring-color);
     }
-
-    &[data-disabled] {
-      cursor: default;
-
-      &:not([data-current]) {
-        color: var(--text-color-disabled);
-      }
-    }
   }
 
   @media (forced-colors: active) {
@@ -269,6 +261,28 @@ Breadcrumbs can be disabled using the `isDisabled` prop. This indicates that nav
   <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
 </Breadcrumbs>
 ```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer breadcrumbs {
+  .react-aria-Breadcrumbs {
+    .react-aria-Link {
+      &[data-disabled] {
+        cursor: default;
+
+        &:not([data-current]) {
+          color: var(--text-color-disabled);
+        }
+      }
+    }
+  }
+}
+```
+
+</details>
 
 Individual breadcrumbs can also be disabled by passing the `isDisabled` prop to the `<Link>` element:
 

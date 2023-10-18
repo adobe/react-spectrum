@@ -108,30 +108,12 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       &[data-pressed] {
         background: var(--spectrum-global-color-gray-150);
       }
-
-      &[data-disabled] {
-        border-color: var(--border-color-disabled);
-        color: var(--text-color-disabled);
-        & span[aria-hidden] {
-          background: var(--border-color-disabled);
-        }
-
-        .react-aria-SelectValue {
-          &[data-placeholder] {
-            color: var(--text-color-disabled);
-          }
-        }
-      }
     }
 
     .react-aria-SelectValue {
       &[data-placeholder] {
         font-style: italic;
         color: var(--spectrum-global-color-gray-700);
-      }
-
-      & [slot=description] {
-        display: none;
       }
     }
 
@@ -145,21 +127,12 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       border-radius: 4px;
       font-size: 0.857rem;
     }
-
-    [slot=description] {
-      font-size: 12px;
-    }
-
-    [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--spectrum-global-color-red-600);
-    }
   }
   @layer listbox {
     .react-aria-ListBox {
       display: block;
       width: unset;
-      max-height: unset;
+      max-height: inherit;
       min-height: unset;
       border: none;
 
@@ -190,8 +163,18 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   @layer popover {
     .react-aria-Popover {
       padding: 0px;
+      margin-top: 0px;
       min-width: var(--trigger-width);
       box-sizing: border-box;
+      &[data-placement=top] {
+        margin-bottom: unset;
+        --origin: translateY(8px);
+      }
+
+      &[data-placement=bottom] {
+        margin-top: unset;
+        --origin: translateY(-8px);
+      }
 
       &[data-entering] {
         animation: slide 200ms;
@@ -209,10 +192,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       --text-color: ButtonText;
       --text-color-disabled: GrayText;
       --focus-ring-color: Highlight;
-
-      .react-aria-Button:disabled span[aria-hidden] {
-        background: transparent;
-      }
     }
   }
 }
@@ -696,6 +675,46 @@ A Select can be fully disabled using the `isDisabled` prop.
 </MySelect>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer select {
+  .react-aria-Select {
+    .react-aria-Button {
+      &[data-disabled] {
+        border-color: var(--border-color-disabled);
+        color: var(--text-color-disabled);
+        & span[aria-hidden] {
+          background: var(--border-color-disabled);
+          color: var(--text-color-disabled);
+        }
+
+        .react-aria-SelectValue {
+          &[data-placeholder] {
+            color: var(--text-color-disabled);
+          }
+        }
+      }
+    }
+  }
+  @media (forced-colors: active) {
+    .react-aria-Select {
+      span[aria-hidden] {
+        background: transparent;
+      }
+      .react-aria-Button {
+        &[data-disabled] span[aria-hidden] {
+          background: 0 0;
+        }
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ### Disabled options
 
 `Select` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
@@ -760,6 +779,32 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer select {
+  .react-aria-Select {
+    .react-aria-SelectValue {
+      & [slot=description] {
+        display: none;
+      }
+    }
+
+    [slot=description] {
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--spectrum-global-color-red-600);
+    }
+  }
+}
+```
+
+</details>
 
 ## Controlled open state
 
