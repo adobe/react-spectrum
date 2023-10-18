@@ -31,7 +31,9 @@ export function useId(defaultId?: string): string {
     nextId.current = val;
   }, []);
 
-  idsUpdaterMap.set(res, updateValue);
+  if (typeof window !== 'undefined') {
+    idsUpdaterMap.set(res, updateValue);
+  }
 
   useLayoutEffect(() => {
     let r = res;
