@@ -16,7 +16,6 @@ import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {Key, RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useKeyboard} from '@react-aria/interactions';
-import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface MenuAria {
@@ -32,13 +31,7 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, 
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate,
-  /**
-   * By default, if the user is moving their pointer towards a submenu, pointer events will be disabled on the menu.
-   * This is so to prevent the submenu from closing due to hovering over a different item.
-   * When this prop is true, this behavior is disabled.
-   */
-  disableSafeSubmenuPointerMovement?: boolean
+  keyboardDelegate?: KeyboardDelegate
 }
 
 interface MenuData {
@@ -54,11 +47,10 @@ export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
  * @param props - Props for the menu.
  * @param state - State for the menu, as returned by `useListState`.
  */
-export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>, submenuRef?: RefObject<HTMLElement>): MenuAria {
+export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
   let {
     shouldFocusWrap = true,
     onKeyDown,
-    disableSafeSubmenuPointerMovement,
     onKeyUp,
     ...otherProps
   } = props;
@@ -83,7 +75,6 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     onAction: props.onAction
   });
 
-  let style = useSafelyMouseToSubmenu({submenuRef, isOpen: state.expandedKeys.size > 0, isDisabled: disableSafeSubmenuPointerMovement});
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
       // TODO: Let Tab propagate so FocusScope handle it. Revisit if we decide to close all menus
@@ -115,8 +106,7 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
         if (e.key !== 'Escape') {
           listProps.onKeyDown(e);
         }
-      },
-      style
+      }
     })
   };
 }

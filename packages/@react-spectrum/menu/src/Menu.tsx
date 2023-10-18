@@ -12,8 +12,8 @@
 
 import {ActionButton} from '@react-spectrum/button';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
-import {classNames, useDOMRef, useIsMobileDevice, useStyleProps, useUnwrapDOMRef} from '@react-spectrum/utils';
-import {DOMRef, DOMRefValue} from '@react-types/shared';
+import {classNames, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -25,7 +25,7 @@ import React, {ReactElement, useContext, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMenu} from '@react-aria/menu';
+import {useMenu, useSafelyMouseToSubmenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -45,9 +45,8 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let popoverContainerRef = useRef(null);
   let trayContainerRef = useRef(null);
   let state = useTreeState(completeProps);
-  let submenuRef = useRef<DOMRefValue<HTMLDivElement>>();
-  let unwrappedSubmenuRef = useUnwrapDOMRef(submenuRef);
-  let {menuProps} = useMenu(completeProps, state, domRef, unwrappedSubmenuRef);
+  let submenuRef = useRef<HTMLDivElement>(null);
+  let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   let {direction} = useLocale();
@@ -66,6 +65,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let headingId = useSlotId();
   let menuLevel = contextProps.level || 0;
   let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel]) != null;
+  let style = useSafelyMouseToSubmenu({submenuRef, isOpen: hasOpenSubmenu});
   // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
@@ -100,7 +100,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
           )}
           <div
             {...menuProps}
-            style={mergeProps(styleProps.style, menuProps.style)}
+            style={mergeProps(styleProps.style, menuProps.style, style)}
             ref={domRef}
             className={
               classNames(
