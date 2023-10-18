@@ -1040,6 +1040,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
   let props = item.props as RowProps<unknown>;
   let isDragging = dragState && dragState.isDragging(item.key);
+  // eslint-disable-next-line no-unused-vars
   let {children:_, ...restProps} = props;
   let renderProps = useRenderProps({
     ...restProps,
