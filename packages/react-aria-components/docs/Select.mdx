@@ -177,11 +177,11 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       }
 
       &[data-entering] {
-        animation: slide 200ms;
+        animation: popover-slide 200ms;
       }
 
       &[data-exiting] {
-        animation: slide 200ms reverse ease-in;
+        animation: popover-slide 200ms reverse ease-in;
       }
     }
   }
@@ -196,7 +196,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   }
 }
 
-@keyframes slide {
+@keyframes popover-slide {
   from {
     transform: var(--origin);
     opacity: 0;
@@ -799,6 +799,13 @@ function Example() {
     [slot=errorMessage] {
       font-size: 12px;
       color: var(--spectrum-global-color-red-600);
+    }
+  }
+  @media (forced-colors: active) {
+    .react-aria-Select {
+      [slot=errorMessage] {
+        color: LinkText;
+      }
     }
   }
 }

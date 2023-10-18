@@ -170,6 +170,18 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
   @layer popover {
     .react-aria-Popover {
       padding: 0px;
+      margin-top: 0px;
+      min-width: var(--trigger-width);
+      box-sizing: border-box;
+      &[data-placement=top] {
+        margin-bottom: unset;
+        --origin: translateY(8px);
+      }
+
+      &[data-placement=bottom] {
+        margin-top: unset;
+        --origin: translateY(-8px);
+      }
     }
   }
 

@@ -115,23 +115,36 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
         box-shadow: 0 0 0 2px slateblue;
       }
     }
+  }
 
-    [slot=description] {
-      font-size: 12px;
+  .react-aria-Calendar {
+    .react-aria-CalendarCell {
+      border-color: var(--page-background);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-DatePicker {
+      --text-color-invalid: LinkText;
+
+      .react-aria-Button {
+        forced-color-adjust: none;
+
+        --focus-ring-color: Highlight;
+        background: ButtonFace;
+        color: ButtonText;
+        border: 1px solid ButtonBorder;
+
+        &[data-focus-visible] {
+          border-color: Highlight;
+          box-shadow: 0 0 0 1px Highlight;
+        }
+      }
     }
 
-    [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--text-color-invalid);
-    }
-
-    &[data-invalid] {
-      .react-aria-DateInput:after {
-        content: '🚫' / '';
-        content: '🚫';
-        alt: ' ';
-        flex: 1;
-        text-align: end;
+    .react-aria-Calendar {
+      .react-aria-CalendarCell {
+        border-color: Canvas;
       }
     }
   }
@@ -557,6 +570,36 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer datepicker {
+  .react-aria-DatePicker {
+    [slot=description] {
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--text-color-invalid);
+    }
+
+    &[data-invalid] {
+      .react-aria-DateInput:after {
+        content: '🚫' / '';
+        content: '🚫';
+        alt: ' ';
+        flex: 1;
+        text-align: end;
+      }
+    }
+  }
+}
+  ```
+
+</details>
 
 ## Format options
 

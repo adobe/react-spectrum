@@ -189,10 +189,11 @@ module.exports = new Transformer({
               // get all css blocks and concat
               let ast = unified().use(remarkParse).use(remarkMdx).parse(contents);
               visit(ast, 'code', node => {
-                if (node.lang !== 'css') {
+                if (node.lang !== 'css' || node?.meta?.includes('render=false') || node?.meta?.includes('hidden')) {
                   return;
                 }
                 let code = node.value;
+                code = code.replace(/@import.*/g, '');
                 result += code;
               });
             } catch (e) {

@@ -131,26 +131,6 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
       flex: 1;
     }
 
-    [slot=description] {
-      font-size: 12px;
-    }
-
-    [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--text-color-invalid);
-    }
-
-    &[data-invalid] {
-      [slot=end]:after {
-        content: '🚫' / '';
-        content: '🚫';
-        alt: ' ';
-        flex: 1;
-        text-align: end;
-        margin-right: -2rem;
-      }
-    }
-
     .react-aria-Button {
       background: slateblue;
       color: white;
@@ -182,6 +162,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     min-width: unset;
     padding: unset;
     border: unset;
+    box-shadow: unset;
   }
 
   @media (forced-colors: active) {
@@ -615,6 +596,28 @@ import {today} from '@internationalized/date';
   }} />
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer daterangepicker {
+  .react-aria-DateRangePicker {
+    &[data-invalid] {
+      [slot=end]:after {
+        content: '🚫' / '';
+        content: '🚫';
+        alt: ' ';
+        flex: 1;
+        text-align: end;
+        margin-right: -2rem;
+      }
+    }
+  }
+}
+  ```
+
+</details>
+
 ### Unavailable dates
 
 `DateRangePicker` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard in the calendar so that navigation is consistent, but cannot be selected by the user. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
@@ -707,6 +710,26 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer daterangepicker {
+  .react-aria-DateRangePicker {
+    [slot=description] {
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--text-color-invalid);
+    }
+  }
+}
+```
+
+</details>
 
 ## Format options
 

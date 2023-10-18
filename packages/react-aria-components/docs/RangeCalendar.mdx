@@ -149,25 +149,6 @@ import {RangeCalendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-
         border-start-end-radius: 6px;
         border-end-end-radius: 6px;
       }
-
-      &[data-disabled] {
-        color: var(--text-color-disabled);
-      }
-
-      &[data-unavailable] {
-        text-decoration: line-through;
-        color: var(--unavailable-color);
-      }
-
-      &[data-invalid] {
-        background: var(--invalid-color);
-        color: var(--highlight-foreground);
-      }
-    }
-
-    [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--text-color-invalid);
     }
   }
 
@@ -445,6 +426,23 @@ import {today} from '@internationalized/date';
 <MyRangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} />
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer rangecalendar {
+  .react-aria-RangeCalendar {
+    .react-aria-CalendarCell {
+      &[data-disabled] {
+        color: var(--text-color-disabled);
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ### Unavailable dates
 
 `RangeCalendar` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard so that navigation is consistent, but cannot be selected by the user. In this example, they are displayed in red. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
@@ -469,6 +467,30 @@ function Example() {
   return <MyRangeCalendar aria-label="Trip dates" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer rangecalendar {
+  .react-aria-RangeCalendar {
+    .react-aria-CalendarCell {
+
+      &[data-unavailable] {
+        text-decoration: line-through;
+        color: var(--unavailable-color);
+      }
+
+      &[data-invalid] {
+        background: var(--invalid-color);
+        color: var(--highlight-foreground);
+      }
+    }
+  }
+}
+```
+
+</details>
 
 ### Non-contiguous ranges
 
@@ -516,6 +538,22 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer rangecalendar {
+  .react-aria-RangeCalendar {
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--text-color-invalid);
+    }
+  }
+}
+  ```
+
+</details>
 
 ## Controlling the focused date
 

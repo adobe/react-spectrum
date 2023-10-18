@@ -61,6 +61,7 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
 @import './Button.mdx';
+@import './Dialog.mdx';
 ```
 
 ```css
@@ -114,15 +115,12 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
     }
 
     &[data-entering] {
-      animation: slide 200ms;
+      animation: popover-slide 200ms;
     }
 
     &[data-exiting] {
-      animation: slide 200ms reverse ease-in;
+      animation: popover-slide 200ms reverse ease-in;
     }
-  }
-  .react-aria-Dialog {
-    outline: none;
   }
 
   @media (forced-colors: active) {
@@ -133,7 +131,7 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
   }
 }
 
-@keyframes slide {
+@keyframes popover-slide {
   from {
     transform: var(--origin);
     opacity: 0;

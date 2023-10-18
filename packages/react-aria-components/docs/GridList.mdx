@@ -208,17 +208,16 @@ import {GridList, Item, Button} from 'react-aria-components';
         border-start-end-radius: 0;
       }
     }
-    @layer checkbox {
-      .react-aria-Checkbox {
-        --focus-ring-color: slateblue;
+
+    .react-aria-Checkbox {
+      --focus-ring-color: slateblue;
+      &[data-focus-visible] .checkbox {
+        box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
+      }
+      &[data-selected],
+      &[data-indeterminate] {
         &[data-focus-visible] .checkbox {
-          box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
-        }
-        &[data-selected],
-        &[data-indeterminate] {
-          &[data-focus-visible] .checkbox {
-            box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--selected-color);
-          }
+          box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--selected-color);
         }
       }
     }
@@ -240,35 +239,35 @@ import {GridList, Item, Button} from 'react-aria-components';
       --background-color: ButtonFace;
       --text-color: ButtonText;
       --text-color-disabled: GrayText;
-    }
 
-    .react-aria-Checkbox {
-      forced-color-adjust: none;
+      .react-aria-Checkbox {
+        forced-color-adjust: none;
 
-      --deselected-color: ButtonBorder;
-      --deselected-color-pressed: ButtonBorder;
-      --selected-color: Highlight;
-      --selected-color-pressed: Highlight;
-      --checkmark-color: HighlightText;
-      --spectrum-alias-background-color-default: Canvas;
-      --focus-ring-color: Highlight;
+        --deselected-color: ButtonBorder;
+        --deselected-color-pressed: ButtonBorder;
+        --selected-color: Highlight;
+        --selected-color-pressed: Highlight;
+        --checkmark-color: HighlightText;
+        --spectrum-alias-background-color-default: Canvas;
+        --focus-ring-color: Highlight;
 
-      &[data-disabled] {
-        opacity: 1;
-        --deselected-color: GrayText;
-        --selected-color: GrayText;
+        &[data-disabled] {
+          opacity: 1;
+          --deselected-color: GrayText;
+          --selected-color: GrayText;
+        }
       }
-    }
 
-    .react-aria-Row .react-aria-Checkbox {
-      --selected-color: ButtonFace;
-      --selected-color-pressed: ButtonFace;
-      --checkmark-color: ButtonText;
-    }
+      .react-aria-Checkbox {
+        --selected-color: ButtonFace;
+        --selected-color-pressed: ButtonFace;
+        --checkmark-color: ButtonText;
+      }
 
-    .react-aria-Button {
-      forced-color-adjust: none;
-      --focus-ring-color: Highlight;
+      .react-aria-Button {
+        forced-color-adjust: none;
+        --focus-ring-color: Highlight;
+      }
     }
   }
 }
