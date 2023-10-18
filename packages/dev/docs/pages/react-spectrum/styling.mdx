@@ -187,8 +187,6 @@ The list of Spectrum color values is visualized below. Use the picker to see how
 light and dark color schemes.
 
 ```tsx import
-import ReactDOM from 'react-dom';
-
 function ColorViewer() {
   let [selectedKey, setSelectedKey] = useState();
   let [colorVersion, setColorVersion] = useState('5');
@@ -222,7 +220,7 @@ function ColorViewer() {
   );
 }
 
-ReactDOM.render(<ColorViewer />, document.getElementById('color-viewer'));
+ReactDOM.createRoot(document.getElementById('color-viewer')).render(<ColorViewer />)
 ```
 
 <div id="color-viewer" />
