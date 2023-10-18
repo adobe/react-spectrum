@@ -9,6 +9,7 @@ governing permissions and limitations under the License. */}
 
 import sharedDocs from 'docs:@react-types/shared/src/style.d.ts';
 import {PropTable} from '@react-spectrum/docs';
+import {createRoot} from 'react-dom/client';
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -76,6 +77,7 @@ import {Picker, Item} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
 import {Example} from '@react-spectrum/docs/src/ThemeSwitcher';
 import {useState} from 'react';
+import ReactDOM from 'react-dom';
 import dnaDocs from 'docs:@react-types/shared/src/dna.d.ts';
 
 function DimensionViewer() {
@@ -186,6 +188,8 @@ The list of Spectrum color values is visualized below. Use the picker to see how
 light and dark color schemes.
 
 ```tsx import
+import ReactDOM from 'react-dom';
+
 function ColorViewer() {
   let [selectedKey, setSelectedKey] = useState();
   let [colorVersion, setColorVersion] = useState('5');
