@@ -36,7 +36,7 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
-  let ref = useRef();
+  let ref = useRef(null);
   let {removeButtonProps, gridCellProps, rowProps, allowsRemoving} = useTag({
     ...props,
     item

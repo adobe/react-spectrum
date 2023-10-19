@@ -88,7 +88,7 @@ export function useSearchField(
   let onPressStart = () => {
     // this is in PressStart for mobile so that touching the clear button doesn't remove focus from
     // the input and close the keyboard
-    inputRef.current.focus();
+    inputRef.current?.focus();
   };
 
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
