@@ -47,14 +47,14 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let popoverRef = useRef(null);
   let {popoverContainerRef, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
-  let subMenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
-  let {subMenuTriggerProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
+  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
+  let {submenuTriggerProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
-    subMenuRef: popoverRef,
-    subMenuType: 'dialog',
+    submenuRef: popoverRef,
+    submenuType: 'dialog',
     isDisabled: !isUnavailable
-  }, subMenuTriggerState, triggerRef);
+  }, submenuTriggerState, triggerRef);
   let slots = {};
   if (isUnavailable) {
     slots = {
@@ -69,8 +69,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let isMobile = useIsMobileDevice();
   let onBlurWithin = (e) => {
     if (e.relatedTarget && popoverRef.current && (!popoverRef?.current?.UNSAFE_getDOMNode()?.contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
-      if (subMenuTriggerState.isOpen) {
-        subMenuTriggerState.close();
+      if (submenuTriggerState.isOpen) {
+        submenuTriggerState.close();
       }
     }
   };
@@ -84,7 +84,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     prevMenuButton: backButtonText
   });
   let onBackButtonPress = () => {
-    subMenuTriggerState.close();
+    submenuTriggerState.close();
     if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
       // Delay for the parent menu in the tray to no longer be display: none so focus can properly be moved to it
       requestAnimationFrame(() => parentMenuRef.current.focus());
@@ -92,7 +92,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   };
 
   if (isMobile) {
-    if (trayContainerRef.current && subMenuTriggerState.isOpen) {
+    if (trayContainerRef.current && submenuTriggerState.isOpen) {
       // TODO: would be nice to centralize this wrapper div and header so that Menu and ContextualHelpTrigger don't duplicate it
       // TODO: update this so that the back button is a heading and the wrapper is a dialog? Are nested dialogs allowed? Otherwise overwrite the role on
       // the inner dialog via slots? Or maybe just have the dismiss button handle it? Ask accessibility team if having two nested dialogs is a problem
@@ -128,7 +128,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         {...overlayProps}
         onBlurWithin={onBlurWithin}
         container={popoverContainerRef.current}
-        state={subMenuTriggerState}
+        state={submenuTriggerState}
         ref={popoverRef}
         triggerRef={triggerRef}
         placement="end top"
@@ -144,9 +144,9 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
 
   return (
     <>
-      <SubmenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...subMenuTriggerProps}}>{trigger}</SubmenuTriggerContext.Provider>
+      <SubmenuTriggerContext.Provider value={{isUnavailable, triggerRef, ...submenuTriggerProps}}>{trigger}</SubmenuTriggerContext.Provider>
       <SlotProvider slots={slots}>
-        {subMenuTriggerState.isOpen && overlay}
+        {submenuTriggerState.isOpen && overlay}
       </SlotProvider>
     </>
   );

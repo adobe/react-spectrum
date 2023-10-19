@@ -26,11 +26,11 @@ export interface AriaSubmenuTriggerProps {
   isDisabled?: boolean,
   // TODO: naming. Also talk about if this should be customizable in this hook or if it belongs somewhere else
   /** Type of the submenu being rendered. */
-  subMenuType?: 'dialog' | 'menu',
+  submenuType?: 'dialog' | 'menu',
   /** Ref of the menu that contains the submenu trigger. */
   parentMenuRef: RefObject<HTMLDivElement>,
   /** Ref of the submenu opened by the submenu trigger. */
-  subMenuRef: RefObject<HTMLDivElement>
+  submenuRef: RefObject<HTMLDivElement>
 }
 
 interface SubmenuTriggerProps extends AriaMenuItemProps {
@@ -45,9 +45,9 @@ interface SubmenuProps<T> extends AriaMenuOptions<T> {
 
 export interface SubmenuTriggerAria<T> {
   /** Props for the submenu trigger menu item. */
-  subMenuTriggerProps: SubmenuTriggerProps,
+  submenuTriggerProps: SubmenuTriggerProps,
   /** Props for the submenu controlled by the submenu trigger menu item. */
-  subMenuProps: SubmenuProps<T>,
+  submenuProps: SubmenuProps<T>,
   /** Props for the submenu's popover container. */
   popoverProps: Pick<AriaPopoverProps, 'isNonModal'>,
   /** Props for the submenu's popover overlay container. */
@@ -69,8 +69,8 @@ export interface SubmenuTriggerAria<T> {
  * @param ref - Ref to the submenu trigger element.
  */
 export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement>): SubmenuTriggerAria<T> {
-  let {parentMenuRef, subMenuRef, subMenuType = 'menu', isDisabled, node} = props;
-  let subMenuTriggerId = useId();
+  let {parentMenuRef, submenuRef, submenuType = 'menu', isDisabled, node} = props;
+  let submenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
   let openTimeout = useRef<ReturnType<typeof setTimeout> | undefined>();
@@ -99,11 +99,11 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
 
 
   // TODO: problem with setting up the submenu close handlers here is that we don't get access to the onClose the user provides
-  // to the menu since this is too far up . Maybe just provide the subMenuTriggerState and have useMenu and useMenuItem handle the key handlers internally?
+  // to the menu since this is too far up . Maybe just provide the submenuTriggerState and have useMenu and useMenuItem handle the key handlers internally?
   // Maybe we should just have the user pass something like onMenuClose to the trigger level since we have the same problem of being unable to call onClose if the user interacts outside?
   // Maybe have Menu call onClose in an effect when it detects that it is unmounting? StrictMode is problematic since the cleanup fires even when the component isn't actually unmounting
   // (not a problem if we wanna keep onClose to fire only if the user selects a item)
-  let subMenuKeyDown = (e: KeyboardEvent) => {
+  let submenuKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr') {
@@ -121,24 +121,24 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
     }
   };
 
-  let subMenuProps = {
+  let submenuProps = {
     id: overlayId,
     'aria-label': node.textValue,
     level: state.level,
-    ...(subMenuType === 'menu' && {
+    ...(submenuType === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy,
-      onKeyDown: subMenuKeyDown
+      onKeyDown: submenuKeyDown
     })
   };
 
-  let subMenuTriggerKeyDown = (e: KeyboardEvent) => {
+  let submenuTriggerKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowRight':
         if (!isDisabled) {
           if (direction === 'ltr') {
-            if (subMenuType === 'menu' && !!subMenuRef?.current && document.activeElement === ref?.current) {
-              subMenuRef.current.focus();
+            if (submenuType === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
+              submenuRef.current.focus();
             } else {
               onSubmenuOpen('first');
             }
@@ -152,8 +152,8 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
       case 'ArrowLeft':
         if (!isDisabled) {
           if (direction === 'rtl') {
-            if (subMenuType === 'menu' && !!subMenuRef?.current && document.activeElement === ref?.current) {
-              subMenuRef.current.focus();
+            if (submenuType === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
+              submenuRef.current.focus();
             } else {
               onSubmenuOpen('first');
             }
@@ -202,7 +202,7 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
     }
   };
 
-  // TODO: Track the external element being interacted with so that we can move focus to it when the subMenu closes. If we don't manually move focus, then focus gets lost to the body
+  // TODO: Track the external element being interacted with so that we can move focus to it when the submenu closes. If we don't manually move focus, then focus gets lost to the body
   // Calling ref.current.focus in useMenuItem's onHoverStart doesn't seem to move focus properly unfortunately
   let closeTarget = useRef(null);
   let shouldCloseOnInteractOutside = (target) => {
@@ -235,19 +235,19 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
   };
 
   return {
-    subMenuTriggerProps: {
-      id: subMenuTriggerId,
+    submenuTriggerProps: {
+      id: submenuTriggerId,
       'aria-controls': state.isOpen ? overlayId : null,
-      'aria-haspopup': !isDisabled ? subMenuType : null,
+      'aria-haspopup': !isDisabled ? submenuType : null,
       'aria-expanded': state.isOpen ? 'true' : 'false',
       onPressStart,
       onPress,
       onHoverChange,
-      onKeyDown: subMenuTriggerKeyDown,
+      onKeyDown: submenuTriggerKeyDown,
       onBlur,
       isOpen: state.isOpen
     },
-    subMenuProps,
+    submenuProps,
     popoverProps: {
       isNonModal: true
     },

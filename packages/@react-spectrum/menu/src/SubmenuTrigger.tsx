@@ -42,15 +42,15 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   let [menuTrigger, menu] = React.Children.toArray(children);
   let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
-  let subMenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
-  let {subMenuTriggerProps, subMenuProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
+  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
+  let {submenuTriggerProps, submenuProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
-    subMenuRef: menuRef
-  }, subMenuTriggerState, triggerRef);
+    submenuRef: menuRef
+  }, submenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
   let onBackButtonPress = () => {
-    subMenuTriggerState.close();
+    submenuTriggerState.close();
     if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
       // Delay for the parent menu in the tray to no longer be display: none so focus can properly be moved to it
       requestAnimationFrame(() => parentMenuRef.current.focus());
@@ -59,10 +59,10 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
 
   let overlay;
   if (isMobile)  {
-    delete subMenuTriggerProps.onBlur;
-    delete subMenuTriggerProps.onHoverChange;
-    subMenuProps.autoFocus ??= true;
-    if (trayContainerRef.current && subMenuTriggerState.isOpen) {
+    delete submenuTriggerProps.onBlur;
+    delete submenuTriggerProps.onHoverChange;
+    submenuProps.autoFocus ??= true;
+    if (trayContainerRef.current && submenuTriggerState.isOpen) {
       // TODO: Will need the same SSR stuff as Overlay? Might not since this trigger should theoretically only be mounted if a parent menu is mounted and thus we aren't in a SSR state
       overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
     }
@@ -78,7 +78,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
         crossOffset={-5}
         enableBothDismissButtons
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible'}}
-        state={subMenuTriggerState}
+        state={submenuTriggerState}
         triggerRef={triggerRef}
         scrollRef={menuRef}
         placement="end top"
@@ -89,7 +89,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   }
 
   let menuContext = {
-    ...subMenuProps,
+    ...submenuProps,
     ref: menuRef,
     UNSAFE_style: isMobile ? {
       width: '100%',
@@ -103,7 +103,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
 
   return (
     <>
-      <SubmenuTriggerContext.Provider value={{triggerRef, ...subMenuTriggerProps}}>{menuTrigger}</SubmenuTriggerContext.Provider>
+      <SubmenuTriggerContext.Provider value={{triggerRef, ...submenuTriggerProps}}>{menuTrigger}</SubmenuTriggerContext.Provider>
       <MenuContext.Provider value={menuContext}>
         {overlay}
       </MenuContext.Provider>

@@ -55,14 +55,14 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {direction} = useLocale();
 
-  let subMenuTriggerContext = useSubmenuTriggerContext();
-  let {triggerRef, ...subMenuTriggerProps} = subMenuTriggerContext || {};
-  let isSubmenuTrigger = !!subMenuTriggerContext;
+  let submenuTriggerContext = useSubmenuTriggerContext();
+  let {triggerRef, ...submenuTriggerProps} = submenuTriggerContext || {};
+  let isSubmenuTrigger = !!submenuTriggerContext;
   let isUnavailable;
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
 
   if (isSubmenuTrigger) {
-    isUnavailable = subMenuTriggerContext.isUnavailable;
+    isUnavailable = submenuTriggerContext.isUnavailable;
   }
 
   let isDisabled = state.disabledKeys.has(key);
@@ -84,7 +84,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       closeOnSelect,
       isVirtualized,
       onAction,
-      ...subMenuTriggerProps
+      ...submenuTriggerProps
     },
     state,
     ref
@@ -112,7 +112,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             'is-disabled': isDisabled,
             'is-selected': isSelected,
             'is-selectable': isSelectable,
-            'is-open': subMenuTriggerProps.isOpen
+            'is-open': submenuTriggerProps.isOpen
           }
         )}>
         <Grid

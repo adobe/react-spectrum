@@ -144,8 +144,8 @@ Default.play = async ({canvasElement}) => {
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
   await userEvent.hover(menuItems[0]);
-  let subMenuTrigger = await within(body).findByText('Baseline');
-  await userEvent.hover(subMenuTrigger);
+  let submenuTrigger = await within(body).findByText('Baseline');
+  await userEvent.hover(submenuTrigger);
 };
 
 export const Mobile: DefaultStory = {
