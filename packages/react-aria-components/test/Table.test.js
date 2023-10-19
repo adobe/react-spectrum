@@ -610,6 +610,35 @@ describe('Table', () => {
     expect(cellRef.current).toBeInstanceOf(HTMLTableCellElement);
   });
 
+  it('should support row render function and not call it with state', () => {
+    let renderRow = jest.fn(() => {});
+    render(
+      <Table aria-label="Search results">
+        <TableHeader columns={[columns[0]]}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={[rows[0]]}>
+          {item => (
+            <Row columns={[columns[0]]}>
+              {column => {
+                renderRow(column);
+                return <Cell>{item[column.key]}</Cell>;
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    );
+
+    expect(renderRow).toHaveBeenCalledTimes(2);
+    expect(renderRow).toHaveBeenNthCalledWith(1, columns[0]);
+    expect(renderRow).toHaveBeenNthCalledWith(2, columns[0]);
+  });
+
   it('should support cell render props', () => {
     let {getAllByRole} = render(
       <Table aria-label="Search results">
