@@ -312,7 +312,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   });
 
   useEffect(() => {
-    if (state.isOpen) {
+    if (state.isOpen && inputRef.current && popoverRef.current) {
       return ariaHideOutside([inputRef.current, popoverRef.current]);
     }
   }, [state.isOpen, inputRef, popoverRef]);
