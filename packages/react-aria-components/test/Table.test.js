@@ -634,9 +634,11 @@ describe('Table', () => {
       </Table>
     );
 
-    expect(renderRow).toHaveBeenCalledTimes(2);
-    expect(renderRow).toHaveBeenNthCalledWith(1, columns[0]);
-    expect(renderRow).toHaveBeenNthCalledWith(2, columns[0]);
+    // React canary only calls render function once, vs twice in React 18, 17 and 16.
+    // Every call should be the same, so just loop over them.
+    renderRow.mock.calls.forEach((call) => {
+      expect(call[0]).toBe(columns[0]);
+    });
   });
 
   it('should support cell render props', () => {
