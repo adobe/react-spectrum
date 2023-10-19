@@ -66,6 +66,11 @@ let itemsNoSize = [
 export default {
   title: 'CardView/Waterfall layout',
   component: CardView,
+  parameters: {
+    chromatic: {
+      delay: 300
+    }
+  },
   args: {
     'aria-label': 'Test CardView'
   },

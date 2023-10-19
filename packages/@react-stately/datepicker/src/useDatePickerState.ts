@@ -28,9 +28,9 @@ export interface DatePickerStateOptions<T extends DateValue> extends DatePickerP
 
 export interface DatePickerState extends OverlayTriggerState {
   /** The currently selected date. */
-  value: DateValue,
+  value: DateValue | null,
   /** Sets the selected date. */
-  setValue(value: DateValue): void,
+  setValue(value: DateValue | null): void,
   /**
    * The date portion of the value. This may be set prior to `value` if the user has
    * selected a date but has not yet selected a time.

@@ -43,7 +43,7 @@ export {useTab, useTabList, useTabPanel} from '@react-aria/tabs';
 export {useTag, useTagGroup} from '@react-aria/tag';
 export {useTextField} from '@react-aria/textfield';
 export {useTooltip, useTooltipTrigger} from '@react-aria/tooltip';
-export {chain, mergeProps, useId} from '@react-aria/utils';
+export {chain, mergeProps, useId, RouterProvider} from '@react-aria/utils';
 export {VisuallyHidden, useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export type {AriaBreadcrumbItemProps, AriaBreadcrumbsProps, BreadcrumbItemAria, BreadcrumbsAria} from '@react-aria/breadcrumbs';

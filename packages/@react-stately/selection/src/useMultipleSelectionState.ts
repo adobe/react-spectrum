@@ -119,7 +119,7 @@ export function useMultipleSelectionState(props: MultipleSelectionStateProps): M
   };
 }
 
-function convertSelection(selection: 'all' | Iterable<Key>, defaultValue?: Selection): 'all' | Selection {
+function convertSelection(selection: 'all' | Iterable<Key>, defaultValue?: Selection): 'all' | Set<Key> {
   if (!selection) {
     return defaultValue;
   }

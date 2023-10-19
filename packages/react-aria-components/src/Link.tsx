@@ -12,10 +12,9 @@
 
 import {AriaLinkOptions, mergeProps, useFocusRing, useHover, useLink} from 'react-aria';
 import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {LinkDOMProps} from '@react-types/shared';
 import React, {createContext, ElementType, ForwardedRef, forwardRef} from 'react';
 
-export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, LinkDOMProps, RenderProps<LinkRenderProps>, SlotProps {}
+export interface LinkProps extends Omit<AriaLinkOptions, 'elementType'>, RenderProps<LinkRenderProps>, SlotProps {}
 
 export interface LinkRenderProps {
   /**
@@ -77,7 +76,7 @@ function Link(props: LinkProps, ref: ForwardedRef<HTMLAnchorElement>) {
   return (
     <ElementType
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       {...mergeProps(renderProps, linkProps, hoverProps, focusProps)}
       data-focused={isFocused || undefined}
       data-hovered={isHovered || undefined}

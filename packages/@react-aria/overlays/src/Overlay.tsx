@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ClearPressResponder} from '@react-aria/interactions';
 import {FocusScope} from '@react-aria/focus';
 import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -53,22 +54,22 @@ export function Overlay(props: OverlayProps) {
     return null;
   }
 
-  let contents;
+  let contents = props.children;
   if (!props.disableFocusManagement) {
     contents = (
-      <OverlayContext.Provider value={contextValue}>
-        <FocusScope restoreFocus contain={contain && !isExiting}>
-          {props.children}
-        </FocusScope>
-      </OverlayContext.Provider>
-    );
-  } else {
-    contents = (
-      <OverlayContext.Provider value={contextValue}>
-        {props.children}
-      </OverlayContext.Provider>
+      <FocusScope restoreFocus contain={contain && !isExiting}>
+        {contents}
+      </FocusScope>
     );
   }
+
+  contents = (
+    <OverlayContext.Provider value={contextValue}>
+      <ClearPressResponder>
+        {contents}
+      </ClearPressResponder>
+    </OverlayContext.Provider>
+  );
 
   return ReactDOM.createPortal(contents, portalContainer);
 }

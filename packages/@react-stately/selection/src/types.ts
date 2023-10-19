@@ -32,7 +32,7 @@ export interface SingleSelectionState extends FocusState {
   /** The currently selected key in the collection. */
   readonly selectedKey: Key,
   /** Sets the selected key in the collection. */
-  setSelectedKey(key: Key): void
+  setSelectedKey(key: Key | null): void
 }
 
 export interface MultipleSelectionState extends FocusState {

@@ -19,9 +19,11 @@ import Anatomy from './TableAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
 import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
 
@@ -452,6 +454,13 @@ import {Table, TableHeader, TableBody, Column, Row, Cell, Button, Checkbox, Resi
   <Selection />
 </ExampleCard>
 
+<ExampleCard
+  url="dnd.html"
+  title="Drag and drop"
+  description="Concepts and interactions for an accessible drag and drop experience.">
+  <DragAndDrop />
+</ExampleCard>
+
 </section>
 
 ### Composed components
@@ -475,6 +484,10 @@ A `Table` uses the following components, which may also be used standalone or re
 </ExampleCard>
 
 </section>
+
+## Examples
+
+<ExampleList tag="table" />
 
 ## Reusable wrappers
 
@@ -522,11 +535,11 @@ function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T
   );
 }
 
-function MyRow<T extends object>({id, columns, children}: RowProps<T>) {
+function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProps<T>) {
   let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
-    <Row id={id}>
+    <Row id={id} {...otherProps}>
       {allowsDragging && <Cell><Button slot="drag">≡</Button></Cell>}
       {selectionBehavior === 'toggle' && <Cell><MyCheckbox /></Cell>}
       <Collection items={columns}>
@@ -759,6 +772,46 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
 </div>
 ```
 
+### Links
+
+Table rows may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Row>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
+
+```tsx example
+<Table aria-label="Bookmarks" selectionMode="multiple">
+  <MyTableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>URL</Column>
+    <Column>Date added</Column>
+  </MyTableHeader>
+  <TableBody>
+    <MyRow href="https://adobe.com/" target="_blank">
+      <Cell>Adobe</Cell>
+      <Cell>https://adobe.com/</Cell>
+      <Cell>January 28, 2023</Cell>
+    </MyRow>
+    <MyRow href="https://google.com/" target="_blank">
+      <Cell>Google</Cell>
+      <Cell>https://google.com/</Cell>
+      <Cell>April 5, 2023</Cell>
+    </MyRow>
+    <MyRow href="https://nytimes.com/" target="_blank">
+      <Cell>New York Times</Cell>
+      <Cell>https://nytimes.com/</Cell>
+      <Cell>July 12, 2023</Cell>
+    </MyRow>
+  </TableBody>
+</Table>
+```
+
+```css hidden
+.react-aria-Row[data-href] {
+  cursor: pointer;
+}
+```
+
+#### Client side routing
+
+The `<Row>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Disabled rows
 
@@ -2434,7 +2487,6 @@ function DndTable(props: DndTableProps) {
   />
 </div>
 ```
-
 
 ## Props
 

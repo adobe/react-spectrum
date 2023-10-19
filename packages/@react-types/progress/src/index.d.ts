@@ -68,7 +68,13 @@ export interface SpectrumProgressCircleProps extends AriaProgressCircleProps, St
    * @default 'M'
    */
   size?: 'S' | 'M' | 'L',
-  /** The [visual style](https://spectrum.adobe.com/page/progress-circle/#Over-background-variant) of the ProgressCircle. */
+  /** The static color style to apply. Useful when the button appears over a color background. */
+  staticColor?: 'white' | 'black',
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/progress-circle/#Over-background-variant) of the ProgressCircle.
+   *
+   * @deprecated - use staticColor instead.
+   */
   variant?: 'overBackground'
 }
 
@@ -88,6 +94,11 @@ export interface SpectrumProgressBarBaseProps extends AriaProgressBarBaseProps, 
 }
 
 export interface SpectrumProgressBarProps extends SpectrumProgressBarBaseProps, ProgressBarProps {
-  /** The [visual style](https://spectrum.adobe.com/page/progress-bar/#Over-background-variant) of the ProgressBar. */
+  /** The static color style to apply. Useful when the button appears over a color background. */
+  staticColor?: 'white' | 'black',
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/progress-bar/#Over-background-variant) of the ProgressBar.
+   * @deprecated - use staticColor instead.
+   */
   variant?: 'overBackground'
 }

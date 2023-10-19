@@ -157,7 +157,7 @@ export default function Home() {
             <ReorderableListView />
             <MenuTrigger>
               <ActionButton>Menu</ActionButton>
-              <Menu onAction={(key) => ToastQueue.positive(key)}>
+              <Menu onAction={(key) => ToastQueue.positive(key.toString())}>
                 <Item key="cut">Cut</Item>
                 <Item key="copy">Copy</Item>
                 <Item key="paste">Paste</Item>
@@ -167,6 +167,7 @@ export default function Home() {
             <MenuTrigger>
               <ActionButton>Menu Trigger</ActionButton>
               <Menu>
+                <Item href="/foo">Link to /foo</Item>
                 <Item>Cut</Item>
                 <Item>Copy</Item>
                 <Item>Paste</Item>
@@ -212,7 +213,7 @@ export default function Home() {
                 {(item: any) =>
                   (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
                     {(key) => {
-                      return <Cell>{item[key]}</Cell>;
+                      return <Cell>{item[key.toString()]}</Cell>;
                     }}
                   </Row>)
                 }
@@ -268,15 +269,13 @@ export default function Home() {
               <Item key="march 2020 assets">March 2020 Assets</Item>
             </Breadcrumbs>
 
-            <Link>
-              <a
-                href="https://www.imdb.com/title/tt6348138/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                The missing link.
-              </a>
+            <Link
+              href="https://www.imdb.com/title/tt6348138/"
+              target="_blank"
+              rel="noreferrer">
+              The missing link.
             </Link>
+            <Link href="/foo">Foo</Link>
 
             <Tabs aria-label="History of Ancient Rome">
               <TabList>

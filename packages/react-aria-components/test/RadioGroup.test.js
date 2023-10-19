@@ -105,8 +105,9 @@ describe('RadioGroup', () => {
   });
 
   it('should support slot', () => {
-    let {getByRole, getAllByRole} = render(
-      <RadioGroupContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
+    let {getByRole, getAllByText} = render(
+      <RadioGroupContext.Provider
+        value={{slots: {test: {'aria-label': 'test'}}}}>
         <RadioContext.Provider value={{'data-test': 'test'}}>
           <TestRadioGroup groupProps={{slot: 'test'}} />
         </RadioContext.Provider>
@@ -117,9 +118,10 @@ describe('RadioGroup', () => {
     expect(group).toHaveAttribute('slot', 'test');
     expect(group).toHaveAttribute('aria-label', 'test');
 
-    let radios = getAllByRole('radio');
-    for (let radio of radios) {
-      expect(radio).toHaveAttribute('data-test', 'test');
+    // label elements were not being found with getAllByRole('label')
+    let labels = getAllByText(/A|B|C/i);
+    for (let label of labels) {
+      expect(label).toHaveAttribute('data-test', 'test');
     }
   });
 
@@ -381,5 +383,29 @@ describe('RadioGroup', () => {
     for (let radio of radios) {
       expect(radio).toHaveAttribute('aria-describedby', 'test');
     }
+  });
+
+  it('should render data- attributes only on the outer Radio element or RadioGroup', () => {
+    let {getAllByTestId, getAllByRole} = render(
+      <RadioGroup data-testid="radio-group">
+        <Label>Test</Label>
+        <Radio data-testid="radio-a" value="a">
+          A
+        </Radio>
+        <Radio value="b">
+          B
+        </Radio>
+        <Radio value="c">
+          C
+        </Radio>
+      </RadioGroup>
+    );
+    let radio = getAllByTestId('radio-a');
+    expect(radio).toHaveLength(1);
+    expect(radio[0].nodeName).toBe('LABEL');
+    let group = getAllByRole('radiogroup');
+    expect(group).toHaveLength(1);
+    expect(group[0]).toHaveAttribute('data-testid', 'radio-group');
+
   });
 });

@@ -718,6 +718,37 @@ Now you can use `MyCustomLabel` within a `DateField`, in place of the builtin Re
 </DateField>
 ```
 
+### State
+
+DateField provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.DateFieldState} /> object to its children via `DateFieldStateContext`. This can be used to access and manipulate the date field's state.
+
+This example shows a `DateFormat` component that can be placed within a `DateField` to display the expected date format.
+
+```tsx example
+import {DateFieldStateContext} from 'react-aria-components';
+import {useLocale} from 'react-aria';
+
+function DateFormat() {
+  /*- begin highlight -*/
+  let state = React.useContext(DateFieldStateContext)!;
+  /*- end highlight -*/
+  let {locale} = useLocale();
+  let displayNames = new Intl.DisplayNames(locale, {type: 'dateTimeField'});
+  let format = state.segments.map(segment => segment.type === 'literal' ? segment.text : displayNames.of(segment.type)).join(' ');
+  return <small>{format}</small>;
+}
+
+<DateField defaultValue={today(getLocalTimeZone())}>
+  <Label>Date</Label>
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+  {/*- begin highlight -*/}
+  <DateFormat />
+  {/*- end highlight -*/}
+</DateField>
+```
+
 ### Hooks
 
 If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useDateField](useDateField.html) for more details.

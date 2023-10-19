@@ -755,8 +755,11 @@ export function useCollectionDocument<T extends object, C extends BaseCollection
 }
 
 const SSRContext = createContext<BaseNode<any> | null>(null);
+export const CollectionDocumentContext = createContext<Document<any, BaseCollection<any>> | null>(null);
 
-export function useCollectionPortal<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, document: Document<T, C>): ReactNode {
+export function useCollectionPortal<T extends object, C extends BaseCollection<T>>(props: CollectionProps<T>, document?: Document<T, C>): ReactNode {
+  let ctx = useContext(CollectionDocumentContext);
+  let doc = document ?? ctx!;
   let children = useCollectionChildren(props);
   let wrappedChildren = useMemo(() => (
     <ShallowRenderContext.Provider value>
@@ -766,17 +769,21 @@ export function useCollectionPortal<T extends object, C extends BaseCollection<T
   // During SSR, we render the content directly, and append nodes to the document during render.
   // The collection children return null so that nothing is actually rendered into the HTML.
   return useIsSSR()
-    ? <SSRContext.Provider value={document}>{wrappedChildren}</SSRContext.Provider>
-    : createPortal(wrappedChildren, document as unknown as Element);
+    ? <SSRContext.Provider value={doc}>{wrappedChildren}</SSRContext.Provider>
+    : createPortal(wrappedChildren, doc as unknown as Element);
+}
+
+export function CollectionPortal<T extends object>(props: CollectionProps<T>) {
+  return <>{useCollectionPortal(props)}</>;
 }
 
 /** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
-export function useShallowRender<T extends Element>(Element: string, props: React.HTMLAttributes<T>, ref: ForwardedRef<T>): ReactElement | null {
+export function useShallowRender<P extends object, T extends Element>(Element: string, props: P, ref: ForwardedRef<T>): ReactElement | null {
   let isShallow = useContext(ShallowRenderContext);
   if (isShallow) {
     // Elements cannot be re-parented, so the context will always be there.
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    return useSSRCollectionNode(Element, props, ref, props.children) ?? <></>;
+    return useSSRCollectionNode(Element, props, ref, 'children' in props ? props.children : null) ?? <></>;
   }
 
   return null;

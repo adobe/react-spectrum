@@ -1348,6 +1348,7 @@ function TableCell({cell}) {
             {
               'spectrum-Table-cell--divider': columnProps.showDivider && cell.column.nextKey !== null,
               'spectrum-Table-cell--hideHeader': columnProps.hideHeader,
+              'spectrum-Table-cell--hasExpandCollapseButton': showExpandCollapseButton,
               'is-disabled': isDisabled
             },
             classNames(
@@ -1356,8 +1357,7 @@ function TableCell({cell}) {
               {
                 'react-spectrum-Table-cell--alignStart': columnProps.align === 'start',
                 'react-spectrum-Table-cell--alignCenter': columnProps.align === 'center',
-                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end',
-                'react-spectrum-Table-cell--hasExpandCollapseButton': showExpandCollapseButton
+                'react-spectrum-Table-cell--alignEnd': columnProps.align === 'end'
               }
             )
           )

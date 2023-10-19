@@ -19,9 +19,11 @@ import Anatomy from './ListBoxAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
 
 ---
 category: Collections
@@ -217,7 +219,18 @@ import {ListBox, Item, Section, Header, Text} from 'react-aria-components';
   <Selection />
 </ExampleCard>
 
+<ExampleCard
+  url="dnd.html"
+  title="Drag and drop"
+  description="Concepts and interactions for an accessible drag and drop experience.">
+  <DragAndDrop />
+</ExampleCard>
+
 </section>
+
+## Examples
+
+<ExampleList tag="listbox" />
 
 ## Reusable wrappers
 
@@ -397,6 +410,42 @@ These selection behaviors are defined in [Aria Practices](https://www.w3.org/WAI
   <Item id="ham">Ham</Item>
 </ListBox>
 ```
+
+## Links
+
+By default, interacting with an item in a ListBox triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component.
+
+```tsx example
+<ListBox aria-label="Links">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</ListBox>
+```
+
+```css hidden
+.react-aria-Item[href] {
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+}
+```
+
+By default, link items in a ListBox are not selectable, and only perform navigation when the user interacts with them. However, with the "replace" [selection behavior](#selection-behavior), items will be selected when single clicking or pressing the <Keyboard>Space</Keyboard> key, and navigate to the link when double clicking or pressing the <Keyboard>Enter</Keyboard> key.
+
+```tsx example
+<ListBox aria-label="Links" selectionMode="multiple" selectionBehavior="replace">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</ListBox>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Sections
 

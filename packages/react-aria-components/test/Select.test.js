@@ -191,4 +191,11 @@ describe('Select', () => {
 
     expect(document.activeElement).toBe(document.body);
   });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(<TestSelect data-testid="select-test" />);
+    let outerEl = getAllByTestId('select-test');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-Select');
+  });
 });

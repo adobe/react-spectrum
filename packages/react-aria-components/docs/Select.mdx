@@ -19,6 +19,7 @@ import Anatomy from './SelectAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
@@ -397,6 +398,10 @@ A `Select` uses the following components, which may also be used standalone or r
 
 </section>
 
+## Examples
+
+<ExampleList tag="select" />
+
 ## Reusable wrappers
 
 If you will use a Select in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
@@ -567,6 +572,30 @@ Select supports the `name` prop for integration with HTML forms. The `id` of the
   <Item id="dog">Dog</Item>
 </MySelect>
 ```
+
+## Links
+
+By default, interacting with an item in a Select triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a `Select` are not selectable.
+
+```tsx example
+<MySelect label="Project">
+  <Item href="https://example.com/" target="_blank">Create new…</Item>
+  <Item>Proposal</Item>
+  <Item>Budget</Item>
+  <Item>Onboarding</Item>
+</MySelect>
+```
+
+```css hidden
+.react-aria-Item[href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Sections
 
@@ -1101,6 +1130,49 @@ Now you can use `MyCustomLabel` within a `Select`, in place of the builtin React
   <MyCustomLabel>Name</MyCustomLabel>
   {/*- end highlight -*/}
   {/* ... */}
+</Select>
+```
+
+### State
+
+Select provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports.SelectState} /> object to its children via `SelectStateContext`. This can be used to access and manipulate the select's state.
+
+This example shows a `SelectClearButton` component that can be placed within a `Select` to allow the user to clear the selected item.
+
+```tsx example
+import {SelectStateContext} from 'react-aria-components';
+
+function SelectClearButton() {
+  /*- begin highlight -*/
+  let state = React.useContext(SelectStateContext);
+  /*- end highlight -*/
+  return (
+    <Button
+      // Don't inherit behavior from Select.
+      slot={null}
+      style={{fontSize: 'small', marginTop: 6, padding: 4}}
+      onPress={() => state?.setSelectedKey(null)}>
+      Clear
+    </Button>
+  );
+}
+
+<Select>
+  <Label>Favorite Animal</Label>
+  <Button>
+    <SelectValue />
+    <span aria-hidden="true">▼</span>
+  </Button>
+  {/*- begin highlight -*/}
+  <SelectClearButton />
+  {/*- end highlight -*/}
+  <Popover>
+    <ListBox>
+      <Item>Cat</Item>
+      <Item>Dog</Item>
+      <Item>Kangaroo</Item>
+    </ListBox>
+  </Popover>
 </Select>
 ```
 

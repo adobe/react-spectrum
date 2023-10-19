@@ -52,3 +52,11 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
     </PressResponderContext.Provider>
   );
 });
+
+export function ClearPressResponder({children}: {children: ReactNode}) {
+  return (
+    <PressResponderContext.Provider value={undefined}>
+      {children}
+    </PressResponderContext.Provider>
+  );
+}

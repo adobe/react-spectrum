@@ -178,7 +178,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
-  let linkProps = getSyntheticLinkProps(node.props);
+  let linkProps = itemStates.hasAction ? getSyntheticLinkProps(node.props) : {};
   let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture: onKeyDown,

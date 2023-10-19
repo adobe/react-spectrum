@@ -11,16 +11,17 @@
  */
 import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
-import {Collection, Node, useComboBoxState} from 'react-stately';
-import {ContextValue, forwardRefType, Hidden, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
+import {CollectionDocumentContext, useCollectionDocument} from './Collection';
+import {ContextValue, forwardRefType, Hidden, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {ListBoxContext} from './ListBox';
+import {ListBoxContext, ListStateContext} from './ListBox';
+import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
-import {useCollectionDocument} from './Collection';
 
 export interface ComboBoxRenderProps {
   /**
@@ -57,6 +58,7 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
 }
 
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
+export const ComboBoxStateContext = createContext<ComboBoxState<any> | null>(null);
 
 function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
@@ -78,9 +80,13 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
       {/* Render a hidden copy of the children so that we can build the collection even when the popover is not open.
         * This should always come before the real DOM content so we have built the collection by the time it renders during SSR. */}
       <Hidden>
-        <ListBoxContext.Provider value={{document, items: props.items ?? props.defaultItems}}>
+        <Provider
+          values={[
+            [CollectionDocumentContext, document],
+            [ListBoxContext, {items: props.items ?? props.defaultItems}]
+          ]}>
           {children}
-        </ListBoxContext.Provider>
+        </Provider>
       </Hidden>
       <ComboBoxInner props={props} collection={collection} comboBoxRef={ref} />
     </>
@@ -133,15 +139,14 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     descriptionProps,
     errorMessageProps
   } = useComboBox({
-    ...props,
+    ...removeDataAttributes(props),
     label,
     inputRef,
     buttonRef,
     listBoxRef,
     popoverRef,
     name: formValue === 'text' ? name : undefined
-  },
-  state);
+  }, state);
 
   // Make menu width match input + button
   let [menuWidth, setMenuWidth] = useState<string | null>(null);
@@ -172,18 +177,20 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
   return (
     <Provider
       values={[
+        [ComboBoxStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
         [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
+        [OverlayTriggerStateContext, state],
         [PopoverContext, {
-          state,
           ref: popoverRef,
           triggerRef: inputRef,
           placement: 'bottom start',
           isNonModal: true,
           style: {'--trigger-width': menuWidth} as React.CSSProperties
         }],
-        [ListBoxContext, {state, ...listBoxProps, ref: listBoxRef}],
+        [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
+        [ListStateContext, state],
         [TextContext, {
           slots: {
             description: descriptionProps,
@@ -195,7 +202,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         {...DOMProps}
         {...renderProps}
         ref={ref}
-        slot={props.slot}
+        slot={props.slot || undefined}
         data-focused={state.isFocused || undefined}
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}

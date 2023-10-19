@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDialogProps, useDialog, useOverlayTrigger} from 'react-aria';
-import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
-import {ModalContext} from './Modal';
-import {OverlayTriggerProps, useOverlayTriggerState} from 'react-stately';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useRef} from 'react';
+import {PressResponder} from '@react-aria/interactions';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 
 export interface DialogTriggerProps extends OverlayTriggerProps {
   children: ReactNode
@@ -28,11 +27,12 @@ interface DialogRenderProps {
 }
 
 export interface DialogProps extends AriaDialogProps, StyleProps, SlotProps {
-  children?: ReactNode | ((opts: DialogRenderProps) => ReactNode),
-  onClose?: () => void
+  /** Children of the dialog. A function may be provided to access a function to close the dialog. */
+  children?: ReactNode | ((opts: DialogRenderProps) => ReactNode)
 }
 
 export const DialogContext = createContext<ContextValue<DialogProps, HTMLElement>>(null);
+export const OverlayTriggerStateContext = createContext<OverlayTriggerState | null>(null);
 
 /**
  * A DialogTrigger opens a dialog when a trigger element is pressed.
@@ -46,25 +46,26 @@ export function DialogTrigger(props: DialogTriggerProps) {
   return (
     <Provider
       values={[
-        [ModalContext, {state}],
-        [DialogContext, {...overlayProps, onClose: state.close}],
-        [ButtonContext, {...triggerProps, isPressed: state.isOpen, ref: buttonRef}],
-        [PopoverContext, {state, triggerRef: buttonRef}]
+        [OverlayTriggerStateContext, state],
+        [DialogContext, overlayProps],
+        [PopoverContext, {triggerRef: buttonRef}]
       ]}>
-      {props.children}
+      <PressResponder {...triggerProps} ref={buttonRef} isPressed={state.isOpen}>
+        {props.children}
+      </PressResponder>
     </Provider>
   );
 }
 
-
 function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, DialogContext);
   let {dialogProps, titleProps} = useDialog(props, ref);
+  let state = useContext(OverlayTriggerStateContext);
 
   let children = props.children;
   if (typeof children === 'function') {
     children = children({
-      close: props.onClose || (() => {})
+      close: state?.close || (() => {})
     });
   }
 
@@ -73,12 +74,11 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
       {...filterDOMProps(props)}
       {...dialogProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       style={props.style}
       className={props.className ?? 'react-aria-Dialog'}>
       <Provider
         values={[
-          [ButtonContext, undefined],
           // TODO: clear context within dialog content?
           [HeadingContext, {...titleProps, level: 2}]
         ]}>

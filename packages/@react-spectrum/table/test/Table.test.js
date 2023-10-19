@@ -4780,6 +4780,45 @@ export let tableTests = () => {
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
+
+      it('should work with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let {getAllByRole} = render(
+          <Provider theme={theme} router={{navigate}}>
+            <TableView aria-label="Table">
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row href="/one">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </Provider>
+        );
+
+        let items = getAllByRole('row').slice(1);
+        await trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/one');
+
+        navigate.mockReset();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+
+        await trigger(items[1]);
+        expect(navigate).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
+      });
     });
   });
 };

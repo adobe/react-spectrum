@@ -4,9 +4,9 @@
   "private": true,
   "main": "CSSEnvTransformer.js",
   "engines": {
-    "parcel": "^2.9.1"
+    "parcel": "^2.9.2"
   },
   "dependencies": {
-    "@parcel/plugin": "^2.9.1"
+    "@parcel/plugin": "^2.9.2"
   }
 }

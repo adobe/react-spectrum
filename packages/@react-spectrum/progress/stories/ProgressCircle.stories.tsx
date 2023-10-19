@@ -70,6 +70,22 @@ VariantOverBackground.story = {
   name: 'variant: overBackground'
 };
 
+export const StaticColorWhite = (args) => (
+  <div style={{...grayedBoxStyle, backgroundColor: 'rgb(0, 119, 114)'}}>{render({...args, staticColor: 'white'})}</div>
+);
+
+StaticColorWhite.story = {
+  name: 'staticColor: white'
+};
+
+export const StaticColorBlack = (args) => (
+  <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>{render({...args, staticColor: 'black'})}</div>
+);
+
+StaticColorBlack.story = {
+  name: 'staticColor: black'
+};
+
 export const UsingRawValuesForMinValueMaxValueAndValue = () =>
   render({
     labelPosition: 'top',
