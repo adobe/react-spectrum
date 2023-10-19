@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/slider",
-  "version": "3.4.3",
+  "version": "3.4.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
