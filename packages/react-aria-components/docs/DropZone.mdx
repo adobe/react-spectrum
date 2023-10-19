@@ -254,6 +254,7 @@ To allow the selection of files from the user's device, pass `FileTrigger` as a 
 
 ```tsx example
 import {FileTrigger, Button} from 'react-aria-components';
+import type {FileDropItem} from 'react-aria'
 
 function Example() {
   let [files, setFiles] = React.useState(null);
@@ -261,20 +262,19 @@ function Example() {
   return(
     <DropZone
       onDrop={(e) => {
-        let files = e.items;
-        let urls = files.map((file) => file.name);
-        setFiles(urls.join(', '));
+        let files = e.items.filter((file) => file.kind === 'file') as FileDropItem[];
+        let filenames = files.map((file) => file.name);
+        setFiles(filenames.join(', '));
       }}>
       <FileTrigger
         allowsMultiple
         onSelect={(e) => {
           let files = Array.from(e);
-          let urls = files.map((file) => file.name);
-          setFiles(urls.join(', '));
+          let filenames = files.map((file) => file.name);
+          setFiles(filenames.join(', '));
         }}>
         <Button>Select files</Button>
       </FileTrigger>
-      <br/>
       <Text slot="label">
         {files || 'Drop files here'}
       </Text>
@@ -338,6 +338,10 @@ function Example() {
     --text-color-disabled: GrayText;
     --focus-ring-color: Highlight;
   }
+}
+
+.react-aria-Text {
+  display: inline-block;
 }
 ```
 
