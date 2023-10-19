@@ -11,8 +11,9 @@
  */
 
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
-import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid, useDefaultProps} from './utils';
+import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, getValidationDetails, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
@@ -38,7 +39,7 @@ export interface DateSegment {
   isEditable: boolean
 }
 
-export interface DateFieldState {
+export interface DateFieldState extends FormValidationState<DateValue> {
   /** The current field value. */
   value: DateValue,
   /** The current value, converted to a native JavaScript `Date` object.  */
@@ -314,11 +315,30 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     }
   };
 
-  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' ||
-    isInvalid(calendarValue, props.minValue, props.maxValue);
+  let validationDetails = getValidationDetails(calendarValue, props.minValue, props.maxValue);
+  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' || !validationDetails.valid;
   let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
+  let errors = [];
+  if (validationDetails.rangeUnderflow) {
+    errors = [`Value must be on or after ${dateFormatter.format(props.minValue.toDate(timeZone))}`];
+  }
+
+  if (validationDetails.rangeOverflow) {
+    errors = [`Value must be on or before ${dateFormatter.format(props.maxValue.toDate(timeZone))}`];
+  }
+
+  let validation = useFormValidationState({
+    ...props,
+    value,
+    builtinValidation: {
+      isInvalid: !validationDetails.valid,
+      errors,
+      validationDetails
+    }
+  });
 
   return {
+    ...validation,
     value: calendarValue,
     dateValue,
     calendar,
@@ -359,7 +379,11 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       if (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod) {
         validSegments = {...allSegments};
         setValidSegments(validSegments);
-        setValue(displayValue.copy());
+        let newValue = displayValue.copy();
+        setValue(newValue);
+        validation.commitValidation(newValue);
+      } else {
+        validation.commitValidation();
       }
     },
     clearSegment(part) {

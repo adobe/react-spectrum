@@ -21,6 +21,24 @@ export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateV
   );
 }
 
+export function getValidationDetails(value: DateValue, minValue: DateValue, maxValue: DateValue) {
+  let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
+  let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
+  return {
+    badInput: false,
+    customError: false,
+    patternMismatch: false,
+    rangeOverflow,
+    rangeUnderflow,
+    stepMismatch: false,
+    tooLong: false,
+    tooShort: false,
+    typeMismatch: false,
+    valueMissing: false,
+    valid: !rangeOverflow && !rangeUnderflow
+  };
+}
+
 export type FieldOptions = Pick<Intl.DateTimeFormatOptions, 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'>;
 interface FormatterOptions {
   timeZone?: string,

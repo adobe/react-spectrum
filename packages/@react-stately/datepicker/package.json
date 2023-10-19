@@ -24,6 +24,7 @@
   "dependencies": {
     "@internationalized/date": "^3.5.0",
     "@internationalized/string": "^3.1.1",
+    "@react-stately/form": "3.0.0-alpha.1",
     "@react-stately/overlays": "^3.6.3",
     "@react-stately/utils": "^3.8.0",
     "@react-types/datepicker": "^3.6.1",
