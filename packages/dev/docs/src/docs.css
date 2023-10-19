@@ -366,6 +366,14 @@ main {
   align-items: center;
 }
 
+main.noToc {
+  margin-right: 0;
+}
+
+main.examplePage {
+  margin: 0;
+}
+
 .article {
   max-width: 967px;
   flex: 1;
@@ -530,6 +538,31 @@ footer li:last-child:after {
   border-radius: 0 0 4px 4px;
   border: 1px solid var(--spectrum-gray-200);
   border-top: none;
+}
+
+:global(.flip) > .example {
+  border-radius: 4px 4px 0 0;
+  border: 1px solid var(--spectrum-gray-200);
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+:global(.flip) ~ pre:global(.example) {
+  border-radius: 0 0 4px 4px;
+  border-top: none;
+  border-bottom: 1px solid var(--spectrum-gray-200);
+  margin-top: 0;
+}
+
+:global(.standalone) > .example {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+:global(.standalone) ~ pre:global(.example) {
+  border-radius: 4px;
+  border: 1px solid var(--spectrum-gray-200);
 }
 
 code {
@@ -713,6 +746,12 @@ h4.sectionHeader.sectionHeader  {
   }
 
   z-index: 1;
+}
+
+.exampleHeader {
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 
 .docSearchBoxThemeProvider {

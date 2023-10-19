@@ -150,7 +150,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     hideTimeZone,
     isDisabled,
     isReadOnly,
-    isRequired
+    isRequired,
+    isDateUnavailable
   } = props;
 
   let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
@@ -315,7 +316,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     }
   };
 
-  let validationDetails = getValidationDetails(calendarValue, props.minValue, props.maxValue);
+  // TODO: do we really need both isDateUnavailable AND validate??
+  let isUnavailable = useMemo(() => (value && isDateUnavailable?.(value)) || false, [value, isDateUnavailable]);
+  let validationDetails = getValidationDetails(calendarValue, props.minValue, props.maxValue, isUnavailable);
   let isValueInvalid = props.isInvalid || props.validationState === 'invalid' || !validationDetails.valid;
   let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
   let errors = [];

@@ -21,11 +21,11 @@ export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateV
   );
 }
 
-export function getValidationDetails(value: DateValue, minValue: DateValue, maxValue: DateValue) {
+export function getValidationDetails(value: DateValue, minValue: DateValue, maxValue: DateValue, isDateUnavailable: boolean): ValidityState {
   let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
   let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
   return {
-    badInput: false,
+    badInput: isDateUnavailable,
     customError: false,
     patternMismatch: false,
     rangeOverflow,
@@ -35,7 +35,7 @@ export function getValidationDetails(value: DateValue, minValue: DateValue, maxV
     tooShort: false,
     typeMismatch: false,
     valueMissing: false,
-    valid: !rangeOverflow && !rangeUnderflow
+    valid: !rangeOverflow && !rangeUnderflow && !isDateUnavailable
   };
 }
 
