@@ -314,8 +314,11 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     }
   };
 
-  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' ||
-    isInvalid(calendarValue, props.minValue, props.maxValue);
+  let isValueInvalid = props.isInvalid || props.validationState === 'invalid'
+    || (calendarValue != null && (
+      isInvalid(calendarValue, props.minValue, props.maxValue) ||
+      (calendarValue && props.isDateUnavailable?.(calendarValue))
+    ));
   let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
