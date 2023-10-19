@@ -25,7 +25,7 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-selectlist-option-background-color);
   color: var(--spectrum-selectlist-option-text-color);
 
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     background-color: var(--spectrum-selectlist-option-background-color-key-focus);
     color: var(--spectrum-selectlist-option-text-color-key-focus);
@@ -103,7 +103,7 @@ governing permissions and limitations under the License.
     &:focus,
     &.is-highlighted,
     &.is-open,
-    &:focus-ring,
+    &:focus-visible,
     &.is-focused {
       &.is-selected {
         .spectrum-Menu-checkmark {

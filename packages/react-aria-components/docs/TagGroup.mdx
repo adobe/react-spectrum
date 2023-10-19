@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/list';
 import {PropTable, HeaderInfo, PageDescription, StateTable, ContextTable, TypeLink} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -358,6 +359,30 @@ function Example() {
  }
  ```
 
+## Links
+
+Tags may be links to another page or website. This can be achieved by passing the `href` prop to the `<Tag>` component. Tags with an `href` are not selectable.
+
+```tsx example
+<MyTagGroup label="Links">
+  <MyTag href="https://adobe.com/" target="_blank">Adobe</MyTag>
+  <MyTag href="https://apple.com/" target="_blank">Apple</MyTag>
+  <MyTag href="https://google.com/" target="_blank">Google</MyTag>
+  <MyTag href="https://microsoft.com/" target="_blank">Microsoft</MyTag>
+</MyTagGroup>
+```
+
+```css hidden
+.react-aria-Tag[data-href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
+### Client side routing
+
+The `<Tag>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
  ## Disabled tags
 
  TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
@@ -693,6 +718,35 @@ Now you can use `MyCustomLabel` within a `TagGroup`, in place of the builtin Rea
   <MyCustomLabel>Name</MyCustomLabel>
   {/*- end highlight -*/}
   {/* ... */}
+</TagGroup>
+```
+
+### State
+
+TagGroup provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.ListState} /> object to its children via `ListStateContext`. This can be used to access and manipulate the TagGroup's state.
+
+This example shows a `SelectionCount` component that can be placed within a `TagGroup` to display the number of selected tags.
+
+```tsx example
+import {ListStateContext} from 'react-aria-components';
+
+function SelectionCount() {
+  /*- begin highlight -*/
+  let state = React.useContext(ListStateContext)!;
+  /*- end highlight -*/
+  let selected = state.selectionManager.selectedKeys.size;
+  return <small>{selected} tags selected.</small>;
+}
+
+<TagGroup selectionMode="multiple">
+  <Label>Tags</Label>
+  <TagList>
+    <Tag>News</Tag>
+    <Tag>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagList>
+  <SelectionCount />
 </TagGroup>
 ```
 

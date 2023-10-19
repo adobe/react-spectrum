@@ -66,8 +66,10 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
  */
 export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ListBoxAria {
   let domProps = filterDOMProps(props, {labelable: true});
-  let linkBehavior = props.linkBehavior || (state.selectionManager.selectionBehavior === 'replace' ? 'action' : 'override');
-  if (state.selectionManager.selectionBehavior === 'toggle' && linkBehavior === 'action') {
+  // Use props instead of state here. We don't want this to change due to long press.
+  let selectionBehavior = props.selectionBehavior || 'toggle';
+  let linkBehavior = props.linkBehavior || (selectionBehavior === 'replace' ? 'action' : 'override');
+  if (selectionBehavior === 'toggle' && linkBehavior === 'action') {
     // linkBehavior="action" does not work with selectionBehavior="toggle" because there is no way
     // to initiate selection (checkboxes are not allowed inside a listbox). Link items will not be
     // selectable in this configuration.

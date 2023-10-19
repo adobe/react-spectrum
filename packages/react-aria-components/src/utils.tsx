@@ -31,10 +31,11 @@ interface SlottedValue<T> {
   [slotCallbackSymbol]?: (value: T) => void
 }
 
-export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E> | null | undefined;
+export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
+export type ContextValue<T, E extends Element> = SlottedContextValue<WithRef<T, E>>;
 
 type ProviderValue<T> = [Context<T>, T];
-type ProviderValues<A, B, C, D, E, F, G, H> =
+type ProviderValues<A, B, C, D, E, F, G, H, I, J> =
   | [ProviderValue<A>]
   | [ProviderValue<A>, ProviderValue<B>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>]
@@ -42,14 +43,16 @@ type ProviderValues<A, B, C, D, E, F, G, H> =
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>];
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>]
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>]
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>];
 
-interface ProviderProps<A, B, C, D, E, F, G, H> {
-  values: ProviderValues<A, B, C, D, E, F, G, H>,
+interface ProviderProps<A, B, C, D, E, F, G, H, I, J> {
+  values: ProviderValues<A, B, C, D, E, F, G, H, I, J>,
   children: ReactNode
 }
 
-export function Provider<A, B, C, D, E, F, G, H>({values, children}: ProviderProps<A, B, C, D, E, F, G, H>): JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H, I, J>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J>): JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;
@@ -134,20 +137,29 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
 
 export type WithRef<T, E> = T & {ref?: ForwardedRef<E>};
 export interface SlotProps {
-  /** A slot name for the component. Slots allow the component to receive props from a parent component. */
-  slot?: string
+  /**
+   * A slot name for the component. Slots allow the component to receive props from a parent component.
+   * An explicit `null` value indicates that the local props completely override all props received from a parent.
+   */
+  slot?: string | null
 }
 
-export function useSlottedContext<U extends SlotProps, E extends Element>(context: Context<ContextValue<U, E>>, slot?: string): WithRef<U, E> | null | undefined {
+export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, slot?: string | null): T | null | undefined {
   let ctx = useContext(context);
-  if (ctx && 'slots' in ctx && ctx.slots) {
+  if (slot === null) {
+    // An explicit `null` slot means don't use context.
+    return null;
+  }
+  if (ctx && typeof ctx === 'object' && 'slots' in ctx && ctx.slots) {
+    let availableSlots = new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`));
+
     if (!slot && !ctx.slots[defaultSlot]) {
-      throw new Error('A slot prop is required');
+      throw new Error(`A slot prop is required. Valid slot names are ${availableSlots}.`);
     }
     let slotKey = slot || defaultSlot;
     if (!ctx.slots[slotKey]) {
       // @ts-ignore
-      throw new Error(`Invalid slot "${slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
+      throw new Error(`Invalid slot "${slot}". Valid slot names are ${availableSlots}.`);
     }
     return ctx.slots[slotKey];
   }
@@ -325,4 +337,21 @@ export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref
   // @ts-ignore - for react dev tools
   Wrapper.displayName = fn.displayName || fn.name;
   return (React.forwardRef as forwardRefType)(Wrapper);
+}
+
+/**
+ * Filters out `data-*` attributes to keep them from being passed down and duplicated.
+ * @param props
+ */
+export function removeDataAttributes<T>(props: T): T {
+  const prefix = /^(data-.*)$/;
+  let filteredProps = {} as T;
+
+  for (const prop in props) {
+    if (!prefix.test(prop)) {
+      filteredProps[prop] = props[prop];
+    }
+  }
+
+  return filteredProps;
 }

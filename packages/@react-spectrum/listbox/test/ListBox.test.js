@@ -1015,6 +1015,30 @@ describe('ListBox', function () {
         expect(onClick.mock.calls[0][0].target.href).toBe('https://adobe.com/');
         expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
       });
+
+      it('works with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let {getAllByRole} = render(
+          <Provider theme={theme} router={{navigate}}>
+            <ListBox aria-label="listbox">
+              <Item href="/one">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListBox>
+          </Provider>
+        );
+
+        let items = getAllByRole('option');
+        trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/one');
+
+        navigate.mockReset();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+
+        trigger(items[1]);
+        expect(navigate).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

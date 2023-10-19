@@ -201,4 +201,13 @@ describe('ComboBox', () => {
     expect(input).toHaveAttribute('name', 'test');
     expect(document.querySelector('input[type=hidden]')).toBeNull();
   });
+
+  it('should render data- attributes on outer element', () => {
+    let {getAllByTestId} = render(
+      <TestComboBox data-testid="combo-box" />
+    );
+    let outerEl = getAllByTestId('combo-box');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-ComboBox');
+  });
 });

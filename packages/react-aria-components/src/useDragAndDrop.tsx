@@ -170,3 +170,11 @@ function DropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>
  */
 const _DropIndicator = forwardRef(DropIndicator);
 export {_DropIndicator as DropIndicator};
+
+export interface DragAndDropContextValue {
+  dragAndDropHooks?: DragAndDropHooks,
+  dragState?: DraggableCollectionState,
+  dropState?: DroppableCollectionState
+}
+
+export const DragAndDropContext = createContext<DragAndDropContextValue>({});

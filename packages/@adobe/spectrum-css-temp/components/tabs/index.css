@@ -178,7 +178,7 @@ governing permissions and limitations under the License.
     block-size: var(--spectrum-tabs-item-height);
 
     /* FieldButton Picker focus ring override */
-    & button {
+    button {
       &::before {
         content: '';
         position: absolute;
@@ -198,7 +198,7 @@ governing permissions and limitations under the License.
     }
 
     &.spectrum-Tabs--compact {
-      & button {
+      button {
         height: calc(var(--spectrum-tabs-compact-item-height));
       }
     }

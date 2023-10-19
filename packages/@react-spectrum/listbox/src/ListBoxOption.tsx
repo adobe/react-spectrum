@@ -12,11 +12,11 @@
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
 import {ListBoxContext} from './ListBoxContext';
+import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {useContext, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -44,8 +44,6 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
     key
   } = item;
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
-  let domProps = filterDOMProps(item.props, {isLink: !!item.props.href});
-  delete domProps.id;
   let state = useContext(ListBoxContext);
 
   let ref = useRef<any>();
@@ -75,7 +73,7 @@ export function ListBoxOption<T>(props: OptionProps<T>) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
-        {...mergeProps(optionProps, shouldFocusOnHover ? {} : hoverProps, domProps)}
+        {...mergeProps(optionProps, shouldFocusOnHover ? {} : hoverProps)}
         ref={ref}
         className={classNames(
           styles,

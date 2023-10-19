@@ -20,6 +20,7 @@ import Anatomy from '@react-aria/datepicker/docs/datepicker-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
@@ -399,7 +400,7 @@ A date picker consists of a label, and group containing a [date field](DateField
 `DatePicker` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
 
 ```tsx
-import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Button, Heading, DateInput, DateSegment, Text} from 'react-aria-components';
+import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Button, Heading, DateInput, DateSegment, Text} from 'react-aria-components';
 
 <DatePicker>
   <Label />
@@ -500,6 +501,10 @@ A `DatePicker` uses the following components, which may also be used standalone 
 </ExampleCard>
 
 </section>
+
+## Examples
+
+<ExampleList tag="datepicker" />
 
 ## Reusable wrappers
 
@@ -1196,6 +1201,95 @@ Now you can use `MyCustomLabel` within a `DatePicker`, in place of the builtin R
   {/* ... */}
 </DatePicker>
 ```
+
+### State
+
+DatePicker provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.DatePickerState} /> object to its children via `DatePickerStateContext`. This can be used to access and manipulate the date picker's state.
+
+This example shows a `DatePickerClearButton` component that can be placed within a `DatePicker` to allow the user to clear the selected value.
+
+```tsx example
+import {DatePickerStateContext} from 'react-aria-components';
+
+function DatePickerClearButton() {
+  /*- begin highlight -*/
+  let state = React.useContext(DatePickerStateContext)!;
+  /*- end highlight -*/
+  return (
+    <Button
+      // Don't inherit default Button behavior from DatePicker.
+      slot={null}
+      className="clear-button"
+      aria-label="Clear"
+      onPress={() => state.setValue(null)}>
+      ✕
+    </Button>
+  );
+}
+
+<DatePicker defaultValue={today(getLocalTimeZone())}>
+  <Label>Date</Label>
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    {/*- begin highlight -*/}
+    <DatePickerClearButton />
+    {/*- end highlight -*/}
+    <Button>▼</Button>
+  </Group>
+  <Popover>
+    <Dialog>
+      <Calendar>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </Calendar>
+    </Dialog>
+  </Popover>
+</DatePicker>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.clear-button {
+  width: 1.143rem;
+  height: 1.143rem;
+  border-radius: 1.143rem;
+  margin-left: -3.4rem;
+  font-size: 0.857rem;
+  line-height: 0.857rem;
+  vertical-align: middle;
+  text-align: center;
+  background: gray;
+  color: white;
+  border: none;
+  padding: 0;
+  outline: none;
+
+  &[data-pressed] {
+    background: dimgray;
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid slateblue;
+    outline-offset: 2px;
+  }
+
+  + .react-aria-Button {
+    margin-left: 4px;
+  }
+}
+```
+
+</details>
 
 ### Hooks
 

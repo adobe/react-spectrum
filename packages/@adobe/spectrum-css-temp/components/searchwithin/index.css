@@ -26,7 +26,7 @@ governing permissions and limitations under the License.
   display: inline-flex;
   position: relative;
 
-  .spectrum-SearchWithin-picker { 
+  .spectrum-SearchWithin-picker {
     width: auto;
   }
 }

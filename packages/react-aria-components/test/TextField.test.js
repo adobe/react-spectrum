@@ -16,7 +16,7 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestTextField = (props) => (
-  <TextField defaultValue="test" data-foo="bar" {...props}>
+  <TextField defaultValue="test" data-testid="text-field-test" data-foo="bar" {...props}>
     <Label>Test</Label>
     <props.input {...props.inputProps} />
     <Text slot="description">Description</Text>
@@ -100,6 +100,13 @@ describe('TextField', () => {
       await user.tab();
       expect(input).not.toHaveAttribute('data-focus-visible');
       expect(input).not.toHaveClass('focus');
+    });
+
+    it('should render data- attributes only on the outer element', () => {
+      let {getAllByTestId} = render(<TestTextField input={component} />);
+      let outerEl = getAllByTestId('text-field-test');
+      expect(outerEl).toHaveLength(1);
+      expect(outerEl[0]).toHaveClass('react-aria-TextField');
     });
   });
 });

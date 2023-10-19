@@ -24,8 +24,8 @@ describe('Table SSR', function () {
             <button onClick={() => setShow(true)}>Show</button>
             <Table aria-label="Table">
               <TableHeader>
-                <Column isRowHeader>Foo</Column>
-                <Column>Bar</Column>
+                <Column>Foo</Column>
+                <Column isRowHeader>Bar</Column>
               </TableHeader>
               <TableBody>
                 <Row key="1">

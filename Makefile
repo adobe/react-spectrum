@@ -20,6 +20,7 @@ clean_all:
 	$(MAKE) clean
 	$(MAKE) clean_node_modules
 	$(MAKE) clean_dist
+	$(MAKE) clean_parcel
 
 clean_node_modules:
 	rm -rf node_modules
@@ -29,6 +30,9 @@ clean_node_modules:
 clean_dist:
 	rm -rf packages/*/*/dist
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/dist
+
+clean_parcel:
+	rm -rf .parcel-cache
 
 packages/@spectrum-icons/workflow/src: packages/@spectrum-icons/workflow/package.json
 	yarn workspace @spectrum-icons/workflow make-icons
@@ -94,7 +98,13 @@ build:
 		do node scripts/buildEsm.js $$pkg; \
 	done
 	sed -i.bak s/\.js/\.mjs/ packages/@react-aria/i18n/dist/import.mjs
+	sed -i.bak 's/@react-aria\/i18n/.\/real-main.js/' packages/@react-aria/i18n/dist/useMessageFormatter.js
+	sed -i.bak 's/@react-aria\/i18n/.\/real-module.js/' packages/@react-aria/i18n/dist/useMessageFormatter.module.js
+	sed -i.bak 's/@react-aria\/i18n/.\/real-module.mjs/' packages/@react-aria/i18n/dist/useMessageFormatter.module.mjs
 	rm packages/@react-aria/i18n/dist/import.mjs.bak
+	rm packages/@react-aria/i18n/dist/useMessageFormatter.js.bak
+	rm packages/@react-aria/i18n/dist/useMessageFormatter.module.js.bak
+	rm packages/@react-aria/i18n/dist/useMessageFormatter.module.mjs.bak
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs

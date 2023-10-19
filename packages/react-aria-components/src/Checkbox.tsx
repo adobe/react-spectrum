@@ -101,7 +101,7 @@ export interface CheckboxRenderProps {
 }
 
 export const CheckboxGroupContext = createContext<ContextValue<CheckboxGroupProps, HTMLDivElement>>(null);
-const InternalCheckboxGroupContext = createContext<CheckboxGroupState | null>(null);
+export const CheckboxGroupStateContext = createContext<CheckboxGroupState | null>(null);
 
 function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxGroupContext);
@@ -129,14 +129,14 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
       {...groupProps}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-readonly={state.isReadOnly || undefined}
       data-required={props.isRequired || undefined}
       data-invalid={state.isInvalid || undefined}
       data-disabled={props.isDisabled || undefined}>
       <Provider
         values={[
-          [InternalCheckboxGroupContext, state],
+          [CheckboxGroupStateContext, state],
           [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [TextContext, {
             slots: {
@@ -155,7 +155,7 @@ export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLInp
 
 function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxContext);
-  let groupState = useContext(InternalCheckboxGroupContext);
+  let groupState = useContext(CheckboxGroupStateContext);
   let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
@@ -219,7 +219,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <label
       {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-indeterminate={props.isIndeterminate || undefined}
       data-pressed={pressed || undefined}

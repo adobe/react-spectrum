@@ -289,7 +289,7 @@ describe('Button', function () {
             setPending(true);
             onPressSpy();
           }}
-          UNSTABLE_isPending={pending}>
+          isPending={pending}>
           Click Me
         </Button>
       );
@@ -317,7 +317,7 @@ describe('Button', function () {
   // isPending anchor element
   it('removes href attribute from anchor element when isPending is true', () => {
     let {getByRole} = render(
-      <Button elementType="a" href="//example.com" UNSTABLE_isPending>
+      <Button elementType="a" href="//example.com" isPending>
         Click Me
       </Button>
     );

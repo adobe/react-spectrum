@@ -133,4 +133,13 @@ describe('NumberField', () => {
     rerender(<TestNumberField name="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />);
     expect(input).toHaveValue('');
   });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <TestNumberField data-testid="number-field" />
+    );
+    let outerEl = getAllByTestId('number-field');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-NumberField');
+  });
 });

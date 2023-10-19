@@ -13,12 +13,12 @@
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {DOMAttributes, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps, mergeRefs, useObjectRef, useSlotId} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {mergeRefs, useObjectRef, useSlotId} from '@react-aria/utils';
 import React, {Key, useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
@@ -53,7 +53,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   }
 
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
-  let domProps = filterDOMProps(item.props, {isLink: !!item.props.href});
 
   let {
     closeOnSelect
@@ -103,7 +102,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
-        {...mergeProps(menuItemProps, domProps)}
+        {...menuItemProps}
         ref={ref}
         className={classNames(
           styles,

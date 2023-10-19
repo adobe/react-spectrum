@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {dimensionValue} from '../';
+import {convertStyleProps, dimensionValue, viewStyleProps} from '../';
 
 
 describe('styleProps', function () {
@@ -65,6 +65,26 @@ describe('styleProps', function () {
         let value = dimensionValue('var(--custom-variable, calc(100% - single-line-width))');
         expect(value).toBe('var(--custom-variable, calc(100% - var(--spectrum-global-dimension-single-line-width, var(--spectrum-alias-single-line-width))))');
       });
+    });
+  });
+
+  describe('borderSizeValue', function () {
+    it('should default to 0 if base is undefined', function () {
+      let style = convertStyleProps({borderEndWidth: {S: 'thin'}}, viewStyleProps, 'ltr', ['base']);
+      expect(style.borderRightWidth).toBe('0');
+      style = convertStyleProps({borderEndWidth: {S: 'thin'}}, viewStyleProps, 'ltr', ['S', 'base']);
+      expect(style.borderRightWidth).toBe('var(--spectrum-alias-border-size-thin)');
+      style = convertStyleProps({borderEndWidth: {S: 'thin'}}, viewStyleProps, 'ltr', ['M', 'S', 'base']);
+      expect(style.borderRightWidth).toBe('var(--spectrum-alias-border-size-thin)');
+    });
+
+    it('should accept "none" to unset the border size', function () {
+      let style = convertStyleProps({borderEndWidth: {S: 'thick', M: 'none', L: 'thin'}}, viewStyleProps, 'ltr', ['S', 'base']);
+      expect(style.borderRightWidth).toBe('var(--spectrum-alias-border-size-thick)');
+      style = convertStyleProps({borderEndWidth: {S: 'thick', M: 'none', L: 'thin'}}, viewStyleProps, 'ltr', ['M', 'S', 'base']);
+      expect(style.borderRightWidth).toBe('0');
+      style = convertStyleProps({borderEndWidth: {S: 'thick', M: 'none', L: 'thin'}}, viewStyleProps, 'ltr', ['L', 'M', 'S', 'base']);
+      expect(style.borderRightWidth).toBe('var(--spectrum-alias-border-size-thin)');
     });
   });
 });

@@ -37,39 +37,45 @@ export function Link(props: SpectrumLinkProps) {
   let {styleProps} = useStyleProps(props);
   let {hoverProps, isHovered} = useHover({});
 
-  if (href) {
-    console.warn('href is deprecated, please use an anchor element as children');
-  }
-
   let ref = useRef();
   let {linkProps} = useLink({
     ...props,
-    elementType: typeof children === 'string' ? 'span' : 'a'
+    elementType: !href && typeof children === 'string' ? 'span' : 'a'
   }, ref);
 
-  let wrappedChild = getWrappedElement(children);
+  let domProps = {
+    ...styleProps,
+    ...mergeProps(linkProps, hoverProps),
+    ref,
+    className: classNames(
+      styles,
+      'spectrum-Link',
+      {
+        'spectrum-Link--quiet': isQuiet,
+        [`spectrum-Link--${variant}`]: variant,
+        'is-hovered': isHovered
+      },
+      styleProps.className
+    )
+  };
+
+  let link: JSX.Element;
+  if (href) {
+    link = <a {...domProps}>{children}</a>;
+  } else {
+    // Backward compatibility.
+    let wrappedChild = getWrappedElement(children);
+    link = React.cloneElement(wrappedChild, {
+      ...mergeProps(wrappedChild.props, domProps),
+      // @ts-ignore https://github.com/facebook/react/issues/8873
+      ref: wrappedChild.ref ? mergeRefs(ref, wrappedChild.ref) : ref
+    });
+  }
+
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      {React.cloneElement(
-        wrappedChild,
-        {
-          ...styleProps,
-          ...mergeProps(wrappedChild.props, linkProps, hoverProps),
-          // @ts-ignore https://github.com/facebook/react/issues/8873
-          ref: wrappedChild.ref ? mergeRefs(ref, wrappedChild.ref) : ref,
-          className: classNames(
-            styles,
-            'spectrum-Link',
-            {
-              'spectrum-Link--quiet': isQuiet,
-              [`spectrum-Link--${variant}`]: variant,
-              'is-hovered': isHovered
-            },
-            styleProps.className
-          )
-        }
-      )}
+      {link}
     </FocusRing>
   );
 }

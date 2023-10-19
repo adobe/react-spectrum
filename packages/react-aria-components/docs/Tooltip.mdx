@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/tooltip';
 import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
@@ -446,6 +447,10 @@ A `OverlayArrow` can be targeted with the `.react-aria-OverlayArrow` CSS selecto
 <StateTable properties={docs.exports.OverlayArrowRenderProps.properties} />
 
 ## Advanced customization
+
+### State
+
+TooltipTrigger provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports.TooltipTriggerState} /> object to its children via `TooltipTriggerStateContext`. This can be used to access and manipulate the tooltip trigger's state.
 
 ### Hooks
 

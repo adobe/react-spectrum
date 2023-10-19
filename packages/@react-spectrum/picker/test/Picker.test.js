@@ -1631,7 +1631,7 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('Two');
     });
 
-    it('move selection on Arrow-Left/Right', function () {
+    it('move selection on Arrow-Left/Right', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
@@ -1643,35 +1643,36 @@ describe('Picker', function () {
       );
 
       let picker = getByRole('button');
-      act(() => {picker.focus();});
+      await user.tab();
       expect(picker).toHaveTextContent('Select an option…');
-      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      await user.keyboard('{ArrowLeft}');
       act(() => jest.runAllTimers());
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      expect(onSelectionChange).toHaveBeenLastCalledWith('one');
       expect(picker).toHaveTextContent('One');
 
-      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
+      await user.keyboard('{ArrowLeft}');
       expect(picker).toHaveTextContent('One');
 
-      fireEvent.keyDown(picker, {key: 'ArrowRight'});
+      await user.keyboard('{ArrowRight}');
+      expect(picker).toHaveTextContent('Two');
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
+
+      await user.keyboard('{ArrowRight}');
+      expect(picker).toHaveTextContent('Three');
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+
+      await user.keyboard('{ArrowRight}');
+      expect(picker).toHaveTextContent('Three');
+      expect(onSelectionChange).toHaveBeenCalledTimes(3);
+
+      await user.keyboard('{ArrowLeft}');
       expect(picker).toHaveTextContent('Two');
-
-      fireEvent.keyDown(picker, {key: 'ArrowRight'});
-      expect(onSelectionChange).toHaveBeenCalledTimes(3);
-      expect(picker).toHaveTextContent('Three');
-
-      fireEvent.keyDown(picker, {key: 'ArrowRight'});
-      expect(onSelectionChange).toHaveBeenCalledTimes(3);
-      expect(picker).toHaveTextContent('Three');
-
-      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
       expect(onSelectionChange).toHaveBeenCalledTimes(4);
-      expect(picker).toHaveTextContent('Two');
 
-      fireEvent.keyDown(picker, {key: 'ArrowLeft'});
-      expect(onSelectionChange).toHaveBeenCalledTimes(5);
+      await user.keyboard('{ArrowLeft}');
       expect(picker).toHaveTextContent('One');
+      expect(onSelectionChange).toHaveBeenCalledTimes(5);
     });
   });
 
@@ -2271,6 +2272,29 @@ describe('Picker', function () {
 
       expect(button).toHaveTextContent('Select an option…');
       expect(listbox).not.toBeInTheDocument();
+    });
+
+    it('works with RouterProvider', async () => {
+      let navigate = jest.fn();
+      let tree = render(
+        <Provider theme={theme} router={{navigate}}>
+          <Picker label="Picker with links">
+            <Item href="/one">One</Item>
+            <Item href="https://adobe.com">Two</Item>
+          </Picker>
+        </Provider>
+      );
+
+      let button = tree.getByRole('button');
+      triggerPress(button);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = tree.getByRole('listbox');
+      let items = within(listbox).getAllByRole('option');
+      triggerPress(items[0]);
+      expect(navigate).toHaveBeenCalledWith('/one');
     });
   });
 });

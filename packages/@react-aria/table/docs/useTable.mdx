@@ -16,6 +16,7 @@ import selectionDocs from 'docs:@react-stately/selection';
 import statelyDocs from 'docs:@react-stately/table';
 import focusDocs from 'docs:@react-aria/focus';
 import checkboxDocs from 'docs:@react-aria/checkbox';
+import utilsDocs from 'docs:@react-aria/utils';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-aria/table/package.json';
@@ -300,6 +301,7 @@ function TableRow({item, children, state}) {
         color: isSelected ? 'white' : null,
         outline: 'none',
         boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
+        cursor: 'default'
       }}
       {...mergeProps(rowProps, focusProps)}
       ref={ref}>
@@ -329,8 +331,7 @@ function TableCell({cell, state}) {
       style={{
         padding: '5px 10px',
         outline: 'none',
-        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none',
-        cursor: 'default'
+        boxShadow: isFocusVisible ? 'inset 0 0 0 2px orange' : 'none'
       }}
       ref={ref}>
       {cell.rendered}
@@ -658,6 +659,47 @@ and reverts the selection behavior back to `"replace"`. Keyboard behaviors are u
   <PokemonTable aria-label="Pokemon table with row actions and replace selection behavior" selectionMode="multiple" selectionBehavior="replace" onRowAction={key => alert(`Opening item ${key}...`)} />
 </div>
 ```
+
+### Links
+
+Table rows may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Row>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
+
+```tsx example
+<Table aria-label="Bookmarks" selectionMode="multiple">
+  <TableHeader>
+    <Column isRowHeader>Name</Column>
+    <Column>URL</Column>
+    <Column>Date added</Column>
+  </TableHeader>
+  <TableBody>
+    <Row href="https://adobe.com/" target="_blank">
+      <Cell>Adobe</Cell>
+      <Cell>https://adobe.com/</Cell>
+      <Cell>January 28, 2023</Cell>
+    </Row>
+    <Row href="https://google.com/" target="_blank">
+      <Cell>Google</Cell>
+      <Cell>https://google.com/</Cell>
+      <Cell>April 5, 2023</Cell>
+    </Row>
+    <Row href="https://nytimes.com/" target="_blank">
+      <Cell>New York Times</Cell>
+      <Cell>https://nytimes.com/</Cell>
+      <Cell>July 12, 2023</Cell>
+    </Row>
+  </TableBody>
+</Table>
+```
+
+```css hidden
+tr[data-href] {
+  cursor: pointer !important;
+}
+```
+
+#### Client side routing
+
+The `<Row>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ### Sorting
 

@@ -46,7 +46,7 @@ function App() {
             {(item: any) =>
               (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
                 {(key) => {
-                  return <Cell>{item[key]}</Cell>;
+                  return <Cell>{item[key.toString()]}</Cell>;
                 }}
               </Row>)
             }

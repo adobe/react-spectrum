@@ -496,7 +496,7 @@ These selection styles implement the behaviors defined in [Aria Practices](https
 <PokemonTable selectionMode="multiple" selectionStyle="highlight" />
 ```
 
-### Row actions
+## Row actions
 
 TableView supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the TableView performs actions by default when clicking or tapping a row.
 Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the TableView is in selection mode,
@@ -510,6 +510,41 @@ This behavior is slightly different in the highlight selection style, where sing
   <PokemonTable aria-label="Pokemon table with row actions and highlight selection" selectionMode="multiple" selectionStyle="highlight" onAction={key => alert(`Opening item ${key}...`)} />
 </Flex>
 ```
+
+### Links
+
+Table rows may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Row>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionStyle`.
+
+```tsx example
+<TableView aria-label="Bookmarks" selectionMode="multiple">
+  <TableHeader>
+    <Column>Name</Column>
+    <Column>URL</Column>
+    <Column>Date added</Column>
+  </TableHeader>
+  <TableBody>
+    <Row href="https://adobe.com/" target="_blank">
+      <Cell>Adobe</Cell>
+      <Cell>https://adobe.com/</Cell>
+      <Cell>January 28, 2023</Cell>
+    </Row>
+    <Row href="https://google.com/" target="_blank">
+      <Cell>Google</Cell>
+      <Cell>https://google.com/</Cell>
+      <Cell>April 5, 2023</Cell>
+    </Row>
+    <Row href="https://nytimes.com/" target="_blank">
+      <Cell>New York Times</Cell>
+      <Cell>https://nytimes.com/</Cell>
+      <Cell>July 12, 2023</Cell>
+    </Row>
+  </TableBody>
+</TableView>
+```
+
+#### Client side routing
+
+The `<Row>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Sorting
 

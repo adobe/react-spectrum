@@ -18,6 +18,7 @@ import Anatomy from './MenuAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
 import {Keyboard} from '@react-spectrum/text';
@@ -323,6 +324,10 @@ A `Menu` uses the following components, which may also be used standalone or reu
 
 </section>
 
+## Examples
+
+<ExampleList tag="menu" />
+
 ## Reusable wrappers
 
 If you will use a Menu in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
@@ -469,6 +474,30 @@ function Example() {
 }
 ```
 
+## Links
+
+By default, interacting with an item in a Menu triggers `onAction` and optionally `onSelectionChange` depending on the `selectionMode`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a menu are not selectable.
+
+```tsx example
+<MyMenuButton label="Links">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</MyMenuButton>
+```
+
+```css hidden
+.react-aria-Item[href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
 ## Sections
 
 Menu supports sections with headings in order to group items. Sections can be used by wrapping groups of Items in a `Section` component. A `<Header>` element may also be included to label the section.
@@ -592,6 +621,23 @@ import {Text, Keyboard} from 'react-aria-components';
     <Keyboard>⌘V</Keyboard>
   </Item>
 </MyMenuButton>
+```
+
+## Long press
+
+By default, MenuTrigger opens by pressing the trigger element or activating it via the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys. However, there may be cases in which your trigger element should perform a separate default action on press, and should only display the Menu when long pressed. This behavior can be changed by providing `"longPress"` to the `trigger` prop. With this prop, the Menu will only be opened upon pressing and holding the trigger element or by using the <Keyboard>Option</Keyboard> (<Keyboard>Alt</Keyboard> on Windows) + <Keyboard>Down Arrow</Keyboard>/<Keyboard>Up Arrow</Keyboard> keys while focusing the trigger element.
+
+```tsx example
+<MenuTrigger trigger="longPress">
+  <Button onPress={() => alert('crop')}>Crop</Button>
+  <Popover>
+    <Menu onAction={alert}>
+      <Item id="rotate">Rotate</Item>
+      <Item id="slice">Slice</Item>
+      <Item id="clone-stamp">Clone stamp</Item>
+    </Menu>
+  </Popover>
+</MenuTrigger>
 ```
 
 ## Disabled items
@@ -861,7 +907,7 @@ If you need to customize things further, such as intercepting events or customiz
 This example implements a custom `OptionMenuTrigger` component that intercepts the keyboard and press events returned by `useMenuTrigger` so that the menu only opens if the user holds the <Keyboard>Alt</Keyboard> key. This allows a button to have a default action, with additional options for power users.
 
 ```tsx example render=false export=true
-import {ButtonContext, PopoverContext, MenuContext, Provider} from 'react-aria-components';
+import {ButtonContext, OverlayTriggerStateContext, PopoverContext, MenuContext, Provider} from 'react-aria-components';
 import {useMenuTriggerState} from 'react-stately';
 import {useMenuTrigger} from 'react-aria';
 
@@ -883,7 +929,8 @@ function OptionMenuTrigger(props: MenuTriggerProps) {
           ref,
           isPressed: state.isOpen
         }],
-        [PopoverContext, {state, triggerRef: ref, placement: 'bottom start'}],
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {triggerRef: ref, placement: 'bottom start'}],
         [MenuContext, menuProps]
       ]}>
       {props.children}

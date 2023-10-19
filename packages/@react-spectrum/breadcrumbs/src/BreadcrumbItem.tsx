@@ -56,8 +56,8 @@ export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps) {
           className={
             classNames(
               styles,
-              'spectrum-Breadcrumbs-itemLink',
               {
+                'spectrum-Breadcrumbs-itemLink': !isMenu,
                 'is-disabled': !isCurrent && isDisabled,
                 'is-hovered': isHovered
               }
@@ -66,18 +66,16 @@ export function BreadcrumbItem(props: SpectrumBreadcrumbItemProps) {
           {children}
         </ElementType>
       </FocusRing>
-      {isCurrent === false &&
-        <ChevronRightSmall
-          UNSAFE_className={
-            classNames(
-              styles,
-              'spectrum-Breadcrumbs-itemSeparator',
-              {
-                'is-reversed': direction === 'rtl'
-              }
-            )
-          } />
-      }
+      <ChevronRightSmall
+        UNSAFE_className={
+          classNames(
+            styles,
+            'spectrum-Breadcrumbs-itemSeparator',
+            {
+              'is-reversed': direction === 'rtl'
+            }
+          )
+        } />
     </Fragment>
   );
 }

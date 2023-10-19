@@ -167,13 +167,11 @@ function Tab<T>(props: TabProps<T>) {
     ...props
   });
   let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
-  let domProps = filterDOMProps(item.props as any, {isLink: !!item.props.href});
-  delete domProps.id;
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <ElementType
-        {...mergeProps(tabProps, hoverProps, domProps)}
+        {...mergeProps(tabProps, hoverProps)}
         ref={ref}
         className={classNames(
           styles,

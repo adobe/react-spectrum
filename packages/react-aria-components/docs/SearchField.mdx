@@ -444,11 +444,11 @@ Render props may also be used as children to alter what elements are rendered ba
 
 ```jsx
 <SearchField>
-  {({value}) => (
+  {({state}) => (
     <>
       <Label>Search</Label>
       <Input />
-      {value !== '' && <Button>✕</Button>}
+      {state.value !== '' && <Button>✕</Button>}
     </>
   )}
 </SearchField>

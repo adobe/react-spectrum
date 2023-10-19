@@ -14,18 +14,19 @@
 import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {BaseCollection, CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
 import {KeyboardContext} from './Keyboard';
+import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
+import {PressResponder} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
-const InternalMenuContext = createContext<TreeState<unknown> | null>(null);
+export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
@@ -44,10 +45,12 @@ export function MenuTrigger(props: MenuTriggerProps) {
     <Provider
       values={[
         [MenuContext, menuProps],
-        [ButtonContext, {...menuTriggerProps, ref, isPressed: state.isOpen}],
-        [PopoverContext, {state, triggerRef: ref, placement: 'bottom start'}]
+        [OverlayTriggerStateContext, state],
+        [PopoverContext, {triggerRef: ref, placement: 'bottom start'}]
       ]}>
-      {props.children}
+      <PressResponder {...menuTriggerProps} ref={ref} isPressed={state.isOpen}>
+        {props.children}
+      </PressResponder>
     </Provider>
   );
 }
@@ -102,12 +105,12 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
       {...filterDOMProps(props)}
       {...menuProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       style={props.style}
       className={props.className ?? 'react-aria-Menu'}>
       <Provider
         values={[
-          [InternalMenuContext, state],
+          [MenuStateContext, state],
           [SeparatorContext, {elementType: 'div'}]
         ]}>
         {children}
@@ -127,7 +130,7 @@ interface MenuSectionProps<T> extends StyleProps {
 }
 
 function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
-  let state = useContext(InternalMenuContext)!;
+  let state = useContext(MenuStateContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
     heading,
@@ -174,7 +177,7 @@ interface MenuItemProps<T> {
 }
 
 function MenuItem<T>({item}: MenuItemProps<T>) {
-  let state = useContext(InternalMenuContext)!;
+  let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
@@ -195,12 +198,10 @@ function MenuItem<T>({item}: MenuItemProps<T>) {
   });
 
   let ElementType: React.ElementType = props.href ? 'a' : 'div';
-  let DOMProps = filterDOMProps(props as any, {isLink: !!props.href});
-  delete DOMProps.id;
 
   return (
     <ElementType
-      {...mergeProps(DOMProps, menuItemProps, focusProps)}
+      {...mergeProps(menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
       data-disabled={states.isDisabled || undefined}
