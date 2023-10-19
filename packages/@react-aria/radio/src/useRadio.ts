@@ -11,11 +11,12 @@
  */
 
 import {AriaRadioProps} from '@react-types/radio';
-import {filterDOMProps, mergeProps, useFormReset, useFormValidation} from '@react-aria/utils';
-import {InputHTMLAttributes, RefObject, useCallback} from 'react';
+import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
+import {InputHTMLAttributes, RefObject} from 'react';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
+import {useFormValidation} from '@react-aria/form';
 import {usePress} from '@react-aria/interactions';
 
 export interface RadioAria {
@@ -81,17 +82,8 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   }
 
   let {name, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;
-
-  useFormValidation({
-    name,
-    validationBehavior,
-    validate: useCallback(() => state.groupValidationErrors, [state.groupValidationErrors]),
-    onValidationChange(e) {
-      state.setValidation(e);
-    }
-  }, state.selectedValue, ref);
-
   useFormReset(ref, state.selectedValue, state.setSelectedValue);
+  useFormValidation({validationBehavior}, state, ref);
 
   return {
     inputProps: mergeProps(domProps, {

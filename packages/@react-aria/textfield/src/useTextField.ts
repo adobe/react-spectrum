@@ -20,10 +20,12 @@ import {
   RefObject
 } from 'react';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useFormReset, useFormValidation} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
+import {useFormValidation} from '@react-aria/form';
+import {useFormValidationState} from '@react-stately/form';
 
 /**
  * A map of HTML element names and their interface types.
@@ -116,7 +118,11 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
   }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
   let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
   let {focusableProps} = useFocusable(props, ref);
-  let {isInvalid, errors, validationDetails} = useFormValidation(props, value, ref);
+  let validationState = useFormValidationState({
+    ...props,
+    value
+  });
+  let {isInvalid, errors, validationDetails} = validationState.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     isInvalid,
@@ -130,6 +136,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
   };
 
   useFormReset(ref, value, setValue);
+  useFormValidation(props, validationState, ref);
 
   return {
     labelProps,

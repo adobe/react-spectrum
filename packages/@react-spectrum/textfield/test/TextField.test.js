@@ -668,7 +668,7 @@ describe('Shared TextField behavior', () => {
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form validationErrors={{name: 'Invalid name'}}>
-              <Component data-testid="input" label="Name" name="name" validationBehavior="native" />
+              <Component data-testid="input" label="Name" name="name" />
             </Form>
           </Provider>
         );

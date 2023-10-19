@@ -11,14 +11,13 @@
  */
 
 import {AriaToggleProps} from '@react-types/checkbox';
-import {filterDOMProps, mergeProps, useFormReset, useFormValidation} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
-import {ValidationResult} from '@react-types/shared';
 
-export interface ToggleAria extends ValidationResult {
+export interface ToggleAria {
   /**
    * Props to be spread on the input element.
    */
@@ -48,7 +47,9 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    validationBehavior = 'aria'
+    validationBehavior = 'aria',
+    validationState = 'valid',
+    isInvalid
   } = props;
 
   let onChange = (e) => {
@@ -75,8 +76,6 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
 
   useFormReset(ref, state.isSelected, state.setSelected);
 
-  let {isInvalid, errors, validationDetails} = useFormValidation(props, state.isSelected, ref);
-
   return {
     inputProps: mergeProps(domProps, {
       'aria-invalid': isInvalid || undefined,
@@ -96,8 +95,6 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     isPressed,
     isDisabled,
     isReadOnly,
-    isInvalid,
-    errors,
-    validationDetails
+    isInvalid: isInvalid || validationState === 'invalid'
   };
 }

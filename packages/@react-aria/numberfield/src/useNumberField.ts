@@ -19,9 +19,7 @@ import {
   LabelHTMLAttributes,
   RefObject,
   useCallback,
-  useEffect,
   useMemo,
-  useRef,
   useState
 } from 'react';
 // @ts-ignore
@@ -29,6 +27,7 @@ import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
 import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
+import {useFormValidation} from '@react-aria/form';
 import {
   useLocalizedStringFormatter,
   useNumberFormatter
@@ -67,10 +66,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     minValue,
     maxValue,
     autoFocus,
-    validationState,
-    isInvalid,
-    validate,
-    validationBehavior = 'aria',
     label,
     formatOptions,
     onBlur = () => {},
@@ -89,24 +84,14 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     decrement,
     decrementToMin,
     numberValue,
-    inputValue
+    inputValue,
+    commit
   } = state;
 
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let inputId = useId(id);
-
-  let valueOnFocus = useRef(state.numberValue);
-  let didCommit = useRef(false);
-  let commit = useCallback(() => {
-    state.commit();
-    didCommit.current = true;
-  }, [state]);
-
   let {focusProps} = useFocus({
-    onFocus: () => {
-      valueOnFocus.current = state.numberValue;
-    },
     onBlur: () => {
       // Set input value to normalized valid value
       commit();
@@ -203,18 +188,22 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
   }, [commit]);
 
-  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps, ...validation} = useFormattedTextField({
+  let {isInvalid, errors, validationDetails} = state.displayValidation;
+  let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
     ...otherProps,
     ...domProps,
+    name: undefined,
     label,
     autoFocus,
     isDisabled,
     isReadOnly,
     isRequired,
-    validationState,
     isInvalid,
-    validate: useCallback(() => validate?.(state.numberValue), [state.numberValue, validate]),
-    validationBehavior,
+    // Disable validation in useTextField. We handle it below.
+    validationState: undefined,
+    validate: undefined,
+    validationBehavior: undefined,
+    onValidationChange: undefined,
     value: inputValue,
     defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
@@ -230,10 +219,11 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onKeyDown: useMemo(() => chain(onKeyDownEnter, onKeyDown), [onKeyDownEnter, onKeyDown]),
     onKeyUp,
     description,
-    errorMessage
+    errorMessage: errorMessage || errors
   }, state, inputRef);
 
   useFormReset(inputRef, state.numberValue, state.setNumberValue);
+  useFormValidation(props, state, inputRef);
 
   let inputProps = mergeProps(
     spinButtonProps,
@@ -249,12 +239,12 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
       'aria-valuenow': null,
       'aria-valuetext': null,
       autoCorrect: 'off',
-      spellCheck: 'false',
-      name: null
+      spellCheck: 'false'
     }
   );
 
-  if (validationBehavior === 'native') {
+  if (props.validationBehavior === 'native') {
+    inputProps.required = isRequired;
     inputProps['aria-required'] = undefined;
   }
 
@@ -318,23 +308,12 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onPressStart: onButtonPressStart
   });
 
-  // After the value is committed, check if the value changed and emit a native "change" event for form validation to pick up.
-  // NOTE: This useEffect must be last so that form validation effects have already run.
-  useEffect(() => {
-    if (didCommit.current) {
-      didCommit.current = false;
-      if (state.numberValue !== valueOnFocus.current) {
-        inputRef.current?.dispatchEvent(new Event('change', {bubbles: true}));
-      }
-    }
-  });
-
   return {
     groupProps: {
       ...focusWithinProps,
       role: 'group',
       'aria-disabled': isDisabled,
-      'aria-invalid': isInvalid || validationState === 'invalid' ? 'true' : undefined
+      'aria-invalid': isInvalid ? 'true' : undefined
     },
     labelProps,
     inputProps,
@@ -342,6 +321,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     decrementButtonProps,
     errorMessageProps,
     descriptionProps,
-    ...validation
+    isInvalid,
+    errors,
+    validationDetails
   };
 }

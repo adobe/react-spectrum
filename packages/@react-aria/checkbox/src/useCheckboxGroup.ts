@@ -36,15 +36,17 @@ export interface CheckboxGroupAria extends ValidationResult {
  */
 export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxGroupState): CheckboxGroupAria {
   let {isDisabled, name, validationBehavior} = props;
+  let {isInvalid, errors, validationDetails} = state.displayValidation;
 
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     // Checkbox group is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span',
-    isInvalid: state.isInvalid,
-    errorMessage: props.errorMessage || state.validationErrors
+    isInvalid,
+    errorMessage: props.errorMessage || errors
   });
+
   checkboxGroupData.set(state, {
     name,
     descriptionId: descriptionProps.id,
@@ -63,8 +65,8 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
     labelProps,
     descriptionProps,
     errorMessageProps,
-    isInvalid: state.isInvalid,
-    errors: state.validationErrors,
-    validationDetails: state.validationDetails
+    isInvalid,
+    errors,
+    validationDetails
   };
 }

@@ -12,7 +12,8 @@
 
 import {Alignment, DOMRef, LabelPosition, SpectrumLabelableProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {filterDOMProps, FormValidationContext} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
+import {FormValidationContext} from '@react-stately/form';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {useContext} from 'react';
 import {SpectrumFormProps} from '@react-types/form';

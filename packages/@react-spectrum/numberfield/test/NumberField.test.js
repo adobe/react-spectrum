@@ -2415,6 +2415,7 @@ describe('NumberField', function () {
 
         await user.tab();
         await user.keyboard('4');
+        await user.tab();
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input).not.toHaveAttribute('aria-invalid');
 
@@ -2426,7 +2427,7 @@ describe('NumberField', function () {
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form validationErrors={{value: 'Invalid value'}}>
-              <NumberField data-testid="input" label="Value" name="value" validationBehavior="native" />
+              <NumberField data-testid="input" label="Value" name="value" />
             </Form>
           </Provider>
         );

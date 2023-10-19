@@ -14,7 +14,7 @@ import {AriaCheckboxGroupItemProps} from '@react-types/checkbox';
 import {CheckboxAria, useCheckbox} from './useCheckbox';
 import {checkboxGroupData} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
-import {RefObject, useCallback} from 'react';
+import {RefObject} from 'react';
 import {useToggleState} from '@react-stately/toggle';
 
 /**
@@ -42,7 +42,6 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
   });
 
   let {name, descriptionId, errorMessageId, validationBehavior} = checkboxGroupData.get(state)!;
-  let {validate} = props;
   let res = useCheckbox({
     ...props,
     isReadOnly: props.isReadOnly || state.isReadOnly,
@@ -50,26 +49,13 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     name: props.name || name,
     isRequired: props.isRequired ?? state.isRequired,
     validationBehavior: props.validationBehavior ?? validationBehavior,
-    validate: useCallback((v) => {
-      // Merge group errors and local errors so form submission is blocked for group level errors.
-      let res = validate?.(v);
-      let arr = [];
-      if (res && typeof res !== 'boolean') {
-        arr = Array.isArray(res) ? res : [res];
-      }
-      return [...state.groupValidationErrors, ...arr];
-    }, [validate, state.groupValidationErrors]),
+    // @ts-ignore - this is passed through to useFormValidation but we don't want it exposed as public API.
+    builtinValidation: state.realtimeValidation,
     onValidationChange(e) {
-      props.onValidationChange?.({
-        ...e,
-        errors: e.errors.slice(state.groupValidationErrors.length)
-      });
+      props.onValidationChange?.(e);
       state.setInvalid(props.value, e);
     }
   }, toggleState, inputRef);
-
-  // Remove group error messages from what we expose to local checkbox item.
-  let errors = res.errors.slice(state.groupValidationErrors.length);
 
   return {
     ...res,
@@ -80,7 +66,6 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
         state.isInvalid ? errorMessageId : null,
         descriptionId
       ].filter(Boolean).join(' ') || undefined
-    },
-    errors
+    }
   };
 }
