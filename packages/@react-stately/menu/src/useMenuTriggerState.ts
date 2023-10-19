@@ -48,18 +48,19 @@ export interface MenuTriggerState extends OverlayTriggerState {
 export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  {
   let overlayTriggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
-  let [expandedKeysStack, setExpandedKeysStack] = useState<string[]>([]);
+  let [expandedKeysStack, setExpandedKeysStack] = useState<Key[]>([]);
+  
   let closeAll = () => {
     setExpandedKeysStack([]);
     overlayTriggerState.close();
   };
 
   // TODO: if level > the length of the expandedKeyStack then this doesn't quite work.
-  let openSubmenu = (triggerKey, level) => {
+  let openSubmenu = (triggerKey: Key, level: number) => {
     setExpandedKeysStack(oldStack => [...oldStack.slice(0, level), triggerKey]);
   };
 
-  let closeSubmenu = (triggerKey, level) => {
+  let closeSubmenu = (triggerKey: Key, level: number) => {
     setExpandedKeysStack(oldStack => {
       let key = oldStack[level - 1];
       if (key === triggerKey) {
