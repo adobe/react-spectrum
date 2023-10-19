@@ -50,8 +50,8 @@ function Example(){
       <FileTrigger
         onSelect={(e) => {
           let files = Array.from(e);
-          let urls = files.map((file) => file.name);
-          setFile(urls);
+          let filenames = files.map((file) => file.name);
+          setFile(filenames);
         }}>
         <Button>Select a file</Button>
       </FileTrigger>
