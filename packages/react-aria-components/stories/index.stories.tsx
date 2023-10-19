@@ -878,7 +878,7 @@ export const TableDynamicExample = () => {
   ];
 
   return (
-    <Table aria-label='Files'>
+    <Table aria-label="Files">
       <TableHeader columns={columns}>
         {(column) => (
           <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
