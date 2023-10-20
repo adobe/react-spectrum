@@ -13,6 +13,7 @@
 import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
+import * as overlays from '@react-aria/overlays';
 import React from 'react';
 import {useComboBox} from '../';
 import {useComboBoxState} from '@react-stately/combobox';
@@ -156,5 +157,56 @@ describe('useComboBox', function () {
     expect(openSpy).toHaveBeenCalledTimes(0);
     expect(toggleSpy).toHaveBeenCalledTimes(0);
     expect(buttonProps.isDisabled).toBeTruthy();
+  });
+
+  it('should hide elements when opened', () => {
+    jest.spyOn(overlays, 'ariaHideOutside');
+
+    let {result: state} = renderHook((props) => useComboBoxState(props), {
+      initialProps: {...props, allowsEmptyCollection: true}
+    });
+
+    act(() => {
+      state.current.open();
+    });
+
+    renderHook((props) => useComboBox(props, state.current), {
+      initialProps: props
+    });
+
+    expect(overlays.ariaHideOutside).toHaveBeenCalledTimes(1);
+    expect(overlays.ariaHideOutside).toHaveBeenCalledWith([
+      props.inputRef.current,
+      props.popoverRef.current
+    ]);
+  });
+
+  it('should hide elements only when popover element available', () => {
+    jest.spyOn(overlays, 'ariaHideOutside');
+
+    let {result: state} = renderHook((props) => useComboBoxState(props), {
+      initialProps: {...props, allowsEmptyCollection: true}
+    });
+
+    act(() => {
+      state.current.open();
+    });
+
+    let {rerender} = renderHook(
+      (props) => useComboBox(props, state.current),
+      {
+        initialProps: {...props, popoverRef: {current: null}}
+      }
+    );
+
+    expect(overlays.ariaHideOutside).toHaveBeenCalledTimes(0);
+
+    // rerender with popover element available
+    rerender(props);
+    expect(overlays.ariaHideOutside).toHaveBeenCalledTimes(1);
+    expect(overlays.ariaHideOutside).toHaveBeenCalledWith([
+      props.inputRef.current,
+      props.popoverRef.current
+    ]);
   });
 });
