@@ -1,8 +1,10 @@
-import {CSSProperties, RefObject, useEffect, useRef, useState} from 'react';
+import {RefObject, useEffect, useRef, useState} from 'react';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useResizeObserver} from '@react-aria/utils';
 
 interface SafelyMouseToSubmenuOptions {
+  /** Ref for the parent menu. */
+  menuRef: RefObject<Element>,
   /** Ref for the submenu. */
   submenuRef: RefObject<Element>,
   /** Whether the submenu is open. */
@@ -20,16 +22,15 @@ const ANGLE_PADDING = Math.PI / 12; // 15°
  * Allows the user to move their pointer to the submenu without it closing when their mouse leaves the trigger element.
  * Prevents pointer events from going to the underlying menu if the user is moving their pointer towards the sub-menu.
  */
-export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): CSSProperties {
-  let {submenuRef, isOpen, isDisabled} = options;
+export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
+  let {menuRef, submenuRef, isOpen, isDisabled} = options;
   let prevPointerPos = useRef<{x: number, y: number} | undefined>();
   let submenuRect = useRef<DOMRect | undefined>();
   let lastProcessedTime = useRef<number>(0);
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>();
   let submenuSide = useRef<'left' | 'right' | undefined>();
-
-  // Keep track of the last few pointer movements, where true = moving towards submenu, false = moving away from submenu.
-  let [movements, setMovements] = useState<Array<boolean>>([]);
+  let movementsTowardsSubmenuCount = useRef<number>(0);
+  let [preventPointerEvents, setPreventPointerEvents] = useState(false);
 
   let updateSubmenuRect = () => {
     if (submenuRef.current) {
@@ -43,10 +44,20 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
   let modality = useInteractionModality();
 
   useEffect(() => {
+    if (preventPointerEvents) {
+      (menuRef.current as HTMLElement).style.pointerEvents = 'none';
+    } else {
+      (menuRef.current as HTMLElement).style.pointerEvents = 'auto';
+    }
+  }, [menuRef, preventPointerEvents]);
+
+  useEffect(() => {
     let submenu = submenuRef.current;
+    let menu = menuRef.current;
 
     if (isDisabled || !submenu || !isOpen || modality !== 'pointer') {
-      setMovements([]);
+      movementsTowardsSubmenuCount.current = 0;
+      setPreventPointerEvents(false);
       return;
     }
 
@@ -82,7 +93,8 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
 
       // Pointer has already reached submenu
       if ((submenuSide.current === 'left' && mouseX < submenuRect.current.right) || (submenuSide.current === 'right' && mouseX > submenuRect.current.left)) {
-        setMovements([]);
+        movementsTowardsSubmenuCount.current = 0;
+        setPreventPointerEvents(false);
         return;
       }
     
@@ -100,7 +112,16 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       let angleBottom = Math.atan2(prevMouseY - submenuRect.current.bottom, toSubmenuX) - ANGLE_PADDING;
       let anglePointer = Math.atan2(prevMouseY - mouseY, (submenuSide.current === 'left' ? -(mouseX - prevMouseX) : mouseX - prevMouseX));
       let isMovingTowardsSubmenu = anglePointer < angleTop && anglePointer > angleBottom;
-      setMovements((prevMovements) => [...prevMovements, isMovingTowardsSubmenu].slice(-(ALLOWED_INVALID_MOVEMENTS + 1)));
+
+      movementsTowardsSubmenuCount.current = isMovingTowardsSubmenu ?
+        Math.min(movementsTowardsSubmenuCount.current + 1, ALLOWED_INVALID_MOVEMENTS) :
+        Math.max(movementsTowardsSubmenuCount.current - 1, 0);
+
+      if (movementsTowardsSubmenuCount.current >= ALLOWED_INVALID_MOVEMENTS) {
+        setPreventPointerEvents(true);
+      } else {
+        setPreventPointerEvents(false);
+      }
 
       lastProcessedTime.current = currentTime;
       prevPointerPos.current = {x: mouseX, y: mouseY};
@@ -108,12 +129,13 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
       // If the pointer is moving towards the submenu, start a timeout to close if no other movements are made after 500ms.
       if (isMovingTowardsSubmenu) {
         timeout.current = setTimeout(() => {
-          setMovements([]);
+          movementsTowardsSubmenuCount.current = 0;
+          setPreventPointerEvents(false);
           setTimeout(() => {
             // Fire a pointerover event to trigger the menu to close.
             // Wait until pointer-events:none is no longer applied
             let target = document.elementFromPoint(mouseX, mouseY);
-            if (target) {
+            if (target && menu.contains(target)) {
               target.dispatchEvent(new PointerEvent('pointerover', {bubbles: true, cancelable: true}));
             }
           }, 100);
@@ -126,11 +148,8 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions): C
     return () => {
       window.removeEventListener('pointermove', onPointerMove);
       clearTimeout(timeout.current);
+      movementsTowardsSubmenuCount.current = 0;
     };
 
-  }, [isDisabled, isOpen, modality, submenuRef]);
-
-  return {
-    pointerEvents: movements.length === 0 || movements.every((m) => !m) ? undefined : 'none'
-  };
+  }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, submenuRef]);
 }

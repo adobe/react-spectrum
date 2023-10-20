@@ -25,7 +25,7 @@ import React, {ReactElement, useContext, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMenu, useSafelyMouseToSubmenu} from '@react-aria/menu';
+import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
@@ -65,7 +65,6 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let headingId = useSlotId();
   let menuLevel = contextProps.level || 0;
   let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel]) != null;
-  let style = useSafelyMouseToSubmenu({submenuRef, isOpen: hasOpenSubmenu});
   // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
@@ -100,7 +99,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
           )}
           <div
             {...menuProps}
-            style={mergeProps(styleProps.style, menuProps.style, style)}
+            style={mergeProps(styleProps.style, menuProps.style)}
             ref={domRef}
             className={
               classNames(

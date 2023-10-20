@@ -18,6 +18,7 @@ import {RefObject, useCallback, useRef} from 'react';
 import type {SubmenuTriggerState} from '@react-stately/menu';
 import {useEffectEvent, useId, useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
+import {useSafelyMouseToSubmenu} from './useSafelyMouseToSubmenu';
 
 export interface AriaSubmenuTriggerProps {
   /** An object representing the submenu trigger menu item. Contains all the relevant information that makes up the menu item. */
@@ -233,6 +234,8 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
 
     cancelOpenTimeout();
   };
+
+  useSafelyMouseToSubmenu({menuRef: parentMenuRef, submenuRef, isOpen: state.isOpen});
 
   return {
     submenuTriggerProps: {
