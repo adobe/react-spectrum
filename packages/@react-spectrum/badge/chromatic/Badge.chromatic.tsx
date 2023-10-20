@@ -21,14 +21,15 @@ import {Text} from '@react-spectrum/text';
 let variants: SpectrumBadgeProps['variant'][] =
   ['positive', 'info', 'negative', 'neutral', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'magenta', 'purple'];
 
-type BadgeStory = ComponentStoryObj<typeof Badge>;
+export type BadgeStory = ComponentStoryObj<typeof Badge>;
 
 export default {
   title: 'Badge',
-  component: Badge
+  component: Badge,
+  excludeStories: ['renderVariants']
 } as ComponentMeta<typeof Badge>;
 
-const renderVariants = (args) => (
+export const renderVariants = (args) => (
   <Flex wrap gap={8}>
     {variants.map((variant) => <Badge {...args} variant={variant} />)}
   </Flex>
