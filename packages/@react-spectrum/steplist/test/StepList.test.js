@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {StepList} from '../';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 const items = [
   {key: 'step-one', value: 'Step 1'},
@@ -36,6 +37,11 @@ function renderComponent(props) {
 
 describe('StepList', function () {
   let onSelectionChange = jest.fn();
+  let user;
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
 
   it('renders', function () {
     const tree = renderComponent();
@@ -46,11 +52,10 @@ describe('StepList', function () {
     expect(stepOne).toHaveAttribute('aria-current', 'step');
     expect(stepOne).not.toHaveAttribute('tabindex');
     expect(stepOne).toHaveClass('is-selected');
-    expect(stepOne.firstElementChild.textContent).not.toContain('Not');
+    expect(stepOne.firstElementChild.textContent).not.toContain('Completed');
 
     for (let i = 1; i < stepListItems.length; i++) {
       expect(stepListItems[i]).toHaveAttribute('aria-disabled', 'true');
-      expect(stepListItems[1]).not.toHaveClass('is-completed');
       expect(stepListItems[1]).not.toHaveClass('is-selected');
       expect(stepListItems[i].firstElementChild.textContent).toContain('Not');
     }
@@ -81,7 +86,7 @@ describe('StepList', function () {
     expect(ref.current.UNSAFE_getDOMNode()).toBe(stepList);
   });
 
-  it('allows user to click completed steps and immediate next step only', function () {
+  it('allows user to click completed steps and immediate next step only', async function () {
     const tree = renderComponent({defaultLastCompletedStep: 'step-two', defaultSelectedKey: 'step-three', onSelectionChange});
     const stepList = tree.getByLabelText('steplist-test');
     const stepListItems =  within(stepList).getAllByRole('link');
@@ -89,60 +94,54 @@ describe('StepList', function () {
     // select previously completed step
     const stepOne = stepListItems[0];
     expect(stepOne).not.toHaveAttribute('aria-current');
-    expect(stepOne).toHaveClass('is-completed');
-    triggerPress(stepOne);
+    expect(stepOne.firstElementChild.textContent).toContain('Completed');
+    await user.click(stepOne);
     expect(stepOne).toHaveAttribute('aria-current', 'step');
 
     // select immediate next step (step after last completed step)
     const stepThree = stepListItems[2];
     expect(stepThree).not.toHaveAttribute('aria-current');
-    expect(stepThree).not.toHaveClass('is-completed');
-    triggerPress(stepThree);
+    expect(stepOne.firstElementChild.textContent).toContain('Current');
+    await user.click(stepThree);
     expect(stepThree).toHaveAttribute('aria-current');
 
     // try to select step after immediate next step
     const stepFour = stepListItems[3];
     expect(stepFour).not.toHaveAttribute('aria-current');
-    triggerPress(stepFour);
+    await user.click(stepFour);
     expect(stepFour).not.toHaveAttribute('aria-current');
   });
 
-  it('allows user to change selected step via tab key only', function () {
+  it('allows user to change selected step via tab key only', async function () {
     const tree = renderComponent({defaultLastCompletedStep: 'step-two', defaultSelectedKey: 'step-three', onSelectionChange});
     const stepList = tree.getByLabelText('steplist-test');
     const stepListItems =  within(stepList).getAllByRole('link');
 
     expect(stepListItems[2]).toHaveAttribute('aria-current', 'step');
 
-    function pressKey(keyOptions) {
-      fireEvent.keyDown(document.activeElement, keyOptions);
-      fireEvent.keyUp(document.activeElement, keyOptions);
-    }
-
     act(() => {
-      stepListItems[1].focus();
-      pressKey({key: 'Tab', shiftKey: true});
-      pressKey({key: 'Enter'});
+      stepList.focus();
     });
+
+    await user.tab({shift: true});
+    await user.keyboard('{Enter}');
 
     expect(stepListItems[1]).toHaveAttribute('aria-current');
 
-    act(() => {
-      pressKey({key: 'ArrowUp'});
-    });
+    await user.keyboard('{ArrowUp}');
 
     expect(stepListItems[1]).toHaveAttribute('aria-current');
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
   });
 
-  it('should not allow user to click on disabled steps', () => {
+  it('should not allow user to click on disabled steps', async function () {
     const tree = renderComponent({defaultLastCompletedStep: 'step-two', defaultSelectedKey: 'step-three', disabledKeys: ['step-one']});
     const stepList = tree.getByLabelText('steplist-test');
     const stepListItems =  within(stepList).getAllByRole('link');
 
     const stepOne = stepListItems[0];
 
-    triggerPress(stepOne);
+    await user.click(stepOne);
     expect(stepOne).not.toHaveAttribute('aria-current');
     expect(stepOne).not.toHaveClass('is-selected');
   });
@@ -162,7 +161,7 @@ describe('StepList', function () {
     expect(stepOne).not.toHaveClass('is-selected');
 
     const stepTwo = stepListItems[1];
-    triggerPress(stepTwo);
+    user.click(stepTwo);
     expect(stepTwo).not.toHaveAttribute('aria-current');
     expect(stepTwo).not.toHaveClass('is-selected');
   });
@@ -182,7 +181,7 @@ describe('StepList', function () {
     expect(stepFour).toHaveClass('is-selected');
 
     const stepOne = stepListItems[0];
-    triggerPress(stepOne);
+    user.click(stepOne);
     expect(stepOne).not.toHaveAttribute('aria-current');
     expect(stepOne).not.toHaveClass('is-selected');
   });
@@ -202,7 +201,8 @@ describe('StepList', function () {
     const stepList = getByLabelText('steplist-test');
     const stepListItems =  within(stepList).getAllByRole('link');
 
-    expect(stepListItems[0]).toHaveClass('is-completed');
+    expect(stepListItems[0]).toHaveAttribute('aria-current');
+    expect(stepListItems[0].firstElementChild.textContent).toContain('Current');
 
     rerender(
       <StepList
@@ -214,8 +214,8 @@ describe('StepList', function () {
       </StepList>
     );
 
-    expect(onLastCompletedStepChange.mock.calls.length).toBe(0);
-    expect(stepListItems[0]).toHaveClass('is-completed');
+    expect(onLastCompletedStepChange).toHaveBeenCalledTimes(0);
+    expect(stepListItems[0].firstElementChild.textContent).toContain('Completed');
 
     rerender(
       <StepList
@@ -227,18 +227,18 @@ describe('StepList', function () {
       </StepList>
     );
 
-    expect(onLastCompletedStepChange.mock.calls[0][0]).toBe('step-two');
-    expect(stepListItems[1]).toHaveClass('is-completed');
+    expect(onLastCompletedStepChange).toHaveBeenCalledWith('step-two');
+    expect(stepListItems[1].firstElementChild.textContent).toContain('Completed');
   });
 
-  it('does not updated selected step when last completed step is controlled', function () {
-    const onSelectedKey = jest.fn();
+  it('does not update selected step when last completed step is controlled', function () {
+    const onSelectedChange = jest.fn();
     const {getByLabelText, rerender} = render(
       <StepList
         id="steplist-id"
         aria-label="steplist-test"
         lastCompletedStep={'step-one'}
-        onSelectedKey={onSelectedKey}>
+        onSelectedChange={onSelectedChange}>
         {items.map(item => (<Item key={item.key}>{item.value}</Item>))}
       </StepList>
     );
@@ -249,7 +249,7 @@ describe('StepList', function () {
       <StepList
         id="steplist-id"
         aria-label="steplist-test"
-        onSelectedKey={onSelectedKey}
+        onSelectedChange={onSelectedChange}
         lastCompletedStep="step-two">
         {items.map(item => (<Item key={item.key}>{item.value}</Item>))}
       </StepList>
@@ -259,13 +259,13 @@ describe('StepList', function () {
       <StepList
         id="steplist-id"
         aria-label="steplist-test"
-        onSelectedKey={onSelectedKey}
+        onSelectedChange={onSelectedChange}
         lastCompletedStep="step-three">
         {items.map(item => (<Item key={item.key}>{item.value}</Item>))}
       </StepList>
     );
 
-    expect(onSelectedKey.mock.calls.length).toBe(0);
+    expect(onSelectedChange).toHaveBeenCalledTimes(0);
     expect(stepListItems[0]).toHaveClass('is-selected');
     expect(stepListItems[1]).toHaveClass('is-completed');
     expect(stepListItems[2]).toHaveClass('is-completed');
