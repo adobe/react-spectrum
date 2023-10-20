@@ -46,7 +46,8 @@ export const privateValidationStateProp = '__formValidationState' + Date.now();
 interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult,
   name?: string,
-  value: T
+  value: T,
+  onValidationChange?: (e: ValidationResult) => void
 }
 
 export interface FormValidationState<T> {

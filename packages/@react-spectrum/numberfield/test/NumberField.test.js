@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, createValidationResult, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
@@ -2265,11 +2265,10 @@ describe('NumberField', function () {
   describe('validation', () => {
     describe('validationBehavior=native', () => {
       it('supports isRequired', async () => {
-        let onValidationChange = jest.fn();
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" onValidationChange={onValidationChange} />
+              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" />
             </Form>
           </Provider>
         );
@@ -2279,11 +2278,8 @@ describe('NumberField', function () {
         expect(input).not.toHaveAttribute('aria-required');
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
-        expect(onValidationChange).not.toHaveBeenCalled();
 
         act(() => getByTestId('form').checkValidity());
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Constraints not satisfied'], 'valueMissing'));
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -2297,16 +2293,13 @@ describe('NumberField', function () {
         await user.tab();
 
         expect(input).not.toHaveAttribute('aria-describedby');
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports validate function', async () => {
-        let onValidationChange = jest.fn();
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <NumberField data-testid="input" label="Value" defaultValue={2} step={2} validationBehavior="native" validate={v => v !== 4 ? 'Invalid value' : null} onValidationChange={onValidationChange} />
+              <NumberField data-testid="input" label="Value" defaultValue={2} step={2} validationBehavior="native" validate={v => v !== 4 ? 'Invalid value' : null} />
             </Form>
           </Provider>
         );
@@ -2314,11 +2307,8 @@ describe('NumberField', function () {
         let input = getByTestId('input');
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
-        expect(onValidationChange).not.toHaveBeenCalled();
 
         act(() => getByTestId('form').checkValidity());
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Invalid value']));
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
@@ -2333,8 +2323,6 @@ describe('NumberField', function () {
 
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(true);
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports server validation', async () => {
@@ -2396,11 +2384,10 @@ describe('NumberField', function () {
 
     describe('validationBehavior=aria', () => {
       it('supports validate function', async () => {
-        let onValidationChange = jest.fn();
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <NumberField data-testid="input" label="Value" defaultValue={2} validate={v => v === 2 ? 'Invalid value' : null} onValidationChange={onValidationChange} />
+              <NumberField data-testid="input" label="Value" defaultValue={2} validate={v => v === 2 ? 'Invalid value' : null} />
             </Form>
           </Provider>
         );
@@ -2409,8 +2396,6 @@ describe('NumberField', function () {
         expect(input).toHaveAttribute('aria-describedby');
         expect(input).toHaveAttribute('aria-invalid', 'true');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Invalid value']));
         expect(input.validity.valid).toBe(true);
 
         await user.tab();
@@ -2418,9 +2403,6 @@ describe('NumberField', function () {
         await user.tab();
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input).not.toHaveAttribute('aria-invalid');
-
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports server validation', async () => {

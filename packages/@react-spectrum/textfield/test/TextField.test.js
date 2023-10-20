@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createValidationResult, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {Form} from '@react-spectrum/form';
@@ -483,11 +483,10 @@ describe('Shared TextField behavior', () => {
         ${'v3 TextArea'}    | ${TextArea}
         ${'v3 SearchField'} | ${SearchField}
       `('$Name supports isRequired', async ({Component}) => {
-        let onValidationChange = jest.fn();
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <Component data-testid="input" label="Name" isRequired validationBehavior="native" onValidationChange={onValidationChange} />
+              <Component data-testid="input" label="Name" isRequired validationBehavior="native" />
             </Form>
           </Provider>
         );
@@ -497,11 +496,8 @@ describe('Shared TextField behavior', () => {
         expect(input).not.toHaveAttribute('aria-required');
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
-        expect(onValidationChange).not.toHaveBeenCalled();
 
         act(() => getByTestId('form').checkValidity());
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Constraints not satisfied'], 'valueMissing'));
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -515,8 +511,6 @@ describe('Shared TextField behavior', () => {
         await user.tab();
 
         expect(input).not.toHaveAttribute('aria-describedby');
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it.each`
@@ -525,11 +519,10 @@ describe('Shared TextField behavior', () => {
         ${'v3 TextArea'}    | ${TextArea}
         ${'v3 SearchField'} | ${SearchField}
       `('$Name supports validate function', async ({Component}) => {
-        let onValidationChange = jest.fn();
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <Component data-testid="input" label="Name" defaultValue="Foo" validationBehavior="native" validate={v => v === 'Foo' ? 'Invalid name' : null} onValidationChange={onValidationChange} />
+              <Component data-testid="input" label="Name" defaultValue="Foo" validationBehavior="native" validate={v => v === 'Foo' ? 'Invalid name' : null} />
             </Form>
           </Provider>
         );
@@ -537,11 +530,8 @@ describe('Shared TextField behavior', () => {
         let input = getByTestId('input');
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
-        expect(onValidationChange).not.toHaveBeenCalled();
 
         act(() => getByTestId('form').checkValidity());
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Invalid name']));
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name');
@@ -555,8 +545,6 @@ describe('Shared TextField behavior', () => {
         await user.tab();
 
         expect(input).not.toHaveAttribute('aria-describedby');
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it.each`
@@ -633,11 +621,10 @@ describe('Shared TextField behavior', () => {
         ${'v3 TextArea'}    | ${TextArea}
         ${'v3 SearchField'} | ${SearchField}
       `('$Name supports validate function', async ({Component}) => {
-        let onValidationChange = jest.fn();
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <Component data-testid="input" label="Name" defaultValue="Foo" validate={v => v === 'Foo' ? 'Invalid name' : null} onValidationChange={onValidationChange} />
+              <Component data-testid="input" label="Name" defaultValue="Foo" validate={v => v === 'Foo' ? 'Invalid name' : null} />
             </Form>
           </Provider>
         );
@@ -646,17 +633,12 @@ describe('Shared TextField behavior', () => {
         expect(input).toHaveAttribute('aria-describedby');
         expect(input).toHaveAttribute('aria-invalid', 'true');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name');
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Invalid name']));
         expect(input.validity.valid).toBe(true);
 
         await user.tab();
         await user.keyboard('Devon');
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input).not.toHaveAttribute('aria-invalid');
-
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it.each`

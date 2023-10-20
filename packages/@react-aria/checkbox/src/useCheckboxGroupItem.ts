@@ -14,6 +14,7 @@ import {AriaCheckboxGroupItemProps} from '@react-types/checkbox';
 import {CheckboxAria, useCheckbox} from './useCheckbox';
 import {checkboxGroupData} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
+import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
 import {RefObject} from 'react';
 import {useToggleState} from '@react-stately/toggle';
 
@@ -42,6 +43,18 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
   });
 
   let {name, descriptionId, errorMessageId, validationBehavior} = checkboxGroupData.get(state)!;
+
+  let validationState = useFormValidationState({
+    ...props,
+    value: toggleState.isSelected,
+    builtinValidation: state.realtimeValidation,
+    name: props.name || name,
+    validationBehavior: props.validationBehavior ?? validationBehavior,
+    onValidationChange(e) {
+      state.setInvalid(props.value, e);
+    }
+  });
+
   let res = useCheckbox({
     ...props,
     isReadOnly: props.isReadOnly || state.isReadOnly,
@@ -49,12 +62,7 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     name: props.name || name,
     isRequired: props.isRequired ?? state.isRequired,
     validationBehavior: props.validationBehavior ?? validationBehavior,
-    // @ts-ignore - this is passed through to useFormValidation but we don't want it exposed as public API.
-    builtinValidation: state.realtimeValidation,
-    onValidationChange(e) {
-      props.onValidationChange?.(e);
-      state.setInvalid(props.value, e);
-    }
+    [privateValidationStateProp]: validationState
   }, toggleState, inputRef);
 
   return {

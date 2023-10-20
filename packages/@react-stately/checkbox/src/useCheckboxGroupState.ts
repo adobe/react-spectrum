@@ -11,8 +11,8 @@
  */
 
 import {CheckboxGroupProps} from '@react-types/checkbox';
+import {mergeValidation, useFormValidationState} from '@react-stately/form';
 import {useControlledState} from '@react-stately/utils';
-import {useFormValidationState, VALID_VALIDITY_STATE} from '@react-stately/form';
 import {useMemo, useState} from 'react';
 import {ValidationResult, ValidationState} from '@react-types/shared';
 
@@ -82,7 +82,7 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
   });
 
   // Aggregate errors from all invalid checkboxes.
-  let aggregatedValidation = useMemo(() => aggregateValidation(invalidValues), [invalidValues]);
+  let aggregatedValidation = useMemo(() => mergeValidation(...invalidValues.values()), [invalidValues]);
   let isInvalid = props.isInvalid || props.validationState === 'invalid' || aggregatedValidation.isInvalid;
 
   // Get display validation for the group. This handles the aggregated errors from each checkbox,
@@ -90,8 +90,7 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
   let validation = useFormValidationState({
     value: selectedValues,
     builtinValidation: aggregatedValidation,
-    name: props.name,
-    onValidationChange: props.onValidationChange
+    name: props.name
   });
 
   const state: CheckboxGroupState = {
@@ -160,29 +159,4 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
   };
 
   return state;
-}
-
-function aggregateValidation(invalidValues: Map<string, ValidationResult>): ValidationResult {
-  let errors = new Set<string>();
-  let isInvalid = invalidValues.size > 0;
-  let validationDetails = {
-    ...VALID_VALIDITY_STATE,
-    valid: !isInvalid
-  };
-
-  for (let v of invalidValues.values()) {
-    for (let e of v.errors) {
-      errors.add(e);
-    }
-
-    // Only these properties apply for checkboxes.
-    validationDetails.valueMissing ||= v.validationDetails.valueMissing;
-    validationDetails.customError ||= v.validationDetails.customError;
-  }
-
-  return {
-    isInvalid,
-    errors: [...errors],
-    validationDetails
-  };
 }

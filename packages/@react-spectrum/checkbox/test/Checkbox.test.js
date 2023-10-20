@@ -295,16 +295,13 @@ describe('Checkbox', function () {
   describe('validation', () => {
     describe('validationBehavior=native', () => {
       it('supports isRequired', async () => {
-        let onValidationChange = jest.fn();
         let {getByRole, getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <Checkbox isRequired validationBehavior="native" onValidationChange={onValidationChange}>Terms and conditions</Checkbox>
+              <Checkbox isRequired validationBehavior="native">Terms and conditions</Checkbox>
             </Form>
           </Provider>
         );
-
-        expect(onValidationChange).not.toHaveBeenCalled();
 
         let checkbox = getByRole('checkbox');
         expect(checkbox).toHaveAttribute('required');
@@ -312,40 +309,27 @@ describe('Checkbox', function () {
         expect(checkbox.validity.valid).toBe(false);
 
         act(() => getByTestId('form').checkValidity());
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Constraints not satisfied'], 'valueMissing'));
 
         await user.click(checkbox);
         expect(checkbox.validity.valid).toBe(true);
-
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports validate function', async () => {
-        let onValidationChange = jest.fn();
         let {getByRole, getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <Checkbox validationBehavior="native" onValidationChange={onValidationChange} validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
+              <Checkbox validationBehavior="native" validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
             </Form>
           </Provider>
         );
-
-        expect(onValidationChange).not.toHaveBeenCalled();
 
         let checkbox = getByRole('checkbox');
         expect(checkbox.validity.valid).toBe(false);
 
         act(() => getByTestId('form').checkValidity());
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept the terms.']));
 
         await user.click(checkbox);
         expect(checkbox.validity.valid).toBe(true);
-
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports server validation', async () => {
@@ -381,22 +365,16 @@ describe('Checkbox', function () {
 
     describe('validationBehavior=aria', () => {
       it('supports validate function', async () => {
-        let onValidationChange = jest.fn();
         let {getByRole} = render(
           <Provider theme={theme}>
-            <Checkbox value="terms" onValidationChange={onValidationChange} validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
+            <Checkbox value="terms" validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
           </Provider>
         );
 
         let checkbox = getByRole('checkbox');
         expect(checkbox.validity.valid).toBe(true);
 
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['You must accept the terms.']));
-
         await user.click(checkbox);
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports server validation', async () => {

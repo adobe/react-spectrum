@@ -203,7 +203,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     validationState: undefined,
     validate: undefined,
     validationBehavior: undefined,
-    onValidationChange: undefined,
     value: inputValue,
     defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',

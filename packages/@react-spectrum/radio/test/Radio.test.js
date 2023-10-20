@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createValidationResult, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
@@ -683,11 +683,10 @@ describe('Radios', function () {
   describe('validation', () => {
     describe('validationBehavior=native', () => {
       it('supports isRequired', async () => {
-        let onValidationChange = jest.fn();
         let {getAllByRole, getByRole, getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <RadioGroup aria-label="favorite pet" isRequired validationBehavior="native" onValidationChange={onValidationChange}>
+              <RadioGroup aria-label="favorite pet" isRequired validationBehavior="native">
                 <Radio value="dogs">Dogs</Radio>
                 <Radio value="cats">Cats</Radio>
                 <Radio value="dragons">Dragons</Radio>
@@ -698,7 +697,6 @@ describe('Radios', function () {
 
         let group = getByRole('radiogroup');
         expect(group).not.toHaveAttribute('aria-describedby');
-        expect(onValidationChange).not.toHaveBeenCalled();
 
         let radios = getAllByRole('radio');
         for (let input of radios) {
@@ -708,8 +706,6 @@ describe('Radios', function () {
         }
 
         act(() => getByTestId('form').checkValidity());
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Constraints not satisfied'], 'valueMissing'));
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -720,16 +716,13 @@ describe('Radios', function () {
         }
 
         expect(group).not.toHaveAttribute('aria-describedby');
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports validate function', async () => {
-        let onValidationChange = jest.fn();
         let {getAllByRole, getByRole, getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <RadioGroup aria-label="favorite pet" defaultValue="dragons" validationBehavior="native" validate={v => v === 'dragons' ? 'Too scary' : null} onValidationChange={onValidationChange}>
+              <RadioGroup aria-label="favorite pet" defaultValue="dragons" validationBehavior="native" validate={v => v === 'dragons' ? 'Too scary' : null}>
                 <Radio value="dogs">Dogs</Radio>
                 <Radio value="cats">Cats</Radio>
                 <Radio value="dragons">Dragons</Radio>
@@ -740,7 +733,6 @@ describe('Radios', function () {
 
         let group = getByRole('radiogroup');
         expect(group).not.toHaveAttribute('aria-describedby');
-        expect(onValidationChange).not.toHaveBeenCalled();
 
         let radios = getAllByRole('radio');
         for (let input of radios) {
@@ -750,8 +742,6 @@ describe('Radios', function () {
         }
 
         act(() => getByTestId('form').checkValidity());
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Too scary']));
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(['Too scary']);
@@ -761,9 +751,6 @@ describe('Radios', function () {
         for (let input of radios) {
           expect(input.validity.valid).toBe(true);
         }
-
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports server validation', async () => {
@@ -836,10 +823,9 @@ describe('Radios', function () {
 
     describe('validationBehavior=aria', () => {
       it('supports validate function', async () => {
-        let onValidationChange = jest.fn();
         let {getAllByRole, getByRole} = render(
           <Provider theme={theme}>
-            <RadioGroup aria-label="favorite pet" defaultValue="dragons" validate={v => v === 'dragons' ? 'Too scary' : null} onValidationChange={onValidationChange}>
+            <RadioGroup aria-label="favorite pet" defaultValue="dragons" validate={v => v === 'dragons' ? 'Too scary' : null}>
               <Radio value="dogs">Dogs</Radio>
               <Radio value="cats">Cats</Radio>
               <Radio value="dragons">Dragons</Radio>
@@ -851,8 +837,6 @@ describe('Radios', function () {
         expect(group).toHaveAttribute('aria-describedby');
         expect(group).toHaveAttribute('aria-invalid', 'true');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Too scary');
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Too scary']));
 
         let radios = getAllByRole('radio');
         for (let input of radios) {
@@ -862,9 +846,6 @@ describe('Radios', function () {
         await user.click(radios[0]);
         expect(group).not.toHaveAttribute('aria-describedby');
         expect(group).not.toHaveAttribute('aria-invalid');
-
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports server validation', async () => {
