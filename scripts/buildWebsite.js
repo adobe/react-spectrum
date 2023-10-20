@@ -48,20 +48,25 @@ async function build() {
           name.startsWith('postcss') ||
           name.startsWith('@adobe') ||
           name === 'sharp' ||
-          name === 'recast'
+          name === 'recast' ||
+          name === 'framer-motion' ||
+          name === 'tailwindcss-animate' ||
+          name === 'tailwindcss' ||
+          name === 'autoprefixer'
         )
     ),
     dependencies: {
       '@adobe/react-spectrum': 'latest',
       'react-aria': 'latest',
       'react-stately': 'latest',
-      'react-aria-components': 'latest'
+      'react-aria-components': 'latest',
+      'tailwindcss-react-aria-components': 'latest'
     },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
-      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
+      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package'
     },
     '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
@@ -140,6 +145,12 @@ async function build() {
       fs.copySync(path.join(dir, 'node_modules', p), path.join(dir, 'docs', p));
     }
   }
+
+  // Patch react-aria-components package.json for example CSS.
+  let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
+  let json = JSON.parse(fs.readFileSync(p));
+  json.sideEffects = ['*.css'];
+  fs.writeFileSync(p, JSON.stringify(json, false, 2));
 
   // TEMP HACK: Patch textfield css to workaround parcel bug
   fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));

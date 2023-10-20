@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {canUseDOM, useSSRSafeId} from '@react-aria/ssr';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
-import {useSSRSafeId} from '@react-aria/ssr';
 import {useValueEffect} from './';
 
 let idsUpdaterMap: Map<string, (v: string) => void> = new Map();
@@ -31,7 +31,9 @@ export function useId(defaultId?: string): string {
     nextId.current = val;
   }, []);
 
-  idsUpdaterMap.set(res, updateValue);
+  if (canUseDOM) {
+    idsUpdaterMap.set(res, updateValue);
+  }
 
   useLayoutEffect(() => {
     let r = res;
