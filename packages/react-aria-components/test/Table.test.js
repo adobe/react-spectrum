@@ -612,7 +612,7 @@ describe('Table', () => {
 
   it('should support row render function and not call it with state', () => {
     let renderRow = jest.fn(() => {});
-    let {getAllByRole} = render(
+    render(
       <Table aria-label="Search results">
         <TableHeader columns={[columns[0]]}>
           {column => (
