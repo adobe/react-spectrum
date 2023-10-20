@@ -15,6 +15,12 @@ governing permissions and limitations under the License.
   --spectrum-selectlist-divider-color: var(--spectrum-global-color-gray-300);
 }
 
+.spectrum-Menu-wrapper,
+.spectrum-Menu-subdialog {
+  border-color: var(--spectrum-popover-border-color);
+  background-color: var(--spectrum-popover-background-color);
+  filter: drop-shadow(0 var(--spectrum-popover-shadow-offset-y) var(--spectrum-popover-shadow-blur) var(--spectrum-popover-shadow-color));
+}
 
 .spectrum-Menu {
   --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
