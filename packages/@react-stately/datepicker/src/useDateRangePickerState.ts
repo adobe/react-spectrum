@@ -12,8 +12,8 @@
 
 import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, getValidationResult, isInvalid, useDefaultProps} from './utils';
-import {FormValidationState, mergeValidation, useFormValidationState} from '@react-stately/form';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, getRangeValidationResult, useDefaultProps} from './utils';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
@@ -156,44 +156,19 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     }
   };
 
-  // let isValueInvalid = props.isInvalid || props.validationState === 'invalid'
-  //   || (value != null && (
-  //     isInvalid(value.start, props.minValue, props.maxValue) ||
-  //     isInvalid(value.end, props.minValue, props.maxValue) ||
-  //     (value.end != null && value.start != null && value.end.compare(value.start) < 0) ||
-  //     (value?.start && props.isDateUnavailable?.(value.start)) ||
-  //     (value?.end && props.isDateUnavailable?.(value.end))
-  //   ));
-  // let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
-
-  let dateFormatter = useMemo(() => new DateFormatter('en-US'), []);
-  let startValidation = getValidationResult(
-    value?.start,
-    props.minValue,
-    props.maxValue,
-    (value?.start && props.isDateUnavailable?.(value.start)) || false,
-    dateFormatter,
-    'America/Los_Angeles'
-  );
-
-  let endValidation = getValidationResult(
-    value?.end,
-    props.minValue,
-    props.maxValue,
-    (value?.end && props.isDateUnavailable?.(value.end)) || false,
-    dateFormatter,
-    'America/Los_Angeles'
-  );
-
-  if (value.end != null && value.start != null && value.end.compare(value.start) < 0) {
-    // TODO
-  }
+  let {minValue, maxValue, isDateUnavailable} = props;
+  let builtinValidation = useMemo(() => getRangeValidationResult(
+    value,
+    minValue,
+    maxValue,
+    isDateUnavailable
+  ), [value, minValue, maxValue, isDateUnavailable]);
 
   let validation = useFormValidationState({
     ...props,
     value,
     name: props.startName, // TODO
-    builtinValidation: mergeValidation(startValidation, endValidation)
+    builtinValidation
   });
 
   let isValueInvalid = validation.displayValidation.isInvalid;

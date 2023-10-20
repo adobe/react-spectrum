@@ -151,6 +151,8 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     isDisabled,
     isReadOnly,
     isRequired,
+    minValue,
+    maxValue,
     isDateUnavailable
   } = props;
 
@@ -316,16 +318,12 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     }
   };
 
-  // TODO: do we really need both isDateUnavailable AND validate??
-  let isUnavailable = useMemo(() => (value && isDateUnavailable?.(value)) || false, [value, isDateUnavailable]);
-  let builtinValidation = getValidationResult(
-    calendarValue,
-    props.minValue,
-    props.maxValue,
-    isUnavailable,
-    dateFormatter,
-    timeZone
-  );
+  let builtinValidation = useMemo(() => getValidationResult(
+    value,
+    minValue,
+    maxValue,
+    isDateUnavailable
+  ), [value, minValue, maxValue, isDateUnavailable]);
 
   let validation = useFormValidationState({
     ...props,

@@ -94,17 +94,13 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
 
-  let isDateUnavailable = props.isDateUnavailable;
-  let isUnavailable = useMemo(() => (value && isDateUnavailable?.(value)) || false, [value, isDateUnavailable]);
-  let dateFormatter = useMemo(() => new DateFormatter('en-US'), []);
-  let builtinValidation = getValidationResult(
+  let {minValue, maxValue, isDateUnavailable} = props;
+  let builtinValidation = useMemo(() => getValidationResult(
     value,
-    props.minValue,
-    props.maxValue,
-    isUnavailable,
-    dateFormatter,
-    'America/Los_Angeles'
-  );
+    minValue,
+    maxValue,
+    isDateUnavailable
+  ), [value, minValue, maxValue, isDateUnavailable]);
 
   let validation = useFormValidationState({
     ...props,
