@@ -32,7 +32,8 @@ export function getValidationResult(
   value: DateValue,
   minValue: DateValue,
   maxValue: DateValue,
-  isDateUnavailable: (v: DateValue) => boolean
+  isDateUnavailable: (v: DateValue) => boolean,
+  options: FormatterOptions
 ): ValidationResult {
   let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
   let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
@@ -43,7 +44,7 @@ export function getValidationResult(
   if (isInvalid) {
     let locale = getLocale();
     let formatter = new LocalizedStringFormatter(locale, dictionary);
-    let dateFormatter = new DateFormatter(locale, {timeZone: 'timeZone' in value ? value.timeZone : undefined});
+    let dateFormatter = new DateFormatter(locale, getFormatOptions({}, options));
     let timeZone = dateFormatter.resolvedOptions().timeZone;
 
     if (rangeUnderflow) {
@@ -82,20 +83,23 @@ export function getRangeValidationResult(
   value: RangeValue<DateValue>,
   minValue: DateValue,
   maxValue: DateValue,
-  isDateUnavailable: (v: DateValue) => boolean
+  isDateUnavailable: (v: DateValue) => boolean,
+  options: FormatterOptions
 ) {
   let startValidation = getValidationResult(
     value?.start,
     minValue,
     maxValue,
-    isDateUnavailable
+    isDateUnavailable,
+    options
   );
 
   let endValidation = getValidationResult(
     value?.end,
     minValue,
     maxValue,
-    isDateUnavailable
+    isDateUnavailable,
+    options
   );
 
   let result = mergeValidation(startValidation, endValidation);

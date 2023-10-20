@@ -94,13 +94,24 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
 
+  let showEra = value?.calendar.identifier === 'gregory' && value.era === 'BC';
+  let formatOpts = useMemo(() => ({
+    granularity,
+    timeZone: defaultTimeZone,
+    hideTimeZone: props.hideTimeZone,
+    hourCycle: props.hourCycle,
+    shouldForceLeadingZeros: props.shouldForceLeadingZeros,
+    showEra
+  }), [granularity, props.hourCycle, props.shouldForceLeadingZeros, defaultTimeZone, props.hideTimeZone, showEra]);
+
   let {minValue, maxValue, isDateUnavailable} = props;
   let builtinValidation = useMemo(() => getValidationResult(
     value,
     minValue,
     maxValue,
-    isDateUnavailable
-  ), [value, minValue, maxValue, isDateUnavailable]);
+    isDateUnavailable,
+    formatOpts
+  ), [value, minValue, maxValue, isDateUnavailable, formatOpts]);
 
   let validation = useFormValidationState({
     ...props,
@@ -182,14 +193,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
         return '';
       }
 
-      let formatOptions = getFormatOptions(fieldOptions, {
-        granularity,
-        timeZone: defaultTimeZone,
-        hideTimeZone: props.hideTimeZone,
-        hourCycle: props.hourCycle,
-        showEra: value.calendar.identifier === 'gregory' && value.era === 'BC'
-      });
-
+      let formatOptions = getFormatOptions(fieldOptions, formatOpts);
       let formatter = new DateFormatter(locale, formatOptions);
       return formatter.format(dateValue);
     }

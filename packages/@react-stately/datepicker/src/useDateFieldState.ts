@@ -322,8 +322,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     value,
     minValue,
     maxValue,
-    isDateUnavailable
-  ), [value, minValue, maxValue, isDateUnavailable]);
+    isDateUnavailable,
+    formatOpts
+  ), [value, minValue, maxValue, isDateUnavailable, formatOpts]);
 
   let validation = useFormValidationState({
     ...props,

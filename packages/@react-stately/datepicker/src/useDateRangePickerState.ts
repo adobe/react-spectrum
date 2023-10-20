@@ -100,7 +100,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
   };
 
   let v = (value?.start || value?.end || props.placeholderValue);
-  let [granularity] = useDefaultProps(v, props.granularity);
+  let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
   let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
@@ -156,13 +156,24 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     }
   };
 
+  let showEra = (value?.start?.calendar.identifier === 'gregory' && value.start.era === 'BC') || (value?.end?.calendar.identifier === 'gregory' && value.end.era === 'BC');
+  let formatOpts = useMemo(() => ({
+    granularity,
+    timeZone: defaultTimeZone,
+    hideTimeZone: props.hideTimeZone,
+    hourCycle: props.hourCycle,
+    shouldForceLeadingZeros: props.shouldForceLeadingZeros,
+    showEra
+  }), [granularity, props.hourCycle, props.shouldForceLeadingZeros, defaultTimeZone, props.hideTimeZone, showEra]);
+
   let {minValue, maxValue, isDateUnavailable} = props;
   let builtinValidation = useMemo(() => getRangeValidationResult(
     value,
     minValue,
     maxValue,
-    isDateUnavailable
-  ), [value, minValue, maxValue, isDateUnavailable]);
+    isDateUnavailable,
+    formatOpts
+  ), [value, minValue, maxValue, isDateUnavailable, formatOpts]);
 
   let validation = useFormValidationState({
     ...props,

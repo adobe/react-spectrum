@@ -1980,38 +1980,38 @@ describe('DatePicker', function () {
           let input = document.querySelector('input[name=date]');
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(input.validity.valid).toBe(false);
-          expect(getDescription()).not.toContain('Value must be on or after 2/3/2020');
+          expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
 
           act(() => getByTestId('form').checkValidity());
 
           expect(group).toHaveAttribute('aria-describedby');
-          expect(getDescription()).toContain('Value must be on or after 2/3/2020');
+          expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
 
           await user.keyboard('[Tab][Tab][Tab][ArrowUp]');
 
-          expect(getDescription()).toContain('Value must be on or after 2/3/2020');
+          expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
           expect(input.validity.valid).toBe(true);
 
           await user.tab();
 
-          expect(getDescription()).not.toContain('Value must be on or after 2/3/2020');
+          expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
 
           await user.tab({shift: true});
           await user.keyboard('2025');
-          expect(getDescription()).not.toContain('Value must be on or before 2/3/2024');
+          expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
           expect(input.validity.valid).toBe(false);
           await user.tab();
 
           act(() => getByTestId('form').checkValidity());
-          expect(getDescription()).toContain('Value must be on or before 2/3/2024');
+          expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
 
           await user.tab({shift: true});
           await user.keyboard('[ArrowDown]');
-          expect(getDescription()).toContain('Value must be on or before 2/3/2024');
+          expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
           expect(input.validity.valid).toBe(true);
           await user.tab();
 
-          expect(getDescription()).not.toContain('Value must be on or before 2/3/2024');
+          expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
         });
 
         it('supports validate function', async () => {
@@ -2170,16 +2170,16 @@ describe('DatePicker', function () {
 
           let group = getByRole('group');
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-          expect(getDescription()).toContain('Value must be on or after 2/3/2020');
+          expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
 
           await user.keyboard('[Tab][Tab][Tab][ArrowUp]');
-          expect(getDescription()).not.toContain('Value must be on or after 2/3/2020');
+          expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
 
           await user.keyboard('[ArrowUp][ArrowUp][ArrowUp][ArrowUp][ArrowUp]');
-          expect(getDescription()).toContain('Value must be on or before 2/3/2024');
+          expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
 
           await user.keyboard('[ArrowDown]');
-          expect(getDescription()).not.toContain('Value must be on or before 2/3/2024');
+          expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
         });
 
         it('supports validate function', async () => {
