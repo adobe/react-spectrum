@@ -22,7 +22,7 @@ export {DropZone, DropZoneContext} from './DropZone';
 export {FileTrigger} from './FileTrigger';
 export {GridList, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
-export {Header} from './Header';
+export {Header, HeaderContext} from './Header';
 export {Heading, HeadingContext} from './Heading';
 export {Input, InputContext} from './Input';
 export {Item, Section, Collection} from './Collection';
