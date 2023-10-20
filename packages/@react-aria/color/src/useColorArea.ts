@@ -83,7 +83,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
   let xChannelStep = state.xChannelStep;
   let yChannelStep = state.yChannelStep;
 
-  let currentPosition = useRef<{x: number, y: number}>(null);
+  let currentPosition = useRef<{x: number, y: number} | null>(null);
 
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
@@ -146,7 +146,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       if (currentPosition.current == null) {
         currentPosition.current = getThumbPosition();
       }
-      let {width, height} = containerRef.current.getBoundingClientRect();
+      let {width, height} = containerRef.current?.getBoundingClientRect() || {width: 0, height: 0};
       let valueChanged = deltaX !== 0 || deltaY !== 0;
       if (pointerType === 'keyboard') {
         let deltaXValue = shiftKey && xChannelPageStep > xChannelStep ? xChannelPageStep : xChannelStep;
@@ -171,7 +171,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       }
     },
     onMoveEnd() {
-      isOnColorArea.current = undefined;
+      isOnColorArea.current = false;
       state.setDragging(false);
       let input = focusedInput === 'x' ? inputXRef : inputYRef;
       focusInput(input);
@@ -207,7 +207,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   });
 
-  let onThumbDown = (id: number | null) => {
+  let onThumbDown = (id: number | null | undefined) => {
     if (!state.isDragging) {
       currentPointer.current = id;
       setValueChangedViaKeyboard(false);
@@ -240,7 +240,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   };
 
-  let onColorAreaDown = (colorArea: Element, id: number | null, clientX: number, clientY: number) => {
+  let onColorAreaDown = (colorArea: Element, id: number | null | undefined, clientX: number, clientY: number) => {
     let rect = colorArea.getBoundingClientRect();
     let {width, height} = rect;
     let x = (clientX - rect.x) / width;

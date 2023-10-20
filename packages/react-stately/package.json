@@ -1,6 +1,6 @@
 {
   "name": "react-stately",
-  "version": "3.27.0",
+  "version": "3.27.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -39,7 +39,7 @@
     "@react-stately/searchfield": "^3.4.6",
     "@react-stately/select": "^3.5.5",
     "@react-stately/selection": "^3.14.0",
-    "@react-stately/slider": "^3.4.3",
+    "@react-stately/slider": "^3.4.4",
     "@react-stately/table": "^3.11.2",
     "@react-stately/tabs": "^3.6.1",
     "@react-stately/toggle": "^3.6.3",
