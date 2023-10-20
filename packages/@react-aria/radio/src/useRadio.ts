@@ -68,7 +68,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   }), ref);
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
-  let tabIndex = -1;
+  let tabIndex: number | undefined = -1;
   if (state.selectedValue != null) {
     if (state.selectedValue === value) {
       tabIndex = 0;
