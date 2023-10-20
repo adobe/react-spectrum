@@ -12,10 +12,11 @@
 
 import {CalendarDate, DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, getValidationResult, useDefaultProps} from './utils';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export interface DatePickerStateOptions<T extends DateValue> extends DatePickerProps<T> {
@@ -26,7 +27,7 @@ export interface DatePickerStateOptions<T extends DateValue> extends DatePickerP
   shouldCloseOnSelect?: boolean | (() => boolean)
 }
 
-export interface DatePickerState extends OverlayTriggerState {
+export interface DatePickerState extends OverlayTriggerState, FormValidationState<DateValue> {
   /** The currently selected date. */
   value: DateValue | null,
   /** Sets the selected date. */
@@ -93,10 +94,41 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
 
+  let isDateUnavailable = props.isDateUnavailable;
+  let isUnavailable = useMemo(() => (value && isDateUnavailable?.(value)) || false, [value, isDateUnavailable]);
+  let dateFormatter = useMemo(() => new DateFormatter('en-US'), []);
+  let builtinValidation = getValidationResult(
+    value,
+    props.minValue,
+    props.maxValue,
+    isUnavailable,
+    dateFormatter,
+    'America/Los_Angeles'
+  );
+
+  let validation = useFormValidationState({
+    ...props,
+    value,
+    builtinValidation
+  });
+
+  let isValueInvalid = validation.displayValidation.isInvalid;
+  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
+
+  let didCommit = useRef(false);
+  useEffect(() => {
+    if (didCommit.current) {
+      didCommit.current = false;
+      validation.commitValidation();
+    }
+  });
+
   let commitValue = (date: DateValue, time: TimeValue) => {
-    setValue('timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time));
+    let newValue = 'timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time);
+    setValue(newValue);
     setSelectedDate(null);
     setSelectedTime(null);
+    didCommit.current = true;
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
@@ -110,6 +142,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       }
     } else {
       setValue(newValue);
+      didCommit.current = true;
     }
 
     if (shouldClose) {
@@ -125,12 +158,8 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
     }
   };
 
-  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' ||
-    isInvalid(value, props.minValue, props.maxValue) ||
-    value && props.isDateUnavailable?.(value);
-  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
-
   return {
+    ...validation,
     value,
     setValue,
     dateValue: selectedDate,

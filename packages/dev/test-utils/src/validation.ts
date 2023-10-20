@@ -12,7 +12,7 @@
 
 import {ValidationResult} from '@react-types/shared';
 
-export function createValidationResult(errors: string[], type: string = 'customError'): ValidationResult {
+export function createValidationResult(errors: string[], ...types: string[]): ValidationResult {
   let validationDetails = {
     badInput: false,
     customError: false,
@@ -28,7 +28,13 @@ export function createValidationResult(errors: string[], type: string = 'customE
   };
 
   if (!validationDetails.valid) {
-    validationDetails[type] = true;
+    if (types.length === 0) {
+      types = ['customError'];
+    }
+
+    for (let type of types) {
+      validationDetails[type] = true;
+    }
   }
 
   return {

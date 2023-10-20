@@ -41,6 +41,8 @@ const DEFAULT_VALIDITY: ValidationResult = {
 
 export const FormValidationContext = createContext<ValidationErrors>({});
 
+export const privateValidationStateProp = '__formValidationState' + Date.now();
+
 interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult,
   name?: string,
@@ -55,6 +57,16 @@ export interface FormValidationState<T> {
 }
 
 export function useFormValidationState<T>(props: FormValidationProps<T>): FormValidationState<T> {
+  if (props[privateValidationStateProp]) {
+    let {realtimeValidation, displayValidation, updateValidation, commitValidation} = props[privateValidationStateProp] as FormValidationState<T>;
+    return {realtimeValidation, displayValidation, updateValidation, commitValidation};
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useFormValidationStateImpl(props);
+}
+
+function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValidationState<T> {
   let {isInvalid, validationState, name, value, builtinValidation, validate, validationBehavior = 'aria', onValidationChange} = props;
 
   // backward compatibility.
@@ -169,4 +181,31 @@ function isEqualValidation(a: ValidationResult | null, b: ValidationResult | nul
     && a.errors.length === b.errors.length
     && a.errors.every((a, i) => a === b.errors[i])
     && Object.entries(a.validationDetails).every(([k, v]) => b.validationDetails[k] === v);
+}
+
+export function mergeValidation(...results: ValidationResult[]): ValidationResult {
+  let errors = new Set<string>();
+  let isInvalid = false;
+  let validationDetails = {
+    ...VALID_VALIDITY_STATE
+  };
+
+  for (let v of results) {
+    for (let e of v.errors) {
+      errors.add(e);
+    }
+
+    // Only these properties apply for checkboxes.
+    isInvalid ||= v.isInvalid;
+    for (let key in validationDetails) {
+      validationDetails[key] ||= v.validationDetails[key];
+    }
+  }
+
+  validationDetails.valid = !isInvalid;
+  return {
+    isInvalid,
+    errors: [...errors],
+    validationDetails
+  };
 }

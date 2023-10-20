@@ -11,7 +11,7 @@
  */
 
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
-import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, getValidationDetails, useDefaultProps} from './utils';
+import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getPlaceholder} from './placeholders';
@@ -318,27 +318,23 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
 
   // TODO: do we really need both isDateUnavailable AND validate??
   let isUnavailable = useMemo(() => (value && isDateUnavailable?.(value)) || false, [value, isDateUnavailable]);
-  let validationDetails = getValidationDetails(calendarValue, props.minValue, props.maxValue, isUnavailable);
-  let isValueInvalid = props.isInvalid || props.validationState === 'invalid' || !validationDetails.valid;
-  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
-  let errors = [];
-  if (validationDetails.rangeUnderflow) {
-    errors = [`Value must be on or after ${dateFormatter.format(props.minValue.toDate(timeZone))}`];
-  }
-
-  if (validationDetails.rangeOverflow) {
-    errors = [`Value must be on or before ${dateFormatter.format(props.maxValue.toDate(timeZone))}`];
-  }
+  let builtinValidation = getValidationResult(
+    calendarValue,
+    props.minValue,
+    props.maxValue,
+    isUnavailable,
+    dateFormatter,
+    timeZone
+  );
 
   let validation = useFormValidationState({
     ...props,
     value,
-    builtinValidation: {
-      isInvalid: !validationDetails.valid,
-      errors,
-      validationDetails
-    }
+    builtinValidation
   });
+
+  let isValueInvalid = validation.displayValidation.isInvalid;
+  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
     ...validation,

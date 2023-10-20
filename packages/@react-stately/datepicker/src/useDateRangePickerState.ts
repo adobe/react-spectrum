@@ -12,11 +12,12 @@
 
 import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, getValidationResult, isInvalid, useDefaultProps} from './utils';
+import {FormValidationState, mergeValidation, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 export interface DateRangePickerStateOptions<T extends DateValue = DateValue> extends DateRangePickerProps<T> {
   /**
@@ -27,7 +28,7 @@ export interface DateRangePickerStateOptions<T extends DateValue = DateValue> ex
 }
 
 type TimeRange = RangeValue<TimeValue>;
-export interface DateRangePickerState extends OverlayTriggerState {
+export interface DateRangePickerState extends OverlayTriggerState, FormValidationState<DateRange> {
   /** The currently selected date range. */
   value: DateRange | null,
   /** Sets the selected date range. */
@@ -120,6 +121,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     });
     setSelectedDateRange(null);
     setSelectedTimeRange(null);
+    didCommit.current = true;
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
@@ -136,6 +138,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
       }
     } else if (range.start && range.end) {
       setValue(range);
+      didCommit.current = true;
     } else {
       setSelectedDateRange(range);
     }
@@ -153,17 +156,59 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     }
   };
 
-  let isValueInvalid = props.isInvalid || props.validationState === 'invalid'
-    || (value != null && (
-      isInvalid(value.start, props.minValue, props.maxValue) ||
-      isInvalid(value.end, props.minValue, props.maxValue) ||
-      (value.end != null && value.start != null && value.end.compare(value.start) < 0) ||
-      (value?.start && props.isDateUnavailable?.(value.start)) ||
-      (value?.end && props.isDateUnavailable?.(value.end))
-    ));
+  // let isValueInvalid = props.isInvalid || props.validationState === 'invalid'
+  //   || (value != null && (
+  //     isInvalid(value.start, props.minValue, props.maxValue) ||
+  //     isInvalid(value.end, props.minValue, props.maxValue) ||
+  //     (value.end != null && value.start != null && value.end.compare(value.start) < 0) ||
+  //     (value?.start && props.isDateUnavailable?.(value.start)) ||
+  //     (value?.end && props.isDateUnavailable?.(value.end))
+  //   ));
+  // let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
+
+  let dateFormatter = useMemo(() => new DateFormatter('en-US'), []);
+  let startValidation = getValidationResult(
+    value?.start,
+    props.minValue,
+    props.maxValue,
+    (value?.start && props.isDateUnavailable?.(value.start)) || false,
+    dateFormatter,
+    'America/Los_Angeles'
+  );
+
+  let endValidation = getValidationResult(
+    value?.end,
+    props.minValue,
+    props.maxValue,
+    (value?.end && props.isDateUnavailable?.(value.end)) || false,
+    dateFormatter,
+    'America/Los_Angeles'
+  );
+
+  if (value.end != null && value.start != null && value.end.compare(value.start) < 0) {
+    // TODO
+  }
+
+  let validation = useFormValidationState({
+    ...props,
+    value,
+    name: props.startName, // TODO
+    builtinValidation: mergeValidation(startValidation, endValidation)
+  });
+
+  let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
+  let didCommit = useRef(false);
+  useEffect(() => {
+    if (didCommit.current) {
+      didCommit.current = false;
+      validation.commitValidation();
+    }
+  });
+
   return {
+    ...validation,
     value,
     setValue,
     dateRange,

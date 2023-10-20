@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {Calendar, DateFormatter, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
 import {useState} from 'react';
+import {ValidationResult} from '@react-types/shared';
 
 export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
   return value != null && (
@@ -21,21 +22,41 @@ export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateV
   );
 }
 
-export function getValidationDetails(value: DateValue, minValue: DateValue, maxValue: DateValue, isDateUnavailable: boolean): ValidityState {
+export function getValidationResult(
+  value: DateValue,
+  minValue: DateValue,
+  maxValue: DateValue,
+  isDateUnavailable: boolean,
+  dateFormatter: DateFormatter,
+  timeZone: string
+): ValidationResult {
   let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
   let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
+  let errors = [];
+  if (rangeUnderflow) {
+    errors = [`Value must be on or after ${dateFormatter.format(minValue.toDate(timeZone))}`];
+  }
+
+  if (rangeOverflow) {
+    errors = [`Value must be on or before ${dateFormatter.format(maxValue.toDate(timeZone))}`];
+  }
+
   return {
-    badInput: isDateUnavailable,
-    customError: false,
-    patternMismatch: false,
-    rangeOverflow,
-    rangeUnderflow,
-    stepMismatch: false,
-    tooLong: false,
-    tooShort: false,
-    typeMismatch: false,
-    valueMissing: false,
-    valid: !rangeOverflow && !rangeUnderflow && !isDateUnavailable
+    isInvalid: rangeOverflow || rangeUnderflow || isDateUnavailable,
+    errors,
+    validationDetails: {
+      badInput: isDateUnavailable,
+      customError: false,
+      patternMismatch: false,
+      rangeOverflow,
+      rangeUnderflow,
+      stepMismatch: false,
+      tooLong: false,
+      tooShort: false,
+      typeMismatch: false,
+      valueMissing: false,
+      valid: !rangeOverflow && !rangeUnderflow && !isDateUnavailable
+    }
   };
 }
 

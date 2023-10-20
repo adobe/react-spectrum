@@ -74,7 +74,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
 
   let {focusWithinProps} = useFocusWithin({
     ...props,
-    onBlurWithin: (e: FocusEvent) => {
+    onBlurWithin: (e) => {
       state.confirmPlaceholder();
 
       if (props.onBlur) {

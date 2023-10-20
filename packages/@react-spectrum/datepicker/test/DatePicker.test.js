@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, createValidationResult, fireEvent, pointerMap, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {Button} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
+import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -1930,6 +1932,341 @@ describe('DatePicker', function () {
       await user.click(button);
       expect(getDescription()).toBe('Selected Date: February 3, 2020');
       expect(input).toHaveValue('2020-02-03');
+    });
+
+    describe('validation', () => {
+      describe('validationBehavior=native', () => {
+        it('supports isRequired', async () => {
+          let onValidationChange = jest.fn();
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DatePicker label="Date" name="date" isRequired validationBehavior="native" onValidationChange={onValidationChange} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          expect(input).toHaveAttribute('required');
+          expect(input.validity.valid).toBe(false);
+          expect(group).not.toHaveAttribute('aria-describedby');
+          expect(onValidationChange).not.toHaveBeenCalled();
+
+          act(() => getByTestId('form').checkValidity());
+          expect(onValidationChange).toHaveBeenCalledTimes(1);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Constraints not satisfied'], 'valueMissing'));
+
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Constraints not satisfied');
+
+          await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+
+          expect(getDescription()).toContain('Constraints not satisfied');
+          expect(input.validity.valid).toBe(true);
+
+          await user.tab();
+
+          expect(getDescription()).not.toContain('Constraints not satisfied');
+          expect(onValidationChange).toHaveBeenCalledTimes(2);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+        });
+
+        it('supports minValue and maxValue', async () => {
+          let onValidationChange = jest.fn();
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DatePicker label="Date" name="date" minValue={new CalendarDate(2020, 2, 3)} maxValue={new CalendarDate(2024, 2, 3)} defaultValue={new CalendarDate(2019, 2, 3)} validationBehavior="native" onValidationChange={onValidationChange} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(input.validity.valid).toBe(false);
+          expect(getDescription()).not.toContain('Value must be on or after 2/3/2020');
+          expect(onValidationChange).not.toHaveBeenCalled();
+
+          act(() => getByTestId('form').checkValidity());
+          expect(onValidationChange).toHaveBeenCalledTimes(1);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Value must be on or after 2/3/2020'], 'rangeUnderflow'));
+
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(getDescription()).toContain('Value must be on or after 2/3/2020');
+
+          await user.keyboard('[Tab][Tab][Tab][ArrowUp]');
+
+          expect(getDescription()).toContain('Value must be on or after 2/3/2020');
+          expect(input.validity.valid).toBe(true);
+
+          await user.tab();
+
+          expect(getDescription()).not.toContain('Value must be on or after 2/3/2020');
+          expect(onValidationChange).toHaveBeenCalledTimes(2);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+
+          await user.tab({shift: true});
+          await user.keyboard('2025');
+          expect(getDescription()).not.toContain('Value must be on or before 2/3/2024');
+          expect(input.validity.valid).toBe(false);
+          await user.tab();
+
+          act(() => getByTestId('form').checkValidity());
+          expect(getDescription()).toContain('Value must be on or before 2/3/2024');
+          expect(onValidationChange).toHaveBeenCalledTimes(3);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Value must be on or before 2/3/2024'], 'rangeOverflow'));
+
+          await user.tab({shift: true});
+          await user.keyboard('[ArrowDown]');
+          expect(getDescription()).toContain('Value must be on or before 2/3/2024');
+          expect(input.validity.valid).toBe(true);
+          await user.tab();
+
+          expect(getDescription()).not.toContain('Value must be on or before 2/3/2024');
+          expect(onValidationChange).toHaveBeenCalledTimes(4);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+        });
+
+        it('supports validate function', async () => {
+          let onValidationChange = jest.fn();
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DatePicker name="date" label="Value" defaultValue={new CalendarDate(2020, 2, 3)} validationBehavior="native" validate={v => v.year < 2022 ? 'Invalid value' : null} onValidationChange={onValidationChange} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).not.toContain('Invalid value');
+          expect(input.validity.valid).toBe(false);
+          expect(onValidationChange).not.toHaveBeenCalled();
+
+          act(() => getByTestId('form').checkValidity());
+          expect(onValidationChange).toHaveBeenCalledTimes(1);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Invalid value']));
+
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(getDescription()).toContain('Invalid value');
+
+          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024');
+
+          expect(getDescription()).toContain('Invalid value');
+          expect(input.validity.valid).toBe(true);
+
+          await user.tab();
+
+          expect(getDescription()).not.toContain('Invalid value');
+          expect(input.validity.valid).toBe(true);
+          expect(onValidationChange).toHaveBeenCalledTimes(2);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+        });
+
+        it('supports server validation', async () => {
+          function Test() {
+            let [serverErrors, setServerErrors] = React.useState({});
+            let onSubmit = e => {
+              e.preventDefault();
+              setServerErrors({
+                date: 'Invalid value'
+              });
+            };
+
+            return (
+              <Provider theme={theme}>
+                <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                  <DatePicker name="date" label="Value" validationBehavior="native" />
+                  <Button type="submit" data-testid="submit">Submit</Button>
+                </Form>
+              </Provider>
+            );
+          }
+
+          let {getByTestId, getByRole} = render(<Test />);
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          await user.click(getByTestId('submit'));
+
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Invalid value');
+          expect(input.validity.valid).toBe(false);
+
+          await user.tab({shift: true});
+          await user.keyboard('2024[ArrowLeft]3[ArrowLeft]2');
+          act(() => document.activeElement.blur());
+
+          expect(group).not.toHaveAttribute('aria-describedby');
+          expect(input.validity.valid).toBe(true);
+        });
+
+        it('supports customizing native error messages', async () => {
+          let {getByTestId, getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DatePicker name="date" label="Value" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          act(() => getByTestId('form').checkValidity());
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+        });
+
+        it('clears validation on form reset', async () => {
+          let onValidationChange = jest.fn();
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DatePicker label="Date" name="date" isRequired validationBehavior="native" onValidationChange={onValidationChange} />
+                <Button type="reset" data-testid="reset">Reset</Button>
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          expect(input).toHaveAttribute('required');
+          expect(input.validity.valid).toBe(false);
+          expect(group).not.toHaveAttribute('aria-describedby');
+          expect(onValidationChange).not.toHaveBeenCalled();
+
+          act(() => getByTestId('form').checkValidity());
+          expect(onValidationChange).toHaveBeenCalledTimes(1);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Constraints not satisfied'], 'valueMissing'));
+
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Constraints not satisfied');
+
+          await user.click(getByTestId('reset'));
+
+          expect(group).not.toHaveAttribute('aria-describedby');
+          expect(onValidationChange).toHaveBeenCalledTimes(2);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+        });
+
+        it('updates when selecting a date with the calendar', async () => {
+          let onValidationChange = jest.fn();
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DatePicker label="Date" name="date" isRequired validationBehavior="native" onValidationChange={onValidationChange} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          expect(input).toHaveAttribute('required');
+          expect(input.validity.valid).toBe(false);
+          expect(group).not.toHaveAttribute('aria-describedby');
+          expect(onValidationChange).not.toHaveBeenCalled();
+
+          act(() => getByTestId('form').checkValidity());
+          expect(onValidationChange).toHaveBeenCalledTimes(1);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Constraints not satisfied'], 'valueMissing'));
+
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Constraints not satisfied');
+
+          await user.click(getByRole('button'));
+          await user.click(document.activeElement);
+
+          expect(input.validity.valid).toBe(true);
+          expect(getDescription()).not.toContain('Constraints not satisfied');
+          expect(onValidationChange).toHaveBeenCalledTimes(2);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+        });
+      });
+
+      describe('validationBehavior=aria', () => {
+        it('supports minValue and maxValue', async () => {
+          let onValidationChange = jest.fn();
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DatePicker label="Date" name="date" minValue={new CalendarDate(2020, 2, 3)} maxValue={new CalendarDate(2024, 2, 3)} defaultValue={new CalendarDate(2019, 2, 3)} onValidationChange={onValidationChange} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Value must be on or after 2/3/2020');
+          expect(onValidationChange).toHaveBeenCalledTimes(1);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Value must be on or after 2/3/2020'], 'rangeUnderflow'));
+
+          await user.keyboard('[Tab][Tab][Tab][ArrowUp]');
+          expect(getDescription()).not.toContain('Value must be on or after 2/3/2020');
+          expect(onValidationChange).toHaveBeenCalledTimes(2);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+
+          await user.keyboard('[ArrowUp][ArrowUp][ArrowUp][ArrowUp][ArrowUp]');
+          expect(getDescription()).toContain('Value must be on or before 2/3/2024');
+          expect(onValidationChange).toHaveBeenCalledTimes(3);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Value must be on or before 2/3/2024'], 'rangeOverflow'));
+
+          await user.keyboard('[ArrowDown]');
+          expect(getDescription()).not.toContain('Value must be on or before 2/3/2024');
+          expect(onValidationChange).toHaveBeenCalledTimes(4);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+        });
+
+        it('supports validate function', async () => {
+          let onValidationChange = jest.fn();
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DatePicker label="Value" defaultValue={new CalendarDate(2020, 2, 3)} validate={v => v.year < 2022 ? 'Invalid value' : null} onValidationChange={onValidationChange} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Invalid value');
+          expect(onValidationChange).toHaveBeenCalledTimes(1);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Invalid value']));
+
+          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024');
+          expect(getDescription()).not.toContain('Invalid value');
+
+          expect(onValidationChange).toHaveBeenCalledTimes(2);
+          expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
+        });
+
+        it('supports server validation', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form validationErrors={{value: 'Invalid value'}}>
+                <DatePicker label="Value" name="value" defaultValue={new CalendarDate(2020, 2, 3)} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Invalid value');
+
+          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');
+          expect(getDescription()).not.toContain('Invalid value');
+        });
+      });
     });
   });
 });
