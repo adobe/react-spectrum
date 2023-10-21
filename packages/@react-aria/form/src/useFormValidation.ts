@@ -21,9 +21,9 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
   let {validationBehavior} = props;
 
   useEffect(() => {
-    if (validationBehavior === 'native') {
+    if (validationBehavior === 'native' && ref.current) {
       let errorMessage = state.realtimeValidation.isInvalid ? state.realtimeValidation.errors.join(' ') || 'Invalid value.' : '';
-      ref.current?.setCustomValidity(errorMessage);
+      ref.current.setCustomValidity(errorMessage);
 
       // Prevent default tooltip for validation message.
       // https://bugzilla.mozilla.org/show_bug.cgi?id=605277

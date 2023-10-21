@@ -11,7 +11,8 @@
  */
 
 import {Collection, CollectionStateBase, FocusStrategy, Node} from '@react-types/shared';
-import {ComboBoxProps, MenuTriggerAction} from '@react-types/combobox';
+import {ComboBoxProps, ComboBoxValidationValue, MenuTriggerAction} from '@react-types/combobox';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getChildNodes} from '@react-stately/collections';
 import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
@@ -19,7 +20,7 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
 import {useMenuTriggerState} from '@react-stately/menu';
 
-export interface ComboBoxState<T> extends SelectState<T> {
+export interface ComboBoxState<T> extends SelectState<T>, FormValidationState<ComboBoxValidationValue> {
   /** The current value of the combo box input. */
   inputValue: string,
   /** Sets the value of the combo box input. */
@@ -247,6 +248,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     lastSelectedKeyText.current = selectedItemText;
   });
 
+  let validation = useFormValidationState({
+    ...props,
+    value: useMemo(() => ({inputValue, selectedKey}), [inputValue, selectedKey])
+  });
+
   // Revert input value and close menu
   let revert = () => {
     if (allowsCustomValue && selectedKey == null) {
@@ -307,8 +313,11 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       if (menuTrigger === 'focus') {
         open(null, 'focus');
       }
-    } else if (shouldCloseOnBlur) {
-      commitValue();
+    } else {
+      if (shouldCloseOnBlur) {
+        commitValue();
+      }
+      validation.commitValidation();
     }
 
     setFocusedState(isFocused);
@@ -327,6 +336,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   }, [triggerState.isOpen, originalCollection, filteredCollection, showAllItems, lastCollection]);
 
   return {
+    ...validation,
     ...triggerState,
     toggle,
     open,
