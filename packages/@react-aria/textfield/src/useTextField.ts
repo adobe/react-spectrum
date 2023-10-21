@@ -126,7 +126,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     isInvalid,
-    errorMessage: errors
+    errorMessage: props.errorMessage || errors
   });
   let domProps = filterDOMProps(props, {labelable: true});
 

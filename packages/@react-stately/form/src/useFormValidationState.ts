@@ -113,6 +113,10 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
   let [currentValidity, setCurrentValidity] = useState(DEFAULT_VALIDATION_RESULT);
   let lastError = useRef(DEFAULT_VALIDATION_RESULT);
   let commitValidation = (value?: T) => {
+    if (validationBehavior === 'aria') {
+      return;
+    }
+
     let nextClientError = clientError;
     if (value !== undefined) {
       nextClientError = getValidationResult(runValidate(validate, value));
@@ -134,9 +138,11 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
     realtimeValidation,
     displayValidation,
     updateValidation(value) {
-      nativeValidity.current = value;
-      if (validationBehavior === 'aria') {
-        commitValidation();
+      // If validationBehavior is 'aria', update in realtime. Otherwise, store in a ref until commit.
+      if (validationBehavior === 'aria' && !isEqualValidation(currentValidity, value)) {
+        setCurrentValidity(value);
+      } else {
+        nativeValidity.current = value;
       }
     },
     resetValidation() {

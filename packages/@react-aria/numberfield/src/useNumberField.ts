@@ -25,9 +25,9 @@ import {
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {NumberFieldState} from '@react-stately/numberfield';
+import {privateValidationStateProp} from '@react-stately/form';
 import {useFocus, useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
-import {useFormValidation} from '@react-aria/form';
 import {
   useLocalizedStringFormatter,
   useNumberFormatter
@@ -198,11 +198,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     isDisabled,
     isReadOnly,
     isRequired,
-    isInvalid,
-    // Disable validation in useTextField. We handle it below.
-    validationState: undefined,
     validate: undefined,
-    validationBehavior: undefined,
+    [privateValidationStateProp]: state,
     value: inputValue,
     defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
@@ -218,11 +215,10 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onKeyDown: useMemo(() => chain(onKeyDownEnter, onKeyDown), [onKeyDownEnter, onKeyDown]),
     onKeyUp,
     description,
-    errorMessage: errorMessage || errors
+    errorMessage
   }, state, inputRef);
 
   useFormReset(inputRef, state.numberValue, state.setNumberValue);
-  useFormValidation(props, state, inputRef);
 
   let inputProps = mergeProps(
     spinButtonProps,
@@ -243,7 +239,6 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   );
 
   if (props.validationBehavior === 'native') {
-    inputProps.required = isRequired;
     inputProps['aria-required'] = undefined;
   }
 

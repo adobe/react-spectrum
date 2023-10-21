@@ -47,7 +47,7 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
 
   useEffect(() => {
     let input = ref.current;
-    if (!input || validationBehavior !== 'native') {
+    if (!input) {
       return;
     }
 
