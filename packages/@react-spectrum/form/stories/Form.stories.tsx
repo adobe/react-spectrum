@@ -16,11 +16,12 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {CalendarDate} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
-import {DateField, DateRangePicker} from '@react-spectrum/datepicker';
+import {DateField, DatePicker, DateRangePicker} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
@@ -452,6 +453,10 @@ function render(props: any = {}) {
         <Item key="5">Cool Tag 5</Item>
         <Item key="6">Cool Tag 6</Item>
       </TagGroup>
+      <ColorField label="Color" />
+      <DateField label="Date" />
+      <DatePicker label="Date picker" />
+      <DateRangePicker label="Date range" />
       {props.showSubmit && (
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>

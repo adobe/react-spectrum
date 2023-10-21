@@ -33,12 +33,14 @@ import {useDatePicker} from '@react-aria/datepicker';
 import {useDatePickerState} from '@react-stately/datepicker';
 import {useFocusManagerRef, useFormatHelpText, useVisibleMonths} from './utils';
 import {useFocusRing} from '@react-aria/focus';
+import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
 function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let {
     autoFocus,
     isQuiet,

@@ -45,8 +45,6 @@ function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
       ref={ref}
       inputRef={inputRef}
       {...result}
-      validationState={props.validationState || (result.isInvalid ? 'invalid' : null)}
-      errorMessage={props.errorMessage ?? result.errors.join(' ')}
       inputClassName={classNames(styles, 'react-spectrum-ColorField-input')} />
   );
 }
