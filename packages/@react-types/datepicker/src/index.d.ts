@@ -84,10 +84,7 @@ export interface DateRangePickerProps<T extends DateValue> extends Omit<DatePick
    * When combined with `isDateUnavailable`, determines whether non-contiguous ranges,
    * i.e. ranges containing unavailable dates, may be selected.
    */
-  allowsNonContiguousRanges?: boolean
-}
-
-export interface AriaDateRangePickerProps<T extends DateValue> extends Omit<AriaDatePickerBaseProps<T>, 'validate'>, DateRangePickerProps<T> {
+  allowsNonContiguousRanges?: boolean,
   /**
    * The name of the start date input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
    */
@@ -97,6 +94,8 @@ export interface AriaDateRangePickerProps<T extends DateValue> extends Omit<Aria
    */
   endName?: string
 }
+
+export interface AriaDateRangePickerProps<T extends DateValue> extends Omit<AriaDatePickerBaseProps<T>, 'validate'>, DateRangePickerProps<T> {}
 
 interface SpectrumDateFieldBase<T extends DateValue> extends SpectrumLabelableProps, HelpTextProps, SpectrumFieldValidation<MappedDateValue<T>>, StyleProps {
   /**

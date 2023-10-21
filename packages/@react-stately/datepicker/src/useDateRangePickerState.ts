@@ -178,7 +178,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
   let validation = useFormValidationState({
     ...props,
     value,
-    name: props.startName, // TODO
+    name: useMemo(() => [props.startName, props.endName], [props.startName, props.endName]),
     builtinValidation
   });
 

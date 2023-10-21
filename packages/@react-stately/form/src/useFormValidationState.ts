@@ -45,7 +45,7 @@ export const privateValidationStateProp = '__formValidationState' + Date.now();
 
 interface FormValidationProps<T> extends Validation<T> {
   builtinValidation?: ValidationResult,
-  name?: string,
+  name?: string | string[],
   value: T
 }
 
@@ -98,11 +98,7 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
   let serverErrorMessages = useMemo(() => {
     if (name) {
       setServerErrorCleared(false);
-      let errors = serverErrors[name];
-      if (!errors) {
-        return [];
-      }
-      return Array.isArray(errors) ? errors : [errors];
+      return Array.isArray(name) ? name.flatMap(name => asArray(serverErrors[name])) : asArray(serverErrors[name]);
     }
     return [];
   }, [serverErrors, name]);
@@ -161,11 +157,19 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
   };
 }
 
+function asArray<T>(v: T | T[]): T[] {
+  if (!v) {
+    return [];
+  }
+
+  return Array.isArray(v) ? v : [v];
+}
+
 function runValidate<T>(validate: ValidationFunction<T>, value: T): string[] {
   if (typeof validate === 'function') {
     let e = validate(value);
     if (e && typeof e !== 'boolean') {
-      return Array.isArray(e) ? e : [e];
+      return asArray(e);
     }
   }
 

@@ -1647,7 +1647,8 @@ describe('DateRangePicker', function () {
             let onSubmit = e => {
               e.preventDefault();
               setServerErrors({
-                start: 'Invalid value'
+                start: 'Invalid start date.',
+                end: 'Invalid end date.'
               });
             };
 
@@ -1670,7 +1671,7 @@ describe('DateRangePicker', function () {
           await user.click(getByTestId('submit'));
 
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-          expect(getDescription()).toContain('Invalid value');
+          expect(getDescription()).toContain('Invalid start date. Invalid end date.');
           expect(input.validity.valid).toBe(false);
 
           await user.tab({shift: true});
@@ -1798,7 +1799,7 @@ describe('DateRangePicker', function () {
         it('supports server validation', async () => {
           let {getByRole} = render(
             <Provider theme={theme}>
-              <Form validationErrors={{start: 'Invalid value'}}>
+              <Form validationErrors={{start: 'Invalid start date.', end: 'Invalid end date.'}}>
                 <DateRangePicker label="Value" startName="start" endName="end" defaultValue={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2025, 2, 3)}} />
               </Form>
             </Provider>
@@ -1807,10 +1808,10 @@ describe('DateRangePicker', function () {
           let group = getByRole('group');
           expect(group).toHaveAttribute('aria-describedby');
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-          expect(getDescription()).toContain('Invalid value');
+          expect(getDescription()).toContain('Invalid start date. Invalid end date.');
 
           await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');
-          expect(getDescription()).not.toContain('Invalid value');
+          expect(getDescription()).not.toContain('Invalid start date. Invalid end date.');
         });
       });
     });
