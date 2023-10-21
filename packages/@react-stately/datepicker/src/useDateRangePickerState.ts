@@ -17,7 +17,7 @@ import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 
 export interface DateRangePickerStateOptions<T extends DateValue = DateValue> extends DateRangePickerProps<T> {
   /**
@@ -28,7 +28,7 @@ export interface DateRangePickerStateOptions<T extends DateValue = DateValue> ex
 }
 
 type TimeRange = RangeValue<TimeValue>;
-export interface DateRangePickerState extends OverlayTriggerState, FormValidationState<DateRange> {
+export interface DateRangePickerState extends OverlayTriggerState, FormValidationState {
   /** The currently selected date range. */
   value: DateRange | null,
   /** Sets the selected date range. */
@@ -121,7 +121,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     });
     setSelectedDateRange(null);
     setSelectedTimeRange(null);
-    didCommit.current = true;
+    validation.commitValidation();
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
@@ -138,7 +138,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
       }
     } else if (range.start && range.end) {
       setValue(range);
-      didCommit.current = true;
+      validation.commitValidation();
     } else {
       setSelectedDateRange(range);
     }
@@ -184,16 +184,6 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
 
   let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
-
-  // Commit validation the next render after the value changes so that
-  // the native input has time to update its validation state.
-  let didCommit = useRef(false);
-  useEffect(() => {
-    if (didCommit.current) {
-      didCommit.current = false;
-      validation.commitValidation();
-    }
-  });
 
   return {
     ...validation,

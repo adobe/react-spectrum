@@ -16,7 +16,7 @@ import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
-export interface RadioGroupState extends FormValidationState<string | null> {
+export interface RadioGroupState extends FormValidationState {
   /**
    * The name for the group, used for native form submission.
    * @deprecated

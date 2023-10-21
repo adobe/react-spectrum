@@ -39,7 +39,7 @@ export interface DateSegment {
   isEditable: boolean
 }
 
-export interface DateFieldState extends FormValidationState<DateValue> {
+export interface DateFieldState extends FormValidationState {
   /** The current field value. */
   value: DateValue,
   /** The current value, converted to a native JavaScript `Date` object.  */
@@ -377,12 +377,9 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
       if (validKeys.length === allKeys.length - 1 && allSegments.dayPeriod && !validSegments.dayPeriod) {
         validSegments = {...allSegments};
         setValidSegments(validSegments);
-        let newValue = displayValue.copy();
-        setValue(newValue);
-        validation.commitValidation(newValue);
-      } else {
-        validation.commitValidation();
+        setValue(displayValue.copy());
       }
+      validation.commitValidation();
     },
     clearSegment(part) {
       delete validSegments[part];

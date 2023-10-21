@@ -16,7 +16,7 @@ import {FieldOptions, getFormatOptions, getPlaceholderTime, getValidationResult,
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useControlledState} from '@react-stately/utils';
-import {useEffect, useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
 export interface DatePickerStateOptions<T extends DateValue> extends DatePickerProps<T> {
@@ -27,7 +27,7 @@ export interface DatePickerStateOptions<T extends DateValue> extends DatePickerP
   shouldCloseOnSelect?: boolean | (() => boolean)
 }
 
-export interface DatePickerState extends OverlayTriggerState, FormValidationState<DateValue> {
+export interface DatePickerState extends OverlayTriggerState, FormValidationState {
   /** The currently selected date. */
   value: DateValue | null,
   /** Sets the selected date. */
@@ -122,21 +122,11 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
   let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
-  // Commit validation the next render after the value changes so that
-  // the native input has time to update its validation state.
-  let didCommit = useRef(false);
-  useEffect(() => {
-    if (didCommit.current) {
-      didCommit.current = false;
-      validation.commitValidation();
-    }
-  });
-
   let commitValue = (date: DateValue, time: TimeValue) => {
     setValue('timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time));
     setSelectedDate(null);
     setSelectedTime(null);
-    didCommit.current = true;
+    validation.commitValidation();
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
@@ -150,7 +140,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
       }
     } else {
       setValue(newValue);
-      didCommit.current = true;
+      validation.commitValidation();
     }
 
     if (shouldClose) {

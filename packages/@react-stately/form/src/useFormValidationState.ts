@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {createContext, useContext, useMemo, useRef, useState} from 'react';
+import {createContext, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Validation, ValidationErrors, ValidationFunction, ValidationResult} from '@react-types/shared';
 
 export const VALID_VALIDITY_STATE: ValidityState = {
@@ -49,18 +49,23 @@ interface FormValidationProps<T> extends Validation<T> {
   value: T
 }
 
-export interface FormValidationState<T> {
+export interface FormValidationState {
+  /** Realtime validation results, updated as the user edits the value. */
   realtimeValidation: ValidationResult,
+  /** Currently displayed validation results, updated when the user commits their changes. */
   displayValidation: ValidationResult,
+  /** Updates the current validation result. Not displayed to the user until `commitValidation` is called. */
   updateValidation(result: ValidationResult): void,
+  /** Resets the displayed validation state to valid when the user resets the form. */
   resetValidation(): void,
-  commitValidation(nextValue?: T): void
+  /** Commits the realtime validation so it is displayed to the user. */
+  commitValidation(): void
 }
 
-export function useFormValidationState<T>(props: FormValidationProps<T>): FormValidationState<T> {
+export function useFormValidationState<T>(props: FormValidationProps<T>): FormValidationState {
   // Private prop for parent components to pass state to children.
   if (props[privateValidationStateProp]) {
-    let {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation} = props[privateValidationStateProp] as FormValidationState<T>;
+    let {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation} = props[privateValidationStateProp] as FormValidationState;
     return {realtimeValidation, displayValidation, updateValidation, resetValidation, commitValidation};
   }
 
@@ -68,7 +73,7 @@ export function useFormValidationState<T>(props: FormValidationProps<T>): FormVa
   return useFormValidationStateImpl(props);
 }
 
-function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValidationState<T> {
+function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValidationState {
   let {isInvalid, validationState, name, value, builtinValidation, validate, validationBehavior = 'aria'} = props;
 
   // backward compatibility.
@@ -103,28 +108,35 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
     return [];
   }, [serverErrors, name]);
 
-  let serverError: ValidationResult | null = useMemo(() => getValidationResult(isServerErrorCleared ? [] : serverErrorMessages), [isServerErrorCleared, serverErrorMessages]);
+  let serverError: ValidationResult | null = useMemo(() =>
+    getValidationResult(isServerErrorCleared ? [] : serverErrorMessages),
+    [isServerErrorCleared, serverErrorMessages]
+  );
 
-  let nativeValidity = useRef(DEFAULT_VALIDATION_RESULT);
+  // Track the next validation state in a ref until commitValidation is called.
+  let nextValidation = useRef(DEFAULT_VALIDATION_RESULT);
   let [currentValidity, setCurrentValidity] = useState(DEFAULT_VALIDATION_RESULT);
+
   let lastError = useRef(DEFAULT_VALIDATION_RESULT);
-  let commitValidation = (value?: T) => {
-    if (validationBehavior === 'aria') {
+  let commitValidation = () => {
+    if (!commitQueued) {
       return;
     }
 
-    let nextClientError = clientError;
-    if (value !== undefined) {
-      nextClientError = getValidationResult(runValidate(validate, value));
-    }
-
-    let error = nextClientError || builtinValidation || nativeValidity.current;
+    setCommitQueued(false);
+    let error = clientError || builtinValidation || nextValidation.current;
     if (!isEqualValidation(error, lastError.current)) {
       lastError.current = error;
       setCurrentValidity(error);
     }
   };
 
+  let [commitQueued, setCommitQueued] = useState(false);
+  useEffect(commitValidation);
+
+  // realtimeValidation is used to update the native input element's state based on custom validation logic.
+  // displayValidation is the currently displayed validation state that the user sees (e.g. on input change/form submit).
+  // With validationBehavior="aria", all errors are displayed in realtime rather than on submit.
   let realtimeValidation = controlledError || serverError || clientError || builtinValidation || DEFAULT_VALIDATION_RESULT;
   let displayValidation = validationBehavior === 'native'
     ? controlledError || serverError || currentValidity
@@ -138,10 +150,12 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
       if (validationBehavior === 'aria' && !isEqualValidation(currentValidity, value)) {
         setCurrentValidity(value);
       } else {
-        nativeValidity.current = value;
+        nextValidation.current = value;
       }
     },
     resetValidation() {
+      // Update the currently displayed validation state to valid on form reset,
+      // even if the native validity says it isn't. It'll show again on the next form submit.
       let error = DEFAULT_VALIDATION_RESULT;
       if (!isEqualValidation(error, lastError.current)) {
         lastError.current = error;
@@ -150,8 +164,12 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
 
       setServerErrorCleared(true);
     },
-    commitValidation(value) {
-      commitValidation(value);
+    commitValidation() {
+      // Commit validation state so the user sees it on blur/change/submit. Also clear any server errors.
+      // Wait until after the next render to commit so that the latest value has been validated.
+      if (validationBehavior !== 'aria') {
+        setCommitQueued(true);
+      }
       setServerErrorCleared(true);
     }
   };

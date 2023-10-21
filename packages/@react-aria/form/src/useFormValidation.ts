@@ -17,7 +17,7 @@ import {Validation, ValidationResult} from '@react-types/shared';
 
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
-export function useFormValidation<T>(props: Validation<T>, state: FormValidationState<T>, ref: RefObject<ValidatableElement>) {
+export function useFormValidation<T>(props: Validation<T>, state: FormValidationState, ref: RefObject<ValidatableElement>) {
   let {validationBehavior} = props;
 
   useEffect(() => {

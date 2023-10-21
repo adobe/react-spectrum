@@ -16,7 +16,7 @@ import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
 
-export interface NumberFieldState extends FormValidationState<number> {
+export interface NumberFieldState extends FormValidationState {
   /**
    * The current text value of the input. Updated as the user types,
    * and formatted according to `formatOptions` on blur.
@@ -124,18 +124,18 @@ export function useNumberFieldState(
 
   let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
   let commit = () => {
+    validation.commitValidation();
+
     // Set to empty state if input value is empty
     if (!inputValue.length) {
       setNumberValue(NaN);
       setInputValue(value === undefined ? '' : format(numberValue));
-      validation.commitValidation(NaN);
       return;
     }
 
     // if it failed to parse, then reset input to formatted version of current number
     if (isNaN(parsedValue)) {
       setInputValue(format(numberValue));
-      validation.commitValidation();
       return;
     }
 
@@ -149,7 +149,6 @@ export function useNumberFieldState(
 
     clampedValue = numberParser.parse(format(clampedValue));
     setNumberValue(clampedValue);
-    validation.commitValidation(clampedValue);
 
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
     setInputValue(format(value === undefined ? clampedValue : numberValue));

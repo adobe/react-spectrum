@@ -12,14 +12,14 @@
 
 import {CollectionStateBase} from '@react-types/shared';
 import {FormValidationState, useFormValidationState} from '@react-stately/form';
-import {Key, useEffect, useRef, useState} from 'react';
 import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import {useState} from 'react';
 
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
-export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState, FormValidationState<Key> {
+export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState, FormValidationState {
   /** Whether the select is currently focused. */
   readonly isFocused: boolean,
 
@@ -34,7 +34,6 @@ export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerSta
  */
 export function useSelectState<T extends object>(props: SelectStateOptions<T>): SelectState<T>  {
   let triggerState = useMenuTriggerState(props);
-  let didCommit = useRef(false);
   let listState = useSingleSelectListState({
     ...props,
     onSelectionChange: (key) => {
@@ -43,15 +42,6 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
       }
 
       triggerState.close();
-      didCommit.current = true;
-    }
-  });
-
-  // Commit validation the next render after the value changes so that
-  // the native input has time to update its validation state.
-  useEffect(() => {
-    if (didCommit.current) {
-      didCommit.current = false;
       validationState.commitValidation();
     }
   });

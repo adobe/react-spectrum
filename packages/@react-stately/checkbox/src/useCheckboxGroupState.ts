@@ -16,7 +16,7 @@ import {useControlledState} from '@react-stately/utils';
 import {useRef} from 'react';
 import {ValidationResult, ValidationState} from '@react-types/shared';
 
-export interface CheckboxGroupState extends FormValidationState<string[]> {
+export interface CheckboxGroupState extends FormValidationState {
   /** Current selected values. */
   readonly value: readonly string[],
 
@@ -85,7 +85,6 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
       }
 
       setValue(value);
-      validation.commitValidation(value);
     },
     isDisabled: props.isDisabled || false,
     isReadOnly: props.isReadOnly || false,
@@ -97,9 +96,7 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         return;
       }
       if (!selectedValues.includes(value)) {
-        let newValue = selectedValues.concat(value);
-        setValue(newValue);
-        validation.commitValidation(newValue);
+        setValue(selectedValues.concat(value));
       }
     },
     removeValue(value) {
@@ -107,21 +104,18 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         return;
       }
       if (selectedValues.includes(value)) {
-        let newValue = selectedValues.filter(existingValue => existingValue !== value);
-        setValue(newValue);
-        validation.commitValidation(newValue);
+        setValue(selectedValues.filter(existingValue => existingValue !== value));
       }
     },
     toggleValue(value) {
       if (props.isReadOnly || props.isDisabled) {
         return;
       }
-
-      let newValue = selectedValues.includes(value)
-        ? selectedValues.filter(existingValue => existingValue !== value)
-        : selectedValues.concat(value);
-      setValue(newValue);
-      validation.commitValidation(newValue);
+      if (selectedValues.includes(value)) {
+        setValue(selectedValues.filter(existingValue => existingValue !== value));
+      } else {
+        setValue(selectedValues.concat(value));
+      }
     },
     setInvalid(value, v) {
       let s = new Map(invalidValues.current);
