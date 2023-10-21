@@ -401,7 +401,7 @@ WithTranslations.story = {
 function render(props: any = {}) {
   return (
     <Form {...props}>
-      <CheckboxGroup defaultValue={['dragons']} label="Pets" validate={v => v.includes('dogs') ? 'No dogs' : null}>
+      <CheckboxGroup label="Pets" validate={v => v.includes('dogs') ? 'No dogs' : null}>
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>

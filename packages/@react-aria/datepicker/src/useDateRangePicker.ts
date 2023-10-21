@@ -187,9 +187,8 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
           startFieldValidation.current = e;
           state.updateValidation(mergeValidation(e, endFieldValidation.current));
         },
-        commitValidation() {
-          state.commitValidation();
-        }
+        resetValidation: state.resetValidation,
+        commitValidation: state.commitValidation
       }
     },
     endFieldProps: {
@@ -205,9 +204,8 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
           endFieldValidation.current = e;
           state.updateValidation(mergeValidation(startFieldValidation.current, e));
         },
-        commitValidation() {
-          state.commitValidation();
-        }
+        resetValidation: state.resetValidation,
+        commitValidation: state.commitValidation
       }
     },
     descriptionProps,

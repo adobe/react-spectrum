@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, createValidationResult, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {ColorField} from '../';
@@ -377,11 +377,10 @@ describe('ColorField', function () {
   describe('validation', () => {
     describe('validationBehavior=native', () => {
       it('supports isRequired', async () => {
-        let onValidationChange = jest.fn();
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <ColorField data-testid="input" label="Color" isRequired validationBehavior="native" onValidationChange={onValidationChange} />
+              <ColorField data-testid="input" label="Color" isRequired validationBehavior="native"  />
             </Form>
           </Provider>
         );
@@ -391,11 +390,8 @@ describe('ColorField', function () {
         expect(input).not.toHaveAttribute('aria-required');
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
-        expect(onValidationChange).not.toHaveBeenCalled();
 
         act(() => getByTestId('form').checkValidity());
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Constraints not satisfied'], 'valueMissing'));
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -409,16 +405,13 @@ describe('ColorField', function () {
         await user.tab();
 
         expect(input).not.toHaveAttribute('aria-describedby');
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports validate function', async () => {
-        let onValidationChange = jest.fn();
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <ColorField data-testid="input" label="Color" defaultValue="#000" step={2} validationBehavior="native" validate={v => v.red === 0 ? 'Invalid value' : null} onValidationChange={onValidationChange} />
+              <ColorField data-testid="input" label="Color" defaultValue="#000" step={2} validationBehavior="native" validate={v => v.red === 0 ? 'Invalid value' : null} />
             </Form>
           </Provider>
         );
@@ -426,11 +419,8 @@ describe('ColorField', function () {
         let input = getByTestId('input');
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
-        expect(onValidationChange).not.toHaveBeenCalled();
 
         act(() => getByTestId('form').checkValidity());
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Invalid value']));
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
@@ -445,8 +435,6 @@ describe('ColorField', function () {
 
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(true);
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports server validation', async () => {
@@ -508,11 +496,10 @@ describe('ColorField', function () {
 
     describe('validationBehavior=aria', () => {
       it('supports validate function', async () => {
-        let onValidationChange = jest.fn();
         let {getByTestId} = render(
           <Provider theme={theme}>
             <Form data-testid="form">
-              <ColorField data-testid="input" label="Color" defaultValue="#000" validate={v => v.red === 0 ? 'Invalid value' : null} onValidationChange={onValidationChange} />
+              <ColorField data-testid="input" label="Color" defaultValue="#000" validate={v => v.red === 0 ? 'Invalid value' : null} />
             </Form>
           </Provider>
         );
@@ -521,8 +508,6 @@ describe('ColorField', function () {
         expect(input).toHaveAttribute('aria-describedby');
         expect(input).toHaveAttribute('aria-invalid', 'true');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
-        expect(onValidationChange).toHaveBeenCalledTimes(1);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult(['Invalid value']));
         expect(input.validity.valid).toBe(true);
 
         await user.tab();
@@ -530,9 +515,6 @@ describe('ColorField', function () {
         await user.tab();
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input).not.toHaveAttribute('aria-invalid');
-
-        expect(onValidationChange).toHaveBeenCalledTimes(2);
-        expect(onValidationChange).toHaveBeenLastCalledWith(createValidationResult([]));
       });
 
       it('supports server validation', async () => {

@@ -10,5 +10,5 @@
  * governing permissions and limitations under the License.
  */
 
-export {FormValidationContext, useFormValidationState, VALID_VALIDITY_STATE, privateValidationStateProp, mergeValidation} from './useFormValidationState';
+export {FormValidationContext, useFormValidationState, DEFAULT_VALIDATION_RESULT, VALID_VALIDITY_STATE, privateValidationStateProp, mergeValidation} from './useFormValidationState';
 export type {FormValidationState} from './useFormValidationState';

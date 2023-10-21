@@ -18,4 +18,3 @@ export * from './renderOverride';
 export * from './StrictModeWrapper';
 export * from './mockImplementation';
 export * from './userEventMaps';
-export * from './validation';

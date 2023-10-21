@@ -35,7 +35,7 @@ export interface CheckboxGroupAria extends ValidationResult {
  * @param state - State for the checkbox group, as returned by `useCheckboxGroupState`.
  */
 export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxGroupState): CheckboxGroupAria {
-  let {isDisabled, name, validationBehavior} = props;
+  let {isDisabled, name, validationBehavior = 'aria'} = props;
   let {isInvalid, errors, validationDetails} = state.displayValidation;
 
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({

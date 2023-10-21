@@ -11,12 +11,12 @@
  */
 
 import {CheckboxGroupProps} from '@react-types/checkbox';
-import {mergeValidation, useFormValidationState} from '@react-stately/form';
+import {FormValidationState, mergeValidation, useFormValidationState} from '@react-stately/form';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useState} from 'react';
+import {useRef} from 'react';
 import {ValidationResult, ValidationState} from '@react-types/shared';
 
-export interface CheckboxGroupState {
+export interface CheckboxGroupState extends FormValidationState<string[]> {
   /** Current selected values. */
   readonly value: readonly string[],
 
@@ -34,9 +34,6 @@ export interface CheckboxGroupState {
 
   /** Whether the checkbox group is invalid. */
   readonly isInvalid: boolean,
-
-  realtimeValidation: ValidationResult,
-  displayValidation: ValidationResult,
 
   /**
    * Whether the checkboxes in the group are required.
@@ -69,31 +66,18 @@ export interface CheckboxGroupState {
  */
 export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxGroupState {
   let [selectedValues, setValue] = useControlledState(props.value, props.defaultValue || [], props.onChange);
-  let [invalidValues, setInvalidValues] = useState(new Map<string, ValidationResult>());
   let isRequired = props.isRequired && selectedValues.length === 0;
 
-  // Keep realtime validation separate so we isolate group level validation from checkbox level validation.
-  // This handles the isInvalid and validate props.
-  let {realtimeValidation} = useFormValidationState({
-    isInvalid: props.isInvalid,
-    validationState: props.validationState,
-    validate: props.validate,
-    value: selectedValues
-  });
-
-  // Aggregate errors from all invalid checkboxes.
-  let aggregatedValidation = useMemo(() => mergeValidation(...invalidValues.values()), [invalidValues]);
-  let isInvalid = props.isInvalid || props.validationState === 'invalid' || aggregatedValidation.isInvalid;
-
-  // Get display validation for the group. This handles the aggregated errors from each checkbox,
-  // along with server errors, and reports validation changes to the user.
+  let invalidValues = useRef(new Map<string, ValidationResult>());
   let validation = useFormValidationState({
+    ...props,
     value: selectedValues,
-    builtinValidation: aggregatedValidation,
     name: props.name
   });
 
+  let isInvalid = validation.displayValidation.isInvalid;
   const state: CheckboxGroupState = {
+    ...validation,
     value: selectedValues,
     setValue(value) {
       if (props.isReadOnly || props.isDisabled) {
@@ -139,22 +123,19 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
       setValue(newValue);
       validation.commitValidation(newValue);
     },
-    setInvalid(value, validation) {
-      setInvalidValues(invalidValues => {
-        let s = new Map(invalidValues);
-        if (validation.isInvalid) {
-          s.set(value, validation);
-        } else {
-          s.delete(value);
-        }
+    setInvalid(value, v) {
+      let s = new Map(invalidValues.current);
+      if (v.isInvalid) {
+        s.set(value, v);
+      } else {
+        s.delete(value);
+      }
 
-        return s;
-      });
+      invalidValues.current = s;
+      validation.updateValidation(mergeValidation(...s.values()));
     },
     validationState: props.validationState ?? (isInvalid ? 'invalid' : null),
     isInvalid,
-    realtimeValidation,
-    displayValidation: validation.displayValidation,
     isRequired
   };
 

@@ -14,8 +14,8 @@ import {AriaCheckboxGroupItemProps} from '@react-types/checkbox';
 import {CheckboxAria, useCheckbox} from './useCheckbox';
 import {checkboxGroupData} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
-import {privateValidationStateProp, useFormValidationState} from '@react-stately/form';
-import {RefObject} from 'react';
+import {DEFAULT_VALIDATION_RESULT, privateValidationStateProp, useFormValidationState} from '@react-stately/form';
+import {RefObject, useEffect, useRef} from 'react';
 import {useToggleState} from '@react-stately/toggle';
 
 /**
@@ -43,17 +43,27 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
   });
 
   let {name, descriptionId, errorMessageId, validationBehavior} = checkboxGroupData.get(state)!;
+  validationBehavior = props.validationBehavior ?? validationBehavior;
 
-  let validationState = useFormValidationState({
+  // Local validation for this checkbox.
+  let {realtimeValidation} = useFormValidationState({
     ...props,
     value: toggleState.isSelected,
-    builtinValidation: state.realtimeValidation,
-    name: props.name || name,
-    validationBehavior: props.validationBehavior ?? validationBehavior,
-    onValidationChange(e) {
-      state.setInvalid(props.value, e);
-    }
+    name: undefined,
+    validationBehavior: 'aria'
   });
+
+  // Update the checkbox group state when realtime validation changes.
+  let nativeValidation = useRef(DEFAULT_VALIDATION_RESULT);
+  let updateValidation = () => {
+    state.setInvalid(props.value, realtimeValidation.isInvalid ? realtimeValidation : nativeValidation.current);
+  };
+
+  useEffect(updateValidation);
+
+  // Combine group and checkbox level validation.
+  let combinedRealtimeValidation = state.realtimeValidation.isInvalid ? state.realtimeValidation : realtimeValidation;
+  let displayValidation = validationBehavior === 'native' ? state.displayValidation : combinedRealtimeValidation;
 
   let res = useCheckbox({
     ...props,
@@ -61,8 +71,17 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     isDisabled: props.isDisabled || state.isDisabled,
     name: props.name || name,
     isRequired: props.isRequired ?? state.isRequired,
-    validationBehavior: props.validationBehavior ?? validationBehavior,
-    [privateValidationStateProp]: validationState
+    validationBehavior,
+    [privateValidationStateProp]: {
+      realtimeValidation: combinedRealtimeValidation,
+      displayValidation,
+      resetValidation: state.resetValidation,
+      commitValidation: state.commitValidation,
+      updateValidation(v) {
+        nativeValidation.current = v;
+        updateValidation();
+      }
+    }
   }, toggleState, inputRef);
 
   return {

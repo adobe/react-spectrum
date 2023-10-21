@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FormValidationState, VALID_VALIDITY_STATE} from '@react-stately/form';
+import {FormValidationState} from '@react-stately/form';
 import {RefObject, useEffect} from 'react';
 import {useEffectEvent} from '@react-aria/utils';
 import {Validation, ValidationResult} from '@react-types/shared';
@@ -38,8 +38,7 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
   });
 
   let onReset = useEffectEvent(() => {
-    state.updateValidation(DEFAULT_VALIDITY);
-    state.commitValidation();
+    state.resetValidation();
   });
 
   let commitValidation = useEffectEvent(() => {
@@ -47,7 +46,11 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
   });
 
   useEffect(() => {
-    let input = ref.current!;
+    let input = ref.current;
+    if (!input || validationBehavior !== 'native') {
+      return;
+    }
+
     let form = input.form;
     let onInvalid = (e: Event) => {
       e.preventDefault();
@@ -59,21 +62,15 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
     };
 
     input.addEventListener('invalid', onInvalid);
-    form?.addEventListener('change', onChange);
+    input.addEventListener('change', onChange);
     form?.addEventListener('reset', onReset);
     return () => {
       input.removeEventListener('invalid', onInvalid);
-      form?.removeEventListener('change', onChange);
+      input.removeEventListener('change', onChange);
       form?.removeEventListener('reset', onReset);
     };
   }, [ref, commitValidation, onReset, validationBehavior]);
 }
-
-const DEFAULT_VALIDITY: ValidationResult = {
-  isInvalid: false,
-  validationDetails: VALID_VALIDITY_STATE,
-  errors: []
-};
 
 function getValidity(input: ValidatableElement) {
   // The native ValidityState object is live, meaning each property is a getter that returns the current state.

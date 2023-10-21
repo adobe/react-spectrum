@@ -13,8 +13,8 @@
 import {act} from 'react-dom/test-utils';
 import {Button} from '@react-spectrum/button';
 import {Checkbox} from '../';
-import {createValidationResult, pointerMap, render} from '@react-spectrum/test-utils';
 import {Form} from '@react-spectrum/form';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
