@@ -15,12 +15,12 @@ import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-t
 import {AriaDialogProps} from '@react-types/dialog';
 import {createFocusManager} from '@react-aria/focus';
 import {DateRangePickerState} from '@react-stately/datepicker';
+import {DEFAULT_VALIDATION_RESULT, mergeValidation, privateValidationStateProp} from '@react-stately/form';
 import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeValidation, privateValidationStateProp, VALID_VALIDITY_STATE} from '@react-stately/form';
 import {RangeCalendarProps} from '@react-types/calendar';
 import {RefObject, useMemo, useRef} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
@@ -117,17 +117,8 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     onFocusWithinChange: props.onFocusChange
   });
 
-  let startFieldValidation = useRef({
-    isInvalid: false,
-    validationDetails: VALID_VALIDITY_STATE,
-    errors: []
-  });
-
-  let endFieldValidation = useRef({
-    isInvalid: false,
-    validationDetails: VALID_VALIDITY_STATE,
-    errors: []
-  });
+  let startFieldValidation = useRef(DEFAULT_VALIDATION_RESULT);
+  let endFieldValidation = useRef(DEFAULT_VALIDATION_RESULT);
 
   return {
     groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {

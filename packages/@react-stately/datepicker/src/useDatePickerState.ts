@@ -122,6 +122,8 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
   let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
+  // Commit validation the next render after the value changes so that
+  // the native input has time to update its validation state.
   let didCommit = useRef(false);
   useEffect(() => {
     if (didCommit.current) {
@@ -131,8 +133,7 @@ export function useDatePickerState<T extends DateValue = DateValue>(props: DateP
   });
 
   let commitValue = (date: DateValue, time: TimeValue) => {
-    let newValue = 'timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time);
-    setValue(newValue);
+    setValue('timeZone' in time ? time.set(toCalendarDate(date)) : toCalendarDateTime(date, time));
     setSelectedDate(null);
     setSelectedTime(null);
     didCommit.current = true;

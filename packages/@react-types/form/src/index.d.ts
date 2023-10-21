@@ -33,7 +33,7 @@ export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StylePro
   validationState?: ValidationState,
   /**
    * Whether to use native HTML form validation to prevent form submission
-   * when the value is missing or invalid, or mark the field as required
+   * when a field value is missing or invalid, or mark the field as required
    * or invalid via ARIA.
    * @default 'aria'
    */

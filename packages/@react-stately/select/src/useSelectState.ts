@@ -47,6 +47,8 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
     }
   });
 
+  // Commit validation the next render after the value changes so that
+  // the native input has time to update its validation state.
   useEffect(() => {
     if (didCommit.current) {
       didCommit.current = false;

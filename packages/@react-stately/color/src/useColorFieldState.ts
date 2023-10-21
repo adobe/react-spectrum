@@ -11,12 +11,13 @@
  */
 
 import {Color, ColorFieldProps} from '@react-types/color';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 
-export interface ColorFieldState {
+export interface ColorFieldState extends FormValidationState<Color | null> {
   /**
    * The current text value of the input. Updated as the user types,
    * and formatted according to `formatOptions` on blur.
@@ -74,6 +75,11 @@ export function useColorFieldState(
   let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
   let [inputValue, setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
 
+  let validation = useFormValidationState({
+    ...props,
+    value: colorValue
+  });
+
   let safelySetColorValue = (newColor: Color) => {
     if (!colorValue || !newColor) {
       setColorValue(newColor);
@@ -106,12 +112,14 @@ export function useColorFieldState(
     if (!inputValue.length) {
       safelySetColorValue(null);
       setInputValue(value === undefined ? '' : colorValue.toString('hex'));
+      validation.commitValidation(null);
       return;
     }
 
     // if it failed to parse, then reset input to formatted version of current number
     if (parsedValue == null) {
       setInputValue(colorValue ? colorValue.toString('hex') : '');
+      validation.commitValidation();
       return;
     }
 
@@ -122,6 +130,7 @@ export function useColorFieldState(
       newColorValue = colorValue.toString('hex');
     }
     setInputValue(newColorValue);
+    validation.commitValidation(parsedValue);
   };
 
   let increment = () => {
@@ -152,6 +161,7 @@ export function useColorFieldState(
   let validate = (value: string) => value === '' || !!value.match(/^#?[0-9a-f]{0,6}$/i)?.[0];
 
   return {
+    ...validation,
     validate,
     colorValue,
     inputValue,

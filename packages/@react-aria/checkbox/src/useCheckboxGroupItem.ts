@@ -49,6 +49,7 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
   let {realtimeValidation} = useFormValidationState({
     ...props,
     value: toggleState.isSelected,
+    // Server validation is handled at the group level.
     name: undefined,
     validationBehavior: 'aria'
   });

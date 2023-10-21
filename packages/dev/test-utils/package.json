@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@react-aria/ssr": "^3.0.0",
-    "@react-types/shared": "^3.21.0",
     "@swc/helpers": "^0.5.0",
     "resolve": "^1.17.0"
   },

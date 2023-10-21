@@ -21,7 +21,7 @@ import {ComboBox} from '@react-spectrum/combobox';
 import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
-import {DateField, DatePicker, DateRangePicker} from '@react-spectrum/datepicker';
+import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
@@ -445,7 +445,7 @@ function render(props: any = {}) {
             <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
           </ContextualHelp>
         )} />
-      <TextField label="Zip code" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
+      <TextField label="Zip code" description="Please enter a five-digit zip code." pattern="[0-9]{5}" />
       <TagGroup label="Favorite tags" description="Select your favorite tags." errorMessage="Incorrect combination of tags.">
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Cool Tag 2</Item>
@@ -455,9 +455,11 @@ function render(props: any = {}) {
         <Item key="6">Cool Tag 6</Item>
       </TagGroup>
       <ColorField label="Color" />
-      <DateField label="Date" />
+      <DateField label="Date" granularity="minute" />
+      <TimeField label="Time" />
       <DatePicker label="Date picker" />
       <DateRangePicker label="Date range" />
+      <TextField type="email" label="Email" />
       {props.showSubmit && (
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>

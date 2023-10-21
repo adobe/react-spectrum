@@ -17,11 +17,10 @@ import {
   LabelHTMLAttributes,
   RefObject,
   useCallback,
-  useEffect,
-  useRef,
   useState
 } from 'react';
 import {mergeProps, useId} from '@react-aria/utils';
+import {privateValidationStateProp} from '@react-stately/form';
 import {useFocusWithin, useScrollWheel} from '@react-aria/interactions';
 import {useFormattedTextField} from '@react-aria/textfield';
 import {useSpinButton} from '@react-aria/spinbutton';
@@ -47,7 +46,6 @@ export function useColorField(
     isDisabled,
     isReadOnly,
     isRequired,
-    validate,
     validationBehavior = 'aria'
   } = props;
 
@@ -57,7 +55,8 @@ export function useColorField(
     increment,
     decrement,
     incrementToMax,
-    decrementToMin
+    decrementToMin,
+    commit
   } = state;
 
   let inputId = useId();
@@ -100,23 +99,17 @@ export function useColorField(
     }
   };
 
-  let {labelProps, inputProps, ...validation} = useFormattedTextField(
+  let {inputProps, ...otherProps} = useFormattedTextField(
     mergeProps(props, {
       id: inputId,
       value: inputValue,
       defaultValue: undefined,
-      validate: useCallback(() => validate?.(state.colorValue), [state.colorValue, validate]),
+      validate: undefined,
+      [privateValidationStateProp]: state,
       type: 'text',
       autoComplete: 'off',
       onChange
     }), state, ref);
-
-  let valueOnFocus = useRef(state.colorValue);
-  let didCommit = useRef(false);
-  let commit = useCallback(() => {
-    state.commit();
-    didCommit.current = true;
-  }, [state]);
 
   inputProps = mergeProps(inputProps, spinButtonProps, focusWithinProps, {
     role: 'textbox',
@@ -126,21 +119,7 @@ export function useColorField(
     'aria-valuetext': null,
     autoCorrect: 'off',
     spellCheck: 'false',
-    onFocus: () => {
-      valueOnFocus.current = state.colorValue;
-    },
     onBlur: commit
-  });
-
-  // After the value is committed, check if the value changed and emit a native "change" event for form validation to pick up.
-  // NOTE: This useEffect must be last so that form validation effects have already run.
-  useEffect(() => {
-    if (didCommit.current) {
-      didCommit.current = false;
-      if (state.colorValue !== valueOnFocus.current) {
-        ref.current?.dispatchEvent(new Event('change', {bubbles: true}));
-      }
-    }
   });
 
   if (validationBehavior === 'native') {
@@ -148,8 +127,7 @@ export function useColorField(
   }
 
   return {
-    labelProps,
     inputProps,
-    ...validation
+    ...otherProps
   };
 }

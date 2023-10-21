@@ -185,6 +185,8 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
   let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
+  // Commit validation the next render after the value changes so that
+  // the native input has time to update its validation state.
   let didCommit = useRef(false);
   useEffect(() => {
     if (didCommit.current) {
