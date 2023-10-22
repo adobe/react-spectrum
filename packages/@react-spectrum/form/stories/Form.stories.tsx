@@ -404,31 +404,31 @@ WithTranslations.story = {
 function render(props: any = {}) {
   return (
     <Form {...props}>
-      <CheckboxGroup label="Pets" validate={v => v.includes('dogs') ? 'No dogs' : null}>
+      <CheckboxGroup label="Pets" name="pets" validate={v => v.includes('dogs') ? 'No dogs' : null}>
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>
       </CheckboxGroup>
-      <ComboBox label="More Animals">
+      <ComboBox label="More Animals" name="combobox">
         <Item key="red panda">Red Panda</Item>
         <Item key="aardvark">Aardvark</Item>
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </ComboBox>
-      <SearchAutocomplete label="Search Animals">
+      <SearchAutocomplete label="Search Animals" name="searchAutocomplete">
         <Item key="red panda">Red Panda</Item>
         <Item key="aardvark">Aardvark</Item>
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </SearchAutocomplete>
-      <NumberField label="Years lived there" />
-      <Picker label="State" items={states}>
+      <NumberField label="Years lived there" name="years" />
+      <Picker label="State" items={states} name="state">
         {item => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
-      <Picker label="Country" items={countries}>
+      <Picker label="Country" items={countries} name="country">
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
-      <Picker label="Favorite color" description="Select any color you like." errorMessage="Please select a nicer color.">
+      <Picker label="Favorite color" name="color" description="Select any color you like." errorMessage="Please select a nicer color.">
         <Item>Red</Item>
         <Item>Orange</Item>
         <Item>Yellow</Item>
@@ -441,18 +441,19 @@ function render(props: any = {}) {
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
-      <SearchField label="Search" />
-      <Switch>Low power mode</Switch>
-      <TextArea label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <SearchField label="Search" name="search" />
+      <Switch name="switch">Low power mode</Switch>
+      <TextArea name="comments" label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
       <TextField
         label="City"
+        name="city"
         contextualHelp={(
           <ContextualHelp>
             <Heading>What is a segment?</Heading>
             <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
           </ContextualHelp>
         )} />
-      <TextField label="Zip code" description="Please enter a five-digit zip code." pattern="[0-9]{5}" />
+      <TextField label="Zip code" description="Please enter a five-digit zip code." pattern="[0-9]{5}" name="zip" />
       <TagGroup label="Favorite tags" description="Select your favorite tags." errorMessage="Incorrect combination of tags.">
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Cool Tag 2</Item>
@@ -461,12 +462,12 @@ function render(props: any = {}) {
         <Item key="5">Cool Tag 5</Item>
         <Item key="6">Cool Tag 6</Item>
       </TagGroup>
-      <ColorField label="Color" />
-      <DateField label="Date" granularity="minute" />
-      <TimeField label="Time" />
-      <DatePicker label="Date picker" />
-      <DateRangePicker label="Date range" />
-      <TextField type="email" label="Email" />
+      <ColorField label="Color" name="color" />
+      <DateField label="Date" granularity="minute" name="date" />
+      <TimeField label="Time" name="time" />
+      <DatePicker label="Date picker" name="datePicker" />
+      <DateRangePicker label="Date range" startName="startDate" endName="endDate" />
+      <TextField type="email" label="Email" name="email" />
       {props.showSubmit && (
         <ButtonGroup>
           <Button variant="primary" type="submit">Submit</Button>
@@ -718,29 +719,29 @@ export const NativeValidation = () => render({
   }
 });
 
+NativeValidation.story = {
+  parameters: {description: {data: 'This story is to test that client validation occurs on form submit and updates when the user commits changes to a field value (e.g. on blur).'}}
+};
+
 export function ServerValidation() {
   let [serverErrors, setServerErrors] = useState<any>({});
   let onSubmit = async (e) => {
     e.preventDefault();
-    let formData = new FormData(e.target);
-    if (formData.get('firstName') === 'Foo') {
-      setServerErrors({
-        firstName: 'Invalid first name'
-      });
-    } else {
-      action('onSubmit')(Object.fromEntries(formData.entries()));
-      setServerErrors({});
+    let errors = {};
+    for (let el of e.target.elements) {
+      errors[el.name] = `Invalid value for "${el.name}".`;
     }
+    setServerErrors(errors);
   };
 
-  return (
-    <Form validationBehavior="native" isRequired onSubmit={onSubmit} validationErrors={serverErrors}>
-      <TextField name="firstName" label="First Name (server errors on 'Foo')" />
-      <TextField name="lastName" label="Last Name (client errors on 'Bar')" validate={v => v === 'Bar' ? 'Invalid last name' : null} />
-      <ButtonGroup>
-        <Button variant="primary" type="submit">Submit</Button>
-        <Button variant="secondary" type="reset">Reset</Button>
-      </ButtonGroup>
-    </Form>
-  );
+  return render({
+    validationBehavior: 'native',
+    onSubmit,
+    validationErrors: serverErrors,
+    showSubmit: true
+  });
 }
+
+ServerValidation.story = {
+  parameters: {description: {data: 'This story is to test that server errors appear after submission, and are cleared when a field is modified.'}}
+};
