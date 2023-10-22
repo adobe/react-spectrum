@@ -31,6 +31,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useEffect, useState} from 'react';
+import {SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {SearchField} from '@react-spectrum/searchfield';
 import {Slider} from '@react-spectrum/slider';
 import {StatusLight} from '@react-spectrum/statuslight';
@@ -414,6 +415,12 @@ function render(props: any = {}) {
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </ComboBox>
+      <SearchAutocomplete label="Search Animals">
+        <Item key="red panda">Red Panda</Item>
+        <Item key="aardvark">Aardvark</Item>
+        <Item key="kangaroo">Kangaroo</Item>
+        <Item key="snake">Snake</Item>
+      </SearchAutocomplete>
       <NumberField label="Years lived there" />
       <Picker label="State" items={states}>
         {item => <Item key={item.abbr}>{item.name}</Item>}

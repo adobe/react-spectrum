@@ -24,10 +24,11 @@ import {focusSafely, FocusScope, useFocusRing} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {
   HTMLAttributes,
+  InputHTMLAttributes,
   ReactElement,
   ReactNode,
   useCallback,
@@ -45,8 +46,9 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {Tray} from '@react-spectrum/overlays';
 import {useButton} from '@react-aria/button';
 import {useDialog} from '@react-aria/dialog';
+import {useField} from '@react-aria/label';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useLabel} from '@react-aria/label';
+import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
@@ -56,7 +58,10 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
   let {
     isQuiet,
     isDisabled,
-    validationState,
+    isRequired,
+    validationBehavior,
+    validate,
+    name,
     isReadOnly,
     onSubmit = () => {}
   } = props;
@@ -73,16 +78,25 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
     allowsCustomValue: true,
     onSelectionChange: (key) => key !== null && onSubmit(null, key),
     selectedKey: undefined,
-    defaultSelectedKey: undefined
+    defaultSelectedKey: undefined,
+    validate: useCallback(v => validate?.(v.inputValue), [validate])
   });
 
   let buttonRef = useRef<HTMLDivElement>(null);
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
-  let {labelProps, fieldProps} = useLabel({
+  let inputRef = useRef<HTMLInputElement>(null);
+  useFormValidation(props, state, inputRef);
+  let {isInvalid, errors, validationDetails} = state.displayValidation;
+  let validationState = props.validationState || (isInvalid ? 'invalid' : null);
+  let errorMessage = props.errorMessage ?? errors.join(' ');
+
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    labelElementType: 'span'
+    labelElementType: 'span',
+    isInvalid,
+    errorMessage
   });
 
   // Focus the button and show focus ring when clicking on the label
@@ -93,11 +107,34 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
     }
   };
 
+  let inputProps: InputHTMLAttributes<HTMLInputElement> = {
+    type: 'hidden',
+    name,
+    value: state.inputValue
+  };
+
+  if (validationBehavior === 'native') {
+    // Use a hidden <input type="text"> rather than <input type="hidden">
+    // so that an empty value blocks HTML form submission when the field is required.
+    inputProps.type = 'text';
+    inputProps.hidden = true;
+    inputProps.required = isRequired;
+    // Ignore react warning.
+    inputProps.onChange = () => {};
+  }
+
+  useFormReset(inputRef, inputProps.value, state.setInputValue);
+
   return (
     <>
       <Field
         {...props}
         labelProps={labelProps}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        isInvalid={isInvalid}
+        errors={errors}
+        validationDetails={validationDetails}
         elementType="span"
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
@@ -115,6 +152,7 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
           {state.inputValue || props.placeholder || ''}
         </SearchAutocompleteButton>
       </Field>
+      <input {...inputProps} ref={inputRef} />
       <Tray state={state} isFixedHeight {...overlayProps}>
         <SearchAutocompleteTray
           {...props}
@@ -362,7 +400,9 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
       keyboardDelegate: layout,
       popoverRef: popoverRef,
       listBoxRef,
-      inputRef
+      inputRef,
+      // Handled outside the tray.
+      name: undefined
     },
     state
   );
