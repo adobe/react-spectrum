@@ -95,18 +95,22 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
     builtinValidation = null;
   }
 
-  // Clear server errors when the user changes the value.
-  let [isServerErrorCleared, setServerErrorCleared] = useState(false);
-
   // Get relevant server errors from the form.
   let serverErrors = useContext(FormValidationContext);
   let serverErrorMessages = useMemo(() => {
     if (name) {
-      setServerErrorCleared(false);
       return Array.isArray(name) ? name.flatMap(name => asArray(serverErrors[name])) : asArray(serverErrors[name]);
     }
     return [];
   }, [serverErrors, name]);
+
+  // Show server errors when the form gets a new value, and clear when the user changes the value.
+  let [lastServerErrors, setLastServerErrors] = useState(serverErrors);
+  let [isServerErrorCleared, setServerErrorCleared] = useState(false);
+  if (serverErrors !== lastServerErrors) {
+    setLastServerErrors(serverErrors);
+    setServerErrorCleared(false);
+  }
 
   let serverError: ValidationResult | null = useMemo(() =>
     getValidationResult(isServerErrorCleared ? [] : serverErrorMessages),
