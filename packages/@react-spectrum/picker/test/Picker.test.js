@@ -2249,7 +2249,7 @@ describe('Picker', function () {
           expect(picker).not.toHaveAttribute('aria-describedby');
           expect(input.validity.valid).toBe(false);
 
-          act(() => getByTestId('form').checkValidity());
+          act(() => {getByTestId('form').checkValidity();});
 
           expect(picker).toHaveAttribute('aria-describedby');
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -2282,7 +2282,7 @@ describe('Picker', function () {
           expect(picker).not.toHaveAttribute('aria-describedby');
           expect(input.validity.valid).toBe(false);
 
-          act(() => getByTestId('form').checkValidity());
+          act(() => {getByTestId('form').checkValidity();});
 
           expect(picker).toHaveAttribute('aria-describedby');
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
@@ -2361,7 +2361,7 @@ describe('Picker', function () {
           let picker = getByTestId('picker');
           expect(picker).not.toHaveAttribute('aria-describedby');
 
-          act(() => getByTestId('form').checkValidity());
+          act(() => {getByTestId('form').checkValidity();});
           expect(picker).toHaveAttribute('aria-describedby');
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
         });

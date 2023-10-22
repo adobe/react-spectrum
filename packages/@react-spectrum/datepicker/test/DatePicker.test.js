@@ -1951,7 +1951,7 @@ describe('DatePicker', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => getByTestId('form').checkValidity());
+          act(() => {getByTestId('form').checkValidity();});
 
           expect(group).toHaveAttribute('aria-describedby');
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
@@ -1982,7 +1982,7 @@ describe('DatePicker', function () {
           expect(input.validity.valid).toBe(false);
           expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
 
-          act(() => getByTestId('form').checkValidity());
+          act(() => {getByTestId('form').checkValidity();});
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
@@ -2002,7 +2002,7 @@ describe('DatePicker', function () {
           expect(input.validity.valid).toBe(false);
           await user.tab();
 
-          act(() => getByTestId('form').checkValidity());
+          act(() => {getByTestId('form').checkValidity();});
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
 
           await user.tab({shift: true});
@@ -2029,7 +2029,7 @@ describe('DatePicker', function () {
           expect(getDescription()).not.toContain('Invalid value');
           expect(input.validity.valid).toBe(false);
 
-          act(() => getByTestId('form').checkValidity());
+          act(() => {getByTestId('form').checkValidity();});
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Invalid value');
@@ -2097,7 +2097,7 @@ describe('DatePicker', function () {
           let group = getByRole('group');
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => getByTestId('form').checkValidity());
+          act(() => {getByTestId('form').checkValidity();});
           expect(group).toHaveAttribute('aria-describedby');
           expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
         });
@@ -2118,7 +2118,7 @@ describe('DatePicker', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => getByTestId('form').checkValidity());
+          act(() => {getByTestId('form').checkValidity();});
 
           expect(group).toHaveAttribute('aria-describedby');
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
@@ -2144,7 +2144,7 @@ describe('DatePicker', function () {
           expect(input.validity.valid).toBe(false);
           expect(group).not.toHaveAttribute('aria-describedby');
 
-          act(() => getByTestId('form').checkValidity());
+          act(() => {getByTestId('form').checkValidity();});
 
           expect(group).toHaveAttribute('aria-describedby');
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');

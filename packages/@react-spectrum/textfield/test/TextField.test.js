@@ -497,7 +497,7 @@ describe('Shared TextField behavior', () => {
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -531,7 +531,7 @@ describe('Shared TextField behavior', () => {
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name');
@@ -608,7 +608,7 @@ describe('Shared TextField behavior', () => {
         let input = getByTestId('input');
         expect(input).not.toHaveAttribute('aria-describedby');
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a name');
       });

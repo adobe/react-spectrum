@@ -5381,7 +5381,7 @@ describe('ComboBox', function () {
             expect(input).not.toHaveAttribute('aria-describedby');
             expect(input.validity.valid).toBe(false);
 
-            act(() => getByTestId('form').checkValidity());
+            act(() => {getByTestId('form').checkValidity();});
 
             expect(input).toHaveAttribute('aria-describedby');
             expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -5419,7 +5419,7 @@ describe('ComboBox', function () {
             expect(input).not.toHaveAttribute('aria-describedby');
             expect(input.validity.valid).toBe(false);
 
-            act(() => getByTestId('form').checkValidity());
+            act(() => {getByTestId('form').checkValidity();});
 
             expect(input).toHaveAttribute('aria-describedby');
             expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
@@ -5508,7 +5508,7 @@ describe('ComboBox', function () {
             let input = getByTestId('input');
             expect(input).not.toHaveAttribute('aria-describedby');
 
-            act(() => getByTestId('form').checkValidity());
+            act(() => {getByTestId('form').checkValidity();});
             expect(input).toHaveAttribute('aria-describedby');
             expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
           });
@@ -5657,7 +5657,7 @@ describe('ComboBox', function () {
             let button = getAllByRole('button')[0];
             expect(button).not.toHaveAttribute('aria-describedby');
 
-            act(() => getByTestId('form').checkValidity());
+            act(() => {getByTestId('form').checkValidity();});
 
             expect(button).toHaveAttribute('aria-describedby');
             expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -5692,7 +5692,7 @@ describe('ComboBox', function () {
             let button = getAllByRole('button')[0];
             expect(button).not.toHaveAttribute('aria-describedby');
 
-            act(() => getByTestId('form').checkValidity());
+            act(() => {getByTestId('form').checkValidity();});
 
             expect(button).toHaveAttribute('aria-describedby');
             expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
@@ -5773,7 +5773,7 @@ describe('ComboBox', function () {
             let button = getAllByRole('button')[0];
             expect(button).not.toHaveAttribute('aria-describedby');
 
-            act(() => getByTestId('form').checkValidity());
+            act(() => {getByTestId('form').checkValidity();});
             expect(button).toHaveAttribute('aria-describedby');
             expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
           });

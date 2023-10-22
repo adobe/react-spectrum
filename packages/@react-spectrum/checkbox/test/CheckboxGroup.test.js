@@ -440,7 +440,7 @@ describe('CheckboxGroup', () => {
           expect(input.validity.valid).toBe(false);
         }
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -481,7 +481,7 @@ describe('CheckboxGroup', () => {
         expect(checkboxes[2]).not.toHaveAttribute('aria-required');
         expect(checkboxes[2].validity.valid).toBe(true);
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -519,7 +519,7 @@ describe('CheckboxGroup', () => {
           expect(input.validity.valid).toBe(false);
         }
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(['You must accept all terms']);
@@ -564,7 +564,7 @@ describe('CheckboxGroup', () => {
         expect(checkboxes[1].validity.valid).toBe(false);
         expect(checkboxes[2].validity.valid).toBe(true);
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept the terms. You must accept the cookies.');
@@ -644,7 +644,7 @@ describe('CheckboxGroup', () => {
         let group = getByRole('group');
         expect(group).not.toHaveAttribute('aria-describedby');
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please select at least one item');
       });

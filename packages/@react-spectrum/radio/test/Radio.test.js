@@ -705,7 +705,7 @@ describe('Radios', function () {
           expect(input.validity.valid).toBe(false);
         }
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -741,7 +741,7 @@ describe('Radios', function () {
           expect(input.validity.valid).toBe(false);
         }
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(['Too scary']);
@@ -815,7 +815,7 @@ describe('Radios', function () {
         let group = getByRole('radiogroup');
         expect(group).not.toHaveAttribute('aria-describedby');
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please select a pet');
       });

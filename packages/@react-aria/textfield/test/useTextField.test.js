@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@react-spectrum/test-utils';
+import {actHook, renderHook} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useTextField} from '../';
 
@@ -81,7 +81,7 @@ describe('useTextField hook', () => {
         }
       };
 
-      act(() => props.onChange(mockEvent));
+      actHook(() => props.onChange(mockEvent));
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(mockEvent.target.value);
       onChange.mockClear();

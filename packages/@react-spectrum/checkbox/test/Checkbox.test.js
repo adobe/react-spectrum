@@ -308,7 +308,7 @@ describe('Checkbox', function () {
         expect(checkbox).not.toHaveAttribute('aria-required');
         expect(checkbox.validity.valid).toBe(false);
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         await user.click(checkbox);
         expect(checkbox.validity.valid).toBe(true);
@@ -326,7 +326,7 @@ describe('Checkbox', function () {
         let checkbox = getByRole('checkbox');
         expect(checkbox.validity.valid).toBe(false);
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         await user.click(checkbox);
         expect(checkbox.validity.valid).toBe(true);

@@ -2279,7 +2279,7 @@ describe('NumberField', function () {
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
@@ -2308,7 +2308,7 @@ describe('NumberField', function () {
         expect(input).not.toHaveAttribute('aria-describedby');
         expect(input.validity.valid).toBe(false);
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
@@ -2376,7 +2376,7 @@ describe('NumberField', function () {
         let input = getByTestId('input');
         expect(input).not.toHaveAttribute('aria-describedby');
 
-        act(() => getByTestId('form').checkValidity());
+        act(() => {getByTestId('form').checkValidity();});
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
       });
