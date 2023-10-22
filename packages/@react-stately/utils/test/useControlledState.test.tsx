@@ -56,7 +56,7 @@ describe('useControlledState tests', function () {
     let onChangeSpy = jest.fn();
     let {result} = renderHook(() => useControlledState<number | null>(undefined, null, onChangeSpy));
     let [value, setValue] = result.current;
-    expect(value).not.toBeDefined();
+    expect(value).toBe(null);
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => setValue(NaN));
     [value, setValue] = result.current;
