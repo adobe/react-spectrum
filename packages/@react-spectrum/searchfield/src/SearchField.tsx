@@ -60,7 +60,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
       isDisabled={isDisabled} />
   );
 
-  let validationState = props.validationState || (result.isInvalid ? 'invalid' : null);
+  let validationState = props.validationState || (result.isInvalid ? 'invalid' : undefined);
 
   return (
     <TextFieldBase

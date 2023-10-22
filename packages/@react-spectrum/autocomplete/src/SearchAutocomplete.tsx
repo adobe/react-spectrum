@@ -153,7 +153,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           inputProps={inputProps}
           inputRef={inputRef}
           clearButtonProps={clearButtonProps}
-          validationState={props.validationState || (isInvalid ? 'invalid' : null)} />
+          validationState={props.validationState || (isInvalid ? 'invalid' : undefined)} />
       </Field>
       <Popover
         state={state}

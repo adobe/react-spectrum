@@ -89,7 +89,7 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
   let inputRef = useRef<HTMLInputElement>(null);
   useFormValidation(props, state, inputRef);
   let {isInvalid, errors, validationDetails} = state.displayValidation;
-  let validationState = props.validationState || (isInvalid ? 'invalid' : null);
+  let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
   let errorMessage = props.errorMessage ?? errors.join(' ');
 
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
@@ -123,7 +123,7 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
     inputProps.onChange = () => {};
   }
 
-  useFormReset(inputRef, inputProps.value, state.setInputValue);
+  useFormReset(inputRef, state.inputValue, state.setInputValue);
 
   return (
     <>

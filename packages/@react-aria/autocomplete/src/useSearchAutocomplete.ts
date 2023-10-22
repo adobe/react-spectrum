@@ -69,7 +69,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     ...otherProps
   } = props;
 
-  let {inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
+  let {inputProps, clearButtonProps} = useSearchField({
     ...otherProps,
     value: state.inputValue,
     onChange: state.setInputValue,
@@ -120,8 +120,6 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     inputProps: mergeProps(inputProps, comboBoxInputProps),
     listBoxProps,
     clearButtonProps,
-    descriptionProps,
-    errorMessageProps,
     ...validation
   };
 }

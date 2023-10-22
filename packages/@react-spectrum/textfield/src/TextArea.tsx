@@ -32,7 +32,7 @@ function TextArea(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
   } = props;
 
   // not in stately because this is so we know when to re-measure, which is a spectrum design
-  let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue, () => {});
+  let [inputValue, setInputValue] = useControlledState(props.value, props.defaultValue ?? '', () => {});
   let inputRef = useRef<HTMLTextAreaElement>(null);
 
   let onHeightChange = useCallback(() => {

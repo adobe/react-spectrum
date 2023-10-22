@@ -17,7 +17,7 @@ import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, useId} from '@react-aria/utils';
-import React, {Ref, RefObject} from 'react';
+import React, {ReactNode, Ref, RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 
@@ -52,7 +52,7 @@ function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let errorMessageString = null;
+  let errorMessageString: ReactNode = null;
   if (typeof errorMessage === 'function') {
     errorMessageString = isInvalid != null && errors != null && validationDetails != null
       ? errorMessage({
