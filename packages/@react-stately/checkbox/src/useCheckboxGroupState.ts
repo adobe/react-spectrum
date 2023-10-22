@@ -71,8 +71,7 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
   let invalidValues = useRef(new Map<string, ValidationResult>());
   let validation = useFormValidationState({
     ...props,
-    value: selectedValues,
-    name: props.name
+    value: selectedValues
   });
 
   let isInvalid = validation.displayValidation.isInvalid;

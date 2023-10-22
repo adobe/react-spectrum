@@ -54,7 +54,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     descriptionProps,
     errorMessageProps,
     isInvalid,
-    errors,
+    validationErrors,
     validationDetails
   } = useNumberField(props, state, inputRef);
   let isMobile = provider.scale === 'large';
@@ -86,7 +86,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
       isInvalid={isInvalid}
-      errors={errors}
+      validationErrors={validationErrors}
       validationDetails={validationDetails}
       labelProps={labelProps}
       ref={domRef}

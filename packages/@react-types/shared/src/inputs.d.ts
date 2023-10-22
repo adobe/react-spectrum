@@ -45,7 +45,7 @@ export interface ValidationResult {
   /** Whether the input value is invalid. */
   isInvalid: boolean,
   /** The current error messages for the input if it is invalid, otherwise an empty array. */
-  errors: string[],
+  validationErrors: string[],
   /** The native validation details for the input. */
   validationDetails: ValidityState
 }

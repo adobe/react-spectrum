@@ -22,7 +22,7 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
 
   useEffect(() => {
     if (validationBehavior === 'native' && ref.current) {
-      let errorMessage = state.realtimeValidation.isInvalid ? state.realtimeValidation.errors.join(' ') || 'Invalid value.' : '';
+      let errorMessage = state.realtimeValidation.isInvalid ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.' : '';
       ref.current.setCustomValidity(errorMessage);
 
       // Prevent default tooltip for validation message.
@@ -95,6 +95,6 @@ function getNativeValidity(input: ValidatableElement): ValidationResult {
   return {
     isInvalid: !input.validity.valid,
     validationDetails: getValidity(input),
-    errors: input.validationMessage ? [input.validationMessage] : []
+    validationErrors: input.validationMessage ? [input.validationMessage] : []
   };
 }

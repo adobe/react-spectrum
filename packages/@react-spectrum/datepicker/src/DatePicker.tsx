@@ -56,7 +56,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
     ...props,
     shouldCloseOnSelect: () => !state.hasTime
   });
-  let {groupProps, labelProps, fieldProps, descriptionProps, errorMessageProps, buttonProps, dialogProps, calendarProps, isInvalid, errors, validationDetails} = useDatePicker(props, state, targetRef);
+  let {groupProps, labelProps, fieldProps, descriptionProps, errorMessageProps, buttonProps, dialogProps, calendarProps, isInvalid, validationErrors, validationDetails} = useDatePicker(props, state, targetRef);
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
@@ -124,7 +124,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
       errorMessageProps={errorMessageProps}
       validationState={validationState}
       isInvalid={isInvalid}
-      errors={errors}
+      validationErrors={validationErrors}
       validationDetails={validationDetails}
       wrapperClassName={classNames(datepickerStyles, 'react-spectrum-Datepicker-fieldWrapper')}>
       <div

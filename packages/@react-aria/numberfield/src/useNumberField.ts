@@ -188,7 +188,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
   }, [commit]);
 
-  let {isInvalid, errors, validationDetails} = state.displayValidation;
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({
     ...otherProps,
     ...domProps,
@@ -316,7 +316,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     errorMessageProps,
     descriptionProps,
     isInvalid,
-    errors,
+    validationErrors,
     validationDetails
   };
 }

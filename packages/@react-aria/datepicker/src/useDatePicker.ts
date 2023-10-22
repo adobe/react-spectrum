@@ -57,12 +57,12 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let fieldId = useId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
-  let {isInvalid, errors, validationDetails} = state.displayValidation;
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',
     isInvalid,
-    errorMessage: props.errorMessage || errors
+    errorMessage: props.errorMessage || validationErrors
   });
 
   let groupProps = useDatePickerGroup(state, ref);
@@ -167,7 +167,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : props.errorMessage
     },
     isInvalid,
-    errors,
+    validationErrors,
     validationDetails
   };
 }

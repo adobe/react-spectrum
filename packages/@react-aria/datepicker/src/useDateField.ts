@@ -64,12 +64,12 @@ export const focusManagerSymbol = '__focusManager_' + Date.now();
  * Each part of a date value is displayed in an individually editable segment.
  */
 export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>, state: DateFieldState, ref: RefObject<Element>): DateFieldAria {
-  let {isInvalid, errors, validationDetails} = state.displayValidation;
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',
     isInvalid,
-    errorMessage: props.errorMessage || errors
+    errorMessage: props.errorMessage || validationErrors
   });
 
   let {focusWithinProps} = useFocusWithin({
@@ -177,7 +177,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     descriptionProps,
     errorMessageProps,
     isInvalid,
-    errors,
+    validationErrors,
     validationDetails
   };
 }

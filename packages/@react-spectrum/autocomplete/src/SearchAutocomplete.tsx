@@ -100,7 +100,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
   );
   let layout = useListBoxLayout(state, loadingState === 'loadingMore');
 
-  let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps, isInvalid, errors, validationDetails} = useSearchAutocomplete(
+  let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSearchAutocomplete(
     {
       ...props,
       keyboardDelegate: layout,
@@ -143,7 +143,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
         errorMessageProps={errorMessageProps}
         labelProps={labelProps}
         isInvalid={isInvalid}
-        errors={errors}
+        validationErrors={validationErrors}
         validationDetails={validationDetails}
         ref={domRef}>
         <SearchAutocompleteInput

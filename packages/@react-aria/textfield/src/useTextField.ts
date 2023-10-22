@@ -122,11 +122,11 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     ...props,
     value
   });
-  let {isInvalid, errors, validationDetails} = validationState.displayValidation;
+  let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     isInvalid,
-    errorMessage: props.errorMessage || errors
+    errorMessage: props.errorMessage || validationErrors
   });
   let domProps = filterDOMProps(props, {labelable: true});
 
@@ -185,7 +185,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     descriptionProps,
     errorMessageProps,
     isInvalid,
-    errors,
+    validationErrors,
     validationDetails
   };
 }

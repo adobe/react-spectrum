@@ -56,12 +56,12 @@ export interface DateRangePickerAria extends ValidationResult {
  */
 export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element>): DateRangePickerAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let {isInvalid, errors, validationDetails} = state.displayValidation;
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',
     isInvalid,
-    errorMessage: props.errorMessage || errors
+    errorMessage: props.errorMessage || validationErrors
   });
 
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
@@ -216,7 +216,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : props.errorMessage
     },
     isInvalid,
-    errors,
+    validationErrors,
     validationDetails
   };
 }

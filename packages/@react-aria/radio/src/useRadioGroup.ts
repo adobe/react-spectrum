@@ -48,14 +48,14 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   } = props;
   let {direction} = useLocale();
 
-  let {isInvalid, errors, validationDetails} = state.displayValidation;
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     // Radio group is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
     labelElementType: 'span',
     isInvalid: state.isInvalid,
-    errorMessage: props.errorMessage || errors
+    errorMessage: props.errorMessage || validationErrors
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
@@ -146,7 +146,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     descriptionProps,
     errorMessageProps,
     isInvalid,
-    errors,
+    validationErrors,
     validationDetails
   };
 }

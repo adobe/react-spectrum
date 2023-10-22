@@ -122,12 +122,12 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     }
   });
 
-  let {isInvalid, errors, validationDetails} = state.displayValidation;
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     labelElementType: 'span',
     isInvalid,
-    errorMessage: props.errorMessage || errors
+    errorMessage: props.errorMessage || validationErrors
   });
 
   typeSelectProps.onKeyDown = typeSelectProps.onKeyDownCapture;
@@ -231,7 +231,7 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     descriptionProps,
     errorMessageProps,
     isInvalid,
-    errors,
+    validationErrors,
     validationDetails
   };
 }

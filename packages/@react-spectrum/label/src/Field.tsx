@@ -35,8 +35,8 @@ function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
     validationState,
     isInvalid,
     description,
-    errorMessage = e => e.errors.join(' '),
-    errors,
+    errorMessage = e => e.validationErrors.join(' '),
+    validationErrors,
     validationDetails,
     isDisabled,
     showErrorIcon,
@@ -54,10 +54,10 @@ function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
   let {styleProps} = useStyleProps(otherProps);
   let errorMessageString: ReactNode = null;
   if (typeof errorMessage === 'function') {
-    errorMessageString = isInvalid != null && errors != null && validationDetails != null
+    errorMessageString = isInvalid != null && validationErrors != null && validationDetails != null
       ? errorMessage({
         isInvalid,
-        errors,
+        validationErrors,
         validationDetails
       })
       : null;

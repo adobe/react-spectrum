@@ -79,9 +79,9 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
 
   let inputRef = useRef<HTMLInputElement>(null);
   useFormValidation(props, state, inputRef);
-  let {isInvalid, errors, validationDetails} = state.displayValidation;
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let validationState = props.validationState || (isInvalid ? 'invalid' : null);
-  let errorMessage = props.errorMessage ?? errors.join(' ');
+  let errorMessage = props.errorMessage ?? validationErrors.join(' ');
 
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
@@ -125,7 +125,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         errorMessageProps={errorMessageProps}
         validationState={validationState}
         isInvalid={isInvalid}
-        errors={errors}
+        validationErrors={validationErrors}
         validationDetails={validationDetails}
         elementType="span"
         ref={domRef}

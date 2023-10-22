@@ -42,7 +42,7 @@ export interface CheckboxAria extends ValidationResult {
 export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
   // Create validation state here because it doesn't make sense to add to general useToggleState.
   let validationState = useFormValidationState({...props, value: state.isSelected});
-  let {isInvalid, errors, validationDetails} = validationState.displayValidation;
+  let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;
   let {inputProps, isSelected, isPressed, isDisabled, isReadOnly} = useToggle({
     ...props,
     isInvalid
@@ -69,7 +69,7 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     isDisabled,
     isReadOnly,
     isInvalid,
-    errors,
+    validationErrors,
     validationDetails
   };
 }

@@ -62,7 +62,7 @@ export function getValidationResult(
 
   return {
     isInvalid,
-    errors,
+    validationErrors: errors,
     validationDetails: {
       badInput: isUnavailable,
       customError: false,
@@ -106,7 +106,7 @@ export function getRangeValidationResult(
   if (value.end != null && value.start != null && value.end.compare(value.start) < 0) {
     result = mergeValidation(result, {
       isInvalid: true,
-      errors: [dictionary.getStringForLocale('rangeReversed', getLocale())],
+      validationErrors: [dictionary.getStringForLocale('rangeReversed', getLocale())],
       validationDetails: {
         ...VALID_VALIDITY_STATE,
         rangeUnderflow: true,

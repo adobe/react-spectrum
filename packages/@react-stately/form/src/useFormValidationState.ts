@@ -36,7 +36,7 @@ const CUSTOM_VALIDITY_STATE: ValidityState = {
 export const DEFAULT_VALIDATION_RESULT: ValidationResult = {
   isInvalid: false,
   validationDetails: VALID_VALIDITY_STATE,
-  errors: []
+  validationErrors: []
 };
 
 export const FormValidationContext = createContext<ValidationErrors>({});
@@ -84,7 +84,7 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
   // If the isInvalid prop is true, update validation result in realtime (controlled).
   let controlledError: ValidationResult | null = isInvalid ? {
     isInvalid: true,
-    errors: [],
+    validationErrors: [],
     validationDetails: CUSTOM_VALIDITY_STATE
   } : null;
 
@@ -197,7 +197,7 @@ function runValidate<T>(validate: ValidationFunction<T>, value: T): string[] {
 function getValidationResult(errors: string[]): ValidationResult | null {
   return errors.length ? {
     isInvalid: true,
-    errors: errors,
+    validationErrors: errors,
     validationDetails: CUSTOM_VALIDITY_STATE
   } : null;
 }
@@ -209,8 +209,8 @@ function isEqualValidation(a: ValidationResult | null, b: ValidationResult | nul
 
   return a && b
     && a.isInvalid === b.isInvalid
-    && a.errors.length === b.errors.length
-    && a.errors.every((a, i) => a === b.errors[i])
+    && a.validationErrors.length === b.validationErrors.length
+    && a.validationErrors.every((a, i) => a === b.validationErrors[i])
     && Object.entries(a.validationDetails).every(([k, v]) => b.validationDetails[k] === v);
 }
 
@@ -222,7 +222,7 @@ export function mergeValidation(...results: ValidationResult[]): ValidationResul
   };
 
   for (let v of results) {
-    for (let e of v.errors) {
+    for (let e of v.validationErrors) {
       errors.add(e);
     }
 
@@ -236,7 +236,7 @@ export function mergeValidation(...results: ValidationResult[]): ValidationResul
   validationDetails.valid = !isInvalid;
   return {
     isInvalid,
-    errors: [...errors],
+    validationErrors: [...errors],
     validationDetails
   };
 }
