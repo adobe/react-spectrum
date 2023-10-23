@@ -466,7 +466,7 @@ export function usePress(props: PressHookProps): PressResult {
           }
         } else if (state.isOverTarget) {
           state.isOverTarget = false;
-          triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
+          triggerPressEnd(createEvent(state.target, e), state.pointerType);
           cancelOnPointerExit(e);
         }
       };
