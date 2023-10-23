@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, RefObject} from 'react';
-import {StepListItemProps} from '@react-types/steplist';
+import {HTMLAttributes, Key, RefObject} from 'react';
 import {StepListState} from '@react-stately/steplist';
 import {useSelectableItem} from '@react-aria/selection';
 
-interface AriaStepListItemProps extends StepListItemProps {
-  /** Whether the step list item represents the current step. */
-  isCurrent?: boolean
+interface AriaStepListItemProps {
+  key: Key
 }
 
 interface StepListItemAria {

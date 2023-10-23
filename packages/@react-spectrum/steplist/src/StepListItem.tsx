@@ -17,17 +17,17 @@ import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {Fragment, useContext, useRef} from 'react';
 import {StepListContext} from './StepListContext';
-import {StepListItemProps} from '@react-types/steplist';
 import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
 import {useHover} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useStepListItem} from '@react-aria/steplist';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface SpectrumStepListItemProps<T> extends StepListItemProps {
-  isEmphasized: boolean,
-  isReadOnly: boolean,
-  item: Node<T>
+interface SpectrumStepListItemProps<T> {
+  item: Node<T>,
+  isDisabled?: boolean,
+  isEmphasized?: boolean,
+  isReadOnly?: boolean
 }
 
 export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
@@ -44,8 +44,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
   let state = useContext(StepListContext);
   const isCompleted = state.isCompleted(itemKey);
   const isItemDisabled = isDisabled || state.disabledKeys.has(itemKey);
-  const isItemInteractive = state.isSelectable(itemKey);
-  let {stepProps, stepStateProps} = useStepListItem({...props, key, isDisabled: isItemInteractive}, state, ref);
+  let {stepProps, stepStateProps} = useStepListItem({...props, key}, state, ref);
 
   let {hoverProps, isHovered} = useHover(props);
   const isSelected = state.selectedKey === itemKey;
@@ -63,7 +62,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
 
   return (
     <Fragment>
-      <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>      
+      <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
         <a
           ref={ref}
           {...mergeProps(hoverProps, stepProps)}

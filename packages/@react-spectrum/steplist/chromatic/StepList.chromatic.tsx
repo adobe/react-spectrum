@@ -10,31 +10,155 @@
  * governing permissions and limitations under the License.
  */
 
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Item, StepList} from '../';
-import {Meta} from '@storybook/react';
 import React from 'react';
-import {SpectrumStepListProps} from '@react-types/steplist';
 
-const meta: Meta<SpectrumStepListProps<object>> = {
+export type StepListStory = ComponentStoryObj<typeof StepList>;
+
+export default {
   title: 'StepList',
   component: StepList,
   parameters: {
     chromaticProvider: {disableAnimations: true}
   }
+} as ComponentMeta<typeof StepList>;
+
+export const HorizontalS: StepListStory = {
+  args: {
+    size: 'S'
+  },
+  render: (args) => (
+    <StepList {...args} >
+      <Item key="cat">Cat</Item>
+      <Item key="dog">Dog</Item>
+      <Item key="monkey">Monkey</Item>
+      <Item key="skunk">Skunk</Item>
+    </StepList>
+  )
 };
 
-export default meta;
-
-const Template = (args: SpectrumStepListProps<object>) => (
-  <StepList {...args}>
-    <Item key="cat">Cat</Item>
-    <Item key="dog">Dog</Item>
-    <Item key="monkey">Monkey</Item>
-    <Item key="skunk">Skunk</Item>
-  </StepList>
-);
-
-export const Default = {
-  render: Template,
-  args: {}
+export const HorizontalM: StepListStory = {
+  args: {
+    selectedKey: 'monkey'
+  },
+  render: (args) => (
+    <StepList {...args} >
+      <Item key="cat">Cat</Item>
+      <Item key="dog">Dog</Item>
+      <Item key="monkey">Monkey</Item>
+      <Item key="skunk">Skunk</Item>
+    </StepList>
+  )
 };
+
+export const HorizontalL: StepListStory = {
+  args: {
+    size: 'L',
+    selectedKey: 'monkey',
+    disabledKeys: ['dog']
+  },
+  render: (args) => (
+    <StepList {...args} >
+      <Item key="cat">Cat</Item>
+      <Item key="dog">Dog</Item>
+      <Item key="monkey">Monkey</Item>
+      <Item key="skunk">Skunk</Item>
+    </StepList>
+  )
+};
+
+export const HorizontalXL: StepListStory = {
+  args: {
+    size: 'XL',
+    isDisabled: true
+  },
+  render: (args) => (
+    <StepList {...args} >
+      <Item key="cat">Cat</Item>
+      <Item key="dog">Dog</Item>
+      <Item key="monkey">Monkey</Item>
+      <Item key="skunk">Skunk</Item>
+    </StepList>
+  )
+};
+
+export const VerticalS: StepListStory = {
+  args: {
+    size: 'S',
+    orientation: 'vertical'
+  },
+  render: (args) => (
+    <StepList {...args} >
+      <Item key="cat">Cat</Item>
+      <Item key="dog">Dog</Item>
+      <Item key="monkey">Monkey</Item>
+      <Item key="skunk">Skunk</Item>
+    </StepList>
+  )
+};
+
+export const VerticalM: StepListStory = {
+  args: {
+    orientation: 'vertical',
+    selectedKey: 'monkey'
+  },
+  render: (args) => (
+    <StepList {...args} >
+      <Item key="cat">Cat</Item>
+      <Item key="dog">Dog</Item>
+      <Item key="monkey">Monkey</Item>
+      <Item key="skunk">Skunk</Item>
+    </StepList>
+  )
+};
+
+export const VerticalL: StepListStory = {
+  args: {
+    size: 'L',
+    orientation: 'vertical',
+    selectedKey: 'monkey',
+    disabledKeys: ['dog']
+  },
+  render: (args) => (
+    <StepList {...args} >
+      <Item key="cat">Cat</Item>
+      <Item key="dog">Dog</Item>
+      <Item key="monkey">Monkey</Item>
+      <Item key="skunk">Skunk</Item>
+    </StepList>
+  )
+};
+
+export const VerticalXL: StepListStory = {
+  args: {
+    size: 'XL',
+    orientation: 'vertical',
+    isDisabled: true
+  },
+  render: (args) => (
+    <StepList {...args} >
+      <Item key="cat">Cat</Item>
+      <Item key="dog">Dog</Item>
+      <Item key="monkey">Monkey</Item>
+      <Item key="skunk">Skunk</Item>
+    </StepList>
+  )
+};
+
+export const Emphasized: StepListStory = {
+  args: {
+    isEmphasized: true,
+    selectedKey: 'monkey',
+    disabledKeys: ['dog']
+  },
+  render: (args) => (
+    <StepList {...args} >
+      <Item key="cat">Cat</Item>
+      <Item key="dog">Dog</Item>
+      <Item key="monkey">Monkey</Item>
+      <Item key="skunk">Skunk</Item>
+    </StepList>
+  )
+};
+

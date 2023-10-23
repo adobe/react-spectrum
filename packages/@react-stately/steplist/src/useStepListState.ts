@@ -29,7 +29,6 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
   let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key>(props.lastCompletedStep, props.defaultLastCompletedStep, props.onLastCompletedStepChange);
   const {setSelectedKey: realSetSelectedKey, selectedKey, collection} = state;
   const {indexMap, keysLinkedList} = useMemo(() => buildKeysMaps(collection), [collection]);
-  const disabledKeys = useMemo(() => new Set(props.disabledKeys), [props.disabledKeys]);
   const selectedIdx = indexMap.get(selectedKey);
   if (selectedIdx > 0 && selectedIdx > (indexMap.get(lastCompletedStep) ?? -1) + 1) {
     setLastCompletedStep(keysLinkedList.get(selectedKey));
@@ -57,7 +56,7 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
   }
 
   function isSelectable(step: Key) {
-    if (props.isDisabled || disabledKeys.has(step) || props.isReadOnly) {
+    if (props.isDisabled || state.disabledKeys.has(step) || props.isReadOnly) {
       return false;
     }
 

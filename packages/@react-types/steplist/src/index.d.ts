@@ -29,12 +29,19 @@ interface StepListProps<T> extends CollectionBase<T>, SingleSelection {
 interface AriaStepListProps<T> extends StepListProps<T>, AriaLabelingProps, DOMProps {}
 
 interface SpectrumStepListProps<T> extends AriaStepListProps<T>, StyleProps {
+  /**
+   * Whether the step list should be displayed with a emphasized style.
+   * @default false
+   */
   isEmphasized?: boolean,
+  /**
+   * The orientation of the step list.
+   * @default 'horizontal'
+   */
   orientation?: Orientation,
-  size: 'S' | 'M' | 'L' | 'XL'
-}
-
-interface StepListItemProps {
-  isDisabled?: boolean,
-  key: Key
+  /**
+   * The size of the step list.
+   * @default 'M'
+   */
+  size?: 'S' | 'M' | 'L' | 'XL'
 }

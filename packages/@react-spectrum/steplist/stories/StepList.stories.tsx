@@ -37,7 +37,8 @@ export default {
   title: 'StepList',
   component: StepList,
   args: {
-    onSelectionChange: action('onSelectionChange')
+    onSelectionChange: action('onSelectionChange'),
+    onLastCompletedStepChange: action('onLastCompletedStepChange')
   },
   argTypes: {
     children: {

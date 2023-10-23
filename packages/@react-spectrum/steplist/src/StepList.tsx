@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import React, {RefObject} from 'react';
+import React, {ReactElement} from 'react';
 import {SpectrumStepListProps} from '@react-types/steplist';
 import {StepListContext} from './StepListContext';
 import {StepListItem} from './StepListItem';
@@ -21,11 +21,11 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useStepList} from '@react-aria/steplist';
 import {useStepListState} from '@react-stately/steplist';
 
-function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef) {
-  const {size = 'M', orientation} = props;
+function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef<HTMLOListElement>) {
+  const {size = 'M', orientation = 'horizontal'} = props;
   props = useProviderProps(props);
   let {styleProps} = useStyleProps(props);
-  let domRef = useDOMRef(ref) as RefObject<HTMLOListElement>;
+  let domRef = useDOMRef(ref);
 
   let state = useStepListState(props);
   let {listProps} = useStepList(props, state, domRef);
@@ -68,5 +68,5 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
   );
 }
 
-const _StepList = React.forwardRef(StepList);
+const _StepList = React.forwardRef(StepList) as <T>(props: SpectrumStepListProps<T> & {ref?: DOMRef<HTMLOListElement>}) => ReactElement;
 export {_StepList as StepList};
