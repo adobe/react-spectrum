@@ -39,7 +39,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   return (
     <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
-        <div style={{overflow: 'hidden', maxHeight: '100%', display: 'inline-flex', borderRadius: 'var(--spectrum-alias-border-radius-regular)'}}>
+        <div className={classNames(styles, 'spectrum-Menu-wrapper')}>
           <div
             {...menuProps}
             {...styleProps}
