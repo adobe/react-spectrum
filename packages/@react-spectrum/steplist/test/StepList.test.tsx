@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {DOMRefValue} from '@react-types/shared';
 import {Item} from '@react-stately/collections';
+import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {StepList} from '../';
