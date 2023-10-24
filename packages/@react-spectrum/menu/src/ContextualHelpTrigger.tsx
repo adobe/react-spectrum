@@ -17,6 +17,7 @@ import {ItemProps} from '@react-types/shared';
 import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
+import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
 interface MenuDialogTriggerProps {
@@ -48,7 +49,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let slots = {};
   if (isUnavailable) {
     slots = {
-      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')},
+      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog', classNames(styles, 'spectrum-Menu-subdialog'))},
       content: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-content']},
       footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
     };
@@ -86,6 +87,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
             </Modal>
           ) : (
             <Popover
+              UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
               onExit={onExit}
               onBlurWithin={onBlurWithin}
               container={container.current}
