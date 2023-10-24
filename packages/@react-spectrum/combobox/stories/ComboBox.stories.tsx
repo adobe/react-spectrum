@@ -27,7 +27,7 @@ import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
-import React, {useRef, useState} from 'react';
+import React, {useRef, useState, useEffect} from 'react';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 
@@ -408,6 +408,10 @@ export const SeverSideFilteringControlledReset: ComboBoxStory = {
 export const InDialog: ComboBoxStory = {
   render: (args) => <ComboBoxWithinDialog {...args} />,
   name: 'within a dialog'
+};
+
+export const WithinScrollableElement: ComboBoxStory = {
+  render: (args) => <WithinScrollableContainerComboBox {...args} />
 };
 
 export const WHCM: ComboBoxStory = {
@@ -966,3 +970,30 @@ function ComboBoxWithinDialog(props) {
     </DialogTrigger>
   );
 }
+
+let WithinScrollableContainerComboBox = (props) => {
+  const [root, setRoot] = useState(null)
+  const element = useRef()
+
+  useEffect(() => {
+   setRoot(element.current)
+  }, [])
+  
+
+  return (<div ref={element} style={{width: "100%", height: "100vh", overflowY: "auto",  position:"relative" }}>
+      
+        <div style={{ paddingTop:"50vh",height: "150vh",display: "flex", justifyContent:"center"}}>
+        <ComboBox
+        container={root}
+         label="Combobox"
+          {...props}>
+          <Item key="1">Item #1</Item>
+          <Item key="2">Item #2</Item>
+          <Item key="3">Item #3</Item>
+        </ComboBox>
+        </div>
+
+  </div>
+ 
+  );
+};
