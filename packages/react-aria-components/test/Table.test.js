@@ -628,7 +628,7 @@ describe('Table', () => {
                 renderRow(column);
                 return (
                   <Cell>
-                    {item[column.key]}{column.values.isFocused ? ' focused' : ''}
+                    {item[column.key]}
                   </Cell>
                 );
               }}
