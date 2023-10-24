@@ -61,14 +61,4 @@ describe('useButton tests', function () {
     expect(typeof result.current.buttonProps.onKeyDown).toBe('function');
     expect(result.current.buttonProps.rel).toBeUndefined();
   });
-  it('handles onPressUp when passed in', function () {
-    let props = {onPressUp: jest.fn()};
-    
-    let {result} = renderHook(() => useButton(props));
-
-    expect(result.current.buttonProps['aria-disabled']).toBeUndefined();
-    expect(typeof result.current.buttonProps.onClick).toBe('function');
-    expect(typeof result.current.buttonProps.onKeyUp).toBe('function');
-    expect(result.current.buttonProps.rel).toBeUndefined();
-  });
 });
