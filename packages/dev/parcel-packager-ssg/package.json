@@ -1,13 +1,15 @@
 {
-  "name": "parcel-transformer-intl",
+  "name": "parcel-packager-ssg",
   "version": "1.0.0",
   "private": true,
-  "main": "IntlTransformer.js",
+  "main": "SSGPackager.js",
   "engines": {
     "parcel": "^2.10.0"
   },
   "dependencies": {
     "@parcel/plugin": "^2.10.0",
-    "@internationalized/string-compiler": "^3.0.0"
+    "@parcel/utils": "^2.10.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }
