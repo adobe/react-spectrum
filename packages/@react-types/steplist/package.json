@@ -10,8 +10,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/list": "^3.9.2",
-    "@react-types/link": "^3.5.0",
     "@react-types/shared": "^3.20.0"
   },
   "peerDependencies": {
