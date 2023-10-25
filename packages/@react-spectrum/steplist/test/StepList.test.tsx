@@ -60,6 +60,7 @@ describe('StepList', function () {
 
     const stepOne = stepListItems[0];
     expect(stepOne).toHaveAttribute('aria-current', 'step');
+    expect(stepOne).toHaveAttribute('tabIndex', '0');
     expect(stepOne.firstElementChild.textContent).not.toContain('Completed');
     expect(onSelectionChange).toHaveBeenCalled();
     expect(onSelectionChange).toHaveBeenCalledWith('step-one');

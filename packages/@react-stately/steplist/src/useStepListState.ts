@@ -78,7 +78,7 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
     }
 
     const prevStep = keysLinkedList.get(step);
-    return isCompleted(prevStep);
+    return isCompleted(prevStep) || step === state.collection.getFirstKey();
   }
 
   function setSelectedKey(key: Key) {
