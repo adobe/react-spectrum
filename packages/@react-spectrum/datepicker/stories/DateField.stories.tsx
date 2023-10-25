@@ -222,7 +222,6 @@ export const IsDateUnavailable: DateFieldStory = {
       </ContextualHelp>
     )
   },
-  name: 'isDateUnavailable: 1/1/1980 - 1/8/1980 unavailable',
   parameters: {description: {data: 'Any date between 1/1/1980 and 1/8/1980 are unavailable and will display a "Date unavailable" error to the user'}}
 };
 
