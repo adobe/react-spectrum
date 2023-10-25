@@ -53,7 +53,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
 
   useEffect(() => {
     // TODO: Fix for ContextualHelpTrigger so we can just use submenuRef.current
-    let submenu = submenuRef.current?.UNSAFE_getDOMNode ? submenuRef.current?.UNSAFE_getDOMNode() : submenuRef.current;
+    let submenu = (submenuRef.current as any)?.UNSAFE_getDOMNode ? (submenuRef.current as any)?.UNSAFE_getDOMNode() : submenuRef.current;
     let menu = menuRef.current;
 
     if (isDisabled || !submenu || !isOpen || modality !== 'pointer') {
