@@ -32,14 +32,15 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   let movementsTowardsSubmenuCount = useRef<number>(0);
   let [preventPointerEvents, setPreventPointerEvents] = useState(false);
 
-  let updateSubmenuRect = () => {
-    if (submenuRef.current) {
-      submenuRect.current = submenuRef.current.getBoundingClientRect();
-      submenuSide.current = undefined;
-    }
-  };
+  // TODO: Fix for ContextualHelpTrigger so we can do this
+  // let updateSubmenuRect = () => {
+  //   if (submenuRef.current) {
+  //     submenuRect.current = submenuRef.current.getBoundingClientRect();
+  //     submenuSide.current = undefined;
+  //   }
+  // };
 
-  useResizeObserver({ref: submenuRef, onResize: updateSubmenuRect});
+  // useResizeObserver({ref: submenuRef, onResize: updateSubmenuRect});
 
   let modality = useInteractionModality();
 
@@ -52,7 +53,8 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   }, [menuRef, preventPointerEvents]);
 
   useEffect(() => {
-    let submenu = submenuRef.current;
+    // TODO: Fix for ContextualHelpTrigger so we can just use submenuRef.current
+    let submenu = submenuRef.current?.UNSAFE_getDOMNode ? submenuRef.current?.UNSAFE_getDOMNode() : submenuRef.current;
     let menu = menuRef.current;
 
     if (isDisabled || !submenu || !isOpen || modality !== 'pointer') {
@@ -60,7 +62,6 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       setPreventPointerEvents(false);
       return;
     }
-
     submenuRect.current = submenu.getBoundingClientRect();
 
     let onPointerMove = (e: PointerEvent) => {
