@@ -41,7 +41,18 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
     state.resetValidation();
   });
 
-  let commitValidation = useEffectEvent(() => {
+  let onInvalid = useEffectEvent((e: Event) => {
+    // Prevent default browser error UI from appearing.
+    e.preventDefault();
+
+    // Only commit validation if we are not already displaying one.
+    // This avoids clearing server errors that the user didn't actually fix.
+    if (!state.displayValidation.isInvalid) {
+      state.commitValidation();
+    }
+  });
+
+  let onChange = useEffectEvent(() => {
     state.commitValidation();
   });
 
@@ -52,15 +63,6 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
     }
 
     let form = input.form;
-    let onInvalid = (e: Event) => {
-      e.preventDefault();
-      commitValidation();
-    };
-
-    let onChange = () => {
-      commitValidation();
-    };
-
     input.addEventListener('invalid', onInvalid);
     input.addEventListener('change', onChange);
     form?.addEventListener('reset', onReset);
@@ -69,7 +71,7 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
       input.removeEventListener('change', onChange);
       form?.removeEventListener('reset', onReset);
     };
-  }, [ref, commitValidation, onReset, validationBehavior]);
+  }, [ref, onInvalid, onChange, onReset, validationBehavior]);
 }
 
 function getValidity(input: ValidatableElement) {

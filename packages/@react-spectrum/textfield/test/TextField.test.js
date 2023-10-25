@@ -564,7 +564,7 @@ describe('Shared TextField behavior', () => {
 
           return (
             <Provider theme={theme}>
-              <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+              <Form data-testid="form" onSubmit={onSubmit} validationErrors={serverErrors}>
                 <Component data-testid="input" label="Name" name="name" validationBehavior="native" />
                 <Button type="submit">Submit</Button>
               </Form>
@@ -578,6 +578,15 @@ describe('Shared TextField behavior', () => {
         expect(input).not.toHaveAttribute('aria-describedby');
 
         await user.click(getByRole('button'));
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
+        expect(input.validity.valid).toBe(false);
+
+        // Clicking twice doesn't clear server errors.
+        await user.click(getByRole('button'));
+        act(() => {getByTestId('form').checkValidity();});
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
