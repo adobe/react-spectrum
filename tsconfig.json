@@ -44,6 +44,7 @@
           "./packages/@react-aria/separator",
           "./packages/@react-aria/sidenav",
           "./packages/@react-aria/tabs",
+          "./packages/@react-aria/toggle",
           "./packages/@react-spectrum/a",
           "./packages/@react-spectrum/b",
           "./packages/@react-spectrum/color",
