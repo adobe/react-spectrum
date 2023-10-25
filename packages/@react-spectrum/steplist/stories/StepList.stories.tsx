@@ -17,7 +17,7 @@ import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import {Item} from '@react-stately/collections';
 import {Picker} from '@react-spectrum/picker';
-import React, {Key, useMemo, useState} from 'react';
+import React, {Key, useCallback, useEffect, useMemo, useState} from 'react';
 import {SpectrumStepListProps} from '@react-types/steplist';
 import {StepList} from '../';
 import {Text} from '@react-spectrum/text';
@@ -51,6 +51,11 @@ export default {
     },
     isReadOnly: {
       control: 'boolean'
+    },
+    onLastCompletedStepChange: {
+      table: {
+        disable: true
+      }
     },
     onSelectionChange: {
       table: {
@@ -123,16 +128,25 @@ function WithButtons(args) {
   let [stepNumber, setStepNumber] = useState(keys.indexOf(initialStepNumberKey) + 1);
   let [lastCompletedStepText, setLastCompletedStepText] = useState(args.defaultLastCompletedStep);
 
+  useEffect(() => {
+    setStepNumber(keys.indexOf(initialStepNumberKey) + 1);
+  }, [initialStepNumberKey, keys]);
+
+  const handleLastCompletedStepChange = useCallback((key) => {
+    setLastCompletedStepText(key);
+    args.onLastCompletedStepChange(key);
+  }, [args]);
+
   return (
     <View>
       <StepList
         {...args}
         onSelectionChange={(key) => {
-          let index = options.findIndex(o => o.key === key);
+          const index = options.findIndex(o => o.key === key);
           args.onSelectionChange(key);
           setStepNumber(Math.max(index + 1, 1));
         }}
-        onLastCompletedStepChange={(key) => setLastCompletedStepText(key)}
+        onLastCompletedStepChange={handleLastCompletedStepChange}
         selectedKey={keys[stepNumber - 1]}>
         {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
       </StepList>

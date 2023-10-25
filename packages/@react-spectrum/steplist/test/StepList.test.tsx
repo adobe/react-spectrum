@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {act} from '@testing-library/react';
 import {DOMRefValue} from '@react-types/shared';
 import {Item} from '@react-stately/collections';
 import {pointerMap, render, within} from '@react-spectrum/test-utils';
@@ -18,7 +19,6 @@ import React from 'react';
 import {StepList} from '../';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
-import {act} from '@testing-library/react';
 
 const items = [
   {key: 'step-one', value: 'Step 1'},
@@ -60,7 +60,6 @@ describe('StepList', function () {
 
     const stepOne = stepListItems[0];
     expect(stepOne).toHaveAttribute('aria-current', 'step');
-    expect(stepOne).not.toHaveAttribute('tabindex');
     expect(stepOne.firstElementChild.textContent).not.toContain('Completed');
     expect(onSelectionChange).toHaveBeenCalled();
     expect(onSelectionChange).toHaveBeenCalledWith('step-one');
@@ -68,6 +67,7 @@ describe('StepList', function () {
     for (let i = 1; i < stepListItems.length; i++) {
       expect(stepListItems[i]).toHaveAttribute('aria-disabled', 'true');
       expect(stepListItems[i].firstElementChild.textContent).toContain('Not');
+      expect(stepListItems[i]).not.toHaveAttribute('tabindex');
     }
 
     const stepList = tree.getByLabelText('steplist-test');
@@ -115,7 +115,7 @@ describe('StepList', function () {
   });
 
   // TODO address bug, we should be able to tab to the default selected key
-  it.skip('allows user to change selected step via tab key only', async function () {
+  it('allows user to change selected step via tab key only', async function () {
     const tree = renderComponent({defaultLastCompletedStep: 'step-two', defaultSelectedKey: 'step-three', onSelectionChange});
     const stepList = tree.getByLabelText('steplist-test');
     const stepListItems =  within(stepList).getAllByRole('link');
@@ -196,14 +196,16 @@ describe('StepList', function () {
   });
 
   // TODO address bug, I think we missed a call to onLastCompletedStepChange
-  it.skip('updates the last completed step automatically (uncontrollled) when the selected step is updated', function () {
+  it('updates the last completed step automatically (uncontrollled) when the selected step is updated', function () {
     const onLastCompletedStepChange = jest.fn();
+    const onSelectionChange = jest.fn();
     const {getByLabelText, rerender} = render(
       <StepList
         id="steplist-id"
         aria-label="steplist-test"
         defaultLastCompletedStep="step-one"
         onLastCompletedStepChange={onLastCompletedStepChange}
+        onSelectionChange={onSelectionChange}
         selectedKey="step-one">
         {items.map(item => (<Item key={item.key}>{item.value}</Item>))}
       </StepList>
@@ -225,7 +227,7 @@ describe('StepList', function () {
       </StepList>
     );
 
-    expect(onLastCompletedStepChange).toHaveBeenCalledWith('step-one');
+    expect(onLastCompletedStepChange).not.toHaveBeenCalled();
     expect(stepListItems[0].textContent).toContain('Completed');
 
     rerender(
@@ -238,22 +240,26 @@ describe('StepList', function () {
       </StepList>
     );
 
+    console.log(onLastCompletedStepChange.mock.calls);
     expect(onLastCompletedStepChange).toHaveBeenCalledWith('step-two');
     expect(stepListItems[1].textContent).toContain('Completed');
   });
 
-  // TODO: fix me
-  it.skip('does not update selected step when last completed step is controlled', function () {
+  it('does not update selected step when last completed step is controlled', function () {
+    const onLastCompletedStepChange = jest.fn();
     const onSelectionChange = jest.fn();
     const {getByLabelText, rerender} = render(
       <StepList
         id="steplist-id"
         aria-label="steplist-test"
         lastCompletedStep={'step-one'}
-        onSelectionChange={onSelectionChange}>
+        onSelectionChange={onSelectionChange}
+        onLastCompletedStepChange={onLastCompletedStepChange}>
         {items.map(item => (<Item key={item.key}>{item.value}</Item>))}
       </StepList>
     );
+    expect(onLastCompletedStepChange).toHaveBeenCalledTimes(0);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
     const stepList = getByLabelText('steplist-test');
     const stepListItems =  within(stepList).getAllByRole('link');
 
@@ -261,6 +267,7 @@ describe('StepList', function () {
       <StepList
         id="steplist-id"
         aria-label="steplist-test"
+        onLastCompletedStepChange={onLastCompletedStepChange}
         onSelectionChange={onSelectionChange}
         lastCompletedStep="step-two">
         {items.map(item => (<Item key={item.key}>{item.value}</Item>))}
@@ -271,13 +278,15 @@ describe('StepList', function () {
       <StepList
         id="steplist-id"
         aria-label="steplist-test"
+        onLastCompletedStepChange={onLastCompletedStepChange}
         onSelectionChange={onSelectionChange}
         lastCompletedStep="step-three">
         {items.map(item => (<Item key={item.key}>{item.value}</Item>))}
       </StepList>
     );
 
-    expect(onSelectionChange).toHaveBeenCalledTimes(0);
+    expect(onLastCompletedStepChange).toHaveBeenCalledTimes(0);
+    expect(onSelectionChange).toHaveBeenCalledTimes(1);
     expect(stepListItems[0]).toHaveAttribute('aria-current');
     expect(stepListItems[1].textContent).toContain('Completed');
     expect(stepListItems[2].textContent).toContain('Completed');

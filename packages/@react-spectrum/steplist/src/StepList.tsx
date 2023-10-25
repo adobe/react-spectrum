@@ -47,21 +47,13 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
       })}>
       <StepListContext.Provider value={state}>
         {[...state.collection].map((item) => (
-          <li
+          <StepListItem
             key={item.key}
-            className={
-              classNames(
-                styles,
-                'spectrum-Steplist-item'
-              )
-            }>
-            <StepListItem
-              key={item.key}
-              isDisabled={isDisabled}
-              isEmphasized={isEmphasized}
-              isReadOnly={isReadOnly}
-              item={item} />
-          </li>)
+            isDisabled={isDisabled}
+            isEmphasized={isEmphasized}
+            isReadOnly={isReadOnly}
+            item={item} />
+          )
         )}
       </StepListContext.Provider>
     </ol>

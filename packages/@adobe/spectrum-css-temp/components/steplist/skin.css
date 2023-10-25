@@ -19,7 +19,7 @@ governing permissions and limitations under the License.
   /* Default Marker Style is 'incomplete' */
   .spectrum-Steplist-marker {
     border-color: var(--spectrum-steplist-border-color);
-    color: transparent;
+    color: var(--spectrum-steplist-default-color);
   }
 
   /* Default Line Style is 'incomplete' */
@@ -76,11 +76,17 @@ governing permissions and limitations under the License.
 
       &.is-disabled {
         .spectrum-Steplist-label {
+         
+          color: var(--spectrum-alias-text-color-disabled);
+        }
+        .spectrum-Steplist-marker {
+          border-color: var(--spectrum-steplist-disabled-border-color);
           color: var(--spectrum-alias-text-color-disabled);
         }
         &.is-completed {
           .spectrum-Steplist-marker {
             background-color: var(--spectrum-steplist-disabled-marker-color);
+            color: var(--spectrum-global-color-gray-50);
           }
         }
       }

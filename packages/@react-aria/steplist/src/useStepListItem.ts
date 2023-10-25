@@ -60,7 +60,7 @@ export function useStepListItem<T>(props: AriaStepListItemProps, state: StepList
       role: 'link',
       'aria-current': isSelected ? 'step' : undefined,
       'aria-disabled': isDisabled ? true : undefined,
-      tabIndex: !isDisabled && !isSelected ? 0 : undefined
+      tabIndex: !isDisabled ? 0 : undefined
     }
   };
 }

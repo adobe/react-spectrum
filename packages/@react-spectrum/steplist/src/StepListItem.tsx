@@ -15,11 +15,11 @@ import {FocusRing} from '@react-aria/focus';
 import intlMessages from '../intl';
 import {mergeProps} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
-import React, {Fragment, useContext, useRef} from 'react';
+import React, {useContext, useRef} from 'react';
 import {StepListContext} from './StepListContext';
 import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
 import {useHover} from '@react-aria/interactions';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useLocale, useLocalizedStringFormatter, useNumberFormatter} from '@react-aria/i18n';
 import {useStepListItem} from '@react-aria/steplist';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -37,20 +37,20 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
     item
   } = props;
   let {key} = item;
-  const itemKey = item.key;
 
   let ref = useRef();
   let {direction} = useLocale();
   let state = useContext(StepListContext);
-  const isCompleted = state.isCompleted(itemKey);
-  const isItemDisabled = isDisabled || state.disabledKeys.has(itemKey);
+  const isCompleted = state.isCompleted(key);
+  const isItemDisabled = isDisabled || state.disabledKeys.has(key);
   let {stepProps, stepStateProps} = useStepListItem({...props, key}, state, ref);
 
   let {hoverProps, isHovered} = useHover(props);
-  const isSelected = state.selectedKey === itemKey;
+  const isSelected = state.selectedKey === key;
 
   let stepStateText = '';
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
+  const numberFormatter = useNumberFormatter();
 
   if (isSelected) {
     stepStateText = stringFormatter.format('current');
@@ -61,9 +61,17 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
   }
 
   return (
-    <Fragment>
+    <li
+      key={key}
+      className={
+        classNames(
+          styles,
+          'spectrum-Steplist-item'
+        )
+      }>
       <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
         <a
+          aria-labelledby={`step-marker-${key} step-label-${key}`}
           ref={ref}
           {...mergeProps(hoverProps, stepProps)}
           className={classNames(
@@ -78,8 +86,8 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
             }
           )}>
           <VisuallyHidden {...stepStateProps}>{stepStateText}</VisuallyHidden>
-          <span className={classNames(styles, 'spectrum-Steplist-marker')}>{(item.index || 0) + 1}</span>
-          <span className={classNames(styles, 'spectrum-Steplist-label')}>
+          <span id={`step-marker-${key}`} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-marker')}>{numberFormatter.format((item.index || 0) + 1)}</span>
+          <span id={`step-label-${key}`} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-label')}>
             {item.rendered}
           </span>
         </a>
@@ -95,6 +103,6 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
             'is-reversed': direction === 'rtl'
           })} />
       </span>
-    </Fragment>
+    </li>
   );
 }

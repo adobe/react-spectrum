@@ -22,7 +22,7 @@ governing permissions and limitations under the License.
   /* The color of the emphasized step */
   --spectrum-steplist-emphasized-color: var(--spectrum-global-color-blue-400);
   /* The color of the disabled step label */
-  --spectrum-steplist-disabled-label-color: var(--spectrum-global-color-gray-400);
+  --spectrum-steplist-disabled-border-color: var(--spectrum-global-color-gray-400);
   /* The color of the disabled step marker */
   --spectrum-steplist-disabled-marker-color: var(--spectrum-global-color-gray-300);
 
@@ -77,6 +77,12 @@ governing permissions and limitations under the License.
     outline-offset: 2px;
   }
 
+  .spectrum-Steplist-segment {
+    align-items: center;
+    display: inline-flex;
+    height: 100%;
+  }
+
   .spectrum-Steplist-chevron {
     &.is-reversed {
       transform: scale(-1);
@@ -106,6 +112,7 @@ governing permissions and limitations under the License.
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    padding-bottom: 1px;
   }
   .spectrum-Steplist-label {
     grid-area: label;
@@ -135,7 +142,6 @@ governing permissions and limitations under the License.
 .spectrum-Steplist--small {
   font-size: var(--spectrum-global-dimension-font-size-75);
   gap: var(--spectrum-steplist-chevron-gap-small);
-  line-height: var(--spectrum-steplist-marker-diameter-small);
 
   .spectrum-Steplist-item {
     gap: var(--spectrum-steplist-chevron-gap-small);
@@ -145,7 +151,6 @@ governing permissions and limitations under the License.
     gap: var(--spectrum-steplist-marker-label-gap-small);
 
     .spectrum-Steplist-marker {
-      line-height: var(--spectrum-steplist-marker-diameter-small);
       width: var(--spectrum-steplist-marker-diameter-small);
       height: var(--spectrum-steplist-marker-diameter-small);
       font-size: 0;
@@ -160,18 +165,26 @@ governing permissions and limitations under the License.
 .spectrum-Steplist--medium {
   font-size: var(--spectrum-global-dimension-font-size-100);
   gap: var(--spectrum-steplist-chevron-gap-medium);
-  line-height: var(--spectrum-steplist-marker-diameter-medium);
 
   .spectrum-Steplist-item {
     gap: var(--spectrum-steplist-chevron-gap-medium);
     grid-template-columns: auto;
+
+    .spectrum-Steplist-link {
+      .spectrum-Steplist-marker:not(.is-completed) {
+        color: transparent;
+      }
+
+      &.is-disabled .spectrum-Steplist-marker:not(.is-completed) {
+        color: transparent;
+      }
+    }
   }
 
   .spectrum-Steplist-link {
     gap: var(--spectrum-steplist-marker-label-gap-medium);
 
     .spectrum-Steplist-marker {
-      line-height: var(--spectrum-steplist-marker-diameter-medium);
       width: var(--spectrum-steplist-marker-diameter-medium);
       height: var(--spectrum-steplist-marker-diameter-medium);
       font-size: var(--spectrum-global-dimension-font-size-75);
@@ -183,30 +196,15 @@ governing permissions and limitations under the License.
 .spectrum-Steplist--large {
   font-size: var(--spectrum-global-dimension-font-size-200);
   gap: var(--spectrum-steplist-chevron-gap-large);
-  line-height: var(--spectrum-steplist-marker-diameter-large);
 
   .spectrum-Steplist-item {
     gap: var(--spectrum-steplist-chevron-gap-large);
     grid-template-columns: auto;
-
-    .spectrum-Steplist-marker {
-      color: var(--spectrum-steplist-default-color);
-    }
-
-    .spectrum-Steplist-link {
-      &.is-disabled:not(.is-completed) {
-        .spectrum-Steplist-marker {
-          border-color: var(--spectrum-steplist-disabled-marker-color);
-          color: var(--spectrum-alias-text-color-disabled);
-        }
-      }
-    }
   }
   .spectrum-Steplist-link {
     gap: var(--spectrum-steplist-marker-label-gap-large);
 
     .spectrum-Steplist-marker {
-      line-height: var(--spectrum-steplist-marker-diameter-large);
       width: var(--spectrum-steplist-marker-diameter-large);
       height: var(--spectrum-steplist-marker-diameter-large);
       font-size: var(--spectrum-global-dimension-font-size-100);
@@ -221,30 +219,15 @@ governing permissions and limitations under the License.
 .spectrum-Steplist--xlarge {
   font-size: var(--spectrum-global-dimension-font-size-300);
   gap: var(--spectrum-steplist-chevron-gap-xlarge);
-  line-height: var(--spectrum-steplist-marker-diameter-xlarge);
 
   .spectrum-Steplist-item {
     gap: var(--spectrum-steplist-chevron-gap-xlarge);
     grid-template-columns: auto;
-
-    .spectrum-Steplist-marker {
-      color: var(--spectrum-steplist-default-color);
-    }
-
-    .spectrum-Steplist-link {
-      &.is-disabled:not(.is-completed) {
-        .spectrum-Steplist-marker {
-          border-color: var(--spectrum-steplist-disabled-marker-color);
-          color: var(--spectrum-alias-text-color-disabled);
-        }
-      }
-    }
   }
   .spectrum-Steplist-link {
     gap: var(--spectrum-steplist-marker-label-gap-xlarge);
 
     .spectrum-Steplist-marker {
-      line-height: var(--spectrum-steplist-marker-diameter-xlarge);
       width: var(--spectrum-steplist-marker-diameter-xlarge);
       height: var(--spectrum-steplist-marker-diameter-xlarge);
       font-size: var(--spectrum-global-dimension-font-size-200);
@@ -284,11 +267,19 @@ governing permissions and limitations under the License.
   &.spectrum-Steplist--small {
     .spectrum-Steplist-item {
       grid-template-columns: 8px auto;
+
+      .spectrum-Steplist-link {
+        line-height: var(--spectrum-steplist-marker-diameter-small);
+      }
     }
   }
   &.spectrum-Steplist--medium {
     .spectrum-Steplist-item {
       grid-template-columns: 16px auto;
+
+      .spectrum-Steplist-link {
+        line-height: var(--spectrum-steplist-marker-diameter-medium);
+      }
     }
   }
   &.spectrum-Steplist--large {

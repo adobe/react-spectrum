@@ -43,6 +43,7 @@
     "@react-aria/steplist": "^3.0.0-alpha.1",
     "@react-aria/utils": "^3.20.0",
     "@react-aria/visually-hidden": "^3.8.4",
+    "@react-spectrum/layout": "^3.5.7",
     "@react-spectrum/utils": "^3.10.2",
     "@react-stately/collections": "^3.10.2",
     "@react-stately/list": "^3.10.0",
