@@ -17,10 +17,9 @@ import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import {Item} from '@react-stately/collections';
 import {Picker} from '@react-spectrum/picker';
-import React, {Key, useCallback, useEffect, useMemo, useState} from 'react';
+import React, {Key, useCallback, useMemo, useState} from 'react';
 import {SpectrumStepListProps} from '@react-types/steplist';
 import {StepList} from '../';
-import {Text} from '@react-spectrum/text';
 import {View} from '@react-spectrum/view';
 
 const options = [{
@@ -124,30 +123,23 @@ export const WithButtonsDefaultCompletedStep: StepListStory = {
 
 function WithButtons(args) {
   const keys = useMemo(() => options.map(o => o.key), []);
-  const initialStepNumberKey = args.defaultSelectedKey || args.defaultLastCompletedStep || keys[0];
-  let [stepNumber, setStepNumber] = useState(keys.indexOf(initialStepNumberKey) + 1);
-  let [lastCompletedStepText, setLastCompletedStepText] = useState(args.defaultLastCompletedStep);
+  let [stepNumber, setStepNumber] = useState(keys.indexOf(args.selectedKey || args.defaultSelectedKey) + 1);
 
-  useEffect(() => {
-    setStepNumber(keys.indexOf(initialStepNumberKey) + 1);
-  }, [initialStepNumberKey, keys]);
+  const selectedKey = useMemo(() => {
+    return keys[stepNumber - 1];
+  }, [keys, stepNumber]);
 
-  const handleLastCompletedStepChange = useCallback((key) => {
-    setLastCompletedStepText(key);
-    args.onLastCompletedStepChange(key);
-  }, [args]);
+  const handleSelectionChange = useCallback((key) => {
+    setStepNumber(keys.indexOf(key) + 1);
+    args.onSelectionChange(key);
+  }, [keys, args]);
 
   return (
     <View>
       <StepList
         {...args}
-        onSelectionChange={(key) => {
-          const index = options.findIndex(o => o.key === key);
-          args.onSelectionChange(key);
-          setStepNumber(Math.max(index + 1, 1));
-        }}
-        onLastCompletedStepChange={handleLastCompletedStepChange}
-        selectedKey={keys[stepNumber - 1]}>
+        onSelectionChange={handleSelectionChange}
+        selectedKey={selectedKey}>
         {options.map((o) => <Item key={o.key}>{o.value}</Item>)}
       </StepList>
       <Flex marginTop="size-300">
@@ -165,13 +157,6 @@ function WithButtons(args) {
             Next
           </Button>
         </ButtonGroup>
-        {lastCompletedStepText && (
-        <View marginStart="size-300">
-          <Text>
-            Last Completed Step: {lastCompletedStepText}
-          </Text>
-        </View>
-        )}
       </Flex>
     </View>
   );
