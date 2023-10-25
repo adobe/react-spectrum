@@ -41,6 +41,7 @@
           "./packages/@react-aria/progress",
           "./packages/@react-aria/radio",
           "./packages/@react-aria/searchfield",
+          "./packages/@react-aria/separator",
           "./packages/@react-aria/tabs",
           "./packages/@react-spectrum/a",
           "./packages/@react-spectrum/b",
