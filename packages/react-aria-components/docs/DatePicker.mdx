@@ -87,7 +87,14 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 ```css
 @layer datepicker {
   .react-aria-DatePicker {
+    --field-border: var(--spectrum-global-color-gray-400);
+    --field-background: var(--spectrum-global-color-gray-50);
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-placeholder: var(--spectrum-global-color-gray-700);
     --text-color-invalid: var(--spectrum-global-color-red-600);
+    --highlight-background: slateblue;
+    --highlight-foreground: white;
+    --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
 
     .react-aria-Group {
       display: flex;
@@ -114,6 +121,22 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
       &[data-focus-visible] {
         box-shadow: 0 0 0 2px slateblue;
       }
+    }
+  }
+
+  .react-aria-DateInput {
+    display: flex;
+    padding: 4px 2.5rem 4px 8px;
+    border: 1px solid var(--field-border);
+    border-radius: 6px;
+    background: var(--field-background);
+    width: fit-content;
+    min-width: 150px;
+    white-space: nowrap;
+
+    &[data-focus-within] {
+      border-color: var(--highlight-background);
+      box-shadow: 0 0 0 1px var(--highlight-background);
     }
   }
 
@@ -948,15 +971,6 @@ function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
   <MyDatePicker label="Ticket sale date" defaultValue={parseDate('2023-08-03')} />
 </FieldGroup>
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-  /* technically covered in DateField... but should it? */
-```
-
-</details>
 
 ### Custom children
 

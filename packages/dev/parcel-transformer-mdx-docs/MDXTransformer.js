@@ -47,7 +47,7 @@ module.exports = new Transformer({
     let remarkParse = (await import('remark-parse')).default;
     let remarkMdx = (await import('remark-mdx')).default;
     const extractExamples = () => (tree, file) => (
-      flatMap(tree,  node => {
+      flatMap(tree, node => {
         if (node.type === 'code') {
           let [meta, ...options] = (node.meta || '').split(' ');
           if (meta === 'import') {
