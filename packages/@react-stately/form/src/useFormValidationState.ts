@@ -166,12 +166,18 @@ function useFormValidationStateImpl<T>(props: FormValidationProps<T>): FormValid
         setCurrentValidity(error);
       }
 
+      // Do not commit validation after the next render. This avoids a condition where
+      // useSelect calls commitValidation inside an onReset handler.
+      if (validationBehavior === 'native') {
+        setCommitQueued(false);
+      }
+
       setServerErrorCleared(true);
     },
     commitValidation() {
       // Commit validation state so the user sees it on blur/change/submit. Also clear any server errors.
       // Wait until after the next render to commit so that the latest value has been validated.
-      if (validationBehavior !== 'aria') {
+      if (validationBehavior === 'native') {
         setCommitQueued(true);
       }
       setServerErrorCleared(true);

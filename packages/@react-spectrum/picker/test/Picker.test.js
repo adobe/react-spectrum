@@ -2365,6 +2365,44 @@ describe('Picker', function () {
           expect(picker).toHaveAttribute('aria-describedby');
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
         });
+
+        it('clears validation on reset', async () => {
+          let {getByTestId, getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <Picker name="picker" data-testid="picker" label="Test" isRequired validationBehavior="native">
+                  <Item key="one">One</Item>
+                  <Item key="two">Two</Item>
+                  <Item key="three">Three</Item>
+                </Picker>
+                <Button data-testid="reset" type="reset">Reset</Button>
+              </Form>
+            </Provider>
+          );
+
+          let picker = getByTestId('picker');
+          let input = document.querySelector('[name=picker]');
+          expect(input).toHaveAttribute('required');
+          expect(picker).not.toHaveAttribute('aria-describedby');
+          expect(input.validity.valid).toBe(false);
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(picker).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+          await user.click(picker);
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          let items = within(listbox).getAllByRole('option');
+          await user.click(items[0]);
+          act(() => jest.runAllTimers());
+          expect(picker).not.toHaveAttribute('aria-describedby');
+
+          await user.click(getByTestId('reset'));
+          expect(picker).not.toHaveAttribute('aria-describedby');
+        });
       });
 
       describe('validationBehavior=aria', () => {
