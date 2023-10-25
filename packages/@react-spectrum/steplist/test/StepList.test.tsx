@@ -177,7 +177,7 @@ describe('StepList', function () {
     expect(onSelectionChange).not.toHaveBeenCalled();
   });
 
-  it('should not allow user to click previous steps when step list is readonly', function () {
+  it('should not allow user to click previous steps when step list is readonly', async function () {
     const tree = renderComponent({defaultSelectedKey: 'step-four', defaultLastCompletedStep: 'step-three', isReadOnly: true, onSelectionChange});
     const stepList = tree.getByLabelText('steplist-test');
     const stepListItems =  within(stepList).getAllByRole('link');
@@ -190,7 +190,7 @@ describe('StepList', function () {
     expect(stepFour).toHaveAttribute('aria-current');
 
     const stepOne = stepListItems[0];
-    user.click(stepOne);
+    await user.click(stepOne);
     expect(stepOne).not.toHaveAttribute('aria-current');
     expect(onSelectionChange).not.toHaveBeenCalled();
   });
