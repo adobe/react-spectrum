@@ -238,14 +238,6 @@ governing permissions and limitations under the License.
   padding-inline-start: var(--spectrum-global-dimension-size-300);
 }
 
-.spectrum-Menu-wrapper {
-  overflow: hidden;
-  max-height: 100%;
-  display: inline-flex;
-  flex-direction: column;
-  border-radius: var(--spectrum-alias-border-radius-regular);
-}
-
 .spectrum-Menu-trayWrapper {
   width: 100%;
   &.is-expanded {
