@@ -35,7 +35,7 @@ export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
 export type ContextValue<T, E extends Element> = SlottedContextValue<WithRef<T, E>>;
 
 type ProviderValue<T> = [Context<T>, T];
-type ProviderValues<A, B, C, D, E, F, G, H, I, J> =
+type ProviderValues<A, B, C, D, E, F, G, H, I, J, K> =
   | [ProviderValue<A>]
   | [ProviderValue<A>, ProviderValue<B>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>]
@@ -45,14 +45,15 @@ type ProviderValues<A, B, C, D, E, F, G, H, I, J> =
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>];
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>]
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>, ProviderValue<K>];
 
-interface ProviderProps<A, B, C, D, E, F, G, H, I, J> {
-  values: ProviderValues<A, B, C, D, E, F, G, H, I, J>,
+interface ProviderProps<A, B, C, D, E, F, G, H, I, J, K> {
+  values: ProviderValues<A, B, C, D, E, F, G, H, I, J, K>,
   children: ReactNode
 }
 
-export function Provider<A, B, C, D, E, F, G, H, I, J>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J>): JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H, I, J, K>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J, K>): JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;
@@ -354,4 +355,15 @@ export function removeDataAttributes<T>(props: T): T {
   }
 
   return filteredProps;
+}
+
+// Override base type to change the default.
+export interface RACValidation {
+  /**
+   * Whether to use native HTML form validation to prevent form submission
+   * when the value is missing or invalid, or mark the field as required
+   * or invalid via ARIA.
+   * @default 'native'
+   */
+  validationBehavior?: 'native' | 'aria'
 }

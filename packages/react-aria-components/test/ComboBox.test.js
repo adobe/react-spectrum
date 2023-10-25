@@ -11,7 +11,7 @@
  */
 
 import {act} from '@testing-library/react';
-import {Button, ComboBox, ComboBoxContext, Header, Input, Item, Label, ListBox, Popover, Section, Text} from '../';
+import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Item, Label, ListBox, Popover, Section, Text} from '../';
 import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -209,5 +209,49 @@ describe('ComboBox', () => {
     let outerEl = getAllByTestId('combo-box');
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-ComboBox');
+  });
+
+  it('should support validation errors', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <ComboBox isRequired>
+          <Label>Favorite Animal</Label>
+          <Input />
+          <Button />
+          <FieldError />
+          <Popover>
+            <ListBox>
+              <Item id="1">Cat</Item>
+              <Item id="2">Dog</Item>
+              <Item id="3">Kangaroo</Item>
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      </form>
+    );
+
+    let input = getByRole('combobox');
+    expect(input).toHaveAttribute('required');
+    expect(input).not.toHaveAttribute('aria-required');
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(false);
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+    await user.tab();
+    await user.keyboard('C');
+
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    await user.click(options[0]);
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(true);
+
+    await user.tab();
+    expect(input).not.toHaveAttribute('aria-describedby');
   });
 });

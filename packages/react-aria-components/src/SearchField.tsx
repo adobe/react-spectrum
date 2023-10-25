@@ -12,7 +12,8 @@
 
 import {AriaSearchFieldProps, useSearchField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -42,7 +43,7 @@ export interface SearchFieldRenderProps {
   state: SearchFieldState
 }
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<SearchFieldRenderProps>, SlotProps {}
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<SearchFieldRenderProps>, SlotProps {}
 
 export const SearchFieldContext = createContext<ContextValue<SearchFieldProps, HTMLDivElement>>(null);
 
@@ -50,10 +51,15 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
   [props, ref] = useContextProps(props, ref, SearchFieldContext);
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
-  let state = useSearchFieldState(props);
-  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField({
+  let state = useSearchFieldState({
+    ...props,
+    validationBehavior: props.validationBehavior ?? 'native'
+  });
+
+  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps, ...validation} = useSearchField({
     ...removeDataAttributes(props),
-    label
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
   }, state, inputRef);
 
   let renderProps = useRenderProps({
@@ -89,7 +95,8 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
               description: descriptionProps,
               errorMessage: errorMessageProps
             }
-          }]
+          }],
+          [FieldErrorContext, validation]
         ]}>
         {renderProps.children}
       </Provider>
