@@ -2700,6 +2700,31 @@ describe('SearchAutocomplete', function () {
             expect(input).not.toHaveAttribute('aria-describedby');
             expect(input).not.toHaveAttribute('aria-invalid');
           });
+
+          it('only commits on blur if the value changed', async () => {
+            let {getByTestId} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native"  />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).toHaveAttribute('required');
+            expect(input).not.toHaveAttribute('aria-required');
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(false);
+
+            await user.tab();
+            await user.tab({shift: true});
+            expect(input).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+          });
         });
       });
     });

@@ -72,16 +72,20 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     errorMessage: props.errorMessage || validationErrors
   });
 
+  let valueOnFocus = useRef<DateValue | null>(null);
   let {focusWithinProps} = useFocusWithin({
     ...props,
+    onFocusWithin(e) {
+      valueOnFocus.current = state.value;
+      props.onFocus?.(e);
+    },
     onBlurWithin: (e) => {
       state.confirmPlaceholder();
-
-      if (props.onBlur) {
-        props.onBlur(e);
+      if (state.value !== valueOnFocus.current) {
+        state.commitValidation();
       }
+      props.onBlur?.(e);
     },
-    onFocusWithin: props.onFocus,
     onFocusWithinChange: props.onFocusChange
   });
 

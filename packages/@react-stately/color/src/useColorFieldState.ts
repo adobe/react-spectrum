@@ -108,8 +108,6 @@ export function useColorFieldState(
   }, [inputValue]);
 
   let commit = () => {
-    validation.commitValidation();
-
     // Set to empty state if input value is empty
     if (!inputValue.length) {
       safelySetColorValue(null);
@@ -142,6 +140,7 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
+    validation.commitValidation();
   };
   let decrement = () => {
     let newValue = addColorValue(parsedValue, -step);
@@ -153,6 +152,7 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
+    validation.commitValidation();
   };
   let incrementToMax = () => safelySetColorValue(MAX_COLOR);
   let decrementToMin = () => safelySetColorValue(MIN_COLOR);

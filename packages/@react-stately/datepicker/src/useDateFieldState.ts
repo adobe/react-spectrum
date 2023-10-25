@@ -379,7 +379,6 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
         setValidSegments(validSegments);
         setValue(displayValue.copy());
       }
-      validation.commitValidation();
     },
     clearSegment(part) {
       delete validSegments[part];

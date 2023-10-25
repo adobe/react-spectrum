@@ -402,7 +402,7 @@ describe('TimeField', function () {
             return (
               <Provider theme={theme}>
                 <Form onSubmit={onSubmit} validationErrors={serverErrors}>
-                  <TimeField name="date" label="Value" validationBehavior="native" />
+                  <TimeField name="date" label="Value" defaultValue={new Time(9)} validationBehavior="native" />
                   <Button type="submit" data-testid="submit">Submit</Button>
                 </Form>
               </Provider>
@@ -413,17 +413,16 @@ describe('TimeField', function () {
 
           let group = getByRole('group');
           let input = document.querySelector('input[name=date]');
-          expect(group).not.toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).not.toContain('Invalid value');
 
           await user.click(getByTestId('submit'));
 
-          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Invalid value');
           expect(input.validity.valid).toBe(false);
 
           await user.tab({shift: true});
-          await user.keyboard('2024[ArrowLeft]3[ArrowLeft]2');
-          act(() => document.activeElement.blur());
+          await user.keyboard('[ArrowUp][Tab]');
 
           expect(getDescription()).not.toContain('Invalid value');
           expect(input.validity.valid).toBe(true);
@@ -530,7 +529,7 @@ describe('TimeField', function () {
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Invalid value');
 
-          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');
+          await user.keyboard('[Tab][ArrowUp][Tab][Tab][Tab]');
           expect(getDescription()).not.toContain('Invalid value');
         });
       });

@@ -564,6 +564,40 @@ describe('DateField', function () {
 
           expect(group).not.toHaveAttribute('aria-describedby');
         });
+
+        it('only commits on blur if the value changed', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateField label="Date" name="date" isRequired validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          expect(input).toHaveAttribute('required');
+          expect(input.validity.valid).toBe(false);
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          await user.tab();
+          await user.tab({shift: true});
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Constraints not satisfied');
+
+          await user.keyboard('[Tab]232023');
+
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(input.validity.valid).toBe(true);
+
+          await user.tab();
+          expect(getDescription()).not.toContain('Constraints not satisfied');
+        });
       });
 
       describe('validationBehavior=aria', () => {

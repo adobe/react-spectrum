@@ -85,14 +85,15 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     decrementToMin,
     numberValue,
     inputValue,
-    commit
+    commit,
+    commitValidation
   } = state;
 
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let inputId = useId(id);
   let {focusProps} = useFocus({
-    onBlur: () => {
+    onBlur() {
       // Set input value to normalized valid value
       commit();
     }
@@ -183,10 +184,11 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   let onKeyDownEnter = useCallback((e) => {
     if (e.key === 'Enter') {
       commit();
+      commitValidation();
     } else {
       e.continuePropagation();
     }
-  }, [commit]);
+  }, [commit, commitValidation]);
 
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps: textFieldProps, descriptionProps, errorMessageProps} = useFormattedTextField({

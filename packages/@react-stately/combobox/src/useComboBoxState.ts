@@ -308,8 +308,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
   };
 
+  let valueOnFocus = useRef(inputValue);
   let setFocused = (isFocused: boolean) => {
     if (isFocused) {
+      valueOnFocus.current = inputValue;
       if (menuTrigger === 'focus') {
         open(null, 'focus');
       }
@@ -317,7 +319,10 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       if (shouldCloseOnBlur) {
         commitValue();
       }
-      validation.commitValidation();
+
+      if (inputValue !== valueOnFocus.current) {
+        validation.commitValidation();
+      }
     }
 
     setFocusedState(isFocused);

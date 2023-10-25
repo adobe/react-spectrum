@@ -1675,6 +1675,7 @@ describe('DateRangePicker', function () {
           expect(input.validity.valid).toBe(false);
 
           await user.tab({shift: true});
+          await user.tab({shift: true});
           await user.keyboard('2024[ArrowLeft]3[ArrowLeft]2');
           act(() => document.activeElement.blur());
 

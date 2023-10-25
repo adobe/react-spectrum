@@ -124,8 +124,6 @@ export function useNumberFieldState(
 
   let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
   let commit = () => {
-    validation.commitValidation();
-
     // Set to empty state if input value is empty
     if (!inputValue.length) {
       setNumberValue(NaN);
