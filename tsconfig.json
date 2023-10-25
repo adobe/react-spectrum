@@ -72,7 +72,7 @@
           "./packages/@react-types/divider",
           "./packages/@react-types/illustratedmessage",
           "./packages/@react-types/image",
-          "./packages/@react-types/link",
+          "./packages/@react-types/l",
           "./packages/@react-types/meter",
           "./packages/@react-types/progress",
           "./packages/@react-types/searchfield",
