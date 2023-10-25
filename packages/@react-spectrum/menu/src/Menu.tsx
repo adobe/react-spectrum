@@ -50,7 +50,6 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   let {direction} = useLocale();
-
   let [leftOffset, setLeftOffset] = useState({left: 0});
   useLayoutEffect(() => {
     let {left} = popoverContainerRef.current.getBoundingClientRect();

@@ -55,10 +55,11 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     submenuType: 'dialog',
     isDisabled: !isUnavailable
   }, submenuTriggerState, triggerRef);
+  let isMobile = useIsMobileDevice();
   let slots = {};
   if (isUnavailable) {
     slots = {
-      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog', classNames(styles, 'spectrum-Menu-subdialog'))},
+      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog', classNames(styles, !isMobile ? 'spectrum-Menu-subdialog' : ''))},
       content: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-content']},
       footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
     };
@@ -66,7 +67,6 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let [trigger] = React.Children.toArray(props.children);
   let [, content] = props.children as [ReactElement, ReactElement];
 
-  let isMobile = useIsMobileDevice();
   let onBlurWithin = (e) => {
     if (e.relatedTarget && popoverRef.current && (!popoverRef?.current?.UNSAFE_getDOMNode()?.contains(e.relatedTarget) && !(e.relatedTarget === triggerRef.current && getInteractionModality() === 'pointer'))) {
       if (submenuTriggerState.isOpen) {

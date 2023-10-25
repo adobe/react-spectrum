@@ -20,6 +20,10 @@ governing permissions and limitations under the License.
   border-color: var(--spectrum-popover-border-color);
   background-color: var(--spectrum-popover-background-color);
   filter: drop-shadow(0 var(--spectrum-popover-shadow-offset-y) var(--spectrum-popover-shadow-blur) var(--spectrum-popover-shadow-color));
+  /* explicitly adding this webkit prefix may fix the bug where the drop-shadow remains dirty */
+  /* https://stackoverflow.com/questions/56478925/safari-drop-shadow-filter-remains-visible-even-with-hidden-element */
+  -webkit-filter: drop-shadow(0 var(--spectrum-popover-shadow-offset-y) var(--spectrum-popover-shadow-blur) var(--spectrum-popover-shadow-color));
+  will-change: filter;
 }
 
 .spectrum-Menu {
