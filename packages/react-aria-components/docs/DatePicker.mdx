@@ -972,6 +972,30 @@ function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
 </FieldGroup>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+}
+
+.invalid {
+  color: var(--spectrum-global-color-red-600);
+  margin-top: 1em;
+  display: block;
+}
+
+@media (forced-colors: active) {
+  .invalid {
+    color: LinkText;
+  }
+}
+```
+
+</details>
+
 ### Custom children
 
 DatePicker passes props to its child components, such as the label and popover, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
