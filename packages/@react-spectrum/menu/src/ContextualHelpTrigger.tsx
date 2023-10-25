@@ -58,7 +58,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let slots = {};
   if (isUnavailable) {
     slots = {
-      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')},
+      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog', classNames(styles, 'spectrum-Menu-subdialog'))},
       content: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-content']},
       footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
     };
@@ -124,6 +124,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   } else {
     overlay = (
       <Popover
+        UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
         {...popoverProps}
         {...overlayProps}
         onBlurWithin={onBlurWithin}

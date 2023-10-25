@@ -35,6 +35,16 @@ governing permissions and limitations under the License.
   --spectrum-menu-max-width: 320px;
 }
 
+.spectrum-Menu-wrapper,
+.spectrum-Menu-subdialog {
+  overflow: hidden;
+  max-height: 100%;
+  display: inline-flex;
+  border-radius: var(--spectrum-alias-border-radius-regular);
+  border-style: solid;
+  border-width: var(--spectrum-popover-border-size);
+}
+
 .spectrum-Menu-popover {
   max-width: var(--spectrum-menu-max-width);
 }
