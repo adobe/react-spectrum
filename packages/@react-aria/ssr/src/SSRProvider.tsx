@@ -93,7 +93,7 @@ export function SSRProvider(props: SSRProviderProps): JSX.Element {
   return <LegacySSRProvider {...props} />;
 }
 
-export let canUseDOM = Boolean(
+let canUseDOM = Boolean(
   typeof window !== 'undefined' &&
   window.document &&
   window.document.createElement
