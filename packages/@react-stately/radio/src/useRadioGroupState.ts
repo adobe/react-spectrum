@@ -45,13 +45,13 @@ export interface RadioGroupState {
   readonly selectedValue: string | null | undefined,
 
   /** Sets the selected value. */
-  setSelectedValue(value: string): void,
+  setSelectedValue(value: string | null | undefined): void,
 
   /** The value of the last focused radio. */
   readonly lastFocusedValue: string | null,
 
   /** Sets the last focused value. */
-  setLastFocusedValue(value: string): void
+  setLastFocusedValue(value: string | null): void
 }
 
 let instance = Math.round(Math.random() * 10000000000);

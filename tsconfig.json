@@ -39,6 +39,7 @@
           "./packages/@react-aria/meter",
           "./packages/@react-aria/color",
           "./packages/@react-aria/progress",
+          "./packages/@react-aria/radio",
           "./packages/@react-aria/searchfield",
           "./packages/@react-aria/tabs",
           "./packages/@react-spectrum/a",
