@@ -124,8 +124,14 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
       .react-aria-Item {
         padding: 0.286rem 0.571rem 0.286rem 1.571rem;
 
+        &[data-focus-visible] {
+          box-shadow: unset;
+        }
+
         &[data-selected] {
           font-weight: 600;
+          background: unset;
+          color: var(--text-color);
 
           &::before {
             content: '✓';
@@ -394,11 +400,16 @@ function MyItem(props: ItemProps) {
       top: 4px;
       left: 4px;
     }
+
+    &.focused {
+      box-shadow: unset;
+    }
   }
 
   &.focused {
     background: #e70073;
     color: white;
+    box-shadow: unset;
   }
 }
 
