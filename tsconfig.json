@@ -84,6 +84,7 @@
           "./packages/@react-types/searchfield",
           "./packages/@react-types/shared",
           "./packages/@react-types/statuslight",
+          "./packages/@react-types/tabs",
           "./packages/@react-types/text",
           "./packages/@react-types/tooltip",
           "./packages/@react-types/view",
