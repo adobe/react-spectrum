@@ -408,7 +408,9 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   );
 
   React.useEffect(() => {
-    focusSafely(inputRef.current);
+    if (inputRef.current) {
+      focusSafely(inputRef.current);
+    }
   }, []);
 
   React.useEffect(() => {
