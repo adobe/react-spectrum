@@ -50,7 +50,7 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
 
   useFormValidation(props, validationState, inputRef);
 
-  let {isIndeterminate} = props;
+  let {isIndeterminate, isRequired, validationBehavior = 'aria'} = props;
   useEffect(() => {
     // indeterminate is a property, but it can only be set via javascript
     // https://css-tricks.com/indeterminate-checkboxes/
@@ -62,7 +62,9 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
   return {
     inputProps: {
       ...inputProps,
-      checked: isSelected
+      checked: isSelected,
+      'aria-required': (isRequired && validationBehavior === 'aria') || undefined,
+      required: isRequired && validationBehavior === 'native'
     },
     isSelected,
     isPressed,
