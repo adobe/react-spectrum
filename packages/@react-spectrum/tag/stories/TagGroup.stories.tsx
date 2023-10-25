@@ -21,7 +21,7 @@ import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
 import {Link} from '@react-spectrum/link';
 import React, {useState} from 'react';
 
-let manyItems = [];
+let manyItems: {key: number}[] = [];
 for (let i = 0; i < 50; i++) {
   let item = {key: i};
   manyItems.push(item);
