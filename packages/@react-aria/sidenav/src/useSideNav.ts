@@ -52,7 +52,7 @@ export function useSideNav<T>(props: SideNavAriaOptions<T>, state: TreeState<T>,
       id
     }),
     listProps: {
-      'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : null),
+      'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : undefined),
       role: 'list',
       ...collectionProps
     }

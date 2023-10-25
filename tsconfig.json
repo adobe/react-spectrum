@@ -42,6 +42,7 @@
           "./packages/@react-aria/radio",
           "./packages/@react-aria/searchfield",
           "./packages/@react-aria/separator",
+          "./packages/@react-aria/sidenav",
           "./packages/@react-aria/tabs",
           "./packages/@react-spectrum/a",
           "./packages/@react-spectrum/b",
