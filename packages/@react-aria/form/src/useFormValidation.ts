@@ -12,7 +12,7 @@
 
 import {FormValidationState} from '@react-stately/form';
 import {RefObject, useEffect} from 'react';
-import {useEffectEvent} from '@react-aria/utils';
+import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {Validation, ValidationResult} from '@react-types/shared';
 
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
@@ -20,7 +20,8 @@ type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectEle
 export function useFormValidation<T>(props: Validation<T>, state: FormValidationState, ref: RefObject<ValidatableElement>) {
   let {validationBehavior} = props;
 
-  useEffect(() => {
+  // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
+  useLayoutEffect(() => {
     if (validationBehavior === 'native' && ref.current) {
       let errorMessage = state.realtimeValidation.isInvalid ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.' : '';
       ref.current.setCustomValidity(errorMessage);

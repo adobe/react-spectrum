@@ -2295,6 +2295,32 @@ describe('NumberField', function () {
         expect(input).not.toHaveAttribute('aria-describedby');
       });
 
+      it('commits validation changes when pressing increment/decrement buttons', async () => {
+        let {getByTestId, getAllByRole} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+        await user.click(getAllByRole('button')[0]);
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
       it('supports validate function', async () => {
         let {getByTestId} = render(
           <Provider theme={theme}>

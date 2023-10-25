@@ -191,6 +191,7 @@ export function useNumberFieldState(
     }
 
     setNumberValue(newValue);
+    validation.commitValidation();
   };
 
   let decrement = () => {
@@ -201,17 +202,20 @@ export function useNumberFieldState(
     }
 
     setNumberValue(newValue);
+    validation.commitValidation();
   };
 
   let incrementToMax = () => {
     if (maxValue != null) {
       setNumberValue(snapValueToStep(maxValue, minValue, maxValue, clampStep));
+      validation.commitValidation();
     }
   };
 
   let decrementToMin = () => {
     if (minValue != null) {
       setNumberValue(minValue);
+      validation.commitValidation();
     }
   };
 
