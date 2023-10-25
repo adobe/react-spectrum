@@ -36,6 +36,7 @@
           "./packages/@react-aria/a",
           "./packages/@react-aria/b",
           "./packages/@react-aria/l",
+          "./packages/@react-aria/meter",
           "./packages/@react-aria/color",
           "./packages/@react-aria/progress",
           "./packages/@react-aria/searchfield",
