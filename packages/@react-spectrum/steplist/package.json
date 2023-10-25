@@ -44,6 +44,7 @@
     "@react-aria/utils": "^3.20.0",
     "@react-aria/visually-hidden": "^3.8.4",
     "@react-spectrum/utils": "^3.10.2",
+    "@react-stately/collections": "^3.10.2",
     "@react-stately/steplist": "^3.0.0-alpha.1",
     "@react-types/shared": "^3.20.0",
     "@react-types/steplist": "^3.0.0-alpha.1",
