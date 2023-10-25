@@ -93,7 +93,7 @@ export const Default: DefaultStory = {
 };
 
 export const DefaultCompleted: DefaultStory = {
-  render: (args) => <DefaultStepList {...args} defaultLastCompletedStep="summary" defaultSelectedKey="summary" />,
+  render: (args) => <DefaultStepList {...args} defaultLastCompletedStep="summary" />,
   name: 'Default - Completed'
 };
 

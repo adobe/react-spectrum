@@ -114,7 +114,6 @@ describe('StepList', function () {
     expect(onSelectionChange).not.toHaveBeenCalled();
   });
 
-  // TODO address bug, we should be able to tab to the default selected key
   it('allows user to change selected step via tab key only', async function () {
     const tree = renderComponent({defaultLastCompletedStep: 'step-two', defaultSelectedKey: 'step-three', onSelectionChange});
     const stepList = tree.getByLabelText('steplist-test');
@@ -154,12 +153,9 @@ describe('StepList', function () {
     expect(onSelectionChange).not.toHaveBeenCalled();
   });
 
-  // TODO address bug shown in React 17 test, I think if we match a bit more with useTabListState, it'll get fixed
-  it.skip('should disable all steps when step list is disabled', function () {
+  it('should disable all steps when step list is disabled', async function () {
     const tree = renderComponent({defaultLastCompletedStep: 'step-two', isDisabled: true, onSelectionChange});
-    // TODO is this the right selection given a defaultLastCompletedStep of 2?
-    // the call to onSelectionChange is correct, see https://github.com/adobe/react-spectrum/issues/5013#issuecomment-1703101568
-    expect(onSelectionChange).toHaveBeenLastCalledWith('step-one');
+    expect(onSelectionChange).toHaveBeenLastCalledWith('step-three');
     onSelectionChange.mockReset();
     const stepList = tree.getByLabelText('steplist-test');
     const stepListItems =  within(stepList).getAllByRole('link');
@@ -168,11 +164,11 @@ describe('StepList', function () {
       expect(stepListItem).toHaveAttribute('aria-disabled', 'true');
     }
 
-    const stepOne = stepListItems[0];
-    expect(stepOne).toHaveAttribute('aria-current');
+    const stepThree = stepListItems[2];
+    expect(stepThree).toHaveAttribute('aria-current');
 
     const stepTwo = stepListItems[1];
-    user.click(stepTwo);
+    await user.click(stepTwo);
     expect(stepTwo).not.toHaveAttribute('aria-current');
     expect(onSelectionChange).not.toHaveBeenCalled();
   });
@@ -240,7 +236,6 @@ describe('StepList', function () {
       </StepList>
     );
 
-    console.log(onLastCompletedStepChange.mock.calls);
     expect(onLastCompletedStepChange).toHaveBeenCalledWith('step-two');
     expect(stepListItems[1].textContent).toContain('Completed');
   });
@@ -260,6 +255,7 @@ describe('StepList', function () {
     );
     expect(onLastCompletedStepChange).toHaveBeenCalledTimes(0);
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
+    expect(onSelectionChange).toHaveBeenLastCalledWith('step-two');
     const stepList = getByLabelText('steplist-test');
     const stepListItems =  within(stepList).getAllByRole('link');
 
@@ -287,8 +283,7 @@ describe('StepList', function () {
 
     expect(onLastCompletedStepChange).toHaveBeenCalledTimes(0);
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
-    expect(stepListItems[0]).toHaveAttribute('aria-current');
-    expect(stepListItems[1].textContent).toContain('Completed');
+    expect(stepListItems[1]).toHaveAttribute('aria-current');
     expect(stepListItems[2].textContent).toContain('Completed');
   });
 });

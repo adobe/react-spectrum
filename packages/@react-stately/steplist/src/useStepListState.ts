@@ -12,7 +12,7 @@
 
 import {AriaStepListProps} from '@react-types/steplist';
 import {Collection, Node} from '@react-types/shared';
-import {Key, useEffect, useMemo} from 'react';
+import {Key, useCallback, useEffect, useMemo} from 'react';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {useControlledState} from '@react-stately/utils';
 
@@ -34,26 +34,39 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
     setLastCompletedStep(keysLinkedList.get(selectedKey));
   }
 
+  const isCompleted = useCallback((step: Key) => {
+    if (step === undefined) {
+      return false;
+    }
+
+    return indexMap.get(step) <= indexMap.get(lastCompletedStep);
+  }, [indexMap, lastCompletedStep]);
+
+  const findDefaultSelectedKey = useCallback((collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) => {
+    let selectedKey = null;
+    if (collection) {
+      selectedKey = collection.getFirstKey();
+      // loop over keys until we find one that isn't completed or disabled and select that
+      while (selectedKey !== collection.getLastKey() && (disabledKeys.has(selectedKey) || isCompleted(selectedKey))) {
+        selectedKey = collection.getKeyAfter(selectedKey);
+      }
+    }
+  
+    return selectedKey;
+  }, [isCompleted]);
+
   useEffect(() => {
     // Ensure a step is always selected (in case no selected key was specified or if selected item was deleted from collection)
     let selectedKey = state.selectedKey;
     if (state.selectionManager.isEmpty || !state.collection.getItem(selectedKey)) {
-      selectedKey = state.collection.getFirstKey();
+      selectedKey = findDefaultSelectedKey(state.collection, state.disabledKeys);
       state.selectionManager.replaceSelection(selectedKey);
     }
 
     if (state.selectionManager.focusedKey == null) {
       state.selectionManager.setFocusedKey(selectedKey);
     }
-  }, [state.selectionManager, state.selectedKey, state.collection]);
-
-  function isCompleted(step: Key) {
-    if (step === undefined) {
-      return false;
-    }
-
-    return indexMap.get(step) <= indexMap.get(lastCompletedStep);
-  }
+  }, [findDefaultSelectedKey, state.disabledKeys, state.selectionManager, state.selectedKey, state.collection]);
 
   function isSelectable(step: Key) {
     if (props.isDisabled || state.disabledKeys.has(step) || props.isReadOnly) {
