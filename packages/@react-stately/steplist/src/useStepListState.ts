@@ -30,9 +30,6 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
   const {setSelectedKey: realSetSelectedKey, selectedKey, collection} = state;
   const {indexMap, keysLinkedList} = useMemo(() => buildKeysMaps(collection), [collection]);
   const selectedIdx = indexMap.get(selectedKey);
-  if (selectedIdx > 0 && selectedIdx > (indexMap.get(lastCompletedStep) ?? -1) + 1) {
-    setLastCompletedStep(keysLinkedList.get(selectedKey));
-  }
 
   const isCompleted = useCallback((step: Key) => {
     if (step === undefined) {
@@ -66,7 +63,11 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
     if (state.selectionManager.focusedKey == null) {
       state.selectionManager.setFocusedKey(selectedKey);
     }
-  }, [findDefaultSelectedKey, state.disabledKeys, state.selectionManager, state.selectedKey, state.collection]);
+
+    if (selectedIdx > 0 && selectedIdx > (indexMap.get(lastCompletedStep) ?? -1) + 1) {
+      setLastCompletedStep(keysLinkedList.get(selectedKey));
+    }
+  });
 
   function isSelectable(step: Key) {
     if (props.isDisabled || state.disabledKeys.has(step) || props.isReadOnly) {
