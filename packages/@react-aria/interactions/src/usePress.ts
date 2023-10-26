@@ -302,7 +302,7 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (e && e.button === 0 && !state.isTriggeringEvent && !openLink.isOpening) {
+        if (e && e.button === 0 && !state.isTriggeringEvent && !(openLink as any).isOpening) {
           let shouldStopPropagation = true;
           if (isDisabled) {
             e.preventDefault();
