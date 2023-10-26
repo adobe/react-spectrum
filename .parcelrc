@@ -19,10 +19,9 @@
   "namers": ["parcel-namer-docs", "..."],
   "packagers": {
     "*.json": "parcel-packager-docs",
-    "*.html": "@parcel/packager-js"
+    "*.html": "parcel-packager-ssg"
   },
   "optimizers": {
-    "*.html": ["parcel-optimizer-ssg", "..."],
     "*.js": ["@parcel/optimizer-terser"]
   }
 }
