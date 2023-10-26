@@ -31,6 +31,7 @@ export default {
     onPress: action('press'),
     onPressStart: action('pressstart'),
     onPressEnd: action('pressend'),
+    onPressUp: action('pressup'),
     onFocus: action('focus'),
     onBlur: action('blur')
   },
@@ -46,6 +47,11 @@ export default {
       }
     },
     onPressEnd: {
+      table: {
+        disable: true
+      }
+    },
+    onPressUp: {
       table: {
         disable: true
       }
