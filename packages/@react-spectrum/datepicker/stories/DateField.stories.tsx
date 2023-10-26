@@ -214,9 +214,15 @@ export const IsDateUnavailable: DateFieldStory = {
       return date.compare(new CalendarDate(1980, 1, 1)) >= 0 
           && date.compare(new CalendarDate(1980, 1, 8)) <= 0;
     },
-    errorMessage: 'Date unavailable.'
+    errorMessage: 'Date unavailable.',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>Which dates are unavailable?</Heading>
+        <Content>Any date between 1/1/1980 and 1/8/1980 are unavailable.</Content>
+      </ContextualHelp>
+    )
   },
-  name: 'isDateUnavailable'
+  parameters: {description: {data: 'Any date between 1/1/1980 and 1/8/1980 are unavailable and will display a "Date unavailable" error to the user'}}
 };
 
 export const PlaceholderVal: DateFieldStory = {
