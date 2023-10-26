@@ -910,7 +910,9 @@ function MyColumn(props) {
               </Menu>
             </Popover>
           </MenuTrigger>
-          <ColumnResizer />
+          <ColumnResizer>
+            ↔
+          </ColumnResizer>
         </div>
       )}
     </Column>

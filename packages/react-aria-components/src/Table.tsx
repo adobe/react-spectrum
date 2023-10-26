@@ -982,6 +982,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
       data-resizable-direction={resizableDirection}>
+      {renderProps.children}
       <input
         ref={inputRef}
         {...mergeProps(inputProps, focusProps, hoverProps)} />
