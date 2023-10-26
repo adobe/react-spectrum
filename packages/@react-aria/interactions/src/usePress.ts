@@ -53,13 +53,13 @@ interface PressState {
   activePointerId: any,
   target: FocusableElement | null,
   isOverTarget: boolean,
-  pointerType: PointerType,
+  pointerType: PointerType | null,
   userSelect?: string,
   metaKeyEvents?: Map<string, KeyboardEvent>
 }
 
 interface EventBase {
-  currentTarget: EventTarget,
+  currentTarget: EventTarget | null,
   shiftKey: boolean,
   ctrlKey: boolean,
   metaKey: boolean,
@@ -230,7 +230,7 @@ export function usePress(props: PressHookProps): PressResult {
 
   let cancel = useEffectEvent((e: EventBase) => {
     let state = ref.current;
-    if (state.isPressed) {
+    if (state.isPressed && state.target) {
       if (state.isOverTarget) {
         triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
       }
@@ -286,14 +286,14 @@ export function usePress(props: PressHookProps): PressResult {
           // https://bugs.webkit.org/show_bug.cgi?id=55291
           // https://bugzilla.mozilla.org/show_bug.cgi?id=1299553
           if (e.metaKey && isMac()) {
-            state.metaKeyEvents.set(e.key, e.nativeEvent);
+            state.metaKeyEvents?.set(e.key, e.nativeEvent);
           }
         } else if (e.key === 'Meta') {
           state.metaKeyEvents = new Map();
         }
       },
       onKeyUp(e) {
-        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && !e.repeat && e.currentTarget.contains(e.target as Element)) {
+        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && !e.repeat && e.currentTarget.contains(e.target as Element) && state.target) {
           triggerPressUp(createEvent(state.target, e), 'keyboard');
         }
       },
@@ -332,7 +332,7 @@ export function usePress(props: PressHookProps): PressResult {
     };
 
     let onKeyUp = (e: KeyboardEvent) => {
-      if (state.isPressed && isValidKeyboardEvent(e, state.target)) {
+      if (state.isPressed && state.target && isValidKeyboardEvent(e, state.target)) {
         if (shouldPreventDefaultKeyboard(e.target as Element, e.key)) {
           e.preventDefault();
         }
@@ -362,9 +362,9 @@ export function usePress(props: PressHookProps): PressResult {
         // and those haven't received keyup events already, fire keyup events ourselves.
         // See comment above for more info about the macOS bug causing this.
         let events = state.metaKeyEvents;
-        state.metaKeyEvents = null;
+        state.metaKeyEvents = undefined;
         for (let event of events.values()) {
-          state.target.dispatchEvent(new KeyboardEvent('keyup', event));
+          state.target?.dispatchEvent(new KeyboardEvent('keyup', event));
         }
       }
     };
@@ -459,12 +459,12 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (isOverTarget(e, state.target)) {
+        if (state.target && isOverTarget(e, state.target)) {
           if (!state.isOverTarget) {
             state.isOverTarget = true;
             triggerPressStart(createEvent(state.target, e), state.pointerType);
           }
-        } else if (state.isOverTarget) {
+        } else if (state.target && state.isOverTarget) {
           state.isOverTarget = false;
           triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
           cancelOnPointerExit(e);
@@ -472,7 +472,7 @@ export function usePress(props: PressHookProps): PressResult {
       };
 
       let onPointerUp = (e: PointerEvent) => {
-        if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0) {
+        if (e.pointerId === state.activePointerId && state.isPressed && e.button === 0 && state.target) {
           if (isOverTarget(e, state.target)) {
             triggerPressEnd(createEvent(state.target, e), state.pointerType);
           } else if (state.isOverTarget) {
@@ -594,9 +594,9 @@ export function usePress(props: PressHookProps): PressResult {
           return;
         }
 
-        if (isOverTarget(e, state.target)) {
+        if (state.target && isOverTarget(e, state.target)) {
           triggerPressEnd(createEvent(state.target, e), state.pointerType);
-        } else if (state.isOverTarget) {
+        } else if (state.target && state.isOverTarget) {
           triggerPressEnd(createEvent(state.target, e), state.pointerType, false);
         }
 
@@ -692,7 +692,7 @@ export function usePress(props: PressHookProps): PressResult {
         state.activePointerId = null;
         state.isOverTarget = false;
         state.ignoreEmulatedMouseEvents = true;
-        if (!allowTextSelectionOnPress) {
+        if (state.target && !allowTextSelectionOnPress) {
           restoreTextSelection(state.target);
         }
         removeAllGlobalListeners();
@@ -750,7 +750,7 @@ export function usePress(props: PressHookProps): PressResult {
     return () => {
       if (!allowTextSelectionOnPress) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        restoreTextSelection(ref.current.target);
+        restoreTextSelection(ref.current.target ?? undefined);
       }
     };
   }, [allowTextSelectionOnPress]);
@@ -830,8 +830,18 @@ interface EventPoint {
 }
 
 function getPointClientRect(point: EventPoint): Rect {
-  let offsetX = (point.width / 2) || point.radiusX || 0;
-  let offsetY = (point.height / 2) || point.radiusY || 0;
+  let offsetX = 0;
+  let offsetY = 0;
+  if (point.width !== undefined) {
+    offsetX = (point.width / 2);
+  } else if (point.radiusX !== undefined) {
+    offsetX = point.radiusX;
+  }
+  if (point.height !== undefined) {
+    offsetY = (point.height / 2);
+  } else if (point.radiusY !== undefined) {
+    offsetY = point.radiusY;
+  }
 
   return {
     top: point.clientY - offsetY,
