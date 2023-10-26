@@ -50,73 +50,64 @@ import {ToggleButton} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-ToggleButton {
-  --deselected-border-color: var(--spectrum-global-color-gray-400);
-  --deselected-border-color-pressed: var(--spectrum-global-color-gray-500);
-  --deselected-background-color: var(--spectrum-global-color-gray-50);
-  --deselected-background-color-pressed: var(--spectrum-global-color-gray-100);
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-selected: white;
+@layer togglebutton {
+  .react-aria-ToggleButton {
+    --deselected-border-color: var(--spectrum-global-color-gray-400);
+    --deselected-border-color-pressed: var(--spectrum-global-color-gray-500);
+    --deselected-background-color: var(--spectrum-global-color-gray-50);
+    --deselected-background-color-pressed: var(--spectrum-global-color-gray-100);
+    --selected-color: slateblue;
+    --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-selected: white;
 
-  color: var(--text-color);
-  background: var(--deselected-background-color);
-  border: 1px solid var(--deselected-border-color);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-  padding: 6px 10px;
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--deselected-background-color-pressed);
-    border-color: var(--deselected-border-color-pressed);
-  }
-
-  &[data-selected] {
-    background: var(--selected-color);
-    border-color: var(--selected-color);
-    color: var(--text-color-selected);
+    color: var(--text-color);
+    background: var(--deselected-background-color);
+    border: 1px solid var(--deselected-border-color);
+    border-radius: 4px;
+    appearance: none;
+    vertical-align: middle;
+    font-size: 1rem;
+    text-align: center;
+    margin: 0;
+    outline: none;
+    padding: 6px 10px;
 
     &[data-pressed] {
-      background: var(--selected-color-pressed);
-      border-color: var(--selected-color-pressed);
+      box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+      background: var(--deselected-background-color-pressed);
+      border-color: var(--deselected-border-color-pressed);
+    }
+
+    &[data-selected] {
+      background: var(--selected-color);
+      border-color: var(--selected-color);
+      color: var(--text-color-selected);
+
+      &[data-pressed] {
+        background: var(--selected-color-pressed);
+        border-color: var(--selected-color-pressed);
+      }
+    }
+
+    &[data-focus-visible] {
+      border-color: var(--selected-color);
+      box-shadow: 0 0 0 1px var(--selected-color);
     }
   }
 
-  &[data-focus-visible] {
-    border-color: var(--selected-color);
-    box-shadow: 0 0 0 1px var(--selected-color);
-  }
+  @media (forced-colors: active) {
+    .react-aria-ToggleButton {
+      forced-color-adjust: none;
 
-  &[data-disabled] {
-    opacity: 0.4;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ToggleButton {
-    forced-color-adjust: none;
-
-    --deselected-border-color: ButtonBorder;
-    --deselected-border-color-pressed: ButtonBorder;
-    --deselected-background-color: ButtonFace;
-    --deselected-background-color-pressed: ButtonFace;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-border-color: GrayText;
-      --selected-color: GrayText;
-      --text-color: GrayText;
+      --deselected-border-color: ButtonBorder;
+      --deselected-border-color-pressed: ButtonBorder;
+      --deselected-background-color: ButtonFace;
+      --deselected-background-color-pressed: ButtonFace;
+      --selected-color: Highlight;
+      --selected-color-pressed: Highlight;
+      --text-color: ButtonText;
+      --text-color-selected: HighlightText;
     }
   }
 }
@@ -172,6 +163,32 @@ A `ToggleButton` can be disabled using the `isDisabled` prop.
 ```tsx example
 <ToggleButton isDisabled>Pin</ToggleButton>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer togglebutton {
+  .react-aria-ToggleButton {
+    &[data-disabled] {
+      opacity: 0.4;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-ToggleButton {
+      &[data-disabled] {
+        opacity: 1;
+        --deselected-border-color: GrayText;
+        --selected-color: GrayText;
+        --text-color: GrayText;
+      }
+    }
+  }
+}
+```
+
+</details>
 
 ## Props
 

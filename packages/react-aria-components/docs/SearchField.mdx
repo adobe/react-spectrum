@@ -57,103 +57,79 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-SearchField {
-  --field-border: var(--spectrum-alias-border-color);
-  --field-border-disabled: var(--spectrum-alias-border-color-disabled);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --focus-ring-color: slateblue;
-  --invalid-color: var(--spectrum-global-color-red-600);
-
-  display: grid;
-  grid-template-areas: "label label"
-                       "input button"
-                       "help  help";
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  width: fit-content;
-
-  .react-aria-Input {
-    grid-area: input;
-    padding: 0.286rem 1.714rem 0.286rem 0.286rem;
-    margin: 0;
-    border: 1px solid var(--field-border);
-    border-radius: 6px;
-    background: var(--field-background);
-    font-size: 1.143rem;
-
-    &::-webkit-search-cancel-button,
-    &::-webkit-search-decoration {
-      -webkit-appearance: none;
-    }
-
-    &[data-focused] {
-      outline: none;
-      border-color: var(--focus-ring-color);
-      box-shadow: 0 0 0 1px var(--focus-ring-color);
-    }
-
-    &[data-disabled] {
-      border-color: var(--field-border-disabled);
-      color: var(--text-color-disabled);
-    }
-  }
-
-  [slot=description] {
-    grid-area: help;
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    grid-area: help;
-    font-size: 12px;
-    color: var(--invalid-color);
-  }
-
-  .react-aria-Button {
-    grid-area: button;
-    width: 1.143rem;
-    height: 1.143rem;
-    border-radius: 1.143rem;
-    margin-left: -1.429rem;
-    font-size: 0.857rem;
-    line-height: 0.857rem;
-    vertical-align: middle;
-    text-align: center;
-    background: gray;
-    color: white;
-    border: none;
-    padding: 0;
-
-    &[data-pressed] {
-      background: dimgray;
-    }
-
-    &[data-disabled] {
-      opacity: 0.4;
-    }
-  }
-
-  &[data-empty] button {
-    display: none;
-  }
-}
-
-@media (forced-colors: active) {
+@layer searchfield {
   .react-aria-SearchField {
-    --field-border: ButtonBorder;
-    --field-border-disabled: GrayText;
-    --field-background: Field;
-    --text-color: FieldText;
-    --text-color-disabled: GrayText;
-    --focus-ring-color: Highlight;
-    --invalid-color: LinkText;
+    --field-border: var(--spectrum-alias-border-color);
+    --field-border-disabled: var(--spectrum-alias-border-color-disabled);
+    --field-background: var(--spectrum-global-color-gray-50);
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+    --focus-ring-color: slateblue;
+    --invalid-color: var(--spectrum-global-color-red-600);
+
+    display: grid;
+    grid-template-areas: "label label"
+                         "input button"
+                         "help  help";
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    width: fit-content;
+
+    .react-aria-Input {
+      grid-area: input;
+      padding: 0.286rem 1.714rem 0.286rem 0.286rem;
+      margin: 0;
+      border: 1px solid var(--field-border);
+      border-radius: 6px;
+      background: var(--field-background);
+      font-size: 1.143rem;
+
+      &::-webkit-search-cancel-button,
+      &::-webkit-search-decoration {
+        -webkit-appearance: none;
+      }
+
+      &[data-focused] {
+        outline: none;
+        border-color: var(--focus-ring-color);
+        box-shadow: 0 0 0 1px var(--focus-ring-color);
+      }
+    }
 
     .react-aria-Button {
-      &[data-disabled] {
-        opacity: 1;
+      grid-area: button;
+      width: 1.143rem;
+      height: 1.143rem;
+      border-radius: 1.143rem;
+      margin-left: -1.429rem;
+      font-size: 0.857rem;
+      line-height: 0.857rem;
+      vertical-align: middle;
+      text-align: center;
+      background: gray;
+      color: white;
+      border: none;
+      padding: 0;
+
+      &[data-pressed] {
+        background: dimgray;
       }
+    }
+
+    &[data-empty] button {
+      display: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-SearchField {
+      --field-border: ButtonBorder;
+      --field-border-disabled: GrayText;
+      --field-background: Field;
+      --text-color: FieldText;
+      --text-color-disabled: GrayText;
+      --focus-ring-color: Highlight;
+      --invalid-color: LinkText;
     }
   }
 }
@@ -342,6 +318,28 @@ The `description` slot can be used to associate additional help text with a sear
 </SearchField>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer searchfield {
+  .react-aria-SearchField {
+    [slot=description] {
+      grid-area: help;
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      grid-area: help;
+      font-size: 12px;
+      color: var(--invalid-color);
+    }
+  }
+}
+```
+
+</details>
+
 ### Error message
 
 The `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to
@@ -366,6 +364,25 @@ A SearchField can be disabled using the `isDisabled` prop.
 <MySearchField label="Email" isDisabled />
 ```
 
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer searchfield {
+  .react-aria-SearchField {
+    .react-aria-Input {
+      &[data-disabled] {
+        border-color: var(--field-border-disabled);
+        color: var(--text-color-disabled);
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ### Read only
 
 The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled`, the SearchField remains focusable
@@ -374,6 +391,34 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 ```tsx example
 <MySearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
 ```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer searchfield {
+  .react-aria-SearchField {
+    .react-aria-Button {
+      &[data-disabled] {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-SearchField {
+      .react-aria-Button {
+        &[data-disabled] {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
+  ```
+
+</details>
 
 ## Props
 

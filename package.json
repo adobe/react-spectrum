@@ -182,6 +182,7 @@
     "postcss-custom-properties": "13.2.0",
     "postcss-import": "15.1.0",
     "react-refresh": "0.9.0",
+    "remark-parse": "10.0.1",
     "browserslist": "4.20.3"
   },
   "@parcel/transformer-css": {

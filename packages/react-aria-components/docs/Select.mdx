@@ -70,185 +70,133 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './ListBox.mdx';
+@import './Popover.mdx';
+```
 
 ```css
-.react-aria-Select {
-  --border-color: var(--spectrum-alias-border-color);
-  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --focus-ring-color: slateblue;
+@layer select {
+  .react-aria-Select {
+    --border-color: var(--spectrum-alias-border-color);
+    --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+    --focus-ring-color: slateblue;
 
-  .react-aria-Button {
-    color: var(--text-color);
-    background: var(--spectrum-global-color-gray-50);
-    border: 1px solid var(--border-color);
-    box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-    border-radius: 6px;
-    appearance: none;
-    vertical-align: middle;
-    font-size: 1.072rem;
-    padding: 0.286rem 0.286rem 0.286rem 0.571rem;
-    margin: 0;
-    outline: none;
-    display: flex;
-    align-items: center;
-    max-width: 250px;
+    .react-aria-Button {
+      color: var(--text-color);
+      background: var(--spectrum-global-color-gray-50);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
+      border-radius: 6px;
+      appearance: none;
+      vertical-align: middle;
+      font-size: 1.072rem;
+      padding: 0.286rem 0.286rem 0.286rem 0.571rem;
+      margin: 0;
+      outline: none;
+      display: flex;
+      align-items: center;
+      max-width: 250px;
 
-    &[data-focus-visible] {
-      border-color: var(--focus-ring-color);
-      box-shadow: 0 0 0 1px var(--focus-ring-color);
-    }
-
-    &[data-pressed] {
-      background: var(--spectrum-global-color-gray-150);
-    }
-
-    &[data-disabled] {
-      border-color: var(--border-color-disabled);
-      color: var(--text-color-disabled);
-      & span[aria-hidden] {
-        background: var(--border-color-disabled);
+      &[data-focus-visible] {
+        border-color: var(--focus-ring-color);
+        box-shadow: 0 0 0 1px var(--focus-ring-color);
       }
 
-      .react-aria-SelectValue {
-        &[data-placeholder] {
-          color: var(--text-color-disabled);
+      &[data-pressed] {
+        background: var(--spectrum-global-color-gray-150);
+      }
+    }
+
+    .react-aria-SelectValue {
+      &[data-placeholder] {
+        font-style: italic;
+        color: var(--spectrum-global-color-gray-700);
+      }
+    }
+
+    & span[aria-hidden] {
+      width: 1.5rem;
+      line-height: 1.375rem;
+      margin-left: 1rem;
+      padding: 1px;
+      background: slateblue;
+      color: white;
+      border-radius: 4px;
+      font-size: 0.857rem;
+    }
+  }
+  @layer listbox {
+    .react-aria-ListBox {
+      display: block;
+      width: unset;
+      max-height: inherit;
+      min-height: unset;
+      border: none;
+
+      .react-aria-Item {
+        padding: 0.286rem 0.571rem 0.286rem 1.571rem;
+
+        &[data-selected] {
+          font-weight: 600;
+
+            &::before {
+            content: '✓';
+            content: '✓' / '';
+            alt: ' ';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+          }
+        }
+
+        &[data-focused],
+        &[data-pressed] {
+          background: var(--highlight-background);
+          color: var(--highlight-foreground);
         }
       }
     }
   }
+  @layer popover {
+    .react-aria-Popover {
+      padding: 0px;
+      margin-top: 0px;
+      min-width: var(--trigger-width);
+      box-sizing: border-box;
+      &[data-placement=top] {
+        margin-bottom: unset;
+        --origin: translateY(8px);
+      }
 
-  .react-aria-SelectValue {
-    &[data-placeholder] {
-      font-style: italic;
-      color: var(--spectrum-global-color-gray-700);
-    }
+      &[data-placement=bottom] {
+        margin-top: unset;
+        --origin: translateY(-8px);
+      }
 
-    & [slot=description] {
-      display: none;
-    }
-  }
+      &[data-entering] {
+        animation: popover-slide 200ms;
+      }
 
-  & span[aria-hidden] {
-    width: 1.5rem;
-    line-height: 1.375rem;
-    margin-left: 1rem;
-    padding: 1px;
-    background: slateblue;
-    color: white;
-    border-radius: 4px;
-    font-size: 0.857rem;
-  }
-
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
-  }
-}
-
-.react-aria-ListBox {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  max-height: inherit;
-  box-sizing: border-box;
-  overflow: auto;
-  padding: 2px;
-  outline: none;
-
-  .react-aria-Section:not(:first-child) {
-    margin-top: 12px;
-  }
-
-  .react-aria-Header {
-    font-size: 1.143rem;
-    font-weight: bold;
-    padding: 0 0.571rem 0 1.571rem;
-  }
-
-  .react-aria-Item {
-    margin: 2px;
-    padding: 0.286rem 0.571rem 0.286rem 1.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-
-    &[data-selected] {
-      font-weight: 600;
-
-      &::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        top: 4px;
-        left: 4px;
+      &[data-exiting] {
+        animation: popover-slide 200ms reverse ease-in;
       }
     }
-
-    &[data-focused],
-    &[data-pressed] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    [slot=label] {
-      font-weight: bold;
-    }
-
-    [slot=description] {
-      font-size: small;
+  }
+  @media (forced-colors: active) {
+    .react-aria-Select {
+      --border-color: ButtonBorder;
+      --border-color-disabled: GrayText;
+      --text-color: ButtonText;
+      --text-color-disabled: GrayText;
+      --focus-ring-color: Highlight;
     }
   }
 }
 
-.react-aria-Popover {
-  --background-color: var(--page-background);
-  --border-color: var(--spectrum-global-color-gray-400);
-
-  border: 1px solid var(--border-color);
-  min-width: var(--trigger-width);
-  max-width: 250px;
-  box-sizing: border-box;
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-
-  &[data-placement=top] {
-    --origin: translateY(8px);
-  }
-
-  &[data-placement=bottom] {
-    --origin: translateY(-8px);
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
+@keyframes popover-slide {
   from {
     transform: var(--origin);
     opacity: 0;
@@ -257,31 +205,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   to {
     transform: translateY(0);
     opacity: 1;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Select {
-    --border-color: ButtonBorder;
-    --border-color-disabled: GrayText;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --focus-ring-color: Highlight;
-
-    .react-aria-Button:disabled span[aria-hidden] {
-      background: transparent;
-    }
-  }
-
-  .react-aria-ListBox {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -752,6 +675,46 @@ A Select can be fully disabled using the `isDisabled` prop.
 </MySelect>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer select {
+  .react-aria-Select {
+    .react-aria-Button {
+      &[data-disabled] {
+        border-color: var(--border-color-disabled);
+        color: var(--text-color-disabled);
+        & span[aria-hidden] {
+          background: var(--border-color-disabled);
+          color: var(--text-color-disabled);
+        }
+
+        .react-aria-SelectValue {
+          &[data-placeholder] {
+            color: var(--text-color-disabled);
+          }
+        }
+      }
+    }
+  }
+  @media (forced-colors: active) {
+    .react-aria-Select {
+      span[aria-hidden] {
+        background: transparent;
+      }
+      .react-aria-Button {
+        &[data-disabled] span[aria-hidden] {
+          background: 0 0;
+        }
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ### Disabled options
 
 `Select` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
@@ -816,6 +779,39 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer select {
+  .react-aria-Select {
+    .react-aria-SelectValue {
+      & [slot=description] {
+        display: none;
+      }
+    }
+
+    [slot=description] {
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--spectrum-global-color-red-600);
+    }
+  }
+  @media (forced-colors: active) {
+    .react-aria-Select {
+      [slot=errorMessage] {
+        color: LinkText;
+      }
+    }
+  }
+}
+```
+
+</details>
 
 ## Controlled open state
 
