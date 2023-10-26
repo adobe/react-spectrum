@@ -11,7 +11,8 @@
  */
 
 import {
-  AriaLabelingProps, CollectionBase,
+  AriaLabelingProps,
+  CollectionBase,
   DisabledBehavior,
   DOMAttributes,
   DOMProps,

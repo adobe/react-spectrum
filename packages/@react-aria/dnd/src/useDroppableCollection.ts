@@ -20,7 +20,8 @@ import {
   setDropCollectionRef
 } from './utils';
 import {
-  Collection, DropEvent,
+  Collection,
+  DropEvent,
   DropOperation,
   DroppableCollectionDropEvent,
   DroppableCollectionProps,

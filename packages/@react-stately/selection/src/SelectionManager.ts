@@ -22,7 +22,6 @@ import {
   SelectionMode
 } from '@react-types/shared';
 import {compareNodeOrder, getChildNodes, getFirstItem} from '@react-stately/collections';
-
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 

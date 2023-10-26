@@ -12,7 +12,6 @@
 
 import {Collection, Direction, Key, KeyboardDelegate, Orientation} from '@react-types/shared';
 
-
 export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<T>;
   private flipDirection: boolean;
@@ -20,7 +19,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
 
   constructor(collection: Collection<T>, direction: Direction, orientation: Orientation, disabledKeys: Set<Key> = new Set()) {
     this.collection = collection;
-    this.flipDirection = direction === 'rtl' && orientation === 'horizontal';    
+    this.flipDirection = direction === 'rtl' && orientation === 'horizontal';
     this.disabledKeys = disabledKeys;
   }
 
@@ -34,7 +33,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
   getKeyRightOf(key: Key) {
     if (this.flipDirection) {
       return this.getPreviousKey(key);
-    } 
+    }
     return this.getNextKey(key);
   }
 

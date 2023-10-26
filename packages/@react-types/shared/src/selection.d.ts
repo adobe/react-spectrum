@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {Key} from '@react-types/shared';
 
 export interface SingleSelection {

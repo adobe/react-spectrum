@@ -20,7 +20,6 @@ import {
   VirtualizerDelegate,
   VirtualizerOptions
 } from './types';
-
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';

@@ -14,8 +14,6 @@ import {Collection, DropTarget, DropTargetDelegate, Key, KeyboardDelegate, Node}
 import {getChildNodes} from '@react-stately/collections';
 import {InvalidationContext, Layout, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
 
-// import { DragTarget, DropTarget, DropPosition } from '@react-types/shared';
-
 export type ListLayoutOptions<T> = {
   /** The height of a row in px. */
   rowHeight?: number,

@@ -12,7 +12,6 @@
 
 import {Collection, Key, Node} from '@react-types/shared';
 
-
 export class TreeCollection<T> implements Collection<Node<T>> {
   private keyMap: Map<Key, Node<T>> = new Map();
   private iterable: Iterable<Node<T>>;

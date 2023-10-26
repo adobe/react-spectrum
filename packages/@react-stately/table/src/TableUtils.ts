@@ -11,7 +11,6 @@
  */
 
 import {ColumnSize} from '@react-types/table';
-
 import {Key} from '@react-types/shared';
 
 // numbers and percents are considered static. *fr units or a lack of units are considered dynamic.

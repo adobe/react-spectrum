@@ -18,7 +18,7 @@ import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {ListCollection} from '@react-stately/list';
 import React, {
-    MutableRefObject,
+  MutableRefObject,
   ReactElement,
   ReactNode,
   useCallback,

@@ -12,7 +12,6 @@
 
 import {Collection, Key, Node} from '@react-types/shared';
 
-
 export interface GridCollection<T> extends Collection<GridNode<T>> {
   /** The number of columns in the grid. */
   columnCount: number,
