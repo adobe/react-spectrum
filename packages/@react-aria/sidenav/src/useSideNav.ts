@@ -18,7 +18,7 @@ import {TreeState} from '@react-stately/tree';
 import {useSelectableCollection} from '@react-aria/selection';
 
 interface SideNavAriaOptions<T> extends AriaSideNavProps<T> {
-  layout?: KeyboardDelegate
+  layout: KeyboardDelegate
 }
 
 interface SideNavAria {

@@ -29,7 +29,7 @@ export interface AriaSelectableCollectionOptions {
   /**
    * A delegate object that implements behavior for keyboard focus movement.
    */
-  keyboardDelegate: KeyboardDelegate | undefined,
+  keyboardDelegate: KeyboardDelegate,
   /**
    * The ref attached to the element representing the collection.
    */
