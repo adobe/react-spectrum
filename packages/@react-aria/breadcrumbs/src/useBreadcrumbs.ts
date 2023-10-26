@@ -32,7 +32,7 @@ export function useBreadcrumbs(props: AriaBreadcrumbsProps): BreadcrumbsAria {
     ...otherProps
   } = props;
 
-  let strings = useLocalizedStringFormatter(intlMessages);
+  let strings = useLocalizedStringFormatter(intlMessages, '@react-aria/breadcrumbs');
   return {
     navProps: {
       ...filterDOMProps(otherProps, {labelable: true}),

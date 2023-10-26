@@ -32,18 +32,24 @@ export class LocalizedStringDictionary<K extends string = string, T extends Loca
 
   /** Returns a localized string for the given key and locale. */
   getStringForLocale(key: K, locale: string): T {
-    let strings = this.strings[locale];
-    if (!strings) {
-      strings = getStringsForLocale(locale, this.strings, this.defaultLocale);
-      this.strings[locale] = strings;
-    }
-
+    let strings = this.getStringsForLocale(locale);
     let string = strings[key];
     if (!string) {
       throw new Error(`Could not find intl message ${key} in ${locale} locale`);
     }
 
     return string;
+  }
+
+  /** Returns all localized strings for the given locale. */
+  getStringsForLocale(locale: string): Record<K, T> {
+    let strings = this.strings[locale];
+    if (!strings) {
+      strings = getStringsForLocale(locale, this.strings, this.defaultLocale);
+      this.strings[locale] = strings;
+    }
+
+    return strings;
   }
 }
 

@@ -58,7 +58,7 @@ export function useTableSelectionCheckbox<T>(props: AriaTableSelectionCheckboxPr
  */
 export function useTableSelectAllCheckbox<T>(state: TableState<T>): TableSelectAllCheckboxAria {
   let {isEmpty, isSelectAll, selectionMode} = state.selectionManager;
-  const stringFormatter = useLocalizedStringFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
 
   return {
     checkboxProps: {

@@ -63,8 +63,10 @@ export default {
     process.env.VERDACCIO && process.env.CIRCLE_SHA1
       ? `/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/next`
       : "",
-  webpack(config) {
-    config.plugins.push(localesPlugin.webpack({locales: ['en']}));
+  webpack(config, {isServer}) {
+    if (!isServer) {
+      config.plugins.push(localesPlugin.webpack({locales: []}));
+    }
     return config;
   }
 };

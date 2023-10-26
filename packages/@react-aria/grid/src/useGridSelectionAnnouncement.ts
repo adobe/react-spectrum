@@ -40,7 +40,7 @@ export function useGridSelectionAnnouncement<T>(props: GridSelectionAnnouncement
   let {
     getRowText = (key) => state.collection.getTextValue?.(key) ?? state.collection.getItem(key)?.textValue
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/grid');
 
   // Many screen readers do not announce when items in a grid are selected/deselected.
   // We do this using an ARIA live region.
