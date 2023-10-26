@@ -37,7 +37,7 @@ export function Link(props: SpectrumLinkProps) {
   let {styleProps} = useStyleProps(props);
   let {hoverProps, isHovered} = useHover({});
 
-  let ref = useRef();
+  let ref = useRef(null);
   let {linkProps} = useLink({
     ...props,
     elementType: !href && typeof children === 'string' ? 'span' : 'a'

@@ -778,12 +778,12 @@ export function CollectionPortal<T extends object>(props: CollectionProps<T>) {
 }
 
 /** Renders a DOM element (e.g. separator or header) shallowly when inside a collection. */
-export function useShallowRender<P extends object, T extends Element>(Element: string, props: P, ref: ForwardedRef<T>): ReactElement | null {
+export function useShallowRender<P extends object, T extends Element>(type: string, props: P, ref: ForwardedRef<T>): ReactElement | null {
   let isShallow = useContext(ShallowRenderContext);
   if (isShallow) {
     // Elements cannot be re-parented, so the context will always be there.
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    return useSSRCollectionNode(Element, props, ref, 'children' in props ? props.children : null) ?? <></>;
+    return useSSRCollectionNode(type, props, ref, 'children' in props ? props.children : null) ?? <></>;
   }
 
   return null;

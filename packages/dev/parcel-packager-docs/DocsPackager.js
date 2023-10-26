@@ -75,7 +75,7 @@ module.exports = new Packager({
       let application;
       let paramStack = [];
       let keyStack = [];
-      return walk(obj, (t, k, recurse) => {
+      let fn = (t, k) => {
         if (t && t.type === 'reference') {
           let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier);
           let res = bundleGraph.getResolvedAsset(dep, bundle);
@@ -91,7 +91,7 @@ module.exports = new Packager({
         }
 
         if (t && t.type === 'application') {
-          application = recurse(t.typeParameters, 'typeParameters');
+          application = t.typeParameters.map(item => fn(item, 'typeParameters'));
         }
 
         let hasParams = false;
@@ -108,7 +108,7 @@ module.exports = new Packager({
         } else if (t && (t.type === 'alias' || t.type === 'interface' || t.type === 'component') && t.typeParameters && keyStack.length === 0) {
           // If we are at a root export, replace type parameters with constraints if possible.
           // Seeing `DateValue` (as in `T extends DateValue`) is nicer than just `T`.
-          let typeParameters = recurse(t.typeParameters, 'typeParameters');
+          let typeParameters = t.typeParameters.map(item => fn(item, 'typeParameters'));
           let params = Object.assign({}, paramStack[paramStack.length - 1]);
           typeParameters.forEach(p => {
             if (!params[p.name] && p.constraint) {
@@ -120,7 +120,7 @@ module.exports = new Packager({
         }
 
         keyStack.push(k);
-        t = recurse(t);
+        t = recurse(t, fn);
         keyStack.pop();
 
         if (hasParams) {
@@ -188,22 +188,30 @@ module.exports = new Packager({
         }
 
         return t;
-      });
+      };
+
+      return walk(obj, fn);
     }
 
     let links = {};
     walkLinks(result);
 
     function walkLinks(obj) {
-      walk(obj, (t, k, recurse) => {
+      let fn = (t) => {
         // don't follow the link if it's already in links, that's circular
         if (t && t.type === 'link' && !links[t.id]) {
           links[t.id] = nodes[t.id];
-          walkLinks(nodes[t.id]);
+          recurse(nodes[t.id], fn);
         }
 
-        return recurse(t);
-      });
+        if (t != null) {
+          return recurse(t, fn);
+        }
+      };
+
+      for (let k in obj) {
+        fn(obj[k]);
+      }
     }
 
     return {contents: JSON.stringify({exports: result, links}, false, 2)};
@@ -234,44 +242,201 @@ async function parse(asset) {
   return [asset.id, v8.deserialize(buffer)];
 }
 // cache things in pre-visit order so the references exist
+const circularSymbol = Symbol('circular');
 function walk(obj, fn) {
-  // circular is to make sure we don't traverse over an object we visited earlier in the recursion
-  let circular = new Set();
-
-  let visit = (obj, fn, k = null) => {
-    let recurse = (obj, key = k) => {
-      if (circular.has(obj)) {
-        return {
-          type: 'link',
-          id: obj.id
-        };
-      }
-      if (Array.isArray(obj)) {
-        let resultArray = [];
-        obj.forEach((item, i) => resultArray[i] = visit(item, fn, key));
-        return resultArray;
-      } else if (obj && typeof obj === 'object') {
-        circular.add(obj);
-        let res = {};
-        for (let key in obj) {
-          res[key] = visit(obj[key], fn, key);
-        }
-        circular.delete(obj);
-        return res;
-      } else {
-        return obj;
-      }
-    };
-
-    return fn(obj, k, recurse);
-  };
-
   let res = {};
   for (let k in obj) {
-    res[k] = visit(obj[k], fn);
+    res[k] = fn(obj[k], null);
   }
 
   return res;
+}
+
+function recurse(obj, fn) {
+  if (obj[circularSymbol]) {
+    return {
+      type: 'link',
+      id: obj.id
+    };
+  }
+  obj[circularSymbol] = true;
+  let res = visitChildren(obj, fn);
+  obj[circularSymbol] = false;
+  return res;
+}
+
+function visitChildren(obj, fn) {
+  let properties = null;
+  switch (obj.type) {
+    case 'any':
+    case 'null':
+    case 'undefined':
+    case 'void':
+    case 'unknown':
+    case 'never':
+    case 'this':
+    case 'symbol':
+    case 'identifier':
+    case 'string':
+    case 'number':
+    case 'boolean':
+    case 'link':
+    case 'reference':
+      return obj;
+    case 'union':
+      return {
+        type: 'union',
+        elements: obj.elements.map(i => fn(i, 'elements'))
+      };
+    case 'intersection':
+      return {
+        type: 'intersection',
+        types: obj.types.map(i => fn(i, 'types'))
+      };
+    case 'application':
+      return {
+        type: 'application',
+        base: fn(obj.base, 'base'),
+        typeParameters: obj.typeParameters.map(i => fn(i, 'typeParameters'))
+      };
+    case 'typeOperator':
+      return {
+        type: 'typeOperator',
+        operator: obj.operator,
+        value: fn(obj.value, 'value')
+      };
+    case 'parameter':
+      return {
+        type: 'parameter',
+        name: obj.name,
+        value: fn(obj.value, 'value'),
+        optional: obj.optional,
+        rest: obj.rest,
+        description: obj.description
+      };
+    case 'property':
+      return {
+        type: 'property',
+        name: obj.name,
+        indexType: obj.indexType ? fn(obj.indexType, 'indexType') : null,
+        value: fn(obj.value, 'value'),
+        optional: obj.optional,
+        description: obj.description,
+        access: obj.access,
+        selector: obj.selector,
+        default: obj.default
+      };
+    case 'method':
+      return {
+        type: 'method',
+        name: obj.name,
+        value: fn(obj.value, 'value'),
+        optional: obj.optional,
+        access: obj.access,
+        description: obj.description,
+        default: obj.default
+      };
+    case 'alias':
+      return {
+        type: 'alias',
+        id: obj.id,
+        name: obj.name,
+        value: fn(obj.value, 'value'),
+        typeParameters: obj.typeParameters.map(i => fn(i, 'typeParameters')),
+        description: obj.description,
+        access: obj.access
+      };
+    case 'function':
+      return {
+        type: 'function',
+        id: obj.id,
+        name: obj.name,
+        parameters: obj.parameters.map(i => fn(i, 'parameters')),
+        return: fn(obj.return, 'return'),
+        typeParameters: obj.typeParameters.map(i => fn(i, 'typeParameters')),
+        description: obj.description,
+        access: obj.access
+      };
+    case 'interface':
+      properties = {...obj.properties};
+      for (let key in obj.properties) {
+        properties[key] = fn(obj.properties[key], key);
+      }
+      return {
+        type: 'interface',
+        id: obj.id,
+        name: obj.name,
+        extends: obj.extends.map(i => fn(i, 'extends')),
+        properties,
+        typeParameters: obj.typeParameters.map(i => fn(i, 'typeParameters')),
+        description: obj.description,
+        access: obj.access
+      };
+    case 'object':
+      if (obj.properties) {
+        properties = {...obj.properties};
+        for (let key in obj.properties) {
+          properties[key] = fn(obj.properties[key], key);
+        }
+      }
+      return {
+        type: 'object',
+        properties,
+        description: obj.description,
+        access: obj.access
+      };
+    case 'array':
+      return {
+        type: 'array',
+        elementType: fn(obj.elementType, 'elementType')
+      };
+    case 'tuple':
+    case 'template':
+      return {
+        type: obj.type,
+        elements: obj.elements.map(i => fn(i, 'elements'))
+      };
+    case 'typeParameter':
+      return {
+        type: 'typeParameter',
+        name: obj.name,
+        constraint: obj.constraint ? fn(obj.constraint, 'constraint') : null,
+        default: obj.default ? fn(obj.default, 'default') : null
+      };
+    case 'component':
+      return {
+        type: 'component',
+        id: obj.id,
+        name: obj.name,
+        props: obj.props ? fn(obj.props, 'props') : null,
+        typeParameters: obj.typeParameters.map(i => fn(i, 'typeParameters')),
+        ref: obj.ref ? fn(obj.ref, 'ref') : null,
+        description: obj.description,
+        access: obj.access
+      };
+    case 'conditional':
+      return {
+        type: 'conditional',
+        checkType: fn(obj.checkType, 'checkType'),
+        extendsType: fn(obj.extendsType, 'extendsType'),
+        trueType: fn(obj.trueType, 'trueType'),
+        falseType: fn(obj.falseType, 'falseType')
+      };
+    case 'indexedAccess':
+      return {
+        type: 'indexedAccess',
+        objectType: fn(obj.objectType, 'objectType'),
+        indexType: fn(obj.indexType, 'indexType')
+      };
+    case 'keyof':
+      return {
+        type: 'keyof',
+        keyof: fn(obj.keyof, 'keyof')
+      };
+    default:
+      console.log('Unknown type in DocsPackager: ' + obj.type, obj);
+      return obj;
+  }
 }
 
 function mergeInterface(obj) {

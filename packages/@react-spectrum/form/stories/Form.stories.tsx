@@ -27,7 +27,7 @@ import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
 import {Heading} from '@react-spectrum/text';
 import {InlineAlert} from '@react-spectrum/inlinealert';
 import {Item, Picker} from '@react-spectrum/picker';
-import {Key} from '@react-types/shared';
+import {Key, ValidationState} from '@react-types/shared';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useEffect, useState} from 'react';
@@ -524,7 +524,7 @@ function FormWithControls(props: any = {}) {
 }
 
 function FormWithSubmit() {
-  let [policies, setPolicies] = useState([]);
+  let [policies, setPolicies] = useState<string[]>([]);
   let [policiesDirty, setPoliciesDirty] = useState(false);
   let [pet, setPet] = useState('');
   let [petDirty, setPetDirty] = useState(false);
@@ -536,11 +536,11 @@ function FormWithSubmit() {
   let [formStatus, setFormStatus] = useState<'progress' | 'invalid' | 'valid' | 'fixing'>('progress');
   let [isSubmitted, setSubmitted] = useState(false); // TODO: really should be isSectionInvalid / 'fixing' for each form field. once form is submitted with mistakes, unchecking an unrelated, previously valid field should not make it look invalid.
 
-  let getValidationState = (isValid: boolean): 'invalid' | null =>
-    ['invalid', 'fixing'].includes(formStatus) && !isValid ? 'invalid' : null;
+  let getValidationState = (isValid: boolean): ValidationState | undefined =>
+    ['invalid', 'fixing'].includes(formStatus) && !isValid ? 'invalid' : undefined;
 
   useEffect(() => {
-    let validate = (): boolean => policies.length === 3 && pet && truth && email.includes('@');
+    let validate = (): boolean => policies.length === 3 && !!pet && truth && email.includes('@');
     let formDirty = policiesDirty || petDirty || truthDirty || emailDirty;
 
     if (isSubmitted) {
@@ -605,12 +605,14 @@ function FormWithSubmit() {
 
   return (
     <Form onSubmit={handleSubmit} isReadOnly={formStatus === 'valid'}>
-      {(formStatus === 'invalid' || formStatus === 'valid') &&
-        <InlineAlert variant={formStatus === 'invalid' ? 'negative' : 'positive'}>
-          <Header>{formStatus === 'invalid' ? 'Error' : 'Success'}</Header>
-          <Content>{formStatus === 'invalid' ? 'There was an error with the form.' : 'Form was successfully completed.'}</Content>
-        </InlineAlert>
-      }
+      <>
+        {(formStatus === 'invalid' || formStatus === 'valid') &&
+          <InlineAlert variant={formStatus === 'invalid' ? 'negative' : 'positive'}>
+            <Header>{formStatus === 'invalid' ? 'Error' : 'Success'}</Header>
+            <Content>{formStatus === 'invalid' ? 'There was an error with the form.' : 'Form was successfully completed.'}</Content>
+          </InlineAlert>
+        }
+      </>
       <TextField
         label="Email address"
         type="email"

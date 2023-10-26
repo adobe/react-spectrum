@@ -151,13 +151,15 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
     return null;
   }
   if (ctx && typeof ctx === 'object' && 'slots' in ctx && ctx.slots) {
+    let availableSlots = new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`));
+
     if (!slot && !ctx.slots[defaultSlot]) {
-      throw new Error('A slot prop is required');
+      throw new Error(`A slot prop is required. Valid slot names are ${availableSlots}.`);
     }
     let slotKey = slot || defaultSlot;
     if (!ctx.slots[slotKey]) {
       // @ts-ignore
-      throw new Error(`Invalid slot "${slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
+      throw new Error(`Invalid slot "${slot}". Valid slot names are ${availableSlots}.`);
     }
     return ctx.slots[slotKey];
   }
