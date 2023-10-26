@@ -169,6 +169,15 @@ governing permissions and limitations under the License.
   line-height: var(--spectrum-text-body-line-height);
 }
 
+.spectrum-Menu-section--noHeading {
+  &.spectrum-Menu-section--isFirst {
+    padding-top: 0;
+  }
+  &.spectrum-Menu-section--isLast {
+    padding-bottom: 0;
+  }
+}
+
 .spectrum-Menu .spectrum-Menu {
   /* Fill parent menu when nested */
   display: block;
