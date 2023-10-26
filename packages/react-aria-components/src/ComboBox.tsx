@@ -121,13 +121,6 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     validationBehavior: props.validationBehavior ?? 'native'
   });
 
-  // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({
-    isOpen: state.isOpen,
-    isDisabled: props.isDisabled || false,
-    isInvalid: props.isInvalid || false,
-    isRequired: props.isRequired || false
-  }), [state.isOpen, props.isDisabled, props.isInvalid, props.isRequired]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
@@ -168,6 +161,14 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     ref: inputRef,
     onResize: onResize
   });
+
+  // Only expose a subset of state to renderProps function to avoid infinite render loop
+  let renderPropsState = useMemo(() => ({
+    isOpen: state.isOpen,
+    isDisabled: props.isDisabled || false,
+    isInvalid: validation.isInvalid || false,
+    isRequired: props.isRequired || false
+  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -211,7 +212,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-focused={state.isFocused || undefined}
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
-        data-invalid={props.isInvalid || undefined}
+        data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined} />
       {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
     </Provider>

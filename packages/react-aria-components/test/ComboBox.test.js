@@ -231,15 +231,18 @@ describe('ComboBox', () => {
     );
 
     let input = getByRole('combobox');
+    let combobox = input.closest('.react-aria-ComboBox');
     expect(input).toHaveAttribute('required');
     expect(input).not.toHaveAttribute('aria-required');
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(input.validity.valid).toBe(false);
+    expect(combobox).not.toHaveAttribute('data-invalid');
 
     act(() => {getByTestId('form').checkValidity();});
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(combobox).toHaveAttribute('data-invalid');
 
     await user.tab();
     await user.keyboard('C');
@@ -253,5 +256,6 @@ describe('ComboBox', () => {
 
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
+    expect(combobox).not.toHaveAttribute('data-invalid');
   });
 });

@@ -219,22 +219,26 @@ describe('Select', () => {
       </form>
     );
 
-    let select = getByRole('button');
+    let button = getByRole('button');
+    let select = button.closest('.react-aria-Select');
     let input = document.querySelector('[name=select]');
     expect(input).toHaveAttribute('required');
-    expect(select).not.toHaveAttribute('aria-describedby');
+    expect(button).not.toHaveAttribute('aria-describedby');
     expect(input.validity.valid).toBe(false);
+    expect(select).not.toHaveAttribute('data-invalid');
 
     act(() => {getByTestId('form').checkValidity();});
 
-    expect(select).toHaveAttribute('aria-describedby');
-    expect(document.getElementById(select.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(button).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(select).toHaveAttribute('data-invalid');
 
-    await user.click(select);
+    await user.click(button);
 
     let listbox = getByRole('listbox');
     let items = within(listbox).getAllByRole('option');
     await user.click(items[0]);
-    expect(select).not.toHaveAttribute('aria-describedby');
+    expect(button).not.toHaveAttribute('aria-describedby');
+    expect(select).not.toHaveAttribute('data-invalid');
   });
 });

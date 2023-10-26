@@ -67,7 +67,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
     values: {
       isEmpty: state.value === '',
       isDisabled: props.isDisabled || false,
-      isInvalid: props.isInvalid || false,
+      isInvalid: validation.isInvalid || false,
       state
     },
     defaultClassName: 'react-aria-SearchField'
@@ -84,7 +84,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
       slot={props.slot || undefined}
       data-empty={state.value === '' || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-invalid={props.isInvalid || undefined}>
+      data-invalid={validation.isInvalid || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],

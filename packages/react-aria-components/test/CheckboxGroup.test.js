@@ -221,13 +221,26 @@ describe('CheckboxGroup', () => {
     let group = getByRole('group');
     let checkboxes = getAllByRole('checkbox');
     expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+    for (let checkbox of checkboxes) {
+      expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
+    }
 
     act(() => {getByTestId('form').checkValidity();});
 
     expect(group).toHaveAttribute('aria-describedby');
     expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(group).toHaveAttribute('data-invalid');
+
+    for (let checkbox of checkboxes) {
+      expect(checkbox.closest('.react-aria-Checkbox')).toHaveAttribute('data-invalid');
+    }
 
     await user.click(checkboxes[0]);
     expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+    for (let checkbox of checkboxes) {
+      expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
+    }
   });
 });

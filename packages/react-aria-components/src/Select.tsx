@@ -76,16 +76,6 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
 
   let {isFocusVisible, focusProps} = useFocusRing({within: true});
 
-  // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({
-    isOpen: state.isOpen,
-    isFocused: state.isFocused,
-    isFocusVisible,
-    isDisabled: props.isDisabled || false,
-    isInvalid: props.isInvalid || false,
-    isRequired: props.isRequired || false
-  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, props.isInvalid, props.isRequired]);
-
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
   let [labelRef, label] = useSlot();
@@ -115,6 +105,16 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     ref: buttonRef,
     onResize: onResize
   });
+
+  // Only expose a subset of state to renderProps function to avoid infinite render loop
+  let renderPropsState = useMemo(() => ({
+    isOpen: state.isOpen,
+    isFocused: state.isFocused,
+    isFocusVisible,
+    isDisabled: props.isDisabled || false,
+    isInvalid: validation.isInvalid || false,
+    isRequired: props.isRequired || false
+  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, validation.isInvalid, props.isRequired]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -172,7 +172,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           data-focus-visible={isFocusVisible || undefined}
           data-open={state.isOpen || undefined}
           data-disabled={props.isDisabled || undefined}
-          data-invalid={props.isInvalid || undefined}
+          data-invalid={validation.isInvalid || undefined}
           data-required={props.isRequired || undefined} />
         <HiddenSelect
           state={state}

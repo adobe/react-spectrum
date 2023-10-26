@@ -76,7 +76,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
     values: {
       state,
       isDisabled: props.isDisabled || false,
-      isInvalid: props.isInvalid || false
+      isInvalid: validation.isInvalid || false
     },
     defaultClassName: 'react-aria-NumberField'
   });
@@ -111,7 +111,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
         ref={ref}
         slot={props.slot || undefined}
         data-disabled={props.isDisabled || undefined}
-        data-invalid={props.isInvalid || undefined} />
+        data-invalid={validation.isInvalid || undefined} />
       {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </Provider>
   );

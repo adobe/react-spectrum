@@ -159,15 +159,18 @@ describe('NumberField', () => {
     );
 
     let input = getByRole('textbox');
+    let numberfield = input.closest('.react-aria-NumberField');
     expect(input).toHaveAttribute('required');
     expect(input).not.toHaveAttribute('aria-required');
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(input.validity.valid).toBe(false);
+    expect(numberfield).not.toHaveAttribute('data-invalid');
 
     act(() => {getByTestId('form').checkValidity();});
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(numberfield).toHaveAttribute('data-invalid');
 
     await user.tab();
     await user.keyboard('3');
@@ -177,5 +180,6 @@ describe('NumberField', () => {
 
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
+    expect(numberfield).not.toHaveAttribute('data-invalid');
   });
 });

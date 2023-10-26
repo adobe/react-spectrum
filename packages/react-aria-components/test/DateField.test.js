@@ -232,12 +232,14 @@ describe('DateField', () => {
     expect(input).toHaveAttribute('required');
     expect(input.validity.valid).toBe(false);
     expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
 
     act(() => {getByTestId('form').checkValidity();});
 
     expect(group).toHaveAttribute('aria-describedby');
     let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
     expect(getDescription()).toContain('Constraints not satisfied');
+    expect(group).toHaveAttribute('data-invalid');
 
     await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
 
@@ -246,5 +248,6 @@ describe('DateField', () => {
 
     await user.tab();
     expect(getDescription()).not.toContain('Constraints not satisfied');
+    expect(group).not.toHaveAttribute('data-invalid');
   });
 });

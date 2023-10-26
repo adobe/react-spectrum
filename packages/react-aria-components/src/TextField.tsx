@@ -65,7 +65,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
     ...props,
     values: {
       isDisabled: props.isDisabled || false,
-      isInvalid: props.isInvalid || false
+      isInvalid: validation.isInvalid
     },
     defaultClassName: 'react-aria-TextField'
   });
@@ -77,7 +77,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
       ref={ref}
       slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-invalid={props.isInvalid || undefined}>
+      data-invalid={validation.isInvalid || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],

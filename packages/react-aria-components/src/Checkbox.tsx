@@ -162,7 +162,7 @@ export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLInp
 function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxContext);
   let groupState = useContext(CheckboxGroupStateContext);
-  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = groupState
+  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
       ...props,
@@ -219,7 +219,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       isFocusVisible,
       isDisabled,
       isReadOnly,
-      isInvalid: props.isInvalid || groupState?.isInvalid || false,
+      isInvalid,
       isRequired: props.isRequired || false
     }
   });
@@ -239,7 +239,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-readonly={isReadOnly || undefined}
-      data-invalid={props.isInvalid || groupState?.isInvalid || undefined}
+      data-invalid={isInvalid || undefined}
       data-required={props.isRequired || undefined}>
       <VisuallyHidden elementType="span">
         <input {...inputProps} {...focusProps} ref={ref} />

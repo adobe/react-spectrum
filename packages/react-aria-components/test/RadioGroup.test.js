@@ -421,6 +421,7 @@ describe('RadioGroup', () => {
 
     let group = getByRole('radiogroup');
     expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
 
     let radios = getAllByRole('radio');
     for (let input of radios) {
@@ -433,6 +434,7 @@ describe('RadioGroup', () => {
 
     expect(group).toHaveAttribute('aria-describedby');
     expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(group).toHaveAttribute('data-invalid');
 
     await user.click(radios[0]);
     for (let input of radios) {
@@ -440,5 +442,6 @@ describe('RadioGroup', () => {
     }
 
     expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
   });
 });

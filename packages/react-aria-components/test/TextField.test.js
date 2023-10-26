@@ -132,6 +132,7 @@ describe('TextField', () => {
 
       expect(input).toHaveAttribute('aria-describedby');
       expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+      expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-invalid');
 
       await user.tab();
       await user.keyboard('Devon');
@@ -141,6 +142,7 @@ describe('TextField', () => {
 
       await user.tab();
       expect(input).not.toHaveAttribute('aria-describedby');
+      expect(input.closest('.react-aria-TextField')).not.toHaveAttribute('data-invalid');
     });
 
     it('supports customizing validation errors', async () => {

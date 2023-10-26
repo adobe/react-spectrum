@@ -213,6 +213,7 @@ describe('DateRangePicker', () => {
     );
 
     let group = getByRole('group');
+    let datepicker = group.closest('.react-aria-DateRangePicker');
     let startInput = document.querySelector('input[name=start]');
     let endInput = document.querySelector('input[name=end]');
     expect(startInput).toHaveAttribute('required');
@@ -220,12 +221,14 @@ describe('DateRangePicker', () => {
     expect(endInput).toHaveAttribute('required');
     expect(endInput.validity.valid).toBe(false);
     expect(group).not.toHaveAttribute('aria-describedby');
+    expect(datepicker).not.toHaveAttribute('data-invalid');
 
     act(() => {getByTestId('form').checkValidity();});
 
     expect(group).toHaveAttribute('aria-describedby');
     let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
     expect(getDescription()).toContain('Constraints not satisfied');
+    expect(datepicker).toHaveAttribute('data-invalid');
 
     await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
     await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
@@ -236,5 +239,6 @@ describe('DateRangePicker', () => {
 
     await user.tab();
     expect(getDescription()).not.toContain('Constraints not satisfied');
+    expect(datepicker).not.toHaveAttribute('data-invalid');
   });
 });
