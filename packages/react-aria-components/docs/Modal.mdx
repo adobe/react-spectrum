@@ -71,43 +71,54 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx';
+@import './TextField.mdx';
+@import './Dialog.mdx';
+```
 
 ```css
-.react-aria-ModalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: var(--visual-viewport-height);
-  background: rgba(0 0 0 / .5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@layer modal {
+  .react-aria-ModalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: var(--visual-viewport-height);
+    background: rgba(0 0 0 / .5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  &[data-entering] {
-    animation: fade 200ms;
+    &[data-entering] {
+      animation: modal-fade 200ms;
+    }
+
+    &[data-exiting] {
+      animation: modal-fade 150ms reverse ease-in;
+    }
   }
 
-  &[data-exiting] {
-    animation: fade 150ms reverse ease-in;
+  .react-aria-Modal {
+    box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+    border-radius: 6px;
+    background: var(--page-background);
+    border: 1px solid var(--spectrum-global-color-gray-300);
+    outline: none;
+    padding: 30px;
+    max-width: 250px;
+
+    &[data-entering] {
+      animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .react-aria-TextField {
+      margin-bottom: 8px;
+    }
   }
 }
 
-.react-aria-Modal {
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--page-background);
-  border: 1px solid var(--spectrum-global-color-gray-300);
-  outline: none;
-  padding: 30px;
-  max-width: 250px;
-
-  &[data-entering] {
-    animation: zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-}
-
-@keyframes fade {
+@keyframes modal-fade {
   from {
     opacity: 0;
   }
@@ -117,7 +128,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   }
 }
 
-@keyframes zoom {
+@keyframes modal-zoom {
   from {
     transform: scale(0.8);
   }
@@ -127,61 +138,6 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   }
 }
 
-.react-aria-Dialog {
-  outline: none;
-
-  .react-aria-Heading {
-    line-height: 1em;
-    margin-top: 0;
-  }
-
-  .react-aria-Button {
-    margin-top: 20px;
-  }
-}
-
-.react-aria-Button {
-  background: var(--spectrum-global-color-gray-50);
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  border-radius: 4px;
-  color: var(--spectrum-alias-text-color);
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-  padding: 6px 10px;
-  transition: border-color 200ms;
-
-  &[data-hovered] {
-    border-color: var(--spectrum-global-color-gray-500);
-  }
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--spectrum-global-color-gray-100);
-    border-color: var(--spectrum-global-color-gray-600);
-  }
-
-  &[data-focus-visible] {
-    border-color: slateblue;
-    box-shadow: 0 0 0 1px slateblue;
-  }
-}
-
-.react-aria-TextField {
-  margin-bottom: 8px;
-
-  .react-aria-Label {
-    display: inline-block;
-    width: 5.357rem;
-  }
-
-  .react-aria-Input {
-    font-size: 16px;
-  }
-}
 ```
 
 </details>
@@ -290,11 +246,11 @@ import {ModalOverlay} from 'react-aria-components';
   backdrop-filter: blur(10px);
 
   &[data-entering] {
-    animation: blur 300ms;
+    animation: mymodal-blur 300ms;
   }
 
   &[data-exiting] {
-    animation: blur 300ms reverse ease-in;
+    animation: mymodal-blur 300ms reverse ease-in;
   }
 }
 
@@ -311,15 +267,15 @@ import {ModalOverlay} from 'react-aria-components';
   box-shadow: -8px 0 20px rgba(0 0 0 / 0.1);
 
   &[data-entering] {
-    animation: slide 300ms;
+    animation: mymodal-slide 300ms;
   }
 
   &[data-exiting] {
-    animation: slide 300ms reverse ease-in;
+    animation: mymodal-slide 300ms reverse ease-in;
   }
 }
 
-@keyframes blur {
+@keyframes mymodal-blur {
   from {
     background: rgba(45 0 0 / 0);
     backdrop-filter: blur(0);
@@ -331,7 +287,7 @@ import {ModalOverlay} from 'react-aria-components';
   }
 }
 
-@keyframes slide {
+@keyframes mymodal-slide {
   from {
     transform: translateX(100%);
   }

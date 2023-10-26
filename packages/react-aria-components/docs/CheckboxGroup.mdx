@@ -70,138 +70,26 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+* import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './Checkbox.mdx';
+```
 
 ```css
-.react-aria-CheckboxGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 0.571rem;
-
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
-  }
-}
-
-.react-aria-Checkbox {
-  --label-color: var(--spectrum-alias-text-color);
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --checkmark-color: white;
-  --invalid-color: var(--spectrum-global-color-red-600);
-  --invalid-color-pressed: var(--spectrum-global-color-red-700);
-
-  display: flex;
-  align-items: center;
-  gap: 0.571rem;
-  font-size: 1.143rem;
-  color: var(--label-color);
-
-  .checkbox {
-    width: 1.143rem;
-    height: 1.143rem;
-    border: 2px solid var(--deselected-color);
-    border-radius: 4px;
-    transition: all 200ms;
+@layer checkboxgroup {
+  .react-aria-CheckboxGroup {
     display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    flex-direction: column;
+    gap: 0.571rem;
 
-  & svg {
-    width: 1rem;
-    height: 1rem;
-    fill: none;
-    stroke: var(--checkmark-color);
-    stroke-width: 3px;
-    stroke-dasharray: 22px;
-    stroke-dashoffset: 66;
-    transition: all 200ms;
-  }
-
-  &[data-pressed] .checkbox {
-    border-color: var(--deselected-color-pressed);
-  }
-
-  &[data-selected],
-  &[data-indeterminate] {
-    .checkbox {
-      border-color: var(--selected-color);
-      background: var(--selected-color);
+    [slot=description] {
+      font-size: 12px;
     }
 
-    &[data-pressed] .checkbox {
-      border-color: var(--selected-color-pressed);
-      background: var(--selected-color-pressed);
-    }
-
-    & svg {
-      stroke-dashoffset: 44;
-    }
-  }
-
-  &[data-invalid] {
-    .checkbox {
-      border-color: var(--invalid-color);
-    }
-
-    &[data-pressed] .checkbox {
-      border-color: var(--invalid-color-pressed);
-    }
-
-    &[data-selected],
-    &[data-indeterminate] {
-      .checkbox {
-        background: var(--invalid-color);
-      }
-
-      &[data-pressed] .checkbox {
-        background: var(--invalid-color-pressed);
-      }
-    }
-  }
-
-  &[data-indeterminate] {
-    & svg {
-      stroke: none;
-      fill: var(--checkmark-color);
-    }
-  }
-
-  &[data-focus-visible] .checkbox {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Checkbox {
-    forced-color-adjust: none;
-
-    --label-color: ButtonText;
-    --deselected-color: ButtonBorder;
-    --deselected-color-pressed: ButtonBorder;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --checkmark-color: HighlightText;
-    --invalid-color: LinkText;
-    --invalid-color-pressed: LinkText;
-    --spectrum-alias-background-color-default: Canvas;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
-      --label-color: GrayText;
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--spectrum-global-color-red-600);
     }
   }
 }

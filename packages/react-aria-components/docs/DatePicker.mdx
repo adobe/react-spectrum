@@ -75,303 +75,101 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+* import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './Button.mdx';
+@import './Popover.mdx';
+@import './DateField.mdx';
+@import './Calendar.mdx';
+```
 
 ```css
-.react-aria-DatePicker {
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-
-  .react-aria-Group {
-    display: flex;
-    width: fit-content;
-    align-items: center;
-  }
-
-  .react-aria-Button {
-    background: slateblue;
-    color: white;
-    border-radius: 4px;
-    border: none;
-    appearance: none;
-    margin-left: -1.929rem;
-    width: 1.429rem;
-    height: 1.429rem;
-    padding: 0;
-    vertical-align: middle;
-    font-size: 0.857rem;
-    outline: none;
-    box-sizing: content-box;
-    border: 2px solid var(--page-background);
-
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px slateblue;
-    }
-  }
-
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
-  }
-
-  &[data-invalid] {
-    .react-aria-DateInput:after {
-      content: '🚫' / '';
-      content: '🚫';
-      alt: ' ';
-      flex: 1;
-      text-align: end;
-    }
-  }
-}
-
-.react-aria-DateInput {
-  --field-border: var(--spectrum-global-color-gray-400);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-placeholder: var(--spectrum-global-color-gray-700);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
-
-  display: flex;
-  padding: 4px 2.5rem 4px 8px;
-  border: 1px solid var(--field-border);
-  border-radius: 6px;
-  background: var(--field-background);
-  width: fit-content;
-  min-width: 150px;
-  white-space: nowrap;
-
-  &[data-focus-within] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
-  }
-}
-
-.react-aria-DateSegment {
-  padding: 0 2px;
-  font-variant-numeric: tabular-nums;
-  text-align: end;
-  color: var(--text-color);
-
-  &[data-type=literal] {
-    padding: 0;
-  }
-
-  &[data-placeholder] {
-    color: var(--text-color-placeholder);
-    font-style: italic;
-  }
-
-  &:focus {
-    color: var(--highlight-foreground);
-    background: var(--highlight-background);
-    outline: none;
-    border-radius: 4px;
-    caret-color: transparent;
-  }
-
-  &[data-invalid] {
-    color: var(--text-color-invalid);
-
-    &:focus {
-      background: var(--highlight-background-invalid);
-      color: var(--highlight-foreground);
-    }
-  }
-}
-
-.react-aria-Calendar {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --button-background: var(--spectrum-global-color-gray-50);
-  --button-background-pressed: var(--spectrum-global-color-gray-100);
-  --button-border: var(--spectrum-global-color-gray-400);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --pressed-color: var(--spectrum-global-color-gray-200);
-  --unavailable-color: var(--spectrum-global-color-red-600);
-  --invalid-color: var(--spectrum-global-color-static-red-600);
-
-  width: fit-content;
-  color: var(--text-color);
-
-  & header {
-    display: flex;
-    align-items: center;
-    margin: 0 4px .5rem 4px;
-
-    .react-aria-Heading {
-      flex: 1;
-      margin: 0;
-      text-align: center;
-      font-size: 1.375rem;
-    }
-
-    .react-aria-Button {
-      background: var(--button-background);
-      border: 1px solid var(--button-border);
-      color: var(--text-color);
-      box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-      border-radius: 4px;
-      appearance: none;
-      vertical-align: middle;
-      font-size: 1rem;
-      width: 2rem;
-      height: 2rem;
-      padding: 0;
-      text-align: center;
-      margin: 0;
-      outline: none;
-
-      &[data-focus-visible] {
-        border-color: var(--highlight-background);
-        box-shadow: 0 0 0 1px var(--highlight-background);
-      }
-
-      &[data-pressed] {
-        background: var(--button-background-pressed);
-      }
-    }
-  }
-
-  .react-aria-CalendarCell {
-    width: 2rem;
-    line-height: 2rem;
-    text-align: center;
-    border-radius: 6px;
-    cursor: default;
-    outline: none;
-    border: 2px solid var(--page-background);
-    margin: -1px;
-
-    &[data-outside-month] {
-      display: none;
-    }
-
-    &[data-pressed] {
-      background: var(--pressed-color);
-    }
-
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--highlight-background);
-    }
-
-    &[data-selected] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    &[data-unavailable] {
-      text-decoration: line-through;
-      color: var(--unavailable-color);
-    }
-
-    &[data-invalid] {
-      background: var(--invalid-color);
-      color: var(--highlight-foreground);
-    }
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
-  }
-}
-
-.react-aria-Popover {
-  overflow: auto;
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--page-background);
-  padding: 1.25rem;
-
-  &[data-placement=top] {
-    --origin: translateY(8px);
-  }
-
-  &[data-placement=bottom] {
-    --origin: translateY(-8px);
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@media (forced-colors: active) {
+@layer datepicker {
   .react-aria-DatePicker {
-    --text-color-invalid: LinkText;
+    --field-border: var(--spectrum-global-color-gray-400);
+    --field-background: var(--spectrum-global-color-gray-50);
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-placeholder: var(--spectrum-global-color-gray-700);
+    --text-color-invalid: var(--spectrum-global-color-red-600);
+    --highlight-background: slateblue;
+    --highlight-foreground: white;
+    --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
+
+    .react-aria-Group {
+      display: flex;
+      width: fit-content;
+      align-items: center;
+    }
 
     .react-aria-Button {
-      forced-color-adjust: none;
-
-      --focus-ring-color: Highlight;
-      background: ButtonFace;
-      color: ButtonText;
-      border: 1px solid ButtonBorder;
+      background: slateblue;
+      color: white;
+      border-radius: 4px;
+      border: none;
+      appearance: none;
+      margin-left: -1.929rem;
+      width: 1.429rem;
+      height: 1.429rem;
+      padding: 0;
+      vertical-align: middle;
+      font-size: 0.857rem;
+      outline: none;
+      box-sizing: content-box;
+      border: 2px solid var(--page-background);
 
       &[data-focus-visible] {
-        border-color: Highlight;
-        box-shadow: 0 0 0 1px Highlight;
+        box-shadow: 0 0 0 2px slateblue;
       }
     }
   }
 
   .react-aria-DateInput {
-    forced-color-adjust: none;
+    display: flex;
+    padding: 4px 2.5rem 4px 8px;
+    border: 1px solid var(--field-border);
+    border-radius: 6px;
+    background: var(--field-background);
+    width: fit-content;
+    min-width: 150px;
+    white-space: nowrap;
 
-    --field-border: ButtonBorder;
-    --field-background: Field;
-    --text-color: FieldText;
-    --text-color-placeholder: FieldText;
-    --text-color-invalid: LinkText;
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --highlight-background-invalid: LinkText;
+    &[data-focus-within] {
+      border-color: var(--highlight-background);
+      box-shadow: 0 0 0 1px var(--highlight-background);
+    }
   }
 
   .react-aria-Calendar {
-    forced-color-adjust: none;
+    .react-aria-CalendarCell {
+      border-color: var(--page-background);
+    }
+  }
 
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --button-border: ButtonBorder;
-    --button-background: ButtonFace;
-    --button-backgound-pressed: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --text-color-invalid: LinkText;
-    --unavailable-color: GrayText;
-    --invalid-color: LinkText;
-    --pressed-color: Canvas;
-    --spectrum-alias-background-color-default: Canvas;
+  @media (forced-colors: active) {
+    .react-aria-DatePicker {
+      --text-color-invalid: LinkText;
+
+      .react-aria-Button {
+        forced-color-adjust: none;
+
+        --focus-ring-color: Highlight;
+        background: ButtonFace;
+        color: ButtonText;
+        border: 1px solid ButtonBorder;
+
+        &[data-focus-visible] {
+          border-color: Highlight;
+          box-shadow: 0 0 0 1px Highlight;
+        }
+      }
+    }
+
+    .react-aria-Calendar {
+      .react-aria-CalendarCell {
+        border-color: Canvas;
+      }
+    }
   }
 }
 ```
@@ -795,6 +593,36 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer datepicker {
+  .react-aria-DatePicker {
+    [slot=description] {
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--text-color-invalid);
+    }
+
+    &[data-invalid] {
+      .react-aria-DateInput:after {
+        content: '🚫' / '';
+        content: '🚫';
+        alt: ' ';
+        flex: 1;
+        text-align: end;
+      }
+    }
+  }
+}
+  ```
+
+</details>
 
 ## Format options
 

@@ -70,169 +70,136 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, Item} from 'react-aria
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Checkbox.mdx';
+@import './ListBox.mdx';
+@import './Popover.mdx';
+```
 
 ```css
-.react-aria-ComboBox {
-  --border-color: var(--spectrum-alias-border-color);
-  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
-  --button-background: slateblue;
+@layer combobox {
+  .react-aria-ComboBox {
+    --border-color: var(--spectrum-alias-border-color);
+    --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+    --button-background: slateblue;
 
-  .react-aria-Input {
-    margin: 0;
-    font-size: 1.072rem;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 0.286rem 2rem 0.286rem 0.571rem;
-    vertical-align: middle;
+    .react-aria-Input {
+      margin: 0;
+      font-size: 1.072rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 0.286rem 2rem 0.286rem 0.571rem;
+      vertical-align: middle;
 
-    &[data-invalid] {
-      border-color: var(--spectrum-global-color-red-600);
-    }
-
-    &[data-focused] {
-      outline: none;
-      border-color: slateblue;
-      box-shadow: 0 0 0 1px slateblue;
-    }
-
-    &[data-disabled] {
-      border-color: var(--border-color-disabled);
-    }
-  }
-
-  .react-aria-Button {
-    background: slateblue;
-    color: white;
-    border-radius: 4px;
-    border: none;
-    appearance: none;
-    margin-left: -1.714rem;
-    width: 1.429rem;
-    height: 1.429rem;
-    padding: 0;
-    vertical-align: middle;
-    font-size: 0.857rem;
-    outline: none;
-
-    &[data-disabled] {
-      background: var(--border-color-disabled);
-    }
-  }
-
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
-  }
-}
-
-.react-aria-ListBox {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  max-height: inherit;
-  box-sizing: border-box;
-  overflow: auto;
-  padding: 2px;
-  outline: none;
-
-  .react-aria-Section:not(:first-child) {
-    margin-top: 12px;
-  }
-
-  .react-aria-Header {
-    font-size: 1.143rem;
-    font-weight: bold;
-    padding: 0 0.571rem 0 1.571rem;
-  }
-
-  .react-aria-Item {
-    margin: 2px;
-    padding: 0.286rem 0.571rem 0.286rem 1.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-
-    &[data-selected] {
-      font-weight: 600;
-
-      &::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        top: 4px;
-        left: 4px;
+      &[data-focused] {
+        outline: none;
+        border-color: slateblue;
+        box-shadow: 0 0 0 1px slateblue;
       }
     }
-
-    &[data-focused],
-    &[data-pressed] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    [slot=label] {
-      font-weight: bold;
-    }
-
-    [slot=description] {
-      font-size: small;
-    }
-  }
-}
-
-.react-aria-Popover {
-  --background-color: var(--page-background);
-  --border-color: var(--spectrum-global-color-gray-400);
-
-  border: 1px solid var(--border-color);
-  width: var(--trigger-width);
-  box-sizing: border-box;
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-}
-
-@media (forced-colors: active) {
-  .react-aria-ComboBox {
-    --border-color: ButtonBorder;
-    --border-color-disabled: GrayText;
 
     .react-aria-Button {
-      background: ButtonFace;
-      color: ButtonText;
-      border: 1px solid ButtonBorder;
-      &[data-disabled] {
-        background: transparent;
+      background: slateblue;
+      color: white;
+      border-radius: 4px;
+      border: none;
+      appearance: none;
+      margin-left: -1.714rem;
+      width: 1.429rem;
+      height: 1.429rem;
+      padding: 0;
+      vertical-align: middle;
+      font-size: 0.857rem;
+      outline: none;
+    }
+  }
+  @layer listbox {
+    .react-aria-ListBox {
+      display: block;
+      width: unset;
+      max-height: inherit;
+      min-height: unset;
+      border: none;
+
+      .react-aria-Item {
+        padding: 0.286rem 0.571rem 0.286rem 1.571rem;
+
+        &[data-focus-visible] {
+          box-shadow: unset;
+        }
+
+        &[data-selected] {
+          font-weight: 600;
+          background: unset;
+          color: var(--text-color);
+
+          &::before {
+            content: '✓';
+            content: '✓' / '';
+            alt: ' ';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+          }
+        }
+
+        &[data-focused],
+        &[data-pressed] {
+          background: var(--highlight-background);
+          color: var(--highlight-foreground);
+        }
+      }
+    }
+  }
+  @layer popover {
+    .react-aria-Popover {
+      padding: 0px;
+      margin-top: 0px;
+      min-width: var(--trigger-width);
+      box-sizing: border-box;
+      &[data-placement=top] {
+        margin-bottom: unset;
+        --origin: translateY(8px);
+      }
+
+      &[data-placement=bottom] {
+        margin-top: unset;
+        --origin: translateY(-8px);
+      }
+
+      &[data-entering] {
+        animation: combobox-slide 200ms;
+      }
+
+      &[data-exiting] {
+        animation: combobox-slide 200ms reverse ease-in;
       }
     }
   }
 
-  .react-aria-ListBox {
-    forced-color-adjust: none;
+  @media (forced-colors: active) {
+    .react-aria-ComboBox {
+      --border-color: ButtonBorder;
+      --border-color-disabled: GrayText;
 
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
+      .react-aria-Button {
+        background: ButtonFace;
+        color: ButtonText;
+        border: 1px solid ButtonBorder;
+      }
+    }
+  }
+}
+
+@keyframes combobox-slide {
+  from {
+    transform: var(--origin);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 ```
@@ -423,6 +390,7 @@ function MyItem(props: ItemProps) {
 
   &.selected {
     font-weight: 600;
+    background: none;
 
     &::before {
       content: '✓';
@@ -432,11 +400,16 @@ function MyItem(props: ItemProps) {
       top: 4px;
       left: 4px;
     }
+
+    &.focused {
+      box-shadow: unset;
+    }
   }
 
   &.focused {
     background: #e70073;
     color: white;
+    box-shadow: unset;
   }
 }
 
@@ -997,6 +970,39 @@ A `ComboBox` can be fully disabled using the isDisabled prop.
 </MyComboBox>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer combobox {
+  .react-aria-ComboBox {
+    .react-aria-Input {
+      &[data-disabled] {
+        border-color: var(--border-color-disabled);
+      }
+    }
+
+    .react-aria-Button {
+      &[data-disabled] {
+        background: var(--border-color-disabled);
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-ComboBox {
+      .react-aria-Button {
+        &[data-disabled] {
+          background: transparent;
+        }
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ### Disabled options
 
 You can disable specific options by providing an array of keys to `ComboBox`
@@ -1058,6 +1064,43 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer combobox {
+  .react-aria-ComboBox {
+    .react-aria-Input {
+      &[data-invalid] {
+        border-color: var(--spectrum-global-color-red-600);
+        &[data-focused] {
+          border-color: slateblue;
+        }
+      }
+    }
+
+    [slot=description] {
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--spectrum-global-color-red-600);
+    }
+  }
+  @media (forced-colors: active) {
+    .react-aria-ComboBox {
+      [slot=errorMessage] {
+        color: LinkText;
+      }
+    }
+  }
+}
+
+```
+
+</details>
 
 ## Props
 
