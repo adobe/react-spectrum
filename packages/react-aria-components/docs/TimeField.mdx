@@ -54,93 +54,70 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-DateInput {
-  --field-border: var(--spectrum-global-color-gray-400);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-placeholder: var(--spectrum-global-color-gray-700);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
-
-  display: flex;
-  padding: 4px;
-  border: 1px solid var(--field-border);
-  border-radius: 6px;
-  background: var(--field-background);
-  width: fit-content;
-  min-width: 150px;
-  white-space: nowrap;
-
-  &[data-focus-within] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
+@layer timefield {
+  .react-aria-TimeField {
+    --field-border: var(--spectrum-global-color-gray-400);
+    --field-background: var(--spectrum-global-color-gray-50);
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-placeholder: var(--spectrum-global-color-gray-700);
+    --text-color-invalid: var(--spectrum-global-color-red-600);
+    --highlight-background: slateblue;
+    --highlight-foreground: white;
+    --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
   }
-}
+  .react-aria-DateInput {
+    display: flex;
+    padding: 4px;
+    border: 1px solid var(--field-border);
+    border-radius: 6px;
+    background: var(--field-background);
+    width: fit-content;
+    min-width: 150px;
+    white-space: nowrap;
 
-.react-aria-DateSegment {
-  padding: 0 2px;
-  font-variant-numeric: tabular-nums;
-  text-align: end;
-  color: var(--text-color);
-
-  &[data-type=literal] {
-    padding: 0;
-  }
-
-  &[data-placeholder] {
-    color: var(--text-color-placeholder);
-    font-style: italic;
-  }
-
-  &:focus {
-    color: var(--highlight-foreground);
-    background: var(--highlight-background);
-    outline: none;
-    border-radius: 4px;
-    caret-color: transparent;
-  }
-
-  &[data-invalid] {
-    color: var(--text-color-invalid);
-
-    &:focus {
-      background: var(--highlight-background-invalid);
-      color: var(--highlight-foreground);
+    &[data-focus-within] {
+      border-color: var(--highlight-background);
+      box-shadow: 0 0 0 1px var(--highlight-background);
     }
   }
-}
 
-.react-aria-TimeField {
-  --text-color-invalid: var(--spectrum-global-color-red-600);
+  .react-aria-DateSegment {
+    padding: 0 2px;
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+    color: var(--text-color);
 
-  [slot=description] {
-    font-size: 12px;
+    &[data-type=literal] {
+      padding: 0;
+    }
+
+    &[data-placeholder] {
+      color: var(--text-color-placeholder);
+      font-style: italic;
+    }
+
+    &:focus {
+      color: var(--highlight-foreground);
+      background: var(--highlight-background);
+      outline: none;
+      border-radius: 4px;
+      caret-color: transparent;
+    }
   }
 
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-TimeField {
-    --text-color-invalid: LinkText;
-  }
-
-  .react-aria-DateInput {
-    forced-color-adjust: none;
-
-    --field-border: ButtonBorder;
-    --field-background: Field;
-    --text-color: FieldText;
-    --text-color-placeholder: FieldText;
-    --text-color-invalid: LinkText;
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --highlight-background-invalid: LinkText;
+  @media (forced-colors: active) {
+    .react-aria-TimeField {
+      forced-color-adjust: none;
+      --text-color-invalid: LinkText;
+      --field-border: ButtonBorder;
+      --field-background: Field;
+      --text-color: FieldText;
+      --text-color-placeholder: FieldText;
+      --text-color-invalid: LinkText;
+      --highlight-background: Highlight;
+      --highlight-foreground: HighlightText;
+      --highlight-background-invalid: LinkText;
+    }
   }
 }
 ```
@@ -365,6 +342,27 @@ This example only accepts times between 9 AM and 5 PM.
   defaultValue={new Time(8)} />
 ```
 
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer timefield {
+  .react-aria-DateSegment {
+    &[data-invalid] {
+      color: var(--text-color-invalid);
+
+      &:focus {
+        background: var(--highlight-background-invalid);
+        color: var(--highlight-foreground);
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ### Help text
 
 The `description` slot can be used to associate additional help text with a date field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the date field as invalid for assistive technologies.
@@ -390,6 +388,26 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer timefield {
+  .react-aria-TimeField {
+    [slot=description] {
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--text-color-invalid);
+    }
+  }
+}
+```
+
+</details>
 
 ## Format options
 
@@ -580,30 +598,6 @@ function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
   <MyTimeField label="End" defaultValue={new Time(9)} />
 </FieldGroup>
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-fieldset {
-  padding: 1.5em;
-  width: fit-content;
-}
-
-.invalid {
-  color: var(--spectrum-global-color-red-600);
-  margin-top: 1em;
-  display: block;
-}
-
-@media (forced-colors: active) {
-  .invalid {
-    color: LinkText;
-  }
-}
-```
-
-</details>
 
 ### Custom children
 

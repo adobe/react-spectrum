@@ -63,179 +63,138 @@ import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx';
+@import './Popover.mdx';
+```
 
 ```css
-.react-aria-Button {
-  background: var(--spectrum-global-color-gray-50);
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  color: var(--spectrum-alias-text-color);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-  padding: 6px 10px;
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--spectrum-global-color-gray-100);
-    border-color: var(--spectrum-global-color-gray-500);
-  }
-
-  &[data-focus-visible] {
-    border-color: slateblue;
-    box-shadow: 0 0 0 1px slateblue;
-  }
-}
-
-.react-aria-Menu {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --separator-color: var(--spectrum-global-color-gray-500);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  max-height: inherit;
-  box-sizing: border-box;
-  overflow: auto;
-  padding: 2px;
-  margin: 0;
-  min-width: 150px;
-  box-sizing: border-box;
-  outline: none;
-
-  .react-aria-Section:not(:first-child) {
-    margin-top: 12px;
-  }
-
-  .react-aria-Header {
-    font-size: 1.143rem;
-    font-weight: bold;
-    padding: 0 0.714rem;
-  }
-
-  [role=separator] {
-    height: 1px;
-    background: var(--separator-color);
-    margin: 2px 4px;
-  }
-
-  .react-aria-Item {
-    margin: 2px;
-    padding: 0.286rem 0.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    display: grid;
-    grid-template-areas: "label kbd"
-                        "desc  kbd";
-    align-items: center;
-    column-gap: 20px;
-
-    &[data-focused] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    [slot=label] {
-      font-weight: bold;
-      grid-area: label;
-    }
-
-    [slot=description] {
-      font-size: small;
-      grid-area: desc;
-    }
-
-    & kbd {
-      grid-area: kbd;
-      font-family: monospace;
-      text-align: end;
-    }
-
-    &[data-selection-mode] {
-      padding-left: 24px;
-      &::before {
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
-
-      &[data-selection-mode=multiple][data-selected]::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
-
-      &[data-selection-mode=single][data-selected]::before {
-        content: '●';
-        content: '●' / '';
-        transform: scale(0.7)
-      }
-    }
-  }
-}
-
-.react-aria-Popover {
-  --background-color: var(--page-background);
-  --border-color: var(--spectrum-global-color-gray-400);
-
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-
-  &[data-placement=top] {
-    --origin: translateY(8px);
-  }
-
-  &[data-placement=bottom] {
-    --origin: translateY(-8px);
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@media (forced-colors: active) {
+@layer menu {
   .react-aria-Menu {
-    forced-color-adjust: none;
+    --highlight-background: slateblue;
+    --highlight-foreground: white;
+    --separator-color: var(--spectrum-global-color-gray-500);
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --separator-color: ButtonBorder;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
+    max-height: inherit;
+    box-sizing: border-box;
+    overflow: auto;
+    padding: 2px;
+    margin: 0;
+    min-width: 150px;
+    box-sizing: border-box;
+    outline: none;
+
+    .react-aria-Section:not(:first-child) {
+      margin-top: 12px;
+    }
+
+    .react-aria-Header {
+      font-size: 1.143rem;
+      font-weight: bold;
+      padding: 0 0.714rem;
+    }
+
+    [role=separator] {
+      height: 1px;
+      background: var(--separator-color);
+      margin: 2px 4px;
+    }
+
+    .react-aria-Item {
+      margin: 2px;
+      padding: 0.286rem 0.571rem;
+      border-radius: 6px;
+      outline: none;
+      cursor: default;
+      color: var(--text-color);
+      font-size: 1.072rem;
+      position: relative;
+      display: grid;
+      grid-template-areas: "label kbd"
+                          "desc  kbd";
+      align-items: center;
+      column-gap: 20px;
+
+      &[data-focused] {
+        background: var(--highlight-background);
+        color: var(--highlight-foreground);
+      }
+
+      &[data-disabled] {
+        color: var(--text-color-disabled);
+      }
+
+      [slot=label] {
+        font-weight: bold;
+        grid-area: label;
+      }
+
+      [slot=description] {
+        font-size: small;
+        grid-area: desc;
+      }
+
+      & kbd {
+        grid-area: kbd;
+        font-family: monospace;
+        text-align: end;
+      }
+
+      &[data-selection-mode] {
+        padding-left: 24px;
+        &::before {
+          position: absolute;
+          left: 4px;
+          font-weight: 600;
+        }
+
+        &[data-selection-mode=multiple][data-selected]::before {
+          content: '✓';
+          content: '✓' / '';
+          alt: ' ';
+          position: absolute;
+          left: 4px;
+          font-weight: 600;
+        }
+
+        &[data-selection-mode=single][data-selected]::before {
+          content: '●';
+          content: '●' / '';
+          transform: scale(0.7)
+        }
+      }
+    }
+  }
+  @layer popover {
+    .react-aria-Popover {
+      padding: 0px;
+      margin-top: 0px;
+      min-width: var(--trigger-width);
+      box-sizing: border-box;
+      &[data-placement=top] {
+        margin-bottom: unset;
+        --origin: translateY(8px);
+      }
+
+      &[data-placement=bottom] {
+        margin-top: unset;
+        --origin: translateY(-8px);
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-Menu {
+      forced-color-adjust: none;
+
+      --highlight-background: Highlight;
+      --highlight-foreground: HighlightText;
+      --separator-color: ButtonBorder;
+      --text-color: ButtonText;
+      --text-color-disabled: GrayText;
+    }
   }
 }
 ```
