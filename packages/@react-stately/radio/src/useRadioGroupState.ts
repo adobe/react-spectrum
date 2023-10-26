@@ -68,16 +68,17 @@ export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
   let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue ?? null, props.onChange);
   let [lastFocusedValue, setLastFocusedValue] = useState<string | null>(null);
 
-  let setSelectedValue = (value) => {
-    if (!props.isReadOnly && !props.isDisabled) {
-      setSelected(value);
-    }
-  };
-
   let validation = useFormValidationState({
     ...props,
     value: selectedValue
   });
+
+  let setSelectedValue = (value) => {
+    if (!props.isReadOnly && !props.isDisabled) {
+      setSelected(value);
+      validation.commitValidation();
+    }
+  };
 
   let isInvalid = validation.displayValidation.isInvalid;
 

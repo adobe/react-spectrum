@@ -718,6 +718,43 @@ describe('Radios', function () {
         expect(group).not.toHaveAttribute('aria-describedby');
       });
 
+      it('updates validation state with the keyboard', async () => {
+        let {getAllByRole, getByRole, getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <RadioGroup aria-label="favorite pet" isRequired validationBehavior="native">
+                <Radio value="dogs">Dogs</Radio>
+                <Radio value="cats">Cats</Radio>
+                <Radio value="dragons">Dragons</Radio>
+              </RadioGroup>
+            </Form>
+          </Provider>
+        );
+
+        let group = getByRole('radiogroup');
+        expect(group).not.toHaveAttribute('aria-describedby');
+
+        let radios = getAllByRole('radio');
+        for (let input of radios) {
+          expect(input).toHaveAttribute('required');
+          expect(input).not.toHaveAttribute('aria-required');
+          expect(input.validity.valid).toBe(false);
+        }
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(group).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+        await user.tab();
+        await user.keyboard('[ArrowDown]');
+        for (let input of radios) {
+          expect(input.validity.valid).toBe(true);
+        }
+
+        expect(group).not.toHaveAttribute('aria-describedby');
+      });
+
       it('supports validate function', async () => {
         let {getAllByRole, getByRole, getByTestId} = render(
           <Provider theme={theme}>
