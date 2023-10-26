@@ -35,6 +35,16 @@ governing permissions and limitations under the License.
   --spectrum-menu-max-width: 320px;
 }
 
+.spectrum-Menu-wrapper,
+.spectrum-Menu-subdialog {
+  overflow: hidden;
+  max-height: 100%;
+  display: inline-flex;
+  border-radius: var(--spectrum-alias-border-radius-regular);
+  border-style: solid;
+  border-width: var(--spectrum-popover-border-size);
+}
+
 .spectrum-Menu-popover {
   max-width: var(--spectrum-menu-max-width);
 }
@@ -157,6 +167,15 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-selectlist-heading-text-size);
   font-weight: var(--spectrum-selectlist-heading-text-font-weight);
   line-height: var(--spectrum-text-body-line-height);
+}
+
+.spectrum-Menu-section--noHeading {
+  &.spectrum-Menu-section--isFirst {
+    padding-top: 0;
+  }
+  &.spectrum-Menu-section--isLast {
+    padding-bottom: 0;
+  }
 }
 
 .spectrum-Menu .spectrum-Menu {

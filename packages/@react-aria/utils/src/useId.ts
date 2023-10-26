@@ -10,10 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {canUseDOM, useSSRSafeId} from '@react-aria/ssr';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
+import {useSSRSafeId} from '@react-aria/ssr';
 import {useValueEffect} from './';
+
+// copied from SSRProvider.tsx to reduce exports, if needed again, consider sharing
+let canUseDOM = Boolean(
+  typeof window !== 'undefined' &&
+  window.document &&
+  window.document.createElement
+);
 
 let idsUpdaterMap: Map<string, (v: string) => void> = new Map();
 

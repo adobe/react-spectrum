@@ -982,6 +982,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
       data-resizable-direction={resizableDirection}>
+      {renderProps.children}
       <input
         ref={inputRef}
         {...mergeProps(inputProps, focusProps, hoverProps)} />
@@ -1040,8 +1041,10 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
   let props = item.props as RowProps<unknown>;
   let isDragging = dragState && dragState.isDragging(item.key);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {children: _, ...restProps} = props;
   let renderProps = useRenderProps({
-    ...props,
+    ...restProps,
     id: undefined,
     defaultClassName: 'react-aria-Row',
     values: {
