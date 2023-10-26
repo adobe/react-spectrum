@@ -87,292 +87,206 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+ * import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './Button.mdx';
+@import './Checkbox.mdx';
+@import './Popover.mdx';
+@import './Menu.mdx';
+```
 
 ```css
-.react-aria-Table {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  padding: 0.286rem;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-  border-spacing: 0;
-  min-height: 100px;
-  align-self: start;
-  max-width: 100%;
-  word-break: break-word;
-
-  &[data-focus-visible] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
-  }
-
-  .react-aria-TableHeader {
-    &:after {
-      content: '';
-      display: table-row;
-      height: 2px;
-    }
-
-    & tr:last-child .react-aria-Column {
-      border-bottom: 1px solid var(--border-color);
-      cursor: default;
-    }
-  }
-
-  .react-aria-Column {
-    &[colspan] {
-      text-align: center;
-    }
-
-    .sort-indicator {
-      padding: 0 2px;
-    }
-
-    &:not([data-sort-direction]) .sort-indicator {
-      visibility: hidden;
-    }
-  }
-
-  .react-aria-TableBody {
-    &[data-empty] {
-      text-align: center;
-      font-style: italic;
-    }
-  }
-
-  .react-aria-Row {
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    transform: scale(1);
-
-    &[data-focus-visible] {
-      outline: 2px solid var(--highlight-background);
-      outline-offset: -2px;
-    }
-
-    &[data-pressed] .react-aria-Cell {
-      background: var(--spectrum-global-color-gray-200);
-    }
-
-    &[data-selected] {
-      .react-aria-Cell {
-        background: var(--highlight-background);
-        color: var(--highlight-foreground);
-      }
-
-      &[data-focus-visible],
-      .react-aria-Cell[data-focus-visible] {
-        outline-color: var(--highlight-foreground);
-        outline-offset: -4px;
-      }
-
-      .react-aria-Button {
-        color: var(--highlight-foreground);
-        --focus-ring-color: var(--highlight-foreground);
-        --hover-highlight: rgb(255 255 255 / 0.1);
-        --active-highlight: rgb(255 255 255 / 0.2);
-      }
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-  }
-
-  .react-aria-Cell,
-  .react-aria-Column {
-    padding: 4px 8px;
-    text-align: left;
-    outline: none;
-
-    &[data-focus-visible] {
-      outline: 2px solid var(--highlight-background);
-      outline-offset: -2px;
-    }
-  }
-
-  .react-aria-Cell {
-    transform: translateZ(0);
-
-    &:first-child {
-      border-radius: 6px 0 0 6px;
-    }
-
-    &:last-child {
-      border-radius: 0 6px 6px 0;
-    }
-  }
-
-  /* join selected items if :has selector is supported */
-  @supports selector(:has(.foo)) {
-    .react-aria-Row[data-selected]:has(+ [data-selected]) .react-aria-Cell,
-    .react-aria-Row[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) .react-aria-Cell {
-      border-end-start-radius: 0;
-      border-end-end-radius: 0;
-    }
-
-    .react-aria-Row[data-selected] + [data-selected] .react-aria-Cell,
-    .react-aria-Row[data-selected] + .react-aria-DropIndicator + [data-selected] .react-aria-Cell {
-      border-start-start-radius: 0;
-      border-start-end-radius: 0;
-    }
-  }
-}
-
-.react-aria-Checkbox {
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --checkmark-color: white;
-  --focus-ring-color: slateblue;
-
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid var(--deselected-color);
-  border-radius: 4px;
-  transition: all 200ms;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  & svg {
-    width: 0.857rem;
-    height: 0.857rem;
-    fill: none;
-    stroke: var(--checkmark-color);
-    stroke-width: 3px;
-    stroke-dasharray: 22px;
-    stroke-dashoffset: 66;
-    transition: all 200ms;
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
-  }
-
-  &[data-pressed] {
-    border-color: var(--deselected-color-pressed);
-  }
-
-  &[data-selected],
-  &[data-indeterminate] {
-    border-color: var(--selected-color);
-    background: var(--selected-color);
-
-    &[data-pressed] {
-      border-color: var(--selected-color-pressed);
-      background: var(--selected-color-pressed);
-    }
-
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--selected-color);
-    }
-
-    & svg {
-      stroke-dashoffset: 44;
-    }
-  }
-
-  &[data-indeterminate] {
-    & svg {
-      stroke: none;
-      fill: var(--checkmark-color);
-    }
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
-  }
-}
-
-:where(.react-aria-Row) .react-aria-Checkbox {
-  --selected-color: white;
-  --selected-color-pressed: #ddd;
-  --checkmark-color: slateblue;
-  --background-color: var(--highlight-background);
-}
-
-.react-aria-Button {
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.2rem;
-  text-align: center;
-  line-height: 1.2em;
-  margin: 0;
-  outline: none;
-  padding: 4px 6px;
-  transition: background 200ms;
-  --focus-ring-color: slateblue;
-  --hover-highlight: var(--spectrum-alias-highlight-hover);
-  --active-highlight: var(--spectrum-alias-highlight-active);
-
-  &[data-hovered] {
-    background: var(--hover-highlight);
-  }
-
-  &[data-pressed] {
-    background: var(--active-highlight);
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--focus-ring-color);
-  }
-}
-
-@media (forced-colors: active) {
+@layer table {
   .react-aria-Table {
-    forced-color-adjust: none;
+    --highlight-background: slateblue;
+    --highlight-foreground: white;
+    --border-color: var(--spectrum-global-color-gray-400);
+    --background-color: var(--page-background);
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
+    padding: 0.286rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--background-color);
+    outline: none;
+    border-spacing: 0;
+    min-height: 100px;
+    align-self: start;
+    max-width: 100%;
+    word-break: break-word;
+
+    &[data-focus-visible] {
+      border-color: var(--highlight-background);
+      box-shadow: 0 0 0 1px var(--highlight-background);
+    }
+
+    .react-aria-TableHeader {
+      &:after {
+        content: '';
+        display: table-row;
+        height: 2px;
+      }
+
+      & tr:last-child .react-aria-Column {
+        border-bottom: 1px solid var(--border-color);
+        cursor: default;
+      }
+    }
+
+    .react-aria-Column {
+      &[colspan] {
+        text-align: center;
+      }
+
+      .sort-indicator {
+        padding: 0 2px;
+      }
+
+      &:not([data-sort-direction]) .sort-indicator {
+        visibility: hidden;
+      }
+    }
+
+    .react-aria-TableBody {
+      &[data-empty] {
+        text-align: center;
+        font-style: italic;
+      }
+    }
+
+    .react-aria-Row {
+      border-radius: 6px;
+      outline: none;
+      cursor: default;
+      color: var(--text-color);
+      font-size: 1.072rem;
+      position: relative;
+      transform: scale(1);
+
+      &[data-focus-visible] {
+        outline: 2px solid var(--highlight-background);
+        outline-offset: -2px;
+      }
+
+      &[data-pressed] .react-aria-Cell {
+        background: var(--spectrum-global-color-gray-200);
+      }
+
+      &[data-selected] {
+        .react-aria-Cell {
+          background: var(--highlight-background);
+          color: var(--highlight-foreground);
+        }
+
+        &[data-focus-visible],
+        .react-aria-Cell[data-focus-visible] {
+          outline-color: var(--highlight-foreground);
+          outline-offset: -4px;
+        }
+      }
+
+      &[data-disabled] {
+        color: var(--text-color-disabled);
+      }
+    }
+
+    .react-aria-Cell,
+    .react-aria-Column {
+      padding: 4px 8px;
+      text-align: left;
+      outline: none;
+
+      &[data-focus-visible] {
+        outline: 2px solid var(--highlight-background);
+        outline-offset: -2px;
+      }
+    }
+
+    .react-aria-Cell {
+      transform: translateZ(0);
+
+      &:first-child {
+        border-radius: 6px 0 0 6px;
+      }
+
+      &:last-child {
+        border-radius: 0 6px 6px 0;
+      }
+    }
+
+    /* join selected items if :has selector is supported */
+    @supports selector(:has(.foo)) {
+      .react-aria-Row[data-selected]:has(+ [data-selected]) .react-aria-Cell,
+      .react-aria-Row[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) .react-aria-Cell {
+        border-end-start-radius: 0;
+        border-end-end-radius: 0;
+      }
+
+      .react-aria-Row[data-selected] + [data-selected] .react-aria-Cell,
+      .react-aria-Row[data-selected] + .react-aria-DropIndicator + [data-selected] .react-aria-Cell {
+        border-start-start-radius: 0;
+        border-start-end-radius: 0;
+      }
+    }
   }
 
   .react-aria-Checkbox {
-    forced-color-adjust: none;
-
-    --deselected-color: ButtonBorder;
-    --deselected-color-pressed: ButtonBorder;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --checkmark-color: HighlightText;
-    --spectrum-alias-background-color-default: Canvas;
-    --focus-ring-color: Highlight;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
+    --focus-ring-color: slateblue;
+    &[data-focus-visible] .checkbox {
+      box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
+    }
+    &[data-selected],
+    &[data-indeterminate] {
+      &[data-focus-visible] .checkbox {
+        box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--selected-color);
+      }
     }
   }
 
-  .react-aria-Row .react-aria-Checkbox {
-    --selected-color: ButtonFace;
-    --selected-color-pressed: ButtonFace;
-    --checkmark-color: ButtonText;
+  :where(.react-aria-Row) .react-aria-Checkbox {
+    --selected-color: white;
+    --selected-color-pressed: #ddd;
+    --checkmark-color: slateblue;
+    --background-color: var(--highlight-background);
   }
 
-  .react-aria-Button {
-    forced-color-adjust: none;
-    --focus-ring-color: Highlight;
+  @media (forced-colors: active) {
+    .react-aria-Table {
+      forced-color-adjust: none;
+
+      --highlight-background: Highlight;
+      --highlight-foreground: HighlightText;
+      --border-color: ButtonBorder;
+      --background-color: ButtonFace;
+      --text-color: ButtonText;
+      --text-color-disabled: GrayText;
+    }
+
+    .react-aria-Checkbox {
+      forced-color-adjust: none;
+
+      --deselected-color: ButtonBorder;
+      --deselected-color-pressed: ButtonBorder;
+      --selected-color: Highlight;
+      --selected-color-pressed: Highlight;
+      --checkmark-color: HighlightText;
+      --spectrum-alias-background-color-default: Canvas;
+      --focus-ring-color: Highlight;
+
+      &[data-disabled] {
+        opacity: 1;
+        --deselected-color: GrayText;
+        --selected-color: GrayText;
+      }
+    }
+
+    .react-aria-Row .react-aria-Checkbox {
+      --selected-color: ButtonFace;
+      --selected-color-pressed: ButtonFace;
+      --checkmark-color: ButtonText;
+    }
   }
 }
 ```
@@ -553,12 +467,14 @@ function MyCheckbox() {
   return (
     <Checkbox slot="selection">
       {({isIndeterminate}) => (
-        <svg viewBox="0 0 18 18" aria-hidden="true">
-          {isIndeterminate
-            ? <rect x={1} y={7.5} width={15} height={3} />
-            : <polyline points="1 9 7 14 15 4" />
-          }
-        </svg>
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" />
+            }
+          </svg>
+        </div>
       )}
     </Checkbox>
   );
@@ -804,6 +720,7 @@ Table rows may also be links to another page or website. This can be achieved by
 ```
 
 ```css hidden
+/* why hide this? */
 .react-aria-Row[data-href] {
   cursor: pointer;
 }
@@ -1083,86 +1000,105 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-ResizableTableContainer {
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
-
-  max-width: 400px;
-  overflow: auto;
-  position: relative;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--background-color);
-
-  .react-aria-Table {
-    border: none;
-  }
-
-  .flex-wrapper {
-    display: flex;
-    align-items: center;
-  }
-
-  .column-name,
-  .react-aria-Button {
-    flex: 1;
-    font: inherit;
-    text-align: start;
-    color: inherit;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    &:focus-visible {
-      outline: 2px solid slateblue;
-    }
-  }
-
-  .react-aria-ColumnResizer {
-    width: 15px;
-    background-color: grey;
-    height: 25px;
-    flex: 0 0 auto;
-    touch-action: none;
-    box-sizing: border-box;
-    border: 5px;
-    border-style: none solid;
-    border-color: transparent;
-    background-clip: content-box;
-
-    &[data-resizable-direction=both] {
-      cursor: ew-resize;
-    }
-
-    &[data-resizable-direction=left] {
-      cursor: e-resize;
-    }
-
-    &[data-resizable-direction=right] {
-      cursor: w-resize;
-    }
-
-    &[data-focus-visible] {
-      background-color: slateblue;
-    }
-
-    &[data-resizing] {
-      border-color: slateblue;
-      background-color: transparent;
-    }
-  }
-
-  .react-aria-Column,
-  .react-aria-Cell {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-@media (forced-colors: active) {
+@layer resizing-table {
   .react-aria-ResizableTableContainer {
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
+    --border-color: var(--spectrum-global-color-gray-400);
+    --background-color: var(--page-background);
+
+    max-width: 400px;
+    overflow: auto;
+    position: relative;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--background-color);
+
+    .react-aria-Table {
+      border: none;
+    }
+
+    .flex-wrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    .column-name,
+    .react-aria-Button {
+      flex: 1;
+      font: inherit;
+      text-align: start;
+      color: inherit;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      border-color: transparent;
+
+      &:focus-visible {
+        outline: 2px solid slateblue;
+      }
+    }
+
+    .react-aria-ColumnResizer {
+      width: 15px;
+      background-color: grey;
+      height: 25px;
+      flex: 0 0 auto;
+      touch-action: none;
+      box-sizing: border-box;
+      border: 5px;
+      border-style: none solid;
+      border-color: transparent;
+      background-clip: content-box;
+
+      &[data-resizable-direction=both] {
+        cursor: ew-resize;
+      }
+
+      &[data-resizable-direction=left] {
+        cursor: e-resize;
+      }
+
+      &[data-resizable-direction=right] {
+        cursor: w-resize;
+      }
+
+      &[data-focus-visible] {
+        background-color: slateblue;
+      }
+
+      &[data-resizing] {
+        border-color: slateblue;
+        background-color: transparent;
+      }
+    }
+
+    .react-aria-Column,
+    .react-aria-Cell {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-ResizableTableContainer {
+      --border-color: ButtonBorder;
+      --background-color: ButtonFace;
+
+      .react-aria-Button[data-focus-visible] {
+        forced-color-adjust: none;
+        --focus-ring-color: Highlight;
+        outline: 2px solid Highlight;
+      }
+      .react-aria-ColumnResizer {
+        &[data-focus-visible] {
+          background-color: Highlight;
+        }
+
+        &[data-resizing] {
+          border-color: Highlight;
+          background-color: transparent;
+        }
+      }
+    }
   }
 }
 ```
@@ -1344,102 +1280,6 @@ function Example() {
   );
 }
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-Menu {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --separator-color: var(--spectrum-global-color-gray-500);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  max-height: inherit;
-  box-sizing: border-box;
-  overflow: auto;
-  padding: 2px;
-  margin: 0;
-  min-width: 150px;
-  box-sizing: border-box;
-  outline: none;
-
-  .react-aria-Item {
-    margin: 2px;
-    padding: 0.286rem 0.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    display: grid;
-    grid-template-areas: "label kbd"
-                        "desc  kbd";
-    align-items: center;
-    column-gap: 20px;
-
-    &[data-focused] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-  }
-}
-
-.react-aria-Popover {
-  --background-color: var(--page-background);
-  --border-color: var(--spectrum-global-color-gray-400);
-
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-
-  &[data-placement=top] {
-    --origin: translateY(8px);
-  }
-
-  &[data-placement=bottom] {
-    --origin: translateY(-8px);
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Menu {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --separator-color: ButtonBorder;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-  }
-}
-```
-
-</details>
 
 ## Drag and drop
 
