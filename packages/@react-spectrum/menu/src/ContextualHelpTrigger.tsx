@@ -46,18 +46,17 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
       }
     }
   }});
+  let isMobile = useIsMobileDevice();
   let slots = {};
   if (isUnavailable) {
     slots = {
-      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog', classNames(styles, 'spectrum-Menu-subdialog'))},
+      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog', classNames(styles, !isMobile ? 'spectrum-Menu-subdialog' : ''))},
       content: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-content']},
       footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
     };
   }
   let [trigger] = React.Children.toArray(props.children);
   let [, content] = props.children as [ReactElement, ReactElement];
-
-  let isMobile = useIsMobileDevice();
 
   let onExit = () => {
     // if focus was already moved back to a menu item, don't need to do anything
