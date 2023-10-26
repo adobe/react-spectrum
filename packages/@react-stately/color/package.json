@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/color",
-  "version": "3.4.3",
+  "version": "3.4.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@internationalized/number": "^3.3.0",
     "@internationalized/string": "^3.1.1",
-    "@react-stately/slider": "^3.4.3",
+    "@react-stately/slider": "^3.4.4",
     "@react-stately/utils": "^3.8.0",
     "@react-types/color": "3.0.0-beta.20",
     "@react-types/numberfield": "^3.6.1",
