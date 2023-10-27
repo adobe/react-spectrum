@@ -38,7 +38,7 @@ export interface Validation<T> {
    * if `validationBehavior="native"`. For realtime validation, use the `isInvalid`
    * prop instead.
    */
-  validate?: ValidationFunction<T>
+  validate?: (value: T) => ValidationError | true | null | undefined
 }
 
 export interface ValidationResult {

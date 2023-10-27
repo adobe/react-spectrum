@@ -20,6 +20,7 @@ import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 import Input from '@react-spectrum/docs/pages/assets/component-illustrations/Input.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
 
 ---
 category: Forms
@@ -115,7 +116,7 @@ but you must manually ensure that they are semantically connected via ids for ac
 allowing for custom styling.
 
 * **Accessible** – Uses a native `<input>` element. Label, description, and error message elements are automatically associated with the field.
-* **Custom validation** – Required and invalid states are exposed to assistive technology via ARIA.
+* **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors.
 
 ## Anatomy
 
@@ -143,6 +144,21 @@ import {TextField, Label, Input, FieldError, Text} from 'react-aria-components';
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
 
+### Concepts
+
+`TextField` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
+</ExampleCard>
+
+</section>
+
 ### Composed components
 
 A `TextField` uses the following components, which may also be used standalone or reused in other components.
@@ -169,7 +185,7 @@ A `TextField` uses the following components, which may also be used standalone o
 
 If you will use a TextField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `TextField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)).
+This example wraps `TextField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation).
 
 ```tsx example export=true
 import type {TextFieldProps, ValidationResult} from 'react-aria-components';
@@ -377,7 +393,14 @@ A `<TextArea>` accepts all HTML attributes.
 
 ### FieldError
 
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
 <PropTable component={docs.exports.FieldError} links={docs.links} />
+
+</details>
 
 ## Styling
 
