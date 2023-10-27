@@ -28,7 +28,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   let lastProcessedTime = useRef<number>(0);
   let timeout = useRef<ReturnType<typeof setTimeout> | undefined>();
   let submenuSide = useRef<'left' | 'right' | undefined>();
-  let movementsTowardsSubmenuCount = useRef<number>(0);
+  let movementsTowardsSubmenuCount = useRef<number>(2);
   let [preventPointerEvents, setPreventPointerEvents] = useState(false);
 
   // TODO: Fix for ContextualHelpTrigger so we can do this
@@ -41,13 +41,18 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
 
   // useResizeObserver({ref: submenuRef, onResize: updateSubmenuRect});
 
+  let reset = () => {
+    setPreventPointerEvents(false);
+    movementsTowardsSubmenuCount.current = ALLOWED_INVALID_MOVEMENTS;
+  };
+
   let modality = useInteractionModality();
 
   useEffect(() => {
-    if (preventPointerEvents) {
+    if (preventPointerEvents && menuRef.current) {
       (menuRef.current as HTMLElement).style.pointerEvents = 'none';
     } else {
-      (menuRef.current as HTMLElement).style.pointerEvents = 'auto';
+      (menuRef.current as HTMLElement).style.pointerEvents = '';
     }
   }, [menuRef, preventPointerEvents]);
 
@@ -57,8 +62,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
     let menu = menuRef.current;
 
     if (isDisabled || !submenu || !isOpen || modality !== 'pointer') {
-      movementsTowardsSubmenuCount.current = 0;
-      setPreventPointerEvents(false);
+      reset();
       return;
     }
     submenuRect.current = submenu.getBoundingClientRect();
@@ -93,8 +97,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
 
       // Pointer has already reached submenu
       if ((submenuSide.current === 'left' && mouseX < submenuRect.current.right) || (submenuSide.current === 'right' && mouseX > submenuRect.current.left)) {
-        movementsTowardsSubmenuCount.current = 0;
-        setPreventPointerEvents(false);
+        reset();
         return;
       }
     
@@ -129,8 +132,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
       // If the pointer is moving towards the submenu, start a timeout to close if no other movements are made after 500ms.
       if (isMovingTowardsSubmenu) {
         timeout.current = setTimeout(() => {
-          movementsTowardsSubmenuCount.current = 0;
-          setPreventPointerEvents(false);
+          reset();
           setTimeout(() => {
             // Fire a pointerover event to trigger the menu to close.
             // Wait until pointer-events:none is no longer applied
@@ -148,7 +150,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
     return () => {
       window.removeEventListener('pointermove', onPointerMove);
       clearTimeout(timeout.current);
-      movementsTowardsSubmenuCount.current = 0;
+      movementsTowardsSubmenuCount.current = ALLOWED_INVALID_MOVEMENTS;
     };
 
   }, [isDisabled, isOpen, menuRef, modality, setPreventPointerEvents, submenuRef]);
