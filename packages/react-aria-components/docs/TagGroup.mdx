@@ -58,105 +58,92 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+* import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './ToggleButton.mdx';
+```
 
 ```css
-.react-aria-TagGroup {
-  --border-color: var(--spectrum-gray-600);
-  --border-color-hovered: var(--spectrum-gray-900);
-  --background-selected: var(--spectrum-gray-900);
-  --text-color: var(--spectrum-gray-800);
-  --text-color-selected: var(--spectrum-gray-50);
-  --remove-button-color: var(--spectrum-gray-700);
-  --remove-button-color-hovered: var(--spectrum-gray-900);
-  --focus-ring-color: slateblue;
-  --invalid-color: var(--spectrum-global-color-red-600);
+@layer taggroup {
+  .react-aria-TagGroup {
+    --border-color: var(--spectrum-gray-600);
+    --border-color-hovered: var(--spectrum-gray-900);
+    --background-selected: var(--spectrum-gray-900);
+    --text-color: var(--spectrum-gray-800);
+    --text-color-selected: var(--spectrum-gray-50);
+    --remove-button-color: var(--spectrum-gray-700);
+    --remove-button-color-hovered: var(--spectrum-gray-900);
+    --focus-ring-color: slateblue;
+    --invalid-color: var(--spectrum-global-color-red-600);
 
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: small;
-
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--invalid-color);
-  }
-}
-
-.react-aria-TagList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-
-  .react-aria-Tag {
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.929rem;
-    outline: none;
-    cursor: default;
     display: flex;
-    align-items: center;
-    transition: border-color 200ms;
+    flex-direction: column;
+    gap: 2px;
+    font-size: small;
+  }
 
-    &[data-hovered] {
-      border-color: var(--border-color-hovered);
-    }
+  .react-aria-TagList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
 
-    &[data-focus-visible] {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: 2px;
-    }
-
-    &[data-selected] {
-      border-color: var(--background-selected);
-      background: var(--background-selected);
-      color: var(--text-color-selected);
-    }
-
-    &[data-disabled] {
-      opacity: 0.4;
-    }
-
-    [slot=remove] {
-      background: none;
-      border: none;
-      padding: 0;
-      margin-left: 8px;
-      color: var(--remove-button-color);
-      transition: color 200ms;
+    .react-aria-Tag {
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.929rem;
       outline: none;
-      font-size: 0.95em;
+      cursor: default;
+      display: flex;
+      align-items: center;
+      transition: border-color 200ms;
 
       &[data-hovered] {
-        color: var(--remove-button-color-hovered);
+        border-color: var(--border-color-hovered);
+      }
+
+      &[data-focus-visible] {
+        outline: 2px solid var(--focus-ring-color);
+        outline-offset: 2px;
+      }
+
+      &[data-selected] {
+        border-color: var(--background-selected);
+        background: var(--background-selected);
+        color: var(--text-color-selected);
+      }
+
+      [slot=remove] {
+        background: none;
+        border: none;
+        padding: 0;
+        margin-left: 8px;
+        color: var(--remove-button-color);
+        transition: color 200ms;
+        outline: none;
+        font-size: 0.95em;
+
+        &[data-hovered] {
+          color: var(--remove-button-color-hovered);
+        }
       }
     }
   }
-}
 
-@media (forced-colors: active) {
-  .react-aria-TagGroup {
-    forced-color-adjust: none;
-    --border-color: ButtonBorder;
-    --border-color-hovered: ButtonBorder;
-    --background-selected: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-    --remove-button-color: ButtonText;
-    --remove-button-color-hovered: Highlight;
-    --focus-ring-color: Highlight;
-    --invalid-color: LinkText;
-
-    .react-aria-Tag[data-disabled] {
-      opacity: 1;
-      --border-color: GrayText;
-      --border-color-hovered: GrayText;
-      --text-color: GrayText;
+  @media (forced-colors: active) {
+    .react-aria-TagGroup {
+      forced-color-adjust: none;
+      --border-color: ButtonBorder;
+      --border-color-hovered: ButtonBorder;
+      --background-selected: Highlight;
+      --text-color: ButtonText;
+      --text-color-selected: HighlightText;
+      --remove-button-color: ButtonText;
+      --remove-button-color-hovered: Highlight;
+      --focus-ring-color: Highlight;
+      --invalid-color: LinkText;
     }
   }
 }
@@ -383,29 +370,57 @@ Tags may be links to another page or website. This can be achieved by passing th
 
 The `<Tag>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
- ## Disabled tags
+## Disabled tags
 
- TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
- corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
- to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
- See [Collections](../react-stately/collections.html) for more details.
+TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
+corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
+to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
+See [Collections](../react-stately/collections.html) for more details.
 
- ```tsx example
- <MyTagGroup
-   label="Sandwich contents"
-   selectionMode="multiple"
-   ///- begin highlight -///
-   disabledKeys={['tuna']}
-   ///- end highlight -///
- >
-   <MyTag id="lettuce">Lettuce</MyTag>
-   <MyTag id="tomato">Tomato</MyTag>
-   <MyTag id="cheese">Cheese</MyTag>
-   <MyTag id="tuna">Tuna Salad</MyTag>
-   <MyTag id="egg">Egg Salad</MyTag>
-   <MyTag id="ham">Ham</MyTag>
- </MyTagGroup>
- ```
+```tsx example
+<MyTagGroup
+ label="Sandwich contents"
+ selectionMode="multiple"
+ ///- begin highlight -///
+ disabledKeys={['tuna']}
+ ///- end highlight -///
+>
+  <MyTag id="lettuce">Lettuce</MyTag>
+  <MyTag id="tomato">Tomato</MyTag>
+  <MyTag id="cheese">Cheese</MyTag>
+  <MyTag id="tuna">Tuna Salad</MyTag>
+  <MyTag id="egg">Egg Salad</MyTag>
+  <MyTag id="ham">Ham</MyTag>
+</MyTagGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer taggroup {
+  .react-aria-TagList {
+    .react-aria-Tag {
+      &[data-disabled] {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-TagGroup {
+      .react-aria-Tag[data-disabled] {
+        opacity: 1;
+        --border-color: GrayText;
+        --border-color-hovered: GrayText;
+        --text-color: GrayText;
+      }
+    }
+  }
+}
+  ```
+
+</details>
 
 ## Empty state
 
@@ -442,6 +457,26 @@ The `description` slot can be used to associate additional help text with a `Tag
   {/*- end highlight -*/}
 </TagGroup>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer taggroup {
+  .react-aria-TagGroup {
+    [slot=description] {
+      font-size: 12px;
+    }
+
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--invalid-color);
+    }
+  }
+}
+```
+
+</details>
 
 ### Error message
 
@@ -616,76 +651,9 @@ import {ToggleButton} from 'react-aria-components';
     <MyTag id="strawberry">Strawberry</MyTag>
     <MyTag id="vanilla">Vanilla</MyTag>
   </MyTagGroup>
-  <ToggleButton>Edit</ToggleButton>
+  <ToggleButton style={{marginTop: '8px'}}>Edit</ToggleButton>
 </Removable>
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-ToggleButton {
-  --deselected-border-color: var(--spectrum-gray-400);
-  --deselected-border-color-pressed: var(--spectrum-gray-500);
-  --deselected-background-color: var(--spectrum-gray-50);
-  --deselected-background-color-pressed: var(--spectrum-gray-100);
-  --selected-color: var(--spectrum-gray-800);
-  --selected-color-pressed: var(--spectrum-gray-900);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-selected: var(--spectrum-gray-50);
-
-  color: var(--text-color);
-  background: var(--deselected-background-color);
-  border: 1px solid var(--deselected-border-color);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  text-align: center;
-  margin: 8px 0 0 0;
-  outline: none;
-  padding: 4px 12px;
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--deselected-background-color-pressed);
-    border-color: var(--deselected-border-color-pressed);
-  }
-
-  &[aria-pressed=true] {
-    background: var(--selected-color);
-    border-color: var(--selected-color);
-    color: var(--text-color-selected);
-
-    &[data-pressed] {
-      background: var(--selected-color-pressed);
-      border-color: var(--selected-color-pressed);
-    }
-  }
-
-  &[data-focus-visible] {
-    border-color: var(--selected-color);
-    box-shadow: 0 0 0 1px var(--selected-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ToggleButton {
-    forced-color-adjust: none;
-
-    --deselected-border-color: ButtonBorder;
-    --deselected-border-color-pressed: ButtonBorder;
-    --deselected-background-color: ButtonFace;
-    --deselected-background-color-pressed: ButtonFace;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-  }
-}
-```
-
-</details>
 
 ### Custom children
 

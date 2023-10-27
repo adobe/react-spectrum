@@ -33,7 +33,8 @@ describe('useSearchField hook', () => {
   beforeEach(() => {
     state.value = '';
     state.setValue = setValue;
-    ref.current = {focus};
+    ref.current = document.createElement('input');
+    focus = jest.spyOn(ref.current, 'focus');
   });
 
   afterEach(() => {

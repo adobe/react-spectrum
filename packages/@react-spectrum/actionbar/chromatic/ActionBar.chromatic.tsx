@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Example} from '../stories/Example';
+import {Example, Example2} from '../stories/Example';
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 
@@ -50,3 +50,7 @@ export const CollapsedIcons = () => (
 CollapsedIcons.story = {
   name: 'collapsed icons'
 };
+
+export const CollapseRounding = () => (
+  <Example2 tableWidth={800} defaultSelectedKeys={new Set(['Foo 1'])} />
+);

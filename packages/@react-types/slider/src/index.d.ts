@@ -11,7 +11,7 @@ import {
   RangeInputBase,
   RangeValue,
   StyleProps,
-  Validation,
+  ValidationState,
   ValueBase
 } from '@react-types/shared';
 import {ReactNode} from 'react';
@@ -44,7 +44,7 @@ export interface SliderProps<T = number | number[]> extends RangeInputBase<numbe
   step?: number
 }
 
-export interface SliderThumbProps extends FocusableProps, Validation, LabelableProps {
+export interface SliderThumbProps extends FocusableProps, LabelableProps {
   /**
    * The orientation of the Slider.
    * @default 'horizontal'
@@ -57,7 +57,13 @@ export interface SliderThumbProps extends FocusableProps, Validation, LabelableP
    * Index of the thumb within the slider.
    * @default 0
    */
-  index?: number
+  index?: number,
+  /** @deprecated */
+  isRequired?: boolean,
+  /** @deprecated */
+  isInvalid?: boolean,
+  /** @deprecated */
+  validationState?: ValidationState
 }
 
 export interface AriaSliderProps<T = number | number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}

@@ -59,101 +59,108 @@ import {ListBox, Item} from 'react-aria-components';
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+* import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './Checkbox.mdx';
+```
 
 ```css
-.react-aria-ListBox {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+@layer listbox {
+  .react-aria-ListBox {
+    --highlight-background: slateblue;
+    --highlight-foreground: white;
+    --border-color: var(--spectrum-global-color-gray-400);
+    --background-color: var(--page-background);
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
-  display: flex;
-  flex-direction: column;
-  max-height: inherit;
-  overflow: auto;
-  padding: 2px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-  width: 250px;
-  max-height: 300px;
-  min-height: 100px;
-  box-sizing: border-box;
-
-  &[data-empty] {
-    align-items: center;
-    justify-content: center;
-    font-style: italic;
-  }
-
-  &[data-focus-visible] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
-  }
-
-  .react-aria-Section:not(:first-child) {
-    margin-top: 12px;
-  }
-
-  .react-aria-Header {
-    font-size: 1.143rem;
-    font-weight: bold;
-    padding: 0 0.714rem;
-  }
-
-  .react-aria-Item {
-    margin: 2px;
-    padding: 0.286rem 0.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
     display: flex;
     flex-direction: column;
+    max-height: inherit;
+    overflow: auto;
+    padding: 2px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--background-color);
+    outline: none;
+    width: 250px;
+    max-height: 300px;
+    min-height: 100px;
+    box-sizing: border-box;
+
+    &[data-empty] {
+      align-items: center;
+      justify-content: center;
+      font-style: italic;
+    }
 
     &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px var(--highlight-background);
+      border-color: var(--highlight-background);
+      box-shadow: 0 0 0 1px var(--highlight-background);
     }
 
-    &[data-selected] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
+    .react-aria-Section:not(:first-child) {
+      margin-top: 12px;
+    }
+
+    .react-aria-Header {
+      font-size: 1.143rem;
+      font-weight: bold;
+      padding: 0 0.714rem;
+    }
+
+    .react-aria-Item {
+      margin: 2px;
+      padding: 0.286rem 0.571rem;
+      border-radius: 6px;
+      outline: none;
+      cursor: default;
+      color: var(--text-color);
+      font-size: 1.072rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
 
       &[data-focus-visible] {
-        box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
+        box-shadow: inset 0 0 0 2px var(--highlight-background);
+      }
+
+      &[data-selected] {
+        background: var(--highlight-background);
+        color: var(--highlight-foreground);
+
+        &[data-focus-visible] {
+          box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
+        }
+      }
+
+      &[data-disabled] {
+        color: var(--text-color-disabled);
+      }
+
+      [slot=label] {
+        font-weight: bold;
+      }
+
+      [slot=description] {
+        font-size: small;
       }
     }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    [slot=label] {
-      font-weight: bold;
-    }
-
-    [slot=description] {
-      font-size: small;
-    }
   }
-}
 
-@media (forced-colors: active) {
-  .react-aria-ListBox {
-    forced-color-adjust: none;
+  @media (forced-colors: active) {
+    .react-aria-ListBox {
+      forced-color-adjust: none;
 
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
-    --separator-color: ButtonBorder;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
+      --highlight-background: Highlight;
+      --highlight-foreground: HighlightText;
+      --border-color: ButtonBorder;
+      --background-color: ButtonFace;
+      --separator-color: ButtonBorder;
+      --text-color: ButtonText;
+      --text-color-disabled: GrayText;
+    }
   }
 }
 ```
@@ -618,66 +625,79 @@ let albums = [
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-ListBox[data-orientation=horizontal],
-.react-aria-ListBox[data-layout=grid] {
-  flex-direction: row;
-  width: fit-content;
-  max-width: 100%;
-  padding: 4px;
-
-  .react-aria-Item {
-    position: relative;
-    margin: 0;
+@layer listbox {
+  .react-aria-ListBox {
+    --selectedFilled: slateblue;
+    --selectedOutline: white;
+  }
+  .react-aria-ListBox[data-orientation=horizontal],
+  .react-aria-ListBox[data-layout=grid] {
+    flex-direction: row;
+    width: fit-content;
+    max-width: 100%;
     padding: 4px;
 
-    & img {
-      object-fit: cover;
-      aspect-ratio: 1/1;
-      max-width: 150px;
-      margin-bottom: 4px;
-      border-radius: 4px;
-      transition: box-shadow 200ms;
-    }
-
-    &[data-hovered] {
-      & img {
-        box-shadow: 0 0 8px rgb(from slateblue r g b / 0.5);
-      }
-    }
-
-    &[data-selected] {
-      background: none;
-      color: inherit;
+    .react-aria-Item {
+      position: relative;
+      margin: 0;
+      padding: 4px;
 
       & img {
-        box-shadow: 0 0 12px rgb(from slateblue r g b / 0.8);
+        object-fit: cover;
+        aspect-ratio: 1/1;
+        max-width: 150px;
+        margin-bottom: 4px;
+        border-radius: 4px;
+        transition: box-shadow 200ms;
       }
 
-      &:after {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        top: 8px;
-        right: 8px;
-        background: slateblue;
-        border: 2px solid white;
-        color: white;
-        width: 22px;
-        height: 22px;
-        border-radius: 22px;
-        box-sizing: border-box;
-        font-size: 14px;
-        line-height: 1em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 0 8px rgb(0 0 0 / .5);
+      &[data-hovered] {
+        & img {
+          box-shadow: 0 0 8px rgb(from slateblue r g b / 0.5);
+        }
       }
 
-      &[data-focus-visible] {
-        box-shadow: inset 0 0 0 2px var(--highlight-background);
+      &[data-selected] {
+        background: none;
+        color: inherit;
+
+        & img {
+          box-shadow: 0 0 12px rgb(from slateblue r g b / 0.8);
+        }
+
+        &:after {
+          content: '✓';
+          content: '✓' / '';
+          alt: ' ';
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          background: var(--selectedFilled);
+          border: 2px solid var(--selectedOutline);
+          color: var(--selectedOutline);
+          width: 22px;
+          height: 22px;
+          border-radius: 22px;
+          box-sizing: border-box;
+          font-size: 14px;
+          line-height: 1em;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 0 8px rgb(0 0 0 / .5);
+        }
+
+        &[data-focus-visible] {
+          box-shadow: inset 0 0 0 2px var(--highlight-background);
+        }
       }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-ListBox {
+      --selectedFilled: Highlight;
+      --selectedOutline: ButtonText;
     }
   }
 }
@@ -747,40 +767,42 @@ The `layout="grid"` and `orientation="horizontal"` props can be combined to buil
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-ListBox[data-layout=grid][data-orientation=horizontal] {
-  width: 100%;
-  max-width: none;
-  display: grid;
-  grid-auto-flow: column;
-  grid-template-rows: 58px 58px;
-  grid-template-columns: none;
-  grid-auto-columns: 250px;
-  max-height: 200px;
-  gap: 8px;
-
-  .react-aria-Item {
+@layer listbox {
+  .react-aria-ListBox[data-layout=grid][data-orientation=horizontal] {
+    width: 100%;
+    max-width: none;
     display: grid;
-    grid-template-areas: "image ."
-                         "image title"
-                         "image description"
-                         "image .";
-    grid-template-columns: auto 1fr;
-    grid-template-rows: 1fr auto auto 1fr;
-    column-gap: 8px;
+    grid-auto-flow: column;
+    grid-template-rows: 58px 58px;
+    grid-template-columns: none;
+    grid-auto-columns: 250px;
+    max-height: 200px;
+    gap: 8px;
 
-    & img {
-      width: 50px;
-      height: 50px;
-      grid-area: image;
-      margin-bottom: 0;
-    }
+    .react-aria-Item {
+      display: grid;
+      grid-template-areas: "image ."
+                           "image title"
+                           "image description"
+                           "image .";
+      grid-template-columns: auto 1fr;
+      grid-template-rows: 1fr auto auto 1fr;
+      column-gap: 8px;
 
-    [slot=label] {
-      grid-area: title;
-    }
+      & img {
+        width: 50px;
+        height: 50px;
+        grid-area: image;
+        margin-bottom: 0;
+      }
 
-    [slot=description] {
-      grid-area: description;
+      [slot=label] {
+        grid-area: title;
+      }
+
+      [slot=description] {
+        grid-area: description;
+      }
     }
   }
 }
@@ -1986,13 +2008,13 @@ The `SelectAllListBox` component can be reused to allow the user to toggle selec
 import {Checkbox} from 'react-aria-components';
 
 <SelectAllListBox>
-  <Checkbox>
+  <Checkbox style={{marginBottom: '8px'}}>
     <div className="checkbox">
       <svg viewBox="0 0 18 18" aria-hidden="true">
         <polyline points="1 9 7 14 15 4" />
       </svg>
     </div>
-    Select All
+    Unsubscribe
   </Checkbox>
   <ListBox selectionMode="multiple" aria-label="Ice cream flavors">
     <Item>Chocolate</Item>
@@ -2002,97 +2024,6 @@ import {Checkbox} from 'react-aria-components';
   </ListBox>
 </SelectAllListBox>
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-Checkbox {
-  --label-color: var(--spectrum-alias-text-color);
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --checkmark-color: white;
-
-  display: flex;
-  align-items: center;
-  gap: 0.571rem;
-  font-size: 1.143rem;
-  color: var(--label-color);
-  margin-bottom: 8px;
-
-  .checkbox {
-    width: 1.143rem;
-    height: 1.143rem;
-    border: 2px solid var(--deselected-color);
-    border-radius: 4px;
-    transition: all 200ms;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  & svg {
-    width: 1rem;
-    height: 1rem;
-    fill: none;
-    stroke: var(--checkmark-color);
-    stroke-width: 3px;
-    stroke-dasharray: 22px;
-    stroke-dashoffset: 66;
-    transition: all 200ms;
-  }
-
-  &[data-pressed] .checkbox {
-    border-color: var(--deselected-color-pressed);
-  }
-
-  &[data-selected],
-  &[data-indeterminate] {
-    .checkbox {
-      border-color: var(--selected-color);
-      background: var(--selected-color);
-    }
-
-    &[data-pressed] .checkbox {
-      border-color: var(--selected-color-pressed);
-      background: var(--selected-color-pressed);
-    }
-
-    & svg {
-      stroke-dashoffset: 44;
-    }
-  }
-
-  &[data-indeterminate] {
-    & svg {
-      stroke: none;
-      fill: var(--checkmark-color);
-    }
-  }
-
-  &[data-focus-visible] .checkbox {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Checkbox {
-    forced-color-adjust: none;
-
-    --label-color: ButtonText;
-    --deselected-color: ButtonBorder;
-    --deselected-color-pressed: ButtonBorder;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --checkmark-color: HighlightText;
-    --spectrum-alias-background-color-default: Canvas;
-  }
-}
-```
-
-</details>
 
 ### Custom children
 

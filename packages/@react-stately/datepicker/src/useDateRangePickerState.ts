@@ -12,11 +12,12 @@
 
 import {DateFormatter, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DateRange, DateRangePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {FieldOptions, getFormatOptions, getPlaceholderTime, isInvalid, useDefaultProps} from './utils';
+import {FieldOptions, getFormatOptions, getPlaceholderTime, getRangeValidationResult, useDefaultProps} from './utils';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {RangeValue, ValidationState} from '@react-types/shared';
 import {useControlledState} from '@react-stately/utils';
-import {useState} from 'react';
+import {useMemo, useState} from 'react';
 
 export interface DateRangePickerStateOptions<T extends DateValue = DateValue> extends DateRangePickerProps<T> {
   /**
@@ -27,7 +28,7 @@ export interface DateRangePickerStateOptions<T extends DateValue = DateValue> ex
 }
 
 type TimeRange = RangeValue<TimeValue>;
-export interface DateRangePickerState extends OverlayTriggerState {
+export interface DateRangePickerState extends OverlayTriggerState, FormValidationState {
   /** The currently selected date range. */
   value: DateRange | null,
   /** Sets the selected date range. */
@@ -99,7 +100,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
   };
 
   let v = (value?.start || value?.end || props.placeholderValue);
-  let [granularity] = useDefaultProps(v, props.granularity);
+  let [granularity, defaultTimeZone] = useDefaultProps(v, props.granularity);
   let hasTime = granularity === 'hour' || granularity === 'minute' || granularity === 'second';
   let shouldCloseOnSelect = props.shouldCloseOnSelect ?? true;
 
@@ -120,6 +121,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     });
     setSelectedDateRange(null);
     setSelectedTimeRange(null);
+    validation.commitValidation();
   };
 
   // Intercept setValue to make sure the Time section is not changed by date selection in Calendar
@@ -136,6 +138,7 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
       }
     } else if (range.start && range.end) {
       setValue(range);
+      validation.commitValidation();
     } else {
       setSelectedDateRange(range);
     }
@@ -153,17 +156,37 @@ export function useDateRangePickerState<T extends DateValue = DateValue>(props: 
     }
   };
 
-  let isValueInvalid = props.isInvalid || props.validationState === 'invalid'
-    || (value != null && (
-      isInvalid(value.start, props.minValue, props.maxValue) ||
-      isInvalid(value.end, props.minValue, props.maxValue) ||
-      (value.end != null && value.start != null && value.end.compare(value.start) < 0) ||
-      (value?.start && props.isDateUnavailable?.(value.start)) ||
-      (value?.end && props.isDateUnavailable?.(value.end))
-    ));
+  let showEra = (value?.start?.calendar.identifier === 'gregory' && value.start.era === 'BC') || (value?.end?.calendar.identifier === 'gregory' && value.end.era === 'BC');
+  let formatOpts = useMemo(() => ({
+    granularity,
+    timeZone: defaultTimeZone,
+    hideTimeZone: props.hideTimeZone,
+    hourCycle: props.hourCycle,
+    shouldForceLeadingZeros: props.shouldForceLeadingZeros,
+    showEra
+  }), [granularity, props.hourCycle, props.shouldForceLeadingZeros, defaultTimeZone, props.hideTimeZone, showEra]);
+
+  let {minValue, maxValue, isDateUnavailable} = props;
+  let builtinValidation = useMemo(() => getRangeValidationResult(
+    value,
+    minValue,
+    maxValue,
+    isDateUnavailable,
+    formatOpts
+  ), [value, minValue, maxValue, isDateUnavailable, formatOpts]);
+
+  let validation = useFormValidationState({
+    ...props,
+    value,
+    name: useMemo(() => [props.startName, props.endName], [props.startName, props.endName]),
+    builtinValidation
+  });
+
+  let isValueInvalid = validation.displayValidation.isInvalid;
   let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
+    ...validation,
     value,
     setValue,
     dateRange,

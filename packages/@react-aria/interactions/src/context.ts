@@ -19,5 +19,5 @@ interface IPressResponderContext extends PressProps {
   ref?: MutableRefObject<FocusableElement>
 }
 
-export const PressResponderContext = React.createContext<IPressResponderContext>(null);
+export const PressResponderContext = React.createContext<IPressResponderContext>({register: () => {}});
 PressResponderContext.displayName = 'PressResponderContext';
