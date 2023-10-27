@@ -72,6 +72,19 @@ let dynamicSubmenu = [
   {name: 'Lvl 1 Item 3'}
 ];
 
+let manyItemsSubmenu = [
+  {name: 'Lvl 1 Item 1'},
+  {name: 'Lvl 1 Item 2', children: [
+    ...[...Array(30)].map((_, i) => ({name: `Lvl 2 Item ${i + 1}`})),
+    {name: 'Lvl 2 Item 3', children: [
+      {name: 'Lvl 3 Item 1'},
+      {name: 'Lvl 3 Item 2'},
+      {name: 'Lvl 3 Item 3'}
+    ]}
+  ]},
+  ...[...Array(30)].map((_, i) => ({name: `Lvl 1 Item ${i + 3}`}))
+];
+
 // TODO: is this really the only way to define the dynamic render func? Kinda annoying that we have
 // to define this func separately and recursively call it, but I don't think we can do the same approach as
 // collapsible rows tableview since Menu isn't a collection component nor are we making the parent Menu tree collection
@@ -101,6 +114,17 @@ export const SubmenuDynamic = {
     )
   ),
   name: 'dynamic submenu items'
+};
+
+export const SubmenuManyItems = {
+  render: (args) => (
+    renderMenuTrigger(
+      <Menu items={manyItemsSubmenu} onAction={action('onAction')} {...args}>
+        {(item) => dynamicRenderFunc(item)}
+      </Menu>
+    )
+  ),
+  name: 'dynamic submenu with many items'
 };
 
 export const SubmenuStaticSections = {
