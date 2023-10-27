@@ -68,8 +68,8 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
     input.addEventListener('change', onChange);
     form?.addEventListener('reset', onReset);
     return () => {
-      input.removeEventListener('invalid', onInvalid);
-      input.removeEventListener('change', onChange);
+      input!.removeEventListener('invalid', onInvalid);
+      input!.removeEventListener('change', onChange);
       form?.removeEventListener('reset', onReset);
     };
   }, [ref, onInvalid, onChange, onReset, validationBehavior]);

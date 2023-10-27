@@ -37,7 +37,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
     ignoreEmulatedMouseEvents: false
   });
 
-  let onPointerDown = useEffectEvent((e: PointerEvent) => {
+  let onPointerDown = useEffectEvent((e) => {
     if (onInteractOutside && isValidEvent(e, ref)) {
       if (onInteractOutsideStart) {
         onInteractOutsideStart(e);
