@@ -36,7 +36,7 @@ export function useStepList<T>(props: SpectrumStepListProps<T>, state: StepListS
 
   const strings = useLocalizedStringFormatter(intlMessages);
   const stepListProps: HTMLAttributes<HTMLElement> = {
-    ...mergeProps(listProps, filterDOMProps(props)),
+    ...mergeProps(listProps, filterDOMProps(props, {labelable: true})),
     'aria-label': ariaLabel || strings.format('steplist')
   };
 

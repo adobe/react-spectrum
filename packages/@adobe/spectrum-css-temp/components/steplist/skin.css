@@ -107,12 +107,6 @@ governing permissions and limitations under the License.
           }
         }
       }
-      /* Step Focused */
-      &.is-keyboard-focused {
-        .spectrum-Steplist-marker-focus {
-          border-color: var(--spectrum-steplist-current-marker-color-key-focus)
-        }
-      }
       &:not(.is-selected):not([aria-disabled]) {
         cursor: pointer;
       }
