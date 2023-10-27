@@ -14,7 +14,7 @@ import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {ContextValue, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DateFieldContext} from './DateField';
-import {DatePickerState, DateRangePickerState, useDatePickerState, useDateRangePickerState} from 'react-stately';
+import {DatePickerState, DatePickerStateOptions, DateRangePickerState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
@@ -61,7 +61,7 @@ export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 
   state: DateRangePickerState
 }
 
-export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<DatePickerRenderProps>, SlotProps {}
+export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, Pick<DatePickerStateOptions<T>, 'shouldCloseOnSelect'>, RenderProps<DatePickerRenderProps>, SlotProps {}
 export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<DateRangePickerRenderProps>, SlotProps {}
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
