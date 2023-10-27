@@ -76,7 +76,7 @@ let manyItemsSubmenu = [
   {name: 'Lvl 1 Item 1'},
   {name: 'Lvl 1 Item 2', children: [
     ...[...Array(30)].map((_, i) => ({name: `Lvl 2 Item ${i + 1}`})),
-    {name: 'Lvl 2 Item 3', children: [
+    {name: 'Lvl 2 Item 31', children: [
       {name: 'Lvl 3 Item 1'},
       {name: 'Lvl 3 Item 2'},
       {name: 'Lvl 3 Item 3'}
