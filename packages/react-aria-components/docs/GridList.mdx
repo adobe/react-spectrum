@@ -47,29 +47,29 @@ type: component
 ## Example
 
 ```tsx example
-import {GridList, Item, Button} from 'react-aria-components';
+import {GridList, GridListItem, Button} from 'react-aria-components';
 
 <GridList aria-label="Favorite pokemon" selectionMode="multiple">
-  <Item textValue="Charizard">
+  <GridListItem textValue="Charizard">
     <MyCheckbox />
     Charizard
     <Button aria-label="Info">ⓘ</Button>
-  </Item>
-  <Item textValue="Blastoise">
+  </GridListItem>
+  <GridListItem textValue="Blastoise">
     <MyCheckbox />
     Blastoise
     <Button aria-label="Info">ⓘ</Button>
-  </Item>
-  <Item textValue="Venusaur">
+  </GridListItem>
+  <GridListItem textValue="Venusaur">
     <MyCheckbox />
     Venusaur
     <Button aria-label="Info">ⓘ</Button>
-  </Item>
-  <Item textValue="Pikachu">
+  </GridListItem>
+  <GridListItem textValue="Pikachu">
     <MyCheckbox />
     Pikachu
     <Button aria-label="Info">ⓘ</Button>
-  </Item>
+  </GridListItem>
 </GridList>
 ```
 
@@ -119,7 +119,7 @@ import {GridList, Item, Button} from 'react-aria-components';
       box-shadow: 0 0 0 1px var(--highlight-background);
     }
 
-    .react-aria-Item {
+    .react-aria-GridListItem {
       padding: 0.286rem 0.286rem 0.286rem 0.571rem;
       border-radius: 6px;
       outline: none;
@@ -196,14 +196,14 @@ import {GridList, Item, Button} from 'react-aria-components';
     @supports selector(:has(.foo)) {
       gap: 0;
 
-      .react-aria-Item[data-selected]:has(+ [data-selected]),
-      .react-aria-Item[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) {
+      .react-aria-GridListItem[data-selected]:has(+ [data-selected]),
+      .react-aria-GridListItem[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) {
         border-end-start-radius: 0;
         border-end-end-radius: 0;
       }
 
-      .react-aria-Item[data-selected] + [data-selected],
-      .react-aria-Item[data-selected] + .react-aria-DropIndicator + [data-selected] {
+      .react-aria-GridListItem[data-selected] + [data-selected],
+      .react-aria-GridListItem[data-selected] + .react-aria-DropIndicator + [data-selected] {
         border-start-start-radius: 0;
         border-start-end-radius: 0;
       }
@@ -221,7 +221,7 @@ import {GridList, Item, Button} from 'react-aria-components';
         }
       }
     }
-    :where(.react-aria-Item) .react-aria-Checkbox {
+    :where(.react-aria-GridListItem) .react-aria-Checkbox {
       --selected-color: white;
       --selected-color-pressed: #ddd;
       --checkmark-color: slateblue;
@@ -300,13 +300,13 @@ A grid list consists of a container element, with rows of data inside. The rows 
 If the list supports row selection, each row can optionally include a selection checkbox.
 
 ```tsx
-import {GridList, Item, Checkbox, Button} from 'react-aria-components';
+import {GridList, GridListItem, Checkbox, Button} from 'react-aria-components';
 
 <GridList>
-  <Item>
+  <GridListItem>
     <Button slot="drag" />
     <Checkbox slot="selection" />
-  </Item>
+  </GridListItem>
 </GridList>
 ```
 
@@ -369,10 +369,10 @@ A `GridList` uses the following components, which may also be used standalone or
 
 If you will use a GridList in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag handle when [drag and drop](#drag-and-drop) is enabled.
+This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `GridListItem` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag handle when [drag and drop](#drag-and-drop) is enabled.
 
 ```tsx example export=true
-import type {GridListProps, ItemProps} from 'react-aria-components';
+import type {GridListProps, GridListItemProps} from 'react-aria-components';
 import {Button, Checkbox} from 'react-aria-components';
 
 function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
@@ -383,17 +383,17 @@ function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
   );
 }
 
-function MyItem({children, ...props}: ItemProps) {
+function MyItem({children, ...props}: GridListItemProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
-    <Item textValue={textValue} {...props}>
+    <GridListItem textValue={textValue} {...props}>
       {({selectionMode, selectionBehavior, allowsDragging}) => <>
         {/* Add elements for drag and drop and selection. */}
         {allowsDragging && <Button slot="drag">≡</Button>}
         {selectionMode === 'multiple' && selectionBehavior === 'toggle' && <MyCheckbox />}
         {children}
       </>}
-    </Item>
+    </GridListItem>
   );
 }
 
@@ -594,7 +594,7 @@ This behavior is slightly different when `selectionBehavior="replace"`, where si
 
 ### Links
 
-Items in a GridList may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
+Items in a GridList may also be links to another page or website. This can be achieved by passing the `href` prop to the `<GridListItem>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
 
 ```tsx example
 <MyGridList aria-label="Links" selectionMode="multiple">
@@ -606,14 +606,14 @@ Items in a GridList may also be links to another page or website. This can be ac
 ```
 
 ```css hidden
-.react-aria-Item[data-href] {
+.react-aria-GridListItem[data-href] {
   cursor: pointer;
 }
 ```
 
 #### Client side routing
 
-The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<GridListItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Disabled items
 
@@ -764,7 +764,7 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Item {
+.react-aria-GridListItem {
   &[data-allows-dragging] {
     padding-left: 4px;
   }
@@ -974,7 +974,7 @@ function Example() {
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DraggableGridList />
       <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => 'Drop items here'}>
-        {item => <Item>{item.name}</Item>}
+        {item => <GridListItem>{item.name}</GridListItem>}
       </MyGridList>
     </div>
   );
@@ -1026,7 +1026,7 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Item[data-drop-target] {
+.react-aria-GridListItem[data-drop-target] {
   box-shadow: inset 0 0 0 2px var(--highlight-background);
   background: rgb(from slateblue r g b / 15%);
 }
@@ -1069,7 +1069,7 @@ function Example() {
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DraggableGridList />
       <MyGridList aria-label="Droppable list" items={list.items} dragAndDropHooks={dragAndDropHooks}>
-        {item => <Item>{item.name}</Item>}
+        {item => <GridListItem>{item.name}</GridListItem>}
       </MyGridList>
     </div>
   );
@@ -1142,7 +1142,7 @@ function Example() {
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DraggableGridList />
       <MyGridList aria-label="Droppable list" items={list.items} dragAndDropHooks={dragAndDropHooks}>
-        {item => <Item>{item.name}</Item>}
+        {item => <GridListItem>{item.name}</GridListItem>}
       </MyGridList>
     </div>
   );
@@ -1721,14 +1721,14 @@ function DndGridList(props: DndGridListProps) {
 
 <PropTable component={docs.exports.GridList} links={docs.links} />
 
-### Item
+### GridListItem
 
-An `<Item>` defines a single option within a `<GridList>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for typeahead in the GridList.
+A `<GridListItem>` defines a single option within a `<GridList>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for typeahead in the GridList.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
-<PropTable component={docs.exports.Item} links={docs.links} />
+<PropTable component={docs.exports.GridListItem} links={docs.links} />
 
 </details>
 
@@ -1753,11 +1753,11 @@ A custom `className` can also be specified on any component. This overrides the 
 In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
-.react-aria-Item[data-selected] {
+.react-aria-GridListItem[data-selected] {
   /* ... */
 }
 
-.react-aria-Item[data-focused] {
+.react-aria-GridListItem[data-focused] {
   /* ... */
 }
 ```
@@ -1765,22 +1765,22 @@ In addition, some components support multiple UI states (e.g. pressed, hovered, 
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<Item className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+<GridListItem className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
   Item
-</Item>
+</GridListItem>
 ```
 
 Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkbox only when selection is enabled.
 
 ```jsx
-<Item>
+<GridListItem>
   {({selectionMode}) => (
     <>
       {selectionMode !== 'none' && <Checkbox />}
       Item
     </>
   )}
-</Item>
+</GridListItem>
 ```
 
 The states and selectors for each component used in a `GridList` are documented below.
@@ -1791,21 +1791,21 @@ A `GridList` can be targeted with the `.react-aria-GridList` CSS selector, or by
 
 <StateTable properties={docs.exports.GridListRenderProps.properties} />
 
-### Item
+### GridListItem
 
-An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+A `GridListItem` can be targeted with the `.react-aria-GridListItem` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
-<StateTable properties={docs.exports.ItemRenderProps.properties} showOptional />
+<StateTable properties={docs.exports.GridListItemRenderProps.properties} showOptional />
 
 ## Advanced customization
 
 ### Composition
 
-If you need to customize one of the components within a `GridList`, such as `Item` or `Section`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+If you need to customize one of the components within a `GridList`, such as `GridListItem` or `Section`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
 
 ```tsx
 function MyItem(props) {
-  return <Item {...props} className="my-item" />
+  return <GridListItem {...props} className="my-item" />
 }
 ```
 
@@ -1882,12 +1882,12 @@ Now you can use `MyCustomCheckbox` within a `GridList`, in place of the builtin 
 
 ```tsx
 <GridList>
-  <Item>
+  <GridListItem>
     {/*- begin highlight -*/}
     <MyCustomCheckbox slot="selection" />
     {/*- end highlight -*/}
     {/* ... */}
-  </Item>
+  </GridListItem>
 </GridList>
 ```
 

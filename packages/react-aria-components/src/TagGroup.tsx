@@ -12,7 +12,7 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CollectionDocumentContext, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
+import {CollectionDocumentContext, CollectionProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
@@ -216,7 +216,7 @@ function TagItem({item}) {
     isDisabled: !states.allowsSelection
   });
 
-  let props: ItemProps<unknown> = item.props;
+  let props: TagProps = item.props;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,

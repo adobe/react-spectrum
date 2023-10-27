@@ -13,12 +13,13 @@ import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicat
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
-import {ContextValue, defaultSlot, forwardRefType, Provider, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
+import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {filterDOMProps, isIOS, isWebKit, useObjectRef} from '@react-aria/utils';
+import {LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, Key, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface GridListRenderProps {
@@ -93,7 +94,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     children: (item: Node<T>) => {
       switch (item.type) {
         case 'item':
-          return <GridListItem item={item} />;
+          return <GridListRow item={item} />;
         default:
           throw new Error('Unsupported node type in GridList: ' + item.type);
       }
@@ -243,7 +244,30 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 const _GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(GridList);
 export {_GridList as GridList};
 
-function GridListItem({item}) {
+export interface GridListItemRenderProps extends ItemRenderProps {}
+
+export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps {
+  /** The unique id of the item. */
+  id?: Key,
+  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  value?: T,
+  /** A string representation of the item's contents, used for features like typeahead. */
+  textValue?: string,
+  /** An accessibility label for this item. */
+  'aria-label'?: string
+}
+
+function GridListItem<T extends object>(props: GridListItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+  return useSSRCollectionNode('item', props, ref, props.children);
+}
+
+/**
+ * A GridListItem represents an individual item in a GridList.
+ */
+const _GridListItem = /*#__PURE__*/ (forwardRef as forwardRefType)(GridListItem);
+export {_GridListItem as GridListItem};
+
+function GridListRow({item}) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
@@ -280,13 +304,13 @@ function GridListItem({item}) {
     }, dropState, dropIndicatorRef);
   }
 
-  let props: ItemProps<unknown> = item.props;
+  let props: GridListItemProps<unknown> = item.props;
   let isDragging = dragState && dragState.isDragging(item.key);
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
     children: item.rendered,
-    defaultClassName: 'react-aria-Item',
+    defaultClassName: 'react-aria-GridListItem',
     values: {
       ...states,
       isHovered,
@@ -310,7 +334,7 @@ function GridListItem({item}) {
 
   useEffect(() => {
     if (!item.textValue) {
-      console.warn('A `textValue` prop is required for <Item> elements with non-plain text children in order to support accessibility features such as type to select.');
+      console.warn('A `textValue` prop is required for <GridListItem> elements with non-plain text children in order to support accessibility features such as type to select.');
     }
   }, [item.textValue]);
 
