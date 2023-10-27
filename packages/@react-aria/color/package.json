@@ -30,6 +30,7 @@
     "@react-aria/utils": "^3.21.1",
     "@react-aria/visually-hidden": "^3.8.6",
     "@react-stately/color": "^3.4.4",
+    "@react-stately/form": "3.0.0-alpha.1",
     "@react-types/color": "3.0.0-beta.20",
     "@react-types/shared": "^3.21.0",
     "@react-types/slider": "^3.6.2",

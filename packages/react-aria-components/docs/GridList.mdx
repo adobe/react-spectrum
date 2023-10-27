@@ -75,233 +75,200 @@ import {GridList, Item, Button} from 'react-aria-components';
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+* import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './Button.mdx';
+@import './Checkbox.mdx';
+@import './ToggleButton.mdx';
+```
 
 ```css
-.react-aria-GridList {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+@layer gridlist {
+  .react-aria-GridList {
+    --highlight-background: slateblue;
+    --highlight-foreground: white;
+    --border-color: var(--spectrum-global-color-gray-400);
+    --background-color: var(--page-background);
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  max-height: inherit;
-  overflow: auto;
-  padding: 4px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-  width: 250px;
-  max-height: 300px;
-  min-height: 100px;
-  box-sizing: border-box;
-
-  &[data-empty] {
-    align-items: center;
-    justify-content: center;
-    font-style: italic;
-  }
-
-  &[data-focus-visible] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
-  }
-
-  .react-aria-Item {
-    padding: 0.286rem 0.286rem 0.286rem 0.571rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: inherit;
+    overflow: auto;
+    padding: 4px;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
+    background: var(--background-color);
     outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    transform: translateZ(0);
+    width: 250px;
+    max-height: 300px;
+    min-height: 100px;
+    box-sizing: border-box;
+
+    &[data-empty] {
+      align-items: center;
+      justify-content: center;
+      font-style: italic;
+    }
 
     &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px var(--highlight-background);
+      border-color: var(--highlight-background);
+      box-shadow: 0 0 0 1px var(--highlight-background);
     }
 
-    &[data-pressed] {
-      background: var(--spectrum-global-color-gray-200);
-    }
-
-    &[data-selected] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
+    .react-aria-Item {
+      padding: 0.286rem 0.286rem 0.286rem 0.571rem;
+      border-radius: 6px;
+      outline: none;
+      cursor: default;
+      color: var(--text-color);
+      font-size: 1.072rem;
+      position: relative;
+      transform: translateZ(0);
 
       &[data-focus-visible] {
-        box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
+        box-shadow: inset 0 0 0 2px var(--highlight-background);
+      }
+
+      &[data-pressed] {
+        background: var(--spectrum-global-color-gray-200);
+      }
+
+      &[data-selected] {
+        background: var(--highlight-background);
+        color: var(--highlight-foreground);
+
+        &[data-focus-visible] {
+          box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
+        }
+
+        .react-aria-Button {
+          color: var(--highlight-foreground);
+          --focus-ring-color: var(--highlight-foreground);
+          --hover-highlight: rgb(255 255 255 / 0.1);
+          --active-highlight: rgb(255 255 255 / 0.2);
+        }
+      }
+
+      &[data-disabled] {
+        color: var(--text-color-disabled);
+      }
+
+      [role=gridcell] {
+        display: flex;
+        align-items: center;
+        gap: 0.571rem;
+        min-height: 28px;
+      }
+
+      .react-aria-Button:not([slot]) {
+        margin-left: auto;
+      }
+      .react-aria-Button {
+        background: transparent;
+        border: none;
+        font-size: 1.2rem;
+        line-height: 1.2em;
+        outline: none;
+        padding: 0.286rem 0.429rem;
+        transition: background 200ms;
+        --hover-highlight: var(--spectrum-alias-highlight-hover);
+        --active-highlight: var(--spectrum-alias-highlight-active);
+
+        &[data-hovered] {
+          background: var(--hover-highlight);
+        }
+
+        &[data-pressed] {
+          background: var(--active-highlight);
+        }
+
+        &[data-focus-visible] {
+          box-shadow: 0 0 0 2px var(--focus-ring-color);
+        }
+      }
+    }
+
+    /* join selected items if :has selector is supported */
+    @supports selector(:has(.foo)) {
+      gap: 0;
+
+      .react-aria-Item[data-selected]:has(+ [data-selected]),
+      .react-aria-Item[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) {
+        border-end-start-radius: 0;
+        border-end-end-radius: 0;
+      }
+
+      .react-aria-Item[data-selected] + [data-selected],
+      .react-aria-Item[data-selected] + .react-aria-DropIndicator + [data-selected] {
+        border-start-start-radius: 0;
+        border-start-end-radius: 0;
+      }
+    }
+
+    .react-aria-Checkbox {
+      --focus-ring-color: slateblue;
+      &[data-focus-visible] .checkbox {
+        box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
+      }
+      &[data-selected],
+      &[data-indeterminate] {
+        &[data-focus-visible] .checkbox {
+          box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--selected-color);
+        }
+      }
+    }
+    :where(.react-aria-Item) .react-aria-Checkbox {
+      --selected-color: white;
+      --selected-color-pressed: #ddd;
+      --checkmark-color: slateblue;
+      --background-color: var(--highlight-background);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-GridList {
+      forced-color-adjust: none;
+
+      --highlight-background: Highlight;
+      --highlight-foreground: HighlightText;
+      --border-color: ButtonBorder;
+      --background-color: ButtonFace;
+      --text-color: ButtonText;
+      --text-color-disabled: GrayText;
+
+      .react-aria-Checkbox {
+        forced-color-adjust: none;
+
+        --deselected-color: ButtonBorder;
+        --deselected-color-pressed: ButtonBorder;
+        --selected-color: Highlight;
+        --selected-color-pressed: Highlight;
+        --checkmark-color: HighlightText;
+        --spectrum-alias-background-color-default: Canvas;
+        --focus-ring-color: Highlight;
+
+        &[data-disabled] {
+          opacity: 1;
+          --deselected-color: GrayText;
+          --selected-color: GrayText;
+        }
+      }
+
+      .react-aria-Checkbox {
+        --selected-color: ButtonFace;
+        --selected-color-pressed: ButtonFace;
+        --checkmark-color: ButtonText;
       }
 
       .react-aria-Button {
-        color: var(--highlight-foreground);
-        --focus-ring-color: var(--highlight-foreground);
-        --hover-highlight: rgb(255 255 255 / 0.1);
-        --active-highlight: rgb(255 255 255 / 0.2);
+        forced-color-adjust: none;
+        --focus-ring-color: Highlight;
       }
     }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    [role=gridcell] {
-      display: flex;
-      align-items: center;
-      gap: 0.571rem;
-      min-height: 28px;
-    }
-
-    .react-aria-Button:not([slot]) {
-      margin-left: auto;
-    }
-  }
-
-  /* join selected items if :has selector is supported */
-  @supports selector(:has(.foo)) {
-    gap: 0;
-
-    .react-aria-Item[data-selected]:has(+ [data-selected]),
-    .react-aria-Item[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) {
-      border-end-start-radius: 0;
-      border-end-end-radius: 0;
-    }
-
-    .react-aria-Item[data-selected] + [data-selected],
-    .react-aria-Item[data-selected] + .react-aria-DropIndicator + [data-selected] {
-      border-start-start-radius: 0;
-      border-start-end-radius: 0;
-    }
-  }
-}
-
-.react-aria-Checkbox {
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --selected-color: white;
-  --selected-color-pressed: #ddd;
-  --checkmark-color: slateblue;
-  --focus-ring-color: slateblue;
-
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid var(--deselected-color);
-  border-radius: 4px;
-  transition: all 200ms;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  & svg {
-    width: 0.857rem;
-    height: 0.857rem;
-    fill: none;
-    stroke: var(--checkmark-color);
-    stroke-width: 3px;
-    stroke-dasharray: 22px;
-    stroke-dashoffset: 66;
-    transition: all 200ms;
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
-  }
-
-  &[data-pressed] {
-    border-color: var(--deselected-color-pressed);
-  }
-
-  &[data-selected] {
-    border-color: var(--selected-color);
-    background: var(--selected-color);
-
-    &[data-pressed] {
-      border-color: var(--selected-color-pressed);
-      background: var(--selected-color-pressed);
-    }
-
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--focus-ring-color), 0 0 0 4px var(--selected-color);
-    }
-
-    & svg {
-      stroke-dashoffset: 44;
-    }
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
-  }
-}
-
-.react-aria-Button {
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.2rem;
-  text-align: center;
-  line-height: 1.2em;
-  margin: 0;
-  outline: none;
-  padding: 0.286rem 0.429rem;
-  transition: background 200ms;
-  color: var(--spectrum-alias-text-color);
-  --focus-ring-color: slateblue;
-  --hover-highlight: var(--spectrum-alias-highlight-hover);
-  --active-highlight: var(--spectrum-alias-highlight-active);
-
-  &[data-hovered] {
-    background: var(--hover-highlight);
-  }
-
-  &[data-pressed] {
-    background: var(--active-highlight);
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--focus-ring-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-GridList {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-  }
-
-  .react-aria-Checkbox {
-    forced-color-adjust: none;
-
-    --deselected-color: ButtonBorder;
-    --deselected-color-pressed: ButtonBorder;
-    --selected-color: ButtonFace;
-    --selected-color-pressed: ButtonFace;
-    --checkmark-color: ButtonText;
-    --spectrum-alias-background-color-default: Canvas;
-    --focus-ring-color: Highlight;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
-    }
-  }
-
-  .react-aria-Button {
-    forced-color-adjust: none;
-    --focus-ring-color: Highlight;
   }
 }
 ```
@@ -431,7 +398,20 @@ function MyItem({children, ...props}: ItemProps) {
 }
 
 function MyCheckbox() {
-  return <Checkbox slot="selection"><svg viewBox="0 0 18 18" aria-hidden="true"><polyline points="1 9 7 14 15 4" /></svg></Checkbox>;
+  return (
+    <Checkbox slot="selection">
+      {({isIndeterminate}) => (
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" />
+            }
+          </svg>
+        </div>
+      )}
+    </Checkbox>
+  );
 }
 
 <MyGridList aria-label="Ice cream flavors" selectionMode="multiple">
@@ -1862,7 +1842,7 @@ The `Selectable` component can be reused to make the selection mode of any neste
 import {ToggleButton} from 'react-aria-components';
 
 <Selectable>
-  <ToggleButton>Select</ToggleButton>
+  <ToggleButton style={{marginBottom: '8px'}}>Select</ToggleButton>
   <GridList aria-label="Ice cream flavors">
     <MyItem>Chocolate</MyItem>
     <MyItem>Mint</MyItem>
@@ -1871,73 +1851,6 @@ import {ToggleButton} from 'react-aria-components';
   </GridList>
 </Selectable>
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-ToggleButton {
-  --deselected-border-color: var(--spectrum-gray-400);
-  --deselected-border-color-pressed: var(--spectrum-gray-500);
-  --deselected-background-color: var(--spectrum-gray-50);
-  --deselected-background-color-pressed: var(--spectrum-gray-100);
-  --selected-color: var(--spectrum-gray-800);
-  --selected-color-pressed: var(--spectrum-gray-900);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-selected: var(--spectrum-gray-50);
-
-  color: var(--text-color);
-  background: var(--deselected-background-color);
-  border: 1px solid var(--deselected-border-color);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  text-align: center;
-  margin: 0 0 8px 0;
-  outline: none;
-  padding: 4px 12px;
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--deselected-background-color-pressed);
-    border-color: var(--deselected-border-color-pressed);
-  }
-
-  &[aria-pressed=true] {
-    background: var(--selected-color);
-    border-color: var(--selected-color);
-    color: var(--text-color-selected);
-
-    &[data-pressed] {
-      background: var(--selected-color-pressed);
-      border-color: var(--selected-color-pressed);
-    }
-  }
-
-  &[data-focus-visible] {
-    border-color: var(--selected-color);
-    box-shadow: 0 0 0 1px var(--selected-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ToggleButton {
-    forced-color-adjust: none;
-
-    --deselected-border-color: ButtonBorder;
-    --deselected-border-color-pressed: ButtonBorder;
-    --deselected-background-color: ButtonFace;
-    --deselected-background-color-pressed: ButtonFace;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-  }
-}
-```
-
-</details>
 
 ### Custom children
 

@@ -56,131 +56,97 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+* import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './NumberField.mdx';
+```
 
 ```css
-.react-aria-Slider {
-  --label-color: var(--spectrum-alias-text-color);
-  --track-color: gray;
-  --thumb-color: slateblue;
-  --thumb-color-dragging: lch(from slateblue calc(l - 10%) c h);
-  --focus-ring-color: slateblue;
-
-  display: grid;
-  grid-template-areas: "label output"
-                       "track track";
-  grid-template-columns: 1fr auto;
-  max-width: 300px;
-  color: var(--label-color);
-
-  .react-aria-Label {
-    grid-area: label;
-  }
-
-  .react-aria-SliderOutput {
-    grid-area: output;
-  }
-
-  .react-aria-SliderTrack {
-    grid-area: track;
-    position: relative;
-
-    /* track line */
-    &:before {
-      content: '';
-      display: block;
-      position: absolute;
-      background: var(--track-color);
-    }
-  }
-
-  .react-aria-SliderThumb {
-    width: 1.429rem;
-    height: 1.429rem;
-    border-radius: 50%;
-    background: var(--thumb-color);
-    border: 2px solid var(--spectrum-alias-background-color-default);
-
-    &[data-dragging] {
-      background: var(--thumb-color-dragging);
-    }
-
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--focus-ring-color);
-    }
-  }
-
-  &[data-orientation=horizontal] {
-    flex-direction: column;
-    width: 300px;
-
-    .react-aria-SliderTrack {
-      height: 30px;
-      width: 100%;
-
-      &:before {
-        height: 3px;
-        width: 100%;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-
-    .react-aria-SliderThumb {
-      top: 50%;
-    }
-  }
-
-  &[data-orientation=vertical] {
-    height: 150px;
-    display: block;
-
-    .react-aria-Label,
-    .react-aria-SliderOutput {
-      display: none;
-    }
-
-    .react-aria-SliderTrack {
-      width: 30px;
-      height: 100%;
-
-      &:before {
-        width: 3px;
-        height: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-      }
-    }
-
-    .react-aria-SliderThumb {
-      left: 50%;
-    }
-  }
-
-  &[data-disabled] {
-    .react-aria-SliderTrack {
-      opacity: 0.4;
-    }
-  }
-}
-
-@media (forced-colors: active) {
+@layer slider {
   .react-aria-Slider {
-    forced-color-adjust: none;
+    --label-color: var(--spectrum-alias-text-color);
+    --track-color: gray;
+    --thumb-color: slateblue;
+    --thumb-color-dragging: lch(from slateblue calc(l - 10%) c h);
+    --focus-ring-color: slateblue;
 
-    --label-color: ButtonText;
-    --track-color: ButtonBorder;
-    --thumb-color: ButtonBorder;
-    --thumb-color-dragging: Highlight;
-    --focus-ring-color: Highlight;
-    --spectrum-alias-background-color-default: Canvas;
+    display: grid;
+    grid-template-areas: "label output"
+                         "track track";
+    grid-template-columns: 1fr auto;
+    max-width: 300px;
+    color: var(--label-color);
 
-    &[data-disabled] {
-      --track-color: GrayText;
-      --thumb-color: GrayText;
-      --label-color: GrayText;
-      & .react-aria-SliderTrack {
-        opacity: 1;
+    .react-aria-Label {
+      grid-area: label;
+    }
+
+    .react-aria-SliderOutput {
+      grid-area: output;
+    }
+
+    .react-aria-SliderTrack {
+      grid-area: track;
+      position: relative;
+
+      /* track line */
+      &:before {
+        content: '';
+        display: block;
+        position: absolute;
+        background: var(--track-color);
       }
+    }
+
+    .react-aria-SliderThumb {
+      width: 1.429rem;
+      height: 1.429rem;
+      border-radius: 50%;
+      background: var(--thumb-color);
+      border: 2px solid var(--spectrum-alias-background-color-default);
+
+      &[data-dragging] {
+        background: var(--thumb-color-dragging);
+      }
+
+      &[data-focus-visible] {
+        box-shadow: 0 0 0 2px var(--focus-ring-color);
+      }
+    }
+
+    &[data-orientation=horizontal] {
+      flex-direction: column;
+      width: 300px;
+
+      .react-aria-SliderTrack {
+        height: 30px;
+        width: 100%;
+
+        &:before {
+          height: 3px;
+          width: 100%;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+
+      .react-aria-SliderThumb {
+        top: 50%;
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-Slider {
+      forced-color-adjust: none;
+
+      --label-color: ButtonText;
+      --track-color: ButtonBorder;
+      --thumb-color: ButtonBorder;
+      --thumb-color-dragging: Highlight;
+      --focus-ring-color: Highlight;
+      --spectrum-alias-background-color-default: Canvas;
     }
   }
 }
@@ -400,6 +366,43 @@ This example also uses `aria-label` rather than `label` to create a slider with 
   step={0.01} />
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer slider {
+  .react-aria-Slider {
+    &[data-orientation=vertical] {
+      height: 150px;
+      display: block;
+
+      .react-aria-Label,
+      .react-aria-SliderOutput {
+        display: none;
+      }
+
+      .react-aria-SliderTrack {
+        width: 30px;
+        height: 100%;
+
+        &:before {
+          width: 3px;
+          height: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+      }
+
+      .react-aria-SliderThumb {
+        left: 50%;
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ### Value formatting
 
 Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
@@ -422,6 +425,36 @@ A slider can be disabled using the `isDisabled` prop.
   defaultValue={25}
   isDisabled />
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer slider {
+  .react-aria-Slider {
+    &[data-disabled] {
+      .react-aria-SliderTrack {
+        opacity: 0.4;
+      }
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-Slider {
+      &[data-disabled] {
+        --track-color: GrayText;
+        --thumb-color: GrayText;
+        --label-color: GrayText;
+        & .react-aria-SliderTrack {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}
+```
+
+</details>
 
 ## Props
 
@@ -643,44 +676,18 @@ function SliderNumberField() {
   </SliderTrack>
 </Slider>
 ```
-
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
 .react-aria-Input {
-  --field-border: var(--spectrum-alias-border-color);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --focus-ring-color: slateblue;
-
-  padding: 0.286rem;
-  margin: 0;
-  border: 1px solid var(--field-border);
   border-radius: 6px;
-  background: var(--field-background);
-  font-size: 1rem;
-  color: var(--text-color);
   width: 3ch;
-
-  &[data-focused] {
-    outline: none;
-    border-color: var(--focus-ring-color);
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Input {
-    --field-border: ButtonBorder;
-    --field-background: Field;
-    --text-color: FieldText;
-    --focus-ring-color: Highlight;
-  }
 }
 ```
 
 </details>
+
 
 ### Hooks
 

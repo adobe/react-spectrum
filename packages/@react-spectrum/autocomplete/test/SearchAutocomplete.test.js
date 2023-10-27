@@ -15,6 +15,7 @@ import {act, fireEvent, pointerMap, render, screen, triggerPress, waitFor, withi
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import Filter from '@spectrum-icons/workflow/Filter';
+import {Form} from '@react-spectrum/form';
 import {Item, SearchAutocomplete, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -2439,6 +2440,544 @@ describe('SearchAutocomplete', function () {
         let progressSpinner = within(listbox).getByRole('progressbar');
         expect(progressSpinner).toBeTruthy();
         expect(progressSpinner).toHaveAttribute('aria-label', 'Loading more…');
+      });
+    });
+  });
+
+  describe('forms', () => {
+    describe('desktop', () => {
+      beforeAll(function () {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+      });
+
+      afterAll(function () {
+        jest.clearAllMocks();
+      });
+
+      it('should support form reset', async () => {
+        let {getByRole, getByTestId} = render(
+          <form>
+            <ExampleSearchAutocomplete name="test" />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+
+        let combobox = getByRole('combobox');
+        expect(combobox).toHaveAttribute('name', 'test');
+        await user.tab();
+        await user.keyboard('Tw');
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        let items = within(listbox).getAllByRole('option');
+        await user.click(items[0]);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(combobox).toHaveValue('Two');
+
+        let button = getByTestId('reset');
+        await user.click(button);
+        expect(combobox).toHaveValue('');
+      });
+
+      describe('validation', () => {
+        describe('validationBehavior=native', () => {
+          it('supports isRequired', async () => {
+            let {getByTestId, getByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native"  />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).toHaveAttribute('required');
+            expect(input).not.toHaveAttribute('aria-required');
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(false);
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+            await user.tab();
+            await user.keyboard('Tw');
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).toHaveAttribute('aria-describedby');
+
+            await user.tab();
+            expect(input).not.toHaveAttribute('aria-describedby');
+          });
+
+          it('supports validate function', async () => {
+            let {getByTestId, getByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" defaultInputValue="Two" validationBehavior="native" validate={v => v === 'Two' ? 'Invalid value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(false);
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+            await user.tab();
+            await user.keyboard('On');
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).toHaveAttribute('aria-describedby');
+
+            await user.tab();
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+
+          it('supports server validation', async () => {
+            function Test() {
+              let [serverErrors, setServerErrors] = React.useState({});
+              let onSubmit = e => {
+                e.preventDefault();
+                setServerErrors({
+                  value: 'Invalid value.'
+                });
+              };
+
+              return (
+                <Provider theme={theme}>
+                  <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                    <ExampleSearchAutocomplete data-testid="input" name="value" validationBehavior="native" />
+                    <Button type="submit" data-testid="submit">Submit</Button>
+                  </Form>
+                </Provider>
+              );
+            }
+
+            let {getByTestId, getByRole} = render(<Test />);
+
+            let input = getByTestId('input');
+            expect(input).not.toHaveAttribute('aria-describedby');
+
+            await user.click(getByTestId('submit'));
+
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
+            expect(input.validity.valid).toBe(false);
+
+            await user.tab({shift: true});
+            await user.keyboard('Tw');
+
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).toHaveAttribute('aria-describedby');
+            await user.tab();
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+
+          it('supports customizing native error messages', async () => {
+            let {getByTestId} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+          });
+        });
+
+        describe('validationBehavior=aria', () => {
+          it('supports validate function', async () => {
+            let {getByTestId, getByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" defaultInputValue="Two" validate={v => v === 'Two' ? 'Invalid value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(input).toHaveAttribute('aria-invalid', 'true');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+            expect(input.validity.valid).toBe(true);
+
+            await user.tab();
+            await user.keyboard('On');
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input).not.toHaveAttribute('aria-invalid');
+          });
+
+          it('supports server validation', async () => {
+            let {getByTestId, getByRole} = render(
+              <Provider theme={theme}>
+                <Form validationErrors={{value: 'Invalid value'}}>
+                  <ExampleSearchAutocomplete data-testid="input" name="value" />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(input).toHaveAttribute('aria-invalid', 'true');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+            await user.tab();
+            await user.keyboard('Tw');
+
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            await user.tab();
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input).not.toHaveAttribute('aria-invalid');
+          });
+
+          it('only commits on blur if the value changed', async () => {
+            let {getByTestId} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native"  />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).toHaveAttribute('required');
+            expect(input).not.toHaveAttribute('aria-required');
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(false);
+
+            await user.tab();
+            await user.tab({shift: true});
+            expect(input).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+          });
+        });
+      });
+    });
+
+    describe('mobile', () => {
+      beforeEach(() => {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+      });
+
+      afterEach(() => {
+        act(() => jest.runAllTimers());
+        jest.clearAllMocks();
+      });
+
+      it('should support form reset', async () => {
+        let {getByRole, getAllByRole, getByTestId} = render(
+          <form>
+            <ExampleSearchAutocomplete name="test" />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+
+        let button = getAllByRole('button')[0];
+
+        await user.click(button);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        let combobox = getByRole('searchbox');
+        expect(combobox).not.toHaveAttribute('name');
+        let listbox = getByRole('listbox');
+
+        let items = within(listbox).getAllByRole('option');
+        await user.click(items[0]);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let input = document.querySelector('input[name=test]');
+        expect(input).toHaveValue('One');
+
+        let reset = getByTestId('reset');
+        await user.click(reset);
+        expect(input).toHaveValue('');
+      });
+
+      describe('validation', () => {
+        describe('validationBehavior=native', () => {
+          it('supports isRequired', async () => {
+            let {getByTestId, getByRole, getAllByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete name="test" isRequired validationBehavior="native"  />
+                </Form>
+              </Provider>
+            );
+
+            let input = document.querySelector('input[name=test]');
+            expect(input).toHaveAttribute('required');
+            expect(input).not.toHaveAttribute('aria-required');
+            expect(input.validity.valid).toBe(false);
+
+            let button = getAllByRole('button')[0];
+            expect(button).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+            await user.click(button);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+          });
+
+          it('supports validate function', async () => {
+            let {getByTestId, getByRole, getAllByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete name="test" defaultInputValue="Two" validationBehavior="native" validate={v => v === 'Two' ? 'Invalid value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let input = document.querySelector('input[name=test]');
+            expect(input.validity.valid).toBe(false);
+
+            let button = getAllByRole('button')[0];
+            expect(button).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+            await user.click(button);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+
+          it('supports server validation', async () => {
+            function Test() {
+              let [serverErrors, setServerErrors] = React.useState({});
+              let onSubmit = e => {
+                e.preventDefault();
+                setServerErrors({
+                  value: 'Invalid value.'
+                });
+              };
+
+              return (
+                <Provider theme={theme}>
+                  <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                    <ExampleSearchAutocomplete name="value" validationBehavior="native" />
+                    <Button type="submit" data-testid="submit">Submit</Button>
+                  </Form>
+                </Provider>
+              );
+            }
+
+            let {getByTestId, getByRole, getAllByRole} = render(<Test />);
+
+            let input = document.querySelector('input[name=value]');
+            let button = getAllByRole('button')[0];
+            expect(button).not.toHaveAttribute('aria-describedby');
+
+            await user.click(getByTestId('submit'));
+
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
+            expect(input.validity.valid).toBe(false);
+
+            await user.click(button);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+
+          it('supports customizing native error messages', async () => {
+            let {getByTestId, getAllByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete name="test" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let button = getAllByRole('button')[0];
+            expect(button).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+          });
+        });
+
+        describe('validationBehavior=aria', () => {
+          it('supports validate function', async () => {
+            let {getAllByRole, getByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete name="test" defaultInputValue="Two" validate={v => v === 'Two' ? 'Invalid value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let input = document.querySelector('input[name=test]');
+            expect(input.validity.valid).toBe(true);
+
+            let button = getAllByRole('button')[0];
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+            await user.click(button);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+
+          it('supports server validation', async () => {
+            let {getByRole, getAllByRole} = render(
+              <Provider theme={theme}>
+                <Form validationErrors={{value: 'Invalid value'}}>
+                  <ExampleSearchAutocomplete name="value" />
+                </Form>
+              </Provider>
+            );
+
+            let input = document.querySelector('input[name=value]');
+            let button = getAllByRole('button')[0];
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+            await user.click(button);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+        });
       });
     });
   });

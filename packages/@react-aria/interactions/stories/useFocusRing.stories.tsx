@@ -15,7 +15,15 @@ import {Key} from '@react-types/shared';
 import React, {useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 
-let manyColumns = [];
+interface IColumn {
+  name: string,
+  key: string
+}
+interface IRow {
+  key: string
+}
+
+let manyColumns: IColumn[] = [];
 for (let i = 0; i < 100; i++) {
   manyColumns.push(
     i === 0
@@ -24,7 +32,7 @@ for (let i = 0; i < 100; i++) {
   );
 }
 
-let manyRows = [];
+let manyRows: IRow[] = [];
 for (let i = 0; i < 1000; i++) {
   let row = {key: 'R' + i};
   for (let j = 0; j < 100; j++) {
@@ -72,7 +80,7 @@ function SearchExample() {
         </TableHeader>
         <TableBody items={items}>
           {item =>
-            (<Row key={item.foo}>
+            (<Row key={item.key}>
               {(key: Key) => <Cell>{item[key]}</Cell>}
             </Row>)
           }

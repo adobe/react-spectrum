@@ -12,8 +12,10 @@
 
 import {FocusableElement} from '@react-types/shared';
 import React, {ReactNode, RefObject, useRef} from 'react';
+import {selectData} from './useSelect';
 import {SelectState} from '@react-stately/select';
 import {useFormReset} from '@react-aria/utils';
+import {useFormValidation} from '@react-aria/form';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
@@ -52,11 +54,14 @@ export interface AriaHiddenSelectOptions extends AriaHiddenSelectProps {
  * navigation, and native HTML form submission.
  */
 export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: SelectState<T>, triggerRef: RefObject<FocusableElement>) {
-  let {autoComplete, name, isDisabled} = props;
+  let data = selectData.get(state) || {};
+  let {autoComplete, name = data.name, isDisabled = data.isDisabled} = props;
+  let {validationBehavior, isRequired} = data;
   let modality = useInteractionModality();
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   useFormReset(props.selectRef, state.selectedKey, state.setSelectedKey);
+  useFormValidation({validationBehavior}, state, props.selectRef);
 
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
   // In Firefox, there must be a <label> to identify the <select> whereas other browsers
@@ -93,8 +98,8 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
       tabIndex: -1,
       autoComplete,
       disabled: isDisabled,
+      required: validationBehavior === 'native' && isRequired,
       name,
-      size: state.collection.size,
       value: state.selectedKey ?? '',
       onChange: (e: React.ChangeEvent<HTMLSelectElement>) => state.setSelectedKey(e.target.value)
     }

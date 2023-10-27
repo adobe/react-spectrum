@@ -13,9 +13,10 @@
 import {AriaRadioProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
-import {radioGroupDescriptionIds, radioGroupErrorMessageIds, radioGroupNames} from './utils';
+import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
+import {useFormValidation} from '@react-aria/form';
 import {usePress} from '@react-aria/interactions';
 
 export interface RadioAria {
@@ -80,22 +81,25 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     tabIndex = undefined;
   }
 
+  let {name, descriptionId, errorMessageId, validationBehavior} = radioGroupData.get(state)!;
   useFormReset(ref, state.selectedValue, state.setSelectedValue);
+  useFormValidation({validationBehavior}, state, ref);
 
   return {
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
-      name: radioGroupNames.get(state),
+      name,
       tabIndex,
       disabled: isDisabled,
+      required: state.isRequired && validationBehavior === 'native',
       checked,
       value,
       onChange,
       'aria-describedby': [
         props['aria-describedby'],
-        state.isInvalid ? radioGroupErrorMessageIds.get(state) : null,
-        radioGroupDescriptionIds.get(state)
+        state.isInvalid ? errorMessageId : null,
+        descriptionId
       ].filter(Boolean).join(' ') || undefined
     }),
     isDisabled,
