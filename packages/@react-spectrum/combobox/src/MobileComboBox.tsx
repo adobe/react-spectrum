@@ -42,6 +42,7 @@ import {useComboBox} from '@react-aria/combobox';
 import {useDialog} from '@react-aria/dialog';
 import {useField} from '@react-aria/label';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -50,8 +51,9 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let {
     isQuiet,
     isDisabled,
-    validationState,
     isReadOnly,
+    isRequired,
+    validationBehavior,
     name,
     formValue = 'text',
     allowsCustomValue
@@ -75,9 +77,17 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
-  let {labelProps, fieldProps} = useField({
+  let inputRef = useRef<HTMLInputElement>(null);
+  useFormValidation(props, state, inputRef);
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
+  let validationState = props.validationState || (isInvalid ? 'invalid' : null);
+  let errorMessage = props.errorMessage ?? validationErrors.join(' ');
+
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    labelElementType: 'span'
+    labelElementType: 'span',
+    isInvalid,
+    errorMessage
   });
 
   // Focus the button and show focus ring when clicking on the label
@@ -94,7 +104,16 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     value: formValue === 'text' ? state.inputValue : state.selectedKey
   };
 
-  let inputRef = useRef<HTMLInputElement>(null);
+  if (validationBehavior === 'native') {
+    // Use a hidden <input type="text"> rather than <input type="hidden">
+    // so that an empty value blocks HTML form submission when the field is required.
+    inputProps.type = 'text';
+    inputProps.hidden = true;
+    inputProps.required = isRequired;
+    // Ignore react warning.
+    inputProps.onChange = () => {};
+  }
+
   useFormReset(inputRef, inputProps.value, formValue === 'text' ? state.setInputValue : state.setSelectedKey);
 
   return (
@@ -102,6 +121,12 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
       <Field
         {...props}
         labelProps={labelProps}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        validationState={validationState}
+        isInvalid={isInvalid}
+        validationErrors={validationErrors}
+        validationDetails={validationDetails}
         elementType="span"
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
@@ -116,7 +141,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
-      {name && <input {...inputProps} ref={inputRef} />}
+      <input {...inputProps} ref={inputRef} />
       <Tray state={state} isFixedHeight {...overlayProps}>
         <ComboBoxTray
           {...props}
@@ -326,16 +351,17 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
 
   React.useEffect(() => {
     focusSafely(inputRef.current);
+  }, []);
 
-    // When the tray unmounts, set state.isFocused (i.e. the tray input's focus tracker) to false.
+  React.useEffect(() => {
+    // When the tray closes, set state.isFocused (i.e. the tray input's focus tracker) to false.
     // This is to prevent state.isFocused from being set to true when the tray closes via tapping on the underlay
     // (FocusScope attempts to restore focus to the tray input when tapping outside the tray due to "contain")
     // Have to do this manually since React doesn't call onBlur when a component is unmounted: https://github.com/facebook/react/issues/12363
-    return () => {
+    if (!state.isOpen && state.isFocused) {
       state.setFocused(false);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    }
+  });
 
   let {dialogProps} = useDialog({
     'aria-labelledby': useId(labelProps.id)

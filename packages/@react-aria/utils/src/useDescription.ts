@@ -17,7 +17,7 @@ import {useState} from 'react';
 let descriptionId = 0;
 const descriptionNodes = new Map<string, {refCount: number, element: Element}>();
 
-export function useDescription(description: string): AriaLabelingProps {
+export function useDescription(description?: string): AriaLabelingProps {
   let [id, setId] = useState(undefined);
 
   useLayoutEffect(() => {

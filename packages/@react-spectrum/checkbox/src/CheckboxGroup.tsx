@@ -32,16 +32,14 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
   } = props;
   let domRef = useDOMRef(ref);
   let state = useCheckboxGroupState(props);
-  let {labelProps, groupProps, descriptionProps, errorMessageProps} = useCheckboxGroup(props, state);
+  let {groupProps, ...otherProps} = useCheckboxGroup(props, state);
 
   return (
     <Field
       {...props}
+      {...otherProps}
       ref={domRef}
       wrapperClassName={classNames(styles, 'spectrum-FieldGroup')}
-      labelProps={labelProps}
-      descriptionProps={descriptionProps}
-      errorMessageProps={errorMessageProps}
       elementType="span"
       includeNecessityIndicatorInAccessibilityName>
       <div
@@ -55,7 +53,7 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
             }
           )
         }>
-        <Provider isEmphasized={isEmphasized} validationState={state.isInvalid ? 'invalid' : undefined}>
+        <Provider isEmphasized={isEmphasized}>
           <CheckboxGroupContext.Provider value={state}>
             {children}
           </CheckboxGroupContext.Provider>

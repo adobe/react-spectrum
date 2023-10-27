@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, SpectrumLabelableProps, StyleProps, ValidationErrors, ValidationState} from '@react-types/shared';
 import {FormEventHandler, ReactElement} from 'react';
 
 export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp' | 'label'> {
@@ -31,6 +31,18 @@ export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StylePro
    * @default 'valid'
    */
   validationState?: ValidationState,
+  /**
+   * Whether to use native HTML form validation to prevent form submission
+   * when a field value is missing or invalid, or mark the field as required
+   * or invalid via ARIA.
+   * @default 'aria'
+   */
+  validationBehavior?: 'aria' | 'native',
+  /**
+   * Validation errors for the form, typically returned by a server.
+   * This should be set to an object mapping from input names to errors.
+   */
+  validationErrors?: ValidationErrors,
   /**
    * Where to send the form-data when the form is submitted.
    */

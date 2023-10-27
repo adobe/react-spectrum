@@ -16,11 +16,12 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {CalendarDate} from '@internationalized/date';
 import {chain} from '@react-aria/utils';
 import {Checkbox, CheckboxGroup} from '@react-spectrum/checkbox';
+import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {countries, states} from './data';
-import {DateField, DateRangePicker} from '@react-spectrum/datepicker';
+import {DateField, DatePicker, DateRangePicker, TimeField} from '@react-spectrum/datepicker';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '../';
 import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
@@ -30,6 +31,7 @@ import {Item, Picker} from '@react-spectrum/picker';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {Key, useEffect, useState} from 'react';
+import {SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {SearchField} from '@react-spectrum/searchfield';
 import {Slider} from '@react-spectrum/slider';
 import {StatusLight} from '@react-spectrum/statuslight';
@@ -365,6 +367,7 @@ FormWithReset.story = {
   name: 'form with reset'
 };
 
+
 export const _FormWithSubmit = () => <FormWithSubmit />;
 
 _FormWithSubmit.story = {
@@ -401,25 +404,31 @@ WithTranslations.story = {
 function render(props: any = {}) {
   return (
     <Form {...props}>
-      <CheckboxGroup defaultValue={['dragons']} label="Pets">
+      <CheckboxGroup label="Pets" name="pets" validate={v => v.includes('dogs') ? 'No dogs' : null}>
         <Checkbox value="dogs">Dogs</Checkbox>
         <Checkbox value="cats">Cats</Checkbox>
         <Checkbox value="dragons">Dragons</Checkbox>
       </CheckboxGroup>
-      <ComboBox label="More Animals">
+      <ComboBox label="More Animals" name="combobox">
         <Item key="red panda">Red Panda</Item>
         <Item key="aardvark">Aardvark</Item>
         <Item key="kangaroo">Kangaroo</Item>
         <Item key="snake">Snake</Item>
       </ComboBox>
-      <NumberField label="Years lived there" />
-      <Picker label="State" items={states}>
+      <SearchAutocomplete label="Search Animals" name="searchAutocomplete">
+        <Item key="red panda">Red Panda</Item>
+        <Item key="aardvark">Aardvark</Item>
+        <Item key="kangaroo">Kangaroo</Item>
+        <Item key="snake">Snake</Item>
+      </SearchAutocomplete>
+      <NumberField label="Years lived there" name="years" />
+      <Picker label="State" items={states} name="state">
         {item => <Item key={item.abbr}>{item.name}</Item>}
       </Picker>
-      <Picker label="Country" items={countries}>
+      <Picker label="Country" items={countries} name="country">
         {item => <Item key={item.name}>{item.name}</Item>}
       </Picker>
-      <Picker label="Favorite color" description="Select any color you like." errorMessage="Please select a nicer color.">
+      <Picker label="Favorite color" name="color" description="Select any color you like." errorMessage="Please select a nicer color.">
         <Item>Red</Item>
         <Item>Orange</Item>
         <Item>Yellow</Item>
@@ -432,18 +441,19 @@ function render(props: any = {}) {
         <Radio value="cats">Cats</Radio>
         <Radio value="dragons">Dragons</Radio>
       </RadioGroup>
-      <SearchField label="Search" />
-      <Switch>Low power mode</Switch>
-      <TextArea label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
+      <SearchField label="Search" name="search" />
+      <Switch name="switch">Low power mode</Switch>
+      <TextArea name="comments" label="Comments" description="Express yourself!" errorMessage="No wrong answers, except for this one." />
       <TextField
         label="City"
+        name="city"
         contextualHelp={(
           <ContextualHelp>
             <Heading>What is a segment?</Heading>
             <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
           </ContextualHelp>
         )} />
-      <TextField label="Zip code" description="Please enter a five-digit zip code." errorMessage="Please remove letters and special characters." />
+      <TextField label="Zip code" description="Please enter a five-digit zip code." pattern="[0-9]{5}" name="zip" />
       <TagGroup label="Favorite tags" description="Select your favorite tags." errorMessage="Incorrect combination of tags.">
         <Item key="1">Cool Tag 1</Item>
         <Item key="2">Cool Tag 2</Item>
@@ -452,6 +462,18 @@ function render(props: any = {}) {
         <Item key="5">Cool Tag 5</Item>
         <Item key="6">Cool Tag 6</Item>
       </TagGroup>
+      <ColorField label="Color" name="color" />
+      <DateField label="Date" granularity="minute" name="date" />
+      <TimeField label="Time" name="time" />
+      <DatePicker label="Date picker" name="datePicker" />
+      <DateRangePicker label="Date range" startName="startDate" endName="endDate" />
+      <TextField type="email" label="Email" name="email" />
+      {props.showSubmit && (
+        <ButtonGroup>
+          <Button variant="primary" type="submit">Submit</Button>
+          <Button variant="secondary" type="reset">Reset</Button>
+        </ButtonGroup>
+      )}
     </Form>
   );
 }
@@ -686,3 +708,40 @@ function FormWithSubmit() {
     </Form>
   );
 }
+
+export const NativeValidation = () => render({
+  isRequired: true,
+  validationBehavior: 'native',
+  showSubmit: true,
+  onSubmit: (e) => {
+    e.preventDefault();
+    action('onSubmit')(Object.fromEntries(new FormData(e.target as HTMLFormElement).entries()));
+  }
+});
+
+NativeValidation.story = {
+  parameters: {description: {data: 'This story is to test that client validation occurs on form submit and updates when the user commits changes to a field value (e.g. on blur).'}}
+};
+
+export function ServerValidation() {
+  let [serverErrors, setServerErrors] = useState<any>({});
+  let onSubmit = async (e) => {
+    e.preventDefault();
+    let errors = {};
+    for (let el of e.target.elements) {
+      errors[el.name] = `Invalid value for "${el.name}".`;
+    }
+    setServerErrors(errors);
+  };
+
+  return render({
+    validationBehavior: 'native',
+    onSubmit,
+    validationErrors: serverErrors,
+    showSubmit: true
+  });
+}
+
+ServerValidation.story = {
+  parameters: {description: {data: 'This story is to test that server errors appear after submission, and are cleared when a field is modified.'}}
+};
