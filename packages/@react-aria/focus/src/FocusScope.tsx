@@ -157,7 +157,7 @@ export function FocusScope(props: FocusScopeProps) {
   useLayoutEffect(() => {
     return () => {
       // Scope may have been re-parented.
-      let parentScope = focusScopeTree.getTreeNode(scopeRef).parent.scopeRef ?? null;
+      let parentScope = focusScopeTree.getTreeNode(scopeRef)?.parent?.scopeRef ?? null;
 
       if (
         (scopeRef === activeScope || isAncestorScope(scopeRef, activeScope)) &&
