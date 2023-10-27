@@ -25,6 +25,7 @@
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
   "dependencies": {
+    "@react-types/shared": "^3.21.0",
     "@swc/helpers": "^0.5.0"
   },
   "publishConfig": {

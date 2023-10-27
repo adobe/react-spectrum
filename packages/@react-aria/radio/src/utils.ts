@@ -12,6 +12,11 @@
 
 import {RadioGroupState} from '@react-stately/radio';
 
-export const radioGroupNames = new WeakMap<RadioGroupState, string>();
-export const radioGroupDescriptionIds = new WeakMap<RadioGroupState, string>();
-export const radioGroupErrorMessageIds = new WeakMap<RadioGroupState, string>();
+interface RadioGroupData {
+  name: string,
+  descriptionId: string,
+  errorMessageId: string,
+  validationBehavior: 'aria' | 'native'
+}
+
+export const radioGroupData = new WeakMap<RadioGroupState, RadioGroupData>();

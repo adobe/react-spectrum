@@ -12,8 +12,8 @@
 
 import {DOMAttributes, FocusableDOMProps, FocusableElement, FocusableProps} from '@react-types/shared';
 import {focusSafely} from './';
-import {mergeProps, useSyncRef} from '@react-aria/utils';
-import React, {MutableRefObject, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import {mergeProps, useObjectRef, useSyncRef} from '@react-aria/utils';
+import React, {ForwardedRef, MutableRefObject, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
 export interface FocusableOptions extends FocusableProps, FocusableDOMProps {
@@ -30,7 +30,7 @@ interface FocusableContextValue extends FocusableProviderProps {
   ref?: MutableRefObject<FocusableElement>
 }
 
-let FocusableContext = React.createContext<FocusableContextValue>(null);
+let FocusableContext = React.createContext<FocusableContextValue | null>(null);
 
 function useFocusableContext(ref: RefObject<FocusableElement>): FocusableContextValue {
   let context = useContext(FocusableContext) || {};
@@ -44,11 +44,12 @@ function useFocusableContext(ref: RefObject<FocusableElement>): FocusableContext
 /**
  * Provides DOM props to the nearest focusable child.
  */
-function FocusableProvider(props: FocusableProviderProps, ref: RefObject<FocusableElement>) {
+function FocusableProvider(props: FocusableProviderProps, ref: ForwardedRef<FocusableElement>) {
   let {children, ...otherProps} = props;
+  let objRef = useObjectRef(ref);
   let context = {
     ...otherProps,
-    ref
+    ref: objRef
   };
 
   return (
