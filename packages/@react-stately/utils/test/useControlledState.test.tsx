@@ -54,9 +54,9 @@ describe('useControlledState tests', function () {
 
   it('using NaN will only trigger onChange once', () => {
     let onChangeSpy = jest.fn();
-    let {result} = renderHook(() => useControlledState<number | undefined>(undefined, undefined, onChangeSpy));
+    let {result} = renderHook(() => useControlledState<number | null>(undefined, null, onChangeSpy));
     let [value, setValue] = result.current;
-    expect(value).not.toBeDefined();
+    expect(value).toBe(null);
     expect(onChangeSpy).not.toHaveBeenCalled();
     act(() => setValue(NaN));
     [value, setValue] = result.current;
