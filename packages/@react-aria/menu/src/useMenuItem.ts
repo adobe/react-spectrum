@@ -211,7 +211,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     onPressUp,
     onPressChange,
     onPressEnd,
-    // TODO: verify we actually don't need isDisabled || (isTrigger && state.expandedKeys.has(key)
     isDisabled
   });
   let {hoverProps} = useHover({

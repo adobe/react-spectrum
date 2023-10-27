@@ -10,19 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvent, PressEvents} from '@react-types/shared';
+import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents} from '@react-types/shared';
 import {MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
 
-export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'autoFocus' | 'onKeyDown'> {
+export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'autoFocus' | 'onKeyDown'>, Pick<KeyboardEvents, 'onKeyDown'> {
   onClose?: () => void,
   closeOnSelect?: boolean,
   shouldFocusWrap?: boolean,
   autoFocus?: boolean | FocusStrategy,
   ref?: MutableRefObject<HTMLDivElement>,
   state?: MenuTriggerState,
-  onKeyDown?: (e: KeyboardEvent) => void,
   onBackButtonPress?: () => void,
   level?: number
 }
@@ -33,13 +32,12 @@ export function useMenuContext(): MenuContextValue {
   return useContext(MenuContext);
 }
 
-export interface SubmenuTriggerContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'> {
+export interface SubmenuTriggerContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'>, Pick<KeyboardEvents, 'onKeyDown'> {
   isUnavailable?: boolean,
   triggerRef?: MutableRefObject<HTMLElement>,
   'aria-expanded'?: boolean | 'true' | 'false',
   'aria-controls'?: string,
   'aria-haspopup'?: 'dialog' | 'menu',
-  onKeyDown?: (e: KeyboardEvent) => void,
   isOpen?: boolean
 }
 

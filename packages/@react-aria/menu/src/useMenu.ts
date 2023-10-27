@@ -15,7 +15,6 @@ import {DOMAttributes, KeyboardDelegate, KeyboardEvents} from '@react-types/shar
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {Key, RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
-import {useKeyboard} from '@react-aria/interactions';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface MenuAria {
@@ -75,25 +74,8 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     onAction: props.onAction
   });
 
-  let {keyboardProps} = useKeyboard({
-    onKeyDown(e) {
-      // TODO: Let Tab propagate so FocusScope handle it. Revisit if we decide to close all menus
-      // Also let Escape propagate so useOverlay handles closing the Menu overlay
-      if (e.key === 'Tab' || e.key === 'Escape') {
-        e.continuePropagation();
-      }
-
-      onKeyDown && onKeyDown(e);
-    },
-    onKeyUp(e) {
-      // Need to continue keyup propagation so MenuTrigger button's press state is properly reset, otherwise it gets stuck in pressed state
-      e.continuePropagation();
-      onKeyUp && onKeyUp(e);
-    }
-  });
-
   return {
-    menuProps: mergeProps(domProps, keyboardProps, {
+    menuProps: mergeProps(domProps, {onKeyDown, onKeyUp}, {
       role: 'menu',
       // TODO: we no longer update treestate's expandedKeys so we can't do the below anymore. This affects Safari VO specifically, the VO cursor doesn't move into the newly opened
       // submenu/dialog without it. Decide how bad this behavior is and if we wanna add a different prop (level or hasOpenSubmenu) and/or pass the submenutrigger state to control this instead

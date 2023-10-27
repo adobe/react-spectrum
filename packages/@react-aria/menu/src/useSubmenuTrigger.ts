@@ -108,17 +108,21 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr') {
+          e.stopPropagation();
           onSubmenuClose();
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl') {
+          e.stopPropagation();
           onSubmenuClose();
         }
         break;
       case 'Escape':
+        e.stopPropagation();
         state.closeAll();
         break;
+      // TODO: add handling for having Tab close all menus if we decide to go that route (aka mimicking macOS's submenu behavior)
     }
   };
 

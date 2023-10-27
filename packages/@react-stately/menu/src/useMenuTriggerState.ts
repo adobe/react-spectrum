@@ -49,15 +49,20 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
   let overlayTriggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
   let [expandedKeysStack, setExpandedKeysStack] = useState<Key[]>([]);
-  
+
   let closeAll = () => {
     setExpandedKeysStack([]);
     overlayTriggerState.close();
   };
 
-  // TODO: if level > the length of the expandedKeyStack then this doesn't quite work.
   let openSubmenu = (triggerKey: Key, level: number) => {
-    setExpandedKeysStack(oldStack => [...oldStack.slice(0, level), triggerKey]);
+    setExpandedKeysStack(oldStack => {
+      if (level > oldStack.length + 1) {
+        return oldStack;
+      }
+
+      return [...oldStack.slice(0, level), triggerKey];
+    });
   };
 
   let closeSubmenu = (triggerKey: Key, level: number) => {
