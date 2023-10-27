@@ -54,7 +54,7 @@ describe('ListBox SSR', function () {
 
   it('should render with sections', async function () {
     await testSSR(__filename, `
-      import {ListBox, Section, Item, Header} from '../';
+      import {ListBox, Section, ListBoxItem, Header} from '../';
 
       <React.StrictMode>
         <ListBox aria-label="Listbox">
