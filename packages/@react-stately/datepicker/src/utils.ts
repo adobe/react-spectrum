@@ -10,15 +10,113 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {Calendar, DateFormatter, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
+// @ts-ignore
+import i18nMessages from '../intl/*.json';
+import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';
+import {mergeValidation, VALID_VALIDITY_STATE} from '@react-stately/form';
+import {RangeValue, ValidationResult} from '@react-types/shared';
 import {useState} from 'react';
 
-export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
-  return value != null && (
-    (minValue != null && value.compare(minValue) < 0) ||
-    (maxValue != null && value.compare(maxValue) > 0)
+const dictionary = new LocalizedStringDictionary(i18nMessages);
+
+function getLocale() {
+  // Match browser language setting here, NOT react-aria's I18nProvider, so that we match other browser-provided
+  // validation messages, which to not respect our provider's language.
+  // @ts-ignore
+  return (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
+}
+
+export function getValidationResult(
+  value: DateValue,
+  minValue: DateValue,
+  maxValue: DateValue,
+  isDateUnavailable: (v: DateValue) => boolean,
+  options: FormatterOptions
+): ValidationResult {
+  let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
+  let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
+  let isUnavailable = (value != null && isDateUnavailable?.(value)) || false;
+  let isInvalid = rangeOverflow || rangeUnderflow || isUnavailable;
+  let errors = [];
+
+  if (isInvalid) {
+    let locale = getLocale();
+    let formatter = new LocalizedStringFormatter(locale, dictionary);
+    let dateFormatter = new DateFormatter(locale, getFormatOptions({}, options));
+    let timeZone = dateFormatter.resolvedOptions().timeZone;
+
+    if (rangeUnderflow) {
+      errors.push(formatter.format('rangeUnderflow', {minValue: dateFormatter.format(minValue.toDate(timeZone))}));
+    }
+
+    if (rangeOverflow) {
+      errors.push(formatter.format('rangeOverflow', {maxValue: dateFormatter.format(maxValue.toDate(timeZone))}));
+    }
+
+    if (isUnavailable) {
+      errors.push(formatter.format('unavailableDate'));
+    }
+  }
+
+  return {
+    isInvalid,
+    validationErrors: errors,
+    validationDetails: {
+      badInput: isUnavailable,
+      customError: false,
+      patternMismatch: false,
+      rangeOverflow,
+      rangeUnderflow,
+      stepMismatch: false,
+      tooLong: false,
+      tooShort: false,
+      typeMismatch: false,
+      valueMissing: false,
+      valid: !isInvalid
+    }
+  };
+}
+
+export function getRangeValidationResult(
+  value: RangeValue<DateValue>,
+  minValue: DateValue,
+  maxValue: DateValue,
+  isDateUnavailable: (v: DateValue) => boolean,
+  options: FormatterOptions
+) {
+  let startValidation = getValidationResult(
+    value?.start,
+    minValue,
+    maxValue,
+    isDateUnavailable,
+    options
   );
+
+  let endValidation = getValidationResult(
+    value?.end,
+    minValue,
+    maxValue,
+    isDateUnavailable,
+    options
+  );
+
+  let result = mergeValidation(startValidation, endValidation);
+  if (value.end != null && value.start != null && value.end.compare(value.start) < 0) {
+    result = mergeValidation(result, {
+      isInvalid: true,
+      validationErrors: [dictionary.getStringForLocale('rangeReversed', getLocale())],
+      validationDetails: {
+        ...VALID_VALIDITY_STATE,
+        rangeUnderflow: true,
+        rangeOverflow: true,
+        valid: false
+      }
+    });
+  }
+
+  return result;
 }
 
 export type FieldOptions = Pick<Intl.DateTimeFormatOptions, 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'>;

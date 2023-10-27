@@ -33,6 +33,7 @@
     "@react-aria/utils": "^3.21.1",
     "@react-stately/collections": "^3.10.2",
     "@react-stately/combobox": "^3.7.1",
+    "@react-stately/form": "3.0.0-alpha.1",
     "@react-stately/layout": "^3.13.3",
     "@react-types/button": "^3.9.0",
     "@react-types/combobox": "^3.8.1",

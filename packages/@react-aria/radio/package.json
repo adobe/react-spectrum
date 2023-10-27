@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@react-aria/focus": "^3.14.3",
+    "@react-aria/form": "3.0.0-alpha.1",
     "@react-aria/i18n": "^3.8.4",
     "@react-aria/interactions": "^3.19.1",
     "@react-aria/label": "^3.7.2",

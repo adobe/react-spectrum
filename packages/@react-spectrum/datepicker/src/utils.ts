@@ -19,7 +19,7 @@ import {useImperativeHandle, useMemo, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider} from '@react-spectrum/provider';
 
-export function useFormatHelpText(props: Pick<SpectrumDatePickerBase, 'description' | 'showFormatHelpText'>) {
+export function useFormatHelpText(props: Pick<SpectrumDatePickerBase<any>, 'description' | 'showFormatHelpText'>) {
   let formatter = useDateFormatter({dateStyle: 'short'});
   let displayNames = useDisplayNames();
   return useMemo(() => {

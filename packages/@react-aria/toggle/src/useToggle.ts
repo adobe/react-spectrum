@@ -40,7 +40,6 @@ export interface ToggleAria {
 export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLInputElement>): ToggleAria {
   let {
     isDisabled = false,
-    isRequired = false,
     isReadOnly = false,
     value,
     name,
@@ -81,7 +80,6 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
       'aria-errormessage': props['aria-errormessage'],
       'aria-controls': props['aria-controls'],
       'aria-readonly': isReadOnly || undefined,
-      'aria-required': isRequired || undefined,
       onChange,
       disabled: isDisabled,
       ...(value == null ? {} : {value}),
