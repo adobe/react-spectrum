@@ -63,7 +63,6 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
     delete submenuTriggerProps.onHoverChange;
     submenuProps.autoFocus ??= true;
     if (trayContainerRef.current && submenuTriggerState.isOpen) {
-      // TODO: Will need the same SSR stuff as Overlay? Might not since this trigger should theoretically only be mounted if a parent menu is mounted and thus we aren't in a SSR state
       overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
     }
   } else {

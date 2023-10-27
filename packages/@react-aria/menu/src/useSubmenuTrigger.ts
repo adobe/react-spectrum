@@ -199,9 +199,6 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
   };
 
   let onBlur = (e) => {
-    // TODO: getting rid of the (!isElementInChildOfActiveScope(e.relatedTarget) part of the check below fixes hovering to open a root unavailable menu item when focus is on a submenu
-    // but breaks the case where the user is hovering over a submenu's submenu trigger child item and then hovers a root menu item (eg hover lvl 1 item 2 -> hover lvl 2 item 3 -> hover lvl 1 item 3)
-    // Ideally we'd be able to track the full menu tree and then check if focus has moved to an element that isn't part of the current submenu tree and close it then
     if (state.isOpen && parentMenuRef.current.contains(e.relatedTarget)) {
       onSubmenuClose();
     }

@@ -70,7 +70,6 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
       <div ref={trayContainerRef} />
       <FocusScope contain={hasOpenSubmenu}>
         <div
-          // TODO: check if this role should always be applied, even for non submenu cases
           role={headingId ? 'dialog' : undefined}
           aria-labelledby={headingId}
           aria-hidden={isMobile && hasOpenSubmenu}

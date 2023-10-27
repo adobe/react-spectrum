@@ -31,7 +31,6 @@ export default {
   title: 'MenuTrigger/Submenu'
 };
 
-// TODO: add chromatic stories
 export const SubmenuStatic = {
   render: (args) => (
     renderMenuTrigger(
