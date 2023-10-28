@@ -16,7 +16,7 @@ import {HTMLAttributes, KeyboardEventHandler, RefObject, useRef, useState} from 
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-export interface AriaToolbarProps extends AriaLabelingProps, MultipleSelection {
+export interface AriaToolbarProps extends AriaLabelingProps {
   /**
    * The orientation of the entire toolbar.
    * @default 'horizontal'
@@ -24,12 +24,17 @@ export interface AriaToolbarProps extends AriaLabelingProps, MultipleSelection {
   orientation?: Orientation
 }
 
-interface ToolbarAria {
+export interface ToolbarAria {
+  /**
+   * Props for the toolbar container.
+   */
   toolbarProps: HTMLAttributes<HTMLElement>
 }
 
 /**
  * Handles interactions for toolbar elements, such as keyboard navigation between elements.
+ * @param props - Props to be applied to the toolbar.
+ * @param ref - A ref to a DOM element for the toolbar.
  */
 export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLDivElement>): ToolbarAria {
   const {
