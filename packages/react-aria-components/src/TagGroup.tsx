@@ -250,7 +250,7 @@ function TagItem({item}) {
       data-pressed={states.isPressed || undefined}
       data-allows-removing={states.allowsRemoving || undefined}
       data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
-      <div {...gridCellProps}>
+      <div {...gridCellProps} style={{display: 'contents'}}>
         <Provider
           values={[
             [ButtonContext, {
