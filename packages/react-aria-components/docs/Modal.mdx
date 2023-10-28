@@ -50,7 +50,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
     <Dialog>
       {({close}) => (
         <form>
-          <Heading>Sign up</Heading>
+          <Heading slot="title">Sign up</Heading>
           <TextField autoFocus>
             <Label>First Name: </Label>
             <Input />
@@ -186,7 +186,7 @@ on the `Modal`. This allows the user to click outside to close the dialog.
   <Button>Open dialog</Button>
   <Modal isDismissable>
     <Dialog>
-      <Heading>Notice</Heading>
+      <Heading slot="title">Notice</Heading>
       <p>Click outside to close this dialog.</p>
     </Dialog>
   </Modal>
@@ -203,7 +203,7 @@ By default, modals can be closed by pressing the <Keyboard>Escape</Keyboard> key
   <Modal isKeyboardDismissDisabled>
     <Dialog>
       {({close}) => <>
-        <Heading>Notice</Heading>
+        <Heading slot="title">Notice</Heading>
         <p>You must close this dialog using the button below.</p>
         <Button onPress={close}>Close</Button>
       </>}
@@ -225,7 +225,7 @@ import {ModalOverlay} from 'react-aria-components';
     <Modal className="my-modal">
       <Dialog>
         {({close}) => <>
-          <Heading>Notice</Heading>
+          <Heading slot="title">Notice</Heading>
           <p>This is a modal with a custom modal overlay.</p>
           <Button onPress={close}>Close</Button>
         </>}
@@ -315,7 +315,7 @@ function Example() {
       <Button onPress={() => setOpen(true)}>Open dialog</Button>
       <Modal isDismissable isOpen={isOpen} onOpenChange={setOpen}>
         <Dialog>
-          <Heading>Notice</Heading>
+          <Heading slot="title">Notice</Heading>
           <p>Click outside to close this dialog.</p>
         </Dialog>
       </Modal>
@@ -438,7 +438,7 @@ The following example uses `KeyboardModalTrigger` to show a modal when the <Keyb
 <KeyboardModalTrigger keyboardShortcut="/">
   <Modal isDismissable>
     <Dialog>
-      <Heading>Command palette</Heading>
+      <Heading slot="title">Command palette</Heading>
       <p>Your cool command palette UI here!</p>
     </Dialog>
   </Modal>

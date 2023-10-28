@@ -42,16 +42,26 @@ type: component
 ## Example
 
 ```tsx example
-import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-components';
+import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} from 'react-aria-components';
 
 <DialogTrigger>
-  <Button>Open popover</Button>
+  <Button>Settings</Button>
   <Popover>
     <OverlayArrow>
       <svg width={12} height={12} viewBox="0 0 12 12"><path d="M0 0 L6 6 L12 0" /></svg>
     </OverlayArrow>
     <Dialog>
-      This is a popover.
+      <div className="flex-col">
+        <Switch defaultSelected>
+          <div className="indicator" /> Wi-Fi
+        </Switch>
+        <Switch defaultSelected>
+          <div className="indicator" /> Bluetooth
+        </Switch>
+        <Switch>
+          <div className="indicator" /> Mute
+        </Switch>
+      </div>
     </Dialog>
   </Popover>
 </DialogTrigger>
@@ -62,6 +72,13 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 ```css hidden
 @import './Button.mdx';
 @import './Dialog.mdx';
+@import './Switch.mdx';
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 ```
 
 ```css
@@ -206,8 +223,11 @@ function MyPopover({children, ...props}: MyPopoverProps) {
 }
 
 <DialogTrigger>
-  <Button>Open popover</Button>
-  <MyPopover>This is an example popover.</MyPopover>
+  <Button aria-label="Help">ⓘ</Button>
+  <MyPopover>
+    <Heading slot="title">Help</Heading>
+    <p>For help accessing your account, please contact support.</p>
+  </MyPopover>
 </DialogTrigger>
 ```
 
@@ -251,7 +271,7 @@ Below is a popover offset by an additional 50px above the trigger.
 
 ```tsx example
 <DialogTrigger>
-  <Button>Open popover</Button>
+  <Button>Offset</Button>
   <MyPopover placement="top" offset={50}>
     Offset by an additional 50px.
   </MyPopover>
@@ -262,7 +282,7 @@ Below is a popover cross offset by an additional 100px to the right of the trigg
 
 ```tsx example
 <DialogTrigger>
-  <Button>Open popover</Button>
+  <Button>Cross offset</Button>
   <MyPopover placement="top" crossOffset={100}>
     Offset by an additional 100px.
   </MyPopover>
@@ -276,19 +296,28 @@ would cause it to render out of view. This can be overridden by setting `shouldF
 To see the difference between the two options, scroll this page so that the example below is near the bottom of the window.
 
 ```tsx example
-<DialogTrigger>
-  <Button>Default</Button>
-  <MyPopover placement="bottom">
-    This is a popover that will flip if it can't fully render below the button.
-  </MyPopover>
-</DialogTrigger>
+<div className="flex-row">
+  <DialogTrigger>
+    <Button>Default</Button>
+    <MyPopover placement="bottom">
+      This is a popover that will flip if it can't fully render below the button.
+    </MyPopover>
+  </DialogTrigger>
 
-<DialogTrigger>
-  <Button>shouldFlip=false</Button>
-  <MyPopover placement="bottom" shouldFlip={false}>
-    This is a popover that won't flip if it can't fully render below the button.
-  </MyPopover>
-</DialogTrigger>
+  <DialogTrigger>
+    <Button>shouldFlip=false</Button>
+    <MyPopover placement="bottom" shouldFlip={false}>
+      This is a popover that won't flip if it can't fully render below the button.
+    </MyPopover>
+  </DialogTrigger>
+</div>
+```
+
+```css hidden
+.flex-row {
+  display: flex;
+  gap: 8px;
+}
 ```
 
 ### Container padding
@@ -301,7 +330,7 @@ The example below will maintain at least 50px between the popover and the edge o
 
 ```tsx example
 <DialogTrigger>
-  <Button>Trigger</Button>
+  <Button>Container padding</Button>
   <MyPopover placement="top" containerPadding={50}>
     This is a popover.
   </MyPopover>
@@ -324,7 +353,8 @@ function Example() {
       <Button onPress={() => setOpen(true)}>Trigger</Button>
       <span ref={triggerRef} style={{paddingLeft: 12}}>Popover will be positioned relative to me</span>
       <MyPopover triggerRef={triggerRef} isOpen={isOpen} onOpenChange={setOpen}>
-        This is a popover.
+        <Heading slot="title">Popover</Heading>
+        <div>I'm over here!</div>
       </MyPopover>
     </>
   );
@@ -445,7 +475,8 @@ function HelpTrigger({children}: HelpTriggerProps) {
 <HelpTrigger>
   <Button>Press ? for help</Button>
   <MyPopover>
-    Do you need help?
+    <Heading slot="title">Help</Heading>
+    <div>Do you need help?</div>
   </MyPopover>
 </HelpTrigger>
 ```

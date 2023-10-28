@@ -9,8 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDialogProps, useDialog, useOverlayTrigger} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
+import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
+import {ContextValue, defaultSlot, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
@@ -43,6 +43,13 @@ export function DialogTrigger(props: DialogTriggerProps) {
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, buttonRef);
 
+  // Label dialog by the trigger as a fallback if there is no title slot.
+  // This is done in RAC instead of hooks because otherwise we cannot distinguish
+  // between context and props. Normally aria-labelledby overrides the title
+  // but when sent by context we want the title to win.
+  triggerProps.id = useId();
+  overlayProps['aria-labelledby'] = triggerProps.id;
+
   return (
     <Provider
       values={[
@@ -58,8 +65,14 @@ export function DialogTrigger(props: DialogTriggerProps) {
 }
 
 function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
+  let originalAriaLabelledby = props['aria-labelledby'];
   [props, ref] = useContextProps(props, ref, DialogContext);
-  let {dialogProps, titleProps} = useDialog(props, ref);
+  let {dialogProps, titleProps} = useDialog({
+    ...props,
+    // Only pass aria-labelledby from props, not context.
+    // Context is used as a fallback below.
+    'aria-labelledby': originalAriaLabelledby
+  }, ref);
   let state = useContext(OverlayTriggerStateContext);
 
   let children = props.children;
@@ -67,6 +80,16 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
     children = children({
       close: state?.close || (() => {})
     });
+  }
+
+  if (!dialogProps['aria-label'] && !dialogProps['aria-labelledby']) {
+    // If aria-labelledby exists on props, we know it came from context.
+    // Use that as a fallback in case there is no title slot.
+    if (props['aria-labelledby']) {
+      dialogProps['aria-labelledby'] = props['aria-labelledby'];
+    } else {
+      console.warn('If a Dialog does not contain a <Heading slot="title">, it must have an aria-label or aria-labelledby attribute for accessibility.');
+    }
   }
 
   return (
@@ -79,8 +102,12 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
       className={props.className ?? 'react-aria-Dialog'}>
       <Provider
         values={[
-          // TODO: clear context within dialog content?
-          [HeadingContext, {...titleProps, level: 2}]
+          [HeadingContext, {
+            slots: {
+              [defaultSlot]: {},
+              title: {...titleProps, level: 2}
+            }
+          }]
         ]}>
         {children}
       </Provider>
