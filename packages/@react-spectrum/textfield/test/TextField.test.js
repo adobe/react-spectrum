@@ -11,10 +11,14 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
+import {Button} from '@react-spectrum/button';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
+import {Form} from '@react-spectrum/form';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';
+import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 let testId = 'test-id';
@@ -469,5 +473,208 @@ describe('Shared TextField behavior', () => {
     let button = getByTestId('reset');
     await user.click(button);
     expect(input).toHaveValue('Devon');
+  });
+
+  describe('validation', () => {
+    describe('validationBehavior=native', () => {
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports isRequired', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <Component data-testid="input" label="Name" isRequired validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+        await user.tab();
+        await user.keyboard('Devon');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
+
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports validate function', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <Component data-testid="input" label="Name" defaultValue="Foo" validationBehavior="native" validate={v => v === 'Foo' ? 'Invalid name' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name');
+
+        await user.tab();
+        await user.keyboard('Devon');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
+
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports server validation', async ({Component}) => {
+        function Test() {
+          let [serverErrors, setServerErrors] = React.useState({});
+          let onSubmit = e => {
+            e.preventDefault();
+            setServerErrors({
+              name: 'Invalid name.'
+            });
+          };
+
+          return (
+            <Provider theme={theme}>
+              <Form data-testid="form" onSubmit={onSubmit} validationErrors={serverErrors}>
+                <Component data-testid="input" label="Name" name="name" validationBehavior="native" />
+                <Button type="submit">Submit</Button>
+              </Form>
+            </Provider>
+          );
+        }
+
+        let {getByTestId, getByRole} = render(<Test />);
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        await user.click(getByRole('button'));
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
+        expect(input.validity.valid).toBe(false);
+
+        // Clicking twice doesn't clear server errors.
+        await user.click(getByRole('button'));
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
+        expect(input.validity.valid).toBe(false);
+
+        await user.tab({shift: true});
+        await user.keyboard('Devon');
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports customizing native error messages', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <Component data-testid="input" label="Name" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a name' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        act(() => {getByTestId('form').checkValidity();});
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a name');
+      });
+    });
+
+    describe('validationBehavior=aria', () => {
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports validate function', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <Component data-testid="input" label="Name" defaultValue="Foo" validate={v => v === 'Foo' ? 'Invalid name' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+        await user.keyboard('Devon');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports server validation', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form validationErrors={{name: 'Invalid name'}}>
+              <Component data-testid="input" label="Name" name="name" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name');
+
+        await user.tab();
+        await user.keyboard('Devon');
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+    });
   });
 });

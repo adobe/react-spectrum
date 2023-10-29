@@ -23,7 +23,7 @@ interface IDOMPropsResponderContext extends DOMAttributes {
   ref?: MutableRefObject<Element>
 }
 
-export const DOMPropsResponderContext = React.createContext<IDOMPropsResponderContext>(null);
+export const DOMPropsResponderContext = React.createContext<IDOMPropsResponderContext | null>(null);
 
 export function useDOMPropsResponderContext(props: DOMPropsResponderProps): DOMPropsResponderProps {
   // Consume context from <DOMPropsResponder> and merge with props.

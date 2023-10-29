@@ -78,7 +78,11 @@ to identify the element to screen readers.
 import type {AriaTextFieldProps} from '@react-aria/textfield';
 import {useTextField} from '@react-aria/textfield';
 
-function TextField(props: AriaTextFieldProps) {
+interface TextFieldProps extends Omit<AriaTextFieldProps, 'errorMessage'> {
+  errorMessage?: string
+}
+
+function TextField(props: TextFieldProps) {
   let {label} = props;
   let ref = React.useRef(null);
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField(props, ref);

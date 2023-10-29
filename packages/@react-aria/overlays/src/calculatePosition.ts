@@ -140,21 +140,26 @@ function getDelta(
   axis: Axis,
   offset: number,
   size: number,
+  // The dimensions of the boundary element that the popover is
+  // positioned within (most of the time this is the <body>).
+  boundaryDimensions: Dimensions,
+  // The dimensions of the containing block element that the popover is
+  // positioned relative to (e.g. parent with position: relative).
+  // Usually this is the same as the boundary element, but if the popover
+  // is portaled somewhere other than the body and has an ancestor with
+  // position: relative/absolute, it will be different.
   containerDimensions: Dimensions,
   padding: number
 ) {
-  let root = document.scrollingElement || document.documentElement;
-  let isScrollPrevented = window.getComputedStyle(root).overflow === 'hidden';
-  let containerScroll = isScrollPrevented && (axis === 'left' || axis === 'right') ? 0 : containerDimensions.scroll[axis];
-  let containerHeight = containerDimensions[AXIS_SIZE[axis]];
-
+  let containerScroll = containerDimensions.scroll[axis];
+  let boundaryHeight = boundaryDimensions[AXIS_SIZE[axis]];
   let startEdgeOffset = offset - padding - containerScroll;
   let endEdgeOffset = offset + padding - containerScroll + size;
 
   if (startEdgeOffset < 0) {
     return -startEdgeOffset;
-  } else if (endEdgeOffset > containerHeight) {
-    return Math.max(containerHeight - endEdgeOffset, -startEdgeOffset);
+  } else if (endEdgeOffset > boundaryHeight) {
+    return Math.max(boundaryHeight - endEdgeOffset, -startEdgeOffset);
   } else {
     return 0;
   }
@@ -289,6 +294,7 @@ export function calculatePositionInternal(
   padding: number,
   flip: boolean,
   boundaryDimensions: Dimensions,
+  containerDimensions: Dimensions,
   containerOffsetWithBoundary: Offset,
   offset: number,
   crossOffset: number,
@@ -331,7 +337,7 @@ export function calculatePositionInternal(
     }
   }
 
-  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
+  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding);
   position[crossAxis] += delta;
 
   let maxHeight = getMaxHeight(
@@ -350,7 +356,7 @@ export function calculatePositionInternal(
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
   position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
-  delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
+  delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding);
   position[crossAxis] += delta;
 
   let arrowPosition: Position = {};
@@ -418,6 +424,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
 
   let scrollSize = getScroll(scrollNode);
   let boundaryDimensions = getContainerDimensions(boundaryElement);
+  let containerDimensions = getContainerDimensions(container);
   let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container) : getPosition(container, boundaryElement);
 
   return calculatePositionInternal(
@@ -429,6 +436,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     padding,
     shouldFlip,
     boundaryDimensions,
+    containerDimensions,
     containerOffsetWithBoundary,
     offset,
     crossOffset,

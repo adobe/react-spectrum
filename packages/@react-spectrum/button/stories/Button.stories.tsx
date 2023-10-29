@@ -31,6 +31,7 @@ export default {
     onPress: action('press'),
     onPressStart: action('pressstart'),
     onPressEnd: action('pressend'),
+    onPressUp: action('pressup'),
     onFocus: action('focus'),
     onBlur: action('blur')
   },
@@ -50,6 +51,11 @@ export default {
         disable: true
       }
     },
+    onPressUp: {
+      table: {
+        disable: true
+      }
+    },
     autoFocus: {
       control: 'boolean'
     },
@@ -60,13 +66,13 @@ export default {
     },
     style: {
       control: 'select',
-      options: ['fill', 'outline']
+      options: [undefined, 'fill', 'outline']
     },
     staticColor: {
       control: 'select',
-      options: ['white', 'black']
+      options: [undefined, 'white', 'black']
     },
-    UNSTABLE_isPending: {
+    isPending: {
       control: 'boolean',
       defaultValue: false
     }
@@ -279,6 +285,10 @@ function Pending(props) {
             <Text>with onClick</Text>
           </PendingButtonOnClickComponent>
         </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent isDisabled {...props}>disabled</PendingButtonComponent>
+        </PendingButtonContainerComponent>
       </Flex>
 
       <View flexBasis={'100%'} paddingTop={16}>Controlled:</View>
@@ -286,7 +296,7 @@ function Pending(props) {
       <Flex wrap="wrap">
         <PendingButtonContainerComponent {...props}>
           <TooltipTrigger offset={2}>
-            <Button {...props} aria-label="Notifications" onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
+            <Button {...props} aria-label="Notifications" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
               <Bell />
             </Button>
             <Tooltip>Notifications</Tooltip>
@@ -294,19 +304,19 @@ function Pending(props) {
         </PendingButtonContainerComponent>
 
         <PendingButtonContainerComponent {...props}>
-          <Button {...props} aria-label="No tooltip" onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
+          <Button {...props} aria-label="No tooltip" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
             <Bell />
           </Button>
         </PendingButtonContainerComponent>
 
         <PendingButtonContainerComponent {...props}>
-          <Button {...props} onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
+          <Button {...props} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
             <Bell />
           </Button>
         </PendingButtonContainerComponent>
 
         <PendingButtonContainerComponent {...props}>
-          <Button {...props} UNSTABLE_isPending={props.UNSTABLE_isPending} onPress={() => {window.alert('use storybook control to change this button UNSTABLE_isPending prop');}}>
+          <Button {...props} isPending={props.isPending} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
             <Text>Controlled pending</Text>
           </Button>
         </PendingButtonContainerComponent>
@@ -316,7 +326,7 @@ function Pending(props) {
 }
 let timerValue = 5000;
 function PendingButtonComponent(props) {
-  let [UNSTABLE_isPending, setPending] = useState(false);
+  let [isPending, setPending] = useState(false);
 
   let handlePress = (e) => {
     action('press')(e);
@@ -329,7 +339,7 @@ function PendingButtonComponent(props) {
   return (
     <Button
       {...props}
-      UNSTABLE_isPending={UNSTABLE_isPending}
+      isPending={isPending}
       onPress={handlePress}>
       {props.children}
     </Button>
@@ -337,7 +347,7 @@ function PendingButtonComponent(props) {
 }
 
 function PendingButtonOnClickComponent(props) {
-  let [UNSTABLE_isPending, setPending] = useState(false);
+  let [isPending, setPending] = useState(false);
 
   let handlePress = (e) => {
     action('click')(e);
@@ -350,7 +360,7 @@ function PendingButtonOnClickComponent(props) {
   return (
     <Button
       {...props}
-      UNSTABLE_isPending={UNSTABLE_isPending}
+      isPending={isPending}
       onClick={handlePress}>
       {props.children}
     </Button>

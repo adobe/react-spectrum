@@ -106,6 +106,16 @@ describe('DatePicker', () => {
     expect(button).toHaveAttribute('data-pressed');
   });
 
+  it('should support data-open state', async () => {
+    let {getByRole} = render(<TestDatePicker />);
+    let datePicker = document.querySelector('.react-aria-DatePicker');
+    let button = getByRole('button');
+
+    expect(datePicker).not.toHaveAttribute('data-open');
+    await user.click(button);
+    expect(datePicker).toHaveAttribute('data-open');
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <DatePicker minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>

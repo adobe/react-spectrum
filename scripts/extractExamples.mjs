@@ -25,7 +25,7 @@ try {
 } catch (err) {}
 fs.mkdirSync(distDir, {recursive: true});
 
-for (let file of glob.sync('packages/{@react-{spectrum,aria,stately}/*,react-aria-components}/docs/*.mdx')) {
+for (let file of glob.sync('packages/{@react-{spectrum,aria,stately}/*,react-aria-components}/docs/**/*.mdx')) {
   console.log(`Extracting ${file}...`);
   let contents = fs.readFileSync(file);
   let ast = unified().use(remarkParse).use(remarkMdx).parse(contents);
@@ -98,6 +98,9 @@ import ReactDOM from 'react-dom';
 `);
     let parts = file.split(path.sep);
     let dir = `${distDir}/${parts[1]}/${parts[2]}`;
+    if (parts[3] === 'examples') {
+      dir += '/examples';
+    }
     fs.mkdirSync(dir, {recursive: true});
     fs.writeFileSync(`${dir}/${path.basename(file).slice(0, -4) + '.tsx'}`, exampleCode.join('\n'));
   }

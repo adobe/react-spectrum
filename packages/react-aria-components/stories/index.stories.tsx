@@ -11,10 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
-import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import {FocusRing, isTextDropItem, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import React, {useRef, useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
 import styles from '../example/index.css';
@@ -713,6 +713,82 @@ export const TabsRenderProps = () => {
   );
 };
 
+const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
+  let list = useListData({initialItems});
+
+  const {dragAndDropHooks} = useDragAndDrop({
+    getItems: keys => {
+      return [...keys].map(k => {
+        const item = list.getItem(k);
+        return {
+          'text/plain': item.id,
+          item: JSON.stringify(item)
+        };
+      });
+    },
+    getDropOperation: () => 'move',
+    onReorder: e => {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+    onInsert: async e => {
+      const processedItems = await Promise.all(
+        e.items.filter(isTextDropItem).map(async item => JSON.parse(await item.getText('item')))
+      );
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...processedItems);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...processedItems);
+      }
+    },
+
+    onDragEnd: e => {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        list.remove(...e.keys);
+      }
+    },
+
+    onRootDrop: async e => {
+      const processedItems = await Promise.all(
+        e.items.filter(isTextDropItem).map(async item => JSON.parse(await item.getText('item')))
+      );
+
+      list.append(...processedItems);
+    }
+  });
+
+  return (
+    <Table aria-label="Reorderable table" dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <MyColumn isRowHeader defaultWidth="50%">Id</MyColumn>
+        <MyColumn>Name</MyColumn>
+      </TableHeader>
+      <TableBody items={list.items} renderEmptyState={({isDropTarget}) => <span style={{color: isDropTarget ? 'red' : 'black'}}>Drop items here</span>}>
+        {item => (
+          <Row>
+            <Cell>{item.id}</Cell>
+            <Cell>{item.name}</Cell>
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
+export const ReorderableTableExample = () => (
+  <>
+    <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
+      <ReorderableTable initialItems={[{id: '1', name: 'Bob'}]} />
+    </ResizableTableContainer>
+    <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
+      <ReorderableTable initialItems={[{id: '2', name: 'Alex'}]} />
+    </ResizableTableContainer>
+  </>
+);
+
 export const TableExample = () => {
   let list = useListData({
     initialItems: [
@@ -787,6 +863,40 @@ export const TableExample = () => {
   );
 };
 
+export const TableDynamicExample = () => {
+  let columns = [
+    {name: 'Name', key: 'name', isRowHeader: true},
+    {name: 'Type', key: 'type'},
+    {name: 'Date Modified', key: 'date'}
+  ];
+
+  let rows = [
+    {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
+    {id: 2, name: 'Program Files", date: "4/7/2021', type: 'File folder'},
+    {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
+    {id: 4, name: 'log.txt', date: '1/18/20167', type: 'Text Document'}
+  ];
+
+  return (
+    <Table aria-label="Files">
+      <TableHeader columns={columns}>
+        {(column) => (
+          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+        )}
+      </TableHeader>
+      <TableBody items={rows}>
+        {(item) => (
+          <Row columns={columns}>
+            {(column) => {
+              return <Cell>{item[column.key]}</Cell>;
+            }}
+          </Row>
+        )}
+      </TableBody>
+    </Table>
+  );
+};
+
 function MyColumn(props) {
   return (
     <Column {...props}>
@@ -800,7 +910,9 @@ function MyColumn(props) {
               </Menu>
             </Popover>
           </MenuTrigger>
-          <ColumnResizer />
+          <ColumnResizer>
+            ↔
+          </ColumnResizer>
         </div>
       )}
     </Column>
@@ -1244,3 +1356,41 @@ export const LinkExample = () => {
     </Link>
   );
 };
+
+export const ToolbarExample = (props) => {
+  return (
+    <div>
+      <label htmlFor="before">Input Before Toolbar</label>
+      <input id="before" type="text" />
+      <Toolbar {...props}>
+        <div role="group" aria-label="Text style">
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><strong>B</strong></ToggleButton>
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><i>I</i></ToggleButton>
+        </div>
+        <Checkbox>
+          <div className="checkbox">
+            <svg viewBox="0 0 18 18" aria-hidden="true">
+              <polyline points="1 9 7 14 15 4" />
+            </svg>
+          </div>
+          Night Mode
+        </Checkbox>
+        <Link href="https://google.com">Help</Link>
+      </Toolbar>
+      <label htmlFor="after">Input After Toolbar</label>
+      <input id="after" type="text" />
+    </div>
+  );
+};
+
+ToolbarExample.args = {
+  orientation: 'horizontal'
+};
+ToolbarExample.argTypes = {
+  orientation: {
+    control: 'radio',
+    options: ['horizontal', 'vertical']
+  }
+};
+

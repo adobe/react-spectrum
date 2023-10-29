@@ -14,16 +14,18 @@ import Moon from "@spectrum-icons/workflow/Moon";
 import Light from "@spectrum-icons/workflow/Light";
 import { ToastContainer } from "@react-spectrum/toast";
 import {enableTableNestedRows} from '@react-stately/flags';
+import {useRouter} from 'next/router';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [theme, setTheme] = useState<ColorScheme>("light");
 
+  let router = useRouter();
   let themeIcons = { dark: <Moon />, light: <Light /> };
   let otherTheme: ColorScheme = theme === "light" ? "dark" : "light";
   enableTableNestedRows();
 
   return (
-    <Provider theme={lightTheme} colorScheme={theme}>
+    <Provider theme={lightTheme} colorScheme={theme} router={{navigate: router.push}}>
       <Grid
         areas={["header", "content"]}
         columns={["1fr"]}

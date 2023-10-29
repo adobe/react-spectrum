@@ -113,12 +113,12 @@ describe('ActionGroup', function () {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
 
-    jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
       if (this instanceof HTMLButtonElement) {
-        return 100;
+        return {width: 100, height: 0, top: 0, left: 0, bottom: 0, right: 0};
       }
 
-      return 1000;
+      return {width: 1000, height: 0, top: 0, left: 0, bottom: 0, right: 0};
     });
   });
 
@@ -693,12 +693,12 @@ describe('ActionGroup', function () {
 
   describe('overflowMode="collapse"', function () {
     beforeEach(() => {
-      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
         if (this instanceof HTMLButtonElement) {
-          return 100;
+          return {width: 100, height: 0, top: 0, left: 0, bottom: 0, right: 0};
         }
 
-        return 250;
+        return {width: 250, height: 0, top: 0, left: 0, bottom: 0, right: 0};
       });
     });
 
@@ -823,12 +823,12 @@ describe('ActionGroup', function () {
     });
 
     it('passes aria labeling props through to menu button if it is the only child', function () {
-      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
         if (this instanceof HTMLButtonElement) {
-          return 100;
+          return {width: 100, height: 0, top: 0, left: 0, bottom: 0, right: 0};
         }
 
-        return 150;
+        return {width: 150, height: 0, top: 0, left: 0, bottom: 0, right: 0};
       });
 
       let onAction = jest.fn();
@@ -1091,12 +1091,12 @@ describe('ActionGroup', function () {
     });
 
     it('should show the text if it fits with buttonLabelBehavior="collapse"', function () {
-      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
         if (this instanceof HTMLButtonElement) {
-          return this.hasAttribute('aria-labelledby') ? 50 : 100;
+          return this.hasAttribute('aria-labelledby') ? {width: 50, height: 0, top: 0, left: 0, bottom: 0, right: 0} : {width: 100, height: 0, top: 0, left: 0, bottom: 0, right: 0};
         }
 
-        return 300;
+        return {width: 300, height: 0, top: 0, left: 0, bottom: 0, right: 0};
       });
 
       let tree = render(
@@ -1122,12 +1122,12 @@ describe('ActionGroup', function () {
     });
 
     it('should hide the text if it does not fit with buttonLabelBehavior="collapse"', function () {
-      jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
+      jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
         if (this instanceof HTMLButtonElement) {
-          return this.hasAttribute('aria-labelledby') ? 50 : 100;
+          return this.hasAttribute('aria-labelledby') ? {width: 50, height: 0, top: 0, left: 0, bottom: 0, right: 0} : {width: 100, height: 0, top: 0, left: 0, bottom: 0, right: 0};
         }
 
-        return 150;
+        return {width: 150, height: 0, top: 0, left: 0, bottom: 0, right: 0};
       });
 
       let tree = render(
