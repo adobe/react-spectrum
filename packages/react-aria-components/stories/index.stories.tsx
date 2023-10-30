@@ -591,6 +591,7 @@ export const PopoverExample = () => (
       <Dialog>
         {({close}) => (
           <form style={{display: 'flex', flexDirection: 'column'}}>
+            <Heading slot="title">Sign up</Heading>
             <label>
               First Name: <input placeholder="John" />
             </label>
@@ -633,7 +634,7 @@ export const ModalExample = () => (
         <Dialog>
           {({close}) => (
             <form style={{display: 'flex', flexDirection: 'column'}}>
-              <Heading style={{marginTop: 0}}>Sign up</Heading>
+              <Heading slot="title" style={{marginTop: 0}}>Sign up</Heading>
               <label>
                 First Name: <input placeholder="John" />
               </label>
@@ -839,7 +840,7 @@ export const TableExample = () => {
                       }}>
                       <Dialog>
                         {({close}) => (<>
-                          <Heading>Delete item</Heading>
+                          <Heading slot="title">Delete item</Heading>
                           <p>Are you sure?</p>
                           <Button onPress={close}>Cancel</Button>
                           <Button
@@ -1404,4 +1405,3 @@ ToolbarExample.argTypes = {
     options: ['horizontal', 'vertical']
   }
 };
-
