@@ -299,6 +299,12 @@ exports[`Compare API interface merging other packages merges properties when ext
 -aria-label?: string
 -childItems?: Iterable<T>
 -hasChildItems?: boolean
+-href?: string
+-target?: HTMLAttributeAnchorTarget
+-rel?: string
+-download?: boolean | string
+-ping?: string
+-referrerPolicy?: HTMLAttributeReferrerPolicy
 -}
 it changed:
 - @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
@@ -438,6 +444,34 @@ it changed:
   
 
 
+ packages/@react-types/shared/src/inputs.d.ts:ValidationError
+  
+#### packages/@react-types/shared/src/inputs.d.ts:ValidationError
+-type ValidationError = {
+-  string | Array<string>
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
+ packages/@react-types/shared/src/inputs.d.ts:ValidationFunction
+  
+#### packages/@react-types/shared/src/inputs.d.ts:ValidationFunction
+-type ValidationFunction = {
+-  (T) => ValidationError | boolean | null | undefined
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
   ### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
   
 #### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
@@ -452,6 +486,8 @@ changed by:
  packages/@react-types/shared/src/selection.d.ts:Selection
  packages/@react-types/shared/src/selection.d.ts:SelectionBehavior
  packages/@react-types/shared/src/selection.d.ts:SelectionMode
+ packages/@react-types/shared/src/inputs.d.ts:ValidationError
+ packages/@react-types/shared/src/inputs.d.ts:ValidationFunction
 
 +SpectrumTagGroupProps<T> {
 +  actionLabel?: string
@@ -477,6 +513,8 @@ changed by:
 +  selectedKeys?: 'all' | Iterable<Key>
 +  selectionBehavior?: SelectionBehavior
 +  selectionMode?: SelectionMode
++  validate?: ValidationFunction<T>
++  validationBehavior?: 'aria' | 'native' = 'aria'
 +}
 
   -----------------------------------
