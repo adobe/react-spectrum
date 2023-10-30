@@ -48,11 +48,11 @@ The default class names for each component are listed in the Styling section of 
 Components often support multiple UI states (e.g. pressed, hovered, selected, etc.). React Aria Components exposes states using data attributes, which you can target in CSS selectors. They can be thought of like custom CSS pseudo classes. For example:
 
 ```css render=false
-.react-aria-Item[data-selected] {
+.react-aria-ListBoxItem[data-selected] {
   /* ... */
 }
 
-.react-aria-Item[data-focused] {
+.react-aria-ListBoxItem[data-focused] {
   /* ... */
 }
 ```
@@ -66,22 +66,22 @@ All states supported by each component are listed in the Styling section of thei
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply.
 
 ```jsx
-<Item className={({isSelected}) => isSelected ? 'selected' : 'unselected'}>
+<ListBoxItem className={({isSelected}) => isSelected ? 'selected' : 'unselected'}>
   Item
-</Item>
+</ListBoxItem>
 ```
 
 Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkmark icon when an item is selected.
 
 ```jsx
-<Item>
+<ListBoxItem>
   {({isSelected}) => (
     <>
       {isSelected && <CheckmarkIcon />}
       <span>Item</span>
     </>
   )}
-</Item>
+</ListBoxItem>
 ```
 
 The render props exposed for each component are listed in the Styling section of their documentation.
@@ -136,9 +136,9 @@ The CSS variables provided by each component are listed in the Styling section o
 [Tailwind CSS](https://tailwindcss.com) is a utility-first CSS framework for rapid styling that works great with React Aria Components. To access [states](#states), you can use [data attributes](https://tailwindcss.com/docs/hover-focus-and-other-states#data-attributes) as modifiers:
 
 ```jsx
-<Item className="data-[selected]:bg-blue-400 data-[disabled]:bg-gray-100">
+<ListBoxItem className="data-[selected]:bg-blue-400 data-[disabled]:bg-gray-100">
   Item
-</Item>
+</ListBoxItem>
 ```
 
 Alternatively, you can use [render props](#render-props) to control which Tailwind classes are applied based on states. This can be useful if you need to apply multiple classes based on a single state:
@@ -184,9 +184,9 @@ module.exports = {
 With the plugin installed, you can now access all states without the `data-` prefix. If you have the [Tailwind VSCode Extension](https://tailwindcss.com/docs/editor-setup#intelli-sense-for-vs-code) installed, you'll also get autocomplete for all states in your editor.
 
 ```jsx
-<Item className="selected:bg-blue-400 disabled:bg-gray-100">
+<ListBoxItem className="selected:bg-blue-400 disabled:bg-gray-100">
   Item
-</Item>
+</ListBoxItem>
 ```
 
 ### Boolean states
@@ -225,9 +225,9 @@ module.exports = {
 With this configured, all states for React Aria Components can be accessed with that prefix.
 
 ```jsx
-<Item className="rac-selected:bg-blue-400 rac-disabled:bg-gray-100">
+<ListBoxItem className="rac-selected:bg-blue-400 rac-disabled:bg-gray-100">
   Item
-</Item>
+</ListBoxItem>
 ```
 
 ## Animation
@@ -330,10 +330,10 @@ function Example() {
 `AnimatePresence` also allows you to animate when items are added or removed in collection components. Use `array.map` to create children, and make sure each child has a unique `key` in addition to an `id` to ensure Framer Motion can track it.
 
 ```tsx
-import {GridList, Item} from 'react-aria-components';
+import {GridList, GridListItem} from 'react-aria-components';
 import {motion, AnimatePresence} from 'framer-motion';
 
-const MotionItem = motion(Item);
+const MotionItem = motion(GridListItem);
 
 <GridList>
   <AnimatePresence>

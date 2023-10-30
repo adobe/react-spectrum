@@ -47,7 +47,7 @@ type: component
 ## Example
 
 ```tsx example
-import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-aria-components';
+import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
 
 <Select>
   <Label>Favorite Animal</Label>
@@ -57,12 +57,12 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   </Button>
   <Popover>
     <ListBox>
-      <Item>Aardvark</Item>
-      <Item>Cat</Item>
-      <Item>Dog</Item>
-      <Item>Kangaroo</Item>
-      <Item>Panda</Item>
-      <Item>Snake</Item>
+      <ListBoxItem>Aardvark</ListBoxItem>
+      <ListBoxItem>Cat</ListBoxItem>
+      <ListBoxItem>Dog</ListBoxItem>
+      <ListBoxItem>Kangaroo</ListBoxItem>
+      <ListBoxItem>Panda</ListBoxItem>
+      <ListBoxItem>Snake</ListBoxItem>
     </ListBox>
   </Popover>
 </Select>
@@ -136,7 +136,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
       min-height: unset;
       border: none;
 
-      .react-aria-Item {
+      .react-aria-ListBoxItem {
         padding: 0.286rem 0.571rem 0.286rem 1.571rem;
 
         &[data-selected] {
@@ -236,7 +236,7 @@ to provide more context about the field, and any validation messages. These are 
 input via the `aria-describedby` attribute.
 
 ```tsx
-import {Select, SelectValue, Label, Button, Popover, ListBox, Item, Section, Header, Text} from 'react-aria-components';
+import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem, Section, Header, Text} from 'react-aria-components';
 
 <Select>
   <Label />
@@ -247,13 +247,13 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item, Section, Hea
   <Text slot="errorMessage" />
   <Popover>
     <ListBox>
-      <Item>
+      <ListBoxItem>
         <Text slot="label" />
         <Text slot="description" />
-      </Item>
+      </ListBoxItem>
       <Section>
         <Header />
-        <Item />
+        <ListBoxItem />
       </Section>
     </ListBox>
   </Popover>
@@ -329,10 +329,10 @@ A `Select` uses the following components, which may also be used standalone or r
 
 If you will use a Select in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `Item` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
+This example wraps `Select` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `ListBoxItem` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
 
 ```tsx example export=true
-import type {SelectProps, ItemProps} from 'react-aria-components';
+import type {SelectProps, ListBoxItemProps} from 'react-aria-components';
 import {Text} from 'react-aria-components';
 
 interface MySelectProps<T extends object> extends Omit<SelectProps<T>, 'children'> {
@@ -362,8 +362,8 @@ function MySelect<T extends object>({label, description, errorMessage, children,
   );
 }
 
-function MyItem(props: ItemProps) {
-  return <Item {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
+function MyItem(props: ListBoxItemProps) {
+  return <ListBoxItem {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
 }
 
 <MySelect label="Ice cream flavor">
@@ -443,7 +443,7 @@ function Example() {
 
   return (
     <MySelect label="Pick an engineering major" items={options}>
-      {(item) => <Item>{item.name}</Item>}
+      {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
     </MySelect>
   );
 }
@@ -473,7 +473,7 @@ function Example() {
       items={options}
       selectedKey={animal}
       onSelectionChange={selected => setAnimal(selected)}>
-      {item => <Item id={item.name}>{item.name}</Item>}
+      {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
     </MySelect>
   );
 }
@@ -490,27 +490,27 @@ Select supports the `name` prop for integration with HTML forms. The `id` of the
   name="favoriteAnimalId"
   ///- end highlight -///
 >
-  <Item id="panda">Panda</Item>
-  <Item id="cat">Cat</Item>
-  <Item id="dog">Dog</Item>
+  <ListBoxItem id="panda">Panda</ListBoxItem>
+  <ListBoxItem id="cat">Cat</ListBoxItem>
+  <ListBoxItem id="dog">Dog</ListBoxItem>
 </MySelect>
 ```
 
 ## Links
 
-By default, interacting with an item in a Select triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a `Select` are not selectable.
+By default, interacting with an item in a Select triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<ListBoxItem>` component. Link items in a `Select` are not selectable.
 
 ```tsx example
 <MySelect label="Project">
-  <Item href="https://example.com/" target="_blank">Create new…</Item>
-  <Item>Proposal</Item>
-  <Item>Budget</Item>
-  <Item>Onboarding</Item>
+  <ListBoxItem href="https://example.com/" target="_blank">Create new…</ListBoxItem>
+  <ListBoxItem>Proposal</ListBoxItem>
+  <ListBoxItem>Budget</ListBoxItem>
+  <ListBoxItem>Onboarding</ListBoxItem>
 </MySelect>
 ```
 
 ```css hidden
-.react-aria-Item[href] {
+.react-aria-ListBoxItem[href] {
   text-decoration: none;
   cursor: pointer;
 }
@@ -518,7 +518,7 @@ By default, interacting with an item in a Select triggers `onSelectionChange`. A
 
 ### Client side routing
 
-The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+The `<ListBoxItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Sections
 
@@ -532,25 +532,25 @@ import {Section, Header} from 'react-aria-components';
 <MySelect label="Preferred fruit or vegetable">
   <Section>
     <Header>Fruit</Header>
-    <Item id="Apple">Apple</Item>
-    <Item id="Banana">Banana</Item>
-    <Item id="Orange">Orange</Item>
-    <Item id="Honeydew">Honeydew</Item>
-    <Item id="Grapes">Grapes</Item>
-    <Item id="Watermelon">Watermelon</Item>
-    <Item id="Cantaloupe">Cantaloupe</Item>
-    <Item id="Pear">Pear</Item>
+    <ListBoxItem id="Apple">Apple</ListBoxItem>
+    <ListBoxItem id="Banana">Banana</ListBoxItem>
+    <ListBoxItem id="Orange">Orange</ListBoxItem>
+    <ListBoxItem id="Honeydew">Honeydew</ListBoxItem>
+    <ListBoxItem id="Grapes">Grapes</ListBoxItem>
+    <ListBoxItem id="Watermelon">Watermelon</ListBoxItem>
+    <ListBoxItem id="Cantaloupe">Cantaloupe</ListBoxItem>
+    <ListBoxItem id="Pear">Pear</ListBoxItem>
   </Section>
   <Section>
     <Header>Vegetable</Header>
-    <Item id="Cabbage">Cabbage</Item>
-    <Item id="Broccoli">Broccoli</Item>
-    <Item id="Carrots">Carrots</Item>
-    <Item id="Lettuce">Lettuce</Item>
-    <Item id="Spinach">Spinach</Item>
-    <Item id="Bok Choy">Bok Choy</Item>
-    <Item id="Cauliflower">Cauliflower</Item>
-    <Item id="Potatoes">Potatoes</Item>
+    <ListBoxItem id="Cabbage">Cabbage</ListBoxItem>
+    <ListBoxItem id="Broccoli">Broccoli</ListBoxItem>
+    <ListBoxItem id="Carrots">Carrots</ListBoxItem>
+    <ListBoxItem id="Lettuce">Lettuce</ListBoxItem>
+    <ListBoxItem id="Spinach">Spinach</ListBoxItem>
+    <ListBoxItem id="Bok Choy">Bok Choy</ListBoxItem>
+    <ListBoxItem id="Cauliflower">Cauliflower</ListBoxItem>
+    <ListBoxItem id="Potatoes">Potatoes</ListBoxItem>
   </Section>
 </MySelect>
 ```
@@ -593,7 +593,7 @@ function Example() {
         <Section id={section.name}>
           <Header>{section.name}</Header>
           <Collection items={section.children}>
-            {item => <Item id={item.name}>{item.name}</Item>}
+            {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
           </Collection>
         </Section>
       )}
@@ -604,7 +604,7 @@ function Example() {
 
 ## Text slots
 
-By default, items in a Select are labeled by their text contents for accessibility. Items also support the "label" and "description" slots to separate primary and secondary content, which improves screen reader announcements and can also be used for styling purposes.
+By default, items in a Select are labeled by their text contents for accessibility. ListBoxItems also support the "label" and "description" slots to separate primary and secondary content, which improves screen reader announcements and can also be used for styling purposes.
 
 **Note**: The ARIA spec prohibits listbox items from including interactive content such as buttons, checkboxes, etc.
 
@@ -612,18 +612,18 @@ By default, items in a Select are labeled by their text contents for accessibili
 import {Text} from 'react-aria-components';
 
 <MySelect label="Permissions">
-  <Item textValue="Read">
+  <ListBoxItem textValue="Read">
     <Text slot="label">Read</Text>
     <Text slot="description">Read only</Text>
-  </Item>
-  <Item textValue="Write">
+  </ListBoxItem>
+  <ListBoxItem textValue="Write">
     <Text slot="label">Write</Text>
     <Text slot="description">Read and write only</Text>
-  </Item>
-  <Item textValue="Admin">
+  </ListBoxItem>
+  <ListBoxItem textValue="Admin">
     <Text slot="label">Admin</Text>
     <Text slot="description">Full access</Text>
-  </Item>
+  </ListBoxItem>
 </MySelect>
 ```
 
@@ -657,7 +657,7 @@ function AsyncLoadingExample() {
 
   return (
     <MySelect label="Pick a Pokemon" items={list.items}>
-      {(item) => <Item id={item.name}>{item.name}</Item>}
+      {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
     </MySelect>
   );
 }
@@ -669,9 +669,9 @@ A Select can be fully disabled using the `isDisabled` prop.
 
 ```tsx example
 <MySelect label="Choose frequency" isDisabled>
-  <Item id="rarely">Rarely</Item>
-  <Item id="sometimes">Sometimes</Item>
-  <Item id="always">Always</Item>
+  <ListBoxItem id="rarely">Rarely</ListBoxItem>
+  <ListBoxItem id="sometimes">Sometimes</ListBoxItem>
+  <ListBoxItem id="always">Always</ListBoxItem>
 </MySelect>
 ```
 
@@ -718,7 +718,7 @@ A Select can be fully disabled using the `isDisabled` prop.
 ### Disabled options
 
 `Select` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
-corresponds with the `id` prop passed to the `Item` component, or automatically derived from the values passed
+corresponds with the `id` prop passed to the `ListBoxItem` component, or automatically derived from the values passed
 to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
 
 Disabled items are not focusable, selectable, or keyboard navigable. The `isDisabled` property returned by
@@ -726,12 +726,12 @@ Disabled items are not focusable, selectable, or keyboard navigable. The `isDisa
 
 ```tsx example
 <MySelect label="Favorite Animal" disabledKeys={['cat', 'kangaroo']}>
-  <Item id="red panda">Red Panda</Item>
-  <Item id="cat">Cat</Item>
-  <Item id="dog">Dog</Item>
-  <Item id="aardvark">Aardvark</Item>
-  <Item id="kangaroo">Kangaroo</Item>
-  <Item id="snake">Snake</Item>
+  <ListBoxItem id="red panda">Red Panda</ListBoxItem>
+  <ListBoxItem id="cat">Cat</ListBoxItem>
+  <ListBoxItem id="dog">Dog</ListBoxItem>
+  <ListBoxItem id="aardvark">Aardvark</ListBoxItem>
+  <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+  <ListBoxItem id="snake">Snake</ListBoxItem>
 </MySelect>
 ```
 
@@ -772,7 +772,7 @@ function Example() {
       {/*- end highlight -*/}
       <Popover>
         <ListBox items={options}>
-          {item => <Item>{item.name}</Item>}
+          {item => <ListBoxItem>{item.name}</ListBoxItem>}
         </ListBox>
       </Popover>
     </Select>
@@ -825,9 +825,9 @@ function Example() {
     <>
       <p>Select is {open ? 'open' : 'closed'}</p>
       <MySelect label="Choose frequency" isOpen={open} onOpenChange={setOpen}>
-        <Item id="rarely">Rarely</Item>
-        <Item id="sometimes">Sometimes</Item>
-        <Item id="always">Always</Item>
+        <ListBoxItem id="rarely">Rarely</ListBoxItem>
+        <ListBoxItem id="sometimes">Sometimes</ListBoxItem>
+        <ListBoxItem id="always">Always</ListBoxItem>
       </MySelect>
     </>
   );
@@ -903,14 +903,14 @@ A `<Section>` defines the child items for a section within a `<ListBox>`. It may
 
 A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
 
-### Item
+### ListBoxItem
 
-An `<Item>` defines a single option within a `<ListBox>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for autocomplete in the Select.
+A `<ListBoxItem>` defines a single option within a `<ListBox>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for autocomplete in the Select.
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
-<PropTable component={docs.exports.Item} links={docs.links} />
+<PropTable component={docs.exports.ListBoxItem} links={docs.links} />
 
 </details>
 
@@ -935,11 +935,11 @@ A custom `className` can also be specified on any component. This overrides the 
 In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
-.react-aria-Item[data-selected] {
+.react-aria-ListBoxItem[data-selected] {
   /* ... */
 }
 
-.react-aria-Item[data-focused] {
+.react-aria-ListBoxItem[data-focused] {
   /* ... */
 }
 ```
@@ -947,22 +947,22 @@ In addition, some components support multiple UI states (e.g. pressed, hovered, 
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
 
 ```jsx
-<Item className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+<ListBoxItem className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
   Item
-</Item>
+</ListBoxItem>
 ```
 
 Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkmark icon when an item is selected.
 
 ```jsx
-<Item>
+<ListBoxItem>
   {({isSelected}) => (
     <>
       {isSelected && <CheckmarkIcon />}
       Item
     </>
   )}
-</Item>
+</ListBoxItem>
 ```
 
 The states and selectors for each component used in a `Select` are documented below.
@@ -1013,11 +1013,11 @@ A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by o
 
 A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
 
-### Item
+### ListBoxItem
 
-An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+A `ListBoxItem` can be targeted with the `.react-aria-ListBoxItem` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
 
-<StateTable properties={docs.exports.ItemRenderProps.properties} />
+<StateTable properties={docs.exports.ListBoxItemRenderProps.properties} />
 
 Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
 
@@ -1071,14 +1071,14 @@ function FieldGroup({title, children, isDisabled}: FieldGroupProps) {
 
 <FieldGroup title="Filters" isDisabled>
   <MySelect label="Status" defaultSelectedKey="published">
-    <Item id="draft">Draft</Item>
-    <Item id="published">Published</Item>
-    <Item id="deleted">Deleted</Item>
+    <ListBoxItem id="draft">Draft</ListBoxItem>
+    <ListBoxItem id="published">Published</ListBoxItem>
+    <ListBoxItem id="deleted">Deleted</ListBoxItem>
   </MySelect>
   <MySelect label="Author" defaultSelectedKey="emma">
-    <Item id="john">John</Item>
-    <Item id="emma">Emma</Item>
-    <Item id="tim">Tim</Item>
+    <ListBoxItem id="john">John</ListBoxItem>
+    <ListBoxItem id="emma">Emma</ListBoxItem>
+    <ListBoxItem id="tim">Tim</ListBoxItem>
   </MySelect>
 </FieldGroup>
 ```
@@ -1164,9 +1164,9 @@ function SelectClearButton() {
   {/*- end highlight -*/}
   <Popover>
     <ListBox>
-      <Item>Cat</Item>
-      <Item>Dog</Item>
-      <Item>Kangaroo</Item>
+      <ListBoxItem>Cat</ListBoxItem>
+      <ListBoxItem>Dog</ListBoxItem>
+      <ListBoxItem>Kangaroo</ListBoxItem>
     </ListBox>
   </Popover>
 </Select>

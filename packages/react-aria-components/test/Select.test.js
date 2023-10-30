@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Item, Label, ListBox, Popover, Select, SelectContext, SelectValue, Text} from '../';
+import {Button, Label, ListBox, ListBoxItem, Popover, Select, SelectContext, SelectValue, Text} from '../';
 import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -25,9 +25,9 @@ let TestSelect = (props) => (
     <Text slot="errorMessage">Error</Text>
     <Popover>
       <ListBox>
-        <Item>Cat</Item>
-        <Item>Dog</Item>
-        <Item>Kangaroo</Item>
+        <ListBoxItem>Cat</ListBoxItem>
+        <ListBoxItem>Dog</ListBoxItem>
+        <ListBoxItem>Kangaroo</ListBoxItem>
       </ListBox>
     </Popover>
   </Select>
@@ -90,14 +90,14 @@ describe('Select', () => {
 
   it('supports items with render props', () => {
     let MyItem = (props) => (
-      <Item {...props}>
+      <ListBoxItem {...props}>
         {({isSelected}) => (
           <>
             {props.children}
             {isSelected ? ' (selected)' : ''}
           </>
         )}
-      </Item>
+      </ListBoxItem>
     );
 
     let {getByRole} = render(
@@ -138,7 +138,7 @@ describe('Select', () => {
         </Button>
         <Popover>
           <ListBox items={items}>
-            {item => <Item>{item.name}</Item>}
+            {item => <ListBoxItem>{item.name}</ListBoxItem>}
           </ListBox>
         </Popover>
       </Select>
@@ -166,9 +166,9 @@ describe('Select', () => {
             </Button>
             <Popover>
               <ListBox>
-                <Item>Cat</Item>
-                <Item>Dog</Item>
-                <Item>Kangaroo</Item>
+                <ListBoxItem>Cat</ListBoxItem>
+                <ListBoxItem>Dog</ListBoxItem>
+                <ListBoxItem>Kangaroo</ListBoxItem>
               </ListBox>
             </Popover>
           </>

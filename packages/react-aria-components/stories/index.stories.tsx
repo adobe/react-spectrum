@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, isTextDropItem, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -37,10 +37,10 @@ export const ComboBoxExample = () => (
       <ListBox
         data-testid="combo-box-list-box"
         className={styles.menu}>
-        <MyItem>Foo</MyItem>
-        <MyItem>Bar</MyItem>
-        <MyItem>Baz</MyItem>
-        <MyItem href="http://google.com">Google</MyItem>
+        <MyListBoxItem>Foo</MyListBoxItem>
+        <MyListBoxItem>Bar</MyListBoxItem>
+        <MyListBoxItem>Baz</MyListBoxItem>
+        <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
       </ListBox>
     </Popover>
   </ComboBox>
@@ -65,9 +65,9 @@ export const ComboBoxRenderPropsStatic = () => (
         </div>
         <Popover placement="bottom end">
           <ListBox className={styles.menu}>
-            <MyItem>Foo</MyItem>
-            <MyItem>Bar</MyItem>
-            <MyItem>Baz</MyItem>
+            <MyListBoxItem>Foo</MyListBoxItem>
+            <MyListBoxItem>Bar</MyListBoxItem>
+            <MyListBoxItem>Baz</MyListBoxItem>
           </ListBox>
         </Popover>
       </>
@@ -88,7 +88,7 @@ export const ComboBoxRenderPropsDefaultItems = () => (
         </div>
         <Popover placement="bottom end">
           <ListBox className={styles.menu}>
-            {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+            {(item: ComboBoxItem) => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
           </ListBox>
         </Popover>
       </>
@@ -110,7 +110,7 @@ export const ComboBoxRenderPropsItems = {
           </div>
           <Popover placement="bottom end">
             <ListBox className={styles.menu}>
-              {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
+              {(item: ComboBoxItem) => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
             </ListBox>
           </Popover>
         </>
@@ -137,7 +137,7 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
         </div>
         <Popover placement="bottom end">
           <ListBox className={styles.menu} items={items}>
-            {item => <MyItem key={item.id}>{item.name}</MyItem>}
+            {item => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
           </ListBox>
         </Popover>
       </>
@@ -147,10 +147,10 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
 
 export const ListBoxExample = (args) => (
   <ListBox className={styles.menu} {...args} aria-label="test listbox">
-    <MyItem>Foo</MyItem>
-    <MyItem>Bar</MyItem>
-    <MyItem>Baz</MyItem>
-    <MyItem href="http://google.com">Google</MyItem>
+    <MyListBoxItem>Foo</MyListBoxItem>
+    <MyListBoxItem>Bar</MyListBoxItem>
+    <MyListBoxItem>Baz</MyListBoxItem>
+    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
   </ListBox>
 );
 
@@ -181,34 +181,34 @@ export const ListBoxSections = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
     <Section className={styles.group}>
       <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-      <MyItem>Foo</MyItem>
-      <MyItem>Bar</MyItem>
-      <MyItem>Baz</MyItem>
+      <MyListBoxItem>Foo</MyListBoxItem>
+      <MyListBoxItem>Bar</MyListBoxItem>
+      <MyListBoxItem>Baz</MyListBoxItem>
     </Section>
     <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
     <Section className={styles.group}>
       <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-      <MyItem>Foo</MyItem>
-      <MyItem>Bar</MyItem>
-      <MyItem>Baz</MyItem>
+      <MyListBoxItem>Foo</MyListBoxItem>
+      <MyListBoxItem>Bar</MyListBoxItem>
+      <MyListBoxItem>Baz</MyListBoxItem>
     </Section>
   </ListBox>
 );
 
 export const ListBoxComplex = () => (
   <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
-    <MyItem>
+    <MyListBoxItem>
       <Text slot="label">Item 1</Text>
       <Text slot="description">Description</Text>
-    </MyItem>
-    <MyItem>
+    </MyListBoxItem>
+    <MyListBoxItem>
       <Text slot="label">Item 2</Text>
       <Text slot="description">Description</Text>
-    </MyItem>
-    <MyItem>
+    </MyListBoxItem>
+    <MyListBoxItem>
       <Text slot="label">Item 3</Text>
       <Text slot="description">Description</Text>
-    </MyItem>
+    </MyListBoxItem>
   </ListBox>
 );
 
@@ -260,10 +260,10 @@ export const SelectExample = () => (
         <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
       </OverlayArrow>
       <ListBox className={styles.menu}>
-        <MyItem>Foo</MyItem>
-        <MyItem>Bar</MyItem>
-        <MyItem>Baz</MyItem>
-        <MyItem href="http://google.com">Google</MyItem>
+        <MyListBoxItem>Foo</MyListBoxItem>
+        <MyListBoxItem>Bar</MyListBoxItem>
+        <MyListBoxItem>Baz</MyListBoxItem>
+        <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
       </ListBox>
     </Popover>
   </Select>
@@ -280,10 +280,10 @@ export const SelectRenderProps = () => (
         </Button>
         <Popover>
           <ListBox className={styles.menu}>
-            <MyItem>Foo</MyItem>
-            <MyItem>Bar</MyItem>
-            <MyItem>Baz</MyItem>
-            <MyItem href="http://google.com">Google</MyItem>
+            <MyListBoxItem>Foo</MyListBoxItem>
+            <MyListBoxItem>Bar</MyListBoxItem>
+            <MyListBoxItem>Baz</MyListBoxItem>
+            <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
           </ListBox>
         </Popover>
       </>
@@ -298,17 +298,17 @@ export const MenuExample = () => (
       <Menu className={styles.menu} onAction={action('onAction')}>
         <Section className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-          <MyItem>Foo</MyItem>
-          <MyItem>Bar</MyItem>
-          <MyItem>Baz</MyItem>
-          <MyItem href="https://google.com">Google</MyItem>
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
+          <MyMenuItem href="https://google.com">Google</MyMenuItem>
         </Section>
         <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
         <Section className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 2</Header>
-          <MyItem>Foo</MyItem>
-          <MyItem>Bar</MyItem>
-          <MyItem>Baz</MyItem>
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
         </Section>
       </Menu>
     </Popover>
@@ -320,21 +320,21 @@ export const MenuComplex = () => (
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu}>
-        <MyItem>
+        <MyMenuItem>
           <Text slot="label">Copy</Text>
           <Text slot="description">Description</Text>
           <Keyboard>⌘C</Keyboard>
-        </MyItem>
-        <MyItem>
+        </MyMenuItem>
+        <MyMenuItem>
           <Text slot="label">Cut</Text>
           <Text slot="description">Description</Text>
           <Keyboard>⌘X</Keyboard>
-        </MyItem>
-        <MyItem>
+        </MyMenuItem>
+        <MyMenuItem>
           <Text slot="label">Paste</Text>
           <Text slot="description">Description</Text>
           <Keyboard>⌘V</Keyboard>
-        </MyItem>
+        </MyMenuItem>
       </Menu>
     </Popover>
   </MenuTrigger>
@@ -906,7 +906,7 @@ function MyColumn(props) {
             <Button style={{flex: 1, textAlign: 'left'}}>{props.children}</Button>
             <Popover>
               <Menu className={styles.menu} onAction={() => startResize()}>
-                <MyItem id="resize">Resize</MyItem>
+                <MyMenuItem id="resize">Resize</MyMenuItem>
               </Menu>
             </Popover>
           </MenuTrigger>
@@ -919,9 +919,20 @@ function MyColumn(props) {
   );
 }
 
-function MyItem(props) {
+function MyListBoxItem(props) {
   return (
-    <Item
+    <ListBoxItem
+      {...props}
+      className={({isFocused, isSelected}) => classNames(styles, 'item', {
+        focused: isFocused,
+        selected: isSelected
+      })} />
+  );
+}
+
+function MyMenuItem(props) {
+  return (
+    <MenuItem
       {...props}
       className={({isFocused, isSelected}) => classNames(styles, 'item', {
         focused: isFocused,
@@ -1220,11 +1231,11 @@ export const ListBoxDnd = (props: ListBoxProps<typeof albums[0]>) => {
       selectionMode="multiple"
       dragAndDropHooks={dragAndDropHooks}>
       {item => (
-        <Item>
+        <ListBoxItem>
           <img src={item.image} alt="" />
           <Text slot="label">{item.title}</Text>
           <Text slot="description">{item.artist}</Text>
-        </Item>
+        </ListBoxItem>
       )}
     </ListBox>
   );
