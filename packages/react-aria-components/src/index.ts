@@ -19,7 +19,9 @@ export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFiel
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext, DatePickerStateContext, DateRangePickerStateContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from './Dialog';
 export {DropZone, DropZoneContext} from './DropZone';
+export {FieldError} from './FieldError';
 export {FileTrigger} from './FileTrigger';
+export {Form} from './Form';
 export {GridList, GridListItem, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
@@ -65,7 +67,9 @@ export type {DateFieldProps, DateFieldRenderProps, DateInputProps, DateInputRend
 export type {DatePickerProps, DatePickerRenderProps, DateRangePickerProps, DateRangePickerRenderProps} from './DatePicker';
 export type {DialogProps, DialogTriggerProps} from './Dialog';
 export type {DropZoneProps, DropZoneRenderProps} from './DropZone';
+export type {FieldErrorProps} from './FieldError';
 export type {FileTriggerProps} from './FileTrigger';
+export type {FormProps} from './Form';
 export type {GridListProps, GridListRenderProps, GridListItemProps, GridListItemRenderProps} from './GridList';
 export type {GroupProps, GroupRenderProps} from './Group';
 export type {HeadingProps} from './Heading';
