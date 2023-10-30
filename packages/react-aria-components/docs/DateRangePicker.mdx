@@ -81,134 +81,132 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 ```css hidden
 /* We only import styles up to one page away, we don't follow those pages dependencies, so
 * import everything and in the correct order of dependency so that layers don't overwrite each other. */
-@import './Button.mdx';
-@import './Popover.mdx';
-@import './DateField.mdx';
-@import './RangeCalendar.mdx';
+@import './Button.mdx' layer(button);
+@import './Popover.mdx' layer(popover);
+@import './DateField.mdx' layer(datefield);
+@import './RangeCalendar.mdx' layer(rangecalendar);
 ```
 
 ```css
-@layer daterangepicker {
+.react-aria-DateRangePicker {
+  --field-border: var(--spectrum-global-color-gray-400);
+  --field-background: var(--spectrum-global-color-gray-50);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-placeholder: var(--spectrum-global-color-gray-700);
+  --text-color-invalid: var(--spectrum-global-color-red-600);
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
+
+  color: var(--text-color);
+
+  .react-aria-Group {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    min-width: 220px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+    position: relative;
+    padding: 2px 2px 2px 8px;
+    border: 1px solid var(--field-border);
+    border-radius: 6px;
+    background: var(--field-background);
+    white-space: nowrap;
+
+    &[data-focus-within] {
+      border-color: var(--highlight-background);
+      box-shadow: 0 0 0 1px var(--highlight-background);
+    }
+  }
+
+  [slot=start] + span {
+    padding: 0 4px;
+  }
+
+  [slot=end] {
+    margin-right: 2rem;
+    flex: 1;
+  }
+
+  .react-aria-Button {
+    background: slateblue;
+    color: white;
+    border-radius: 4px;
+    border: none;
+    appearance: none;
+    margin-left: auto;
+    width: 1.429rem;
+    height: 1.429rem;
+    padding: 0;
+    vertical-align: middle;
+    font-size: 0.857rem;
+    outline: none;
+    box-sizing: content-box;
+    flex-shrink: 0;
+    border: 2px solid var(--page-background);
+    position: sticky;
+    right: 0;
+
+    &[data-focus-visible] {
+      box-shadow: 0 0 0 2px slateblue;
+    }
+  }
+}
+
+.react-aria-DateInput {
+  display: flex;
+  width: unset;
+  min-width: unset;
+  padding: unset;
+  border: unset;
+  box-shadow: unset;
+}
+
+@media (forced-colors: active) {
   .react-aria-DateRangePicker {
-    --field-border: var(--spectrum-global-color-gray-400);
-    --field-background: var(--spectrum-global-color-gray-50);
-    --text-color: var(--spectrum-alias-text-color);
-    --text-color-placeholder: var(--spectrum-global-color-gray-700);
-    --text-color-invalid: var(--spectrum-global-color-red-600);
-    --highlight-background: slateblue;
-    --highlight-foreground: white;
-    --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
+    forced-color-adjust: none;
 
-    color: var(--text-color);
-
-    .react-aria-Group {
-      display: flex;
-      align-items: center;
-      width: fit-content;
-      min-width: 220px;
-      max-width: 100%;
-      box-sizing: border-box;
-      overflow: auto;
-      position: relative;
-      padding: 2px 2px 2px 8px;
-      border: 1px solid var(--field-border);
-      border-radius: 6px;
-      background: var(--field-background);
-      white-space: nowrap;
-
-      &[data-focus-within] {
-        border-color: var(--highlight-background);
-        box-shadow: 0 0 0 1px var(--highlight-background);
-      }
-    }
-
-    [slot=start] + span {
-      padding: 0 4px;
-    }
-
-    [slot=end] {
-      margin-right: 2rem;
-      flex: 1;
-    }
+    --field-border: ButtonBorder;
+    --field-background: Field;
+    --text-color: FieldText;
+    --text-color-placeholder: FieldText;
+    --text-color-invalid: LinkText;
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --highlight-background-invalid: LinkText;
 
     .react-aria-Button {
-      background: slateblue;
-      color: white;
-      border-radius: 4px;
-      border: none;
-      appearance: none;
-      margin-left: auto;
-      width: 1.429rem;
-      height: 1.429rem;
-      padding: 0;
-      vertical-align: middle;
-      font-size: 0.857rem;
-      outline: none;
-      box-sizing: content-box;
-      flex-shrink: 0;
-      border: 2px solid var(--page-background);
-      position: sticky;
-      right: 0;
+      forced-color-adjust: none;
+
+      --focus-ring-color: Highlight;
+      background: ButtonFace;
+      color: ButtonText;
+      border: 1px solid ButtonBorder;
 
       &[data-focus-visible] {
-        box-shadow: 0 0 0 2px slateblue;
+        border-color: Highlight;
+        box-shadow: 0 0 0 1px Highlight;
       }
     }
   }
 
-  .react-aria-DateInput {
-    display: flex;
-    width: unset;
-    min-width: unset;
-    padding: unset;
-    border: unset;
-    box-shadow: unset;
-  }
+  .react-aria-RangeCalendar {
+    forced-color-adjust: none;
 
-  @media (forced-colors: active) {
-    .react-aria-DateRangePicker {
-      forced-color-adjust: none;
-
-      --field-border: ButtonBorder;
-      --field-background: Field;
-      --text-color: FieldText;
-      --text-color-placeholder: FieldText;
-      --text-color-invalid: LinkText;
-      --highlight-background: Highlight;
-      --highlight-foreground: HighlightText;
-      --highlight-background-invalid: LinkText;
-
-      .react-aria-Button {
-        forced-color-adjust: none;
-
-        --focus-ring-color: Highlight;
-        background: ButtonFace;
-        color: ButtonText;
-        border: 1px solid ButtonBorder;
-
-        &[data-focus-visible] {
-          border-color: Highlight;
-          box-shadow: 0 0 0 1px Highlight;
-        }
-      }
-    }
-
-    .react-aria-RangeCalendar {
-      forced-color-adjust: none;
-
-      --highlight-background: Highlight;
-      --highlight-foreground: HighlightText;
-      --button-border: ButtonBorder;
-      --button-border-disabled: GrayText;
-      --button-background: ButtonFace;
-      --text-color: ButtonText;
-      --text-color-disabled: GrayText;
-      --text-color-invalid: LinkText;
-      --unavailable-color: GrayText;
-      --invalid-color: LinkText;
-      --pressed-color: Canvas;
-      --spectrum-alias-background-color-default: Canvas;
-    }
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --button-border: ButtonBorder;
+    --button-border-disabled: GrayText;
+    --button-background: ButtonFace;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+    --text-color-invalid: LinkText;
+    --unavailable-color: GrayText;
+    --invalid-color: LinkText;
+    --pressed-color: Canvas;
+    --spectrum-alias-background-color-default: Canvas;
   }
 }
 ```
@@ -600,17 +598,15 @@ import {today} from '@internationalized/date';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer daterangepicker {
-  .react-aria-DateRangePicker {
-    &[data-invalid] {
-      [slot=end]:after {
-        content: '🚫' / '';
-        content: '🚫';
-        alt: ' ';
-        flex: 1;
-        text-align: end;
-        margin-right: -2rem;
-      }
+.react-aria-DateRangePicker {
+  &[data-invalid] {
+    [slot=end]:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+      margin-right: -2rem;
     }
   }
 }
@@ -715,16 +711,14 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer daterangepicker {
-  .react-aria-DateRangePicker {
-    [slot=description] {
-      font-size: 12px;
-    }
+.react-aria-DateRangePicker {
+  [slot=description] {
+    font-size: 12px;
+  }
 
-    [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--text-color-invalid);
-    }
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--text-color-invalid);
   }
 }
 ```

@@ -73,26 +73,24 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-@import './Button.mdx';
-@import './TextField.mdx';
-@import './Popover.mdx';
-@import './Modal.mdx';
+@import './Button.mdx' layer(button);
+@import './TextField.mdx' layer(textfield);
+@import './Popover.mdx' layer(popover);
+@import './Modal.mdx' layer(modal);
 ```
 
 ```css
-@layer dialog {
-  .react-aria-Dialog {
-    outline: none;
+.react-aria-Dialog {
+  outline: none;
 
-    .react-aria-Heading {
-      line-height: 1em;
-      margin-top: 0;
-    }
+  .react-aria-Heading {
+    line-height: 1em;
+    margin-top: 0;
+  }
 
-    .react-aria-Button {
-      margin-top: 20px;
-      margin-right: 8px;
-    }
+  .react-aria-Button {
+    margin-top: 20px;
+    margin-right: 8px;
   }
 }
 ```
