@@ -11,7 +11,7 @@
  */
 
 import {act} from '@testing-library/react';
-import {Button, ComboBox, ComboBoxContext, Header, Input, Item, Label, ListBox, Popover, Section, Text} from '../';
+import {Button, ComboBox, ComboBoxContext, Header, Input, Label, ListBox, ListBoxItem, Popover, Section, Text} from '../';
 import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -25,9 +25,9 @@ let TestComboBox = (props) => (
     <Text slot="errorMessage">Error</Text>
     <Popover>
       <ListBox>
-        <Item id="1">Cat</Item>
-        <Item id="2">Dog</Item>
-        <Item id="3">Kangaroo</Item>
+        <ListBoxItem id="1">Cat</ListBoxItem>
+        <ListBoxItem id="2">Dog</ListBoxItem>
+        <ListBoxItem id="3">Kangaroo</ListBoxItem>
       </ListBox>
     </Popover>
   </ComboBox>
@@ -100,13 +100,13 @@ describe('ComboBox', () => {
           <ListBox>
             <Section>
               <Header>Fruit</Header>
-              <Item id="Apple">Apple</Item>
-              <Item id="Banana">Banana</Item>
+              <ListBoxItem id="Apple">Apple</ListBoxItem>
+              <ListBoxItem id="Banana">Banana</ListBoxItem>
             </Section>
             <Section>
               <Header>Vegetable</Header>
-              <Item id="Cabbage">Cabbage</Item>
-              <Item id="Broccoli">Broccoli</Item>
+              <ListBoxItem id="Cabbage">Cabbage</ListBoxItem>
+              <ListBoxItem id="Broccoli">Broccoli</ListBoxItem>
             </Section>
           </ListBox>
         </Popover>
@@ -144,7 +144,7 @@ describe('ComboBox', () => {
         <Text slot="errorMessage">Error</Text>
         <Popover>
           <ListBox>
-            {item => <Item>{item.name}</Item>}
+            {item => <ListBoxItem>{item.name}</ListBoxItem>}
           </ListBox>
         </Popover>
       </ComboBox>
@@ -171,9 +171,9 @@ describe('ComboBox', () => {
             <Button>{isOpen ? 'close' : 'open'}</Button>
             <Popover>
               <ListBox>
-                <Item>Cat</Item>
-                <Item>Dog</Item>
-                <Item>Kangaroo</Item>
+                <ListBoxItem>Cat</ListBoxItem>
+                <ListBoxItem>Dog</ListBoxItem>
+                <ListBoxItem>Kangaroo</ListBoxItem>
               </ListBox>
             </Popover>
           </>
