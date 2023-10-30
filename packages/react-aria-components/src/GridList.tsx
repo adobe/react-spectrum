@@ -9,14 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden, VisuallyHidden} from 'react-aria';
+import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
 import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {filterDOMProps, isIOS, isWebKit, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, Key, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
@@ -174,39 +174,14 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
-    // Ideally we'd use `display: contents` on the row and cell elements so that
-    // they don't affect the layout of the children. However, WebKit currently has
-    // a bug that makes grid elements with display: contents hidden to screen readers.
-    // https://bugs.webkit.org/show_bug.cgi?id=239479
     let content = props.renderEmptyState(renderValues);
-    if (isWebKit()) {
-      // For now, when in an empty state, swap the role to group in webkit.
-      emptyStatePropOverrides = {
-        role: 'group',
-        'aria-multiselectable': undefined
-      };
-
-      if (isIOS()) {
-        // iOS VoiceOver also doesn't announce the aria-label of group elements
-        // so try to add a visually hidden label element as well.
-        emptyState = (
-          <>
-            <VisuallyHidden>{gridProps['aria-label']}</VisuallyHidden>
-            {content}
-          </>
-        );
-      } else {
-        emptyState = content;
-      }
-    } else {
-      emptyState = (
-        <div role="row" style={{display: 'contents'}}>
-          <div role="gridcell" style={{display: 'contents'}}>
-            {content}
-          </div>
+    emptyState = (
+      <div role="row" style={{display: 'contents'}}>
+        <div role="gridcell" style={{display: 'contents'}}>
+          {content}
         </div>
-      );
-    }
+      </div>
+    );
   }
 
   return (
@@ -364,7 +339,7 @@ function GridListRow({item}) {
         data-dragging={isDragging || undefined}
         data-drop-target={dropIndicator?.isDropTarget || undefined}
         data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
-        <div {...gridCellProps}>
+        <div {...gridCellProps} style={{display: 'contents'}}>
           <Provider
             values={[
               [CheckboxContext, {

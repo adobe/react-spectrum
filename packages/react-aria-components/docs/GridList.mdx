@@ -120,6 +120,10 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
     }
 
     .react-aria-GridListItem {
+      display: flex;
+      align-items: center;
+      gap: 0.571rem;
+      min-height: 28px;
       padding: 0.286rem 0.286rem 0.286rem 0.571rem;
       border-radius: 6px;
       outline: none;
@@ -155,13 +159,6 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
 
       &[data-disabled] {
         color: var(--text-color-disabled);
-      }
-
-      [role=gridcell] {
-        display: flex;
-        align-items: center;
-        gap: 0.571rem;
-        min-height: 28px;
       }
 
       .react-aria-Button:not([slot]) {
