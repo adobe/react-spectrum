@@ -221,9 +221,9 @@ describe('ComboBox', () => {
           <FieldError />
           <Popover>
             <ListBox>
-              <Item id="1">Cat</Item>
-              <Item id="2">Dog</Item>
-              <Item id="3">Kangaroo</Item>
+              <ListBoxItem id="1">Cat</ListBoxItem>
+              <ListBoxItem id="2">Dog</ListBoxItem>
+              <ListBoxItem id="3">Kangaroo</ListBoxItem>
             </ListBox>
           </Popover>
         </ComboBox>

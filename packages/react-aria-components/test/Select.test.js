@@ -210,9 +210,9 @@ describe('Select', () => {
           <FieldError />
           <Popover>
             <ListBox>
-              <Item>Cat</Item>
-              <Item>Dog</Item>
-              <Item>Kangaroo</Item>
+              <ListBoxItem>Cat</ListBoxItem>
+              <ListBoxItem>Dog</ListBoxItem>
+              <ListBoxItem>Kangaroo</ListBoxItem>
             </ListBox>
           </Popover>
         </Select>
