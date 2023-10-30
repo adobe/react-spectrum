@@ -1,4 +1,4 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -19,7 +19,7 @@ import Anatomy from '@react-aria/breadcrumbs/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
-category: Navigation
+category: Content
 keywords: [toolbar, aria]
 type: component
 ---
@@ -30,7 +30,7 @@ type: component
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Breadcrumbs']}
+  componentNames={['Toolbar']}
   sourceData={[
     {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/'}
   ]} />
@@ -115,11 +115,11 @@ import {Toolbar, Button, ToggleButton, Separator, Popover, MenuTrigger, Menu, It
 
 ## Features
 
-Toobar provides keyboard navigation and announcements for groups of interactive elements.
+Toolbar provides keyboard navigation and announcements for groups of interactive elements.
 `Toolbar` helps implement these in an accessible way.
 
-* **Flexible** – Support for various RAC implemented components.
-* **Accessible** – Implemented as a roving tab index with arrow key navigation.
+* **Flexible** – Support for various RAC or Aria Hooks implemented components.
+* **Accessible** – Follows the [ARIA toolbar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) with support for keyboard arrow key navigation and is a single tab stop.
 * **Styleable** – Can be styled in any custom way, including extra dom structure between the Toolbar and the interactive children.
 
 ## Anatomy
@@ -127,8 +127,6 @@ Toobar provides keyboard navigation and announcements for groups of interactive 
 <Anatomy />
 
 Toolbar consists of a wrapping element which controls arrow key navigation depending on the orientation and children.
-
-## Content
 
 ## Props
 
