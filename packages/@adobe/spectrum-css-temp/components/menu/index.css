@@ -171,9 +171,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Menu-section--noHeading {
-  &.spectrum-Menu-section--firstSection,
-  &.spectrum-Menu-section--lastSection {
-    padding: 0;
+  &.spectrum-Menu-section--isFirst {
+    padding-top: 0;
+  }
+  &.spectrum-Menu-section--isLast {
+    padding-bottom: 0;
   }
 }
 

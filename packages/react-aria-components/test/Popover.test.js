@@ -98,7 +98,7 @@ describe('Popover', () => {
     let {getByRole} = render(<>
       <span ref={triggerRef}>Trigger</span>
       <Popover isOpen triggerRef={triggerRef} onOpenChange={onOpenChange}>
-        <Dialog>A popover</Dialog>
+        <Dialog aria-label="Popover">A popover</Dialog>
       </Popover>
     </>);
 

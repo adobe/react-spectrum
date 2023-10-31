@@ -86,7 +86,8 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     let computeVisibleItems = (visibleItems: number) => {
       if (domRef.current && wrapperRef.current) {
         let listItems = Array.from(domRef.current.children) as HTMLLIElement[];
-        let containerSize = orientation === 'horizontal' ? wrapperRef.current.offsetWidth : wrapperRef.current.offsetHeight;
+        let containerSize = orientation === 'horizontal' ? wrapperRef.current.getBoundingClientRect().width : wrapperRef.current.getBoundingClientRect().height;
+
         let isShowingMenu = visibleItems < state.collection.size;
         let calculatedSize = 0;
         let newVisibleItems = 0;
@@ -104,7 +105,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
           calculatedSize += orientation === 'horizontal'
             ? outerWidth(item, i === 0, i === listItems.length - 1)
             : outerHeight(item, i === 0, i === listItems.length - 1);
-          if (calculatedSize <= containerSize) {
+          if (Math.round(calculatedSize) <= Math.round(containerSize)) {
             newVisibleItems++;
           } else {
             break;
@@ -481,13 +482,13 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
 
 function outerWidth(element: HTMLElement, ignoreLeftMargin: boolean, ignoreRightMargin: boolean) {
   let style = window.getComputedStyle(element);
-  return element.offsetWidth + (ignoreLeftMargin ? 0 : toNumber(style.marginLeft)) + (ignoreRightMargin ? 0 : toNumber(style.marginRight));
+  return element.getBoundingClientRect().width + (ignoreLeftMargin ? 0 : toNumber(style.marginLeft)) + (ignoreRightMargin ? 0 : toNumber(style.marginRight));
 }
 
 
 function outerHeight(element: HTMLElement, ignoreTopMargin: boolean, ignoreBottomMargin: boolean) {
   let style = window.getComputedStyle(element);
-  return element.offsetHeight + (ignoreTopMargin ? 0 : toNumber(style.marginTop)) + (ignoreBottomMargin ? 0 : toNumber(style.marginBottom));
+  return element.getBoundingClientRect().height + (ignoreTopMargin ? 0 : toNumber(style.marginTop)) + (ignoreBottomMargin ? 0 : toNumber(style.marginBottom));
 }
 
 function toNumber(value: string) {

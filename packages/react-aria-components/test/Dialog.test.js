@@ -29,7 +29,7 @@ describe('Dialog', () => {
           <Dialog role="alertdialog" data-test="dialog">
             {({close}) => (
               <>
-                <Heading>Alert</Heading>
+                <Heading slot="title">Alert</Heading>
                 <Button onPress={close}>Close</Button>
               </>
             )}
@@ -64,7 +64,7 @@ describe('Dialog', () => {
             <Dialog role="alertdialog" data-test="dialog">
               {({close}) => (
                 <>
-                  <Heading>Alert</Heading>
+                  <Heading slot="title">Alert</Heading>
                   <Button onPress={close}>Close</Button>
                 </>
               )}
@@ -99,7 +99,7 @@ describe('Dialog', () => {
           <Dialog role="alertdialog" data-test="dialog">
             {({close}) => (
               <>
-                <Heading>Alert</Heading>
+                <Heading slot="title">Alert</Heading>
                 <Button onPress={close}>Close</Button>
               </>
             )}
@@ -128,7 +128,7 @@ describe('Dialog', () => {
             <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
           </OverlayArrow>
           <Dialog data-test="dialog">
-            <Heading>Help</Heading>
+            <Heading slot="title">Help</Heading>
             <p>For help accessing your account, please contact support.</p>
           </Dialog>
         </Popover>
@@ -160,6 +160,26 @@ describe('Dialog', () => {
     expect(dialog).not.toBeInTheDocument();
   });
 
+  it('should get default aria label from trigger', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Settings</Button>
+        <Popover>
+          <Dialog>Test</Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-labelledby', button.id);
+
+    await user.click(document.body);
+    expect(dialog).not.toBeInTheDocument();
+  });
+
   it('should support render props', async () => {
     let {getByRole} = render(
       <DialogTrigger>
@@ -168,7 +188,7 @@ describe('Dialog', () => {
           <Dialog>
             {({close}) => (
               <>
-                <Heading>Help</Heading>
+                <Heading slot="title">Help</Heading>
                 <p>For help accessing your account, please contact support.</p>
                 <Button onPress={() => close()}>Dismiss</Button>
               </>
@@ -196,7 +216,7 @@ describe('Dialog', () => {
     let onOpenChange = jest.fn();
     let {getByRole} = render(
       <Modal isDismissable isOpen onOpenChange={onOpenChange}>
-        <Dialog>A modal</Dialog>
+        <Dialog aria-label="Modal">A modal</Dialog>
       </Modal>
     );
 
@@ -214,7 +234,7 @@ describe('Dialog', () => {
       <DialogTrigger>
         <Button />
         <Modal isDismissable isOpen onOpenChange={onOpenChange}>
-          <Dialog>A modal</Dialog>
+          <Dialog aria-label="Modal">A modal</Dialog>
         </Modal>
       </DialogTrigger>
     </>);

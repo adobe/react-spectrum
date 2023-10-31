@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
+import userEvent from '@testing-library/user-event';
 
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
@@ -25,8 +26,14 @@ import React, {useState} from 'react';
 
 describe('Button', function () {
   let onPressSpy = jest.fn();
+  let onPressStartSpy = jest.fn();
+  let onPressEndSpy = jest.fn();
+  let onPressUpSpy = jest.fn();
+  let onPressChangeSpy = jest.fn();
+  let user;
 
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 
@@ -39,12 +46,32 @@ describe('Button', function () {
     ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy}}
     ${'Button'}       | ${Button}      | ${{onPress: onPressSpy}}
     ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy}}
-  `('$Name handles defaults', function ({Component, props}) {
+  `('$Name handles defaults', async function ({Component, props}) {
     let {getByRole, getByText} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
+
+    let text = getByText('Click Me');
+    expect(text).not.toBeNull();
+  });
+
+  it.each`
+    Name              | Component      | props
+    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+  `('$Name supports press events', async function ({Component, props}) {
+    let {getByRole, getByText} = render(<Component {...props}>Click Me</Component>);
+
+    let button = getByRole('button');
+    await user.click(button);
+    expect(onPressStartSpy).toHaveBeenCalledTimes(1);
+    expect(onPressSpy).toHaveBeenCalledTimes(1);
+    expect(onPressEndSpy).toHaveBeenCalledTimes(1);
+    expect(onPressUpSpy).toHaveBeenCalledTimes(1);
+    expect(onPressChangeSpy).toHaveBeenCalledTimes(2);
 
     let text = getByText('Click Me');
     expect(text).not.toBeNull();

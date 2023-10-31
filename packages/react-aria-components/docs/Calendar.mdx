@@ -57,147 +57,90 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+* import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './Button.mdx';
+```
 
 ```css
-.react-aria-Calendar {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --pressed-color: var(--spectrum-global-color-gray-200);
-  --unavailable-color: var(--spectrum-global-color-red-600);
-  --invalid-color: var(--spectrum-global-color-static-red-600);
-
-  width: fit-content;
-  max-width: 100%;
-  color: var(--text-color);
-
-  & header {
-    display: flex;
-    align-items: center;
-    margin: 0 4px .5rem 4px;
-
-    .react-aria-Heading {
-      flex: 1;
-      margin: 0;
-      text-align: center;
-      font-size: 1.375rem;
-    }
-  }
-
-  .react-aria-Button {
-    width: 2rem;
-    height: 2rem;
-    padding: 0;
-  }
-
-  .react-aria-CalendarCell {
-    width: 2rem;
-    line-height: 2rem;
-    text-align: center;
-    border-radius: 6px;
-    cursor: default;
-    outline: none;
-    border: 2px solid var(--spectrum-alias-background-color-default);
-    margin: -1px;
-
-    &[data-outside-month] {
-      display: none;
-    }
-
-    &[data-pressed] {
-      background: var(--pressed-color);
-    }
-
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--highlight-background);
-    }
-
-    &[data-selected] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    &[data-unavailable] {
-      text-decoration: line-through;
-      color: var(--unavailable-color);
-    }
-
-    &[data-invalid] {
-      background: var(--invalid-color);
-      color: var(--highlight-foreground);
-    }
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
-  }
-}
-
-.react-aria-Button {
-  --button-background: var(--spectrum-global-color-gray-50);
-  --button-backgound-pressed: var(--spectrum-global-color-gray-100);
-  --button-border: var(--spectrum-global-color-gray-400);
-  --button-border-disabled: var(--spectrum-alias-border-color-disabled);
-  --focus-ring-color: slateblue;
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  background: var(--button-background);
-  border: 1px solid var(--button-border);
-  color: var(--text-color);
-  box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  padding: 0.4rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-
-  &[data-focus-visible] {
-    border-color: var(--focus-ring-color);
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
-  }
-
-  &[data-pressed] {
-    background: var(--button-backgound-pressed);
-  }
-
-  &[data-disabled] {
-    border-color: var(--button-border-disabled);
-    color: var(--text-color-disabled);
-  }
-}
-
-@media (forced-colors: active) {
+@layer calendar {
   .react-aria-Calendar {
-    forced-color-adjust: none;
+    --highlight-background: slateblue;
+    --highlight-foreground: white;
+    --text-color: var(--spectrum-alias-text-color);
+    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+    --text-color-invalid: var(--spectrum-global-color-red-600);
+    --pressed-color: var(--spectrum-global-color-gray-200);
+    --unavailable-color: var(--spectrum-global-color-red-600);
+    --invalid-color: var(--spectrum-global-color-static-red-600);
 
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --text-color-invalid: LinkText;
-    --unavailable-color: GrayText;
-    --invalid-color: LinkText;
-    --pressed-color: Canvas;
-    --spectrum-alias-background-color-default: Canvas;
+    width: fit-content;
+    max-width: 100%;
+    color: var(--text-color);
+
+    & header {
+      display: flex;
+      align-items: center;
+      margin: 0 4px .5rem 4px;
+
+      .react-aria-Heading {
+        flex: 1;
+        margin: 0;
+        text-align: center;
+        font-size: 1.375rem;
+      }
+    }
+
+    .react-aria-Button {
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+    }
+
+    .react-aria-CalendarCell {
+      width: 2rem;
+      line-height: 2rem;
+      text-align: center;
+      border-radius: 6px;
+      cursor: default;
+      outline: none;
+      border: 2px solid var(--spectrum-alias-background-color-default);
+      margin: -1px;
+
+      &[data-outside-month] {
+        display: none;
+      }
+
+      &[data-pressed] {
+        background: var(--pressed-color);
+      }
+
+      &[data-focus-visible] {
+        box-shadow: 0 0 0 2px var(--highlight-background);
+      }
+
+      &[data-selected] {
+        background: var(--highlight-background);
+        color: var(--highlight-foreground);
+      }
+    }
   }
 
-  .react-aria-Button {
-    --button-border: ButtonBorder;
-    --button-border-disabled: GrayText;
-    --button-background: ButtonFace;
-    --button-backgound-pressed: ButtonFace;
-    --focus-ring-color: Highlight;
-    --text-color-disabled: GrayText;
+  @media (forced-colors: active) {
+    .react-aria-Calendar {
+      forced-color-adjust: none;
+
+      --highlight-background: Highlight;
+      --highlight-foreground: HighlightText;
+      --text-color: ButtonText;
+      --text-color-disabled: GrayText;
+      --text-color-invalid: LinkText;
+      --unavailable-color: GrayText;
+      --invalid-color: LinkText;
+      --pressed-color: Canvas;
+      --spectrum-alias-background-color-default: Canvas;
+    }
   }
 }
 ```
@@ -442,6 +385,23 @@ import {today} from '@internationalized/date';
 <MyCalendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} />
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer calendar {
+  .react-aria-Calendar {
+    .react-aria-CalendarCell {
+      &[data-disabled] {
+        color: var(--text-color-disabled);
+      }
+    }
+  }
+}
+```
+
+</details>
+
 ### Unavailable dates
 
 `Calendar` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard so that navigation is consistent, but cannot be selected by the user. In this example, they are displayed in red. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
@@ -467,6 +427,24 @@ function Example() {
   return <MyCalendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer calendar {
+  .react-aria-Calendar {
+    .react-aria-CalendarCell {
+      &[data-unavailable] {
+        text-decoration: line-through;
+        color: var(--unavailable-color);
+      }
+    }
+  }
+}
+```
+
+</details>
 
 ### Error message
 
@@ -496,6 +474,28 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer calendar {
+  .react-aria-Calendar {
+    .react-aria-CalendarCell {
+      &[data-invalid] {
+        background: var(--invalid-color);
+        color: var(--highlight-foreground);
+      }
+    }
+    [slot=errorMessage] {
+      font-size: 12px;
+      color: var(--text-color-invalid);
+    }
+  }
+}
+```
+
+</details>
 
 ## Controlling the focused date
 

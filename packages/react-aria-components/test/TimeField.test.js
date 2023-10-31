@@ -10,12 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {DateInput, DateSegment, Label, Text, TimeField, TimeFieldContext} from '../';
+import {act, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {DateInput, DateSegment, FieldError, Label, Text, TimeField, TimeFieldContext} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import {Time} from '@internationalized/date';
+import userEvent from '@testing-library/user-event';
 
 describe('TimeField', () => {
+  installPointerEvent();
+
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(
       <TimeField data-foo="bar">
@@ -88,7 +96,7 @@ describe('TimeField', () => {
 
   it('should support render props', () => {
     let {getByRole} = render(
-      <TimeField minValue={new Time(6, 0, 0)} defaultValue={new Time(5, 0, 0)}>
+      <TimeField minValue={new Time(6, 0, 0)} defaultValue={new Time(5, 0, 0)} validationBehavior="aria">
         {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
@@ -115,5 +123,40 @@ describe('TimeField', () => {
     );
     let input = document.querySelector('input[name=time]');
     expect(input).toHaveValue('08:30:00');
+  });
+
+  it('supports validation errors', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <TimeField name="date" isRequired>
+          <Label>Time</Label>
+          <DateInput>
+            {segment => <DateSegment segment={segment} />}
+          </DateInput>
+          <FieldError />
+        </TimeField>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let input = document.querySelector('input[name=date]');
+    expect(input).toHaveAttribute('required');
+    expect(input.validity.valid).toBe(false);
+    expect(group).not.toHaveAttribute('aria-describedby');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(group).toHaveAttribute('aria-describedby');
+    let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+    expect(getDescription()).toContain('Constraints not satisfied');
+
+    await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+
+    expect(getDescription()).toContain('Constraints not satisfied');
+    expect(input.validity.valid).toBe(true);
+
+    await user.tab();
+
+    expect(getDescription()).not.toContain('Constraints not satisfied');
   });
 });

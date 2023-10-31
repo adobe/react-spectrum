@@ -56,66 +56,60 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Breadcrumbs {
-  display: flex;
-  align-items: center;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  font-size: 18px;
+@layer breadcrumbs {
+  .react-aria-Breadcrumbs {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
 
-  .react-aria-Breadcrumb:not(:last-child)::after {
-    content: '›';
-    content: '›' / '';
-    alt: ' ';
-    padding: 0 5px;
-  }
-}
-
-.react-aria-Link {
-  --focus-ring-color: slateblue;
-  --text-color: var(--spectrum-global-color-gray-800);
-  --text-color-current: var(--spectrum-global-color-gray-900);
-  --text-color-disabled: gray;
-
-  color: var(--text-color);
-  outline: none;
-  position: relative;
-  text-decoration: none;
-  cursor: pointer;
-
-  &[data-hovered] {
-    text-decoration: underline;
-  }
-
-  &[data-current] {
-    color: var(--text-color-current);
-    font-weight: bold;
-  }
-
-  &[data-focus-visible]:after {
-    content: '';
-    position: absolute;
-    inset: -2px -4px;
-    border-radius: 6px;
-    border: 2px solid var(--focus-ring-color);
-  }
-
-  &[data-disabled] {
-    cursor: default;
-
-    &:not([data-current]) {
-      color: var(--text-color-disabled);
+    .react-aria-Breadcrumb:not(:last-child)::after {
+      content: '›';
+      content: '›' / '';
+      alt: ' ';
+      padding: 0 5px;
     }
   }
-}
 
-@media (forced-colors: active) {
   .react-aria-Link {
-    --focus-ring-color: Highlight;
-    --text-color: LinkText;
-    --text-color-current: CanvasText;
-    --text-color-disabled: GrayText;
+    --focus-ring-color: slateblue;
+    --text-color: var(--spectrum-global-color-gray-800);
+    --text-color-current: var(--spectrum-global-color-gray-900);
+    --text-color-disabled: gray;
+
+    color: var(--text-color);
+    outline: none;
+    position: relative;
+    text-decoration: none;
+    cursor: pointer;
+
+    &[data-hovered] {
+      text-decoration: underline;
+    }
+
+    &[data-current] {
+      color: var(--text-color-current);
+      font-weight: bold;
+    }
+
+    &[data-focus-visible]:after {
+      content: '';
+      position: absolute;
+      inset: -2px -4px;
+      border-radius: 6px;
+      border: 2px solid var(--focus-ring-color);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-Link {
+      --focus-ring-color: Highlight;
+      --text-color: LinkText;
+      --text-color-current: CanvasText;
+      --text-color-disabled: GrayText;
+    }
   }
 }
 ```
@@ -267,6 +261,28 @@ Breadcrumbs can be disabled using the `isDisabled` prop. This indicates that nav
   <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
 </Breadcrumbs>
 ```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@layer breadcrumbs {
+  .react-aria-Breadcrumbs {
+    .react-aria-Link {
+      &[data-disabled] {
+        cursor: default;
+
+        &:not([data-current]) {
+          color: var(--text-color-disabled);
+        }
+      }
+    }
+  }
+}
+```
+
+</details>
 
 Individual breadcrumbs can also be disabled by passing the `isDisabled` prop to the `<Link>` element:
 

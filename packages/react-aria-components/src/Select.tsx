@@ -13,7 +13,8 @@
 import {AriaSelectProps, HiddenSelect, useFocusRing, useLocalizedStringFormatter, useSelect} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CollectionDocumentContext, ItemRenderProps, useCollectionDocument} from './Collection';
-import {ContextValue, forwardRefType, Hidden, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -58,7 +59,7 @@ export interface SelectRenderProps {
   isRequired: boolean
 }
 
-export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'items'>, RenderProps<SelectRenderProps>, SlotProps {}
+export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior' | 'items'>, RACValidation, RenderProps<SelectRenderProps>, SlotProps {}
 
 export const SelectContext = createContext<ContextValue<SelectProps<any>, HTMLDivElement>>(null);
 export const SelectStateContext = createContext<SelectState<unknown> | null>(null);
@@ -69,20 +70,11 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
   let state = useSelectState({
     ...props,
     collection,
-    children: undefined
+    children: undefined,
+    validationBehavior: props.validationBehavior ?? 'native'
   });
 
   let {isFocusVisible, focusProps} = useFocusRing({within: true});
-
-  // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({
-    isOpen: state.isOpen,
-    isFocused: state.isFocused,
-    isFocusVisible,
-    isDisabled: props.isDisabled || false,
-    isInvalid: props.isInvalid || false,
-    isRequired: props.isRequired || false
-  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, props.isInvalid, props.isRequired]);
 
   // Get props for child elements from useSelect
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -93,8 +85,13 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     valueProps,
     menuProps,
     descriptionProps,
-    errorMessageProps
-  } = useSelect({...removeDataAttributes(props), label}, state, buttonRef);
+    errorMessageProps,
+    ...validation
+  } = useSelect({
+    ...removeDataAttributes(props),
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, buttonRef);
 
   // Make menu width match input + button
   let [buttonWidth, setButtonWidth] = useState<string | null>(null);
@@ -108,6 +105,16 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
     ref: buttonRef,
     onResize: onResize
   });
+
+  // Only expose a subset of state to renderProps function to avoid infinite render loop
+  let renderPropsState = useMemo(() => ({
+    isOpen: state.isOpen,
+    isFocused: state.isFocused,
+    isFocusVisible,
+    isDisabled: props.isDisabled || false,
+    isInvalid: validation.isInvalid || false,
+    isRequired: props.isRequired || false
+  }), [state.isOpen, state.isFocused, isFocusVisible, props.isDisabled, validation.isInvalid, props.isRequired]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -152,7 +159,8 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
               description: descriptionProps,
               errorMessage: errorMessageProps
             }
-          }]
+          }],
+          [FieldErrorContext, validation]
         ]}>
         <div
           {...DOMProps}
@@ -164,7 +172,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           data-focus-visible={isFocusVisible || undefined}
           data-open={state.isOpen || undefined}
           data-disabled={props.isDisabled || undefined}
-          data-invalid={props.isInvalid || undefined}
+          data-invalid={validation.isInvalid || undefined}
           data-required={props.isRequired || undefined} />
         <HiddenSelect
           state={state}

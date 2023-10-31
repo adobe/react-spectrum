@@ -288,6 +288,10 @@ describe('Tabs', function () {
 
     let tabpanel = tree.getByRole('tabpanel');
     expect(document.activeElement).toBe(tabpanel);
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    await user.click(tabs[0]);
   });
 
   it('disabled tabs cannot be keyboard navigated to', async function () {
