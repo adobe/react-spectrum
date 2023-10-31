@@ -95,8 +95,8 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
         submenuSide.current = mouseX > submenuRect.current.right ? 'left' : 'right';
       }
 
-      // Pointer has already reached submenu
-      if ((submenuSide.current === 'left' && mouseX < submenuRect.current.right) || (submenuSide.current === 'right' && mouseX > submenuRect.current.left)) {
+      // Pointer is outside of parent menu
+      if (mouseX < menu.getBoundingClientRect().left || mouseX > menu.getBoundingClientRect().right || mouseY < menu.getBoundingClientRect().top || mouseY > menu.getBoundingClientRect().bottom) {
         reset();
         return;
       }
