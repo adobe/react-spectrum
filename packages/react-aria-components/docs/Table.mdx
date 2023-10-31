@@ -1002,6 +1002,8 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
 .react-aria-ResizableTableContainer {
   --border-color: var(--spectrum-global-color-gray-400);
   --background-color: var(--page-background);
+  --hover-highlight: var(--spectrum-alias-highlight-hover);
+  --active-highlight: var(--spectrum-alias-highlight-active);
 
   max-width: 400px;
   overflow: auto;
@@ -1021,6 +1023,7 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
 
   .column-name,
   .react-aria-Button {
+    --background-color: var(--page-background);
     flex: 1;
     font: inherit;
     text-align: start;
@@ -1028,6 +1031,13 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
     overflow: hidden;
     text-overflow: ellipsis;
     border-color: transparent;
+    &[data-hovered] {
+      background: var(--hover-highlight);
+    }
+
+    &[data-pressed] {
+      background: var(--active-highlight);
+    }
 
     &:focus-visible {
       outline: 2px solid slateblue;
