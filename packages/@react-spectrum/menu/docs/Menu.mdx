@@ -366,6 +366,38 @@ import {Content} from '@react-spectrum/view';
 </MenuTrigger>
 ```
 
+## Submenus <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+Submenus can be created by wrapping an item and a menu in a `SubmenuTrigger`. The `SubmenuTrigger` accepts exactly two children: the `Item` which triggers opening of the submenu, and the `Menu` itself.
+
+```tsx example
+import {SubmenuTrigger} from '@react-spectrum/menu';
+
+<MenuTrigger>
+  <ActionButton>Actions</ActionButton>
+  <Menu>
+    <Item key="Copy">Copy</Item>
+    <Item key="Cut">Cut</Item>
+    <Item key="Paste">Paste</Item>
+      <SubmenuTrigger>
+        <Item key="Share">Share</Item>
+        <Menu>
+          <Item key="Copy Link">Copy Link</Item>
+          <SubmenuTrigger>
+            <Item key="Email">Email</Item>
+            <Menu>
+              <Item key="Attachment">Email as Attachment</Item>
+              <Item key="Link">Email as Link</Item>
+            </Menu>
+          </SubmenuTrigger>
+          <Item key="SMS">SMS</Item>
+        </Menu>
+      </SubmenuTrigger>
+    <Item key="Delete">Delete</Item>
+  </Menu>
+</MenuTrigger>
+```
+
 ## Props
 
 ### Menu props
