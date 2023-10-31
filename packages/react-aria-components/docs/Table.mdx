@@ -91,6 +91,7 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 /* We only import styles up to one page away, we don't follow those pages dependencies, so
  * import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx' layer(button);
+@import './ToggleButton.mdx' layer(togglebutton);
 @import './Checkbox.mdx' layer(checkbox);
 @import './Popover.mdx' layer(popover);
 @import './Menu.mdx' layer(menu);
@@ -2500,66 +2501,9 @@ import {ToggleButton} from 'react-aria-components';
 
 ```css
 .react-aria-ToggleButton {
-  --deselected-border-color: var(--spectrum-gray-400);
-  --deselected-border-color-pressed: var(--spectrum-gray-500);
-  --deselected-background-color: var(--spectrum-gray-50);
-  --deselected-background-color-pressed: var(--spectrum-gray-100);
-  --selected-color: var(--spectrum-gray-800);
-  --selected-color-pressed: var(--spectrum-gray-900);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-selected: var(--spectrum-gray-50);
-
-  color: var(--text-color);
-  background: var(--deselected-background-color);
-  border: 1px solid var(--deselected-border-color);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  text-align: center;
-  margin: 0 0 8px 0;
-  outline: none;
-  padding: 4px 12px;
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--deselected-background-color-pressed);
-    border-color: var(--deselected-border-color-pressed);
-  }
-
-  &[aria-pressed=true] {
-    background: var(--selected-color);
-    border-color: var(--selected-color);
-    color: var(--text-color-selected);
-
-    &[data-pressed] {
-      background: var(--selected-color-pressed);
-      border-color: var(--selected-color-pressed);
-    }
-  }
-
-  &[data-focus-visible] {
-    border-color: var(--selected-color);
-    box-shadow: 0 0 0 1px var(--selected-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ToggleButton {
-    forced-color-adjust: none;
-
-    --deselected-border-color: ButtonBorder;
-    --deselected-border-color-pressed: ButtonBorder;
-    --deselected-background-color: ButtonFace;
-    --deselected-background-color-pressed: ButtonFace;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-  }
+  margin-bottom: 8px;
 }
 ```
-
 </details>
 
 ### Custom children
