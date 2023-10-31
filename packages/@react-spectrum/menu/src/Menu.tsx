@@ -68,7 +68,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
       <div ref={trayContainerRef} />
-      <FocusScope contain={hasOpenSubmenu}>
+      <FocusScope>
         <div
           role={headingId ? 'dialog' : undefined}
           aria-labelledby={headingId}

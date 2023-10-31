@@ -22,7 +22,8 @@ import userEvent from '@testing-library/user-event';
 let {
   SubmenuStatic,
   SubmenuDynamic,
-  Complex
+  Complex,
+  TabBehaviorStory
 } = composeStories(stories);
 
 let render = (children, scale = 'medium' as Scale, locale = 'en-US') => {
@@ -478,60 +479,55 @@ describe('Submenu', function () {
       expect(document.activeElement).toBe(submenuTrigger2);
     });
 
-    it('should shift focus between a submenu trigger and its submenu when pressing tab', async function () {
-      let tree = render(<SubmenuStatic />);
+    it('should shift focus to the prev/next element adjacent to the menu trigger when pressing Tab', async function () {
+      async function openSubMenus() {
+        await user.keyboard('[ArrowDown]');
+        act(() => {jest.runAllTimers();});
+
+        let menu = tree.getByRole('menu');
+        expect(menu).toBeTruthy();
+        await user.keyboard('[ArrowDown]');
+        await user.keyboard('[ArrowRight]');
+        act(() => {jest.runAllTimers();});
+
+        let menus = tree.getAllByRole('menu', {hidden: true});
+        expect(menus).toHaveLength(2);
+        await user.keyboard('[ArrowDown]');
+        await user.keyboard('[ArrowDown]');
+        await user.keyboard('[ArrowRight]');
+        act(() => {jest.runAllTimers();});
+
+        menus = tree.getAllByRole('menu', {hidden: true});
+        expect(menus).toHaveLength(3);
+        let submenu2Items = within(menus[2]).getAllByRole('menuitem');
+        expect(document.activeElement).toBe(submenu2Items[0]);
+      }
+
+      let tree = render(<TabBehaviorStory />);
+      let inputleft = tree.getByTestId('inputleft');
+      let inputright = tree.getByTestId('inputright');
+      let triggerButton = tree.getByRole('button');
       await user.tab();
-      await user.keyboard('[ArrowDown]');
-      act(() => {jest.runAllTimers();});
-
-      let menu = tree.getByRole('menu');
-      expect(menu).toBeTruthy();
-      let menuItems = within(menu).getAllByRole('menuitem');
-      let submenuTrigger1 = menuItems[1];
-      await user.keyboard('[ArrowDown]');
-      await user.keyboard('[ArrowRight]');
-      act(() => {jest.runAllTimers();});
-
-      let menus = tree.getAllByRole('menu', {hidden: true});
-      expect(menus).toHaveLength(2);
-      let submenu1Items = within(menus[1]).getAllByRole('menuitem');
-      let submenuTrigger2 = submenu1Items[2];
-      await user.keyboard('[ArrowDown]');
-      await user.keyboard('[ArrowDown]');
-      await user.keyboard('[ArrowRight]');
-      act(() => {jest.runAllTimers();});
-
-      menus = tree.getAllByRole('menu', {hidden: true});
-      expect(menus).toHaveLength(3);
-      let submenu2Items = within(menus[2]).getAllByRole('menuitem');
-      expect(document.activeElement).toBe(submenu2Items[0]);
-      // Tab should move focus back to trigger
       await user.tab();
-      act(() => {jest.runAllTimers();});
-      menus = tree.getAllByRole('menu', {hidden: true});
-      expect(menus).toHaveLength(3);
-      expect(document.activeElement).toBe(submenuTrigger2);
+      await openSubMenus();
 
-      // Tab should move focus back to first item
+      // Tab should close all menus and move focus to the next input relative to the original menu trigger
       await user.tab();
       act(() => {jest.runAllTimers();});
-      expect(document.activeElement).toBe(submenu2Items[0]);
-
-      // Shift Tab should move back to trigger and back up through sub menus
-      await user.tab({shift: true});
-      act(() => {jest.runAllTimers();});
-      expect(document.activeElement).toBe(submenuTrigger2);
-      menus = tree.getAllByRole('menu', {hidden: true});
-      expect(menus).toHaveLength(3);
+      let menus = tree.queryAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(0);
+      expect(document.activeElement).toBe(inputright);
 
       await user.tab({shift: true});
-      act(() => {jest.runAllTimers();});
-      menus = tree.getAllByRole('menu', {hidden: true});
-      expect(menus).toHaveLength(2);
-      expect(document.activeElement).toBe(submenuTrigger1);
+      expect(document.activeElement).toBe(triggerButton);
+      await openSubMenus();
 
-      // TODO: an additional shift tab restores focus to the original trigger, but should it actually move focus to the preceeding element? The reason for
-      // this is that the base menu still has a submenu rendered, making it contain focus and thus restore focus
+      // Shift + Tab should close all menus and move focus to the prev input relative to the original menu trigger
+      await user.tab({shift: true});
+      act(() => {jest.runAllTimers();});
+      menus = tree.queryAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(0);
+      expect(document.activeElement).toBe(inputleft);
     });
   });
 

@@ -13,6 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
+import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 // @ts-ignore
@@ -138,7 +139,9 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         offset={-10}
         hideArrow
         enableBothDismissButtons>
-        {content}
+        <FocusScope restoreFocus>
+          {content}
+        </FocusScope>
       </Popover>
     );
   }

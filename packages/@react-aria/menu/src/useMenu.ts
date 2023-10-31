@@ -77,11 +77,6 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   return {
     menuProps: mergeProps(domProps, {onKeyDown, onKeyUp}, {
       role: 'menu',
-      // TODO: we no longer update treestate's expandedKeys so we can't do the below anymore. This affects Safari VO specifically, the VO cursor doesn't move into the newly opened
-      // submenu/dialog without it. Decide how bad this behavior is and if we wanna add a different prop (level or hasOpenSubmenu) and/or pass the submenutrigger state to control this instead
-      // of using expanded keys
-      // this forces AT to move their cursors into any open sub dialogs, the sub dialogs contain hidden close buttons in order to come back to this level of the menu
-      // 'aria-hidden': state.expandedKeys.size > 0 ? true : undefined,
       ...listProps,
       onKeyDown: (e) => {
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu

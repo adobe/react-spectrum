@@ -608,3 +608,24 @@ export const UnavailableWithSubmenu = {
   ),
   name: 'with unavailable menu item'
 };
+
+export const TabBehaviorStory = {
+  render: () => (
+    <>
+      <input data-testid="inputleft" />
+      <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
+        <MenuTrigger onOpenChange={action('onOpenChange')}>
+          <ActionButton>
+            Menu Button
+          </ActionButton>
+          <Menu items={dynamicSubmenu} onAction={action('onAction')}>
+            {(item) => dynamicRenderFunc(item)}
+          </Menu>
+        </MenuTrigger>
+      </div>
+      <input data-testid="inputright" />
+    </>
+  ),
+  name: 'tab behavior',
+  parameters: {description: {data: 'Test tabbing and shift tabbing from within a submenu'}}
+};

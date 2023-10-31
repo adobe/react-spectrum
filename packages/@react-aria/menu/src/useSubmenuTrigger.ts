@@ -53,15 +53,12 @@ export interface SubmenuTriggerAria<T> {
   popoverProps: Pick<AriaPopoverProps, 'isNonModal'>,
   /** Props for the submenu's popover overlay container. */
   overlayProps: {
-    // TODO add descriptions when I try to get rid of onExit and stuff
-    onExit: () => void,
+    /** Whether the overlay should manage restoring and containing focus. */
     disableFocusManagement: boolean,
+    /** Callback called to determine if the overlay should be closed when the user interacts with a element outside. */
     shouldCloseOnInteractOutside: (element: Element) => boolean
   }
 }
-
-// TODO: debatable if we should have a useSubmenu hook for the submenu keyboard handlers. Feels better to have it here so we don't need to ferry around
-// things like parentMenuRef and the open timeout canceling since we centralized them here
 
 /**
  * Provides the behavior and accessbility implementation for a submenu trigger and its associated submenu.
@@ -98,31 +95,26 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
     };
   }, [cancelOpenTimeout]);
 
-
-  // TODO: problem with setting up the submenu close handlers here is that we don't get access to the onClose the user provides
-  // to the menu since this is too far up . Maybe just provide the submenuTriggerState and have useMenu and useMenuItem handle the key handlers internally?
-  // Maybe we should just have the user pass something like onMenuClose to the trigger level since we have the same problem of being unable to call onClose if the user interacts outside?
-  // Maybe have Menu call onClose in an effect when it detects that it is unmounting? StrictMode is problematic since the cleanup fires even when the component isn't actually unmounting
-  // (not a problem if we wanna keep onClose to fire only if the user selects a item)
   let submenuKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr') {
           e.stopPropagation();
           onSubmenuClose();
+          ref.current.focus();
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl') {
           e.stopPropagation();
           onSubmenuClose();
+          ref.current.focus();
         }
         break;
       case 'Escape':
         e.stopPropagation();
         state.closeAll();
         break;
-      // TODO: add handling for having Tab close all menus if we decide to go that route (aka mimicking macOS's submenu behavior)
     }
   };
 
@@ -204,36 +196,12 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
     }
   };
 
-  // TODO: Track the external element being interacted with so that we can move focus to it when the submenu closes. If we don't manually move focus, then focus gets lost to the body
-  // Calling ref.current.focus in useMenuItem's onHoverStart doesn't seem to move focus properly unfortunately
-  let closeTarget = useRef(null);
   let shouldCloseOnInteractOutside = (target) => {
     if (target !== ref.current) {
-      closeTarget.current = target;
       return true;
     }
 
     return false;
-  };
-
-  // TODO: this onExit is Spectrum specific, so kinda weird to have in the aria hook. However, perhaps it would be nice if the aria Popover has onExit as well so
-  // users wouldn't need to reimplement this?
-  let onExit = () => {
-    // TODO: A bit awkward, but this first part of the if statement handles moving focus to the item the user hovers, specifically if said item is a menu item
-    // in one of the menu ancestors of the currently open submenu. The ideal logic would be to check if the closeTarget was in any of the menus in the tree and do nothing if so. Technically
-    // the else if part of this handles this already since hovering a submenu item sets it as the focusedKey and then focusing the submenu itself will move focus to the focusedKey via useSelectableCollection,
-    // but it breaks if the user hovers the base menu's first submenu trigger since then the first submenu won't actually close
-    // due to the logic in shouldCloseOnInteractOutside, and thus the first submenu retains focus, overriding the hover focus of the root menu's submenu trigger
-    if (closeTarget.current) {
-      closeTarget.current?.focus();
-      closeTarget.current = null;
-    } else if (!parentMenuRef.current.contains(document.activeElement)) {
-      // need to return focus to the trigger because hitting Esc causes focus to go to the subdialog, which is then unmounted
-      // this leads to blur never being fired nor focus on the body
-      parentMenuRef.current.focus();
-    }
-
-    cancelOpenTimeout();
   };
 
   useSafelyMouseToSubmenu({menuRef: parentMenuRef, submenuRef, isOpen: state.isOpen});
@@ -256,7 +224,6 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
       isNonModal: true
     },
     overlayProps: {
-      onExit,
       disableFocusManagement: true,
       shouldCloseOnInteractOutside
     }
