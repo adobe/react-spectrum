@@ -375,6 +375,7 @@ function MyItem(props: ListBoxItemProps) {
 
   &.selected {
     font-weight: 600;
+    background: none;
 
     &::before {
       content: '✓';
@@ -384,11 +385,16 @@ function MyItem(props: ListBoxItemProps) {
       top: 4px;
       left: 4px;
     }
+
+    &.focused {
+      box-shadow: unset;
+    }
   }
 
   &.focused {
     background: #e70073;
     color: white;
+    box-shadow: unset;
   }
 }
 
