@@ -12,10 +12,11 @@
 import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue, useDatePicker, useDateRangePicker, useFocusRing} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
-import {ContextValue, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DateFieldContext} from './DateField';
 import {DatePickerState, DateRangePickerState, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
+import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
@@ -61,8 +62,8 @@ export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 
   state: DateRangePickerState
 }
 
-export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<DatePickerRenderProps>, SlotProps {}
-export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<DateRangePickerRenderProps>, SlotProps {}
+export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DatePickerRenderProps>, SlotProps {}
+export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps {}
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
 export const DateRangePickerContext = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
@@ -71,7 +72,11 @@ export const DateRangePickerStateContext = createContext<DateRangePickerState | 
 
 function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DatePickerContext);
-  let state = useDatePickerState(props);
+  let state = useDatePickerState({
+    ...props,
+    validationBehavior: props.validationBehavior ?? 'native'
+  });
+
   let groupRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let {
@@ -82,8 +87,13 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     dialogProps,
     calendarProps,
     descriptionProps,
-    errorMessageProps
-  } = useDatePicker({...removeDataAttributes(props), label}, state, groupRef);
+    errorMessageProps,
+    ...validation
+  } = useDatePicker({
+    ...removeDataAttributes(props),
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, groupRef);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({
@@ -119,7 +129,8 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FieldErrorContext, validation]
       ]}>
       <div
         {...focusProps}
@@ -144,7 +155,11 @@ export {_DatePicker as DatePicker};
 
 function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DateRangePickerContext);
-  let state = useDateRangePickerState(props);
+  let state = useDateRangePickerState({
+    ...props,
+    validationBehavior: props.validationBehavior ?? 'native'
+  });
+
   let groupRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let {
@@ -156,8 +171,13 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     dialogProps,
     calendarProps,
     descriptionProps,
-    errorMessageProps
-  } = useDateRangePicker({...removeDataAttributes(props), label}, state, groupRef);
+    errorMessageProps,
+    ...validation
+  } = useDateRangePicker({
+    ...removeDataAttributes(props),
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, groupRef);
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({
@@ -198,7 +218,8 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FieldErrorContext, validation]
       ]}>
       <div
         {...focusProps}

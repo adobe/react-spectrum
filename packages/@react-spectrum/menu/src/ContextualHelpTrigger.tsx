@@ -38,7 +38,7 @@ interface InternalMenuDialogTriggerProps extends MenuDialogTriggerProps {
 export interface SpectrumMenuDialogTriggerProps extends MenuDialogTriggerProps {}
 
 function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElement {
-  let {isUnavailable, targetKey} = props;
+  let {isUnavailable = false, targetKey} = props;
 
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
@@ -125,8 +125,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         offset={-10}
         hideArrow
         enableBothDismissButtons>
-        {/* TODO: adding contain means hovering another root menu item when the subdialog is open doesn't actually move focus to that item... */}
-        <FocusScope restoreFocus contain>
+        <FocusScope restoreFocus>
           {content}
         </FocusScope>
       </Popover>

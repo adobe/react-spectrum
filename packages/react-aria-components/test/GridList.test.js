@@ -11,15 +11,15 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Button, Checkbox, GridList, GridListContext, Item, useDragAndDrop} from '../';
+import {Button, Checkbox, GridList, GridListContext, GridListItem, useDragAndDrop} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestGridList = ({listBoxProps, itemProps}) => (
   <GridList aria-label="Test" {...listBoxProps}>
-    <Item {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" /> Cat</Item>
-    <Item {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" /> Dog</Item>
-    <Item {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</Item>
+    <GridListItem {...itemProps} id="cat" textValue="Cat"><Checkbox slot="selection" /> Cat</GridListItem>
+    <GridListItem {...itemProps} id="dog" textValue="Dog"><Checkbox slot="selection" /> Dog</GridListItem>
+    <GridListItem {...itemProps} id="kangaroo" textValue="Kangaroo"><Checkbox slot="selection" /> Kangaroo</GridListItem>
   </GridList>
 );
 
@@ -31,9 +31,9 @@ let DraggableGridList = (props) => {
 
   return (
     <GridList aria-label="Test" dragAndDropHooks={dragAndDropHooks}>
-      <Item id="cat" textValue="Cat"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Cat</Item>
-      <Item id="dog" textValue="Dog"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Dog</Item>
-      <Item id="kangaroo" textValue="Kangaroo"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Kangaroo</Item>
+      <GridListItem id="cat" textValue="Cat"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Cat</GridListItem>
+      <GridListItem id="dog" textValue="Dog"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Dog</GridListItem>
+      <GridListItem id="kangaroo" textValue="Kangaroo"><Button slot="drag">≡</Button><Checkbox slot="selection" /> Kangaroo</GridListItem>
     </GridList>
   );
 };
@@ -57,7 +57,7 @@ describe('GridList', () => {
     expect(grid).toHaveAttribute('class', 'react-aria-GridList');
 
     for (let row of getAllByRole('row')) {
-      expect(row).toHaveAttribute('class', 'react-aria-Item');
+      expect(row).toHaveAttribute('class', 'react-aria-GridListItem');
     }
   });
 
@@ -98,7 +98,7 @@ describe('GridList', () => {
     let itemRef = React.createRef();
     render(
       <GridList aria-label="Test" ref={listBoxRef}>
-        <Item ref={itemRef}>Cat</Item>
+        <GridListItem ref={itemRef}>Cat</GridListItem>
       </GridList>
     );
     expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
@@ -230,7 +230,7 @@ describe('GridList', () => {
 
     let {getByRole} = render(
       <GridList aria-label="Test" items={items}>
-        {(item) => <Item id={item.id}>{item.name}</Item>}
+        {(item) => <GridListItem id={item.id}>{item.name}</GridListItem>}
       </GridList>
     );
 
@@ -354,8 +354,8 @@ describe('GridList', () => {
       it('should support links with selectionMode="none"', async function () {
         let {getAllByRole} = render(
           <GridList aria-label="listview">
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <GridListItem href="https://google.com">One</GridListItem>
+            <GridListItem href="https://adobe.com">Two</GridListItem>
           </GridList>
         );
 
@@ -376,8 +376,8 @@ describe('GridList', () => {
       it.each(['single', 'multiple'])('should support links with selectionBehavior="toggle" selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <GridList aria-label="listview" selectionMode={selectionMode}>
-            <Item href="https://google.com" textValue="one"><Checkbox slot="selection" /> One</Item>
-            <Item href="https://adobe.com" textValue="two"><Checkbox slot="selection" /> Two</Item>
+            <GridListItem href="https://google.com" textValue="one"><Checkbox slot="selection" /> One</GridListItem>
+            <GridListItem href="https://adobe.com" textValue="two"><Checkbox slot="selection" /> Two</GridListItem>
           </GridList>
         );
 
@@ -407,8 +407,8 @@ describe('GridList', () => {
       it.each(['single', 'multiple'])('should support links with selectionBehavior="replace" selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <GridList aria-label="listview" selectionMode={selectionMode} selectionBehavior="replace">
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <GridListItem href="https://google.com">One</GridListItem>
+            <GridListItem href="https://adobe.com">Two</GridListItem>
           </GridList>
         );
 

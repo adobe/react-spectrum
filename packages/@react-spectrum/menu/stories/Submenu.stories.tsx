@@ -524,11 +524,11 @@ export const ConditionalSubmenu = {
 };
 
 function ConditionalSubmenuExample(props) {
-  let [disabled, setDisablde] = React.useState(false);
+  let [disabled, setDisabled] = React.useState(false);
 
   return (
     <>
-      <ToggleButton isSelected={disabled} onChange={setDisablde}>Toggle item 2 unavailable</ToggleButton>
+      <ToggleButton isSelected={disabled} onChange={setDisabled}>Toggle item 2 unavailable</ToggleButton>
       <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
         <MenuTrigger onOpenChange={action('onOpenChange')} {...props}>
           <ActionButton>

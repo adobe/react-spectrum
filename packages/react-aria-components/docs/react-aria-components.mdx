@@ -88,7 +88,7 @@ Once installed, you can import and render the components you need. Each componen
 This example renders a custom [Select](Select.html).
 
 ```tsx example
-import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-aria-components';
+import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
 
 <Select>
   <Label>Favorite Animal</Label>
@@ -98,9 +98,9 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   </Button>
   <Popover>
     <ListBox>
-      <Item>Cat</Item>
-      <Item>Dog</Item>
-      <Item>Kangaroo</Item>
+      <ListBoxItem>Cat</ListBoxItem>
+      <ListBoxItem>Dog</ListBoxItem>
+      <ListBoxItem>Kangaroo</ListBoxItem>
     </ListBox>
   </Popover>
 </Select>
@@ -211,7 +211,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     padding: 0 0.571rem 0 1.571rem;
   }
 
-  .react-aria-Item {
+  .react-aria-ListBoxItem {
     margin: 2px;
     padding: 0.286rem 0.571rem 0.286rem 1.571rem;
     border-radius: 6px;

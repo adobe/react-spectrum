@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, mergeProps, TimeValue, useDateField, useDateSegment, useFocusRing, useHover, useLocale, useTimeField} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, TimeFieldState, useDateFieldState, useTimeFieldState} from 'react-stately';
+import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Group, GroupContext} from './Group';
 import {Input, InputContext} from './Input';
@@ -36,8 +37,8 @@ export interface DateFieldRenderProps {
    */
   isDisabled: boolean
 }
-export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<DateFieldRenderProps>, SlotProps {}
-export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<DateFieldRenderProps>, SlotProps {}
+export interface DateFieldProps<T extends DateValue> extends Omit<AriaDateFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps {}
+export interface TimeFieldProps<T extends TimeValue> extends Omit<AriaTimeFieldProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateFieldRenderProps>, SlotProps {}
 
 export const DateFieldContext = createContext<ContextValue<DateFieldProps<any>, HTMLDivElement>>(null);
 export const TimeFieldContext = createContext<ContextValue<TimeFieldProps<any>, HTMLDivElement>>(null);
@@ -50,13 +51,19 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
   let state = useDateFieldState({
     ...props,
     locale,
-    createCalendar
+    createCalendar,
+    validationBehavior: props.validationBehavior ?? 'native'
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useDateField({...removeDataAttributes(props), label, inputRef}, state, fieldRef);
+  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useDateField({
+    ...removeDataAttributes(props),
+    label,
+    inputRef,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, fieldRef);
 
   let renderProps = useRenderProps({
     ...removeDataAttributes(props),
@@ -83,7 +90,8 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FieldErrorContext, validation]
       ]}>
       <div
         {...DOMProps}
@@ -107,13 +115,19 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
   let {locale} = useLocale();
   let state = useTimeFieldState({
     ...props,
-    locale
+    locale,
+    validationBehavior: props.validationBehavior ?? 'native'
   });
 
   let fieldRef = useRef<HTMLDivElement>(null);
   let [labelRef, label] = useSlot();
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps} = useTimeField({...removeDataAttributes(props), label, inputRef}, state, fieldRef);
+  let {labelProps, fieldProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTimeField({
+    ...removeDataAttributes(props),
+    label,
+    inputRef,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, fieldRef);
 
   let renderProps = useRenderProps({
     ...props,
@@ -140,7 +154,8 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FieldErrorContext, validation]
       ]}>
       <div
         {...DOMProps}

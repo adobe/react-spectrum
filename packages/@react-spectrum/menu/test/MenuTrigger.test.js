@@ -1006,6 +1006,7 @@ describe('MenuTrigger', function () {
         let {locale = 'en-US'} = providerProps;
         tree = render(
           <Provider theme={theme} locale={locale}>
+            <input data-testid="previous" />
             <MenuTrigger>
               <ActionButton>Menu</ActionButton>
               <Menu onAction={action('onAction')}>
@@ -1032,6 +1033,7 @@ describe('MenuTrigger', function () {
                 </ContextualHelpTrigger>
               </Menu>
             </MenuTrigger>
+            <input data-testid="next" />
           </Provider>
         );
       };
@@ -1150,7 +1152,9 @@ describe('MenuTrigger', function () {
         await user.tab();
         act(() => {jest.runAllTimers();});
         expect(dialog).not.toBeInTheDocument();
-        expect(document.activeElement).toBe(menuItems[4]);
+        expect(menu).not.toBeInTheDocument();
+        let input = tree.getByTestId('next');
+        expect(document.activeElement).toBe(input);
       });
 
       it('will close everything if the user shift tabs out of the subdialog', async function () {
@@ -1172,8 +1176,8 @@ describe('MenuTrigger', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
         expect(dialog).not.toBeInTheDocument();
-
-        expect(document.activeElement).toBe(unavailableItem);
+        let input = tree.getByTestId('previous');
+        expect(document.activeElement).toBe(input);
       });
 
       it('will close everything if the user shift tabs out of the subdialog', function () {

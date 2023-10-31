@@ -14,7 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
 import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement, KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, KeyboardDelegate, ValidationResult} from '@react-types/shared';
 import {FocusEvent, RefObject, useMemo} from 'react';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
@@ -31,7 +31,7 @@ export interface AriaSelectOptions<T> extends Omit<AriaSelectProps<T>, 'children
   keyboardDelegate?: KeyboardDelegate
 }
 
-export interface SelectAria<T> {
+export interface SelectAria<T> extends ValidationResult {
   /** Props for the label element. */
   labelProps: DOMAttributes,
 
@@ -51,6 +51,15 @@ export interface SelectAria<T> {
   errorMessageProps: DOMAttributes
 }
 
+interface SelectData {
+  isDisabled?: boolean,
+  isRequired?: boolean,
+  name?: string,
+  validationBehavior?: 'aria' | 'native'
+}
+
+export const selectData = new WeakMap<SelectState<any>, SelectData>();
+
 /**
  * Provides the behavior and accessibility implementation for a select component.
  * A select displays a collapsible list of options and allows a user to select one of them.
@@ -60,7 +69,10 @@ export interface SelectAria<T> {
 export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>, ref: RefObject<FocusableElement>): SelectAria<T> {
   let {
     keyboardDelegate,
-    isDisabled
+    isDisabled,
+    isRequired,
+    name,
+    validationBehavior = 'aria'
   } = props;
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
@@ -110,9 +122,12 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     }
   });
 
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    labelElementType: 'span'
+    labelElementType: 'span',
+    isInvalid,
+    errorMessage: props.errorMessage || validationErrors
   });
 
   typeSelectProps.onKeyDown = typeSelectProps.onKeyDownCapture;
@@ -122,6 +137,13 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
   let triggerProps = mergeProps(typeSelectProps, menuTriggerProps, fieldProps);
 
   let valueId = useId();
+
+  selectData.set(state, {
+    isDisabled,
+    isRequired,
+    name,
+    validationBehavior
+  });
 
   return {
     labelProps: {
@@ -207,6 +229,9 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
       ].filter(Boolean).join(' ')
     },
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }
