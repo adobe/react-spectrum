@@ -1184,7 +1184,7 @@ The `Column` component exposes a `startResize` function as part of its render pr
 This example shows how to create a reusable component that wraps `<Column>` to include a menu with sorting and resizing functionality.
 
 ```tsx example export=true render=false
-import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
+import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-components';
 
 interface ResizableTableColumnProps<T> extends Omit<ColumnProps<T>, 'children'> {
   children: React.ReactNode
@@ -1207,9 +1207,9 @@ function ResizableTableColumn<T extends object>(props: ResizableTableColumnProps
                   startResize();
                 }
               }}>
-                <Item id="sortAscending">Sort Ascending</Item>
-                <Item id="sortDescending">Sort Descending</Item>
-                <Item id="resize">Resize</Item>
+                <MenuItem id="sortAscending">Sort Ascending</MenuItem>
+                <MenuItem id="sortDescending">Sort Descending</MenuItem>
+                <MenuItem id="resize">Resize</MenuItem>
               </Menu>
             </Popover>
           </MenuTrigger>
@@ -2396,7 +2396,7 @@ The `className` and `style` props also accept functions which receive states for
 
 ```jsx
 <Row className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
-  Item
+  {/* ... */}
 </Row>
 ```
 

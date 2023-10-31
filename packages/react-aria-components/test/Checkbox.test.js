@@ -169,7 +169,7 @@ describe('Checkbox', () => {
     let checkbox = getByRole('checkbox');
     let label = checkbox.closest('label');
 
-    expect(checkbox).toHaveAttribute('aria-required', 'true');
+    expect(checkbox).toHaveAttribute('required');
     expect(label).toHaveAttribute('data-required', 'true');
     expect(label).toHaveClass('required');
   });

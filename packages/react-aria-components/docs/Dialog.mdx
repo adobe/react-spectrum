@@ -51,7 +51,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
     <Dialog>
       {({close}) => (
         <form>
-          <Heading>Sign up</Heading>
+          <Heading slot="title">Sign up</Heading>
           <TextField autoFocus>
             <Label>First Name</Label>
             <Input />
@@ -123,7 +123,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-componen
   <Button />
   <Modal>
     <Dialog>
-      <Heading />
+      <Heading slot="title" />
     </Dialog>
   </Modal>
 </DialogTrigger>
@@ -149,7 +149,7 @@ import {Popover, OverlayArrow} from 'react-aria-components';
       <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
     </OverlayArrow>
     <Dialog>
-      <Heading>Help</Heading>
+      <Heading slot="title">Help</Heading>
       <p>For help accessing your account, please contact support.</p>
     </Dialog>
   </Popover>
@@ -167,7 +167,7 @@ Alert dialogs are a special type of dialog meant to present a prompt that the us
     <Dialog role="alertdialog">
       {({close}) => (
         <>
-          <Heading>Delete file</Heading>
+          <Heading slot="title">Delete file</Heading>
           <p>This will permanently delete the selected file. Continue?</p>
           <div>
             <Button onPress={close}>Cancel</Button>
@@ -290,7 +290,7 @@ function CloseButton() {
   <Button>About</Button>
   <Modal isDismissable>
     <Dialog>
-      <Heading>About</Heading>
+      <Heading slot="title">About</Heading>
       <p>Copyright © 2023 Adobe. All rights reserved.</p>
       {/*- begin highlight -*/}
       <CloseButton />

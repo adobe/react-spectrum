@@ -15,7 +15,7 @@ import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils';
 describe('GridList SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {GridList, Item} from '../';
+      import {GridList, GridListItem} from '../';
 
       function Test() {
         let [show, setShow] = React.useState(false);
@@ -23,10 +23,10 @@ describe('GridList SSR', function () {
           <>
             <button onClick={() => setShow(true)}>Show</button>
             <GridList aria-label="GridList">
-              <Item key="1">Left</Item>
-              <Item key="2">Middle</Item>
-              {show && <Item key="4">Extra</Item>}
-              <Item key="3">Right</Item>
+              <GridListItem key="1">Left</GridListItem>
+              <GridListItem key="2">Middle</GridListItem>
+              {show && <GridListItem key="4">Extra</GridListItem>}
+              <GridListItem key="3">Right</GridListItem>
             </GridList>
           </>
         );
