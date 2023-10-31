@@ -61,7 +61,7 @@ export interface SubmenuTriggerAria<T> {
 }
 
 /**
- * Provides the behavior and accessbility implementation for a submenu trigger and its associated submenu.
+ * Provides the behavior and accessibility implementation for a submenu trigger and its associated submenu.
  * @param props - Props for the submenu trigger and refs attach to its submenu and parent menu.
  * @param state - State for the submenu trigger.
  * @param ref - Ref to the submenu trigger element.
