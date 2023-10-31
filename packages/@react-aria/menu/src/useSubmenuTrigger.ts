@@ -25,7 +25,6 @@ export interface AriaSubmenuTriggerProps {
   node: RSNode<unknown>,
   /** Whether the submenu trigger is disabled. */
   isDisabled?: boolean,
-  // TODO: naming. Also talk about if this should be customizable in this hook or if it belongs somewhere else
   /** Type of the submenu being rendered. */
   submenuType?: 'dialog' | 'menu',
   /** Ref of the menu that contains the submenu trigger. */

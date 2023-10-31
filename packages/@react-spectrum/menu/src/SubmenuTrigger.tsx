@@ -19,8 +19,6 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 
-// TODO: Add shouldFlip and closeOnSelect if we feel like those should be customizable for SubmenuTrigger
-// Other MenuTriggerProps like onOpenChange and positioning stuff have been removed as per discussion
 interface SubmenuTriggerProps {
   /**
    * The contents of the SubmenuTrigger - a Item and a Menu.
@@ -31,7 +29,6 @@ interface SubmenuTriggerProps {
 
 export interface SpectrumSubmenuTriggerProps extends Omit<SubmenuTriggerProps, 'targetKey'> {}
 
-// TODO: got rid of user provided ref support since it doesn't really make sense for submenus IMO
 function SubmenuTrigger(props: SubmenuTriggerProps) {
   let triggerRef = useRef<HTMLDivElement>();
   let {

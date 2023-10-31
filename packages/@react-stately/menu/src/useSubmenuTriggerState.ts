@@ -33,7 +33,6 @@ export interface SubmenuTriggerState extends OverlayTriggerState {
   closeAll: () => void,
   /** The level of the submenu. */
   level: number,
-  // TODO: below two are unused, should I even document? Made setOpen private so people don't try to use
   /** Toggles the submenu. */
   toggle: (focusStrategy?: FocusStrategy | null) => void,
   /** @private */
