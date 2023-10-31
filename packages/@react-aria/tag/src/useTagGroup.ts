@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, HelpTextProps, KeyboardDelegate, LabelableProps, MultipleSelection, SelectionBehavior} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {Key, RefObject, useEffect, useRef, useState} from 'react';
+import {Key, ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import type {ListState} from '@react-stately/list';
 import {useField} from '@react-aria/label';
@@ -31,11 +31,13 @@ export interface TagGroupAria {
   errorMessageProps: DOMAttributes
 }
 
-export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelection, DOMProps, LabelableProps, AriaLabelingProps, HelpTextProps {
+export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelection, DOMProps, LabelableProps, AriaLabelingProps, Omit<HelpTextProps, 'errorMessage'> {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** Handler that is called when a user deletes a tag.  */
-  onRemove?: (keys: Set<Key>) => void
+  onRemove?: (keys: Set<Key>) => void,
+  /** An error message for the field. */
+  errorMessage?: ReactNode
 }
 
 export interface AriaTagGroupOptions<T> extends Omit<AriaTagGroupProps<T>, 'children'> {

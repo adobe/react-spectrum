@@ -575,12 +575,17 @@ export interface TableBodyRenderProps {
    * Whether the table body has no rows and should display its empty state.
    * @selector [data-empty]
    */
-  isEmpty: boolean
+  isEmpty: boolean,
+  /**
+   * Whether the Table is currently the active drop target.
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean
 }
 
 export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps> {
   /** Provides content to display when there are no rows in the table. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
 
 function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>): JSX.Element | null {
@@ -693,7 +698,8 @@ function TableHeaderRowGroup<T>({collection}: {collection: TableCollection<T>}) 
   );
 }
 
-function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableCollection<T>, isDroppable: boolean}) {
+function TableBodyRowGroup<T>(props: {collection: TableCollection<T>, isDroppable: boolean}) {
+  let {collection, isDroppable} = props;
   let bodyRows = useCachedChildren({
     items: collection.rows,
     children: useCallback((item: Node<T>) => {
@@ -706,23 +712,29 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
     }, [])
   });
 
-  let props: TableBodyProps<T> = collection.body.props;
+  let state = useContext(TableStateContext);
+  let {dropState} = useContext(DragAndDropContext);
+  let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
+
+  let bodyProps: TableBodyProps<T> = collection.body.props;
+  let renderValues = {
+    isDropTarget: isRootDropTarget,
+    isEmpty: collection.size === 0
+  };
   let renderProps = useRenderProps({
-    ...props,
+    ...bodyProps,
     id: undefined,
     children: undefined,
     defaultClassName: 'react-aria-TableBody',
-    values: {
-      isEmpty: collection.size === 0
-    }
+    values: renderValues
   });
 
   let emptyState;
-  if (collection.size === 0 && props.renderEmptyState) {
+  if (collection.size === 0 && bodyProps.renderEmptyState && state) {
     emptyState = (
       <tr role="row">
         <td role="gridcell" colSpan={collection.columnCount}>
-          {props.renderEmptyState()}
+          {bodyProps.renderEmptyState(renderValues)}
         </td>
       </tr>
     );
@@ -731,7 +743,7 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
   let {rowGroupProps} = useTableRowGroup();
   return (
     <tbody
-      {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
+      {...mergeProps(filterDOMProps(bodyProps as any), rowGroupProps)}
       {...renderProps}
       ref={collection.body.props.ref}
       data-empty={collection.size === 0 || undefined}>
@@ -970,6 +982,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
       data-resizable-direction={resizableDirection}>
+      {renderProps.children}
       <input
         ref={inputRef}
         {...mergeProps(inputProps, focusProps, hoverProps)} />
@@ -1028,8 +1041,10 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
   let props = item.props as RowProps<unknown>;
   let isDragging = dragState && dragState.isDragging(item.key);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {children: _, ...restProps} = props;
   let renderProps = useRenderProps({
-    ...props,
+    ...restProps,
     id: undefined,
     defaultClassName: 'react-aria-Row',
     values: {

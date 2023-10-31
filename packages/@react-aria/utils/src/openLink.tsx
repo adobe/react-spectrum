@@ -103,13 +103,13 @@ export function openLink(target: HTMLAnchorElement, modifiers: Modifiers, setOpe
     // @ts-ignore - keyIdentifier is a non-standard property, but it's what webkit expects
     ? new KeyboardEvent('keydown', {keyIdentifier: 'Enter', metaKey, ctrlKey, altKey, shiftKey})
     : new MouseEvent('click', {metaKey, ctrlKey, altKey, shiftKey, bubbles: true, cancelable: true});
-  openLink.isOpening = setOpening;
+  (openLink as any).isOpening = setOpening;
   focusWithoutScrolling(target);
   target.dispatchEvent(event);
-  openLink.isOpening = false;
+  (openLink as any).isOpening = false;
 }
-
-openLink.isOpening = false;
+// https://github.com/parcel-bundler/parcel/issues/8724
+(openLink as any).isOpening = false;
 
 function getSyntheticLink(target: Element, open: (link: HTMLAnchorElement) => void) {
   if (target instanceof HTMLAnchorElement) {

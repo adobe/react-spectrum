@@ -11,9 +11,9 @@
  */
 
 import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {AriaSearchFieldProps, SearchFieldProps} from '@react-types/searchfield';
 import {Key, ReactElement} from 'react';
 import {MenuTriggerAction} from '@react-types/combobox';
-import {SearchFieldProps} from '@react-types/searchfield';
 
 export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit' | 'defaultValue' | 'value'> {
   /** The list of SearchAutocomplete items (uncontrolled). */
@@ -44,9 +44,9 @@ export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<Sear
   onSubmit?: (value: string | null, key: Key | null) => void
 }
 
-export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaSearchAutocompleteProps<T> extends SearchAutocompleteProps<T>, Omit<AriaSearchFieldProps, 'onSubmit' | 'defaultValue' | 'value'>, DOMProps, AriaLabelingProps {}
 
-export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<AriaSearchAutocompleteProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBase, Omit<AriaSearchAutocompleteProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState' | 'validate'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the SearchAutocomplete menu. Note that this prop has no effect on the mobile SearchAutocomplete experience.
    * @default 'input'

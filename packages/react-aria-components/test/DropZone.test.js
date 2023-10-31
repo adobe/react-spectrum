@@ -108,7 +108,7 @@ describe('DropZone', () => {
     expect(dropzone).not.toHaveClass('focus');
   });
 
-  it('should apply correct aria-labelledby', () => {
+  it('should apply correct default aria-labelledby', () => {
     let {getByRole, getByText} = render(
       <DropZone className="test">
         <Text slot="label">
@@ -116,24 +116,13 @@ describe('DropZone', () => {
         </Text>
       </DropZone>);
     let text = getByText('Test');
+    let div = getByText('DropZone');
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-labelledby', `${button.id} ${text.id}`);
-  });
-
-  it('should apply default aria-label', () => {
-    let {getByRole} = render(
-      <DropZone
-        data-testid="foo">
-        <FileTrigger>
-          <Link>Upload</Link>
-        </FileTrigger>
-      </DropZone>);
-    let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-label', 'DropZone');
+    expect(button).toHaveAttribute('aria-labelledby', `${div.id} ${text.id}`);
   });
 
   it('should allow custom aria-label', () => {
-    let {getByRole} = render(
+    let {getByRole, getByText} = render(
       <DropZone
         data-testid="foo"
         aria-label="test aria-label">
@@ -142,7 +131,8 @@ describe('DropZone', () => {
         </FileTrigger>
       </DropZone>);
     let button = getByRole('button');
-    expect(button).toHaveAttribute('aria-label', 'test aria-label');
+    let div = getByText('test aria-label');
+    expect(button).toHaveAttribute('aria-labelledby', `${div.id}`);
   });
 
   it('should support render props', async () => {

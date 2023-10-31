@@ -57,46 +57,48 @@ import {Meter, Label} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Meter {
-  --bar-color: var(--spectrum-global-color-gray-500);
-  --fill-color: forestgreen;
-  --text-color: var(--spectrum-alias-text-color);
-
-  display: grid;
-  grid-template-areas: "label value"
-                       "bar bar";
-  grid-template-columns: 1fr auto;
-  gap: 4px;
-  width: 250px;
-  color: var(--text-color);
-
-  .value {
-    grid-area: value;
-  }
-
-  .bar {
-    grid-area: bar;
-    box-shadow: inset 0px 0px 0px 1px var(--bar-color);
-    height: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-
-  .fill {
-    background: var(--fill-color);
-    height: 100%;
-  }
-}
-
-@media (forced-colors: active) {
+@layer meter {
   .react-aria-Meter {
-    --bar-color: ButtonFace;
-    --text-color: ButtonText;
-    --fill-color: Highlight;
+    --bar-color: var(--spectrum-global-color-gray-500);
+    --fill-color: forestgreen;
+    --text-color: var(--spectrum-alias-text-color);
+
+    display: grid;
+    grid-template-areas: "label value"
+                         "bar bar";
+    grid-template-columns: 1fr auto;
+    gap: 4px;
+    width: 250px;
+    color: var(--text-color);
+
+    .value {
+      grid-area: value;
+    }
 
     .bar {
-      border: 1px solid ButtonBorder;
-      box-sizing: border-box;
+      grid-area: bar;
+      box-shadow: inset 0px 0px 0px 1px var(--bar-color);
+      height: 10px;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .fill {
+      background: var(--fill-color);
+      height: 100%;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .react-aria-Meter {
+      --bar-color: ButtonFace;
+      --text-color: ButtonText;
+      --fill-color: Highlight;
+
+      .bar {
+        border: 1px solid ButtonBorder;
+        box-sizing: border-box;
+      }
     }
   }
 }
