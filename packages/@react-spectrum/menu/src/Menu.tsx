@@ -124,7 +124,7 @@ export function TrayHeaderWrapper(props) {
   let {direction} = useLocale();
 
   return (
-    <div style={{display: 'flex'}} role="presentation" onKeyDown={wrapperKeyDown}>
+    <div style={{display: 'flex', overflow: 'hidden'}} role="presentation" onKeyDown={wrapperKeyDown}>
       <div
         role={headingId ? 'dialog' : undefined}
         aria-labelledby={headingId}

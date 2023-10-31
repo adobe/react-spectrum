@@ -38,7 +38,7 @@ interface InternalMenuDialogTriggerProps extends MenuDialogTriggerProps {
 export interface SpectrumMenuDialogTriggerProps extends MenuDialogTriggerProps {}
 
 function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElement {
-  let {isUnavailable, targetKey} = props;
+  let {isUnavailable = false, targetKey} = props;
 
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
