@@ -13,7 +13,8 @@ import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
 import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
 import {CollectionDocumentContext, useCollectionDocument} from './Collection';
-import {ContextValue, forwardRefType, Hidden, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -46,7 +47,7 @@ export interface ComboBoxRenderProps {
   isRequired: boolean
 }
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<ComboBoxRenderProps>, SlotProps {
+export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps {
   /** The filter function used to determine if a option should be included in the combo box list. */
   defaultFilter?: (textValue: string, inputValue: string) => boolean,
   /**
@@ -116,16 +117,10 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     // If props.items isn't provided, rely on collection filtering (aka listbox.items is provided or defaultItems provided to Combobox)
     items: props.items,
     children: undefined,
-    collection
+    collection,
+    validationBehavior: props.validationBehavior ?? 'native'
   });
 
-  // Only expose a subset of state to renderProps function to avoid infinite render loop
-  let renderPropsState = useMemo(() => ({
-    isOpen: state.isOpen,
-    isDisabled: props.isDisabled || false,
-    isInvalid: props.isInvalid || false,
-    isRequired: props.isRequired || false
-  }), [state.isOpen, props.isDisabled, props.isInvalid, props.isRequired]);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let inputRef = useRef<HTMLInputElement>(null);
   let listBoxRef = useRef<HTMLDivElement>(null);
@@ -137,7 +132,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     listBoxProps,
     labelProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    ...validation
   } = useComboBox({
     ...removeDataAttributes(props),
     label,
@@ -145,7 +141,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     buttonRef,
     listBoxRef,
     popoverRef,
-    name: formValue === 'text' ? name : undefined
+    name: formValue === 'text' ? name : undefined,
+    validationBehavior: props.validationBehavior ?? 'native'
   }, state);
 
   // Make menu width match input + button
@@ -164,6 +161,14 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     ref: inputRef,
     onResize: onResize
   });
+
+  // Only expose a subset of state to renderProps function to avoid infinite render loop
+  let renderPropsState = useMemo(() => ({
+    isOpen: state.isOpen,
+    isDisabled: props.isDisabled || false,
+    isInvalid: validation.isInvalid || false,
+    isRequired: props.isRequired || false
+  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -196,7 +201,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FieldErrorContext, validation]
       ]}>
       <div
         {...DOMProps}
@@ -206,7 +212,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
         data-focused={state.isFocused || undefined}
         data-open={state.isOpen || undefined}
         data-disabled={props.isDisabled || undefined}
-        data-invalid={props.isInvalid || undefined}
+        data-invalid={validation.isInvalid || undefined}
         data-required={props.isRequired || undefined} />
       {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
     </Provider>
