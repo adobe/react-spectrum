@@ -140,30 +140,6 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
       font-family: monospace;
       text-align: end;
     }
-
-    &[data-selection-mode] {
-      padding-left: 24px;
-      &::before {
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
-
-      &[data-selection-mode=multiple][data-selected]::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
-
-      &[data-selection-mode=single][data-selected]::before {
-        content: '●';
-        content: '●' / '';
-        transform: scale(0.7)
-      }
-    }
   }
 }
 @layer popover {

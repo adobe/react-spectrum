@@ -141,7 +141,7 @@ A `Dialog` may be placed within a [Popover](Popover.html) to display it in conte
 import {Popover, OverlayArrow} from 'react-aria-components';
 
 <DialogTrigger>
-  <Button aria-label="Help" className="react-aria-Button dialog-trigger">ⓘ</Button>
+  <Button aria-label="Help">ⓘ</Button>
   <Popover>
     <OverlayArrow>
       <svg width={12} height={12} viewBox="0 0 12 12"><path d="M0 0 L6 6 L12 0" /></svg>
@@ -153,15 +153,6 @@ import {Popover, OverlayArrow} from 'react-aria-components';
   </Popover>
 </DialogTrigger>
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-```css
-.dialog-trigger {
-  font-family: "Arial Unicode MS", Arial, arial, sans-serif;
-}
-```
-</details>
 
 ## Alert dialog
 
