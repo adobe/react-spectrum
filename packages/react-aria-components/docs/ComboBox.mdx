@@ -166,14 +166,6 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
       margin-top: unset;
       --origin: translateY(-8px);
     }
-
-    &[data-entering] {
-      animation: combobox-slide 200ms;
-    }
-
-    &[data-exiting] {
-      animation: combobox-slide 200ms reverse ease-in;
-    }
   }
 }
 
@@ -187,18 +179,6 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
       color: ButtonText;
       border: 1px solid ButtonBorder;
     }
-  }
-}
-
-@keyframes combobox-slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
   }
 }
 ```

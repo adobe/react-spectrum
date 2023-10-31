@@ -138,8 +138,14 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     .react-aria-ListBoxItem {
       padding: 0.286rem 0.571rem 0.286rem 1.571rem;
 
+      &[data-focus-visible] {
+        box-shadow: unset;
+      }
+
       &[data-selected] {
         font-weight: 600;
+        background: unset;
+        color: var(--text-color);
 
           &::before {
           content: '✓';
@@ -165,6 +171,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     margin-top: 0px;
     min-width: var(--trigger-width);
     box-sizing: border-box;
+
     &[data-placement=top] {
       margin-bottom: unset;
       --origin: translateY(8px);
@@ -173,14 +180,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     &[data-placement=bottom] {
       margin-top: unset;
       --origin: translateY(-8px);
-    }
-
-    &[data-entering] {
-      animation: popover-slide 200ms;
-    }
-
-    &[data-exiting] {
-      animation: popover-slide 200ms reverse ease-in;
     }
   }
 }
@@ -191,18 +190,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     --text-color: ButtonText;
     --text-color-disabled: GrayText;
     --focus-ring-color: Highlight;
-  }
-}
-
-@keyframes popover-slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
   }
 }
 ```
