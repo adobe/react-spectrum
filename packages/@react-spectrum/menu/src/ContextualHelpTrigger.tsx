@@ -10,23 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {ActionButton} from '@react-spectrum/button';
-import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
 import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
 import {ItemProps} from '@react-types/shared';
 import {Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
+import {TrayHeaderWrapper} from './Menu';
 import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
-import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface MenuDialogTriggerProps {
   /** Whether the menu item is currently unavailable. */
@@ -78,12 +74,6 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
 
   let overlay;
   let tray;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let {direction} = useLocale();
-  let backButtonText = state?.collection.getItem(rootMenuTriggerState.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
-  let backButtonLabel = stringFormatter.format('backButton', {
-    prevMenuButton: backButtonText
-  });
   let onBackButtonPress = () => {
     submenuTriggerState.close();
     if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
@@ -94,30 +84,26 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
 
   if (isMobile) {
     if (trayContainerRef.current && submenuTriggerState.isOpen) {
-      // TODO: would be nice to centralize this wrapper div and header so that Menu and ContextualHelpTrigger don't duplicate it
-      // TODO: update this so that the back button is a heading and the wrapper is a dialog? Are nested dialogs allowed? Otherwise overwrite the role on
-      // the inner dialog via slots? Or maybe just have the dismiss button handle it? Ask accessibility team if having two nested dialogs is a problem
+      let subDialogKeyDown = (e: KeyboardEvent) => {
+        switch (e.key) {
+          case 'Escape':
+            e.stopPropagation();
+            onBackButtonPress();
+            break;
+        }
+      };
+
+      // TODO: Since we are sharing this between SubMenu and ContextualHelpTrigger, we actually have a set of nested dialogs for the ContextualHelpTrigger case
+      // ask accessbility if this is ok. Also means we have two h2...
       tray = (
-        <div
-          className={
-            classNames(
-              styles,
-              'spectrum-Menu-wrapper',
-              'spectrum-Menu-trayWrapper'
-            )
-        }>
-          <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
-            <ActionButton
-              aria-label={backButtonLabel}
-              isQuiet
-              onPress={onBackButtonPress}>
-              {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
-              {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
-            </ActionButton>
-            <h2 className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h2>
-          </div>
+        <TrayHeaderWrapper
+          isSubmenu
+          parentMenuTreeState={state}
+          rootMenuTriggerState={rootMenuTriggerState}
+          wrapperKeyDown={subDialogKeyDown}
+          onBackButtonPress={onBackButtonPress}>
           {content}
-        </div>
+        </TrayHeaderWrapper>
       );
 
       overlay = ReactDOM.createPortal(tray, trayContainerRef.current);
@@ -139,7 +125,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         offset={-10}
         hideArrow
         enableBothDismissButtons>
-        <FocusScope restoreFocus>
+        {/* TODO: adding contain means hovering another root menu item when the subdialog is open doesn't actually move focus to that item... */}
+        <FocusScope restoreFocus contain>
           {content}
         </FocusScope>
       </Popover>

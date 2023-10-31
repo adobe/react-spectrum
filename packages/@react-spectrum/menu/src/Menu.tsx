@@ -30,7 +30,6 @@ import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isSubmenu = true;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
   let {rootMenuTriggerState, state: parentMenuTreeState} = parentMenuContext || {};
@@ -49,19 +48,12 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
-  let {direction} = useLocale();
   let [leftOffset, setLeftOffset] = useState({left: 0});
   useLayoutEffect(() => {
     let {left} = popoverContainerRef.current.getBoundingClientRect();
     setLeftOffset({left: -1 * left});
   }, []);
 
-  let isMobile = useIsMobileDevice();
-  let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
-  let backButtonLabel = stringFormatter.format('backButton', {
-    prevMenuButton: backButtonText
-  });
-  let headingId = useSlotId();
   let menuLevel = contextProps.level || 0;
   let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel]) != null;
   // TODO: add slide transition
@@ -69,32 +61,12 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
       <div ref={trayContainerRef} />
       <FocusScope>
-        <div
-          role={headingId ? 'dialog' : undefined}
-          aria-labelledby={headingId}
-          aria-hidden={isMobile && hasOpenSubmenu}
-          className={
-            classNames(
-              styles,
-              'spectrum-Menu-wrapper',
-              {
-                'spectrum-Menu-trayWrapper': isMobile,
-                'is-expanded': hasOpenSubmenu
-              }
-            )
-        }>
-          {isMobile && isSubmenu && !hasOpenSubmenu && (
-            <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
-              <ActionButton
-                aria-label={backButtonLabel}
-                isQuiet
-                onPress={contextProps.onBackButtonPress}>
-                {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
-                {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
-              </ActionButton>
-              <h2 id={headingId} className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h2>
-            </div>
-          )}
+        <TrayHeaderWrapper
+          onBackButtonPress={contextProps.onBackButtonPress}
+          hasOpenSubmenu={hasOpenSubmenu}
+          isSubmenu={isSubmenu}
+          parentMenuTreeState={parentMenuTreeState}
+          rootMenuTriggerState={rootMenuTriggerState}>
           <div
             {...menuProps}
             style={mergeProps(styleProps.style, menuProps.style)}
@@ -132,11 +104,56 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
               return menuItem;
             })}
           </div>
-        </div>
+        </TrayHeaderWrapper>
         {/* Make the portal container for submenus wide enough so that the submenu items can render as wide as they need to be */}
         <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} />
       </FocusScope>
     </MenuStateContext.Provider>
+  );
+}
+
+export function TrayHeaderWrapper(props) {
+  let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
+  let backButtonLabel = stringFormatter.format('backButton', {
+    prevMenuButton: backButtonText
+  });
+  let headingId = useSlotId();
+  let isMobile = useIsMobileDevice();
+  let {direction} = useLocale();
+
+  return (
+    <div style={{display: 'flex'}} role="presentation" onKeyDown={wrapperKeyDown}>
+      <div
+        role={headingId ? 'dialog' : undefined}
+        aria-labelledby={headingId}
+        aria-hidden={isMobile && hasOpenSubmenu}
+        className={
+          classNames(
+            styles,
+            'spectrum-Menu-wrapper',
+            {
+              'spectrum-Menu-trayWrapper': isMobile,
+              'is-expanded': hasOpenSubmenu
+            }
+          )
+        }>
+        {isMobile && isSubmenu && !hasOpenSubmenu && (
+          <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
+            <ActionButton
+              aria-label={backButtonLabel}
+              isQuiet
+              onPress={onBackButtonPress}>
+              {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
+              {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
+            </ActionButton>
+            <h2 id={headingId} className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h2>
+          </div>
+        )}
+        {children}
+      </div>
+    </div>
   );
 }
 
