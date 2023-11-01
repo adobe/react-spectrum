@@ -1,12 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="976" height="227" viewBox="0 0 976 227">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 741 227">
   <defs>
     <clipPath id="clip-Toolbar_anatomy">
-      <rect width="976" height="227"/>
+      <rect width="741" height="227"/>
     </clipPath>
   </defs>
   <g id="Toolbar_anatomy" data-name="Toolbar anatomy" clip-path="url(#clip-Toolbar_anatomy)">
-    <rect width="976" height="227" fill="var(--anatomy-gray-100)"/>
-    <g id="Group_151095" data-name="Group 151095" transform="translate(-34)">
+    <rect width="741" height="227" fill="var(--anatomy-gray-100)"/>
+    <g id="Group_151095" data-name="Group 151095" transform="translate(-151.045 -3)">
       <g id="Group_151076" data-name="Group 151076" transform="translate(-238.378 44)">
         <g id="Group_151075" data-name="Group 151075" transform="translate(427.5 489.755)">
           <text id="Toolbar" transform="translate(366 -344.755)" fill="var(--anatomy-gray-700)" font-size="13" font-family="Adobe-Clean" font-style="italic"><tspan x="-38.441" y="0">Toolbar</tspan></text>
