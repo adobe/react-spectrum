@@ -823,7 +823,7 @@ describe('Submenu', function () {
       expect(backButton).toHaveAttribute('aria-label', `Return to ${submenuTrigger1.textContent}`);
       let menuHeader = within(trayDialog).getAllByText(submenuTrigger1.textContent)[0];
       expect(menuHeader).toBeVisible();
-      expect(menuHeader.tagName).toBe('H2');
+      expect(menuHeader.tagName).toBe('H1');
       let submenu1Items = within(submenu1).getAllByRole('menuitem');
       let submenuTrigger2 = submenu1Items[2];
       triggerTouch(submenuTrigger2);
@@ -841,7 +841,7 @@ describe('Submenu', function () {
       expect(backButton).toHaveAttribute('aria-label', `Return to ${submenuTrigger2.textContent}`);
       menuHeader = within(tray).getAllByText(submenuTrigger2.textContent)[0];
       expect(menuHeader).toBeVisible();
-      expect(menuHeader.tagName).toBe('H2');
+      expect(menuHeader.tagName).toBe('H1');
     });
 
     it('should provide a back button to close the submenu', async function () {

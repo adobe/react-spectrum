@@ -12,12 +12,14 @@
 
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
+import {mergeProps} from '@react-aria/utils';
 import {Popover} from '@react-spectrum/overlays';
 import React, {Key, ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
+import {useLocale} from '@react-aria/i18n';
 
 interface SubmenuTriggerProps {
   /**
@@ -54,6 +56,23 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
     }
   };
 
+  let {direction} = useLocale();
+  // Delay for the parent menu in the tray to no longer be display: none so focus can properly be moved to the parent submenu trigger
+  let mobileSubmenuKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowLeft':
+        if (direction === 'ltr') {
+          requestAnimationFrame(() => triggerRef.current.focus());
+        }
+        break;
+      case 'ArrowRight':
+        if (direction === 'rtl') {
+          requestAnimationFrame(() => triggerRef.current.focus());
+        }
+        break;
+    }
+  };
+
   let overlay;
   if (isMobile)  {
     delete submenuTriggerProps.onBlur;
@@ -85,15 +104,17 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   }
 
   let menuContext = {
-    ...submenuProps,
-    ref: menuRef,
-    UNSAFE_style: isMobile ? {
-      width: '100%',
-      maxHeight: 'inherit'
-    } : undefined,
-    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
-    ...(isMobile && {
-      onBackButtonPress
+    ...mergeProps(submenuProps, {
+      ref: menuRef,
+      UNSAFE_style: isMobile ? {
+        width: '100%',
+        maxHeight: 'inherit'
+      } : undefined,
+      UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
+      ...(isMobile && {
+        onBackButtonPress,
+        onKeyDown: mobileSubmenuKeyDown
+      })
     })
   };
 

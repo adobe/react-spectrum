@@ -148,7 +148,7 @@ export function TrayHeaderWrapper(props) {
               {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
               {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
             </ActionButton>
-            <h2 id={headingId} className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h2>
+            <h1 id={headingId} className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h1>
           </div>
         )}
         {children}
