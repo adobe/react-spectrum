@@ -58,8 +58,7 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer radiogroup {
-  .react-aria-RadioGroup {
+.react-aria-RadioGroup {
   --label-color: var(--spectrum-alias-text-color);
   --deselected-color: gray;
   --deselected-color-pressed: dimgray;
@@ -69,64 +68,63 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
   --invalid-color: var(--spectrum-global-color-red-600);
   --invalid-color-pressed: var(--spectrum-global-color-red-700);
 
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.react-aria-Radio {
+  display: flex;
+  align-items: center;
+  gap: 0.571rem;
+  font-size: 1.143rem;
+  color: var(--label-color);
+
+  &:before {
+    content: '';
+    display: block;
+    width: 1.286rem;
+    height: 1.286rem;
+    box-sizing: border-box;
+    border: 0.143rem solid var(--deselected-color);
+    background: var(--background-color);
+    border-radius: 1.286rem;
+    transition: all 200ms;
   }
 
-  .react-aria-Radio {
-    display: flex;
-    align-items: center;
-    gap: 0.571rem;
-    font-size: 1.143rem;
-    color: var(--label-color);
+  &[data-pressed]:before {
+    border-color: var(--deselected-color-pressed);
+  }
 
+  &[data-selected] {
     &:before {
-      content: '';
-      display: block;
-      width: 1.286rem;
-      height: 1.286rem;
-      box-sizing: border-box;
-      border: 0.143rem solid var(--deselected-color);
-      background: var(--background-color);
-      border-radius: 1.286rem;
-      transition: all 200ms;
+      border-color: var(--selected-color);
+      border-width: 0.429rem;
     }
 
     &[data-pressed]:before {
-      border-color: var(--deselected-color-pressed);
-    }
-
-    &[data-selected] {
-      &:before {
-        border-color: var(--selected-color);
-        border-width: 0.429rem;
-      }
-
-      &[data-pressed]:before {
-        border-color: var(--selected-color-pressed);
-      }
-    }
-
-    &[data-focus-visible]:before {
-      box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+      border-color: var(--selected-color-pressed);
     }
   }
 
-  @media (forced-colors: active) {
-    .react-aria-RadioGroup {
-      forced-color-adjust: none;
+  &[data-focus-visible]:before {
+    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+  }
+}
 
-      --label-color: ButtonText;
-      --deselected-color: ButtonBorder;
-      --deselected-color-pressed: ButtonBorder;
-      --selected-color: Highlight;
-      --selected-color-pressed: Highlight;
-      --background-color: HighlightText;
-      --invalid-color: LinkText;
-      --invalid-color-pressed: LinkText;
-      --spectrum-alias-background-color-default: Canvas;
-    }
+@media (forced-colors: active) {
+  .react-aria-RadioGroup {
+    forced-color-adjust: none;
+
+    --label-color: ButtonText;
+    --deselected-color: ButtonBorder;
+    --deselected-color-pressed: ButtonBorder;
+    --selected-color: Highlight;
+    --selected-color-pressed: Highlight;
+    --background-color: HighlightText;
+    --invalid-color: LinkText;
+    --invalid-color-pressed: LinkText;
+    --spectrum-alias-background-color-default: Canvas;
   }
 }
 ```
@@ -295,16 +293,14 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer radiogroup {
-  .react-aria-Radio {
-    &[data-invalid] {
-      &:before {
-        border-color: var(--invalid-color);
-      }
+.react-aria-Radio {
+  &[data-invalid] {
+    &:before {
+      border-color: var(--invalid-color);
+    }
 
-      &[data-pressed]:before {
-        border-color: var(--invalid-color-pressed);
-      }
+    &[data-pressed]:before {
+      border-color: var(--invalid-color-pressed);
     }
   }
 }
@@ -352,16 +348,14 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer radiogroup {
-  .react-aria-RadioGroup {
-    & [slot=description] {
-      font-size: 12px;
-    }
+.react-aria-RadioGroup {
+  & [slot=description] {
+    font-size: 12px;
+  }
 
-    & [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--invalid-color);
-    }
+  & [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
   }
 }
 ```
@@ -385,12 +379,10 @@ The `orientation` prop can be used to change the orientation to horizontal.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer radiogroup {
-  .react-aria-RadioGroup {
-    &[data-orientation=horizontal] {
-      flex-direction: row;
-      align-items: center;
-    }
+.react-aria-RadioGroup {
+  &[data-orientation=horizontal] {
+    flex-direction: row;
+    align-items: center;
   }
 }
 ```
@@ -413,21 +405,19 @@ The entire RadioGroup can be disabled with the `isDisabled` prop.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer radiogroup {
+.react-aria-Radio {
+  &[data-disabled] {
+    opacity: 0.4;
+  }
+}
+
+@media (forced-colors: active) {
   .react-aria-Radio {
     &[data-disabled] {
-      opacity: 0.4;
-    }
-  }
-
-  @media (forced-colors: active) {
-    .react-aria-Radio {
-      &[data-disabled] {
-        opacity: 1;
-        --deselected-color: GrayText;
-        --selected-color: GrayText;
-        --label-color: GrayText;
-      }
+      opacity: 1;
+      --deselected-color: GrayText;
+      --selected-color: GrayText;
+      --label-color: GrayText;
     }
   }
 }

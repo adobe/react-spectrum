@@ -58,89 +58,85 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-/* We only import styles up to one page away, we don't follow those pages dependencies, so
-* import everything and in the correct order of dependency so that layers don't overwrite each other. */
-@import './Button.mdx';
+@import './Button.mdx' layer(button);
 ```
 
 ```css
-@layer calendar {
-  .react-aria-Calendar {
-    --highlight-background: slateblue;
-    --highlight-foreground: white;
-    --text-color: var(--spectrum-alias-text-color);
-    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-    --text-color-invalid: var(--spectrum-global-color-red-600);
-    --pressed-color: var(--spectrum-global-color-gray-200);
-    --unavailable-color: var(--spectrum-global-color-red-600);
-    --invalid-color: var(--spectrum-global-color-static-red-600);
+.react-aria-Calendar {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --text-color-invalid: var(--spectrum-global-color-red-600);
+  --pressed-color: var(--spectrum-global-color-gray-200);
+  --unavailable-color: var(--spectrum-global-color-red-600);
+  --invalid-color: var(--spectrum-global-color-static-red-600);
 
-    width: fit-content;
-    max-width: 100%;
-    color: var(--text-color);
+  width: fit-content;
+  max-width: 100%;
+  color: var(--text-color);
 
-    & header {
-      display: flex;
-      align-items: center;
-      margin: 0 4px .5rem 4px;
+  & header {
+    display: flex;
+    align-items: center;
+    margin: 0 4px .5rem 4px;
 
-      .react-aria-Heading {
-        flex: 1;
-        margin: 0;
-        text-align: center;
-        font-size: 1.375rem;
-      }
-    }
-
-    .react-aria-Button {
-      width: 2rem;
-      height: 2rem;
-      padding: 0;
-    }
-
-    .react-aria-CalendarCell {
-      width: 2rem;
-      line-height: 2rem;
+    .react-aria-Heading {
+      flex: 1;
+      margin: 0;
       text-align: center;
-      border-radius: 6px;
-      cursor: default;
-      outline: none;
-      border: 2px solid var(--spectrum-alias-background-color-default);
-      margin: -1px;
-
-      &[data-outside-month] {
-        display: none;
-      }
-
-      &[data-pressed] {
-        background: var(--pressed-color);
-      }
-
-      &[data-focus-visible] {
-        box-shadow: 0 0 0 2px var(--highlight-background);
-      }
-
-      &[data-selected] {
-        background: var(--highlight-background);
-        color: var(--highlight-foreground);
-      }
+      font-size: 1.375rem;
     }
   }
 
-  @media (forced-colors: active) {
-    .react-aria-Calendar {
-      forced-color-adjust: none;
+  .react-aria-Button {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+  }
 
-      --highlight-background: Highlight;
-      --highlight-foreground: HighlightText;
-      --text-color: ButtonText;
-      --text-color-disabled: GrayText;
-      --text-color-invalid: LinkText;
-      --unavailable-color: GrayText;
-      --invalid-color: LinkText;
-      --pressed-color: Canvas;
-      --spectrum-alias-background-color-default: Canvas;
+  .react-aria-CalendarCell {
+    width: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    border-radius: 6px;
+    cursor: default;
+    outline: none;
+    border: 2px solid var(--spectrum-alias-background-color-default);
+    margin: -1px;
+
+    &[data-outside-month] {
+      display: none;
     }
+
+    &[data-pressed] {
+      background: var(--pressed-color);
+    }
+
+    &[data-focus-visible] {
+      box-shadow: 0 0 0 2px var(--highlight-background);
+    }
+
+    &[data-selected] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Calendar {
+    forced-color-adjust: none;
+
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+    --text-color-invalid: LinkText;
+    --unavailable-color: GrayText;
+    --invalid-color: LinkText;
+    --pressed-color: Canvas;
+    --spectrum-alias-background-color-default: Canvas;
   }
 }
 ```
@@ -389,12 +385,10 @@ import {today} from '@internationalized/date';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer calendar {
-  .react-aria-Calendar {
-    .react-aria-CalendarCell {
-      &[data-disabled] {
-        color: var(--text-color-disabled);
-      }
+.react-aria-Calendar {
+  .react-aria-CalendarCell {
+    &[data-disabled] {
+      color: var(--text-color-disabled);
     }
   }
 }
@@ -432,13 +426,11 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer calendar {
-  .react-aria-Calendar {
-    .react-aria-CalendarCell {
-      &[data-unavailable] {
-        text-decoration: line-through;
-        color: var(--unavailable-color);
-      }
+.react-aria-Calendar {
+  .react-aria-CalendarCell {
+    &[data-unavailable] {
+      text-decoration: line-through;
+      color: var(--unavailable-color);
     }
   }
 }
@@ -479,18 +471,16 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer calendar {
-  .react-aria-Calendar {
-    .react-aria-CalendarCell {
-      &[data-invalid] {
-        background: var(--invalid-color);
-        color: var(--highlight-foreground);
-      }
+.react-aria-Calendar {
+  .react-aria-CalendarCell {
+    &[data-invalid] {
+      background: var(--invalid-color);
+      color: var(--highlight-foreground);
     }
-    [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--text-color-invalid);
-    }
+  }
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--text-color-invalid);
   }
 }
 ```
