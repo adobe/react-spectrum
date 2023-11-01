@@ -388,36 +388,43 @@ export function createTodo(prevState: any, formData: FormData) {
 
 #### Remix
 
-[Remix actions](https://remix.run/docs/en/main/route/action) handle form submissions on the server. The [useActionData](https://remix.run/docs/en/main/hooks/use-action-data) hook can be used to get the value returned by the server, which may include validation errors. Since Remix has its own [Form](https://remix.run/docs/en/main/components/form) component which must be used to submit data, use `FormValidationContext` from React Aria directly to provide validation errors instead of `Form`.
+[Remix actions](https://remix.run/docs/en/main/route/action) handle form submissions on the server. The [useSubmit](https://remix.run/docs/en/main/hooks/use-submit) hook can be used to submit data to the server, and the [useActionData](https://remix.run/docs/en/main/hooks/use-action-data) hook can be used to get the value returned by the server, which may include validation errors.
 
 ```tsx
 // app/routes/signup.tsx
 import type {ActionArgs} from '@remix-run/node';
-import {Form, useActionData} from '@remix-run/react';
-import {FormValidationContext, TextField, Label, Input, FieldError, Button} from 'react-aria-components';
+import {useActionData, useSubmit} from '@remix-run/react';
+import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-components';
 
 export default function SignupForm() {
+  let submit = useSubmit();
+  let onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    submit(e.currentTarget);
+  };
+
   /*- begin highlight -*/
   let actionData = useActionData<typeof action>();
   /*- end highlight -*/
 
   return (
-    <Form method="post">
-      {/*- begin highlight -*/}
-      <FormValidationContext.Provider value={actionData?.errors}>
-      {/*- end highlight -*/}
-        <TextField name="username" isRequired>
-          <Label>Username</Label>
-          <Input />
-          <FieldError />
-        </TextField>
-        <TextField name="password" type="password" isRequired>
-          <Label>Password</Label>
-          <Input />
-          <FieldError />
-        </TextField>
-        <Button type="submit">Submit</Button>
-      </FormValidationContext.Provider>
+    <Form
+      method="post"
+      /*- begin highlight -*/
+      validationErrors={actionData?.errors}
+      /*- end highlight -*/
+      onSubmit={onSubmit}>
+      <TextField name="username" isRequired>
+        <Label>Username</Label>
+        <Input />
+        <FieldError />
+      </TextField>
+      <TextField name="password" type="password" isRequired>
+        <Label>Password</Label>
+        <Input />
+        <FieldError />
+      </TextField>
+      <Button type="submit">Submit</Button>
     </Form>
   );
 }
