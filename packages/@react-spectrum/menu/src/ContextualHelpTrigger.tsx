@@ -83,6 +83,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   };
 
   if (isMobile) {
+    delete submenuTriggerProps.onBlur;
+    delete submenuTriggerProps.onHoverChange;
     if (trayContainerRef.current && submenuTriggerState.isOpen) {
       let subDialogKeyDown = (e: KeyboardEvent) => {
         switch (e.key) {
@@ -93,8 +95,6 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         }
       };
 
-      // TODO: Since we are sharing this between SubMenu and ContextualHelpTrigger, we actually have a set of nested dialogs for the ContextualHelpTrigger case
-      // ask accessbility if this is ok. Also means we have two h2...
       tray = (
         <TrayHeaderWrapper
           isSubmenu

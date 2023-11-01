@@ -170,7 +170,9 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
   };
 
   let onPress = (e: PressEvent) => {
-    if (!isDisabled && e.pointerType === 'touch') {
+    if (!isDisabled && (e.pointerType === 'touch' || e.pointerType === 'mouse')) {
+      // For touch or on a desktop device with a small screen open on press up to possible problems with
+      // press up happening on the newly opened tray items
       onSubmenuOpen();
     }
   };

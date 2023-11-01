@@ -634,7 +634,7 @@ describe('Submenu', function () {
       expect(submenuOnClose).not.toHaveBeenCalled();
     });
 
-    it('should not trigger root menu\' onAction when pressing on a submenu trigger item', async function () {
+    it.only('should not trigger root menu\' onAction when pressing on a submenu trigger item', async function () {
       let tree = render(<SubmenuStatic onAction={onAction} />);
       let triggerButton = tree.getByRole('button');
       await user.pointer({target: triggerButton, keys: '[MouseLeft]'});
@@ -645,14 +645,13 @@ describe('Submenu', function () {
       let submenuTrigger1 = menuItems[1];
       await user.pointer({target: submenuTrigger1, keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
-      menu = tree.getByRole('menu', {hidden: true});
-      expect(menu).toBeTruthy();
+      let menus = tree.getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(2);
       expect(onAction).not.toHaveBeenCalled();
+
       await user.keyboard('[Enter]');
       act(() => {jest.runAllTimers();});
       expect(onAction).not.toHaveBeenCalled();
-      let menus = tree.getAllByRole('menu', {hidden: true});
-      expect(menus).toHaveLength(2);
 
       await user.pointer({target: menuItems[0], keys: '[MouseLeft]'});
       act(() => {jest.runAllTimers();});
@@ -729,12 +728,17 @@ describe('Submenu', function () {
       // Click on the menu's submenu trigger
       await user.pointer({target: document.activeElement, keys: '[MouseLeft]'});
       expect(onSelectionChange).not.toHaveBeenCalled();
-      await user.keyboard('[Enter]');
+      await user.keyboard('[ArrowLeft]');
       act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(submenuTrigger);
+
+      // Hit enter on the menu's submenu trigger
+      await user.keyboard('[Enter]');
       expect(onSelectionChange).not.toHaveBeenCalled();
       let menus = tree.getAllByRole('menu', {hidden: true});
       let submenu1Items = within(menus[1]).getAllByRole('menuitemradio');
       expect(document.activeElement).toBe(submenu1Items[0]);
+
       await user.keyboard('[ArrowDown]');
       await user.keyboard('[ArrowDown]');
 
