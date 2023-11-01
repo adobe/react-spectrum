@@ -106,7 +106,7 @@ function Example() {
       /*- begin highlight -*/
       onSubmit={e => {
         e.preventDefault();
-        let data = Object.fromEntries(new FormData(e.target));
+        let data = Object.fromEntries(new FormData(e.currentTarget));
         setAction(`submit ${JSON.stringify(data)}`);
       }}
       onReset={() => setAction('reset')}

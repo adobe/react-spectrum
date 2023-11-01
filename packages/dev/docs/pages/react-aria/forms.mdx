@@ -62,12 +62,12 @@ function Example() {
   let [submitted, setSubmitted] = React.useState(null);
 
   /*- begin highlight -*/
-  let onSubmit = (e) => {
+  let onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     // Prevent default browser page refresh.
     e.preventDefault();
 
     // Get form data as an object.
-    let data = Object.fromEntries(new FormData(e.target));
+    let data = Object.fromEntries(new FormData(e.currentTarget));
 
     // Submit to your backend API...
     setSubmitted(data);
@@ -263,10 +263,10 @@ function Example() {
   /*- begin highlight -*/
   let [errors, setErrors] = React.useState({});
   /*- end highlight -*/
-  let onSubmit = async (e) => {
+  let onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    let data = Object.fromEntries(new FormData(e.target));
+    let data = Object.fromEntries(new FormData(e.currentTarget));
     let result = await callServer(data)
     /*- begin highlight -*/
     setErrors(result.errors);

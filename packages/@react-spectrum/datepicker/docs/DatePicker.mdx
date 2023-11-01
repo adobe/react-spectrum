@@ -281,14 +281,12 @@ function Example() {
   ];
 
   let {locale} = useLocale();
-  let isDateUnavailable = (date: DateValue) => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
-
   return (
     <DatePicker
       label="Appointment date"
       minValue={today(getLocalTimeZone())}
       /*- begin highlight -*/
-      isDateUnavailable={isDateUnavailable}
+      isDateUnavailable={date => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0)}
       /*- end highlight -*/
       validationBehavior="native" />
   );
