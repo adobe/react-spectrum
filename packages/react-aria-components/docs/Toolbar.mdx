@@ -74,40 +74,38 @@ import {Toolbar, Button, ToggleButton, Separator, Popover, MenuTrigger, Menu, Me
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-@import './Checkbox.mdx';
-@import './Button.mdx';
-@import './ToggleButton.mdx';
-@import './Popover.mdx';
-@import './Menu.mdx';
+@import './Checkbox.mdx' layer(checkbox);
+@import './Button.mdx' layer(button);
+@import './ToggleButton.mdx' layer(togglebutton);
+@import './Popover.mdx' layer(popover);
+@import './Menu.mdx' layer(menu);
 ```
 
 ```css
-@layer toolbar {
-  .react-aria-Toolbar {
-    --separator-color: var(--spectrum-global-color-gray-500);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 5px;
-    padding: 15px;
-    border: 1px solid var(--separator-color);
+.react-aria-Toolbar {
+  --separator-color: var(--spectrum-global-color-gray-500);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 15px;
+  border: 1px solid var(--separator-color);
 
-    &[data-orientation=vertical] {
-      flex-direction: column;
-    }
+  &[data-orientation=vertical] {
+    flex-direction: column;
+  }
 
-    &[data-orientation=horizontal] {
-      flex-direction: row;
-    }
+  &[data-orientation=horizontal] {
+    flex-direction: row;
   }
-  .react-aria-ToggleButton {
-    width: 32px;
-  }
-  .react-aria-Separator {
-    width: 2px;
-    margin: 0px 10px;
-    align-self: stretch;
-    background-color: var(--separator-color);
-  }
+}
+.react-aria-ToggleButton {
+  width: 32px;
+}
+.react-aria-Separator {
+  width: 2px;
+  margin: 0px 10px;
+  align-self: stretch;
+  background-color: var(--separator-color);
 }
 ```
 
