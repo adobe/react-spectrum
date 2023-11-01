@@ -43,6 +43,7 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
         'spectrum-Steplist--medium': size === 'M',
         'spectrum-Steplist--large': size === 'L',
         'spectrum-Steplist--xlarge': size === 'XL',
+        'spectrum-Steplist--horizontal': orientation === 'horizontal',
         'spectrum-Steplist--vertical': orientation === 'vertical'
       })}>
       <StepListContext.Provider value={state}>

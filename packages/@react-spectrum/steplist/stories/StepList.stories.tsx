@@ -111,6 +111,27 @@ export const WithButtonsDefault: StepListStory = {
   name: 'Control Selected Key'
 };
 
+export const VerticalWithOddLengths: StepListStory = {
+  args: {
+    orientation: 'vertical',
+    width: 75,
+    children: options.map((o) => <Item key={o.key}>{`${o.value} ${o.value} ${o.value}`}</Item>),
+    defaultSelectedKey: options[1].key,
+    defaultLastCompletedStep: options[1].key
+  },
+  name: 'Vertical Odd names'
+};
+
+export const HorizontalWithOddLengths: StepListStory = {
+  args: {
+    width: 600,
+    children: options.map((o) => <Item key={o.key}>{`${o.value} ${o.value} ${o.value}`}</Item>),
+    defaultSelectedKey: options[1].key,
+    defaultLastCompletedStep: options[1].key
+  },
+  name: 'Horizontal Odd names'
+};
+
 export const WithButtonsDefaultCompletedStep: StepListStory = {
   render: (args) => (
     <WithButtons

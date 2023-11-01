@@ -27,6 +27,9 @@ governing permissions and limitations under the License.
     .spectrum-Steplist-chevron {
       color: var(--spectrum-steplist-border-color);
     }
+    svg line {
+      stroke: var(--spectrum-steplist-border-color);
+    }
   }
 
   .spectrum-Steplist-item {
@@ -76,7 +79,7 @@ governing permissions and limitations under the License.
 
       &.is-disabled {
         .spectrum-Steplist-label {
-         
+
           color: var(--spectrum-alias-text-color-disabled);
         }
         .spectrum-Steplist-marker {

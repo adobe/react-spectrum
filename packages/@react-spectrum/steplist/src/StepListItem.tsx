@@ -90,19 +90,22 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
           <span id={`step-label-${key}`} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-label')}>
             {item.rendered}
           </span>
+          <div
+            className={classNames(
+              styles,
+              'spectrum-Steplist-segment', {
+                'is-completed': isCompleted
+              })} >
+            <svg className={classNames(styles, 'spectrum-Steplist-segmentLine')} xmlns="http://www.w3.org/2000/svg" height="100%" viewBox="0 0 2 8" preserveAspectRatio="none">
+              <line x1="1" y1="0" x2="1" y2="8" vectorEffect="non-scaling-stroke" />
+            </svg>
+            <ChevronRightMedium
+              UNSAFE_className={classNames(styles, 'spectrum-Steplist-chevron', {
+                'is-reversed': direction === 'rtl'
+              })} />
+          </div>
         </a>
       </FocusRing>
-      <span
-        className={classNames(
-          styles,
-          'spectrum-Steplist-segment', {
-            'is-completed': isCompleted
-          })} >
-        <ChevronRightMedium
-          UNSAFE_className={classNames(styles, 'spectrum-Steplist-chevron', {
-            'is-reversed': direction === 'rtl'
-          })} />
-      </span>
     </li>
   );
 }
