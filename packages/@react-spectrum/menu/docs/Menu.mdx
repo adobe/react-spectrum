@@ -372,6 +372,8 @@ import {Content} from '@react-spectrum/view';
 Submenus can be created by wrapping an item and a menu in a `SubmenuTrigger`. The `SubmenuTrigger` accepts exactly two children: the `Item` which triggers opening of the submenu, and the `Menu` itself.
 Each submenu's Menu accepts its own set of menu props, allowing you to customize its user action and selection behavior.
 
+### Static
+
 ```tsx example
 import {SubmenuTrigger} from '@react-spectrum/menu';
 
@@ -396,6 +398,51 @@ import {SubmenuTrigger} from '@react-spectrum/menu';
         </Menu>
       </SubmenuTrigger>
     <Item key="Delete">Delete</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Dynamic
+
+You can define a recursive function to render the nested menu items dynamically.
+
+```tsx example
+import {SubmenuTrigger} from '@react-spectrum/menu';
+
+let items = [
+  {name: 'Copy'},
+  {name: 'Cut'},
+  {name: 'Paste'},
+  {name: 'Share', children: [
+    {name: 'Copy Link'},
+    {name: 'Email', children: [
+      {name: 'Email as Attachment'},
+      {name: 'Email as Link'},
+    ]},
+    {name: 'SMS'},
+  ]},
+  {name: 'Delete'}
+];
+
+let renderSubmenu = (item) => {
+  if (item.children) {
+    return (
+      <SubmenuTrigger>
+        <Item key={item.name}>{item.name}</Item>
+        <Menu items={item.children}>
+          {(item) => renderSubmenu(item)}
+        </Menu>
+      </SubmenuTrigger>
+    );
+  } else {
+    return <Item key={item.name}>{item.name}</Item>;
+  }
+};
+
+<MenuTrigger>
+  <ActionButton>Actions</ActionButton>
+  <Menu items={items}>
+    {(item) => renderSubmenu(item)}
   </Menu>
 </MenuTrigger>
 ```
