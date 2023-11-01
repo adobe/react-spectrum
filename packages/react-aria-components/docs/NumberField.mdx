@@ -59,86 +59,84 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer numberfield {
-  .react-aria-NumberField {
-    --field-border: var(--spectrum-alias-border-color);
-    --field-border-disabled: var(--spectrum-alias-border-color-disabled);
-    --field-background: var(--spectrum-global-color-gray-50);
-    --text-color: var(--spectrum-alias-text-color);
-    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-    --focus-ring-color: slateblue;
-    --invalid-color: var(--spectrum-global-color-red-600);
+.react-aria-NumberField {
+  --field-border: var(--spectrum-alias-border-color);
+  --field-border-disabled: var(--spectrum-alias-border-color-disabled);
+  --field-background: var(--spectrum-global-color-gray-50);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --focus-ring-color: slateblue;
+  --invalid-color: var(--spectrum-global-color-red-600);
 
-    margin-bottom: 8px;
+  margin-bottom: 8px;
 
-    .react-aria-Group {
-      display: flex;
-      width: fit-content;
-      border-radius: 4px;
+  .react-aria-Group {
+    display: flex;
+    width: fit-content;
+    border-radius: 4px;
+  }
+
+  .react-aria-Button {
+    background: var(--field-background);
+    border: 1px solid var(--field-border);
+    border-radius: 4px;
+    color: var(--text-color);
+    appearance: none;
+    vertical-align: middle;
+    font-size: 1.4rem;
+    width: 2.3rem;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    outline: none;
+
+    &[slot=decrement] {
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
     }
 
-    .react-aria-Button {
-      background: var(--field-background);
-      border: 1px solid var(--field-border);
-      border-radius: 4px;
-      color: var(--text-color);
-      appearance: none;
-      vertical-align: middle;
-      font-size: 1.4rem;
-      width: 2.3rem;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      outline: none;
-
-      &[slot=decrement] {
-        border-start-end-radius: 0;
-        border-end-end-radius: 0;
-      }
-
-      &[slot=increment] {
-        border-start-start-radius: 0;
-        border-end-start-radius: 0;
-      }
-
-      &[data-pressed] {
-        box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-        background: var(--spectrum-global-color-gray-75);
-      }
+    &[slot=increment] {
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
     }
 
-    .react-aria-Input {
-      background: var(--field-background);
-      border: 1px solid var(--field-border);
-      border-radius: 0;
-      color: var(--text-color);
-      margin: 0 -1px;
-      z-index: 1;
-      font-size: 1rem;
-      padding: 0.429rem 0.571rem;
-      outline: none;
-      width: 6rem;
-      flex: 1;
-    }
-
-    &:focus-within {
-      .react-aria-Input,
-      .react-aria-Button {
-        border-color: var(--focus-ring-color);
-      }
+    &[data-pressed] {
+      box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+      background: var(--spectrum-global-color-gray-75);
     }
   }
 
-  @media (forced-colors: active) {
-    .react-aria-NumberField {
-      --field-border: ButtonBorder;
-      --field-border-disabled: GrayText;
-      --field-background: Field;
-      --text-color: FieldText;
-      --text-color-disabled: GrayText;
-      --focus-ring-color: Highlight;
-      --invalid-color: LinkText;
+  .react-aria-Input {
+    background: var(--field-background);
+    border: 1px solid var(--field-border);
+    border-radius: 0;
+    color: var(--text-color);
+    margin: 0 -1px;
+    z-index: 1;
+    font-size: 1rem;
+    padding: 0.429rem 0.571rem;
+    outline: none;
+    width: 6rem;
+    flex: 1;
+  }
+
+  &:focus-within {
+    .react-aria-Input,
+    .react-aria-Button {
+      border-color: var(--focus-ring-color);
     }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-NumberField {
+    --field-border: ButtonBorder;
+    --field-border-disabled: GrayText;
+    --field-background: Field;
+    --text-color: FieldText;
+    --text-color-disabled: GrayText;
+    --focus-ring-color: Highlight;
+    --invalid-color: LinkText;
   }
 }
 ```
@@ -468,16 +466,14 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer numberfield {
-  .react-aria-NumberField {
-    [slot=description] {
-      font-size: 12px;
-    }
+.react-aria-NumberField {
+  [slot=description] {
+    font-size: 12px;
+  }
 
-    [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--invalid-color);
-    }
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
   }
 }
 ```
@@ -496,20 +492,18 @@ The `isDisabled` prop can be used prevent the user from editing the value of the
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer numberfield {
-  .react-aria-NumberField {
-    .react-aria-Button {
-      &[data-disabled] {
-        border-color: var(--field-border-disabled);
-        color: var(--text-color-disabled);
-      }
+.react-aria-NumberField {
+  .react-aria-Button {
+    &[data-disabled] {
+      border-color: var(--field-border-disabled);
+      color: var(--text-color-disabled);
     }
+  }
 
-    .react-aria-Input {
-      &[data-disabled] {
-        border-color: var(--field-border-disabled);
-        color: var(--text-color-disabled);
-      }
+  .react-aria-Input {
+    &[data-disabled] {
+      border-color: var(--field-border-disabled);
+      color: var(--text-color-disabled);
     }
   }
 }

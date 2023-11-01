@@ -37,8 +37,8 @@ import './tailwind.global.css';
 ```
 
 ```tsx example standalone
-import {Select, Label, Button, SelectValue, Popover, ListBox, Item} from 'react-aria-components';
-import type {ItemProps} from 'react-aria-components';
+import {Select, Label, Button, SelectValue, Popover, ListBox, ListBoxItem} from 'react-aria-components';
+import type {ListBoxItemProps} from 'react-aria-components';
 import ChevronUpDownIcon from '@spectrum-icons/workflow/ChevronUpDown';
 import CheckIcon from '@spectrum-icons/workflow/Checkmark';
 
@@ -53,26 +53,26 @@ function SelectExample() {
         </Button>
         <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
           <ListBox className="outline-none p-1">
-            <ListBoxItem textValue="Backlog">
+            <StatusItem textValue="Backlog">
               <Status className="bg-gray-500" />
               Backlog
-            </ListBoxItem>
-            <ListBoxItem textValue="In Progress">
+            </StatusItem>
+            <StatusItem textValue="In Progress">
               <Status className="bg-blue-500" />
               In Progress
-            </ListBoxItem>
-            <ListBoxItem textValue="In Review">
+            </StatusItem>
+            <StatusItem textValue="In Review">
               <Status className="bg-yellow-500" />
               In Review
-            </ListBoxItem>
-            <ListBoxItem textValue="Done">
+            </StatusItem>
+            <StatusItem textValue="Done">
               <Status className="bg-green-500" />
               Done
-            </ListBoxItem>
-            <ListBoxItem textValue="Won't Do">
+            </StatusItem>
+            <StatusItem textValue="Won't Do">
               <Status className="bg-red-500" />
               Won't Do
-            </ListBoxItem>
+            </StatusItem>
           </ListBox>
         </Popover>
       </Select>
@@ -80,9 +80,9 @@ function SelectExample() {
   );
 }
 
-function ListBoxItem(props: ItemProps & {children: React.ReactNode}) {
+function StatusItem(props: ListBoxItemProps & {children: React.ReactNode}) {
   return (
-    <Item
+    <ListBoxItem
       {...props}
       className="group flex items-center gap-2 cursor-default select-none py-2 px-4 outline-none rounded text-gray-900 focus:bg-rose-600 focus:text-white">
       {({ isSelected }) => (
@@ -93,7 +93,7 @@ function ListBoxItem(props: ItemProps & {children: React.ReactNode}) {
           </span>
         </>
       )}
-    </Item>
+    </ListBoxItem>
   );
 }
 

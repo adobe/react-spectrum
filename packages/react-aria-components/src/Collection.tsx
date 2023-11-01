@@ -9,10 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase, LinkDOMProps} from '@react-types/shared';
+import {CollectionBase} from '@react-types/shared';
 import {createPortal} from 'react-dom';
-import {forwardRefType, RenderProps, StyleProps} from './utils';
-import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, ItemProps as SharedItemProps, SectionProps as SharedSectionProps} from 'react-stately';
+import {forwardRefType, StyleProps} from './utils';
+import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
 import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
@@ -882,20 +882,6 @@ export function useSSRCollectionNode<T extends Element>(Type: string, props: obj
   // @ts-ignore
   return <Type ref={itemRef}>{children}</Type>;
 }
-
-export interface ItemProps<T = object> extends Omit<SharedItemProps<T>, 'children'>, RenderProps<ItemRenderProps>, LinkDOMProps {
-  /** The unique id of the item. */
-  id?: Key,
-  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
-  value?: T
-}
-
-function Item<T extends object>(props: ItemProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
-  return useSSRCollectionNode('item', props, ref, props.children);
-}
-
-const _Item = /*#__PURE__*/ (forwardRef as forwardRefType)(Item);
-export {_Item as Item};
 
 export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' | 'title'>, StyleProps {
   /** The unique id of the section. */

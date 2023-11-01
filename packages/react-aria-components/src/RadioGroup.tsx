@@ -11,14 +11,15 @@
  */
 
 import {AriaRadioGroupProps, AriaRadioProps, Orientation, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {TextContext} from './Text';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState'>, RenderProps<RadioGroupRenderProps>, SlotProps {}
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
 export interface RadioProps extends Omit<AriaRadioProps, 'children'>, RenderProps<RadioRenderProps>, SlotProps {}
 
 export interface RadioGroupRenderProps {
@@ -107,11 +108,16 @@ export const RadioGroupStateContext = createContext<RadioGroupState | null>(null
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
-  let state = useRadioGroupState(props);
-  let [labelRef, label] = useSlot();
-  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup({
+  let state = useRadioGroupState({
     ...props,
-    label
+    validationBehavior: props.validationBehavior ?? 'native'
+  });
+
+  let [labelRef, label] = useSlot();
+  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps, ...validation} = useRadioGroup({
+    ...props,
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
   }, state);
 
   let renderProps = useRenderProps({
@@ -147,7 +153,8 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
               description: descriptionProps,
               errorMessage: errorMessageProps
             }
-          }]
+          }],
+          [FieldErrorContext, validation]
         ]}>
         {renderProps.children}
       </Provider>

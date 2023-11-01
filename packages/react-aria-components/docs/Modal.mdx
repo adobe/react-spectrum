@@ -50,7 +50,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
     <Dialog>
       {({close}) => (
         <form>
-          <Heading>Sign up</Heading>
+          <Heading slot="title">Sign up</Heading>
           <TextField autoFocus>
             <Label>First Name: </Label>
             <Input />
@@ -72,49 +72,47 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-@import './Button.mdx';
-@import './TextField.mdx';
-@import './Dialog.mdx';
+@import './Button.mdx' layer(button);
+@import './TextField.mdx' layer(textfield);
+@import './Dialog.mdx' layer(dialog);
 ```
 
 ```css
-@layer modal {
-  .react-aria-ModalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: var(--visual-viewport-height);
-    background: rgba(0 0 0 / .5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.react-aria-ModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: var(--visual-viewport-height);
+  background: rgba(0 0 0 / .5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    &[data-entering] {
-      animation: modal-fade 200ms;
-    }
-
-    &[data-exiting] {
-      animation: modal-fade 150ms reverse ease-in;
-    }
+  &[data-entering] {
+    animation: modal-fade 200ms;
   }
 
-  .react-aria-Modal {
-    box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-    border-radius: 6px;
-    background: var(--page-background);
-    border: 1px solid var(--spectrum-global-color-gray-300);
-    outline: none;
-    padding: 30px;
-    max-width: 250px;
+  &[data-exiting] {
+    animation: modal-fade 150ms reverse ease-in;
+  }
+}
 
-    &[data-entering] {
-      animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
+.react-aria-Modal {
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--page-background);
+  border: 1px solid var(--spectrum-global-color-gray-300);
+  outline: none;
+  padding: 30px;
+  max-width: 250px;
 
-    .react-aria-TextField {
-      margin-bottom: 8px;
-    }
+  &[data-entering] {
+    animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .react-aria-TextField {
+    margin-bottom: 8px;
   }
 }
 
@@ -186,7 +184,7 @@ on the `Modal`. This allows the user to click outside to close the dialog.
   <Button>Open dialog</Button>
   <Modal isDismissable>
     <Dialog>
-      <Heading>Notice</Heading>
+      <Heading slot="title">Notice</Heading>
       <p>Click outside to close this dialog.</p>
     </Dialog>
   </Modal>
@@ -203,7 +201,7 @@ By default, modals can be closed by pressing the <Keyboard>Escape</Keyboard> key
   <Modal isKeyboardDismissDisabled>
     <Dialog>
       {({close}) => <>
-        <Heading>Notice</Heading>
+        <Heading slot="title">Notice</Heading>
         <p>You must close this dialog using the button below.</p>
         <Button onPress={close}>Close</Button>
       </>}
@@ -225,7 +223,7 @@ import {ModalOverlay} from 'react-aria-components';
     <Modal className="my-modal">
       <Dialog>
         {({close}) => <>
-          <Heading>Notice</Heading>
+          <Heading slot="title">Notice</Heading>
           <p>This is a modal with a custom modal overlay.</p>
           <Button onPress={close}>Close</Button>
         </>}
@@ -315,7 +313,7 @@ function Example() {
       <Button onPress={() => setOpen(true)}>Open dialog</Button>
       <Modal isDismissable isOpen={isOpen} onOpenChange={setOpen}>
         <Dialog>
-          <Heading>Notice</Heading>
+          <Heading slot="title">Notice</Heading>
           <p>Click outside to close this dialog.</p>
         </Dialog>
       </Modal>
@@ -438,7 +436,7 @@ The following example uses `KeyboardModalTrigger` to show a modal when the <Keyb
 <KeyboardModalTrigger keyboardShortcut="/">
   <Modal isDismissable>
     <Dialog>
-      <Heading>Command palette</Heading>
+      <Heading slot="title">Command palette</Heading>
       <p>Your cool command palette UI here!</p>
     </Dialog>
   </Modal>
