@@ -1,3 +1,4 @@
+'use client';
 import {ListViewContext} from './ListView';
 import React, {useContext, useRef} from 'react';
 import {useVisuallyHidden} from '@react-aria/visually-hidden';

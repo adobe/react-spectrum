@@ -1,3 +1,4 @@
+'use client';
 import {classNames} from '@react-spectrum/utils';
 import {ItemDropTarget} from '@react-types/shared';
 import listStyles from './styles.css';
