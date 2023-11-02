@@ -11,7 +11,6 @@
  */
 
 import {ContextValue, createHideableComponent, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
 import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, InputHTMLAttributes} from 'react';
 
