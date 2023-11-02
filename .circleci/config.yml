@@ -600,7 +600,7 @@ workflows:
       - docs-verdaccio:
           filters:
             branches:
-              only: main
+              only: upgrade-parcel
           requires:
             - install
       - deploy:
