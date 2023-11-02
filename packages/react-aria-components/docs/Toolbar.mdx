@@ -1,0 +1,178 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/toolbar/docs/toolbar-anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+
+---
+category: Content
+keywords: [toolbar, aria]
+type: component
+---
+
+# Toolbar
+
+<PageDescription>{docs.exports.Toolbar.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Toolbar']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {Toolbar, Button, ToggleButton, Separator, Popover, MenuTrigger, Menu, MenuItem, Checkbox} from 'react-aria-components';
+
+<Toolbar>
+  <ToggleButton><strong>B</strong></ToggleButton>
+  <ToggleButton><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
+  <ToggleButton><i>I</i></ToggleButton>
+  <Separator orientation="vertical" />
+  <Button>Copy</Button>
+  <Button>Paste</Button>
+  <Button>Cut</Button>
+  <Separator orientation="vertical" />
+  <MenuTrigger>
+    <Button>Alignment</Button>
+    <Popover>
+      <Menu>
+        <MenuItem>Left</MenuItem>
+        <MenuItem>Center</MenuItem>
+        <MenuItem>Right</MenuItem>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+  <Separator orientation="vertical" />
+  <Checkbox>
+    <div className="checkbox">
+      <svg viewBox="0 0 18 18" aria-hidden="true">
+        <polyline points="1 9 7 14 15 4" />
+      </svg>
+    </div>
+    Night Mode
+  </Checkbox>
+</Toolbar>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Checkbox.mdx' layer(checkbox);
+@import './Button.mdx' layer(button);
+@import './ToggleButton.mdx' layer(togglebutton);
+@import './Popover.mdx' layer(popover);
+@import './Menu.mdx' layer(menu);
+```
+
+```css
+.react-aria-Toolbar {
+  --separator-color: var(--spectrum-global-color-gray-500);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 15px;
+  border: 1px solid var(--separator-color);
+
+  &[data-orientation=vertical] {
+    flex-direction: column;
+  }
+
+  &[data-orientation=horizontal] {
+    flex-direction: row;
+  }
+}
+.react-aria-ToggleButton {
+  width: 32px;
+}
+.react-aria-Separator {
+  width: 2px;
+  margin: 0px 10px;
+  align-self: stretch;
+  background-color: var(--separator-color);
+}
+```
+
+</details>
+
+## Features
+
+Toolbar provides keyboard navigation and announcements for groups of interactive elements.
+`Toolbar` helps implement these in an accessible way.
+
+* **Flexible** – Support for various RAC or Aria Hooks implemented components.
+* **Accessible** – Follows the [ARIA toolbar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) with support for keyboard arrow key navigation and is a single tab stop.
+* **Styleable** – Can be styled in any custom way, including extra DOM structure between the Toolbar and the interactive children.
+
+## Anatomy
+
+<Anatomy />
+
+Toolbar consists of a wrapping element which controls arrow key navigation depending on the orientation and children.
+
+## Props
+
+### Toolbar
+
+<PropTable component={docs.exports.Toolbar} links={docs.links} />
+
+### Separator
+
+A `<Separator>` can be placed between elements and groups in a toolbar.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+  <PropTable component={docs.exports.Separator} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Toolbar {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Toolbar className="my-toolbar">
+  {/* ... */}
+</Toolbar>
+```
+
+### Separator
+
+A `Separator` can be targeted with the `.react-aria-Separator` CSS selector, or by overriding with a custom `className`.
+
+## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Toolbar']} docs={docs} />
+
+### Hooks
+
+If you need to customize things further, such as customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useToolbar](useToolbar.html) for more details.

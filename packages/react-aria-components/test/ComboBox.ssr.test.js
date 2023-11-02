@@ -15,7 +15,7 @@ import {screen, testSSR} from '@react-spectrum/test-utils';
 describe('ComboBox SSR', function () {
   it('should render text of default selected key', async function () {
     await testSSR(__filename, `
-      import {ComboBox, Label, Input, Popover, ListBox, Item} from '../';
+      import {ComboBox, Label, Input, Popover, ListBox, ListBoxItem} from '../';
 
       <React.StrictMode>
         <ComboBox defaultSelectedKey="dog">
@@ -23,9 +23,9 @@ describe('ComboBox SSR', function () {
           <Input />
           <Popover>
             <ListBox>
-              <Item id="cat">Cat</Item>
-              <Item id="dog">Dog</Item>
-              <Item id="kangaroo">Kangaroo</Item>
+              <ListBoxItem id="cat">Cat</ListBoxItem>
+              <ListBoxItem id="dog">Dog</ListBoxItem>
+              <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
             </ListBox>
           </Popover>
         </ComboBox>

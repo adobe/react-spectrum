@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
-import {pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -141,5 +141,45 @@ describe('NumberField', () => {
     let outerEl = getAllByTestId('number-field');
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-NumberField');
+  });
+
+  it('supports validation errors', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <NumberField isRequired>
+          <Label>Width</Label>
+          <Group>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </form>
+    );
+
+    let input = getByRole('textbox');
+    let numberfield = input.closest('.react-aria-NumberField');
+    expect(input).toHaveAttribute('required');
+    expect(input).not.toHaveAttribute('aria-required');
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(false);
+    expect(numberfield).not.toHaveAttribute('data-invalid');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(numberfield).toHaveAttribute('data-invalid');
+
+    await user.tab();
+    await user.keyboard('3');
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(true);
+
+    await user.tab();
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(numberfield).not.toHaveAttribute('data-invalid');
   });
 });

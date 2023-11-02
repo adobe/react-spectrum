@@ -57,95 +57,93 @@ import {Checkbox} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer checkbox {
-  .react-aria-Checkbox {
-    --label-color: var(--spectrum-alias-text-color);
-    --deselected-color: gray;
-    --deselected-color-pressed: dimgray;
-    --selected-color: slateblue;
-    --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-    --checkmark-color: white;
-    --invalid-color: var(--spectrum-global-color-red-600);
-    --invalid-color-pressed: var(--spectrum-global-color-red-700);
+.react-aria-Checkbox {
+  --label-color: var(--spectrum-alias-text-color);
+  --deselected-color: gray;
+  --deselected-color-pressed: dimgray;
+  --selected-color: slateblue;
+  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
+  --checkmark-color: white;
+  --invalid-color: var(--spectrum-global-color-red-600);
+  --invalid-color-pressed: var(--spectrum-global-color-red-700);
 
+  display: flex;
+  align-items: center;
+  gap: 0.571rem;
+  font-size: 1.143rem;
+
+  .checkbox {
+    width: 1.143rem;
+    height: 1.143rem;
+    border: 2px solid var(--deselected-color);
+    border-radius: 4px;
+    transition: all 200ms;
     display: flex;
     align-items: center;
-    gap: 0.571rem;
-    font-size: 1.143rem;
+    justify-content: center;
+  }
 
+  & svg {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: var(--checkmark-color);
+    stroke-width: 3px;
+    stroke-dasharray: 22px;
+    stroke-dashoffset: 66;
+    transition: all 200ms;
+  }
+
+  &[data-pressed] .checkbox {
+    border-color: var(--deselected-color-pressed);
+  }
+
+  &[data-focus-visible] .checkbox {
+    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+  }
+  &[data-selected],
+  &[data-indeterminate] {
     .checkbox {
-      width: 1.143rem;
-      height: 1.143rem;
-      border: 2px solid var(--deselected-color);
-      border-radius: 4px;
-      transition: all 200ms;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    & svg {
-      width: 1rem;
-      height: 1rem;
-      fill: none;
-      stroke: var(--checkmark-color);
-      stroke-width: 3px;
-      stroke-dasharray: 22px;
-      stroke-dashoffset: 66;
-      transition: all 200ms;
+      border-color: var(--selected-color);
+      background: var(--selected-color);
     }
 
     &[data-pressed] .checkbox {
-      border-color: var(--deselected-color-pressed);
+      border-color: var(--selected-color-pressed);
+      background: var(--selected-color-pressed);
     }
 
-    &[data-focus-visible] .checkbox {
-      box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
-    }
-    &[data-selected],
-    &[data-indeterminate] {
-      .checkbox {
-        border-color: var(--selected-color);
-        background: var(--selected-color);
-      }
-
-      &[data-pressed] .checkbox {
-        border-color: var(--selected-color-pressed);
-        background: var(--selected-color-pressed);
-      }
-
-      & svg {
-        stroke-dashoffset: 44;
-      }
-    }
-
-    &[data-indeterminate] {
-      & svg {
-        stroke: none;
-        fill: var(--checkmark-color);
-      }
+    & svg {
+      stroke-dashoffset: 44;
     }
   }
 
-  @media (forced-colors: active) {
-    .react-aria-Checkbox {
-      forced-color-adjust: none;
+  &[data-indeterminate] {
+    & svg {
+      stroke: none;
+      fill: var(--checkmark-color);
+    }
+  }
+}
 
-      --label-color: ButtonText;
-      --deselected-color: ButtonBorder;
-      --deselected-color-pressed: ButtonBorder;
-      --selected-color: Highlight;
-      --selected-color-pressed: Highlight;
-      --checkmark-color: HighlightText;
-      --invalid-color: LinkText;
-      --invalid-color-pressed: LinkText;
-      --spectrum-alias-background-color-default: Canvas;
+@media (forced-colors: active) {
+  .react-aria-Checkbox {
+    forced-color-adjust: none;
 
-      &[data-disabled] {
-        --deselected-color: GrayText;
-        --selected-color: GrayText;
-        --label-color: GrayText;
-      }
+    --label-color: ButtonText;
+    --deselected-color: ButtonBorder;
+    --deselected-color-pressed: ButtonBorder;
+    --selected-color: Highlight;
+    --selected-color-pressed: Highlight;
+    --checkmark-color: HighlightText;
+    --invalid-color: LinkText;
+    --invalid-color-pressed: LinkText;
+    --spectrum-alias-background-color-default: Canvas;
+
+    &[data-disabled] {
+      --deselected-color: GrayText;
+      --selected-color: GrayText;
+      --label-color: GrayText;
     }
   }
 }
@@ -263,27 +261,25 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer checkbox {
-  .react-aria-Checkbox {
-    &[data-invalid] {
+.react-aria-Checkbox {
+  &[data-invalid] {
+    .checkbox {
+      --checkmark-color: black;
+      border-color: var(--invalid-color);
+    }
+
+    &[data-pressed] .checkbox {
+      border-color: var(--invalid-color-pressed);
+    }
+
+    &[data-selected],
+    &[data-indeterminate] {
       .checkbox {
-        --checkmark-color: black;
-        border-color: var(--invalid-color);
+        background: var(--invalid-color);
       }
 
       &[data-pressed] .checkbox {
-        border-color: var(--invalid-color-pressed);
-      }
-
-      &[data-selected],
-      &[data-indeterminate] {
-        .checkbox {
-          background: var(--invalid-color);
-        }
-
-        &[data-pressed] .checkbox {
-          background: var(--invalid-color-pressed);
-        }
+        background: var(--invalid-color-pressed);
       }
     }
   }
@@ -303,17 +299,15 @@ Checkboxes can be disabled using the `isDisabled` prop.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer checkbox {
+.react-aria-Checkbox {
+  &[data-disabled] {
+    opacity: 0.4;
+  }
+}
+@media (forced-colors: active) {
   .react-aria-Checkbox {
     &[data-disabled] {
-      opacity: 0.4;
-    }
-  }
-  @media (forced-colors: active) {
-    .react-aria-Checkbox {
-      &[data-disabled] {
-        opacity: 1;
-      }
+      opacity: 1;
     }
   }
 }

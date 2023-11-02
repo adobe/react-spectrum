@@ -52,45 +52,43 @@ import {Link} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer link {
-  .react-aria-Link {
-    --focus-ring-color: slateblue;
-    --text-color: var(--spectrum-global-color-blue-600);
-    --text-color-pressed: var(--spectrum-global-color-blue-700);
-    --text-color-disabled: gray;
+.react-aria-Link {
+  --focus-ring-color: slateblue;
+  --text-color: var(--spectrum-global-color-blue-600);
+  --text-color-pressed: var(--spectrum-global-color-blue-700);
+  --text-color-disabled: gray;
 
-    color: var(--text-color);
-    font-size: 18px;
-    transition: all 200ms;
-    text-decoration: underline;
-    cursor: pointer;
-    outline: none;
-    position: relative;
+  color: var(--text-color);
+  font-size: 18px;
+  transition: all 200ms;
+  text-decoration: underline;
+  cursor: pointer;
+  outline: none;
+  position: relative;
 
-    &[data-hovered] {
-      text-decoration-style: wavy;
-    }
-
-    &[data-pressed] {
-      color: var(--text-color-pressed);
-    }
-
-    &[data-focus-visible]:after {
-      content: '';
-      position: absolute;
-      inset: -3px -6px;
-      border-radius: 6px;
-      border: 2px solid var(--focus-ring-color);
-    }
+  &[data-hovered] {
+    text-decoration-style: wavy;
   }
 
-  @media (forced-colors: active) {
-    .react-aria-Link {
-      --focus-ring-color: Highlight;
-      --text-color: LinkText;
-      --text-color-pressed: LinkText;
-      --text-color-disabled: GrayText;
-    }
+  &[data-pressed] {
+    color: var(--text-color-pressed);
+  }
+
+  &[data-focus-visible]:after {
+    content: '';
+    position: absolute;
+    inset: -3px -6px;
+    border-radius: 6px;
+    border: 2px solid var(--focus-ring-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Link {
+    --focus-ring-color: Highlight;
+    --text-color: LinkText;
+    --text-color-pressed: LinkText;
+    --text-color-disabled: GrayText;
   }
 }
 ```

@@ -13,6 +13,7 @@
 import {ActionBar, ActionBarContainer, Item} from '../';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import Copy from '@spectrum-icons/workflow/Copy';
+import DataAdd from '@spectrum-icons/workflow/DataAdd';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Duplicate from '@spectrum-icons/workflow/Duplicate';
 import Edit from '@spectrum-icons/workflow/Edit';
@@ -111,6 +112,68 @@ export function Example(props: any = {}) {
         <Item key="duplicate" textValue="Duplicate">
           <Duplicate />
           <Text>Duplicate</Text>
+        </Item>
+      </ActionBar>
+    </ActionBarContainer>
+  );
+}
+
+export function Example2(props: any = {}) {
+  const [selectedKeys, setSelectedKeys] = useState<Selection>(props.defaultSelectedKeys || new Set());
+  let [items, setItems] = useState(defaultItems);
+
+  let ref = useRef(null);
+  return (
+    <ActionBarContainer height={props.containerHeight || 300}>
+      <TableView
+        ref={ref}
+        aria-label="Table"
+        isQuiet={props.isQuiet}
+        width={props.tableWidth}
+        selectedKeys={selectedKeys}
+        selectionMode="multiple"
+        onSelectionChange={(keys) => setSelectedKeys(keys)}>
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={items}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+      <ActionBar
+        selectedItemCount={selectedKeys === 'all' ? selectedKeys : selectedKeys.size}
+        onClearSelection={() => {
+          setSelectedKeys(new Set());
+        }}
+        {...mergeProps(props, {
+          onAction: (key) => {
+            if (key === 'delete') {
+              let newItems = items;
+              if (selectedKeys instanceof Set) {
+                newItems = items.filter(item => !selectedKeys.has(item.foo));
+              } else if (selectedKeys === 'all') {
+                newItems = [];
+              }
+              setItems(newItems);
+              setSelectedKeys(new Set());
+            }
+          }
+        })}>
+        <Item key="edit" textValue="Edit">
+          <Edit size="S" />
+          <Text>Bearbeiten</Text>
+        </Item>
+        <Item key="loschen" textValue="Delete">
+          <Delete size="S" />
+          <Text>Löschen</Text>
+        </Item>
+        <Item key="dataadd" textValue="DataAdd">
+          <DataAdd size="S" />
+          <Text>Datenansicht erstellen</Text>
         </Item>
       </ActionBar>
     </ActionBarContainer>

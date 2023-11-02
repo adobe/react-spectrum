@@ -76,7 +76,11 @@ module.exports = new Packager({
 
         let resolved = bundleGraph.getResolvedAsset(dep, bundle);
         if (resolved) {
-          deps.set(getSpecifier(dep), {id: resolved.id});
+          if (resolved.type !== 'js') {
+            deps.set(getSpecifier(dep), {skipped: true});
+          } else {
+            deps.set(getSpecifier(dep), {id: resolved.id});
+          }
         } else {
           deps.set(getSpecifier(dep), {specifier: dep.specifier});
         }
