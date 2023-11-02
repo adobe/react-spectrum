@@ -1956,8 +1956,9 @@ describe('DatePicker', function () {
           expect(group).toHaveAttribute('aria-describedby');
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Constraints not satisfied');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+          await user.keyboard('[ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
 
           expect(getDescription()).toContain('Constraints not satisfied');
           expect(input.validity.valid).toBe(true);
@@ -1986,8 +1987,9 @@ describe('DatePicker', function () {
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.keyboard('[Tab][Tab][Tab][ArrowUp]');
+          await user.keyboard('[Tab][Tab][ArrowUp]');
 
           expect(getDescription()).toContain('Value must be 2/3/2020 or later.');
           expect(input.validity.valid).toBe(true);
@@ -2004,9 +2006,9 @@ describe('DatePicker', function () {
 
           act(() => {getByTestId('form').checkValidity();});
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.tab({shift: true});
-          await user.keyboard('[ArrowDown]');
+          await user.keyboard('[Tab][Tab][ArrowDown]');
           expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
           expect(input.validity.valid).toBe(true);
           await user.tab();
@@ -2033,8 +2035,9 @@ describe('DatePicker', function () {
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Invalid value');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024');
+          await user.keyboard('[ArrowRight][ArrowRight]2024');
 
           expect(getDescription()).toContain('Invalid value');
           expect(input.validity.valid).toBe(true);

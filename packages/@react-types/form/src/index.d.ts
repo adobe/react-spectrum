@@ -48,6 +48,10 @@ export interface FormProps extends AriaLabelingProps {
    */
   onReset?:  (event: FormEvent<HTMLFormElement>) => void,
   /**
+   * Triggered for each invalid field when a user submits the form.
+   */
+  onInvalid?:  (event: FormEvent<HTMLFormElement>) => void,
+  /**
    * Indicates whether input elements can by default have their values automatically completed by the browser.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#autocomplete).
    */

@@ -108,6 +108,54 @@ import {ButtonGroup, Button} from '@adobe/react-spectrum';
 </Form>
 ```
 
+### Focus management
+
+By default, after a user submits a form with validation errors, the first invalid field will be focused. You can prevent this by calling `preventDefault` during the `onInvalid` event, and move focus yourself.
+
+This example shows how to move focus to an [InlineAlert](InlineAlert.html) using the `autoFocus` prop when displaying validation errors at the top of a form.
+
+```tsx example
+import {InlineAlert, Heading, Content} from '@adobe/react-spectrum';
+
+function Example() {
+  let [isInvalid, setInvalid] = React.useState(false);
+
+  return (
+    <Form
+      validationBehavior="native"
+      /*- begin highlight -*/
+      onInvalid={e => {
+        e.preventDefault();
+        setInvalid(true);
+      }}
+      /*- end highlight -*/
+      onSubmit={e => {
+        e.preventDefault();
+        setInvalid(false);
+      }}
+      onReset={() => setInvalid(false)}
+      maxWidth="size-3600">
+      {isInvalid &&
+        /*- begin highlight -*/
+        <InlineAlert variant="negative" autoFocus>
+        {/*- end highlight -*/}
+          <Heading>Unable to submit</Heading>
+          <Content>
+            Please fix the validation errors below, and re-submit the form.
+          </Content>
+        </InlineAlert>
+      }
+      <TextField label="First Name" isRequired />
+      <TextField label="Last Name" isRequired />
+      <ButtonGroup>
+        <Button type="submit" variant="primary">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </ButtonGroup>
+    </Form>
+  );
+}
+```
+
 ## Props
 
 <PropTable component={docs.exports.Form} links={docs.links} />

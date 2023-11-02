@@ -395,8 +395,8 @@ describe('ColorField', function () {
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.activeElement).toBe(input);
 
-        await user.tab();
         await user.keyboard('#000');
 
         expect(input).toHaveAttribute('aria-describedby');
@@ -424,8 +424,9 @@ describe('ColorField', function () {
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(document.activeElement).toBe(input);
 
-        await user.tab();
+        await user.clear(input);
         await user.keyboard('#111');
 
         expect(input).toHaveAttribute('aria-describedby');
@@ -515,8 +516,8 @@ describe('ColorField', function () {
         act(() => {getByTestId('form').checkValidity();});
 
         expect(input).toHaveAttribute('aria-describedby');
+        expect(document.activeElement).toBe(input);
 
-        await user.tab();
         await user.keyboard('333');
 
         expect(input).toHaveAttribute('aria-describedby');

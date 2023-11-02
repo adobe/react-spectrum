@@ -155,6 +155,11 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
         background: var(--highlight-background);
         color: var(--highlight-foreground);
       }
+
+      &[data-focus-visible] {
+        border-color: var(--focus-ring-color);
+        box-shadow: 0 0 0 1px var(--focus-ring-color);
+      }
     }
   }
 }

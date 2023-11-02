@@ -171,8 +171,8 @@ describe('NumberField', () => {
     expect(input).toHaveAttribute('aria-describedby');
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
     expect(numberfield).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(input);
 
-    await user.tab();
     await user.keyboard('3');
 
     expect(input).toHaveAttribute('aria-describedby');
