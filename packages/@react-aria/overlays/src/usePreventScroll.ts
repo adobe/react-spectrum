@@ -148,6 +148,7 @@ function preventScrollMobileSafari() {
     // Apply this change if we're not already focused on the target element
     if (willOpenKeyboard(target) && target !== document.activeElement) {
       e.preventDefault();
+      setupStyles();
 
       // Apply a transform to trick Safari into thinking the input is at the top of the page
       // so it doesn't try to scroll it into view. When tapping on an input, this needs to
@@ -163,6 +164,8 @@ function preventScrollMobileSafari() {
   let onFocus = (e: FocusEvent) => {
     let target = e.target as HTMLElement;
     if (willOpenKeyboard(target)) {
+      setupStyles();
+
       // Transform also needs to be applied in the focus event in cases where focus moves
       // other than tapping on an input directly, e.g. the next/previous buttons in the
       // software keyboard. In these cases, it seems applying the transform in the focus event
@@ -190,40 +193,49 @@ function preventScrollMobileSafari() {
     }
   };
 
-  let onWindowScroll = () => {
-    // Last resort. If the window scrolled, scroll it back to the top.
-    // It should always be at the top because the body will have a negative margin (see below).
+  let restoreStyles = null;
+  let setupStyles = () => {
+    if (restoreStyles) {
+      return;
+    }
+
+    let onWindowScroll = () => {
+      // Last resort. If the window scrolled, scroll it back to the top.
+      // It should always be at the top because the body will have a negative margin (see below).
+      window.scrollTo(0, 0);
+    };
+
+    // Record the original scroll position so we can restore it.
+    // Then apply a negative margin to the body to offset it by the scroll position. This will
+    // enable us to scroll the window to the top, which is required for the rest of this to work.
+    let scrollX = window.pageXOffset;
+    let scrollY = window.pageYOffset;
+
+    restoreStyles = chain(
+      addEvent(window, 'scroll', onWindowScroll),
+      setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
+      setStyle(document.documentElement, 'overflow', 'hidden'),
+      setStyle(document.body, 'marginTop', `-${scrollY}px`),
+      () => {
+        window.scrollTo(scrollX, scrollY);
+      }
+    );
+
+    // Scroll to the top. The negative margin on the body will make this appear the same.
     window.scrollTo(0, 0);
   };
-
-  // Record the original scroll position so we can restore it.
-  // Then apply a negative margin to the body to offset it by the scroll position. This will
-  // enable us to scroll the window to the top, which is required for the rest of this to work.
-  let scrollX = window.pageXOffset;
-  let scrollY = window.pageYOffset;
-
-  let restoreStyles = chain(
-    setStyle(document.documentElement, 'paddingRight', `${window.innerWidth - document.documentElement.clientWidth}px`),
-    setStyle(document.documentElement, 'overflow', 'hidden'),
-    setStyle(document.body, 'marginTop', `-${scrollY}px`)
-  );
-
-  // Scroll to the top. The negative margin on the body will make this appear the same.
-  window.scrollTo(0, 0);
 
   let removeEvents = chain(
     addEvent(document, 'touchstart', onTouchStart, {passive: false, capture: true}),
     addEvent(document, 'touchmove', onTouchMove, {passive: false, capture: true}),
     addEvent(document, 'touchend', onTouchEnd, {passive: false, capture: true}),
-    addEvent(document, 'focus', onFocus, true),
-    addEvent(window, 'scroll', onWindowScroll)
+    addEvent(document, 'focus', onFocus, true)
   );
 
   return () => {
     // Restore styles and scroll the page back to where it was.
-    restoreStyles();
+    restoreStyles?.();
     removeEvents();
-    window.scrollTo(scrollX, scrollY);
   };
 }
 
