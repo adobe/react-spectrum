@@ -175,7 +175,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       performAction(e);
     }
 
-    pressStartProp && pressStartProp(e);
+    pressStartProp?.(e);
   };
 
   let onPressUp = (e: PressEvent) => {
@@ -189,7 +189,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       }
     }
 
-    pressUpProp && pressStartProp(e);
+    pressUpProp?.(e);
   };
 
   let {itemProps, isFocused} = useSelectableItem({
@@ -220,7 +220,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
       }
-      hoverStartProp && hoverStartProp(e);
+      hoverStartProp?.(e);
     },
     onHoverChange,
     onHoverEnd

@@ -237,7 +237,7 @@ governing permissions and limitations under the License.
   margin-inline-end: calc(var(--spectrum-global-dimension-size-50) * -1);
   grid-area: chevron;
   justify-self: end;
-  align-self: center;
+  align-self: flex-start;
   padding-inline-start: var(--spectrum-global-dimension-size-300);
 }
 

@@ -424,25 +424,23 @@ let items = [
   {name: 'Delete'}
 ];
 
-let renderSubmenu = (item) => {
-  if (item.children) {
-    return (
-      <SubmenuTrigger>
-        <Item key={item.name}>{item.name}</Item>
-        <Menu items={item.children}>
-          {(item) => renderSubmenu(item)}
-        </Menu>
-      </SubmenuTrigger>
-    );
-  } else {
-    return <Item key={item.name}>{item.name}</Item>;
-  }
-};
-
 <MenuTrigger>
   <ActionButton>Actions</ActionButton>
   <Menu items={items}>
-    {(item) => renderSubmenu(item)}
+    {function renderSubmenu(item) {
+      if (item.children) {
+        return (
+          <SubmenuTrigger>
+            <Item key={item.name}>{item.name}</Item>
+            <Menu items={item.children}>
+              {(item) => renderSubmenu(item)}
+            </Menu>
+          </SubmenuTrigger>
+        );
+      } else {
+        return <Item key={item.name}>{item.name}</Item>;
+      }
+    }}
   </Menu>
 </MenuTrigger>
 ```
@@ -465,7 +463,7 @@ let renderSubmenu = (item) => {
   props: {
     properties: Object.fromEntries(Object.entries(docs.exports.SpectrumSubmenuTriggerProps.properties))
   }
-}} links={contextualHelpTriggerTypes.links} />
+}} links={submenuTriggerTypes.links} />
 
 ## Visual Options
 
