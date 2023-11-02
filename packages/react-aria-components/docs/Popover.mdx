@@ -70,9 +70,9 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-@import './Button.mdx';
-@import './Dialog.mdx';
-@import './Switch.mdx';
+@import './Button.mdx' layer(button);
+@import './Dialog.mdx' layer(dialog);
+@import './Switch.mdx' layer(switch);
 
 .flex-col {
   display: flex;
@@ -82,69 +82,67 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
 ```
 
 ```css
-@layer popover {
-  .react-aria-Popover {
-    --background-color: var(--page-background);
-    --border-color: var(--spectrum-global-color-gray-400);
+.react-aria-Popover {
+  --background-color: var(--page-background);
+  --border-color: var(--spectrum-global-color-gray-400);
 
-    border: 1px solid var(--border-color);
-    box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-    border-radius: 6px;
-    background: var(--background-color);
-    outline: none;
-    padding: 30px;
-    max-width: 250px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+  background: var(--background-color);
+  outline: none;
+  padding: 30px;
+  max-width: 250px;
 
-    .react-aria-OverlayArrow svg {
-      display: block;
-      fill: var(--background-color);
-      stroke: var(--border-color);
-      stroke-width: 1px;
-    }
+  .react-aria-OverlayArrow svg {
+    display: block;
+    fill: var(--background-color);
+    stroke: var(--border-color);
+    stroke-width: 1px;
+  }
 
-    &[data-placement=top] {
-      margin-bottom: 6px;
-      --origin: translateY(8px);
-    }
+  &[data-placement=top] {
+    margin-bottom: 6px;
+    --origin: translateY(8px);
+  }
 
-    &[data-placement=bottom] {
-      margin-top: 6px;
-      --origin: translateY(-8px);
-      & .react-aria-OverlayArrow svg {
-        transform: rotate(180deg);
-      }
-    }
-
-    &[data-placement=right] {
-      margin-left: 6px;
-      --origin: translateX(-8px);
-      & .react-aria-OverlayArrow svg {
-        transform: rotate(90deg);
-      }
-    }
-
-    &[data-placement=left] {
-      margin-right: 6px;
-      --origin: translateX(8px);
-      & .react-aria-OverlayArrow svg {
-        transform: rotate(-90deg);
-      }
-    }
-
-    &[data-entering] {
-      animation: popover-slide 200ms;
-    }
-
-    &[data-exiting] {
-      animation: popover-slide 200ms reverse ease-in;
+  &[data-placement=bottom] {
+    margin-top: 6px;
+    --origin: translateY(-8px);
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(180deg);
     }
   }
 
-  @media (forced-colors: active) {
-    .react-aria-Popover {
-      --background-color: Canvas;
-      --border-color: ButtonBorder;
+  &[data-placement=right] {
+    margin-left: 6px;
+    --origin: translateX(-8px);
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(90deg);
     }
+  }
+
+  &[data-placement=left] {
+    margin-right: 6px;
+    --origin: translateX(8px);
+    & .react-aria-OverlayArrow svg {
+      transform: rotate(-90deg);
+    }
+  }
+
+  &[data-entering] {
+    animation: popover-slide 200ms;
+  }
+
+  &[data-exiting] {
+    animation: popover-slide 200ms reverse ease-in;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Popover {
+    --background-color: Canvas;
+    --border-color: ButtonBorder;
   }
 }
 
