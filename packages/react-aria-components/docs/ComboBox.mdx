@@ -72,34 +72,33 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-@import './Checkbox.mdx';
-@import './ListBox.mdx';
-@import './Popover.mdx';
-@import './Form.mdx';
-@import './Button.mdx';
+@import './Checkbox.mdx' layer(checkbox);
+@import './ListBox.mdx' layer(listbox);
+@import './Popover.mdx' layer(popover);
+@import './Form.mdx' layer(form);
+@import './Button.mdx' layer(button);
 ```
 
 ```css
-@layer combobox {
-  .react-aria-ComboBox {
-    --border-color: var(--spectrum-alias-border-color);
-    --border-color-disabled: var(--spectrum-alias-border-color-disabled);
-    --button-background: slateblue;
+.react-aria-ComboBox {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+  --button-background: slateblue;
 
-    .react-aria-Input {
-      margin: 0;
-      font-size: 1.072rem;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      padding: 0.286rem 2rem 0.286rem 0.571rem;
-      vertical-align: middle;
+  .react-aria-Input {
+    margin: 0;
+    font-size: 1.072rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.286rem 2rem 0.286rem 0.571rem;
+    vertical-align: middle;
 
-      &[data-focused] {
-        outline: none;
-        border-color: slateblue;
-        box-shadow: 0 0 0 1px slateblue;
-      }
+    &[data-focused] {
+      outline: none;
+      border-color: slateblue;
+      box-shadow: 0 0 0 1px slateblue;
     }
+  }
 
     .react-aria-Button {
       background: slateblue;
@@ -113,6 +112,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
       font-size: 0.857rem;
     }
   }
+
   @layer listbox {
     .react-aria-ListBox {
       display: block;
@@ -121,85 +121,66 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
       min-height: unset;
       border: none;
 
-      .react-aria-ListBoxItem {
-        padding: 0.286rem 0.571rem 0.286rem 1.571rem;
+    .react-aria-ListBoxItem {
+      padding: 0.286rem 0.571rem 0.286rem 1.571rem;
 
-        &[data-focus-visible] {
-          box-shadow: unset;
-        }
+      &[data-focus-visible] {
+        box-shadow: unset;
+      }
 
-        &[data-selected] {
-          font-weight: 600;
-          background: unset;
-          color: var(--text-color);
+      &[data-selected] {
+        font-weight: 600;
+        background: unset;
+        color: var(--text-color);
 
-          &::before {
-            content: '✓';
-            content: '✓' / '';
-            alt: ' ';
-            position: absolute;
-            top: 4px;
-            left: 4px;
-          }
-        }
-
-        &[data-focused],
-        &[data-pressed] {
-          background: var(--highlight-background);
-          color: var(--highlight-foreground);
+        &::before {
+          content: '✓';
+          content: '✓' / '';
+          alt: ' ';
+          position: absolute;
+          top: 4px;
+          left: 4px;
         }
       }
-    }
-  }
-  @layer popover {
-    .react-aria-Popover {
-      padding: 0px;
-      margin-top: 0px;
-      min-width: var(--trigger-width);
-      box-sizing: border-box;
-      &[data-placement=top] {
-        margin-bottom: unset;
-        --origin: translateY(8px);
-      }
 
-      &[data-placement=bottom] {
-        margin-top: unset;
-        --origin: translateY(-8px);
-      }
-
-      &[data-entering] {
-        animation: combobox-slide 200ms;
-      }
-
-      &[data-exiting] {
-        animation: combobox-slide 200ms reverse ease-in;
-      }
-    }
-  }
-
-  @media (forced-colors: active) {
-    .react-aria-ComboBox {
-      --border-color: ButtonBorder;
-      --border-color-disabled: GrayText;
-
-      .react-aria-Button {
-        background: ButtonFace;
-        color: ButtonText;
-        border: 1px solid ButtonBorder;
+      &[data-focused],
+      &[data-pressed] {
+        background: var(--highlight-background);
+        color: var(--highlight-foreground);
       }
     }
   }
 }
 
-@keyframes combobox-slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
+@layer popover {
+  .react-aria-Popover {
+    padding: 0px;
+    margin-top: 0px;
+    min-width: var(--trigger-width);
+    box-sizing: border-box;
 
-  to {
-    transform: translateY(0);
-    opacity: 1;
+    &[data-placement=top] {
+      margin-bottom: unset;
+      --origin: translateY(8px);
+    }
+
+    &[data-placement=bottom] {
+      margin-top: unset;
+      --origin: translateY(-8px);
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-ComboBox {
+    --border-color: ButtonBorder;
+    --border-color-disabled: GrayText;
+
+    .react-aria-Button {
+      background: ButtonFace;
+      color: ButtonText;
+      border: 1px solid ButtonBorder;
+    }
   }
 }
 ```
@@ -982,27 +963,25 @@ A `ComboBox` can be fully disabled using the isDisabled prop.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer combobox {
-  .react-aria-ComboBox {
-    .react-aria-Input {
-      &[data-disabled] {
-        border-color: var(--border-color-disabled);
-      }
-    }
-
-    .react-aria-Button {
-      &[data-disabled] {
-        background: var(--border-color-disabled);
-      }
+.react-aria-ComboBox {
+  .react-aria-Input {
+    &[data-disabled] {
+      border-color: var(--border-color-disabled);
     }
   }
 
-  @media (forced-colors: active) {
-    .react-aria-ComboBox {
-      .react-aria-Button {
-        &[data-disabled] {
-          background: transparent;
-        }
+  .react-aria-Button {
+    &[data-disabled] {
+      background: var(--border-color-disabled);
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-ComboBox {
+    .react-aria-Button {
+      &[data-disabled] {
+        background: transparent;
       }
     }
   }
@@ -1068,14 +1047,12 @@ import {Form, FieldError} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer combobox {
-  .react-aria-ComboBox {
-    .react-aria-Input {
-      &[data-invalid] {
-        border-color: var(--spectrum-global-color-red-600);
-        &[data-focused] {
-          border-color: slateblue;
-        }
+.react-aria-ComboBox {
+  .react-aria-Input {
+    &[data-invalid] {
+      border-color: var(--spectrum-global-color-red-600);
+      &[data-focused] {
+        border-color: slateblue;
       }
     }
   }
@@ -1128,11 +1105,9 @@ The `description` slot can be used to associate additional help text with a Comb
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer select {
-  .react-aria-ComboBox {
-    [slot=description] {
-      font-size: 12px;
-    }
+.react-aria-ComboBox {
+  [slot=description] {
+    font-size: 12px;
   }
 }
 ```

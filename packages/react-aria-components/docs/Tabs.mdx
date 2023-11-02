@@ -69,107 +69,105 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 ```css hidden
 /* We only import styles up to one page away, we don't follow those pages dependencies, so
 * import everything and in the correct order of dependency so that layers don't overwrite each other. */
-@import './Button.mdx';
-@import './Link.mdx';
+@import './Button.mdx' layer(button);
+@import './Link.mdx' layer(link);
 ```
 
 ```css
-@layer tabs {
-  .react-aria-Tabs {
-    --highlight-color: slateblue;
-    --text-color: var(--spectrum-global-color-gray-700);
-    --text-color-hover: var(--spectrum-global-color-gray-800);
-    --text-color-selected: var(--spectrum-global-color-gray-900);
-    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+.react-aria-Tabs {
+  --highlight-color: slateblue;
+  --text-color: var(--spectrum-global-color-gray-700);
+  --text-color-hover: var(--spectrum-global-color-gray-800);
+  --text-color-selected: var(--spectrum-global-color-gray-900);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
-    display: flex;
+  display: flex;
 
-    &[data-orientation=horizontal] {
-      flex-direction: column;
-    }
+  &[data-orientation=horizontal] {
+    flex-direction: column;
+  }
 
-    &[data-orientation=vertical] {
-      flex-direction: row;
+  &[data-orientation=vertical] {
+    flex-direction: row;
+  }
+}
+
+.react-aria-TabList {
+  display: flex;
+
+  &[data-orientation=horizontal] {
+    border-bottom: 1px solid gray;
+
+    .react-aria-Tab {
+      border-bottom: 3px solid var(--border-color, transparent);
     }
   }
 
-  .react-aria-TabList {
-    display: flex;
+  &[data-orientation=vertical] {
+    flex-direction: column;
+    border-right: 1px solid gray;
 
-    &[data-orientation=horizontal] {
-      border-bottom: 1px solid gray;
-
-      .react-aria-Tab {
-        border-bottom: 3px solid var(--border-color, transparent);
-      }
-    }
-
-    &[data-orientation=vertical] {
-      flex-direction: column;
-      border-right: 1px solid gray;
-
-      .react-aria-Tab {
-        border-right: 3px solid var(--border-color, transparent);
-      }
+    .react-aria-Tab {
+      border-right: 3px solid var(--border-color, transparent);
     }
   }
+}
 
-  .react-aria-Tab {
-    padding: 10px;
-    cursor: default;
-    outline: none;
-    position: relative;
-    color: var(--text-color);
-    transition: color 200ms;
+.react-aria-Tab {
+  padding: 10px;
+  cursor: default;
+  outline: none;
+  position: relative;
+  color: var(--text-color);
+  transition: color 200ms;
 
-    &[data-hovered],
-    &[data-focused] {
-      color: var(--text-color-hover);
-    }
+  &[data-hovered],
+  &[data-focused] {
+    color: var(--text-color-hover);
+  }
 
+  &[data-selected] {
+    --border-color: var(--highlight-color);
+    color: var(--text-color-selected);
+  }
+
+  &[data-disabled] {
+    color: var(--text-color-disabled);
     &[data-selected] {
-      --border-color: var(--highlight-color);
-      color: var(--text-color-selected);
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-      &[data-selected] {
-        --border-color: var(--text-color-disabled);
-      }
-    }
-
-    &[data-focus-visible]:after {
-      content: '';
-      position: absolute;
-      inset: 4px;
-      border-radius: 4px;
-      border: 2px solid var(--highlight-color);
+      --border-color: var(--text-color-disabled);
     }
   }
 
-  .react-aria-TabPanel {
-    margin-top: 4px;
-    padding: 10px;
+  &[data-focus-visible]:after {
+    content: '';
+    position: absolute;
+    inset: 4px;
     border-radius: 4px;
-    outline: none;
-
-    &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px var(--highlight-color);
-    }
+    border: 2px solid var(--highlight-color);
   }
+}
 
-  @media (forced-colors: active) {
-    .react-aria-Tabs {
-      forced-color-adjust: none;
-      color: CanvasText;
+.react-aria-TabPanel {
+  margin-top: 4px;
+  padding: 10px;
+  border-radius: 4px;
+  outline: none;
 
-      --highlight-color: Highlight;
-      --text-color: ButtonText;
-      --text-color-hover: ButtonText;
-      --text-color-selected: ButtonText;
-      --text-color-disabled: GrayText;
-    }
+  &[data-focus-visible] {
+    box-shadow: inset 0 0 0 2px var(--highlight-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Tabs {
+    forced-color-adjust: none;
+    color: CanvasText;
+
+    --highlight-color: Highlight;
+    --text-color: ButtonText;
+    --text-color-hover: ButtonText;
+    --text-color-selected: ButtonText;
+    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -412,24 +410,21 @@ By default, tabs are horizontally oriented. The `orientation` prop can be set to
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer tabs {
-  .react-aria-Tabs {
-
-    &[data-orientation=horizontal] {
-      flex-direction: column;
-    }
+.react-aria-Tabs {
+  &[data-orientation=horizontal] {
+    flex-direction: column;
   }
+}
 
-  .react-aria-TabList {
-    display: flex;
+.react-aria-TabList {
+  display: flex;
 
-    &[data-orientation=vertical] {
-      flex-direction: column;
-      border-right: 1px solid gray;
+  &[data-orientation=vertical] {
+    flex-direction: column;
+    border-right: 1px solid gray;
 
-      .react-aria-Tab {
-        border-right: 3px solid var(--border-color, transparent);
-      }
+    .react-aria-Tab {
+      border-right: 3px solid var(--border-color, transparent);
     }
   }
 }
@@ -458,13 +453,11 @@ All tabs can be disabled using the `isDisabled` prop.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer tabs {
-  .react-aria-Tab {
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-      &[data-selected] {
-        --border-color: var(--text-color-disabled);
-      }
+.react-aria-Tab {
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+    &[data-selected] {
+      --border-color: var(--text-color-disabled);
     }
   }
 }
