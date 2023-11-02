@@ -162,7 +162,7 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
 
   return (
     <div
-      {...mergeProps(props, hoverProps)}
+      {...mergeProps(filterDOMProps(props as any), hoverProps)}
       {...renderProps}
       ref={ref}
       data-hovered={isHovered || undefined}

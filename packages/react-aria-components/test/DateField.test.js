@@ -95,11 +95,14 @@ describe('DateField', () => {
   });
 
   it('should support hover state', async () => {
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
     let {getByRole} = render(
       <DateField>
         <Label>Birth date</Label>
         <DateInput className={({isHovered}) => isHovered ? 'hover' : ''}>
-          {segment => <DateSegment segment={segment} className={({isHovered}) => isHovered ? 'hover' : ''} />}
+          {segment => <DateSegment segment={segment} className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy} />}
         </DateInput>
       </DateField>
     );
@@ -120,10 +123,14 @@ describe('DateField', () => {
     await user.hover(segments[0]);
     expect(segments[0]).toHaveAttribute('data-hovered', 'true');
     expect(segments[0]).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(segments[0]);
     expect(segments[0]).not.toHaveAttribute('data-hovered', 'true');
     expect(segments[0]).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus visible state', async () => {

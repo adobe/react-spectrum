@@ -7,6 +7,13 @@ export interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
 
 export const TextAreaContext = createContext<ContextValue<TextAreaProps, HTMLTextAreaElement>>({});
 
+let filterHoverProps = (props: TextAreaProps) => {
+  delete props.onHoverStart;
+  delete props.onHoverChange;
+  delete props.onHoverEnd;
+  return props;
+};
+
 function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) {
   [props, ref] = useContextProps(props, ref, TextAreaContext);
 
@@ -31,7 +38,7 @@ function TextArea(props: TextAreaProps, ref: ForwardedRef<HTMLTextAreaElement>) 
 
   return (
     <textarea
-      {...mergeProps(props, focusProps, hoverProps)}
+      {...mergeProps(filterHoverProps(props), focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-focused={isFocused || undefined}

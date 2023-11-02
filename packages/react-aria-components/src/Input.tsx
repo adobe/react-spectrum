@@ -11,6 +11,7 @@
  */
 
 import {ContextValue, createHideableComponent, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {HoverEvents, mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, InputHTMLAttributes} from 'react';
 
@@ -46,6 +47,13 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 
 export const InputContext = createContext<ContextValue<InputProps, HTMLInputElement>>({});
 
+let filterHoverProps = (props: InputProps) => {
+  delete props.onHoverStart;
+  delete props.onHoverChange;
+  delete props.onHoverEnd;
+  return props;
+};
+
 function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, InputContext);
 
@@ -70,7 +78,7 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
 
   return (
     <input
-      {...mergeProps(props, focusProps, hoverProps)}
+      {...mergeProps(filterHoverProps(props), focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-focused={isFocused || undefined}
