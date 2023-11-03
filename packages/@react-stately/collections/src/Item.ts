@@ -76,5 +76,5 @@ function hasChildItems<T>(props: ItemProps<T>) {
 }
 
 // We don't want getCollectionNode to show up in the type definition
-let _Item = Item as <T>(props: ItemProps<T>) => JSX.Element;
+let _Item = Item as <T>(props: ItemProps<T>) => React.JSX.Element;
 export {_Item as Item};

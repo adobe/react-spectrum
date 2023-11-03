@@ -201,7 +201,7 @@ export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRen
   children: (segment: IDateSegment) => ReactElement
 }
 
-function DateInput(props: DateInputProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
+function DateInput(props: DateInputProps, ref: ForwardedRef<HTMLDivElement>): React.JSX.Element {
   // If state is provided by DateField/TimeField, just render.
   // Otherwise (e.g. in DatePicker), we need to call hooks and create state ourselves.
   let dateFieldState = useContext(DateFieldStateContext);

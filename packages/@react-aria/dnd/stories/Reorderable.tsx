@@ -20,7 +20,7 @@ import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
-import {ItemDropTarget} from '@react-types/shared';
+import {ItemDropTarget, Key} from '@react-types/shared';
 import {ListDropTargetDelegate} from '@react-aria/dnd';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import React, {useRef} from 'react';
@@ -45,7 +45,7 @@ export function ReorderableGridExample(props) {
     ]
   });
 
-  let onMove = (keys: React.Key[], target: ItemDropTarget) => {
+  let onMove = (keys: Key[], target: ItemDropTarget) => {
     if (target.dropPosition === 'before') {
       list.moveBefore(target.key, keys);
     } else {

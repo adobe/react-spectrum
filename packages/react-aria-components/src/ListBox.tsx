@@ -17,8 +17,8 @@ import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContex
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
-import {LinkDOMProps} from '@react-types/shared';
-import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
+import {Key, LinkDOMProps} from '@react-types/shared';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
@@ -137,7 +137,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       collection,
       collator,
       ref: listBoxRef,
-      disabledKeys: disabledBehavior === 'selection' ? new Set<React.Key>() : disabledKeys,
+      disabledKeys: disabledBehavior === 'selection' ? new Set<Key>() : disabledKeys,
       layout,
       orientation,
       direction
@@ -181,7 +181,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
   let dropState: DroppableCollectionState | undefined = undefined;
   let droppableCollection: DroppableCollectionResult | undefined = undefined;
   let isRootDropTarget = false;
-  let dragPreview: JSX.Element | null = null;
+  let dragPreview: React.JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {
@@ -229,7 +229,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
     values: renderValues
   });
 
-  let emptyState: JSX.Element | null = null;
+  let emptyState: React.JSX.Element | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
     emptyState = (
       <div

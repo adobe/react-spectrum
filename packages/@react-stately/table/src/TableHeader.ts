@@ -55,5 +55,5 @@ TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeade
  * as children, or generated dynamically using a function based on the data passed to the `columns` prop.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _TableHeader = TableHeader as <T>(props: TableHeaderProps<T>) => JSX.Element;
+let _TableHeader = TableHeader as <T>(props: TableHeaderProps<T>) => React.JSX.Element;
 export {_TableHeader as TableHeader};

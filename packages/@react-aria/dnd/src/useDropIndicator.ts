@@ -12,9 +12,9 @@
 
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {DropTarget} from '@react-types/shared';
+import {DropTarget, Key} from '@react-types/shared';
 import {getDroppableCollectionId} from './utils';
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDroppableItem} from './useDroppableItem';

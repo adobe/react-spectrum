@@ -11,9 +11,9 @@
  */
 
 import {AriaMenuProps} from '@react-types/menu';
-import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, Key, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {Key, RefObject} from 'react';
+import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 

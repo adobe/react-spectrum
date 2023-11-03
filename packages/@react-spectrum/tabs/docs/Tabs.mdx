@@ -75,6 +75,7 @@ Each item accepts a key prop, which is passed to the `onSelectionChange` handler
 See the [Events](#events) section for more detail on selection.
 
 ```tsx example
+import {Key} from '@react-types/shared';
 function Example() {
   let tabs = [
     {id: 1, name: 'Founding of Rome', children: 'Arma virumque cano, Troiae qui primus ab oris.'},
@@ -82,7 +83,7 @@ function Example() {
     {id: 3, name: 'Empire', children: 'Alea jacta est.'}
   ];
   type Tab = typeof tabs[0];
-  let [tabId, setTabId] = React.useState<React.Key>(1);
+  let [tabId, setTabId] = React.useState<Key>(1);
 
   return (
     <>
@@ -219,7 +220,7 @@ function Example() {
     {id: 3, name: 'Gamepad Settings', children: 'No gamepad detected'}
   ];
   type Tab = typeof tabs[0];
-  let [tab, setTab] = React.useState<React.Key>(2);
+  let [tab, setTab] = React.useState<Key>(2);
 
   return (
     <Flex gap="size-150" wrap>
@@ -275,7 +276,7 @@ function Example() {
     {name: 'Cretaceous', children: 'The Cretaceous is the longest period of the Mesozoic, spanning from 145 million to 66 million years ago.'}
   ];
   type Tab = typeof tabs[0];
-  let [timePeriod, setTimePeriod] = React.useState<React.Key>('Triassic');
+  let [timePeriod, setTimePeriod] = React.useState<Key>('Triassic');
 
   return (
     <>

@@ -11,9 +11,9 @@
  */
 
 import {AriaStepListProps} from '@react-types/steplist';
-import {Collection, Node} from '@react-types/shared';
-import {Key, useCallback, useEffect, useMemo} from 'react';
+import {Collection, Key, Node} from '@react-types/shared';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
+import {useCallback, useEffect, useMemo} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 export interface StepListState<T> extends SingleSelectListState<T> {
@@ -48,7 +48,7 @@ export function useStepListState<T extends object>(props: AriaStepListProps<T>):
         selectedKey = collection.getKeyAfter(selectedKey);
       }
     }
-  
+
     return selectedKey;
   }, [isCompleted]);
 

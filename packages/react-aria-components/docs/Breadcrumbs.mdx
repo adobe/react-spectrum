@@ -179,6 +179,7 @@ as shown below, can be used when the options come from an external data source s
 As seen below, an iterable list of options is passed to the Breadcrumbs using the `items` prop. A function provided as `children` of the `<Breadcrumbs>` is called to render each item. When a breadcrumb is pressed, the `onAction` event is triggered and the breadcrumbs array is updated.
 
 ```tsx example
+import {Key} from '@react-types/shared';
 function Example() {
   let [breadcrumbs, setBreadcrumbs] = React.useState([
     {id: 1, label: 'Home'},
@@ -186,7 +187,7 @@ function Example() {
     {id: 3, label: 'March 2022 Assets'}
   ]);
 
-  let navigate = (id: React.Key) => {
+  let navigate = (id: Key) => {
     let i = breadcrumbs.findIndex(item => item.id === id);
     setBreadcrumbs(breadcrumbs.slice(0, i + 1));
   };
@@ -378,7 +379,7 @@ function Router({children}) {
   ]);
 
   // Pop stack when a breadcrumb item is clicked.
-  let onAction = (id: React.Key) => {
+  let onAction = (id: Key) => {
     let i = items.findIndex(item => item.id === id);
     setItems(items.slice(0, i + 1));
   };

@@ -11,7 +11,7 @@
  */
 
 import {InvalidationContext} from './types';
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 import {LayoutInfo} from './LayoutInfo';
 // import {Point} from './Point';
 import {Rect} from './Rect';
