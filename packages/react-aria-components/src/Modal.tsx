@@ -112,7 +112,7 @@ function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<
   let modalRef = useRef<HTMLDivElement>(null);
   let isOverlayExiting = useExitAnimation(objectRef, state.isOpen);
   let isModalExiting = useExitAnimation(modalRef, state.isOpen);
-  let isExiting = isOverlayExiting || isModalExiting || props.isExiting;
+  let isExiting = isOverlayExiting || isModalExiting || props.isExiting || false;
   let isSSR = useIsSSR();
 
   if ((!state.isOpen && !isExiting) || isSSR) {
