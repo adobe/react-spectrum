@@ -214,9 +214,9 @@ const nonTextInputTypes = new Set([
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
   isTextInput = isTextInput || 
-    (e.target instanceof HTMLInputElement && !nonTextInputTypes.has(e.target.type)) ||
-    e.target instanceof HTMLTextAreaElement ||
-    (e.target instanceof HTMLElement && e.target.isContentEditable);
+    (e?.target instanceof HTMLInputElement && !nonTextInputTypes.has(e?.target?.type)) ||
+    e?.target instanceof HTMLTextAreaElement ||
+    (e?.target instanceof HTMLElement && e?.target.isContentEditable);
   return !(isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
 }
 
