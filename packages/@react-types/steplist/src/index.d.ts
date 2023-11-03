@@ -10,8 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMProps, Orientation, SingleSelection, StyleProps} from '@react-types/shared';
-import {Key} from 'react';
+import {
+  AriaLabelingProps,
+  CollectionBase,
+  DOMProps,
+  Key,
+  Orientation,
+  SingleSelection,
+  StyleProps
+} from '@react-types/shared';
 
 interface StepListProps<T> extends CollectionBase<T>, SingleSelection {
   /** The key of the last completed step (controlled). */

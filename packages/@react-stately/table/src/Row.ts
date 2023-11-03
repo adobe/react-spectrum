@@ -115,5 +115,5 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
  * based on the columns defined in the TableHeader.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _Row = Row as <T>(props: RowProps<T>) => JSX.Element;
+let _Row = Row as <T>(props: RowProps<T>) => React.JSX.Element;
 export {_Row as Row};

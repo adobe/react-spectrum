@@ -447,6 +447,7 @@ When `Select` is used with a dynamic collection as described above, the id of ea
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
 ```tsx example
+import {Key} from '@react-types/shared';
 function Example() {
   let options = [
     {name: 'Koala'},
@@ -456,7 +457,7 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
-  let [animal, setAnimal] = React.useState<React.Key>("Bison");
+  let [animal, setAnimal] = React.useState<Key>("Bison");
 
   return (
     <MySelect
@@ -729,8 +730,9 @@ Disabled items are not focusable, selectable, or keyboard navigable. The `isDisa
 The `description` slot can be used to associate additional help text with a Select. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the Select as invalid for assistive technologies.
 
 ```tsx example
+import {Key} from '@react-types/shared';
 function Example() {
-  let [animalId, setAnimalId] = React.useState<React.Key | null>(null);
+  let [animalId, setAnimalId] = React.useState<Key | null>(null);
   let options = [
     { id: 1, name: 'Aardvark' },
     { id: 2, name: 'Cat' },

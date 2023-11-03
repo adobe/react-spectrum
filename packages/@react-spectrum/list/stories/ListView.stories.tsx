@@ -1,14 +1,17 @@
 import {action} from '@storybook/addon-actions';
 import {ActionBar, ActionBarContainer} from '@react-spectrum/actionbar';
-import {ActionButton} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {ActionGroup} from '@react-spectrum/actiongroup';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content} from '@react-spectrum/view';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Delete from '@spectrum-icons/workflow/Delete';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Divider} from '@react-spectrum/divider';
 import Edit from '@spectrum-icons/workflow/Edit';
 import File from '@spectrum-icons/illustrations/File';
 import {Flex} from '@react-spectrum/layout';
+import {FocusScope} from '@react-aria/focus';
 import Folder from '@spectrum-icons/illustrations/Folder';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
@@ -464,5 +467,53 @@ function EmptyTest() {
         </div>
       </Flex>
     </div>
+  );
+}
+
+export const RemoveListItems = {
+  render: (args) => (
+    <Demo {...args} />
+  )
+};
+
+function Demo(props) {
+  let [items, setItems] = useState<{key: number, label: string}[]>([
+    {key: 1, label: 'utilities'}
+  ]);
+  let onDelete = (key) => {
+    setItems(prevItems => prevItems.filter((item) => item.key !== key));
+  };
+  return (
+    <ListView
+      selectionMode="multiple"
+      maxWidth="size-6000"
+      items={items}
+      height="300px"
+      width="250px"
+      aria-label="ListView example with complex items"
+      {...props}>
+      {(item: {key: number, label: string}) => {
+        return (
+          <Item key={item.key} textValue={item.label}>
+            <Text>{item.label}</Text>
+            <DialogTrigger type="popover">
+              <ActionButton>Delete</ActionButton>
+              <Dialog>
+                <Heading>Warning, cannot undo</Heading>
+                <Divider />
+                <Content>
+                  <Text>Are you sure?</Text>
+                  <FocusScope>
+                    <Button variant="accent" onPressStart={() => onDelete(item.key)}>
+                      Delete
+                    </Button>
+                  </FocusScope>
+                </Content>
+              </Dialog>
+            </DialogTrigger>
+          </Item>
+        );
+      }}
+    </ListView>
   );
 }

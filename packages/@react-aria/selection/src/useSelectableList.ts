@@ -11,10 +11,10 @@
  */
 
 import {AriaSelectableCollectionOptions, useSelectableCollection} from './useSelectableCollection';
-import {Collection, DOMAttributes, KeyboardDelegate, Node} from '@react-types/shared';
-import {Key, useMemo} from 'react';
+import {Collection, DOMAttributes, Key, KeyboardDelegate, Node} from '@react-types/shared';
 import {ListKeyboardDelegate} from './ListKeyboardDelegate';
 import {useCollator} from '@react-aria/i18n';
+import {useMemo} from 'react';
 
 export interface AriaSelectableListOptions extends Omit<AriaSelectableCollectionOptions, 'keyboardDelegate'> {
   /**
