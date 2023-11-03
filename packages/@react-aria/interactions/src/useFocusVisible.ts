@@ -201,7 +201,8 @@ export function useInteractionModality(): Modality | null {
  * focus visible style can be properly set.
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
-  return !(isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
+  let elementType = (e?.target as HTMLInputElement)?.type;
+  return !((isTextInput || elementType === 'text' || elementType === 'textarea') && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
 }
 
 /**
