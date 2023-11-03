@@ -972,28 +972,37 @@ function ComboBoxWithinDialog(props) {
 }
 
 let WithinScrollableContainerComboBox = (props) => {
-  const [root, setRoot] = useState(null)
-  const element = useRef()
+  const [root, setRoot] = useState(null);
+  const element = useRef();
 
   useEffect(() => {
-   setRoot(element.current)
-  }, [])
-  
+    setRoot(element.current);
+  }, []);
 
-  return (<div ref={element} style={{width: "100%", height: "100vh", overflowY: "auto",  position:"relative" }}>
-      
-        <div style={{ paddingTop:"50vh",height: "150vh",display: "flex", justifyContent:"center"}}>
-        <ComboBox
-        container={root}
-         label="Combobox"
-          {...props}>
+  return (
+    <div
+      ref={element}
+      style={{
+        width: "100%",
+        height: "100vh",
+        overflowY: "auto",
+        position: "relative",
+      }}
+    >
+      <div
+        style={{
+          paddingTop: "50vh",
+          height: "150vh",
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <ComboBox container={root} label="Combobox" {...props}>
           <Item key="1">Item #1</Item>
           <Item key="2">Item #2</Item>
           <Item key="3">Item #3</Item>
         </ComboBox>
-        </div>
-
-  </div>
- 
+      </div>
+    </div>
   );
 };
