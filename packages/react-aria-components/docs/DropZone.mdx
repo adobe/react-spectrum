@@ -60,57 +60,53 @@ function Example() {
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-/* We only import styles up to one page away, we don't follow those pages dependencies, so
-* import everything and in the correct order of dependency so that layers don't overwrite each other. */
-@import './Button.mdx';
+@import './Button.mdx' layer(dropzone);
 ```
 
 ```css
-@layer dropzone {
-  .react-aria-DropZone {
-    --border-color: var(--spectrum-alias-border-color);
-    --border-color-pressed: var(--spectrum-alias-border-color-focus);
-    --background-color: var(--spectrum-global-color-gray-50);
-    --background-color-pressed: var(--spectrum-global-color-gray-100);
-    --text-color: var(--spectrum-alias-text-color);
-    --focus-ring-color: var(--spectrum-alias-border-color-focus);
+.react-aria-DropZone {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-pressed: var(--spectrum-alias-border-color-focus);
+  --background-color: var(--spectrum-global-color-gray-50);
+  --background-color-pressed: var(--spectrum-global-color-gray-100);
+  --text-color: var(--spectrum-alias-text-color);
+  --focus-ring-color: var(--spectrum-alias-border-color-focus);
 
-    color: var(--text-color);
-    background: var(--background-color);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    appearance: none;
-    vertical-align: middle;
-    font-size: 1.2rem;
-    text-align: center;
-    margin: 0;
-    outline: none;
-    padding: 24px 12px;
-    width: 25%;
-    display: inline-block;
+  color: var(--text-color);
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  appearance: none;
+  vertical-align: middle;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 0;
+  outline: none;
+  padding: 24px 12px;
+  width: 25%;
+  display: inline-block;
 
-    &[data-drop-target] {
-      box-shadow: 0 0 0 1px var(--focus-ring-color);
-      background: var(--background-color-pressed);
-      border-color: var(--border-color-pressed);
-    }
-
-    &[data-focus-visible] {
-      border-color: var(--focus-ring-color);
-      box-shadow: 0 0 0 1px var(--focus-ring-color);
-    }
+  &[data-drop-target] {
+    box-shadow: 0 0 0 1px var(--focus-ring-color);
+    background: var(--background-color-pressed);
+    border-color: var(--border-color-pressed);
   }
 
-  @media (forced-colors: active) {
-    .react-aria-DropZone {
-      forced-color-adjust: none;
-      --border-color: ButtonBorder;
-      --border-color-drop-target: ButtonBorder;
-      --background-color: ButtonFace;
-      --background-color-pressed: ButtonFace;
-      --text-color: ButtonText;
-      --focus-ring-color: Highlight;
-    }
+  &[data-focus-visible] {
+    border-color: var(--focus-ring-color);
+    box-shadow: 0 0 0 1px var(--focus-ring-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-DropZone {
+    forced-color-adjust: none;
+    --border-color: ButtonBorder;
+    --border-color-drop-target: ButtonBorder;
+    --background-color: ButtonFace;
+    --background-color-pressed: ButtonFace;
+    --text-color: ButtonText;
+    --focus-ring-color: Highlight;
   }
 }
 ```

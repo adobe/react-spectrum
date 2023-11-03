@@ -71,140 +71,125 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-@import './ListBox.mdx';
-@import './Popover.mdx';
+@import './ListBox.mdx' layer(listbox);
+@import './Popover.mdx' layer(popover);
 ```
 
 ```css
-@layer select {
-  .react-aria-Select {
-    --border-color: var(--spectrum-alias-border-color);
-    --border-color-disabled: var(--spectrum-alias-border-color-disabled);
-    --text-color: var(--spectrum-alias-text-color);
-    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-    --focus-ring-color: slateblue;
+.react-aria-Select {
+  --border-color: var(--spectrum-alias-border-color);
+  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --focus-ring-color: slateblue;
 
-    .react-aria-Button {
-      color: var(--text-color);
-      background: var(--spectrum-global-color-gray-50);
-      border: 1px solid var(--border-color);
-      box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-      border-radius: 6px;
-      appearance: none;
-      vertical-align: middle;
-      font-size: 1.072rem;
-      padding: 0.286rem 0.286rem 0.286rem 0.571rem;
-      margin: 0;
-      outline: none;
-      display: flex;
-      align-items: center;
-      max-width: 250px;
+  .react-aria-Button {
+    color: var(--text-color);
+    background: var(--spectrum-global-color-gray-50);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
+    border-radius: 6px;
+    appearance: none;
+    vertical-align: middle;
+    font-size: 1.072rem;
+    padding: 0.286rem 0.286rem 0.286rem 0.571rem;
+    margin: 0;
+    outline: none;
+    display: flex;
+    align-items: center;
+    max-width: 250px;
+
+    &[data-focus-visible] {
+      border-color: var(--focus-ring-color);
+      box-shadow: 0 0 0 1px var(--focus-ring-color);
+    }
+
+    &[data-pressed] {
+      background: var(--spectrum-global-color-gray-150);
+    }
+  }
+
+  .react-aria-SelectValue {
+    &[data-placeholder] {
+      font-style: italic;
+      color: var(--spectrum-global-color-gray-700);
+    }
+  }
+
+  & span[aria-hidden] {
+    width: 1.5rem;
+    line-height: 1.375rem;
+    margin-left: 1rem;
+    padding: 1px;
+    background: slateblue;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.857rem;
+  }
+}
+@layer listbox {
+  .react-aria-ListBox {
+    display: block;
+    width: unset;
+    max-height: inherit;
+    min-height: unset;
+    border: none;
+
+    .react-aria-ListBoxItem {
+      padding: 0.286rem 0.571rem 0.286rem 1.571rem;
 
       &[data-focus-visible] {
-        border-color: var(--focus-ring-color);
-        box-shadow: 0 0 0 1px var(--focus-ring-color);
+        box-shadow: unset;
       }
 
+      &[data-selected] {
+        font-weight: 600;
+        background: unset;
+        color: var(--text-color);
+
+          &::before {
+          content: '✓';
+          content: '✓' / '';
+          alt: ' ';
+          position: absolute;
+          top: 4px;
+          left: 4px;
+        }
+      }
+
+      &[data-focused],
       &[data-pressed] {
-        background: var(--spectrum-global-color-gray-150);
+        background: var(--highlight-background);
+        color: var(--highlight-foreground);
       }
-    }
-
-    .react-aria-SelectValue {
-      &[data-placeholder] {
-        font-style: italic;
-        color: var(--spectrum-global-color-gray-700);
-      }
-    }
-
-    & span[aria-hidden] {
-      width: 1.5rem;
-      line-height: 1.375rem;
-      margin-left: 1rem;
-      padding: 1px;
-      background: slateblue;
-      color: white;
-      border-radius: 4px;
-      font-size: 0.857rem;
-    }
-  }
-  @layer listbox {
-    .react-aria-ListBox {
-      display: block;
-      width: unset;
-      max-height: inherit;
-      min-height: unset;
-      border: none;
-
-      .react-aria-ListBoxItem {
-        padding: 0.286rem 0.571rem 0.286rem 1.571rem;
-
-        &[data-selected] {
-          font-weight: 600;
-
-            &::before {
-            content: '✓';
-            content: '✓' / '';
-            alt: ' ';
-            position: absolute;
-            top: 4px;
-            left: 4px;
-          }
-        }
-
-        &[data-focused],
-        &[data-pressed] {
-          background: var(--highlight-background);
-          color: var(--highlight-foreground);
-        }
-      }
-    }
-  }
-  @layer popover {
-    .react-aria-Popover {
-      padding: 0px;
-      margin-top: 0px;
-      min-width: var(--trigger-width);
-      box-sizing: border-box;
-      &[data-placement=top] {
-        margin-bottom: unset;
-        --origin: translateY(8px);
-      }
-
-      &[data-placement=bottom] {
-        margin-top: unset;
-        --origin: translateY(-8px);
-      }
-
-      &[data-entering] {
-        animation: popover-slide 200ms;
-      }
-
-      &[data-exiting] {
-        animation: popover-slide 200ms reverse ease-in;
-      }
-    }
-  }
-  @media (forced-colors: active) {
-    .react-aria-Select {
-      --border-color: ButtonBorder;
-      --border-color-disabled: GrayText;
-      --text-color: ButtonText;
-      --text-color-disabled: GrayText;
-      --focus-ring-color: Highlight;
     }
   }
 }
+@layer popover {
+  .react-aria-Popover {
+    padding: 0px;
+    margin-top: 0px;
+    min-width: var(--trigger-width);
+    box-sizing: border-box;
 
-@keyframes popover-slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
+    &[data-placement=top] {
+      margin-bottom: unset;
+      --origin: translateY(8px);
+    }
+
+    &[data-placement=bottom] {
+      margin-top: unset;
+      --origin: translateY(-8px);
+    }
   }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
+}
+@media (forced-colors: active) {
+  .react-aria-Select {
+    --border-color: ButtonBorder;
+    --border-color-disabled: GrayText;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
+    --focus-ring-color: Highlight;
   }
 }
 ```
@@ -390,6 +375,7 @@ function MyItem(props: ListBoxItemProps) {
 
   &.selected {
     font-weight: 600;
+    background: none;
 
     &::before {
       content: '✓';
@@ -399,11 +385,16 @@ function MyItem(props: ListBoxItemProps) {
       top: 4px;
       left: 4px;
     }
+
+    &.focused {
+      box-shadow: unset;
+    }
   }
 
   &.focused {
     background: #e70073;
     color: white;
+    box-shadow: unset;
   }
 }
 
@@ -679,34 +670,32 @@ A Select can be fully disabled using the `isDisabled` prop.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer select {
-  .react-aria-Select {
-    .react-aria-Button {
-      &[data-disabled] {
-        border-color: var(--border-color-disabled);
+.react-aria-Select {
+  .react-aria-Button {
+    &[data-disabled] {
+      border-color: var(--border-color-disabled);
+      color: var(--text-color-disabled);
+      & span[aria-hidden] {
+        background: var(--border-color-disabled);
         color: var(--text-color-disabled);
-        & span[aria-hidden] {
-          background: var(--border-color-disabled);
-          color: var(--text-color-disabled);
-        }
+      }
 
-        .react-aria-SelectValue {
-          &[data-placeholder] {
-            color: var(--text-color-disabled);
-          }
+      .react-aria-SelectValue {
+        &[data-placeholder] {
+          color: var(--text-color-disabled);
         }
       }
     }
   }
-  @media (forced-colors: active) {
-    .react-aria-Select {
-      span[aria-hidden] {
-        background: transparent;
-      }
-      .react-aria-Button {
-        &[data-disabled] span[aria-hidden] {
-          background: 0 0;
-        }
+}
+@media (forced-colors: active) {
+  .react-aria-Select {
+    span[aria-hidden] {
+      background: transparent;
+    }
+    .react-aria-Button {
+      &[data-disabled] span[aria-hidden] {
+        background: 0 0;
       }
     }
   }
@@ -784,28 +773,26 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer select {
-  .react-aria-Select {
-    .react-aria-SelectValue {
-      & [slot=description] {
-        display: none;
-      }
-    }
-
-    [slot=description] {
-      font-size: 12px;
-    }
-
-    [slot=errorMessage] {
-      font-size: 12px;
-      color: var(--spectrum-global-color-red-600);
+.react-aria-Select {
+  .react-aria-SelectValue {
+    & [slot=description] {
+      display: none;
     }
   }
-  @media (forced-colors: active) {
-    .react-aria-Select {
-      [slot=errorMessage] {
-        color: LinkText;
-      }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--spectrum-global-color-red-600);
+  }
+}
+@media (forced-colors: active) {
+  .react-aria-Select {
+    [slot=errorMessage] {
+      color: LinkText;
     }
   }
 }

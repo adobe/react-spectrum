@@ -58,47 +58,45 @@ import {ProgressBar, Label} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer progressbar {
+.react-aria-ProgressBar {
+  --bar-color: var(--spectrum-global-color-gray-500);
+  --circle-color: var(--bar-color);
+  --fill-color: slateblue;
+
+  display: grid;
+  grid-template-areas: "label value"
+                       "bar bar";
+  grid-template-columns: 1fr auto;
+  gap: 4px;
+  width: 250px;
+
+  .value {
+    grid-area: value;
+  }
+
+  .bar {
+    grid-area: bar;
+    box-shadow: inset 0px 0px 0px 1px var(--bar-color);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    will-change: transform;
+  }
+
+  .fill {
+    background: var(--fill-color);
+    height: 100%;
+  }
+}
+@media (forced-colors: active) {
   .react-aria-ProgressBar {
-    --bar-color: var(--spectrum-global-color-gray-500);
-    --circle-color: var(--bar-color);
-    --fill-color: slateblue;
-
-    display: grid;
-    grid-template-areas: "label value"
-                         "bar bar";
-    grid-template-columns: 1fr auto;
-    gap: 4px;
-    width: 250px;
-
-    .value {
-      grid-area: value;
-    }
+    --bar-color: ButtonFace;
+    --circle-color: ButtonBorder;
+    --fill-color: Highlight;
 
     .bar {
-      grid-area: bar;
-      box-shadow: inset 0px 0px 0px 1px var(--bar-color);
-      height: 10px;
-      border-radius: 5px;
-      overflow: hidden;
-      will-change: transform;
-    }
-
-    .fill {
-      background: var(--fill-color);
-      height: 100%;
-    }
-  }
-  @media (forced-colors: active) {
-    .react-aria-ProgressBar {
-      --bar-color: ButtonFace;
-      --circle-color: ButtonBorder;
-      --fill-color: Highlight;
-
-      .bar {
-        border: 1px solid ButtonBorder;
-        box-sizing: border-box;
-      }
+      border: 1px solid ButtonBorder;
+      box-sizing: border-box;
     }
   }
 }
@@ -221,15 +219,13 @@ The `isIndeterminate` prop can be used to represent an interdeterminate operatio
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer progressbar {
-  .react-aria-ProgressBar {
-    &:not([aria-valuenow]) {
-      .fill {
-        width: 120px;
-        border-radius: inherit;
-        animation: indeterminate 1.5s infinite ease-in-out;
-        will-change: transform;
-      }
+.react-aria-ProgressBar {
+  &:not([aria-valuenow]) {
+    .fill {
+      width: 120px;
+      border-radius: inherit;
+      animation: indeterminate 1.5s infinite ease-in-out;
+      will-change: transform;
     }
   }
 }
