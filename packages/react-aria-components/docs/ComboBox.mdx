@@ -423,6 +423,7 @@ is passed to the `onSelectionChange` handler to identify the selected item. Alte
 as shown in the example below, then this is used automatically and an `id` prop is not required.
 
 ```tsx example
+import {Key} from '@react-types/shared';
 function Example() {
   let options = [
     {id: 1, name: 'Aerospace'},
@@ -435,7 +436,7 @@ function Example() {
     {id: 8, name: 'Agricultural'},
     {id: 9, name: 'Electrical'}
   ];
-  let [majorId, setMajorId] = React.useState<React.Key | null>(null);
+  let [majorId, setMajorId] = React.useState<Key | null>(null);
 
   return (
     <>
@@ -560,7 +561,7 @@ function Example() {
     {id: 8, name: 'Adobe Fresco'},
     {id: 9, name: 'Adobe Dreamweaver'}
   ];
-  let [productId, setProductId] = React.useState<React.Key>(9);
+  let [productId, setProductId] = React.useState<Key>(9);
 
   return (
     <div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
@@ -852,7 +853,7 @@ function ControlledComboBox() {
     inputValue: ''
   });
 
-  let onSelectionChange = (id: React.Key) => {
+  let onSelectionChange = (id: Key) => {
     setFieldState({
       inputValue: options.find(o => o.id === id)?.name ?? '',
       selectedKey: id

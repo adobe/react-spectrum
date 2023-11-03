@@ -10,8 +10,26 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, InputDOMProps, LabelableProps, LoadingState, SingleSelection, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps, TextInputBase, Validation} from '@react-types/shared';
-import {Key} from 'react';
+import {
+  AriaLabelingProps,
+  AsyncLoadable,
+  CollectionBase,
+  DOMProps,
+  FocusableProps,
+  HelpTextProps,
+  InputBase,
+  InputDOMProps,
+  Key,
+  LabelableProps,
+  LoadingState,
+  SingleSelection,
+  SpectrumFieldValidation,
+  SpectrumLabelableProps,
+  SpectrumTextInputBase,
+  StyleProps,
+  TextInputBase,
+  Validation
+} from '@react-types/shared';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 

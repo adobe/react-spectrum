@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection} from '@react-types/shared';
-import {Key} from 'react';
+import {Collection, Key} from '@react-types/shared';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {Rect, RectCorner} from './Rect';

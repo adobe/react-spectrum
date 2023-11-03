@@ -11,11 +11,10 @@
  */
 
 import {ColumnSize, TableCollection} from '@react-types/table';
-import {DropTarget, Node} from '@react-types/shared';
+import {DropTarget, Key, Node} from '@react-types/shared';
 import {getChildNodes} from '@react-stately/collections';
 import {GridNode} from '@react-types/grid';
 import {InvalidationContext, LayoutInfo, Point, Rect, Size} from '@react-stately/virtualizer';
-import {Key} from 'react';
 import {LayoutNode, ListLayout, ListLayoutOptions} from './ListLayout';
 import {TableColumnLayout} from '@react-stately/table';
 

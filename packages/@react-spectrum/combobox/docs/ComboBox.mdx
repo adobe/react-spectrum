@@ -260,6 +260,7 @@ Setting a selected option can be done by using the `defaultSelectedKey` or `sele
 Additionally, see the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
+import {Key} from '@react-types/shared';
 function Example() {
   let options = [
     {id: 1, name: 'Adobe Photoshop'},
@@ -272,7 +273,7 @@ function Example() {
     {id: 8, name: 'Adobe Fresco'},
     {id: 9, name: 'Adobe Dreamweaver'}
   ];
-  let [productId, setProductId] = React.useState<React.Key>(9);
+  let [productId, setProductId] = React.useState<Key>(9);
 
   return (
     <Flex gap="size-150" wrap>

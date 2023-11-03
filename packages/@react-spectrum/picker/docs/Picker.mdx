@@ -119,6 +119,7 @@ Setting a selected option can be done by using the `defaultSelectedKey` or `sele
 Additionally see the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
+import {Key} from '@react-types/shared';
 function Example() {
   let options = [
     {name: 'Koala'},
@@ -128,7 +129,7 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
-  let [animal, setAnimal] = React.useState<React.Key>("Bison");
+  let [animal, setAnimal] = React.useState<Key>("Bison");
 
   return (
     <Flex gap="size-150" wrap>

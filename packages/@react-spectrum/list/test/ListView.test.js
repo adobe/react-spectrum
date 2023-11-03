@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';

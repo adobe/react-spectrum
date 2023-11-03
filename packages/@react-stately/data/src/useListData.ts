@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useMemo, useState} from 'react';
-import {Selection} from '@react-types/shared';
+import {Key, Selection} from '@react-types/shared';
+import {useMemo, useState} from 'react';
 
 export interface ListOptions<T> {
   /** Initial items in the list. */

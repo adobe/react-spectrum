@@ -12,9 +12,9 @@
 
 import {GridState, useGridState} from '@react-stately/grid';
 import {TableCollection as ITableCollection, TableBodyProps, TableHeaderProps} from '@react-types/table';
-import {Key, ReactElement, useCallback, useMemo, useState} from 'react';
+import {Key, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
-import {Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {ReactElement, useCallback, useMemo, useState} from 'react';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
 

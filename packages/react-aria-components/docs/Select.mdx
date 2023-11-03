@@ -450,6 +450,7 @@ When `Select` is used with a dynamic collection as described above, the id of ea
 See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
 
 ```tsx example
+import {Key} from '@react-types/shared';
 function Example() {
   let options = [
     {name: 'Koala'},
@@ -459,7 +460,7 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
-  let [animal, setAnimal] = React.useState<React.Key>("Bison");
+  let [animal, setAnimal] = React.useState<Key>("Bison");
 
   return (
     <MySelect
