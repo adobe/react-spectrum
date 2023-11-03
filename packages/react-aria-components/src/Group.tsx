@@ -88,7 +88,7 @@ function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-invalid={isInvalid || undefined}>
-      {props.children}
+      {renderProps.children}
     </div>
   );
 }
