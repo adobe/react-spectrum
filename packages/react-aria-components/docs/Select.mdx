@@ -86,18 +86,22 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
   --text-color-disabled: var(--spectrum-alias-text-color-disabled);
   --focus-ring-color: slateblue;
 
-    .react-aria-Button {
-      background: var(--spectrum-global-color-gray-50);
-      box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-      border-radius: 6px;
-      font-size: 1.072rem;
-      padding: 0.286rem 0.286rem 0.286rem 0.571rem;
-      display: flex;
-      align-items: center;
-      max-width: 250px;
+  .react-aria-Button {
+    background: var(--spectrum-global-color-gray-50);
+    box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
+    border-radius: 6px;
+    font-size: 1.072rem;
+    padding: 0.286rem 0.286rem 0.286rem 0.571rem;
+    display: flex;
+    align-items: center;
+    max-width: 250px;
 
     &[data-pressed] {
       background: var(--spectrum-global-color-gray-150);
+    }
+
+    &[data-focus-visible] {
+      box-shadow: 0 0 0 1px var(--focus-ring-color);
     }
   }
 
@@ -120,6 +124,12 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
   }
 }
 
+@layer popover {
+  .react-aria-Popover {
+    min-width: var(--trigger-width);
+  }
+}
+
 @layer listbox {
   .react-aria-ListBox {
     display: block;
@@ -127,58 +137,38 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     max-height: inherit;
     min-height: unset;
     border: none;
+  }
 
-    .react-aria-ListBoxItem {
-      padding: 0.286rem 0.571rem 0.286rem 1.571rem;
+  .react-aria-ListBoxItem {
+    padding: 0.286rem 0.571rem 0.286rem 1.571rem;
+
+    &[data-focus-visible] {
+      box-shadow: unset;
+    }
+
+    &[data-selected] {
+      font-weight: 600;
+      background: unset;
+      color: var(--text-color);
+
+      &::before {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        top: 4px;
+        left: 4px;
+      }
 
       &[data-focus-visible] {
         box-shadow: unset;
       }
-
-      &[data-selected] {
-        font-weight: 600;
-        background: unset;
-        color: var(--text-color);
-
-          &::before {
-          content: '✓';
-          content: '✓' / '';
-          alt: ' ';
-          position: absolute;
-          top: 4px;
-          left: 4px;
-        }
-      }
-
-      &[data-focused],
-      &[data-pressed] {
-        background: var(--highlight-background);
-        color: var(--highlight-foreground);
-      }
-
-      &[data-focus-visible] {
-        border-color: var(--focus-ring-color);
-        box-shadow: 0 0 0 1px var(--focus-ring-color);
-      }
-    }
-  }
-}
-
-@layer popover {
-  .react-aria-Popover {
-    padding: 0px;
-    margin-top: 0px;
-    min-width: var(--trigger-width);
-    box-sizing: border-box;
-
-    &[data-placement=top] {
-      margin-bottom: unset;
-      --origin: translateY(8px);
     }
 
-    &[data-placement=bottom] {
-      margin-top: unset;
-      --origin: translateY(-8px);
+    &[data-focused],
+    &[data-pressed] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
     }
   }
 }

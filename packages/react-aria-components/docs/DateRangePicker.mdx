@@ -137,14 +137,11 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     color: white;
     border-radius: 4px;
     border: none;
-    appearance: none;
     margin-left: auto;
     width: 1.429rem;
     height: 1.429rem;
     padding: 0;
-    vertical-align: middle;
     font-size: 0.857rem;
-    outline: none;
     box-sizing: content-box;
     flex-shrink: 0;
     border: 2px solid var(--page-background);
@@ -155,15 +152,21 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
       box-shadow: 0 0 0 2px slateblue;
     }
   }
+
+  .react-aria-DateInput {
+    width: unset;
+    min-width: unset;
+    padding: unset;
+    border: unset;
+    box-shadow: unset;
+  }
 }
 
-.react-aria-DateInput {
-  display: flex;
-  width: unset;
-  min-width: unset;
-  padding: unset;
-  border: unset;
-  box-shadow: unset;
+@layer popover {
+  .react-aria-Popover {
+    max-width: unset;
+    padding: 1.25rem;
+  }
 }
 
 @media (forced-colors: active) {
