@@ -391,6 +391,48 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
         expect(getColumnWidths(tree)).toStrictEqual([113, 112, 113, 112, 450]);
       });
 
+      it('can handle adding columns from no columns', function () {
+        let tree = render(<ControlledTable columns={[]} />);
+        rerender(tree, <ControlledTable
+          columns={[
+            {name: 'Name', uid: 'name', width: '1fr'}
+          ]} />);
+        expect(getColumnWidths(tree)).toStrictEqual([900]);
+        rerender(tree, <ControlledTable
+          columns={[
+            {name: 'Name', uid: 'name', width: '1fr'},
+            {name: 'Type', uid: 'type', width: '1fr'}
+          ]} />);
+        expect(getColumnWidths(tree)).toStrictEqual([450, 450]);
+        rerender(tree, <ControlledTable
+          columns={[
+            {name: 'Name', uid: 'name', width: '1fr'},
+            {name: 'Type', uid: 'type', width: '1fr'},
+            {name: 'Height', uid: 'height'}
+          ]} />);
+        expect(getColumnWidths(tree)).toStrictEqual([300, 300, 300]);
+        rerender(tree, <ControlledTable
+          columns={[
+            {name: 'Name', uid: 'name', width: '1fr'},
+            {name: 'Type', uid: 'type', width: '1fr'},
+            {name: 'Height', uid: 'height'},
+            {name: 'Weight', uid: 'weight'},
+          ]} />);
+        expect(getColumnWidths(tree)).toStrictEqual([225, 225, 225, 225]);
+        rerender(tree, <ControlledTable
+          columns={[
+            {name: 'Name', uid: 'name', width: '1fr'},
+            {name: 'Type', uid: 'type', width: '1fr'},
+            {name: 'Height', uid: 'height'},
+            {name: 'Weight', uid: 'weight'},
+            {name: 'Level', uid: 'level', width: '4fr'}
+          ]} />);
+        expect(getColumnWidths(tree)).toStrictEqual([113, 112, 113, 112, 450]);
+
+        resizeCol(tree, 'Type', 0);
+        expect(getColumnWidths(tree)).toStrictEqual([113, 112, 113, 112, 450]);
+      });
+
       it('can handle adding many columns with widths', function () {
         let tree = render(<ControlledTable
           columns={[
