@@ -39,7 +39,9 @@ const formPropNames = new Set([
   'encType',
   'method',
   'target',
-  'onSubmit'
+  'onSubmit',
+  'onReset',
+  'onInvalid'
 ]);
 
 function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {

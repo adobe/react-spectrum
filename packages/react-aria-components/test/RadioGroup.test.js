@@ -435,6 +435,7 @@ describe('RadioGroup', () => {
     expect(group).toHaveAttribute('aria-describedby');
     expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
     expect(group).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(radios[0]);
 
     await user.click(radios[0]);
     for (let input of radios) {

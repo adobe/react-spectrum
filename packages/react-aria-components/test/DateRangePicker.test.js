@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Button, CalendarCell, CalendarGrid, DateInput, DateRangePicker, DateRangePickerContext, DateSegment, Dialog, FieldError, Group, Heading, Label, Popover, RangeCalendar, Text} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
 import React from 'react';
@@ -229,8 +229,9 @@ describe('DateRangePicker', () => {
     let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
     expect(getDescription()).toContain('Constraints not satisfied');
     expect(datepicker).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-    await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+    await user.keyboard('[ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
     await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
 
     expect(getDescription()).toContain('Constraints not satisfied');

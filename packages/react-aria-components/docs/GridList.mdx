@@ -105,12 +105,6 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
   min-height: 100px;
   box-sizing: border-box;
 
-  &[data-empty] {
-    align-items: center;
-    justify-content: center;
-    font-style: italic;
-  }
-
   &[data-focus-visible] {
     border-color: var(--highlight-background);
     box-shadow: 0 0 0 1px var(--highlight-background);
@@ -161,6 +155,7 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
     .react-aria-Button:not([slot]) {
       margin-left: auto;
     }
+
     .react-aria-Button {
       background: transparent;
       border: none;
@@ -215,6 +210,7 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
       }
     }
   }
+
   :where(.react-aria-GridListItem) .react-aria-Checkbox {
     --selected-color: white;
     --selected-color-pressed: #ddd;
@@ -693,6 +689,21 @@ Use the `renderEmptyState` prop to customize what the `GridList` will display if
   {[]}
 </GridList>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-GridList {
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+}
+```
+
+</details>
 
 ## Drag and drop
 

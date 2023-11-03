@@ -116,8 +116,8 @@ describe('SearchField', () => {
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(document.activeElement).toBe(input);
 
-    await user.tab();
     await user.keyboard('Devon');
 
     expect(input).toHaveAttribute('aria-describedby');

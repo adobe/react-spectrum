@@ -9,12 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {CollectionBase} from '@react-types/shared';
+import {CollectionBase, Key} from '@react-types/shared';
 import {createPortal} from 'react-dom';
 import {forwardRefType, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -892,7 +892,7 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
-function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
+function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): React.JSX.Element | null {
   let children = useCollectionChildren(props);
   return useSSRCollectionNode('section', props, ref, null, children);
 }
@@ -904,7 +904,7 @@ export const CollectionContext = createContext<CachedChildrenOptions<unknown> | 
 export const CollectionRendererContext = createContext<CollectionProps<any>['children']>(null);
 
 /** A Collection renders a list of items, automatically managing caching and keys. */
-export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
+export function Collection<T extends object>(props: CollectionProps<T>): React.JSX.Element {
   let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
   let renderer = typeof props.children === 'function' ? props.children : null;

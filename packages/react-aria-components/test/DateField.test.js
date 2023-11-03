@@ -240,8 +240,9 @@ describe('DateField', () => {
     let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
     expect(getDescription()).toContain('Constraints not satisfied');
     expect(group).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-    await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+    await user.keyboard('[ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
 
     expect(getDescription()).toContain('Constraints not satisfied');
     expect(input.validity.valid).toBe(true);
