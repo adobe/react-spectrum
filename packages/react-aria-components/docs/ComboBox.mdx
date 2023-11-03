@@ -26,6 +26,7 @@ import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/P
 import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
 
 ---
 category: Pickers
@@ -74,6 +75,8 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
 @import './Checkbox.mdx' layer(checkbox);
 @import './ListBox.mdx' layer(listbox);
 @import './Popover.mdx' layer(popover);
+@import './Form.mdx' layer(form);
+@import './Button.mdx' layer(button);
 ```
 
 ```css
@@ -97,28 +100,26 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
     }
   }
 
-  .react-aria-Button {
-    background: slateblue;
-    color: white;
-    border-radius: 4px;
-    border: none;
-    appearance: none;
-    margin-left: -1.714rem;
-    width: 1.429rem;
-    height: 1.429rem;
-    padding: 0;
-    vertical-align: middle;
-    font-size: 0.857rem;
-    outline: none;
+    .react-aria-Button {
+      background: slateblue;
+      color: white;
+      border-radius: 4px;
+      border: none;
+      margin-left: -1.714rem;
+      width: 1.429rem;
+      height: 1.429rem;
+      padding: 0;
+      font-size: 0.857rem;
+    }
   }
-}
-@layer listbox {
-  .react-aria-ListBox {
-    display: block;
-    width: unset;
-    max-height: inherit;
-    min-height: unset;
-    border: none;
+
+  @layer listbox {
+    .react-aria-ListBox {
+      display: block;
+      width: unset;
+      max-height: inherit;
+      min-height: unset;
+      border: none;
 
     .react-aria-ListBoxItem {
       padding: 0.286rem 0.571rem 0.286rem 1.571rem;
@@ -150,6 +151,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
     }
   }
 }
+
 @layer popover {
   .react-aria-Popover {
     padding: 0px;
@@ -192,6 +194,7 @@ A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.
 * **Flexible** – Support for selecting pre-defined values, custom values, controlled and uncontrolled state, custom filter functions, async loading, disabled items, validation, and multiple menu trigger options.
 * **Keyboard navigation** – ComboBox can be opened and navigated using the arrow keys, along with page up/down, home/end, etc. The list of options is filtered while typing into the input, and items can be selected with the enter key.
 * **Accessible** – Follows the [ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/), with support for items and sections, and slots for label and description elements within each item. Custom localized announcements are included for option focusing, filtering, and selection using an ARIA live region to ensure announcements are clear and consistent.
+* **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors.
 * **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
 
 Read our [blog post](../blog/building-a-combobox.html) for more details about the interactions and accessibility features implemented by `ComboBox`.
@@ -210,14 +213,14 @@ to provide more context about the field, and any validation messages. These are 
 input via the `aria-describedby` attribute.
 
 ```tsx
-import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem, Section, Header, Text} from 'react-aria-components';
+import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem, Section, Header, Text, FieldError} from 'react-aria-components';
 
 <ComboBox>
   <Label />
   <Input />
   <Button />
   <Text slot="description" />
-  <Text slot="errorMessage" />
+  <FieldError />
   <Popover>
     <ListBox>
       <ListBoxItem>
@@ -254,6 +257,13 @@ identify it to assistive technology.
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
+</ExampleCard>
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
 </ExampleCard>
 
 </section>
@@ -309,16 +319,16 @@ A `ComboBox` uses the following components, which may also be used standalone or
 
 If you will use a ComboBox in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `ComboBox` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)). The `ListBoxItem` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
+This example wraps `ComboBox` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation). The `Item` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
 
 ```tsx example export=true
-import type {ComboBoxProps, ListBoxItemProps} from 'react-aria-components';
-import {Text} from 'react-aria-components';
+import type {ComboBoxProps, ListBoxItemProps, ValidationResult} from 'react-aria-components';
+import {Text, FieldError} from 'react-aria-components';
 
 interface MyComboBoxProps<T extends object> extends Omit<ComboBoxProps<T>, 'children'> {
   label?: string,
   description?: string | null,
-  errorMessage?: string | null,
+  errorMessage?: string | ((validation: ValidationResult) => string),
   children: React.ReactNode | ((item: T) => React.ReactNode)
 }
 
@@ -331,7 +341,7 @@ function MyComboBox<T extends object>({label, description, errorMessage, childre
         <Button>▼</Button>
       </div>
       {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      <FieldError>{errorMessage}</FieldError>
       <Popover>
         <ListBox>
           {children}
@@ -998,49 +1008,40 @@ receiving keyboard focus as shown in the example below. Note that you are respon
 </MyComboBox>
 ```
 
-## Help text
+## Validation
 
-The `description` slot can be used to associate additional help text with a ComboBox. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the ComboBox as invalid for assistive technologies.
+ComboBox supports the `isRequired` prop to ensure the user enters a value, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+To display validation errors, add a `<FieldError>` element as a child of the ComboBox. This allows you to render error messages from all of the above sources with consistent custom styles.
 
 ```tsx example
-function Example() {
-  let [animalId, setAnimalId] = React.useState<Key | null>(null);
-  let options = [
-    { id: 1, name: 'Aardvark' },
-    { id: 2, name: 'Cat' },
-    { id: 3, name: 'Dog' },
-    { id: 4, name: 'Kangaroo' },
-    { id: 5, name: 'Koala' },
-    { id: 6, name: 'Penguin' },
-    { id: 7, name: 'Snake' },
-    { id: 8, name: 'Turtle' },
-    { id: 9, name: 'Wombat' }
-  ];
-  let isValid = React.useMemo(() => animalId !== 2 && animalId !== 7, [
-    animalId
-  ]);
+import {Form, FieldError} from 'react-aria-components';
 
-  return (
-    <ComboBox selectedKey={animalId} onSelectionChange={setAnimalId} isInvalid={animalId && !isValid}>
-      <Label>Favorite Animal</Label>
-      <div>
-        <Input />
-        <Button>▼</Button>
-      </div>
-      {/*- begin highlight -*/}
-      {isValid && <Text slot="description">Pick your favorite animal, you will be judged.</Text>}
-      {!isValid && <Text slot="errorMessage">{animalId === 2
-        ? 'The author of this example is a dog person.'
-        : "Oh no it's a snake! Choose anything else."}</Text>}
-      {/*- end highlight -*/}
-      <Popover>
-        <ListBox items={options}>
-          {item => <ListBoxItem>{item.name}</ListBoxItem>}
-        </ListBox>
-      </Popover>
-    </ComboBox>
-  );
-}
+<Form>
+  {/*- begin highlight -*/}
+  <ComboBox name="animal" isRequired>
+  {/*- end highlight -*/}
+    <Label>Favorite Animal</Label>
+    <div>
+      <Input />
+      <Button>▼</Button>
+    </div>
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+    <Popover>
+      <ListBox>
+        <ListBoxItem>Aardvark</ListBoxItem>
+        <ListBoxItem>Cat</ListBoxItem>
+        <ListBoxItem>Dog</ListBoxItem>
+        <ListBoxItem>Kangaroo</ListBoxItem>
+        <ListBoxItem>Panda</ListBoxItem>
+        <ListBoxItem>Snake</ListBoxItem>
+      </ListBox>
+    </Popover>
+  </ComboBox>
+  <Button type="submit">Submit</Button>
+</Form>
 ```
 
 <details>
@@ -1057,20 +1058,57 @@ function Example() {
     }
   }
 
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
+  .react-aria-FieldError {
     font-size: 12px;
     color: var(--spectrum-global-color-red-600);
   }
-}
-@media (forced-colors: active) {
-  .react-aria-ComboBox {
-    [slot=errorMessage] {
+
+  @media (forced-colors: active) {
+    .react-aria-FieldError {
       color: LinkText;
     }
+  }
+}
+```
+
+</details>
+
+By default, `FieldError` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
+### Description
+
+The `description` slot can be used to associate additional help text with a ComboBox.
+
+```tsx example
+<ComboBox>
+  <Label>Favorite Animal</Label>
+  <div>
+    <Input />
+    <Button>▼</Button>
+  </div>
+  {/*- begin highlight -*/}
+  <Text slot="description">Please select an animal.</Text>
+  {/*- end highlight -*/}
+  <Popover>
+    <ListBox>
+      <ListBoxItem>Aardvark</ListBoxItem>
+      <ListBoxItem>Cat</ListBoxItem>
+      <ListBoxItem>Dog</ListBoxItem>
+      <ListBoxItem>Kangaroo</ListBoxItem>
+      <ListBoxItem>Panda</ListBoxItem>
+      <ListBoxItem>Snake</ListBoxItem>
+    </ListBox>
+  </Popover>
+</ComboBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ComboBox {
+  [slot=description] {
+    font-size: 12px;
   }
 }
 ```
@@ -1147,6 +1185,17 @@ A `<ListBoxItem>` defines a single option within a `<ListBox>`. If the `children
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
 <PropTable component={docs.exports.ListBoxItem} links={docs.links} />
+
+</details>
+
+### FieldError
+
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.FieldError} links={docs.links} />
 
 </details>
 
@@ -1262,6 +1311,12 @@ Note that items may not contain interactive children such as buttons, as screen 
 ### Text
 
 The help text elements within a `ComboBox` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
+### FieldError
+
+A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, or by overriding with a custom `className`. It supports the following render props:
+
+<StateTable properties={docs.exports.FieldErrorRenderProps.properties} />
 
 ## Advanced customization
 

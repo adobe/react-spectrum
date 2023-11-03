@@ -351,6 +351,35 @@ function AsyncLoadingExample() {
 }
 ```
 
+## Validation
+
+Picker supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically.
+
+```tsx example
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <Picker label="Favorite animal" name="animal" isRequired>
+  {/*- end highlight -*/}
+    <Item>Aardvark</Item>
+    <Item>Cat</Item>
+    <Item>Dog</Item>
+    <Item>Kangaroo</Item>
+    <Item>Panda</Item>
+    <Item>Snake</Item>
+  </Picker>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+By default, `Picker` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
 ## Props
 
 <PropTable component={docs.exports.Picker} links={docs.links} />

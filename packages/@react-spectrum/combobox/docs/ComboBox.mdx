@@ -659,41 +659,33 @@ function AsyncLoadingExample() {
 ```
 
 ## Validation
-ComboBox can display a validation state to communicate to the user whether the current value is valid or invalid.
-Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the ComboBox via the `validationState` prop.
 
-The example below illustrates how one would validate if the user has entered a valid email into the ComboBox.
+ComboBox supports the `isRequired` prop to ensure the user enters a value, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the combo box or submits the form.
+
 ```tsx example
-function Example() {
-  let [value, setValue] = React.useState('me@email.com');
-  let isValid = React.useMemo(() => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value), [value]);
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 
-  let options = [
-    {id: 1, email: 'fake@email.com'},
-    {id: 2, email: 'anotherfake@email.com'},
-    {id: 3, email: 'bob@email.com'},
-    {id: 4, email: 'joe@email.com'},
-    {id: 5, email: 'yourEmail@email.com'},
-    {id: 6, email: 'valid@email.com'},
-    {id: 7, email: 'spam@email.com'},
-    {id: 8, email: 'newsletter@email.com'},
-    {id: 9, email: 'subscribe@email.com'}
-  ];
-
-  return (
-    <ComboBox
-      width="size-3000"
-      label="To:"
-      validationState={isValid ? 'valid' : 'invalid'}
-      defaultItems={options}
-      inputValue={value}
-      onInputChange={setValue}
-      allowsCustomValue>
-      {item => <Item>{item.email}</Item>}
-    </ComboBox>
-  );
-}
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <ComboBox label="Favorite animal" name="animal" isRequired>
+  {/*- end highlight -*/}
+    <Item>Aardvark</Item>
+    <Item>Cat</Item>
+    <Item>Dog</Item>
+    <Item>Kangaroo</Item>
+    <Item>Panda</Item>
+    <Item>Snake</Item>
+  </ComboBox>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `ComboBox` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## Custom Filtering
 By default, ComboBox uses a string "contains" filtering strategy when deciding what items to display in the dropdown menu. This filtering strategy can be overwritten

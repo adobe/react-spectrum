@@ -20,6 +20,7 @@ import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 import Input from '@react-spectrum/docs/pages/assets/component-illustrations/Input.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
 
 ---
 category: Forms
@@ -53,6 +54,7 @@ import {TextField, Label, Input} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
 @import './Button.mdx' layer(button);
+@import './Form.mdx' layer(form);
 ```
 
 ```css
@@ -112,7 +114,7 @@ but you must manually ensure that they are semantically connected via ids for ac
 allowing for custom styling.
 
 * **Accessible** – Uses a native `<input>` element. Label, description, and error message elements are automatically associated with the field.
-* **Custom validation** – Required and invalid states are exposed to assistive technology via ARIA.
+* **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors.
 
 ## Anatomy
 
@@ -127,18 +129,33 @@ to provide more context about the field, and any validation messages. These are 
 input via the `aria-describedby` attribute.
 
 ```tsx
-import {TextField, Label, Input, Button, Text} from 'react-aria-components';
+import {TextField, Label, Input, FieldError, Text} from 'react-aria-components';
 
 <TextField>
   <Label />
   <Input />
   <Text slot="description" />
-  <Text slot="errorMessage" />
+  <FieldError />
 </TextField>
 ```
 
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
+
+### Concepts
+
+`TextField` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
+</ExampleCard>
+
+</section>
 
 ### Composed components
 
@@ -166,16 +183,16 @@ A `TextField` uses the following components, which may also be used standalone o
 
 If you will use a TextField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `TextField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#description)).
+This example wraps `TextField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation).
 
 ```tsx example export=true
-import type {TextFieldProps} from 'react-aria-components';
-import {Text} from 'react-aria-components';
+import type {TextFieldProps, ValidationResult} from 'react-aria-components';
+import {Text, FieldError} from 'react-aria-components';
 
 interface MyTextFieldProps extends TextFieldProps {
   label?: string,
   description?: string,
-  errorMessage?: string
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 function MyTextField({label, description, errorMessage, ...props}: MyTextFieldProps) {
@@ -184,7 +201,7 @@ function MyTextField({label, description, errorMessage, ...props}: MyTextFieldPr
       <Label>{label}</Label>
       <Input />
       {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      <FieldError>{errorMessage}</FieldError>
     </TextField>
   );
 }
@@ -231,6 +248,56 @@ TextField supports the `name` prop for integration with HTML forms. In addition,
 
 ## Validation
 
+TextField supports HTML constraint validation props such as `isRequired`, `type="email"`, `minLength`, and `pattern`, as well as custom validation functions, realtime validation, and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+To display validation errors, add a `<FieldError>` element as a child of the TextField. This allows you to render error messages from all of the above sources with consistent custom styles.
+
+```tsx example
+import {Form, FieldError, Button} from 'react-aria-components';
+
+<Form>
+  {/*- begin highlight -*/}
+  <TextField name="email" type="email" isRequired>
+  {/*- end highlight -*/}
+    <Label>Email</Label>
+    <Input />
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+  </TextField>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TextField {
+  .react-aria-Input,
+  .react-aria-TextArea {
+    &[data-invalid] {
+      border-color: var(--invalid-color);
+
+      &[data-focused] {
+        outline: none;
+        border-color: var(--focus-ring-color);
+        box-shadow: 0 0 0 1px var(--focus-ring-color);
+      }
+    }
+  }
+
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+```
+
+</details>
+
+By default, `FieldError` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
 ### Description
 
 The `description` slot can be used to associate additional help text with a text field.
@@ -250,55 +317,13 @@ The `description` slot can be used to associate additional help text with a text
 
 ```css
 .react-aria-TextField {
-
-  .react-aria-Input,
-  .react-aria-TextArea {
-    &[data-invalid] {
-      border-color: var(--invalid-color);
-
-      &[data-focused] {
-        outline: none;
-        border-color: var(--focus-ring-color);
-        box-shadow: 0 0 0 1px var(--focus-ring-color);
-      }
-    }
-  }
-
   [slot=description] {
     font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--invalid-color);
   }
 }
 ```
 
 </details>
-
-### Error message
-
-The `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to
-semantically mark the input element as invalid for assistive technologies.
-
-```tsx example
-<TextField isInvalid>
-  <Label>Email</Label>
-  <Input />
-  {/*- begin highlight -*/}
-  <Text slot="errorMessage">Please enter a valid email address.</Text>
-  {/*- end highlight -*/}
-</TextField>
-```
-
-### Required
-
-A TextField can be marked as required using the `isRequired` prop. This is exposed to assistive technologies by React Aria. It's your responsibility to add additional visual styling if needed.
-
-```tsx example
-<MyTextField label="Email" isRequired />
-```
 
 ## Disabled
 
@@ -368,6 +393,17 @@ A `<TextArea>` accepts all HTML attributes.
 
 `<Text>` accepts all HTML attributes.
 
+### FieldError
+
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.FieldError} links={docs.links} />
+
+</details>
+
 ## Styling
 
 React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
@@ -423,6 +459,12 @@ A `TextArea` can be targeted with the `.react-aria-TextArea` CSS selector, or by
 ### Text
 
 The help text elements within a `TextField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
+### FieldError
+
+A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, or by overriding with a custom `className`. It supports the following render props:
+
+<StateTable properties={docs.exports.FieldErrorRenderProps.properties} />
 
 ## Advanced customization
 
