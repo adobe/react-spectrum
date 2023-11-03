@@ -152,6 +152,83 @@ To provide validation errors, the `validationErrors` prop should be set to an ob
 
 See the [Forms](forms.html) guide to learn more about form validation in React Aria, including client-side validation, and integration with other frameworks and libraries.
 
+### Focus management
+
+By default, after a user submits a form with validation errors, the first invalid field will be focused. You can prevent this by calling `preventDefault` during the `onInvalid` event, and move focus yourself. This example shows how to move focus to an [alert](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/alert_role) element at the top of a form.
+
+```tsx example
+function Example() {
+  let [isInvalid, setInvalid] = React.useState(false);
+
+  return (
+    <Form
+      /*- begin highlight -*/
+      onInvalid={e => {
+        e.preventDefault();
+        setInvalid(true);
+      }}
+      /*- end highlight -*/
+      onSubmit={e => {
+        e.preventDefault();
+        setInvalid(false);
+      }}
+      onReset={() => setInvalid(false)}>
+      {isInvalid &&
+        /*- begin highlight -*/
+        <div role="alert" tabIndex={-1} ref={e => e?.focus()}>
+        {/*- end highlight -*/}
+          <h3>Unable to submit</h3>
+          <p>Please fix the validation errors below, and re-submit the form.</p>
+        </div>
+      }
+      <TextField name="firstName" isRequired>
+        <Label>First Name</Label>
+        <Input />
+        <FieldError />
+      </TextField>
+      <TextField name="lastName" isRequired>
+        <Label>Last Name</Label>
+        <Input />
+        <FieldError />
+      </TextField>
+      <div style={{display: 'flex', gap: 8}}>
+        <Button type="submit">Submit</Button>
+        <Button type="reset">Reset</Button>
+      </div>
+    </Form>
+  );
+}
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Form [role=alert] {
+  border: 2px solid var(--spectrum-red-800);
+  background: var(--spectrum-gray-50);
+  border-radius: 6px;
+  padding: 12px;
+  max-width: 250px;
+  outline: none;
+
+  &:focus-visible {
+    outline: 2px solid slateblue;
+    outline-offset: 2px;
+  }
+
+  h3 {
+    margin-top: 0;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+}
+```
+
+</details>
+
 ## Props
 
 <PropTable component={docs.exports.Form} links={docs.links} />
