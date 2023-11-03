@@ -126,7 +126,7 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
 
   return (
     <Overlay isExiting={isExiting}>
-      {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
+      {!props.isNonModal && state.isOpen && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
         {...mergeProps(filterDOMProps(props as any), popoverProps)}
         {...renderProps}
