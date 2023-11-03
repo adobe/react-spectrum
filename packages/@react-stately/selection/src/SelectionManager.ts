@@ -11,10 +11,10 @@
  */
 
 import {
-  Collection,
-  DisabledBehavior,
+  Collection, DisabledBehavior,
   FocusStrategy,
   Selection as ISelection,
+  Key,
   LongPressEvent,
   Node,
   PressEvent,
@@ -22,7 +22,6 @@ import {
   SelectionMode
 } from '@react-types/shared';
 import {compareNodeOrder, getChildNodes, getFirstItem} from '@react-stately/collections';
-import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 

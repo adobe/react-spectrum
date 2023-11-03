@@ -83,11 +83,6 @@ import {Button} from 'react-aria-components';
     border-color: var(--focus-ring-color);
     box-shadow: 0 0 0 1px var(--focus-ring-color);
   }
-
-  &[data-disabled]{
-    border-color: var(--border-color-disabled);
-    color: var(--text-color-disabled);
-  }
 }
 
 @media (forced-colors: active) {
@@ -158,6 +153,20 @@ A `Button` can be disabled using the `isDisabled` prop.
 ```tsx example
 <Button isDisabled>Pin</Button>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Button {
+  &[data-disabled]{
+    border-color: var(--border-color-disabled);
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
 
 ## Link buttons
 

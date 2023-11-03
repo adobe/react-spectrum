@@ -12,14 +12,14 @@
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
 import {ButtonContext} from './Button';
-import {CollectionDocumentContext, CollectionProps, ItemProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
+import {CollectionDocumentContext, CollectionProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
+import {Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
-import {LinkDOMProps} from '@react-types/shared';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps {}
@@ -196,7 +196,7 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps {
   textValue?: string
 }
 
-function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): React.JSX.Element | null {
   return useSSRCollectionNode('item', props, ref, props.children);
 }
 
@@ -216,7 +216,7 @@ function TagItem({item}) {
     isDisabled: !states.allowsSelection
   });
 
-  let props: ItemProps<unknown> = item.props;
+  let props: TagProps = item.props;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -250,7 +250,7 @@ function TagItem({item}) {
       data-pressed={states.isPressed || undefined}
       data-allows-removing={states.allowsRemoving || undefined}
       data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
-      <div {...gridCellProps}>
+      <div {...gridCellProps} style={{display: 'contents'}}>
         <Provider
           values={[
             [ButtonContext, {

@@ -11,6 +11,8 @@
  */
 
 import {act, fireEvent, pointerMap, render as render_, within} from '@react-spectrum/test-utils';
+import {Button} from '@react-spectrum/button';
+import {Form} from '@react-spectrum/form';
 import {parseZonedDateTime, Time} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -275,6 +277,262 @@ describe('TimeField', function () {
       await user.click(button);
       expect(getDescription()).toBe('Selected Time: 8:30 AM');
       expect(input).toHaveValue('08:30:00');
+    });
+
+    describe('validation', () => {
+      describe('validationBehavior=native', () => {
+        it('supports isRequired', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <TimeField label="Date" name="date" isRequired validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          expect(input).toHaveAttribute('required');
+          expect(input.validity.valid).toBe(false);
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Constraints not satisfied');
+
+          await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+
+          expect(getDescription()).toContain('Constraints not satisfied');
+          expect(input.validity.valid).toBe(true);
+
+          await user.tab();
+
+          expect(getDescription()).not.toContain('Constraints not satisfied');
+        });
+
+        it('supports minValue and maxValue', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <TimeField label="Date" name="date" minValue={new Time(9)} maxValue={new Time(17)} defaultValue={new Time(8)} validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(input.validity.valid).toBe(false);
+          expect(getDescription()).not.toContain('Value must be 9:00 AM or later.');
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(getDescription()).toContain('Value must be 9:00 AM or later.');
+
+          await user.keyboard('[Tab][ArrowUp]');
+
+          expect(getDescription()).toContain('Value must be 9:00 AM or later.');
+          expect(input.validity.valid).toBe(true);
+
+          await user.tab({shift: true});
+          expect(getDescription()).not.toContain('Value must be 9:00 AM or later.');
+
+          await user.tab();
+          await user.keyboard('6[Tab][ArrowUp]');
+          expect(getDescription()).not.toContain('Value must be 5:00 AM or earlier.');
+          expect(input.validity.valid).toBe(false);
+          await user.tab();
+
+          act(() => {getByTestId('form').checkValidity();});
+          expect(getDescription()).toContain('Value must be 5:00 PM or earlier.');
+
+          await user.tab();
+          await user.keyboard('[ArrowDown]');
+          expect(getDescription()).toContain('Value must be 5:00 PM or earlier.');
+          expect(input.validity.valid).toBe(true);
+          act(() => document.activeElement.blur());
+
+          expect(getDescription()).not.toContain('Value must be 5:00 PM or earlier.');
+        });
+
+        it('supports validate function', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <TimeField name="date" label="Value" defaultValue={new Time(8)} validationBehavior="native" validate={v => v.hour < 9 ? 'Invalid value' : null} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).not.toContain('Invalid value');
+          expect(input.validity.valid).toBe(false);
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(getDescription()).toContain('Invalid value');
+
+          await user.keyboard('[Tab]10');
+
+          expect(getDescription()).toContain('Invalid value');
+          expect(input.validity.valid).toBe(true);
+
+          act(() => document.activeElement.blur());
+
+          expect(getDescription()).not.toContain('Invalid value');
+          expect(input.validity.valid).toBe(true);
+        });
+
+        it('supports server validation', async () => {
+          function Test() {
+            let [serverErrors, setServerErrors] = React.useState({});
+            let onSubmit = e => {
+              e.preventDefault();
+              setServerErrors({
+                date: 'Invalid value'
+              });
+            };
+
+            return (
+              <Provider theme={theme}>
+                <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                  <TimeField name="date" label="Value" defaultValue={new Time(9)} validationBehavior="native" />
+                  <Button type="submit" data-testid="submit">Submit</Button>
+                </Form>
+              </Provider>
+            );
+          }
+
+          let {getByTestId, getByRole} = render(<Test />);
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).not.toContain('Invalid value');
+
+          await user.click(getByTestId('submit'));
+
+          expect(getDescription()).toContain('Invalid value');
+          expect(input.validity.valid).toBe(false);
+
+          await user.tab({shift: true});
+          await user.keyboard('[ArrowUp][Tab]');
+
+          expect(getDescription()).not.toContain('Invalid value');
+          expect(input.validity.valid).toBe(true);
+        });
+
+        it('supports customizing native error messages', async () => {
+          let {getByTestId, getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <TimeField name="date" label="Value" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          act(() => {getByTestId('form').checkValidity();});
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+        });
+
+        it('clears validation on form reset', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <TimeField label="Date" name="date" isRequired validationBehavior="native" />
+                <Button type="reset" data-testid="reset">Reset</Button>
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=date]');
+          expect(input).toHaveAttribute('required');
+          expect(input.validity.valid).toBe(false);
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Constraints not satisfied');
+
+          await user.click(getByTestId('reset'));
+
+          expect(group).not.toHaveAttribute('aria-describedby');
+        });
+      });
+
+      describe('validationBehavior=aria', () => {
+        it('supports minValue and maxValue', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <TimeField label="Date" name="date" minValue={new Time(9)} maxValue={new Time(17)} defaultValue={new Time(8)} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Value must be 9:00 AM or later.');
+
+          await user.keyboard('[Tab][ArrowUp]');
+          expect(getDescription()).not.toContain('Value must be 9:00 AM or later');
+
+          await user.keyboard('6[Tab][ArrowUp]');
+          expect(getDescription()).toContain('Value must be 5:00 PM or earlier');
+
+          await user.keyboard('[Tab][Tab][ArrowDown]');
+          expect(getDescription()).not.toContain('Value must be 5:00 PM or earlier');
+        });
+
+        it('supports validate function', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <TimeField label="Value" defaultValue={new Time(8)} validate={v => v.hour < 9 ? 'Invalid value' : null} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Invalid value');
+
+          await user.keyboard('[Tab]10');
+          expect(getDescription()).not.toContain('Invalid value');
+        });
+
+        it('supports server validation', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form validationErrors={{value: 'Invalid value'}}>
+                <TimeField label="Value" name="value" defaultValue={new Time(9)} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Invalid value');
+
+          await user.keyboard('[Tab][ArrowUp][Tab][Tab][Tab]');
+          expect(getDescription()).not.toContain('Invalid value');
+        });
+      });
     });
   });
 });

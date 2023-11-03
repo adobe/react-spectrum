@@ -64,7 +64,7 @@ export class SyntheticFocusEvent<Target = Element> implements ReactFocusEvent<Ta
 export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEvent<Target>) => void) {
   let stateRef = useRef({
     isFocused: false,
-    observer: null as MutationObserver
+    observer: null as MutationObserver | null
   });
 
   // Clean up MutationObserver on unmount. See below.
@@ -98,12 +98,12 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
       stateRef.current.isFocused = true;
 
       let target = e.target;
-      let onBlurHandler = (e: FocusEvent) => {
+      let onBlurHandler: EventListenerOrEventListenerObject | null = (e) => {
         stateRef.current.isFocused = false;
 
         if (target.disabled) {
           // For backward compatibility, dispatch a (fake) React synthetic event.
-          dispatchBlur(new SyntheticFocusEvent('blur', e));
+          dispatchBlur(new SyntheticFocusEvent('blur', e as FocusEvent));
         }
 
         // We no longer need the MutationObserver once the target is blurred.
@@ -117,7 +117,7 @@ export function useSyntheticBlurEvent<Target = Element>(onBlur: (e: ReactFocusEv
 
       stateRef.current.observer = new MutationObserver(() => {
         if (stateRef.current.isFocused && target.disabled) {
-          stateRef.current.observer.disconnect();
+          stateRef.current.observer?.disconnect();
           let relatedTargetEl = target === document.activeElement ? null : document.activeElement;
           target.dispatchEvent(new FocusEvent('blur', {relatedTarget: relatedTargetEl}));
           target.dispatchEvent(new FocusEvent('focusout', {bubbles: true, relatedTarget: relatedTargetEl}));

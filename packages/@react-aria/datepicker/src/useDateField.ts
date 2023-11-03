@@ -13,23 +13,24 @@
 import {AriaDateFieldProps as AriaDateFieldPropsBase, AriaTimeFieldProps, DateValue, TimeValue} from '@react-types/datepicker';
 import {createFocusManager, FocusManager} from '@react-aria/focus';
 import {DateFieldState, TimeFieldState} from '@react-stately/datepicker';
-import {DOMAttributes, GroupDOMAttributes, KeyboardEvent} from '@react-types/shared';
+import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useFormReset} from '@react-aria/utils';
-import {FocusEvent, InputHTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
+import {InputHTMLAttributes, RefObject, useEffect, useMemo, useRef} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
+import {useFormValidation} from '@react-aria/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 // Allows this hook to also be used with TimeField
-export interface AriaDateFieldOptions<T extends DateValue> extends Omit<AriaDateFieldPropsBase<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue'> {
+export interface AriaDateFieldOptions<T extends DateValue> extends Omit<AriaDateFieldPropsBase<T>, 'value' | 'defaultValue' | 'onChange' | 'minValue' | 'maxValue' | 'placeholderValue' | 'validate'> {
   /** A ref for the hidden input element for HTML form submission. */
   inputRef?: RefObject<HTMLInputElement>
 }
 
-export interface DateFieldAria {
+export interface DateFieldAria extends ValidationResult {
    /** Props for the field's visible label element, if any. */
   labelProps: DOMAttributes,
    /** Props for the field grouping element. */
@@ -63,21 +64,28 @@ export const focusManagerSymbol = '__focusManager_' + Date.now();
  * Each part of a date value is displayed in an individually editable segment.
  */
 export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>, state: DateFieldState, ref: RefObject<Element>): DateFieldAria {
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    labelElementType: 'span'
+    labelElementType: 'span',
+    isInvalid,
+    errorMessage: props.errorMessage || validationErrors
   });
 
+  let valueOnFocus = useRef<DateValue | null>(null);
   let {focusWithinProps} = useFocusWithin({
     ...props,
-    onBlurWithin: (e: FocusEvent) => {
-      state.confirmPlaceholder();
-
-      if (props.onBlur) {
-        props.onBlur(e);
-      }
+    onFocusWithin(e) {
+      valueOnFocus.current = state.value;
+      props.onFocus?.(e);
     },
-    onFocusWithin: props.onFocus,
+    onBlurWithin: (e) => {
+      state.confirmPlaceholder();
+      if (state.value !== valueOnFocus.current) {
+        state.commitValidation();
+      }
+      props.onBlur?.(e);
+    },
     onFocusWithinChange: props.onFocusChange
   });
 
@@ -131,6 +139,23 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   }, [focusManager]);
 
   useFormReset(props.inputRef, state.value, state.setValue);
+  useFormValidation(props, state, props.inputRef);
+
+  let inputProps: InputHTMLAttributes<HTMLInputElement> = {
+    type: 'hidden',
+    name: props.name,
+    value: state.value?.toString() || ''
+  };
+
+  if (props.validationBehavior === 'native') {
+    // Use a hidden <input type="text"> rather than <input type="hidden">
+    // so that an empty value blocks HTML form submission when the field is required.
+    inputProps.type = 'text';
+    inputProps.hidden = true;
+    inputProps.required = props.isRequired;
+    // Ignore react warning.
+    inputProps.onChange = () => {};
+  }
 
   let domProps = filterDOMProps(props);
   return {
@@ -152,13 +177,12 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
         }
       }
     }),
-    inputProps: {
-      type: 'hidden',
-      name: props.name,
-      value: state.value?.toString() || ''
-    },
+    inputProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }
 

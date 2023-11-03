@@ -28,7 +28,7 @@ export const HoverDisabling = {
 function Button(props: AriaButtonProps) {
   let {children, isDisabled} = props;
 
-  let buttonRef = useRef();
+  let buttonRef = useRef(null);
 
   let {buttonProps} = useButton(props, buttonRef);
   let {hoverProps, isHovered} = useHover({isDisabled});

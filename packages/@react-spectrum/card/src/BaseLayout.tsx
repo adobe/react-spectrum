@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
+import {Direction, Key, KeyboardDelegate, Node} from '@react-types/shared';
 import {getChildNodes, getFirstItem} from '@react-stately/collections';
 import {GridCollection} from '@react-stately/grid';
 import {InvalidationContext, Layout, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import {Key} from 'react';
 import {Scale} from '@react-types/provider';
 
 export interface BaseLayoutOptions {

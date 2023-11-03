@@ -20,6 +20,7 @@ import Anatomy from '@react-aria/dialog/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 
 ---
@@ -50,7 +51,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
     <Dialog>
       {({close}) => (
         <form>
-          <Heading>Sign up</Heading>
+          <Heading slot="title">Sign up</Heading>
           <TextField autoFocus>
             <Label>First Name</Label>
             <Input />
@@ -71,6 +72,12 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './TextField.mdx' layer(textfield);
+@import './Popover.mdx' layer(popover);
+@import './Modal.mdx' layer(modal);
+```
 
 ```css
 .react-aria-Dialog {
@@ -84,104 +91,6 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   .react-aria-Button {
     margin-top: 20px;
     margin-right: 8px;
-  }
-}
-
-.react-aria-ModalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: var(--visual-viewport-height);
-  width: 100vw;
-  background: rgba(0 0 0 / .5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &[data-entering] {
-    animation: fade 200ms;
-  }
-
-  &[data-exiting] {
-    animation: fade 150ms reverse ease-in;
-  }
-}
-
-.react-aria-Modal {
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--page-background);
-  border: 1px solid var(--spectrum-global-color-gray-300);
-  outline: none;
-  padding: 30px;
-  max-width: 250px;
-
-  &[data-entering] {
-    animation: zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-}
-
-@keyframes fade {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes zoom {
-  from {
-    transform: scale(0.8);
-  }
-
-  to {
-    transform: scale(1);
-  }
-}
-
-.react-aria-Button {
-  background: var(--spectrum-global-color-gray-50);
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  border-radius: 4px;
-  color: var(--spectrum-alias-text-color);
-  appearance: none;
-  vertical-align: middle;
-  font-family: system-ui;
-  font-size: 1rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-  padding: 6px 10px;
-  transition: border-color 200ms;
-
-  &[data-hovered] {
-    border-color: var(--spectrum-global-color-gray-500);
-  }
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--spectrum-global-color-gray-100);
-    border-color: var(--spectrum-global-color-gray-600);
-  }
-
-  &[data-focus-visible] {
-    border-color: slateblue;
-    box-shadow: 0 0 0 1px slateblue;
-  }
-}
-
-.react-aria-TextField {
-  margin-bottom: 8px;
-
-  .react-aria-Label {
-    display: inline-block;
-    width: 5.357rem;
-  }
-
-  .react-aria-Input {
-    font-size: 16px;
   }
 }
 ```
@@ -212,13 +121,17 @@ import {DialogTrigger, Modal, Dialog, Button, Heading} from 'react-aria-componen
   <Button />
   <Modal>
     <Dialog>
-      <Heading />
+      <Heading slot="title" />
     </Dialog>
   </Modal>
 </DialogTrigger>
 ```
 
 If a dialog does not have a visible heading element, an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive technology.
+
+## Examples
+
+<ExampleList tag="dialog" />
 
 ## Popover
 
@@ -231,98 +144,15 @@ import {Popover, OverlayArrow} from 'react-aria-components';
   <Button aria-label="Help">ⓘ</Button>
   <Popover>
     <OverlayArrow>
-      <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+      <svg width={12} height={12} viewBox="0 0 12 12"><path d="M0 0 L6 6 L12 0" /></svg>
     </OverlayArrow>
     <Dialog>
-      <Heading>Help</Heading>
+      <Heading slot="title">Help</Heading>
       <p>For help accessing your account, please contact support.</p>
     </Dialog>
   </Popover>
 </DialogTrigger>
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-Popover {
-  --background-color: var(--page-background);
-  --border-color: var(--spectrum-global-color-gray-400);
-
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-  padding: 30px;
-  max-width: 250px;
-
-  & .react-aria-OverlayArrow svg {
-    display: block;
-    fill: var(--background-color);
-    stroke: var(--border-color);
-    stroke-width: 1px;
-  }
-
-  &[data-placement=top] {
-    margin-bottom: 6px;
-    --origin: translateY(8px);
-  }
-
-  &[data-placement=bottom] {
-    margin-top: 6px;
-    --origin: translateY(-8px);
-    & .react-aria-OverlayArrow svg {
-      transform: rotate(180deg);
-    }
-  }
-
-  &[data-placement=right] {
-    margin-left: 6px;
-    --origin: translateX(-8px);
-    & .react-aria-OverlayArrow svg {
-      transform: rotate(90deg);
-    }
-  }
-
-  &[data-placement=left] {
-    margin-right: 6px;
-    --origin: translateX(8px);
-    & .react-aria-OverlayArrow svg {
-      transform: rotate(-90deg);
-    }
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Popover {
-    --background-color: Canvas;
-    --border-color: ButtonBorder;
-  }
-}
-```
-
-</details>
 
 ## Alert dialog
 
@@ -335,7 +165,7 @@ Alert dialogs are a special type of dialog meant to present a prompt that the us
     <Dialog role="alertdialog">
       {({close}) => (
         <>
-          <Heading>Delete file</Heading>
+          <Heading slot="title">Delete file</Heading>
           <p>This will permanently delete the selected file. Continue?</p>
           <div>
             <Button onPress={close}>Cancel</Button>
@@ -458,7 +288,7 @@ function CloseButton() {
   <Button>About</Button>
   <Modal isDismissable>
     <Dialog>
-      <Heading>About</Heading>
+      <Heading slot="title">About</Heading>
       <p>Copyright © 2023 Adobe. All rights reserved.</p>
       {/*- begin highlight -*/}
       <CloseButton />
