@@ -46,7 +46,7 @@ export interface RadioGroupState extends FormValidationState {
   readonly selectedValue: string | null,
 
   /** Sets the selected value. */
-  setSelectedValue(value: string | null | undefined): void,
+  setSelectedValue(value: string | null): void,
 
   /** The value of the last focused radio. */
   readonly lastFocusedValue: string | null,
