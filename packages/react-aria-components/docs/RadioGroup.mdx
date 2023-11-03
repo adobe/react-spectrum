@@ -59,26 +59,6 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
 
 ```css
 .react-aria-RadioGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  &[data-orientation=horizontal] {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  & [slot=description] {
-    font-size: 12px;
-  }
-
-  & [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
-  }
-}
-
-.react-aria-Radio {
   --label-color: var(--spectrum-alias-text-color);
   --deselected-color: gray;
   --deselected-color-pressed: dimgray;
@@ -88,6 +68,12 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
   --invalid-color: var(--spectrum-global-color-red-600);
   --invalid-color-pressed: var(--spectrum-global-color-red-700);
 
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.react-aria-Radio {
   display: flex;
   align-items: center;
   gap: 0.571rem;
@@ -121,27 +107,13 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
     }
   }
 
-  &[data-invalid] {
-    &:before {
-      border-color: var(--invalid-color);
-    }
-
-    &[data-pressed]:before {
-      border-color: var(--invalid-color-pressed);
-    }
-  }
-
   &[data-focus-visible]:before {
     box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
   }
 }
 
 @media (forced-colors: active) {
-  .react-aria-Radio {
+  .react-aria-RadioGroup {
     forced-color-adjust: none;
 
     --label-color: ButtonText;
@@ -153,13 +125,6 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
     --invalid-color: LinkText;
     --invalid-color-pressed: LinkText;
     --spectrum-alias-background-color-default: Canvas;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
-      --label-color: GrayText;
-    }
   }
 }
 ```
@@ -324,6 +289,25 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
 </MyRadioGroup>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Radio {
+  &[data-invalid] {
+    &:before {
+      border-color: var(--invalid-color);
+    }
+
+    &[data-pressed]:before {
+      border-color: var(--invalid-color-pressed);
+    }
+  }
+}
+```
+
+</details>
+
 ### Help text
 
 The `description` slot can be used to associate additional help text with a radio group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the radio group as invalid for assistive technologies.
@@ -360,6 +344,24 @@ function Example() {
 }
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-RadioGroup {
+  & [slot=description] {
+    font-size: 12px;
+  }
+
+  & [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+```
+
+</details>
+
 ## Orientation
 
 RadioGroups are vertically oriented by default.
@@ -372,6 +374,21 @@ The `orientation` prop can be used to change the orientation to horizontal.
 </MyRadioGroup>
 ```
 
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-RadioGroup {
+  &[data-orientation=horizontal] {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+```
+
+</details>
+
 ## Disabled
 
 The entire RadioGroup can be disabled with the `isDisabled` prop.
@@ -383,6 +400,30 @@ The entire RadioGroup can be disabled with the `isDisabled` prop.
   <Radio value="basketball">Basketball</Radio>
 </MyRadioGroup>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Radio {
+  &[data-disabled] {
+    opacity: 0.4;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Radio {
+    &[data-disabled] {
+      opacity: 1;
+      --deselected-color: GrayText;
+      --selected-color: GrayText;
+      --label-color: GrayText;
+    }
+  }
+}
+```
+
+</details>
 
 To disable an individual radio, pass `isDisabled` to the `Radio` instead.
 

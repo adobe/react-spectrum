@@ -10,9 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
+import {act} from 'react-dom/test-utils';
+import {Button} from '@react-spectrum/button';
 import {Checkbox} from '../';
+import {Form} from '@react-spectrum/form';
 import {pointerMap, render} from '@react-spectrum/test-utils';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 describe('Checkbox', function () {
@@ -285,5 +290,108 @@ describe('Checkbox', function () {
     let button = getByTestId('reset');
     await user.click(button);
     expect(input).not.toBeChecked();
+  });
+
+  describe('validation', () => {
+    describe('validationBehavior=native', () => {
+      it('supports isRequired', async () => {
+        let {getByRole, getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <Checkbox isRequired validationBehavior="native">Terms and conditions</Checkbox>
+            </Form>
+          </Provider>
+        );
+
+        let checkbox = getByRole('checkbox');
+        expect(checkbox).toHaveAttribute('required');
+        expect(checkbox).not.toHaveAttribute('aria-required');
+        expect(checkbox.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        await user.click(checkbox);
+        expect(checkbox.validity.valid).toBe(true);
+      });
+
+      it('supports validate function', async () => {
+        let {getByRole, getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <Checkbox validationBehavior="native" validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
+            </Form>
+          </Provider>
+        );
+
+        let checkbox = getByRole('checkbox');
+        expect(checkbox.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        await user.click(checkbox);
+        expect(checkbox.validity.valid).toBe(true);
+      });
+
+      it('supports server validation', async () => {
+        function Test() {
+          let [serverErrors, setServerErrors] = React.useState({});
+          let onSubmit = e => {
+            e.preventDefault();
+            setServerErrors({
+              terms: 'You must accept the terms.'
+            });
+          };
+
+          return (
+            <Provider theme={theme}>
+              <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                <Checkbox name="terms" validationBehavior="native">Terms and conditions</Checkbox>
+                <Button type="submit">Submit</Button>
+              </Form>
+            </Provider>
+          );
+        }
+
+        let {getByRole} = render(<Test />);
+        await user.click(getByRole('button'));
+
+        let checkbox = getByRole('checkbox');
+        expect(checkbox.validity.valid).toBe(false);
+
+        await user.click(checkbox);
+        expect(checkbox.validity.valid).toBe(true);
+      });
+    });
+
+    describe('validationBehavior=aria', () => {
+      it('supports validate function', async () => {
+        let {getByRole} = render(
+          <Provider theme={theme}>
+            <Checkbox value="terms" validate={v => !v ? 'You must accept the terms.' : null}>Terms and conditions</Checkbox>
+          </Provider>
+        );
+
+        let checkbox = getByRole('checkbox');
+        expect(checkbox.validity.valid).toBe(true);
+
+        await user.click(checkbox);
+      });
+
+      it('supports server validation', async () => {
+        let {getByRole} = render(
+          <Provider theme={theme}>
+            <Form validationErrors={{terms: 'You must accept the terms'}}>
+              <Checkbox name="terms">Terms and conditions</Checkbox>
+            </Form>
+          </Provider>
+        );
+
+        let checkbox = getByRole('checkbox');
+        expect(checkbox).toHaveAttribute('aria-invalid', 'true');
+
+        await user.click(checkbox);
+        expect(checkbox).not.toHaveAttribute('aria-invalid');
+      });
+    });
   });
 });

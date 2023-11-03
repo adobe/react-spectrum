@@ -53,7 +53,7 @@ function Toolbar(props: ToolbarProps, ref: ForwardedRef<HTMLDivElement>) {
 }
 
 /**
- * A toolbar lets you group multiple interactive elements such as Buttons.
+ * A toolbar is a container for grouping a set of controls, such as buttons, menubuttons, or checkboxes.
  */
 const _Toolbar = /*#__PURE__*/ (forwardRef as forwardRefType)(Toolbar);
 export {_Toolbar as Toolbar};

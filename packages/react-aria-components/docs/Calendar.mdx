@@ -57,6 +57,9 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+```
 
 ```css
 .react-aria-Calendar {
@@ -118,61 +121,6 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
       background: var(--highlight-background);
       color: var(--highlight-foreground);
     }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    &[data-unavailable] {
-      text-decoration: line-through;
-      color: var(--unavailable-color);
-    }
-
-    &[data-invalid] {
-      background: var(--invalid-color);
-      color: var(--highlight-foreground);
-    }
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
-  }
-}
-
-.react-aria-Button {
-  --button-background: var(--spectrum-global-color-gray-50);
-  --button-backgound-pressed: var(--spectrum-global-color-gray-100);
-  --button-border: var(--spectrum-global-color-gray-400);
-  --button-border-disabled: var(--spectrum-alias-border-color-disabled);
-  --focus-ring-color: slateblue;
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  background: var(--button-background);
-  border: 1px solid var(--button-border);
-  color: var(--text-color);
-  box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  padding: 0.4rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-
-  &[data-focus-visible] {
-    border-color: var(--focus-ring-color);
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
-  }
-
-  &[data-pressed] {
-    background: var(--button-backgound-pressed);
-  }
-
-  &[data-disabled] {
-    border-color: var(--button-border-disabled);
-    color: var(--text-color-disabled);
   }
 }
 
@@ -189,15 +137,6 @@ import {Calendar, Heading, Button, CalendarGrid, CalendarCell} from 'react-aria-
     --invalid-color: LinkText;
     --pressed-color: Canvas;
     --spectrum-alias-background-color-default: Canvas;
-  }
-
-  .react-aria-Button {
-    --button-border: ButtonBorder;
-    --button-border-disabled: GrayText;
-    --button-background: ButtonFace;
-    --button-backgound-pressed: ButtonFace;
-    --focus-ring-color: Highlight;
-    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -442,6 +381,21 @@ import {today} from '@internationalized/date';
 <MyCalendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} />
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Calendar {
+  .react-aria-CalendarCell {
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+  }
+}
+```
+
+</details>
+
 ### Unavailable dates
 
 `Calendar` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard so that navigation is consistent, but cannot be selected by the user. In this example, they are displayed in red. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
@@ -467,6 +421,22 @@ function Example() {
   return <MyCalendar aria-label="Appointment date" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Calendar {
+  .react-aria-CalendarCell {
+    &[data-unavailable] {
+      text-decoration: line-through;
+      color: var(--unavailable-color);
+    }
+  }
+}
+```
+
+</details>
 
 ### Error message
 
@@ -496,6 +466,26 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Calendar {
+  .react-aria-CalendarCell {
+    &[data-invalid] {
+      background: var(--invalid-color);
+      color: var(--highlight-foreground);
+    }
+  }
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--text-color-invalid);
+  }
+}
+```
+
+</details>
 
 ## Controlling the focused date
 

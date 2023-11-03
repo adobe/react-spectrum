@@ -14,8 +14,10 @@ import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-s
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {Button} from '@react-spectrum/button';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
+import {Form} from '@react-spectrum/form';
 import {Item, Picker, Section} from '../src';
 import Paste from '@spectrum-icons/workflow/Paste';
 import {Provider} from '@react-spectrum/provider';
@@ -1781,15 +1783,7 @@ describe('Picker', function () {
       expect(hiddenLabel.tagName).toBe('LABEL');
       expect(hiddenLabel.parentElement).toHaveAttribute('aria-hidden', 'true');
 
-      // For anyone else who comes through this listbox/combobox path
-      // I can't use combobox here because there is a size attribute on the html select
-      // everything below this line is the path i followed to get to the correct role:
-      //   not sure why i can't use listbox https://github.com/A11yance/aria-query#elements-to-roles
-      //   however, i think this is correct based on https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles
-      //   which says "The listbox role is used for lists from which a user may select one or more items which are static and, unlike HTML <select> elements, may contain images."
-      //   Also, this test in react testing library seems to indicate something about size which we do not currently have, probably a bug
-      //   https://github.com/testing-library/dom-testing-library/blob/master/src/__tests__/element-queries.js#L548
-      let hiddenSelect = getByRole('listbox', {hidden: true});
+      let hiddenSelect = getByRole('combobox', {hidden: true});
       expect(hiddenSelect.parentElement).toBe(hiddenLabel);
       expect(hiddenSelect).toHaveAttribute('tabIndex', '-1');
       expect(hiddenSelect).toHaveAttribute('autoComplete', 'address-level1');
@@ -2232,6 +2226,243 @@ describe('Picker', function () {
       let button = getByTestId('reset');
       await user.click(button);
       expect(input).toHaveValue('one');
+    });
+
+    describe('validation', () => {
+      describe('validationBehavior=native', () => {
+        it('supports isRequired', async () => {
+          let {getByTestId, getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <Picker name="picker" data-testid="picker" label="Test" isRequired validationBehavior="native">
+                  <Item key="one">One</Item>
+                  <Item key="two">Two</Item>
+                  <Item key="three">Three</Item>
+                </Picker>
+              </Form>
+            </Provider>
+          );
+
+          let picker = getByTestId('picker');
+          let input = document.querySelector('[name=picker]');
+          expect(input).toHaveAttribute('required');
+          expect(picker).not.toHaveAttribute('aria-describedby');
+          expect(input.validity.valid).toBe(false);
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(picker).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+          await user.click(picker);
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          let items = within(listbox).getAllByRole('option');
+          await user.click(items[0]);
+          act(() => jest.runAllTimers());
+          expect(picker).not.toHaveAttribute('aria-describedby');
+        });
+
+        it('supports validate function', async () => {
+          let {getByTestId, getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <Picker name="picker" data-testid="picker" label="Test" defaultSelectedKey="two" validationBehavior="native" validate={v => v === 'two' ? 'Invalid value' : null}>
+                  <Item key="one">One</Item>
+                  <Item key="two">Two</Item>
+                  <Item key="three">Three</Item>
+                </Picker>
+              </Form>
+            </Provider>
+          );
+
+          let picker = getByTestId('picker');
+          let input = document.querySelector('[name=picker]');
+          expect(picker).not.toHaveAttribute('aria-describedby');
+          expect(input.validity.valid).toBe(false);
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(picker).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+          await user.click(picker);
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          let items = within(listbox).getAllByRole('option');
+          await user.click(items[0]);
+          act(() => jest.runAllTimers());
+          expect(picker).not.toHaveAttribute('aria-describedby');
+        });
+
+        it('supports server validation', async () => {
+          function Test() {
+            let [serverErrors, setServerErrors] = React.useState({});
+            let onSubmit = e => {
+              e.preventDefault();
+              setServerErrors({
+                picker: 'Invalid value.'
+              });
+            };
+
+            return (
+              <Provider theme={theme}>
+                <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                  <Picker name="picker" data-testid="picker" label="Test" validationBehavior="native" >
+                    <Item key="one">One</Item>
+                    <Item key="two">Two</Item>
+                    <Item key="three">Three</Item>
+                  </Picker>
+                  <Button type="submit" data-testid="submit">Submit</Button>
+                </Form>
+              </Provider>
+            );
+          }
+
+          let {getByTestId, getByRole} = render(<Test />);
+
+          let picker = getByTestId('picker');
+          let input = document.querySelector('[name=picker]');
+          expect(picker).not.toHaveAttribute('aria-describedby');
+
+          await user.click(getByTestId('submit'));
+
+          expect(picker).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
+          expect(input.validity.valid).toBe(false);
+
+          await user.click(picker);
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          let items = within(listbox).getAllByRole('option');
+          await user.click(items[0]);
+          act(() => jest.runAllTimers());
+
+          expect(picker).not.toHaveAttribute('aria-describedby');
+          expect(input.validity.valid).toBe(true);
+        });
+
+        it('supports customizing native error messages', async () => {
+          let {getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <Picker name="picker" data-testid="picker" label="Test" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null}>
+                  <Item key="one">One</Item>
+                  <Item key="two">Two</Item>
+                  <Item key="three">Three</Item>
+                </Picker>
+              </Form>
+            </Provider>
+          );
+
+          let picker = getByTestId('picker');
+          expect(picker).not.toHaveAttribute('aria-describedby');
+
+          act(() => {getByTestId('form').checkValidity();});
+          expect(picker).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+        });
+
+        it('clears validation on reset', async () => {
+          let {getByTestId, getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <Picker name="picker" data-testid="picker" label="Test" isRequired validationBehavior="native">
+                  <Item key="one">One</Item>
+                  <Item key="two">Two</Item>
+                  <Item key="three">Three</Item>
+                </Picker>
+                <Button data-testid="reset" type="reset">Reset</Button>
+              </Form>
+            </Provider>
+          );
+
+          let picker = getByTestId('picker');
+          let input = document.querySelector('[name=picker]');
+          expect(input).toHaveAttribute('required');
+          expect(picker).not.toHaveAttribute('aria-describedby');
+          expect(input.validity.valid).toBe(false);
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(picker).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+          await user.click(picker);
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          let items = within(listbox).getAllByRole('option');
+          await user.click(items[0]);
+          act(() => jest.runAllTimers());
+          expect(picker).not.toHaveAttribute('aria-describedby');
+
+          await user.click(getByTestId('reset'));
+          expect(picker).not.toHaveAttribute('aria-describedby');
+        });
+      });
+
+      describe('validationBehavior=aria', () => {
+        it('supports validate function', async () => {
+          let {getByTestId, getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <Picker name="picker" data-testid="picker" label="Test" defaultSelectedKey="two" validate={v => v === 'two' ? 'Invalid value' : null}>
+                  <Item key="one">One</Item>
+                  <Item key="two">Two</Item>
+                  <Item key="three">Three</Item>
+                </Picker>
+              </Form>
+            </Provider>
+          );
+
+          let picker = getByTestId('picker');
+          let input = document.querySelector('[name=picker]');
+          expect(picker).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+          expect(input.validity.valid).toBe(true);
+
+          await user.click(picker);
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          let items = within(listbox).getAllByRole('option');
+          await user.click(items[0]);
+          act(() => jest.runAllTimers());
+
+          expect(picker).not.toHaveAttribute('aria-describedby');
+        });
+
+        it('supports server validation', async () => {
+          let {getByTestId, getByRole} = render(
+            <Provider theme={theme}>
+              <Form validationErrors={{picker: 'Invalid value'}}>
+                <Picker name="picker" data-testid="picker" label="Test">
+                  <Item key="one">One</Item>
+                  <Item key="two">Two</Item>
+                  <Item key="three">Three</Item>
+                </Picker>
+              </Form>
+            </Provider>
+          );
+
+          let picker = getByTestId('picker');
+          expect(picker).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+          await user.click(picker);
+          act(() => jest.runAllTimers());
+
+          let listbox = getByRole('listbox');
+          let items = within(listbox).getAllByRole('option');
+          await user.click(items[0]);
+          act(() => jest.runAllTimers());
+          expect(picker).not.toHaveAttribute('aria-describedby');
+        });
+      });
     });
   });
 

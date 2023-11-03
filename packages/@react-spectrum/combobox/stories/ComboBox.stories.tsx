@@ -26,6 +26,7 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
+import {Key} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import React, {useRef, useState} from 'react';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
@@ -576,7 +577,7 @@ function AsyncLoadingExampleControlledKey(props) {
     list.setFilterText(value);
   };
 
-  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  let selectedKey = (list.selectedKeys as Set<Key>).values().next().value;
   return (
     <ComboBox
       label="Star Wars Character Lookup"
@@ -612,7 +613,7 @@ function AsyncLoadingExampleControlledKeyWithReset(props) {
       let json = await res.json();
 
       let selectedText;
-      let selectedKey = (selectedKeys as Set<React.Key>).values().next().value;
+      let selectedKey = (selectedKeys as Set<Key>).values().next().value;
 
       // If selectedKey exists and combobox is performing intial load, update the input value with the selected key text
       if (!isFocused.current && selectedKey) {
@@ -644,7 +645,7 @@ function AsyncLoadingExampleControlledKeyWithReset(props) {
     list.setFilterText(value);
   };
 
-  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  let selectedKey = (list.selectedKeys as Set<Key>).values().next().value;
   return (
     <ComboBox
       label="Star Wars Character Lookup"
@@ -696,7 +697,7 @@ function AllControlledComboBox(props) {
     initialItems: withSection
   });
 
-  let onSelectionChange = (key: React.Key) => {
+  let onSelectionChange = (key: Key) => {
     setFieldState(prevState => ({
       inputValue: list.getItem(key)?.value.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
       selectedKey: key

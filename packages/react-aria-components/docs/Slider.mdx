@@ -56,6 +56,9 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './NumberField.mdx' layer(numberfield);
+```
 
 ```css
 .react-aria-Slider {
@@ -129,38 +132,6 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
       top: 50%;
     }
   }
-
-  &[data-orientation=vertical] {
-    height: 150px;
-    display: block;
-
-    .react-aria-Label,
-    .react-aria-SliderOutput {
-      display: none;
-    }
-
-    .react-aria-SliderTrack {
-      width: 30px;
-      height: 100%;
-
-      &:before {
-        width: 3px;
-        height: 100%;
-        left: 50%;
-        transform: translateX(-50%);
-      }
-    }
-
-    .react-aria-SliderThumb {
-      left: 50%;
-    }
-  }
-
-  &[data-disabled] {
-    .react-aria-SliderTrack {
-      opacity: 0.4;
-    }
-  }
 }
 
 @media (forced-colors: active) {
@@ -173,15 +144,6 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
     --thumb-color-dragging: Highlight;
     --focus-ring-color: Highlight;
     --spectrum-alias-background-color-default: Canvas;
-
-    &[data-disabled] {
-      --track-color: GrayText;
-      --thumb-color: GrayText;
-      --label-color: GrayText;
-      & .react-aria-SliderTrack {
-        opacity: 1;
-      }
-    }
   }
 }
 ```
@@ -400,6 +362,41 @@ This example also uses `aria-label` rather than `label` to create a slider with 
   step={0.01} />
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Slider {
+  &[data-orientation=vertical] {
+    height: 150px;
+    display: block;
+
+    .react-aria-Label,
+    .react-aria-SliderOutput {
+      display: none;
+    }
+
+    .react-aria-SliderTrack {
+      width: 30px;
+      height: 100%;
+
+      &:before {
+        width: 3px;
+        height: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+    }
+
+    .react-aria-SliderThumb {
+      left: 50%;
+    }
+  }
+}
+```
+
+</details>
+
 ### Value formatting
 
 Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
@@ -422,6 +419,34 @@ A slider can be disabled using the `isDisabled` prop.
   defaultValue={25}
   isDisabled />
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Slider {
+  &[data-disabled] {
+    .react-aria-SliderTrack {
+      opacity: 0.4;
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Slider {
+    &[data-disabled] {
+      --track-color: GrayText;
+      --thumb-color: GrayText;
+      --label-color: GrayText;
+      & .react-aria-SliderTrack {
+        opacity: 1;
+      }
+    }
+  }
+}
+```
+
+</details>
 
 ## Props
 
@@ -643,44 +668,18 @@ function SliderNumberField() {
   </SliderTrack>
 </Slider>
 ```
-
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
 .react-aria-Input {
-  --field-border: var(--spectrum-alias-border-color);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --focus-ring-color: slateblue;
-
-  padding: 0.286rem;
-  margin: 0;
-  border: 1px solid var(--field-border);
   border-radius: 6px;
-  background: var(--field-background);
-  font-size: 1rem;
-  color: var(--text-color);
   width: 3ch;
-
-  &[data-focused] {
-    outline: none;
-    border-color: var(--focus-ring-color);
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Input {
-    --field-border: ButtonBorder;
-    --field-background: Field;
-    --text-color: FieldText;
-    --focus-ring-color: Highlight;
-  }
 }
 ```
 
 </details>
+
 
 ### Hooks
 

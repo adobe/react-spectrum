@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DatePickerContext, DateSegment, Dialog, Group, Heading, Label, Popover, Text} from 'react-aria-components';
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DatePickerContext, DateSegment, Dialog, FieldError, Group, Heading, Label, Popover, Text} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
-import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -118,7 +118,7 @@ describe('DatePicker', () => {
 
   it('should support render props', () => {
     let {getByRole} = render(
-      <DatePicker minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)}>
+      <DatePicker minValue={new CalendarDate(2023, 1, 1)} defaultValue={new CalendarDate(2020, 2, 3)} validationBehavior="aria">
         {({isInvalid}) => (
           <>
             <Label>Birth date</Label>
@@ -164,5 +164,60 @@ describe('DatePicker', () => {
     let outerEl = getAllByTestId('date-picker');
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-DatePicker');
+  });
+
+  it('supports validation errors', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <DatePicker name="date" isRequired>
+          <Label>Birth date</Label>
+          <Group>
+            <DateInput>
+              {(segment) => <DateSegment segment={segment} />}
+            </DateInput>
+            <Button>▼</Button>
+          </Group>
+          <FieldError />
+          <Popover>
+            <Dialog>
+              <Calendar>
+                <header>
+                  <Button slot="previous">◀</Button>
+                  <Heading />
+                  <Button slot="next">▶</Button>
+                </header>
+                <CalendarGrid>
+                  {(date) => <CalendarCell date={date} />}
+                </CalendarGrid>
+              </Calendar>
+            </Dialog>
+          </Popover>
+        </DatePicker>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let datepicker = group.closest('.react-aria-DatePicker');
+    let input = document.querySelector('input[name=date]');
+    expect(input).toHaveAttribute('required');
+    expect(input.validity.valid).toBe(false);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(datepicker).not.toHaveAttribute('data-invalid');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(group).toHaveAttribute('aria-describedby');
+    let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+    expect(getDescription()).toContain('Constraints not satisfied');
+    expect(datepicker).toHaveAttribute('data-invalid');
+
+    await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+
+    expect(getDescription()).toContain('Constraints not satisfied');
+    expect(input.validity.valid).toBe(true);
+
+    await user.tab();
+    expect(getDescription()).not.toContain('Constraints not satisfied');
+    expect(datepicker).not.toHaveAttribute('data-invalid');
   });
 });

@@ -13,12 +13,17 @@
 import {Alignment, DOMRef, LabelPosition, SpectrumLabelableProps} from '@react-types/shared';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {FormValidationContext} from '@react-stately/form';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React, {useContext} from 'react';
 import {SpectrumFormProps} from '@react-types/form';
 import styles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 
-let FormContext = React.createContext<SpectrumLabelableProps | null>(null);
+interface FormContextValue extends SpectrumLabelableProps {
+  validationBehavior?: 'aria' | 'native'
+}
+
+let FormContext = React.createContext<FormContextValue | null>(null);
 export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
   let ctx = useContext(FormContext);
   if (ctx) {
@@ -50,6 +55,8 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
     isDisabled,
     isReadOnly,
     validationState,
+    validationBehavior,
+    validationErrors,
     ...otherProps
   } = props;
 
@@ -59,14 +66,15 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
   let ctx = {
     labelPosition,
     labelAlign,
-    necessityIndicator
+    necessityIndicator,
+    validationBehavior
   };
 
   return (
     <form
       {...filterDOMProps(otherProps, {labelable: true, propNames: formPropNames})}
       {...styleProps}
-      noValidate
+      noValidate={validationBehavior !== 'native'}
       ref={domRef}
       className={
         classNames(
@@ -87,7 +95,9 @@ function Form(props: SpectrumFormProps, ref: DOMRef<HTMLFormElement>) {
           isReadOnly={isReadOnly}
           isRequired={isRequired}
           validationState={validationState}>
-          {children}
+          <FormValidationContext.Provider value={validationErrors || {}}>
+            {children}
+          </FormValidationContext.Provider>
         </Provider>
       </FormContext.Provider>
     </form>

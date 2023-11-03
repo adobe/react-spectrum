@@ -87,27 +87,7 @@ import {ProgressBar, Label} from 'react-aria-components';
     background: var(--fill-color);
     height: 100%;
   }
-
-  &:not([aria-valuenow]) {
-    .fill {
-      width: 120px;
-      border-radius: inherit;
-      animation: indeterminate 1.5s infinite ease-in-out;
-      will-change: transform;
-    }
-  }
 }
-
-@keyframes indeterminate {
-  from {
-    transform: translateX(-100%);
-  }
-
-  to {
-    transform: translateX(250px);
-  }
-}
-
 @media (forced-colors: active) {
   .react-aria-ProgressBar {
     --bar-color: ButtonFace;
@@ -233,6 +213,35 @@ The `isIndeterminate` prop can be used to represent an interdeterminate operatio
   aria-label="Loading…"
   isIndeterminate />
 ```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ProgressBar {
+  &:not([aria-valuenow]) {
+    .fill {
+      width: 120px;
+      border-radius: inherit;
+      animation: indeterminate 1.5s infinite ease-in-out;
+      will-change: transform;
+    }
+  }
+}
+
+@keyframes indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(250px);
+  }
+}
+```
+
+</details>
 
 ## Labeling
 

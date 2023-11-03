@@ -18,6 +18,7 @@ import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
+import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
@@ -25,6 +26,7 @@ import {useSearchFieldState} from '@react-stately/searchfield';
 function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
   props = useSlotProps(props, 'searchfield');
   props = useProviderProps(props);
+  props = useFormProps(props);
   let defaultIcon = (
     <Magnifier data-testid="searchicon" />
   );
@@ -43,7 +45,7 @@ function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
 
   let state = useSearchFieldState(props);
   let inputRef = useRef<HTMLInputElement>(null);
-  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField(props, state, inputRef);
+  let {clearButtonProps, ...result} = useSearchField(props, state, inputRef);
 
   let clearButton = (
     <ClearButton
@@ -58,13 +60,13 @@ function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
       isDisabled={isDisabled} />
   );
 
+  let validationState = props.validationState || (result.isInvalid ? 'invalid' : undefined);
+
   return (
     <TextFieldBase
       {...otherProps}
-      labelProps={labelProps}
-      inputProps={inputProps}
-      descriptionProps={descriptionProps}
-      errorMessageProps={errorMessageProps}
+      {...result}
+      validationState={validationState}
       UNSAFE_className={
         classNames(
           styles,
@@ -73,8 +75,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
           {
             'is-disabled': isDisabled,
             'is-quiet': props.isQuiet,
-            'spectrum-Search--invalid': props.validationState === 'invalid' && !isDisabled,
-            'spectrum-Search--valid': props.validationState === 'valid' && !isDisabled
+            'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
+            'spectrum-Search--valid': validationState === 'valid' && !isDisabled
           },
           UNSAFE_className
         )

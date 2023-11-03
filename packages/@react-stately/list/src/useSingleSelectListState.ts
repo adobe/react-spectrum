@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionStateBase, Node, SingleSelection} from '@react-types/shared';
-import {Key, useMemo} from 'react';
+import {CollectionStateBase, Key, Node, SingleSelection} from '@react-types/shared';
 import {ListState, useListState} from './useListState';
 import {useControlledState} from '@react-stately/utils';
+import {useMemo} from 'react';
 
 export interface SingleSelectListProps<T> extends CollectionStateBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
   /** Filter function to generate a filtered list of nodes. */

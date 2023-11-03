@@ -15,19 +15,20 @@ import {AriaDatePickerProps, AriaDateRangePickerProps, DateValue} from '@react-t
 import {AriaDialogProps} from '@react-types/dialog';
 import {createFocusManager} from '@react-aria/focus';
 import {DateRangePickerState} from '@react-stately/datepicker';
-import {DOMAttributes, GroupDOMAttributes, KeyboardEvent} from '@react-types/shared';
+import {DEFAULT_VALIDATION_RESULT, mergeValidation, privateValidationStateProp} from '@react-stately/form';
+import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {focusManagerSymbol, roleSymbol} from './useDateField';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {RangeCalendarProps} from '@react-types/calendar';
-import {RefObject, useMemo} from 'react';
+import {RefObject, useMemo, useRef} from 'react';
 import {useDatePickerGroup} from './useDatePickerGroup';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface DateRangePickerAria {
+export interface DateRangePickerAria extends ValidationResult {
   /** Props for the date range picker's visible label element, if any. */
   labelProps: DOMAttributes,
   /** Props for the grouping element containing the date fields and button. */
@@ -55,9 +56,12 @@ export interface DateRangePickerAria {
  */
 export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePickerProps<T>, state: DateRangePickerState, ref: RefObject<Element>): DateRangePickerAria {
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    labelElementType: 'span'
+    labelElementType: 'span',
+    isInvalid,
+    errorMessage: props.errorMessage || validationErrors
   });
 
   let labelledBy = fieldProps['aria-labelledby'] || fieldProps.id;
@@ -92,8 +96,6 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     [focusManagerSymbol]: focusManager,
     [roleSymbol]: 'presentation',
     'aria-describedby': ariaDescribedBy,
-    minValue: props.minValue,
-    maxValue: props.maxValue,
     placeholderValue: props.placeholderValue,
     hideTimeZone: props.hideTimeZone,
     hourCycle: props.hourCycle,
@@ -102,7 +104,7 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     isDisabled: props.isDisabled,
     isReadOnly: props.isReadOnly,
     isRequired: props.isRequired,
-    isInvalid: state.isInvalid
+    validationBehavior: props.validationBehavior
   };
 
   let domProps = filterDOMProps(props);
@@ -114,6 +116,9 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
     onFocusWithin: props.onFocus,
     onFocusWithinChange: props.onFocusChange
   });
+
+  let startFieldValidation = useRef(DEFAULT_VALIDATION_RESULT);
+  let endFieldValidation = useRef(DEFAULT_VALIDATION_RESULT);
 
   return {
     groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
@@ -165,14 +170,34 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       value: state.value?.start,
       onChange: start => state.setDateTime('start', start),
       autoFocus: props.autoFocus,
-      name: props.startName
+      name: props.startName,
+      [privateValidationStateProp]: {
+        realtimeValidation: state.realtimeValidation,
+        displayValidation: state.displayValidation,
+        updateValidation(e) {
+          startFieldValidation.current = e;
+          state.updateValidation(mergeValidation(e, endFieldValidation.current));
+        },
+        resetValidation: state.resetValidation,
+        commitValidation: state.commitValidation
+      }
     },
     endFieldProps: {
       ...endFieldProps,
       ...commonFieldProps,
       value: state.value?.end,
       onChange: end => state.setDateTime('end', end),
-      name: props.endName
+      name: props.endName,
+      [privateValidationStateProp]: {
+        realtimeValidation: state.realtimeValidation,
+        displayValidation: state.displayValidation,
+        updateValidation(e) {
+          endFieldValidation.current = e;
+          state.updateValidation(mergeValidation(startFieldValidation.current, e));
+        },
+        resetValidation: state.resetValidation,
+        commitValidation: state.commitValidation
+      }
     },
     descriptionProps,
     errorMessageProps,
@@ -188,7 +213,10 @@ export function useDateRangePicker<T extends DateValue>(props: AriaDateRangePick
       allowsNonContiguousRanges: props.allowsNonContiguousRanges,
       defaultFocusedValue: state.dateRange ? undefined : props.placeholderValue,
       isInvalid: state.isInvalid,
-      errorMessage: props.errorMessage
-    }
+      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : props.errorMessage
+    },
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

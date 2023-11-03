@@ -117,7 +117,7 @@ let messages = {
 ```
 
 ```tsx example flip
-import { Button, Item, GridList } from "react-aria-components";
+import { Button, GridListItem, GridList } from "react-aria-components";
 import type {Selection, SelectionMode} from 'react-aria-components';
 import {
   motion,
@@ -131,7 +131,7 @@ import {
 import { useRef, useState } from "react";
 import type {CSSProperties} from 'react';
 
-const MotionItem = motion(Item);
+const MotionItem = motion(GridListItem);
 const inertiaTransition = {
   type: "inertia" as const,
   bounceStiffness: 300,
