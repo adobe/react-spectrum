@@ -9,11 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {getFirstItem, getLastItem} from '@react-stately/collections';
 import {GridCollection} from '@react-stately/grid';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 
 interface GridCollectionOptions {
   showSelectionCheckboxes?: boolean,

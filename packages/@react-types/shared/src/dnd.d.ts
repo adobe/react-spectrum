@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, RefObject} from 'react';
+import {Key} from '@react-types/shared';
+import {RefObject} from 'react';
 
 export interface DragDropEvent {
   /** The x coordinate of the event, relative to the target element. */
