@@ -1,4 +1,4 @@
-import {AriaLabelingProps, HoverEvents, LinkDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
