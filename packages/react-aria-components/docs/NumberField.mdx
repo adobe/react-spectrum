@@ -22,6 +22,7 @@ import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import Input from '@react-spectrum/docs/pages/assets/component-illustrations/Input.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
 
 ---
 category: Forms
@@ -57,6 +58,11 @@ import {NumberField, Label, Group, Input, Button} from 'react-aria-components';
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css hidden
+@import './Button.mdx' layer(button);
+@import './Form.mdx' layer(form);
+```
 
 ```css
 .react-aria-NumberField {
@@ -152,7 +158,7 @@ formatting options and can be styled as needed.
 
 * **Customizable formatting** – Support for internationalized number formatting and parsing including decimals, percentages, currency values, and units. Multiple currency formats are supported, including symbol, code, and name in standard or accounting notation.
 * **International** – Support for the Latin, Arabic, and Han positional decimal numbering systems in [over 30 locales](internationalization.html#supported-locales). The numbering system is automatically detected from user input, and input method editors such as Pinyin are supported.
-* **Validation** – Keyboard input is validated as the user types so that only numeric input is accepted, according to the locale and numbering system. Values are automatically rounded and clamped according to configurable decimal, minimum, maximum, and step values.
+* **Validation** – Keyboard input is validated as the user types so that only numeric input is accepted, according to the locale and numbering system. Values are automatically rounded and clamped according to configurable decimal, minimum, maximum, and step values. Custom client and server-side validation is also supported.
 * **Mobile friendly** – An appropriate software keyboard is automatically selected based on the allowed values for ease of use.
 * **Accessible** – Follows the [spinbutton](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/) ARIA pattern, with support for arrow keys, scroll wheel, and stepper buttons to increment and decrement the value. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
 
@@ -171,7 +177,7 @@ to provide more context about the field, and any validation messages. These are 
 input via the `aria-describedby` attribute.
 
 ```tsx
-import {NumberField, Label, Group, Input, Button, Text} from 'react-aria-components';
+import {NumberField, Label, Group, Input, Button, Text, FieldError} from 'react-aria-components';
 
 <NumberField>
   <Label />
@@ -181,12 +187,27 @@ import {NumberField, Label, Group, Input, Button, Text} from 'react-aria-compone
     <Button slot="decrement" />
   </Group>
   <Text slot="description" />
-  <Text slot="errorMessage" />
+  <FieldError />
 </NumberField>
 ```
 
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
+
+### Concepts
+
+`NumberField` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
+</ExampleCard>
+
+</section>
 
 ### Composed components
 
@@ -221,16 +242,16 @@ A `NumberField` uses the following components, which may also be used standalone
 
 If you will use a NumberField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `NumberField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
+This example wraps `NumberField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation).
 
 ```tsx example export=true
-import type {NumberFieldProps} from 'react-aria-components';
-import {Text} from 'react-aria-components';
+import type {NumberFieldProps, ValidationResult} from 'react-aria-components';
+import {Text, FieldError} from 'react-aria-components';
 
 interface MyNumberFieldProps extends NumberFieldProps {
   label?: string,
   description?: string,
-  errorMessage?: string
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 function MyNumberField({label, description, errorMessage, ...props}: MyNumberFieldProps) {
@@ -243,7 +264,7 @@ function MyNumberField({label, description, errorMessage, ...props}: MyNumberFie
         <Button slot="increment">+</Button>
       </Group>
       {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      <FieldError>{errorMessage}</FieldError>
     </NumberField>
   );
 }
@@ -429,38 +450,80 @@ Otherwise, the value starts from `0`.
   step={3} />
 ```
 
-### Help text
+### Validation errors
 
-The `description` slot can be used to associate additional help text with a number field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the number field as invalid for assistive technologies.
+NumberField supports the `isRequired` prop to ensure the user enters a value, as well as custom validation functions, realtime validation, and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+To display validation errors, add a `<FieldError>` element as a child of the NumberField. This allows you to render error messages from all of the above sources with consistent custom styles.
 
 ```tsx example
-function Example() {
-  let [value, setValue] = React.useState(1);
-  let isValid = React.useMemo(() => value > 0 || Number.isNaN(value), [value]);
+import {Form, FieldError} from 'react-aria-components';
 
-  return (
-    <NumberField
-      value={value}
-      onChange={setValue}
-      /*- begin highlight -*/
-      isInvalid={Number.isNaN(value) && !isValid}
-      /*- end highlight -*/
-    >
-      <Label>Positive numbers only</Label>
-      <Group>
-        <Button slot="decrement">-</Button>
-        <Input />
-        <Button slot="increment">+</Button>
-      </Group>
-      {/*- begin highlight -*/}
-      {isValid && <Text slot="description">Enter a positive number.</Text>}
-      {!isValid && <Text slot="errorMessage">{value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'}</Text>}
-      {/*- end highlight -*/}
-    </NumberField>
-  );
+<Form>
+  {/*- begin highlight -*/}
+  <NumberField name="width" isRequired>
+  {/*- end highlight -*/}
+    <Label>Width</Label>
+    <Group>
+       <Button slot="decrement">-</Button>
+       <Input />
+       <Button slot="increment">+</Button>
+     </Group>
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+  </NumberField>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-NumberField {
+  &[data-invalid] {
+    .react-aria-Input,
+    .react-aria-Button {
+      border-color: var(--invalid-color);
+    }
+
+    &:focus-within {
+      .react-aria-Input,
+      .react-aria-Button {
+        border-color: var(--focus-ring-color);
+      }
+    }
+  }
+
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
 }
 ```
 
+</details>
+
+By default, `FieldError` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
+### Description
+
+The `description` slot can be used to associate additional help text with a number field.
+
+```tsx example
+<NumberField>
+  <Label>Width</Label>
+  <Group>
+    <Button slot="decrement">-</Button>
+    <Input />
+    <Button slot="increment">+</Button>
+  </Group>
+  {/*- begin highlight -*/}
+  <Text slot="description">Enter a width in centimeters.</Text>
+  {/*- end highlight -*/}
+</NumberField>
+```
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
@@ -469,11 +532,6 @@ function Example() {
 .react-aria-NumberField {
   [slot=description] {
     font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--invalid-color);
   }
 }
 ```
@@ -549,6 +607,17 @@ A `<Button>` accepts its contents as `children`. Other props such as `onPress` a
 
 </details>
 
+### FieldError
+
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.FieldError} links={docs.links} />
+
+</details>
+
 ## Styling
 
 React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
@@ -614,6 +683,12 @@ A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS select
 ### Text
 
 The help text elements within a `NumberField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
+### FieldError
+
+A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, or by overriding with a custom `className`. It supports the following render props:
+
+<StateTable properties={docs.exports.FieldErrorRenderProps.properties} />
 
 ## Advanced customization
 

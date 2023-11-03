@@ -57,6 +57,7 @@ describe('TextField', () => {
     expect(input).toHaveAttribute('aria-describedby');
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
     expect(input.validity.valid).toBe(false);
+    expect(document.activeElement).toBe(input);
 
     // Clicking twice doesn't clear server errors.
     await user.click(getByRole('button'));
@@ -65,8 +66,9 @@ describe('TextField', () => {
     expect(input).toHaveAttribute('aria-describedby');
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
     expect(input.validity.valid).toBe(false);
+    expect(document.activeElement).toBe(input);
 
-    await user.tab({shift: true});
+    await user.clear(input);
     await user.keyboard('Devon');
     await user.tab();
 

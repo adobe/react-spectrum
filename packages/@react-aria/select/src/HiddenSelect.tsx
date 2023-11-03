@@ -61,7 +61,10 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
   let {visuallyHiddenProps} = useVisuallyHidden();
 
   useFormReset(props.selectRef, state.selectedKey, state.setSelectedKey);
-  useFormValidation({validationBehavior}, state, props.selectRef);
+  useFormValidation({
+    validationBehavior,
+    focus: () => triggerRef.current.focus()
+  }, state, props.selectRef);
 
   // In Safari, the <select> cannot have `display: none` or `hidden` for autofill to work.
   // In Firefox, there must be a <label> to identify the <select> whereas other browsers
