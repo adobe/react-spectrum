@@ -47,10 +47,9 @@ export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 
 export const InputContext = createContext<ContextValue<InputProps, HTMLInputElement>>({});
 
 let filterHoverProps = (props: InputProps) => {
-  delete props.onHoverStart;
-  delete props.onHoverChange;
-  delete props.onHoverEnd;
-  return props;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  return otherProps;
 };
 
 function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
