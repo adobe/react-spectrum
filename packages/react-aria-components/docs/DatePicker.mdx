@@ -108,14 +108,11 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     color: white;
     border-radius: 4px;
     border: none;
-    appearance: none;
     margin-left: -1.929rem;
     width: 1.429rem;
     height: 1.429rem;
     padding: 0;
-    vertical-align: middle;
     font-size: 0.857rem;
-    outline: none;
     box-sizing: content-box;
     border: 2px solid var(--page-background);
 
@@ -123,21 +120,16 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
       box-shadow: 0 0 0 2px slateblue;
     }
   }
+
+  .react-aria-DateInput {
+    padding: 4px 2.5rem 4px 8px;
+  }
 }
 
-.react-aria-DateInput {
-  display: flex;
-  padding: 4px 2.5rem 4px 8px;
-  border: 1px solid var(--field-border);
-  border-radius: 6px;
-  background: var(--field-background);
-  width: fit-content;
-  min-width: 150px;
-  white-space: nowrap;
-
-  &[data-focus-within] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
+@layer popover {
+  .react-aria-Popover {
+    max-width: unset;
+    padding: 1.25rem;
   }
 }
 

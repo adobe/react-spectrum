@@ -86,10 +86,6 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
   &[data-orientation=horizontal] {
     flex-direction: column;
   }
-
-  &[data-orientation=vertical] {
-    flex-direction: row;
-  }
 }
 
 .react-aria-TabList {
@@ -100,15 +96,6 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 
     .react-aria-Tab {
       border-bottom: 3px solid var(--border-color, transparent);
-    }
-  }
-
-  &[data-orientation=vertical] {
-    flex-direction: column;
-    border-right: 1px solid gray;
-
-    .react-aria-Tab {
-      border-right: 3px solid var(--border-color, transparent);
     }
   }
 }
@@ -412,20 +399,18 @@ By default, tabs are horizontally oriented. The `orientation` prop can be set to
 
 ```css
 .react-aria-Tabs {
-  &[data-orientation=horizontal] {
-    flex-direction: column;
+  &[data-orientation=vertical] {
+    flex-direction: row;
   }
 }
 
 .react-aria-TabList {
-  display: flex;
-
   &[data-orientation=vertical] {
     flex-direction: column;
-    border-right: 1px solid gray;
+    border-inline-end: 1px solid gray;
 
     .react-aria-Tab {
-      border-right: 3px solid var(--border-color, transparent);
+      border-inline-end: 3px solid var(--border-color, transparent);
     }
   }
 }
