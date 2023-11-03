@@ -40,7 +40,7 @@ interface SubmenuTriggerProps extends AriaMenuItemProps {
 
 interface SubmenuProps<T> extends AriaMenuOptions<T> {
   /** The level of the submenu. */
-  level: number
+  submenuLevel: number
 }
 
 export interface SubmenuTriggerAria<T> {
@@ -120,7 +120,7 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
   let submenuProps = {
     id: overlayId,
     'aria-label': node.textValue,
-    level: state.level,
+    submenuLevel: state.submenuLevel,
     ...(submenuType === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy,
@@ -205,13 +205,13 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
     return false;
   };
 
-  useSafelyMouseToSubmenu({menuRef: parentMenuRef, submenuRef, isOpen: state.isOpen});
+  useSafelyMouseToSubmenu({menuRef: parentMenuRef, submenuRef, isOpen: state.isOpen, isDisabled: isDisabled});
 
   return {
     submenuTriggerProps: {
       id: submenuTriggerId,
-      'aria-controls': state.isOpen ? overlayId : null,
-      'aria-haspopup': !isDisabled ? submenuType : null,
+      'aria-controls': state.isOpen ? overlayId : undefined,
+      'aria-haspopup': !isDisabled ? submenuType : undefined,
       'aria-expanded': state.isOpen ? 'true' : 'false',
       onPressStart,
       onPress,

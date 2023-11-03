@@ -32,7 +32,7 @@ export interface SubmenuTriggerState extends OverlayTriggerState {
   /** Closes all menus and submenus in the menu tree. */
   closeAll: () => void,
   /** The level of the submenu. */
-  level: number,
+  submenuLevel: number,
   /** Toggles the submenu. */
   toggle: (focusStrategy?: FocusStrategy | null) => void,
   /** @private */
@@ -46,19 +46,19 @@ export interface SubmenuTriggerState extends OverlayTriggerState {
 export function UNSTABLE_useSubmenuTriggerState(props: SubmenuTriggerProps, state: MenuTriggerState): SubmenuTriggerState  {
   let {triggerKey} = props;
   let {UNSTABLE_expandedKeysStack, UNSTABLE_openSubmenu, UNSTABLE_closeSubmenu, close: closeAll} = state;
-  let [level] = useState(UNSTABLE_expandedKeysStack?.length + 1);
-  let isOpen = useMemo(() => UNSTABLE_expandedKeysStack[level - 1] === triggerKey, [UNSTABLE_expandedKeysStack, triggerKey, level]);
+  let [submenuLevel] = useState(UNSTABLE_expandedKeysStack?.length);
+  let isOpen = useMemo(() => UNSTABLE_expandedKeysStack[submenuLevel] === triggerKey, [UNSTABLE_expandedKeysStack, triggerKey, submenuLevel]);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   let open = useCallback((focusStrategy: FocusStrategy = null) => {
     setFocusStrategy(focusStrategy);
-    UNSTABLE_openSubmenu(triggerKey, level);
-  }, [UNSTABLE_openSubmenu, level, triggerKey]);
+    UNSTABLE_openSubmenu(triggerKey, submenuLevel);
+  }, [UNSTABLE_openSubmenu, submenuLevel, triggerKey]);
 
   let close = useCallback(() => {
     setFocusStrategy(null);
-    UNSTABLE_closeSubmenu(triggerKey, level);
-  }, [UNSTABLE_closeSubmenu, level, triggerKey]);
+    UNSTABLE_closeSubmenu(triggerKey, submenuLevel);
+  }, [UNSTABLE_closeSubmenu, submenuLevel, triggerKey]);
 
   let toggle = useCallback((focusStrategy: FocusStrategy = null) => {
     setFocusStrategy(focusStrategy);
@@ -75,10 +75,10 @@ export function UNSTABLE_useSubmenuTriggerState(props: SubmenuTriggerProps, stat
     open,
     close,
     closeAll,
-    level,
+    submenuLevel,
     // TODO: Placeholders that aren't used but give us parity with OverlayTriggerState so we can use this in Popover. Refactor if we update Popover via
     // https://github.com/adobe/react-spectrum/pull/4976#discussion_r1336472863
     setOpen: () => {},
     toggle
-  }), [isOpen, open, close, closeAll, focusStrategy, toggle, level]);
+  }), [isOpen, open, close, closeAll, focusStrategy, toggle, submenuLevel]);
 }

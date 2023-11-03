@@ -634,7 +634,7 @@ describe('Submenu', function () {
       expect(submenuOnClose).not.toHaveBeenCalled();
     });
 
-    it.only('should not trigger root menu\' onAction when pressing on a submenu trigger item', async function () {
+    it('should not trigger root menu\' onAction when pressing on a submenu trigger item', async function () {
       let tree = render(<SubmenuStatic onAction={onAction} />);
       let triggerButton = tree.getByRole('button');
       await user.pointer({target: triggerButton, keys: '[MouseLeft]'});

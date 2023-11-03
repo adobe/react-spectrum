@@ -15,6 +15,7 @@ import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps, Key} from '@react-types/shared';
+import {mergeProps} from '@react-aria/utils';
 import {Popover} from '@react-spectrum/overlays';
 import React, {ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
@@ -77,8 +78,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let onBackButtonPress = () => {
     submenuTriggerState.close();
     if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
-      // Delay for the parent menu in the tray to no longer be display: none so focus can properly be moved to it
-      requestAnimationFrame(() => parentMenuRef.current.focus());
+      parentMenuRef.current.focus();
     }
   };
 
@@ -112,8 +112,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     overlay = (
       <Popover
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
-        {...popoverProps}
-        {...overlayProps}
+        {...mergeProps(popoverProps, overlayProps)}
         onBlurWithin={onBlurWithin}
         container={popoverContainerRef.current}
         state={submenuTriggerState}

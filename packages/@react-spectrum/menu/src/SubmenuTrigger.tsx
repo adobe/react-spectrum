@@ -52,8 +52,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   let onBackButtonPress = () => {
     submenuTriggerState.close();
     if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
-      // Delay for the parent menu in the tray to no longer be display: none so focus can properly be moved to it
-      requestAnimationFrame(() => parentMenuRef.current.focus());
+      parentMenuRef.current.focus();
     }
   };
 
@@ -63,12 +62,12 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
     switch (e.key) {
       case 'ArrowLeft':
         if (direction === 'ltr') {
-          requestAnimationFrame(() => triggerRef.current.focus());
+          triggerRef.current.focus();
         }
         break;
       case 'ArrowRight':
         if (direction === 'rtl') {
-          requestAnimationFrame(() => triggerRef.current.focus());
+          triggerRef.current.focus();
         }
         break;
     }
@@ -85,8 +84,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   } else {
     overlay = (
       <Popover
-        {...popoverProps}
-        {...overlayProps}
+        {...mergeProps(popoverProps, overlayProps)}
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
         container={popoverContainerRef.current}
         offset={-10}

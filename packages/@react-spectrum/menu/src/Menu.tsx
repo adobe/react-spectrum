@@ -32,9 +32,8 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let isSubmenu = true;
   let contextProps = useContext(MenuContext);
   let parentMenuContext = useMenuStateContext();
-  let {rootMenuTriggerState, state: parentMenuTreeState} = parentMenuContext || {};
+  let {rootMenuTriggerState, state: parentMenuTreeState} = parentMenuContext || {rootMenuTriggerState: contextProps.state};
   if (!parentMenuContext) {
-    rootMenuTriggerState = contextProps.state;
     isSubmenu = false;
   }
   let completeProps = {
@@ -54,8 +53,8 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     setLeftOffset({left: -1 * left});
   }, []);
 
-  let menuLevel = contextProps.level || 0;
-  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel]) != null;
+  let menuLevel = contextProps.submenuLevel ?? -1;
+  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel + 1]) != null;
   // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>

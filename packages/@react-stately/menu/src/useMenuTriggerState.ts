@@ -57,7 +57,7 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
 
   let openSubmenu = (triggerKey: Key, level: number) => {
     setExpandedKeysStack(oldStack => {
-      if (level > oldStack.length + 1) {
+      if (level > oldStack.length) {
         return oldStack;
       }
 
@@ -67,9 +67,9 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
 
   let closeSubmenu = (triggerKey: Key, level: number) => {
     setExpandedKeysStack(oldStack => {
-      let key = oldStack[level - 1];
+      let key = oldStack[level];
       if (key === triggerKey) {
-        return oldStack.slice(0, level - 1);
+        return oldStack.slice(0, level);
       } else {
         return oldStack;
       }

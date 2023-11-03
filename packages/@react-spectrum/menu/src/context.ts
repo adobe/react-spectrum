@@ -23,7 +23,7 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   ref?: MutableRefObject<HTMLDivElement>,
   state?: MenuTriggerState,
   onBackButtonPress?: () => void,
-  level?: number
+  submenuLevel?: number
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
