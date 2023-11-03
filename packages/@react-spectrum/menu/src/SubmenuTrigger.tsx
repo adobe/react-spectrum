@@ -91,7 +91,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
         containerPadding={0}
         crossOffset={-5}
         enableBothDismissButtons
-        UNSAFE_style={{clipPath: 'unset', overflow: 'visible'}}
+        UNSAFE_style={{clipPath: 'unset', overflow: 'visible', borderWidth: '0px'}}
         state={submenuTriggerState}
         triggerRef={triggerRef}
         scrollRef={menuRef}
