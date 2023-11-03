@@ -70,6 +70,7 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
     defaultOpen,
     onOpenChange,
     children,
+    isEntering,
     isExiting,
     ...otherProps
   } = props;
@@ -81,6 +82,7 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
       isOpen={isOpen}
       defaultOpen={defaultOpen}
       onOpenChange={onOpenChange}
+      isEntering={isEntering}
       isExiting={isExiting}>
       <ModalContent {...otherProps} modalRef={ref}>
         {children}

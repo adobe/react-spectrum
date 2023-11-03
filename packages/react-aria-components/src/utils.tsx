@@ -270,7 +270,7 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
     if (isActive && ref.current) {
       // Make sure there's actually an animation, and it wasn't there before we triggered the update.
       let computedStyle = window.getComputedStyle(ref.current);
-      if (computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
+      if (computedStyle.animationName && computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
         let onAnimationEnd = (e: AnimationEvent) => {
           if (e.target === ref.current) {
             element.removeEventListener('animationend', onAnimationEnd);
