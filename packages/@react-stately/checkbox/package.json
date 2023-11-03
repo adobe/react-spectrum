@@ -22,6 +22,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@react-stately/form": "3.0.0-alpha.1",
     "@react-stately/toggle": "^3.6.3",
     "@react-stately/utils": "^3.8.0",
     "@react-types/checkbox": "^3.5.2",

@@ -51,6 +51,9 @@ import {TextField, Label, Input} from 'react-aria-components';
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+```
 
 ```css
 .react-aria-TextField {
@@ -76,29 +79,11 @@ import {TextField, Label, Input} from 'react-aria-components';
     font-size: 1.143rem;
     color: var(--text-color);
 
-    &[data-invalid] {
-      border-color: var(--invalid-color);
-    }
-
     &[data-focused] {
       outline: none;
       border-color: var(--focus-ring-color);
       box-shadow: 0 0 0 1px var(--focus-ring-color);
     }
-
-    &[data-disabled] {
-      border-color: var(--field-border-disabled);
-      color: var(--text-color-disabled);
-    }
-  }
-
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--invalid-color);
   }
 }
 
@@ -260,6 +245,38 @@ The `description` slot can be used to associate additional help text with a text
 </TextField>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TextField {
+
+  .react-aria-Input,
+  .react-aria-TextArea {
+    &[data-invalid] {
+      border-color: var(--invalid-color);
+
+      &[data-focused] {
+        outline: none;
+        border-color: var(--focus-ring-color);
+        box-shadow: 0 0 0 1px var(--focus-ring-color);
+      }
+    }
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+```
+
+</details>
+
 ### Error message
 
 The `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to
@@ -290,6 +307,22 @@ A TextField can be disabled using the `isDisabled` prop.
 ```tsx example
 <MyTextField label="Email" isDisabled />
 ```
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TextField {
+  .react-aria-Input,
+  .react-aria-TextArea {
+    &[data-disabled] {
+      border-color: var(--field-border-disabled);
+      color: var(--text-color-disabled);
+    }
+  }
+}
+```
+
+</details>
 
 ### Read only
 
@@ -326,6 +359,10 @@ A `<Label>` accepts all HTML attributes.
 ### Input
 
 An `<Input>` accepts all HTML attributes.
+
+### TextArea
+
+A `<TextArea>` accepts all HTML attributes.
 
 ### Text
 
@@ -381,7 +418,7 @@ An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by over
 
 ### TextArea
 
-An `TextArea` can be targeted with the `.react-aria-TextArea` CSS selector, or by overriding with a custom `className`. It supports the same states as `Input` described above.
+A `TextArea` can be targeted with the `.react-aria-TextArea` CSS selector, or by overriding with a custom `className`. It supports the same states as `Input` described above.
 
 ### Text
 

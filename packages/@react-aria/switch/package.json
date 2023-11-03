@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/switch",
-  "version": "3.5.5",
+  "version": "3.5.6",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,7 +22,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/toggle": "^3.8.1",
+    "@react-aria/toggle": "^3.8.2",
     "@react-stately/toggle": "^3.6.3",
     "@react-types/switch": "^3.4.2",
     "@swc/helpers": "^0.5.0"

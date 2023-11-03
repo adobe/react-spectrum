@@ -610,6 +610,49 @@ describe('Table', () => {
     expect(cellRef.current).toBeInstanceOf(HTMLTableCellElement);
   });
 
+  it('should support row render function and not call it with state', () => {
+    let renderRow = jest.fn(() => {});
+    render(
+      <Table aria-label="Search results">
+        <TableHeader columns={[columns[0]]}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={[rows[0]]}>
+          {item => (
+            <Row columns={[columns[0]]}>
+              {column => {
+                renderRow(column);
+                return (
+                  <Cell>
+                    {item[column.key]}
+                  </Cell>
+                );
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    );
+
+    // React canary only calls render function once, vs twice in React 18, 17 and 16.
+    // Every call should be the same, so just loop over them.
+    expect(renderRow.mock.calls.length).toBeGreaterThanOrEqual(1);
+    renderRow.mock.calls.forEach((call) => {
+      expect(call[0]).toBe(columns[0]);
+    });
+    renderRow.mockReset();
+
+    // We do not currently call the renderProps function on any of these changes
+    // let rowElems = getAllByRole('row');
+    // let cells = getAllByRole('rowheader');
+    // act(() => rowElems[1].focus());
+    // expect(cells[0]).toHaveTextContent('Games focused');
+  });
+
   it('should support cell render props', () => {
     let {getAllByRole} = render(
       <Table aria-label="Search results">
