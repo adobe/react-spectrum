@@ -12,9 +12,9 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {getChildNodes} from '@react-stately/collections';
+import {Key, Node} from '@react-types/shared';
 import {MenuItem} from './MenuItem';
-import {Node} from '@react-types/shared';
-import React, {Fragment, Key} from 'react';
+import React, {Fragment} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState} from '@react-stately/tree';
 import {useMenuSection} from '@react-aria/menu';

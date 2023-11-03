@@ -1,9 +1,14 @@
-export const getOwnerDocument = (el?: Element | null): Document => {
+export const getOwnerDocument = (el: Element | null | undefined): Document => {
   return el?.ownerDocument ?? document;
 };
 
 export const getOwnerWindow = (
-  el?: Element | null
+  el: (Window & typeof global) | Element | null | undefined
 ): Window & typeof global => {
-  return el?.ownerDocument?.defaultView ?? window;
+  if (el && 'window' in el && el.window === el) {
+    return el;
+  }
+
+  const doc = getOwnerDocument(el as Element | null | undefined);
+  return doc.defaultView || window;
 };

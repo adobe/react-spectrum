@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, KeyboardEvents, PressEvent, PressEvents} from '@react-types/shared';
+import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
-import {Key, RefObject} from 'react';
 import {menuData} from './useMenu';
+import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableItem} from '@react-aria/selection';
 

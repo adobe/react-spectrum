@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {DisabledBehavior, MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
-import {Key, useEffect, useMemo, useRef, useState} from 'react';
+import {DisabledBehavior, Key, MultipleSelection, SelectionBehavior, SelectionMode} from '@react-types/shared';
 import {MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 import {useControlledState} from '@react-stately/utils';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 function equalSets(setA, setB) {
   if (setA.size !== setB.size) {

@@ -14,9 +14,9 @@ import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils
 import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
-import {ItemProps} from '@react-types/shared';
+import {ItemProps, Key} from '@react-types/shared';
 import {Popover} from '@react-spectrum/overlays';
-import React, {Key, ReactElement, useRef} from 'react';
+import React, {ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
@@ -163,5 +163,5 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
   };
 };
 
-let _Item = ContextualHelpTrigger as (props: SpectrumMenuDialogTriggerProps) => JSX.Element;
+let _Item = ContextualHelpTrigger as (props: SpectrumMenuDialogTriggerProps) => React.JSX.Element;
 export {_Item as ContextualHelpTrigger};

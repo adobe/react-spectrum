@@ -64,137 +64,111 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-@import './Button.mdx';
-@import './Popover.mdx';
+@import './Button.mdx' layer(button);
+@import './Popover.mdx' layer(popover);
 ```
 
 ```css
-@layer menu {
-  .react-aria-Menu {
-    --highlight-background: slateblue;
-    --highlight-foreground: white;
-    --separator-color: var(--spectrum-global-color-gray-500);
-    --text-color: var(--spectrum-alias-text-color);
-    --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+.react-aria-Menu {
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --separator-color: var(--spectrum-global-color-gray-500);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
 
-    max-height: inherit;
-    box-sizing: border-box;
-    overflow: auto;
-    padding: 2px;
-    margin: 0;
-    min-width: 150px;
-    box-sizing: border-box;
+  max-height: inherit;
+  box-sizing: border-box;
+  overflow: auto;
+  padding: 2px;
+  margin: 0;
+  min-width: 150px;
+  box-sizing: border-box;
+  outline: none;
+
+  .react-aria-Section:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-Header {
+    font-size: 1.143rem;
+    font-weight: bold;
+    padding: 0 0.714rem;
+  }
+
+  .react-aria-Separator {
+    height: 1px;
+    background: var(--separator-color);
+    margin: 2px 4px;
+  }
+
+  .react-aria-MenuItem {
+    margin: 2px;
+    padding: 0.286rem 0.571rem;
+    border-radius: 6px;
     outline: none;
+    cursor: default;
+    color: var(--text-color);
+    font-size: 1.072rem;
+    position: relative;
+    display: grid;
+    grid-template-areas: "label kbd"
+                        "desc  kbd";
+    align-items: center;
+    column-gap: 20px;
 
-    .react-aria-Section:not(:first-child) {
-      margin-top: 12px;
+    &[data-focused] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
     }
 
-    .react-aria-Header {
-      font-size: 1.143rem;
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+
+    [slot=label] {
       font-weight: bold;
-      padding: 0 0.714rem;
+      grid-area: label;
     }
 
-    .react-aria-Separator {
-      height: 1px;
-      background: var(--separator-color);
-      margin: 2px 4px;
+    [slot=description] {
+      font-size: small;
+      grid-area: desc;
     }
 
-    .react-aria-MenuItem {
-      margin: 2px;
-      padding: 0.286rem 0.571rem;
-      border-radius: 6px;
-      outline: none;
-      cursor: default;
-      color: var(--text-color);
-      font-size: 1.072rem;
-      position: relative;
-      display: grid;
-      grid-template-areas: "label kbd"
-                          "desc  kbd";
-      align-items: center;
-      column-gap: 20px;
-
-      &[data-focused] {
-        background: var(--highlight-background);
-        color: var(--highlight-foreground);
-      }
-
-      &[data-disabled] {
-        color: var(--text-color-disabled);
-      }
-
-      [slot=label] {
-        font-weight: bold;
-        grid-area: label;
-      }
-
-      [slot=description] {
-        font-size: small;
-        grid-area: desc;
-      }
-
-      & kbd {
-        grid-area: kbd;
-        font-family: monospace;
-        text-align: end;
-      }
-
-      &[data-selection-mode] {
-        padding-left: 24px;
-        &::before {
-          position: absolute;
-          left: 4px;
-          font-weight: 600;
-        }
-
-        &[data-selection-mode=multiple][data-selected]::before {
-          content: '✓';
-          content: '✓' / '';
-          alt: ' ';
-          position: absolute;
-          left: 4px;
-          font-weight: 600;
-        }
-
-        &[data-selection-mode=single][data-selected]::before {
-          content: '●';
-          content: '●' / '';
-          transform: scale(0.7)
-        }
-      }
+    & kbd {
+      grid-area: kbd;
+      font-family: monospace;
+      text-align: end;
     }
   }
-  @layer popover {
-    .react-aria-Popover {
-      padding: 0px;
-      margin-top: 0px;
-      min-width: var(--trigger-width);
-      box-sizing: border-box;
-      &[data-placement=top] {
-        margin-bottom: unset;
-        --origin: translateY(8px);
-      }
+}
+@layer popover {
+  .react-aria-Popover {
+    padding: 0px;
+    margin-top: 0px;
+    min-width: var(--trigger-width);
+    box-sizing: border-box;
+    &[data-placement=top] {
+      margin-bottom: unset;
+      --origin: translateY(8px);
+    }
 
-      &[data-placement=bottom] {
-        margin-top: unset;
-        --origin: translateY(-8px);
-      }
+    &[data-placement=bottom] {
+      margin-top: unset;
+      --origin: translateY(-8px);
     }
   }
+}
 
-  @media (forced-colors: active) {
-    .react-aria-Menu {
-      forced-color-adjust: none;
+@media (forced-colors: active) {
+  .react-aria-Menu {
+    forced-color-adjust: none;
 
-      --highlight-background: Highlight;
-      --highlight-foreground: HighlightText;
-      --separator-color: ButtonBorder;
-      --text-color: ButtonText;
-      --text-color-disabled: GrayText;
-    }
+    --highlight-background: Highlight;
+    --highlight-foreground: HighlightText;
+    --separator-color: ButtonBorder;
+    --text-color: ButtonText;
+    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -410,6 +384,43 @@ function Example() {
   );
 }
 ```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Menu {
+  .react-aria-MenuItem {
+    &[data-selection-mode] {
+      padding-left: 24px;
+
+      &::before {
+        position: absolute;
+        left: 4px;
+        font-weight: 600;
+      }
+
+      &[data-selection-mode=multiple][data-selected]::before {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        left: 4px;
+        font-weight: 600;
+      }
+
+      &[data-selection-mode=single][data-selected]::before {
+        content: '●';
+        content: '●' / '';
+        transform: scale(0.7)
+      }
+    }
+  }
+}
+```
+
+</details>
 
 ### Multiple
 

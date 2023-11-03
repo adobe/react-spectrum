@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, FocusStrategy, KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, FocusStrategy, Key, KeyboardDelegate} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import {FocusEvent, Key, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
+import {FocusEvent, KeyboardEvent, RefObject, useEffect, useRef} from 'react';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {focusWithoutScrolling, mergeProps, scrollIntoView, scrollIntoViewport, useEvent, useRouter} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';

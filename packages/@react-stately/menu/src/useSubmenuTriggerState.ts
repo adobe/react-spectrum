@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy} from '@react-types/shared';
-import {Key, useCallback, useMemo, useState} from 'react';
+import {FocusStrategy, Key} from '@react-types/shared';
 import type {MenuTriggerState} from './useMenuTriggerState';
 import type {OverlayTriggerState} from '@react-stately/overlays';
+import {useCallback, useMemo, useState} from 'react';
 
 export interface SubmenuTriggerProps {
   /** Key of the trigger item. */
