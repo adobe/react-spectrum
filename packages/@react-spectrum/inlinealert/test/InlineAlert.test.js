@@ -71,4 +71,17 @@ describe('InlineAlert', function () {
       let alert = getByTestId('testid1');
       expect(alert).toHaveClass(`spectrum-InLineAlert--${variant}`);
     });
+
+  it('supports autoFocus', () => {
+    let {getByRole} = render(
+      <InlineAlert autoFocus>
+        <Header>Title</Header>
+        <Content>Content</Content>
+      </InlineAlert>
+    );
+
+    let alert = getByRole('alert');
+    expect(alert).toHaveAttribute('tabIndex', '-1');
+    expect(document.activeElement).toBe(alert);
+  });
 });

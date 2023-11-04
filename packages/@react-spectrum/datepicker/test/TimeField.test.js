@@ -301,8 +301,9 @@ describe('TimeField', function () {
           expect(group).toHaveAttribute('aria-describedby');
           let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
           expect(getDescription()).toContain('Constraints not satisfied');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+          await user.keyboard('[ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
 
           expect(getDescription()).toContain('Constraints not satisfied');
           expect(input.validity.valid).toBe(true);
@@ -331,8 +332,9 @@ describe('TimeField', function () {
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Value must be 9:00 AM or later.');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.keyboard('[Tab][ArrowUp]');
+          await user.keyboard('[ArrowUp]');
 
           expect(getDescription()).toContain('Value must be 9:00 AM or later.');
           expect(input.validity.valid).toBe(true);
@@ -348,8 +350,8 @@ describe('TimeField', function () {
 
           act(() => {getByTestId('form').checkValidity();});
           expect(getDescription()).toContain('Value must be 5:00 PM or earlier.');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.tab();
           await user.keyboard('[ArrowDown]');
           expect(getDescription()).toContain('Value must be 5:00 PM or earlier.');
           expect(input.validity.valid).toBe(true);
@@ -377,8 +379,9 @@ describe('TimeField', function () {
 
           expect(group).toHaveAttribute('aria-describedby');
           expect(getDescription()).toContain('Invalid value');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-          await user.keyboard('[Tab]10');
+          await user.keyboard('10');
 
           expect(getDescription()).toContain('Invalid value');
           expect(input.validity.valid).toBe(true);

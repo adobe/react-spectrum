@@ -28,12 +28,13 @@ import {
   DropPosition,
   DropTarget,
   DropTargetDelegate,
+  Key,
   KeyboardDelegate,
   Node
 } from '@react-types/shared';
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {HTMLAttributes, Key, RefObject, useCallback, useEffect, useRef} from 'react';
+import {HTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import {setInteractionModality} from '@react-aria/interactions';
 import {useAutoScroll} from './useAutoScroll';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 import type {ListState} from '@react-stately/list';
 
 interface ListMapShared {

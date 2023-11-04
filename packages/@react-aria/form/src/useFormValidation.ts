@@ -12,13 +12,18 @@
 
 import {FormValidationState} from '@react-stately/form';
 import {RefObject, useEffect} from 'react';
+import {setInteractionModality} from '@react-aria/interactions';
 import {useEffectEvent, useLayoutEffect} from '@react-aria/utils';
 import {Validation, ValidationResult} from '@react-types/shared';
 
 type ValidatableElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement;
 
-export function useFormValidation<T>(props: Validation<T>, state: FormValidationState, ref: RefObject<ValidatableElement>) {
-  let {validationBehavior} = props;
+interface FormValidationProps<T> extends Validation<T> {
+  focus?: () => void
+}
+
+export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement>) {
+  let {validationBehavior, focus} = props;
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
   useLayoutEffect(() => {
@@ -43,14 +48,27 @@ export function useFormValidation<T>(props: Validation<T>, state: FormValidation
   });
 
   let onInvalid = useEffectEvent((e: Event) => {
-    // Prevent default browser error UI from appearing.
-    e.preventDefault();
-
     // Only commit validation if we are not already displaying one.
     // This avoids clearing server errors that the user didn't actually fix.
     if (!state.displayValidation.isInvalid) {
       state.commitValidation();
     }
+
+    // Auto focus the first invalid input in a form, unless the error already had its default prevented.
+    let form = ref.current?.form;
+    if (!e.defaultPrevented && form && getFirstInvalidInput(form) === ref.current) {
+      if (focus) {
+        focus();
+      } else {
+        ref.current?.focus();
+      }
+
+      // Always show focus ring.
+      setInteractionModality('keyboard');
+    }
+
+    // Prevent default browser error UI from appearing.
+    e.preventDefault();
   });
 
   let onChange = useEffectEvent(() => {
@@ -100,4 +118,15 @@ function getNativeValidity(input: ValidatableElement): ValidationResult {
     validationDetails: getValidity(input),
     validationErrors: input.validationMessage ? [input.validationMessage] : []
   };
+}
+
+function getFirstInvalidInput(form: HTMLFormElement): ValidatableElement | null {
+  for (let i = 0; i < form.elements.length; i++) {
+    let element = form.elements[i] as ValidatableElement;
+    if (!element.validity.valid) {
+      return element;
+    }
+  }
+
+  return null;
 }

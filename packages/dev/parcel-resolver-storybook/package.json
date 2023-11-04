@@ -4,9 +4,9 @@
   "private": true,
   "main": "StorybookResolver.js",
   "engines": {
-    "parcel": "^2.10.0"
+    "parcel": "^2.10.2"
   },
   "dependencies": {
-    "@parcel/plugin": "^2.10.0"
+    "@parcel/plugin": "^2.10.2"
   }
 }

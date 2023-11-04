@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, ReactElement, ReactNode} from 'react';
+import {Key} from '@react-types/shared';
+import {ReactElement, ReactNode} from 'react';
 
 export interface PartialNode<T> {
   type?: string,

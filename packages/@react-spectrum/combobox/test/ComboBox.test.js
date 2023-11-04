@@ -5383,10 +5383,10 @@ describe('ComboBox', function () {
 
             act(() => {getByTestId('form').checkValidity();});
 
+            expect(document.activeElement).toBe(input);
             expect(input).toHaveAttribute('aria-describedby');
             expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
 
-            await user.tab();
             await user.keyboard('[ArrowRight]Tw');
 
             act(() => {
@@ -5421,6 +5421,7 @@ describe('ComboBox', function () {
 
             act(() => {getByTestId('form').checkValidity();});
 
+            expect(document.activeElement).toBe(input);
             expect(input).toHaveAttribute('aria-describedby');
             expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
 
