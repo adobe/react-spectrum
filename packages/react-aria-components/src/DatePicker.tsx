@@ -42,7 +42,7 @@ export interface DatePickerRenderProps {
   isDisabled: boolean,
   /**
    * Whether the date picker is invalid.
-   * @selector [data-disabled]
+   * @selector [data-invalid]
    */
   isInvalid: boolean,
   /**

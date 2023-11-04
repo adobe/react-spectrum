@@ -911,7 +911,7 @@ function MyColumn(props) {
               </Menu>
             </Popover>
           </MenuTrigger>
-          <ColumnResizer>
+          <ColumnResizer onHoverStart={action('onHoverStart')} onHoverChange={action('onHoverChange')} onHoverEnd={action('onHoverEnd')}>
             ↔
           </ColumnResizer>
         </div>
