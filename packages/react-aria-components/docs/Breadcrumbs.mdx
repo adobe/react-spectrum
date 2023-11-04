@@ -179,7 +179,8 @@ as shown below, can be used when the options come from an external data source s
 As seen below, an iterable list of options is passed to the Breadcrumbs using the `items` prop. A function provided as `children` of the `<Breadcrumbs>` is called to render each item. When a breadcrumb is pressed, the `onAction` event is triggered and the breadcrumbs array is updated.
 
 ```tsx example
-import {Key} from '@react-types/shared';
+import type {Key} from 'react-aria-components';
+
 function Example() {
   let [breadcrumbs, setBreadcrumbs] = React.useState([
     {id: 1, label: 'Home'},

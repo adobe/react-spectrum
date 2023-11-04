@@ -240,7 +240,8 @@ See the `react-stately` [Selection docs](../react-stately/selection.html) for mo
 Selection can be controlled using the `selectedKey` prop, paired with the `onSelectionChange` event. The `id` prop from the selected tab will be passed into the callback when the tab is selected, allowing you to update state accordingly.
 
 ```tsx example
-import {Key} from '@react-types/shared';
+import type {Key} from 'react-aria-components';
+
 function Example() {
   let [timePeriod, setTimePeriod] = React.useState<Key>('triassic');
 
