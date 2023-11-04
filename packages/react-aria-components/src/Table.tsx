@@ -1,4 +1,4 @@
-import {AriaLabelingProps, LinkDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
@@ -12,7 +12,7 @@ import {filterDOMProps, useLayoutEffect, useObjectRef, useResizeObserver} from '
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
@@ -324,7 +324,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   let dropState: DroppableCollectionState | undefined = undefined;
   let droppableCollection: DroppableCollectionResult | undefined = undefined;
   let isRootDropTarget = false;
-  let dragPreview: JSX.Element | null = null;
+  let dragPreview: React.JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {
@@ -547,7 +547,7 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
   maxWidth?: ColumnStaticSize | null
 }
 
-function Column<T extends object>(props: ColumnProps<T>, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
+function Column<T extends object>(props: ColumnProps<T>, ref: ForwardedRef<HTMLTableCellElement>): React.JSX.Element | null {
   let render = useContext(CollectionRendererContext);
   let childColumns: ReactNode | ((item: T) => ReactNode);
   if (typeof render === 'function') {
@@ -575,15 +575,20 @@ export interface TableBodyRenderProps {
    * Whether the table body has no rows and should display its empty state.
    * @selector [data-empty]
    */
-  isEmpty: boolean
+  isEmpty: boolean,
+  /**
+   * Whether the Table is currently the active drop target.
+   * @selector [data-drop-target]
+   */
+  isDropTarget: boolean
 }
 
 export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<TableBodyRenderProps> {
   /** Provides content to display when there are no rows in the table. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
 
-function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>): JSX.Element | null {
+function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>): React.JSX.Element | null {
   let children = useCollectionChildren(props);
   return useSSRCollectionNode('tablebody', props, ref, null, children);
 }
@@ -606,7 +611,7 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   textValue?: string
 }
 
-function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): JSX.Element | null {
+function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): React.JSX.Element | null {
   let children = useCollectionChildren({
     children: props.children,
     items: props.columns,
@@ -657,7 +662,7 @@ export interface CellProps extends RenderProps<CellRenderProps> {
   textValue?: string
 }
 
-function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
+function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): React.JSX.Element | null {
   return useSSRCollectionNode('cell', props, ref, props.children);
 }
 
@@ -693,7 +698,8 @@ function TableHeaderRowGroup<T>({collection}: {collection: TableCollection<T>}) 
   );
 }
 
-function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableCollection<T>, isDroppable: boolean}) {
+function TableBodyRowGroup<T>(props: {collection: TableCollection<T>, isDroppable: boolean}) {
+  let {collection, isDroppable} = props;
   let bodyRows = useCachedChildren({
     items: collection.rows,
     children: useCallback((item: Node<T>) => {
@@ -706,23 +712,29 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
     }, [])
   });
 
-  let props: TableBodyProps<T> = collection.body.props;
+  let state = useContext(TableStateContext);
+  let {dropState} = useContext(DragAndDropContext);
+  let isRootDropTarget = isDroppable && !!dropState && (dropState.isDropTarget({type: 'root'}) ?? false);
+
+  let bodyProps: TableBodyProps<T> = collection.body.props;
+  let renderValues = {
+    isDropTarget: isRootDropTarget,
+    isEmpty: collection.size === 0
+  };
   let renderProps = useRenderProps({
-    ...props,
+    ...bodyProps,
     id: undefined,
     children: undefined,
     defaultClassName: 'react-aria-TableBody',
-    values: {
-      isEmpty: collection.size === 0
-    }
+    values: renderValues
   });
 
   let emptyState;
-  if (collection.size === 0 && props.renderEmptyState) {
+  if (collection.size === 0 && bodyProps.renderEmptyState && state) {
     emptyState = (
       <tr role="row">
         <td role="gridcell" colSpan={collection.columnCount}>
-          {props.renderEmptyState()}
+          {bodyProps.renderEmptyState(renderValues)}
         </td>
       </tr>
     );
@@ -731,7 +743,7 @@ function TableBodyRowGroup<T>({collection, isDroppable}: {collection: TableColle
   let {rowGroupProps} = useTableRowGroup();
   return (
     <tbody
-      {...mergeProps(filterDOMProps(props as any), rowGroupProps)}
+      {...mergeProps(filterDOMProps(bodyProps as any), rowGroupProps)}
       {...renderProps}
       ref={collection.body.props.ref}
       data-empty={collection.size === 0 || undefined}>
@@ -887,7 +899,7 @@ export interface ColumnResizerRenderProps {
   resizableDirection: 'right' | 'left' | 'both'
 }
 
-export interface ColumnResizerProps extends RenderProps<ColumnResizerRenderProps> {
+export interface ColumnResizerProps extends HoverEvents, RenderProps<ColumnResizerRenderProps> {
   /** A custom accessibility label for the resizer. */
   'aria-label'?: string
 }
@@ -915,7 +927,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
     inputRef
   );
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover(props);
 
   let isEResizable = layoutState.getColumnMinWidth(column.key) >= layoutState.getColumnWidth(column.key);
   let isWResizable = layoutState.getColumnMaxWidth(column.key) <= layoutState.getColumnWidth(column.key);
@@ -970,6 +982,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
       data-resizable-direction={resizableDirection}>
+      {renderProps.children}
       <input
         ref={inputRef}
         {...mergeProps(inputProps, focusProps, hoverProps)} />
@@ -1028,8 +1041,10 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
   let props = item.props as RowProps<unknown>;
   let isDragging = dragState && dragState.isDragging(item.key);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {children: _, ...restProps} = props;
   let renderProps = useRenderProps({
-    ...props,
+    ...restProps,
     id: undefined,
     defaultClassName: 'react-aria-Row',
     values: {

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Item, Label, ListBox, Popover, Select, SelectContext, SelectValue, Text} from '../';
-import {pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {Button, FieldError, Label, ListBox, ListBoxItem, Popover, Select, SelectContext, SelectValue, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -25,9 +25,9 @@ let TestSelect = (props) => (
     <Text slot="errorMessage">Error</Text>
     <Popover>
       <ListBox>
-        <Item>Cat</Item>
-        <Item>Dog</Item>
-        <Item>Kangaroo</Item>
+        <ListBoxItem>Cat</ListBoxItem>
+        <ListBoxItem>Dog</ListBoxItem>
+        <ListBoxItem>Kangaroo</ListBoxItem>
       </ListBox>
     </Popover>
   </Select>
@@ -90,14 +90,14 @@ describe('Select', () => {
 
   it('supports items with render props', () => {
     let MyItem = (props) => (
-      <Item {...props}>
+      <ListBoxItem {...props}>
         {({isSelected}) => (
           <>
             {props.children}
             {isSelected ? ' (selected)' : ''}
           </>
         )}
-      </Item>
+      </ListBoxItem>
     );
 
     let {getByRole} = render(
@@ -138,7 +138,7 @@ describe('Select', () => {
         </Button>
         <Popover>
           <ListBox items={items}>
-            {item => <Item>{item.name}</Item>}
+            {item => <ListBoxItem>{item.name}</ListBoxItem>}
           </ListBox>
         </Popover>
       </Select>
@@ -166,9 +166,9 @@ describe('Select', () => {
             </Button>
             <Popover>
               <ListBox>
-                <Item>Cat</Item>
-                <Item>Dog</Item>
-                <Item>Kangaroo</Item>
+                <ListBoxItem>Cat</ListBoxItem>
+                <ListBoxItem>Dog</ListBoxItem>
+                <ListBoxItem>Kangaroo</ListBoxItem>
               </ListBox>
             </Popover>
           </>
@@ -185,11 +185,11 @@ describe('Select', () => {
 
   it('should send disabled prop to the hidden field', () => {
     render(
-      <TestSelect isDisabled />
+      <TestSelect name="select" isDisabled />
     );
-    userEvent.tab();
 
-    expect(document.activeElement).toBe(document.body);
+    let input = document.querySelector('[name=select]');
+    expect(input).toBeDisabled();
   });
 
   it('should render data- attributes only on the outer element', () => {
@@ -197,5 +197,49 @@ describe('Select', () => {
     let outerEl = getAllByTestId('select-test');
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-Select');
+  });
+
+  it('supports validation errors', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <Select name="select" isRequired>
+          <Label>Favorite Animal</Label>
+          <Button>
+            <SelectValue />
+          </Button>
+          <FieldError />
+          <Popover>
+            <ListBox>
+              <ListBoxItem>Cat</ListBoxItem>
+              <ListBoxItem>Dog</ListBoxItem>
+              <ListBoxItem>Kangaroo</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </Select>
+      </form>
+    );
+
+    let button = getByRole('button');
+    let select = button.closest('.react-aria-Select');
+    let input = document.querySelector('[name=select]');
+    expect(input).toHaveAttribute('required');
+    expect(button).not.toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(false);
+    expect(select).not.toHaveAttribute('data-invalid');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(button).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(select).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(button);
+
+    await user.click(button);
+
+    let listbox = getByRole('listbox');
+    let items = within(listbox).getAllByRole('option');
+    await user.click(items[0]);
+    expect(button).not.toHaveAttribute('aria-describedby');
+    expect(select).not.toHaveAttribute('data-invalid');
   });
 });

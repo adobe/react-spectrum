@@ -19,6 +19,7 @@ import Anatomy from '@react-aria/overlays/docs/modal-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 
 ---
@@ -49,7 +50,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
     <Dialog>
       {({close}) => (
         <form>
-          <Heading>Sign up</Heading>
+          <Heading slot="title">Sign up</Heading>
           <TextField autoFocus>
             <Label>First Name: </Label>
             <Input />
@@ -70,6 +71,11 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './TextField.mdx' layer(textfield);
+@import './Dialog.mdx' layer(dialog);
+```
 
 ```css
 .react-aria-ModalOverlay {
@@ -84,11 +90,11 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   justify-content: center;
 
   &[data-entering] {
-    animation: fade 200ms;
+    animation: modal-fade 200ms;
   }
 
   &[data-exiting] {
-    animation: fade 150ms reverse ease-in;
+    animation: modal-fade 150ms reverse ease-in;
   }
 }
 
@@ -98,15 +104,18 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   background: var(--page-background);
   border: 1px solid var(--spectrum-global-color-gray-300);
   outline: none;
-  padding: 30px;
   max-width: 250px;
 
   &[data-entering] {
-    animation: zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .react-aria-TextField {
+    margin-bottom: 8px;
   }
 }
 
-@keyframes fade {
+@keyframes modal-fade {
   from {
     opacity: 0;
   }
@@ -116,7 +125,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   }
 }
 
-@keyframes zoom {
+@keyframes modal-zoom {
   from {
     transform: scale(0.8);
   }
@@ -126,61 +135,6 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   }
 }
 
-.react-aria-Dialog {
-  outline: none;
-
-  .react-aria-Heading {
-    line-height: 1em;
-    margin-top: 0;
-  }
-
-  .react-aria-Button {
-    margin-top: 20px;
-  }
-}
-
-.react-aria-Button {
-  background: var(--spectrum-global-color-gray-50);
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  border-radius: 4px;
-  color: var(--spectrum-alias-text-color);
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-  padding: 6px 10px;
-  transition: border-color 200ms;
-
-  &[data-hovered] {
-    border-color: var(--spectrum-global-color-gray-500);
-  }
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--spectrum-global-color-gray-100);
-    border-color: var(--spectrum-global-color-gray-600);
-  }
-
-  &[data-focus-visible] {
-    border-color: slateblue;
-    box-shadow: 0 0 0 1px slateblue;
-  }
-}
-
-.react-aria-TextField {
-  margin-bottom: 8px;
-
-  .react-aria-Label {
-    display: inline-block;
-    width: 5.357rem;
-  }
-
-  .react-aria-Input {
-    font-size: 16px;
-  }
-}
 ```
 
 </details>
@@ -213,6 +167,10 @@ import {Modal, ModalOverlay} from 'react-aria-components';
 </ModalOverlay>
 ```
 
+## Examples
+
+<ExampleList tag="modal" />
+
 ## Interactions
 
 ### Dismissable
@@ -225,7 +183,7 @@ on the `Modal`. This allows the user to click outside to close the dialog.
   <Button>Open dialog</Button>
   <Modal isDismissable>
     <Dialog>
-      <Heading>Notice</Heading>
+      <Heading slot="title">Notice</Heading>
       <p>Click outside to close this dialog.</p>
     </Dialog>
   </Modal>
@@ -242,7 +200,7 @@ By default, modals can be closed by pressing the <Keyboard>Escape</Keyboard> key
   <Modal isKeyboardDismissDisabled>
     <Dialog>
       {({close}) => <>
-        <Heading>Notice</Heading>
+        <Heading slot="title">Notice</Heading>
         <p>You must close this dialog using the button below.</p>
         <Button onPress={close}>Close</Button>
       </>}
@@ -264,7 +222,7 @@ import {ModalOverlay} from 'react-aria-components';
     <Modal className="my-modal">
       <Dialog>
         {({close}) => <>
-          <Heading>Notice</Heading>
+          <Heading slot="title">Notice</Heading>
           <p>This is a modal with a custom modal overlay.</p>
           <Button onPress={close}>Close</Button>
         </>}
@@ -285,11 +243,11 @@ import {ModalOverlay} from 'react-aria-components';
   backdrop-filter: blur(10px);
 
   &[data-entering] {
-    animation: blur 300ms;
+    animation: mymodal-blur 300ms;
   }
 
   &[data-exiting] {
-    animation: blur 300ms reverse ease-in;
+    animation: mymodal-blur 300ms reverse ease-in;
   }
 }
 
@@ -298,23 +256,22 @@ import {ModalOverlay} from 'react-aria-components';
   top: 0;
   bottom: 0;
   right: 0;
-  width: 250px;
+  width: 300px;
   background: var(--page-background);
   outline: none;
-  padding: 30px;
   border-left: 1px solid var(--spectrum-global-color-gray-400);
   box-shadow: -8px 0 20px rgba(0 0 0 / 0.1);
 
   &[data-entering] {
-    animation: slide 300ms;
+    animation: mymodal-slide 300ms;
   }
 
   &[data-exiting] {
-    animation: slide 300ms reverse ease-in;
+    animation: mymodal-slide 300ms reverse ease-in;
   }
 }
 
-@keyframes blur {
+@keyframes mymodal-blur {
   from {
     background: rgba(45 0 0 / 0);
     backdrop-filter: blur(0);
@@ -326,7 +283,7 @@ import {ModalOverlay} from 'react-aria-components';
   }
 }
 
-@keyframes slide {
+@keyframes mymodal-slide {
   from {
     transform: translateX(100%);
   }
@@ -354,7 +311,7 @@ function Example() {
       <Button onPress={() => setOpen(true)}>Open dialog</Button>
       <Modal isDismissable isOpen={isOpen} onOpenChange={setOpen}>
         <Dialog>
-          <Heading>Notice</Heading>
+          <Heading slot="title">Notice</Heading>
           <p>Click outside to close this dialog.</p>
         </Dialog>
       </Modal>
@@ -477,7 +434,7 @@ The following example uses `KeyboardModalTrigger` to show a modal when the <Keyb
 <KeyboardModalTrigger keyboardShortcut="/">
   <Modal isDismissable>
     <Dialog>
-      <Heading>Command palette</Heading>
+      <Heading slot="title">Command palette</Heading>
       <p>Your cool command palette UI here!</p>
     </Dialog>
   </Modal>

@@ -240,50 +240,77 @@ function Example() {
 
 ## Validation
 
-`DateRangePicker` can display a validation state to communicate to the user whether the current value is valid or invalid. Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` via the `validationState` prop. The `errorMessage` prop can be used to communicate errors to the user.
+DateRangePicker supports the `isRequired` prop to ensure the user enters a value, as well as minimum and maximum values, and custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
 
-This example validates that the start and end dates of the selected range are within the same month.
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the date range picker or submits the form.
 
 ```tsx example
-import {today, isSameMonth} from '@internationalized/date';
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 
-function Example() {
-  let [range, setRange] = React.useState({
-    start: today(getLocalTimeZone()),
-    end: today(getLocalTimeZone()).add({weeks: 1})
-  });
-
-  return (
-    <DateRangePicker
-      label="Date range"
-      value={range}
-      onChange={setRange}
-      validationState={range && !isSameMonth(range.start, range.end) ? 'invalid' : 'valid'}
-      description="Select a range within the same month"
-      errorMessage="Start and end dates must be in the same month" />
-  );
-}
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <DateRangePicker label="Date range" startName="startDate" endName="endDate" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `DateRangePicker` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ### Minimum and maximum values
 
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This prevents the user from selecting dates outside the valid range in the calendar, and displays an invalid state if the user enters an invalid date into the date field.
-
-This example only accepts dates after today.
+The `minValue` and `maxValue` props can also be used to ensure the value is within a specific range. `DateRangePicker` also validates that the end date is after the start date. This example only accepts dates after today.
 
 ```tsx example
-<DateRangePicker
-  label="Trip dates"
-  minValue={today(getLocalTimeZone())}
-  defaultValue={{
-    start: parseDate('2022-02-03'),
-    end: parseDate('2022-05-03')
-  }}  />
+import {today} from '@internationalized/date';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  <DateRangePicker
+    label="Trip dates"
+    /*- begin highlight -*/
+    minValue={today(getLocalTimeZone())}
+    /*- end highlight -*/
+    defaultValue={{
+      start: parseDate('2022-02-03'),
+      end: parseDate('2022-05-03')
+    }} />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+### Custom validation
+
+The `validate` function can be used to perform custom validation logic. It receives the current date range, and should return a string or array of strings representing one or more error messages if the value is invalid.
+
+This example validates that the selected date range is a maximum of 1 week in duration.
+
+```tsx example
+<Form validationBehavior="native" maxWidth="size-3000">
+  <DateRangePicker
+    label="Trip dates"
+    /*- begin highlight -*/
+    validate={range => range?.end.compare(range.start) > 7 ? 'Maximum stay duration is 1 week.' : null}
+    /*- end highlight -*/
+    defaultValue={{
+      start: today(getLocalTimeZone()),
+      end: today(getLocalTimeZone()).add({ weeks: 1, days: 3 })
+    }} />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
 
 ### Unavailable dates
 
-`DateRangePicker` supports marking certain dates as _unavailable_. These dates cannot be selected by the user and are displayed with a crossed out appearance in the calendar. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether a date is unavailable.
+`DateRangePicker` supports marking certain dates as _unavailable_. These dates cannot be selected by the user and are displayed with a crossed out appearance in the calendar. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
 
 Note that by default, users may not select non-contiguous ranges, i.e. ranges that contain unavailable dates within them. Once a start date is selected in the calendar, enabled dates will be restricted to subsequent dates until an unavailable date is hit. While this is handled automatically in the calendar, additional validation logic must be provided to ensure an invalid state is displayed in the date field. This can be achieved using the `validationState` prop. See [below](#non-contiguous-ranges) for an example of how to allow non-contiguous ranges.
 
@@ -300,18 +327,15 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let isDateUnavailable = (date) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
-  let [value, setValue] = React.useState(null);
-  let isInvalid = value && disabledRanges.some(interval => value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
-
   return (
     <DateRangePicker
       label="Trip dates"
       minValue={today(getLocalTimeZone())}
-      isDateUnavailable={isDateUnavailable}
-      value={value}
-      onChange={setValue}
-      validationState={isInvalid ? 'invalid' : null} />
+      /*- begin highlight -*/
+      isDateUnavailable={date => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0)}
+      validate={value => disabledRanges.some(interval => value && value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0) ? 'Selected date range may not include unavailable dates.' : null}
+      /*- end highlight -*/
+      validationBehavior="native" />
   );
 }
 ```
@@ -371,7 +395,14 @@ By default, the label is positioned above the `DateRangePicker`. The `labelPosit
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
 
-Both a description and an error message can be supplied to a `DateRangePicker`. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized. See the [Validation](#validation) section above for an example.
+Both a description and an error message can be supplied to a `DateRangePicker`. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+<Flex gap="size-100" wrap>
+  <DateRangePicker label="Date range" defaultValue={{start: today(getLocalTimeZone()), end: today(getLocalTimeZone()).add({weeks: 1})}} validationState="valid" description="Select your trip dates." />
+  <DateRangePicker label="Date range" validationState="invalid" errorMessage="Empty input is not allowed." />
+</Flex>
+```
 
 `DateRangePicker` also supports displaying the expected date format for the user's locale automatically using the `showFormatHelpText` prop.
 

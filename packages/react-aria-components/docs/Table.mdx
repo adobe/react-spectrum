@@ -19,6 +19,7 @@ import Anatomy from './TableAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
 import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
@@ -86,6 +87,15 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+ * import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './Button.mdx' layer(button);
+@import './ToggleButton.mdx' layer(togglebutton);
+@import './Checkbox.mdx' layer(checkbox);
+@import './Popover.mdx' layer(popover);
+@import './Menu.mdx' layer(menu);
+```
 
 ```css
 .react-aria-Table {
@@ -125,27 +135,6 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     }
   }
 
-  .react-aria-Column {
-    &[colspan] {
-      text-align: center;
-    }
-
-    .sort-indicator {
-      padding: 0 2px;
-    }
-
-    &:not([data-sort-direction]) .sort-indicator {
-      visibility: hidden;
-    }
-  }
-
-  .react-aria-TableBody {
-    &[data-empty] {
-      text-align: center;
-      font-style: italic;
-    }
-  }
-
   .react-aria-Row {
     border-radius: 6px;
     outline: none;
@@ -174,13 +163,6 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       .react-aria-Cell[data-focus-visible] {
         outline-color: var(--highlight-foreground);
         outline-offset: -4px;
-      }
-
-      .react-aria-Button {
-        color: var(--highlight-foreground);
-        --focus-ring-color: var(--highlight-foreground);
-        --hover-highlight: rgb(255 255 255 / 0.1);
-        --active-highlight: rgb(255 255 255 / 0.2);
       }
     }
 
@@ -230,69 +212,15 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 }
 
 .react-aria-Checkbox {
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --checkmark-color: white;
   --focus-ring-color: slateblue;
-
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid var(--deselected-color);
-  border-radius: 4px;
-  transition: all 200ms;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  & svg {
-    width: 0.857rem;
-    height: 0.857rem;
-    fill: none;
-    stroke: var(--checkmark-color);
-    stroke-width: 3px;
-    stroke-dasharray: 22px;
-    stroke-dashoffset: 66;
-    transition: all 200ms;
-  }
-
-  &[data-focus-visible] {
+  &[data-focus-visible] .checkbox {
     box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
   }
-
-  &[data-pressed] {
-    border-color: var(--deselected-color-pressed);
-  }
-
   &[data-selected],
   &[data-indeterminate] {
-    border-color: var(--selected-color);
-    background: var(--selected-color);
-
-    &[data-pressed] {
-      border-color: var(--selected-color-pressed);
-      background: var(--selected-color-pressed);
-    }
-
-    &[data-focus-visible] {
+    &[data-focus-visible] .checkbox {
       box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--selected-color);
     }
-
-    & svg {
-      stroke-dashoffset: 44;
-    }
-  }
-
-  &[data-indeterminate] {
-    & svg {
-      stroke: none;
-      fill: var(--checkmark-color);
-    }
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
   }
 }
 
@@ -301,36 +229,6 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   --selected-color-pressed: #ddd;
   --checkmark-color: slateblue;
   --background-color: var(--highlight-background);
-}
-
-.react-aria-Button {
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.2rem;
-  text-align: center;
-  line-height: 1.2em;
-  margin: 0;
-  outline: none;
-  padding: 4px 6px;
-  transition: background 200ms;
-  --focus-ring-color: slateblue;
-  --hover-highlight: var(--spectrum-alias-highlight-hover);
-  --active-highlight: var(--spectrum-alias-highlight-active);
-
-  &[data-hovered] {
-    background: var(--hover-highlight);
-  }
-
-  &[data-pressed] {
-    background: var(--active-highlight);
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--focus-ring-color);
-  }
 }
 
 @media (forced-colors: active) {
@@ -367,11 +265,6 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     --selected-color: ButtonFace;
     --selected-color-pressed: ButtonFace;
     --checkmark-color: ButtonText;
-  }
-
-  .react-aria-Button {
-    forced-color-adjust: none;
-    --focus-ring-color: Highlight;
   }
 }
 ```
@@ -484,6 +377,10 @@ A `Table` uses the following components, which may also be used standalone or re
 
 </section>
 
+## Examples
+
+<ExampleList tag="table" />
+
 ## Reusable wrappers
 
 If you will use a Table in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
@@ -548,12 +445,14 @@ function MyCheckbox() {
   return (
     <Checkbox slot="selection">
       {({isIndeterminate}) => (
-        <svg viewBox="0 0 18 18" aria-hidden="true">
-          {isIndeterminate
-            ? <rect x={1} y={7.5} width={15} height={3} />
-            : <polyline points="1 9 7 14 15 4" />
-          }
-        </svg>
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" />
+            }
+          </svg>
+        </div>
       )}
     </Checkbox>
   );
@@ -799,6 +698,7 @@ Table rows may also be links to another page or website. This can be achieved by
 ```
 
 ```css hidden
+/* why hide this? */
 .react-aria-Row[data-href] {
   cursor: pointer;
 }
@@ -897,6 +797,23 @@ function AsyncSortTable() {
 }
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Column {
+  .sort-indicator {
+    padding: 0 2px;
+  }
+
+  &:not([data-sort-direction]) .sort-indicator {
+    visibility: hidden;
+  }
+}
+```
+
+</details>
+
 ## Nested columns
 
 Columns can be nested to create column groups. This will result in more than one header row to be created, with the `colspan`
@@ -950,6 +867,19 @@ Only leaf columns may be marked as row headers.
   </TableBody>
 </Table>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Column {
+  &[colspan] {
+    text-align: center;
+  }
+}
+```
+
+</details>
 
 ### Dynamic
 
@@ -1022,6 +952,20 @@ Use the `renderEmptyState` prop to customize what the `TableBody` will display i
 </Table>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TableBody {
+  &[data-empty] {
+    text-align: center;
+    font-style: italic;
+  }
+}
+```
+
+</details>
+
 ## Column Resizing
 
 Table supports resizable columns, allowing users to dynamically adjust the width of a column. This is enabled by wrapping the `<Table>` with a `<ResizableTableContainer>` element, which serves as a scrollable container for the Table. Then, to make a column resizable, render a `<ColumnResizer>` element inside a `<Column>`. This allows a user to drag a resize handle to change the width of a column. Keyboard users can also resize a column by pressing <Keyboard>Enter</Keyboard> to enter resizing mode and then using the arrow keys to resize. Screen reader users can resize columns by operating the resizer like a slider.
@@ -1081,6 +1025,8 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
 .react-aria-ResizableTableContainer {
   --border-color: var(--spectrum-global-color-gray-400);
   --background-color: var(--page-background);
+  --hover-highlight: var(--spectrum-alias-highlight-hover);
+  --active-highlight: var(--spectrum-alias-highlight-active);
 
   max-width: 400px;
   overflow: auto;
@@ -1100,12 +1046,21 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
 
   .column-name,
   .react-aria-Button {
+    --background-color: var(--page-background);
     flex: 1;
     font: inherit;
     text-align: start;
     color: inherit;
     overflow: hidden;
     text-overflow: ellipsis;
+    border-color: transparent;
+    &[data-hovered] {
+      background: var(--hover-highlight);
+    }
+
+    &[data-pressed] {
+      background: var(--active-highlight);
+    }
 
     &:focus-visible {
       outline: 2px solid slateblue;
@@ -1158,6 +1113,22 @@ import {ResizableTableContainer, ColumnResizer} from 'react-aria-components';
   .react-aria-ResizableTableContainer {
     --border-color: ButtonBorder;
     --background-color: ButtonFace;
+
+    .react-aria-Button[data-focus-visible] {
+      forced-color-adjust: none;
+      --focus-ring-color: Highlight;
+      outline: 2px solid Highlight;
+    }
+    .react-aria-ColumnResizer {
+      &[data-focus-visible] {
+        background-color: Highlight;
+      }
+
+      &[data-resizing] {
+        border-color: Highlight;
+        background-color: transparent;
+      }
+    }
   }
 }
 ```
@@ -1243,7 +1214,7 @@ The `Column` component exposes a `startResize` function as part of its render pr
 This example shows how to create a reusable component that wraps `<Column>` to include a menu with sorting and resizing functionality.
 
 ```tsx example export=true render=false
-import {MenuTrigger, Button, Popover, Menu, Item} from 'react-aria-components';
+import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-components';
 
 interface ResizableTableColumnProps<T> extends Omit<ColumnProps<T>, 'children'> {
   children: React.ReactNode
@@ -1266,9 +1237,9 @@ function ResizableTableColumn<T extends object>(props: ResizableTableColumnProps
                   startResize();
                 }
               }}>
-                <Item id="sortAscending">Sort Ascending</Item>
-                <Item id="sortDescending">Sort Descending</Item>
-                <Item id="resize">Resize</Item>
+                <MenuItem id="sortAscending">Sort Ascending</MenuItem>
+                <MenuItem id="sortDescending">Sort Descending</MenuItem>
+                <MenuItem id="resize">Resize</MenuItem>
               </Menu>
             </Popover>
           </MenuTrigger>
@@ -1339,102 +1310,6 @@ function Example() {
   );
 }
 ```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-Menu {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --separator-color: var(--spectrum-global-color-gray-500);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-
-  max-height: inherit;
-  box-sizing: border-box;
-  overflow: auto;
-  padding: 2px;
-  margin: 0;
-  min-width: 150px;
-  box-sizing: border-box;
-  outline: none;
-
-  .react-aria-Item {
-    margin: 2px;
-    padding: 0.286rem 0.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    display: grid;
-    grid-template-areas: "label kbd"
-                        "desc  kbd";
-    align-items: center;
-    column-gap: 20px;
-
-    &[data-focused] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-  }
-}
-
-.react-aria-Popover {
-  --background-color: var(--page-background);
-  --border-color: var(--spectrum-global-color-gray-400);
-
-  border: 1px solid var(--border-color);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--background-color);
-  outline: none;
-
-  &[data-placement=top] {
-    --origin: translateY(8px);
-  }
-
-  &[data-placement=bottom] {
-    --origin: translateY(-8px);
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Menu {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --separator-color: ButtonBorder;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-  }
-}
-```
-
-</details>
 
 ## Drag and drop
 
@@ -2483,7 +2358,6 @@ function DndTable(props: DndTableProps) {
 </div>
 ```
 
-
 ## Props
 
 ### Table
@@ -2552,7 +2426,7 @@ The `className` and `style` props also accept functions which receive states for
 
 ```jsx
 <Row className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
-  Item
+  {/* ... */}
 </Row>
 ```
 
@@ -2660,66 +2534,9 @@ import {ToggleButton} from 'react-aria-components';
 
 ```css
 .react-aria-ToggleButton {
-  --deselected-border-color: var(--spectrum-gray-400);
-  --deselected-border-color-pressed: var(--spectrum-gray-500);
-  --deselected-background-color: var(--spectrum-gray-50);
-  --deselected-background-color-pressed: var(--spectrum-gray-100);
-  --selected-color: var(--spectrum-gray-800);
-  --selected-color-pressed: var(--spectrum-gray-900);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-selected: var(--spectrum-gray-50);
-
-  color: var(--text-color);
-  background: var(--deselected-background-color);
-  border: 1px solid var(--deselected-border-color);
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1rem;
-  text-align: center;
-  margin: 0 0 8px 0;
-  outline: none;
-  padding: 4px 12px;
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--deselected-background-color-pressed);
-    border-color: var(--deselected-border-color-pressed);
-  }
-
-  &[aria-pressed=true] {
-    background: var(--selected-color);
-    border-color: var(--selected-color);
-    color: var(--text-color-selected);
-
-    &[data-pressed] {
-      background: var(--selected-color-pressed);
-      border-color: var(--selected-color-pressed);
-    }
-  }
-
-  &[data-focus-visible] {
-    border-color: var(--selected-color);
-    box-shadow: 0 0 0 1px var(--selected-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ToggleButton {
-    forced-color-adjust: none;
-
-    --deselected-border-color: ButtonBorder;
-    --deselected-border-color-pressed: ButtonBorder;
-    --deselected-background-color: ButtonFace;
-    --deselected-background-color-pressed: ButtonFace;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-  }
+  margin-bottom: 8px;
 }
 ```
-
 </details>
 
 ### Custom children

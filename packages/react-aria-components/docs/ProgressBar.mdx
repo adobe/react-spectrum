@@ -18,6 +18,7 @@ import Anatomy from '@react-aria/progress/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 
 ---
@@ -86,25 +87,6 @@ import {ProgressBar, Label} from 'react-aria-components';
     background: var(--fill-color);
     height: 100%;
   }
-
-  &:not([aria-valuenow]) {
-    .fill {
-      width: 120px;
-      border-radius: inherit;
-      animation: indeterminate 1.5s infinite ease-in-out;
-      will-change: transform;
-    }
-  }
-}
-
-@keyframes indeterminate {
-  from {
-    transform: translateX(-100%);
-  }
-
-  to {
-    transform: translateX(250px);
-  }
 }
 
 @media (forced-colors: active) {
@@ -169,6 +151,10 @@ A `ProgressBar` uses the following components, which may also be used standalone
 
 </section>
 
+## Examples
+
+<ExampleList tag="progressbar" />
+
 ## Reusable wrappers
 
 If you will use a ProgressBar in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
@@ -228,6 +214,35 @@ The `isIndeterminate` prop can be used to represent an interdeterminate operatio
   aria-label="Loading…"
   isIndeterminate />
 ```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ProgressBar {
+  &:not([aria-valuenow]) {
+    .fill {
+      width: 120px;
+      border-radius: inherit;
+      animation: indeterminate 1.5s infinite ease-in-out;
+      will-change: transform;
+    }
+  }
+}
+
+@keyframes indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(250px);
+  }
+}
+```
+
+</details>
 
 ## Labeling
 

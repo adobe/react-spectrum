@@ -220,46 +220,51 @@ function Example() {
 
 ## Validation
 
-`DatePicker` can display a validation state to communicate to the user whether the current value is valid or invalid. Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` via the `validationState` prop. The `errorMessage` prop can be used to communicate errors to the user.
+DatePicker supports the `isRequired` prop to ensure the user enters a value, as well as minimum and maximum values, and custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
 
-This example validates that the selected date is a weekday and not a weekend according to the current locale.
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the date picker or submits the form.
 
 ```tsx example
-import {today, isWeekend} from '@internationalized/date';
-import {useLocale} from '@adobe/react-spectrum';
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 
-function Example() {
-  let [date, setDate] = React.useState(today(getLocalTimeZone()));
-  let {locale} = useLocale();
-
-  return (
-    <DatePicker
-      label="Appointment date"
-      value={date}
-      onChange={setDate}
-      validationState={date && isWeekend(date, locale) ? 'invalid' : 'valid'}
-      description="Select a weekday"
-      errorMessage="We are closed on weekends" />
-  );
-}
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <DatePicker label="Appointment date" name="date" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `DatePicker` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ### Minimum and maximum values
 
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This prevents the user from selecting dates outside the valid range in the calendar, and displays an invalid state if the user enters an invalid date into the date field.
-
-This example only accepts dates after today.
+The `minValue` and `maxValue` props can also be used to ensure the value is within a specific range. This example only accepts dates after today.
 
 ```tsx example
-<DatePicker
-  label="Appointment date"
-  minValue={today(getLocalTimeZone())}
-  defaultValue={parseDate('2022-02-03')} />
+import {today} from '@internationalized/date';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  <DatePicker
+    label="Appointment date"
+    /*- begin highlight -*/
+    minValue={today(getLocalTimeZone())}
+    /*- end highlight -*/
+    defaultValue={parseDate('2022-02-03')} />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
 
 ### Unavailable dates
 
-`DatePicker` supports marking certain dates as _unavailable_. These dates cannot be selected by the user and are displayed with a crossed out appearance in the calendar. In the date field, an invalid state is displayed if a user enters an unavailable date. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether a date is unavailable.
+`DatePicker` supports marking certain dates as _unavailable_.  These dates cannot be selected by the user and are displayed with a crossed out appearance in the calendar. In the date field, an invalid state is displayed if a user enters an unavailable date. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
 
 This example includes multiple unavailable date ranges, e.g. dates when no appointments are available. In addition, all weekends are unavailable. The `minValue` prop is also used to prevent selecting dates before today.
 
@@ -276,9 +281,45 @@ function Example() {
   ];
 
   let {locale} = useLocale();
-  let isDateUnavailable = (date) => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+  return (
+    <DatePicker
+      label="Appointment date"
+      minValue={today(getLocalTimeZone())}
+      /*- begin highlight -*/
+      isDateUnavailable={date => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0)}
+      /*- end highlight -*/
+      validationBehavior="native" />
+  );
+}
+```
 
-  return <DatePicker label="Appointment date" minValue={today(getLocalTimeZone())} isDateUnavailable={isDateUnavailable} />
+### Custom validation
+
+The `validate` function can be used to perform custom validation logic. It receives the current date value, and should return a string or array of strings representing one or more error messages if the value is invalid.
+
+This example validates that the selected date is a weekday and not a weekend according to the current locale.
+
+```tsx example
+import {isWeekend} from '@internationalized/date';
+import {useLocale} from '@adobe/react-spectrum';
+
+function Example() {
+  let {locale} = useLocale();
+
+  return (
+    <Form validationBehavior="native" maxWidth="size-3000">
+      <DatePicker
+        label="Appointment date"
+        /*- begin highlight -*/
+        validate={date => date && isWeekend(date, locale) ? 'We are closed on weekends.' : null}
+        /*- end highlight -*/
+        defaultValue={parseDate('2023-10-28')} />
+      <ButtonGroup>
+        <Button type="submit" variant="primary">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </ButtonGroup>
+    </Form>
+  );
 }
 ```
 
@@ -320,7 +361,14 @@ By default, the label is positioned above the `DatePicker`. The `labelPosition` 
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
 
-Both a description and an error message can be supplied to a DatePicker. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized. See the [Validation](#validation) section above for an example.
+Both a description and an error message can be supplied to a DatePicker. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+<Flex gap="size-100" wrap>
+  <DatePicker label="Date" defaultValue={today(getLocalTimeZone())} validationState="valid" description="Select a meeting date." />
+  <DatePicker label="Date" validationState="invalid" errorMessage="Empty input is not allowed." />
+</Flex>
+```
 
 `DatePicker` also supports displaying the expected date format for the user's locale automatically using the `showFormatHelpText` prop.
 

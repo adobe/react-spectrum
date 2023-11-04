@@ -26,7 +26,7 @@ export let ModalAnimation = {
               <Dialog>
                 {({close}) => (
                   <>
-                    <Heading>Notice</Heading>
+                    <Heading slot="title">Notice</Heading>
                     <p>This is a modal with a custom modal overlay.</p>
                     <Button onPress={close}>Close</Button>
                   </>

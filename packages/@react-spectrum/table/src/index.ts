@@ -14,10 +14,11 @@
 
 export {TableView} from './TableViewWrapper';
 import {Column} from '@react-stately/table';
+import React from 'react';
 import {SpectrumColumnProps} from '@react-types/table';
 
 // Override TS for Column to support spectrum specific props.
-const SpectrumColumn = Column as <T>(props: SpectrumColumnProps<T>) => JSX.Element;
+const SpectrumColumn = Column as <T>(props: SpectrumColumnProps<T>) => React.JSX.Element;
 export {SpectrumColumn as Column};
 
 export {

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Label, Modal, Radio, RadioContext, RadioGroup, RadioGroupContext, Text} from '../';
-import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {Button, Dialog, DialogTrigger, FieldError, Label, Modal, Radio, RadioContext, RadioGroup, RadioGroupContext, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -126,7 +126,10 @@ describe('RadioGroup', () => {
   });
 
   it('should support hover', async () => {
-    let {getAllByRole} = renderGroup({}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getAllByRole} = renderGroup({}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: hoverStartSpy, onHoverChange: hoverChangeSpy, onHoverEnd: hoverEndSpy});
     let radio = getAllByRole('radio')[0].closest('label');
 
     expect(radio).not.toHaveAttribute('data-hovered');
@@ -135,10 +138,14 @@ describe('RadioGroup', () => {
     await user.hover(radio);
     expect(radio).toHaveAttribute('data-hovered', 'true');
     expect(radio).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(radio);
     expect(radio).not.toHaveAttribute('data-hovered');
     expect(radio).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus ring', async () => {
@@ -406,6 +413,43 @@ describe('RadioGroup', () => {
     let group = getAllByRole('radiogroup');
     expect(group).toHaveLength(1);
     expect(group[0]).toHaveAttribute('data-testid', 'radio-group');
+  });
 
+  it('supports validation errors', async () => {
+    let {getByRole, getAllByRole, getByTestId} = render(
+      <form data-testid="form">
+        <RadioGroup isRequired>
+          <Label>Test</Label>
+          <Radio value="a">A</Radio>
+          <FieldError />
+        </RadioGroup>
+      </form>
+    );
+
+    let group = getByRole('radiogroup');
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+
+    let radios = getAllByRole('radio');
+    for (let input of radios) {
+      expect(input).toHaveAttribute('required');
+      expect(input).not.toHaveAttribute('aria-required');
+      expect(input.validity.valid).toBe(false);
+    }
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(group).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(radios[0]);
+
+    await user.click(radios[0]);
+    for (let input of radios) {
+      expect(input.validity.valid).toBe(true);
+    }
+
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
   });
 });

@@ -20,12 +20,14 @@ import Anatomy from '@react-aria/datepicker/docs/datepicker-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
 import DateField from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
 import Calendar from '@react-spectrum/docs/pages/assets/component-illustrations/Calendar.svg';
 import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
 import InternationalizedDate from '@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDate.svg';
 
 ---
@@ -74,10 +76,26 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+/* We only import styles up to one page away, we don't follow those pages dependencies, so
+* import everything and in the correct order of dependency so that layers don't overwrite each other. */
+@import './Button.mdx' layer(button);
+@import './Popover.mdx' layer(popover);
+@import './DateField.mdx' layer(datefield);
+@import './Calendar.mdx' layer(calendar);
+@import './Form.mdx' layer(form);
+```
 
 ```css
 .react-aria-DatePicker {
+  --field-border: var(--spectrum-global-color-gray-400);
+  --field-background: var(--spectrum-global-color-gray-50);
+  --text-color: var(--spectrum-alias-text-color);
+  --text-color-placeholder: var(--spectrum-global-color-gray-700);
   --text-color-invalid: var(--spectrum-global-color-red-600);
+  --highlight-background: slateblue;
+  --highlight-foreground: white;
+  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
 
   .react-aria-Group {
     display: flex;
@@ -90,14 +108,11 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     color: white;
     border-radius: 4px;
     border: none;
-    appearance: none;
     margin-left: -1.929rem;
     width: 1.429rem;
     height: 1.429rem;
     padding: 0;
-    vertical-align: middle;
     font-size: 0.857rem;
-    outline: none;
     box-sizing: content-box;
     border: 2px solid var(--page-background);
 
@@ -106,221 +121,21 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     }
   }
 
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
-  }
-
-  &[data-invalid] {
-    .react-aria-DateInput:after {
-      content: '🚫' / '';
-      content: '🚫';
-      alt: ' ';
-      flex: 1;
-      text-align: end;
-    }
+  .react-aria-DateInput {
+    padding: 4px 2.5rem 4px 8px;
   }
 }
 
-.react-aria-DateInput {
-  --field-border: var(--spectrum-global-color-gray-400);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-placeholder: var(--spectrum-global-color-gray-700);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
-
-  display: flex;
-  padding: 4px 2.5rem 4px 8px;
-  border: 1px solid var(--field-border);
-  border-radius: 6px;
-  background: var(--field-background);
-  width: fit-content;
-  min-width: 150px;
-  white-space: nowrap;
-
-  &[data-focus-within] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
-  }
-}
-
-.react-aria-DateSegment {
-  padding: 0 2px;
-  font-variant-numeric: tabular-nums;
-  text-align: end;
-  color: var(--text-color);
-
-  &[data-type=literal] {
-    padding: 0;
-  }
-
-  &[data-placeholder] {
-    color: var(--text-color-placeholder);
-    font-style: italic;
-  }
-
-  &:focus {
-    color: var(--highlight-foreground);
-    background: var(--highlight-background);
-    outline: none;
-    border-radius: 4px;
-    caret-color: transparent;
-  }
-
-  &[data-invalid] {
-    color: var(--text-color-invalid);
-
-    &:focus {
-      background: var(--highlight-background-invalid);
-      color: var(--highlight-foreground);
-    }
+@layer popover {
+  .react-aria-Popover {
+    max-width: unset;
+    padding: 1.25rem;
   }
 }
 
 .react-aria-Calendar {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --button-background: var(--spectrum-global-color-gray-50);
-  --button-background-pressed: var(--spectrum-global-color-gray-100);
-  --button-border: var(--spectrum-global-color-gray-400);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --pressed-color: var(--spectrum-global-color-gray-200);
-  --unavailable-color: var(--spectrum-global-color-red-600);
-  --invalid-color: var(--spectrum-global-color-static-red-600);
-
-  width: fit-content;
-  color: var(--text-color);
-
-  & header {
-    display: flex;
-    align-items: center;
-    margin: 0 4px .5rem 4px;
-
-    .react-aria-Heading {
-      flex: 1;
-      margin: 0;
-      text-align: center;
-      font-size: 1.375rem;
-    }
-
-    .react-aria-Button {
-      background: var(--button-background);
-      border: 1px solid var(--button-border);
-      color: var(--text-color);
-      box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-      border-radius: 4px;
-      appearance: none;
-      vertical-align: middle;
-      font-size: 1rem;
-      width: 2rem;
-      height: 2rem;
-      padding: 0;
-      text-align: center;
-      margin: 0;
-      outline: none;
-
-      &[data-focus-visible] {
-        border-color: var(--highlight-background);
-        box-shadow: 0 0 0 1px var(--highlight-background);
-      }
-
-      &[data-pressed] {
-        background: var(--button-background-pressed);
-      }
-    }
-  }
-
   .react-aria-CalendarCell {
-    width: 2rem;
-    line-height: 2rem;
-    text-align: center;
-    border-radius: 6px;
-    cursor: default;
-    outline: none;
-    border: 2px solid var(--page-background);
-    margin: -1px;
-
-    &[data-outside-month] {
-      display: none;
-    }
-
-    &[data-pressed] {
-      background: var(--pressed-color);
-    }
-
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--highlight-background);
-    }
-
-    &[data-selected] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    &[data-unavailable] {
-      text-decoration: line-through;
-      color: var(--unavailable-color);
-    }
-
-    &[data-invalid] {
-      background: var(--invalid-color);
-      color: var(--highlight-foreground);
-    }
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
-  }
-}
-
-.react-aria-Popover {
-  overflow: auto;
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--page-background);
-  padding: 1.25rem;
-
-  &[data-placement=top] {
-    --origin: translateY(8px);
-  }
-
-  &[data-placement=bottom] {
-    --origin: translateY(-8px);
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
+    border-color: var(--page-background);
   }
 }
 
@@ -343,34 +158,10 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     }
   }
 
-  .react-aria-DateInput {
-    forced-color-adjust: none;
-
-    --field-border: ButtonBorder;
-    --field-background: Field;
-    --text-color: FieldText;
-    --text-color-placeholder: FieldText;
-    --text-color-invalid: LinkText;
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --highlight-background-invalid: LinkText;
-  }
-
   .react-aria-Calendar {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --button-border: ButtonBorder;
-    --button-background: ButtonFace;
-    --button-backgound-pressed: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --text-color-invalid: LinkText;
-    --unavailable-color: GrayText;
-    --invalid-color: LinkText;
-    --pressed-color: Canvas;
-    --spectrum-alias-background-color-default: Canvas;
+    .react-aria-CalendarCell {
+      border-color: Canvas;
+    }
   }
 }
 ```
@@ -386,6 +177,7 @@ A date picker can be built using `<input type="date">`, but this is very limited
 * **Time zone aware** – Dates and times can optionally include a time zone. All modifications follow time zone rules such as daylight saving time.
 * **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale. Users can also open a calendar popover to select dates in a standard month grid. Localized screen reader messages are included to announce when the selection and visible date range change.
 * **Touch friendly** – Date segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
+* **Validation** – Integrates with HTML forms, supporting required, minimum and maximum values, unavailable dates, custom validation functions, realtime validation, and server-side validation errors.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
 Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `DatePicker`.
@@ -399,7 +191,7 @@ A date picker consists of a label, and group containing a [date field](DateField
 `DatePicker` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
 
 ```tsx
-import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Button, Heading, DateInput, DateSegment, Text} from 'react-aria-components';
+import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Button, Heading, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
 
 <DatePicker>
   <Label />
@@ -410,7 +202,7 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     <Button />
   </Group>
   <Text slot="description" />
-  <Text slot="errorMessage" />
+  <FieldError />
   <Popover>
     <Dialog>
       <Calendar>
@@ -447,6 +239,13 @@ Note that most of this anatomy is shared with [DateRangePicker](DateRangePicker.
   title="@internationalized/date"
   description="Represent and manipulate dates and times in a locale-aware manner.">
   <InternationalizedDate />
+</ExampleCard>
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
 </ExampleCard>
 
 </section>
@@ -501,20 +300,24 @@ A `DatePicker` uses the following components, which may also be used standalone 
 
 </section>
 
+## Examples
+
+<ExampleList tag="datepicker" />
+
 ## Reusable wrappers
 
 If you will use a DatePicker in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `DatePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
+This example wraps `DatePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation).
 
 ```tsx example export=true
-import type {DatePickerProps, DateValue} from 'react-aria-components';
-import {Text} from 'react-aria-components';
+import type {DatePickerProps, DateValue, ValidationResult} from 'react-aria-components';
+import {Text, FieldError} from 'react-aria-components';
 
 interface MyDatePickerProps<T extends DateValue> extends DatePickerProps<T> {
   label?: string,
   description?: string,
-  errorMessage?: string
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 function MyDatePicker<T extends DateValue>({label, description, errorMessage, ...props}: MyDatePickerProps<T>) {
@@ -528,7 +331,7 @@ function MyDatePicker<T extends DateValue>({label, description, errorMessage, ..
         <Button>▼</Button>
       </Group>
       {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      <FieldError>{errorMessage}</FieldError>
       <Popover>
         <Dialog>
           <Calendar>
@@ -540,7 +343,6 @@ function MyDatePicker<T extends DateValue>({label, description, errorMessage, ..
             <CalendarGrid>
               {date => <CalendarCell date={date} />}
             </CalendarGrid>
-            {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
           </Calendar>
         </Dialog>
       </Popover>
@@ -712,21 +514,88 @@ function Example() {
 
 ## Validation
 
+DatePicker supports the `isRequired` prop to ensure the user enters a value, as well as minimum and maximum values, and custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+To display validation errors, add a `<FieldError>` element as a child of the DatePicker. This allows you to render error messages from all of the above sources with consistent custom styles.
+
+```tsx example
+import {Form, FieldError} from 'react-aria-components';
+
+<Form>
+  {/*- begin highlight -*/}
+  <DatePicker name="date" isRequired>
+  {/*- end highlight -*/}
+    <Label>Appointment date</Label>
+    <Group>
+      <DateInput>
+        {segment => <DateSegment segment={segment} />}
+      </DateInput>
+      <Button>▼</Button>
+    </Group>
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+    <Popover>
+      <Dialog>
+        <Calendar>
+          <header>
+            <Button slot="previous">◀</Button>
+            <Heading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </Calendar>
+      </Dialog>
+    </Popover>
+  </DatePicker>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-DatePicker {
+  &[data-invalid] {
+    .react-aria-DateInput:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+    }
+  }
+}
+
+.react-aria-FieldError {
+  font-size: 12px;
+  color: var(--text-color-invalid);
+}
+  ```
+
+</details>
+
+By default, `FieldError` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
 ### Minimum and maximum values
 
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This prevents the user from selecting dates outside the valid range in the calendar, and marks the date field as invalid using ARIA. You should implement a visual indication that the date picker is invalid as well.
-
-This example only accepts dates after today.
+The `minValue` and `maxValue` props can also be used to ensure the value is within a specific range. This example only accepts dates after today.
 
 ```tsx example
 import {today} from '@internationalized/date';
 
-<MyDatePicker
-  label="Appointment date"
-  /*- begin highlight -*/
-  minValue={today(getLocalTimeZone())}
-  /*- end highlight -*/
-  defaultValue={parseDate('2022-02-03')} />
+<Form>
+  <MyDatePicker
+    label="Appointment date"
+    /*- begin highlight -*/
+    minValue={today(getLocalTimeZone())}
+    /*- end highlight -*/
+    defaultValue={parseDate('2022-02-03')} />
+  <Button type="submit">Submit</Button>
+</Form>
 ```
 
 ### Unavailable dates
@@ -762,34 +631,78 @@ function Example() {
 }
 ```
 
-### Help text
+### Custom validation
 
-The `description` slot can be used to associate additional help text with a date picker. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the date picker as invalid for assistive technologies.
+The `validate` function can be used to perform custom validation logic. It receives the current date value, and should return a string or array of strings representing one or more error messages if the value is invalid.
 
 This example validates that the selected date is a weekday and not a weekend according to the current locale.
 
 ```tsx example
-import {today, isWeekend} from '@internationalized/date';
+import {isWeekend} from '@internationalized/date';
 import {useLocale} from 'react-aria';
 
 function Example() {
-  let [date, setDate] = React.useState(today(getLocalTimeZone()));
   let {locale} = useLocale();
-  let isInvalid = date && isWeekend(date, locale);
 
   return (
-    <MyDatePicker
-      label="Appointment date"
-      value={date}
-      onChange={setDate}
-      isInvalid={isInvalid}
-      /*- begin highlight -*/
-      description={isInvalid ? undefined : 'Select a weekday'}
-      errorMessage={isInvalid ? 'We are closed on weekends' : undefined} />
-      /*- end highlight -*/
+    <Form>
+      <MyDatePicker
+        label="Appointment date"
+        /*- begin highlight -*/
+        validate={date => date && isWeekend(date, locale) ? 'We are closed on weekends.' : null}
+        /*- end highlight -*/
+        defaultValue={parseDate('2023-10-28')} />
+      <Button type="submit">Submit</Button>
+    </Form>
   );
 }
 ```
+
+### Description
+
+The `description` slot can be used to associate additional help text with a date picker.
+
+```tsx example
+<DatePicker granularity="hour">
+  <Label>Appointment time</Label>
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button>▼</Button>
+  </Group>
+  {/*- begin highlight -*/}
+  <Text slot="description">Please select a weekday between 9 AM and 5 PM.</Text>
+  {/*- end highlight -*/}
+  <Popover>
+    <Dialog>
+      <Calendar>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </Calendar>
+    </Dialog>
+  </Popover>
+</DatePicker>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-DatePicker {
+  [slot=description] {
+    font-size: 12px;
+  }
+}
+```
+
+</details>
 
 ## Format options
 
@@ -869,6 +782,17 @@ A `<Button>` accepts its contents as `children`. Other props such as `onPress` a
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
 <PropTable component={docs.exports.Button} links={docs.links} />
+
+</details>
+
+### FieldError
+
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.FieldError} links={docs.links} />
 
 </details>
 
@@ -1044,6 +968,12 @@ A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector,
 A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. The next and previous buttons within a calendar can be targeted specifically with the `[slot=previous]` and `[slot=next]` selectors. Buttons support the following states:
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
+
+### FieldError
+
+A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, or by overriding with a custom `className`. It supports the following render props:
+
+<StateTable properties={docs.exports.FieldErrorRenderProps.properties} />
 
 ### Popover
 

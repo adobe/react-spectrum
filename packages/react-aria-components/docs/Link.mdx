@@ -74,11 +74,6 @@ import {Link} from 'react-aria-components';
     color: var(--text-color-pressed);
   }
 
-  &[data-disabled] {
-    cursor: default;
-    color: var(--text-color-disabled);
-  }
-
   &[data-focus-visible]:after {
     content: '';
     position: absolute;
@@ -174,6 +169,21 @@ event will not be fired. The link will be exposed as disabled to assistive techn
 ```tsx example
 <Link isDisabled href="https://adobe.com" target="_blank">Disabled link</Link>
 ```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Link {
+  &[data-disabled] {
+    cursor: default;
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
 
 ## Props
 

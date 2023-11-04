@@ -71,7 +71,6 @@ import {Checkbox} from 'react-aria-components';
   align-items: center;
   gap: 0.571rem;
   font-size: 1.143rem;
-  color: var(--label-color);
 
   .checkbox {
     width: 1.143rem;
@@ -99,6 +98,9 @@ import {Checkbox} from 'react-aria-components';
     border-color: var(--deselected-color-pressed);
   }
 
+  &[data-focus-visible] .checkbox {
+    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+  }
   &[data-selected],
   &[data-indeterminate] {
     .checkbox {
@@ -116,40 +118,11 @@ import {Checkbox} from 'react-aria-components';
     }
   }
 
-  &[data-invalid] {
-    .checkbox {
-      border-color: var(--invalid-color);
-    }
-
-    &[data-pressed] .checkbox {
-      border-color: var(--invalid-color-pressed);
-    }
-
-    &[data-selected],
-    &[data-indeterminate] {
-      .checkbox {
-        background: var(--invalid-color);
-      }
-
-      &[data-pressed] .checkbox {
-        background: var(--invalid-color-pressed);
-      }
-    }
-  }
-
   &[data-indeterminate] {
     & svg {
       stroke: none;
       fill: var(--checkmark-color);
     }
-  }
-
-  &[data-focus-visible] .checkbox {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
   }
 }
 
@@ -168,7 +141,6 @@ import {Checkbox} from 'react-aria-components';
     --spectrum-alias-background-color-default: Canvas;
 
     &[data-disabled] {
-      opacity: 1;
       --deselected-color: GrayText;
       --selected-color: GrayText;
       --label-color: GrayText;
@@ -285,6 +257,36 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
 <MyCheckbox isInvalid>I accept the terms and conditions</MyCheckbox>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Checkbox {
+  &[data-invalid] {
+    .checkbox {
+      --checkmark-color: var(--spectrum-gray-50);
+      border-color: var(--invalid-color);
+    }
+
+    &[data-pressed] .checkbox {
+      border-color: var(--invalid-color-pressed);
+    }
+
+    &[data-selected],
+    &[data-indeterminate] {
+      .checkbox {
+        background: var(--invalid-color);
+      }
+
+      &[data-pressed] .checkbox {
+        background: var(--invalid-color-pressed);
+      }
+    }
+  }
+}
+```
+</details>
+
 ## Disabled
 
 Checkboxes can be disabled using the `isDisabled` prop.
@@ -292,6 +294,26 @@ Checkboxes can be disabled using the `isDisabled` prop.
 ```tsx example
 <MyCheckbox isDisabled>Subscribe</MyCheckbox>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Checkbox {
+  &[data-disabled] {
+    opacity: 0.4;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Checkbox {
+    &[data-disabled] {
+      opacity: 1;
+    }
+  }
+}
+```
+</details>
 
 ### Read only
 

@@ -12,9 +12,10 @@
 
 import {AriaCheckboxGroupItemProps} from '@react-types/checkbox';
 import {CheckboxAria, useCheckbox} from './useCheckbox';
-import {checkboxGroupDescriptionIds, checkboxGroupErrorMessageIds, checkboxGroupNames} from './utils';
+import {checkboxGroupData} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
-import {RefObject} from 'react';
+import {DEFAULT_VALIDATION_RESULT, privateValidationStateProp, useFormValidationState} from '@react-stately/form';
+import {RefObject, useEffect, useRef} from 'react';
 import {useToggleState} from '@react-stately/toggle';
 
 /**
@@ -41,11 +42,47 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
     }
   });
 
+  let {name, descriptionId, errorMessageId, validationBehavior} = checkboxGroupData.get(state)!;
+  validationBehavior = props.validationBehavior ?? validationBehavior;
+
+  // Local validation for this checkbox.
+  let {realtimeValidation} = useFormValidationState({
+    ...props,
+    value: toggleState.isSelected,
+    // Server validation is handled at the group level.
+    name: undefined,
+    validationBehavior: 'aria'
+  });
+
+  // Update the checkbox group state when realtime validation changes.
+  let nativeValidation = useRef(DEFAULT_VALIDATION_RESULT);
+  let updateValidation = () => {
+    state.setInvalid(props.value, realtimeValidation.isInvalid ? realtimeValidation : nativeValidation.current);
+  };
+
+  useEffect(updateValidation);
+
+  // Combine group and checkbox level validation.
+  let combinedRealtimeValidation = state.realtimeValidation.isInvalid ? state.realtimeValidation : realtimeValidation;
+  let displayValidation = validationBehavior === 'native' ? state.displayValidation : combinedRealtimeValidation;
+
   let res = useCheckbox({
     ...props,
     isReadOnly: props.isReadOnly || state.isReadOnly,
     isDisabled: props.isDisabled || state.isDisabled,
-    name: props.name || checkboxGroupNames.get(state)
+    name: props.name || name,
+    isRequired: props.isRequired ?? state.isRequired,
+    validationBehavior,
+    [privateValidationStateProp]: {
+      realtimeValidation: combinedRealtimeValidation,
+      displayValidation,
+      resetValidation: state.resetValidation,
+      commitValidation: state.commitValidation,
+      updateValidation(v) {
+        nativeValidation.current = v;
+        updateValidation();
+      }
+    }
   }, toggleState, inputRef);
 
   return {
@@ -54,8 +91,8 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
       ...res.inputProps,
       'aria-describedby': [
         props['aria-describedby'],
-        state.isInvalid ? checkboxGroupErrorMessageIds.get(state) : null,
-        checkboxGroupDescriptionIds.get(state)
+        state.isInvalid ? errorMessageId : null,
+        descriptionId
       ].filter(Boolean).join(' ') || undefined
     }
   };

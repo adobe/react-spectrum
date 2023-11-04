@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, Expandable, MultipleSelection, Node} from '@react-types/shared';
-import {Key, useCallback, useEffect, useMemo} from 'react';
+import {Collection, CollectionStateBase, Expandable, Key, MultipleSelection, Node} from '@react-types/shared';
 import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
 import {TreeCollection} from './TreeCollection';
+import {useCallback, useEffect, useMemo} from 'react';
 import {useCollection} from '@react-stately/collections';
 import {useControlledState} from '@react-stately/utils';
 

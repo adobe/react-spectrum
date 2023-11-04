@@ -527,6 +527,23 @@ export let resizingTests = (render, rerender, Table, ControlledTable, resizeCol,
         expect(getColumnWidths(tree)).toStrictEqual([113, 112, 113, 112, 450]);
       });
 
+      it('onResize end called with values even if no resizing took place uncontrolled', function () {
+        let allowsResizing = true;
+        let columns = [
+          {name: 'Name', id: 'name', allowsResizing},
+          {name: 'Type', id: 'type', defaultWidth: '3fr', allowsResizing},
+          {name: 'Level', id: 'level', allowsResizing},
+          {name: 'Height', id: 'height', defaultWidth: '5fr', allowsResizing}
+        ];
+        let columnNames = ['Name', 'Type', 'Level', 'Height'];
+        let onResizeEnd = jest.fn();
+        let tree = render(<Table columns={columns} rows={rows} onResizeEnd={onResizeEnd} />);
+        expect(getColumnWidths(tree)).toStrictEqual([90, 270, 90, 450]);
+        resizeCol(tree, 'Type', 0);
+        expect(getColumnWidths(tree)).toStrictEqual([90, 270, 90, 450]);
+        expect(onResizeEnd).toHaveBeenCalledWith(mapFromWidths(columnNames, [90, 270, '1fr', '5fr']));
+      });
+
       it('onResizeStart called with expected values', function () {
         let columns = [
           {name: 'Name', uid: 'name', width: '1fr'},

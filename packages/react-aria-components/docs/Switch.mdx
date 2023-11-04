@@ -19,6 +19,7 @@ import Anatomy from '@react-aria/switch/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 
 ---
@@ -119,10 +120,6 @@ import {Switch} from 'react-aria-components';
   &[data-focus-visible] .indicator {
     box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
   }
-
-  &[data-disabled] {
-    opacity: 0.4;
-  }
 }
 
 @media (forced-colors: active) {
@@ -138,14 +135,6 @@ import {Switch} from 'react-aria-components';
     --selected-color: Highlight;
     --selected-color-pressed: Highlight;
     --spectrum-alias-background-color-default: Canvas;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
-      --label-color: GrayText;
-      --indicator-color: GrayText;
-    }
   }
 }
 ```
@@ -170,6 +159,10 @@ to toggle the selection state, or use the <Keyboard>Tab</Keyboard> key to naviga
 In most cases, switches should have a visual label. If the switch does not have a visible label,
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
 technology.
+
+## Examples
+
+<ExampleList tag="switch" />
 
 ## Reusable wrappers
 
@@ -238,6 +231,31 @@ Switches can be disabled using the `isDisabled` prop.
 ```tsx example
 <MySwitch isDisabled>Airplane Mode</MySwitch>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Switch {
+  &[data-disabled] {
+    opacity: 0.4;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Switch {
+    &[data-disabled] {
+      opacity: 1;
+      --deselected-color: GrayText;
+      --selected-color: GrayText;
+      --label-color: GrayText;
+      --indicator-color: GrayText;
+    }
+  }
+}
+```
+
+</details>
 
 ### Read only
 

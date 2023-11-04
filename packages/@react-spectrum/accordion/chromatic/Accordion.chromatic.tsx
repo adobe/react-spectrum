@@ -17,12 +17,13 @@ import {SpectrumAccordionProps} from '@react-types/accordion';
 
 const meta: Meta<SpectrumAccordionProps<object>> = {
   title: 'Accordion',
-  component: Accordion
+  component: Accordion,
+  excludeStories: ['Template']
 };
 
 export default meta;
 
-const Template = (args) => (
+export const Template = (args) => (
   <Accordion {...args}>
     <Item key="files" title="Your files">
       files
