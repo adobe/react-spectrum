@@ -86,62 +86,34 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
   min-height: 100px;
   box-sizing: border-box;
 
-  &[data-empty] {
-    align-items: center;
-    justify-content: center;
-    font-style: italic;
-  }
-
   &[data-focus-visible] {
     border-color: var(--highlight-background);
     box-shadow: 0 0 0 1px var(--highlight-background);
   }
+}
 
-  .react-aria-Section:not(:first-child) {
-    margin-top: 12px;
+.react-aria-ListBoxItem {
+  margin: 2px;
+  padding: 0.286rem 0.571rem;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font-size: 1.072rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &[data-focus-visible] {
+    box-shadow: inset 0 0 0 2px var(--highlight-background);
   }
 
-  .react-aria-Header {
-    font-size: 1.143rem;
-    font-weight: bold;
-    padding: 0 0.714rem;
-  }
-
-  .react-aria-ListBoxItem {
-    margin: 2px;
-    padding: 0.286rem 0.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    display: flex;
-    flex-direction: column;
+  &[data-selected] {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
 
     &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px var(--highlight-background);
-    }
-
-    &[data-selected] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-
-      &[data-focus-visible] {
-        box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
-      }
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    [slot=label] {
-      font-weight: bold;
-    }
-
-    [slot=description] {
-      font-size: small;
+      box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
     }
   }
 }
@@ -481,6 +453,25 @@ import {Section, Header} from 'react-aria-components';
 </ListBox>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox {
+  .react-aria-Section:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-Header {
+    font-size: 1.143rem;
+    font-weight: bold;
+    padding: 0 0.714rem;
+  }
+}
+```
+
+</details>
+
 ### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a heirarchical data structure.
@@ -555,6 +546,23 @@ import {Text} from 'react-aria-components';
   </ListBoxItem>
 </ListBox>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxItem {
+  [slot=label] {
+    font-weight: bold;
+  }
+
+  [slot=description] {
+    font-size: small;
+  }
+}
+```
+
+</details>
 
 ## Layouts
 
@@ -861,6 +869,19 @@ to the `items` prop. See [Collections](../react-stately/Collections.html) for mo
 </ListBox>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxItem {
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
+
 ## Empty state
 
 Use the `renderEmptyState` prop to customize what the `ListBox` will display if there are no items.
@@ -875,6 +896,22 @@ Use the `renderEmptyState` prop to customize what the `ListBox` will display if 
   {[]}
 </ListBox>
 ```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox {
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+}
+```
+
+</details>
 
 ## Drag and drop
 

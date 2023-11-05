@@ -84,48 +84,33 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+}
 
-  .react-aria-Tag {
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.929rem;
-    outline: none;
-    cursor: default;
-    display: flex;
-    align-items: center;
-    transition: border-color 200ms;
+.react-aria-Tag {
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.929rem;
+  outline: none;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  transition: border-color 200ms;
 
-    &[data-hovered] {
-      border-color: var(--border-color-hovered);
-    }
+  &[data-hovered] {
+    border-color: var(--border-color-hovered);
+  }
 
-    &[data-focus-visible] {
-      outline: 2px solid var(--focus-ring-color);
-      outline-offset: 2px;
-    }
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
 
-    &[data-selected] {
-      border-color: var(--background-selected);
-      background: var(--background-selected);
-      color: var(--text-color-selected);
-    }
-
-    [slot=remove] {
-      background: none;
-      border: none;
-      padding: 0;
-      margin-left: 8px;
-      color: var(--remove-button-color);
-      transition: color 200ms;
-      outline: none;
-      font-size: 0.95em;
-
-      &[data-hovered] {
-        color: var(--remove-button-color-hovered);
-      }
-    }
+  &[data-selected] {
+    border-color: var(--background-selected);
+    background: var(--background-selected);
+    color: var(--text-color-selected);
   }
 }
 
@@ -307,6 +292,30 @@ function Example() {
   );
 }
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Tag {
+  [slot=remove] {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 8px;
+    color: var(--remove-button-color);
+    transition: color 200ms;
+    outline: none;
+    font-size: 0.95em;
+
+    &[data-hovered] {
+      color: var(--remove-button-color-hovered);
+    }
+  }
+}
+```
+
+</details>
 
 ## Selection
 
