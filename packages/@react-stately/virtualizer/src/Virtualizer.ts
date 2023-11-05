@@ -24,6 +24,7 @@ import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
 import {Point} from './Point';
+import React from 'react';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
@@ -184,11 +185,18 @@ export class Virtualizer<T extends object, V, W> {
     this._visibleRect = rect;
 
     if (shouldInvalidate) {
-      // We are already in a layout effect when this method is called, so relayoutNow is appropriate.
-      this.relayoutNow({
-        offsetChanged: !rect.pointEquals(current),
-        sizeChanged: !rect.sizeEquals(current)
-      });
+      if (React.version.startsWith('16.') || React.version.startsWith('17.')) {
+        this.relayout({
+          offsetChanged: !rect.pointEquals(current),
+          sizeChanged: !rect.sizeEquals(current)
+        });
+      } else {
+        // We are already in a layout effect when this method is called, so relayoutNow is appropriate.
+        this.relayoutNow({
+          offsetChanged: !rect.pointEquals(current),
+          sizeChanged: !rect.sizeEquals(current)
+        });
+      }
     } else {
       this.updateSubviews(forceUpdate);
     }
@@ -460,6 +468,12 @@ export class Virtualizer<T extends object, V, W> {
     }
 
     this._invalidationContext = context;
+    if (React.version.startsWith('16.') || React.version.startsWith('17.')) {
+      this._relayoutRaf = requestAnimationFrame(() => {
+        this._relayoutRaf = null;
+        this.relayoutNow();
+      });
+    }
   }
 
   /**
@@ -812,7 +826,7 @@ export class Virtualizer<T extends object, V, W> {
   afterRender() {
     if (this._transactionQueue.length > 0) {
       this._processTransactionQueue();
-    } else if (this._invalidationContext) {
+    } else if (this._invalidationContext && !React.version.startsWith('16.') && !React.version.startsWith('17.')) {
       this.relayoutNow();
     }
 
