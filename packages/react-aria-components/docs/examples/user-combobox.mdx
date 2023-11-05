@@ -89,8 +89,8 @@ const people = [
 ```
 
 ```tsx example standalone
-import {ComboBox, Label, Input, Group, Button, Popover, ListBox, Item} from 'react-aria-components';
-import type {ItemProps} from 'react-aria-components';
+import {ComboBox, Label, Input, Group, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
+import type {ListBoxItemProps} from 'react-aria-components';
 import ChevronUpDownIcon from '@spectrum-icons/workflow/ChevronUpDown';
 import CheckIcon from '@spectrum-icons/workflow/Checkmark';
 
@@ -108,10 +108,10 @@ function ComboBoxExample() {
         <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
           <ListBox className="outline-none p-1" items={people}>
             {item => (
-              <ListBoxItem textValue={item.name}>
+              <UserItem textValue={item.name}>
                 <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
                 <span className="truncate">{item.name}</span>
-              </ListBoxItem>
+              </UserItem>
             )}
           </ListBox>
         </Popover>
@@ -120,9 +120,9 @@ function ComboBoxExample() {
   );
 }
 
-function ListBoxItem(props: ItemProps & {children: React.ReactNode}) {
+function UserItem(props: ListBoxItemProps & {children: React.ReactNode}) {
   return (
-    <Item
+    <ListBoxItem
       {...props}
       className="group flex items-center gap-2 cursor-default select-none py-2 pl-2 pr-4 outline-none rounded text-gray-900 focus:bg-sky-600 focus:text-white">
       {({ isSelected }) => (
@@ -135,7 +135,7 @@ function ListBoxItem(props: ItemProps & {children: React.ReactNode}) {
           }
         </>
       )}
-    </Item>
+    </ListBoxItem>
   );
 }
 ```

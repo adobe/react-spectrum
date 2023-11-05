@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Input, Label, Text, TextArea, TextField, TextFieldContext} from '../';
-import {pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {FieldError, Input, Label, Text, TextArea, TextField, TextFieldContext} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -29,6 +29,7 @@ describe('TextField', () => {
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
+
   describe.each([
     {name: 'Input', component: Input},
     {name: 'TextArea', component: TextArea}]
@@ -70,7 +71,10 @@ describe('TextField', () => {
     });
 
     it('should support hover state', async () => {
-      let {getByRole} = render(<TestTextField input={component} inputProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      let hoverStartSpy = jest.fn();
+      let hoverChangeSpy = jest.fn();
+      let hoverEndSpy = jest.fn();
+      let {getByRole} = render(<TestTextField input={component} inputProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: hoverStartSpy, onHoverChange: hoverChangeSpy, onHoverEnd: hoverEndSpy}} />);
       let input = getByRole('textbox');
 
       expect(input).not.toHaveAttribute('data-hovered');
@@ -79,10 +83,14 @@ describe('TextField', () => {
       await user.hover(input);
       expect(input).toHaveAttribute('data-hovered', 'true');
       expect(input).toHaveClass('hover');
+      expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+      expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
       await user.unhover(input);
       expect(input).not.toHaveAttribute('data-hovered');
       expect(input).not.toHaveClass('hover');
+      expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+      expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should support focus visible state', async () => {
@@ -107,6 +115,74 @@ describe('TextField', () => {
       let outerEl = getAllByTestId('text-field-test');
       expect(outerEl).toHaveLength(1);
       expect(outerEl[0]).toHaveClass('react-aria-TextField');
+    });
+
+    it('supports validation errors', async () => {
+      let Component = component;
+      let {getByRole, getByTestId} = render(
+        <form data-testid="form">
+          <TextField isRequired>
+            <Label>Test</Label>
+            <Component />
+            <FieldError />
+          </TextField>
+        </form>
+      );
+
+      let input = getByRole('textbox');
+      expect(input).toHaveAttribute('required');
+      expect(input).not.toHaveAttribute('aria-required');
+      expect(input).not.toHaveAttribute('aria-describedby');
+      expect(input.validity.valid).toBe(false);
+
+      act(() => {getByTestId('form').checkValidity();});
+
+      expect(input).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+      expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-invalid');
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('Devon');
+
+      expect(input).toHaveAttribute('aria-describedby');
+      expect(input.validity.valid).toBe(true);
+
+      await user.tab();
+      expect(input).not.toHaveAttribute('aria-describedby');
+      expect(input.closest('.react-aria-TextField')).not.toHaveAttribute('data-invalid');
+    });
+
+    it('supports customizing validation errors', async () => {
+      let Component = component;
+      let {getByRole, getByTestId} = render(
+        <form data-testid="form">
+          <TextField isRequired>
+            <Label>Test</Label>
+            <Component />
+            <FieldError>{e => e.validationDetails.valueMissing ? 'Please enter a name' : null}</FieldError>
+          </TextField>
+        </form>
+      );
+
+      let input = getByRole('textbox');
+      expect(input).toHaveAttribute('required');
+      expect(input).not.toHaveAttribute('aria-required');
+      expect(input).not.toHaveAttribute('aria-describedby');
+      expect(input.validity.valid).toBe(false);
+
+      act(() => {getByTestId('form').checkValidity();});
+
+      expect(input).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a name');
+      expect(document.activeElement).toBe(input);
+
+      await user.keyboard('Devon');
+
+      expect(input).toHaveAttribute('aria-describedby');
+      expect(input.validity.valid).toBe(true);
+
+      await user.tab();
+      expect(input).not.toHaveAttribute('aria-describedby');
     });
   });
 });

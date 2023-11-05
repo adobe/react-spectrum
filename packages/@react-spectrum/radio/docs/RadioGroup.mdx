@@ -149,15 +149,29 @@ function Example() {
 
 ## Validation
 
-RadioGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
+RadioGroup supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically.
 
 ```tsx example
-<RadioGroup label="Favorite avatar" isInvalid>
-  <Radio value="wizard">Wizard</Radio>
-  <Radio value="dragon">Dragon</Radio>
-</RadioGroup>
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native">
+  {/*- begin highlight -*/}
+  <RadioGroup label="Favorite pet" name="pet" isRequired>
+  {/*- end highlight -*/}
+    <Radio value="dogs">Dog</Radio>
+    <Radio value="cats">Cat</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `RadioGroup` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## RadioGroup props
 

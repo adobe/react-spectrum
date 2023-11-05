@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, HoverEvents} from '@react-types/shared';
 import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
@@ -43,7 +43,7 @@ export interface GroupRenderProps {
   isInvalid: boolean
 }
 
-export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'className' | 'style' | 'role'>, StyleRenderProps<GroupRenderProps> {
+export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'className' | 'style' | 'role'>, HoverEvents, StyleRenderProps<GroupRenderProps> {
   /** Whether the group is disabled. */
   isDisabled?: boolean,
   /** Whether the group is invalid. */
@@ -63,7 +63,7 @@ export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElemen
 function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, GroupContext);
 
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover(props);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true
   });

@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Header, Item, Keyboard, Menu, MenuContext, MenuTrigger, Popover, Section, Separator, Text} from '../';
+import {Button, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, Popover, Section, Separator, Text} from '../';
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestMenu = ({menuProps, itemProps}) => (
   <Menu aria-label="Test" {...menuProps}>
-    <Item {...itemProps} id="cat">Cat</Item>
-    <Item {...itemProps} id="dog">Dog</Item>
-    <Item {...itemProps} id="kangaroo">Kangaroo</Item>
+    <MenuItem {...itemProps} id="cat">Cat</MenuItem>
+    <MenuItem {...itemProps} id="dog">Dog</MenuItem>
+    <MenuItem {...itemProps} id="kangaroo">Kangaroo</MenuItem>
   </Menu>
 );
 
@@ -37,7 +37,7 @@ describe('Menu', () => {
     expect(menu).toHaveAttribute('class', 'react-aria-Menu');
 
     for (let menuitem of getAllByRole('menuitem')) {
-      expect(menuitem).toHaveAttribute('class', 'react-aria-Item');
+      expect(menuitem).toHaveAttribute('class', 'react-aria-MenuItem');
     }
   });
 
@@ -80,7 +80,7 @@ describe('Menu', () => {
     render(
       <Menu aria-label="Test" ref={listBoxRef}>
         <Section ref={sectionRef}>
-          <Item ref={itemRef}>Cat</Item>
+          <MenuItem ref={itemRef}>Cat</MenuItem>
         </Section>
       </Menu>
     );
@@ -92,11 +92,11 @@ describe('Menu', () => {
   it('should support slots', () => {
     let {getByRole} = render(
       <Menu aria-label="Actions">
-        <Item textValue="Copy">
+        <MenuItem textValue="Copy">
           <Text slot="label">Copy</Text>
           <Text slot="description">Copy the selected text</Text>
           <Keyboard>⌘C</Keyboard>
-        </Item>
+        </MenuItem>
       </Menu>
     );
 
@@ -110,9 +110,9 @@ describe('Menu', () => {
   it('should support separators', () => {
     let {getByRole} = render(
       <Menu aria-label="Actions">
-        <Item>Foo</Item>
+        <MenuItem>Foo</MenuItem>
         <Separator />
-        <Item>Bar</Item>
+        <MenuItem>Bar</MenuItem>
       </Menu>
     );
 
@@ -123,9 +123,9 @@ describe('Menu', () => {
   it('should support separators with custom class names', () => {
     let {getByRole} = render(
       <Menu aria-label="Actions">
-        <Item>Foo</Item>
+        <MenuItem>Foo</MenuItem>
         <Separator className="my-separator" />
-        <Item>Bar</Item>
+        <MenuItem>Bar</MenuItem>
       </Menu>
     );
 
@@ -138,15 +138,15 @@ describe('Menu', () => {
       <Menu aria-label="Sandwich contents" selectionMode="multiple">
         <Section>
           <Header>Veggies</Header>
-          <Item id="lettuce">Lettuce</Item>
-          <Item id="tomato">Tomato</Item>
-          <Item id="onion">Onion</Item>
+          <MenuItem id="lettuce">Lettuce</MenuItem>
+          <MenuItem id="tomato">Tomato</MenuItem>
+          <MenuItem id="onion">Onion</MenuItem>
         </Section>
         <Section>
           <Header>Protein</Header>
-          <Item id="ham">Ham</Item>
-          <Item id="tuna">Tuna</Item>
-          <Item id="tofu">Tofu</Item>
+          <MenuItem id="ham">Ham</MenuItem>
+          <MenuItem id="tuna">Tuna</MenuItem>
+          <MenuItem id="tofu">Tofu</MenuItem>
         </Section>
       </Menu>
     );
@@ -169,7 +169,7 @@ describe('Menu', () => {
 
     let {getAllByRole} = render(
       <Menu aria-label="Test" items={items}>
-        {(item) => <Item id={item.id}>{item.name}</Item>}
+        {(item) => <MenuItem id={item.id}>{item.name}</MenuItem>}
       </Menu>
     );
 
@@ -241,11 +241,11 @@ describe('Menu', () => {
         <Button aria-label="Menu">☰</Button>
         <Popover>
           <Menu onAction={onAction}>
-            <Item id="open">Open</Item>
-            <Item id="rename">Rename…</Item>
-            <Item id="duplicate">Duplicate</Item>
-            <Item id="share">Share…</Item>
-            <Item id="delete">Delete…</Item>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
           </Menu>
         </Popover>
       </MenuTrigger>
@@ -274,8 +274,8 @@ describe('Menu', () => {
         let onSelectionChange = jest.fn();
         let tree = render(
           <Menu aria-label="menu" selectionMode={selectionMode} onSelectionChange={onSelectionChange} onAction={onAction}>
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <MenuItem href="https://google.com">One</MenuItem>
+            <MenuItem href="https://adobe.com">Two</MenuItem>
           </Menu>
         );
 

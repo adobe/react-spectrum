@@ -14,7 +14,7 @@ import {ButtonContext} from './Button';
 import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth, isSameDay, isSameMonth} from '@internationalized/date';
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, HoverEvents} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
@@ -459,7 +459,7 @@ function CalendarGridBody(props: CalendarGridBodyProps, ref: ForwardedRef<HTMLTa
 const CalendarGridBodyForwardRef = /*#__PURE__*/ (forwardRef as forwardRefType)(CalendarGridBody);
 export {CalendarGridBodyForwardRef as CalendarGridBody};
 
-export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps> {
+export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>, HoverEvents {
   /** The date to render in the cell. */
   date: CalendarDate
 }
@@ -476,7 +476,7 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
     objectRef
   );
 
-  let {hoverProps, isHovered} = useHover({isDisabled: states.isDisabled});
+  let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: states.isDisabled});
   let {focusProps, isFocusVisible} = useFocusRing();
   let isOutsideMonth = !isSameMonth(currentMonth, date);
   let isSelectionStart = false;

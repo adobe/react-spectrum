@@ -236,9 +236,9 @@ describe('ActionBar', () => {
     expect(toolbar).toBeVisible();
     expect(document.activeElement).toBe(rows[1]);
 
-    jest.spyOn(toolbar.parentNode, 'offsetWidth', 'get').mockImplementation(() => 200);
+    jest.spyOn(toolbar.parentNode, 'getBoundingClientRect').mockImplementation(() => ({width: 200, height: 0, top: 0, left: 0, bottom: 0, right: 0}));
     for (let action of toolbar.childNodes) {
-      jest.spyOn(action, 'offsetWidth', 'get').mockImplementation(() => 75);
+      jest.spyOn(action, 'getBoundingClientRect').mockImplementation(() => ({width: 75, height: 0, top: 0, left: 0, bottom: 0, right: 0}));
     }
     fireEvent(window, new Event('resize'));
 

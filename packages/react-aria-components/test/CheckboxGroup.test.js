@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, CheckboxGroup, CheckboxGroupContext, Label, Text} from '../';
-import {pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {Checkbox, CheckboxGroup, CheckboxGroupContext, FieldError, Label, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -204,6 +204,43 @@ describe('CheckboxGroup', () => {
     let checkboxes = getAllByRole('checkbox');
     for (let checkbox of checkboxes) {
       expect(checkbox).toHaveAttribute('aria-describedby', 'test');
+    }
+  });
+
+  it('should support validation errors', async () => {
+    let {getByRole, getAllByRole, getByTestId} = render(
+      <form data-testid="form">
+        <CheckboxGroup isRequired>
+          <Label>Test</Label>
+          <Checkbox value="a">A</Checkbox>
+          <FieldError />
+        </CheckboxGroup>
+      </form>
+    );
+
+    let group = getByRole('group');
+    let checkboxes = getAllByRole('checkbox');
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+    for (let checkbox of checkboxes) {
+      expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
+    }
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(group).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(group).toHaveAttribute('data-invalid');
+
+    for (let checkbox of checkboxes) {
+      expect(checkbox.closest('.react-aria-Checkbox')).toHaveAttribute('data-invalid');
+    }
+
+    await user.click(checkboxes[0]);
+    expect(group).not.toHaveAttribute('aria-describedby');
+    expect(group).not.toHaveAttribute('data-invalid');
+    for (let checkbox of checkboxes) {
+      expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
     }
   });
 });

@@ -12,14 +12,14 @@
 
 import {chain, useLayoutEffect} from '@react-aria/utils';
 import React, {Ref, useCallback, useRef} from 'react';
-import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
+import {SpectrumTextAreaProps, TextFieldRef} from '@react-types/textfield';
 import {TextFieldBase} from './TextFieldBase';
 import {useControlledState} from '@react-stately/utils';
 import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useTextField} from '@react-aria/textfield';
 
-function TextArea(props: SpectrumTextFieldProps, ref: Ref<TextFieldRef>) {
+function TextArea(props: SpectrumTextAreaProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
