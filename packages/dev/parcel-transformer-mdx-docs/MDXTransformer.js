@@ -19,6 +19,7 @@ const dprint = require('dprint-node');
 const t = require('@babel/types');
 const lightningcss = require('lightningcss');
 const fs = require('fs');
+const path = require('path');
 
 const IMPORT_MAPPINGS = {
   '@react-spectrum/theme-default': {
@@ -179,6 +180,14 @@ module.exports = new Transformer({
           safari: 15 << 16
         },
         resolver: {
+          resolve(specifier, parent) {
+            if (specifier.startsWith('.')) {
+              return path.resolve(path.dirname(parent), specifier);
+            }
+
+            let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
+            return path.resolve(options.projectRoot, baseDir, specifier);
+          },
           read(filePath) {
             if (filePath === `${asset.filePath}.lightning`) {
               return cssCode.join('\n');
