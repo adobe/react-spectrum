@@ -275,6 +275,7 @@ describe('DateRangePicker', () => {
     expect(selected.children[0]).toHaveAttribute('aria-label', 'Selected Range: Tuesday, January 10 to Friday, January 20, 2023, Tuesday, January 10, 2023 selected');
 
     await user.click(selected.nextSibling.children[0]);
+    await user.click(selected.nextSibling.children[1]);
     expect(dialog).toBeInTheDocument();
   });
 });
