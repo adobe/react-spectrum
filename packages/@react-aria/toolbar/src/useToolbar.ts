@@ -32,7 +32,8 @@ export interface ToolbarAria {
 }
 
 /**
- * Handles interactions for toolbar elements, such as keyboard navigation between elements.
+ * Provides the behavior and accessibility implementation for a toolbar.
+ * A toolbar is a container for a set of interactive controls with arrow key navigation.
  * @param props - Props to be applied to the toolbar.
  * @param ref - A ref to a DOM element for the toolbar.
  */
