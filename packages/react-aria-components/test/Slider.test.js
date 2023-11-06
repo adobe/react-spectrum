@@ -123,19 +123,44 @@ describe('Slider', () => {
   });
 
   it('should support hover state', async () => {
-    let {getByRole} = renderSlider({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`});
+    let hoverStartTrackSpy = jest.fn();
+    let hoverChangeTrackSpy = jest.fn();
+    let hoverEndTrackSpy = jest.fn();
+    let hoverStartThumbSpy = jest.fn();
+    let hoverChangeThumbSpy = jest.fn();
+    let hoverEndThumbSpy = jest.fn();
+    let {getByRole} = renderSlider({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartThumbSpy, onHoverChange: hoverChangeThumbSpy, onHoverEnd: hoverEndThumbSpy}, {className: ({isHovered}) => `track ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartTrackSpy, onHoverChange: hoverChangeTrackSpy, onHoverEnd: hoverEndTrackSpy});
     let thumb = getByRole('slider').closest('.thumb');
+    let track = getByRole('slider').closest('.track');
 
     expect(thumb).not.toHaveAttribute('data-hovered');
     expect(thumb).not.toHaveClass('hovered');
+    expect(track).not.toHaveAttribute('data-hovered');
+    expect(track).not.toHaveClass('hovered');
 
     await user.hover(thumb);
     expect(thumb).toHaveAttribute('data-hovered', 'true');
     expect(thumb).toHaveClass('hovered');
+    expect(hoverStartThumbSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeThumbSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(thumb);
     expect(thumb).not.toHaveAttribute('data-hovered');
     expect(thumb).not.toHaveClass('hovered');
+    expect(hoverEndThumbSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeThumbSpy).toHaveBeenCalledTimes(2);
+
+    await user.hover(track);
+    expect(track).toHaveAttribute('data-hovered', 'true');
+    expect(track).toHaveClass('hovered');
+    expect(hoverStartTrackSpy).toHaveBeenCalledTimes(2);
+    expect(hoverChangeTrackSpy).toHaveBeenCalledTimes(3);
+
+    await user.unhover(track);
+    expect(track).not.toHaveAttribute('data-hovered');
+    expect(track).not.toHaveClass('hovered');
+    expect(hoverEndTrackSpy).toHaveBeenCalledTimes(2);
+    expect(hoverChangeTrackSpy).toHaveBeenCalledTimes(4);
   });
 
   it('should support disabled state', () => {

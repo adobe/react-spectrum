@@ -164,7 +164,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       isDateUnavailable: props.isDateUnavailable,
       defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue,
       isInvalid: state.isInvalid,
-      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : props.errorMessage
+      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' '))
     },
     isInvalid,
     validationErrors,

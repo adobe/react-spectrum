@@ -18,7 +18,16 @@ import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from '
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useMemo, useRef} from 'react';
 
-export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps {}
+export interface ModalOverlayProps extends AriaModalOverlayProps, OverlayTriggerProps, RenderProps<ModalRenderProps>, SlotProps {
+  /**
+   * Whether the modal is currently performing an entry animation.
+   */
+  isEntering?: boolean,
+  /**
+   * Whether the modal is currently performing an exit animation.
+   */
+  isExiting?: boolean
+}
 
 interface InternalModalContextValue {
   modalProps: DOMAttributes,
@@ -61,6 +70,8 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
     defaultOpen,
     onOpenChange,
     children,
+    isEntering,
+    isExiting,
     ...otherProps
   } = props;
 
@@ -70,7 +81,9 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}
       isOpen={isOpen}
       defaultOpen={defaultOpen}
-      onOpenChange={onOpenChange}>
+      onOpenChange={onOpenChange}
+      isEntering={isEntering}
+      isExiting={isExiting}>
       <ModalContent {...otherProps} modalRef={ref}>
         {children}
       </ModalContent>
@@ -101,7 +114,7 @@ function ModalOverlayWithForwardRef(props: ModalOverlayProps, ref: ForwardedRef<
   let modalRef = useRef<HTMLDivElement>(null);
   let isOverlayExiting = useExitAnimation(objectRef, state.isOpen);
   let isModalExiting = useExitAnimation(modalRef, state.isOpen);
-  let isExiting = isOverlayExiting || isModalExiting;
+  let isExiting = isOverlayExiting || isModalExiting || props.isExiting || false;
   let isSSR = useIsSSR();
 
   if ((!state.isOpen && !isExiting) || isSSR) {
@@ -128,7 +141,7 @@ function ModalOverlayInner(props: ModalOverlayInnerProps) {
   let {state} = props;
   let {modalProps, underlayProps} = useModalOverlay(props, state, modalRef);
 
-  let entering = useEnterAnimation(props.overlayRef);
+  let entering = useEnterAnimation(props.overlayRef) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-ModalOverlay',

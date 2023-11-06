@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionStateBase, Node} from '@react-types/shared';
-import {Key, useCallback, useEffect, useMemo, useRef} from 'react';
+import {Collection, CollectionStateBase, Key, Node} from '@react-types/shared';
 import {ListCollection} from './ListCollection';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {useCallback, useEffect, useMemo, useRef} from 'react';
 import {useCollection} from '@react-stately/collections';
 
 export interface ListProps<T> extends CollectionStateBase<T>, MultipleSelectionStateProps {

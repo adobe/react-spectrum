@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-types/shared';
-import {Key} from 'react';
+import {Collection, Key, Node} from '@react-types/shared';
 
 export class TreeCollection<T> implements Collection<Node<T>> {
   private keyMap: Map<Key, Node<T>> = new Map();

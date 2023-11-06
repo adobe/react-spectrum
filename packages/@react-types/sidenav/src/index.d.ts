@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMProps, Expandable, MultipleSelection, Node, StyleProps} from '@react-types/shared';
-import {HTMLAttributes, Key, ReactNode} from 'react';
+import {AriaLabelingProps, CollectionBase, DOMProps, Expandable, Key, MultipleSelection, Node, StyleProps} from '@react-types/shared';
+import {HTMLAttributes, ReactNode} from 'react';
 import {LayoutInfo, Size} from '@react-stately/virtualizer';
 
 export interface SideNavProps<T> extends CollectionBase<T>, Expandable, MultipleSelection {

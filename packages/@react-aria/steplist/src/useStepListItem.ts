@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
+import {Key} from '@react-types/shared';
 import {StepListState} from '@react-stately/steplist';
 import {useSelectableItem} from '@react-aria/selection';
 

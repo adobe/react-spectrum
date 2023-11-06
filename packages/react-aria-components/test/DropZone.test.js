@@ -70,7 +70,10 @@ describe('DropZone', () => {
   });
 
   it('should support hover', async () => {
-    let {getByText} = render(<DropZone className={({isHovered}) => isHovered ? 'hover' : ''}>Test</DropZone>);
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getByText} = render(<DropZone className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</DropZone>);
     let dropzone = getByText('Test');
 
     expect(dropzone).not.toHaveAttribute('data-hovered');
@@ -79,10 +82,14 @@ describe('DropZone', () => {
     await user.hover(dropzone);
     expect(dropzone).toHaveAttribute('data-hovered', 'true');
     expect(dropzone).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(dropzone);
     expect(dropzone).not.toHaveAttribute('data-hovered');
     expect(dropzone).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus ring', async () => {

@@ -196,11 +196,27 @@ export function useInteractionModality(): Modality | null {
   return useIsSSR() ? null : modality;
 }
 
+const nonTextInputTypes = new Set([
+  'checkbox',
+  'radio',
+  'range',
+  'color',
+  'file',
+  'image',
+  'button',
+  'submit',
+  'reset'
+]);
+
 /**
  * If this is attached to text input component, return if the event is a focus event (Tab/Escape keys pressed) so that
  * focus visible style can be properly set.
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
+  isTextInput = isTextInput || 
+    (e?.target instanceof HTMLInputElement && !nonTextInputTypes.has(e?.target?.type)) ||
+    e?.target instanceof HTMLTextAreaElement ||
+    (e?.target instanceof HTMLElement && e?.target.isContentEditable);
   return !(isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
 }
 

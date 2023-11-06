@@ -68,7 +68,10 @@ describe('Link', () => {
   });
 
   it('should support hover', async () => {
-    let {getByRole} = render(<Link className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Link>);
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getByRole} = render(<Link className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Link>);
     let link = getByRole('link');
 
     expect(link).not.toHaveAttribute('data-hovered');
@@ -77,10 +80,14 @@ describe('Link', () => {
     await user.hover(link);
     expect(link).toHaveAttribute('data-hovered', 'true');
     expect(link).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(link);
     expect(link).not.toHaveAttribute('data-hovered');
     expect(link).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus ring', async () => {
