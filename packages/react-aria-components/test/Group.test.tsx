@@ -9,8 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Group, GroupContext} from '..';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -51,7 +51,14 @@ describe('Group', () => {
   });
 
   it('should support hover', async () => {
-    let {getByRole} = render(<Group className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Group>);
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getByRole} = render(<Group
+      className={({isHovered}) => isHovered ? 'hover' : ''}
+      onHoverStart={hoverStartSpy}
+      onHoverChange={hoverChangeSpy}
+      onHoverEnd={hoverEndSpy}>Test</Group>);
     let group = getByRole('group');
 
     expect(group).not.toHaveAttribute('data-hovered');
@@ -60,10 +67,14 @@ describe('Group', () => {
     await user.hover(group);
     expect(group).toHaveAttribute('data-hovered', 'true');
     expect(group).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(group);
     expect(group).not.toHaveAttribute('data-hovered');
     expect(group).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus ring', async () => {
@@ -96,7 +107,8 @@ describe('Group', () => {
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
 
-    await user.type(input, 'a');
+    await user.click(input);
+    await user.keyboard('a');
     expect(document.activeElement).toBe(input);
     expect(input).toHaveValue('a');
 
@@ -112,16 +124,16 @@ describe('Group', () => {
     expect(group).toHaveClass('disabled');
   });
 
-  it('should support render props', () => {
+  it('should support render props', async () => {
     let {getByRole} = render(<Group>{({isHovered}) => isHovered ? 'Hovered' : 'Group'}</Group>);
     let group = getByRole('group');
 
     expect(group).toHaveTextContent('Group');
 
-    fireEvent.mouseOver(group);
+    await user.hover(group);
     expect(group).toHaveTextContent('Hovered');
 
-    fireEvent.mouseOut(group);
+    await user.unhover(group);
     expect(group).toHaveTextContent('Group');
   });
 });
