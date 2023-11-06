@@ -1,4 +1,4 @@
-import {AriaLabelingProps, Key, LinkDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
@@ -899,7 +899,7 @@ export interface ColumnResizerRenderProps {
   resizableDirection: 'right' | 'left' | 'both'
 }
 
-export interface ColumnResizerProps extends RenderProps<ColumnResizerRenderProps> {
+export interface ColumnResizerProps extends HoverEvents, RenderProps<ColumnResizerRenderProps> {
   /** A custom accessibility label for the resizer. */
   'aria-label'?: string
 }
@@ -927,7 +927,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
     inputRef
   );
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover(props);
 
   let isEResizable = layoutState.getColumnMinWidth(column.key) >= layoutState.getColumnWidth(column.key);
   let isWResizable = layoutState.getColumnMaxWidth(column.key) <= layoutState.getColumnWidth(column.key);

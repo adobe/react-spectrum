@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaCheckboxGroupProps, AriaCheckboxProps, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
+import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RACValidation, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
@@ -19,7 +19,7 @@ import React, {createContext, ForwardedRef, forwardRef, useContext, useState} fr
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState'>, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps {}
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps {}
 
 export interface CheckboxGroupRenderProps {
   /**
@@ -201,6 +201,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   });
 
   let {hoverProps, isHovered} = useHover({
+    ...props,
     isDisabled: isInteractionDisabled
   });
 

@@ -48,14 +48,6 @@ This codebase contains a portion of code from react which can be obtained at:
     SOFTWARE.
 
 -------------------------------------------------------------------------------
-This codebase contains a modified portion of code from Modernizr which can be obtained at:
-  * SOURCE:
-    * https://github.com/Modernizr/Modernizr/blob/7efb9d0edd66815fb115fdce95fabaf019ce8db5/feature-detects/css/flexgap.js
-
-  * LICENSE:
-    * https://github.com/Modernizr/Modernizr/blob/master/LICENSE
-
--------------------------------------------------------------------------------
 This codebase contains a modified portion of code from react-window which can be obtained at:
   * SOURCE:
     * https://github.com/bvaughn/react-window/blob/master/src/createGridComponent.js

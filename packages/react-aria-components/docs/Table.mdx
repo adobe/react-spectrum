@@ -135,27 +135,6 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     }
   }
 
-  .react-aria-Column {
-    &[colspan] {
-      text-align: center;
-    }
-
-    .sort-indicator {
-      padding: 0 2px;
-    }
-
-    &:not([data-sort-direction]) .sort-indicator {
-      visibility: hidden;
-    }
-  }
-
-  .react-aria-TableBody {
-    &[data-empty] {
-      text-align: center;
-      font-style: italic;
-    }
-  }
-
   .react-aria-Row {
     border-radius: 6px;
     outline: none;
@@ -818,6 +797,23 @@ function AsyncSortTable() {
 }
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Column {
+  .sort-indicator {
+    padding: 0 2px;
+  }
+
+  &:not([data-sort-direction]) .sort-indicator {
+    visibility: hidden;
+  }
+}
+```
+
+</details>
+
 ## Nested columns
 
 Columns can be nested to create column groups. This will result in more than one header row to be created, with the `colspan`
@@ -871,6 +867,19 @@ Only leaf columns may be marked as row headers.
   </TableBody>
 </Table>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Column {
+  &[colspan] {
+    text-align: center;
+  }
+}
+```
+
+</details>
 
 ### Dynamic
 
@@ -942,6 +951,20 @@ Use the `renderEmptyState` prop to customize what the `TableBody` will display i
   </TableBody>
 </Table>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TableBody {
+  &[data-empty] {
+    text-align: center;
+    font-style: italic;
+  }
+}
+```
+
+</details>
 
 ## Column Resizing
 
