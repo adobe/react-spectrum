@@ -22,7 +22,7 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ElementType, ReactElement, useEffect, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
@@ -72,6 +72,10 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
   let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
   let [isProgressVisible, setIsProgressVisible] = useState(false);
+  let spinnerId = useId();
+  let textId = useId();
+  let iconId = useId();
+  let buttonId = useId();
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -98,71 +102,18 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     staticColor = 'white';
   }
 
-  /**
-   * Parse the children of the button to determine the text to return
-   * for the pending spinner aria-label.
-   * @returns A string that ends in a "pending", localized.
-   */
-  function getLabelFromChildren(): string {
-    // Text for spinner aria-label could come from one or more of:
-    // - child string
-    // - aria-label of button props
-    // - child Text component
-    // - child icon aria-label
-    // - could be absent
-    let label: string[] = [];
-
-    // string child
-    if (typeof children === 'string') {
-      label.push(children);
-    }
-
-    // aria-label on button
-    // Todo: Test how it announces in SRs
-    if (props['aria-label']) {
-      label.push(props['aria-label']);
-    }
-
-    if (React.isValidElement(children)) {
-      // Text wrapped in an component or element
-      if (typeof children?.props?.children === 'string') {
-        label.push(children.props.children);
-      }
-      // Icon with aria-label
-      if (children?.props['aria-label']) {
-        label.push(children['props']['aria-label']);
-      }
-    }
-
-    // loop multiple children looking for text and/or aria-labels
-    if (Array.isArray(children)) {
-      children.forEach((child) => {
-        // Text component with string child
-        if (typeof child.props.children === 'string') {
-          label.push(child.props.children);
-        }
-        // Icon with aria-label
-        if (child.props['aria-label']) {
-          label.push(child.props['aria-label']);
-        }
-      });
-    }
-
-    // Append pending. If nothing matched above, will still get 'pending' as the label.
-    label.push(stringFormatter.format('pending'));
-    return label.join(' ');
-  }
-
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <ElementType
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
+        id={buttonId}
         ref={domRef}
         data-variant={variant}
         data-style={style}
         data-static-color={staticColor || undefined}
         aria-disabled={isPending || undefined}
+        aria-labelledby={isPending ? undefined : `${iconId} ${textId}`}
         aria-live={isPending ? 'polite' : undefined}
         className={
           classNames(
@@ -181,22 +132,29 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
         <SlotProvider
           slots={{
             icon: {
+              id: iconId,
               size: 'S',
               UNSAFE_className: classNames(styles, 'spectrum-Icon')
             },
             text: {
+              id: textId,
               UNSAFE_className: classNames(styles, 'spectrum-Button-label')
             }
           }}>
-          {isProgressVisible && <ProgressCircle
-            aria-label={getLabelFromChildren()}
-            isIndeterminate
-            size="S"
-            UNSAFE_className={classNames(styles, 'spectrum-Button-circleLoader')}
-            staticColor={staticColor} />}
           {typeof children === 'string'
             ? <Text>{children}</Text>
             : children}
+          {isProgressVisible && <><ProgressCircle
+            aria-hidden="true"
+            isIndeterminate
+            size="S"
+            UNSAFE_className={classNames(styles, 'spectrum-Button-circleLoader')}
+            staticColor={staticColor} />
+            <div
+              id={spinnerId}
+              aria-label={stringFormatter.format('pending')}
+              aria-labelledby={`${textId} ${spinnerId}`} />
+          </>}
         </SlotProvider>
       </ElementType>
     </FocusRing>
