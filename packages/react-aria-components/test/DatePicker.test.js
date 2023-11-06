@@ -221,4 +221,38 @@ describe('DatePicker', () => {
     expect(getDescription()).not.toContain('Constraints not satisfied');
     expect(datepicker).not.toHaveAttribute('data-invalid');
   });
+
+  it('should support close on select = true', async () => {
+    let {getByRole, getAllByRole} = render(<TestDatePicker value={new CalendarDate(2019, 2, 3)} />);
+
+    let button = getByRole('button');
+
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+
+    let cells = getAllByRole('gridcell');
+    let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+    expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+
+    await user.click(selected.nextSibling.children[0]);
+    expect(dialog).not.toBeInTheDocument();
+  });
+
+  it('should support close on select = false', async () => {
+    let {getByRole, getAllByRole} = render(<TestDatePicker value={new CalendarDate(2019, 2, 3)} shouldCloseOnSelect={false} />);
+
+    let button = getByRole('button');
+
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+
+    let cells = getAllByRole('gridcell');
+    let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+    expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+
+    await user.click(selected.nextSibling.children[0]);
+    expect(dialog).toBeInTheDocument();
+  });
 });
