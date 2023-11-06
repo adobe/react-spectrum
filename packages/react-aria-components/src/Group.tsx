@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, HoverEvents} from '@react-types/shared';
-import {ContextValue, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {mergeProps, useFocusRing, useHover} from 'react-aria';
+import {AriaLabelingProps, DOMProps} from '@react-types/shared';
+import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {HoverProps, mergeProps, useFocusRing, useHover} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
 export interface GroupRenderProps {
@@ -43,7 +43,7 @@ export interface GroupRenderProps {
   isInvalid: boolean
 }
 
-export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'className' | 'style' | 'role'>, HoverEvents, StyleRenderProps<GroupRenderProps> {
+export interface GroupProps extends AriaLabelingProps, Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style' | 'role' | 'slot'>, DOMProps, HoverProps, RenderProps<GroupRenderProps>, SlotProps {
   /** Whether the group is disabled. */
   isDisabled?: boolean,
   /** Whether the group is invalid. */
@@ -62,13 +62,13 @@ export const GroupContext = createContext<ContextValue<GroupProps, HTMLDivElemen
 
 function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, GroupContext);
+  let {isDisabled, isInvalid, onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
 
-  let {hoverProps, isHovered} = useHover(props);
+  let {hoverProps, isHovered} = useHover({onHoverStart, onHoverChange, onHoverEnd, isDisabled});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true
   });
 
-  let {isDisabled, isInvalid, ...otherProps} = props;
   isDisabled ??= !!props['aria-disabled'] && props['aria-disabled'] !== 'false';
   isInvalid ??= !!props['aria-invalid'] && props['aria-invalid'] !== 'false';
   let renderProps = useRenderProps({
@@ -83,12 +83,13 @@ function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
       {...renderProps}
       ref={ref}
       role={props.role ?? 'group'}
+      slot={props.slot ?? undefined}
       data-focus-within={isFocused || undefined}
       data-hovered={isHovered || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-invalid={isInvalid || undefined}>
-      {props.children}
+      {renderProps.children}
     </div>
   );
 }
@@ -96,5 +97,5 @@ function Group(props: GroupProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * A group represents a set of related UI controls, and supports interactive states for styling.
  */
-const _Group = forwardRef(Group);
+const _Group = /*#__PURE__*/ (forwardRef as forwardRefType)(Group);
 export {_Group as Group};

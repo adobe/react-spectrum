@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, ContextTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, ContextTable, StateTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/toolbar/docs/toolbar-anatomy.svg';
@@ -38,27 +38,20 @@ type: component
 ## Example
 
 ```tsx example
-import {Toolbar, Button, ToggleButton, Separator, Popover, MenuTrigger, Menu, MenuItem, Checkbox} from 'react-aria-components';
+import {Toolbar, Button, ToggleButton, Separator, Checkbox, Group} from 'react-aria-components';
 
-<Toolbar>
-  <ToggleButton><strong>B</strong></ToggleButton>
-  <ToggleButton><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
-  <ToggleButton><i>I</i></ToggleButton>
+<Toolbar aria-label="Text formatting">
+  <Group aria-label="Style">
+    <ToggleButton aria-label="Bold"><b>B</b></ToggleButton>
+    <ToggleButton aria-label="Italic"><i>I</i></ToggleButton>
+    <ToggleButton aria-label="Underline"><u>U</u></ToggleButton>
+  </Group>
   <Separator orientation="vertical" />
-  <Button>Copy</Button>
-  <Button>Paste</Button>
-  <Button>Cut</Button>
-  <Separator orientation="vertical" />
-  <MenuTrigger>
-    <Button>Alignment</Button>
-    <Popover>
-      <Menu>
-        <MenuItem>Left</MenuItem>
-        <MenuItem>Center</MenuItem>
-        <MenuItem>Right</MenuItem>
-      </Menu>
-    </Popover>
-  </MenuTrigger>
+  <Group aria-label="Clipboard">
+    <Button>Copy</Button>
+    <Button>Paste</Button>
+    <Button>Cut</Button>
+  </Group>
   <Separator orientation="vertical" />
   <Checkbox>
     <div className="checkbox">
@@ -77,8 +70,6 @@ import {Toolbar, Button, ToggleButton, Separator, Popover, MenuTrigger, Menu, Me
 @import './Checkbox.mdx' layer(checkbox);
 @import './Button.mdx' layer(button);
 @import './ToggleButton.mdx' layer(togglebutton);
-@import './Popover.mdx' layer(popover);
-@import './Menu.mdx' layer(menu);
 ```
 
 ```css
@@ -87,27 +78,29 @@ import {Toolbar, Button, ToggleButton, Separator, Popover, MenuTrigger, Menu, Me
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  padding: 15px;
-  border: 1px solid var(--separator-color);
-
-  &[data-orientation=vertical] {
-    flex-direction: column;
-  }
 
   &[data-orientation=horizontal] {
     flex-direction: row;
   }
+
+  .react-aria-Group {
+    display: contents;
+  }
+
+  .react-aria-ToggleButton {
+    width: 32px;
+  }
 }
 
-.react-aria-ToggleButton {
-  width: 32px;
-}
 
 .react-aria-Separator {
-  width: 2px;
-  margin: 0px 10px;
   align-self: stretch;
   background-color: var(--separator-color);
+
+  &[aria-orientation=vertical] {
+    width: 1px;
+    margin: 0px 10px;
+  }
 }
 ```
 
@@ -115,18 +108,74 @@ import {Toolbar, Button, ToggleButton, Separator, Popover, MenuTrigger, Menu, Me
 
 ## Features
 
-Toolbar provides keyboard navigation and announcements for groups of interactive elements.
-`Toolbar` helps implement these in an accessible way.
+There is no built-in HTML toolbar element. `Toolbar` helps achieve accessible toolbars with arrow key navigation that can be styled as needed.
 
-* **Flexible** – Support for various RAC or Aria Hooks implemented components.
-* **Accessible** – Follows the [ARIA toolbar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) with support for keyboard arrow key navigation and is a single tab stop.
-* **Styleable** – Can be styled in any custom way, including extra DOM structure between the Toolbar and the interactive children.
+* **Flexible** – Support for interactive children such as buttons, checkboxes, dropdown menus, etc. in a horizontal or vertical orientation.
+* **Accessible** – Follows the [ARIA toolbar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) with support for arrow key navigation as a single tab stop.
 
 ## Anatomy
 
 <Anatomy />
 
-Toolbar consists of a wrapping element which controls arrow key navigation depending on the orientation and children.
+A toolbar consists of a container element for a set of interactive controls. It provides arrow key navigation between its children, in either horizontal or vertical orientation.
+
+```tsx
+import {Toolbar} from 'react-aria-components';
+
+<Toolbar>
+  {/* ... */}
+</Toolbar>
+```
+
+## Orientation
+
+By default, toolbars are horizontally oriented. The `orientation` prop can be set to `"vertical"` to change the arrow key navigation behavior.
+
+```tsx example
+import Move from '@spectrum-icons/workflow/Move';
+import Select from '@spectrum-icons/workflow/Select';
+import Polygon from '@spectrum-icons/workflow/PolygonSelect';
+import Brush from '@spectrum-icons/workflow/Brush';
+import Pencil from '@spectrum-icons/workflow/Edit';
+
+<Toolbar aria-label="Tools" orientation="vertical">
+  <Group aria-label="Select">
+    <Button aria-label="Move"><Move size="S" /></Button>
+    <Button aria-label="Rectangle"><Select size="S" /></Button>
+    <Button aria-label="Polygon"><Polygon size="S" /></Button>
+  </Group>
+  <Separator orientation="horizontal" />
+  <Group aria-label="Draw">
+    <Button aria-label="Brush"><Brush size="S" /></Button>
+    <Button aria-label="Pencil"><Pencil size="S" /></Button>
+  </Group>
+</Toolbar>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Toolbar {
+  width: fit-content;
+
+  &[data-orientation=vertical] {
+    flex-direction: column;
+    align-items: start;
+  }
+}
+
+.react-aria-Separator {
+  &:not([aria-orientation=vertical]) {
+    border: none;
+    height: 1px;
+    width: 100%;
+    margin: 10px 0;
+  }
+}
+```
+
+</details>
 
 ## Props
 
@@ -162,6 +211,22 @@ A custom `className` can also be specified on any component. This overrides the 
   {/* ... */}
 </Toolbar>
 ```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Toolbar className={({orientation}) => orientation === 'vertical' ? 'flex-col' : 'flex-row'}>
+  {/* ... */}
+</Toolbar>
+```
+
+The selectors and render props for each component used in a `Toolbar` are documented below.
+
+### Toolbar
+
+A `Toolbar` can be targeted with the `.react-aria-Toolbar` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ToolbarRenderProps.properties} />
 
 ### Separator
 

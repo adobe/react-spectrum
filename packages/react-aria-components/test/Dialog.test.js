@@ -246,4 +246,37 @@ describe('Dialog', () => {
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
   });
+
+  it('supports isEntering and isExiting props', async () => {
+    function TestModal(props) {
+      return (
+        <DialogTrigger>
+          <Button />
+          <Modal {...props}>
+            <Dialog aria-label="Modal">A modal</Dialog>
+          </Modal>
+        </DialogTrigger>
+      );
+    }
+
+    let {getByRole, rerender} = render(<TestModal isEntering />);
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let modal = getByRole('dialog').closest('.react-aria-ModalOverlay');
+    expect(modal).toHaveAttribute('data-entering');
+
+    rerender(<TestModal />);
+    expect(modal).not.toHaveAttribute('data-entering');
+
+    rerender(<TestModal isExiting />);
+    await user.click(button);
+
+    expect(modal).toBeInTheDocument();
+    expect(modal).toHaveAttribute('data-exiting');
+
+    rerender(<TestModal />);
+    expect(modal).not.toBeInTheDocument();
+  });
 });
