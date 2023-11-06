@@ -123,7 +123,7 @@ export function TrayHeaderWrapper(props) {
   let {direction} = useLocale();
 
   return (
-    <div style={{display: 'flex', overflow: 'hidden', height: '100%'}} role="presentation" onKeyDown={wrapperKeyDown}>
+    <div style={{display: 'flex', overflow: 'hidden', height: !hasOpenSubmenu ? '100%' : undefined}} role="presentation" onKeyDown={wrapperKeyDown}>
       <div
         role={headingId ? 'dialog' : undefined}
         aria-labelledby={headingId}
@@ -133,7 +133,7 @@ export function TrayHeaderWrapper(props) {
             styles,
             'spectrum-Menu-wrapper',
             {
-              'spectrum-Menu-trayWrapper': isMobile,
+              'is-mobile': isMobile,
               'is-expanded': hasOpenSubmenu,
               'spectrum-Submenu-trayWrapper': isSubmenu
             }
