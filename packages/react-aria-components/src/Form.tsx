@@ -10,17 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMProps} from './utils';
 import {FormValidationContext} from '@react-stately/form';
-import React, {FormHTMLAttributes, ForwardedRef, forwardRef} from 'react';
-import {ValidationErrors} from '@react-types/shared';
+import React, {ForwardedRef, forwardRef} from 'react';
+import {FormProps as SharedFormProps} from '@react-types/form';
 
-export interface FormProps extends FormHTMLAttributes<HTMLFormElement> {
-  /**
-   * Validation errors for the form, typically returned by a server.
-   * This should be set to an object mapping from input names to errors.
-   */
-  validationErrors?: ValidationErrors | null
-}
+export interface FormProps extends SharedFormProps, DOMProps {}
 
 function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
   let {validationErrors, children, className, ...domProps} = props;

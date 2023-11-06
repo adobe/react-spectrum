@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Vērtībai ir jābūt {maxValue} vai agrākai.",
+  "rangeReversed": "Sākuma datumam ir jābūt pirms beigu datuma.",
+  "rangeUnderflow": "Vērtībai ir jābūt {minValue} vai vēlākai.",
+  "unavailableDate": "Atlasītais datums nav pieejams."
+}
