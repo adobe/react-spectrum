@@ -22,12 +22,12 @@ interface FormValidationProps<T> extends Validation<T> {
   focus?: () => void
 }
 
-export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement>) {
+export function useFormValidation<T>(props: FormValidationProps<T>, state: FormValidationState, ref: RefObject<ValidatableElement> | undefined) {
   let {validationBehavior, focus} = props;
 
   // This is a useLayoutEffect so that it runs before the useEffect in useFormValidationState, which commits the validation change.
   useLayoutEffect(() => {
-    if (validationBehavior === 'native' && ref.current) {
+    if (validationBehavior === 'native' && ref?.current) {
       let errorMessage = state.realtimeValidation.isInvalid ? state.realtimeValidation.validationErrors.join(' ') || 'Invalid value.' : '';
       ref.current.setCustomValidity(errorMessage);
 
@@ -55,8 +55,8 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
     }
 
     // Auto focus the first invalid input in a form, unless the error already had its default prevented.
-    let form = ref.current?.form;
-    if (!e.defaultPrevented && form && getFirstInvalidInput(form) === ref.current) {
+    let form = ref?.current?.form;
+    if (!e.defaultPrevented && ref && form && getFirstInvalidInput(form) === ref.current) {
       if (focus) {
         focus();
       } else {
@@ -76,7 +76,7 @@ export function useFormValidation<T>(props: FormValidationProps<T>, state: FormV
   });
 
   useEffect(() => {
-    let input = ref.current;
+    let input = ref?.current;
     if (!input) {
       return;
     }
