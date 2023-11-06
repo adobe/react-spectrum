@@ -25,7 +25,15 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
    * When used within a trigger component such as DialogTrigger, MenuTrigger, Select, etc.,
    * this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element>
+  triggerRef?: RefObject<Element>,
+  /**
+   * Whether the popover is currently performing an entry animation.
+   */
+  isEntering?: boolean,
+  /**
+   * Whether the popover is currently performing an exit animation.
+   */
+  isExiting?: boolean
 }
 
 export interface PopoverRenderProps {
@@ -53,7 +61,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   let contextState = useContext(OverlayTriggerStateContext);
   let localState = useOverlayTriggerState(props);
   let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
-  let isExiting = useExitAnimation(ref, state.isOpen);
+  let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
   let isHidden = useContext(HiddenContext);
 
   // If we are in a hidden tree, we still need to preserve our children.
@@ -92,6 +100,7 @@ export {_Popover as Popover};
 
 interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, SlotProps {
   state: OverlayTriggerState,
+  isEntering?: boolean,
   isExiting: boolean
 }
 
@@ -102,7 +111,7 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   }, state);
 
   let ref = props.popoverRef as RefObject<HTMLDivElement>;
-  let isEntering = useEnterAnimation(ref, !!placement);
+  let isEntering = useEnterAnimation(ref, !!placement) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Popover',
@@ -117,7 +126,7 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
 
   return (
     <Overlay isExiting={isExiting}>
-      {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
+      {!props.isNonModal && state.isOpen && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
         {...mergeProps(filterDOMProps(props as any), popoverProps)}
         {...renderProps}
