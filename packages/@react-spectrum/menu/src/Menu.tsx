@@ -58,7 +58,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
-      <div ref={trayContainerRef} />
+      <div style={{height: hasOpenSubmenu ? '100%' : undefined}} ref={trayContainerRef} />
       <FocusScope>
         <TrayHeaderWrapper
           onBackButtonPress={contextProps.onBackButtonPress}
@@ -123,7 +123,7 @@ export function TrayHeaderWrapper(props) {
   let {direction} = useLocale();
 
   return (
-    <div style={{display: 'flex', overflow: 'hidden'}} role="presentation" onKeyDown={wrapperKeyDown}>
+    <div style={{display: 'flex', overflow: 'hidden', height: '100%'}} role="presentation" onKeyDown={wrapperKeyDown}>
       <div
         role={headingId ? 'dialog' : undefined}
         aria-labelledby={headingId}
@@ -134,7 +134,8 @@ export function TrayHeaderWrapper(props) {
             'spectrum-Menu-wrapper',
             {
               'spectrum-Menu-trayWrapper': isMobile,
-              'is-expanded': hasOpenSubmenu
+              'is-expanded': hasOpenSubmenu,
+              'spectrum-Submenu-trayWrapper': isSubmenu
             }
           )
         }>

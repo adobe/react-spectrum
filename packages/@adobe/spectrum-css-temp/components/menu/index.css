@@ -250,6 +250,12 @@ governing permissions and limitations under the License.
     border: 0;
   }
 
+  &:not(.is-expanded).spectrum-Submenu-trayWrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
   .spectrum-Submenu-headingWrapper {
     display: flex;
     margin: 4px 4px 0px 4px;
