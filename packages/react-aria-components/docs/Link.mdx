@@ -175,12 +175,10 @@ event will not be fired. The link will be exposed as disabled to assistive techn
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer link {
-  .react-aria-Link {
-    &[data-disabled] {
-      cursor: default;
-      color: var(--text-color-disabled);
-    }
+.react-aria-Link {
+  &[data-disabled] {
+    cursor: default;
+    color: var(--text-color-disabled);
   }
 }
 ```

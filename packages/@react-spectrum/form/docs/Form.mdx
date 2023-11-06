@@ -78,6 +78,83 @@ technology as a form landmark region to which assistive technology can navigate.
 </Form>
 ```
 
+## Validation
+
+React Spectrum supports native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and integration with server-side validation errors. The `Form` component facilitates server-side validation by providing error messages to the fields within it.
+
+To provide validation errors, the `validationErrors` prop should be set to an object that maps each field's `name` prop to a string or array of strings representing one or more errors. These are displayed to the user as soon as the `validationErrors` prop is set, and cleared after the user modifies each field's value.
+
+```tsx example
+<Form validationErrors={{username: 'Sorry, this username is taken.'}} maxWidth="size-3000">
+  <TextField label="Username" name="username" />
+</Form>
+```
+
+See the [Forms](forms.html) guide to learn more about form validation in React Spectrum, including client-side validation, and integration with other frameworks and libraries.
+
+### Validation behavior
+
+By default, validation errors are displayed to the user in realtime as the value is edited, and do not block form submission. To enable native HTML form validation and prevent form submission when fields are invalid, set the `validationBehavior` prop to `"native"`.
+
+```tsx example
+import {ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  <TextField label="Email" name="email" type="email" isRequired />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+### Focus management
+
+By default, after a user submits a form with validation errors, the first invalid field will be focused. You can prevent this by calling `preventDefault` during the `onInvalid` event, and move focus yourself.
+
+This example shows how to move focus to an [InlineAlert](InlineAlert.html) using the `autoFocus` prop when displaying validation errors at the top of a form.
+
+```tsx example
+import {InlineAlert, Heading, Content} from '@adobe/react-spectrum';
+
+function Example() {
+  let [isInvalid, setInvalid] = React.useState(false);
+
+  return (
+    <Form
+      validationBehavior="native"
+      /*- begin highlight -*/
+      onInvalid={e => {
+        e.preventDefault();
+        setInvalid(true);
+      }}
+      /*- end highlight -*/
+      onSubmit={e => {
+        e.preventDefault();
+        setInvalid(false);
+      }}
+      onReset={() => setInvalid(false)}
+      maxWidth="size-3600">
+      {isInvalid &&
+        /*- begin highlight -*/
+        <InlineAlert variant="negative" autoFocus>
+        {/*- end highlight -*/}
+          <Heading>Unable to submit</Heading>
+          <Content>
+            Please fix the validation errors below, and re-submit the form.
+          </Content>
+        </InlineAlert>
+      }
+      <TextField label="First Name" isRequired />
+      <TextField label="Last Name" isRequired />
+      <ButtonGroup>
+        <Button type="submit" variant="primary">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </ButtonGroup>
+    </Form>
+  );
+}
+```
 
 ## Props
 

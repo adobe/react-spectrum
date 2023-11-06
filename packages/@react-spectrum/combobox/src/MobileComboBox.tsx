@@ -78,7 +78,10 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
   let inputRef = useRef<HTMLInputElement>(null);
-  useFormValidation(props, state, inputRef);
+  useFormValidation({
+    ...props,
+    focus: () => buttonRef.current.focus()
+  }, state, inputRef);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let validationState = props.validationState || (isInvalid ? 'invalid' : null);
   let errorMessage = props.errorMessage ?? validationErrors.join(' ');

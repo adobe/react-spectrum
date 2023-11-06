@@ -80,83 +80,29 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
   box-sizing: border-box;
   overflow: auto;
   padding: 2px;
-  margin: 0;
   min-width: 150px;
   box-sizing: border-box;
   outline: none;
-
-  .react-aria-Section:not(:first-child) {
-    margin-top: 12px;
-  }
-
-  .react-aria-Header {
-    font-size: 1.143rem;
-    font-weight: bold;
-    padding: 0 0.714rem;
-  }
-
-  .react-aria-Separator {
-    height: 1px;
-    background: var(--separator-color);
-    margin: 2px 4px;
-  }
-
-  .react-aria-MenuItem {
-    margin: 2px;
-    padding: 0.286rem 0.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    display: grid;
-    grid-template-areas: "label kbd"
-                        "desc  kbd";
-    align-items: center;
-    column-gap: 20px;
-
-    &[data-focused] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    [slot=label] {
-      font-weight: bold;
-      grid-area: label;
-    }
-
-    [slot=description] {
-      font-size: small;
-      grid-area: desc;
-    }
-
-    & kbd {
-      grid-area: kbd;
-      font-family: monospace;
-      text-align: end;
-    }
-  }
 }
-@layer popover {
-  .react-aria-Popover {
-    padding: 0px;
-    margin-top: 0px;
-    min-width: var(--trigger-width);
-    box-sizing: border-box;
-    &[data-placement=top] {
-      margin-bottom: unset;
-      --origin: translateY(8px);
-    }
 
-    &[data-placement=bottom] {
-      margin-top: unset;
-      --origin: translateY(-8px);
-    }
+.react-aria-MenuItem {
+  margin: 2px;
+  padding: 0.286rem 0.571rem;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font-size: 1.072rem;
+  position: relative;
+  display: grid;
+  grid-template-areas: "label kbd"
+                      "desc  kbd";
+  align-items: center;
+  column-gap: 20px;
+
+  &[data-focused] {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
   }
 }
 
@@ -492,6 +438,25 @@ import {Section, Header} from 'react-aria-components';
 </MyMenuButton>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Menu {
+  .react-aria-Section:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-Header {
+    font-size: 1.143rem;
+    font-weight: bold;
+    padding: 0 0.714rem;
+  }
+}
+```
+
+</details>
+
 ### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a heirarchical data structure.
@@ -563,6 +528,21 @@ import {Separator} from 'react-aria-components';
 </MyMenuButton>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Menu {
+  .react-aria-Separator {
+    height: 1px;
+    background: var(--separator-color);
+    margin: 2px 4px;
+  }
+}
+```
+
+</details>
+
 ### Accessibility
 
 Sections without a `<Header>` must provide an `aria-label` for accessibility.
@@ -592,6 +572,31 @@ import {Text, Keyboard} from 'react-aria-components';
   </MenuItem>
 </MyMenuButton>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-MenuItem {
+  [slot=label] {
+    font-weight: bold;
+    grid-area: label;
+  }
+
+  [slot=description] {
+    font-size: small;
+    grid-area: desc;
+  }
+
+  kbd {
+    grid-area: kbd;
+    font-family: monospace;
+    text-align: end;
+  }
+}
+```
+
+</details>
 
 ## Long press
 
@@ -625,6 +630,19 @@ Disabled items are not focusable or keyboard navigable, and do not trigger `onAc
   <MenuItem id="paste">Paste</MenuItem>
 </MyMenuButton>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-MenuItem {
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
 
 ## Controlled open state
 

@@ -81,6 +81,20 @@ export function useTableColumnResizeState<T>(props: TableColumnResizeStateProps<
   let [uncontrolledWidths, setUncontrolledWidths] = useState(() =>
     columnLayout.getInitialUncontrolledWidths(uncontrolledColumns)
   );
+
+  // Update uncontrolled widths if the columns changed.
+  let [lastColumns, setLastColumns] = useState(state.collection.columns);
+  if (state.collection.columns !== lastColumns) {
+    if (
+      state.collection.columns.length !== lastColumns.length ||
+      state.collection.columns.some((c, i) => c.key !== lastColumns[i].key)
+    ) {
+      let newUncontrolledWidths = columnLayout.getInitialUncontrolledWidths(uncontrolledColumns);
+      setUncontrolledWidths(newUncontrolledWidths);
+    }
+    setLastColumns(state.collection.columns);
+  }
+
   // combine columns back into one map that maintains same order as the columns
   let colWidths = useMemo(() =>
       columnLayout.recombineColumns(state.collection.columns, uncontrolledWidths, uncontrolledColumns, controlledColumns)

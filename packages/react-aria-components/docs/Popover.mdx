@@ -91,8 +91,8 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
   border-radius: 6px;
   background: var(--background-color);
   outline: none;
-  padding: 30px;
   max-width: 250px;
+  box-sizing: border-box;
 
   .react-aria-OverlayArrow svg {
     display: block;
@@ -102,30 +102,45 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
   }
 
   &[data-placement=top] {
-    margin-bottom: 6px;
     --origin: translateY(8px);
+
+    &:has(.react-aria-OverlayArrow) {
+      margin-bottom: 6px;
+    }
   }
 
   &[data-placement=bottom] {
-    margin-top: 6px;
     --origin: translateY(-8px);
-    & .react-aria-OverlayArrow svg {
+
+    &:has(.react-aria-OverlayArrow) {
+      margin-top: 6px;
+    }
+
+    .react-aria-OverlayArrow svg {
       transform: rotate(180deg);
     }
   }
 
   &[data-placement=right] {
-    margin-left: 6px;
     --origin: translateX(-8px);
-    & .react-aria-OverlayArrow svg {
+
+    &:has(.react-aria-OverlayArrow) {
+      margin-left: 6px;
+    }
+
+    .react-aria-OverlayArrow svg {
       transform: rotate(90deg);
     }
   }
 
   &[data-placement=left] {
-    margin-right: 6px;
     --origin: translateX(8px);
-    & .react-aria-OverlayArrow svg {
+
+    &:has(.react-aria-OverlayArrow) {
+      margin-right: 6px;
+    }
+
+    .react-aria-OverlayArrow svg {
       transform: rotate(-90deg);
     }
   }

@@ -24,6 +24,7 @@ import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Ac
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
 import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
 import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
 import InternationalizedDate from '@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDate.svg';
 
 ---
@@ -56,6 +57,11 @@ import {DateField, Label, DateInput, DateSegment} from 'react-aria-components';
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
+```css hidden
+@import './Form.mdx' layer(form);
+@import './Button.mdx' layer(button);
+```
+
 ```css
 .react-aria-DateField {
   --field-border: var(--spectrum-global-color-gray-400);
@@ -67,6 +73,7 @@ import {DateField, Label, DateInput, DateSegment} from 'react-aria-components';
   --highlight-foreground: white;
   --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
 }
+
 .react-aria-DateInput {
   display: flex;
   padding: 4px;
@@ -134,6 +141,7 @@ A date field can be built using `<input type="date">`, but this is very limited 
 * **Time zone aware** – Dates and times can optionally include a time zone. All modifications follow time zone rules such as daylight saving time.
 * **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale.
 * **Touch friendly** – Date segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
+* **Validation** – Integrates with HTML forms, supporting required, minimum and maximum values, custom validation functions, realtime validation, and server-side validation errors.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
 Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `DateField`.
@@ -147,7 +155,7 @@ A date field consists of a label, and a group of segments representing each unit
 `DateField` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
 
 ```tsx
-import {DateField, Label, DateInput, DateSegment, Text} from 'react-aria-components';
+import {DateField, Label, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
 
 <DateField>
   <Label />
@@ -155,7 +163,7 @@ import {DateField, Label, DateInput, DateSegment, Text} from 'react-aria-compone
     {segment => <DateSegment segment={segment} />}
   </DateInput>
   <Text slot="description" />
-  <Text slot="errorMessage" />
+  <FieldError />
 </DateField>
 ```
 
@@ -174,6 +182,13 @@ Note that most of this anatomy is shared with [TimeField](TimeField.html), so yo
   title="@internationalized/date"
   description="Represent and manipulate dates and times in a locale-aware manner.">
   <InternationalizedDate />
+</ExampleCard>
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
 </ExampleCard>
 
 </section>
@@ -197,16 +212,16 @@ A `DateField` uses the following components, which may also be used standalone o
 
 If you will use a DateField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `DateField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
+This example wraps `DateField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation).
 
 ```tsx example export=true
-import type {DateFieldProps, DateValue} from 'react-aria-components';
-import {Text} from 'react-aria-components';
+import type {DateFieldProps, DateValue, ValidationResult} from 'react-aria-components';
+import {Text, FieldError} from 'react-aria-components';
 
 interface MyDateFieldProps<T extends DateValue> extends DateFieldProps<T> {
   label?: string,
   description?: string,
-  errorMessage?: string
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 function MyDateField<T extends DateValue>({label, description, errorMessage, ...props}: MyDateFieldProps<T>) {
@@ -217,7 +232,7 @@ function MyDateField<T extends DateValue>({label, description, errorMessage, ...
         {segment => <DateSegment segment={segment} />}
       </DateInput>
       {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      <FieldError>{errorMessage}</FieldError>
     </DateField>
   );
 }
@@ -385,21 +400,27 @@ function Example() {
 
 ## Validation
 
-### Minimum and maximum values
+DateField supports the `isRequired` prop to ensure the user enters a value, as well as minimum and maximum values, and custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
 
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This marks the date field as invalid using ARIA if the user enters an invalid date. You should implement a visual indication that the date field is invalid as well.
-
-This example only accepts dates after today.
+To display validation errors, add a `<FieldError>` element as a child of the DateField. This allows you to render error messages from all of the above sources with consistent custom styles.
 
 ```tsx example
-import {today} from '@internationalized/date';
+import {Form, FieldError, Button} from 'react-aria-components';
 
-<MyDateField
-  label="Appointment date"
-  /*- begin highlight -*/
-  minValue={today(getLocalTimeZone())}
-  /*- end highlight -*/
-  defaultValue={parseDate('2022-02-03')} />
+<Form>
+  {/*- begin highlight -*/}
+  <DateField name="date" isRequired>
+  {/*- end highlight -*/}
+    <Label>Appointment date</Label>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+  </DateField>
+  <Button type="submit">Submit</Button>
+</Form>
 ```
 
 <details>
@@ -416,38 +437,76 @@ import {today} from '@internationalized/date';
     }
   }
 }
+
+.react-aria-FieldError {
+  font-size: 12px;
+  color: var(--text-color-invalid);
+}
 ```
 
 </details>
 
-### Help text
+By default, `FieldError` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
-The `description` slot can be used to associate additional help text with a date field. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the date field as invalid for assistive technologies.
+### Minimum and maximum values
+
+The `minValue` and `maxValue` props can also be used to ensure the value is within a specific range. This example only accepts dates after today.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+<Form>
+  <MyDateField
+    label="Appointment date"
+    /*- begin highlight -*/
+    minValue={today(getLocalTimeZone())}
+    /*- end highlight -*/
+    defaultValue={parseDate('2022-02-03')} />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+### Custom validation
+
+The `validate` function can be used to perform custom validation logic. It receives the current field value, and should return a string or array of strings representing one or more error messages if the value is invalid.
 
 This example validates that the selected date is a weekday and not a weekend according to the current locale.
 
 ```tsx example
-import {today, isWeekend} from '@internationalized/date';
+import {isWeekend} from '@internationalized/date';
 import {useLocale} from 'react-aria';
 
 function Example() {
-  let [date, setDate] = React.useState(today(getLocalTimeZone()));
   let {locale} = useLocale();
-  let isInvalid = date && isWeekend(date, locale);
 
   return (
-    <DateField value={date} onChange={setDate} isInvalid={isInvalid}>
-      <Label>Appointment date</Label>
-      <DateInput>
-        {segment => <DateSegment segment={segment} />}
-      </DateInput>
-      {/*- begin highlight -*/}
-      {!isInvalid && <Text slot="description">Select a weekday</Text>}
-      {isInvalid && <Text slot="errorMessage">We are closed on weekends.</Text>}
-      {/*- end highlight -*/}
-    </DateField>
+    <Form>
+      <MyDateField
+        label="Appointment date"
+        /*- begin highlight -*/
+        validate={date => date && isWeekend(date, locale) ? 'We are closed on weekends.' : null}
+        /*- end highlight -*/
+        defaultValue={parseDate('2023-10-28')} />
+      <Button type="submit">Submit</Button>
+    </Form>
   );
 }
+```
+
+### Description
+
+The `description` slot can be used to associate additional help text with a date field.
+
+```tsx example
+<DateField granularity="hour">
+  <Label>Appointment time</Label>
+  <DateInput>
+    {segment => <DateSegment segment={segment} />}
+  </DateInput>
+  {/*- begin highlight -*/}
+  <Text slot="description">Please select a weekday between 9 AM and 5 PM.</Text>
+  {/*- end highlight -*/}
+</DateField>
 ```
 
 <details>
@@ -457,11 +516,6 @@ function Example() {
 .react-aria-DateField {
   [slot=description] {
     font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
   }
 }
 ```
@@ -533,6 +587,17 @@ The `<DateSegment>` component renders an individual segment.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
 <PropTable component={docs.exports.DateSegment} links={docs.links} />
+
+</details>
+
+### FieldError
+
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.FieldError} links={docs.links} />
 
 </details>
 
@@ -612,6 +677,12 @@ A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector,
 ### Text
 
 The help text elements within a `DateField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
+### FieldError
+
+A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, or by overriding with a custom `className`. It supports the following render props:
+
+<StateTable properties={docs.exports.FieldErrorRenderProps.properties} />
 
 ## Advanced customization
 

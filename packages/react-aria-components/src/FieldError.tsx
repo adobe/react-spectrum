@@ -17,11 +17,16 @@ import {ValidationResult} from '@react-types/shared';
 
 export const FieldErrorContext = createContext<ValidationResult | null>(null);
 
-export interface FieldErrorProps extends RenderProps<ValidationResult> {}
+export interface FieldErrorRenderProps extends ValidationResult {}
+export interface FieldErrorProps extends RenderProps<FieldErrorRenderProps> {}
 
 function FieldError(props: FieldErrorProps, ref: ForwardedRef<HTMLElement>) {
   let validation = useContext(FieldErrorContext);
-  return validation?.isInvalid ? <FieldErrorInner {...props} ref={ref} /> : null;
+  if (!validation?.isInvalid) {
+    return null;
+  }
+
+  return <FieldErrorInner {...props} ref={ref} />;
 }
 
 /**

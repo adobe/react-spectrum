@@ -52,7 +52,10 @@ describe('Checkbox', () => {
   });
 
   it('should support hover', async () => {
-    let {getByRole} = render(<Checkbox className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Checkbox>);
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getByRole} = render(<Checkbox className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
 
     expect(checkbox).not.toHaveAttribute('data-hovered');
@@ -61,10 +64,14 @@ describe('Checkbox', () => {
     await user.hover(checkbox);
     expect(checkbox).toHaveAttribute('data-hovered', 'true');
     expect(checkbox).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(checkbox);
     expect(checkbox).not.toHaveAttribute('data-hovered');
     expect(checkbox).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus ring', async () => {

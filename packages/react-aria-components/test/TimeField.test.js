@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {DateInput, DateSegment, FieldError, Label, Text, TimeField, TimeFieldContext} from '../';
 import React from 'react';
 import {Time} from '@internationalized/date';
@@ -149,8 +149,9 @@ describe('TimeField', () => {
     expect(group).toHaveAttribute('aria-describedby');
     let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
     expect(getDescription()).toContain('Constraints not satisfied');
+    expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-    await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+    await user.keyboard('[ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
 
     expect(getDescription()).toContain('Constraints not satisfied');
     expect(input.validity.valid).toBe(true);
