@@ -139,6 +139,16 @@ module.exports = new Packager({
           return omit(application[0], application[1], nodes);
         }
 
+        if (t && t.type === 'identifier' && t.name === 'Pick' && application) {
+          if (application[0]?.type === 'application') {
+            // this condition was necessary to prevent an unwanted side-effect for other types.
+            // For example, if you go to http://localhost:1234/react-aria/useTextField.html#anatomy
+            // and click the link 'TextFieldIntrinsicElements', the popover won't show 'Pick' anymore if it is processed by `pick()` function here.
+            // i.e., `keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>` becomes `keyof <IntrinsicHTMLElements, 'input' | 'textarea'>`
+            return pick(application[0], application[1], nodes);
+          }
+        }
+
         if (t && t.type === 'identifier' && params && params[t.name]) {
           return params[t.name];
         }
@@ -509,6 +519,42 @@ function omit(obj, toOmit, nodes) {
     let properties = {};
     for (let key in obj.properties) {
       if (!keys.has(key)) {
+        properties[key] = obj.properties[key];
+      }
+    }
+
+    return {
+      ...obj,
+      properties
+    };
+  }
+
+  return obj;
+}
+
+// Exactly the same as `omit()` above except for `keys.has(key)` instead of `!keys.has(key)`.
+function pick(obj, toPick, nodes) {
+  obj = resolveValue(obj, nodes);
+  
+  if (obj.type === 'interface' || obj.type === 'object') {
+    let keys = new Set();
+    if (toPick.type === 'string' && toPick.value) {
+      keys.add(toPick.value);
+    } else if (toPick.type === 'union') {
+      for (let e of toPick.elements) {
+        if (e.type === 'string' && e.value) {
+          keys.add(e.value);
+        }
+      }
+    }
+
+    if (keys.size === 0) {
+      return obj;
+    }
+
+    let properties = {};
+    for (let key in obj.properties) {
+      if (keys.has(key)) {
         properties[key] = obj.properties[key];
       }
     }

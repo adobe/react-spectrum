@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
-import {Key, KeyboardEvent, useRef} from 'react';
+import {DOMAttributes, Key, KeyboardDelegate} from '@react-types/shared';
+import {KeyboardEvent, useRef} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
 /**
