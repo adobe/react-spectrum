@@ -169,6 +169,9 @@ governing permissions and limitations under the License.
   --spectrum-steplist-counter-font-size: 0;
   --spectrum-steplist-chevron-scale: 0.75;
   --spectrum-steplist-segment-height-adjust: 2px;
+  .spectrum-Steplist-marker {
+    align-self: center;
+  }
 }
 
 /* Medium size */

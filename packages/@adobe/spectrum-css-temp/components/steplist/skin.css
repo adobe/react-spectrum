@@ -161,9 +161,9 @@ governing permissions and limitations under the License.
   }
 }
 
-/*
+
 @media (forced-colors: active) {
-  .spectrum-Tag {
+  .spectrum-Steplist {
     forced-color-adjust: none;
     --spectrum-steplist-default-color: ButtonFace;
     --spectrum-steplist-border-color: ButtonFace;
@@ -175,4 +175,4 @@ governing permissions and limitations under the License.
     --spectrum-steplist-disabled-color: GrayText;
   }
 }
-*/
+
