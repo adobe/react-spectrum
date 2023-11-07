@@ -1046,8 +1046,8 @@ exports[`DocsTransformer - API interface merging merges properties when extendin
                 "type": "application",
                 "typeParameters": [
                   {
-                    "name": "Key",
-                    "type": "identifier",
+                    "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+                    "type": "link",
                   },
                 ],
               },
@@ -1083,8 +1083,8 @@ exports[`DocsTransformer - API interface merging merges properties when extendin
             "type": "application",
             "typeParameters": [
               {
-                "name": "Key",
-                "type": "identifier",
+                "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+                "type": "link",
               },
             ],
           },
@@ -1230,8 +1230,8 @@ exports[`DocsTransformer - API interface merging merges properties when extendin
                   "type": "application",
                   "typeParameters": [
                     {
-                      "name": "Key",
-                      "type": "identifier",
+                      "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+                      "type": "link",
                     },
                   ],
                 },
@@ -1295,8 +1295,8 @@ exports[`DocsTransformer - API interface merging merges properties when extendin
                 "type": "application",
                 "typeParameters": [
                   {
-                    "name": "Key",
-                    "type": "identifier",
+                    "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+                    "type": "link",
                   },
                 ],
               },
@@ -1339,18 +1339,40 @@ prop instead.",
           "optional": true,
           "type": "property",
           "value": {
-            "base": {
-              "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationFunction",
-              "type": "link",
-            },
-            "type": "application",
-            "typeParameters": [
+            "parameters": [
               {
-                "id": "/packages/@react-types/shared/src/inputs.d.ts:T",
-                "name": "T",
-                "type": "identifier",
+                "description": null,
+                "name": "value",
+                "rest": false,
+                "type": "parameter",
+                "value": {
+                  "id": "/packages/@react-types/shared/src/inputs.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
               },
             ],
+            "return": {
+              "elements": [
+                {
+                  "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationError",
+                  "type": "link",
+                },
+                {
+                  "type": "boolean",
+                  "value": true,
+                },
+                {
+                  "type": "null",
+                },
+                {
+                  "type": "undefined",
+                },
+              ],
+              "type": "union",
+            },
+            "type": "function",
+            "typeParameters": [],
           },
         },
         "validationBehavior": {
@@ -1959,55 +1981,6 @@ or invalid via ARIA.",
         "type": "union",
       },
     },
-    "/packages/@react-types/shared/src/inputs.d.ts:ValidationFunction": {
-      "description": null,
-      "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationFunction",
-      "name": "ValidationFunction",
-      "type": "alias",
-      "typeParameters": [
-        {
-          "constraint": null,
-          "default": null,
-          "name": "T",
-          "type": "typeParameter",
-        },
-      ],
-      "value": {
-        "parameters": [
-          {
-            "name": "value",
-            "rest": false,
-            "type": "parameter",
-            "value": {
-              "id": "/packages/@react-types/shared/src/inputs.d.ts:T",
-              "name": "T",
-              "type": "identifier",
-            },
-          },
-        ],
-        "return": {
-          "elements": [
-            {
-              "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationError",
-              "type": "link",
-            },
-            {
-              "type": "boolean",
-              "value": true,
-            },
-            {
-              "type": "null",
-            },
-            {
-              "type": "undefined",
-            },
-          ],
-          "type": "union",
-        },
-        "type": "function",
-        "typeParameters": [],
-      },
-    },
     "/packages/@react-types/shared/src/inputs.d.ts:ValidationState": {
       "description": null,
       "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
@@ -2023,6 +1996,24 @@ or invalid via ARIA.",
           {
             "type": "string",
             "value": "invalid",
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/shared/src/key.d.ts:Key": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+      "name": "Key",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "string",
+          },
+          {
+            "type": "number",
           },
         ],
         "type": "union",
@@ -2049,8 +2040,8 @@ or invalid via ARIA.",
             "type": "application",
             "typeParameters": [
               {
-                "name": "Key",
-                "type": "identifier",
+                "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+                "type": "link",
               },
             ],
           },
