@@ -1007,77 +1007,6 @@ async function fakeFetch() {
   );
 }
 
-async function load(signal, cursor) {
-  // const url = new URL('https://www.reddit.com/r/aww.json');
-
-  // if (cursor) {
-  //   url.searchParams.append('after', cursor);
-  // }
-
-  // // const res = await fetch(url.toString(), {
-  // //   signal
-  // // });
-  // const res = await fakeFetch();
-  // const json = await res.json();
-  // const items = json.data.children.map((item) => {
-  //   return {
-  //     id: item.data.id,
-  //     preview: item.data.thumbnail,
-  //     ups: item.data.ups,
-  //     title: item.data.title,
-  //     created: new Date(item.data.created * 1000).toISOString()
-  //   };
-  // });
-
-  // console.log('load');
-
-  // return {
-  //   items,
-  //   cursor: json.data.after,
-  //   total: 987
-  // };
-
-  const url = new URL(`https://www.reddit.com/r/aww.json`);
-
-  if (cursor) {
-    url.searchParams.append('after', cursor);
-  }
-
-  const res = await fetch(url.toString(), {
-    signal
-  });
-  const json = await res.json();
-  const items = json.data.children.map((item) => {
-    return {
-      id: item.data.id,
-      preview: item.data.thumbnail,
-      ups: item.data.ups,
-      title: item.data.title,
-      created: new Date(item.data.created * 1000).toISOString(),
-    };
-  });
-  return {
-    items,
-    cursor: json.data.after,
-    total: 987
-  };
-}
-
-async function sort({items, sortDescriptor}) {
-  return {
-    items: items.slice().sort((a, b) => {
-      let cmp = a[sortDescriptor.column] < b[sortDescriptor.column] ? -1 : 1;
-
-      if (sortDescriptor.direction === 'descending') {
-        cmp *= -1;
-      }
-
-      return cmp;
-    })
-    
-  };
-}
-
 export const AsyncLoadingQuarryTest: TableStory = {
   args: {
     'aria-label': 'Top news from Reddit',
@@ -1091,9 +1020,6 @@ export const AsyncLoadingQuarryTest: TableStory = {
 
 function AsyncLoadingExampleQuarryTest(props) {
   let [filters, setFilters] = React.useState({});
-  // let [total, setTotal] = useState(null);
-  // let [page, setPage] = useState(initialPage);
-  // let [limit, setLimit] = useState(initialLimit);
 
   const rColumns = [
     {
@@ -1120,49 +1046,6 @@ function AsyncLoadingExampleQuarryTest(props) {
     created: string,
     url: string
   }
-
-  // const filtersSort = useCallback(
-  //   async (opts) => {
-  //     return sort({filters, ...opts});
-  //   },
-  //   [filters, sort],
-  // );
-
-  // const pagedLoad = useCallback(
-  //   async (opts) => {
-  //     // const {pagination} = filters;
-  //     // const pageToLoad = pagination?.page ?? page;
-  //     // const limitToLoad = pagination?.limit ?? limit;
-
-  //     // const {total, ...data} = await load({ filters, limit: limitToLoad, page: pageToLoad, ...opts });
-  //     const {total, ...data} = await load({});
-
-
-  //     if (total != null) {
-  //       setTotal(total);
-  //     }
-  //     if (pageToLoad != null) {
-  //       setPage(pageToLoad);
-  //     }
-  
-  //     if (limitToLoad != null) {
-  //       setLimit(limitToLoad);
-  //     }
-
-  //     return {...data};
-  //   },
-  //   [filters, load],
-  // );
-
-  // const listOpts = {
-  //   getKey: (item) => item.id,
-  //   load: pagedLoad,
-  //   ...(sort && {sort: filtersSort})  
-  // }
-  
-
-  // let list = useAsyncList(listOpts);
-
 
   let list = useAsyncList<Post>({
     getKey: (item) => item.id,
