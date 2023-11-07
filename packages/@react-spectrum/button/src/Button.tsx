@@ -75,7 +75,6 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let spinnerId = useId();
   let textId = useId();
   let iconId = useId();
-  let buttonId = useId();
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -107,7 +106,6 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       <ElementType
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
-        id={buttonId}
         ref={domRef}
         data-variant={variant}
         data-style={style}
