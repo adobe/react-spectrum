@@ -24,7 +24,7 @@ describe('Dialog SSR', function () {
             <Dialog>
               {({ close }) => (
                 <form>
-                  <Heading>Sign up</Heading>
+                  <Heading slot="title">Sign up</Heading>
                   <TextField autoFocus>
                     <Label>First Name:</Label>
                     <Input />

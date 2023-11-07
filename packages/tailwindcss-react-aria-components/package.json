@@ -4,7 +4,7 @@
   "description": "A Tailwind plugin that adds variants for data attributes in React Aria Components",
   "license": "Apache-2.0",
   "main": "src/index.js",
-  "types": "src/types.d.ts",
+  "types": "src/index.d.ts",
   "source": "src/index.js",
   "files": [
     "dist",

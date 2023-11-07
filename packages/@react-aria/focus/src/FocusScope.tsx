@@ -131,43 +131,42 @@ export function FocusScope(props: FocusScopeProps) {
   useRestoreFocus(scopeRef, restoreFocus, contain);
   useAutoFocus(scopeRef, autoFocus);
 
-  // this layout effect needs to run last so that focusScopeTree cleanup happens at the last moment possible
+  // This needs to be an effect so that activeScope is updated after the FocusScope tree is complete.
+  // It cannot be a useLayoutEffect because the parent of this node hasn't been attached in the tree yet.
   useEffect(() => {
-    if (scopeRef) {
-      let activeElement = document.activeElement;
-      let scope: TreeNode | null = null;
-      // In strict mode, active scope is incorrectly updated since cleanup will run even though scope hasn't unmounted.
-      // To fix this, we need to update the actual activeScope here
-      if (isElementInScope(activeElement, scopeRef.current)) {
-        // Since useLayoutEffect runs for children first, we need to traverse the focusScope tree and find the bottom most scope that
-        // contains the active element and set that as the activeScope
-        for (let node of focusScopeTree.traverse()) {
-          if (node.scopeRef && isElementInScope(activeElement, node.scopeRef.current)) {
-            scope = node;
-          }
-        }
+    let activeElement = document.activeElement;
+    let scope: TreeNode | null = null;
 
-        if (scope === focusScopeTree.getTreeNode(scopeRef)) {
-          activeScope = scope.scopeRef;
+    if (isElementInScope(activeElement, scopeRef.current)) {
+      // We need to traverse the focusScope tree and find the bottom most scope that
+      // contains the active element and set that as the activeScope.
+      for (let node of focusScopeTree.traverse()) {
+        if (node.scopeRef && isElementInScope(activeElement, node.scopeRef.current)) {
+          scope = node;
         }
       }
 
-      return () => {
-        // Scope may have been re-parented.
-        let parentScope = focusScopeTree.getTreeNode(scopeRef)?.parent?.scopeRef ?? null;
-
-        // Restore the active scope on unmount if this scope or a descendant scope is active.
-        // Parent effect cleanups run before children, so we need to check if the
-        // parent scope actually still exists before restoring the active scope to it.
-        if (
-          (scopeRef === activeScope || isAncestorScope(scopeRef, activeScope)) &&
-          (!parentScope || focusScopeTree.getTreeNode(parentScope))
-        ) {
-          activeScope = parentScope;
-        }
-        focusScopeTree.removeTreeNode(scopeRef);
-      };
+      if (scope === focusScopeTree.getTreeNode(scopeRef)) {
+        activeScope = scope.scopeRef;
+      }
     }
+  }, [scopeRef]);
+
+  // This layout effect cleanup is so that the tree node is removed synchronously with react before the RAF
+  // in useRestoreFocus cleanup runs.
+  useLayoutEffect(() => {
+    return () => {
+      // Scope may have been re-parented.
+      let parentScope = focusScopeTree.getTreeNode(scopeRef)?.parent?.scopeRef ?? null;
+
+      if (
+        (scopeRef === activeScope || isAncestorScope(scopeRef, activeScope)) &&
+        (!parentScope || focusScopeTree.getTreeNode(parentScope))
+      ) {
+        activeScope = parentScope;
+      }
+      focusScopeTree.removeTreeNode(scopeRef);
+    };
   }, [scopeRef]);
 
   let focusManager = useMemo(() => createFocusManagerForScope(scopeRef), []);

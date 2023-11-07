@@ -17,10 +17,11 @@ import {
   HTMLAttributes,
   LabelHTMLAttributes,
   ReactDOM,
-  RefObject
+  RefObject,
+  useEffect
 } from 'react';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
+import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
 import {useControlledState} from '@react-stately/utils';
 import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
@@ -137,6 +138,24 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
 
   useFormReset(ref, value, setValue);
   useFormValidation(props, validationState, ref);
+
+  useEffect(() => {
+    // This works around a React/Chrome bug that prevents textarea elements from validating when controlled.
+    // We prevent React from updating defaultValue (i.e. children) of textarea when `value` changes,
+    // which causes Chrome to skip validation. Only updating `value` is ok in our case since our
+    // textareas are always controlled. React is planning on removing this synchronization in a
+    // future major version.
+    // https://github.com/facebook/react/issues/19474
+    // https://github.com/facebook/react/issues/11896
+    if (ref.current instanceof getOwnerWindow(ref.current).HTMLTextAreaElement) {
+      let input = ref.current;
+      Object.defineProperty(input, 'defaultValue', {
+        get: () => input.value,
+        set: () => {},
+        configurable: true
+      });
+    }
+  }, [ref]);
 
   return {
     labelProps,
