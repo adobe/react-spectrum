@@ -87,7 +87,7 @@ function Example() {
         label="Pick an engineering major"
         defaultItems={options}
         onSelectionChange={setMajorId}>
-        {item => <Item>{item.name}</Item>}
+        {item => <Item key={item.name}>{item.name}</Item>}
       </ComboBox>
     </>
   );
@@ -131,7 +131,7 @@ function Example() {
         label="Adobe product (Uncontrolled)"
         defaultItems={options}
         defaultInputValue="Adobe XD">
-        {item => <Item>{item.name}</Item>}
+        {item => <Item key={item.name}>{item.name}</Item>}
       </ComboBox>
 
       <ComboBox
@@ -139,7 +139,7 @@ function Example() {
         defaultItems={options}
         inputValue={value}
         onInputChange={setValue}>
-        {item => <Item>{item.name}</Item>}
+        {item => <Item key={item.name}>{item.name}</Item>}
       </ComboBox>
     </Flex>
   );
@@ -282,7 +282,7 @@ function Example() {
         label="Pick an Adobe product (uncontrolled)"
         defaultItems={options}
         defaultSelectedKey={9}>
-        {item => <Item>{item.name}</Item>}
+        {item => <Item key={item.name}>{item.name}</Item>}
       </ComboBox>
 
       <ComboBox
@@ -290,7 +290,7 @@ function Example() {
         defaultItems={options}
         selectedKey={productId}
         onSelectionChange={selected => setProductId(selected)}>
-        {item => <Item>{item.name}</Item>}
+        {item => <Item key={item.name}>{item.name}</Item>}
       </ComboBox>
     </Flex>
   );
@@ -426,7 +426,7 @@ function Example() {
         selectedKey={majorId}
         onSelectionChange={onSelectionChange}
         onInputChange={onInputChange}>
-        {item => <Item>{item.name}</Item>}
+        {item => <Item key={item.name}>{item.name}</Item>}
       </ComboBox>
     </>
   );
@@ -891,7 +891,7 @@ function Example() {
       items={options}
       selectedKey={animalId}
       onSelectionChange={selected => setAnimalId(selected)}>
-      {item => <Item>{item.name}</Item>}
+      {item => <Item key={item.name}>{item.name}</Item>}
     </ComboBox>
   );
 }
