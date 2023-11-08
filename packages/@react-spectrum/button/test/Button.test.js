@@ -12,12 +12,10 @@
 
 import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
-import Bell from '@spectrum-icons/workflow/Bell';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
-import {Text} from '@react-spectrum/text';
 
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
