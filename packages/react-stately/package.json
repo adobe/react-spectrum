@@ -31,6 +31,7 @@
     "@react-stately/data": "^3.10.3",
     "@react-stately/datepicker": "^3.8.0",
     "@react-stately/dnd": "^3.2.5",
+    "@react-stately/form": "3.0.0-alpha.1",
     "@react-stately/list": "^3.10.0",
     "@react-stately/menu": "^3.5.6",
     "@react-stately/numberfield": "^3.6.2",
