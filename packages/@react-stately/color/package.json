@@ -28,8 +28,6 @@
     "@react-stately/slider": "^3.4.4",
     "@react-stately/utils": "^3.8.0",
     "@react-types/color": "3.0.0-beta.20",
-    "@react-types/numberfield": "^3.6.1",
-    "@react-types/shared": "^3.21.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

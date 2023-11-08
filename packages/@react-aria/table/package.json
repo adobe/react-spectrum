@@ -27,7 +27,6 @@
     "@react-aria/i18n": "^3.8.4",
     "@react-aria/interactions": "^3.19.1",
     "@react-aria/live-announcer": "^3.3.1",
-    "@react-aria/selection": "^3.17.1",
     "@react-aria/utils": "^3.21.1",
     "@react-aria/visually-hidden": "^3.8.6",
     "@react-stately/collections": "^3.10.2",

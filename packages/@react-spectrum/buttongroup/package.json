@@ -37,8 +37,6 @@
   },
   "dependencies": {
     "@react-aria/utils": "^3.21.1",
-    "@react-spectrum/button": "^3.14.1",
-    "@react-spectrum/text": "^3.4.7",
     "@react-spectrum/utils": "^3.11.1",
     "@react-types/buttongroup": "^3.3.5",
     "@react-types/shared": "^3.21.0",

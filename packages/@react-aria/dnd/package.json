@@ -28,7 +28,6 @@
     "@react-aria/live-announcer": "^3.3.1",
     "@react-aria/overlays": "^3.18.1",
     "@react-aria/utils": "^3.21.1",
-    "@react-aria/visually-hidden": "^3.8.6",
     "@react-stately/dnd": "^3.2.5",
     "@react-types/button": "^3.9.0",
     "@react-types/shared": "^3.21.0",

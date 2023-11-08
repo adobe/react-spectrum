@@ -519,7 +519,7 @@ let {isInvalid, validationErrors, validationDetails} = useTextField(props, ref);
 Server errors can be provided using the `FormValidationContext` directly, or using the `Form` component from `react-aria-components` as described above.
 
 ```tsx
-import {FormValidationContext} from 'react-aria';
+import {FormValidationContext} from 'react-stately';
 
 <FormValidationContext.Provider value={{username: 'This username is taken.'}}>
   <MyTextField
