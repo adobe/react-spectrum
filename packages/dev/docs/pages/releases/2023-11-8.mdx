@@ -1,0 +1,113 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description:In this release, we’re promoting React Aria Components from beta to RC, introducing built-in support for form validation, adding a new Toolbar component, and fixing plenty of bugs. Both React Aria and React Spectrum now have built-in support for form validation, including native HTML constraint validation, custom validation functions, realtime validation, and integration with server-side validation. Check out our forms guide to learn more. We also added Toolbar to React Aria Components, which provides an accessible grouping that manages arrow key navigation between interactive elements such as buttons, dropdown menus, and checkboxes. As always, huge thanks to everyone in our community for their feedback and contributions to make this release possible!
+
+date: 2023-11-08
+---
+
+# November 08, 2023 Release
+
+In this release, we’re promoting React Aria Components from beta to RC, introducing built-in support for form validation, adding a new Toolbar component, and fixing plenty of bugs.
+
+Both React Aria and React Spectrum now have built-in support for form validation, including native HTML constraint validation, custom validation functions, realtime validation, and integration with server-side validation. Check out our [forms guide](https://react-spectrum.adobe.com/react-aria/forms.html) to learn more.
+
+We also added [Toolbar](https://react-spectrum.adobe.com/react-aria/Toolbar.html) to React Aria Components, which provides an accessible grouping that manages arrow key navigation between interactive elements such as buttons, dropdown menus, and checkboxes.
+
+As always, huge thanks to everyone in our community for their feedback and contributions to make this release possible!
+
+**React Aria Components API updates**
+In this release, we made a few API final updates to React Aria Components.
+
+
+1. ListBox, Menu, and GridList now have their own individual item components. The shared `<Item>` component has been removed and replaced with `<ListBoxItem>`, `<MenuItem>`, and `<GridListItem>`. Our default CSS classes have changed to match these names as well.
+2. GridList and TagGroup have moved to using `display: contents` for their internal `gridcell` elements, making it easier to style items with flex or grid layout properties. If you were previously applying these using a descendant selector, you’ll need to move them to the parent row element.
+3. The Dialog component now uses an explicit `<Heading slot=``"``title``"``>` to ensure that other headings in the dialog are not affected. You’ll need to add the `slot` prop to the main heading, and will see a console warning if no heading is provided.
+
+
+## Enhancements
+- Support native form validation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5288)
+
+## Fixes
+- Updated translations for Menu - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/5182)
+- TS StrictMode for Radio - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5193)
+- Add getOwnerDocument and getOwnerWindow utils and update usage - [@slye-stripe](https://github.com/slye-stripe) - [PR](https://github.com/adobe/react-spectrum/pull/5096)
+- NumberParser percent and significant figure fixes - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5156)
+- Remove gap shim - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5229)
+- Fix stately import from aria - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5251)
+- Check `isDateUnavailable` in `useDateFieldState` validation - [@blair-c](https://github.com/blair-c) - [PR](https://github.com/adobe/react-spectrum/pull/5239)
+- Remove circular dependency - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5256)
+- Export `HeaderContext` - [@hosmelq](https://github.com/hosmelq) - [PR](https://github.com/adobe/react-spectrum/pull/5264)
+- TS StrictMode for various form components - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5218)
+- Fix SSR `useId` memory leak - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5268)
+- Pass onPressUp prop to `useButton` - [@andrewchough](https://github.com/andrewchough) - [PR](https://github.com/adobe/react-spectrum/pull/5219)
+- Update useTreeData move function to allow moving item to root - [@michaeldfoley](https://github.com/michaeldfoley) - [PR](https://github.com/adobe/react-spectrum/pull/5277)
+- TS strict aria hooks batch - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5069)
+- Resolve inconsistent look of buttons in `ActionGroup` between Firefox and Chrome - [@adnicolae](https://github.com/adnicolae) - [PR](https://github.com/adobe/react-spectrum/pull/5293)
+- Use correct owner document for `useInteractOutside` - [@slye-stripe](https://github.com/slye-stripe) - [PR](https://github.com/adobe/react-spectrum/pull/5306)
+- Fix `FocusScope` restore logic in `createTreeWalker` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5131)
+- Update React types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5237)
+- Add translations for DatePicker plus general linguistic corrections - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/5360)
+- Add `Key` type to monopackages - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5362)
+* Bump lightningcss - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5379)
+
+## Docs
+- Fix example drag behavior w/ mouseUp - [@blair-c](https://github.com/blair-c) - [PR](https://github.com/adobe/react-spectrum/pull/5190)
+- Toolbar docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5327)
+- Add docs for form validation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5343)
+- Fix `useCheckbox` example - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5185)
+* Add basic validation docs for hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5375)
+
+## Under construction
+
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+**React Aria Components** (RC)
+
+- Update React Aria Components README - [@wojtekmaj](https://github.com/wojtekmaj) - [PR](https://github.com/adobe/react-spectrum/pull/5188)
+- Add `isRootDropTarget` to empty state in GridList - [@gennadiipel](https://github.com/gennadiipel) - [PR](https://github.com/adobe/react-spectrum/pull/5211)
+- `Toolbar` component - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5080)
+- Add styled examples for React Aria Components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5226)
+- Replace value with state when destructuring `SearchFieldRenderProps` - [@itsuka-dev](https://github.com/itsuka-dev) - [PR](https://github.com/adobe/react-spectrum/pull/5250)
+- Improve error message for required slots - [@hosmelq](https://github.com/hosmelq) - [PR](https://github.com/adobe/react-spectrum/pull/5271)
+- Add `onDrop` to `DropZone` & FileTrigger examples - [@blair-c](https://github.com/blair-c) - [PR](https://github.com/adobe/react-spectrum/pull/5270)
+- Fix unexpected `TableRow` children render call - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/5265)
+- Allow children in Table Column resizer - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5311)
+- Docs separate css blocks by example - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5050)
+- Use separate item components for ListBox, Menu, and GridList - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5317)
+- Add validation support for React Aria Components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5313)
+- Enable easier styling in GridList & TagGroup items - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5322)
+- Use explicit "title" slot for RAC dialogs, and improve aria labelling - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5323)
+- Fix types field in Tailwind plugin - [@stefanprobst](https://github.com/stefanprobst) - [PR](https://github.com/adobe/react-spectrum/pull/5326)
+- Fix ComboBox re-opening after selection - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5354)
+- Auto focus the first invalid field when submitting a form - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5344)
+- Support hover event props - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5351)
+- Add isEntering and isExiting props to control animation from outside - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5358)
+- Fix `Group` render props and focus-visible behavior with text input children - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5359)
+- Add `shouldCloseOnSelect` prop to DatePicker - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5316)
+- Add support for named groups and peers in Tailwind plugin - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5178)
+* Fix clicking on track to move slider in RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5383)
+
+
+**React Spectrum DropZone** (Beta)
+
+- Update RSP DropZone visual feedback example in docs - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5207)
+- Fix `DropZone`'s filled message announcement on different platforms - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5123)
+
+
+
+## Released packages
+
+```
+
+```
