@@ -16,7 +16,6 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Breadcrumbs, Item} from '@react-spectrum/breadcrumbs';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, SpectrumTableProps, TableBody, TableHeader, TableView} from '../';
-import {Checkbox} from '@react-spectrum/checkbox';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, View} from '@react-spectrum/view';
 import {ControllingResize, PokemonColumn} from './ControllingResize';
@@ -985,7 +984,7 @@ export const AsyncLoading: TableStory = {
 
 async function fakeFetch() {
   return new Promise(
-    (resolve, reject) => {
+    (resolve) => {
       console.log('fetching data');
       setTimeout(() => resolve({json: async function () {
         return {data: {children: [
@@ -1001,7 +1000,7 @@ async function fakeFetch() {
           {data: {id: '4', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
           {data: {id: '5', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
           {data: {id: '6', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}}
-        ]}}
+        ]}};
       }}), 1000);
     }
   );
@@ -1049,10 +1048,10 @@ function AsyncLoadingExampleQuarryTest(props) {
 
   let list = useAsyncList<Post>({
     getKey: (item) => item.id,
-    async load({signal, cursor}) {
+    async load({cursor}) {
       console.log('load');
 
-      const url = new URL(`https://www.reddit.com/r/aww.json`);
+      const url = new URL('https://www.reddit.com/r/aww.json');
 
       if (cursor) {
         url.searchParams.append('after', cursor);
@@ -1066,7 +1065,7 @@ function AsyncLoadingExampleQuarryTest(props) {
           preview: item.data.thumbnail,
           ups: item.data.ups,
           title: item.data.title,
-          created: new Date(item.data.created * 1000).toISOString(),
+          created: new Date(item.data.created * 1000).toISOString()
         };
       });
       return {
@@ -1097,10 +1096,8 @@ function AsyncLoadingExampleQuarryTest(props) {
     list.reload();
   }, reloadDeps);
 
-  console.log('reloadDeps', reloadDeps);
-
   return (
-    <TableView {...props} width='90vw' sortDescriptor={list.sortDescriptor} onSortChange={list.sort} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onSortChange={setFilters}>
+    <TableView {...props} width="90vw" sortDescriptor={list.sortDescriptor} selectedKeys={list.selectedKeys} onSelectionChange={list.setSelectedKeys} onSortChange={setFilters}>
       <TableHeader columns={rColumns}>
         {(column) => (
           <Column key={column.key} allowsSorting>
