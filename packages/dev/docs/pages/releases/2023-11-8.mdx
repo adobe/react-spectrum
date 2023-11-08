@@ -31,7 +31,7 @@ In this release, we made a few API final updates to React Aria Components.
 
 1. ListBox, Menu, and GridList now have their own individual item components. The shared `<Item>` component has been removed and replaced with `<ListBoxItem>`, `<MenuItem>`, and `<GridListItem>`. Our default CSS classes have changed to match these names as well.
 2. GridList and TagGroup have moved to using `display: contents` for their internal `gridcell` elements, making it easier to style items with flex or grid layout properties. If you were previously applying these using a descendant selector, you’ll need to move them to the parent row element.
-3. The Dialog component now uses an explicit `<Heading slot=``"``title``"``>` to ensure that other headings in the dialog are not affected. You’ll need to add the `slot` prop to the main heading, and will see a console warning if no heading is provided.
+3. The Dialog component now uses an explicit `<Heading slot="title">` to ensure that other headings in the dialog are not affected. You’ll need to add the `slot` prop to the main heading, and will see a console warning if no heading is provided.
 
 
 ## Enhancements
@@ -58,14 +58,14 @@ In this release, we made a few API final updates to React Aria Components.
 - Update React types - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5237)
 - Add translations for DatePicker plus general linguistic corrections - [@rgeraghty](https://github.com/rgeraghty) - [PR](https://github.com/adobe/react-spectrum/pull/5360)
 - Add `Key` type to monopackages - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5362)
-* Bump lightningcss - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5379)
+- Bump lightningcss - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5379)
 
 ## Docs
 - Fix example drag behavior w/ mouseUp - [@blair-c](https://github.com/blair-c) - [PR](https://github.com/adobe/react-spectrum/pull/5190)
 - Toolbar docs - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5327)
 - Add docs for form validation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5343)
 - Fix `useCheckbox` example - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5185)
-* Add basic validation docs for hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5375)
+- Add basic validation docs for hooks - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5375)
 
 ## Under construction
 
@@ -95,7 +95,7 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 - Fix `Group` render props and focus-visible behavior with text input children - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5359)
 - Add `shouldCloseOnSelect` prop to DatePicker - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5316)
 - Add support for named groups and peers in Tailwind plugin - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5178)
-* Fix clicking on track to move slider in RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5383)
+- Fix clicking on track to move slider in RAC - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5383)
 
 
 **React Spectrum DropZone** (Beta)
