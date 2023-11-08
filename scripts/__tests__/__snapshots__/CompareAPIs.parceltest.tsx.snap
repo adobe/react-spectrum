@@ -402,6 +402,20 @@ it changed:
   
 
 
+ packages/@react-types/shared/src/key.d.ts:Key
+  
+#### packages/@react-types/shared/src/key.d.ts:Key
+-type Key = {
+-  string | number
+-}
+it changed:
+- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
+
+
+  -----------------------------------
+  
+
+
  packages/@react-types/shared/src/selection.d.ts:Selection
   
 #### packages/@react-types/shared/src/selection.d.ts:Selection
@@ -458,20 +472,6 @@ it changed:
   
 
 
- packages/@react-types/shared/src/inputs.d.ts:ValidationFunction
-  
-#### packages/@react-types/shared/src/inputs.d.ts:ValidationFunction
--type ValidationFunction = {
--  (T) => ValidationError | boolean | null | undefined
--}
-it changed:
-- @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
-
-
-  -----------------------------------
-  
-
-
   ### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
   
 #### @test/parcel-test-app/src/index.tsx:SpectrumTagGroupProps
@@ -483,11 +483,11 @@ changed by:
  packages/@react-types/shared/src/collections.d.ts:SectionElement
  packages/@react-types/shared/src/collections.d.ts:CollectionElement
  packages/@react-types/shared/src/collections.d.ts:CollectionChildren
+ packages/@react-types/shared/src/key.d.ts:Key
  packages/@react-types/shared/src/selection.d.ts:Selection
  packages/@react-types/shared/src/selection.d.ts:SelectionBehavior
  packages/@react-types/shared/src/selection.d.ts:SelectionMode
  packages/@react-types/shared/src/inputs.d.ts:ValidationError
- packages/@react-types/shared/src/inputs.d.ts:ValidationFunction
 
 +SpectrumTagGroupProps<T> {
 +  actionLabel?: string
@@ -513,7 +513,7 @@ changed by:
 +  selectedKeys?: 'all' | Iterable<Key>
 +  selectionBehavior?: SelectionBehavior
 +  selectionMode?: SelectionMode
-+  validate?: ValidationFunction<T>
++  validate?: (T) => ValidationError | boolean | null | undefined
 +  validationBehavior?: 'aria' | 'native' = 'aria'
 +}
 
