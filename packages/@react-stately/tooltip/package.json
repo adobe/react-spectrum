@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@react-stately/overlays": "^3.6.3",
-    "@react-stately/utils": "^3.8.0",
     "@react-types/tooltip": "^3.4.5",
     "@swc/helpers": "^0.5.0"
   },

@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@react-aria/i18n": "^3.8.4",
-    "@react-aria/interactions": "^3.19.1",
     "@react-aria/textfield": "^3.12.2",
     "@react-aria/utils": "^3.21.1",
     "@react-stately/searchfield": "^3.4.6",

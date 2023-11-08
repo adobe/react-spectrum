@@ -30,7 +30,6 @@
     "@react-aria/toolbar": "3.0.0-alpha.1",
     "@react-aria/utils": "^3.21.1",
     "@react-stately/table": "^3.11.2",
-    "@react-types/calendar": "^3.4.1",
     "@react-types/form": "^3.5.4",
     "@react-types/grid": "^3.2.2",
     "@react-types/shared": "^3.21.0",

@@ -34,7 +34,6 @@
     "@react-aria/utils": "^3.21.1",
     "@react-stately/datepicker": "^3.8.0",
     "@react-stately/form": "3.0.0-alpha.1",
-    "@react-stately/utils": "^3.8.0",
     "@react-types/button": "^3.9.0",
     "@react-types/calendar": "^3.4.1",
     "@react-types/datepicker": "^3.6.1",

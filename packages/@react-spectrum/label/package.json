@@ -37,7 +37,6 @@
   },
   "dependencies": {
     "@react-aria/i18n": "^3.8.4",
-    "@react-aria/label": "^3.7.2",
     "@react-aria/utils": "^3.21.1",
     "@react-spectrum/form": "^3.6.7",
     "@react-spectrum/layout": "^3.5.7",

@@ -41,8 +41,6 @@
     "@react-aria/interactions": "^3.19.1",
     "@react-aria/tabs": "^3.8.1",
     "@react-aria/utils": "^3.21.1",
-    "@react-spectrum/button": "^3.14.1",
-    "@react-spectrum/menu": "^3.15.1",
     "@react-spectrum/picker": "^3.12.2",
     "@react-spectrum/text": "^3.4.7",
     "@react-spectrum/utils": "^3.11.1",
@@ -52,7 +50,6 @@
     "@react-types/select": "^3.8.4",
     "@react-types/shared": "^3.21.0",
     "@react-types/tabs": "^3.3.3",
-    "@spectrum-icons/workflow": "^4.2.6",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

@@ -58,9 +58,7 @@
     "@react-stately/combobox": "^3.7.1",
     "@react-types/button": "^3.9.0",
     "@react-types/combobox": "^3.8.1",
-    "@react-types/overlays": "^3.8.3",
     "@react-types/shared": "^3.21.0",
-    "@react-types/textfield": "^3.8.1",
     "@spectrum-icons/ui": "^3.6.1",
     "@swc/helpers": "^0.5.0"
   },
