@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/menu",
-  "version": "3.11.1",
+  "version": "3.11.2",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,18 +22,18 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.14.3",
-    "@react-aria/i18n": "^3.8.4",
-    "@react-aria/interactions": "^3.19.1",
-    "@react-aria/overlays": "^3.18.1",
-    "@react-aria/selection": "^3.17.1",
-    "@react-aria/utils": "^3.21.1",
-    "@react-stately/collections": "^3.10.2",
-    "@react-stately/menu": "^3.5.6",
-    "@react-stately/tree": "^3.7.3",
-    "@react-types/button": "^3.9.0",
-    "@react-types/menu": "^3.9.5",
-    "@react-types/shared": "^3.21.0",
+    "@react-aria/focus": "^3.15.0",
+    "@react-aria/i18n": "^3.9.0",
+    "@react-aria/interactions": "^3.20.0",
+    "@react-aria/overlays": "^3.19.0",
+    "@react-aria/selection": "^3.17.2",
+    "@react-aria/utils": "^3.22.0",
+    "@react-stately/collections": "^3.10.3",
+    "@react-stately/menu": "^3.5.7",
+    "@react-stately/tree": "^3.7.4",
+    "@react-types/button": "^3.9.1",
+    "@react-types/menu": "^3.9.6",
+    "@react-types/shared": "^3.22.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
