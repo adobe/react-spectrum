@@ -25,7 +25,6 @@
     "@react-stately/list": "^3.9.2",
     "@react-stately/utils": "^3.7.0",
     "@react-types/shared": "^3.20.0",
-    "@react-types/steplist": "^3.0.0-alpha.1",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
