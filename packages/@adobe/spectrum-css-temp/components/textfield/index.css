@@ -263,7 +263,7 @@ governing permissions and limitations under the License.
 }
 
 /* styles the textfield properly if the left icon is provided */
-.spectrum-Textfield-inputIcon {
+.spectrum-Textfield-input.spectrum-Textfield-inputIcon {
   /* Use padding instead of text-indent so long strings don't overlap the icon */
   /* These values have real names in a spectrum-css update, when we update, use those. */
   padding-inline-start: calc(
