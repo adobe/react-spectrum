@@ -9,7 +9,6 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/checkbox": "^3.5.2",
     "@react-types/shared": "^3.21.0"
   },
   "peerDependencies": {

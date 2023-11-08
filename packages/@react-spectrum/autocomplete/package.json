@@ -45,7 +45,6 @@
     "@react-aria/interactions": "^3.19.1",
     "@react-aria/label": "^3.7.2",
     "@react-aria/overlays": "^3.18.1",
-    "@react-aria/searchfield": "^3.5.7",
     "@react-aria/utils": "^3.21.1",
     "@react-spectrum/button": "^3.14.1",
     "@react-spectrum/form": "^3.6.7",
@@ -59,8 +58,6 @@
     "@react-stately/combobox": "^3.7.1",
     "@react-types/autocomplete": "3.0.0-alpha.17",
     "@react-types/button": "^3.9.0",
-    "@react-types/overlays": "^3.8.3",
-    "@react-types/searchfield": "^3.5.1",
     "@react-types/shared": "^3.21.0",
     "@spectrum-icons/ui": "^3.6.1",
     "@swc/helpers": "^0.5.0"

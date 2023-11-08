@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@react-aria/i18n": "^3.8.4",
-    "@react-aria/interactions": "^3.19.1",
     "@react-aria/listbox": "^3.11.1",
     "@react-aria/live-announcer": "^3.3.1",
     "@react-aria/menu": "^3.11.1",
@@ -34,7 +33,6 @@
     "@react-stately/collections": "^3.10.2",
     "@react-stately/combobox": "^3.7.1",
     "@react-stately/form": "3.0.0-alpha.1",
-    "@react-stately/layout": "^3.13.3",
     "@react-types/button": "^3.9.0",
     "@react-types/combobox": "^3.8.1",
     "@react-types/shared": "^3.21.0",

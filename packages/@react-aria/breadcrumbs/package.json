@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@react-aria/i18n": "^3.8.4",
-    "@react-aria/interactions": "^3.19.1",
     "@react-aria/link": "^3.6.1",
     "@react-aria/utils": "^3.21.1",
     "@react-types/breadcrumbs": "^3.7.1",

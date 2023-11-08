@@ -37,7 +37,6 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.5.0",
-    "@internationalized/number": "^3.3.0",
     "@react-aria/datepicker": "^3.8.1",
     "@react-aria/focus": "^3.14.3",
     "@react-aria/i18n": "^3.8.4",
@@ -52,7 +51,6 @@
     "@react-spectrum/utils": "^3.11.1",
     "@react-spectrum/view": "^3.6.4",
     "@react-stately/datepicker": "^3.8.0",
-    "@react-stately/utils": "^3.8.0",
     "@react-types/datepicker": "^3.6.1",
     "@react-types/shared": "^3.21.0",
     "@spectrum-icons/ui": "^3.6.1",
