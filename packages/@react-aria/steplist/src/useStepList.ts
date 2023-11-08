@@ -10,20 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {HTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {SpectrumStepListProps} from '@react-types/steplist';
-import {StepListState} from '@react-stately/steplist';
+import {StepListProps, StepListState} from '@react-stately/steplist';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useSelectableList} from '@react-aria/selection';
 
-interface StepListAria {
+export interface AriaStepListProps<T> extends StepListProps<T>, AriaLabelingProps, DOMProps {}
+
+export interface StepListAria {
   listProps: HTMLAttributes<HTMLElement>
 }
 
-export function useStepList<T>(props: SpectrumStepListProps<T>, state: StepListState<T>, ref: RefObject<HTMLOListElement>): StepListAria {
+export function useStepList<T>(props: AriaStepListProps<T>, state: StepListState<T>, ref: RefObject<HTMLOListElement>): StepListAria {
   let {
     'aria-label': ariaLabel
   } = props;
