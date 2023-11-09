@@ -16,6 +16,7 @@ import {filterDOMProps, mergeProps, shouldClientNavigate, useRouter} from '@reac
 import React, {RefObject} from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
+import {withBaseName} from '../../utils/src/openLink';
 
 export interface AriaLinkOptions extends AriaLinkProps {
   /** Whether the link is disabled. */
@@ -48,6 +49,7 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
     // @ts-ignore
     onClick: deprecatedOnClick,
     isDisabled,
+    href,
     ...otherProps
   } = props;
 
@@ -66,11 +68,12 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
 
   return {
     isPressed, // Used to indicate press state for visual
-    linkProps: mergeProps(domProps, {
+    linkProps: mergeProps(withBaseName(router, domProps), {
       ...interactionHandlers,
       ...linkProps,
       'aria-disabled': isDisabled || undefined,
       'aria-current': props['aria-current'],
+      href,
       onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
         pressProps.onClick?.(e);
         if (deprecatedOnClick) {

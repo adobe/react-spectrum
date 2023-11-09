@@ -20,6 +20,7 @@ import {menuData} from './useMenu';
 import {TreeState} from '@react-stately/tree';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
+import {withBaseName} from '../../utils/src/openLink';
 
 export interface MenuItemAria {
   /** Props for the menu item element. */
@@ -283,7 +284,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   });
 
-  let domProps = filterDOMProps(item.props, {isLink: !!item?.props?.href});
+  let domProps = filterDOMProps(withBaseName(router, item.props), {isLink: !!item?.props?.href});
   delete domProps.id;
   return {
     menuItemProps: {
