@@ -14,4 +14,4 @@
 
 export {StepList} from './StepList';
 export {Item} from '@react-stately/collections';
-export type {SpectrumStepListProps} from '@react-types/steplist';
+export type {SpectrumStepListProps} from './StepList';

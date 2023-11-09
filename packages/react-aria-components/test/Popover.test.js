@@ -15,10 +15,10 @@ import {Button, Dialog, DialogTrigger, OverlayArrow, Popover} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let TestPopover = () => (
+let TestPopover = (props) => (
   <DialogTrigger>
     <Button />
-    <Popover>
+    <Popover {...props}>
       <OverlayArrow>
         <svg width={12} height={12}>
           <path d="M0 0,L6 6,L12 0" />
@@ -127,5 +127,27 @@ describe('Popover', () => {
     await user.click(document.body);
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('supports isEntering and isExiting props', async () => {
+    let {getByRole, rerender} = render(<TestPopover isEntering />);
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let popover = getByRole('dialog').closest('.react-aria-Popover');
+    expect(popover).toHaveAttribute('data-entering');
+
+    rerender(<TestPopover />);
+    expect(popover).not.toHaveAttribute('data-entering');
+
+    rerender(<TestPopover isExiting />);
+    await user.click(button);
+
+    expect(popover).toBeInTheDocument();
+    expect(popover).toHaveAttribute('data-exiting');
+
+    rerender(<TestPopover />);
+    expect(popover).not.toBeInTheDocument();
   });
 });
