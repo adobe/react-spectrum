@@ -49,7 +49,6 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
     // @ts-ignore
     onClick: deprecatedOnClick,
     isDisabled,
-    href,
     ...otherProps
   } = props;
 
@@ -73,7 +72,6 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
       ...linkProps,
       'aria-disabled': isDisabled || undefined,
       'aria-current': props['aria-current'],
-      href,
       onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
         pressProps.onClick?.(e);
         if (deprecatedOnClick) {
