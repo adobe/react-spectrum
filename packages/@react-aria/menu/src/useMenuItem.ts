@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement, Key, PressEvent} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId, withBasename} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
@@ -20,7 +20,6 @@ import {RefObject, useCallback, useRef} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
-import {withBasename} from '../../utils/src/openLink';
 
 export interface MenuItemAria {
   /** Props for the menu item element. */
