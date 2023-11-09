@@ -17,7 +17,7 @@ date: 2023-11-08
 
 # November 08, 2023 Release
 
-In this release, we’re promoting React Aria Components from beta to RC, introducing built-in support for form validation, adding a new Toolbar component, and fixing plenty of bugs.
+In this release, we’re promoting React Aria Components from beta to RC 🎉, introducing built-in support for form validation, adding a new Toolbar component, improving our css bundle size with [lightning css](https://lightningcss.dev), and fixing plenty of bugs.
 
 Both React Aria and React Spectrum now have built-in support for form validation, including native HTML constraint validation, custom validation functions, realtime validation, and integration with server-side validation. Check out the React Aria [forms guide](https://react-spectrum.adobe.com/react-aria/forms.html) as well as our [guide](https://react-spectrum.adobe.com/react-spectrum/forms.html) in React Spectrum to learn more.
 
@@ -26,8 +26,8 @@ We also added [Toolbar](https://react-spectrum.adobe.com/react-aria/Toolbar.html
 As always, huge thanks to everyone in our community for their feedback and contributions to make this release possible!
 
 **React Aria Components API updates**
-In this release, we made a few API final updates to React Aria Components.
 
+In this release, we made a few API final updates to React Aria Components.
 
 1. ListBox, Menu, and GridList now have their own individual item components. The shared `<Item>` component has been removed and replaced with `<ListBoxItem>`, `<MenuItem>`, and `<GridListItem>`. Our default CSS classes have changed to match these names as well.
 2. GridList and TagGroup have moved to using `display: contents` for their internal `gridcell` elements, making it easier to style items with flex or grid layout properties. If you were previously applying these using a descendant selector, you’ll need to move them to the parent row element.
