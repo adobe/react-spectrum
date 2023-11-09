@@ -23,10 +23,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/interactions": "^3.1.0",
     "@react-aria/selection": "^3.1.0",
     "@react-aria/utils": "^3.1.0",
-    "@react-stately/collections": "^3.1.0",
     "@react-stately/tree": "^3.1.0",
     "@react-types/shared": "^3.1.0",
     "@react-types/sidenav": "3.0.0-alpha.1",

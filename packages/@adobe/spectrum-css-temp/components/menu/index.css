@@ -230,4 +230,5 @@ governing permissions and limitations under the License.
   /* override default browser styling. */
   /* keyboard shortcuts are always ASCII, so use base font */
   font-family: var(--spectrum-font-family-base);
+  unicode-bidi: plaintext;
 }

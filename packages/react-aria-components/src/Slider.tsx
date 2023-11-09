@@ -148,7 +148,8 @@ interface SliderTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'chi
 function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, SliderTrackContext);
   let state = useContext(SliderStateContext)!;
-  let {hoverProps, isHovered} = useHover(props);
+  let {onHoverStart, onHoverEnd, onHoverChange, ...otherProps} = props;
+  let {hoverProps, isHovered} = useHover({onHoverStart, onHoverEnd, onHoverChange});
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-SliderTrack',
@@ -162,7 +163,7 @@ function SliderTrack(props: SliderTrackProps, ref: ForwardedRef<HTMLDivElement>)
 
   return (
     <div
-      {...mergeProps(filterDOMProps(props as any), hoverProps)}
+      {...mergeProps(otherProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-hovered={isHovered || undefined}
