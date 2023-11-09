@@ -232,6 +232,7 @@ describe('Select', () => {
     expect(button).toHaveAttribute('aria-describedby');
     expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
     expect(select).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(button);
 
     await user.click(button);
 

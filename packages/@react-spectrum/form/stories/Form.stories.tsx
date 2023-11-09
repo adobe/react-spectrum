@@ -28,9 +28,10 @@ import {FormTranslatedText} from './../chromatic/FormLanguages.chromatic';
 import {Heading} from '@react-spectrum/text';
 import {InlineAlert} from '@react-spectrum/inlinealert';
 import {Item, Picker} from '@react-spectrum/picker';
+import {Key, ValidationState} from '@react-types/shared';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
-import React, {Key, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {SearchField} from '@react-spectrum/searchfield';
 import {Slider} from '@react-spectrum/slider';
@@ -39,7 +40,6 @@ import {Switch} from '@react-spectrum/switch';
 import {TagGroup} from '@react-spectrum/tag';
 import {TextArea, TextField} from '@react-spectrum/textfield';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-import {ValidationState} from '@react-types/shared';
 import {Well} from '@react-spectrum/well';
 
 export default {

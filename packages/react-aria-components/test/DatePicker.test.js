@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Button, Calendar, CalendarCell, CalendarGrid, DateInput, DatePicker, DatePickerContext, DateSegment, Dialog, FieldError, Group, Heading, Label, Popover, Text} from 'react-aria-components';
 import {CalendarDate} from '@internationalized/date';
 import React from 'react';
@@ -210,8 +210,9 @@ describe('DatePicker', () => {
     let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
     expect(getDescription()).toContain('Constraints not satisfied');
     expect(datepicker).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
 
-    await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+    await user.keyboard('[ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
 
     expect(getDescription()).toContain('Constraints not satisfied');
     expect(input.validity.valid).toBe(true);
@@ -219,5 +220,39 @@ describe('DatePicker', () => {
     await user.tab();
     expect(getDescription()).not.toContain('Constraints not satisfied');
     expect(datepicker).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should support close on select = true', async () => {
+    let {getByRole, getAllByRole} = render(<TestDatePicker value={new CalendarDate(2019, 2, 3)} />);
+
+    let button = getByRole('button');
+
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+
+    let cells = getAllByRole('gridcell');
+    let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+    expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+
+    await user.click(selected.nextSibling.children[0]);
+    expect(dialog).not.toBeInTheDocument();
+  });
+
+  it('should support close on select = false', async () => {
+    let {getByRole, getAllByRole} = render(<TestDatePicker value={new CalendarDate(2019, 2, 3)} shouldCloseOnSelect={false} />);
+
+    let button = getByRole('button');
+
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+
+    let cells = getAllByRole('gridcell');
+    let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
+    expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
+
+    await user.click(selected.nextSibling.children[0]);
+    expect(dialog).toBeInTheDocument();
   });
 });

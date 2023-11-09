@@ -20,7 +20,7 @@ import React, {ReactNode} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/dropzone/vars.css';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StyleProps, AriaLabelingProps {
+export interface SpectrumDropZoneProps extends Omit<DropZoneProps, 'onHoverStart' | 'onHoverChange' | 'onHoverEnd'>, DOMProps, StyleProps, AriaLabelingProps {
   /** The content to display in the drop zone. */
   children: ReactNode,
   /** Whether the drop zone has been filled. */
@@ -28,6 +28,13 @@ export interface SpectrumDropZoneProps extends DropZoneProps, DOMProps, StylePro
   /** The message to replace the default banner message that is shown when the drop zone is filled. */
   replaceMessage?: string
 }
+
+// Filter out props used by RAC DropZone that we don't want in RSP DropZone for now.
+let filterProps = (props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {onHoverStart, onHoverChange, onHoverEnd, ...otherProps} = props;
+  return otherProps;
+};
 
 function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let {children, isFilled, replaceMessage, ...otherProps} = props;
@@ -38,7 +45,7 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
 
   return (
     <RACDropZone
-      {...mergeProps(otherProps)}
+      {...mergeProps(filterProps(otherProps))}
       {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
       aria-labelledby={isFilled && messageId}
       className={

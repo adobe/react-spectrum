@@ -709,6 +709,7 @@ describe('Radios', function () {
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.activeElement).toBe(radios[0]);
 
         await user.click(radios[0]);
         for (let input of radios) {
@@ -745,8 +746,8 @@ describe('Radios', function () {
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.activeElement).toBe(radios[0]);
 
-        await user.tab();
         await user.keyboard('[ArrowDown]');
         for (let input of radios) {
           expect(input.validity.valid).toBe(true);
@@ -782,6 +783,7 @@ describe('Radios', function () {
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(['Too scary']);
+        expect(document.activeElement).toBe(radios[0]);
 
         await user.click(radios[0]);
         expect(group).not.toHaveAttribute('aria-describedby');

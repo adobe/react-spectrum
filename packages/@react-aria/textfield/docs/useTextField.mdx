@@ -48,7 +48,7 @@ allowing for custom styling.
 * Built with a native `<input>` or `<textarea>` element
 * Visual and ARIA labeling support
 * Change, clipboard, composition, selection, and input event support
-* Required and invalid states exposed to assistive technology via ARIA
+* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
 * Support for description and error message help text linked to the input via ARIA
 
 ## Anatomy
@@ -78,21 +78,17 @@ to identify the element to screen readers.
 import type {AriaTextFieldProps} from '@react-aria/textfield';
 import {useTextField} from '@react-aria/textfield';
 
-interface TextFieldProps extends Omit<AriaTextFieldProps, 'errorMessage'> {
-  errorMessage?: string
-}
-
-function TextField(props: TextFieldProps) {
+function TextField(props: AriaTextFieldProps) {
   let {label} = props;
   let ref = React.useRef(null);
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField(props, ref);
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, isInvalid, validationErrors} = useTextField(props, ref);
 
   return (
     <div style={{display: 'flex', flexDirection: 'column', width: 200}}>
       <label {...labelProps}>{label}</label>
       <input {...inputProps} ref={ref} />
       {props.description && <div {...descriptionProps} style={{fontSize: 12}}>{props.description}</div>}
-      {props.errorMessage && <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{props.errorMessage}</div>}
+      {isInvalid && <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{validationErrors.join(' ')}</div>}
     </div>
   );
 }
@@ -165,16 +161,25 @@ The `description` prop can be used to associate additional help text with a text
   description="Enter an email for us to contact you about your order." />
 ```
 
-### Error message
+### Validation
 
-The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to
-semantically mark the input element as invalid for assistive technologies.
+useTextField supports HTML constraint validation props such as `isRequired`, `type="email"`, `minLength`, and `pattern`, as well as custom validation functions, realtime validation, and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When a TextField has the `validationBehavior="native"` prop, validation errors block form submission. To display validation errors, use the `validationErrors` and `errorMessageProps` returned by `useTextField`. This allows you to render error messages from all of the above sources with consistent custom styles.
 
 ```tsx example
-<TextField
-  label="Email"
-  isInvalid
-  errorMessage="Please enter a valid email address." />
+<form>
+  <TextField
+    label="Email"
+    name="email"
+    /*- begin highlight -*/
+    type="email"
+    isRequired
+    validationBehavior="native"
+    /*- end highlight -*/
+  />
+  <input type="submit" style={{marginTop: 8}} />
+</form>
 ```
 
 ### Disabled

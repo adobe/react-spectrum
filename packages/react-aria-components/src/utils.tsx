@@ -53,13 +53,13 @@ interface ProviderProps<A, B, C, D, E, F, G, H, I, J, K> {
   children: ReactNode
 }
 
-export function Provider<A, B, C, D, E, F, G, H, I, J, K>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J, K>): JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H, I, J, K>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J, K>): React.JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;
   }
 
-  return children as JSX.Element;
+  return children as React.JSX.Element;
 }
 
 export interface StyleProps {
@@ -175,6 +175,19 @@ export function useContextProps<T, U extends SlotProps, E extends Element>(props
   let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));
   let mergedProps = mergeProps(contextProps, props) as unknown as T;
 
+  // mergeProps does not merge `style`. Adding this there might be a breaking change.
+  if (
+    'style' in contextProps &&
+    contextProps.style &&
+    typeof contextProps.style === 'object' &&
+    'style' in props &&
+    props.style &&
+    typeof props.style === 'object'
+  ) {
+    // @ts-ignore
+    mergedProps.style = {...contextProps.style, ...props.style};
+  }
+
   // A parent component might need the props from a child, so call slot callback if needed.
   useEffect(() => {
     if (callback) {
@@ -257,7 +270,7 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
     if (isActive && ref.current) {
       // Make sure there's actually an animation, and it wasn't there before we triggered the update.
       let computedStyle = window.getComputedStyle(ref.current);
-      if (computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
+      if (computedStyle.animationName && computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
         let onAnimationEnd = (e: AnimationEvent) => {
           if (e.target === ref.current) {
             element.removeEventListener('animationend', onAnimationEnd);

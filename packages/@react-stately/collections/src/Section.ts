@@ -55,5 +55,5 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
 };
 
 // We don't want getCollectionNode to show up in the type definition
-let _Section = Section as <T>(props: SectionProps<T>) => JSX.Element;
+let _Section = Section as <T>(props: SectionProps<T>) => React.JSX.Element;
 export {_Section as Section};

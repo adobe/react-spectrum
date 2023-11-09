@@ -57,6 +57,7 @@ export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider} from 'react-aria';
+export {FormValidationContext} from 'react-stately';
 
 export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';
@@ -67,7 +68,7 @@ export type {DateFieldProps, DateFieldRenderProps, DateInputProps, DateInputRend
 export type {DatePickerProps, DatePickerRenderProps, DateRangePickerProps, DateRangePickerRenderProps} from './DatePicker';
 export type {DialogProps, DialogTriggerProps} from './Dialog';
 export type {DropZoneProps, DropZoneRenderProps} from './DropZone';
-export type {FieldErrorProps} from './FieldError';
+export type {FieldErrorProps, FieldErrorRenderProps} from './FieldError';
 export type {FileTriggerProps} from './FileTrigger';
 export type {FormProps} from './Form';
 export type {GridListProps, GridListRenderProps, GridListItemProps, GridListItemRenderProps} from './GridList';
@@ -106,4 +107,5 @@ export type {ContextValue, SlotProps} from './utils';
 
 export type {DateValue, DateRange, TimeValue} from 'react-aria';
 export type {DirectoryDropItem, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem, PressEvent} from 'react-aria';
-export type {Selection, SortDescriptor, SortDirection, SelectionMode} from 'react-stately';
+export type {Key, Selection, SortDescriptor, SortDirection, SelectionMode} from 'react-stately';
+export type {ValidationResult} from '@react-types/shared';

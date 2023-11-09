@@ -17,12 +17,12 @@ import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTrigge
 import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
+import {Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
-import {LinkDOMProps} from '@react-types/shared';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, RefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
