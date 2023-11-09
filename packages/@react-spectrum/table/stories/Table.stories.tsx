@@ -985,7 +985,6 @@ export const AsyncLoading: TableStory = {
 async function fakeFetch() {
   return new Promise(
     (resolve) => {
-      console.log('fetching data');
       setTimeout(() => resolve({json: async function () {
         return {data: {children: [
           {data: {id: 'foo', thumbnail: 'https://i.imgur.com/Z7AzH2c.jpg', ups: '7', title: 'cats', created: Date.now()}},
@@ -1014,7 +1013,7 @@ export const AsyncLoadingQuarryTest: TableStory = {
     width: '100%'
   },
   render: (args) => <AsyncLoadingExampleQuarryTest {...args} />,
-  name: 'async loading quarry test'
+  name: 'async reload on sort'
 };
 
 function AsyncLoadingExampleQuarryTest(props) {
@@ -1049,8 +1048,6 @@ function AsyncLoadingExampleQuarryTest(props) {
   let list = useAsyncList<Post>({
     getKey: (item) => item.id,
     async load({cursor}) {
-      console.log('load');
-
       const url = new URL('https://www.reddit.com/r/aww.json');
 
       if (cursor) {
@@ -1058,6 +1055,7 @@ function AsyncLoadingExampleQuarryTest(props) {
       }
 
       const res = await fakeFetch();
+      // @ts-ignore
       const json = await res.json();
       const items = json.data.children.map((item) => {
         return {

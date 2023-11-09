@@ -21,7 +21,8 @@ import {TableColumnLayout} from '@react-stately/table';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
   columnLayout: TableColumnLayout<T>,
-  initialCollection: TableCollection<T>
+  initialCollection: TableCollection<T>,
+  bodyBorderWidth: number
 }
 
 export class TableLayout<T> extends ListLayout<T> {
@@ -39,6 +40,7 @@ export class TableLayout<T> extends ListLayout<T> {
   uncontrolledColumns: Map<Key, GridNode<unknown>>;
   uncontrolledWidths: Map<Key, ColumnSize>;
   resizingColumn: Key | null;
+  bodyBorderWidth = 0;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
@@ -50,6 +52,7 @@ export class TableLayout<T> extends ListLayout<T> {
     this.controlledColumns = controlledColumns;
     this.uncontrolledColumns = uncontrolledColumns;
     this.uncontrolledWidths = this.columnLayout.getInitialUncontrolledWidths(uncontrolledColumns);
+    this.bodyBorderWidth = options.bodyBorderWidth;
   }
 
   protected shouldInvalidateEverything(invalidationContext: InvalidationContext<Node<T>, unknown>): boolean {
@@ -141,7 +144,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let body = this.buildBody(0);
     this.lastPersistedKeys = null;
 
-    body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
+    body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width - (2 * this.bodyBorderWidth), body.layoutInfo.rect.width);
     this.contentSize = new Size(body.layoutInfo.rect.width, body.layoutInfo.rect.maxY);
     return [
       header,

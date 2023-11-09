@@ -228,11 +228,12 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
       ? DEFAULT_HEADER_HEIGHT[scale]
       : null,
     columnLayout,
-    initialCollection: state.collection
+    initialCollection: state.collection,
+    bodyBorderWidth: isQuiet ? 0 : 1
   }),
     // don't recompute when state.collection changes, only used for initial value
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.overflowMode, scale, density, columnLayout]
+    [props.overflowMode, scale, density, columnLayout, isQuiet]
   );
 
   // Use a proxy so that a new object is created for each render so that alternate instances aren't affected by mutation.
