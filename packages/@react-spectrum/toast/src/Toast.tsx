@@ -19,7 +19,7 @@ import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import React, {ReactNode, useContext} from 'react';
+import React, {ReactNode, useContext, useEffect, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import toastContainerStyles from './toastContainer.css';
@@ -89,6 +89,30 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   // Disable buttons for toasts behind the first one.
   let shouldDisableButtons = props.toast.index !== 0 && animation !== 'exiting';
 
+  // Rough mocking of resizing toasts when multiples are displayed
+  let [size, setSize] = useState({width: 0, height: 0, overflow: 'auto'});
+  useEffect(() => {
+    // resize if too big:  If toast isn't first get width and height from first toast
+    // quick and dirty solution would be better to get refs to toasts
+    if (props.toast.index !== 0) {
+      setTimeout(() => {
+        let el: NodeListOf<HTMLElement> = document.querySelectorAll('[class*="spectrum-Toast--"]');
+        console.log(props.toast.index, el[0]?.offsetWidth, el[0]?.offsetHeight);
+        console.log(domRef.current?.offsetWidth);
+        setSize({
+          width: el[0]?.offsetWidth,
+          height: el[0]?.offsetHeight,
+          overflow: 'auto'
+        });
+      }, 5);
+
+    } else {
+      console.log('first');
+      setSize(undefined);
+    }
+  }, [props.toast.index]);
+
+
   return (
     <div
       {...styleProps}
@@ -106,6 +130,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       )}
       style={{
         ...styleProps.style,
+        ...size,
         zIndex: state.visibleToasts.length - props.toast.index
       }}
       data-animation={animation}

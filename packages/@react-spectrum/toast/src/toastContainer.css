@@ -85,7 +85,8 @@
   }
 
   &[data-animation=exiting] {
-    animation: fade-out 300ms forwards;
+    /* Temporarily set to animation time to 0ms to avoid problems calculating size of background toasts while animating foreground */
+    animation: fade-out 0ms forwards;
   }
 
   /* scale each successive toast backward so it looks like a stack */
@@ -99,6 +100,8 @@
     --scale: scale(0.8);
     --slide-from: translateY(0);
     --slide-to: translateY(-24px);
+    --opacity-to: .35; /* fade out last to show there could be more behind */
+    opacity: var(--opacity-to);
   }
 
   /* extra 4th toast will scale back while fading out */
@@ -113,7 +116,7 @@
     --scale-from: scale(0.7);
     --slide-from: translateY(-32px);
     --opacity-from: 0;
-    --opacity-to: 1;
+    /* --opacity-to: 1; */
     animation: slide-in 300ms;
   }
 }
@@ -136,6 +139,6 @@
   }
 
   to {
-    opacity: 0;
+    opacity: 0.1;
   }
 }
