@@ -46,7 +46,8 @@ export function RouterProvider(props: RouterProviderProps) {
     open: (target: Element, modifiers: Modifiers) => {
       getSyntheticLink(target, link => {
         if (shouldClientNavigate(link, modifiers)) {
-          navigate(link.pathname + link.search + link.hash);
+          const pathname = basename ? link.pathname.replace(basename, '') : link.pathname;
+          navigate(pathname + link.search + link.hash);
         } else {
           openLink(link, modifiers);
         }
