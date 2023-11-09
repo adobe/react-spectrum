@@ -208,4 +208,14 @@ describe('Slider', () => {
     let output = getByRole('status');
     expect(output).toHaveTextContent('30 – 60');
   });
+
+  it('should support clicking on the track to move the thumb', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = renderSlider({onChange});
+    let group = getByRole('group');
+    let track = group.querySelector('.react-aria-SliderTrack');
+
+    await user.pointer([{target: track, keys: '[MouseLeft]', coords: {x: 20}}]);
+    expect(onChange).toHaveBeenCalled();
+  });
 });

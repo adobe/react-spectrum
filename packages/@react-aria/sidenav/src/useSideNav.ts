@@ -18,7 +18,7 @@ import {TreeState} from '@react-stately/tree';
 import {useSelectableCollection} from '@react-aria/selection';
 
 interface SideNavAriaOptions<T> extends AriaSideNavProps<T> {
-  layout?: KeyboardDelegate
+  layout: KeyboardDelegate
 }
 
 interface SideNavAria {
@@ -52,7 +52,7 @@ export function useSideNav<T>(props: SideNavAriaOptions<T>, state: TreeState<T>,
       id
     }),
     listProps: {
-      'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : null),
+      'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : undefined),
       role: 'list',
       ...collectionProps
     }
