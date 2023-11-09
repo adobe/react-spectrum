@@ -158,9 +158,7 @@ export function getSyntheticLinkProps(props: LinkDOMProps) {
   };
 }
 
-export function withBaseName<T extends object>(router: Router, props: T): T {
-  return {
-    ...props,
-    href: router.basename && props.href ? router.basename + props.href : undefined
-  };
+export function withBasename<T>(router: Router, props: T): T {
+  const {href} = (props as {href?: string});
+  return router.basename && href ? {...props, href: router.basename + href} : props;
 }
