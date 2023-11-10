@@ -12,10 +12,10 @@
 
 import {AriaActionGroupProps} from '@react-types/actiongroup';
 import {createFocusManager} from '@react-aria/focus';
-import {filterDOMProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject} from 'react';
+import {DOMAttributes, FocusableElement, Orientation} from '@react-types/shared';
+import {filterDOMProps, useLayoutEffect} from '@react-aria/utils';
 import {ListState} from '@react-stately/list';
-import {Orientation} from '@react-types/shared';
+import {RefObject, useState} from 'react';
 import {useLocale} from '@react-aria/i18n';
 
 const BUTTON_GROUP_ROLES = {
@@ -25,14 +25,20 @@ const BUTTON_GROUP_ROLES = {
 };
 
 export interface ActionGroupAria {
-  actionGroupProps: HTMLAttributes<HTMLElement>
+  actionGroupProps: DOMAttributes
 }
 
-export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ActionGroupAria {
+export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): ActionGroupAria {
   let {
     isDisabled,
     orientation = 'horizontal' as Orientation
   } = props;
+
+  let [isInToolbar, setInToolbar] = useState(false);
+  useLayoutEffect(() => {
+    setInToolbar(!!(ref.current && ref.current.parentElement?.closest('[role="toolbar"]')));
+  }, [ref]);
+
   let allKeys = [...state.collection.getKeys()];
   if (!allKeys.some(key => !state.disabledKeys.has(key))) {
     isDisabled = true;
@@ -70,12 +76,15 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
     }
   };
 
-  let role = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
+  let role: string | undefined = BUTTON_GROUP_ROLES[state.selectionManager.selectionMode];
+  if (isInToolbar && role === 'toolbar') {
+    role = 'group';
+  }
   return {
     actionGroupProps: {
       ...filterDOMProps(props, {labelable: true}),
       role,
-      'aria-orientation': role === 'toolbar' ? orientation : null,
+      'aria-orientation': role === 'toolbar' ? orientation : undefined,
       'aria-disabled': isDisabled,
       onKeyDown
     }

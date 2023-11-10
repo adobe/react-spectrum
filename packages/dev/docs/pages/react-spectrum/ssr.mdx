@@ -1,14 +1,16 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
+
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 category: Concepts
@@ -18,29 +20,28 @@ order: 4
 
 # Server Side Rendering
 
-This page describes how to use React Spectrum with server side rendering, including frameworks like Next.js and Gatsby.
+This page describes how to use React Spectrum with server side rendering, including frameworks like Next.js, Remix, and Gatsby.
 
 ## Introduction
 
-**Server side rendering**, or SSR, is the process of rendering components to HTML on the server, rather than rendering them only on the client. **Static rendering** is a similar approach, but pre-renders pages to HTML at build time rather than on each request. These techniques can help improve perceived loading performance and SEO. React Spectrum supports both of these approaches, either through a custom implementation or via frameworks like [Next.js](https://nextjs.org) and [Gatsby](https://www.gatsbyjs.com).
+**Server side rendering**, or SSR, is the process of rendering components to HTML on the server, rather than rendering them only on the client. **Static rendering** is a similar approach, but pre-renders pages to HTML at build time rather than on each request. These techniques can help improve perceived loading performance and SEO. React Spectrum supports both of these approaches, either through a custom implementation or via frameworks like [Next.js](https://nextjs.org),[Remix](https://remix.run), and [Gatsby](https://www.gatsbyjs.com).
 
 ## SSR Provider
 
 In React, SSR works by rendering the component to HTML on the server, and then **hydrating** the DOM tree with events and state on the client. This enables applications to both render complete HTML in advance for performance and SEO, but also support rich interactions on the client.
 
-In order to make React Spectrum components work with SSR, you will need to wrap your application in an [SSRProvider](../react-aria/SSRProvider.html) component. This signals to all nested React Spectrum components that they are being rendered in an SSR context.
+In React 18, SSR works out of the box with no additional work. If you're using React 16 or 17, you will need to wrap your application in an [SSRProvider](../react-aria/SSRProvider.html) component. This signals to all nested React Spectrum components that they are being rendered in an SSR context, which ensures that the HTML generated on the server matches the DOM structure hydrated on the client.
 
 ```tsx
 import {SSRProvider, Provider, defaultTheme} from '@adobe/react-spectrum';
 
+// SSRProvider is only needed if you are using React 16 or 17.
 <SSRProvider>
-  <Provider theme={defaultTheme} locale={locale}>
+  <Provider theme={defaultTheme} locale={yourLocaleHere}>
     <App />
   </Provider>
 </SSRProvider>
 ```
-
-Wrapping your application in an `SSRProvider` ensures that the HTML generated on the server matches the DOM structure hydrated on the client. Specifically, it affects four things: id generation for accessibility, media queries, feature detection, and automatic locale selection.
 
 When using SSR, only a single copy of React Spectrum can be on the page at a time. This is in contrast to client-side rendering, where multiple copies from different parts of an app can coexist. Internally, many components rely on auto-generated ids to link related elements via ARIA attributes. When server side rendering, these ids need to be consistent so they match between the server and client, and this would not be possible with multiple copies of React Spectrum.
 
@@ -50,32 +51,149 @@ Finally, when using server side rendering, the `locale` prop should be set expli
 
 ## Next.js
 
-[Next.js](https://nextjs.org) is a framework for building websites and web applications with React. It supports both server side rendering as well as static rendering. In addition to using an `SSRProvider`, a small amount of configuration is required to get React Spectrum’s CSS working with Next.js.
+[Next.js](https://nextjs.org) is a framework for building websites and web applications with React. It supports both server side rendering as well as static rendering. A small amount of configuration is required to get React Spectrum’s CSS working with Next.js.
 
-First, you’ll need to install a couple Next.js plugins:
-
-```
-yarn add next-compose-plugins @zeit/next-css next-transpile-modules
-```
-
-With these installed, add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js.
+Add the following to your `next.config.js` file. This will ensure that React Spectrum’s CSS is loaded properly by Next.js. Note that packages may need to be removed or added to the config below if using an older or newer version of React Spectrum.
 
 ```tsx
-const withPlugins = require('next-compose-plugins');
-const withCSS = require('@zeit/next-css');
-const withTM = require('next-transpile-modules')([
-  '@adobe/react-spectrum',
-  '@spectrum-icons/.*',
-  '@react-spectrum/.*'
+module.exports = {
+  transpilePackages: [
+    "@adobe/react-spectrum",
+    "@react-spectrum/actionbar",
+    "@react-spectrum/actiongroup",
+    "@react-spectrum/avatar",
+    "@react-spectrum/badge",
+    "@react-spectrum/breadcrumbs",
+    "@react-spectrum/button",
+    "@react-spectrum/buttongroup",
+    "@react-spectrum/calendar",
+    "@react-spectrum/checkbox",
+    "@react-spectrum/combobox",
+    "@react-spectrum/contextualhelp",
+    "@react-spectrum/datepicker",
+    "@react-spectrum/dialog",
+    "@react-spectrum/divider",
+    "@react-spectrum/dnd",
+    "@react-spectrum/form",
+    "@react-spectrum/icon",
+    "@react-spectrum/illustratedmessage",
+    "@react-spectrum/inlinealert",
+    "@react-spectrum/image",
+    "@react-spectrum/label",
+    "@react-spectrum/labeledvalue",
+    "@react-spectrum/layout",
+    "@react-spectrum/link",
+    "@react-spectrum/list",
+    "@react-spectrum/listbox",
+    "@react-spectrum/menu",
+    "@react-spectrum/meter",
+    "@react-spectrum/numberfield",
+    "@react-spectrum/overlays",
+    "@react-spectrum/picker",
+    "@react-spectrum/progress",
+    "@react-spectrum/provider",
+    "@react-spectrum/radio",
+    "@react-spectrum/slider",
+    "@react-spectrum/searchfield",
+    "@react-spectrum/statuslight",
+    "@react-spectrum/switch",
+    "@react-spectrum/table",
+    "@react-spectrum/tabs",
+    "@react-spectrum/tag",
+    "@react-spectrum/text",
+    "@react-spectrum/textfield",
+    "@react-spectrum/theme-dark",
+    "@react-spectrum/theme-default",
+    "@react-spectrum/theme-light",
+    "@react-spectrum/tooltip",
+    "@react-spectrum/view",
+    "@react-spectrum/well",
+    "@spectrum-icons/illustrations",
+    "@spectrum-icons/ui",
+    "@spectrum-icons/workflow"
+  ]
+};
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> For Next.js 13.0.x and below</summary>
+
+You’ll need to install an additional Next.js plugin:
+
+```
+yarn add next-transpile-modules
+```
+
+With this installed, add the following to your `next.config.js` file.
+
+```tsx
+const withTM = require("next-transpile-modules")([
+  "@adobe/react-spectrum",
+  "@react-spectrum/actionbar",
+  "@react-spectrum/actiongroup",
+  "@react-spectrum/avatar",
+  "@react-spectrum/badge",
+  "@react-spectrum/breadcrumbs",
+  "@react-spectrum/button",
+  "@react-spectrum/buttongroup",
+  "@react-spectrum/calendar",
+  "@react-spectrum/checkbox",
+  "@react-spectrum/combobox",
+  "@react-spectrum/contextualhelp",
+  "@react-spectrum/datepicker",
+  "@react-spectrum/dialog",
+  "@react-spectrum/divider",
+  "@react-spectrum/dnd",
+  "@react-spectrum/form",
+  "@react-spectrum/icon",
+  "@react-spectrum/illustratedmessage",
+  "@react-spectrum/image",
+  "@react-spectrum/inlinealert",
+  "@react-spectrum/label",
+  "@react-spectrum/labeledvalue",
+  "@react-spectrum/layout",
+  "@react-spectrum/link",
+  "@react-spectrum/list",
+  "@react-spectrum/listbox",
+  "@react-spectrum/menu",
+  "@react-spectrum/meter",
+  "@react-spectrum/numberfield",
+  "@react-spectrum/overlays",
+  "@react-spectrum/picker",
+  "@react-spectrum/progress",
+  "@react-spectrum/provider",
+  "@react-spectrum/radio",
+  "@react-spectrum/slider",
+  "@react-spectrum/searchfield",
+  "@react-spectrum/statuslight",
+  "@react-spectrum/switch",
+  "@react-spectrum/table",
+  "@react-spectrum/tabs",
+  "@react-spectrum/tag",
+  "@react-spectrum/text",
+  "@react-spectrum/textfield",
+  "@react-spectrum/theme-dark",
+  "@react-spectrum/theme-default",
+  "@react-spectrum/theme-light",
+  "@react-spectrum/tooltip",
+  "@react-spectrum/view",
+  "@react-spectrum/well",
+  "@spectrum-icons/illustrations",
+  "@spectrum-icons/ui",
+  "@spectrum-icons/workflow"
 ]);
 
-module.exports = withPlugins([withCSS, withTM], {
+module.exports = withTM({
   // Your Next.js configuration
 });
 ```
 
-For an example of a working Next.js app using React Spectrum, see [this repo](https://github.com/devongovett/rsp-next).
+</details>
 
 ## Gatsby
 
 [Gatsby](https://www.gatsbyjs.com) is a static site generator built with React. Gatsby works out of the box with React Spectrum without any additional configuration. For an example of a working Gatsby site using React Spectrum, see [this repo](https://github.com/devongovett/rsp-gatsby).
+
+## Remix
+
+[Remix](https://remix.run) is a full-stack React framework with nested routing. To configure Remix to load React Spectrum styles, visit the [CSS Side-Effect Imports](https://remix.run/docs/en/main/guides/styling#md-css-side-effect-imports) section of the Remix docs.

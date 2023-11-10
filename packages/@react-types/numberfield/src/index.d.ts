@@ -14,15 +14,17 @@ import {
   AriaLabelingProps,
   DOMProps,
   FocusableProps,
-  InputBase, LabelableProps,
-  RangeInputBase, SpectrumLabelableProps,
+  HelpTextProps,
+  InputBase, InputDOMProps, LabelableProps,
+  RangeInputBase, SpectrumFieldValidation, SpectrumLabelableProps,
   StyleProps,
   TextInputBase,
+  TextInputDOMEvents,
   Validation,
   ValueBase
 } from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps {
+export interface NumberFieldProps extends InputBase, Validation<number>, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
   /**
    * Formatting options for the value displayed in the number field.
    * This also affects what characters are allowed to be typed by the user.
@@ -30,14 +32,14 @@ export interface NumberFieldProps extends InputBase, Validation, FocusableProps,
   formatOptions?: Intl.NumberFormatOptions
 }
 
-export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps {
+export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {
   /** A custom aria-label for the decrement button. If not provided, the localized string "Decrement" is used. */
   decrementAriaLabel?: string,
   /** A custom aria-label for the increment button. If not provided, the localized string "Increment" is used. */
   incrementAriaLabel?: string
 }
 
-export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder'>, StyleProps, SpectrumLabelableProps {
+export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<number>, InputDOMProps, StyleProps, SpectrumLabelableProps {
   /** Whether the numberfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Whether to hide the increment and decrement buttons. */

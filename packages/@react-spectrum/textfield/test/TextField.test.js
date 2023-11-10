@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
+import {Button} from '@react-spectrum/button';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
-import {fireEvent, render} from '@testing-library/react';
+import {Form} from '@react-spectrum/form';
+import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {TextArea, TextField} from '../';
-import {typeText} from '@react-spectrum/test-utils';
+import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
-import V2SearchField from '@react/react-spectrum/Search';
-import V2TextArea from '@react/react-spectrum/Textarea';
-import V2TextField from '@react/react-spectrum/Textfield';
 
 let testId = 'test-id';
 let inputText = 'blah';
@@ -36,6 +36,10 @@ describe('Shared TextField behavior', () => {
   let onBlur = jest.fn();
   let onChange = jest.fn();
   let onFocus = jest.fn();
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
 
   afterEach(() => {
     onChange.mockClear();
@@ -47,9 +51,6 @@ describe('Shared TextField behavior', () => {
   it.each`
     Name                | Component         | props
     ${'v3 SearchField'} | ${SearchField}    | ${{UNSAFE_className: 'custom-class-name', 'aria-label': 'mandatory label'}}
-    ${'v2 TextField'}   | ${V2TextField}    | ${{className: 'custom-class-name'}}
-    ${'v2 TextArea'}    | ${V2TextArea}     | ${{className: 'custom-class-name'}}
-    ${'v2 SearchField'} | ${V2SearchField}  | ${{className: 'custom-class-name'}}
   `('$Name supports appending custom classnames onto the root element', ({Component, props}) => {
     let tree = renderComponent(Component, props);
     expect(tree.container.querySelector('body>div> .custom-class-name')).toBeTruthy();
@@ -60,19 +61,12 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${'text'}    | ${'INPUT'}
     ${'v3 TextArea'}    | ${TextArea}      | ${'text'}    | ${'TEXTAREA'}
     ${'v3 SearchField'} | ${SearchField}   | ${'search'}  | ${'INPUT'}
-    ${'v2 TextField'}   | ${V2TextField}   | ${'text'}    | ${'INPUT'}
-    ${'v2 TextArea'}    | ${V2TextArea}    | ${'text'}    | ${'TEXTAREA'}
-    ${'v2 SearchField'} | ${V2SearchField} | ${'search'}  | ${'INPUT'}
-  `('$Name renders with default textfield behavior', ({Name, Component, expectedType, expectedTagName}) => {
+  `('$Name renders with default textfield behavior', async ({Name, Component, expectedType, expectedTagName}) => {
     let tree = renderComponent(Component, {'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input.value).toBe('');
-    typeText(input, inputText);
+    await user.tab();
+    await user.keyboard(inputText);
     expect(input.value).toBe(inputText);
     if (Name === 'v3 TextArea') {
       expect(input).not.toHaveAttribute('type');
@@ -87,18 +81,10 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name allow custom naming', ({Name, Component}) => {
     let name = 'blah';
     let tree = renderComponent(Component, {name, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('name', name);
   });
 
@@ -107,19 +93,13 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name renders with placeholder text', ({Name, Component}) => {
+  `('$Name renders with placeholder text and shows warning', ({Name, Component}) => {
+    let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let tree = renderComponent(Component, {placeholder: inputText, 'aria-label': 'mandatory label'});
     expect(tree.getByPlaceholderText(inputText)).toBeTruthy();
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input.placeholder).toBe(inputText);
+    expect(spyWarn).toHaveBeenCalledWith(`Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/${Name.replace('v3 ', '')}.html#help-text`);
   });
 
   it.each`
@@ -127,31 +107,13 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name calls onChange when text changes', ({Name, Component}) => {
     let tree = renderComponent(Component, {onChange, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     fireEvent.change(input, {target: {value: inputText}});
     expect(onChange).toHaveBeenCalledTimes(1);
 
-    if (Component === V2SearchField) {
-      expect(onChange).toHaveBeenLastCalledWith(
-        inputText,
-        expect.anything(),
-        {
-          'from': 'input'
-        }
-      );
-    } else {
-      expect(onChange.mock.calls[0][0]).toBe(inputText);
-    }
+    expect(onChange.mock.calls[0][0]).toBe(inputText);
   });
 
   it.each`
@@ -159,20 +121,13 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name calls onFocus when the the input field is focused', ({Name, Component}) => {
+  `('$Name calls onFocus when the the input field is focused', async ({Name, Component}) => {
     let tree = renderComponent(Component, {onFocus, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
-    fireEvent.focus(input);
+    let input = tree.getByTestId(testId);
+    act(() => input.focus());
     expect(onFocus).toHaveBeenCalledTimes(1);
-    userEvent.click(input);
+    act(() => input.blur());
+    await user.click(input);
     expect(onFocus).toHaveBeenCalledTimes(2);
   });
 
@@ -181,18 +136,10 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
   `('$Name calls onBlur when the input field loses focus', ({Name, Component}) => {
-    let tree = renderComponent(Component, {onBlur, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
-    fireEvent.blur(input);
+    let tree = renderComponent(Component, {onBlur, autoFocus: true, 'aria-label': 'mandatory label'});
+    let input = tree.getByTestId(testId);
+    act(() => input.blur());
     expect(onBlur).toHaveBeenCalledTimes(1);
   });
 
@@ -201,19 +148,12 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-  `('$Name is uncontrolled if defaultValue prop is provided', ({Name, Component}) => {
+  `('$Name is uncontrolled if defaultValue prop is provided', async ({Name, Component}) => {
     let defaultValue = 'test';
     let newValue = 'blah';
-    let tree = renderComponent(Component, {onChange, defaultValue, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
-    userEvent.type(input, newValue);
+    renderComponent(Component, {onChange, defaultValue, 'aria-label': 'mandatory label'});
+    await user.tab();
+    await user.keyboard(newValue);
     expect(onChange).toHaveBeenCalledTimes(newValue.length);
   });
 
@@ -222,21 +162,14 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
-    ${'v2 SearchField'} | ${V2SearchField}
-  `('$Name is controlled if value prop is provided', ({Name, Component}) => {
+  `('$Name is controlled if value prop is provided', async ({Name, Component}) => {
     let value = 'test';
     let newValue = 'blah';
     let tree = renderComponent(Component, {onChange, value, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input.value).toBe(value);
-    userEvent.type(input, newValue);
+    await user.tab();
+    await user.keyboard(newValue);
     expect(input.value).toBe(value);
     expect(onChange).toHaveBeenCalledTimes(newValue.length);
   });
@@ -246,21 +179,12 @@ describe('Shared TextField behavior', () => {
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
   `('$Name has the proper aria-invalid value and renders a invalid icon if validationState=invalid', ({Name, Component}) => {
     let tree = renderComponent(Component, {validationState: 'invalid', 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('aria-invalid', 'true');
-    if (Component === TextField || Component === TextArea) {
-      let invalidIcon = tree.getByRole('img', {hidden: true});
-      expect(invalidIcon).toBeTruthy();
-    }
+    let invalidIcon = tree.getByRole('img', {hidden: true});
+    expect(invalidIcon).toBeTruthy();
   });
 
   it.each`
@@ -279,21 +203,12 @@ describe('Shared TextField behavior', () => {
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
-    ${'v2 TextField'}   | ${V2TextField}
-    ${'v2 TextArea'}    | ${V2TextArea}
   `('$Name has the proper aria-invalid value and renders a valid icon if validationState=valid', ({Name, Component}) => {
     let tree = renderComponent(Component, {validationState: 'valid', 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).not.toHaveAttribute('aria-invalid', 'true');
-    if (Component === TextField || Component === TextArea) {
-      let validIcon = tree.getByRole('img', {hidden: true});
-      expect(validIcon).toBeTruthy();
-    }
+    let validIcon = tree.getByRole('img', {hidden: true});
+    expect(validIcon).toBeTruthy();
   });
 
   it.each`
@@ -301,16 +216,9 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
     ${'v3 TextArea'}    | ${TextArea}      | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
     ${'v3 SearchField'} | ${SearchField}   | ${{isRequired: true, 'aria-label': 'mandatory label'}} | ${'aria-required'}
-    ${'v2 TextField'}   | ${V2TextField}   | ${{required: true}}                                    | ${'required'}
-    ${'v2 TextArea'}    | ${V2TextArea}    | ${{required: true}}                                    | ${'required'}
   `('$Name supports a isRequired prop', ({Name, Component, props, expected}) => {
     let tree = renderComponent(Component, props);
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute(expected);
   });
 
@@ -321,12 +229,7 @@ describe('Shared TextField behavior', () => {
     ${'v3 SearchField'} | ${SearchField}
   `('$Name automatically focuses the input field if autoFocus=true', ({Name, Component}) => {
     let tree = renderComponent(Component, {autoFocus: true, onFocus, 'aria-label': 'mandatory label'});
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
 
     expect(document.activeElement).toEqual(input);
     expect(onFocus).toHaveBeenCalledTimes(1);
@@ -337,22 +240,14 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${{isReadOnly: true, 'aria-label': 'mandatory label'}}
     ${'v3 TextArea'}    | ${TextArea}      | ${{isReadOnly: true, 'aria-label': 'mandatory label'}}
     ${'v3 SearchField'} | ${SearchField}   | ${{isReadOnly: true, 'aria-label': 'mandatory label'}}
-    ${'v2 TextField'}   | ${V2TextField}   | ${{readOnly: true}}
-    ${'v2 TextArea'}    | ${V2TextArea}    | ${{readOnly: true}}
-    ${'v2 SearchField'} | ${V2SearchField} | ${{readOnly: true}}
-  `('$Name should support isReadOnly', ({Name, Component, props}) => {
+  `('$Name should support isReadOnly', async ({Name, Component, props}) => {
     let tree = renderComponent(Component, props);
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('readonly');
-    userEvent.click(input);
+    await user.click(input);
     expect(document.activeElement).toEqual(input);
 
-    // Note: simulating text input via fireEvent or "type"(userEvent library) still causes the input value to change
+    // Note: simulating text input via fireEvent or "type"(await user library) still causes the input value to change
     // Seems like this is a framework issue rather than a bug with TextField so omitting the test case
   });
 
@@ -361,25 +256,16 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}     | ${{isDisabled: true, 'aria-label': 'mandatory label'}}
     ${'v3 TextArea'}    | ${TextArea}      | ${{isDisabled: true, 'aria-label': 'mandatory label'}}
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true, 'aria-label': 'mandatory label'}}
-    ${'v2 TextField'}   | ${V2TextField}   | ${{disabled: true}}
-    ${'v2 TextArea'}    | ${V2TextArea}    | ${{disabled: true}}
-    ${'v2 SearchField'} | ${V2SearchField} | ${{disabled: true}}
-  `('$Name should disable the input field if isDisabled=true', ({Name, Component, props}) => {
+  `('$Name should disable the input field if isDisabled=true', async ({Name, Component, props}) => {
     let tree = renderComponent(Component, props);
-    let input;
-    if (Name.startsWith('v3')) {
-      input = tree.getByTestId(testId);
-    } else {
-      input = tree.getAllByTestId(testId)[0];
-    }
+    let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('disabled');
-    userEvent.click(input);
+    await user.click(input);
     expect(document.activeElement).not.toEqual(input);
     // Note: simulating text input via fireEvent or "type"(userEvent library) still causes the input value to change
     // Seems like this is a framework issue rather than a bug with TextField so omitting the test case
   });
 
-  // New v3 feature valid for textfield and textarea only
   it.each`
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
@@ -391,7 +277,6 @@ describe('Shared TextField behavior', () => {
     expect(icon).toHaveAttribute('role', 'img');
   });
 
-  // New v3 functionality, omitting v2 components
   it.each`
     Name                | Component
     ${'v3 TextField'}   | ${TextField}
@@ -427,6 +312,120 @@ describe('Shared TextField behavior', () => {
     ${'v3 TextField'}   | ${TextField}
     ${'v3 TextArea'}    | ${TextArea}
     ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports description or error message', ({Component}) => {
+    function Example(props) {
+      let [value, setValue] = React.useState('0');
+      let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+
+      return (
+        <Component
+          {...props}
+          validationState={isValid ? 'valid' : 'invalid'}
+          value={value}
+          onChange={setValue}
+          label="Favorite number"
+          maxLength={1}
+          description="Enter a single digit number."
+          errorMessage={
+            value === ''
+              ? 'Empty input not allowed.'
+              : 'Single digit numbers are 0-9.'
+          } />
+      );
+    }
+    let tree = renderComponent(Example);
+    let input = tree.getByTestId(testId);
+    let helpText = tree.getByText('Enter a single digit number.');
+    expect(helpText).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
+    expect(input.value).toBe('0');
+    let newValue = 's';
+    fireEvent.change(input, {target: {value: newValue}});
+    expect(input.value).toBe(newValue);
+    helpText = tree.getByText('Single digit numbers are 0-9.');
+    expect(helpText).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
+    newValue = '';
+    fireEvent.change(input, {target: {value: newValue}});
+    expect(input.value).toBe(newValue);
+    helpText = tree.getByText('Empty input not allowed.');
+    expect(helpText).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
+    newValue = '4';
+    fireEvent.change(input, {target: {value: newValue}});
+    expect(input.value).toBe(newValue);
+    helpText = tree.getByText('Enter a single digit number.');
+    expect(helpText).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports error message', async ({Component}) => {
+    function Example(props) {
+      let [value, setValue] = React.useState('0');
+      let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
+
+      return (
+        <Component
+          {...props}
+          validationState={isValid ? 'valid' : 'invalid'}
+          value={value}
+          onChange={setValue}
+          label="Favorite number"
+          maxLength={1}
+          errorMessage={
+            value === ''
+              ? 'Empty input not allowed.'
+              : 'Single digit numbers are 0-9.'
+          } />
+      );
+    }
+    let tree = renderComponent(Example);
+    let input = tree.getByTestId(testId);
+    let helpText;
+    expect(tree.getByTestId(testId)).not.toHaveAttribute('aria-describedby');
+
+    fireEvent.change(input, {target: {value: 's'}});
+
+    await waitFor(() => {
+      input = tree.getByTestId(testId);
+      expect(input.value).toEqual('s');
+    });
+
+    helpText = tree.getByText('Single digit numbers are 0-9.');
+    expect(helpText).toHaveAttribute('id');
+    expect(tree.getByTestId(testId)).toHaveAttribute('aria-describedby', `${helpText.id}`);
+
+    fireEvent.change(input, {target: {value: ''}});
+
+    await waitFor(() => {
+      input = tree.getByTestId(testId);
+      expect(input.value).toEqual('');
+    });
+
+    helpText = tree.getByText('Empty input not allowed.');
+    expect(helpText).toHaveAttribute('id');
+    expect(input).toHaveAttribute('aria-describedby', `${helpText.id}`);
+
+    fireEvent.change(input, {target: {value: '4'}});
+
+    await waitFor(() => {
+      input = tree.getByTestId(testId);
+      expect(input.value).toEqual('4');
+    });
+
+    expect(input).not.toHaveAttribute('aria-describedby');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
   `('$Name passes through ARIA props', ({Name, Component}) => {
     let tree = renderComponent(Component, {'aria-label': 'mandatory label', 'aria-activedescendant': 'test', 'aria-autocomplete': 'list', 'aria-haspopup': 'menu'});
     let input = tree.getByTestId(testId);
@@ -444,5 +443,257 @@ describe('Shared TextField behavior', () => {
     let tree = renderComponent(Component, {excludeFromTabOrder: true, 'aria-label': 'mandatory label'});
     let input = tree.getByTestId(testId);
     expect(input).toHaveAttribute('tabIndex', '-1');
+  });
+
+  it.each`
+    Name                | Component
+    ${'v3 TextField'}   | ${TextField}
+    ${'v3 TextArea'}    | ${TextArea}
+    ${'v3 SearchField'} | ${SearchField}
+  `('$Name supports form reset', async ({Component}) => {
+    function Test() {
+      let [value, setValue] = React.useState('Devon');
+      return (
+        <form>
+          <Component data-testid="name" label="Name" value={value} onChange={setValue} />
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId} = render(<Test />);
+    let input = getByTestId('name');
+
+    expect(input).toHaveValue('Devon');
+    await user.tab();
+
+    await user.keyboard('[ArrowRight] test');
+    expect(input).toHaveValue('Devon test');
+
+    let button = getByTestId('reset');
+    await user.click(button);
+    expect(input).toHaveValue('Devon');
+  });
+
+  describe('validation', () => {
+    describe('validationBehavior=native', () => {
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports isRequired', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <Component data-testid="input" label="Name" isRequired validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(document.activeElement).toBe(input);
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+        await user.keyboard('Devon');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
+
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports validate function', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <Component data-testid="input" label="Name" defaultValue="Foo" validationBehavior="native" validate={v => v === 'Foo' ? 'Invalid name' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(document.activeElement).toBe(input);
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name');
+
+        await user.keyboard('Devon');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
+
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports server validation', async ({Component}) => {
+        function Test() {
+          let [serverErrors, setServerErrors] = React.useState({});
+          let onSubmit = e => {
+            e.preventDefault();
+            setServerErrors({
+              name: 'Invalid name.'
+            });
+          };
+
+          return (
+            <Provider theme={theme}>
+              <Form data-testid="form" onSubmit={onSubmit} validationErrors={serverErrors}>
+                <Component data-testid="input" label="Name" name="name" validationBehavior="native" />
+                <Button type="submit">Submit</Button>
+              </Form>
+            </Provider>
+          );
+        }
+
+        let {getByTestId, getByRole} = render(<Test />);
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        await user.click(getByRole('button'));
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
+        expect(input.validity.valid).toBe(false);
+
+        // Clicking twice doesn't clear server errors.
+        await user.click(getByRole('button'));
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(document.activeElement).toBe(input);
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
+        expect(input.validity.valid).toBe(false);
+
+        await user.keyboard('Devon');
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports customizing native error messages', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <Component data-testid="input" label="Name" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a name' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        act(() => {getByTestId('form').checkValidity();});
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a name');
+      });
+
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name does not auto focus invalid input if default is prevented', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form validationBehavior="native" data-testid="form" onInvalid={e => e.preventDefault()}>
+              <Component data-testid="input" label="Name" isRequired />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        act(() => {getByTestId('form').checkValidity();});
+        expect(document.activeElement).not.toBe(input);
+      });
+    });
+
+    describe('validationBehavior=aria', () => {
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports validate function', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <Component data-testid="input" label="Name" defaultValue="Foo" validate={v => v === 'Foo' ? 'Invalid name' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+        await user.keyboard('Devon');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name supports server validation', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form validationErrors={{name: 'Invalid name'}}>
+              <Component data-testid="input" label="Name" name="name" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name');
+
+        await user.tab();
+        await user.keyboard('Devon');
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+    });
   });
 });

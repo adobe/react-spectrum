@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar} from '../types';
+import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
 
 const CIVIL_EPOC = 1948440; // CE 622 July 16 Friday (Julian calendar) / CE 622 July 19 (Gregorian calendar)
@@ -42,6 +42,13 @@ function isLeapYear(year: number): boolean {
   return (14 + 11 * year) % 30 < 11;
 }
 
+/**
+ * The Islamic calendar, also known as the "Hijri" calendar, is used throughout much of the Arab world.
+ * The civil variant uses simple arithmetic rules rather than astronomical calculations to approximate
+ * the traditional calendar, which is based on sighting of the crescent moon. It uses Friday, July 16 622 CE (Julian) as the epoch.
+ * Each year has 12 months, with either 354 or 355 days depending on whether it is a leap year.
+ * Learn more about the available Islamic calendars [here](https://cldr.unicode.org/development/development-process/design-proposals/islamic-calendar-types).
+ */
 export class IslamicCivilCalendar implements Calendar {
   identifier = 'islamic-civil';
 
@@ -49,11 +56,11 @@ export class IslamicCivilCalendar implements Calendar {
     return julianDayToIslamic(this, CIVIL_EPOC, jd);
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     return islamicToJulianDay(CIVIL_EPOC, date.year, date.month, date.day);
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     let length = 29 + date.month % 2;
     if (date.month === 12 && isLeapYear(date.year)) {
       length++;
@@ -66,15 +73,27 @@ export class IslamicCivilCalendar implements Calendar {
     return 12;
   }
 
-  getDaysInYear(date: CalendarDate): number {
+  getDaysInYear(date: AnyCalendarDate): number {
     return isLeapYear(date.year) ? 355 : 354;
   }
 
-  getCurrentEra() {
-    return 'AH';
+  getYearsInEra(): number {
+    // 9999 gregorian
+    return 9665;
+  }
+
+  getEras() {
+    return ['AH'];
   }
 }
 
+/**
+ * The Islamic calendar, also known as the "Hijri" calendar, is used throughout much of the Arab world.
+ * The tabular variant uses simple arithmetic rules rather than astronomical calculations to approximate
+ * the traditional calendar, which is based on sighting of the crescent moon. It uses Thursday, July 15 622 CE (Julian) as the epoch.
+ * Each year has 12 months, with either 354 or 355 days depending on whether it is a leap year.
+ * Learn more about the available Islamic calendars [here](https://cldr.unicode.org/development/development-process/design-proposals/islamic-calendar-types).
+ */
 export class IslamicTabularCalendar extends IslamicCivilCalendar {
   identifier = 'islamic-tbla';
 
@@ -82,7 +101,7 @@ export class IslamicTabularCalendar extends IslamicCivilCalendar {
     return julianDayToIslamic(this, ASTRONOMICAL_EPOC, jd);
   }
 
-  toJulianDay(date: CalendarDate) {
+  toJulianDay(date: AnyCalendarDate) {
     return islamicToJulianDay(ASTRONOMICAL_EPOC, date.year, date.month, date.day);
   }
 }
@@ -118,6 +137,13 @@ function umalquraYearLength(year: number): number {
   return UMALQURA_YEAR_START_TABLE[year + 1 - UMALQURA_YEAR_START] - UMALQURA_YEAR_START_TABLE[year - UMALQURA_YEAR_START];
 }
 
+/**
+ * The Islamic calendar, also known as the "Hijri" calendar, is used throughout much of the Arab world.
+ * The Umalqura variant is primarily used in Saudi Arabia. It is a lunar calendar, based on astronomical
+ * calculations that predict the sighting of a crescent moon. Month and year lengths vary between years
+ * depending on these calculations.
+ * Learn more about the available Islamic calendars [here](https://cldr.unicode.org/development/development-process/design-proposals/islamic-calendar-types).
+ */
 export class IslamicUmalquraCalendar extends IslamicCivilCalendar {
   identifier = 'islamic-umalqura';
 
@@ -173,7 +199,7 @@ export class IslamicUmalquraCalendar extends IslamicCivilCalendar {
     }
   }
 
-  toJulianDay(date: CalendarDate): number {
+  toJulianDay(date: AnyCalendarDate): number {
     if (date.year < UMALQURA_YEAR_START || date.year > UMALQURA_YEAR_END) {
       return super.toJulianDay(date);
     }
@@ -181,7 +207,7 @@ export class IslamicUmalquraCalendar extends IslamicCivilCalendar {
     return CIVIL_EPOC + umalquraMonthStart(date.year, date.month) + (date.day - 1);
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     if (date.year < UMALQURA_YEAR_START || date.year > UMALQURA_YEAR_END) {
       return super.getDaysInMonth(date);
     }
@@ -189,7 +215,7 @@ export class IslamicUmalquraCalendar extends IslamicCivilCalendar {
     return umalquraMonthLength(date.year, date.month);
   }
 
-  getDaysInYear(date: CalendarDate): number {
+  getDaysInYear(date: AnyCalendarDate): number {
     if (date.year < UMALQURA_YEAR_START || date.year > UMALQURA_YEAR_END) {
       return super.getDaysInYear(date);
     }

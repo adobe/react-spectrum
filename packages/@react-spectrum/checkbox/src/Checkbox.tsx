@@ -20,6 +20,7 @@ import React, {forwardRef, useContext, useRef} from 'react';
 import {SpectrumCheckboxProps} from '@react-types/checkbox';
 import styles from '@adobe/spectrum-css-temp/components/checkbox/vars.css';
 import {useCheckbox, useCheckboxGroupItem} from '@react-aria/checkbox';
+import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useToggleState} from '@react-stately/toggle';
@@ -27,13 +28,13 @@ import {useToggleState} from '@react-stately/toggle';
 function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   let originalProps = props;
   props = useProviderProps(props);
+  props = useFormProps(props);
   let {
     isIndeterminate = false,
     isEmphasized = false,
     isDisabled = false,
     autoFocus,
     children,
-    validationState,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -46,17 +47,19 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
   // This is a bit unorthodox. Typically, hooks cannot be called in a conditional,
   // but since the checkbox won't move in and out of a group, it should be safe.
   let groupState = useContext(CheckboxGroupContext);
-  let {inputProps} = groupState
+  let {inputProps, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
       ...props,
       // Value is optional for standalone checkboxes, but required for CheckboxGroup items;
-      // it's passed explicitly here to avoid typescript error (requires strictNullChecks disabled).
+      // it's passed explicitly here to avoid typescript error (requires ignore).
+      // @ts-ignore
       value: props.value,
       // Only pass isRequired and validationState to react-aria if they came from
       // the props for this individual checkbox, and not from the group via context.
       isRequired: originalProps.isRequired,
-      validationState: originalProps.validationState
+      validationState: originalProps.validationState,
+      isInvalid: originalProps.isInvalid
     }, groupState, inputRef)
     // eslint-disable-next-line react-hooks/rules-of-hooks
     : useCheckbox(props, useToggleState(props), inputRef);
@@ -89,7 +92,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
             'is-checked': inputProps.checked,
             'is-indeterminate': isIndeterminate,
             'spectrum-Checkbox--quiet': !isEmphasized,
-            'is-invalid': validationState === 'invalid',
+            'is-invalid': isInvalid,
             'is-disabled': isDisabled,
             'is-hovered': isHovered
           },

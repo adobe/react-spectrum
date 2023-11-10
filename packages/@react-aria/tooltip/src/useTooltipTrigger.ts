@@ -10,32 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusEvents} from '@react-types/shared';
-import {getInteractionModality, HoverProps, isFocusVisible, PressProps, usePress} from '@react-aria/interactions';
-import {HTMLAttributes, RefObject, useEffect, useRef} from 'react';
+import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
+import {getInteractionModality, HoverProps, isFocusVisible, PressProps, useHover, usePress} from '@react-aria/interactions';
 import {mergeProps, useId} from '@react-aria/utils';
+import {RefObject, useEffect, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useFocusable} from '@react-aria/focus';
-import {useHover} from '@react-aria/interactions';
 
-interface TooltipTriggerAria {
+export interface TooltipTriggerAria {
   /**
    * Props for the trigger element.
    */
-  triggerProps: HTMLAttributes<HTMLElement> & PressProps & HoverProps & FocusEvents,
+  triggerProps: DOMAttributes & PressProps & HoverProps & FocusEvents,
 
   /**
    * Props for the overlay container element.
    */
-  tooltipProps: HTMLAttributes<HTMLElement>
+  tooltipProps: DOMAttributes
 }
 
 /**
  * Provides the behavior and accessibility implementation for a tooltip trigger, e.g. a button
  * that shows a description when focused or hovered.
  */
-export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<HTMLElement>) : TooltipTriggerAria {
+export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTriggerState, ref: RefObject<FocusableElement>) : TooltipTriggerAria {
   let {
     isDisabled,
     trigger
@@ -64,6 +63,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
         // Escape after clicking something can give it keyboard focus
         // dismiss tooltip on esc key press
         if (e.key === 'Escape') {
+          e.stopPropagation();
           state.close(true);
         }
       }

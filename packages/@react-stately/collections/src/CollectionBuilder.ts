@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, CollectionElement, Node} from '@react-types/shared';
+import {CollectionBase, CollectionElement, Key, Node} from '@react-types/shared';
 import {PartialNode} from './types';
-import React, {Key, ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 
 interface CollectionBuilderState {
   renderer?: (value: any) => ReactElement
@@ -109,7 +109,7 @@ export class CollectionBuilder<T extends object> {
     // Call this function to get a partial node, and recursively build a full node from there.
     if (React.isValidElement(element)) {
       let type = element.type as any;
-      if (typeof type !== 'function' || typeof type.getCollectionNode !== 'function') {
+      if (typeof type !== 'function' && typeof type.getCollectionNode !== 'function') {
         let name = typeof element.type === 'function' ? element.type.name : element.type;
         throw new Error(`Unknown element <${name}> in collection.`);
       }
@@ -188,6 +188,10 @@ export class CollectionBuilder<T extends object> {
         for (let child of partialNode.childNodes()) {
           // Ensure child keys are globally unique by prepending the parent node's key
           if (child.key != null) {
+            // TODO: Remove this line entirely and enforce that users always provide unique keys.
+            // Currently this line will have issues when a parent has a key `a` and a child with key `bc`
+            // but another parent has key `ab` and its child has a key `c`. The combined keys would result in both
+            // children having a key of `abc`.
             child.key = `${node.key}${child.key}`;
           }
 

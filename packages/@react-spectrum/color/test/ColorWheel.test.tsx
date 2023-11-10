@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {ColorWheel} from '../';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
+import {ControlledHSL} from '../stories/ColorWheel.stories';
 import {parseColor} from '@react-stately/color';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -32,29 +32,19 @@ const getBoundingClientRect = () => ({
 describe('ColorWheel', () => {
   let onChangeSpy = jest.fn();
   let onChangeEndSpy = jest.fn();
-
-  afterEach(() => {
-    onChangeSpy.mockClear();
-    onChangeEndSpy.mockClear();
-  });
+  let user;
 
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => SIZE);
-    // @ts-ignore
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => cb());
     jest.useFakeTimers();
-  });
-  afterAll(() => {
-    // @ts-ignore
-    window.HTMLElement.prototype.offsetWidth.mockReset();
-    jest.useRealTimers();
-    // @ts-ignore
-    window.requestAnimationFrame.mockReset();
   });
 
   afterEach(() => {
     // for restoreTextSelection
     jest.runAllTimers();
+    onChangeSpy.mockClear();
+    onChangeEndSpy.mockClear();
   });
 
   it('sets input props', () => {
@@ -69,7 +59,7 @@ describe('ColorWheel', () => {
     expect(slider).toHaveAttribute('aria-valuetext', '0°');
   });
 
-  it('the slider is focusable', () => {
+  it('the slider is focusable', async () => {
     let {getAllByRole, getByRole} = render(<div>
       <button>A</button>
       <ColorWheel />
@@ -78,17 +68,17 @@ describe('ColorWheel', () => {
     let slider = getByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(slider);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(slider);
   });
 
-  it('disabled', () => {
+  it('disabled', async () => {
     let {getAllByRole, getByRole} = render(<div>
       <button>A</button>
       <ColorWheel isDisabled />
@@ -98,12 +88,42 @@ describe('ColorWheel', () => {
     let [buttonA, buttonB] = getAllByRole('button');
     expect(slider).toHaveAttribute('disabled');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttonA);
+  });
+
+  it('supports form name', () => {
+    let {getByRole} = render(<ColorWheel name="hue" />);
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('name', 'hue');
+    expect(input).toHaveValue('0');
+  });
+
+  it('supports form reset', async () => {
+    function Test() {
+      let [value, setValue] = React.useState(parseColor('hsl(15, 100%, 50%)'));
+      return (
+        <form>
+          <ColorWheel value={value} onChange={setValue} />
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let input = getByRole('slider');
+
+    expect(input).toHaveValue('15');
+    fireEvent.change(input, {target: {value: '30'}});
+    expect(input).toHaveValue('30');
+
+    let button = getByTestId('reset');
+    await user.click(button);
+    expect(input).toHaveValue('15');
   });
 
   describe('labelling', () => {
@@ -166,18 +186,44 @@ describe('ColorWheel', () => {
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 359).toString('hsla'));
     });
 
-    it('respects step', () => {
+    it('respects page steps', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={45} />);
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
-      fireEvent.keyDown(slider, {key: 'Right'});
+      fireEvent.keyDown(slider, {key: 'PageUp'});
+      fireEvent.keyUp(slider, {key: 'PageUp'});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 45).toString('hsla'));
-      fireEvent.keyDown(slider, {key: 'Left'});
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
+      fireEvent.keyDown(slider, {key: 'PageDown'});
+      fireEvent.keyUp(slider, {key: 'PageDown'});
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+    });
+
+    it('respects page steps from shift arrow', () => {
+      let defaultColor = parseColor('hsl(0, 100%, 50%)');
+      let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
+      let slider = getByRole('slider');
+      act(() => {slider.focus();});
+
+      fireEvent.keyDown(slider, {key: 'Right', shiftKey: true});
+      fireEvent.keyUp(slider, {key: 'Right', shiftKey: true});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
+      expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
+      fireEvent.keyDown(slider, {key: 'Left', shiftKey: true});
+      fireEvent.keyUp(slider, {key: 'Left', shiftKey: true});
+      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
     });
   });
 
@@ -206,7 +252,7 @@ describe('ColorWheel', () => {
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -232,7 +278,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel isDisabled defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
       let thumb = slider.parentElement;
 
@@ -248,23 +294,6 @@ describe('ColorWheel', () => {
       end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
       expect(document.activeElement).not.toBe(slider);
-    });
-
-    it('dragging the thumb respects the step', () => {
-      let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
-      let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
-      let thumb = slider.parentElement;
-      container.getBoundingClientRect = getBoundingClientRect;
-
-      start(thumb, {pageX: CENTER + THUMB_RADIUS, pageY: CENTER});
-      expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      move(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 120).toString('hsla'));
-      end(thumb, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(1);
     });
 
     it('clicking and dragging on the track works', () => {
@@ -272,7 +301,7 @@ describe('ColorWheel', () => {
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       let thumb = slider.parentElement;
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -295,7 +324,7 @@ describe('ColorWheel', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getByRole('slider');
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
       expect(document.activeElement).not.toBe(slider);
@@ -312,22 +341,44 @@ describe('ColorWheel', () => {
       expect(document.activeElement).not.toBe(slider);
     });
 
-    it('clicking and dragging on the track respects the step', () => {
+    it('clicking on the track works', () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
-      let {container: _container, getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} step={120} />);
+      let {container: _container, getByRole} = render(<ControlledHSL defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
-      let thumb = slider.parentElement;
-      let container = _container.firstChild.firstChild as HTMLElement;
+      let container = _container?.firstChild?.firstChild as HTMLElement;
       container.getBoundingClientRect = getBoundingClientRect;
 
+      expect(document.activeElement).not.toBe(slider);
       start(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
-      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 120).toString('hsla'));
-      move(thumb, {pageX: CENTER, pageY: CENTER - THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(2);
-      expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 240).toString('hsla'));
-      end(thumb, {pageX: CENTER, pageY: CENTER - THUMB_RADIUS});
-      expect(onChangeSpy).toHaveBeenCalledTimes(2);
+      expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 90).toString('hsla'));
+      expect(document.activeElement).toBe(slider);
+
+      end(container, {pageX: CENTER, pageY: CENTER + THUMB_RADIUS});
+      expect(onChangeSpy).toHaveBeenCalledTimes(1);
+      expect(document.activeElement).toBe(slider);
+      expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('thumb background color should not include alpha channel', () => {
+    let defaultColor = parseColor('hsla(0, 100%, 50%, 0.5)');
+    let {container: _container} = render(<ColorWheel defaultValue={defaultColor} />);
+    /*
+     Current DOM structure for ColorWheel, starting at the container:
+
+     div
+       div.spectrum-ColorWheel
+         div.spectrum-ColorWheel-gradient
+         div.spectrum-ColorWheel-handle
+             div.spectrum-ColorHandle-color
+             svg.spectrum-ColorLoupe
+               ...
+             input.spectrum-ColorWheel-slider
+    */
+    let handleColorElement = _container?.firstChild?.firstChild?.nextSibling?.firstChild as HTMLElement;
+    let thumbColor = parseColor(handleColorElement.style.backgroundColor);
+    expect(defaultColor.getChannelValue('alpha')).toEqual(0.5);
+    expect(thumbColor.getChannelValue('alpha')).toEqual(1);
   });
 });

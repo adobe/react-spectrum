@@ -12,5 +12,8 @@
 
 /// <reference types="css-module-types" />
 
-export * from './DatePicker';
-export * from './DateRangePicker';
+export {DatePicker} from './DatePicker';
+export {DateRangePicker} from './DateRangePicker';
+export {TimeField} from './TimeField';
+export {DateField} from './DateField';
+export type {SpectrumDateFieldProps, SpectrumDatePickerProps, SpectrumDateRangePickerProps, SpectrumTimeFieldProps} from '@react-types/datepicker';

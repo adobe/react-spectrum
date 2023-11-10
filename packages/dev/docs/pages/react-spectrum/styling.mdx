@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import sharedDocs from 'docs:@react-types/shared/src/style.d.ts';
 import {PropTable} from '@react-spectrum/docs';
@@ -46,7 +46,7 @@ Supported styling options are available as props on every React Spectrum compone
 a text field and a button. The text field has a custom width set on it, and the button has a margin before it.
 
 ```tsx example
-<TextField label="Name" labelPosition="side" placeholder="John Smith" width="size-2000" />
+<TextField label="Name" labelPosition="side" width="size-2000" />
 <ActionButton marginStart="size-150">Submit</ActionButton>
 ```
 
@@ -61,7 +61,7 @@ All of the available style props are listed below.
 
 ## Dimension values
 
-Where applicable, each style property accepts Spectrum defined variables in addition to raw CSS values.
+Where applicable, each style property accepts [Spectrum defined variables](https://spectrum.adobe.com/page/design-tokens/#Size-tokens) in addition to raw CSS values.
 **Using Spectrum variables is preferred wherever possible**. These variables conform to Spectrum design
 defined sizing and spacing requirements, and also automatically adapt on different devices. For example,
 on touch screen devices, all Spectrum components expand in size to give users larger hit targets.
@@ -103,7 +103,7 @@ function DimensionViewer() {
   );
 }
 
-ReactDOM.render(<DimensionViewer />, document.getElementById('dimension-viewer'));
+ReactDOM.createRoot(document.getElementById('dimension-viewer')).render(<DimensionViewer />);
 ```
 
 <div id="dimension-viewer" />
@@ -128,7 +128,7 @@ In this example, the TextField has a default width of `size-2000`, which is over
 Resize your browser window to see this in action.
 
 ```tsx example
-<TextField label="Name" placeholder="John Smith" width={{base: 'size-2000', L: 'size-5000'}} />
+<TextField label="Name" width={{base: 'size-2000', L: 'size-5000'}} />
 ```
 
 React Spectrum's breakpoints are mobile first, which means style props apply at that breakpoint and above. For example, the `L`
@@ -157,7 +157,7 @@ and padding. Use the color scheme and scale pickers to see how the view changes 
   borderColor="dark"
   borderRadius="medium"
   padding="size-250">
-  <TextField label="Name" placeholder="John Smith" />
+  <TextField label="Name" />
 </View>
 ```
 
@@ -174,7 +174,13 @@ All of the properties supported by `View` are listed below. All style properties
 
 Style props that accept colors, such as backgrounds and borders, only accept Spectrum defined color values.
 In addition to ensuring consistency across products, Spectrum colors automatically adapt to color
-scheme changes, e.g. dark mode.
+scheme changes, e.g. dark mode. Learn more about color on the [Spectrum website](https://spectrum.adobe.com/page/color-fundamentals/).
+
+There are two versions of Spectrum colors available: v5, and v6. v6 offers an expanded color palette, and we
+recommend using it for new projects. However, v5 is still the default for backward compatibility. You can use v6 colors in custom
+components by setting the `colorVersion` prop on the [View](View.html) component to `6`. This controls the accepted values of other
+style props on the View, such as background and border colors. A color [migration guide](https://spectrum.adobe.com/static/misc/Colors_v6.0_Migration-Guide.xd)
+is also available on the Spectrum website to help you upgrade from v5 to v6.
 
 The list of Spectrum color values is visualized below. Use the picker to see how they change between the
 light and dark color schemes.
@@ -182,18 +188,28 @@ light and dark color schemes.
 ```tsx import
 function ColorViewer() {
   let [selectedKey, setSelectedKey] = useState();
+  let [colorVersion, setColorVersion] = useState('5');
+  let colors = colorVersion === '6'
+    ? dnaDocs.exports.ColorValueV6.id
+    : dnaDocs.exports.ColorValue.id;
 
   return (
     <Example colorScheme={selectedKey}>
-      <Picker label="Color Scheme" selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
-        <Item key="light">Light</Item>
-        <Item key="dark">Dark</Item>
-      </Picker>
+      <Flex gap="size-100">
+        <Picker label="Color Scheme" selectedKey={selectedKey} onSelectionChange={setSelectedKey}>
+          <Item key="light">Light</Item>
+          <Item key="dark">Dark</Item>
+        </Picker>
+        <Picker label="Color Version" selectedKey={colorVersion} onSelectionChange={setColorVersion}>
+          <Item key="5">v5 (default)</Item>
+          <Item key="6">v6</Item>
+        </Picker>
+      </Flex>
       <ul style={{columnWidth: 160, listStyle: 'none', padding: 0}}>
-        {dnaDocs.links[dnaDocs.exports.ColorValue.id].value.elements.filter(v => v.value && !v.value.startsWith('static')).map(v =>
+        {dnaDocs.links[colors].value.elements.filter(v => v.value && !v.value.startsWith('static')).map(v =>
           <li key={v.value}>
             <Flex alignItems="center" marginBottom="size-25">
-              <View backgroundColor={v.value} width="size-250" height="size-250" marginEnd="size-100" flexShrink={0} />
+              <View colorVersion={+colorVersion} backgroundColor={v.value} width="size-250" height="size-250" marginEnd="size-100" flexShrink={0} />
               {v.value}
             </Flex>
           </li>
@@ -203,7 +219,7 @@ function ColorViewer() {
   );
 }
 
-ReactDOM.render(<ColorViewer />, document.getElementById('color-viewer'));
+ReactDOM.createRoot(document.getElementById('color-viewer')).render(<ColorViewer />);
 ```
 
 <div id="color-viewer" />

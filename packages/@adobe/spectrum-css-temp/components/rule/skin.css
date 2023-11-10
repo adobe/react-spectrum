@@ -21,3 +21,12 @@ governing permissions and limitations under the License.
 .spectrum-Rule--small {
   background-color: var(--spectrum-rule-small-background-color);
 }
+
+@media (forced-colors: active) {
+  .spectrum-Rule {
+    forced-color-adjust: none;
+    --spectrum-rule-large-background-color: CanvasText;
+    --spectrum-rule-medium-background-color: CanvasText;
+    --spectrum-rule-small-background-color: CanvasText;
+  }
+}

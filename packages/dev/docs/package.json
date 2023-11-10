@@ -5,10 +5,11 @@
   "source": "src/index.js",
   "dependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",
-    "@mdx-js/react": "^1.5.5",
+    "@mdx-js/react": "next",
     "@react-aria/aria-modal-polyfill": "^3.1.0",
     "@react-aria/interactions": "^3.1.0",
     "@react-aria/visually-hidden": "^3.1.0",
+    "@react-spectrum/autocomplete": "3.0.0-alpha.24",
     "@react-spectrum/breadcrumbs": "^3.1.0",
     "@react-spectrum/button": "^3.1.0",
     "@react-spectrum/dialog": "^3.1.0",
@@ -22,14 +23,16 @@
     "@react-spectrum/view": "^3.1.0",
     "@spectrum-icons/illustrations": "^3.1.0",
     "@spectrum-icons/ui": "^3.1.0",
-    "@spectrum-icons/workflow": "^3.1.0",
+    "@spectrum-icons/workflow": "^4.0.0",
+    "algoliasearch": "^4.14.1",
     "clsx": "^1.1.1",
+    "dompurify": "^2.3.10",
     "globals-docs": "^2.4.1",
     "highlight.js": "9.18.1",
     "markdown-to-jsx": "^6.11.0",
     "quicklink": "^2.0.0",
-    "react": "^16.8.0 || ^17.0.0-rc.1",
-    "react-dom": "^16.8.0 || ^17.0.0-rc.1",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-lowlight": "^2.0.0"
   }
 }

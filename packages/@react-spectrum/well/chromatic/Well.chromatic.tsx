@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumWellProps} from '@react-types/well';
 import {Well} from '../';
@@ -22,11 +22,9 @@ const meta: Meta<SpectrumWellProps> = {
 
 export default meta;
 
+const Template = (args) =>
+  <Well {...args}>This is a React Spectrum Well</Well>;
 
-const Template = (): Story<SpectrumWellProps> => (args) => (
-  <Well {...args}>This is a React Spectrum Well</Well>
-);
-
-
-export const Default = Template().bind({});
-Default.args = {};
+export const Default = {
+  render: Template
+};

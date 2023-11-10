@@ -11,18 +11,15 @@
  */
 
 const {Transformer} = require('@parcel/plugin');
-const mdx = require('@mdx-js/mdx');
 const flatMap = require('unist-util-flatmap');
-const treeSitter = require('remark-tree-sitter');
+const treeSitter = require('tree-sitter-highlight');
 const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
-const frontmatter = require('remark-frontmatter');
-const slug = require('remark-slug');
-const util = require('mdast-util-toc');
 const yaml = require('js-yaml');
-const prettier = require('prettier');
-const {parse} = require('@babel/parser');
-const traverse = require('@babel/traverse').default;
+const dprint = require('dprint-node');
 const t = require('@babel/types');
+const lightningcss = require('lightningcss');
+const fs = require('fs');
+const path = require('path');
 
 const IMPORT_MAPPINGS = {
   '@react-spectrum/theme-default': {
@@ -34,11 +31,22 @@ const IMPORT_MAPPINGS = {
 };
 
 module.exports = new Transformer({
-  async transform({asset, options}) {
+  async loadConfig({config}) {
+    let pkg = await config.getPackage();
+    return {
+      version: pkg.version
+    };
+  },
+  async transform({asset, options, config}) {
     let exampleCode = [];
-    let assetPackage = await asset.getPackage();
-    let preReleaseParts = assetPackage.version.match(/(alpha)|(beta)|(rc)/);
+    let cssCode = [];
+    let preReleaseParts = config.version.match(/(alpha)|(beta)|(rc)/);
     let preRelease = preReleaseParts ? preReleaseParts[0] : '';
+
+    let visit = (await import('unist-util-visit')).visit;
+    let unified = (await import('unified')).unified;
+    let remarkParse = (await import('remark-parse')).default;
+    let remarkMdx = (await import('remark-mdx')).default;
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
         if (node.type === 'code') {
@@ -48,6 +56,8 @@ module.exports = new Transformer({
             node.meta = null;
             return [];
           }
+
+          let keepIndividualImports = meta === 'keepIndividualImports' || options.includes('keepIndividualImports');
 
           if (meta === 'example' || meta === 'snippet') {
             let id = `example-${exampleCode.length}`;
@@ -68,11 +78,12 @@ module.exports = new Transformer({
             }
 
             if (!options.includes('render=false')) {
-              if (/^\s*function (.|\n)*}\s*$/.test(code)) {
-                let name = code.match(/^\s*function (.*?)\s*\(/)[1];
-                code = `${code}\nReactDOM.render(<${provider}><${name} /></${provider}>, document.getElementById("${id}"));`;
+              let props = options.includes('hidden') ? 'isHidden' : '';
+              if (/function (.|\n)*}\s*$/.test(code)) {
+                let name = code.match(/function (.*?)\s*\(/)[1];
+                code = `${code}\nRENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}><${name} /></${provider}>));`;
               } else if (/^<(.|\n)*>$/m.test(code)) {
-                code = code.replace(/^(<(.|\n)*>)$/m, `ReactDOM.render(<${provider}>$1</${provider}>, document.getElementById("${id}"));`);
+                code = code.replace(/^(<(.|\n)*>)$/m, `RENDER_FNS.push(() => ReactDOM.createRoot(document.getElementById("${id}")).render(<${provider} ${props}>$1</${provider}>));`);
               }
             }
 
@@ -82,61 +93,183 @@ module.exports = new Transformer({
 
             exampleCode.push(code);
 
+            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
+            // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
+            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\/(\s*\n*(?=\s*(\/\/|\/\*)))?/g, () => '').trim();
+
             if (options.includes('render=false')) {
               node.meta = null;
-              return transformExample(node, preRelease);
+              return transformExample(node, preRelease, keepIndividualImports);
             }
 
             if (meta === 'snippet') {
               node.meta = null;
               return [
                 {
-                  type: 'jsx',
-                  value: `<div id="${id}" />`
+                  type: 'mdxJsxFlowElement',
+                  name: 'div',
+                  attributes: [
+                    {
+                      type: 'mdxJsxAttribute',
+                      name: 'id',
+                      value: id
+                    }
+                  ]
                 }
               ];
             }
 
-            // We'd like to exclude certain sections of the code from being rendered on the page, but they need to be there to actually
-            // execute. So, you can wrap that section in a ///- begin collapse -/// ... ///- end collapse -/// block to mark it.
-            node.value = node.value.replace(/\n*\/\/\/- begin collapse -\/\/\/(.|\n)*?\/\/\/- end collapse -\/\/\//g, () => '').trim();
-            node.meta = 'example';
+            node.meta = options.includes('hidden') ? null : 'example';
+            let highlightedCode = transformExample(node, preRelease, keepIndividualImports);
+            let output = {
+              type: 'mdxJsxFlowElement',
+              name: 'div',
+              attributes: [
+                {
+                  type: 'mdxJsxAttribute',
+                  name: 'id',
+                  value: id
+                }
+              ]
+            };
+
+            if (options.includes('flip') || options.includes('standalone')) {
+              output.attributes.push({
+                type: 'mdxJsxAttribute',
+                name: 'className',
+                value: options.includes('standalone') ? 'standalone' : 'flip'
+              });
+              return [
+                output,
+                ...highlightedCode
+              ];
+            }
 
             return [
-              ...transformExample(node, preRelease),
-              {
-                type: 'jsx',
-                value: `<div id="${id}" />`
-              }
+              ...highlightedCode,
+              output
             ];
           }
 
           if (node.lang === 'css') {
-            return [
-              ...responsiveCode(node),
-              {
-                type: 'jsx',
-                value: '<style>{`' + node.value + '`}</style>'
-              }
-            ];
+            if (node.meta && node.meta.includes('render=false')) {
+              return responsiveCode(node);
+            }
+            cssCode.push(node.value);
+
+            let code = node.meta && node.meta.includes('hidden') ? [] : responsiveCode(node);
+            return code;
           }
 
-          return transformExample(node, preRelease);
+          return transformExample(node, preRelease, keepIndividualImports);
         }
 
         return [node];
       })
     );
 
+    let appendCSS = () => async (tree) => {
+      let transformed = await lightningcss.bundleAsync({
+        filename: `${asset.filePath}.lightning`,
+        minify: true,
+        drafts: {
+          nesting: true
+        },
+        targets: {
+          chrome: 95 << 16,
+          safari: 15 << 16
+        },
+        resolver: {
+          resolve(specifier, parent) {
+            if (specifier.startsWith('.')) {
+              return path.resolve(path.dirname(parent), specifier);
+            }
+
+            let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
+            return path.resolve(options.projectRoot, baseDir, specifier);
+          },
+          read(filePath) {
+            if (filePath === `${asset.filePath}.lightning`) {
+              return cssCode.join('\n');
+            }
+            let result = '';
+            try {
+              let contents = fs.readFileSync(filePath, 'utf8');
+              // get all css blocks and concat
+              let ast = unified().use(remarkParse).use(remarkMdx).parse(contents);
+              visit(ast, 'code', node => {
+                if (node.lang !== 'css' || node?.meta?.includes('render=false') || node?.meta?.includes('hidden')) {
+                  return;
+                }
+                let code = node.value;
+                code = code.replace(/@import.*/g, '');
+                result += code;
+              });
+            } catch (e) {
+              console.log(e);
+            }
+            return result;
+          }
+        }
+      });
+      let css = transformed.code.toString();
+
+      tree.children.push(
+        {
+          type: 'mdxJsxFlowElement',
+          name: 'style',
+          attributes: [
+            {
+              type: 'mdxJsxAttribute',
+              name: 'dangerouslySetInnerHTML',
+              value: {
+                type: 'mdxJsxAttributeValueExpression',
+                value: JSON.stringify({__html: css}),
+                data: {
+                  estree: {
+                    type: 'Program',
+                    body: [{
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'ObjectExpression',
+                        properties: [{
+                          type: 'Property',
+                          kind: 'init',
+                          key: {
+                            type: 'Identifier',
+                            name: '__html'
+                          },
+                          value: {
+                            type: 'Literal',
+                            value: css
+                          }
+                        }]
+                      }
+                    }]
+                  }
+                }
+              }
+            }
+          ],
+          children: []
+        }
+      );
+      return tree;
+    };
+
     let toc = [];
     let title = '';
+    let navigationTitle;
     let category = '';
+    let type = '';
     let keywords = [];
     let description = '';
     let date = '';
     let author = '';
     let image = '';
+    let hidden = false;
     let order;
+    let util = (await import('mdast-util-toc')).toc;
     const extractToc = (options) => {
       const settings = options || {};
       const depth = settings.maxDepth || 6;
@@ -149,6 +282,21 @@ module.exports = new Transformer({
           tight: tight,
           skip: skip
         }).map;
+
+        function findLink(node) {
+          if (node.type === 'link') {
+            return node;
+          }
+
+          if (node.children) {
+            for (let child of node.children) {
+              let link = findLink(child);
+              if (link) {
+                return link;
+              }
+            }
+          }
+        }
 
         /**
          * Go from complex structure that the mdx plugin renders from to a simpler one
@@ -165,8 +313,9 @@ module.exports = new Transformer({
             if (nodes) {
               newTree.children = treeConverter(nodes);
             }
-            newTree.id = name.children[0].url.split('#').pop();
-            newTree.textContent = name.children[0].children[0].value;
+            let link = findLink(name);
+            newTree.id = link.url.split('#').pop();
+            newTree.textContent = link.children[0].value;
           }
           return newTree;
         }
@@ -184,16 +333,19 @@ module.exports = new Transformer({
           let yamlData = yaml.safeLoad(metadata.value);
           // title defined in yaml data will override
           title = yamlData.title || title;
+          navigationTitle = yamlData.navigationTitle;
           category = yamlData.category || '';
           keywords = yamlData.keywords || [];
           description = yamlData.description || '';
           date = yamlData.date || '';
           author = yamlData.author || '';
           order = yamlData.order;
+          hidden = yamlData.hidden;
+          type = yamlData.type || '';
           if (yamlData.image) {
             image = asset.addDependency({
-              moduleSpecifier: yamlData.image,
-              isURL: true
+              specifier: yamlData.image,
+              specifierType: 'url'
             });
           }
         }
@@ -212,8 +364,8 @@ module.exports = new Transformer({
     function wrapExamples() {
       return (tree) => (
         flatMap(tree, node => {
-          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].properties.metastring) {
-            node.properties.className = node.children[0].properties.metastring.split(' ');
+          if (node.tagName === 'pre' && node.children && node.children.length > 0 && node.children[0].tagName === 'code' && node.children[0].data?.meta) {
+            node.properties.className = node.children[0].data.meta.split(' ');
           }
 
           return [node];
@@ -221,23 +373,115 @@ module.exports = new Transformer({
       );
     }
 
-    const compiled = await mdx(await asset.getCode(), {
+    function highlight(options) {
+      return (tree) => {
+        visit(tree, 'code', node => {
+          if (!node.lang) {
+            return;
+          }
+          let language = treeSitter.Language[node.lang.toUpperCase()];
+          if (!language) {
+            return;
+          }
+          if (!node.data) {
+            node.data = {};
+          }
+          let highlighted = treeSitter.highlightHast(node.value, language);
+
+          // Add <mark> elements wrapping highlighted regions, marked by comments in the code.
+          if (node.value.includes('- begin highlight -')) {
+            let highlightParent = null;
+            let highlightedNodes = [];
+            flatMap(highlighted, (node, index, parent) => {
+              if (node.properties?.className === 'comment' && /- begin highlight -/.test(node.children[0].value)) {
+                // Handle JSX-style comments, e.g. {/* foo */}
+                let prev = parent.children[index - 1];
+                if (prev?.children?.[0]?.value === '{') {
+                  prev.children = [];
+                  prev = parent.children[index - 2];
+                }
+
+                // Remove extra newline before comment.
+                if (prev?.type === 'text') {
+                  prev.value = prev.value.replace(/\n( *)$/, '\n');
+                }
+
+                highlightParent = parent;
+                highlightedNodes = [];
+                return [];
+              } else if (node.properties?.className === 'comment' && /- end highlight -/.test(node.children?.[0].value)) {
+                highlightParent = null;
+                let res = [{
+                  type: 'element',
+                  tagName: 'mark',
+                  children: highlightedNodes
+                }];
+
+                // Remove closing brace from JSX-style starting comments, e.g. {/* foo */}
+                if (highlightedNodes[0]?.children?.[0]?.value === '}') {
+                  highlightedNodes.shift();
+                }
+
+                // Remove extra newline after starting comment, but keep indentation.
+                if (highlightedNodes[0]?.type === 'text' && /^\s+/.test(highlightedNodes[0].value)) {
+                  let node = highlightedNodes[0];
+                  node.value = node.value.replace(/^\s*\n+(\s*)/, '$1');
+                }
+
+                // Remove opening brace from JSX-style ending comments.
+                let last = highlightedNodes[highlightedNodes.length - 1];
+                if (last?.children?.[0]?.value === '{') {
+                  highlightedNodes.pop();
+                }
+
+                // Remove extra newline before ending comment.
+                last = highlightedNodes[highlightedNodes.length - 1];
+                if (last?.type === 'text' && /^\s+$/.test(last?.value)) {
+                  highlightedNodes.pop();
+                }
+
+                // Remove closing brace from JSX-style ending comments.
+                let next = parent.children?.[index + 1];
+                if (next?.children?.[0]?.value === '}') {
+                  parent.children[index + 1] = {type: 'text', value: ''};
+                  next = parent.children?.[index + 2];
+                }
+
+                // Remove extra newline after ending comment.
+                if (next?.type === 'text') {
+                  next.value = next.value.replace(/^ *\n/, '');
+                }
+
+                return res;
+              } else if (highlightParent && parent === highlightParent) {
+                highlightedNodes.push(node);
+                return [];
+              }
+
+              return [node];
+            });
+          }
+
+          node.data.hChildren = [highlighted];
+        });
+        return tree;
+      };
+    }
+
+    let {compile} = await import('@mdx-js/mdx');
+    let frontmatter = (await import('remark-frontmatter')).default;
+    let slug = (await import('remark-slug')).default;
+    let compiled = await compile(await asset.getCode(), {
+      providerImportSource: '@mdx-js/react',
       remarkPlugins: [
         slug,
         extractToc,
         extractExamples,
         fragmentWrap,
         [frontmatter, {type: 'yaml', anywhere: true, marker: '-'}],
-        [
-          treeSitter,
-          {
-            grammarPackages: [
-              '@atom-languages/language-typescript',
-              '@atom-languages/language-css'
-            ]
-          }
-        ],
-        fragmentUnWrap
+        highlight,
+        fragmentUnWrap,
+        appendCSS
       ],
       rehypePlugins: [
         wrapExamples
@@ -245,13 +489,10 @@ module.exports = new Transformer({
     });
 
     asset.type = 'jsx';
-    asset.setCode(`/* @jsx mdx */
-    import React from 'react';
-    import { mdx } from '@mdx-js/react'
-    ${compiled}
-    `);
+    asset.setCode(String(compiled));
     asset.meta.toc = toc;
     asset.meta.title = title;
+    asset.meta.navigationTitle = navigationTitle;
     asset.meta.category = category;
     asset.meta.description = description;
     asset.meta.keywords = keywords;
@@ -259,9 +500,11 @@ module.exports = new Transformer({
     asset.meta.author = author;
     asset.meta.image = image;
     asset.meta.order = order;
+    asset.meta.hidden = hidden;
     asset.meta.isMDX = true;
     asset.meta.preRelease = preRelease;
-    asset.isSplittable = false;
+    asset.meta.type = type;
+    asset.isBundleSplittable = false;
 
     // Generate the client bundle. We always need the client script,
     // and the docs script when there's a TOC or an example on the page.
@@ -273,9 +516,13 @@ module.exports = new Transformer({
     // Add example code collected from the MDX.
     if (exampleCode.length > 0) {
       clientBundle += `import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
+let RENDER_FNS = [];
 ${exampleCode.join('\n')}
+for (let render of RENDER_FNS) {
+  render();
+}
 export default {};
 `;
     }
@@ -283,19 +530,20 @@ export default {};
     let assets = [
       asset,
       {
-        type: 'jsx',
+        type: 'tsx',
         content: clientBundle,
         uniqueKey: 'client',
-        isSplittable: true,
+        isBundleSplittable: true,
+        sideEffects: true,
         env: {
           // We have to override all of the environment options to ensure this doesn't inherit
           // anything from the parent asset, whose environment is set below.
           context: 'browser',
           engines: asset.env.engines,
-          outputFormat: asset.env.scopeHoist ? 'esmodule' : 'global',
+          outputFormat: asset.env.shouldScopeHoist ? 'esmodule' : 'global',
           includeNodeModules: asset.env.includeNodeModules,
-          scopeHoist: asset.env.scopeHoist,
-          minify: asset.env.minify
+          shouldScopeHoist: asset.env.shouldScopeHoist,
+          shouldOptimize: asset.env.shouldOptimize
         },
         meta: {
           isMDX: false
@@ -306,9 +554,10 @@ export default {};
     // Add a dependency on the client bundle. It should not inherit its entry status from the page,
     // and should always be placed in a separate bundle.
     asset.addDependency({
-      moduleSpecifier: 'client',
-      isEntry: false,
-      isIsolated: true
+      specifier: 'client',
+      specifierType: 'esm',
+      needsStableName: false,
+      priority: 'parallel'
     });
 
     // Override the environment of the page bundle. It will run in node as part of the SSG optimizer.
@@ -330,50 +579,66 @@ export default {};
         'markdown-to-jsx': false,
         'prop-types': false
       },
-      scopeHoist: false,
-      minify: false
+      shouldScopeHoist: false,
+      shouldOptimize: false
     });
 
     return assets;
   }
 });
 
-function transformExample(node, preRelease) {
-  if (node.lang !== 'tsx') {
+function transformExample(node, preRelease, keepIndividualImports) {
+  if (node.lang !== 'tsx' && node.lang !== 'jsx') {
     return responsiveCode(node);
   }
 
   if (/^<(.|\n)*>$/m.test(node.value)) {
-    node.value = node.value.replace(/^(<(.|\n)*>)$/m, '<WRAPPER>$1</WRAPPER>');
+    node.value = node.value.replace(/^(<(.|\n)*>)$/m, '(<WRAPPER>$1</WRAPPER>)');
   }
 
-  let ast = parse(node.value, {
-    sourceType: 'module',
-    plugins: ['jsx', 'typescript']
-  });
+  let force = false;
 
   /* Replace individual package imports in the code
    * with monorepo imports if building for production and not a pre-release
    */
-  if (process.env.DOCS_ENV === 'production' && !preRelease) {
-    let specifiers = [];
-    let last;
+  if (!preRelease && /@react-spectrum|@react-aria|@react-stately/.test(node.value)) {
+    let specifiers = {};
+    let typeSpecifiers = {};
+    const recast = require('recast');
+    const traverse = require('@babel/traverse').default;
+    const {parse} = require('@babel/parser');
+    let ast = recast.parse(node.value, {
+      parser: {
+        parse() {
+          return parse(node.value, {
+            sourceType: 'module',
+            plugins: ['jsx', 'typescript'],
+            tokens: true
+          });
+        }
+      }
+    });
 
     traverse(ast, {
       ImportDeclaration(path) {
-        if (path.node.source.value.startsWith('@react-spectrum') && !(node.meta && node.meta.split(' ').includes('keepIndividualImports'))) {
+        if (/^(@react-spectrum|@react-aria|@react-stately)/.test(path.node.source.value) && !keepIndividualImports) {
+          let lib = path.node.source.value.split('/')[0];
+          let s = path.node.importKind === 'type' ? typeSpecifiers : specifiers;
+          if (!s[lib]) {
+            s[lib] = [];
+          }
+
           let mapping = IMPORT_MAPPINGS[path.node.source.value];
           for (let specifier of path.node.specifiers) {
             let mapped = mapping && mapping[specifier.imported.name];
             if (mapped && specifier.local.name === specifier.imported.name) {
               path.scope.rename(specifier.local.name, mapped);
-              specifiers.push(mapped);
+              s[lib].push(mapped);
             } else {
-              specifiers.push(specifier.imported.name);
+              s[lib].push(specifier.imported.name);
             }
           }
 
-          last = path.node;
           path.remove();
         }
       },
@@ -382,30 +647,38 @@ function transformExample(node, preRelease) {
       },
       Program: {
         exit(path) {
-          if (specifiers.length > 0) {
-            let literal =  t.stringLiteral('@adobe/react-spectrum');
-            literal.raw = "'@adobe/react-spectrum'";
+          let process = (specifiers, importKind) => {
+            for (let lib in specifiers) {
+              let names = specifiers[lib];
+              if (names.length > 0) {
+                let monopackage = lib === '@react-spectrum' ? '@adobe/react-spectrum' : lib.slice(1);
+                let literal =  t.stringLiteral(monopackage);
 
-            let decl = t.importDeclaration(
-              specifiers.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
-              literal
-            );
+                let decl = t.importDeclaration(
+                  names.map(s => t.importSpecifier(t.identifier(s), t.identifier(s))),
+                  literal
+                );
 
-            decl.loc = last.loc;
-            decl.start = last.start;
-            decl.end = last.end;
+                decl.importKind = importKind;
+                path.unshiftContainer('body', [decl]);
+              }
+            }
+          };
 
-            path.unshiftContainer('body', [decl]);
-          }
+          process(specifiers, 'value');
+          process(typeSpecifiers, 'type');
         }
       }
     });
+
+    node.value = recast.print(ast, {objectCurlySpacing: false, quote: 'single'}).code.replace(/(<WRAPPER>(?:.|\n)*<\/WRAPPER>)/g, '\n($1)');
+    force = true;
   }
 
-  return responsiveCode(node, ast);
+  return responsiveCode(node, force);
 }
 
-function responsiveCode(node, ast) {
+function responsiveCode(node, force) {
   if (!node.lang) {
     return [node];
   }
@@ -413,19 +686,19 @@ function responsiveCode(node, ast) {
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',
-    value: formatCode(node, node.value, ast, 80)
+    value: formatCode(node, node.value, 80, force)
   };
 
   let medium = {
     ...node,
     meta: node.meta ? `${node.meta} medium` : 'medium',
-    value: formatCode(node, large.value, ast, 60)
+    value: formatCode(node, large.value, 60, force)
   };
 
   let small = {
     ...node,
     meta: node.meta ? `${node.meta} small` : 'small',
-    value: formatCode(node, medium.value, ast, 25)
+    value: formatCode(node, medium.value, 25, force)
   };
 
   return [
@@ -435,26 +708,25 @@ function responsiveCode(node, ast) {
   ];
 }
 
-function formatCode(node, code, ast, printWidth = 80) {
-  if (!ast && code.split('\n').every(line => line.length <= printWidth)) {
-    return code;
+function formatCode(node, code, printWidth = 80, force = false) {
+  if (!force && code.split('\n').every(line => line.length <= printWidth)) {
+    return code.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, '$1');
   }
 
-  let parser = node.lang === 'css' ? 'css' : 'babel-ts';
-  if (ast) {
-    parser = () => ast;
+  if (node.lang === 'css') {
+    return node.value;
   }
 
-  let res = prettier.format(node.value, {
-    parser,
-    singleQuote: true,
-    jsxBracketSameLine: true,
-    bracketSpacing: false,
-    trailingComma: 'none',
-    printWidth
+  let res = dprint.format('example.' + node.lang, node.value, {
+    quoteStyle: 'preferSingle',
+    'jsx.quoteStyle': 'preferDouble',
+    trailingCommas: 'never',
+    lineWidth: printWidth,
+    'importDeclaration.spaceSurroundingNamedImports': false,
+    'importDeclaration.forceSingleLine': printWidth >= 80
   });
 
-  return res.replace(/^<WRAPPER>((?:.|\n)*)<\/WRAPPER>;?\s*$/m, (str, contents) =>
+  return res.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, (str, contents) =>
     contents.replace(/^\s{2}/gm, '').trim()
   );
 }

@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {HTMLAttributes, RefObject, SyntheticEvent, useEffect} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import {isElementInChildOfActiveScope} from '@react-aria/focus';
+import {RefObject, useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
-interface OverlayProps {
+export interface AriaOverlayProps {
   /** Whether the overlay is currently open. */
   isOpen?: boolean,
 
@@ -41,24 +43,24 @@ interface OverlayProps {
    * out interaction with elements that should not dismiss the overlay.
    * By default, onClose will always be called on interaction outside the overlay ref.
    */
-  shouldCloseOnInteractOutside?: (element: HTMLElement) => boolean
+  shouldCloseOnInteractOutside?: (element: Element) => boolean
 }
 
-interface OverlayAria {
+export interface OverlayAria {
   /** Props to apply to the overlay container element. */
-  overlayProps: HTMLAttributes<HTMLElement>,
+  overlayProps: DOMAttributes,
   /** Props to apply to the underlay element, if any. */
-  underlayProps: HTMLAttributes<HTMLElement>
+  underlayProps: DOMAttributes
 }
 
-const visibleOverlays: RefObject<HTMLElement>[] = [];
+const visibleOverlays: RefObject<Element>[] = [];
 
 /**
  * Provides the behavior for overlays such as dialogs, popovers, and menus.
  * Hides the overlay when the user interacts outside it, when the Escape key is pressed,
  * or optionally, on blur. Only the top-most overlay will close at once.
  */
-export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): OverlayAria {
+export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): OverlayAria {
   let {
     onClose,
     shouldCloseOnBlur,
@@ -89,8 +91,8 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
     }
   };
 
-  let onInteractOutsideStart = (e: SyntheticEvent<HTMLElement>) => {
-    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as HTMLElement)) {
+  let onInteractOutsideStart = (e: PointerEvent) => {
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
         e.preventDefault();
@@ -98,8 +100,8 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
     }
   };
 
-  let onInteractOutside = (e: SyntheticEvent<HTMLElement>) => {
-    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as HTMLElement)) {
+  let onInteractOutside = (e: PointerEvent) => {
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
         e.preventDefault();
@@ -111,18 +113,32 @@ export function useOverlay(props: OverlayProps, ref: RefObject<HTMLElement>): Ov
   // Handle the escape key
   let onKeyDown = (e) => {
     if (e.key === 'Escape' && !isKeyboardDismissDisabled) {
+      e.stopPropagation();
       e.preventDefault();
       onHide();
     }
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null, onInteractOutsideStart});
+  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : null, onInteractOutsideStart});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,
     onBlurWithin: (e) => {
-      if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.relatedTarget as HTMLElement)) {
+      // Do not close if relatedTarget is null, which means focus is lost to the body.
+      // That can happen when switching tabs, or due to a VoiceOver/Chrome bug with Control+Option+Arrow navigation.
+      // Clicking on the body to close the overlay should already be handled by useInteractOutside.
+      // https://github.com/adobe/react-spectrum/issues/4130
+      // https://github.com/adobe/react-spectrum/issues/4922
+      //
+      // If focus is moving into a child focus scope (e.g. menu inside a dialog),
+      // do not close the outer overlay. At this point, the active scope should
+      // still be the outer overlay, since blur events run before focus.
+      if (!e.relatedTarget || isElementInChildOfActiveScope(e.relatedTarget)) {
+        return;
+      }
+
+      if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.relatedTarget as Element)) {
         onClose();
       }
     }

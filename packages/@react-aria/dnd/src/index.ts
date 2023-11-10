@@ -10,10 +10,59 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useDrag';
-export * from './useDrop';
-export * from './useDroppableCollection';
-export * from './useDroppableItem';
-export * from './useDropIndicator';
-export * from './useDraggableItem';
-export * from './useClipboard';
+export type {DroppableCollectionOptions, DroppableCollectionResult} from './useDroppableCollection';
+export type {DroppableItemOptions, DroppableItemResult} from './useDroppableItem';
+export type {DropIndicatorProps, DropIndicatorAria} from './useDropIndicator';
+export type {DraggableItemProps, DraggableItemResult} from './useDraggableItem';
+export type {DraggableCollectionOptions} from './useDraggableCollection';
+export type {DragPreviewProps} from './DragPreview';
+export type {DragOptions, DragResult} from './useDrag';
+export type {DropOptions, DropResult} from './useDrop';
+export type {ClipboardProps, ClipboardResult} from './useClipboard';
+export type {
+  DirectoryDropItem,
+  DragEndEvent,
+  DraggableCollectionEndEvent,
+  DraggableCollectionMoveEvent,
+  DraggableCollectionStartEvent,
+  DragItem,
+  DragMoveEvent,
+  DragPreviewRenderer,
+  DragStartEvent,
+  DragTypes,
+  DropEnterEvent,
+  DropEvent,
+  DropExitEvent,
+  DropItem,
+  DropMoveEvent,
+  DropOperation,
+  DroppableCollectionDropEvent,
+  DroppableCollectionEnterEvent,
+  DroppableCollectionExitEvent,
+  DroppableCollectionInsertDropEvent,
+  DroppableCollectionMoveEvent,
+  DroppableCollectionOnItemDropEvent,
+  DroppableCollectionReorderEvent,
+  DroppableCollectionRootDropEvent,
+  DropPosition,
+  DropTarget,
+  DropTargetDelegate,
+  FileDropItem,
+  ItemDropTarget,
+  RootDropTarget,
+  TextDropItem
+} from '@react-types/shared';
+
+export {DIRECTORY_DRAG_TYPE} from './utils';
+export {useDrag} from './useDrag';
+export {useDrop} from './useDrop';
+export {useDroppableCollection} from './useDroppableCollection';
+export {useDroppableItem} from './useDroppableItem';
+export {useDropIndicator} from './useDropIndicator';
+export {useDraggableItem} from './useDraggableItem';
+export {useDraggableCollection} from './useDraggableCollection';
+export {useClipboard} from './useClipboard';
+export {DragPreview} from './DragPreview';
+export {ListDropTargetDelegate} from './ListDropTargetDelegate';
+export {isVirtualDragging} from './DragManager';
+export {isDirectoryDropItem, isFileDropItem, isTextDropItem} from './utils';

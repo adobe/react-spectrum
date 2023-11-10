@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2022 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {getChildNodes, getFirstItem, getNthItem} from '@react-stately/collections';
 import {GridKeyboardDelegate} from '@react-aria/grid';
-import {Key} from 'react';
-import {Node} from '@react-types/shared';
+import {Key, Node} from '@react-types/shared';
 import {TableCollection} from '@react-types/table';
 
 export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableCollection<T>> {
@@ -30,13 +30,18 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
     // If focus was on a column, then focus the first child column if any,
     // or find the corresponding cell in the first row.
     if (startItem.type === 'column') {
-      let child = [...startItem.childNodes][0];
+      let child = getFirstItem(getChildNodes(startItem, this.collection));
       if (child) {
         return child.key;
       }
 
-      let firstItem = this.collection.getItem(this.getFirstKey());
-      return [...firstItem.childNodes][startItem.index].key;
+      let firstKey = this.getFirstKey();
+      if (firstKey == null) {
+        return;
+      }
+
+      let firstItem = this.collection.getItem(firstKey);
+      return getNthItem(getChildNodes(firstItem, this.collection), startItem.index).key;
     }
 
     return super.getKeyBelow(key);
@@ -60,7 +65,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     // only return above row key if not header row
     let superKey = super.getKeyAbove(key);
-    if (superKey && this.collection.getItem(superKey).type !== 'headerrow') {
+    if (superKey != null && this.collection.getItem(superKey).type !== 'headerrow') {
       return superKey;
     }
 
@@ -83,7 +88,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     // Wrap around to the first column
     let row = this.collection.headerRows[column.level];
-    for (let item of row.childNodes) {
+    for (let item of getChildNodes(row, this.collection)) {
       if (item.type === 'column') {
         return item.key;
       }
@@ -99,7 +104,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     // Wrap around to the last column
     let row = this.collection.headerRows[column.level];
-    let childNodes = [...row.childNodes];
+    let childNodes = [...getChildNodes(row, this.collection)];
     for (let i = childNodes.length - 1; i >= 0; i--) {
       let item = childNodes[i];
       if (item.type === 'column') {
@@ -147,6 +152,9 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
 
     let collection = this.collection;
     let key = fromKey ?? this.getFirstKey();
+    if (key == null) {
+      return null;
+    }
 
     // If the starting key is a cell, search from its parent row.
     let startItem = collection.getItem(key);
@@ -159,7 +167,7 @@ export class TableKeyboardDelegate<T> extends GridKeyboardDelegate<T, TableColle
       let item = collection.getItem(key);
 
       // Check each of the row header cells in this row for a match
-      for (let cell of item.childNodes) {
+      for (let cell of getChildNodes(item, this.collection)) {
         let column = collection.columns[cell.index];
         if (collection.rowHeaderColumnKeys.has(column.key) && cell.textValue) {
           let substring = cell.textValue.slice(0, search.length);

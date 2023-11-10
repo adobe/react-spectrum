@@ -1,17 +1,17 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/numberfield';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/numberfield/package.json';
 
 ```jsx import
@@ -26,12 +26,13 @@ keywords: [number field, input]
 
 # NumberField
 
-<p>{docs.exports.NumberField.description}</p>
+<PageDescription>{docs.exports.NumberField.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
   componentNames={['NumberField']}
-  sourceData={[]} />
+  sourceData={[]}
+  since="3.10.0" />
 
 ## Example
 
@@ -63,6 +64,21 @@ function Example() {
     </Flex>
   );
 }
+```
+
+### HTML forms
+
+NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).
+
+```tsx example
+<NumberField
+  label="Transaction amount"
+  name="amount"
+  defaultValue={45}
+  formatOptions={{
+    style: 'currency',
+    currency: 'USD'
+  }} />
 ```
 
 ## Labeling
@@ -235,7 +251,7 @@ For a full list of supported events, see the [Props](#props) table below.
 The example below uses `onChange` to update a separate `pre` element with the same values entered into the NumberField.
 ```tsx example
 function Example() {
-  let [value, setValue] = React.useState();
+  let [value, setValue] = React.useState(null);
 
   return (
     <Flex direction="column" gap="size-150">
@@ -251,25 +267,25 @@ function Example() {
 
 ## Validation
 
-NumberFields can display a validation state to communicate to the user whether the current value is valid or invalid.
-Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the NumberField via the `validationState` prop.
+NumberField supports the `isRequired` prop to ensure the user enters a value, as well as custom validation functions, realtime validation, and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
 
-The example below illustrates how one would validate if the user has entered a [FizzBuzz](https://en.wikipedia.org/wiki/Fizz_buzz) number into the NumberField.
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the number field or submits the form.
+
 ```tsx example
-function Example() {
-  let [value, setValue] = React.useState(15);
-  let isValid = React.useMemo(() => value % 3 === 0 && value % 5 === 0, [value]);
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 
-  return (
-    <NumberField
-      validationState={isValid ? 'valid' : 'invalid'}
-      value={value}
-      onChange={setValue}
-      label="FizzBuzz values only"
-    />
-  );
-}
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <NumberField label="Width" name="width" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `NumberField` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## Props
 
@@ -299,7 +315,7 @@ NumberField stepper buttons are optional.
 
 ### Read only
 
-The `isReadOnly` boolean prop makes the NumberField's text content immutable. Unlike `isDisabled` the NumberField remains focusable
+The `isReadOnly` boolean prop makes the NumberField's text content immutable. Unlike `isDisabled`, the NumberField remains focusable
 and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
 
 ```tsx example
@@ -313,6 +329,52 @@ By default, the label is positioned above the NumberField. The `labelPosition` p
 
 ```tsx example
 <NumberField label="Cookies" labelPosition="side" labelAlign="end" minValue={0} />
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
+
+Both a description and an error message can be supplied to a NumberField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let [value, setValue] = React.useState(1);
+  let isValid = React.useMemo(() => value > 0 || Number.isNaN(value), [value]);
+
+  return (
+    <NumberField
+      validationState={Number.isNaN(value) ? undefined : (isValid ? 'valid' : 'invalid')}
+      value={value}
+      onChange={setValue}
+      label="Positive numbers only"
+      description="Enter a positive number."
+      errorMessage={value === 0 ? 'Is zero positive?' : 'Positive numbers are bigger than 0.'}
+    />
+  );
+}
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a NumberField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<NumberField
+  label="Exposure"
+  formatOptions={{
+    signDisplay: 'exceptZero',
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 2
+  }}
+  defaultValue={0}
+  contextualHelp={
+    <ContextualHelp>
+      <Heading>What is exposure?</Heading>
+      <Content>Exposure adjusts how bright the image is.</Content>
+    </ContextualHelp>
+  } />
 ```
 
 ### Custom width

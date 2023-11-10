@@ -1,10 +1,15 @@
 {
   "name": "@internationalized/message",
-  "version": "3.0.2",
+  "version": "3.1.1",
   "description": "Internationalized message formatting and locale negotiation",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/import.mjs",
+    "require": "./dist/main.js"
+  },
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
@@ -17,8 +22,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
-    "intl-messageformat": "^9.6.12"
+    "@swc/helpers": "^0.5.0",
+    "intl-messageformat": "^10.1.0"
   },
   "publishConfig": {
     "access": "public"

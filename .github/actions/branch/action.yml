@@ -1,0 +1,5 @@
+name: 'Branch from fork'
+description: 'creates a branch based off PR from fork'
+runs:
+  using: 'node16'
+  main: 'index.js'

@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {BuddhistCalendar, CalendarDate, CalendarDateTime, fromAbsolute, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, possibleAbsolutes, TaiwanCalendar, Time, toAbsolute, toCalendar, toCalendarDate, toCalendarDateTime, toDate, toTime} from '..';
+import {BuddhistCalendar, CalendarDate, CalendarDateTime, EthiopicAmeteAlemCalendar, EthiopicCalendar, GregorianCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, Time, toCalendar, toCalendarDate, toCalendarDateTime, toTime, ZonedDateTime} from '..';
+import {fromAbsolute, possibleAbsolutes, toAbsolute, toDate} from '../src/conversion';
 
 describe('CalendarDate conversion', function () {
   describe('toAbsolute', function () {
@@ -130,10 +131,10 @@ describe('CalendarDate conversion', function () {
   describe('fromAbsolute', function () {
     it('should convert a date from absolute using a timezone', function () {
       let date = fromAbsolute(new Date('2020-02-03T10:00Z').getTime(), 'America/Los_Angeles');
-      expect(date).toEqual(new CalendarDateTime(2020, 2, 3, 2));
+      expect(date).toEqual(new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000, 2));
 
       date = fromAbsolute(new Date('2020-02-03T10:00Z').getTime(), 'America/New_York');
-      expect(date).toEqual(new CalendarDateTime(2020, 2, 3, 5));
+      expect(date).toEqual(new ZonedDateTime(2020, 2, 3, 'America/New_York', -18000000, 5));
     });
   });
 
@@ -164,6 +165,19 @@ describe('CalendarDate conversion', function () {
         date = new CalendarDate(2020, 4, 30);
         expect(toCalendar(date, new JapaneseCalendar())).toEqual(new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 4, 30));
       });
+
+      it('returns the correct number of days for leap and non-leap years', function () {
+        let date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 4, 2, 5);
+        expect(date.calendar.getDaysInMonth(date)).toBe(28);
+
+        date = new CalendarDate(new JapaneseCalendar(), 'reiwa', 2, 2, 5);
+        expect(date.calendar.getDaysInMonth(date)).toBe(29);
+      });
+
+      it('constrains dates outside supported eras', function () {
+        let date = new CalendarDate(1700, 4, 30);
+        expect(toCalendar(date, new JapaneseCalendar())).toEqual(new CalendarDate(new JapaneseCalendar(), 'meiji', 1, 9, 30));
+      });
     });
 
     describe('taiwan', function () {
@@ -192,6 +206,14 @@ describe('CalendarDate conversion', function () {
         date = new CalendarDate(1911, 1, 1);
         expect(toCalendar(date, new TaiwanCalendar())).toEqual(new CalendarDate(new TaiwanCalendar(), 'before_minguo', 1, 1, 1));
       });
+
+      it('handles BC dates', function () {
+        let date = new CalendarDate('BC', 2, 1, 1);
+        expect(toCalendar(date, new TaiwanCalendar())).toEqual(new CalendarDate(new TaiwanCalendar(), 'before_minguo', 1913, 1, 1));
+
+        date = new CalendarDate(new TaiwanCalendar(), 'before_minguo', 1913, 1, 1);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate('BC', 2, 1, 1));
+      });
     });
 
     describe('buddhist', function () {
@@ -203,6 +225,14 @@ describe('CalendarDate conversion', function () {
       it('gregorian to buddhist', function () {
         let date = new CalendarDate(2020, 4, 30);
         expect(toCalendar(date, new BuddhistCalendar())).toEqual(new CalendarDate(new BuddhistCalendar(), 2563, 4, 30));
+      });
+
+      it('handles BC dates', function () {
+        let date = new CalendarDate('BC', 2, 1, 1);
+        expect(toCalendar(date, new BuddhistCalendar())).toEqual(new CalendarDate(new BuddhistCalendar(), 542, 1, 1));
+
+        date = new CalendarDate(new BuddhistCalendar(), 542, 1, 1);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate('BC', 2, 1, 1));
       });
     });
 
@@ -343,6 +373,39 @@ describe('CalendarDate conversion', function () {
       it('gregorian to hebrew in a leap year', function () {
         let date = new CalendarDate(2022, 2, 2);
         expect(toCalendar(date, new HebrewCalendar())).toEqual(new CalendarDate(new HebrewCalendar(), 5782, 6, 1));
+      });
+    });
+
+    describe('ethiopic', function () {
+      it('ethiopic to gregorian', function () {
+        let date = new CalendarDate(new EthiopicCalendar(), 'AA', 9999, 13, 5);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(4507, 9, 29));
+
+        date = new CalendarDate(new EthiopicCalendar(), 'AM', 9991, 13, 5);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(9999, 11, 9));
+      });
+
+      it('gregorian to ethioaa', function () {
+        let date = new CalendarDate(4507, 9, 29);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(new CalendarDate(new EthiopicCalendar(), 'AM', 4499, 13, 5));
+
+        date = new CalendarDate(1, 9, 29);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(new CalendarDate(new EthiopicCalendar(), 'AA', 5494, 2, 4));
+
+        date = new CalendarDate('BC', 1200, 9, 29);
+        expect(toCalendar(date, new EthiopicCalendar())).toEqual(new CalendarDate(new EthiopicCalendar(), 'AA', 4294, 2, 13));
+      });
+    });
+
+    describe('ethioaa', function () {
+      it('ethioaa to gregorian', function () {
+        let date = new CalendarDate(new EthiopicAmeteAlemCalendar(), 9999, 13, 5);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(4507, 9, 29));
+      });
+
+      it('gregorian to ethioaa', function () {
+        let date = new CalendarDate(4507, 9, 29);
+        expect(toCalendar(date, new EthiopicAmeteAlemCalendar())).toEqual(new CalendarDate(new EthiopicAmeteAlemCalendar(), 9999, 13, 5));
       });
     });
   });

@@ -17,10 +17,10 @@ import {RefObject, useEffect} from 'react';
 // it sets a close function here mapped from the trigger element. This way we can avoid
 // forcing users to pass an onClose function to useOverlayPosition which could be considered
 // a breaking change.
-export const onCloseMap: WeakMap<HTMLElement, () => void> = new WeakMap();
+export const onCloseMap: WeakMap<Element, () => void> = new WeakMap();
 
 interface CloseOnScrollOptions {
-  triggerRef: RefObject<HTMLElement>,
+  triggerRef: RefObject<Element>,
   isOpen?: boolean,
   onClose?: () => void
 }
@@ -30,14 +30,15 @@ export function useCloseOnScroll(opts: CloseOnScrollOptions) {
   let {triggerRef, isOpen, onClose} = opts;
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!isOpen || onClose === null) {
       return;
     }
 
     let onScroll = (e: MouseEvent) => {
       // Ignore if scrolling an scrollable region outside the trigger's tree.
-      let target = e.target as HTMLElement;
-      if (!triggerRef.current || !target.contains(triggerRef.current)) {
+      let target = e.target;
+      // window is not a Node and doesn't have contain, but window contains everything
+      if (!triggerRef.current || ((target instanceof Node) && !target.contains(triggerRef.current))) {
         return;
       }
 

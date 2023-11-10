@@ -12,6 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export * from './ProgressBar';
-export * from './ProgressCircle';
-export * from './ProgressBarBase';
+export {ProgressBar} from './ProgressBar';
+export {ProgressCircle} from './ProgressCircle';
+export {ProgressBarBase} from './ProgressBarBase';
+export type {SpectrumProgressBarProps, SpectrumProgressCircleProps} from '@react-types/progress';

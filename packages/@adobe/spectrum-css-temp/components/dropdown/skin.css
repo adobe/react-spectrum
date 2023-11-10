@@ -11,11 +11,9 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropdown {
-  .spectrum-Dropdown-trigger:hover {
-    .spectrum-Dropdown-chevron {
-      color: var(--spectrum-dropdown-icon-color-hover);
-    }
-  }
+  /* Override to gray-800 to meet WCAG */
+  --spectrum-dropdown-placeholder-text-color: var(--spectrum-global-color-gray-800);
+
 
   .spectrum-Dropdown-trigger {
     &.is-selected {
@@ -26,25 +24,20 @@ governing permissions and limitations under the License.
   }
 
   &.is-invalid {
-    .spectrum-Dropdown-invalidIcon {
-      color: var(--spectrum-dropdown-validation-icon-color-error);
+    /* override all states (e.g. active) */
+    .spectrum-Dropdown-invalidIcon.spectrum-Dropdown-invalidIcon {
+      fill: var(--spectrum-dropdown-validation-icon-color-error);
     }
 
     &.is-disabled {
       .spectrum-Icon,
       .spectrum-Dropdown-invalidIcon {
-        color: var(--spectrum-dropdown-icon-color-disabled);
+        fill: var(--spectrum-dropdown-icon-color-disabled);
       }
     }
   }
 
   &.is-disabled {
-    &,
-    .spectrum-Dropdown-trigger:hover {
-      .spectrum-Dropdown-chevron {
-        color: var(--spectrum-dropdown-icon-color-disabled);
-      }
-    }
     &:active .spectrum-Dropdown-label {
       color: var(--spectrum-dropdown-text-color-disabled);
     }
@@ -54,10 +47,6 @@ governing permissions and limitations under the License.
       }
     }
   }
-}
-
-.spectrum-Dropdown-chevron {
-  color: var(--spectrum-dropdown-icon-color);
 }
 
 .spectrum-Dropdown-label {
@@ -80,7 +69,30 @@ governing permissions and limitations under the License.
   .spectrum-Dropdown-label.is-placeholder {
     color: var(--spectrum-dropdown-placeholder-text-color-key-focus);
   }
-  .spectrum-Dropdown-chevron {
-    color: var(--spectrum-dropdown-icon-color-key-focus)
+}
+
+@media (forced-colors: active) {
+  .spectrum-Dropdown {
+    --spectrum-dropdown-icon-color: ButtonText;
+    --spectrum-dropdown-icon-color-disabled: GrayText;
+    --spectrum-dropdown-icon-color-hover: ButtonText;
+    --spectrum-dropdown-icon-color-key-focus: ButtonText;
+    --spectrum-dropdown-placeholder-text-color: GrayText;
+    --spectrum-dropdown-placeholder-text-color-disabled: GrayText;
+    --spectrum-dropdown-placeholder-text-color-down: GrayText;
+    --spectrum-dropdown-placeholder-text-color-hover: GrayText;
+    --spectrum-dropdown-placeholder-text-color-key-focus: GrayText;
+    --spectrum-dropdown-placeholder-text-color-mouse-focus: GrayText;
+    --spectrum-dropdown-text-color-disabled: GrayText;
+    --spectrum-dropdown-validation-icon-color-error: ButtonText;
+  }
+  /*Override the label behaviour when NOT a placeholder*/
+  .spectrum-Dropdown-trigger {
+    &:hover .spectrum-Dropdown-label {
+      color: ButtonText;
+      &.is-placeholder {
+        color: GrayText;
+      }
+    }
   }
 }

@@ -10,12 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, FocusStrategy, MultipleSelection, StyleProps} from '@react-types/shared';
-import {Key, ReactElement} from 'react';
+import {Alignment, AriaLabelingProps, CollectionBase, DOMProps, FocusStrategy, Key, MultipleSelection, StyleProps} from '@react-types/shared';
 import {OverlayTriggerProps} from '@react-types/overlays';
+import {ReactElement} from 'react';
+
+export type MenuTriggerType = 'press' | 'longPress';
 
 export interface MenuTriggerProps extends OverlayTriggerProps {
-  // trigger?: 'press' | 'longPress',
+  /**
+   * How the menu is triggered.
+   * @default 'press'
+   */
+  trigger?: MenuTriggerType
+}
+
+export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
+  /**
+   * The contents of the MenuTrigger - a trigger and a Menu.
+   */
+  children: ReactElement[],
   /**
    * Alignment of the menu relative to the trigger.
    * @default 'start'
@@ -27,22 +40,15 @@ export interface MenuTriggerProps extends OverlayTriggerProps {
    */
   direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
   /**
-   * Whether the Menu closes when a selection is made.
-   * @default true
-   */
-  closeOnSelect?: boolean,
-  /**
    * Whether the menu should automatically flip direction when space is limited.
    * @default true
    */
-  shouldFlip?: boolean
-}
-
-export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
+  shouldFlip?: boolean,
   /**
-   * The contents of the MenuTrigger - a trigger and a Menu.
+   * Whether the Menu closes when a selection is made.
+   * @default true
    */
-  children: ReactElement[]
+  closeOnSelect?: boolean
 }
 
 export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
@@ -51,28 +57,15 @@ export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
   /** Whether keyboard navigation is circular. */
   shouldFocusWrap?: boolean,
   /** Handler that is called when an item is selected. */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  /** Handler that is called when the menu should close after selecting an item. */
+  onClose?: () => void
 }
 
 export interface AriaMenuProps<T> extends MenuProps<T>, DOMProps, AriaLabelingProps {}
 export interface SpectrumMenuProps<T> extends AriaMenuProps<T>, StyleProps {}
 
-export interface SpectrumActionMenuProps<T> extends CollectionBase<T>, DOMProps, AriaLabelingProps {
-  /**
-   * Alignment of the menu relative to the trigger.
-   * @default 'start'
-   */
-  align?: Alignment,  // from shared types
-  /**
-   * Where the Menu opens relative to its trigger.
-   * @default 'bottom'
-   */
-  direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
-  /**
-   * Whether the menu should automatically flip direction when space is limited.
-   * @default true
-   */
-  shouldFlip?: boolean,
+export interface SpectrumActionMenuProps<T> extends CollectionBase<T>, Omit<SpectrumMenuTriggerProps, 'children'>, StyleProps, DOMProps, AriaLabelingProps {
   /** Whether the button is disabled. */
   isDisabled?: boolean,
   /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
@@ -80,5 +73,5 @@ export interface SpectrumActionMenuProps<T> extends CollectionBase<T>, DOMProps,
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean,
   /** Handler that is called when an item is selected. */
-  onAction?: (key: Key) => void 
+  onAction?: (key: Key) => void
 }

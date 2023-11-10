@@ -1,17 +1,17 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/link';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/link/package.json';
 
 ```jsx import
@@ -25,46 +25,42 @@ category: Navigation
 
 # Link
 
-<p>{docs.exports.Link.description}</p>
+<PageDescription>{docs.exports.Link.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
   componentNames={['Link']}
-  sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/link/'}]} />
+  sourceData={[{type: 'Spectrum', url: 'https://spectrum.adobe.com/page/link/'}]}
+  since="3.0.0" />
 
 ## Example
 
 ```tsx example
-<Link><a href="https://www.imdb.com/title/tt6348138/" target="_blank">The missing link.</a></Link>
+<Link href="https://www.imdb.com/title/tt6348138/" target="_blank">The missing link.</Link>
 ```
 
 ## Content
 
-Links accept content as children.
-If the child is a native anchor element, or a link component used with a client side router, the Link component will add spectrum styles and event handlers to that element.
-Actual navigation will be handled by the wrapped element.
+
+Links accept content as children. If the link has an href prop, it will be rendered as an `<a>` element.
 
 ```tsx example
-<Link><a href="https://www.adobe.com" target="_blank">Adobe.com</a></Link>
+<Link href="https://adobe.com" target="_blank">Adobe.com</Link>
 ```
 
-To use in [React Router](https://reacttraining.com/react-router/)
+### JavaScript handled links
 
-```tsx
-import {Link} from '@react-spectrum/link';
-import {Link as RouterLink} from 'react-router-dom';
+When a `<Link`> does not have an `href` prop, it is rendered as a `<span role="link">` instead of an `<a>`. Events will need to be handled in JavaScript with the `onPress` prop.
 
-<Link><RouterLink to="/next-page">Next Page</RouterLink></Link>
-```
-
-If the content is plain text, it will be styled and exposed to assistive technologies as a link.
-Events will need to be handled in JavaScript with the `onPress` prop.
 Note: this will not behave like a native link. Browser features like context menus and open in new tab will not apply.
 
 ```tsx example
-<Link onPress={() => alert('pressed!')}>A label</Link>
+<Link onPress={() => alert('Pressed link')}>Adobe</Link>
 ```
 
+### Client side routing
+
+The `<Link>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ### Internationalization
 
@@ -72,7 +68,7 @@ In order to internationalize a link, a localized string should be passed to the 
 
 ### Accessibility
 
-For string-typed `children`, the link component will expose the accessible role to assistive technology as a "link".
+When an `href` is not provided, the link component will expose the accessible role to assistive technology as a "link".
 
 ```tsx example
 <Link onPress={e => alert(`clicked "${e.target.textContent}" Link`)}>
@@ -80,9 +76,9 @@ For string-typed `children`, the link component will expose the accessible role 
 </Link>
 ```
 
-For other children, use an element of semantic meaning, or use a [role](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles) where appropriate.
-
 Be mindful of what the experience is for users navigating with screen readers. Make sure to give enough context about where the link will take the user.
+
+The quiet style must only be used when the placement and context of the link is explicit enough that a visible underline isn’t necessary. It must not be used within, for example, a paragraph of text.
 
 ## Props
 

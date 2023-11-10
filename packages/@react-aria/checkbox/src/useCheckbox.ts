@@ -13,11 +13,22 @@
 import {AriaCheckboxProps} from '@react-types/checkbox';
 import {InputHTMLAttributes, RefObject, useEffect} from 'react';
 import {ToggleState} from '@react-stately/toggle';
+import {useFormValidation} from '@react-aria/form';
+import {useFormValidationState} from '@react-stately/form';
 import {useToggle} from '@react-aria/toggle';
+import {ValidationResult} from '@react-types/shared';
 
-export interface CheckboxAria {
+export interface CheckboxAria extends ValidationResult {
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Whether the checkbox is selected. */
+  isSelected: boolean,
+  /** Whether the checkbox is in a pressed state. */
+  isPressed: boolean,
+  /** Whether the checkbox is disabled. */
+  isDisabled: boolean,
+  /** Whether the checkbox is read only. */
+  isReadOnly: boolean
 }
 
 /**
@@ -29,10 +40,17 @@ export interface CheckboxAria {
  * @param inputRef - A ref for the HTML input element.
  */
 export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputRef: RefObject<HTMLInputElement>): CheckboxAria {
-  let {inputProps} = useToggle(props, state, inputRef);
-  let {isSelected} = state;
+  // Create validation state here because it doesn't make sense to add to general useToggleState.
+  let validationState = useFormValidationState({...props, value: state.isSelected});
+  let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;
+  let {inputProps, isSelected, isPressed, isDisabled, isReadOnly} = useToggle({
+    ...props,
+    isInvalid
+  }, state, inputRef);
 
-  let {isIndeterminate} = props;
+  useFormValidation(props, validationState, inputRef);
+
+  let {isIndeterminate, isRequired, validationBehavior = 'aria'} = props;
   useEffect(() => {
     // indeterminate is a property, but it can only be set via javascript
     // https://css-tricks.com/indeterminate-checkboxes/
@@ -45,7 +63,15 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     inputProps: {
       ...inputProps,
       checked: isSelected,
-      'aria-checked': isIndeterminate ? 'mixed' : isSelected
-    }
+      'aria-required': (isRequired && validationBehavior === 'aria') || undefined,
+      required: isRequired && validationBehavior === 'native'
+    },
+    isSelected,
+    isPressed,
+    isDisabled,
+    isReadOnly,
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

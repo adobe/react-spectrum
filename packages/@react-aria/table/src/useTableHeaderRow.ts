@@ -10,9 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {GridRowAria, GridRowProps} from '@react-aria/grid';
+import {DOMAttributes} from '@react-types/shared';
+import {GridRowProps} from '@react-aria/grid';
 import {RefObject} from 'react';
+import {tableNestedRows} from '@react-stately/flags';
 import {TableState} from '@react-stately/table';
+
+export interface TableHeaderRowAria {
+  /** Props for the grid row element. */
+  rowProps: DOMAttributes
+}
 
 /**
  * Provides the behavior and accessibility implementation for a header row in a table.
@@ -20,13 +27,13 @@ import {TableState} from '@react-stately/table';
  * @param state - State of the table, as returned by `useTableState`.
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridRowAria {
+export function useTableHeaderRow<T>(props: GridRowProps<T>, state: TableState<T>, ref: RefObject<Element>): TableHeaderRowAria {
   let {node, isVirtualized} = props;
   let rowProps = {
     role: 'row'
   };
 
-  if (isVirtualized) {
+  if (isVirtualized && !(tableNestedRows() && 'expandedKeys' in state)) {
     rowProps['aria-rowindex'] = node.index + 1; // aria-rowindex is 1 based
   }
 

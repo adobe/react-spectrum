@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps} from '@react-types/shared';
-import {HTMLAttributes} from 'react';
+import {AriaLabelingProps, DOMProps, LinkDOMProps} from '@react-types/shared';
 
 const DOMPropNames = new Set([
   'id'
@@ -24,11 +23,23 @@ const labelablePropNames = new Set([
   'aria-details'
 ]);
 
+// See LinkDOMProps in dom.d.ts.
+const linkPropNames = new Set([
+  'href',
+  'target',
+  'rel',
+  'download',
+  'ping',
+  'referrerPolicy'
+]);
+
 interface Options {
   /**
    * If labelling associated aria properties should be included in the filter.
    */
   labelable?: boolean,
+  /** Whether the element is a link and should include DOM props for <a> elements. */
+  isLink?: boolean,
   /**
    * A Set of other property names that should be included in the filter.
    */
@@ -42,15 +53,16 @@ const propRe = /^(data-.*)$/;
  * @param props - The component props to be filtered.
  * @param opts - Props to override.
  */
-export function filterDOMProps(props: DOMProps & AriaLabelingProps, opts: Options = {}): DOMProps & AriaLabelingProps {
-  let {labelable, propNames} = opts;
-  let filteredProps: HTMLAttributes<HTMLElement> = {};
+export function filterDOMProps(props: DOMProps & AriaLabelingProps & LinkDOMProps, opts: Options = {}): DOMProps & AriaLabelingProps {
+  let {labelable, isLink, propNames} = opts;
+  let filteredProps = {};
 
   for (const prop in props) {
     if (
       Object.prototype.hasOwnProperty.call(props, prop) && (
         DOMPropNames.has(prop) ||
         (labelable && labelablePropNames.has(prop)) ||
+        (isLink && linkPropNames.has(prop)) ||
         propNames?.has(prop) ||
         propRe.test(prop)
       )

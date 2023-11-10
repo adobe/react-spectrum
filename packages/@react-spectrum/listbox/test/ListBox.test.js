@@ -10,14 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
 import Bell from '@spectrum-icons/workflow/Bell';
+import {FocusExample} from '../stories/ListBox.stories';
 import {Item, ListBox, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
 
 let withSection = [
   {name: 'Heading 1', children: [
@@ -35,8 +35,19 @@ let withSection = [
   ]}
 ];
 
+let itemsWithFalsyId = [
+  {id: 0, name: 'Heading 1', children: [
+    {id: 1, name: 'Foo'},
+    {id: 2, name: 'Bar'}
+  ]},
+  {id: '', name: 'Heading 2', children: [
+    {id: 3, name: 'Blah'},
+    {id: 4, name: 'Bleh'}
+  ]}
+];
+
 function renderComponent(props) {
-  return render(
+  let tree = render(
     <Provider theme={theme}>
       <span id="label">Choose an item</span>
       <ListBox items={withSection} aria-labelledby="label" {...props}>
@@ -48,6 +59,9 @@ function renderComponent(props) {
       </ListBox>
     </Provider>
   );
+  // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+  act(() => jest.runAllTimers());
+  return tree;
 }
 
 describe('ListBox', function () {
@@ -58,7 +72,6 @@ describe('ListBox', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 48);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
     jest.useFakeTimers();
   });
 
@@ -85,11 +98,15 @@ describe('ListBox', function () {
       expect(section).toHaveAttribute('aria-labelledby');
       let heading = document.getElementById(section.getAttribute('aria-labelledby'));
       expect(heading).toBeTruthy();
-      expect(heading).toHaveAttribute('aria-hidden', 'true');
-    }
+      expect(heading).toHaveAttribute('role', 'presentation');
 
-    let dividers = within(listbox).getAllByRole('separator');
-    expect(dividers.length).toBe(withSection.length - 1);
+      // Separator should render for sections after first section
+      if (section !== sections[0]) {
+        let divider = heading.previousElementSibling;
+        expect(divider).toHaveAttribute('role', 'presentation');
+        expect(divider).toHaveClass('spectrum-Menu-divider');
+      }
+    }
 
     let items = within(listbox).getAllByRole('option');
     expect(items.length).toBe(withSection.reduce((acc, curr) => (acc + curr.children.length), 0));
@@ -97,7 +114,7 @@ describe('ListBox', function () {
     for (let item of items) {
       expect(item).toHaveAttribute('tabindex');
       expect(item).not.toHaveAttribute('aria-selected');
-      expect(item).toHaveAttribute('aria-disabled');
+      expect(item).not.toHaveAttribute('aria-disabled');
       expect(item).toHaveAttribute('aria-posinset', '' + i++);
       expect(item).toHaveAttribute('aria-setsize');
     }
@@ -113,6 +130,35 @@ describe('ListBox', function () {
     expect(item4).toBeTruthy();
     expect(item5).toBeTruthy();
     expect(item3).toBeTruthy();
+  });
+
+  it('renders with falsy id', function () {
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ListBox items={itemsWithFalsyId} aria-label="listbox">
+          {item => (
+            <Section items={item.children} title={item.name}>
+              {item => <Item childItems={item.children}>{item.name}</Item>}
+            </Section>
+          )}
+        </ListBox>
+      </Provider>
+    );
+
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    expect(listbox).toBeTruthy();
+
+    let sections = within(listbox).getAllByRole('group');
+    expect(sections.length).toBe(itemsWithFalsyId.length);
+
+    for (let [i, section] of sections.entries()) {
+      let items = within(section).getAllByRole('option');
+      expect(items.length).toBe(itemsWithFalsyId[i].children.length);
+      for (let [j, item] of items.entries()) {
+        expect(within(item).getByText(itemsWithFalsyId[i].children[j].name)).toBeTruthy();
+      }
+    }
   });
 
   it('allows user to change menu item focus via up/down arrow keys', function () {
@@ -621,6 +667,8 @@ describe('ListBox', function () {
         </ListBox>
       </Provider>
     );
+    // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+    act(() => jest.runAllTimers());
 
     let listbox = tree.getByRole('listbox');
     let option = within(listbox).getByRole('option');
@@ -653,6 +701,8 @@ describe('ListBox', function () {
         </ListBox>
       </Provider>
     );
+    // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+    act(() => jest.runAllTimers());
 
     let listbox = tree.getByRole('listbox');
     let group = within(listbox).getByRole('group');
@@ -669,8 +719,38 @@ describe('ListBox', function () {
     expect(listbox).toHaveAttribute('data-testid', 'test');
   });
 
+  it('items support custom data attributes', function () {
+    let items = [{key: 0, name: 'Foo'}, {key: 1, name: 'Bar'}];
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ListBox aria-label="listbox" items={items}>
+          {item => <Item data-name={item.name}>{item.name}</Item>}
+        </ListBox>
+      </Provider>
+    );
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let option = within(listbox).getAllByRole('option')[0];
+    expect(option).toHaveAttribute('data-name', 'Foo');
+  });
+
+  it('item id should not get overridden by custom id', function () {
+    let items = [{key: 0, name: 'Foo'}, {key: 1, name: 'Bar'}];
+    let {getByRole} = render(
+      <Provider theme={theme}>
+        <ListBox aria-label="listbox" items={items}>
+          {item => <Item id={item.name}>{item.name}</Item>}
+        </ListBox>
+      </Provider>
+    );
+    act(() => jest.runAllTimers());
+    let listbox = getByRole('listbox');
+    let option = within(listbox).getAllByRole('option')[0];
+    expect(option.id).not.toEqual('Foo');
+  });
+
   describe('async loading', function () {
-    it('should display a spinner while loading', function () {
+    it('should display a spinner while loading', async function () {
       let {getByRole, rerender} = render(
         <Provider theme={theme}>
           <ListBox aria-label="listbox" items={[]} isLoading>
@@ -678,6 +758,8 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
@@ -694,6 +776,8 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       expect(progressbar).not.toBeInTheDocument();
     });
@@ -707,6 +791,8 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
@@ -723,6 +809,8 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(2);
@@ -739,6 +827,7 @@ describe('ListBox', function () {
       for (let i = 1; i <= 100; i++) {
         items.push({name: 'Test ' + i});
       }
+      // total height if all are rendered would be about 100 * 48px = 4800px
 
       let {getByRole} = render(
         <Provider theme={theme}>
@@ -747,6 +836,8 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
@@ -754,17 +845,22 @@ describe('ListBox', function () {
 
       listbox.scrollTop = 250;
       fireEvent.scroll(listbox);
+      // allow time for updates to run
+      act(() => jest.runAllTimers());
 
       listbox.scrollTop = 1500;
       fireEvent.scroll(listbox);
+      act(() => jest.runAllTimers());
 
+      // there are no more items to load at this height, so loadMore is only called twice
       listbox.scrollTop = 5000;
       fireEvent.scroll(listbox);
+      act(() => jest.runAllTimers());
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
-    it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', function () {
+    it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {
       // Mock clientHeight to match maxHeight prop
       let maxHeight = 300;
       jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => maxHeight);
@@ -782,13 +878,167 @@ describe('ListBox', function () {
           </ListBox>
         </Provider>
       );
+      // need to run one raf for Virtualizer layout to update, could use advance by 16 as well
+      act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
-      // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
-      // onLoadMore called three times from useLayoutEffect
-      expect(onLoadMore).toHaveBeenCalledTimes(5);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('When focused item is removed', function () {
+    it('should move focus to the next item that is not disabled', () => {
+      let tree = render(<Provider theme={theme}><FocusExample /></Provider>);
+      act(() => jest.runAllTimers());
+      let listbox = tree.getByRole('listbox');
+      let options = within(listbox).getAllByRole('option');
+      act(() => {options[2].focus();});
+      expect(options[2]).toHaveAttribute('aria-posinset', '3');
+      expect(options[2]).toHaveAttribute('aria-setsize', '6');
+      expect(document.activeElement).toBe(options[2]);
+      fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
+      expect(document.activeElement).toHaveAttribute('aria-selected', 'true');
+      let removeButton = tree.getByRole('button');
+      expect(removeButton).toBeInTheDocument();
+      act(() => {removeButton.focus();});
+      expect(document.activeElement).toBe(removeButton);
+      triggerPress(removeButton);
+      act(() => jest.runAllTimers());
+      let confirmationDialog = tree.getByRole('alertdialog');
+      expect(document.activeElement).toBe(confirmationDialog);
+      let confirmationDialogButton = within(confirmationDialog).getByRole('button');
+      expect(confirmationDialogButton).toBeInTheDocument();
+      triggerPress(confirmationDialogButton);
+      act(() => jest.runAllTimers());
+      options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(5);
+      act(() => jest.runAllTimers());
+      expect(confirmationDialog).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(options[2]);
+      expect(options[2]).toHaveAttribute('aria-posinset', '3');
+      expect(options[2]).toHaveAttribute('aria-setsize', '5');
+      act(() => {options[1].focus();});
+      fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
+      expect(document.activeElement).toHaveAttribute('aria-selected', 'true');
+      act(() => {options[0].focus();});
+      fireEvent.keyDown(document.activeElement, {key: ' ', code: 32, charCode: 32});
+      expect(document.activeElement).toHaveAttribute('aria-selected', 'true');
+      act(() => {options[0].focus();});
+      removeButton = tree.getByRole('button');
+      expect(removeButton).toBeInTheDocument();
+      act(() => {removeButton.focus();});
+      expect(document.activeElement).toBe(removeButton);
+      triggerPress(removeButton);
+      act(() => jest.runAllTimers());
+      confirmationDialog = tree.getByRole('alertdialog');
+      expect(document.activeElement).toBe(confirmationDialog);
+      confirmationDialogButton = within(confirmationDialog).getByRole('button');
+      expect(confirmationDialogButton).toBeInTheDocument();
+      triggerPress(confirmationDialogButton);
+      act(() => jest.runAllTimers());
+      options = within(listbox).getAllByRole('option');
+      expect(options.length).toBe(3);
+      act(() => jest.runAllTimers());
+      expect(confirmationDialog).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(options[0]);
+      expect(options[0]).toHaveAttribute('aria-posinset', '1');
+      expect(options[0]).toHaveAttribute('aria-setsize', '3');
+    });
+  });
+
+  describe('links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = (item) => {
+        if (type === 'mouse') {
+          triggerPress(item);
+        } else {
+          fireEvent.keyDown(item, {key: 'Enter'});
+          fireEvent.keyUp(item, {key: 'Enter'});
+        }
+      };
+
+      it('should support links with selectionMode="none"', function () {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <ListBox aria-label="listbox">
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListBox>
+          </Provider>
+        );
+
+        let items = getAllByRole('option');
+        for (let item of items) {
+          expect(item.tagName).toBe('A');
+          expect(item).toHaveAttribute('href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionMode="%s"', function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <ListBox aria-label="listbox" selectionMode={selectionMode}>
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListBox>
+          </Provider>
+        );
+
+        let items = getAllByRole('option');
+        for (let item of items) {
+          expect(item.tagName).toBe('A');
+          expect(item).toHaveAttribute('href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+        expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[1]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://adobe.com/');
+        expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('works with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let {getAllByRole} = render(
+          <Provider theme={theme} router={{navigate}}>
+            <ListBox aria-label="listbox">
+              <Item href="/one">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListBox>
+          </Provider>
+        );
+
+        let items = getAllByRole('option');
+        trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/one');
+
+        navigate.mockReset();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+
+        trigger(items[1]);
+        expect(navigate).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, snapValueToStep} from '@react-aria/utils';
+import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
+import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
-import {useControlledState} from '@react-stately/utils';
-import {useRef, useState} from 'react';
+import {useMemo, useRef, useState} from 'react';
 
 export interface SliderState {
   /**
@@ -120,16 +120,36 @@ export interface SliderState {
   setThumbEditable(index: number, editable: boolean): void,
 
   /**
+   * Increments the value of the thumb by the step or page amount.
+   */
+  incrementThumb(index: number, stepSize?: number): void,
+  /**
+   * Decrements the value of the thumb by the step or page amount.
+   */
+  decrementThumb(index: number, stepSize?: number): void,
+
+  /**
    * The step amount for the slider.
    */
-  readonly step: number
+  readonly step: number,
+
+  /**
+   * The page size for the slider, used to do a bigger step.
+   */
+  readonly pageSize: number,
+
+  /** The orientation of the slider. */
+  readonly orientation: Orientation,
+
+  /** Whether the slider is disabled. */
+  readonly isDisabled: boolean
 }
 
 const DEFAULT_MIN_VALUE = 0;
 const DEFAULT_MAX_VALUE = 100;
 const DEFAULT_STEP_VALUE = 1;
 
-interface SliderStateOptions extends SliderProps {
+export interface SliderStateOptions<T> extends SliderProps<T> {
   numberFormatter: Intl.NumberFormat
 }
 
@@ -139,22 +159,48 @@ interface SliderStateOptions extends SliderProps {
  * of any thumbs.
  * @param props
  */
-export function useSliderState(props: SliderStateOptions): SliderState {
-  const {isDisabled, minValue = DEFAULT_MIN_VALUE, maxValue = DEFAULT_MAX_VALUE, numberFormatter: formatter, step = DEFAULT_STEP_VALUE} = props;
+export function useSliderState<T extends number | number[]>(props: SliderStateOptions<T>): SliderState {
+  const {
+    isDisabled = false,
+    minValue = DEFAULT_MIN_VALUE,
+    maxValue = DEFAULT_MAX_VALUE,
+    numberFormatter: formatter,
+    step = DEFAULT_STEP_VALUE,
+    orientation = 'horizontal'
+  } = props;
 
-  const [values, setValues] = useControlledState<number[]>(
-    props.value as any,
-    props.defaultValue ?? [minValue] as any,
-    props.onChange as any
+  // Page step should be at least equal to step and always a multiple of the step.
+  let pageSize = useMemo(() => {
+    let calcPageSize = (maxValue - minValue) / 10;
+    calcPageSize = snapValueToStep(calcPageSize, 0, calcPageSize + step, step);
+    return Math.max(calcPageSize, step);
+  }, [step, maxValue, minValue]);
+
+  let value = useMemo(() => convertValue(props.value), [props.value]);
+  let defaultValue = useMemo(() => convertValue(props.defaultValue) ?? [minValue], [props.defaultValue, minValue]);
+  let onChange = createOnChange(props.value, props.defaultValue, props.onChange);
+  let onChangeEnd = createOnChange(props.value, props.defaultValue, props.onChangeEnd);
+
+  const [values, setValuesState] = useControlledState<number[]>(
+    value,
+    defaultValue,
+    onChange
   );
-  const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
+  const [isDraggings, setDraggingsState] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
-  const valuesRef = useRef<number[]>(null);
-  valuesRef.current = values;
-  const isDraggingsRef = useRef<boolean[]>(null);
-  isDraggingsRef.current = isDraggings;
+  const valuesRef = useRef<number[]>(values);
+  const isDraggingsRef = useRef<boolean[]>(isDraggings);
+  let setValues = (values: number[]) => {
+    valuesRef.current = values;
+    setValuesState(values);
+  };
+
+  let setDraggings = (draggings: boolean[]) => {
+    isDraggingsRef.current = draggings;
+    setDraggingsState(draggings);
+  };
 
   function getValuePercent(value: number) {
     return (value - minValue) / (maxValue - minValue);
@@ -184,8 +230,8 @@ export function useSliderState(props: SliderStateOptions): SliderState {
 
     // Round value to multiple of step, clamp value between min and max
     value = snapValueToStep(value, thisMin, thisMax, step);
-    valuesRef.current = replaceIndex(valuesRef.current, index, value);
-    setValues(valuesRef.current);
+    let newValues = replaceIndex(valuesRef.current, index, value);
+    setValues(newValues);
   }
 
   function updateDragging(index: number, dragging: boolean) {
@@ -198,8 +244,8 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     setDraggings(isDraggingsRef.current);
 
     // Call onChangeEnd if no handles are dragging.
-    if (props.onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
-      props.onChangeEnd(valuesRef.current);
+    if (onChangeEnd && wasDragging && !isDraggingsRef.current.some(Boolean)) {
+      onChangeEnd(valuesRef.current);
     }
   }
 
@@ -220,6 +266,16 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     return clamp(getRoundedValue(val), minValue, maxValue);
   }
 
+  function incrementThumb(index: number, stepSize: number = 1) {
+    let s = Math.max(stepSize, step);
+    updateValue(index, snapValueToStep(values[index] + s, minValue, maxValue, step));
+  }
+
+  function decrementThumb(index: number, stepSize: number = 1) {
+    let s = Math.max(stepSize, step);
+    updateValue(index, snapValueToStep(values[index] - s, minValue, maxValue, step));
+  }
+
   return {
     values: values,
     getThumbValue: (index: number) => values[index],
@@ -238,7 +294,12 @@ export function useSliderState(props: SliderStateOptions): SliderState {
     getPercentValue,
     isThumbEditable,
     setThumbEditable,
-    step
+    incrementThumb,
+    decrementThumb,
+    step,
+    pageSize,
+    orientation,
+    isDisabled
   };
 }
 
@@ -248,4 +309,22 @@ function replaceIndex<T>(array: T[], index: number, value: T) {
   }
 
   return [...array.slice(0, index), value, ...array.slice(index + 1)];
+}
+
+function convertValue(value: number | number[]) {
+  if (value == null) {
+    return undefined;
+  }
+
+  return Array.isArray(value) ? value : [value];
+}
+
+function createOnChange(value, defaultValue, onChange) {
+  return (newValue: number[]) => {
+    if (typeof value === 'number' || typeof defaultValue === 'number') {
+      onChange?.(newValue[0]);
+    } else {
+      onChange?.(newValue);
+    }
+  };
 }

@@ -1,18 +1,18 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/checkbox';
 import packageData from '@react-spectrum/checkbox/package.json';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 
 ```jsx import
  import {Checkbox} from '@react-spectrum/checkbox';
@@ -27,14 +27,15 @@ keywords: [input]
 
 # Checkbox
 
-<p>{docs.exports.Checkbox.description}</p>
+<PageDescription>{docs.exports.Checkbox.description}</PageDescription>
 
 <HeaderInfo
  packageData={packageData}
  componentNames={['Checkbox']}
  sourceData={[
  {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/checkbox/'}
- ]} />
+ ]}
+ since="3.0.0" />
 
 ## Example
 
@@ -86,6 +87,14 @@ The Checkbox will visually remain indeterminate until the `isIndeterminate` prop
 <Checkbox isIndeterminate>Subscribe</Checkbox>
 ```
 
+### HTML forms
+
+Checkbox supports the `name` and `value` props for integration with HTML forms.
+
+```tsx example
+<Checkbox name="newsletter" value="subscribe">Subscribe</Checkbox>
+```
+
 ## Events
 
 Checkboxes accept a user defined `onChange` prop, triggered whenever the Checkbox is clicked.
@@ -109,10 +118,10 @@ function Example() {
 ## Validation
 
 Checkboxes can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the Checkbox via the `validationState` prop.
-
+Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
+The invalid state is only communicated via a color change so in order to be accessible the validation error must also be communicated in another way.
 ```tsx example
-<Checkbox validationState="invalid">I accept the terms and conditions</Checkbox>
+<Checkbox isInvalid>I accept the terms and conditions</Checkbox>
 ```
 
 ## Props

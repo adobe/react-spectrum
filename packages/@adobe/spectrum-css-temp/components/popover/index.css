@@ -30,7 +30,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Popover {
-  @inherit: %spectrum-overlay;
+  composes: spectrum-overlay;
 
   /* Be a flexbox to allow a full sized content area that scrolls */
   display: inline-flex;
@@ -48,10 +48,15 @@ governing permissions and limitations under the License.
 
   outline: none; /* Hide focus outline */
   box-sizing: border-box;
+  overflow: hidden;
+}
 
-  &.is-open {
-    @inherit: %spectrum-overlay--open;
-  }
+.is-open {
+  composes: spectrum-overlay--open;
+}
+
+.spectrum-Popover--withTip {
+  overflow: visible;
 }
 
 .spectrum-Popover-tip {
@@ -78,12 +83,13 @@ governing permissions and limitations under the License.
     margin-right: var(--spectrum-popover-target-offset);
   }
 
-  &.is-open {
-    @inherit: %spectrum-overlay--left--open;
-  }
-  .spectrum-Popover-tip {
+  & .spectrum-Popover-tip {
     left: 100%;
   }
+}
+
+.is-open--left {
+  composes: spectrum-overlay--left--open;
 }
 
 .spectrum-Popover--right {
@@ -91,13 +97,14 @@ governing permissions and limitations under the License.
     margin-left: var(--spectrum-popover-target-offset);
   }
 
-  &.is-open {
-    @inherit: %spectrum-overlay--right--open;
-  }
-  .spectrum-Popover-tip {
+  & .spectrum-Popover-tip {
     right: 100%;
     transform: scaleX(-1);
   }
+}
+
+.is-open--right {
+  composes: spectrum-overlay--right--open;
 }
 
 /* Center the tip by default */
@@ -114,13 +121,14 @@ governing permissions and limitations under the License.
     margin-top: var(--spectrum-popover-target-offset);
   }
 
-  &.is-open {
-    @inherit: %spectrum-overlay--bottom--open;
-  }
-  .spectrum-Popover-tip {
+  & .spectrum-Popover-tip {
     bottom: 100%;
     transform: scaleY(-1);
   }
+}
+
+.is-open--bottom {
+  composes: spectrum-overlay--bottom--open;
 }
 
 .spectrum-Popover--top {
@@ -128,12 +136,13 @@ governing permissions and limitations under the License.
     margin-bottom: var(--spectrum-popover-target-offset);
   }
 
-  &.is-open {
-    @inherit: %spectrum-overlay--top--open;
-  }
-  .spectrum-Popover-tip {
+  & .spectrum-Popover-tip {
     top: 100%;
   }
+}
+
+.is-open--top {
+  composes: spectrum-overlay--top--open;
 }
 
 /* Center the tip by default */

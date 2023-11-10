@@ -12,4 +12,5 @@
 
 /// <reference types="css-module-types" />
 
-export * from './SearchWithin';
+export {SearchWithin} from './SearchWithin';
+export type {SpectrumSearchWithinProps} from '@react-types/searchwithin';

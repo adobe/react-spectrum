@@ -11,10 +11,9 @@
  */
 
 import {CheckboxGroupContext} from './context';
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, LabelPosition} from '@react-types/shared';
-import {Label} from '@react-spectrum/label';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {classNames, useDOMRef} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {Field} from '@react-spectrum/label';
 import {Provider, useProviderProps} from '@react-spectrum/provider';
 import React from 'react';
 import {SpectrumCheckboxGroupProps} from '@react-types/checkbox';
@@ -28,55 +27,23 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
   props = useFormProps(props);
   let {
     isEmphasized,
-    isRequired,
-    necessityIndicator,
-    label,
-    labelPosition = 'top' as LabelPosition,
-    labelAlign,
     children,
-    orientation = 'vertical',
-    validationState,
-    ...otherProps
+    orientation = 'vertical'
   } = props;
   let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
   let state = useCheckboxGroupState(props);
-  let {labelProps, groupProps} = useCheckboxGroup(props, state);
+  let {groupProps, ...otherProps} = useCheckboxGroup(props, state);
 
   return (
-    <div
-      {...styleProps}
-      {...groupProps}
-      className={
-        classNames(
-          styles,
-          'spectrum-FieldGroup',
-          {
-            'spectrum-FieldGroup--positionSide': labelPosition === 'side'
-          },
-          // This is so checkbox group works inside a <Form>
-          classNames(
-            labelStyles,
-            'spectrum-Field'
-          ),
-          styleProps.className
-        )
-      }
-      ref={domRef}>
-      {label &&
-        <Label
-          {...labelProps}
-          elementType="span"
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}
-          includeNecessityIndicatorInAccessibilityName>
-          {label}
-        </Label>
-      }
+    <Field
+      {...props}
+      {...otherProps}
+      ref={domRef}
+      wrapperClassName={classNames(styles, 'spectrum-FieldGroup')}
+      elementType="span"
+      includeNecessityIndicatorInAccessibilityName>
       <div
-        role="presentation"
+        {...groupProps}
         className={
           classNames(
             styles,
@@ -86,13 +53,13 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
             }
           )
         }>
-        <Provider isEmphasized={isEmphasized} validationState={validationState}>
+        <Provider isEmphasized={isEmphasized}>
           <CheckboxGroupContext.Provider value={state}>
             {children}
           </CheckboxGroupContext.Provider>
         </Provider>
       </div>
-    </div>
+    </Field>
   );
 }
 

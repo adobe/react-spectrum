@@ -12,7 +12,7 @@
 
 import {OverlayContainer, OverlayProvider, useModal} from '..';
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils';
 
 function ModalDOM(props) {
   let {modalProps} = useModal();
@@ -180,9 +180,17 @@ describe('useModal', function () {
           </div>
         )
       ).toThrow();
-      expect(console.error).toHaveBeenCalledWith(
-        expect.stringContaining('An OverlayContainer must not be inside another container. Please change the portalContainer prop.'),
-        expect.anything()
+      expect.extend({
+        toHaveBeenNthCalledWithError(received, index, arg) {
+          return {
+            pass: received.mock.calls[index - 1][0].toString().includes(arg),
+            message: () => `expected ${received.mock.calls[0][0]} to include ${arg}`
+          };
+        }
+      });
+      expect(console.error).toHaveBeenNthCalledWithError(
+        1,
+          'An OverlayContainer must not be inside another container. Please change the portalContainer prop.'
       );
     });
   });

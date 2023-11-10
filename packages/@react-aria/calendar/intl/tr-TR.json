@@ -1,11 +1,14 @@
 {
-  "dateSelected": "{date, date, full} seçildi",
+  "dateRange": "{startDate} - {endDate}",
+  "dateSelected": "{date} seçildi",
   "finishRangeSelectionPrompt": "Tarih aralığı seçimini tamamlamak için tıklayın",
+  "maximumDate": "Son müsait tarih",
+  "minimumDate": "İlk müsait tarih",
   "next": "Sonraki",
   "previous": "Önceki",
-  "selectedDateDescription": "Seçili Tarih: {date, date, full}",
-  "selectedRangeDescription": "Seçili Aralık: {start, date, long} - {end, date, long}",
+  "selectedDateDescription": "Seçilen Tarih: {date}",
+  "selectedRangeDescription": "Seçilen Aralık: {dateRange}",
   "startRangeSelectionPrompt": "Tarih aralığı seçimini başlatmak için tıklayın",
-  "todayDate": "Bugün, {date, date, full}",
-  "todayDateSelected": "Bugün, {date, date, full} seçildi"
+  "todayDate": "Bugün, {date}",
+  "todayDateSelected": "Bugün, {date} seçildi"
 }

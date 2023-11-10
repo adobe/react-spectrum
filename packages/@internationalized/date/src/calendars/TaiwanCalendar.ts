@@ -13,61 +13,76 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
+import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
-import {GregorianCalendar} from './GregorianCalendar';
+import {fromExtendedYear, getExtendedYear, GregorianCalendar} from './GregorianCalendar';
 import {Mutable} from '../utils';
 
 const TAIWAN_ERA_START = 1911;
 
-function gregorianYear(date: CalendarDate) {
+function gregorianYear(date: AnyCalendarDate) {
   return date.era === 'minguo'
     ? date.year + TAIWAN_ERA_START
     : 1 - date.year + TAIWAN_ERA_START;
 }
 
-function gregorianToTaiwan(year: number, date: Mutable<CalendarDate>) {
+function gregorianToTaiwan(year: number): [string, number] {
   let y = year - TAIWAN_ERA_START;
   if (y > 0) {
-    date.era = 'minguo';
-    date.year = y;
+    return ['minguo', y];
   } else {
-    date.era = 'before_minguo';
-    date.year = 1 - y;
+    return ['before_minguo', 1 - y];
   }
 }
 
+/**
+ * The Taiwanese calendar is the same as the Gregorian calendar, but years
+ * are numbered starting from 1912 (Gregorian). Two eras are supported:
+ * 'before_minguo' and 'minguo'.
+ */
 export class TaiwanCalendar extends GregorianCalendar {
   identifier = 'roc'; // Republic of China
 
   fromJulianDay(jd: number): CalendarDate {
-    let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
-    gregorianToTaiwan(date.year, date);
-    return date;
+    let date = super.fromJulianDay(jd);
+    let extendedYear = getExtendedYear(date.era, date.year);
+    let [era, year] = gregorianToTaiwan(extendedYear);
+    return new CalendarDate(this, era, year, date.month, date.day);
   }
 
-  toJulianDay(date: CalendarDate) {
-    return super.toJulianDay(
-      new CalendarDate(
-        gregorianYear(date),
-        date.month,
-        date.day
-      )
-    );
+  toJulianDay(date: AnyCalendarDate) {
+    return super.toJulianDay(toGregorian(date));
   }
 
-  getCurrentEra() {
-    return 'minguo';
+  getEras() {
+    return ['before_minguo', 'minguo'];
   }
 
-  balanceDate(date: Mutable<CalendarDate>) {
-    gregorianToTaiwan(gregorianYear(date), date);
+  balanceDate(date: Mutable<AnyCalendarDate>) {
+    let [era, year] = gregorianToTaiwan(gregorianYear(date));
+    date.era = era;
+    date.year = year;
   }
 
-  addYears(date: Mutable<CalendarDate>, years: number) {
-    if (date.era === 'before_minguo') {
-      years = -years;
-    }
-
-    date.year += years;
+  isInverseEra(date: AnyCalendarDate): boolean {
+    return date.era === 'before_minguo';
   }
+
+  getDaysInMonth(date: AnyCalendarDate): number {
+    return super.getDaysInMonth(toGregorian(date));
+  }
+
+  getYearsInEra(date: AnyCalendarDate): number {
+    return date.era === 'before_minguo' ? 9999 : 9999 - TAIWAN_ERA_START;
+  }
+}
+
+function toGregorian(date: AnyCalendarDate) {
+  let [era, year] = fromExtendedYear(gregorianYear(date));
+  return new CalendarDate(
+    era,
+    year,
+    date.month,
+    date.day
+  );
 }

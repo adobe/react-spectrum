@@ -22,6 +22,7 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
   let {children, title, items} = props;
   yield {
     type: 'section',
+    props: props,
     hasChildNodes: true,
     rendered: title,
     'aria-label': props['aria-label'],
@@ -30,7 +31,7 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
         if (!items) {
           throw new Error('props.children was a function but props.items is missing');
         }
-    
+
         for (let item of items) {
           yield {
             type: 'item',
@@ -54,5 +55,5 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
 };
 
 // We don't want getCollectionNode to show up in the type definition
-let _Section = Section as <T>(props: SectionProps<T>) => JSX.Element;
+let _Section = Section as <T>(props: SectionProps<T>) => React.JSX.Element;
 export {_Section as Section};

@@ -10,12 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
+import {CollectionStateBase} from '@react-types/shared';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {useState} from 'react';
 
-export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState {
+export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
+
+export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState, FormValidationState {
   /** Whether the select is currently focused. */
   readonly isFocused: boolean,
 
@@ -28,7 +32,7 @@ export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerSta
  * of items from props, handles the open state for the popup menu, and manages
  * multiple selection state.
  */
-export function useSelectState<T extends object>(props: SelectProps<T>): SelectState<T>  {
+export function useSelectState<T extends object>(props: SelectStateOptions<T>): SelectState<T>  {
   let triggerState = useMenuTriggerState(props);
   let listState = useSingleSelectListState({
     ...props,
@@ -38,12 +42,19 @@ export function useSelectState<T extends object>(props: SelectProps<T>): SelectS
       }
 
       triggerState.close();
+      validationState.commitValidation();
     }
+  });
+
+  let validationState = useFormValidationState({
+    ...props,
+    value: listState.selectedKey
   });
 
   let [isFocused, setFocused] = useState(false);
 
   return {
+    ...validationState,
     ...listState,
     ...triggerState,
     open() {

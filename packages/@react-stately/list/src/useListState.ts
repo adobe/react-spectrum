@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, CollectionBase, MultipleSelection, Node} from '@react-types/shared';
-import {Key, useEffect, useMemo} from 'react';
+import {Collection, CollectionStateBase, Key, Node} from '@react-types/shared';
 import {ListCollection} from './ListCollection';
-import {SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {useCallback, useEffect, useMemo, useRef} from 'react';
 import {useCollection} from '@react-stately/collections';
 
-export interface ListProps<T> extends CollectionBase<T>, MultipleSelection {
+export interface ListProps<T> extends CollectionStateBase<T>, MultipleSelectionStateProps {
   /** Filter function to generate a filtered list of nodes. */
   filter?: (nodes: Iterable<Node<T>>) => Iterable<Node<T>>,
   /** @private */
@@ -39,30 +39,73 @@ export interface ListState<T> {
  * of items from props, and manages multiple selection state.
  */
 export function useListState<T extends object>(props: ListProps<T>): ListState<T>  {
-  let {
-    filter
-  } = props;
+  let {filter} = props;
 
   let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);
 
-  let factory = nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>);
+  let factory = useCallback(nodes => filter ? new ListCollection(filter(nodes)) : new ListCollection(nodes as Iterable<Node<T>>), [filter]);
   let context = useMemo(() => ({suppressTextValueWarning: props.suppressTextValueWarning}), [props.suppressTextValueWarning]);
 
-  let collection = useCollection(props, factory, context, [filter]);
+  let collection = useCollection(props, factory, context);
+
+  let selectionManager = useMemo(() =>
+    new SelectionManager(collection, selectionState)
+    , [collection, selectionState]
+  );
 
   // Reset focused key if that item is deleted from the collection.
+  const cachedCollection = useRef(null);
   useEffect(() => {
     if (selectionState.focusedKey != null && !collection.getItem(selectionState.focusedKey)) {
-      selectionState.setFocusedKey(null);
+      const startItem = cachedCollection.current.getItem(selectionState.focusedKey);
+      const cachedItemNodes = [...cachedCollection.current.getKeys()].map(
+        key => {
+          const itemNode = cachedCollection.current.getItem(key);
+          return itemNode.type === 'item' ? itemNode : null;
+        }
+      ).filter(node => node !== null);
+      const itemNodes = [...collection.getKeys()].map(
+        key => {
+          const itemNode = collection.getItem(key);
+          return itemNode.type === 'item' ? itemNode : null;
+        }
+      ).filter(node => node !== null);
+      const diff = cachedItemNodes.length - itemNodes.length;
+      let index = Math.min(
+        (
+          diff > 1 ?
+          Math.max(startItem.index - diff + 1, 0) :
+          startItem.index
+        ),
+        itemNodes.length - 1);
+      let newNode:Node<T>;
+      while (index >= 0) {
+        if (!selectionManager.isDisabled(itemNodes[index].key)) {
+          newNode = itemNodes[index];
+          break;
+        }
+        // Find next, not disabled item.
+        if (index < itemNodes.length - 1) {
+          index++;
+        // Otherwise, find previous, not disabled item.
+        } else {
+          if (index > startItem.index) {
+            index = startItem.index;
+          }
+          index--;
+        }
+      }
+      selectionState.setFocusedKey(newNode ? newNode.key : null);
     }
-  }, [collection, selectionState.focusedKey]);
+    cachedCollection.current = collection;
+  }, [collection, selectionManager, selectionState, selectionState.focusedKey]);
 
   return {
     collection,
     disabledKeys,
-    selectionManager: new SelectionManager(collection, selectionState)
+    selectionManager
   };
 }

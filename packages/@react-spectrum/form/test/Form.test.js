@@ -10,17 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
+import {act} from 'react-dom/test-utils';
 import {Button} from '@react-spectrum/button';
+import {Content, Header} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
+import {pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render} from '@testing-library/react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
+import {within} from '@testing-library/dom';
 
 describe('Form', function () {
+  let user;
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
+
   it('should render a form', () => {
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -30,6 +46,7 @@ describe('Form', function () {
 
     let form = getByRole('form');
     expect(form).toBeTruthy();
+    expect(form).toHaveAttribute('novalidate');
   });
 
   it('should render children inside the form', () => {
@@ -74,7 +91,7 @@ describe('Form', function () {
     expect(label).toHaveTextContent('A text field ​(optional)');
   });
 
-  it('supports form attributes', () => {
+  it('supports form attributes', async () => {
     let onSubmit = jest.fn().mockImplementation(e => e.preventDefault());
     let {getByLabelText, getByRole} = render(
       <Provider theme={theme}>
@@ -98,7 +115,7 @@ describe('Form', function () {
     expect(form).toHaveAttribute('encType', 'text/plain');
     expect(form).toHaveAttribute('autoComplete', 'on');
     let submit = getByLabelText('Submit');
-    userEvent.click(submit);
+    await user.click(submit);
     expect(onSubmit).toHaveBeenCalled();
   });
 
@@ -181,6 +198,44 @@ describe('Form', function () {
 
       let form = getByRole('form');
       expect(form.elements['picker'].value).toEqual('one');
+    });
+
+    it('contextual help should not be disabled nor should its dismiss button be disabled', async () => {
+      let {getByRole, getByLabelText} = render(
+        <Provider theme={theme}>
+          <Form aria-label="Test" isDisabled>
+            <Picker
+              name="picker"
+              defaultSelectedKey="one"
+              label="Test Picker"
+              contextualHelp={(
+                <ContextualHelp>
+                  <Header>What is it good for?</Header>
+                  <Content>Absolutely nothing.</Content>
+                </ContextualHelp>
+              )}>
+              <Item key="one">One</Item>
+              <Item key="two">Two</Item>
+              <Item key="three">Three</Item>
+            </Picker>
+          </Form>
+        </Provider>
+      );
+
+      let button = getByLabelText('Help');
+      triggerPress(button);
+
+      let dialog = getByRole('dialog');
+      await user.tab();
+
+      let dismissButton = within(dialog).getByRole('button');
+      expect(document.activeElement).toBe(dismissButton);
+
+      triggerPress(dismissButton);
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+
+      expect(document.activeElement).toBe(button);
     });
   });
 });

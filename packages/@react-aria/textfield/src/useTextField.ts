@@ -11,27 +11,93 @@
  */
 
 import {AriaTextFieldProps} from '@react-types/textfield';
-import {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, TextareaHTMLAttributes} from 'react';
-import {ElementType} from 'react';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {
+  ChangeEvent,
+  DOMFactory,
+  HTMLAttributes,
+  LabelHTMLAttributes,
+  ReactDOM,
+  RefObject,
+  useEffect
+} from 'react';
+import {DOMAttributes, ValidationResult} from '@react-types/shared';
+import {filterDOMProps, getOwnerWindow, mergeProps, useFormReset} from '@react-aria/utils';
+import {useControlledState} from '@react-stately/utils';
+import {useField} from '@react-aria/label';
 import {useFocusable} from '@react-aria/focus';
-import {useLabel} from '@react-aria/label';
+import {useFormValidation} from '@react-aria/form';
+import {useFormValidationState} from '@react-stately/form';
 
-export interface TextFieldAria {
-  /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
-  /** Props for the text field's visible label element (if any). */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>
-}
+/**
+ * A map of HTML element names and their interface types.
+ * For example `'a'` -> `HTMLAnchorElement`.
+ */
+type IntrinsicHTMLElements = {
+  [K in keyof IntrinsicHTMLAttributes]: IntrinsicHTMLAttributes[K] extends HTMLAttributes<infer T> ? T : never
+};
 
-interface AriaTextFieldOptions extends AriaTextFieldProps {
+/**
+ * A map of HTML element names and their attribute interface types.
+ * For example `'a'` -> `AnchorHTMLAttributes<HTMLAnchorElement>`.
+ */
+type IntrinsicHTMLAttributes = {
+  [K in keyof ReactDOM]: ReactDOM[K] extends DOMFactory<infer T, any> ? T : never
+};
+
+type DefaultElementType = 'input';
+
+/**
+ * The intrinsic HTML element names that `useTextField` supports; e.g. `input`,
+ * `textarea`.
+ */
+type TextFieldIntrinsicElements = keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>;
+
+/**
+ * The HTML element interfaces that `useTextField` supports based on what is
+ * defined for `TextFieldIntrinsicElements`; e.g. `HTMLInputElement`,
+ * `HTMLTextAreaElement`.
+ */
+type TextFieldHTMLElementType = Pick<IntrinsicHTMLElements, TextFieldIntrinsicElements>;
+
+/**
+ * The HTML attributes interfaces that `useTextField` supports based on what
+ * is defined for `TextFieldIntrinsicElements`; e.g. `InputHTMLAttributes`,
+ * `TextareaHTMLAttributes`.
+ */
+type TextFieldHTMLAttributesType = Pick<IntrinsicHTMLAttributes, TextFieldIntrinsicElements>;
+
+/**
+ * The type of `inputProps` returned by `useTextField`; e.g. `InputHTMLAttributes`,
+ * `TextareaHTMLAttributes`.
+ */
+type TextFieldInputProps<T extends TextFieldIntrinsicElements> = TextFieldHTMLAttributesType[T];
+
+export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> extends AriaTextFieldProps {
   /**
    * The HTML element used to render the input, e.g. 'input', or 'textarea'.
    * It determines whether certain HTML attributes will be included in `inputProps`.
    * For example, [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
    * @default 'input'
    */
-  inputElementType?: ElementType
+  inputElementType?: T
+}
+
+/**
+ * The type of `ref` object that can be passed to `useTextField` based on the given
+ * intrinsic HTML element name; e.g.`RefObject<HTMLInputElement>`,
+ * `RefObject<HTMLTextAreaElement>`.
+ */
+type TextFieldRefObject<T extends TextFieldIntrinsicElements> = RefObject<TextFieldHTMLElementType[T]>;
+
+export interface TextFieldAria<T extends TextFieldIntrinsicElements = DefaultElementType> extends ValidationResult {
+  /** Props for the input element. */
+  inputProps: TextFieldInputProps<T>,
+  /** Props for the text field's visible label element, if any. */
+  labelProps: DOMAttributes | LabelHTMLAttributes<HTMLLabelElement>,
+  /** Props for the text field's description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the text field's error message element, if any. */
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -39,27 +105,57 @@ interface AriaTextFieldOptions extends AriaTextFieldProps {
  * @param props - Props for the text field.
  * @param ref - Ref to the HTML input or textarea element.
  */
-export function useTextField(
-  props: AriaTextFieldOptions,
-  ref: RefObject<HTMLInputElement | HTMLTextAreaElement>
-): TextFieldAria {
+export function useTextField<T extends TextFieldIntrinsicElements = DefaultElementType>(
+  props: AriaTextFieldOptions<T>,
+  ref: TextFieldRefObject<T>
+): TextFieldAria<T> {
   let {
     inputElementType = 'input',
     isDisabled = false,
     isRequired = false,
     isReadOnly = false,
-    validationState,
     type = 'text',
-    onChange = () => {}
-  } = props;
+    validationBehavior = 'aria'
+  }: AriaTextFieldOptions<TextFieldIntrinsicElements> = props;
+  let [value, setValue] = useControlledState<string>(props.value, props.defaultValue || '', props.onChange);
   let {focusableProps} = useFocusable(props, ref);
-  let {labelProps, fieldProps} = useLabel(props);
+  let validationState = useFormValidationState({
+    ...props,
+    value
+  });
+  let {isInvalid, validationErrors, validationDetails} = validationState.displayValidation;
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+    ...props,
+    isInvalid,
+    errorMessage: props.errorMessage || validationErrors
+  });
   let domProps = filterDOMProps(props, {labelable: true});
 
   const inputOnlyProps = {
     type,
     pattern: props.pattern
   };
+
+  useFormReset(ref, value, setValue);
+  useFormValidation(props, validationState, ref);
+
+  useEffect(() => {
+    // This works around a React/Chrome bug that prevents textarea elements from validating when controlled.
+    // We prevent React from updating defaultValue (i.e. children) of textarea when `value` changes,
+    // which causes Chrome to skip validation. Only updating `value` is ok in our case since our
+    // textareas are always controlled. React is planning on removing this synchronization in a
+    // future major version.
+    // https://github.com/facebook/react/issues/19474
+    // https://github.com/facebook/react/issues/11896
+    if (ref.current instanceof getOwnerWindow(ref.current).HTMLTextAreaElement) {
+      let input = ref.current;
+      Object.defineProperty(input, 'defaultValue', {
+        get: () => input.value,
+        set: () => {},
+        configurable: true
+      });
+    }
+  }, [ref]);
 
   return {
     labelProps,
@@ -69,15 +165,15 @@ export function useTextField(
       {
         disabled: isDisabled,
         readOnly: isReadOnly,
-        'aria-required': isRequired || undefined,
-        'aria-invalid': validationState === 'invalid' || undefined,
+        required: isRequired && validationBehavior === 'native',
+        'aria-required': (isRequired && validationBehavior === 'aria') || undefined,
+        'aria-invalid': isInvalid || undefined,
         'aria-errormessage': props['aria-errormessage'],
         'aria-activedescendant': props['aria-activedescendant'],
         'aria-autocomplete': props['aria-autocomplete'],
         'aria-haspopup': props['aria-haspopup'],
-        value: props.value,
-        defaultValue: props.value ? undefined : props.defaultValue,
-        onChange: (e: ChangeEvent<HTMLInputElement>) => onChange(e.target.value),
+        value,
+        onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
         autoComplete: props.autoComplete,
         maxLength: props.maxLength,
         minLength: props.minLength,
@@ -104,6 +200,11 @@ export function useTextField(
         ...focusableProps,
         ...fieldProps
       }
-    )
+    ),
+    descriptionProps,
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

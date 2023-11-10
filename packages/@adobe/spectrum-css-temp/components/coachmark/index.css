@@ -59,7 +59,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-CoachMarkPopover-step {
-  align-self: start;
+  align-self: flex-start;
 
   font-size: var(--spectrum-coachmark-step-text-size);
   font-weight: var(--spectrum-coachmark-step-text-font-weight);

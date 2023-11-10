@@ -12,10 +12,22 @@
 
 import {Grid, repeat} from '@react-spectrum/layout';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {View} from '@react-spectrum/view';
 
-let baseColors = ['celery', 'chartreuse', 'yellow', 'magenta', 'fuchsia', 'purple', 'indigo', 'seafoam', 'red', 'orange', 'green', 'blue'];
+let baseColors = [
+  'celery',
+  'chartreuse',
+  'yellow',
+  'magenta',
+  'fuchsia',
+  'purple',
+  'indigo',
+  'seafoam',
+  'red',
+  'orange',
+  'green',
+  'blue'
+];
 let colors = [];
 for (let color of baseColors) {
   for (let i = 4; i <= 7; i++) {
@@ -23,42 +35,54 @@ for (let color of baseColors) {
   }
 }
 
-storiesOf('Grid', module)
-  // we do not care about colors for this one, knowing it lays out correctly is all
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}})
-  .add(
-    'Explicit grid',
-    () => (
-      <Grid
-        areas={[
-          'header  header',
-          'sidebar content',
-          'footer  footer'
-        ]}
-        columns={['size-3000', 'auto']}
-        rows={['size-1000', 'auto', 'size-1000']}
-        height="size-6000"
-        width="80%"
-        gap="size-100">
-        <View backgroundColor="celery-600" gridArea="header" padding="size-100">Header</View>
-        <View backgroundColor="blue-600" gridArea="sidebar" padding="size-100">Sidebar</View>
-        <View backgroundColor="purple-600" gridArea="content" padding="size-100">Content</View>
-        <View backgroundColor="magenta-600" gridArea="footer" padding="size-100">Footer</View>
-      </Grid>
-    )
-  )
-  .add(
-    'Implicit grid',
-    () => (
-      <Grid
-        columns={repeat('auto-fit', 'size-800')}
-        autoRows="size-800"
-        justifyContent="center"
-        width="80%"
-        gap="size-100">
-        {colors.map(color =>
-          <View key={color} backgroundColor={color} />
-        )}
-      </Grid>
-    )
-  );
+export default {
+  title: 'Grid',
+
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light']}
+  }
+};
+
+export const ExplicitGrid = () => (
+  <Grid
+    areas={['header  header', 'sidebar content', 'footer  footer']}
+    columns={['size-3000', 'auto']}
+    rows={['size-1000', 'auto', 'size-1000']}
+    height="size-6000"
+    width="80%"
+    gap="size-100">
+    <View backgroundColor="celery-600" gridArea="header" padding="size-100">
+      Header
+    </View>
+    <View backgroundColor="blue-600" gridArea="sidebar" padding="size-100">
+      Sidebar
+    </View>
+    <View backgroundColor="purple-600" gridArea="content" padding="size-100">
+      Content
+    </View>
+    <View backgroundColor="magenta-600" gridArea="footer" padding="size-100">
+      Footer
+    </View>
+  </Grid>
+);
+
+ExplicitGrid.story = {
+  name: 'Explicit grid'
+};
+
+export const ImplicitGrid = () => (
+  <Grid
+    columns={repeat('auto-fit', 'size-800')}
+    autoRows="size-800"
+    justifyContent="center"
+    width="80%"
+    gap="size-100">
+    {colors.map((color) => (
+      <View key={color} backgroundColor={color} />
+    ))}
+  </Grid>
+);
+
+ImplicitGrid.story = {
+  name: 'Implicit grid'
+};

@@ -1,0 +1,29 @@
+<svg style="height:150px;background:var(--anatomy-gray-100);padding:calc((152px - 130px) / 2) 10px;width:calc(100% - 20px);border-radius:4px" viewBox="0 -20 415 220">
+  <g id="Tag" transform="translate(67.653 85.595)">
+    <rect id="Placement_Area" data-name="Placement Area" width="148.873" height="45.807" transform="translate(0 0)" fill="red" opacity="0"/>
+    <g id="Background" transform="translate(0 0)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+      <rect width="148.873" height="45.807" rx="4" stroke="none"/>
+      <rect x="0.5" y="0.5" width="147.873" height="44.807" rx="3.5" fill="none"/>
+    </g>
+    <text id="Traveling" transform="translate(19.086 28.635)" fill="var(--anatomy-gray-700)" font-size="21" font-family="Adobe-Clean"><tspan x="0" y="0">Traveling</tspan></text>
+    <g id="Close" transform="translate(118.335 15.269)">
+      <rect id="Frame" width="15.269" height="15.269" fill="var(--anatomy-gray-600)" opacity="0"/>
+      <path id="Shape" d="M13.511,11.824,8.867,7.18l4.644-4.644A1.193,1.193,0,0,0,11.824.849L7.18,5.493,2.537.849A1.193,1.193,0,1,0,.849,2.537L5.493,7.18.849,11.824a1.193,1.193,0,0,0,1.687,1.687L7.18,8.867l4.644,4.644a1.193,1.193,0,0,0,1.687-1.687Z" transform="translate(0.454 0.454)" fill="var(--anatomy-gray-600)"/>
+    </g>
+  </g>
+  <g id="Tag-2" data-name="Tag" transform="translate(220.343 53)">
+    <rect id="Placement_Area-2" data-name="Placement Area" width="148.873" height="45.807" transform="translate(0 32.595)" fill="red" opacity="0"/>
+    <g id="Background-2" data-name="Background" transform="translate(0 32.595)" fill="var(--anatomy-gray-75)" stroke="var(--anatomy-gray-600)" stroke-width="1">
+      <rect width="124.061" height="45.807" rx="4" stroke="none"/>
+      <rect x="0.5" y="0.5" width="123.061" height="44.807" rx="3.5" fill="none"/>
+    </g>
+    <text id="Hiking" transform="translate(19.086 61.23)" fill="var(--anatomy-gray-700)" font-size="21" font-family="Adobe-Clean"><tspan x="0" y="0">Hiking</tspan></text>
+    <g id="Close-2" data-name="Close" transform="translate(93.523 47.864)">
+      <rect id="Frame-2" data-name="Frame" width="15.269" height="15.269" transform="translate(0)" fill="var(--anatomy-gray-600)" opacity="0"/>
+      <path id="Shape-2" data-name="Shape" d="M13.511,11.824,8.867,7.18l4.644-4.644A1.193,1.193,0,0,0,11.824.849L7.18,5.493,2.537.849A1.193,1.193,0,1,0,.849,2.537L5.493,7.18.849,11.824a1.193,1.193,0,0,0,1.687,1.687L7.18,8.867l4.644,4.644a1.193,1.193,0,0,0,1.687-1.687Z" transform="translate(0.044 0.454)" fill="var(--anatomy-gray-600)"/>
+    </g>
+  </g>
+  <g id="Group_2" data-name="Group 2" transform="translate(-105.895 -47.94)">
+    <text id="Categories" transform="translate(172.658 112.312)" fill="var(--anatomy-gray-700)" font-size="21" font-family="Adobe-Clean"><tspan x="0" y="0">Categories</tspan></text>
+  </g>
+</svg>

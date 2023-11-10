@@ -40,5 +40,9 @@ export interface SpectrumLabelableProps extends LabelableProps {
   /**
    * Whether the label is labeling a required field or group.
    */
-  isRequired?: boolean
+  isRequired?: boolean,
+  /**
+   * A ContextualHelp element to place next to the label.
+   */
+  contextualHelp?: ReactNode
 }

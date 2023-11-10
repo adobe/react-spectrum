@@ -1,10 +1,29 @@
+/*
+ * Copyright 2023 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
+
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
+import {Key} from '@react-types/shared';
 import React, {useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
-import {storiesOf} from '@storybook/react';
 
+interface IColumn {
+  name: string,
+  key: string
+}
+interface IRow {
+  key: string
+}
 
-let manyColumns = [];
+let manyColumns: IColumn[] = [];
 for (let i = 0; i < 100; i++) {
   manyColumns.push(
     i === 0
@@ -13,7 +32,7 @@ for (let i = 0; i < 100; i++) {
   );
 }
 
-let manyRows = [];
+let manyRows: IRow[] = [];
 for (let i = 0; i < 1000; i++) {
   let row = {key: 'R' + i};
   for (let j = 0; j < 100; j++) {
@@ -23,13 +42,22 @@ for (let i = 0; i < 1000; i++) {
   manyRows.push(row);
 }
 
-storiesOf('useFocusRing', module)
-  .add(
-    'search + tableview',
-    () => (
-      <SearchExample />
-    )
-  );
+export default {
+  title: 'useFocusRing'
+};
+
+export const SearchTableview = {
+  render: () => <SearchExample />,
+  name: 'search + tableview',
+  parameters: {
+    a11y: {
+      config: {
+        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
+        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
+      }
+    }
+  }
+};
 
 function SearchExample() {
   const [items, setItems] = useState(manyRows);
@@ -37,6 +65,7 @@ function SearchExample() {
   return (
     <div>
       <SearchField
+        aria-label="table searchfield"
         onChange={(value) => {
           const newItems = manyRows.filter((item) =>
             item['C0'].toLowerCase().includes(value.toLowerCase())
@@ -51,8 +80,8 @@ function SearchExample() {
         </TableHeader>
         <TableBody items={items}>
           {item =>
-            (<Row key={item.foo}>
-              {key => <Cell>{item[key]}</Cell>}
+            (<Row key={item.key}>
+              {(key: Key) => <Cell>{item[key]}</Cell>}
             </Row>)
           }
         </TableBody>

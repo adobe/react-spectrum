@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, LabelableProps} from '@react-types/shared';
-import {ElementType, HTMLAttributes, LabelHTMLAttributes} from 'react';
+import {AriaLabelingProps, DOMAttributes, DOMProps, LabelableProps} from '@react-types/shared';
+import {ElementType, LabelHTMLAttributes} from 'react';
 import {useId, useLabels} from '@react-aria/utils';
 
-interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingProps {
+export interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingProps {
   /**
    * The HTML element used to render the label, e.g. 'label', or 'span'.
    * @default 'label'
@@ -22,11 +22,11 @@ interface LabelAriaProps extends LabelableProps, DOMProps, AriaLabelingProps {
   labelElementType?: ElementType
 }
 
-interface LabelAria {
+export interface LabelAria {
   /** Props to apply to the label container element. */
-  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
+  labelProps: DOMAttributes | LabelHTMLAttributes<HTMLLabelElement>,
   /** Props to apply to the field container element being labeled. */
-  fieldProps: HTMLAttributes<HTMLElement>
+  fieldProps: AriaLabelingProps & DOMProps
 }
 
 /**
@@ -47,7 +47,7 @@ export function useLabel(props: LabelAriaProps): LabelAria {
   let labelId = useId();
   let labelProps = {};
   if (label) {
-    ariaLabelledby = ariaLabelledby ? `${ariaLabelledby} ${labelId}` : labelId;
+    ariaLabelledby = ariaLabelledby ? `${labelId} ${ariaLabelledby}` : labelId;
     labelProps = {
       id: labelId,
       htmlFor: labelElementType === 'label' ? id : undefined

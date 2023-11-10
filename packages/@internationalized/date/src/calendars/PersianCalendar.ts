@@ -13,7 +13,7 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
-import {Calendar} from '../types';
+import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {mod} from '../utils';
 
@@ -42,6 +42,12 @@ function persianToJulianDay(year: number, month: number, day: number): number {
   );
 }
 
+/**
+ * The Persian calendar is the main calendar used in Iran and Afghanistan. It has 12 months
+ * in each year, the first 6 of which have 31 days, and the next 5 have 30 days. The 12th month
+ * has either 29 or 30 days depending on whether it is a leap year. The Persian year starts
+ * around the March equinox.
+ */
 export class PersianCalendar implements Calendar {
   identifier = 'persian';
 
@@ -62,7 +68,7 @@ export class PersianCalendar implements Calendar {
     return new CalendarDate(this, year, month, day);
   }
 
-  toJulianDay(date: CalendarDate): number {
+  toJulianDay(date: AnyCalendarDate): number {
     return persianToJulianDay(date.year, date.month, date.day);
   }
 
@@ -70,7 +76,7 @@ export class PersianCalendar implements Calendar {
     return 12;
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     if (date.month <= 6) {
       return 31;
     }
@@ -82,7 +88,13 @@ export class PersianCalendar implements Calendar {
     return isLeapYear(date.year) ? 30 : 29;
   }
 
-  getCurrentEra() {
-    return 'AP';
+  getEras() {
+    return ['AP'];
+  }
+
+  getYearsInEra(): number {
+    // 9378-10-10 persian is 9999-12-31 gregorian.
+    // Round down to 9377 to set the maximum full year.
+    return 9377;
   }
 }

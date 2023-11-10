@@ -13,39 +13,54 @@
 import {classNames, SlotProvider, useFocusableRef, useResizeObserver, useStyleProps} from '@react-spectrum/utils';
 import {Field} from '@react-spectrum/label';
 import {FocusableRef} from '@react-types/shared';
-import React, {useCallback, useLayoutEffect, useRef, useState} from 'react';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import React, {useCallback, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useFormProps} from '@react-spectrum/form';
+import {useId, useLayoutEffect} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
+import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {styleProps} = useStyleProps(props);
-  let {labelProps, fieldProps} = useLabel(props);
   let {
     children,
     isDisabled,
     isRequired,
-    label,
-    'aria-label': ariaLabel,
-    'aria-labelledby': ariaLabelledby
+    label
   } = props;
 
+  let defaultAriaLabel = stringFormatter.format('search');
+  if (!label && !props['aria-label'] && !props['aria-labelledby']) {
+    props['aria-label'] = defaultAriaLabel;
+  }
+  // Get label and group props (aka fieldProps)
+  let {labelProps, fieldProps} = useLabel(props);
+
+  // Grab aria-labelledby for the search input. Will need the entire concatenated aria-labelledby if it exists since pointing at the group id doesn’t
+  // suffice if there is a external label
+  let labelledBy = fieldProps['aria-labelledby'] || (fieldProps['aria-label'] !== defaultAriaLabel ? fieldProps.id : '');
+  let pickerId = useId();
+
   let domRef = useFocusableRef(ref);
-  let groupRef = useRef<HTMLDivElement>();
+  let groupRef = useRef<HTMLDivElement>(null);
 
   // Measure the width of the field to inform the width of the menu.
-  let [menuWidth, setMenuWidth] = useState(null);
+  let [menuWidth, setMenuWidth] = useState<number | null>(null);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
     let shouldUseGroup = !!label;
     let width = shouldUseGroup ? groupRef.current?.offsetWidth : domRef.current?.offsetWidth;
 
-    if (!isNaN(width)) {
+    if (width && !isNaN(width)) {
       setMenuWidth(width);
     }
   }, [groupRef, domRef, setMenuWidth, label]);
@@ -62,18 +77,40 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
     isRequired,
     label: null,
     isQuiet: false,
-    'aria-labelledby': labelProps.id || ariaLabel,
-    validationState: null
-  };
-  let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
-  let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
-  let slots = {
-    searchfield: {UNSAFE_className: searchFieldClassName, ...fieldProps, ...defaultSlotValues},
-    picker: {UNSAFE_className: pickerClassName, menuWidth, align: 'end', ...defaultSlotValues}
+    validationState: null,
+    description: null,
+    errorMessage: null,
+    descriptionProps: null,
+    errorMessageProps: null,
+    'aria-label': null
   };
 
-  if (!label && !ariaLabel && !ariaLabelledby) {
-    console.warn('If you do not provide a `label` prop, you must specify an aria-label or aria-labelledby attribute for accessibility');
+  let searchFieldClassName = classNames(styles, 'spectrum-SearchWithin-searchfield');
+  let pickerClassName = classNames(styles, 'spectrum-SearchWithin-picker');
+  let visuallyHiddenId = useId();
+
+  let slots = {
+    searchfield: {
+      ...defaultSlotValues,
+      UNSAFE_className: searchFieldClassName,
+      // Apply aria-labelledby of group or the group id to searchfield. No need to pass the group id (we want a new one) and aria-label (aria-labelledby will suffice)
+      'aria-labelledby': `${labelledBy} ${visuallyHiddenId} ${pickerId}`,
+      // When label is provided, input should have id referenced by htmlFor of label, instead of group
+      id: label && fieldProps.id
+    },
+    picker: {
+      ...defaultSlotValues,
+      id: pickerId,
+      UNSAFE_className: pickerClassName,
+      menuWidth,
+      align: 'end',
+      'aria-labelledby': `${labelledBy} ${visuallyHiddenId}`
+    }
+  };
+
+  if (label) {
+    // When label is provided, input should have id referenced by htmlFor of label, instead of group
+    delete fieldProps.id;
   }
 
   return (
@@ -86,10 +123,11 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
         'spectrum-SearchWithin-container'
       )}>
       <div
+        {...fieldProps}
         role="group"
-        aria-labelledby={labelProps.id || ariaLabel}
         className={classNames(styles, 'spectrum-SearchWithin', styleProps.className)}
         ref={groupRef}>
+        <VisuallyHidden id={visuallyHiddenId}>{stringFormatter.format('searchWithin')}</VisuallyHidden>
         <SlotProvider slots={slots}>
           {children}
         </SlotProvider>
@@ -103,4 +141,3 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
  */
 const _SearchWithin = React.forwardRef(SearchWithin);
 export {_SearchWithin as SearchWithin};
-

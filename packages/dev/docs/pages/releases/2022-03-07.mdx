@@ -1,0 +1,225 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: This month we have been concentrating on updating our pre-released components along with some improvements to our Slider hooks and general bug fixes. Thank you to all those who reported issues and contributed fixes in this release!
+date: 2022-03-07
+---
+
+# March 7, 2022 Release
+
+This month we have been concentrating on updating our pre-released components along with some improvements to our Slider hooks and general bug fixes. Thank you to all those who reported issues and contributed fixes in this release!
+
+## New features
+- Allow custom messages on `DismissButton` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2868)
+- Adding `name` to `ComboBox` props - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2880)
+## Fixes
+- Fire `onChangeEnd` for PageUp/PageDown/Home/End in `useSliderThumb` - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/2661)
+- Fix `TableView` rendering of rows with ids of 0 - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2840)
+- Update `Tab` index when selection is changed and not focused - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2829)
+- Fix controlled `NumberField` showing old value on blur - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2882)
+- Fix Chrome warning for `userAgent` and `platform` usage - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/2612)
+- Make `Button` function overload the default for `useButton` - [@karlhorky](https://github.com/karlhorky) - [PR](https://github.com/adobe/react-spectrum/pull/2930)
+## Docs
+- Update `AlertDialog` Spectrum guideline links - [@matthewdeutsch](https://github.com/matthewdeutsch) - [PR](https://github.com/adobe/react-spectrum/pull/2907)
+- VisuallyHidden: fix docs typo - [@aarongarciah](https://github.com/aarongarciah) - [PR](https://github.com/adobe/react-spectrum/pull/2911)
+## Under construction
+
+Pre-release versions of the following components have been released. Please feel free to try them out, and report any issues you encounter.
+
+
+- ColorSlider beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorSlider.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorSlider.html)
+- ColorWheel beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorWheel.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorWheel.html)
+- ColorField beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorField.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorField.html)
+- ColorArea beta
+- SearchWithin alpha
+- Calendar alpha
+- DatePicker alpha
+- ListView alpha
+- CardView alpha
+- Card alpha
+
+## Released packages
+```
+- @adobe/react-spectrum@3.16.4
+- @react-aria/accordion@3.0.0-alpha.5
+- @react-aria/actiongroup@3.2.4
+- @react-aria/aria-modal-polyfill@3.4.3
+- @react-aria/autocomplete@3.0.0-alpha.4
+- @react-aria/breadcrumbs@3.1.8
+- @react-aria/button@3.4.2
+- @react-aria/checkbox@3.3.2
+- @react-aria/color@3.0.0-beta.9
+- @react-aria/combobox@3.2.4
+- @react-aria/dialog@3.1.7
+- @react-aria/dnd@3.0.0-alpha.6
+- @react-aria/focus@3.5.3
+- @react-aria/grid@3.2.4
+- @react-aria/i18n@3.3.7
+- @react-aria/interactions@3.8.2
+- @react-aria/label@3.2.4
+- @react-aria/link@3.2.3
+- @react-aria/listbox@3.4.3
+- @react-aria/live-announcer@3.0.4
+- @react-aria/menu@3.4.2
+- @react-aria/meter@3.1.6
+- @react-aria/numberfield@3.1.4
+- @react-aria/overlays@3.8.0
+- @react-aria/progress@3.1.6
+- @react-aria/radio@3.1.9
+- @react-aria/searchfield@3.2.5
+- @react-aria/select@3.6.3
+- @react-aria/selection@3.8.0
+- @react-aria/separator@3.1.6
+- @react-aria/slider@3.0.6
+- @react-aria/spinbutton@3.0.4
+- @react-aria/switch@3.1.6
+- @react-aria/table@3.2.4
+- @react-aria/tabs@3.1.3
+- @react-aria/tag@3.0.0-alpha.3
+- @react-aria/textfield@3.5.3
+- @react-aria/toggle@3.2.2
+- @react-aria/tooltip@3.1.6
+- @react-aria/utils@3.11.3
+- @react-aria/virtualizer@3.3.8
+- @react-aria/visually-hidden@3.2.6
+- @react-spectrum/accordion@3.0.0-alpha.6
+- @react-spectrum/actionbar@3.0.0-alpha.6
+- @react-spectrum/actiongroup@3.4.2
+- @react-spectrum/autocomplete@3.0.0-alpha.4
+- @react-spectrum/avatar@3.0.0-alpha.3
+- @react-spectrum/breadcrumbs@3.2.7
+- @react-spectrum/button@3.7.2
+- @react-spectrum/buttongroup@3.2.6
+- @react-spectrum/card@3.0.0-alpha.5
+- @react-spectrum/checkbox@3.3.2
+- @react-spectrum/color@3.0.0-beta.9
+- @react-spectrum/combobox@3.2.3
+- @react-spectrum/contextualhelp@3.0.2
+- @react-spectrum/dialog@3.3.7
+- @react-spectrum/divider@3.2.2
+- @react-spectrum/dnd@3.0.0-alpha.0
+- @react-spectrum/form@3.2.7
+- @react-spectrum/icon@3.3.5
+- @react-spectrum/illustratedmessage@3.1.7
+- @react-spectrum/image@3.1.7
+- @react-spectrum/label@3.4.4
+- @react-spectrum/layout@3.2.4
+- @react-spectrum/link@3.2.3
+- @react-spectrum/list@3.0.0-alpha.9
+- @react-spectrum/listbox@3.5.6
+- @react-spectrum/menu@3.6.2
+- @react-spectrum/meter@3.1.6
+- @react-spectrum/numberfield@3.1.4
+- @react-spectrum/overlays@3.4.7
+- @react-spectrum/picker@3.5.3
+- @react-spectrum/progress@3.1.6
+- @react-spectrum/provider@3.3.2
+- @react-spectrum/radio@3.1.8
+- @react-spectrum/searchfield@3.2.4
+- @react-spectrum/searchwithin@3.0.0-alpha.4
+- @react-spectrum/slider@3.0.7
+- @react-spectrum/statuslight@3.2.5
+- @react-spectrum/switch@3.1.6
+- @react-spectrum/table@3.1.6
+- @react-spectrum/tabs@3.1.4
+- @react-spectrum/tag@3.0.0-alpha.3
+- @react-spectrum/text@3.1.6
+- @react-spectrum/textfield@3.3.3
+- @react-spectrum/theme-dark@3.2.6
+- @react-spectrum/theme-default@3.2.6
+- @react-spectrum/theme-light@3.1.6
+- @react-spectrum/tooltip@3.1.7
+- @react-spectrum/utils@3.6.6
+- @react-spectrum/view@3.1.6
+- @react-spectrum/well@3.1.6
+- @react-stately/checkbox@3.0.6
+- @react-stately/collections@3.3.7
+- @react-stately/color@3.0.0-beta.8
+- @react-stately/combobox@3.0.4
+- @react-stately/data@3.4.6
+- @react-stately/dnd@3.0.0-alpha.5
+- @react-stately/grid@3.1.3
+- @react-stately/layout@3.4.5
+- @react-stately/list@3.4.4
+- @react-stately/menu@3.2.6
+- @react-stately/numberfield@3.0.5
+- @react-stately/overlays@3.1.6
+- @react-stately/radio@3.3.5
+- @react-stately/searchfield@3.1.6
+- @react-stately/select@3.1.6
+- @react-stately/selection@3.9.3
+- @react-stately/slider@3.0.6
+- @react-stately/table@3.1.3
+- @react-stately/tabs@3.0.4
+- @react-stately/toggle@3.2.6
+- @react-stately/tooltip@3.0.8
+- @react-stately/tree@3.2.3
+- @react-stately/virtualizer@3.1.8
+- @react-types/accordion@3.0.0-alpha.4
+- @react-types/actionbar@3.0.0-alpha.4
+- @react-types/actiongroup@3.2.4
+- @react-types/autocomplete@3.0.0-alpha.3
+- @react-types/avatar@3.0.0-alpha.3
+- @react-types/breadcrumbs@3.2.4
+- @react-types/button@3.4.4
+- @react-types/buttongroup@3.1.5
+- @react-types/card@3.0.0-alpha.4
+- @react-types/checkbox@3.2.6
+- @react-types/color@3.0.0-beta.6
+- @react-types/combobox@3.3.0
+- @react-types/contextualhelp@3.0.2
+- @react-types/dialog@3.3.4
+- @react-types/divider@3.1.5
+- @react-types/form@3.2.5
+- @react-types/grid@3.0.3
+- @react-types/illustratedmessage@3.1.5
+- @react-types/image@3.1.6
+- @react-types/label@3.5.3
+- @react-types/layout@3.2.3
+- @react-types/link@3.2.3
+- @react-types/listbox@3.2.4
+- @react-types/menu@3.5.2
+- @react-types/meter@3.1.5
+- @react-types/numberfield@3.1.3
+- @react-types/overlays@3.5.4
+- @react-types/progress@3.1.5
+- @react-types/provider@3.4.2
+- @react-types/radio@3.1.5
+- @react-types/searchfield@3.1.5
+- @react-types/searchwithin@3.0.0-alpha.3
+- @react-types/select@3.5.4
+- @react-types/shared@3.11.2
+- @react-types/slider@3.0.5
+- @react-types/statuslight@3.1.5
+- @react-types/switch@3.1.5
+- @react-types/table@3.1.3
+- @react-types/tabs@3.0.4
+- @react-types/tag@3.0.0-alpha.2
+- @react-types/text@3.1.6
+- @react-types/textfield@3.3.3
+- @react-types/tooltip@3.1.5
+- @react-types/view@3.1.5
+- @react-types/well@3.1.5
+- @spectrum-icons/color@3.3.4
+- @spectrum-icons/illustrations@3.2.5
+- @spectrum-icons/ui@3.2.4
+- @spectrum-icons/workflow@3.2.4
+- react-aria@3.14.0
+- react-stately@3.12.2
+```

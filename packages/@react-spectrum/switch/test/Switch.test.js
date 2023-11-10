@@ -10,14 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@testing-library/react';
 import {Switch} from '../';
 import userEvent from '@testing-library/user-event';
-import V2Switch from '@react/react-spectrum/Switch';
 
 describe('Switch', function () {
   let onChangeSpy = jest.fn();
+  let user;
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
 
   afterEach(() => {
     onChangeSpy.mockClear();
@@ -27,23 +31,19 @@ describe('Switch', function () {
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy}}
     ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, isEmphasized: true}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, quiet: true}}
-  `('$Name default unchecked can be checked', function ({Component, props}) {
+  `('$Name default unchecked can be checked', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
+    expect(checkbox.value).toBe('on');
     expect(checkbox.checked).toBeFalsy();
-    expect(checkbox).toHaveAttribute('aria-checked', 'false');
     expect(onChangeSpy).not.toHaveBeenCalled();
 
-    userEvent.click(checkbox);
-    expect(checkbox).toHaveAttribute('aria-checked', 'true');
+    await user.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
 
-    userEvent.click(checkbox);
-    expect(checkbox).toHaveAttribute('aria-checked', 'false');
+    await user.click(checkbox);
     expect(onChangeSpy.mock.calls[1][0]).toBe(false);
 
     // would test space key, but then it's just testing the browser, no need
@@ -51,17 +51,16 @@ describe('Switch', function () {
 
   it.each`
     Name                     | Component    | props
-    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true}}
-    ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true, isEmphasized: true}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, defaultChecked: true}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, defaultChecked: true, quiet: true}}
-  `('$Name can be default checked', function ({Component, props}) {
+    ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true, value: 'newsletter'}}
+    ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, defaultSelected: true, isEmphasized: true, value: 'newsletter'}}
+  `('$Name can be default checked', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
+    expect(checkbox.value).toBe('newsletter');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(false);
   });
@@ -70,15 +69,13 @@ describe('Switch', function () {
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, isSelected: true}}
     ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, isSelected: true, isEmphasized: true}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, checked: true}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, checked: true, quiet: true}}
-  `('$Name can be controlled checked', function ({Component, props}) {
+  `('$Name can be controlled checked', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(false);
   });
@@ -87,15 +84,13 @@ describe('Switch', function () {
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, isSelected: false}}
     ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, isSelected: false, isEmphasized: true}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, checked: false}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, checked: false, quiet: true}}
-  `('$Name can be controlled unchecked', function ({Component, props}) {
+  `('$Name can be controlled unchecked', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeFalsy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy.mock.calls[0][0]).toBe(true);
   });
@@ -104,15 +99,13 @@ describe('Switch', function () {
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, isDisabled: true}}
     ${'Switch isEmphasized'} | ${Switch}    | ${{onChange: onChangeSpy, isDisabled: true, isEmphasized: true}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, disabled: true}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, disabled: true, quiet: true}}
-  `('$Name can be disabled', function ({Component, props}) {
+  `('$Name can be disabled', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeFalsy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeFalsy();
     expect(onChangeSpy).not.toHaveBeenCalled();
   });
@@ -120,7 +113,6 @@ describe('Switch', function () {
   it.each`
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-label': 'not visible'}}
-    ${'V2Switch quiet'}      | ${V2Switch}  | ${{onChange: onChangeSpy, 'aria-label': 'not visible', quiet: true}}
   `('$Name can have a non-visible label', function ({Component, props}) {
     let {getByRole} = render(<Component {...props} />);
 
@@ -131,7 +123,6 @@ describe('Switch', function () {
   it.each`
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-labelledby': 'test'}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, 'aria-labelledby': 'test'}}
   `('$Name supports aria-labelledby', function ({Component, props}) {
     let {getByRole} = render(
       <>
@@ -147,7 +138,6 @@ describe('Switch', function () {
   it.each`
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, 'aria-describedby': 'test'}}
-    ${'V2Switch'}            | ${V2Switch}  | ${{onChange: onChangeSpy, 'aria-describedby': 'test'}}
   `('$Name supports aria-describedby', function ({Component, props}) {
     let {getByRole} = render(
       <>
@@ -184,14 +174,37 @@ describe('Switch', function () {
   it.each`
     Name                     | Component    | props
     ${'Switch'}              | ${Switch}    | ${{onChange: onChangeSpy, isSelected: true, isReadOnly: true}}
-  `('$Name supports readOnly', function ({Component, props}) {
+  `('$Name supports readOnly', async function ({Component, props}) {
     let {getByLabelText} = render(<Component {...props}>Click Me</Component>);
 
     let checkbox = getByLabelText('Click Me');
     expect(checkbox.checked).toBeTruthy();
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
     expect(checkbox.checked).toBeTruthy();
     expect(onChangeSpy).not.toHaveBeenCalled();
+  });
+
+  it('supports form reset', async () => {
+    function Test() {
+      let [isSelected, setSelected] = React.useState(false);
+      return (
+        <form>
+          <Switch data-testid="switch" isSelected={isSelected} onChange={setSelected}>Switch</Switch>
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId} = render(<Test />);
+    let input = getByTestId('switch');
+
+    expect(input).not.toBeChecked();
+    await user.click(input);
+    expect(input).toBeChecked();
+
+    let button = getByTestId('reset');
+    await user.click(button);
+    expect(input).not.toBeChecked();
   });
 });

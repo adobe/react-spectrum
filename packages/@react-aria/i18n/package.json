@@ -1,12 +1,41 @@
 {
   "name": "@react-aria/i18n",
-  "version": "3.3.2",
+  "version": "3.9.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
+  "exports": {
+    "types": "./dist/types.d.ts",
+    "import": "./dist/import.mjs",
+    "require": "./dist/main.js"
+  },
+  "real-main": "dist/real-main.js",
+  "real-module": "dist/real-module.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
+  "targets": {
+    "main": false,
+    "module": false,
+    "real-module": {
+      "outputFormat": "esmodule",
+      "isLibrary": true,
+      "includeNodeModules": false
+    },
+    "real-main": {
+      "outputFormat": "commonjs",
+      "isLibrary": true,
+      "includeNodeModules": false
+    }
+  },
+  "alias": {
+    "./src/useMessageFormatter.ts": false
+  },
+  "scripts": {
+    "build:module": "yarn babel --presets @babel/preset-typescript src/useMessageFormatter.ts -o dist/useMessageFormatter.module.js && cp src/module.js dist/module.js && cp dist/real-module.js dist/real-module.mjs && cp dist/real-module.js.map dist/real-module.mjs.map && cp dist/useMessageFormatter.module.js dist/useMessageFormatter.module.mjs",
+    "build:cjs": "yarn babel --presets @babel/preset-typescript,@babel/preset-env src/useMessageFormatter.ts -o dist/useMessageFormatter.js && cp src/main.js dist/main.js",
+    "prepublishOnly": "yarn build:module && yarn build:cjs"
+  },
   "files": [
     "dist",
     "src"
@@ -17,15 +46,17 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@babel/runtime": "^7.6.2",
-    "@react-aria/ssr": "^3.0.3",
-    "@react-aria/utils": "^3.8.2",
-    "@react-types/shared": "^3.8.0",
-    "@internationalized/message": "^3.0.2",
-    "@internationalized/number": "^3.0.2"
+    "@internationalized/date": "^3.5.0",
+    "@internationalized/message": "^3.1.1",
+    "@internationalized/number": "^3.4.0",
+    "@internationalized/string": "^3.1.1",
+    "@react-aria/ssr": "^3.9.0",
+    "@react-aria/utils": "^3.22.0",
+    "@react-types/shared": "^3.22.0",
+    "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1"
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
   "publishConfig": {
     "access": "public"

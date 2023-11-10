@@ -10,13 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React from 'react';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLabels} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface DismissButtonProps {
+export interface DismissButtonProps extends AriaLabelingProps, DOMProps {
   /** Called when the dismiss button is activated. */
   onDismiss?: () => void
 }
@@ -27,8 +29,11 @@ interface DismissButtonProps {
  * affordance to do so.
  */
 export function DismissButton(props: DismissButtonProps) {
-  let {onDismiss} = props;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let {onDismiss, ...otherProps} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+
+  let labels = useLabels(otherProps, stringFormatter.format('dismiss'));
+
   let onClick = () => {
     if (onDismiss) {
       onDismiss();
@@ -38,8 +43,8 @@ export function DismissButton(props: DismissButtonProps) {
   return (
     <VisuallyHidden>
       <button
+        {...labels}
         tabIndex={-1}
-        aria-label={formatMessage('dismiss')}
         onClick={onClick} />
     </VisuallyHidden>
   );

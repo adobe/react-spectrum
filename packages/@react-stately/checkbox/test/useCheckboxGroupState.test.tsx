@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render} from '@testing-library/react';
+import {act, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useCheckboxGroupState} from '../';
 
@@ -228,7 +228,7 @@ describe('useCheckboxGroupState', () => {
       toggleValue('qwe');
     });
 
-    expect(container.textContent).toBe('foo, qwe');
+    expect(container.textContent).toBe('foo');
   });
 
   it('should not update state for readonly group', () => {

@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps} from '@react-aria/utils';
+import {DOMAttributes} from '@react-types/shared';
+import {mergeProps, useObjectRef} from '@react-aria/utils';
 import {PressProps, usePress} from './usePress';
-import React, {HTMLAttributes, ReactElement, RefObject, useRef} from 'react';
+import React, {ForwardedRef, ReactElement} from 'react';
 
 interface PressableProps extends PressProps {
-  children: ReactElement<HTMLAttributes<HTMLElement>, string>
+  children: ReactElement<DOMAttributes, string>
 }
 
-export const Pressable = React.forwardRef(({children, ...props}: PressableProps, ref: RefObject<HTMLElement>) => {
-  let newRef = useRef();
-  ref = ref ?? newRef;
+export const Pressable = React.forwardRef(({children, ...props}: PressableProps, ref: ForwardedRef<HTMLElement>) => {
+  ref = useObjectRef(ref);
   let {pressProps} = usePress({...props, ref});
   let child = React.Children.only(children);
   return React.cloneElement(

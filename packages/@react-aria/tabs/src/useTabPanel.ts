@@ -11,15 +11,16 @@
  */
 
 import {AriaTabPanelProps} from '@react-types/tabs';
+import {DOMAttributes} from '@react-types/shared';
 import {generateId} from './utils';
-import {getFocusableTreeWalker} from '@react-aria/focus';
-import {HTMLAttributes, RefObject, useLayoutEffect, useState} from 'react';
 import {mergeProps, useLabels} from '@react-aria/utils';
+import {RefObject} from 'react';
 import {TabListState} from '@react-stately/tabs';
+import {useHasTabbableChild} from '@react-aria/focus';
 
-interface TabPanelAria {
+export interface TabPanelAria {
   /** Props for the tab panel element. */
-  tabPanelProps: HTMLAttributes<HTMLElement>
+  tabPanelProps: DOMAttributes
 }
 
 
@@ -27,38 +28,13 @@ interface TabPanelAria {
  * Provides the behavior and accessibility implementation for a tab panel. A tab panel is a container for
  * the contents of a tab, and is shown when the tab is selected.
  */
-export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>, ref: RefObject<HTMLElement>): TabPanelAria {
-  let [tabIndex, setTabIndex] = useState(0);
-
+export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>, ref: RefObject<Element>): TabPanelAria {
   // The tabpanel should have tabIndex=0 when there are no tabbable elements within it.
   // Otherwise, tabbing from the focused tab should go directly to the first tabbable element
   // within the tabpanel.
-  useLayoutEffect(() => {
-    if (ref?.current) {
-      let update = () => {
-        // Detect if there are any tabbable elements and update the tabIndex accordingly.
-        let walker = getFocusableTreeWalker(ref.current, {tabbable: true});
-        setTabIndex(walker.nextNode() ? undefined : 0);
-      };
+  let tabIndex = useHasTabbableChild(ref) ? undefined : 0;
 
-      update();
-
-      // Update when new elements are inserted, or the tabIndex/disabled attribute updates.
-      let observer = new MutationObserver(update);
-      observer.observe(ref.current, {
-        subtree: true,
-        childList: true,
-        attributes: true,
-        attributeFilter: ['tabIndex', 'disabled']
-      });
-
-      return () => {
-        observer.disconnect();
-      };
-    }
-  }, [ref]);
-
-  const id = generateId(state, state?.selectedKey, 'tabpanel');
+  const id = generateId(state, props.id ?? state?.selectedKey, 'tabpanel');
   const tabPanelProps = useLabels({...props, id, 'aria-labelledby': generateId(state, state?.selectedKey, 'tab')});
 
   return {

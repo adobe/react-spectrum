@@ -1,3 +1,4 @@
 {
-  "remove": "Ukloni"
+  "removeButtonLabel": "Ukloni",
+  "removeDescription": "Pritisnite Obriši da biste uklonili oznaku."
 }

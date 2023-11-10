@@ -8,16 +8,7 @@
   );
 }
 
-%spectrum-ColorControl-handle--focused {
-  /* Bigger handle when focused */
-  width: calc(var(--spectrum-colorhandle-size) * 2);
-  height: calc(var(--spectrum-colorhandle-size) * 2);
-
-  margin-left: calc(-1 * var(--spectrum-colorhandle-size));
-  margin-top: calc(-1 * var(--spectrum-colorhandle-size));
-}
-
-%spectrum-ColorControl-hiddenField {
+.spectrum-ColorControl-hiddenField {
   opacity: 0.0001;
   position: absolute;
   top: 0;
@@ -52,6 +43,10 @@
 
   cursor: default;
 
+  .spectrum-ColorSlider-handle.spectrum-ColorSlider-handle {
+    margin: 0;
+  }
+
   /* The checkerboard is a separate element so that the gradient is overlaid on top. */
   &:before {
     content: "";
@@ -72,10 +67,6 @@
 
   &.is-focused {
     z-index: 2;
-
-    .spectrum-ColorSlider-handle {
-      @extend %spectrum-ColorControl-handle--focused;
-    }
   }
 
   &.is-disabled {
@@ -107,5 +98,23 @@
 }
 
 .spectrum-ColorSlider-slider {
-  @extend %spectrum-ColorControl-hiddenField;
+  composes: spectrum-ColorControl-hiddenField;
+}
+
+.spectrum-ColorSlider-labelContainer {
+  display: grid;
+  grid-template-areas: "label contextualHelp value";
+  grid-template-columns: auto 1fr auto;
+  justify-items: start;
+}
+
+.spectrum-ColorSlider-contextualHelp.spectrum-ColorSlider-contextualHelp {
+  grid-area: contextualHelp;
+  margin-inline-start: var(--spectrum-global-dimension-size-50);
+  margin-top: var(--spectrum-global-dimension-size-25);
+}
+
+.spectrum-ColorSlider-valueLabel {
+  grid-area: value;
+  margin-inline-start: var(--spectrum-global-dimension-size-50);
 }

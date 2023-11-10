@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="intl-types-extension" />
+export {useNumberFieldState} from './useNumberFieldState';
 
-export * from './useNumberFieldState';
+export type {NumberFieldStateOptions} from './useNumberFieldState';
+export type {NumberFieldState} from './useNumberFieldState';

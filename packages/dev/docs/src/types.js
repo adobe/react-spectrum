@@ -31,14 +31,22 @@ const DOC_LINKS = {
   Iterable: 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols',
   DataTransfer: 'https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer',
   CSSProperties: 'https://reactjs.org/docs/dom-elements.html#style',
+  DOMAttributes: 'https://reactjs.org/docs/dom-elements.html#all-supported-html-attributes',
+  FocusableElement: 'https://developer.mozilla.org/en-US/docs/Web/API/Element',
   'Intl.NumberFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat',
   'Intl.NumberFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat',
+  'Intl.ListFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat/ListFormat',
   'Intl.DateTimeFormat': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat',
   'Intl.DateTimeFormatOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat',
   'Intl.Collator': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator',
   'Intl.CollatorOptions': 'https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator/Collator',
   'AbortSignal': 'https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal',
-  'Key': 'https://reactjs.org/docs/lists-and-keys.html'
+  'Key': 'https://reactjs.org/docs/lists-and-keys.html',
+  'HTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes',
+  'InputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attributes',
+  'TextareaHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/textarea#attributes',
+  'LabelHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label#attributes',
+  'OutputHTMLAttributes': 'https://developer.mozilla.org/en-US/docs/Web/HTML/Element/output#attributes'
 };
 
 export const TypeContext = React.createContext();
@@ -57,7 +65,12 @@ export function Type({type}) {
     case 'undefined':
     case 'void':
     case 'unknown':
+    case 'never':
       return <Keyword {...type} />;
+    case 'this':
+      return <Keyword {...type} />;
+    case 'symbol':
+      return <Symbol {...type} />;
     case 'identifier':
       return <Identifier {...type} />;
     case 'string':
@@ -84,6 +97,8 @@ export function Type({type}) {
       return <IntersectionType {...type} />;
     case 'application':
       return <TypeApplication {...type} />;
+    case 'typeOperator':
+      return <TypeOperator {...type} />;
     case 'function':
       return <FunctionType {...type} />;
     case 'parameter':
@@ -116,10 +131,26 @@ export function Type({type}) {
       }
       return <Type type={{...props, description: type.description}} />;
     }
+    case 'conditional':
+      return <ConditionalType {...type} />;
+    case 'indexedAccess':
+      return <IndexedAccess {...type} />;
+    case 'keyof':
+      return <Keyof {...type} />;
+    case 'template':
+      return <TemplateLiteral {...type} />;
     default:
       console.log('no render component for TYPE', type);
       return null;
   }
+}
+
+function TypeOperator({operator, value}) {
+  return <span><span className="token hljs-literal">{operator}</span>{' '}<Type type={value} /></span>;
+}
+
+function IndexedAccess({objectType, indexType}) {
+  return <span><Type type={objectType} />[<Type type={indexType} />]</span>;
 }
 
 function StringLiteral({value}) {
@@ -134,10 +165,18 @@ function BooleanLiteral({value}) {
   return <span className="token hljs-literal">{'' + value}</span>;
 }
 
+function Symbol() {
+  return <span className="token hljs-literal">symbol</span>;
+}
+
+function Keyof({keyof}) {
+  return <span><Keyword type="keyof" />{' '}<Type type={keyof} /></span>;
+}
+
 function Keyword({type}) {
   let link = getDoc(type);
   if (link) {
-    return <a href={link} className={`${styles.colorLink} token hljs-keyword`} rel="noreferrer" target="_blank">{type}</a>;
+    return <a href={link} className={`${styles.colorLink} token hljs-keyword`} data-hover={styles['is-hovered']} rel="noreferrer" target="_blank">{type}</a>;
   }
 
   return <span className="token hljs-keyword">{type}</span>;
@@ -146,7 +185,7 @@ function Keyword({type}) {
 function Identifier({name}) {
   let link = getDoc(name) || DOC_LINKS[name];
   if (link) {
-    return <a href={link} className={`${styles.colorLink} token hljs-name`} rel="noreferrer" target="_blank">{name}</a>;
+    return <a href={link} className={`${styles.colorLink} token hljs-name`} data-hover={styles['is-hovered']} rel="noreferrer" target="_blank">{name}</a>;
   }
 
   return <span className="token hljs-name">{name}</span>;
@@ -276,10 +315,18 @@ export function TypeParameters({typeParameters}) {
   );
 }
 
-function TypeParameter({name, default: defaultType}) {
+function TypeParameter({name, constraint, default: defaultType}) {
   return (
     <>
       <span className="token hljs-name">{name}</span>
+      {constraint &&
+        <>
+          {' '}
+          <span className="token hljs-keyword">extends</span>
+          {' '}
+          <Type type={constraint} />
+        </>
+      }
       {defaultType &&
         <>
           <span className="token punctuation">{' = '}</span>
@@ -304,11 +351,12 @@ function FunctionType({name, parameters, return: returnType, typeParameters, res
   );
 }
 
-function Parameter({name, value, default: defaultValue, rest}) {
+function Parameter({name, value, default: defaultValue, optional, rest}) {
   return (
     <>
       {rest && <span className="token punctuation">...</span>}
       <span className="token">{name}</span>
+      {optional && <span className="token punctuation">?</span>}
       {value &&
         <>
           <span className="token punctuation">: </span>
@@ -340,6 +388,9 @@ export function LinkRenderer() {
   return [...links.values()].map(({type, links}) => (
     <section key={type.id} id={type.id} data-title={type.name} hidden>
       {type.description && <Markdown options={{forceBlock: true, overrides: {a: {component: SpectrumLink}}}} className={styles['type-description']}>{type.description}</Markdown>}
+      {type.type === 'interface' && type.extends?.length > 0 &&
+        <p style={{paddingLeft: 'var(--spectrum-global-dimension-size-200)'}}><strong>Extends</strong>: <code className={`${typographyStyles['spectrum-Code4']}`}><JoinList elements={type.extends} joiner=", " /></code></p>
+      }
       <TypeContext.Provider value={links}>
         {type.type === 'interface' || type.type === 'alias' || type.type === 'component'
           ? <Type type={type} />
@@ -358,6 +409,10 @@ export function LinkType({id}) {
     return null;
   }
 
+  if (DOC_LINKS[value.name]) {
+    return <Identifier name={value.name} />;
+  }
+
   registered.set(id, {type: value, links});
 
   let used = getUsedLinks(value, links);
@@ -365,22 +420,22 @@ export function LinkType({id}) {
     registered.set(id, {type: used[id], links});
   }
 
-  return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`}>{value.name}</a>;
+  return <a href={'#' + id} data-link={id} className={`${styles.colorLink} token hljs-name`} data-hover={styles['is-hovered']}>{value.name}</a>;
 }
 
 function SpectrumLink({href, children, title}) {
   return <a className={clsx(linkStyle['spectrum-Link--secondary'], styles.link)} href={href} title={title} {...getAnchorProps(href)}>{children}</a>;
 }
 
-export function renderHTMLfromMarkdown(description) {
+export function renderHTMLfromMarkdown(description, opts) {
   if (description) {
-    const options = {forceInline: true, overrides: {a: {component: SpectrumLink}}};
+    const options = {forceInline: true, overrides: {a: {component: SpectrumLink}}, ...opts};
     return <Markdown options={options}>{description}</Markdown>;
   }
   return '';
 }
 
-export function InterfaceType({description, properties: props, showRequired, showDefault, isComponent}) {
+export function InterfaceType({description, properties: props, typeParameters, showRequired, showDefault, isComponent, name, hideType}) {
   let properties = Object.values(props).filter(prop => prop.type === 'property' && prop.access !== 'private' && prop.access !== 'protected');
   let methods = Object.values(props).filter(prop => prop.type === 'method' && prop.access !== 'private' && prop.access !== 'protected');
 
@@ -411,13 +466,13 @@ export function InterfaceType({description, properties: props, showRequired, sho
         <h3 className={typographyStyles['spectrum-Heading4']}>Properties</h3>
       }
       {properties.length > 0 &&
-        <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
+        <table className={`${tableStyles['spectrum-Table']} ${styles.propTable}`}>
           <thead>
             <tr>
               <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Name</td>
-              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>
+              {!hideType && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '30%'}}>Type</td>}
               {showDefault && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Default</td>}
-              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']} style={{'width': '40%'}}>Description</td>
+              <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Description</td>
             </tr>
           </thead>
           <tbody className={tableStyles['spectrum-Table-body']}>
@@ -432,11 +487,13 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     : null
                   }
                 </td>
-                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
-                  <code className={typographyStyles['spectrum-Code4']}>
-                    <Type type={prop.value} />
-                  </code>
-                </td>
+                {!hideType &&
+                  <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="Type">
+                    <code className={typographyStyles['spectrum-Code4']}>
+                      <Type type={prop.value} />
+                    </code>
+                  </td>
+                }
                 {showDefault &&
                   <td className={`${tableStyles['spectrum-Table-cell']} ${styles.tableCell} ${!prop.default ? styles.noDefault : ''}`} data-column="Default">
                     {prop.default
@@ -445,7 +502,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     }
                   </td>
                 }
-                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
+                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</td>
               </tr>
             ))}
           </tbody>
@@ -455,7 +512,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
         <h3 className={typographyStyles['spectrum-Heading4']}>Methods</h3>
       }
       {methods.length > 0 &&
-        <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable} ${styles.methodTable}`}>
+        <table className={`${tableStyles['spectrum-Table']} ${styles.propTable} ${styles.methodTable}`}>
           <thead>
             <tr>
               <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Method</td>
@@ -476,7 +533,7 @@ export function InterfaceType({description, properties: props, showRequired, sho
                     <Type type={prop.value.return} />
                   </code>
                 </td>
-                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description)}</td>
+                <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</td>
               </tr>
             ))}
           </tbody>
@@ -504,24 +561,9 @@ function ObjectType({properties, exact}) {
         let optional = property.optional;
         let value = property.value;
 
-        // Special handling for methods
-        if (value && value.type === 'function' && !optional && token === 'method') {
-          return (
-            <div key={property.key} style={{paddingLeft: '1.5em'}}>
-              <span className="token hljs-function">{k}</span>
-              <span className="token punctuation">(</span>
-              <JoinList elements={value.parameters} joiner=", " />
-              <span className="token punctuation">)</span>
-              <span className="token punctuation">{': '}</span>
-              <Type type={value.return} />
-              {i < arr.length - 1 ? ',' : ''}
-            </div>
-          );
-        }
-
         let punc = optional ? '?: ' : ': ';
         return (
-          <div key={property.key} style={{paddingLeft: '1.5em'}}>
+          <div key={property.key ?? i} style={{paddingLeft: '1.5em'}}>
             {property.indexType && <span className="token punctuation">[</span>}
             <span className={`token ${token}`}>{k}</span>
             {property.indexType && <span className="token punctuation">{': '}</span>}
@@ -553,6 +595,44 @@ function TupleType({elements}) {
       <Indent params={elements} alwaysIndent open="[" close="]">
         <JoinList elements={elements} joiner=", " alwaysIndent />
       </Indent>
+    </>
+  );
+}
+
+function ConditionalType({checkType, extendsType, trueType, falseType}) {
+  return (
+    <>
+      <Type type={checkType} />
+      {' '}
+      <span className="token hljs-keyword">extends</span>
+      {' '}
+      <Type type={extendsType} />
+      <span className="token punctuation">{' ? '}</span>
+      <Type type={trueType} />
+      <span className="token punctuation">{' :' + (falseType.type === 'conditional' ? '\n' : ' ')}</span>
+      <Type type={falseType} />
+    </>
+  );
+}
+
+function TemplateLiteral({elements}) {
+  return (
+    <>
+      <span className="token hljs-string">{'`'}</span>
+      {elements.map((element, i) => {
+        if (element.type === 'string' && element.value) {
+          return <span className="token hljs-string" key={i}>{element.value}</span>;
+        }
+
+        return (
+          <React.Fragment key={i}>
+            <span className="token punctuation">{'${'}</span>
+            <Type type={element} />
+            <span className="token punctuation">{'}'}</span>
+          </React.Fragment>
+        );
+      })}
+      <span className="token hljs-string">{'`'}</span>
     </>
   );
 }

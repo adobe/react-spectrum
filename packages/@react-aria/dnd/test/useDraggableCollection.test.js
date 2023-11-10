@@ -10,18 +10,24 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@testing-library/react';
+import {act, fireEvent, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {DataTransfer, DataTransferItem, DragEvent} from './mocks';
 import {DraggableCollectionExample} from '../stories/DraggableCollection';
+import {DraggableListBox} from '../stories/DraggableListBox';
 import {Droppable} from './examples';
+import {Item} from '@react-stately/collections';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 describe('useDraggableCollection', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({
       left: 0,
       top: 0,
@@ -92,7 +98,6 @@ describe('useDraggableCollection', () => {
       fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
       fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
       fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
-      act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
         type: 'drop',
@@ -112,13 +117,15 @@ describe('useDraggableCollection', () => {
       expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
 
       fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+      act(() => jest.runAllTimers());
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({
         type: 'dragend',
         x: 2,
         y: 2,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -144,9 +151,9 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.click(cells[0]);
+      await user.click(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
-      userEvent.click(cells[1]);
+      await user.click(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
       let dataTransfer = new DataTransfer();
@@ -178,6 +185,8 @@ describe('useDraggableCollection', () => {
       fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
       fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
       fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
+
+      // onDrop and onDragEnd are delayed via setTimeout in useDrop/useDrag in a mouse drag and drop case
       act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
@@ -212,7 +221,8 @@ describe('useDraggableCollection', () => {
         x: 2,
         y: 2,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -238,7 +248,7 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.click(cells[0]);
+      await user.click(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
 
       let dataTransfer = new DataTransfer();
@@ -269,7 +279,6 @@ describe('useDraggableCollection', () => {
       fireEvent(droppable, new DragEvent('dragenter', {dataTransfer, clientX: 1, clientY: 1}));
       fireEvent(droppable, new DragEvent('dragover', {dataTransfer, clientX: 2, clientY: 2}));
       fireEvent(droppable, new DragEvent('drop', {dataTransfer, clientX: 2, clientY: 2}));
-      act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
         type: 'drop',
@@ -289,13 +298,15 @@ describe('useDraggableCollection', () => {
       expect(await onDrop.mock.calls[0][0].items[0].getText('folder')).toBe('Bar');
 
       fireEvent(cells[1], new DragEvent('dragend', {dataTransfer, clientX: 2, clientY: 2}));
+      act(() => jest.runAllTimers());
       expect(onDragEnd).toHaveBeenCalledTimes(1);
       expect(onDragEnd).toHaveBeenCalledWith({
         type: 'dragend',
         x: 2,
         y: 2,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -327,7 +338,7 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
       fireEvent.keyDown(cells[0], {key: 'ArrowDown'});
@@ -383,7 +394,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -409,7 +421,7 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
       fireEvent.keyDown(cells[0], {key: ' '});
@@ -481,7 +493,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -507,7 +520,7 @@ describe('useDraggableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
       fireEvent.keyDown(cells[0], {key: 'ArrowDown'});
@@ -567,16 +580,205 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);
       expect(cells.map(c => c.textContent)).toEqual(['Foo', 'Baz']);
     });
+
+    it('should work with a listbox without a drag button', async () => {
+      let onDragStart = jest.fn();
+      let onDragEnd = jest.fn();
+      let onDrop = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <DraggableListBox aria-label="Test" selectionMode="multiple" onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            <Item key="foo">Foo</Item>
+            <Item key="bar">Bar</Item>
+            <Item key="baz">Baz</Item>
+          </DraggableListBox>
+          <Droppable onDrop={onDrop} />
+        </Provider>
+      );
+
+      let listbox = tree.getByRole('listbox');
+      let droppable = tree.getByText('Drop here');
+
+      let options = within(listbox).getAllByRole('option');
+      expect(options).toHaveLength(3);
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(options[0], {key: ' '});
+      fireEvent.keyUp(options[0], {key: ' '});
+      expect(options[0]).toHaveAttribute('aria-selected', 'true');
+      expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to start dragging');
+
+      fireEvent.keyDown(options[0], {key: 'ArrowDown'});
+      fireEvent.keyUp(options[0], {key: 'ArrowDown'});
+      expect(document.activeElement).toBe(options[1]);
+
+      fireEvent.keyDown(options[1], {key: ' '});
+      fireEvent.keyUp(options[1], {key: ' '});
+      expect(options[1]).toHaveAttribute('aria-selected', 'true');
+      expect(options[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to drag 2 selected items.');
+
+      fireEvent.keyDown(options[1], {key: 'Enter'});
+      fireEvent.keyUp(options[1], {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragStart).toHaveBeenCalledWith({
+        type: 'dragstart',
+        x: 50,
+        y: 25,
+        keys: new Set(['foo', 'bar'])
+      });
+
+      expect(document.activeElement).toBe(droppable);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(onDrop).toHaveBeenCalledWith({
+        type: 'drop',
+        x: 50,
+        y: 25,
+        dropOperation: 'move',
+        items: [
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          },
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          }
+        ]
+      });
+
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Foo');
+      expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Bar');
+
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        x: 50,
+        y: 25,
+        dropOperation: 'move',
+        keys: new Set(['foo', 'bar']),
+        isInternal: false
+      });
+    });
+
+    it('should support row actions', async () => {
+      let onDragStart = jest.fn();
+      let onDragEnd = jest.fn();
+      let onDrop = jest.fn();
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <DraggableListBox aria-label="Test" selectionMode="multiple" selectionBehavior="replace" onDragStart={onDragStart} onDragEnd={onDragEnd} onAction={onAction}>
+            <Item key="foo">Foo</Item>
+            <Item key="bar">Bar</Item>
+            <Item key="baz">Baz</Item>
+          </DraggableListBox>
+          <Droppable onDrop={onDrop} />
+        </Provider>
+      );
+
+      let listbox = tree.getByRole('listbox');
+      let droppable = tree.getByText('Drop here');
+
+      let options = within(listbox).getAllByRole('option');
+      expect(options).toHaveLength(3);
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+
+      fireEvent.keyDown(options[0], {key: ' '});
+      fireEvent.keyUp(options[0], {key: ' '});
+      expect(options[0]).toHaveAttribute('aria-selected', 'true');
+      expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Press Alt + Enter to start dragging');
+
+      fireEvent.keyDown(options[0], {key: 'ArrowDown', shiftKey: true});
+      fireEvent.keyUp(options[0], {key: 'ArrowDown', shiftKey: true});
+      expect(document.activeElement).toBe(options[1]);
+
+      expect(options[1]).toHaveAttribute('aria-selected', 'true');
+      expect(options[1]).toHaveAttribute('aria-describedby');
+      expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Press Alt + Enter to drag 2 selected items.');
+
+      fireEvent.keyDown(options[1], {key: 'Enter'});
+      fireEvent.keyUp(options[1], {key: 'Enter'});
+      act(() => jest.runAllTimers());
+
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onDragStart).toHaveBeenCalledTimes(0);
+
+      fireEvent.keyDown(options[1], {key: 'Enter', altKey: true});
+      fireEvent.keyUp(options[1], {key: 'Enter', altKey: true});
+      act(() => jest.runAllTimers());
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragStart).toHaveBeenCalledWith({
+        type: 'dragstart',
+        x: 50,
+        y: 25,
+        keys: new Set(['foo', 'bar'])
+      });
+
+      expect(document.activeElement).toBe(droppable);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.runAllTimers());
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(onDrop).toHaveBeenCalledWith({
+        type: 'drop',
+        x: 50,
+        y: 25,
+        dropOperation: 'move',
+        items: [
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          },
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          }
+        ]
+      });
+
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Foo');
+      expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Bar');
+
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        x: 50,
+        y: 25,
+        dropOperation: 'move',
+        keys: new Set(['foo', 'bar']),
+        isInternal: false
+      });
+    });
   });
 
   describe('screen reader', () => {
+    installPointerEvent();
+
     beforeEach(() => {
       // reset focus visible state
       fireEvent.focus(document.body);
@@ -650,7 +852,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -736,7 +939,8 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['foo', 'bar'])
+        keys: new Set(['foo', 'bar']),
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
@@ -812,12 +1016,198 @@ describe('useDraggableCollection', () => {
         x: 50,
         y: 25,
         dropOperation: 'move',
-        keys: new Set(['bar'])
+        keys: new Set(['bar']),
+        isInternal: false
       });
 
       cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(2);
       expect(cells.map(c => c.textContent)).toEqual(['Foo', 'Baz']);
+    });
+
+    it('should work with a listbox without a drag button', async () => {
+      window.ontouchstart = () => {};
+      let onDragStart = jest.fn();
+      let onDragEnd = jest.fn();
+      let onDrop = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <DraggableListBox aria-label="Test" selectionMode="multiple" onDragStart={onDragStart} onDragEnd={onDragEnd}>
+            <Item key="foo">Foo</Item>
+            <Item key="bar">Bar</Item>
+            <Item key="baz">Baz</Item>
+          </DraggableListBox>
+          <Droppable onDrop={onDrop} />
+        </Provider>
+      );
+
+      let listbox = tree.getByRole('listbox');
+      let droppable = tree.getByText('Drop here');
+
+      let options = within(listbox).getAllByRole('option');
+      expect(options).toHaveLength(3);
+
+      fireEvent.focus(options[0]);
+      await user.pointer({target: options[0], keys: '[TouchA]'});
+      expect(options[0]).toHaveAttribute('aria-selected', 'true');
+      expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Long press to start dragging');
+
+      await user.pointer({target: options[1], keys: '[TouchA]'});
+      expect(options[1]).toHaveAttribute('aria-selected', 'true');
+      expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Long press to drag 2 selected items.');
+
+      fireEvent.pointerDown(options[1], {pointerType: 'touch', width: 0.33, height: 0.33});
+      let dataTransfer = new DataTransfer();
+      fireEvent(options[1], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragStart).toHaveBeenCalledWith({
+        type: 'dragstart',
+        x: 50,
+        y: 25,
+        keys: new Set(['foo', 'bar'])
+      });
+
+      expect(document.activeElement).toBe(options[1]);
+      act(() => droppable.focus());
+
+      fireEvent.click(droppable);
+      act(() => jest.runAllTimers());
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(onDrop).toHaveBeenCalledWith({
+        type: 'drop',
+        x: 50,
+        y: 25,
+        dropOperation: 'move',
+        items: [
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          },
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          }
+        ]
+      });
+
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Foo');
+      expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Bar');
+
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        x: 50,
+        y: 25,
+        dropOperation: 'move',
+        keys: new Set(['foo', 'bar']),
+        isInternal: false
+      });
+
+      delete window.ontouchstart;
+    });
+
+    it('should support row actions', async () => {
+      window.ontouchstart = () => {};
+      let onDragStart = jest.fn();
+      let onDragEnd = jest.fn();
+      let onDrop = jest.fn();
+      let onAction = jest.fn();
+      let tree = render(
+        <Provider theme={theme}>
+          <DraggableListBox aria-label="Test" selectionMode="multiple" onDragStart={onDragStart} onDragEnd={onDragEnd} onAction={onAction}>
+            <Item key="foo">Foo</Item>
+            <Item key="bar">Bar</Item>
+            <Item key="baz">Baz</Item>
+          </DraggableListBox>
+          <Droppable onDrop={onDrop} />
+        </Provider>
+      );
+
+      let listbox = tree.getByRole('listbox');
+      let droppable = tree.getByText('Drop here');
+
+      let options = within(listbox).getAllByRole('option');
+      expect(options).toHaveLength(3);
+
+      fireEvent.focus(options[0]);
+      expect(options[0]).not.toHaveAttribute('aria-describedby');
+
+      await user.pointer({target: options[0], keys: '[TouchA]'});
+      expect(options[0]).not.toHaveAttribute('aria-selected', 'true');
+      expect(options[0]).not.toHaveAttribute('aria-describedby');
+      expect(onDragStart).toHaveBeenCalledTimes(0);
+      expect(onAction).toHaveBeenCalledTimes(1);
+
+      fireEvent.pointerDown(options[0], {pointerType: 'touch', width: 0.33, height: 0.33});
+      act(() => jest.advanceTimersByTime(800));
+      let dataTransfer = new DataTransfer();
+      fireEvent(options[0], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+
+      expect(onDragStart).toHaveBeenCalledTimes(0);
+
+      expect(options[0]).toHaveAttribute('aria-selected', 'true');
+      expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Long press to start dragging');
+
+      await user.pointer({target: options[1], keys: '[TouchA]'});
+      expect(options[1]).toHaveAttribute('aria-selected', 'true');
+      expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Long press to drag 2 selected items');
+
+      fireEvent.pointerDown(options[1], {pointerType: 'touch', width: 0.33, height: 0.33});
+      fireEvent(options[1], new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
+      act(() => jest.runAllTimers());
+
+      expect(onDragStart).toHaveBeenCalledTimes(1);
+      expect(onDragStart).toHaveBeenCalledWith({
+        type: 'dragstart',
+        x: 50,
+        y: 25,
+        keys: new Set(['foo', 'bar'])
+      });
+
+      expect(document.activeElement).toBe(options[1]);
+      act(() => droppable.focus());
+
+      fireEvent.click(droppable);
+      act(() => jest.runAllTimers());
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(onDrop).toHaveBeenCalledWith({
+        type: 'drop',
+        x: 50,
+        y: 25,
+        dropOperation: 'move',
+        items: [
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          },
+          {
+            kind: 'text',
+            types: new Set(['text/plain']),
+            getText: expect.any(Function)
+          }
+        ]
+      });
+
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('Foo');
+      expect(await onDrop.mock.calls[0][0].items[1].getText('text/plain')).toBe('Bar');
+
+      expect(onDragEnd).toHaveBeenCalledTimes(1);
+      expect(onDragEnd).toHaveBeenCalledWith({
+        type: 'dragend',
+        x: 50,
+        y: 25,
+        dropOperation: 'move',
+        keys: new Set(['foo', 'bar']),
+        isInternal: false
+      });
+
+      delete window.ontouchstart;
     });
   });
 });

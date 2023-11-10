@@ -2,7 +2,11 @@ packages/@spectrum-icons/color/**
 packages/@spectrum-icons/ui/**
 packages/@spectrum-icons/workflow/**
 packages/@spectrum-icons/illustrations/**
+packages/@spectrum-icons/express/**
 node_modules
 packages/*/*/dist
 packages/react-aria/dist
+packages/react-aria-components/dist
 packages/react-stately/dist
+packages/dev/storybook-builder-parcel/preview.js
+examples/**

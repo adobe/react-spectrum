@@ -10,17 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
 import {useComboBox} from '../';
 import {useComboBoxState} from '@react-stately/combobox';
-import {useSingleSelectListState} from '@react-stately/list';
 
 describe('useComboBox', function () {
   let preventDefault = jest.fn();
   let stopPropagation = jest.fn();
+  let openSpy = jest.fn();
+  let toggleSpy = jest.fn();
   let event = (e) => ({
     ...e,
     preventDefault,
@@ -28,27 +29,35 @@ describe('useComboBox', function () {
   });
 
   let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
-  let {result} = renderHook(() => useSingleSelectListState(defaultProps));
+  let {result} = renderHook(() => useComboBoxState(defaultProps));
   let mockLayout = new ListLayout({
     rowHeight: 40
   });
   mockLayout.collection = result.current.collection;
+
+  let props = {
+    label: 'test label',
+    popoverRef: {
+      current: document.createElement('div')
+    },
+    buttonRef: {
+      current: document.createElement('button')
+    },
+    inputRef: {
+      current: document.createElement('input')
+    },
+    listBoxRef: {
+      current: document.createElement('div')
+    },
+    layout: mockLayout
+  };
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   it('should return default props for all the button group elements', function () {
-    let props = {
-      label: 'test label',
-      popoverRef: React.createRef(),
-      buttonRef: React.createRef(),
-      inputRef: React.createRef(),
-      listBoxRef: React.createRef(),
-      layout: mockLayout
-    };
-
-    let {result} = renderHook(() => useComboBox(props, useSingleSelectListState(defaultProps)));
+    let {result} = renderHook(() => useComboBox(props, useComboBoxState(defaultProps)));
     let {buttonProps, inputProps, listBoxProps, labelProps} = result.current;
 
     expect(labelProps.id).toBeTruthy();
@@ -60,7 +69,7 @@ describe('useComboBox', function () {
     expect(inputProps['aria-controls']).toBeFalsy();
     expect(inputProps['aria-activedescendant']).toBeFalsy();
     expect(listBoxProps.id).toBeTruthy();
-    expect(listBoxProps['aria-labelledby']).toBe(`${labelProps.id} ${listBoxProps.id}`);
+    expect(listBoxProps['aria-labelledby']).toBe(`${listBoxProps.id} ${labelProps.id}`);
     expect(buttonProps.id).toBeTruthy();
     expect(buttonProps.excludeFromTabOrder).toBeTruthy();
     expect(buttonProps['aria-haspopup']).toBeTruthy();
@@ -72,20 +81,6 @@ describe('useComboBox', function () {
   });
 
   it('should prevent default on Enter if isOpen', function () {
-    let props = {
-      label: 'test label',
-      popoverRef: React.createRef(),
-      buttonRef: React.createRef(),
-      inputRef: {
-        current: {
-          contains: jest.fn(),
-          focus: jest.fn()
-        }
-      },
-      listBoxRef: React.createRef(),
-      layout: mockLayout
-    };
-
     let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: {...props, allowsEmptyCollection: true}});
     act(() => {
       // set combobox state to open
@@ -113,22 +108,6 @@ describe('useComboBox', function () {
   });
 
   it('calls open and toggle with the expected parameters when arrow down/up/trigger button is pressed', function () {
-    let openSpy = jest.fn();
-    let toggleSpy = jest.fn();
-    let props = {
-      label: 'test label',
-      popoverRef: React.createRef(),
-      buttonRef: React.createRef(),
-      inputRef: {
-        current: {
-          contains: jest.fn(),
-          focus: jest.fn()
-        }
-      },
-      listBoxRef: React.createRef(),
-      layout: mockLayout
-    };
-
     let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: props});
     state.current.open = openSpy;
     state.current.toggle = toggleSpy;
@@ -151,5 +130,30 @@ describe('useComboBox', function () {
     expect(openSpy).toHaveBeenCalledTimes(2);
     expect(toggleSpy).toHaveBeenCalledTimes(2);
     expect(toggleSpy).toHaveBeenLastCalledWith(null, 'manual');
+  });
+
+  it.each`
+    Name          | componentProps
+    ${'disabled'} | ${{isDisabled: true}}
+    ${'readonly'} | ${{isReadOnly: true}}
+  `('press and keyboard events on the button doesn\'t toggle the menu if $Name', function ({componentProps}) {
+    let additionalProps = {
+      ...props,
+      ...componentProps
+    };
+
+    let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps: additionalProps});
+    state.current.open = openSpy;
+    state.current.toggle = toggleSpy;
+
+    let {result} = renderHook((props) => useComboBox(props, state.current), {initialProps: additionalProps});
+    let {buttonProps} = result.current;
+    buttonProps.onKeyDown(event({key: 'ArrowDown'}));
+    expect(openSpy).toHaveBeenCalledTimes(0);
+    expect(toggleSpy).toHaveBeenCalledTimes(0);
+    buttonProps.onKeyDown(event({key: 'ArrowUp'}));
+    expect(openSpy).toHaveBeenCalledTimes(0);
+    expect(toggleSpy).toHaveBeenCalledTimes(0);
+    expect(buttonProps.isDisabled).toBeTruthy();
   });
 });

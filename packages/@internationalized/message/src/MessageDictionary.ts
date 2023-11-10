@@ -58,6 +58,10 @@ function getStringsForLocale(locale: string, strings: LocalizedStrings, defaultL
   // This could be replaced with Intl.LocaleMatcher once it is supported.
   // https://github.com/tc39/proposal-intl-localematcher
   let language = getLanguage(locale);
+  if (strings[language]) {
+    return strings[language];
+  }
+
   for (let key in strings) {
     if (key.startsWith(language + '-')) {
       return strings[key];

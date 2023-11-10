@@ -11,26 +11,34 @@
  */
 
 import {
-  AriaLabelingProps,
-  CollectionBase,
+  AriaLabelingProps, CollectionBase,
   CollectionChildren,
   DOMProps,
+  Key,
   Orientation,
   SingleSelection,
   StyleProps
 } from '@react-types/shared';
-import {Key, ReactNode} from 'react';
+import {ReactNode} from 'react';
 
-export interface AriaTabProps {
+export interface AriaTabProps extends AriaLabelingProps {
   /** The key of the tab. */
   key: Key,
   /** Whether the tab should be disabled. */
+  isDisabled?: boolean,
+  /** Whether the tab selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean
+}
+
+export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {
+  /**
+   * Whether the TabList is disabled.
+   * Shows that a selection exists, but is not available in that circumstance.
+   */
   isDisabled?: boolean
 }
 
-export interface TabListProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'> {}
-
-interface AriaTabListBase {
+interface AriaTabListBase extends AriaLabelingProps {
   /**
    * Whether tabs are activated automatically on focus or manually.
    * @default 'automatic'
@@ -40,12 +48,7 @@ interface AriaTabListBase {
    * The orientation of the tabs.
    * @default 'horizontal'
    */
-  orientation?: Orientation,
-  /**
-   * Whether the Tabs are disabled.
-   * Shows that a selection exists, but is not available in that circumstance.
-   */
-  isDisabled?: boolean
+  orientation?: Orientation
 }
 
 export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, DOMProps, AriaLabelingProps {}
@@ -53,14 +56,18 @@ export interface AriaTabListProps<T> extends TabListProps<T>, AriaTabListBase, D
 export interface AriaTabPanelProps extends DOMProps, AriaLabelingProps {}
 
 export interface SpectrumTabsProps<T> extends AriaTabListBase, SingleSelection, DOMProps, StyleProps {
-  /** The children of the <Tabs> element. Should include `<TabList>` and `<TabPanels>` elements. */
+  /** The children of the `<Tabs>` element. Should include `<TabList>` and `<TabPanels>` elements. */
   children: ReactNode,
   /** The item objects for each tab, for dynamic collections. */
   items?: Iterable<T>,
   /** The keys of the tabs that are disabled. These tabs cannot be selected, focused, or otherwise interacted with. */
   disabledKeys?: Iterable<Key>,
+  /** Whether the Tabs are disabled. */
+  isDisabled?: boolean,
   /** Whether the tabs are displayed in a quiet style. */
   isQuiet?: boolean,
+  /** Whether the tabs are displayed in an emphasized style. */
+  isEmphasized?: boolean,
   /** The amount of space between the tabs. */
   density?: 'compact' | 'regular'
 }

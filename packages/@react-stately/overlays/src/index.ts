@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useOverlayTriggerState';
+export {useOverlayTriggerState} from './useOverlayTriggerState';
+
+export type {OverlayTriggerProps} from '@react-types/overlays';
+export type {OverlayTriggerState} from './useOverlayTriggerState';

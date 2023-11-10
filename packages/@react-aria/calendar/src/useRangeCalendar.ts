@@ -10,49 +10,72 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarAria} from './types';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {isSameDay, toDate} from '@internationalized/date';
-import {mergeProps} from '@react-aria/utils';
-import {RangeCalendarProps} from '@react-types/calendar';
+import {AriaRangeCalendarProps, DateValue} from '@react-types/calendar';
+import {CalendarAria, useCalendarBase} from './useCalendarBase';
+import {FocusableElement} from '@react-types/shared';
 import {RangeCalendarState} from '@react-stately/calendar';
-import {useCalendarBase} from './useCalendarBase';
-import {useMemo} from 'react';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {RefObject, useRef} from 'react';
+import {useEvent} from '@react-aria/utils';
 
-export function useRangeCalendar(props: RangeCalendarProps, state: RangeCalendarState): CalendarAria {
-  // Compute localized message for the selected date or range
-  let formatMessage = useMessageFormatter(intlMessages);
-  let {start, end} = state.highlightedRange || {start: null, end: null};
-  let selectedDateDescription = useMemo(() => {
-    // No message if currently selecting a range, or there is nothing highlighted.
-    if (!state.anchorDate && start && end) {
-      // Use a single date message if the start and end dates are the same day,
-      // otherwise include both dates.
-      if (isSameDay(start, end)) {
-        return formatMessage('selectedDateDescription', {date: toDate(start, state.timeZone)});
-      } else {
-        return formatMessage('selectedRangeDescription', {start: toDate(start, state.timeZone), end: toDate(end, state.timeZone)});
-      }
+/**
+ * Provides the behavior and accessibility implementation for a range calendar component.
+ * A range calendar displays one or more date grids and allows users to select a contiguous range of dates.
+ */
+export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarProps<T>, state: RangeCalendarState, ref: RefObject<FocusableElement>): CalendarAria {
+  let res = useCalendarBase(props, state);
+
+  // We need to ignore virtual pointer events from VoiceOver due to these bugs.
+  // https://bugs.webkit.org/show_bug.cgi?id=222627
+  // https://bugs.webkit.org/show_bug.cgi?id=223202
+  // usePress also does this and waits for the following click event before firing.
+  // We need to match that here otherwise this will fire before the press event in
+  // useCalendarCell, causing range selection to not work properly.
+  let isVirtualClick = useRef(false);
+  let windowRef = useRef(typeof window !== 'undefined' ? window : null);
+  useEvent(windowRef, 'pointerdown', e => {
+    isVirtualClick.current = e.width === 0 && e.height === 0;
+  });
+
+  // Stop range selection when pressing or releasing a pointer outside the calendar body,
+  // except when pressing the next or previous buttons to switch months.
+  let endDragging = (e: PointerEvent) => {
+    if (isVirtualClick.current) {
+      isVirtualClick.current = false;
+      return;
     }
-    return '';
-  }, [start, end, state.anchorDate, state.timeZone, formatMessage]);
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'Escape':
-        // Cancel the selection.
-        state.setAnchorDate(null);
-        break;
+    state.setDragging(false);
+    if (!state.anchorDate) {
+      return;
+    }
+
+    let target = e.target as Element;
+    let body = document.getElementById(res.calendarProps.id);
+    if (
+      body &&
+      body.contains(document.activeElement) &&
+      (!body.contains(target) || !target.closest('button, [role="button"]'))
+    ) {
+      state.selectFocusedDate();
     }
   };
 
-  let res = useCalendarBase(props, state, selectedDateDescription);
-  res.calendarBodyProps = mergeProps(res.calendarBodyProps, {
-    'aria-multiselectable': true,
-    onKeyDown
-  });
+  useEvent(windowRef, 'pointerup', endDragging);
+  useEvent(windowRef, 'pointercancel', endDragging);
+
+  // Also stop range selection on blur, e.g. tabbing away from the calendar.
+  res.calendarProps.onBlur = e => {
+    if ((!e.relatedTarget || !ref.current.contains(e.relatedTarget)) && state.anchorDate) {
+      state.selectFocusedDate();
+    }
+  };
+
+  // Prevent touch scrolling while dragging
+  useEvent(ref, 'touchmove', e => {
+    if (state.isDragging) {
+      e.preventDefault();
+    }
+  }, {passive: false, capture: true});
 
   return res;
 }

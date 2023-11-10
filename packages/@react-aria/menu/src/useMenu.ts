@@ -11,18 +11,18 @@
  */
 
 import {AriaMenuProps} from '@react-types/menu';
+import {DOMAttributes, Key, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes, RefObject} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
-interface MenuAria {
+export interface MenuAria {
   /** Props for the menu element. */
-  menuProps: HTMLAttributes<HTMLElement>
+  menuProps: DOMAttributes
 }
 
-interface AriaMenuOptions<T> extends AriaMenuProps<T> {
+export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
   /** Whether the menu uses virtual scrolling. */
   isVirtualized?: boolean,
 
@@ -32,6 +32,13 @@ interface AriaMenuOptions<T> extends AriaMenuProps<T> {
    */
   keyboardDelegate?: KeyboardDelegate
 }
+
+interface MenuData {
+  onClose?: () => void,
+  onAction?: (key: Key) => void
+}
+
+export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
 
 /**
  * Provides the behavior and accessibility implementation for a menu component.
@@ -56,13 +63,27 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     selectionManager: state.selectionManager,
     collection: state.collection,
     disabledKeys: state.disabledKeys,
-    shouldFocusWrap
+    shouldFocusWrap,
+    linkBehavior: 'override'
+  });
+
+  menuData.set(state, {
+    onClose: props.onClose,
+    onAction: props.onAction
   });
 
   return {
     menuProps: mergeProps(domProps, {
       role: 'menu',
-      ...listProps
+      // this forces AT to move their cursors into any open sub dialogs, the sub dialogs contain hidden close buttons in order to come back to this level of the menu
+      'aria-hidden': state.expandedKeys.size > 0 ? true : undefined,
+      ...listProps,
+      onKeyDown: (e) => {
+        // don't clear the menu selected keys if the user is presses escape since escape closes the menu
+        if (e.key !== 'Escape') {
+          listProps.onKeyDown(e);
+        }
+      }
     })
   };
 }

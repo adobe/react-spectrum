@@ -15,61 +15,69 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {FocusEvent, HTMLAttributes} from 'react';
-import {FocusEvents} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
+import {FocusEvent, useCallback} from 'react';
+import {useSyntheticBlurEvent} from './utils';
 
-interface FocusProps extends FocusEvents {
+export interface FocusProps<Target = FocusableElement> extends FocusEvents<Target> {
   /** Whether the focus events should be disabled. */
   isDisabled?: boolean
 }
 
-interface FocusResult {
+export interface FocusResult<Target = FocusableElement> {
   /** Props to spread onto the target element. */
-  focusProps: HTMLAttributes<HTMLElement>
+  focusProps: DOMAttributes<Target>
 }
 
 /**
  * Handles focus events for the immediate target.
  * Focus events on child elements will be ignored.
  */
-export function useFocus(props: FocusProps): FocusResult {
-  if (props.isDisabled) {
-    return {focusProps: {}};
-  }
+export function useFocus<Target extends FocusableElement = FocusableElement>(props: FocusProps<Target>): FocusResult<Target> {
+  let {
+    isDisabled,
+    onFocus: onFocusProp,
+    onBlur: onBlurProp,
+    onFocusChange
+  } = props;
 
-  let onFocus, onBlur;
-  if (props.onFocus || props.onFocusChange) {
-    onFocus = (e: FocusEvent) => {
-      if (e.target === e.currentTarget) {
-        if (props.onFocus) {
-          props.onFocus(e);
-        }
-
-        if (props.onFocusChange) {
-          props.onFocusChange(true);
-        }
+  const onBlur: FocusProps<Target>['onBlur'] = useCallback((e: FocusEvent<Target>) => {
+    if (e.target === e.currentTarget) {
+      if (onBlurProp) {
+        onBlurProp(e);
       }
-    };
-  }
 
-  if (props.onBlur || props.onFocusChange) {
-    onBlur = (e: FocusEvent) => {
-      if (e.target === e.currentTarget) {
-        if (props.onBlur) {
-          props.onBlur(e);
-        }
-
-        if (props.onFocusChange) {
-          props.onFocusChange(false);
-        }
+      if (onFocusChange) {
+        onFocusChange(false);
       }
-    };
-  }
+
+      return true;
+    }
+  }, [onBlurProp, onFocusChange]);
+
+
+  const onSyntheticFocus = useSyntheticBlurEvent<Target>(onBlur);
+
+  const onFocus: FocusProps<Target>['onFocus'] = useCallback((e: FocusEvent<Target>) => {
+    // Double check that document.activeElement actually matches e.target in case a previously chained
+    // focus handler already moved focus somewhere else.
+    if (e.target === e.currentTarget && document.activeElement === e.target) {
+      if (onFocusProp) {
+        onFocusProp(e);
+      }
+
+      if (onFocusChange) {
+        onFocusChange(true);
+      }
+
+      onSyntheticFocus(e);
+    }
+  }, [onFocusChange, onFocusProp, onSyntheticFocus]);
 
   return {
     focusProps: {
-      onFocus,
-      onBlur
+      onFocus: (!isDisabled && (onFocusProp || onFocusChange || onBlurProp)) ? onFocus : undefined,
+      onBlur: (!isDisabled && (onBlurProp || onFocusChange)) ? onBlur : undefined
     }
   };
 }

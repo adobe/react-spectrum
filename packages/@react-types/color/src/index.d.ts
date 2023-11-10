@@ -17,15 +17,20 @@ import {
   DOMProps,
   FocusableDOMProps,
   FocusableProps,
+  HelpTextProps,
   InputBase,
+  InputDOMProps,
   LabelableProps,
+  SpectrumFieldValidation,
   SpectrumLabelableProps,
+  SpectrumTextInputBase,
   StyleProps,
   TextInputBase,
   TextInputDOMProps,
   Validation,
   ValueBase
 } from '@react-types/shared';
+import {ReactNode} from 'react';
 import {SliderProps} from '@react-types/slider';
 
 /** A list of supported color formats. */
@@ -34,13 +39,17 @@ export type ColorFormat = 'hex' | 'hexa' | 'rgb' | 'rgba' | 'hsl' | 'hsla' | 'hs
 /** A list of color channels. */
 export type ColorChannel = 'hue' | 'saturation' | 'brightness' | 'lightness' | 'red' | 'green' | 'blue' | 'alpha';
 
+export type ColorAxes = {xChannel: ColorChannel, yChannel: ColorChannel, zChannel: ColorChannel};
+
 export interface ColorChannelRange {
   /** The minimum value of the color channel. */
   minValue: number,
   /** The maximum value of the color channel. */
   maxValue: number,
   /** The step value of the color channel, used when incrementing and decrementing. */
-  step: number
+  step: number,
+  /** The page step value of the color channel, used when incrementing and decrementing. */
+  pageSize: number
 }
 
 /** Represents a color value. */
@@ -73,27 +82,34 @@ export interface Color {
   /**
    * Formats the numeric value for a given channel for display according to the provided locale.
    */
-  formatChannelValue(channel: ColorChannel, locale: string): string
+  formatChannelValue(channel: ColorChannel, locale: string): string,
+  /**
+   * Returns the color space, 'rgb', 'hsb' or 'hsl', for the current color.
+   */
+  getColorSpace(): ColorFormat,
+  /**
+   * Returns the color space axes, xChannel, yChannel, zChannel.
+   */
+  getColorSpaceAxes(xyChannels: {xChannel?: ColorChannel, yChannel?: ColorChannel}): ColorAxes,
+  /**
+   * Returns an array of the color channels within the current color space space.
+   */
+  getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 }
 
-export interface ColorFieldProps extends ValueBase<string | Color>, InputBase, Validation, FocusableProps, TextInputBase, LabelableProps {
+export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation<Color | null>, FocusableProps, TextInputBase, LabelableProps, HelpTextProps {
   /** Handler that is called when the value changes. */
-  onChange?: (color: Color) => void,
-  /**
-   * The step value to increment and decrement the color by when using the arrow keys.
-   * @default 1
-   */
-  step?: number
+  onChange?: (color: Color | null) => void
 }
 
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
 
-export interface SpectrumColorFieldProps extends AriaColorFieldProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<Color | null>, SpectrumLabelableProps, StyleProps {
   /** Whether the ColorField should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 
-export interface ColorWheelProps extends ValueBase<string | Color> {
+export interface ColorWheelProps extends Omit<ValueBase<string | Color>, 'onChange'> {
   /** Whether the ColorWheel is disabled. */
   isDisabled?: boolean,
   /** Handler that is called when the value changes, as the user drags. */
@@ -101,25 +117,20 @@ export interface ColorWheelProps extends ValueBase<string | Color> {
   /** Handler that is called when the user stops dragging. */
   onChangeEnd?: (value: Color) => void,
   /**
-   * The ColorWheel's step value.
-   * @default 1
-   */
-  step?: number,
-  /**
    * The default value (uncontrolled).
    * @default 'hsl(0, 100%, 50%)'
    */
   defaultValue?: string | Color
 }
 
-export interface AriaColorWheelProps extends ColorWheelProps, DOMProps, AriaLabelingProps {}
+export interface AriaColorWheelProps extends ColorWheelProps, InputDOMProps, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumColorWheelProps extends AriaColorWheelProps, Omit<StyleProps, 'width' | 'height'> {
   /** The outer diameter of the ColorWheel. */
   size?: DimensionValue
 }
 
-export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue'> {
+export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'minValue' | 'maxValue' | 'step' | 'pageSize' | 'onChange' | 'onChangeEnd'> {
   /** The color channel that the slider manipulates. */
   channel: ColorChannel,
   /** Handler that is called when the value changes, as the user drags. */
@@ -128,9 +139,40 @@ export interface ColorSliderProps extends Omit<SliderProps<string | Color>, 'min
   onChangeEnd?: (value: Color) => void
 }
 
-export interface AriaColorSliderProps extends ColorSliderProps, DOMProps, AriaLabelingProps {}
+export interface AriaColorSliderProps extends ColorSliderProps, InputDOMProps, DOMProps, AriaLabelingProps {}
 
 export interface SpectrumColorSliderProps extends AriaColorSliderProps, StyleProps {
   /** Whether the value label is displayed. True by default if there is a label, false by default if not. */
-  showValueLabel?: boolean
+  showValueLabel?: boolean,
+  /** A ContextualHelp element to place next to the label. */
+  contextualHelp?: ReactNode
+}
+
+export interface ColorAreaProps extends Omit<ValueBase<string | Color>, 'onChange'> {
+  /** Color channel for the horizontal axis. */
+  xChannel?: ColorChannel,
+  /** Color channel for the vertical axis. */
+  yChannel?: ColorChannel,
+  /** Whether the ColorArea is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the value changes, as the user drags. */
+  onChange?: (value: Color) => void,
+  /** Handler that is called when the user stops dragging. */
+  onChangeEnd?: (value: Color) => void
+}
+
+export interface AriaColorAreaProps extends ColorAreaProps, DOMProps, AriaLabelingProps {
+  /**
+   * The name of the x channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  xName?: string,
+  /**
+   * The name of the y channel input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  yName?: string
+}
+
+export interface SpectrumColorAreaProps extends AriaColorAreaProps, Omit<StyleProps, 'width' | 'height'> {
+  /** Size of the Color Area. */
+  size?: DimensionValue
 }

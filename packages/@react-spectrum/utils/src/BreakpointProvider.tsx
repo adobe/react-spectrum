@@ -62,13 +62,23 @@ export function useMatchedBreakpoints(breakpoints: Breakpoints): string[] {
     }
 
     let onResize = () => {
-      setBreakpoint(getBreakpointHandler());
+      const breakpointHandler = getBreakpointHandler();
+
+      setBreakpoint(previousBreakpointHandler => {
+        if (previousBreakpointHandler.length !== breakpointHandler.length ||
+          previousBreakpointHandler.some((breakpoint, idx) => breakpoint !== breakpointHandler[idx])) {
+          return [...breakpointHandler]; // Return a new array to force state change
+        }
+
+        return previousBreakpointHandler;
+      });
     };
 
     window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('resize', onResize);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [supportsMatchMedia]);
 
   // If in SSR, the media query should never match. Once the page hydrates,

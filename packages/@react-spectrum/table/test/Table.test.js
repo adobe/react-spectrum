@@ -11,28 +11,37 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render as renderComponent, within} from '@testing-library/react';
+import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import {announce} from '@react-aria/live-announcer';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
+import {composeStories} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';
 import {CRUDExample} from '../stories/CRUDExample';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Divider} from '@react-spectrum/divider';
+import {enableTableNestedRows} from '@react-stately/flags';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
-import {HidingColumns} from '../stories/HidingColumns';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import * as stories from '../stories/Table.stories';
 import {Switch} from '@react-spectrum/switch';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {triggerPress} from '@react-spectrum/test-utils';
-import {typeText} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
+
+let {
+  InlineDeleteButtons: DeletableRowsTable,
+  EmptyStateStory: EmptyStateTable,
+  WithBreadcrumbNavigation: TableWithBreadcrumbs,
+  TypeaheadWithDialog: TypeaheadWithDialog,
+  ColumnHeaderFocusRingTable
+} = composeStories(stories);
+
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -59,9 +68,19 @@ let items = [
   {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
+let itemsWithFalsyId = [
+  {test: 'Test 1', foo: 'Foo 1', bar: 'Bar 1', yay: 'Yay 1', baz: 'Baz 1', id: 0},
+  {test: 'Test 2', foo: 'Foo 2', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2', id: 1}
+];
+
 let manyItems = [];
 for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
+}
+
+let manyColumns = [];
+for (let i = 1; i <= 100; i++) {
+  manyColumns.push({id: i, name: 'Column ' + i});
 }
 
 function ExampleSortTable() {
@@ -85,10 +104,45 @@ function ExampleSortTable() {
   );
 }
 
-describe('TableView', function () {
+let defaultTable = (
+  <TableView aria-label="Table">
+    <TableHeader>
+      <Column key="foo">Foo</Column>
+      <Column key="bar">Bar</Column>
+    </TableHeader>
+    <TableBody>
+      <Row>
+        <Cell>Foo 1</Cell>
+        <Cell>Bar 1</Cell>
+      </Row>
+      <Row>
+        <Cell>Foo 2</Cell>
+        <Cell>Bar 2</Cell>
+      </Row>
+    </TableBody>
+  </TableView>
+);
+
+function pointerEvent(type, opts) {
+  let evt = new Event(type, {bubbles: true, cancelable: true});
+  Object.assign(evt, {
+    ctrlKey: false,
+    metaKey: false,
+    shiftKey: false,
+    altKey: false,
+    button: opts.button || 0,
+    width: opts.width == null ? undefined : opts.width ?? 1,
+    height: opts.height == null ? undefined : opts.height ?? 1
+  }, opts);
+  return evt;
+}
+
+export let tableTests = () => {
   let offsetWidth, offsetHeight;
+  let user;
 
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
@@ -99,26 +153,30 @@ describe('TableView', function () {
     offsetHeight.mockReset();
   });
 
-  beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
-  });
-
   afterEach(() => {
     act(() => {jest.runAllTimers();});
   });
 
-  let render = (children, scale = 'medium') => renderComponent(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
+  let render = (children, scale = 'medium') => {
+    let tree = renderComponent(
+      <Provider theme={theme} scale={scale}>
+        {children}
+      </Provider>
+    );
+    // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
+    act(() => {jest.runAllTimers();});
+    return tree;
+  };
 
-  let rerender = (tree, children, scale = 'medium') => tree.rerender(
-    <Provider theme={theme} scale={scale}>
-      {children}
-    </Provider>
-  );
-
+  let rerender = (tree, children, scale = 'medium') => {
+    let newTree = tree.rerender(
+      <Provider theme={theme} scale={scale}>
+        {children}
+      </Provider>
+    );
+    act(() => {jest.runAllTimers();});
+    return newTree;
+  };
   // I'd use tree.getByRole(role, {name: text}) here, but it's unbearably slow.
   let getCell = (tree, text) => {
     // Find by text, then go up to the element with the cell role.
@@ -129,6 +187,9 @@ describe('TableView', function () {
 
     return el;
   };
+
+  let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
+  let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
   it('renders a static table', function () {
     let {getByRole} = render(
@@ -189,17 +250,19 @@ describe('TableView', function () {
     expect(rows[1]).toHaveAttribute('aria-rowindex', '3');
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Foo 1');
     expect(rowheader).toHaveTextContent('Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Foo 2');
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
     expect(rows[1]).not.toHaveAttribute('aria-selected');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
@@ -274,27 +337,29 @@ describe('TableView', function () {
     expect(rows[1]).toHaveAttribute('aria-rowindex', '3');
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Foo 1');
     expect(rowheader).toHaveTextContent('Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
 
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Foo 2');
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(6);
@@ -305,6 +370,33 @@ describe('TableView', function () {
     expect(cells[3]).toHaveAttribute('aria-colindex', '1');
     expect(cells[4]).toHaveAttribute('aria-colindex', '3');
     expect(cells[5]).toHaveAttribute('aria-colindex', '4');
+  });
+
+  it('accepts a UNSAFE_className', function () {
+    let {getByRole} = render(
+      <TableView aria-label="Table" data-testid="test" selectionMode="multiple" UNSAFE_className="test-class">
+        <TableHeader>
+          <Column>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </TableHeader>
+        <TableBody>
+          <Row>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </Row>
+          <Row>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </Row>
+        </TableBody>
+      </TableView>
+    );
+
+    let grid = getByRole('grid');
+    expect(grid).toHaveAttribute('class', expect.stringContaining('test-class'));
   });
 
   it('renders a dynamic table', function () {
@@ -349,17 +441,19 @@ describe('TableView', function () {
     expect(rows).toHaveLength(2);
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Foo 1');
     expect(rowheader).toHaveTextContent('Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Foo 2');
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '1');
 
     expect(rows[1]).not.toHaveAttribute('aria-selected');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(4);
@@ -417,27 +511,29 @@ describe('TableView', function () {
     expect(rows).toHaveLength(2);
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Foo 1');
     expect(rowheader).toHaveTextContent('Foo 1');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
 
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Foo 2');
     expect(rowheader).toHaveTextContent('Foo 2');
     expect(rowheader).toHaveAttribute('aria-colindex', '2');
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
 
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(6);
@@ -448,6 +544,45 @@ describe('TableView', function () {
     expect(cells[3]).toHaveAttribute('aria-colindex', '1');
     expect(cells[4]).toHaveAttribute('aria-colindex', '3');
     expect(cells[5]).toHaveAttribute('aria-colindex', '4');
+  });
+
+  it('renders contents even with falsy row ids', function () {
+    // TODO: doesn't support empty string ids, fix for that to come
+    let {getByRole} = render(
+      <TableView aria-label="Table">
+        <TableHeader columns={columns}>
+          {column => <Column>{column.name}</Column>}
+        </TableHeader>
+        <TableBody items={itemsWithFalsyId}>
+          {item =>
+            (<Row>
+              {key => <Cell>{item[key]}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    );
+
+    let grid = getByRole('grid');
+    let rows = within(grid).getAllByRole('row');
+    expect(rows).toHaveLength(3);
+
+    for (let [i, row] of rows.entries()) {
+      if (i === 0) {
+        let columnheaders = within(row).getAllByRole('columnheader');
+        expect(columnheaders).toHaveLength(3);
+        for (let [j, columnheader] of columnheaders.entries()) {
+          expect(within(columnheader).getByText(columns[j].name)).toBeTruthy();
+        }
+      } else {
+        let rowheader = within(row).getByRole('rowheader');
+        expect(within(rowheader).getByText(itemsWithFalsyId[i - 1][columns[0].key])).toBeTruthy();
+        let cells = within(row).getAllByRole('gridcell');
+        expect(cells).toHaveLength(2);
+        expect(within(cells[0]).getByText(itemsWithFalsyId[i - 1][columns[1].key])).toBeTruthy();
+        expect(within(cells[1]).getByText(itemsWithFalsyId[i - 1][columns[2].key])).toBeTruthy();
+      }
+    }
   });
 
   it('renders a static table with nested columns', function () {
@@ -529,27 +664,29 @@ describe('TableView', function () {
     expect(rows).toHaveLength(2);
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Test 1');
     expect(rowheader).toHaveTextContent('Test 1');
 
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
     expect(rows[0]).toHaveAttribute('aria-rowindex', '3');
 
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Test 2');
     expect(rowheader).toHaveTextContent('Test 2');
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
     expect(rows[1]).toHaveAttribute('aria-rowindex', '4');
 
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(8);
@@ -632,27 +769,29 @@ describe('TableView', function () {
     expect(rows).toHaveLength(2);
 
     let rowheader = within(rows[0]).getByRole('rowheader');
+    let cellSpan = within(rowheader).getByText('Test 1');
     expect(rowheader).toHaveTextContent('Test 1');
 
     expect(rows[0]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[0]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', cellSpan.id);
     expect(rows[0]).toHaveAttribute('aria-rowindex', '4');
 
     checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     rowheader = within(rows[1]).getByRole('rowheader');
+    cellSpan = within(rowheader).getByText('Test 2');
     expect(rowheader).toHaveTextContent('Test 2');
 
     expect(rows[1]).toHaveAttribute('aria-selected', 'false');
-    expect(rows[1]).toHaveAttribute('aria-labelledby', rowheader.id);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', cellSpan.id);
     expect(rows[1]).toHaveAttribute('aria-rowindex', '5');
 
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheader.id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${cellSpan.id}`);
 
     let cells = within(rowgroups[1]).getAllByRole('gridcell');
     expect(cells).toHaveLength(10);
@@ -689,63 +828,75 @@ describe('TableView', function () {
     expect(rowheaders).toHaveLength(2);
     expect(rowheaders[0]).toHaveTextContent('Sam');
     expect(rowheaders[1]).toHaveTextContent('Smith');
+    let firstCellSpan = within(rowheaders[0]).getByText('Sam');
+    let secondCellSpan = within(rowheaders[1]).getByText('Smith');
 
-    expect(rows[0]).toHaveAttribute('aria-labelledby', `${rowheaders[0].id} ${rowheaders[1].id}`);
+    expect(rows[0]).toHaveAttribute('aria-labelledby', `${firstCellSpan.id} ${secondCellSpan.id}`);
 
     let checkbox = within(rows[0]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheaders[0].id} ${rowheaders[1].id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${firstCellSpan.id} ${secondCellSpan.id}`);
 
     rowheaders = within(rows[1]).getAllByRole('rowheader');
     expect(rowheaders).toHaveLength(2);
     expect(rowheaders[0]).toHaveTextContent('Julia');
     expect(rowheaders[1]).toHaveTextContent('Jones');
+    firstCellSpan = within(rowheaders[0]).getByText('Julia');
+    secondCellSpan = within(rowheaders[1]).getByText('Jones');
 
-    expect(rows[1]).toHaveAttribute('aria-labelledby', `${rowheaders[0].id} ${rowheaders[1].id}`);
+    expect(rows[1]).toHaveAttribute('aria-labelledby', `${firstCellSpan.id} ${secondCellSpan.id}`);
 
     checkbox = within(rows[1]).getByRole('checkbox');
     expect(checkbox).toHaveAttribute('aria-label', 'Select');
-    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${rowheaders[0].id} ${rowheaders[1].id}`);
+    expect(checkbox).toHaveAttribute('aria-labelledby', `${checkbox.id} ${firstCellSpan.id} ${secondCellSpan.id}`);
   });
 
   describe('keyboard focus', function () {
     // locale is being set here, since we can't nest them, use original render function
-    let renderTable = (locale = 'en-US', props = {}) => renderComponent(
-      <Provider locale={locale} theme={theme}>
-        <TableView aria-label="Table" {...props}>
-          <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
-          </TableHeader>
-          <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
-          </TableBody>
-        </TableView>
-      </Provider>
-    );
+    let renderTable = (locale = 'en-US', props = {}) => {
+      let tree = renderComponent(
+        <Provider locale={locale} theme={theme}>
+          <TableView aria-label="Table" {...props}>
+            <TableHeader columns={columns}>
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        </Provider>
+      );
+      act(() => {jest.runAllTimers();});
+      return tree;
+    };
 
     // locale is being set here, since we can't nest them, use original render function
-    let renderNested = (locale = 'en-US') => renderComponent(
-      <Provider locale={locale} theme={theme}>
-        <TableView aria-label="Table">
-          <TableHeader columns={nestedColumns}>
-            {column =>
-              <Column childColumns={column.children}>{column.name}</Column>
-            }
-          </TableHeader>
-          <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
-          </TableBody>
-        </TableView>
-      </Provider>
-    );
+    let renderNested = (locale = 'en-US') => {
+      let tree = renderComponent(
+        <Provider locale={locale} theme={theme}>
+          <TableView aria-label="Table">
+            <TableHeader columns={nestedColumns}>
+              {column =>
+                <Column childColumns={column.children}>{column.name}</Column>
+              }
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        </Provider>
+      );
+      act(() => {jest.runAllTimers();});
+      return tree;
+    };
 
     let renderMany = () => render(
       <TableView aria-label="Table">
@@ -764,14 +915,28 @@ describe('TableView', function () {
       </TableView>
     );
 
-    let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
-    let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
+    let renderManyColumns = () => render(
+      <TableView aria-label="Table" selectionMode="multiple">
+        <TableHeader columns={manyColumns}>
+          {column =>
+            <Column>{column.name}</Column>
+          }
+        </TableHeader>
+        <TableBody items={manyItems}>
+          {item =>
+            (<Row key={item.foo}>
+              {key => <Cell>{item.foo + ' ' + key}</Cell>}
+            </Row>)
+          }
+        </TableBody>
+      </TableView>
+    );
 
     describe('ArrowRight', function () {
-      it('should move focus to the next cell in a row with ArrowRight', function () {
+      it('should move focus to the next cell in a row with ArrowRight', async function () {
         let tree = renderTable();
         focusCell(tree, 'Bar 1');
-        moveFocus('ArrowRight');
+        await user.keyboard('{ArrowRight}');
         expect(document.activeElement).toBe(getCell(tree, 'Baz 1'));
       });
 
@@ -1268,6 +1433,43 @@ describe('TableView', function () {
         moveFocus('S');
         expect(document.activeElement).toBe(getCell(tree, 'Sam'));
       });
+
+      describe('type ahead with dialog triggers', function () {
+        beforeEach(function () {
+          offsetHeight.mockRestore();
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementationOnce(() => 20)
+            .mockImplementation(() => 100);
+        });
+        afterEach(function () {
+          offsetHeight.mockRestore();
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+        });
+        it('does not pick up typeahead from a dialog', async function () {
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
+            .mockImplementationOnce(() => 20)
+            .mockImplementation(() => 100);
+          let tree = render(<TypeaheadWithDialog />);
+          let trigger = tree.getAllByRole('button')[0];
+          await user.click(trigger);
+          act(() => {
+            jest.runAllTimers();
+          });
+          let textfield = tree.getByLabelText('Enter a J');
+          act(() => {textfield.focus();});
+          fireEvent.keyDown(textfield, {key: 'J'});
+          fireEvent.keyUp(textfield, {key: 'J'});
+          act(() => {
+            jest.runAllTimers();
+          });
+          expect(document.activeElement).toBe(textfield);
+          fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+          fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+          act(() => {
+            jest.runAllTimers();
+          });
+        });
+      });
     });
 
     describe('focus marshalling', function () {
@@ -1296,6 +1498,13 @@ describe('TableView', function () {
           <input data-testid="after" />
         </>
       );
+
+      it('should retain focus on the pressed child', async function () {
+        let tree = renderFocusable();
+        let switchToPress = tree.getAllByRole('switch')[2];
+        await user.click(switchToPress);
+        expect(document.activeElement).toBe(switchToPress);
+      });
 
       it('should marshall focus to the focusable element inside a cell', function () {
         let tree = renderFocusable();
@@ -1331,19 +1540,13 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(tree.getAllByRole('checkbox')[0]);
       });
 
-      it('should support keyboard navigation after pressing focusable element inside a cell', function () {
+      it('should support keyboard navigation after pressing focusable element inside a cell', async function () {
         let tree = renderFocusable();
-        triggerPress(tree.getAllByRole('switch')[0]);
+        await user.click(tree.getAllByRole('switch')[0]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
-      });
-
-      it('should marshall focus to the child on press of the cell', function () {
-        let tree = renderFocusable();
-        triggerPress(tree.getAllByRole('rowheader')[0]);
-        expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
       });
 
       it('should move focus to the first row when tabbing into the table from the start', function () {
@@ -1426,10 +1629,10 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(baz1);
       });
 
-      it('should move focus after the table when tabbing', function () {
+      it('should move focus after the table when tabbing', async function () {
         let tree = renderFocusable();
 
-        triggerPress(tree.getAllByRole('switch')[1]);
+        await user.click(tree.getAllByRole('switch')[1]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate tabbing within the table
@@ -1462,10 +1665,10 @@ describe('TableView', function () {
         expect(document.activeElement).toBe(after);
       });
 
-      it('should move focus before the table when shift tabbing', function () {
+      it('should move focus before the table when shift tabbing', async function () {
         let tree = renderFocusable();
 
-        triggerPress(tree.getAllByRole('switch')[1]);
+        await user.click(tree.getAllByRole('switch')[1]);
         expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
         // Simulate shift tabbing within the table
@@ -1477,6 +1680,100 @@ describe('TableView', function () {
 
         let before = tree.getByTestId('before');
         expect(document.activeElement).toBe(before);
+      });
+
+      it('should send focus to the appropriate key below if the focused row is removed', async function () {
+        let tree = render(<DeletableRowsTable selectionMode="multiple" />);
+
+        let rows = tree.getAllByRole('row');
+        await user.tab();
+        expect(document.activeElement).toBe(rows[1]);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(within(rows[0]).getAllByRole('columnheader')[4]);
+      });
+
+      it('should send focus to the appropriate key above if the focused last row is removed', async function () {
+        let tree = render(<DeletableRowsTable selectionMode="multiple" />);
+
+        let rows = tree.getAllByRole('row');
+        await user.tab();
+        expect(document.activeElement).toBe(rows[1]);
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+        fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+        act(() => {jest.runAllTimers();});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+
+        rows = tree.getAllByRole('row');
+        expect(document.activeElement).toBe(within(rows[0]).getAllByRole('columnheader')[4]);
+      });
+
+      it('should send focus to the appropriate column and row if both the current row and column are removed', function () {
+        let itemsLocal = items;
+        let columnsLocal = columns;
+        let renderJSX = (props, items = itemsLocal, columns = columnsLocal) => (
+          <TableView aria-label="Table" {...props}>
+            <TableHeader columns={columns}>
+              {column => <Column>{column.name}</Column>}
+            </TableHeader>
+            <TableBody items={items}>
+              {item =>
+                (<Row key={item.foo}>
+                  {key => <Cell>{item[key]}</Cell>}
+                </Row>)
+              }
+            </TableBody>
+          </TableView>
+        );
+
+        let renderTable = (props, items = itemsLocal, columns = columnsLocal) => render(renderJSX(props, items, columns));
+
+        let tree = renderTable();
+        focusCell(tree, 'Baz 1');
+
+        rerender(tree, renderJSX({}, [itemsLocal[1], itemsLocal[0]], columnsLocal.slice(0, 2)));
+
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[1], 'If column index with last focus is greater than the new number of columns, focus the row');
+
+        focusCell(tree, 'Bar 1');
+
+        rerender(tree, renderJSX({}, [itemsLocal[1]], columnsLocal.slice(0, 1)));
+
+        expect(document.activeElement).toBe(tree.getAllByRole('row')[1], 'If column index with last focus is greater than the new number of columns, focus the row');
+
+        focusCell(tree, 'Foo 2');
+
+        rerender(tree, renderJSX({}, [itemsLocal[0], itemsLocal[0]], columnsLocal));
+
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 1'));
       });
     });
 
@@ -1491,31 +1788,46 @@ describe('TableView', function () {
       });
 
       it('should scroll to a cell when it is focused off screen', function () {
-        let tree = renderMany();
+        let tree = renderManyColumns();
         let body = tree.getByRole('grid').childNodes[1];
 
-        let cell = getCell(tree, 'Baz 5');
+        let cell = getCell(tree, 'Foo 5 5');
         act(() => cell.focus());
         expect(document.activeElement).toBe(cell);
         expect(body.scrollTop).toBe(0);
 
-        // When scrolling the focused item out of view, focus should move to the table itself
+        // When scrolling the focused item out of view, focus should remain on the item,
+        // virtualizer keeps focused items from being reused
         body.scrollTop = 1000;
+        body.scrollLeft = 1000;
         fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
-        expect(tree.queryByText('Baz 5')).toBeNull();
+        expect(document.activeElement).toBe(cell);
+        expect(tree.queryByText('Foo 5 5')).toBe(cell.firstElementChild);
+
+        // Ensure we have the correct sticky cells in the right order.
+        let row = cell.closest('[role=row]');
+        let cells = within(row).getAllByRole('gridcell');
+        let rowHeaders = within(row).getAllByRole('rowheader');
+        expect(cells).toHaveLength(17);
+        expect(rowHeaders).toHaveLength(1);
+        expect(cells[0]).toHaveAttribute('aria-colindex', '1'); // checkbox
+        expect(rowHeaders[0]).toHaveAttribute('aria-colindex', '2'); // rowheader
+        expect(cells[1]).toHaveAttribute('aria-colindex', '6'); // persisted
+        expect(cells[1]).toBe(cell);
+        expect(cells[2]).toHaveAttribute('aria-colindex', '14'); // first visible
 
         // Moving focus should scroll the new focused item into view
         moveFocus('ArrowLeft');
         expect(body.scrollTop).toBe(164);
-        expect(document.activeElement).toBe(getCell(tree, 'Bar 5'));
+        expect(document.activeElement).toBe(getCell(tree, 'Foo 5 4'));
       });
 
       it('should not scroll when a column header receives focus', function () {
         let tree = renderMany();
         let body = tree.getByRole('grid').childNodes[1];
+        let cell = getCell(tree, 'Baz 5');
 
         focusCell(tree, 'Baz 5');
 
@@ -1523,7 +1835,7 @@ describe('TableView', function () {
         fireEvent.scroll(body);
 
         expect(body.scrollTop).toBe(1000);
-        expect(document.activeElement).toBe(tree.getByRole('grid'));
+        expect(document.activeElement).toBe(cell);
 
         focusCell(tree, 'Bar');
         expect(document.activeElement).toHaveAttribute('role', 'columnheader');
@@ -1534,6 +1846,10 @@ describe('TableView', function () {
   });
 
   describe('selection', function () {
+    afterEach(() => {
+      act(() => jest.runAllTimers());
+    });
+
     let renderJSX = (props, items = manyItems) => (
       <TableView aria-label="Table" selectionMode="multiple" {...props}>
         <TableHeader columns={columns}>
@@ -1578,26 +1894,26 @@ describe('TableView', function () {
     };
 
     describe('row selection', function () {
-      it('should select a row from checkbox', function () {
+      it('should select a row from checkbox', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        userEvent.click(within(row).getByRole('checkbox'));
+        await user.click(within(row).getByRole('checkbox'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
         checkSelectAll(tree);
       });
 
-      it('should select a row by pressing on a cell', function () {
+      it('should select a row by pressing on a cell', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        triggerPress(getCell(tree, 'Baz 1'));
+        await user.click(getCell(tree, 'Baz 1'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -1656,7 +1972,7 @@ describe('TableView', function () {
         checkSelectAll(tree);
       });
 
-      it('should support selecting multiple with a pointer', function () {
+      it('should support selecting multiple with a pointer', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -1664,7 +1980,7 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        triggerPress(getCell(tree, 'Baz 1'));
+        await user.click(getCell(tree, 'Baz 1'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1672,7 +1988,7 @@ describe('TableView', function () {
         checkSelectAll(tree, 'indeterminate');
 
         onSelectionChange.mockReset();
-        triggerPress(getCell(tree, 'Baz 2'));
+        await user.click(getCell(tree, 'Baz 2'));
 
         checkSelection(onSelectionChange, ['Foo 1', 'Foo 2']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1682,7 +1998,7 @@ describe('TableView', function () {
 
         // Deselect
         onSelectionChange.mockReset();
-        triggerPress(getCell(tree, 'Baz 2'));
+        await user.click(getCell(tree, 'Baz 2'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1724,13 +2040,13 @@ describe('TableView', function () {
         checkSelectAll(tree, 'indeterminate');
       });
 
-      it('should not allow selection of a disabled row via checkbox click', function () {
+      it('should not allow selection of a disabled row via checkbox click', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 1']});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(within(row).getByRole('checkbox')));
+        await user.click(within(row).getByRole('checkbox'));
 
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(row).toHaveAttribute('aria-selected', 'false');
@@ -1739,13 +2055,13 @@ describe('TableView', function () {
         expect(checkbox.checked).toBeFalsy();
       });
 
-      it('should not allow selection of a disabled row by pressing on a cell', function () {
+      it('should not allow selection of a disabled row by pressing on a cell', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 1']});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        await user.click(getCell(tree, 'Baz 1'));
 
         expect(onSelectionChange).not.toHaveBeenCalled();
         expect(row).toHaveAttribute('aria-selected', 'false');
@@ -1769,10 +2085,58 @@ describe('TableView', function () {
         let checkbox = tree.getByLabelText('Select All');
         expect(checkbox.checked).toBeFalsy();
       });
+
+      describe('Space key with focus on a link within a cell', () => {
+        it('should toggle selection and prevent scrolling of the table', () => {
+          let tree = render(
+            <TableView aria-label="Table" selectionMode="multiple">
+              <TableHeader columns={columns}>
+                {column => <Column>{column.name}</Column>}
+              </TableHeader>
+              <TableBody items={items}>
+                {item =>
+                  (<Row key={item.foo}>
+                    {key => <Cell><Link><a href={`https://example.com/?id=${item.id}`} target="_blank">{item[key]}</a></Link></Cell>}
+                  </Row>)
+                }
+              </TableBody>
+            </TableView>
+          );
+
+          let row = tree.getAllByRole('row')[1];
+          expect(row).toHaveAttribute('aria-selected', 'false');
+
+          let link = within(row).getAllByRole('link')[0];
+          expect(link.textContent).toBe('Foo 1');
+
+          act(() => {
+            link.focus();
+            fireEvent.keyDown(link, {key: ' '});
+            fireEvent.keyUp(link, {key: ' '});
+            jest.runAllTimers();
+          });
+
+          row = tree.getAllByRole('row')[1];
+          expect(row).toHaveAttribute('aria-selected', 'true');
+
+          act(() => {
+            link.focus();
+            fireEvent.keyDown(link, {key: ' '});
+            fireEvent.keyUp(link, {key: ' '});
+            jest.runAllTimers();
+          });
+
+          row = tree.getAllByRole('row')[1];
+          link = within(row).getAllByRole('link')[0];
+
+          expect(row).toHaveAttribute('aria-selected', 'false');
+          expect(link.textContent).toBe('Foo 1');
+        });
+      });
     });
 
     describe('range selection', function () {
-      it('should support selecting a range with a pointer', function () {
+      it('should support selecting a range with a pointer', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -1780,10 +2144,12 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        triggerPress(getCell(tree, 'Baz 1'));
+        await user.click(getCell(tree, 'Baz 1'));
 
         onSelectionChange.mockReset();
-        triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true});
+        await user.keyboard('[ShiftLeft>]');
+        await user.click(getCell(tree, 'Baz 20'));
+        await user.keyboard('[/ShiftLeft]');
 
         checkSelection(onSelectionChange, [
           'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10',
@@ -1794,7 +2160,7 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(21), false);
       });
 
-      it('should anchor range selections with a pointer', function () {
+      it('should anchor range selections with a pointer', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -1802,10 +2168,12 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        triggerPress(getCell(tree, 'Baz 10'));
+        await user.click(getCell(tree, 'Baz 10'));
 
         onSelectionChange.mockReset();
-        triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true});
+        await user.keyboard('[ShiftLeft>]');
+        await user.click(getCell(tree, 'Baz 20'));
+        await user.keyboard('[/ShiftLeft]');
 
         checkSelection(onSelectionChange, [
           'Foo 10', 'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15',
@@ -1816,7 +2184,9 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(21), false);
 
         onSelectionChange.mockReset();
-        triggerPress(getCell(tree, 'Baz 1'), {shiftKey: true});
+        await user.keyboard('[ShiftLeft>]');
+        await user.click(getCell(tree, 'Baz 1'));
+        await user.keyboard('[/ShiftLeft]');
 
         checkSelection(onSelectionChange, [
           'Foo 1', 'Foo 2', 'Foo 3', 'Foo 4', 'Foo 5',
@@ -1951,17 +2321,19 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(11), false);
       });
 
-      it('should not include disabled rows within a range selection', function () {
+      it('should not include disabled rows within a range selection', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 3', 'Foo 16']});
         checkSelectAll(tree, 'unchecked');
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        await user.click(getCell(tree, 'Baz 1'));
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 20'), {shiftKey: true}));
+        await user.keyboard('[ShiftLeft>]');
+        await user.click(getCell(tree, 'Baz 20'));
+        await user.keyboard('[/ShiftLeft]');
 
         checkSelection(onSelectionChange, [
           'Foo 1', 'Foo 2', 'Foo 4', 'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10',
@@ -1977,7 +2349,7 @@ describe('TableView', function () {
     });
 
     describe('select all', function () {
-      it('should support selecting all via the checkbox', function () {
+      it('should support selecting all via the checkbox', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -1986,7 +2358,7 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        userEvent.click(tree.getByLabelText('Select All'));
+        await user.click(tree.getByLabelText('Select All'));
 
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
@@ -2009,9 +2381,16 @@ describe('TableView', function () {
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
         checkRowSelection(rows.slice(1), true);
         checkSelectAll(tree, 'checked');
+
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'a', ctrlKey: true});
+
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
+        checkRowSelection(rows.slice(1), true);
+        checkSelectAll(tree, 'checked');
       });
 
-      it('should deselect an item after selecting all', function () {
+      it('should deselect an item after selecting all', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -2020,10 +2399,10 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        userEvent.click(tree.getByLabelText('Select All'));
+        await user.click(tree.getByLabelText('Select All'));
 
         onSelectionChange.mockReset();
-        triggerPress(rows[4]);
+        await user.click(rows[4]);
 
         let expected = [];
         for (let i = 1; i <= 100; i++) {
@@ -2036,7 +2415,7 @@ describe('TableView', function () {
         expect(rows[4]).toHaveAttribute('aria-selected', 'false');
       });
 
-      it('should shift click on an item after selecting all', function () {
+      it('should shift click on an item after selecting all', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -2045,10 +2424,12 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        userEvent.click(tree.getByLabelText('Select All'));
+        await user.click(tree.getByLabelText('Select All'));
 
         onSelectionChange.mockReset();
-        triggerPress(rows[4], {shiftKey: true});
+        await user.keyboard('[ShiftLeft>]');
+        await user.click(rows[4]);
+        await user.keyboard('[/ShiftLeft]');
 
         checkSelection(onSelectionChange, ['Foo 4']);
         checkRowSelection(rows.slice(1, 4), false);
@@ -2056,7 +2437,7 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(5), false);
       });
 
-      it('should support clearing selection via checkbox', function () {
+      it('should support clearing selection via checkbox', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -2065,11 +2446,11 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        userEvent.click(tree.getByLabelText('Select All'));
+        await user.click(tree.getByLabelText('Select All'));
         checkSelectAll(tree, 'checked');
 
         onSelectionChange.mockReset();
-        userEvent.click(tree.getByLabelText('Select All'));
+        await user.click(tree.getByLabelText('Select All'));
 
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set());
@@ -2077,7 +2458,7 @@ describe('TableView', function () {
         checkSelectAll(tree, 'unchecked');
       });
 
-      it('should support clearing selection via Escape', function () {
+      it('should support clearing selection via Escape', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -2085,7 +2466,7 @@ describe('TableView', function () {
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        triggerPress(getCell(tree, 'Baz 1'));
+        await user.click(getCell(tree, 'Baz 1'));
         checkSelectAll(tree, 'indeterminate');
 
         onSelectionChange.mockReset();
@@ -2097,7 +2478,7 @@ describe('TableView', function () {
         checkSelectAll(tree, 'unchecked');
       });
 
-      it('should only call onSelectionChange if there are selections to clear', function () {
+      it('should only call onSelectionChange if there are selections to clear', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -2105,7 +2486,7 @@ describe('TableView', function () {
         fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Escape'});
         expect(onSelectionChange).not.toHaveBeenCalled();
 
-        userEvent.click(tree.getByLabelText('Select All'));
+        await user.click(tree.getByLabelText('Select All'));
         checkSelectAll(tree, 'checked');
         expect(onSelectionChange).toHaveBeenLastCalledWith('all');
 
@@ -2114,7 +2495,7 @@ describe('TableView', function () {
         expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set());
       });
 
-      it('should automatically select new items when select all is active', function () {
+      it('should automatically select new items when select all is active', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -2123,7 +2504,7 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        userEvent.click(tree.getByLabelText('Select All'));
+        await user.click(tree.getByLabelText('Select All'));
         checkSelectAll(tree, 'checked');
         checkRowSelection(rows.slice(1), true);
 
@@ -2138,7 +2519,7 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(1), true);
       });
 
-      it('manually selecting all should not auto select new items', function () {
+      it('manually selecting all should not auto select new items', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange}, items);
 
@@ -2147,10 +2528,10 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        triggerPress(rows[1]);
+        await user.click(rows[1]);
         checkSelectAll(tree, 'indeterminate');
 
-        triggerPress(rows[2]);
+        await user.click(rows[2]);
         checkSelectAll(tree, 'checked');
 
         rerender(tree, renderJSX({onSelectionChange}, [
@@ -2167,7 +2548,7 @@ describe('TableView', function () {
         checkSelectAll(tree, 'indeterminate');
       });
 
-      it('should not included disabled rows when selecting all', function () {
+      it('should not included disabled rows when selecting all', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 3']});
 
@@ -2176,7 +2557,7 @@ describe('TableView', function () {
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
 
-        act(() => userEvent.click(tree.getByLabelText('Select All')));
+        await user.click(tree.getByLabelText('Select All'));
 
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
@@ -2187,58 +2568,60 @@ describe('TableView', function () {
     });
 
     describe('annoucements', function () {
-      it('should announce the selected or deselected row', function () {
+      it('should announce the selected or deselected row', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
-        triggerPress(row);
+        await user.click(row);
         expect(announce).toHaveBeenLastCalledWith('Foo 1 selected.');
 
-        triggerPress(row);
+        await user.click(row);
         expect(announce).toHaveBeenLastCalledWith('Foo 1 not selected.');
       });
 
-      it('should announce the row and number of selected items when there are more than one', function () {
+      it('should announce the row and number of selected items when there are more than one', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
         let rows = tree.getAllByRole('row');
-        triggerPress(rows[1]);
-        triggerPress(rows[2]);
+        await user.click(rows[1]);
+        await user.click(rows[2]);
 
         expect(announce).toHaveBeenLastCalledWith('Foo 2 selected. 2 items selected.');
 
-        triggerPress(rows[2]);
+        await user.click(rows[2]);
         expect(announce).toHaveBeenLastCalledWith('Foo 2 not selected. 1 item selected.');
       });
 
-      it('should announce only the number of selected items when multiple are selected at once', function () {
+      it('should announce only the number of selected items when multiple are selected at once', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
         let rows = tree.getAllByRole('row');
-        triggerPress(rows[1]);
-        triggerPress(rows[3], {shiftKey: true});
+        await user.click(rows[1]);
+        await user.keyboard('[ShiftLeft>]');
+        await user.click(rows[3]);
 
         expect(announce).toHaveBeenLastCalledWith('3 items selected.');
 
-        triggerPress(rows[1], {shiftKey: true});
+        await user.click(rows[1]);
+        await user.keyboard('[/ShiftLeft]');
         expect(announce).toHaveBeenLastCalledWith('1 item selected.');
       });
 
-      it('should announce select all', function () {
+      it('should announce select all', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
-        userEvent.click(tree.getByLabelText('Select All'));
+        await user.click(tree.getByLabelText('Select All'));
         expect(announce).toHaveBeenLastCalledWith('All items selected.');
 
-        userEvent.click(tree.getByLabelText('Select All'));
+        await user.click(tree.getByLabelText('Select All'));
         expect(announce).toHaveBeenLastCalledWith('No items selected.');
       });
 
-      it('should announce all row header columns', function () {
+      it('should announce all row header columns', async function () {
         let tree = render(
           <TableView aria-label="Table" selectionMode="multiple">
             <TableHeader>
@@ -2262,27 +2645,686 @@ describe('TableView', function () {
         );
 
         let row = tree.getAllByRole('row')[1];
-        triggerPress(row);
+        await user.click(row);
         expect(announce).toHaveBeenLastCalledWith('Sam Smith selected.');
 
-        triggerPress(row);
+        await user.click(row);
         expect(announce).toHaveBeenLastCalledWith('Sam Smith not selected.');
       });
 
-      it('should announce changes in sort order', function () {
+      it('should announce changes in sort order', async function () {
         let tree = render(<ExampleSortTable />);
         let table = tree.getByRole('grid');
         let columnheaders = within(table).getAllByRole('columnheader');
         expect(columnheaders).toHaveLength(3);
 
-        triggerPress(columnheaders[1]);
+        await user.click(columnheaders[1]);
         expect(announce).toHaveBeenLastCalledWith('sorted by column Bar in descending order', 'assertive', 500);
-        triggerPress(columnheaders[1]);
+        await user.click(columnheaders[1]);
         expect(announce).toHaveBeenLastCalledWith('sorted by column Bar in ascending order', 'assertive', 500);
-        triggerPress(columnheaders[0]);
+        await user.click(columnheaders[0]);
         expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in ascending order', 'assertive', 500);
-        triggerPress(columnheaders[0]);
+        await user.click(columnheaders[0]);
         expect(announce).toHaveBeenLastCalledWith('sorted by column Foo in descending order', 'assertive', 500);
+      });
+    });
+
+    it('can announce deselect even when items are swapped out completely', async () => {
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
+
+      let row = tree.getAllByRole('row')[2];
+      await user.click(row);
+      expect(announce).toHaveBeenLastCalledWith('File B selected.');
+
+      let link = tree.getAllByRole('link')[1];
+      await user.click(link);
+
+      expect(announce).toHaveBeenLastCalledWith('No items selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+    });
+
+    it('will not announce deselect caused by breadcrumb navigation', async () => {
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
+
+      let link = tree.getAllByRole('link')[1];
+      await user.click(link);
+
+      // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+      act(() => jest.runAllTimers());
+      // Animation.
+      act(() => jest.runAllTimers());
+      let row = tree.getAllByRole('row')[1];
+      await user.click(row);
+      expect(announce).toHaveBeenLastCalledWith('File C selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+
+      // breadcrumb root
+      link = tree.getAllByRole('link')[0];
+      await user.click(link);
+
+      // focus isn't on the table, so we don't announce that it has been deselected
+      expect(announce).toHaveBeenCalledTimes(2);
+    });
+
+    it('updates even if not focused', async () => {
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
+
+      let link = tree.getAllByRole('link')[1];
+      await user.click(link);
+
+      // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+      act(() => jest.runAllTimers());
+      // Animation.
+      act(() => jest.runAllTimers());
+      let row = tree.getAllByRole('row')[1];
+      await user.click(row);
+      expect(announce).toHaveBeenLastCalledWith('File C selected.');
+      expect(announce).toHaveBeenCalledTimes(2);
+      let button = tree.getAllByRole('button')[0];
+      await user.click(button);
+      expect(announce).toHaveBeenCalledTimes(2);
+
+      // breadcrumb root
+      link = tree.getAllByRole('menuitemradio')[0];
+      await user.click(link);
+
+      act(() => {
+        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+        jest.runAllTimers();
+      });
+
+      // focus isn't on the table, so we don't announce that it has been deselected
+      expect(announce).toHaveBeenCalledTimes(2);
+
+      link = tree.getAllByRole('link')[1];
+      await user.click(link);
+
+      act(() => {
+        // TableWithBreadcrumbs has a setTimeout to load the results of the link navigation on Folder A
+        jest.runAllTimers();
+      });
+
+      expect(announce).toHaveBeenCalledTimes(3);
+      expect(announce).toHaveBeenLastCalledWith('No items selected.');
+    });
+
+    describe('onAction', function () {
+      it('should trigger onAction when clicking rows with the mouse', async function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, onAction});
+
+        let rows = tree.getAllByRole('row');
+        await user.click(getCell(tree, 'Baz 10'), {pointerType: 'mouse'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('Foo 10');
+        checkRowSelection(rows.slice(1), false);
+
+        let checkbox = within(rows[1]).getByRole('checkbox');
+        await user.click(checkbox);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkRowSelection([rows[1]], true);
+
+        await user.click(getCell(tree, 'Baz 10'), {pointerType: 'mouse'});
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        checkRowSelection([rows[1], rows[10]], true);
+      });
+
+      it('should trigger onAction when clicking rows with touch', async function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, onAction});
+
+        let rows = tree.getAllByRole('row');
+        await user.click(getCell(tree, 'Baz 10'), {pointerType: 'touch'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('Foo 10');
+        checkRowSelection(rows.slice(1), false);
+
+        let checkbox = within(rows[1]).getByRole('checkbox');
+        await user.click(checkbox, {pointerType: 'touch'});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        checkRowSelection([rows[1]], true);
+
+        await user.click(getCell(tree, 'Baz 10'), {pointerType: 'touch'});
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        checkRowSelection([rows[1], rows[10]], true);
+      });
+
+      describe('needs PointerEvent defined', () => {
+        installPointerEvent();
+        it('should support long press to enter selection mode on touch', async function () {
+          let onSelectionChange = jest.fn();
+          let onAction = jest.fn();
+          let tree = renderTable({onSelectionChange, onAction});
+          act(() => jest.runAllTimers());
+          await user.pointer({target: document.body, keys: '[TouchA]'});
+
+          let cellBaz5 = getCell(tree, 'Foo 5');
+
+          fireEvent.pointerDown(cellBaz5, {pointerType: 'touch'});
+          expect(onSelectionChange).not.toHaveBeenCalled();
+          expect(onAction).not.toHaveBeenCalled();
+
+          act(() => jest.runAllTimers());
+
+          checkSelection(onSelectionChange, ['Foo 5']);
+          expect(onAction).not.toHaveBeenCalled();
+
+          fireEvent.pointerUp(cellBaz5, {pointerType: 'touch'});
+          fireEvent.click(cellBaz5, {pointerType: 'touch'});
+          onSelectionChange.mockReset();
+
+          await user.pointer({target: getCell(tree, 'Foo 10'), keys: '[TouchA]'});
+          checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
+
+          // Deselect all to exit selection mode
+          await user.pointer({target: getCell(tree, 'Foo 10'), keys: '[TouchA]'});
+          onSelectionChange.mockReset();
+          await user.pointer({target: cellBaz5, keys: '[TouchA]'});
+
+          act(() => jest.runAllTimers());
+          checkSelection(onSelectionChange, []);
+          expect(onAction).not.toHaveBeenCalled();
+        });
+      });
+
+      it('should trigger onAction when pressing Enter', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, onAction});
+        let rows = tree.getAllByRole('row');
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'Enter'});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: 'Enter'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('Foo 10');
+        checkRowSelection(rows.slice(1), false);
+
+        onAction.mockReset();
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(onAction).not.toHaveBeenCalled();
+        checkRowSelection([rows[10]], true);
+      });
+    });
+
+    describe('selectionStyle highlight', function () {
+      it('will replace the current selection with the new selection', async function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        await user.click(getCell(tree, 'Baz 10'));
+        expect(announce).toHaveBeenLastCalledWith('Foo 10 selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+
+        onSelectionChange.mockReset();
+        await user.keyboard('[ShiftLeft>]');
+        await user.click(getCell(tree, 'Baz 20'));
+        await user.keyboard('[/ShiftLeft]');
+        // await user.click(getCell(tree, 'Baz 20'), {pointerType: 'mouse', shiftKey: true});
+        expect(announce).toHaveBeenLastCalledWith('11 items selected.');
+        expect(announce).toHaveBeenCalledTimes(2);
+
+        onSelectionChange.mockReset();
+        await user.click(getCell(tree, 'Foo 5'));
+        expect(announce).toHaveBeenLastCalledWith('Foo 5 selected. 1 item selected.');
+        expect(announce).toHaveBeenCalledTimes(3);
+
+        checkSelection(onSelectionChange, [
+          'Foo 5'
+        ]);
+
+        checkRowSelection(rows.slice(1, 5), false);
+        checkRowSelection(rows.slice(5, 6), true);
+        checkRowSelection(rows.slice(6), false);
+
+        onSelectionChange.mockReset();
+        await user.keyboard('[ShiftLeft>]');
+        await user.click(getCell(tree, 'Foo 10'));
+        await user.keyboard('[/ShiftLeft]');
+        expect(announce).toHaveBeenLastCalledWith('6 items selected.');
+        expect(announce).toHaveBeenCalledTimes(4);
+
+        checkSelection(onSelectionChange, [
+          'Foo 5', 'Foo 6', 'Foo 7', 'Foo 8', 'Foo 9', 'Foo 10'
+        ]);
+
+        checkRowSelection(rows.slice(1, 5), false);
+        checkRowSelection(rows.slice(5, 11), true);
+        checkRowSelection(rows.slice(11), false);
+      });
+
+      it('will add to the current selection if the command key is pressed', async function () {
+        let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        expect(tree.queryByLabelText('Select All')).toBeNull();
+
+        let rows = tree.getAllByRole('row');
+        checkRowSelection(rows.slice(1), false);
+        await user.click(getCell(tree, 'Baz 10'), {pointerType: 'mouse'});
+
+        onSelectionChange.mockReset();
+        await user.keyboard('[ShiftLeft>]');
+        await user.click(getCell(tree, 'Baz 20'));
+        await user.keyboard('[/ShiftLeft]');
+
+        onSelectionChange.mockReset();
+        await user.keyboard('[MetaLeft>]');
+        await user.click(getCell(tree, 'Foo 5'));
+        await user.keyboard('[/MetaLeft]');
+
+        checkSelection(onSelectionChange, [
+          'Foo 5', 'Foo 10', 'Foo 11', 'Foo 12', 'Foo 13', 'Foo 14', 'Foo 15',
+          'Foo 16', 'Foo 17', 'Foo 18', 'Foo 19', 'Foo 20'
+        ]);
+
+        checkRowSelection(rows.slice(1, 5), false);
+        checkRowSelection(rows.slice(5, 6), true);
+        checkRowSelection(rows.slice(6, 10), false);
+        checkRowSelection(rows.slice(10, 21), true);
+        checkRowSelection(rows.slice(21), false);
+
+        uaMock.mockRestore();
+      });
+
+      describe('needs pointerEvents', function () {
+        installPointerEvent();
+
+        it('should toggle selection with touch', async function () {
+          let onSelectionChange = jest.fn();
+          let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+          expect(tree.queryByLabelText('Select All')).toBeNull();
+
+          await user.pointer({target: getCell(tree, 'Baz 5'), keys: '[TouchA]'});
+          expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
+          expect(announce).toHaveBeenCalledTimes(1);
+          onSelectionChange.mockReset();
+          await user.pointer({target: getCell(tree, 'Foo 10'), keys: '[TouchA]'});
+          expect(announce).toHaveBeenLastCalledWith('Foo 10 selected. 2 items selected.');
+          expect(announce).toHaveBeenCalledTimes(2);
+
+          checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
+        });
+
+        it('should support single tap to perform onAction with touch', async function () {
+          let onSelectionChange = jest.fn();
+          let onAction = jest.fn();
+          let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+          await user.pointer({target: getCell(tree, 'Baz 5'), keys: '[TouchA]'});
+          expect(announce).not.toHaveBeenCalled();
+          expect(onSelectionChange).not.toHaveBeenCalled();
+          expect(onAction).toHaveBeenCalledTimes(1);
+          expect(onAction).toHaveBeenCalledWith('Foo 5');
+        });
+      });
+
+      it('should support double click to perform onAction with mouse', async function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        await user.click(getCell(tree, 'Baz 5'));
+        expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Foo 5']);
+        expect(onAction).not.toHaveBeenCalled();
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        await user.dblClick(getCell(tree, 'Baz 5'));
+        expect(announce).not.toHaveBeenCalled();
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 5');
+      });
+
+      describe('needs pointerEvents', function () {
+        installPointerEvent();
+        it('should support single tap to perform row selection with screen reader if onAction isn\'t provided', function () {
+          let onSelectionChange = jest.fn();
+          let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+          let cell = getCell(tree, 'Baz 5');
+          fireEvent(cell, pointerEvent('pointerdown', {width: 0, height: 0, pointerType: 'touch'}));
+          fireEvent(cell, pointerEvent('mousedown', {}));
+          fireEvent(cell, pointerEvent('pointerup', {width: 0, height: 0, pointerType: 'touch'}));
+          fireEvent(cell, pointerEvent('mouseup', {}));
+          fireEvent(cell, pointerEvent('click', {}));
+          checkSelection(onSelectionChange, [
+            'Foo 5'
+          ]);
+          onSelectionChange.mockReset();
+
+          cell = getCell(tree, 'Foo 8');
+          fireEvent(cell, pointerEvent('pointerdown', {
+            pointerId: 1,
+            width: 1,
+            height: 1,
+            pressure: 0,
+            detail: 0,
+            pointerType: 'mouse'
+          }));
+          fireEvent(cell, pointerEvent('pointerup', {
+            pointerId: 1,
+            width: 1,
+            height: 1,
+            pressure: 0,
+            detail: 0,
+            pointerType: 'mouse'
+          }));
+          fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+          checkSelection(onSelectionChange, [
+            'Foo 5', 'Foo 8'
+          ]);
+          onSelectionChange.mockReset();
+
+          // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
+          cell = getCell(tree, 'Foo 10');
+          fireEvent(cell, pointerEvent('pointerdown', {
+            pointerId: 1,
+            width: 1,
+            height: 1,
+            pressure: 0,
+            detail: 0,
+            pointerType: 'mouse'
+          }));
+          fireEvent(cell, pointerEvent('pointerup', {
+            pointerId: 1,
+            width: 1,
+            height: 1,
+            pressure: 0,
+            detail: 0,
+            pointerType: 'mouse'
+          }));
+          fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+          checkSelection(onSelectionChange, [
+            'Foo 5', 'Foo 8', 'Foo 10'
+          ]);
+        });
+
+        it('should support single tap to perform onAction with screen reader', function () {
+          let onSelectionChange = jest.fn();
+          let onAction = jest.fn();
+          let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+          fireEvent.click(getCell(tree, 'Baz 5'), {detail: 0});
+          expect(announce).not.toHaveBeenCalled();
+          expect(onSelectionChange).not.toHaveBeenCalled();
+          expect(onAction).toHaveBeenCalledTimes(1);
+          expect(onAction).toHaveBeenCalledWith('Foo 5');
+
+          // Android TalkBack double tap test, virtual pointer event sets pointerType and onClick handles the rest
+          let cell = getCell(tree, 'Foo 10');
+          fireEvent(cell, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+          fireEvent(cell, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+          fireEvent.click(cell, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+          expect(onSelectionChange).not.toHaveBeenCalled();
+          expect(onAction).toHaveBeenCalledTimes(2);
+          expect(onAction).toHaveBeenCalledWith('Foo 10');
+        });
+      });
+
+      describe('with pointer events', () => {
+        beforeEach(() => {
+          window.ontouchstart = jest.fn();
+        });
+        afterEach(() => {
+          delete window.ontouchstart;
+        });
+
+        describe('still needs pointer events install', function () {
+          installPointerEvent();
+          it('should support long press to enter selection mode on touch', async function () {
+            let onSelectionChange = jest.fn();
+            let onAction = jest.fn();
+            let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+            act(() => {
+              jest.runAllTimers();
+            });
+            await user.click(document.body);
+
+            fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            let description = tree.getByText('Long press to enter selection mode.');
+            expect(tree.getByRole('grid')).toHaveAttribute('aria-describedby', expect.stringContaining(description.id));
+            expect(announce).not.toHaveBeenCalled();
+            expect(onSelectionChange).not.toHaveBeenCalled();
+            expect(onAction).not.toHaveBeenCalled();
+            expect(tree.queryByLabelText('Select All')).toBeNull();
+
+            act(() => {
+              jest.advanceTimersByTime(800);
+            });
+
+            expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
+            expect(announce).toHaveBeenCalledTimes(1);
+            checkSelection(onSelectionChange, ['Foo 5']);
+            expect(onAction).not.toHaveBeenCalled();
+            expect(tree.queryByLabelText('Select All')).not.toBeNull();
+
+            fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            onSelectionChange.mockReset();
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            await user.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+            act(() => {
+              jest.runAllTimers();
+            });
+            expect(announce).toHaveBeenLastCalledWith('Foo 10 selected. 2 items selected.');
+            expect(announce).toHaveBeenCalledTimes(2);
+            checkSelection(onSelectionChange, ['Foo 5', 'Foo 10']);
+
+            // Deselect all to exit selection mode
+            await user.click(getCell(tree, 'Foo 10'), {pointerType: 'touch'});
+            act(() => {
+              jest.runAllTimers();
+            });
+            expect(announce).toHaveBeenLastCalledWith('Foo 10 not selected. 1 item selected.');
+            expect(announce).toHaveBeenCalledTimes(3);
+            onSelectionChange.mockReset();
+
+            fireEvent.pointerDown(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            fireEvent.pointerUp(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            fireEvent.click(getCell(tree, 'Baz 5'), {pointerType: 'touch'});
+            act(() => {
+              jest.runAllTimers();
+            });
+            expect(announce).toHaveBeenLastCalledWith('Foo 5 not selected.');
+            expect(announce).toHaveBeenCalledTimes(4);
+
+            act(() => {
+              jest.runAllTimers();
+            });
+            checkSelection(onSelectionChange, []);
+            expect(onAction).not.toHaveBeenCalled();
+            expect(tree.queryByLabelText('Select All')).toBeNull();
+          });
+        });
+      });
+
+      it('should support Enter to perform onAction with keyboard', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        checkSelection(onSelectionChange, ['Foo 10']);
+        // screen reader automatically handles this one
+        expect(announce).not.toHaveBeenCalled();
+        expect(onAction).not.toHaveBeenCalled();
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(getCell(tree, 'Baz 5'), {key: 'Enter'});
+        fireEvent.keyUp(getCell(tree, 'Baz 5'), {key: 'Enter'});
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(announce).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 5');
+      });
+
+      it('should perform onAction on single click with selectionMode: none', async function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionMode: 'none', onAction});
+
+        await user.click(getCell(tree, 'Baz 10'), {pointerType: 'mouse'});
+        expect(announce).not.toHaveBeenCalled();
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 10');
+      });
+
+      it('should move selection when using the arrow keys', async function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        await user.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
+        expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        expect(announce).toHaveBeenCalledWith('Foo 6 selected.');
+        checkSelection(onSelectionChange, ['Foo 6']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
+        expect(announce).toHaveBeenCalledWith('Foo 5 selected.');
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+        expect(announce).toHaveBeenCalledWith('Foo 6 selected. 2 items selected.');
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 6']);
+      });
+
+      it('should announce the new row when moving with the keyboard after multi select', async function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        await user.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
+        expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', shiftKey: true});
+        expect(announce).toHaveBeenCalledWith('Foo 6 selected. 2 items selected.');
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 6']);
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        expect(announce).toHaveBeenCalledWith('Foo 7 selected. 1 item selected.');
+        checkSelection(onSelectionChange, ['Foo 7']);
+      });
+
+      it('should support non-contiguous selection with the keyboard', async function () {
+        let onSelectionChange = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight'});
+
+        await user.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
+        expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        expect(announce).not.toHaveBeenCalled();
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 6').closest('[role="row"]'));
+
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+        expect(announce).not.toHaveBeenCalled();
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(document.activeElement).toBe(getCell(tree, 'Baz 7').closest('[role="row"]'));
+
+        fireEvent.keyDown(document.activeElement, {key: ' ', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: ' ', ctrlKey: true});
+        expect(announce).toHaveBeenCalledWith('Foo 7 selected. 2 items selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Foo 5', 'Foo 7']);
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: ' '});
+        fireEvent.keyUp(document.activeElement, {key: ' '});
+        expect(announce).toHaveBeenCalledWith('Foo 7 selected. 1 item selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Foo 7']);
+      });
+
+      it('should not call onSelectionChange when hitting Space/Enter on the currently selected row', function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        checkSelection(onSelectionChange, ['Foo 10']);
+        expect(onAction).not.toHaveBeenCalled();
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: ' '});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: ' '});
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+
+        fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'Enter'});
+        fireEvent.keyUp(getCell(tree, 'Baz 10'), {key: 'Enter'});
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenCalledWith('Foo 10');
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+      });
+
+      it('should announce the current selection when moving from all to one item', async function () {
+        let onSelectionChange = jest.fn();
+        let onAction = jest.fn();
+        let tree = renderTable({onSelectionChange, selectionStyle: 'highlight', onAction});
+        await user.click(getCell(tree, 'Baz 5'), {pointerType: 'mouse'});
+        expect(announce).toHaveBeenLastCalledWith('Foo 5 selected.');
+        expect(announce).toHaveBeenCalledTimes(1);
+        checkSelection(onSelectionChange, ['Foo 5']);
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'a', ctrlKey: true});
+        fireEvent.keyUp(document.activeElement, {key: 'a', ctrlKey: true});
+        expect(onSelectionChange.mock.calls[0][0]).toEqual('all');
+        expect(announce).toHaveBeenCalledWith('All items selected.');
+
+        announce.mockReset();
+        onSelectionChange.mockReset();
+        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+        expect(announce).toHaveBeenCalledWith('Foo 6 selected. 1 item selected.');
+        checkSelection(onSelectionChange, ['Foo 6']);
       });
     });
   });
@@ -2325,25 +3367,25 @@ describe('TableView', function () {
     };
 
     describe('row selection', function () {
-      it('should select a row from checkbox', function () {
+      it('should select a row from checkbox', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(within(row).getByRole('checkbox')));
+        await user.click(within(row).getByRole('checkbox'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
       });
 
-      it('should select a row by pressing on a cell', function () {
+      it('should select a row by pressing on a cell', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        await user.click(getCell(tree, 'Baz 1'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(row).toHaveAttribute('aria-selected', 'true');
@@ -2397,13 +3439,13 @@ describe('TableView', function () {
         expect(row).toHaveAttribute('aria-selected', 'true');
       });
 
-      it('will only select one if pointer is used to click on multiple rows', function () {
+      it('will only select one if pointer is used to click on multiple rows', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
+        await user.click(getCell(tree, 'Baz 1'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -2411,7 +3453,7 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(2), false);
 
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 2')));
+        await user.click(getCell(tree, 'Baz 2'));
 
         checkSelection(onSelectionChange, ['Foo 2']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -2420,7 +3462,7 @@ describe('TableView', function () {
 
         // Deselect
         onSelectionChange.mockReset();
-        act(() => triggerPress(getCell(tree, 'Baz 2')));
+        await user.click(getCell(tree, 'Baz 2'));
 
         checkSelection(onSelectionChange, []);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -2428,13 +3470,13 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(2), false);
       });
 
-      it('will only select one if pointer is used to click on multiple checkboxes', function () {
+      it('will only select one if pointer is used to click on multiple checkboxes', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
         let rows = tree.getAllByRole('row');
         checkRowSelection(rows.slice(1), false);
-        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+        await user.click(within(rows[1]).getByRole('checkbox'));
 
         checkSelection(onSelectionChange, ['Foo 1']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -2442,7 +3484,7 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(2), false);
 
         onSelectionChange.mockReset();
-        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+        await user.click(within(rows[2]).getByRole('checkbox'));
 
         checkSelection(onSelectionChange, ['Foo 2']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -2451,7 +3493,7 @@ describe('TableView', function () {
 
         // Deselect
         onSelectionChange.mockReset();
-        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+        await user.click(within(rows[2]).getByRole('checkbox'));
 
         checkSelection(onSelectionChange, []);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
@@ -2490,17 +3532,17 @@ describe('TableView', function () {
         checkRowSelection(rows.slice(2), false);
       });
 
-      it('should not select a disabled row from checkbox or keyboard interaction', function () {
+      it('should not select a disabled row from checkbox or keyboard interaction', async function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange, disabledKeys: ['Foo 1']});
 
         let row = tree.getAllByRole('row')[1];
         expect(row).toHaveAttribute('aria-selected', 'false');
-        act(() => userEvent.click(within(row).getByRole('checkbox')));
-        act(() => triggerPress(getCell(tree, 'Baz 1')));
-        act(() => {fireEvent.keyDown(row, {key: ' '});});
-        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: ' '});});
-        act(() => {fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Enter'});});
+        await user.click(within(row).getByRole('checkbox'));
+        await user.click(getCell(tree, 'Baz 1'));
+        fireEvent.keyDown(row, {key: ' '});
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: ' '});
+        fireEvent.keyDown(getCell(tree, 'Bar 1'), {key: 'Enter'});
 
         expect(row).toHaveAttribute('aria-selected', 'false');
         expect(onSelectionChange).not.toHaveBeenCalled();
@@ -2523,7 +3565,7 @@ describe('TableView', function () {
   });
 
   describe('press/hover interactions and selection mode', function () {
-    let TableExample = (props) => (
+    let TableWithBreadcrumbs = (props) => (
       <TableView aria-label="Table" {...props}>
         <TableHeader columns={columns}>
           {column => <Column>{column.name}</Column>}
@@ -2539,7 +3581,7 @@ describe('TableView', function () {
     );
 
     it('displays pressed/hover styles when row is pressed/hovered and selection mode is not "none"', function () {
-      let tree = render(<TableExample selectionMode="multiple" />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="multiple" />);
 
       let row = tree.getAllByRole('row')[1];
       fireEvent.mouseDown(row, {detail: 1});
@@ -2547,7 +3589,7 @@ describe('TableView', function () {
       fireEvent.mouseEnter(row);
       expect(row.className.includes('is-hovered')).toBeTruthy();
 
-      rerender(tree, <TableExample selectionMode="single" />);
+      rerender(tree, <TableWithBreadcrumbs selectionMode="single" />);
       row = tree.getAllByRole('row')[1];
       fireEvent.mouseDown(row, {detail: 1});
       expect(row.className.includes('is-active')).toBeTruthy();
@@ -2556,7 +3598,7 @@ describe('TableView', function () {
     });
 
     it('doesn\'t show pressed/hover styles when row is pressed/hovered and selection mode is "none"', function () {
-      let tree = render(<TableExample selectionMode="none" />);
+      let tree = render(<TableWithBreadcrumbs selectionMode="none" />);
 
       let row = tree.getAllByRole('row')[1];
       fireEvent.mouseDown(row, {detail: 1});
@@ -2567,7 +3609,7 @@ describe('TableView', function () {
   });
 
   describe('CRUD', function () {
-    it('can add items', function () {
+    it('can add items', async function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
@@ -2577,25 +3619,23 @@ describe('TableView', function () {
       expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
       let button = tree.getByLabelText('Add item');
-      triggerPress(button);
+      await user.click(button);
+      act(() => {jest.runAllTimers();});
 
       let dialog = tree.getByRole('dialog');
       expect(dialog).toBeVisible();
 
-      let firstName = tree.getByLabelText('First Name');
-      typeText(firstName, 'Devon');
-      userEvent.tab();
+      await user.keyboard('Devon');
+      await user.tab();
 
-      let lastName = tree.getByLabelText('Last Name');
-      typeText(lastName, 'Govett');
-      userEvent.tab();
+      await user.keyboard('Govett');
+      await user.tab();
 
-      let birthday = tree.getByLabelText('Birthday');
-      typeText(birthday, 'Feb 3');
-      userEvent.tab();
+      await user.keyboard('Feb 3');
+      await user.tab();
 
       let createButton = tree.getByText('Create');
-      triggerPress(createButton);
+      await user.click(createButton);
       act(() => {jest.runAllTimers();});
 
       expect(dialog).not.toBeInTheDocument();
@@ -2606,7 +3646,6 @@ describe('TableView', function () {
       expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
       expect(rows[3]).toHaveAttribute('aria-rowindex', '4');
 
-
       let rowHeaders = within(rows[1]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Devon');
       expect(rowHeaders[1]).toHaveTextContent('Govett');
@@ -2615,51 +3654,57 @@ describe('TableView', function () {
       expect(cells[1]).toHaveTextContent('Feb 3');
     });
 
-    it('can remove items', function () {
+    it('can remove items', async function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
 
-      let button = within(rows[2]).getByRole('button');
-      triggerPress(button);
+      await user.tab();
+      await user.tab();
+      expect(document.activeElement).toBe(rows[1]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
       let menu = tree.getByRole('menu');
-      expect(document.activeElement).toBe(menu);
-
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
+      expect(document.activeElement).toBe(menuItems[0]);
 
-      // Need requestAnimationFrame to actually be async for this test to work.
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
+      expect(document.activeElement).toBe(menuItems[1]);
 
-      triggerPress(menuItems[1]);
-      act(() => jest.runAllTimers());
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('alertdialog', {hidden: true});
       let deleteButton = within(dialog).getByRole('button', {hidden: true});
 
-      triggerPress(deleteButton);
+      await user.click(deleteButton);
       act(() => jest.runAllTimers());
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
-      expect(rows[2]).not.toBeInTheDocument();
+      expect(rows[1]).not.toBeInTheDocument();
 
       rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(2);
 
-      let rowHeaders = within(rows[1]).getAllByRole('rowheader');
-      expect(rowHeaders[0]).toHaveTextContent('Sam');
+      expect(within(rows[1]).getAllByRole('rowheader')[0]).toHaveTextContent('Julia');
 
-      // focus gets reset
-      act(() => table.focus());
-      expect(document.activeElement).toBe(rows[1]);
+      act(() => jest.runAllTimers());
+      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
     });
 
-    it('resets row indexes after deleting a row', function () {
+    it('resets row indexes after deleting a row', async function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
@@ -2669,7 +3714,7 @@ describe('TableView', function () {
       expect(rows[2]).toHaveAttribute('aria-rowindex', '3');
 
       let button = within(rows[1]).getByRole('button');
-      triggerPress(button);
+      await user.click(button);
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(menu);
@@ -2677,15 +3722,18 @@ describe('TableView', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
 
-      triggerPress(menuItems[1]);
+      await user.click(menuItems[1]);
+      act(() => jest.runAllTimers());
       expect(menu).not.toBeInTheDocument();
 
       let dialog = tree.getByRole('alertdialog', {hidden: true});
       let deleteButton = within(dialog).getByRole('button', {hidden: true});
 
-      triggerPress(deleteButton);
+      await user.click(deleteButton);
+      act(() => jest.runAllTimers());
       expect(dialog).not.toBeInTheDocument();
 
+      act(() => jest.runAllTimers());
       act(() => jest.runAllTimers());
       expect(rows[1]).not.toBeInTheDocument();
 
@@ -2698,35 +3746,45 @@ describe('TableView', function () {
       expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
     });
 
-    it('can bulk remove items', function () {
+    it('can bulk remove items', async function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
+      let addButton = tree.getAllByRole('button')[0];
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(3);
 
       let checkbox = within(rows[0]).getByRole('checkbox');
-      userEvent.click(checkbox);
+      await user.click(checkbox);
       expect(checkbox.checked).toBe(true);
 
       let deleteButton = tree.getByLabelText('Delete selected items');
-      triggerPress(deleteButton);
+      await user.click(deleteButton);
 
       let dialog = tree.getByRole('alertdialog');
       let confirmButton = within(dialog).getByRole('button');
+      expect(document.activeElement).toBe(dialog);
 
-      triggerPress(confirmButton);
+      await user.click(confirmButton);
+      act(() => jest.runAllTimers());
       expect(dialog).not.toBeInTheDocument();
 
       act(() => jest.runAllTimers());
 
       rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(1);
+
+      // account for renderEmptyState
+      await act(() => Promise.resolve());
+      expect(rows).toHaveLength(2);
+      expect(rows[1].firstChild.getAttribute('aria-colspan')).toBe('5');
+      expect(rows[1].textContent).toBe('No results');
 
       expect(checkbox.checked).toBe(false);
+
+      expect(document.activeElement).toBe(addButton);
     });
 
-    it('can edit items', function () {
+    it('can edit items', async function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
@@ -2734,7 +3792,8 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       let button = within(rows[2]).getByRole('button');
-      triggerPress(button);
+      await user.click(button);
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(menu);
@@ -2742,28 +3801,32 @@ describe('TableView', function () {
       let menuItems = within(menu).getAllByRole('menuitem');
       expect(menuItems.length).toBe(2);
 
-      triggerPress(menuItems[0]);
+      await user.click(menuItems[0]);
+      act(() => {jest.runAllTimers();});
       expect(menu).not.toBeInTheDocument();
 
-      let dialog = tree.getByRole('dialog', {hidden: true});
+      let dialog = tree.getByRole('dialog');
       expect(dialog).toBeVisible();
 
       let firstName = tree.getByLabelText('First Name');
-      typeText(firstName, 'Jessica');
+      expect(document.activeElement).toBe(firstName);
+      await user.keyboard('Jessica');
 
       let saveButton = tree.getByText('Save');
-      triggerPress(saveButton);
+      await user.click(saveButton);
+
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
 
       expect(dialog).not.toBeInTheDocument();
-
-      act(() => jest.runAllTimers());
 
       let rowHeaders = within(rows[2]).getAllByRole('rowheader');
       expect(rowHeaders[0]).toHaveTextContent('Jessica');
       expect(rowHeaders[1]).toHaveTextContent('Jones');
+      expect(document.activeElement).toBe(button);
     });
 
-    it('keyboard navigation works as expected with menu buttons', function () {
+    it('keyboard navigation works as expected with menu buttons', async function () {
       let tree = render(<Provider theme={theme}><CRUDExample /></Provider>);
 
       let table = tree.getByRole('grid');
@@ -2771,7 +3834,9 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
-      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+      act(() => {jest.runAllTimers();});
+      let button = within(rows[1]).getByRole('button');
+      expect(document.activeElement).toBe(button);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
 
@@ -2780,15 +3845,38 @@ describe('TableView', function () {
       expect(document.activeElement).toBe(within(rows[2]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
       expect(tree.queryByRole('menu')).toBeNull();
 
-      expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
+      expect(document.activeElement).toBe(button);
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', altKey: true});
+      act(() => {jest.runAllTimers();});
 
       let menu = tree.getByRole('menu');
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[0]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {jest.runAllTimers();});
+      await user.tab();
+      act(() => {jest.runAllTimers();});
+      await user.tab();
+      act(() => {jest.runAllTimers();});
+      await user.tab();
+      act(() => {jest.runAllTimers();});
+      await user.tab();
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(tree.getAllByRole('button')[1]);
+
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+
+      expect(document.activeElement).toBe(button);
     });
 
     it('menu buttons can be opened with Alt + ArrowDown', function () {
@@ -2799,6 +3887,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
@@ -2816,6 +3905,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', altKey: true});
@@ -2833,6 +3923,7 @@ describe('TableView', function () {
       expect(rows).toHaveLength(3);
 
       act(() => within(rows[1]).getAllByRole('gridcell').pop().focus());
+      act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(within(rows[1]).getByRole('button'));
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', altKey: true});
@@ -2846,9 +3937,6 @@ describe('TableView', function () {
       fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
       expect(document.activeElement).toBe(within(menu).getAllByRole('menuitem')[1]);
 
-      // Need requestAnimationFrame to actually be async for this test to work.
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-
       fireEvent.keyDown(document.activeElement, {key: 'Escape'});
       fireEvent.keyUp(document.activeElement, {key: 'Escape'});
 
@@ -2860,7 +3948,7 @@ describe('TableView', function () {
   });
 
   describe('with dialog trigger', function () {
-    let TableExample = (props) => (
+    let TableWithBreadcrumbs = (props) => (
       <TableView aria-label="TableView with static contents" selectionMode="multiple" width={300} height={200} {...props}>
         <TableHeader>
           <Column key="foo">Foo</Column>
@@ -2894,42 +3982,42 @@ describe('TableView', function () {
       </TableView>
     );
 
-    it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', function () {
-      let tree = render(<TableExample />);
+    it('arrow keys interactions don\'t move the focus away from the textfield in the dialog', async function () {
+      let tree = render(<TableWithBreadcrumbs />);
       let table = tree.getByRole('grid');
       let rows = within(table).getAllByRole('row');
       expect(rows).toHaveLength(2);
 
       let button = within(rows[1]).getByRole('button');
-      triggerPress(button);
+      await user.click(button);
 
       let dialog = tree.getByRole('dialog');
       let input = within(dialog).getByTestId('input');
 
       expect(input).toBeTruthy();
-      userEvent.type(input, 'blah');
+      await user.type(input, 'blah');
       expect(document.activeElement).toEqual(input);
       expect(input.value).toBe('blah');
 
+      fireEvent.keyDown(input, {key: 'ArrowLeft', code: 37, charCode: 37});
+      fireEvent.keyUp(input, {key: 'ArrowLeft', code: 37, charCode: 37});
       act(() => {
-        fireEvent.keyDown(input, {key: 'ArrowLeft', code: 37, charCode: 37});
-        fireEvent.keyUp(input, {key: 'ArrowLeft', code: 37, charCode: 37});
         jest.runAllTimers();
       });
 
       expect(document.activeElement).toEqual(input);
 
+      fireEvent.keyDown(input, {key: 'ArrowRight', code: 39, charCode: 39});
+      fireEvent.keyUp(input, {key: 'ArrowRight', code: 39, charCode: 39});
       act(() => {
-        fireEvent.keyDown(input, {key: 'ArrowRight', code: 39, charCode: 39});
-        fireEvent.keyUp(input, {key: 'ArrowRight', code: 39, charCode: 39});
         jest.runAllTimers();
       });
 
       expect(document.activeElement).toEqual(input);
 
+      fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
+      fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
       act(() => {
-        fireEvent.keyDown(input, {key: 'Escape', code: 27, charCode: 27});
-        fireEvent.keyUp(input, {key: 'Escape', code: 27, charCode: 27});
         jest.runAllTimers();
       });
 
@@ -2938,25 +4026,6 @@ describe('TableView', function () {
   });
 
   describe('async loading', function () {
-    let defaultTable = (
-      <TableView aria-label="Table">
-        <TableHeader>
-          <Column key="foo">Foo</Column>
-          <Column key="bar">Bar</Column>
-        </TableHeader>
-        <TableBody>
-          <Row>
-            <Cell>Foo 1</Cell>
-            <Cell>Bar 1</Cell>
-          </Row>
-          <Row>
-            <Cell>Foo 2</Cell>
-            <Cell>Bar 2</Cell>
-          </Row>
-        </TableBody>
-      </TableView>
-    );
-
     it('should display a spinner when loading', function () {
       let tree = render(
         <TableView aria-label="Table" selectionMode="multiple">
@@ -3087,12 +4156,15 @@ describe('TableView', function () {
 
       scrollView.scrollTop = 250;
       fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
 
       scrollView.scrollTop = 1500;
       fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
 
       scrollView.scrollTop = 2800;
       fireEvent.scroll(scrollView);
+      act(() => {jest.runAllTimers();});
 
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
@@ -3119,41 +4191,7 @@ describe('TableView', function () {
 
       render(<TableMock items={items} />);
       act(() => jest.runAllTimers());
-      // first loadMore triggered by onVisibleRectChange, other 2 by useLayoutEffect
-      expect(onLoadMoreSpy).toHaveBeenCalledTimes(3);
-    });
-
-    it('should display an empty state when there are no items', function () {
-      let tree = render(
-        <TableView aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
-          <TableHeader>
-            <Column key="foo">Foo</Column>
-            <Column key="bar">Bar</Column>
-          </TableHeader>
-          <TableBody>
-            {[]}
-          </TableBody>
-        </TableView>
-      );
-
-      let table = tree.getByRole('grid');
-      let rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(2);
-      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
-
-      let cell = within(rows[1]).getByRole('rowheader');
-      expect(cell).toHaveAttribute('aria-colspan', '2');
-
-      let heading = within(cell).getByRole('heading');
-      expect(heading).toBeVisible();
-      expect(heading).toHaveTextContent('No results');
-
-      rerender(tree, defaultTable);
-      act(() => jest.runAllTimers());
-
-      rows = within(table).getAllByRole('row');
-      expect(rows).toHaveLength(3);
-      expect(heading).not.toBeInTheDocument();
+      expect(onLoadMoreSpy).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -3251,7 +4289,7 @@ describe('TableView', function () {
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
     });
 
-    it('should add sort direction info to the column header\'s aria-describedby for Android', function () {
+    it('should add sort direction info to the column header\'s aria-describedby for Android', async function () {
       let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
       let tree = render(<ExampleSortTable />);
 
@@ -3267,13 +4305,13 @@ describe('TableView', function () {
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, ascending');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
-      triggerPress(columnheaders[1]);
+      await user.click(columnheaders[1]);
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column, descending');
 
       uaMock.mockRestore();
     });
 
-    it('should fire onSortChange when there is no existing sortDescriptor', function () {
+    it('should fire onSortChange when there is no existing sortDescriptor', async function () {
       let onSortChange = jest.fn();
       let tree = render(
         <TableView aria-label="Table" onSortChange={onSortChange}>
@@ -3304,13 +4342,13 @@ describe('TableView', function () {
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
-      triggerPress(columnheaders[0]);
+      await user.click(columnheaders[0]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'ascending'});
     });
 
-    it('should toggle the sort direction from ascending to descending', function () {
+    it('should toggle the sort direction from ascending to descending', async function () {
       let onSortChange = jest.fn();
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
@@ -3341,13 +4379,13 @@ describe('TableView', function () {
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
-      triggerPress(columnheaders[0]);
+      await user.click(columnheaders[0]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'descending'});
     });
 
-    it('should toggle the sort direction from descending to ascending', function () {
+    it('should toggle the sort direction from descending to ascending', async function () {
       let onSortChange = jest.fn();
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'descending'}} onSortChange={onSortChange}>
@@ -3378,13 +4416,13 @@ describe('TableView', function () {
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
-      triggerPress(columnheaders[0]);
+      await user.click(columnheaders[0]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'foo', direction: 'ascending'});
     });
 
-    it('should trigger sorting on a different column', function () {
+    it('should trigger sorting on a different column', async function () {
       let onSortChange = jest.fn();
       let tree = render(
         <TableView aria-label="Table" sortDescriptor={{column: 'foo', direction: 'ascending'}} onSortChange={onSortChange}>
@@ -3415,721 +4453,382 @@ describe('TableView', function () {
       expect(document.getElementById(columnheaders[1].getAttribute('aria-describedby'))).toHaveTextContent('sortable column');
       expect(columnheaders[2]).not.toHaveAttribute('aria-describedby');
 
-      triggerPress(columnheaders[1]);
+      await user.click(columnheaders[1]);
 
       expect(onSortChange).toHaveBeenCalledTimes(1);
       expect(onSortChange).toHaveBeenCalledWith({column: 'bar', direction: 'ascending'});
     });
   });
 
-  describe('layout', function () {
-    describe('row heights', function () {
-      let renderTable = (props, scale) => render(
-        <TableView aria-label="Table" {...props}>
-          <TableHeader columns={columns}>
-            {column => <Column>{column.name}</Column>}
+  describe('empty state', function () {
+    it('should display an empty state when there are no items', async function () {
+      let tree = render(
+        <TableView aria-label="Table" renderEmptyState={() => <h3>No results</h3>}>
+          <TableHeader>
+            <Column key="foo">Foo</Column>
+            <Column key="bar">Bar</Column>
           </TableHeader>
-          <TableBody items={items}>
-            {item =>
-              (<Row key={item.foo}>
-                {key => <Cell>{item[key]}</Cell>}
-              </Row>)
-            }
+          <TableBody>
+            {[]}
           </TableBody>
         </TableView>
-      , scale);
+      );
 
-      it('should layout rows with default height', function () {
-        let tree = renderTable();
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
+      await act(() => Promise.resolve()); // wait for MutationObserver in useHasTabbableChild or we get act warnings
 
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('34px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('41px');
-        expect(rows[2].style.top).toBe('41px');
-        expect(rows[2].style.height).toBe('41px');
+      let table = tree.getByRole('grid');
+      let rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(2);
+      expect(rows[1]).toHaveAttribute('aria-rowindex', '2');
 
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('40px');
-        }
-      });
+      let cell = within(rows[1]).getByRole('rowheader');
+      expect(cell).toHaveAttribute('aria-colspan', '2');
 
-      it('should layout rows with default height in large scale', function () {
-        let tree = renderTable({}, 'large');
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
+      let heading = within(cell).getByRole('heading');
+      expect(heading).toBeVisible();
+      expect(heading).toHaveTextContent('No results');
 
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('40px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('51px');
-        expect(rows[2].style.top).toBe('51px');
-        expect(rows[2].style.height).toBe('51px');
+      rerender(tree, defaultTable);
+      act(() => jest.runAllTimers());
 
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('50px');
-        }
-      });
+      rows = within(table).getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      expect(heading).not.toBeInTheDocument();
+    });
 
-      it('should layout rows with density="compact"', function () {
-        let tree = renderTable({density: 'compact'});
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('34px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('33px');
-        expect(rows[2].style.top).toBe('33px');
-        expect(rows[2].style.height).toBe('33px');
-
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('32px');
-        }
-      });
-
-      it('should layout rows with density="compact" in large scale', function () {
-        let tree = renderTable({density: 'compact'}, 'large');
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('40px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('41px');
-        expect(rows[2].style.top).toBe('41px');
-        expect(rows[2].style.height).toBe('41px');
-
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('40px');
-        }
-      });
-
-      it('should layout rows with density="spacious"', function () {
-        let tree = renderTable({density: 'spacious'});
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('34px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('49px');
-        expect(rows[2].style.top).toBe('49px');
-        expect(rows[2].style.height).toBe('49px');
-
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('48px');
-        }
-      });
-
-      it('should layout rows with density="spacious" in large scale', function () {
-        let tree = renderTable({density: 'spacious'}, 'large');
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('40px');
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('61px');
-        expect(rows[2].style.top).toBe('61px');
-        expect(rows[2].style.height).toBe('61px');
-
-        for (let cell of [...rows[1].childNodes, ...rows[2].childNodes]) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('60px');
-        }
-      });
-
-      it('should support variable row heights with overflowMode="wrap"', function () {
-        let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
-          .mockImplementation(function () {
-            return this.textContent === 'Foo 1' ? 64 : 48;
-          });
-
-        let tree = renderTable({overflowMode: 'wrap'});
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        expect(rows[1].style.top).toBe('0px');
-        expect(rows[1].style.height).toBe('65px');
-        expect(rows[2].style.top).toBe('65px');
-        expect(rows[2].style.height).toBe('49px');
-
-        for (let cell of rows[1].childNodes) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('64px');
-        }
-
-        for (let cell of rows[2].childNodes) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('48px');
-        }
-
-        scrollHeight.mockRestore();
-      });
-
-      it('should support variable column header heights with overflowMode="wrap"', function () {
-        let scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get')
-          .mockImplementation(function () {
-            return this.textContent === 'Tier Two Header B' ? 48 : 34;
-          });
-
-        let tree = render(
-          <TableView aria-label="Table" overflowMode="wrap">
-            <TableHeader columns={nestedColumns}>
-              {column => <Column childColumns={column.children}>{column.name}</Column>}
+    it('empty table select all should be disabled', async function () {
+      let onSelectionChange = jest.fn();
+      let tree = render(
+        <div>
+          <TableView aria-label="Table" selectionMode="multiple" onSelectionChange={onSelectionChange} renderEmptyState={() => <h3>No results</h3>}>
+            <TableHeader>
+              <Column key="foo">Foo</Column>
+              <Column key="bar">Bar</Column>
             </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
+            <TableBody>
+              {[]}
             </TableBody>
           </TableView>
-        );
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(5);
+          <input />
+        </div>
+      );
 
-        expect(rows[0].style.top).toBe('0px');
-        expect(rows[0].style.height).toBe('34px');
-        expect(rows[1].style.top).toBe('34px');
-        expect(rows[1].style.height).toBe('48px');
-        expect(rows[2].style.top).toBe('82px');
-        expect(rows[2].style.height).toBe('34px');
+      await act(() => Promise.resolve());
 
-        for (let cell of rows[0].childNodes) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('34px');
+      let table = tree.getByRole('grid');
+      let selectAll = tree.getByRole('checkbox');
+
+      await user.tab();
+      expect(document.activeElement).toBe(table);
+      await user.tab();
+      expect(document.activeElement).not.toBe(selectAll);
+      expect(selectAll).toHaveAttribute('disabled');
+    });
+
+    it('should allow the user to tab into the table body', async function () {
+      let tree = render(<EmptyStateTable />);
+      await act(() => Promise.resolve());
+      let toggleButton = tree.getAllByRole('button')[0];
+      let link = tree.getByRole('link');
+
+      await user.tab();
+      expect(document.activeElement).toBe(toggleButton);
+      await user.tab();
+      expect(document.activeElement).toBe(link);
+    });
+
+    it('should disable keyboard navigation within the table', async function () {
+      let tree = render(<EmptyStateTable />);
+      await act(() => Promise.resolve());
+      let table = tree.getByRole('grid');
+      let header = within(table).getAllByRole('columnheader')[2];
+      expect(header).toHaveAttribute('tabindex', '-1');
+      let headerButton = within(header).getByRole('button');
+      expect(headerButton).toHaveAttribute('aria-disabled', 'true');
+    });
+
+    it('should shift focus to the table if table becomes empty via column sort', function () {
+      let tree = render(<ColumnHeaderFocusRingTable />);
+      let rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(3);
+      focusCell(tree, 'Height');
+      expect(document.activeElement).toHaveTextContent('Height');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+      act(() => jest.advanceTimersByTime(500));
+      let table = tree.getByRole('grid');
+      expect(document.activeElement).toBe(table);
+      // Run the rest of the timeout and run the transitions
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+      rows = tree.getAllByRole('row');
+      expect(rows).toHaveLength(2);
+    });
+
+    it('should disable press interactions with the column headers', async function () {
+      let tree = render(<EmptyStateTable />);
+      await act(() => Promise.resolve());
+      let table = tree.getByRole('grid');
+      let headers = within(table).getAllByRole('columnheader');
+      let toggleButton = tree.getAllByRole('button')[0];
+
+      await user.tab();
+      expect(document.activeElement).toBe(toggleButton);
+
+      let columnButton = within(headers[2]).getByRole('button');
+      await user.click(columnButton);
+      expect(document.activeElement).toBe(toggleButton);
+      expect(tree.queryByRole('menuitem')).toBeFalsy();
+      fireEvent.mouseEnter(headers[2]);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryByRole('slider')).toBeFalsy();
+    });
+
+    it.skip('should re-enable functionality when the table recieves items', async function () {
+      let tree = render(<EmptyStateTable />);
+      let table = tree.getByRole('grid');
+      let headers = within(table).getAllByRole('columnheader');
+      let toggleButton = tree.getAllByRole('button')[0];
+      let selectAll = tree.getByRole('checkbox');
+
+      await user.tab();
+      expect(document.activeElement).toBe(toggleButton);
+      await user.click(toggleButton);
+      act(() => {jest.runAllTimers();});
+
+      expect(selectAll).not.toHaveAttribute('disabled');
+      await user.click(selectAll);
+      act(() => {jest.runAllTimers();});
+      expect(selectAll.checked).toBeTruthy();
+      expect(document.activeElement).toBe(selectAll);
+
+      fireEvent.mouseEnter(headers[2]);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryAllByRole('slider')).toBeTruthy();
+
+      let column1Button = within(headers[1]).getByRole('button');
+      let column2Button = within(headers[2]).getByRole('button');
+      await user.click(column2Button);
+      act(() => {jest.runAllTimers();});
+      expect(tree.queryAllByRole('menuitem')).toBeTruthy();
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      act(() => {jest.runAllTimers();});
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(column2Button);
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+      expect(document.activeElement).toBe(column1Button);
+
+      await user.click(toggleButton);
+      act(() => {jest.runAllTimers();});
+      expect(selectAll).toHaveAttribute('disabled');
+      await user.click(headers[2]);
+      expect(document.activeElement).toBe(toggleButton);
+      await user.tab();
+      expect(document.activeElement).toBe(table);
+      expect(table).toHaveAttribute('tabIndex', '0');
+    });
+  });
+
+  describe('links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = async (item, key = 'Enter') => {
+        if (type === 'mouse') {
+          await user.click(item);
+        } else {
+          fireEvent.keyDown(item, {key});
+          fireEvent.keyUp(item, {key});
         }
+      };
 
-        for (let cell of rows[1].childNodes) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('48px');
-        }
-
-        for (let cell of rows[2].childNodes) {
-          expect(cell.style.top).toBe('0px');
-          expect(cell.style.height).toBe('34px');
-        }
-
-        scrollHeight.mockRestore();
-      });
-
-      // To test https://github.com/adobe/react-spectrum/issues/1885
-      it('should not throw error if selection mode changes with overflowMode="wrap" and selection was controlled', function () {
-        function ControlledSelection(props) {
-          let [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
-          return (
-            <TableView aria-label="Table" overflowMode="wrap" selectionMode={props.selectionMode} selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
-              <TableHeader columns={columns}>
-                {column => <Column>{column.name}</Column>}
+      it('should support links with selectionMode="none"', async function () {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <TableView aria-label="Table">
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
               </TableHeader>
-              <TableBody items={items}>
-                {item =>
-                  (<Row key={item.foo}>
-                    {key => <Cell>{item[key]}</Cell>}
-                  </Row>)
-                }
+              <TableBody>
+                <Row href="https://google.com">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
               </TableBody>
             </TableView>
-          );
-        }
-
-        let tree = render(<ControlledSelection selectionMode="multiple" />);
-        let row = tree.getAllByRole('row')[2];
-        expect(row).toHaveAttribute('aria-selected', 'false');
-        userEvent.click(within(row).getByRole('checkbox'));
-        expect(row).toHaveAttribute('aria-selected', 'true');
-
-        // Without ListLayout fix, throws here with "TypeError: Cannot set property 'estimatedSize' of undefined"
-        rerender(tree, <ControlledSelection selectionMode="none" />);
-        act(() => jest.runAllTimers());
-        expect(tree.queryByRole('checkbox')).toBeNull();
-      });
-
-      it('should return the proper cell z-indexes for overflowMode="wrap"', function () {
-        let tree = renderTable({overflowMode: 'wrap', selectionMode: 'multiple'});
-        let rows = tree.getAllByRole('row');
-        expect(rows).toHaveLength(3);
-
-        for (let row of rows) {
-          for (let [index, cell] of row.childNodes.entries()) {
-            if (index === 0) {
-              expect(cell.style.zIndex).toBe('2');
-            } else {
-              expect(cell.style.zIndex).toBe('1');
-            }
-          }
-        }
-      });
-    });
-
-    describe('column widths', function () {
-      it('should divide the available width by default', function () {
-        let tree = render(
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
+          </Provider>
         );
 
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('320.6666666666667px');
-          expect(row.childNodes[2].style.width).toBe('320.6666666666667px');
-          expect(row.childNodes[3].style.width).toBe('320.6666666666667px');
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
         }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        await trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
 
-      it('should divide the available width by default in large scale', function () {
-        let tree = render((
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader columns={columns}>
-              {column => <Column>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        ), 'large');
-
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('48px');
-          expect(row.childNodes[1].style.width).toBe('317.3333333333333px');
-          expect(row.childNodes[2].style.width).toBe('317.3333333333333px');
-          expect(row.childNodes[3].style.width).toBe('317.3333333333333px');
-        }
-      });
-
-      it('should support explicitly sized columns', function () {
-        let tree = render(
-          <TableView aria-label="Table">
-            <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar" width={500}>Bar</Column>
-              <Column key="baz" width={300}>Baz</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
+      it.each(['single', 'multiple'])('should support links with selectionStyle="checkbox" selectionMode="%s"', async function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <TableView aria-label="Table" selectionMode={selectionMode}>
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row href="https://google.com">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </Provider>
         );
 
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('200px');
-          expect(row.childNodes[1].style.width).toBe('500px');
-          expect(row.childNodes[2].style.width).toBe('300px');
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
         }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        await trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+
+        await user.click(within(items[0]).getByRole('checkbox'));
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick);
+        await trigger(items[1], ' ');
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+        document.removeEventListener('click', onClick);
       });
 
-      it('should divide remaining width amoung remaining columns', function () {
-        let tree = render(
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar">Bar</Column>
-              <Column key="baz">Baz</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
+      it.each(['single', 'multiple'])('should support links with selectionStyle="highlight" selectionMode="%s"', async function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <TableView aria-label="Table" selectionMode={selectionMode} selectionStyle="highlight">
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row href="https://google.com">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </Provider>
         );
 
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('381px');
-          expect(row.childNodes[3].style.width).toBe('381px');
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
         }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick);
+        await trigger(items[0], ' ');
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+        document.removeEventListener('click', onClick);
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        if (type === 'mouse') {
+          await user.dblClick(items[0], {pointerType: 'mouse'});
+        } else {
+          fireEvent.keyDown(items[0], {key: 'Enter'});
+          fireEvent.keyUp(items[0], {key: 'Enter'});
+        }
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       });
 
-      it('should support percentage widths', function () {
-        let tree = render(
-          <TableView aria-label="Table">
-            <TableHeader>
-              <Column key="foo" width="10%">Foo</Column>
-              <Column key="bar" width={500}>Bar</Column>
-              <Column key="baz">Baz</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
+      it('should work with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let {getAllByRole} = render(
+          <Provider theme={theme} router={{navigate}}>
+            <TableView aria-label="Table">
+              <TableHeader>
+                <Column>Foo</Column>
+                <Column>Bar</Column>
+                <Column>Baz</Column>
+              </TableHeader>
+              <TableBody>
+                <Row href="/one">
+                  <Cell>Foo 1</Cell>
+                  <Cell>Bar 1</Cell>
+                  <Cell>Baz 1</Cell>
+                </Row>
+                <Row href="https://adobe.com">
+                  <Cell>Foo 2</Cell>
+                  <Cell>Bar 2</Cell>
+                  <Cell>Baz 2</Cell>
+                </Row>
+              </TableBody>
+            </TableView>
+          </Provider>
         );
 
-        let rows = tree.getAllByRole('row');
+        let items = getAllByRole('row').slice(1);
+        await trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/one');
 
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('100px');
-          expect(row.childNodes[1].style.width).toBe('500px');
-          expect(row.childNodes[2].style.width).toBe('400px');
-        }
-      });
+        navigate.mockReset();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
 
-      it('should support minWidth', function () {
-        let tree = render(
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar" minWidth={500}>Bar</Column>
-              <Column key="baz">Baz</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('200px');
-          expect(row.childNodes[2].style.width).toBe('500px');
-          expect(row.childNodes[3].style.width).toBe('262px');
-        }
-      });
-
-      it('should support maxWidth', function () {
-        let tree = render(
-          <TableView aria-label="Table">
-            <TableHeader>
-              <Column key="foo" width={200}>Foo</Column>
-              <Column key="bar" maxWidth={300}>Bar</Column>
-              <Column key="baz">Baz</Column>
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-
-        let rows = tree.getAllByRole('row');
-
-        for (let row of rows) {
-          expect(row.childNodes[0].style.width).toBe('200px');
-          expect(row.childNodes[1].style.width).toBe('300px');
-          expect(row.childNodes[2].style.width).toBe('500px');
-
-        }
-      });
-
-      it('should compute the correct widths for tiered headings with selection', function () {
-        let tree = render(
-          <TableView aria-label="Table" selectionMode="multiple">
-            <TableHeader columns={nestedColumns}>
-              {column => <Column childColumns={column.children}>{column.name}</Column>}
-            </TableHeader>
-            <TableBody items={items}>
-              {item =>
-                (<Row key={item.foo}>
-                  {key => <Cell>{item[key]}</Cell>}
-                </Row>)
-              }
-            </TableBody>
-          </TableView>
-        );
-
-        let rows = tree.getAllByRole('row');
-
-        expect(rows[0].childNodes[0].style.width).toBe('230.4px');
-        expect(rows[0].childNodes[1].style.width).toBe('769.6px');
-
-        expect(rows[1].childNodes[0].style.width).toBe('230.4px');
-        expect(rows[1].childNodes[1].style.width).toBe('384.8px');
-        expect(rows[1].childNodes[2].style.width).toBe('192.4px');
-        expect(rows[1].childNodes[3].style.width).toBe('192.4px');
-
-        for (let row of rows.slice(2)) {
-          expect(row.childNodes[0].style.width).toBe('38px');
-          expect(row.childNodes[1].style.width).toBe('192.4px');
-          expect(row.childNodes[2].style.width).toBe('192.4px');
-          expect(row.childNodes[3].style.width).toBe('192.4px');
-          expect(row.childNodes[4].style.width).toBe('192.4px');
-          expect(row.childNodes[5].style.width).toBe('192.4px');
-        }
+        await trigger(items[1]);
+        expect(navigate).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
       });
     });
   });
+};
 
-  describe('updating columns', function () {
-    it('should support removing columns', function () {
-      let tree = render(<HidingColumns />);
+describe('TableView', tableTests);
 
-      let checkbox = tree.getByLabelText('Net Budget');
-      expect(checkbox.checked).toBe(true);
-
-      let table = tree.getByRole('grid');
-      let columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(6);
-      expect(columns[1]).toHaveTextContent('Plan Name');
-      expect(columns[2]).toHaveTextContent('Audience Type');
-      expect(columns[3]).toHaveTextContent('Net Budget');
-      expect(columns[4]).toHaveTextContent('Target OTP');
-      expect(columns[5]).toHaveTextContent('Reach');
-
-      for (let row of within(table).getAllByRole('row').slice(1)) {
-        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
-        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
-      }
-
-      userEvent.click(checkbox);
-      expect(checkbox.checked).toBe(false);
-
-      act(() => jest.runAllTimers());
-
-      columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(5);
-      expect(columns[1]).toHaveTextContent('Plan Name');
-      expect(columns[2]).toHaveTextContent('Audience Type');
-      expect(columns[3]).toHaveTextContent('Target OTP');
-      expect(columns[4]).toHaveTextContent('Reach');
-
-      for (let row of within(table).getAllByRole('row').slice(1)) {
-        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
-        expect(within(row).getAllByRole('gridcell')).toHaveLength(4);
-      }
-    });
-
-    it('should support adding columns', function () {
-      let tree = render(<HidingColumns />);
-
-      let checkbox = tree.getByLabelText('Net Budget');
-      expect(checkbox.checked).toBe(true);
-
-      userEvent.click(checkbox);
-      expect(checkbox.checked).toBe(false);
-
-      act(() => jest.runAllTimers());
-
-      let table = tree.getByRole('grid');
-      let columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(5);
-
-      userEvent.click(checkbox);
-      expect(checkbox.checked).toBe(true);
-
-      act(() => jest.runAllTimers());
-
-      columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(6);
-      expect(columns[1]).toHaveTextContent('Plan Name');
-      expect(columns[2]).toHaveTextContent('Audience Type');
-      expect(columns[3]).toHaveTextContent('Net Budget');
-      expect(columns[4]).toHaveTextContent('Target OTP');
-      expect(columns[5]).toHaveTextContent('Reach');
-
-      for (let row of within(table).getAllByRole('row').slice(1)) {
-        expect(within(row).getAllByRole('rowheader')).toHaveLength(1);
-        expect(within(row).getAllByRole('gridcell')).toHaveLength(5);
-      }
-    });
-
-    it('should update the row widths when removing and adding columns', function () {
-      function compareWidths(row, b) {
-        let newWidth = row.childNodes[1].style.width;
-        expect(parseInt(newWidth, 10)).toBeGreaterThan(parseInt(b, 10));
-        return newWidth;
-      }
-
-      let tree = render(<HidingColumns />);
-      let table = tree.getByRole('grid');
-      let columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(6);
-
-      let rows = tree.getAllByRole('row');
-      let oldWidth = rows[1].childNodes[1].style.width;
-
-      let audienceCheckbox = tree.getByLabelText('Audience Type');
-      let budgetCheckbox = tree.getByLabelText('Net Budget');
-      let targetCheckbox = tree.getByLabelText('Target OTP');
-      let reachCheckbox = tree.getByLabelText('Reach');
-
-      userEvent.click(audienceCheckbox);
-      expect(audienceCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
-      oldWidth = compareWidths(rows[1], oldWidth);
-
-      userEvent.click(budgetCheckbox);
-      expect(budgetCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
-      oldWidth = compareWidths(rows[1], oldWidth);
-
-      userEvent.click(targetCheckbox);
-      expect(targetCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
-      oldWidth = compareWidths(rows[1], oldWidth);
-
-      // This previously failed, the first column wouldn't update its width
-      // when the 2nd to last column was removed
-      userEvent.click(reachCheckbox);
-      expect(reachCheckbox.checked).toBe(false);
-      act(() => jest.runAllTimers());
-      oldWidth = compareWidths(rows[1], oldWidth);
-      columns = within(table).getAllByRole('columnheader');
-      expect(columns).toHaveLength(2);
-
-      // Readd the column and check that the width decreases
-      userEvent.click(audienceCheckbox);
-      expect(audienceCheckbox.checked).toBe(true);
-      act(() => jest.runAllTimers());
-      expect(parseInt(rows[1].childNodes[1].style.width, 10)).toBeLessThan(parseInt(oldWidth, 10));
-    });
+describe('TableView with expandable rows flag on', function () {
+  beforeAll(() => {
+    enableTableNestedRows();
   });
 
-  describe('headerless columns', function () {
-
-    let renderTable = (props, scale, showDivider = false) => render(
-      <TableView aria-label="Table" data-testid="test" {...props}>
-        <TableHeader>
-          <Column key="foo">Foo</Column>
-          <Column key="addAction" hideHeader showDivider={showDivider}>
-            Add Item
-          </Column>
-        </TableHeader>
-        <TableBody>
-          <Row>
-            <Cell>Foo 1</Cell>
-            <Cell>
-              <ActionButton isQuiet>
-                <Add />
-              </ActionButton>
-            </Cell>
-          </Row>
-        </TableBody>
-      </TableView>
-      , scale);
-
-    it('renders  table with headerless column with default scale', function () {
-      let {getByRole} = renderTable();
-      let grid = getByRole('grid');
-      expect(grid).toBeVisible();
-      expect(grid).toHaveAttribute('aria-label', 'Table');
-      expect(grid).toHaveAttribute('data-testid', 'test');
-
-      expect(grid).toHaveAttribute('aria-rowcount', '2');
-      expect(grid).toHaveAttribute('aria-colcount', '2');
-      let rowgroups = within(grid).getAllByRole('rowgroup');
-      expect(rowgroups).toHaveLength(2);
-
-      let headerRows = within(rowgroups[0]).getAllByRole('row');
-      expect(headerRows).toHaveLength(1);
-      expect(headerRows[0]).toHaveAttribute('aria-rowindex', '1');
-
-      let headers = within(grid).getAllByRole('columnheader');
-      expect(headers).toHaveLength(2);
-      let className = headers[1].className;
-      expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
-      expect(headers[0]).toHaveTextContent('Foo');
-      // visually hidden syle
-      expect(headers[1].childNodes[0].style.clipPath).toBe('inset(50%)');
-      expect(headers[1].childNodes[0].style.width).toBe('1px');
-      expect(headers[1].childNodes[0].style.height).toBe('1px');
-      expect(headers[1]).not.toBeEmptyDOMElement();
-
-
-      let rows = within(rowgroups[1]).getAllByRole('row');
-      expect(rows).toHaveLength(1);
-      // The width of headerless column
-      expect(rows[0].childNodes[1].style.width).toBe('36px');
-      let rowheader = within(rows[0]).getByRole('rowheader');
-      expect(rowheader).toHaveTextContent('Foo 1');
-      let actionCell = within(rows[0]).getAllByRole('gridcell');
-      expect(actionCell).toHaveLength(1);
-      let buttons = within(actionCell[0]).getAllByRole('button');
-      expect(buttons).toHaveLength(1);
-      className = actionCell[0].className;
-      expect(className.includes('spectrum-Table-cell--hideHeader')).toBeTruthy();
-    });
-
-    it('renders table with headerless column with large scale', function () {
-      let {getByRole} = renderTable({}, 'large');
-      let grid = getByRole('grid');
-      expect(grid).toBeVisible();
-      expect(grid).toHaveAttribute('aria-label', 'Table');
-      expect(grid).toHaveAttribute('data-testid', 'test');
-      let rowgroups = within(grid).getAllByRole('rowgroup');
-      let rows = within(rowgroups[1]).getAllByRole('row');
-      expect(rows).toHaveLength(1);
-      // The width of headerless column
-      expect(rows[0].childNodes[1].style.width).toBe('44px');
-    });
-
-    it('renders table with headerless column and divider', function () {
-      let {getByRole} = renderTable({}, undefined, true);
-      let grid = getByRole('grid');
-      expect(grid).toBeVisible();
-      let rowgroups = within(grid).getAllByRole('rowgroup');
-      expect(rowgroups).toHaveLength(2);
-      let rows = within(rowgroups[1]).getAllByRole('row');
-      expect(rows).toHaveLength(1);
-      // The width of headerless column with divider
-      expect(rows[0].childNodes[1].style.width).toBe('37px');
-    });
-
-    it('renders table with headerless column with tooltip', function () {
-      let {getByRole} = renderTable({}, 'large');
-      let grid = getByRole('grid');
-      expect(grid).toBeVisible();
-      expect(grid).toHaveAttribute('aria-label', 'Table');
-      expect(grid).toHaveAttribute('data-testid', 'test');
-      let headers = within(grid).getAllByRole('columnheader');
-      let headerlessColumn = headers[1];
-      act(() => {
-        headerlessColumn.focus();
-      });
-      let tooltip = getByRole('tooltip');
-      expect(tooltip).toBeVisible();
-    });
-
-  });
+  tableTests();
 });

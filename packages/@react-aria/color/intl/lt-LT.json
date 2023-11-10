@@ -1,0 +1,6 @@
+{
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorNameAndValue": "{name}: {value}",
+  "colorPicker": "Spalvų parinkiklis",
+  "twoDimensionalSlider": "2D slankiklis"
+}

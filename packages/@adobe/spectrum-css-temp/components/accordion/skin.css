@@ -10,28 +10,28 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-.spectrum-Accordion-item {
-  border-color: var(--spectrum-accordion-border-color);
+:root {
+  --spectrum-accordion-text-color-disabled: var(--spectrum-alias-text-color-disabled);
 }
 
-.spectrum-Accordion-itemIndicator {
-  color: var(--spectrum-accordion-icon-color);
+.spectrum-Accordion-item {
+  border-color: var(--spectrum-accordion-border-color);
+
+  &:first-of-type {
+    border-top-color: var(--spectrum-accordion-border-color);
+  }
 }
 
 .spectrum-Accordion-itemHeader {
-  color: var(--spectrum-accordion-text-color);
+  color: var(--spectrum-alias-text-color);
 
   &:hover {
-    color: var(--spectrum-accordion-text-color-hover);
+    color: var(--spectrum-alias-text-color-hover);
 
     background-color: var(--spectrum-accordion-background-color-hover);
-
-    + .spectrum-Accordion-itemIndicator {
-      color: var(--spectrum-accordion-icon-color-hover);
-    }
   }
 
-  &:focus-ring {
+  &:focus-visible {
     &:after  {
       background-color: var(--spectrum-accordion-border-left-color-key-focus);
     }
@@ -52,13 +52,16 @@ governing permissions and limitations under the License.
   .spectrum-Accordion-itemHeader {
     &,
     &:hover,
-    &:focus-ring {
+    &:focus-visible {
       color: var(--spectrum-accordion-text-color-disabled);
       background-color: transparent;
     }
-
-    + .spectrum-Accordion-itemIndicator {
-      color: var(--spectrum-accordion-icon-color-disabled);
+  }
+}
+@media (forced-colors: active) {
+  .spectrum-Accordion-itemHeader {
+    &:focus-visible {
+      outline: 3px solid CanvasText;
     }
   }
 }

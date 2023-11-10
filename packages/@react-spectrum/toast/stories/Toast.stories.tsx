@@ -12,106 +12,324 @@
 
 import {action} from '@storybook/addon-actions';
 import {Button} from '@react-spectrum/button';
-import React from 'react';
-import {storiesOf} from '@storybook/react';
-import {Toast} from '../';
-import {ToastProps} from '@react-types/toast';
-import {ToastProvider, useToastProvider} from '../';
+import {ButtonGroup} from '@react-spectrum/buttongroup';
+import {Checkbox} from '@react-spectrum/checkbox';
+import {Content} from '@react-spectrum/view';
+import {createLandmarkController, useLandmark} from '@react-aria/landmark';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {Flex} from '@react-spectrum/layout';
+import {Heading} from '@react-spectrum/text';
+import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
+import {SpectrumToastOptions} from '../src/ToastContainer';
+import {ToastContainer, ToastQueue} from '../';
 
-storiesOf('Toast', module)
-  .add(
-    'Default',
-    () => render({onClose: action('onClose')}, 'Toast is done.')
-  )
-  .add(
-    'variant = info',
-    () => render({variant: 'info', onClose: action('onClose')}, 'Toast is happening.')
-  )
-  .add(
-    'variant = positive',
-    () => render({variant: 'positive', onClose: action('onClose')}, 'Toast is perfect.')
-  )
-  .add(
-    'variant = Negative',
-    () => render({variant: 'negative', onClose: action('onClose')}, 'Toast is not done.')
-  )
-  .add(
-    'actionable',
-      () => render({actionLabel: 'Undo', onAction: action('onAction'), onClose: action('onClose')}, 'Untoast the toast')
-  )
-  .add(
-    'action triggers close',
-    () => render({actionLabel: 'Undo', onAction: action('onAction'), shouldCloseOnAction: true, onClose: action('onClose')}, 'Close on untoasting of the toast')
-  ).add(
-    'add via provider',
-    () => <ToastProvider><RenderProvider /></ToastProvider>
-  ).add(
-    'add via provider with timers',
-    () => <ToastProvider><RenderProviderTimers /></ToastProvider>
-  );
+export default {
+  title: 'Toast',
+  decorators: [
+    (story, {parameters}) => (
+      <>
+        {!parameters.disableToastContainer && <ToastContainer />}
+        <MainLandmark>{story()}</MainLandmark>
+      </>
+    )
+  ],
+  args: {
+    shouldCloseOnAction: false,
+    timeout: null
+  },
+  argTypes: {
+    timeout: {
+      control: {
+        type: 'radio',
+        options: [null, 5000]
+      }
+    }
+  }
+};
 
-function render(props:ToastProps = {}, message:String) {
+export const Default = (args) => <RenderProvider {...args} />;
+Default.story = {
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          // Ignore landmark accessibility failures since the extra main is just for testing purposes
+          // and not a explicit part of the Toast component
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+
+export const WithAction = (args) => (
+  <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />
+);
+
+WithAction.story = {
+  name: 'With action',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+export const WithDialog = (args) => (
+  <DialogTrigger isDismissable>
+    <Button variant="accent">Open dialog</Button>
+    <Dialog>
+      <Heading>Toasty</Heading>
+      <Content>
+        <RenderProvider {...args} />
+      </Content>
+    </Dialog>
+  </DialogTrigger>
+);
+
+WithDialog.story = {
+  name: 'With dialog',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+export const MultipleToastContainers = (args) => <Multiple {...args} />;
+
+MultipleToastContainers.story = {
+  name: 'multiple ToastContainers',
+  parameters: {
+    disableToastContainer: true,
+    a11y: {
+      config: {
+        rules: [
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+export const ProgrammaticallyClosing = (args) => <ToastToggle {...args} />;
+
+ProgrammaticallyClosing.story = {
+  name: 'programmatically closing',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+export const WithIframe = () => <IframeExample />;
+
+WithIframe.story = {
+  name: 'with iframe',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {id: 'aria-allowed-role', selector: '*:not(iframe[role="main"])'},
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+function RenderProvider(options: SpectrumToastOptions) {
   return (
-    <Toast {...props}>
-      {message}
-    </Toast>
-  );
-}
-
-function RenderProvider() {
-  let toastContext = useToastProvider();
-
-  return (
-    <div>
+    <ButtonGroup>
       <Button
-        onPress={() => toastContext.neutral('Toast is default', {onClose: action('onClose')})}
+        onPress={() => ToastQueue.neutral('Toast available', {...options, onClose: action('onClose')})}
         variant="secondary">
-        Show Default Toast
+        Show Neutral Toast
       </Button>
       <Button
-        onPress={() => toastContext.positive('Toast is positive', {onClose: action('onClose')})}
+        onPress={() => ToastQueue.positive('Toast is done!', {...options, onClose: action('onClose')})}
         variant="primary">
-        Show Primary Toast
+        Show Positive Toast
       </Button>
       <Button
-        onPress={() => toastContext.negative('Toast is negative', {onClose: action('onClose')})}
+        onPress={() => ToastQueue.negative('Toast is burned!', {...options, onClose: action('onClose')})}
         variant="negative">
         Show Negative Toast
       </Button>
       <Button
-        onPress={() => toastContext.info('Toast is info', {onClose: action('onClose')})}
-        variant="cta">
-        Show info Toast
+        onPress={() => ToastQueue.info('Toasting…', {...options, onClose: action('onClose')})}
+        variant="accent"
+        style="outline">
+        Show Info Toast
       </Button>
-    </div>
+    </ButtonGroup>
   );
 }
 
-function RenderProviderTimers() {
-  let toastContext = useToastProvider();
+function ToastToggle(options: SpectrumToastOptions) {
+  let [close, setClose] = useState(null);
 
   return (
-    <div>
-      <Button
-        onPress={() => toastContext.neutral('Toast defaults to 5 second timeout', {onClose: action('onClose')})}
-        variant="secondary">
-        Show Default Toast
-      </Button>
-      <Button
-        onPress={() => toastContext.neutral('Actionable Toast defaults to no timeout', {onClose: action('onClose'), onAction: action('onAction'), shouldCloseOnAction: true, actionLabel: 'no timeout'})}
-        variant="secondary">
-        Show Actionable Toast
-      </Button>
-      <Button
-        onPress={() => toastContext.neutral('Toast has a 7 second timeout', {onClose: action('onClose'), timeout: 7000})}
-        variant="secondary">
-        Show 7 Second Timeout Toast
-      </Button>
-      <Button
-        onPress={() => toastContext.neutral('Toast with "timeout=0" has no timeout', {onClose: action('onClose'), timeout: 0})}
-        variant="secondary">
-        Show No Timeout Toast
-      </Button>
-    </div>
+    <Button
+      onPress={() => {
+        if (!close) {
+          let close = ToastQueue.negative('Unable to save', {...options, onClose: () => setClose(null)});
+          setClose(() => close);
+        } else {
+          close();
+        }
+      }}
+      variant="primary">
+      {close ? 'Hide' : 'Show'} Toast
+    </Button>
   );
+}
+
+function Multiple(options: SpectrumToastOptions) {
+  let [isMounted1, setMounted1] = useState(true);
+
+  return (
+    <Flex direction="column">
+      <Checkbox isSelected={isMounted1} onChange={setMounted1}>First mounted</Checkbox>
+      {isMounted1 && <ToastContainer />}
+      <MultipleInner />
+      <RenderProvider {...options} />
+    </Flex>
+  );
+}
+
+function MultipleInner() {
+  let [isMounted2, setMounted2] = useState(true);
+
+  return (
+    <>
+      <Checkbox isSelected={isMounted2} onChange={setMounted2}>Second mounted</Checkbox>
+      {isMounted2 && <ToastContainer />}
+    </>
+  );
+}
+
+function IframeExample() {
+  let controller = useMemo(() => createLandmarkController(), []);
+  useEffect(() => () => controller.dispose(), [controller]);
+  let onLoad = (e: SyntheticEvent) => {
+    let iframe = e.target as HTMLIFrameElement;
+    let window = iframe.contentWindow;
+    let document = window.document;
+
+    // Catch toasts inside the iframe and redirect them outside.
+    window.addEventListener('react-spectrum-toast', (e: CustomEvent) => {
+      e.preventDefault();
+      ToastQueue[e.detail.variant](e.detail.children, e.detail.options);
+    });
+
+    let prevFocusedElement = null;
+    window.addEventListener('react-aria-landmark-navigation', (e: CustomEvent) => {
+      e.preventDefault();
+      let el = document.activeElement;
+      if (el !== document.body) {
+        prevFocusedElement = el;
+      }
+
+      // Prevent focus scope from stealing focus back when we move focus to the iframe.
+      document.body.setAttribute('data-react-aria-top-layer', 'true');
+
+      window.parent.postMessage({
+        type: 'landmark-navigation',
+        direction: e.detail.direction
+      });
+
+      setTimeout(() => {
+        document.body.removeAttribute('data-react-aria-top-layer');
+      }, 100);
+    });
+
+    // When the iframe is re-focused, restore focus back inside where it was before.
+    window.addEventListener('focus', () => {
+      if (prevFocusedElement) {
+        prevFocusedElement.focus();
+        prevFocusedElement = null;
+      }
+    });
+
+    // Move focus to first or last landmark when we receive a message from the parent page.
+    window.addEventListener('message', e => {
+      if (e.data.type === 'landmark-navigation') {
+        // (Can't use LandmarkController in this example because we need the controller instance inside the iframe)
+        document.body.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
+      }
+    });
+  };
+
+  useEffect(() => {
+    let onMessage = (e: MessageEvent) => {
+      let iframe = ref.current;
+      if (e.data.type === 'landmark-navigation') {
+        // Move focus to the iframe so that when focus is restored there, and we can redirect it back inside (below).
+        iframe.focus();
+
+        // Now re-dispatch the keyboard event so landmark navigation outside the iframe picks it up.
+        controller.navigate(e.data.direction);
+      }
+    };
+
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [controller]);
+
+  let ref = useRef(null);
+  let {landmarkProps} = useLandmark({
+    role: 'main',
+    focus(direction) {
+      // when iframe landmark receives focus via landmark navigation, go to first/last landmark inside iframe.
+      ref.current.contentWindow.postMessage({
+        type: 'landmark-navigation',
+        direction
+      });
+    }
+  }, ref);
+
+  return (
+    <iframe
+      ref={ref}
+      {...landmarkProps}
+      title="iframe"
+      width="500"
+      height="500"
+      src="iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&viewMode=story&id=toast--with-dialog"
+      onLoad={onLoad}
+      tabIndex={-1} />
+  );
+}
+
+function MainLandmark(props) {
+  let ref = useRef();
+  let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
+  return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} style={{padding: 40, background: 'white'}}>{props.children}</main>;
 }

@@ -28,11 +28,13 @@ governing permissions and limitations under the License.
   --spectrum-textfield-multiline-padding-top: var(--spectrum-textfield-padding-top);
   --spectrum-textfield-multiline-padding-bottom: var(--spectrum-textfield-padding-bottom);
 
-  /* Todo: DNA uses incorrect font family "Adobe Clean" */;
-  --spectrum-textfield-text-font-family-fixed: var(--spectrum-font-family-base);
+  --spectrum-textfield-border-size: var(--spectrum-alias-input-border-size);
+  --spectrum-textfield-quiet-border-size: var(--spectrum-alias-input-border-size);
 }
 
 .spectrum-Textfield {
+  composes: spectrum-FocusRing;
+
   display: inline-flex;
   position: relative;
   min-width: var(--spectrum-textfield-min-width);
@@ -43,6 +45,10 @@ governing permissions and limitations under the License.
     min-height: var(--spectrum-textfield-height);
     overflow-x: hidden;
   }
+}
+
+.spectrum-Textfield--quiet {
+  composes: spectrum-FocusRing--quiet;
 }
 
 .spectrum-Textfield-input {
@@ -56,7 +62,7 @@ governing permissions and limitations under the License.
   /* Use padding instead of text-indent because text-indent does not left align the text in Edge browser  */
   text-indent: 0;
 
-  width: 100%;
+  inline-size: 100%;
   height: var(--spectrum-textfield-height);
 
   vertical-align: top; /* used to align them correctly in forms. */
@@ -68,9 +74,9 @@ governing permissions and limitations under the License.
   overflow: visible;
 
   /* Change the input font styles in all browsers */
-  font-family: var(--spectrum-textfield-text-font-family-fixed);
+  composes: i18nFontFamily;
   font-size: var(--spectrum-textfield-text-size);
-  line-height: var(--spectrum-textfield-text-line-height);
+  line-height: var(--spectrum-textfield-height);
   text-overflow: ellipsis;
 
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out,
@@ -163,6 +169,7 @@ governing permissions and limitations under the License.
     height: var(--spectrum-textfield-multiline-height);
     min-height: var(--spectrum-textfield-multiline-min-height);
     padding: var(--spectrum-textfield-multiline-padding-top) var(--spectrum-textfield-multiline-padding-x) var(--spectrum-textfield-multiline-padding-bottom) calc(var(--spectrum-textfield-multiline-padding-x) - 1px);
+    resize: none;
 
     /* Remove the default vertical scrollbar for textarea in IE. */
     overflow: auto;
@@ -175,10 +182,6 @@ governing permissions and limitations under the License.
     /* removes the side padding to align the text properly */
     padding-inline-start: var(--spectrum-textfield-quiet-padding-x);
     padding-inline-end: var(--spectrum-textfield-quiet-padding-x);
-
-    /* Treat all quiet inputs and textareas the same */
-    resize: none;
-    overflow-y: hidden;
   }
 
   .spectrum-Textfield--valid & {
@@ -191,6 +194,32 @@ governing permissions and limitations under the License.
 
   .spectrum-Textfield--loadable & {
     padding-inline-end: calc(var(--spectrum-textfield-padding-x) + var(--spectrum-icon-alert-medium-width) + var(--spectrum-textfield-icon-margin-left));
+  }
+}
+
+.spectrum-Textfield-wrapper.spectrum-Textfield-wrapper--quiet{
+  grid-template-rows: auto;
+}
+
+.spectrum-Textfield-wrapper .spectrum-Textfield--multiline {
+  /* when textarea is inside a label wrapper, make it flex to take up remaining height. */
+  flex: 1 1 auto;
+  min-height: 0;
+
+  .spectrum-Textfield-input {
+    line-height: var(--spectrum-textfield-text-line-height);
+  }
+
+  &.spectrum-Textfield--quiet {
+    /* quiet textfields grow based on text content, up to the height of the container. */
+    /* but we need to keep help text next to input */
+    flex: 0 1 auto;
+    max-height: 100%;
+
+    .spectrum-Textfield-input {
+      /* make textarea scroll when reaching height of container */
+      max-height: 100%;
+    }
   }
 }
 
@@ -222,7 +251,7 @@ governing permissions and limitations under the License.
 }
 
 /* styles the left icon for textfield, assumes usage of workflow icon sizing (18px by 18px) */
-.spectrum-Textfield-icon {
+.spectrum-Textfield .spectrum-Textfield-icon {
   display: block;
   position: absolute;
   height: var(--spectrum-icon-info-medium-height);
@@ -234,7 +263,7 @@ governing permissions and limitations under the License.
 }
 
 /* styles the textfield properly if the left icon is provided */
-.spectrum-Textfield-inputIcon {
+.spectrum-Textfield-input.spectrum-Textfield-inputIcon {
   /* Use padding instead of text-indent so long strings don't overlap the icon */
   /* These values have real names in a spectrum-css update, when we update, use those. */
   padding-inline-start: calc(

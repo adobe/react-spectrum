@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
-import {AriaLabelingProps, DOMProps, KeyboardDelegate, Selection} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId, useUpdateEffect} from '@react-aria/utils';
+import {AriaLabelingProps, DOMAttributes, DOMProps, Key, KeyboardDelegate} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {GridCollection} from '@react-types/grid';
 import {GridKeyboardDelegate} from './GridKeyboardDelegate';
-import {gridKeyboardDelegates} from './utils';
+import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
-import {HTMLAttributes, Key, RefObject, useMemo, useRef} from 'react';
-// @ts-ignore
-import intlMessages from '../intl/*.json';
-import {useCollator, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {RefObject, useCallback, useMemo} from 'react';
+import {useCollator, useLocale} from '@react-aria/i18n';
+import {useGridSelectionAnnouncement} from './useGridSelectionAnnouncement';
+import {useHasTabbableChild} from '@react-aria/focus';
+import {useHighlightSelectionDescription} from './useHighlightSelectionDescription';
 import {useSelectableCollection} from '@react-aria/selection';
 
 export interface GridProps extends DOMProps, AriaLabelingProps {
@@ -40,12 +40,20 @@ export interface GridProps extends DOMProps, AriaLabelingProps {
    * A function that returns the text that should be announced by assistive technology when a row is added or removed from selection.
    * @default (key) => state.collection.getItem(key)?.textValue
    */
-  getRowText?: (key: Key) => string
+  getRowText?: (key: Key) => string,
+  /**
+   * The ref attached to the scrollable body. Used to provided automatic scrolling on item focus for non-virtualized grids.
+   */
+  scrollRef?: RefObject<HTMLElement>,
+  /** Handler that is called when a user performs an action on the row. */
+  onRowAction?: (key: Key) => void,
+  /** Handler that is called when a user performs an action on the cell. */
+  onCellAction?: (key: Key) => void
 }
 
 export interface GridAria {
   /** Props for the grid element. */
-  gridProps: HTMLAttributes<HTMLElement>
+  gridProps: DOMAttributes
 }
 
 /**
@@ -60,9 +68,12 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
     isVirtualized,
     keyboardDelegate,
     focusMode,
-    getRowText = (key) => state.collection.getItem(key)?.textValue
+    scrollRef,
+    getRowText,
+    onRowAction,
+    onCellAction
   } = props;
-  let formatMessage = useMessageFormatter(intlMessages);
+  let {selectionManager: manager} = state;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
     console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
@@ -72,95 +83,82 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
+  let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: state.disabledKeys,
+    disabledKeys: disabledBehavior === 'selection' ? new Set() : state.disabledKeys,
     ref,
     direction,
     collator,
     focusMode
-  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, focusMode]);
+  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, focusMode]);
+
   let {collectionProps} = useSelectableCollection({
     ref,
-    selectionManager: state.selectionManager,
-    keyboardDelegate: delegate
+    selectionManager: manager,
+    keyboardDelegate: delegate,
+    isVirtualized,
+    scrollRef
   });
 
-  let id = useId();
-  gridKeyboardDelegates.set(state, delegate);
+  let id = useId(props.id);
+  gridMap.set(state, {keyboardDelegate: delegate, actions: {onRowAction, onCellAction}});
+
+  let descriptionProps = useHighlightSelectionDescription({
+    selectionManager: manager,
+    hasItemActions: !!(onRowAction || onCellAction)
+  });
 
   let domProps = filterDOMProps(props, {labelable: true});
-  let gridProps: HTMLAttributes<HTMLElement> = mergeProps(domProps, {
-    role: 'grid',
-    id,
-    'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined,
-    ...collectionProps
+
+  let onFocus = useCallback((e) => {
+    if (manager.isFocused) {
+      // If a focus event bubbled through a portal, reset focus state.
+      if (!e.currentTarget.contains(e.target)) {
+        manager.setFocused(false);
+      }
+
+      return;
+    }
+
+    // Focus events can bubble through portals. Ignore these events.
+    if (!e.currentTarget.contains(e.target)) {
+      return;
+    }
+
+    manager.setFocused(true);
+  }, [manager]);
+
+  // Continue to track collection focused state even if keyboard navigation is disabled
+  let navDisabledHandlers = useMemo(() => ({
+    onBlur: collectionProps.onBlur,
+    onFocus
+  }), [onFocus, collectionProps.onBlur]);
+
+  let hasTabbableChild = useHasTabbableChild(ref, {
+    isDisabled: state.collection.size !== 0
   });
+
+  let gridProps: DOMAttributes = mergeProps(
+    domProps,
+    {
+      role: 'grid',
+      id,
+      'aria-multiselectable': manager.selectionMode === 'multiple' ? 'true' : undefined
+    },
+    state.isKeyboardNavigationDisabled ? navDisabledHandlers : collectionProps,
+    // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
+    state.collection.size === 0 && {tabIndex: hasTabbableChild ? -1 : 0},
+    descriptionProps
+  );
 
   if (isVirtualized) {
     gridProps['aria-rowcount'] = state.collection.size;
     gridProps['aria-colcount'] = state.collection.columnCount;
   }
 
-  // Many screen readers do not announce when items in a grid are selected/deselected.
-  // We do this using an ARIA live region.
-  let selection = state.selectionManager.rawSelection;
-  let lastSelection = useRef(selection);
-  useUpdateEffect(() => {
-    if (!state.selectionManager.isFocused) {
-      return;
-    }
-
-    let addedKeys = diffSelection(selection, lastSelection.current);
-    let removedKeys = diffSelection(lastSelection.current, selection);
-
-    // If adding or removing a single row from the selection, announce the name of that item.
-    let messages = [];
-    if (addedKeys.size === 1 && removedKeys.size === 0) {
-      let addedText = getRowText(addedKeys.keys().next().value);
-      if (addedText) {
-        messages.push(formatMessage('selectedItem', {item: addedText}));
-      }
-    } else if (removedKeys.size === 1 && addedKeys.size === 0) {
-      let removedText = getRowText(removedKeys.keys().next().value);
-      if (removedText) {
-        messages.push(formatMessage('deselectedItem', {item: removedText}));
-      }
-    }
-
-    // Announce how many items are selected, except when selecting the first item.
-    if (state.selectionManager.selectionMode === 'multiple') {
-      if (messages.length === 0 || selection === 'all' || selection.size > 1 || lastSelection.current === 'all' || lastSelection.current.size > 1) {
-        messages.push(selection === 'all'
-          ? formatMessage('selectedAll')
-          : formatMessage('selectedCount', {count: selection.size})
-        );
-      }
-    }
-
-    if (messages.length > 0) {
-      announce(messages.join(' '));
-    }
-
-    lastSelection.current = selection;
-  }, [selection]);
-
+  useGridSelectionAnnouncement({getRowText}, state);
   return {
     gridProps
   };
-}
-
-function diffSelection(a: Selection, b: Selection): Set<Key> {
-  let res = new Set<Key>();
-  if (a === 'all' || b === 'all') {
-    return res;
-  }
-
-  for (let key of a.keys()) {
-    if (!b.has(key)) {
-      res.add(key);
-    }
-  }
-
-  return res;
 }

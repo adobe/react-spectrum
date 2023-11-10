@@ -10,27 +10,55 @@
  * governing permissions and limitations under the License.
  */
 
+import ariaMonopackage from 'react-aria/package.json';
 import {Flex} from '@react-spectrum/layout';
 import js from 'highlight.js/lib/languages/javascript';
 import Lowlight from 'react-lowlight';
 import React from 'react';
 import {ResourceCard} from './ResourceCard';
+import rspMonopackage from '@adobe/react-spectrum/package.json';
+import statelyMonopackage from 'react-stately/package.json';
 import styles from './headerInfo.css';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 
 Lowlight.registerLanguage('js', js);
 
+const monopackages = {
+  '@react-spectrum': {
+    importName: '@adobe/react-spectrum',
+    version: rspMonopackage.version
+  },
+  '@react-aria': {
+    importName: 'react-aria',
+    version: ariaMonopackage.version
+  },
+  '@react-stately': {
+    importName: 'react-stately',
+    version: statelyMonopackage.version
+  }
+};
+
 export function HeaderInfo(props) {
   let {
     packageData,
     componentNames,
-    sourceData = []
+    sourceData = [],
+    since = ''
   } = props;
 
   let preRelease = packageData.version.match(/(alpha)|(beta)|(rc)/);
   let importName = packageData.name;
-  if (importName.startsWith('@react-spectrum') && process.env.DOCS_ENV === 'production' && !preRelease) {
-    importName = '@adobe/react-spectrum';
+  let version = packageData.version;
+
+  if (!preRelease) {
+    let scope = importName.split('/')[0];
+    if (monopackages[scope]) {
+      ({importName, version} = monopackages[scope]);
+    }
+
+    if (since) {
+      version = since;
+    }
   }
 
   return (
@@ -42,8 +70,8 @@ export function HeaderInfo(props) {
             <td className={typographyStyles['spectrum-Body4']}><code className={typographyStyles['spectrum-Code4']}>yarn add {importName}</code></td>
           </tr>
           <tr>
-            <th className={typographyStyles['spectrum-Body--secondary']}>version</th>
-            <td className={typographyStyles['spectrum-Body4']}>{packageData.version}</td>
+            <th className={typographyStyles['spectrum-Body--secondary']}>{preRelease || !since ? 'version' : 'added'}</th>
+            <td className={typographyStyles['spectrum-Body4']}>{version}</td>
           </tr>
           {componentNames &&
             <tr>
@@ -57,7 +85,7 @@ export function HeaderInfo(props) {
       </table>
       <Flex wrap gap="size-200">
         {sourceData.map((source) => (
-          <ResourceCard type={source.type} url={source.url} />
+          <ResourceCard key={source.url} type={source.type} url={source.url} />
         ))}
         <ResourceCard type="GitHub" url={`https://github.com/adobe/react-spectrum/tree/main/packages/${encodeURI(packageData.name)}`} />
         <ResourceCard type="NPM" url={`https://www.npmjs.com/package/${encodeURI(packageData.name)}`} />

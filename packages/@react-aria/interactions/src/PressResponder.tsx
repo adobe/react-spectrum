@@ -10,21 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps, useSyncRef} from '@react-aria/utils';
+import {FocusableElement} from '@react-types/shared';
+import {mergeProps, useObjectRef, useSyncRef} from '@react-aria/utils';
 import {PressProps} from './usePress';
 import {PressResponderContext} from './context';
-import React, {ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import React, {ForwardedRef, ReactNode, useContext, useEffect, useMemo, useRef} from 'react';
 
 interface PressResponderProps extends PressProps {
   children: ReactNode
 }
 
-export const PressResponder = React.forwardRef(({children, ...props}: PressResponderProps, ref: RefObject<HTMLElement>) => {
+export const PressResponder = React.forwardRef(({children, ...props}: PressResponderProps, ref: ForwardedRef<FocusableElement>) => {
   let isRegistered = useRef(false);
   let prevContext = useContext(PressResponderContext);
+  ref = useObjectRef(ref || prevContext?.ref);
   let context = mergeProps(prevContext || {}, {
     ...props,
-    ref: ref || prevContext?.ref,
+    ref,
     register() {
       isRegistered.current = true;
       if (prevContext) {
@@ -41,6 +43,7 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
         'A PressResponder was rendered without a pressable child. ' +
         'Either call the usePress hook, or wrap your DOM node with <Pressable> component.'
       );
+      isRegistered.current = true; // only warn once in strict mode.
     }
   }, []);
 
@@ -50,3 +53,12 @@ export const PressResponder = React.forwardRef(({children, ...props}: PressRespo
     </PressResponderContext.Provider>
   );
 });
+
+export function ClearPressResponder({children}: {children: ReactNode}) {
+  let context = useMemo(() => ({register: () => {}}), []);
+  return (
+    <PressResponderContext.Provider value={context}>
+      {children}
+    </PressResponderContext.Provider>
+  );
+}

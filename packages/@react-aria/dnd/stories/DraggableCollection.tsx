@@ -9,20 +9,19 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {chain, useId} from '@react-aria/utils';
+import {chain, mergeProps, useId} from '@react-aria/utils';
 import {classNames} from '@react-spectrum/utils';
 import dndStyles from './dnd.css';
+import {DragPreview} from '../src';
 import {FocusRing} from '@react-aria/focus';
 import Folder from '@spectrum-icons/workflow/Folder';
 import {GridCollection, useGridState} from '@react-stately/grid';
 import {Item} from '@react-stately/collections';
-import {mergeProps} from '@react-aria/utils';
-import {Provider, useProvider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useRef} from 'react';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {useButton} from '@react-aria/button';
+import {useDraggableCollection, useDraggableItem} from '..';
 import {useDraggableCollectionState} from '@react-stately/dnd';
-import {useDraggableItem} from '..';
 import {useGrid, useGridCell, useGridRow} from '@react-aria/grid';
 import {useListData} from '@react-stately/data';
 import {useListState} from '@react-stately/list';
@@ -78,7 +77,7 @@ function DraggableCollection(props) {
     })
   });
 
-  let provider = useProvider();
+  let preview = useRef(null);
   let dragState = useDraggableCollectionState({
     collection: gridState.collection,
     selectionManager: gridState.selectionManager,
@@ -93,26 +92,12 @@ function DraggableCollection(props) {
         };
       });
     },
-    renderPreview(selectedKeys, draggedKey) {
-      let item = state.collection.getItem(draggedKey);
-      return (
-        <Provider {...provider}>
-          <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': selectedKeys.size > 1})}>
-            <div className={classNames(dndStyles, 'drag-handle')}>
-              <ShowMenu size="XS" />
-            </div>
-            <span>{item.rendered}</span>
-            {selectedKeys.size > 1 &&
-              <div className={classNames(dndStyles, 'badge')}>{selectedKeys.size}</div>
-            }
-          </div>
-        </Provider>
-      );
-    },
+    preview,
     onDragStart: props.onDragStart,
     onDragMove: props.onDragMove,
     onDragEnd: props.onDragEnd
   });
+  useDraggableCollection({}, dragState, ref);
 
   let {gridProps} = useGrid({
     ...props,
@@ -135,6 +120,22 @@ function DraggableCollection(props) {
           state={gridState}
           dragState={dragState} />
       ))}
+      <DragPreview ref={preview}>
+        {() => {
+          let item = state.collection.getItem(dragState.draggedKey);
+          return (
+            <div className={classNames(dndStyles, 'draggable', 'is-drag-preview', {'is-dragging-multiple': dragState.draggingKeys.size > 1})}>
+              <div className={classNames(dndStyles, 'drag-handle')}>
+                <ShowMenu size="XS" />
+              </div>
+              <span>{item.rendered}</span>
+              {dragState.draggingKeys.size > 1 &&
+                <div className={classNames(dndStyles, 'badge')}>{dragState.draggingKeys.size}</div>
+              }
+            </div>
+          );
+        }}
+      </DragPreview>
     </div>
   );
 }
@@ -152,7 +153,7 @@ function DraggableCollectionItem({item, state, dragState}) {
     shouldSelectOnPressUp: true
   }, state, cellRef);
 
-  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key}, dragState);
+  let {dragProps, dragButtonProps} = useDraggableItem({key: item.key, hasDragButton: true}, dragState);
 
   let buttonRef = React.useRef();
   let {buttonProps} = useButton({
@@ -174,7 +175,7 @@ function DraggableCollectionItem({item, state, dragState}) {
           })}>
           <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
             <div
-              {...buttonProps as React.HTMLAttributes<HTMLElement>}
+              {...buttonProps}
               ref={buttonRef}
               className={classNames(dndStyles, 'drag-handle')}>
               <ShowMenu size="XS" />

@@ -12,13 +12,10 @@ governing permissions and limitations under the License.
 
 @import '../commons/index.css';
 
-.spectrum-FieldGroup {
-  display: flex;
-  flex-direction: column;
-}
-
-.spectrum-FieldGroup--positionSide {
-  flex-direction: row;
+/* override .spectrum-Field */
+.spectrum-FieldGroup.spectrum-FieldGroup {
+  width: auto;
+  --spectrum-field-default-width: auto;
 }
 
 .spectrum-FieldGroup-group {

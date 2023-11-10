@@ -10,11 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import {DOMAttributes} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import React, {CSSProperties, HTMLAttributes, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
-import {useFocus} from '@react-aria/interactions';
+import React, {CSSProperties, JSXElementConstructor, ReactNode, useMemo, useState} from 'react';
+import {useFocusWithin} from '@react-aria/interactions';
 
-interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {
+export interface VisuallyHiddenProps extends DOMAttributes {
   /** The content to visually hide. */
   children?: ReactNode,
 
@@ -32,17 +33,17 @@ const styles: CSSProperties = {
   border: 0,
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
-  height: 1,
-  margin: '0 -1px -1px 0',
+  height: '1px',
+  margin: '-1px',
   overflow: 'hidden',
   padding: 0,
   position: 'absolute',
-  width: 1,
+  width: '1px',
   whiteSpace: 'nowrap'
 };
 
-interface VisuallyHiddenAria {
-  visuallyHiddenProps: HTMLAttributes<HTMLElement>
+export interface VisuallyHiddenAria {
+  visuallyHiddenProps: DOMAttributes
 }
 
 /**
@@ -56,9 +57,9 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
   } = props;
 
   let [isFocused, setFocused] = useState(false);
-  let {focusProps} = useFocus({
+  let {focusWithinProps} = useFocusWithin({
     isDisabled: !isFocusable,
-    onFocusChange: setFocused
+    onFocusWithinChange: (val) => setFocused(val)
   });
 
   // If focused, don't hide the element.
@@ -70,11 +71,12 @@ export function useVisuallyHidden(props: VisuallyHiddenProps = {}): VisuallyHidd
     } else {
       return styles;
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
 
   return {
     visuallyHiddenProps: {
-      ...focusProps,
+      ...focusWithinProps,
       style: combinedStyles
     }
   };

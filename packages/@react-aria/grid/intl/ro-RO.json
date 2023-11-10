@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} neselectat.",
+  "longPressToSelect": "Apăsați lung pentru a intra în modul de selectare.",
+  "select": "Selectare",
+  "selectedAll": "Toate elementele selectate.",
+  "selectedCount": "{count, plural, =0 {Niciun element selectat} one {# element selectat} other {# elemente selectate}}.",
+  "selectedItem": "{item} selectat."
+}

@@ -12,9 +12,10 @@
 
 import {FocusableProvider} from '@react-aria/focus';
 import {Overlay} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef} from 'react';
+import React, {ReactElement, useRef, useState} from 'react';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipContext} from './context';
+import {useLayoutEffect} from '@react-aria/utils';
 import {useOverlayPosition} from '@react-aria/overlays';
 import {useTooltipTrigger} from '@react-aria/tooltip';
 import {useTooltipTriggerState} from '@react-stately/tooltip';
@@ -31,8 +32,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     trigger: triggerAction
   } = props;
 
-  let [trigger, tooltip] = React.Children.toArray(children);
-
+  let [trigger, tooltip] = React.Children.toArray(children) as [ReactElement, ReactElement];
   let state = useTooltipTriggerState(props);
 
   let tooltipTriggerRef = useRef<HTMLElement>();
@@ -43,13 +43,34 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     trigger: triggerAction
   }, state, tooltipTriggerRef);
 
+  let [borderRadius, setBorderRadius] = useState(0);
+  useLayoutEffect(() => {
+    if (overlayRef.current && state.isOpen) {
+      let spectrumBorderRadius = window.getComputedStyle(overlayRef.current).borderRadius;
+      if (spectrumBorderRadius !== '') {
+        setBorderRadius(parseInt(spectrumBorderRadius, 10));
+      }
+    }
+  }, [state.isOpen, overlayRef]);
+  let arrowRef = useRef(null);
+  let [arrowWidth, setArrowWidth] = useState(0);
+  useLayoutEffect(() => {
+    if (arrowRef.current && state.isOpen) {
+      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
+    }
+  }, [state.isOpen, arrowRef]);
+
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
     placement: props.placement || 'top',
     targetRef: tooltipTriggerRef,
     overlayRef,
     offset,
     crossOffset,
-    isOpen: state.isOpen
+    isOpen: state.isOpen,
+    shouldFlip: props.shouldFlip,
+    containerPadding: props.containerPadding,
+    arrowSize: arrowWidth,
+    arrowBoundaryOffset: borderRadius
   });
 
   return (
@@ -64,9 +85,10 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
           ref: overlayRef,
           UNSAFE_style: overlayProps.style,
           arrowProps,
+          arrowRef: arrowRef,
           ...tooltipProps
         }}>
-        <Overlay isOpen={state.isOpen}>
+        <Overlay isOpen={state.isOpen} nodeRef={overlayRef}>
           {tooltip}
         </Overlay>
       </TooltipContext.Provider>
@@ -101,5 +123,5 @@ TooltipTrigger.getCollectionNode = function* (props: SpectrumTooltipTriggerProps
  * relative to the trigger.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _TooltipTrigger = TooltipTrigger as (props: SpectrumTooltipTriggerProps) => JSX.Element;
+let _TooltipTrigger = TooltipTrigger as (props: SpectrumTooltipTriggerProps) => React.JSX.Element;
 export {_TooltipTrigger as TooltipTrigger};

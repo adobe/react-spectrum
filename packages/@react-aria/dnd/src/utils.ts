@@ -10,27 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-import {CUSTOM_DRAG_TYPE, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
-import {DirectoryItem, DragItem, DropItem, FileItem, DragTypes as IDragTypes} from '@react-types/shared';
+import {CUSTOM_DRAG_TYPE, DROP_OPERATION, GENERIC_TYPE, NATIVE_DRAG_TYPES} from './constants';
+import {DirectoryDropItem, DragItem, DropItem, FileDropItem, DragTypes as IDragTypes, Key, TextDropItem} from '@react-types/shared';
 import {DroppableCollectionState} from '@react-stately/dnd';
 import {getInteractionModality, useInteractionModality} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
+import {RefObject} from 'react';
 
-const droppableCollectionIds = new WeakMap<DroppableCollectionState, string>();
-
-export function useDroppableCollectionId(state: DroppableCollectionState) {
-  let id = useId();
-  droppableCollectionIds.set(state, id);
-  return id;
+interface DroppableCollectionMap {
+  id: string,
+  ref: RefObject<HTMLElement>
 }
 
+export const droppableCollectionMap = new WeakMap<DroppableCollectionState, DroppableCollectionMap>();
+export const DIRECTORY_DRAG_TYPE = Symbol();
+
 export function getDroppableCollectionId(state: DroppableCollectionState) {
-  let id = droppableCollectionIds.get(state);
+  let {id} = droppableCollectionMap.get(state);
   if (!id) {
     throw new Error('Droppable item outside a droppable collection');
   }
 
   return id;
+}
+
+export function getDroppableCollectionRef(state: DroppableCollectionState) {
+  let {ref} = droppableCollectionMap.get(state);
+  if (!ref) {
+    throw new Error('Droppable item outside a droppable collection');
+  }
+
+  return ref;
 }
 
 export function getTypes(items: DragItem[]): Set<string> {
@@ -53,7 +62,7 @@ function mapModality(modality: string) {
     modality = 'virtual';
   }
 
-  if (modality === 'virtual' && 'ontouchstart' in window) {
+  if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
     modality = 'touch';
   }
 
@@ -158,12 +167,12 @@ export class DragTypes implements IDragTypes {
     this.includesUnknownTypes = !hasFiles && dataTransfer.types.includes('Files');
   }
 
-  has(type: string) {
-    if (this.includesUnknownTypes) {
+  has(type: string | symbol) {
+    if (this.includesUnknownTypes || (type === DIRECTORY_DRAG_TYPE && this.types.has(GENERIC_TYPE))) {
       return true;
     }
 
-    return this.types.has(type);
+    return typeof type === 'string' && this.types.has(type);
   }
 }
 
@@ -207,6 +216,7 @@ export function readFromDataTransfer(dataTransfer: DataTransfer) {
         // only implemented in Chrome.
         if (typeof item.webkitGetAsEntry === 'function') {
           let entry: FileSystemEntry = item.webkitGetAsEntry();
+          // eslint-disable-next-line max-depth
           if (!entry) {
             // For some reason, Firefox includes an item with type image/png when copy
             // and pasting any file or directory (no matter the type), but returns `null` for both
@@ -216,6 +226,7 @@ export function readFromDataTransfer(dataTransfer: DataTransfer) {
             continue;
           }
 
+          // eslint-disable-next-line max-depth
           if (entry.isFile) {
             items.push(createFileItem(item.getAsFile()));
           } else if (entry.isDirectory) {
@@ -259,7 +270,7 @@ function blobToString(blob: Blob): Promise<string> {
   });
 }
 
-function createFileItem(file: File): FileItem {
+function createFileItem(file: File): FileDropItem {
   return {
     kind: 'file',
     type: file.type || GENERIC_TYPE,
@@ -269,7 +280,7 @@ function createFileItem(file: File): FileItem {
   };
 }
 
-function createDirectoryItem(entry: any): DirectoryItem {
+function createDirectoryItem(entry: any): DirectoryDropItem {
   return {
     kind: 'directory',
     name: entry.name,
@@ -277,26 +288,7 @@ function createDirectoryItem(entry: any): DirectoryItem {
   };
 }
 
-interface FileSystemFileEntry {
-  isFile: true,
-  isDirectory: false,
-  name: string,
-  file(successCallback: (file: File) => void, errorCallback?: (error: Error) => void): void
-}
-
-interface FileSystemDirectoryEntry {
-  isDirectory: true,
-  isFile: false,
-  name: string,
-  createReader(): FileSystemDirectoryReader
-}
-
-type FileSystemEntry = FileSystemFileEntry | FileSystemDirectoryEntry;
-interface FileSystemDirectoryReader {
-  readEntries(successCallback: (entries: FileSystemEntry[]) => void, errorCallback?: (error: Error) => void): void
-}
-
-async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileItem | DirectoryItem> {
+async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileDropItem | DirectoryDropItem> {
   let reader = item.createReader();
 
   // We must call readEntries repeatedly because there may be a limit to the
@@ -309,7 +301,7 @@ async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileIt
 
     for (let entry of entries) {
       if (entry.isFile) {
-        let file = await getEntryFile(entry);
+        let file = await getEntryFile(entry as FileSystemFileEntry);
         yield createFileItem(file);
       } else if (entry.isDirectory) {
         yield createDirectoryItem(entry);
@@ -320,4 +312,69 @@ async function *getEntries(item: FileSystemDirectoryEntry): AsyncIterable<FileIt
 
 function getEntryFile(entry: FileSystemFileEntry): Promise<File> {
   return new Promise((resolve, reject) => entry.file(resolve, reject));
+}
+
+/** Returns whether a drop item contains text data. */
+export function isTextDropItem(dropItem: DropItem): dropItem is TextDropItem {
+  return dropItem.kind === 'text';
+}
+
+/** Returns whether a drop item is a file. */
+export function isFileDropItem(dropItem: DropItem): dropItem is FileDropItem {
+  return dropItem.kind === 'file';
+}
+
+/** Returns whether a drop item is a directory. */
+export function isDirectoryDropItem(dropItem: DropItem): dropItem is DirectoryDropItem {
+  return dropItem.kind === 'directory';
+}
+
+// Global DnD collection state tracker.
+export interface DnDState {
+  /** A ref for the  of the drag items in the current drag session if any. */
+  draggingCollectionRef?: RefObject<HTMLElement>,
+  /** The set of currently dragged keys. */
+  draggingKeys: Set<Key>,
+  /** A ref for the collection that is targeted for a drop operation, if any. */
+  dropCollectionRef?: RefObject<HTMLElement>
+}
+
+export let globalDndState: DnDState = {draggingKeys: new Set()};
+
+export function setDraggingCollectionRef(ref: RefObject<HTMLElement>) {
+  globalDndState.draggingCollectionRef = ref;
+}
+
+export function setDraggingKeys(keys: Set<Key>) {
+  globalDndState.draggingKeys = keys;
+}
+
+export function setDropCollectionRef(ref: RefObject<HTMLElement>) {
+  globalDndState.dropCollectionRef = ref;
+}
+
+export function clearGlobalDnDState() {
+  globalDndState = {draggingKeys: new Set()};
+}
+
+export function setGlobalDnDState(state: DnDState) {
+  globalDndState = state;
+}
+
+// Util function to check if the current dragging collection ref is the same as the current targeted droppable collection ref.
+// Allows a droppable ref arg in case the global drop collection ref hasn't been set
+export function isInternalDropOperation(ref?: RefObject<HTMLElement>) {
+  let {draggingCollectionRef, dropCollectionRef} = globalDndState;
+  return draggingCollectionRef?.current != null && draggingCollectionRef.current === (ref?.current || dropCollectionRef?.current);
+}
+
+type DropEffect = 'none' | 'copy' | 'link' | 'move';
+export let globalDropEffect: DropEffect;
+export function setGlobalDropEffect(dropEffect: DropEffect) {
+  globalDropEffect = dropEffect;
+}
+
+export let globalAllowedDropOperations = DROP_OPERATION.none;
+export function setGlobalAllowedDropOperations(o: DROP_OPERATION) {
+  globalAllowedDropOperations = o;
 }

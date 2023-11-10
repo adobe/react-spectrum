@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {AriaAttributes, HTMLAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
+import {DOMAttributes} from '@react-types/shared';
+import React, {AriaAttributes, ReactNode, useContext, useEffect, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {useIsSSR} from '@react-aria/ssr';
 
-interface ModalProviderProps extends HTMLAttributes<HTMLElement> {
+export interface ModalProviderProps extends DOMAttributes {
   children: ReactNode
 }
 
@@ -62,7 +64,7 @@ export function ModalProvider(props: ModalProviderProps) {
   );
 }
 
-interface ModalProviderAria {
+export interface ModalProviderAria {
   /**
    * Props to be spread on the container element.
    */
@@ -106,12 +108,12 @@ export function OverlayProvider(props: ModalProviderProps) {
   );
 }
 
-interface OverlayContainerProps extends ModalProviderProps {
+export interface OverlayContainerProps extends ModalProviderProps {
   /**
    * The container element in which the overlay portal will be placed.
    * @default document.body
    */
-  portalContainer?: HTMLElement
+  portalContainer?: Element
 }
 
 /**
@@ -122,28 +124,33 @@ interface OverlayContainerProps extends ModalProviderProps {
  * be accessible at once.
  */
 export function OverlayContainer(props: OverlayContainerProps): React.ReactPortal {
-  let {portalContainer = document.body, ...rest} = props;
+  let isSSR = useIsSSR();
+  let {portalContainer = isSSR ? null : document.body, ...rest} = props;
 
   React.useEffect(() => {
-    if (portalContainer.closest('[data-overlay-container]')) {
+    if (portalContainer?.closest('[data-overlay-container]')) {
       throw new Error('An OverlayContainer must not be inside another container. Please change the portalContainer prop.');
     }
   }, [portalContainer]);
+
+  if (!portalContainer) {
+    return null;
+  }
 
   let contents = <OverlayProvider {...rest} />;
   return ReactDOM.createPortal(contents, portalContainer);
 }
 
-interface ModalAriaProps extends HTMLAttributes<HTMLElement> {
+interface ModalAriaProps extends DOMAttributes {
   /** Data attribute marks the dom node as a modal for the aria-modal-polyfill. */
   'data-ismodal': boolean
 }
 
-interface ModalOptions {
+export interface AriaModalOptions {
   isDisabled?: boolean
 }
 
-interface ModalAria {
+export interface ModalAria {
   /** Props for the modal content element. */
   modalProps: ModalAriaProps
 }
@@ -154,7 +161,7 @@ interface ModalAria {
  * other types of overlays to ensure that only the top-most modal is
  * accessible at once.
  */
-export function useModal(options?: ModalOptions): ModalAria {
+export function useModal(options?: AriaModalOptions): ModalAria {
   // Add aria-hidden to all parent providers on mount, and restore on unmount.
   let context = useContext(Context);
   if (!context) {

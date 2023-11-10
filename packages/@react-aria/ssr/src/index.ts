@@ -9,5 +9,5 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-export * from './SSRProvider';
+export {SSRProvider, useSSRSafeId, useIsSSR} from './SSRProvider';
+export type {SSRProviderProps} from './SSRProvider';

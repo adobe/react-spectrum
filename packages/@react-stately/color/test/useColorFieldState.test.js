@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, renderHook} from '@testing-library/react-hooks';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import {parseColor} from '../src/Color';
 import {useColorFieldState} from '..';
 
@@ -40,20 +40,6 @@ describe('useColorFieldState tests', function () {
     expect(result.current.colorValue.getChannelValue('blue')).toBe(204);
     expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
     expect(result.current.inputValue).toBe('#AABBCC');
-  });
-
-  it.each`
-    action          | props
-    ${'increment'}  | ${{defaultValue: '#000008', step: 4}}
-    ${'decrement'}  | ${{defaultValue: '#000010', step: 4}}
-  `('should $action', function ({action, props}) {
-    let {result} = renderHook(() => useColorFieldState(props));
-    act(() => result.current[action]());
-    expect(result.current.colorValue.getChannelValue('red')).toBe(0);
-    expect(result.current.colorValue.getChannelValue('green')).toBe(0);
-    expect(result.current.colorValue.getChannelValue('blue')).toBe(12);
-    expect(result.current.colorValue.getChannelValue('alpha')).toBe(1);
-    expect(result.current.inputValue).toBe('#00000C');
   });
 
   it.each`

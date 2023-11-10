@@ -13,9 +13,9 @@
 // Portions of the code in this file are based on code from ICU.
 // Original licensing can be found in the NOTICE file in the root directory of this source tree.
 
+import {AnyCalendarDate} from '../types';
 import {CalendarDate} from '../CalendarDate';
-import {GregorianCalendar, gregorianToJulianDay, isLeapYear} from './GregorianCalendar';
-import {Mutable} from '../utils';
+import {fromExtendedYear, GregorianCalendar, gregorianToJulianDay, isLeapYear} from './GregorianCalendar';
 
 // Starts in 78 AD,
 const INDIAN_ERA_START = 78;
@@ -23,18 +23,23 @@ const INDIAN_ERA_START = 78;
 // The Indian year starts 80 days later than the Gregorian year.
 const INDIAN_YEAR_START = 80;
 
+/**
+ * The Indian National Calendar is similar to the Gregorian calendar, but with
+ * years numbered since the Saka era in 78 AD (Gregorian). There are 12 months
+ * in each year, with either 30 or 31 days. Only one era identifier is supported: 'saka'.
+ */
 export class IndianCalendar extends GregorianCalendar {
   identifier = 'indian';
 
   fromJulianDay(jd: number): CalendarDate {
     // Gregorian date for Julian day
-    let date = super.fromJulianDay(jd) as Mutable<CalendarDate>;
+    let date = super.fromJulianDay(jd);
 
     // Year in Saka era
     let indianYear = date.year - INDIAN_ERA_START;
 
     // Day number in Gregorian year (starting from 0)
-    let yDay = jd - gregorianToJulianDay(date.year, 1, 1);
+    let yDay = jd - gregorianToJulianDay(date.era, date.year, 1, 1);
 
     let leapMonth: number;
     if (yDay < INDIAN_YEAR_START) {
@@ -70,17 +75,18 @@ export class IndianCalendar extends GregorianCalendar {
     return new CalendarDate(this, indianYear, indianMonth, indianDay);
   }
 
-  toJulianDay(date: CalendarDate) {
-    let year = date.year + INDIAN_ERA_START;
+  toJulianDay(date: AnyCalendarDate) {
+    let extendedYear = date.year + INDIAN_ERA_START;
+    let [era, year] = fromExtendedYear(extendedYear);
 
     let leapMonth: number;
     let jd: number;
     if (isLeapYear(year)) {
       leapMonth = 31;
-      jd = gregorianToJulianDay(year, 3, 21);
+      jd = gregorianToJulianDay(era, year, 3, 21);
     } else {
       leapMonth = 30;
-      jd = gregorianToJulianDay(year, 3, 22);
+      jd = gregorianToJulianDay(era, year, 3, 22);
     }
 
     if (date.month === 1) {
@@ -97,7 +103,7 @@ export class IndianCalendar extends GregorianCalendar {
     return jd;
   }
 
-  getDaysInMonth(date: CalendarDate): number {
+  getDaysInMonth(date: AnyCalendarDate): number {
     if (date.month === 1 && isLeapYear(date.year + INDIAN_ERA_START)) {
       return 31;
     }
@@ -109,7 +115,15 @@ export class IndianCalendar extends GregorianCalendar {
     return 30;
   }
 
-  getCurrentEra() {
-    return 'saka';
+  getYearsInEra(): number {
+    // 9999-12-31 gregorian is 9920-10-10 indian.
+    // Round down to 9919 for the last full year.
+    return 9919;
   }
+
+  getEras() {
+    return ['saka'];
+  }
+
+  balanceDate() {}
 }

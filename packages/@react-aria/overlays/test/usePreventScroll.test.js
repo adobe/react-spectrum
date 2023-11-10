@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {render} from '@testing-library/react';
+import {render} from '@react-spectrum/test-utils';
 import {usePreventScroll} from '..';
 
 function Example(props) {
@@ -45,6 +45,22 @@ describe('usePreventScroll', function () {
     expect(document.documentElement).toHaveStyle('overflow: hidden');
 
     one.unmount();
+    expect(document.documentElement).not.toHaveStyle('overflow: hidden');
+  });
+
+  it('should work with nested/multiple modals regardless of unmount order', function () {
+    expect(document.documentElement).not.toHaveStyle('overflow: hidden');
+
+    let one = render(<Example />);
+    expect(document.documentElement).toHaveStyle('overflow: hidden');
+
+    let two = render(<Example />);
+    expect(document.documentElement).toHaveStyle('overflow: hidden');
+
+    one.unmount();
+    expect(document.documentElement).toHaveStyle('overflow: hidden');
+
+    two.unmount();
     expect(document.documentElement).not.toHaveStyle('overflow: hidden');
   });
 

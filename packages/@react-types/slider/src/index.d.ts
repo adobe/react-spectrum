@@ -4,17 +4,19 @@ import {
   DOMProps,
   FocusableDOMProps,
   FocusableProps,
+  InputDOMProps,
   LabelableProps,
   LabelPosition,
   Orientation,
   RangeInputBase,
   RangeValue,
   StyleProps,
-  Validation,
+  ValidationState,
   ValueBase
 } from '@react-types/shared';
+import {ReactNode} from 'react';
 
-export interface SliderProps<T = number[]> extends RangeInputBase<number>, ValueBase<T>, LabelableProps {
+export interface SliderProps<T = number | number[]> extends RangeInputBase<number>, ValueBase<T>, LabelableProps {
   /**
    * The orientation of the Slider.
    * @default 'horizontal'
@@ -42,20 +44,30 @@ export interface SliderProps<T = number[]> extends RangeInputBase<number>, Value
   step?: number
 }
 
-export interface SliderThumbProps extends FocusableProps, Validation, LabelableProps {
+export interface SliderThumbProps extends FocusableProps, LabelableProps {
   /**
    * The orientation of the Slider.
    * @default 'horizontal'
+   * @deprecated - pass to the slider instead.
    */
   orientation?: Orientation,
   /** Whether the Thumb is disabled. */
   isDisabled?: boolean,
-  /** Index of the thumb for accessing purposes. */
-  index: number
+  /**
+   * Index of the thumb within the slider.
+   * @default 0
+   */
+  index?: number,
+  /** @deprecated */
+  isRequired?: boolean,
+  /** @deprecated */
+  isInvalid?: boolean,
+  /** @deprecated */
+  validationState?: ValidationState
 }
 
-export interface AriaSliderProps<T = number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}
-export interface AriaSliderThumbProps extends SliderThumbProps, DOMProps, FocusableDOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface AriaSliderProps<T = number | number[]> extends SliderProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaSliderThumbProps extends SliderThumbProps, DOMProps, FocusableDOMProps, InputDOMProps, AriaLabelingProps, AriaValidationProps {}
 
 export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<T>, StyleProps {
   /**
@@ -70,10 +82,14 @@ export interface SpectrumBarSliderBase<T> extends AriaSliderProps<T>, ValueBase<
   /** Whether the value's label is displayed. True by default if there's a `label`, false by default if not. */
   showValueLabel?: boolean,
   /** A function that returns the content to display as the value's label. Overrides default formatted number. */
-  getValueLabel?: (value: T) => string
+  getValueLabel?: (value: T) => string,
+  /**
+   * A ContextualHelp element to place next to the label.
+   */
+  contextualHelp?: ReactNode
 }
 
-export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
+export interface SpectrumSliderProps extends SpectrumBarSliderBase<number>, InputDOMProps {
   /**
    * Whether a fill color is shown between the start of the slider and the current value.
    * @see https://spectrum.adobe.com/page/slider/#Fill.
@@ -93,4 +109,13 @@ export interface SpectrumSliderProps extends SpectrumBarSliderBase<number> {
   trackGradient?: string[]
 }
 
-export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>> { }
+export interface SpectrumRangeSliderProps extends SpectrumBarSliderBase<RangeValue<number>> {
+  /**
+   * The name of the start input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  startName?: string,
+  /**
+   * The name of the end input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  endName?: string
+}

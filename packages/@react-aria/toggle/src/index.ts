@@ -10,4 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useToggle';
+export {useToggle} from './useToggle';
+export type {AriaToggleProps} from '@react-types/checkbox';
+export type {ToggleAria} from './useToggle';

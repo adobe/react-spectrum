@@ -11,7 +11,7 @@
  */
 
 import {Color, ColorWheelProps} from '@react-types/color';
-import {parseColor} from './Color';
+import {normalizeColor, parseColor} from './Color';
 import {useControlledState} from '@react-stately/utils';
 import {useRef, useState} from 'react';
 
@@ -32,24 +32,20 @@ export interface ColorWheelState {
   getThumbPosition(radius: number): {x: number, y: number},
 
   /** Increments the hue by the given amount (defaults to 1). */
-  increment(minStepSize?: number): void,
+  increment(stepSize?: number): void,
   /** Decrements the hue by the given amount (defaults to 1). */
-  decrement(minStepSize?: number): void,
+  decrement(stepSize?: number): void,
 
   /** Whether the color wheel is currently being dragged. */
   readonly isDragging: boolean,
   /** Sets whether the color wheel is being dragged. */
   setDragging(value: boolean): void,
   /** Returns the color that should be displayed in the color wheel instead of `value`. */
-  getDisplayColor(): Color
-}
-
-function normalizeColor(v: string | Color) {
-  if (typeof v === 'string') {
-    return parseColor(v);
-  } else {
-    return v;
-  }
+  getDisplayColor(): Color,
+  /** The step value of the hue channel, used when incrementing and decrementing. */
+  step: number,
+  /** The page step value of the hue channel, used when incrementing and decrementing. */
+  pageStep: number
 }
 
 const DEFAULT_COLOR = parseColor('hsl(0, 100%, 50%)');
@@ -97,17 +93,23 @@ function cartesianToAngle(x: number, y: number, radius: number): number {
  * Color wheels allow users to adjust the hue of an HSL or HSB color value on a circular track.
  */
 export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
-  let {defaultValue, onChange, onChangeEnd, step = 1} = props;
+  let {defaultValue, onChange, onChangeEnd} = props;
 
   if (!props.value && !defaultValue) {
     defaultValue = DEFAULT_COLOR;
   }
 
-  let [value, setValue] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
+  let [value, setValueState] = useControlledState(normalizeColor(props.value), normalizeColor(defaultValue), onChange);
   let valueRef = useRef(value);
-  valueRef.current = value;
+  let setValue = (value: Color) => {
+    valueRef.current = value;
+    setValueState(value);
+  };
 
+  let channelRange = value.getChannelRange('hue');
+  let {minValue: minValueX, maxValue: maxValueX, step: step, pageSize: pageStep} = channelRange;
   let [isDragging, setDragging] = useState(false);
+  let isDraggingRef = useRef(false);
 
   let hue = value.getChannelValue('hue');
   function setHue(v: number) {
@@ -117,15 +119,17 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     }
     v = roundToStep(mod(v, 360), step);
     if (hue !== v) {
-      setValue(value.withChannelValue('hue', v));
+      let color = value.withChannelValue('hue', v);
+      setValue(color);
     }
   }
 
   return {
     value,
+    step,
+    pageStep,
     setValue(v) {
       let color = normalizeColor(v);
-      valueRef.current = color;
       setValue(color);
     },
     hue,
@@ -136,36 +140,38 @@ export function useColorWheelState(props: ColorWheelProps): ColorWheelState {
     getThumbPosition(radius) {
       return angleToCartesian(value.getChannelValue('hue'), radius);
     },
-    increment(minStepSize: number = 0) {
-      let newValue = hue + Math.max(minStepSize, step);
-      if (newValue > 360) {
+    increment(stepSize = 1) {
+      let s = Math.max(stepSize, step);
+      let newValue = hue + s;
+      if (newValue >= maxValueX) {
         // Make sure you can always get back to 0.
-        newValue = 0;
+        newValue = minValueX;
       }
-      setHue(newValue);
+      setHue(roundToStep(mod(newValue, 360), s));
     },
-    decrement(minStepSize: number = 0) {
-      let s = Math.max(minStepSize, step);
+    decrement(stepSize = 1) {
+      let s = Math.max(stepSize, step);
       if (hue === 0) {
         // We can't just subtract step because this might be the case:
         // |(previous step) - 0| < step size
         setHue(roundDown(360 / s) * s);
       } else {
-        setHue(hue - s);
+        setHue(roundToStep(mod(hue - s, 360), s));
       }
     },
     setDragging(isDragging) {
-      setDragging(wasDragging => {
-        if (onChangeEnd && !isDragging && wasDragging) {
-          onChangeEnd(valueRef.current);
-        }
+      let wasDragging = isDraggingRef.current;
+      isDraggingRef.current = isDragging;
 
-        return isDragging;
-      });
+      if (onChangeEnd && !isDragging && wasDragging) {
+        onChangeEnd(valueRef.current);
+      }
+
+      setDragging(isDragging);
     },
     isDragging,
     getDisplayColor() {
-      return value.withChannelValue('saturation', 100).withChannelValue('lightness', 50);
+      return value.toFormat('hsl').withChannelValue('saturation', 100).withChannelValue('lightness', 50).withChannelValue('alpha', 1);
     }
   };
 }

@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -61,9 +61,7 @@ component can be used to create flexbox containers, and any React Spectrum compo
 Flex layouts are also automatically mirrored in right-to-left languages, and can be nested to create
 more complex layouts.
 
-In addition to the properties widely supported by CSS, React Spectrum also shims the `gap` property, along
-with `rowGap` and `columnGap`. These properties make it much easier to build layouts
-with consistent space between each item. The gap can be defined with [Spectrum dimension variables](styling.html#dimension-values)
+The `gap`, `rowGap` and `columnGap` can be defined with [Spectrum dimension variables](styling.html#dimension-values)
 to ensure consistency across applications, and allow the layout to adapt to different devices automatically.
 
 ### Example
@@ -258,17 +256,17 @@ placed using the `slot` prop to specify a named area.
 ```tsx example
 <Picker label="Permission" defaultSelectedKey="read">
   <Item textValue="Read" key="read">
-    <Book size="S" />
+    <Book />
     <Text>Read</Text>
     <Text slot="description">Read only</Text>
   </Item>
   <Item textValue="Write" key="write">
-    <Draw size="S" />
+    <Draw />
     <Text>Write</Text>
     <Text slot="description">Read and write only</Text>
   </Item>
   <Item textValue="Admin" key="admin">
-    <BulkEditUsers size="S" />
+    <BulkEditUsers />
     <Text>Admin</Text>
     <Text slot="description">Full access</Text>
   </Item>

@@ -11,6 +11,10 @@
  */
 
 export function getScrollParent(node: Element): Element {
+  if (isScrollable(node)) {
+    node = node.parentElement;
+  }
+
   while (node && !isScrollable(node)) {
     node = node.parentElement;
   }
@@ -18,7 +22,7 @@ export function getScrollParent(node: Element): Element {
   return node || document.scrollingElement || document.documentElement;
 }
 
-function isScrollable(node: Element): boolean {
+export function isScrollable(node: Element): boolean {
   let style = window.getComputedStyle(node);
   return /(auto|scroll)/.test(style.overflow + style.overflowX + style.overflowY);
 }

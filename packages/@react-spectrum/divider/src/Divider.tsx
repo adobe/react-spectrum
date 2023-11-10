@@ -12,7 +12,7 @@
 
 import {classNames, useDOMRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
-import React from 'react';
+import React, {ElementType} from 'react';
 import {SpectrumDividerProps} from '@react-types/divider';
 import styles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import {useSeparator} from '@react-aria/separator';
@@ -34,7 +34,7 @@ function Divider(props: SpectrumDividerProps, ref: DOMRef) {
   let {styleProps} = useStyleProps(otherProps);
   let weight = sizeMap[size];
 
-  let Element = 'hr';
+  let Element: ElementType = 'hr';
   if (orientation === 'vertical') {
     Element = 'div';
   }

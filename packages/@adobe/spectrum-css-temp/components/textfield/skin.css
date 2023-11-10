@@ -28,10 +28,6 @@ governing permissions and limitations under the License.
     &.is-placeholder {
       color: var(--spectrum-textfield-placeholder-text-color-hover);
     }
-
-    & ~ .spectrum-Textfield-icon {
-      fill: var(--spectrum-textfield-icon-color-hover);
-    }
   }
 
   &:active {
@@ -43,18 +39,14 @@ governing permissions and limitations under the License.
     &.is-placeholder {
       color: var(--spectrum-textfield-placeholder-text-color-down);
     }
-
-    & ~ .spectrum-Textfield-icon {
-      fill: var(--spectrum-textfield-icon-color-down);
-    }
   }
 
   &:focus,
   &.is-focused {
-    border-color: var(--spectrum-textfield-border-color-down);
+    border-color: var(--spectrum-textfield-border-color-key-focus);
   }
 
-  &:focus-ring {
+  &:focus-visible {
     &:not(:active) {
       border-color: var(--spectrum-textfield-border-color-key-focus);
       box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
@@ -80,22 +72,26 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:invalid,
   &.spectrum-Textfield--invalid {
     border-color: var(--spectrum-textfield-border-color-error);
 
     &:hover {
-      border-color: var(--spectrum-textfield-border-color-error-hover);
+      border-color: var(--spectrum-textfield-border-color-key-focus);
     }
 
     &:active {
-      border-color: var(--spectrum-textfield-border-color-error-down);
+      border-color: var(--spectrum-textfield-border-color-key-focus);
     }
 
-    &:focus-ring { /* might break things due to pre-defined focus-ring */
+    &:focus,
+    &.is-focused {
+      border-color: var(--spectrum-textfield-border-color-key-focus);
+    }
+
+    &:focus-visible { /* might break things due to pre-defined focus-ring */
       &:not(:active) {
-        border-color: var(--spectrum-textfield-border-color-error);
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
       }
     }
   }
@@ -117,7 +113,7 @@ governing permissions and limitations under the License.
       border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
     }
 
-    &:focus-ring {
+    &:focus-visible {
       &:not(:active) {
         border-color: var(--spectrum-textfield-border-color-key-focus);
         box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-key-focus);
@@ -129,42 +125,40 @@ governing permissions and limitations under the License.
       background-color: var(--spectrum-textfield-quiet-background-color-disabled);
       border-color:  var(--spectrum-textfield-quiet-border-color-disabled);
     }
-
-    &:invalid {
-      border-color: var(--spectrum-textfield-border-color-error);
-
-      &:focus-ring { /* might break things due to pre-defined focus-ring */
-        &:not(:active) {
-          border-color: var(--spectrum-textfield-border-color-error);
-          box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
-        }
-      }
-    }
   }
 
   .spectrum-Textfield.spectrum-Textfield--invalid & {
     border-color: var(--spectrum-textfield-border-color-error);
 
-    &:focus-ring { /* might break things due to pre-defined focus-ring */
+    &:hover {
+      border-color: var(--spectrum-textfield-border-color-error-hover);
+    }
+
+    &:active {
+      border-color: var(--spectrum-textfield-border-color-error-down);
+    }
+
+    &:focus,
+    &.is-focused {
+      border-color: var(--spectrum-textfield-border-color-key-focus);
+    }
+
+    &:focus-visible { /* might break things due to pre-defined focus-ring */
       &:not(:active) {
-        border-color: var(--spectrum-textfield-border-color-error);
-        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-error);
+        border-color: var(--spectrum-textfield-border-color-key-focus);
+        box-shadow: 0 0 0 1px var(--spectrum-textfield-border-color-key-focus);
       }
     }
   }
 
   .spectrum-Textfield--quiet.spectrum-Textfield--invalid & {
-    &:focus-ring { /* might break things due to pre-defined focus-ring */
+    &:focus-visible { /* might break things due to pre-defined focus-ring */
       &:not(:active) {
-        box-shadow: 0 1px 0 var(--spectrum-textfield-border-color-error);
+        box-shadow: 0 1px 0 var(--spectrum-textfield-quiet-border-color-key-focus);
       }
     }
   }
 
-}
-
-.spectrum-Textfield-icon {
-  fill: var(--spectrum-textfield-icon-color);
 }
 
 .spectrum-Textfield-validationIcon {
@@ -174,5 +168,34 @@ governing permissions and limitations under the License.
 
   .spectrum-Textfield--invalid & {
     fill: var(--spectrum-alert-error-icon-color);
+  }
+}
+@media (forced-colors: active) {
+  .spectrum-Textfield-input {
+    --spectrum-textfield-border-color: CanvasText;
+    --spectrum-textfield-text-color-disabled: GrayText;
+    --spectrum-textfield-border-color-disabled: GrayText;
+    --spectrum-textfield-quiet-border-color-disabled: GrayText;
+    --spectrum-textfield-quiet-border-color-key-focus: Highlight;
+    --spectrum-textfield-border-color-key-focus: Highlight;
+    --spectrum-textfield-placeholder-text-color: GrayText;
+    --spectrum-textfield-placeholder-text-color-hover: GrayText;
+    &.focus-ring,
+    &:focus-visible {
+      outline: 2px solid Highlight;
+    }
+    .spectrum-Textfield--quiet & {
+      &.focus-ring,
+      &:focus-visible {
+        forced-color-adjust: none;
+        outline: 0;
+        box-shadow: 0 1px 0 0 var(--spectrum-textfield-quiet-border-color-key-focus);
+        .spectrum-Textfield-input {
+          border-color: var(--spectrum-textfield-quiet-border-color-key-focus);
+        }
+      }
+    }
+
+
   }
 }

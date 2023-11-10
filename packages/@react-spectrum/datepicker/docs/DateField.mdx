@@ -1,0 +1,395 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/datepicker';
+import i18nDocs from 'docs:@internationalized/date';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/datepicker/package.json';
+
+```jsx import
+import {DateField} from '@react-spectrum/datepicker';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Date and Time
+keywords: [input, form, field, date, time]
+---
+
+# DateField
+
+<PageDescription>{docs.exports.DateField.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['DateField']}
+  sourceData={[]}
+  since="3.19.0" />
+
+## Example
+
+```tsx example
+<DateField label="Event date" />
+```
+
+## Value
+
+A `DateField` displays a placeholder by default. An initial, uncontrolled value can be provided to the `DateField` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns. `DateField` supports values of the following types:
+
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> – a date without any time components. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDate} /> function. Use this type to represent dates where the time is not important, such as a birthday or an all day calendar event.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> – a date with a time, but not in any specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDateTime} /> function. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a `ZonedDateTime`.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> – a date with a time in a specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} />, <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} />, or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> functions. Use this type to represent an exact moment in time at a particular location on Earth.
+
+```tsx example
+import {parseDate} from '@internationalized/date';
+
+function Example() {
+  let [value, setValue] = React.useState(parseDate('2020-02-03'));
+
+  return (
+    <Flex gap="size-150" wrap>
+      <DateField
+        label="Date (uncontrolled)"
+        defaultValue={parseDate('2020-02-03')} />
+      <DateField
+        label="Date (controlled)"
+        value={value}
+        onChange={setValue} />
+    </Flex>
+  );
+}
+```
+
+### Time zones
+
+`DateField` is time zone aware when a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account when the value is manipulated.
+
+In most cases, your data will come from and be sent to a server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string. [@internationalized/date](../internationalized/date/) includes functions for parsing strings in multiple formats into <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> objects. Which format you use will depend on what information you need to store.
+
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} /> – This function parses a date with an explicit time zone and optional UTC offset attached (e.g. `"2021-11-07T00:45[America/Los_Angeles]"` or `"2021-11-07T00:45-07:00[America/Los_Angeles]"`). This format preserves the maximum amount of information. If the exact local time and time zone that a user selected is important, use this format. Storing the time zone and offset that was selected rather than converting to UTC ensures that the local time is correct regardless of daylight saving rule changes (e.g. if a locale abolishes DST). Examples where this applies include calendar events, reminders, and other times that occur in a particular location.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} /> – This function parses an absolute date and time that occurs at the same instant at all locations on Earth. It can be represented in UTC (e.g. `"2021-11-07T07:45:00Z"`), or stored with a particular offset (e.g. `"2021-11-07T07:45:00-07:00"`). A time zone identifier, e.g. `America/Los_Angeles`, must be passed, and the result will be converted into that time zone. Absolute times are the best way to represent events that occurred in the past, or future events where an exact time is needed, regardless of time zone.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> – This function parses an absolute date and time into the current user's local time zone. It is a shortcut for `parseAbsolute`, and accepts the same formats.
+
+```tsx example
+import {parseZonedDateTime} from '@internationalized/date';
+
+<DateField
+  label="Event date"
+  defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
+```
+
+`DateField` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+
+```tsx example
+import {parseAbsoluteToLocal} from '@internationalized/date';
+
+<DateField
+  label="Event date"
+  defaultValue={parseAbsoluteToLocal('2021-11-07T07:45:00Z')}
+/>
+```
+
+### Granularity
+
+The `granularity` prop allows you to control the smallest unit that is displayed by a `DateField`. By default, `CalendarDate` values are displayed with `"day"` granularity (year, month, and day), and `CalendarDateTime` and `ZonedDateTime` values are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
+
+In addition, when a value with a time is provided but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DateFields are synchronized with the same value, but display different granularities.
+
+```tsx example
+function Example() {
+  let [date, setDate] = React.useState(parseAbsoluteToLocal('2021-04-07T18:45:22Z'));
+
+  return (
+    <Flex gap="size-150" wrap>
+      <DateField
+        label="Date and time"
+        granularity="second"
+        value={date}
+        onChange={setDate} />
+      <DateField
+        label="Date"
+        granularity="day"
+        value={date}
+        onChange={setDate} />
+    </Flex>
+  );
+}
+```
+
+
+If no `value` or `defaultValue` prop is passed, then the `granularity` prop also affects which type of value is emitted from the `onChange` event. Note that by default, time values will not have a time zone because none was supplied. You can override this by setting the `placeholderValue` prop explicitly. Values emitted from `onChange` will use the time zone of the placeholder value.
+
+```tsx example
+import {now} from '@internationalized/date';
+
+<Flex gap="size-150" wrap>
+  <DateField
+    label="Event date"
+    granularity="second" />
+  <DateField
+    label="Event date"
+    placeholderValue={now('America/New_York')}
+    granularity="second" />
+</Flex>
+```
+
+### International calendars
+
+`DateField` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the `Provider` component.
+
+Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
+
+The below example displays a `DateField` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
+
+```tsx example
+import {Provider} from '@adobe/react-spectrum';
+
+function Example() {
+  let [date, setDate] = React.useState(null);
+  return (
+    <Provider locale="hi-IN-u-ca-indian">
+      <DateField label="Date" value={date} onChange={setDate} />
+      <p>Selected date: {date?.toString()}</p>
+    </Provider>
+  );
+}
+```
+
+### HTML forms
+
+DateField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string according to the granularity of the value. For example, if the date field allows selecting only a date then a string such as `"2023-02-03"` will be submitted, and if it allows selecting a time then a string such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
+
+```tsx example
+<DateField label="Birth date" name="birthday" />
+```
+
+## Labeling
+
+A visual label should be provided for the `DateField` using the `label` prop. If the `DateField` is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<Flex gap="size-150" wrap>
+  <DateField label="Birth date" />
+  <DateField label="Birth date" isRequired necessityIndicator="icon" />
+  <DateField label="Birth date" isRequired necessityIndicator="label" />
+  <DateField label="Birth date" necessityIndicator="label" />
+</Flex>
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the `DateField` for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
+the `id` of the labeling element instead.
+
+### Internationalization
+
+In order to internationalize a `DateField`, a localized string should be passed to the `label` or `aria-label` prop.
+When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
+
+## Events
+
+`DateField` accepts an `onChange` prop which is triggered whenever the date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@adobe/react-spectrum';
+
+function Example() {
+  let [date, setDate] = React.useState(parseDate('1985-07-03'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <DateField label="Birth date" value={date} onChange={setDate} />
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())): '--'}</p>
+    </>
+  );
+}
+```
+
+## Validation
+
+DateField supports the `isRequired` prop to ensure the user enters a value, as well as minimum and maximum values, and custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the date field or submits the form.
+
+```tsx example
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <DateField label="Appointment date" name="date" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+By default, `DateField` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
+### Minimum and maximum values
+
+The `minValue` and `maxValue` props can also be used to ensure the value is within a specific range. This example only accepts dates after today.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  <DateField
+    label="Appointment date"
+    /*- begin highlight -*/
+    minValue={today(getLocalTimeZone())}
+    /*- end highlight -*/
+    defaultValue={parseDate('2022-02-03')} />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+### Custom validation
+
+The `validate` function can be used to perform custom validation logic. It receives the current field value, and should return a string or array of strings representing one or more error messages if the value is invalid.
+
+This example validates that the selected date is a weekday and not a weekend according to the current locale.
+
+```tsx example
+import {isWeekend} from '@internationalized/date';
+import {useLocale} from '@adobe/react-spectrum';
+
+function Example() {
+  let {locale} = useLocale();
+
+  return (
+    <Form validationBehavior="native" maxWidth="size-3000">
+      <DateField
+        label="Appointment date"
+        /*- begin highlight -*/
+        validate={date => date && isWeekend(date, locale) ? 'We are closed on weekends.' : null}
+        /*- end highlight -*/
+        defaultValue={parseDate('2023-10-28')} />
+      <ButtonGroup>
+        <Button type="submit" variant="primary">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </ButtonGroup>
+    </Form>
+  );
+}
+```
+
+## Props
+
+<PropTable component={docs.exports.DateField} links={docs.links} />
+
+## Visual options
+
+### Quiet
+
+```tsx example
+<DateField label="Birth date" isQuiet />
+```
+
+### Disabled
+
+```tsx example
+<DateField label="Birth date" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the DateField's value immutable. Unlike `isDisabled`, the DateField remains focusable.
+
+```tsx example
+<DateField label="Birth date" value={today(getLocalTimeZone())} isReadOnly />
+```
+
+### Label alignment and position
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
+
+By default, the label is positioned above the `DateField`. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the `DateField` and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<DateField label="Birth date" labelPosition="side" labelAlign="end" />
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
+
+Both a description and an error message can be supplied to a DateField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+<Flex gap="size-100" wrap>
+  <DateField label="Date" defaultValue={today(getLocalTimeZone())} validationState="valid" description="Select a meeting date." />
+  <DateField label="Date" validationState="invalid" errorMessage="Empty input is not allowed." />
+</Flex>
+```
+
+`DateField` also supports displaying the expected date format for the user's locale automatically using the `showFormatHelpText` prop.
+
+```tsx example
+<DateField label="Birth date" showFormatHelpText />
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a DateField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<DateField
+  label="Appointment date"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Appointment changes</Heading>
+      <Content>Your appointment date cannot be changed once it is scheduled.</Content>
+    </ContextualHelp>
+  } />
+```
+
+### Placeholder value
+
+When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.
+
+```tsx example
+import {CalendarDate} from '@internationalized/date';
+
+<DateField label="Birth date" placeholderValue={new CalendarDate(1980, 1, 1)} />
+```
+
+### Hide time zone
+
+When a `ZonedDateTime` object is provided as the value of a `DateField`, the time zone abbreviation is displayed by default. However, if this is displayed elsewhere or implicit based on the usecase, it can be hidden using the `hideTimeZone` option.
+
+```tsx example
+<DateField
+  label="Appointment time"
+  defaultValue={parseZonedDateTime('2022-11-07T10:45[America/Los_Angeles]')}
+  hideTimeZone />
+```
+
+### Hour cycle
+
+By default, `DateField` displays times in either 12 or 24 hour hour format depending on the user's locale. However, this can be overridden using the `hourCycle` prop if needed for a specific usecase. This example forces the `DateField` to use 24-hour time, regardless of the locale.
+
+```tsx example
+<DateField
+  label="Appointment time"
+  granularity="minute"
+  hourCycle={24} />
+```

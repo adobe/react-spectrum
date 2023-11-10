@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-.react-spectrum-ColorField-input {
-  direction: ltr;
-  text-align: start;
+.react-spectrum-ColorField-input:not(:placeholder-shown) {
+  unicode-bidi: plaintext;
+  &:dir(rtl) {
+    text-align: end;
+  }
 }

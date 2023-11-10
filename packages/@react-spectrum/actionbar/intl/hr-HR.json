@@ -1,0 +1,7 @@
+{
+  "actions": "Radnje",
+  "actionsAvailable": "Dostupne radnje.",
+  "clearSelection": "Poništi odabir",
+  "selected": "Odabrano: { count }",
+  "selectedAll": "Sve je odabrano"
+}

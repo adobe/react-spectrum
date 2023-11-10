@@ -12,7 +12,7 @@
 
 import {ListLayout} from '@react-stately/layout';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useSideNav} from '../';
 
 describe('useSideNav', function () {
@@ -20,9 +20,15 @@ describe('useSideNav', function () {
   let mockLayout = new ListLayout({
     rowHeight: 40
   });
+  let mockRef = {
+    current: {
+      addEventListener: () => jest.fn(),
+      removeEventListener: () => jest.fn()
+    }
+  };
 
   let renderSideNavHook = (menuProps) => {
-    let {result} = renderHook(() => useSideNav({...menuProps, layout: mockLayout}, mockState));
+    let {result} = renderHook(() => useSideNav({...menuProps, layout: mockLayout}, mockState, mockRef));
     return result.current;
   };
 

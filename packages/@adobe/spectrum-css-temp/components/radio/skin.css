@@ -71,8 +71,8 @@ governing permissions and limitations under the License.
       color: var(--spectrum-radio-emphasized-text-color-down);
     }
   }
-  & .spectrum-Radio-input:focus-ring,
-  &:hover .spectrum-Radio-input:focus-ring {
+  & .spectrum-Radio-input:focus-visible,
+  &:hover .spectrum-Radio-input:focus-visible {
     &:checked + .spectrum-Radio-button {
       &:before {
         border-color: var(--spectrum-radio-emphasized-circle-border-color-selected-key-focus);
@@ -101,8 +101,8 @@ governing permissions and limitations under the License.
       }
     }
   }
-  & .spectrum-Radio-input:focus-ring,
-  &:hover .spectrum-Radio-input:focus-ring {
+  & .spectrum-Radio-input:focus-visible,
+  &:hover .spectrum-Radio-input:focus-visible {
     &:checked + .spectrum-Radio-button {
       &:before {
         border-color: var(--spectrum-radio-quiet-circle-border-color-selected-key-focus);
@@ -144,8 +144,8 @@ governing permissions and limitations under the License.
       color: var(--spectrum-radio-emphasized-circle-border-color-error-down);
     }
   }
-  &.is-invalid .spectrum-Radio-input:focus-ring,
-  &.is-invalid:hover .spectrum-Radio-input:focus-ring {
+  &.is-invalid .spectrum-Radio-input:focus-visible,
+  &.is-invalid:hover .spectrum-Radio-input:focus-visible {
     &:not(:checked) + .spectrum-Radio-button {
       &:before {
         border-color: var(--spectrum-radio-circle-border-color-error-key-focus);
@@ -175,8 +175,8 @@ governing permissions and limitations under the License.
 /* Removed :before so that border-color isn't overwritten by keyboard focus */
 .spectrum-Radio,
 .spectrum-Radio--quiet {
-  & .spectrum-Radio-input:focus-ring,
-  &:hover .spectrum-Radio-input:focus-ring {
+  & .spectrum-Radio-input:focus-visible,
+  &:hover .spectrum-Radio-input:focus-visible {
     &:not(:checked) + .spectrum-Radio-button {
       &:before {
         border-color: var(--spectrum-radio-circle-border-color-key-focus);
@@ -185,6 +185,48 @@ governing permissions and limitations under the License.
     & + .spectrum-Radio-button {
       &:after {
         box-shadow: 0 0 0 var(--spectrum-radio-focus-ring-size-key-focus) var(--spectrum-radio-focus-ring-color-key-focus);
+      }
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Radio {
+    forced-color-adjust: none;
+    --spectrum-radio-circle-border-color-error-key-focus: ButtonText;
+    --spectrum-radio-circle-border-color-error-selected-key-focus: Highlight;
+    --spectrum-radio-circle-border-color-key-focus: Highlight;
+    --spectrum-radio-emphasized-circle-background-color: ButtonFace;
+    --spectrum-radio-emphasized-circle-border-color-disabled: GrayText;
+    --spectrum-radio-emphasized-circle-border-color-down: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-error: ButtonText;
+    --spectrum-radio-emphasized-circle-border-color-error-down: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-error-hover: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-hover: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-selected-down: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-selected-hover: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-selected-key-focus: Highlight;
+    --spectrum-radio-emphasized-circle-border-color-selected: Highlight;
+    --spectrum-radio-emphasized-circle-border-color: ButtonText;
+    --spectrum-radio-emphasized-text-color-disabled: GrayText;
+    --spectrum-radio-emphasized-text-color-down: CanvasText;
+    --spectrum-radio-emphasized-text-color-hover: CanvasText;
+    --spectrum-radio-emphasized-text-color: CanvasText;
+    --spectrum-radio-focus-ring-color-key-focus: ButtonText;
+    --spectrum-radio-quiet-circle-border-color-selected: Highlight;
+    --spectrum-radio-quiet-circle-border-color-selected-down: Highlight;
+    --spectrum-radio-quiet-circle-border-color-selected-hover: Highlight;
+    --spectrum-radio-quiet-circle-border-color-selected-key-focus: Highlight;
+    --spectrum-radio-focus-ring-gap-key-focus: var(--spectrum-global-dimension-static-size-25);
+    --spectrum-radio-focus-ring-size: var(--spectrum-global-dimension-static-size-40);
+    &.is-invalid:hover {
+      .spectrum-Radio-label {
+        color: var(--spectrum-radio-emphasized-circle-border-color-error);
+      }
+    }
+    &.is-invalid:active {
+      .spectrum-Radio-label {
+        color: var(--spectrum-radio-emphasized-circle-border-color-error);
       }
     }
   }

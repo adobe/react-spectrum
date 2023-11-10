@@ -2,12 +2,11 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/provider';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/provider/package.json';
 
 ```jsx import
 import {Checkbox} from '@react-spectrum/checkbox';
-import {Form} from '@react-spectrum/form';
 import {TextField} from '@react-spectrum/textfield';
 import {Flex} from '@react-spectrum/layout';
 import {Picker, Item} from '@react-spectrum/picker';
@@ -23,11 +22,12 @@ keywords: [theme, locale, application, colorstop]
 
 # Provider
 
-<p>{docs.exports.Provider.description}</p>
+<PageDescription>{docs.exports.Provider.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
-  componentNames={['Provider']} />
+  componentNames={['Provider', 'useProvider']}
+  since="3.0.0" />
 
 ## Example
 
@@ -39,7 +39,7 @@ import {Button} from '@react-spectrum/button';
 function App() {
   return (
     <Provider theme={theme}>
-      <Button variant="cta">
+      <Button variant="accent">
         Hello React Spectrum!
       </Button>
     </Provider>
@@ -97,6 +97,18 @@ This example specifies two breakpoints: `tablet` and `desktop`. It displays a [V
 </Provider>
 ```
 
+### Client side routing
+
+The Provider component accepts an optional `router` prop. This enables React Spectrum components that render links to perform client side navigation using your application or framework's client side router. See the [client side routing guide](routing.html) for details on how to set this up.
+
+```tsx
+let navigate = useNavigateFromYourRouter();
+
+<Provider theme={theme} router={{navigate}}>
+  <YourApp />
+</Provider>
+```
+
 ## Property groups
 Provider can also be used to define common properties for a group of components within it. For example, a group of components could be disabled together rather than individually by setting the `isDisabled` prop on any parent provider.
 
@@ -129,7 +141,6 @@ function Register() {
       <Provider isQuiet>
         <TextField
           label="Email"
-          placeholder="example@adobe.com"
           value={email}
           onChange={setEmail} />
         <Provider isDisabled={email.length === 0}>
@@ -138,7 +149,7 @@ function Register() {
             <Item key="indigo">Indigo</Item>
             <Item key="chartreuse">Chartreuse</Item>
           </Picker>
-          <Button variant="primary" isQuiet={false}>Submit</Button>
+          <Button variant="primary">Submit</Button>
         </Provider>
       </Provider>
     </Flex>
@@ -149,3 +160,24 @@ function Register() {
 ## Props
 
 <PropTable component={docs.exports.Provider} links={docs.links} />
+
+## useProvider
+The <TypeLink links={docs.links} type={docs.exports.useProvider} /> hook can be used to access the various properties applied by the nearest parent Provider. This can be useful for adapting a custom component to the current color scheme or scale.
+
+The example below uses the `colorScheme` returned from `useProvider` to display either a moon or sun icon depending on the current color scheme. Toggle the theme using the switcher in the top right corner of the page to see the icon change.
+
+```tsx example
+import Light from '@spectrum-icons/workflow/Light';
+import Moon from '@spectrum-icons/workflow/Moon';
+import {useProvider} from '@react-spectrum/provider';
+
+function Example() {
+  let {colorScheme} = useProvider();
+
+  return colorScheme === 'dark'
+    ? <Moon aria-label="In dark theme" />
+    : <Light aria-label="In light theme" />
+}
+
+<Example />
+```

@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
@@ -24,12 +25,15 @@ import {useProviderProps} from '@react-spectrum/provider';
 
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
+  props = useSlotProps(props, 'actionButton');
   let {
     isQuiet,
     isDisabled,
     staticColor,
     children,
     autoFocus,
+    // @ts-ignore (private)
+    holdAffordance,
     ...otherProps
   } = props;
 
@@ -61,6 +65,9 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
             styleProps.className
           )
         }>
+        {holdAffordance &&
+          <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
+        }
         <SlotProvider
           slots={{
             icon: {

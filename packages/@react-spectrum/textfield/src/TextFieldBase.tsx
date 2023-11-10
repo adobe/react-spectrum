@@ -12,45 +12,34 @@
 
 import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
-import {
-  classNames,
-  createFocusableRef,
-  useStyleProps
-} from '@react-spectrum/utils';
-import {FocusRing} from '@react-aria/focus';
-import {Label} from '@react-spectrum/label';
-import {LabelPosition, PressEvents} from '@react-types/shared';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {classNames, createFocusableRef} from '@react-spectrum/utils';
+import {Field} from '@react-spectrum/label';
 import {mergeProps} from '@react-aria/utils';
-import React, {cloneElement, forwardRef, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
+import {PressEvents, ValidationResult} from '@react-types/shared';
+import React, {cloneElement, forwardRef, HTMLAttributes, InputHTMLAttributes, LabelHTMLAttributes, ReactElement, Ref, RefObject, TextareaHTMLAttributes, useImperativeHandle, useRef} from 'react';
 import {SpectrumTextFieldProps, TextFieldRef} from '@react-types/textfield';
 import styles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
-import {useFormProps} from '@react-spectrum/form';
+import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
-import {useProviderProps} from '@react-spectrum/provider';
 
-interface TextFieldBaseProps extends SpectrumTextFieldProps, PressEvents {
+interface TextFieldBaseProps extends Omit<SpectrumTextFieldProps, 'onChange' | 'validate'>, PressEvents, Partial<ValidationResult> {
   wrapperChildren?: ReactElement | ReactElement[],
   inputClassName?: string,
   validationIconClassName?: string,
   multiLine?: boolean,
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
   inputProps: InputHTMLAttributes<HTMLInputElement> | TextareaHTMLAttributes<HTMLTextAreaElement>,
+  descriptionProps?: HTMLAttributes<HTMLElement>,
+  errorMessageProps?: HTMLAttributes<HTMLElement>,
   inputRef?: RefObject<HTMLInputElement | HTMLTextAreaElement>,
   loadingIndicator?: ReactElement,
-  isLoading?: boolean
+  isLoading?: boolean,
+  disableFocusRing?: boolean
 }
 
 function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
-  props = useProviderProps(props);
-  props = useFormProps(props);
   let {
-    label,
-    labelPosition = 'top' as LabelPosition,
-    labelAlign,
-    isRequired,
-    necessityIndicator,
-    validationState,
+    validationState = props.isInvalid ? 'invalid' : null,
     icon,
     isQuiet = false,
     isDisabled,
@@ -60,16 +49,18 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     wrapperChildren,
     labelProps,
     inputProps,
-    inputRef,
+    descriptionProps,
+    errorMessageProps,
+    inputRef: userInputRef,
     isLoading,
     loadingIndicator,
     validationIconClassName,
-    ...otherProps
+    disableFocusRing
   } = props;
   let {hoverProps, isHovered} = useHover({isDisabled});
   let domRef = useRef<HTMLDivElement>(null);
   let defaultInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
-  inputRef = inputRef || defaultInputRef;
+  let inputRef = userInputRef || defaultInputRef;
 
   // Expose imperative interface for ref
   useImperativeHandle(ref, () => ({
@@ -84,9 +75,8 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     }
   }));
 
-  let {styleProps} = useStyleProps(otherProps);
   let ElementType: React.ElementType = multiLine ? 'textarea' : 'input';
-  let isInvalid = validationState === 'invalid';
+  let isInvalid = validationState === 'invalid' && !isDisabled;
 
   if (icon) {
     let UNSAFE_className = classNames(
@@ -110,6 +100,11 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
     )
   });
 
+  let {focusProps, isFocusVisible} = useFocusRing({
+    isTextInput: true,
+    autoFocus
+  });
+
   let textField = (
     <div
       className={
@@ -118,80 +113,56 @@ function TextFieldBase(props: TextFieldBaseProps, ref: Ref<TextFieldRef>) {
           'spectrum-Textfield',
           {
             'spectrum-Textfield--invalid': isInvalid,
-            'spectrum-Textfield--valid': validationState === 'valid',
+            'spectrum-Textfield--valid': validationState === 'valid' && !isDisabled,
             'spectrum-Textfield--loadable': loadingIndicator,
             'spectrum-Textfield--quiet': isQuiet,
-            'spectrum-Textfield--multiline': multiLine
+            'spectrum-Textfield--multiline': multiLine,
+            'focus-ring': !disableFocusRing && isFocusVisible
           }
         )
       }>
-      <FocusRing focusRingClass={classNames(styles, 'focus-ring')} isTextInput autoFocus={autoFocus}>
-        <ElementType
-          {...mergeProps(inputProps, hoverProps)}
-          ref={inputRef as any}
-          rows={multiLine ? 1 : undefined}
-          className={
-            classNames(
-              styles,
-              'spectrum-Textfield-input',
-              {
-                'spectrum-Textfield-inputIcon': icon,
-                'is-hovered': isHovered
-              },
-              inputClassName
-            )
-          } />
-      </FocusRing>
+      <ElementType
+        {...mergeProps(inputProps, hoverProps, focusProps)}
+        ref={inputRef as any}
+        rows={multiLine ? 1 : undefined}
+        className={
+          classNames(
+            styles,
+            'spectrum-Textfield-input',
+            {
+              'spectrum-Textfield-inputIcon': icon,
+              'is-hovered': isHovered
+            },
+            inputClassName
+          )
+        } />
       {icon}
-      {validationState && !isLoading ? validation : null}
+      {validationState && !isLoading && !isDisabled ? validation : null}
       {isLoading && loadingIndicator}
       {wrapperChildren}
     </div>
   );
 
-  if (label) {
-    let labelWrapperClass = classNames(
-      labelStyles,
-      'spectrum-Field',
-      {
-        'spectrum-Field--positionTop': labelPosition === 'top',
-        'spectrum-Field--positionSide': labelPosition === 'side'
-      },
-      styleProps.className
-    );
-
-    textField = React.cloneElement(textField, mergeProps(textField.props, {
-      className: classNames(
-        labelStyles,
-        'spectrum-Field-field',
-        {
-          'spectrum-Field-field--multiline': multiLine
-        }
-      )
-    }));
-
-    return (
-      <div
-        {...styleProps}
-        ref={domRef}
-        className={labelWrapperClass}>
-        <Label
-          {...labelProps}
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}>
-          {label}
-        </Label>
-        {textField}
-      </div>
-    );
-  }
-
-  return React.cloneElement(textField, mergeProps(textField.props, {
-    ...styleProps,
-    ref: domRef
-  }));
+  return (
+    <Field
+      {...props}
+      labelProps={labelProps}
+      descriptionProps={descriptionProps}
+      errorMessageProps={errorMessageProps}
+      wrapperClassName={
+        classNames(
+          styles,
+          'spectrum-Textfield-wrapper',
+          {
+            'spectrum-Textfield-wrapper--quiet': isQuiet
+          }
+        )
+      }
+      showErrorIcon={false}
+      ref={domRef}>
+      {textField}
+    </Field>
+  );
 }
 
 const _TextFieldBase = forwardRef(TextFieldBase);

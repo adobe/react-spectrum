@@ -11,45 +11,61 @@
  */
 
 import {calculatePosition, PositionResult} from './calculatePosition';
-import {HTMLAttributes, RefObject, useCallback, useRef, useState} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
+import {RefObject, useCallback, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
-interface AriaPositionProps extends PositionProps {
+export interface AriaPositionProps extends PositionProps {
+  /**
+   * Cross size of the overlay arrow in pixels.
+   * @default 0
+   */
+  arrowSize?: number,
   /**
    * Element that that serves as the positioning boundary.
    * @default document.body
    */
-  boundaryElement?: HTMLElement,
+  boundaryElement?: Element,
   /**
    * The ref for the element which the overlay positions itself with respect to.
    */
-  targetRef: RefObject<HTMLElement>,
+  targetRef: RefObject<Element>,
   /**
    * The ref for the overlay element.
    */
-  overlayRef: RefObject<HTMLElement>,
+  overlayRef: RefObject<Element>,
   /**
    * A ref for the scrollable region within the overlay.
    * @default overlayRef
    */
-  scrollRef?: RefObject<HTMLElement>,
+  scrollRef?: RefObject<Element>,
   /**
    * Whether the overlay should update its position automatically.
    * @default true
    */
   shouldUpdatePosition?: boolean,
   /** Handler that is called when the overlay should close. */
-  onClose?: () => void
+  onClose?: () => void,
+  /**
+   * The maxHeight specified for the overlay element.
+   * By default, it will take all space up to the current viewport height.
+   */
+  maxHeight?: number,
+  /**
+   * The minimum distance the arrow's edge should be from the edge of the overlay element.
+   * @default 0
+   */
+  arrowBoundaryOffset?: number
 }
 
-interface PositionAria {
+export interface PositionAria {
   /** Props for the overlay container element. */
-  overlayProps: HTMLAttributes<Element>,
+  overlayProps: DOMAttributes,
   /** Props for the overlay tip arrow if any. */
-  arrowProps: HTMLAttributes<Element>,
+  arrowProps: DOMAttributes,
   /** Placement of the overlay with respect to the overlay trigger. */
   placement: PlacementAxis,
   /** Updates the position of the overlay. */
@@ -57,7 +73,7 @@ interface PositionAria {
 }
 
 // @ts-ignore
-let visualViewport = typeof window !== 'undefined' && window.visualViewport;
+let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger
@@ -66,6 +82,7 @@ let visualViewport = typeof window !== 'undefined' && window.visualViewport;
 export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   let {direction} = useLocale();
   let {
+    arrowSize = 0,
     targetRef,
     overlayRef,
     scrollRef = overlayRef,
@@ -77,7 +94,9 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     crossOffset = 0,
     shouldUpdatePosition = true,
     isOpen = true,
-    onClose
+    onClose,
+    maxHeight,
+    arrowBoundaryOffset = 0
   } = props;
   let [position, setPosition] = useState<PositionResult>({
     position: {},
@@ -99,7 +118,10 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     offset,
     crossOffset,
     isOpen,
-    direction
+    direction,
+    maxHeight,
+    arrowBoundaryOffset,
+    arrowSize
   ];
 
   let updatePosition = useCallback(() => {
@@ -107,32 +129,49 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       return;
     }
 
-    setPosition(
-      calculatePosition({
-        placement: translateRTL(placement, direction),
-        overlayNode: overlayRef.current,
-        targetNode: targetRef.current,
-        scrollNode: scrollRef.current,
-        padding: containerPadding,
-        shouldFlip,
-        boundaryElement,
-        offset,
-        crossOffset
-      })
-    );
+    let position = calculatePosition({
+      placement: translateRTL(placement, direction),
+      overlayNode: overlayRef.current,
+      targetNode: targetRef.current,
+      scrollNode: scrollRef.current,
+      padding: containerPadding,
+      shouldFlip,
+      boundaryElement,
+      offset,
+      crossOffset,
+      maxHeight,
+      arrowSize,
+      arrowBoundaryOffset
+    });
+
+    // Modify overlay styles directly so positioning happens immediately without the need of a second render
+    // This is so we don't have to delay autoFocus scrolling or delay applying preventScroll for popovers
+    Object.keys(position.position).forEach(key => (overlayRef.current as HTMLElement).style[key] = position.position[key] + 'px');
+    (overlayRef.current as HTMLElement).style.maxHeight = position.maxHeight != null ?  position.maxHeight + 'px' : undefined;
+
+    // Trigger a set state for a second render anyway for arrow positioning
+    setPosition(position);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);
 
   // Update position when anything changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(updatePosition, deps);
 
   // Update position on window resize
   useResize(updatePosition);
 
+  // Update position when the overlay changes size (might need to flip).
+  useResizeObserver({
+    ref: overlayRef,
+    onResize: updatePosition
+  });
+
   // Reposition the overlay and do not close on scroll while the visual viewport is resizing.
   // This will ensure that overlays adjust their positioning when the iOS virtual keyboard appears.
   let isResizing = useRef(false);
   useLayoutEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
     let onResize = () => {
       isResizing.current = true;
       clearTimeout(timeout);
@@ -145,9 +184,11 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     };
 
     visualViewport?.addEventListener('resize', onResize);
+    visualViewport?.addEventListener('scroll', onResize);
 
     return () => {
       visualViewport?.removeEventListener('resize', onResize);
+      visualViewport?.removeEventListener('scroll', onResize);
     };
   }, [updatePosition]);
 
@@ -162,7 +203,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
   useCloseOnScroll({
     triggerRef: targetRef,
     isOpen,
-    onClose: onClose ? close : undefined
+    onClose: onClose && close
   });
 
   return {
@@ -176,6 +217,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     },
     placement: position.placement,
     arrowProps: {
+      'aria-hidden': 'true',
+      role: 'presentation',
       style: {
         left: position.arrowOffsetLeft,
         top: position.arrowOffsetTop

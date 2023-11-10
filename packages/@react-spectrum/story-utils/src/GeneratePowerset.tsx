@@ -30,6 +30,11 @@ export function generatePowerset(states: Array<object>, exclude?: (merged) => bo
         });
       } else {
         let merged = mergeProps(combinations[j], states[i]);
+        let s = JSON.stringify(merged);
+        if (combinations.some(c => JSON.stringify(c) === s)) {
+          continue;
+        }
+
         if (!(exclude && exclude(merged))) {
           combinations.push(merged);
         }

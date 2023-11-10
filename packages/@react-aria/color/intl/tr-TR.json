@@ -1,0 +1,6 @@
+{
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorNameAndValue": "{name}: {value}",
+  "colorPicker": "Renk Seçici",
+  "twoDimensionalSlider": "2D sürgü"
+}

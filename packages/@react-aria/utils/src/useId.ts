@@ -10,9 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from './useLayoutEffect';
 import {useSSRSafeId} from '@react-aria/ssr';
+import {useValueEffect} from './';
+
+// copied from SSRProvider.tsx to reduce exports, if needed again, consider sharing
+let canUseDOM = Boolean(
+  typeof window !== 'undefined' &&
+  window.document &&
+  window.document.createElement
+);
 
 let idsUpdaterMap: Map<string, (v: string) => void> = new Map();
 
@@ -21,27 +29,18 @@ let idsUpdaterMap: Map<string, (v: string) => void> = new Map();
  * @param defaultId - Default component id.
  */
 export function useId(defaultId?: string): string {
-  let isRendering = useRef(true);
-  isRendering.current = true;
   let [value, setValue] = useState(defaultId);
   let nextId = useRef(null);
 
   let res = useSSRSafeId(value);
 
-  // don't memo this, we want it new each render so that the Effects always run
-  let updateValue = (val) => {
-    if (!isRendering.current) {
-      setValue(val);
-    } else {
-      nextId.current = val;
-    }
-  };
+  let updateValue = useCallback((val) => {
+    nextId.current = val;
+  }, []);
 
-  idsUpdaterMap.set(res, updateValue);
-
-  useLayoutEffect(() => {
-    isRendering.current = false;
-  }, [updateValue]);
+  if (canUseDOM) {
+    idsUpdaterMap.set(res, updateValue);
+  }
 
   useLayoutEffect(() => {
     let r = res;
@@ -50,13 +49,16 @@ export function useId(defaultId?: string): string {
     };
   }, [res]);
 
+  // This cannot cause an infinite loop because the ref is updated first.
+  // eslint-disable-next-line
   useEffect(() => {
     let newId = nextId.current;
     if (newId) {
-      setValue(newId);
       nextId.current = null;
+      setValue(newId);
     }
-  }, [setValue, updateValue]);
+  });
+
   return res;
 }
 
@@ -87,18 +89,20 @@ export function mergeIds(idA: string, idB: string): string {
 /**
  * Used to generate an id, and after render, check if that id is rendered so we know
  * if we can use it in places such as labelledby.
+ * @param depArray - When to recalculate if the id is in the DOM.
  */
-export function useSlotId(): string {
+export function useSlotId(depArray: ReadonlyArray<any> = []): string {
   let id = useId();
-  let [resolvedId, setResolvedId] = useState(id);
-  useLayoutEffect(() => {
-    let setCurr = idsUpdaterMap.get(id);
-    if (setCurr && !document.getElementById(id)) {
-      setResolvedId(null);
-    } else {
-      setResolvedId(id);
-    }
-  }, [id]);
+  let [resolvedId, setResolvedId] = useValueEffect(id);
+  let updateId = useCallback(() => {
+    setResolvedId(function *() {
+      yield id;
+
+      yield document.getElementById(id) ? id : undefined;
+    });
+  }, [id, setResolvedId]);
+
+  useLayoutEffect(updateId, [id, updateId, ...depArray]);
 
   return resolvedId;
 }

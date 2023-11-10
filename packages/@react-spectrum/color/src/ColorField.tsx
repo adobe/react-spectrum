@@ -11,17 +11,19 @@
  */
 
 import {classNames} from '@react-spectrum/utils';
-import React, {RefObject, useRef} from 'react';
+import React, {Ref, useRef} from 'react';
 import {SpectrumColorFieldProps} from '@react-types/color';
 import styles from './colorfield.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
 import {useColorField} from '@react-aria/color';
 import {useColorFieldState} from '@react-stately/color';
+import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 
-function ColorField(props: SpectrumColorFieldProps, ref: RefObject<TextFieldRef>) {
+function ColorField(props: SpectrumColorFieldProps, ref: Ref<TextFieldRef>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let {
     // These disabled props are handled by the state hook
     value,          // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -30,19 +32,19 @@ function ColorField(props: SpectrumColorFieldProps, ref: RefObject<TextFieldRef>
     ...otherProps
   } = props;
   let state = useColorFieldState(props);
-  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>();
-  let {
-    labelProps,
-    inputProps
-  } = useColorField(otherProps, state, inputRef);
+  let inputRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
+  let result = useColorField(otherProps, state, inputRef);
+
+  if (props.placeholder) {
+    console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ColorField.html#help-text');
+  }
 
   return (
     <TextFieldBase
       {...otherProps}
       ref={ref}
       inputRef={inputRef}
-      labelProps={labelProps}
-      inputProps={inputProps}
+      {...result}
       inputClassName={classNames(styles, 'react-spectrum-ColorField-input')} />
   );
 }

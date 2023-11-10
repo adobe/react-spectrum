@@ -12,7 +12,7 @@
 
 import intlMessages from '../intl';
 import {PaginationState} from '@react-stately/pagination';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 interface PaginationAriaProps {
   value?: any,
@@ -21,7 +21,7 @@ interface PaginationAriaProps {
 }
 
 export function usePagination(props: PaginationAriaProps, state: PaginationState) {
-  let formatMessage = useMessageFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let onPrevious = () => {
     state.onDecrement();
@@ -57,12 +57,12 @@ export function usePagination(props: PaginationAriaProps, state: PaginationState
   return {
     prevButtonProps: {
       ...props,
-      'aria-label': formatMessage('previous'),
+      'aria-label': stringFormatter.format('previous'),
       onPress: onPrevious
     },
     nextButtonProps: {
       ...props,
-      'aria-label': formatMessage('next'),
+      'aria-label': stringFormatter.format('next'),
       onPress: onNext
     },
     textProps: {

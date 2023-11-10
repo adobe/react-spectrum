@@ -1,0 +1,3 @@
+{
+  "invalidSelection": "נבחר {selectedCount, plural, one {תאריך} other {תאריכים}} אינו זמין."
+}

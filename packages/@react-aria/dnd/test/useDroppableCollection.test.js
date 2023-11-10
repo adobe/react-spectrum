@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor, within} from '@testing-library/react';
+import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils';
 import {DataTransfer, DragEvent} from './mocks';
 import {Draggable} from './examples';
 import {DroppableGridExample} from '../stories/DroppableGrid';
@@ -18,8 +18,12 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('useDroppableCollection', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   beforeEach(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
     jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
       let y = 0;
       let height = 50;
@@ -143,7 +147,7 @@ describe('useDroppableCollection', () => {
         type: 'dropenter',
         x: 0,
         y: 0,
-        target: {type: 'item', key: '1', dropPosition: 'after'}
+        target: {type: 'item', key: '2', dropPosition: 'before'}
       });
 
       allCells = within(grid).getAllByRole('gridcell', {hidden: true});
@@ -157,31 +161,10 @@ describe('useDroppableCollection', () => {
         type: 'dropexit',
         x: 0,
         y: 0,
-        target: {type: 'item', key: '1', dropPosition: 'after'}
+        target: {type: 'item', key: '2', dropPosition: 'before'}
       });
 
       expect(onDropEnter).toHaveBeenCalledTimes(4);
-      expect(onDropEnter).toHaveBeenLastCalledWith({
-        type: 'dropenter',
-        x: 0,
-        y: 0,
-        target: {type: 'root'}
-      });
-
-      allCells = within(grid).getAllByRole('gridcell', {hidden: true});
-      expect(allCells).toHaveLength(3);
-      expect(grid).toHaveAttribute('data-droptarget', 'true');
-
-      fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 1, clientY: 100}));
-      expect(onDragExit).toHaveBeenCalledTimes(4);
-      expect(onDragExit).toHaveBeenLastCalledWith({
-        type: 'dropexit',
-        x: 0,
-        y: 0,
-        target: {type: 'root'}
-      });
-
-      expect(onDropEnter).toHaveBeenCalledTimes(5);
       expect(onDropEnter).toHaveBeenLastCalledWith({
         type: 'dropenter',
         x: 0,
@@ -245,35 +228,35 @@ describe('useDroppableCollection', () => {
 
       let dataTransfer = new DataTransfer();
       fireEvent(draggable, new DragEvent('dragstart', {dataTransfer, clientX: 0, clientY: 0}));
-      act(() => jest.runAllTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(draggable).toHaveAttribute('data-dragging', 'true');
 
       fireEvent(cells[0], new DragEvent('dragenter', {dataTransfer, clientX: 30, clientY: 30}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).not.toHaveBeenCalled();
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 100}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).not.toHaveBeenCalled();
 
       fireEvent(cells[4], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 135}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(1);
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(2);
       jest.clearAllTimers();
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 100}));
-      act(() => jest.runAllTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(2);
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 15}));
-      act(() => jest.runOnlyPendingTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(3);
       jest.clearAllTimers();
 
       fireEvent(cells[2], new DragEvent('dragover', {dataTransfer, clientX: 30, clientY: 30}));
-      act(() => jest.runAllTimers());
+      act(() => jest.advanceTimersToNextTimer());
       expect(scrollTop).toHaveBeenCalledTimes(3);
     });
 
@@ -358,7 +341,7 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -406,7 +389,7 @@ describe('useDroppableCollection', () => {
       expect(cells[1].parentElement).toHaveAttribute('aria-selected', 'true');
     });
 
-    it('should support arrow key navigation', () => {
+    it('should support arrow key navigation', async () => {
       let onDropEnter = jest.fn();
       let onDragExit = jest.fn();
       let tree = render(<>
@@ -419,7 +402,7 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -521,7 +504,7 @@ describe('useDroppableCollection', () => {
       });
     });
 
-    it('supports Home and End', () => {
+    it('supports Home and End', async () => {
       let onDropEnter = jest.fn();
       let onDragExit = jest.fn();
       let onDrop = jest.fn();
@@ -535,7 +518,7 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -587,7 +570,7 @@ describe('useDroppableCollection', () => {
       });
     });
 
-    it('supports PageUp and PageDown', () => {
+    it('supports PageUp and PageDown', async () => {
       let onDropEnter = jest.fn();
       let onDragExit = jest.fn();
       let onDrop = jest.fn();
@@ -597,7 +580,7 @@ describe('useDroppableCollection', () => {
       }
       let tree = render(<>
         <Draggable />
-        <DroppableGridExample items={items} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        <DroppableGridExample style={{overflow: 'auto'}} items={items} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
       </>);
 
       let draggable = tree.getByText('Drag me');
@@ -605,7 +588,7 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(6);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -670,7 +653,7 @@ describe('useDroppableCollection', () => {
       }
     });
 
-    it('should skip invalid targets with PageUp and PageDown', () => {
+    it('should skip invalid targets with PageUp and PageDown', async () => {
       let onDropEnter = jest.fn();
       let onDragExit = jest.fn();
       let onDrop = jest.fn();
@@ -681,7 +664,7 @@ describe('useDroppableCollection', () => {
       let getDropOperation = (target) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '4' && target.key !== '1' ? 'move' : 'cancel';
       let tree = render(<>
         <Draggable />
-        <DroppableGridExample items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        <DroppableGridExample style={{overflow: 'auto'}} items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
       </>);
 
       let draggable = tree.getByText('Drag me');
@@ -689,7 +672,7 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(6);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -753,7 +736,7 @@ describe('useDroppableCollection', () => {
       }
     });
 
-    it('should skip invalid targets at edges with PageUp and PageDown', () => {
+    it('should skip invalid targets at edges with PageUp and PageDown', async () => {
       let onDropEnter = jest.fn();
       let onDragExit = jest.fn();
       let onDrop = jest.fn();
@@ -764,7 +747,7 @@ describe('useDroppableCollection', () => {
       let getDropOperation = (target) => target.type === 'item' && target.dropPosition === 'on' && target.key !== '0' && target.key !== '5' ? 'move' : 'cancel';
       let tree = render(<>
         <Draggable />
-        <DroppableGridExample items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        <DroppableGridExample style={{overflow: 'auto'}} items={items} getDropOperation={getDropOperation} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
       </>);
 
       let draggable = tree.getByText('Drag me');
@@ -772,7 +755,7 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(6);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -836,7 +819,7 @@ describe('useDroppableCollection', () => {
       }
     });
 
-    it('should default to dropping after the last focused item if any', () => {
+    it('should default to dropping after the last focused item if any', async () => {
       let onDrop = jest.fn();
       let tree = render(<>
         <Draggable />
@@ -848,14 +831,14 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
-      userEvent.tab();
+      await user.tab();
+      await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
       pressKey('ArrowDown');
       expect(document.activeElement).toBe(cells[1]);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -864,7 +847,7 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Two and Three');
     });
 
-    it('should default to dropping after the selected items if any', () => {
+    it('should default to dropping after the selected items if any', async () => {
       let onDrop = jest.fn();
       let tree = render(<>
         <Draggable />
@@ -877,8 +860,8 @@ describe('useDroppableCollection', () => {
       let rows = within(grid).getAllByRole('row');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
-      userEvent.tab();
+      await user.tab();
+      await user.tab();
       pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
@@ -894,7 +877,7 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -903,7 +886,7 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Three');
     });
 
-    it('should default to before the selected items if the last focused item is the first selected item', () => {
+    it('should default to before the selected items if the last focused item is the first selected item', async () => {
       let onDrop = jest.fn();
       let tree = render(<>
         <Draggable />
@@ -916,8 +899,8 @@ describe('useDroppableCollection', () => {
       let rows = within(grid).getAllByRole('row');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
-      userEvent.tab();
+      await user.tab();
+      await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
       pressKey('ArrowDown');
@@ -932,7 +915,7 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -941,7 +924,7 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between One and Two');
     });
 
-    it('should default to on the first selected item if the last focused item is the first selected item and only dropping on items is allowed', () => {
+    it('should default to on the first selected item if the last focused item is the first selected item and only dropping on items is allowed', async () => {
       let onDrop = jest.fn();
       let getDropOperation = (target) => target.dropPosition !== 'on' ? 'cancel' : 'move';
       let tree = render(<>
@@ -955,8 +938,8 @@ describe('useDroppableCollection', () => {
       let rows = within(grid).getAllByRole('row');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
-      userEvent.tab();
+      await user.tab();
+      await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
       pressKey('ArrowDown');
@@ -971,7 +954,7 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -980,7 +963,7 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Two');
     });
 
-    it('should default to on the last selected item when only dropping on items is allowed', () => {
+    it('should default to on the last selected item when only dropping on items is allowed', async () => {
       let onDrop = jest.fn();
       let getDropOperation = (target) => target.dropPosition !== 'on' ? 'cancel' : 'move';
       let tree = render(<>
@@ -994,8 +977,8 @@ describe('useDroppableCollection', () => {
       let rows = within(grid).getAllByRole('row');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
-      userEvent.tab();
+      await user.tab();
+      await user.tab();
       pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
@@ -1011,7 +994,7 @@ describe('useDroppableCollection', () => {
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(draggable);
 
       pressKey('Enter');
@@ -1044,7 +1027,7 @@ describe('useDroppableCollection', () => {
       let cells = within(grid).getAllByRole('gridcell');
       expect(cells).toHaveLength(3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(draggable);
 
       fireEvent.focus(draggable);

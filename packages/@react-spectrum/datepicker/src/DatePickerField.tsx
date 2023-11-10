@@ -10,102 +10,52 @@
  * governing permissions and limitations under the License.
  */
 
-import Alert from '@spectrum-icons/ui/AlertMedium';
-import Checkmark from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames} from '@react-spectrum/utils';
+import {createCalendar} from '@internationalized/date';
 import {DatePickerSegment} from './DatePickerSegment';
-import datepickerStyles from './index.css';
-import {DOMProps} from '@react-types/shared';
-import inputgroupStyles from '@adobe/spectrum-css-temp/components/inputgroup/vars.css';
-import React from 'react';
-import {SpectrumDatePickerProps} from '@react-types/datepicker';
-import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
+import datepickerStyles from './styles.css';
+import {DateValue, SpectrumDatePickerProps} from '@react-types/datepicker';
+import React, {useRef} from 'react';
 import {useDateField} from '@react-aria/datepicker';
-import {useDatePickerFieldState} from '@react-stately/datepicker';
-import {useStyleProps} from '@react-spectrum/utils';
+import {useDateFieldState} from '@react-stately/datepicker';
+import {useLocale} from '@react-aria/i18n';
 
-interface DateFieldDescProps extends DOMProps {
-  children?: string,
-  hidden?: boolean
+interface DatePickerFieldProps<T extends DateValue> extends SpectrumDatePickerProps<T> {
+  inputClassName?: string,
+  hideValidationIcon?: boolean,
+  maxGranularity?: SpectrumDatePickerProps<T>['granularity']
 }
 
-export function DatePickerField(props: SpectrumDatePickerProps & {descProps?: DateFieldDescProps}) {
-  let state = useDatePickerFieldState(props);
+export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps<T>) {
   let {
     isDisabled,
     isReadOnly,
     isRequired,
-    isQuiet,
-    validationState,
-    descProps,
-    ...otherProps
+    inputClassName
   } = props;
-  let {styleProps} = useStyleProps(otherProps);
-  let {fieldProps, segmentProps} = useDateField(props);
+  let ref = useRef();
+  let {locale} = useLocale();
+  let state = useDateFieldState({
+    ...props,
+    locale,
+    createCalendar
+  });
 
-  let isInvalid = validationState === 'invalid';
-  let textfieldClass = classNames(
-    textfieldStyles,
-    'spectrum-Textfield',
-    {
-      'is-invalid': isInvalid,
-      'is-valid': validationState === 'valid',
-      'spectrum-Textfield--quiet': isQuiet
-    },
-    classNames(datepickerStyles, 'react-spectrum-Datepicker-field'),
-    styleProps.className
-  );
-
-  let inputClass = classNames(
-    textfieldStyles,
-    'spectrum-Textfield-input',
-    {
-      'is-disabled': isDisabled,
-      'is-invalid': isInvalid
-    },
-    classNames(
-      inputgroupStyles,
-      'spectrum-InputGroup-input',
-      {
-        'is-disabled': isDisabled,
-        'is-invalid': isInvalid
-      }
-    ),
-    classNames(datepickerStyles, 'react-spectrum-Datepicker-input')
-  );
-
-  let iconClass = classNames(
-    textfieldStyles,
-    'spectrum-Textfield-validationIcon',
-    {
-      'is-invalid': isInvalid,
-      'is-valid': validationState === 'valid'
-    }
-  );
-
-  let validationIcon = null;
-  if (validationState === 'invalid') {
-    validationIcon = <Alert data-testid="invalid-icon" UNSAFE_className={iconClass} />;
-  } else if (validationState === 'valid') {
-    validationIcon = <Checkmark data-testid="valid-icon" UNSAFE_className={iconClass} />;
-  }
+  let inputRef = useRef();
+  let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
 
   return (
-    <div {...fieldProps} {...styleProps} className={textfieldClass}>
-      {descProps && descProps.children && <span {...descProps} />}
-      <div role="presentation" className={inputClass}>
-        {state.segments.map((segment, i) =>
-          (<DatePickerSegment
-            {...segmentProps}
-            key={i}
-            segment={segment}
-            state={state}
-            isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
-            isRequired={isRequired} />)
-        )}
-      </div>
-      {validationIcon}
+    <div {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
+      {state.segments.map((segment, i) =>
+        (<DatePickerSegment
+          key={i}
+          segment={segment}
+          state={state}
+          isDisabled={isDisabled}
+          isReadOnly={isReadOnly}
+          isRequired={isRequired} />)
+      )}
+      <input {...inputProps} ref={inputRef} />
     </div>
   );
 }

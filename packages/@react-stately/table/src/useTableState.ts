@@ -10,10 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, MultipleSelection, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
-import {TableCollection as ITableCollection} from '@react-types/table';
-import {Key, useMemo} from 'react';
+import {TableCollection as ITableCollection, TableBodyProps, TableHeaderProps} from '@react-types/table';
+import {Key, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
+import {MultipleSelectionStateProps} from '@react-stately/selection';
+import {ReactElement, useCallback, useMemo, useState} from 'react';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
 
@@ -25,18 +26,33 @@ export interface TableState<T> extends GridState<T, ITableCollection<T>> {
   /** The current sorted column and direction. */
   sortDescriptor: SortDescriptor,
   /** Calls the provided onSortChange handler with the provided column key and sort direction. */
-  sort(columnKey: Key): void
+  sort(columnKey: Key, direction?: 'ascending' | 'descending'): void,
+  /** Whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
+  isKeyboardNavigationDisabled: boolean,
+  /** Set whether keyboard navigation is disabled, such as when the arrow keys should be handled by a component within a cell. */
+  setKeyboardNavigationDisabled: (val: boolean) => void
 }
 
 export interface CollectionBuilderContext<T> {
   showSelectionCheckboxes: boolean,
+  showDragButtons: boolean,
   selectionMode: SelectionMode,
   columns: Node<T>[]
 }
 
-export interface TableStateProps<T> extends CollectionBase<T>, MultipleSelection, Sortable {
+export interface TableStateProps<T> extends MultipleSelectionStateProps, Sortable {
+  /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
+  children?: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
+  /** A list of row keys to disable. */
+  disabledKeys?: Iterable<Key>,
+  /** A pre-constructed collection to use instead of building one from items and children. */
+  collection?: ITableCollection<T>,
   /** Whether the row selection checkboxes should be displayed. */
-  showSelectionCheckboxes?: boolean
+  showSelectionCheckboxes?: boolean,
+  /** Whether the row drag button should be displayed.
+   * @private
+   */
+  showDragButtons?: boolean
 }
 
 const OPPOSITE_SORT_DIRECTION = {
@@ -48,21 +64,28 @@ const OPPOSITE_SORT_DIRECTION = {
  * Provides state management for a table component. Handles building a collection
  * of columns and rows from props. In addition, it tracks row selection and manages sort order changes.
  */
-export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T>  {
-  let {selectionMode = 'none'} = props;
+export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
+  let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
+  let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons} = props;
 
   let context = useMemo(() => ({
-    showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
+    showSelectionCheckboxes: showSelectionCheckboxes && selectionMode !== 'none',
+    showDragButtons: showDragButtons,
     selectionMode,
     columns: []
-  }), [props.children, props.showSelectionCheckboxes, selectionMode]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }), [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
-  let collection = useCollection<T, TableCollection<T>>(
+  let collection = useCollection<T, ITableCollection<T>>(
     props,
-    (nodes, prev) => new TableCollection(nodes, prev, context),
+    useCallback((nodes) => new TableCollection(nodes, null, context), [context]),
     context
   );
-  let {disabledKeys, selectionManager} = useGridState({...props, collection});
+  let {disabledKeys, selectionManager} = useGridState({
+    ...props,
+    collection,
+    disabledBehavior: props.disabledBehavior || 'selection'
+  });
 
   return {
     collection,
@@ -70,12 +93,14 @@ export function useTableState<T extends object>(props: TableStateProps<T>): Tabl
     selectionManager,
     showSelectionCheckboxes: props.showSelectionCheckboxes || false,
     sortDescriptor: props.sortDescriptor,
-    sort(columnKey: Key) {
+    isKeyboardNavigationDisabled: collection.size === 0 || isKeyboardNavigationDisabled,
+    setKeyboardNavigationDisabled,
+    sort(columnKey: Key, direction?: 'ascending' | 'descending') {
       props.onSortChange({
         column: columnKey,
-        direction: props.sortDescriptor?.column === columnKey
+        direction: direction ?? (props.sortDescriptor?.column === columnKey
           ? OPPOSITE_SORT_DIRECTION[props.sortDescriptor.direction]
-          : 'ascending'
+          : 'ascending')
       });
     }
   };

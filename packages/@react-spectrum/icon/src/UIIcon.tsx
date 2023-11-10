@@ -17,7 +17,7 @@ import React, {ReactElement} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/icon/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
-interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
+export interface UIIconProps extends DOMProps, AriaLabelingProps, StyleProps {
   children: ReactElement,
   slot?: string,
   /**
@@ -26,9 +26,9 @@ interface IconProps extends DOMProps, AriaLabelingProps, StyleProps {
   'aria-hidden'?: boolean | 'false' | 'true'
 }
 
-export type UIIconPropsWithoutChildren = Omit<IconProps, 'children'>;
+export type UIIconPropsWithoutChildren = Omit<UIIconProps, 'children'>;
 
-export function UIIcon(props: IconProps) {
+export function UIIcon(props: UIIconProps) {
   props = useSlotProps(props, 'icon');
   let {
     children,

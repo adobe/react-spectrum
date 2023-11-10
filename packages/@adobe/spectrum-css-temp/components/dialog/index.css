@@ -36,6 +36,7 @@ governing permissions and limitations under the License.
 
   --spectrum-dialog-button-margin: var(--spectrum-global-dimension-size-200);
   --spectrum-dialog-content-margin-bottom: var(--spectrum-global-dimension-size-450);
+  --spectrum-dialog-content-min-height: var(--spectrum-component-single-line-height);
 
   /* 12px desktop (medium scale) and 8px mobile (large scale) */
   --spectrum-dialog-close-button-padding: calc(26px - var(--spectrum-global-dimension-size-175));
@@ -58,8 +59,14 @@ governing permissions and limitations under the License.
   max-width: 100%;
 
   max-height: inherit;
-
+  overflow: hidden;
   outline: none;
+
+  --spectrum-dialog-padding-x: var(--spectrum-dialog-padding);
+  --spectrum-dialog-padding-y: var(--spectrum-dialog-padding);
+  --spectrum-dialog-border-radius: var(--spectrum-border-radius);
+
+  border-radius: var(--spectrum-dialog-border-radius);
 }
 
 .spectrum-Dialog--small {
@@ -88,8 +95,8 @@ governing permissions and limitations under the License.
 
 .spectrum-Dialog .spectrum-Dialog-grid {
   display: grid;
-  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
-  grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
+  grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding-x);
+  grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto 1fr auto var(--spectrum-dialog-padding-y);
   grid-template-areas:
     "hero hero    hero    hero        hero        hero"
     ".    .       .       .           .           ."
@@ -118,6 +125,11 @@ governing permissions and limitations under the License.
     grid-area: heading-start / heading-start / header-end / header-end;
     padding-inline-end: 0;
   }
+
+  &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+    grid-area: heading-start / heading-start / typeIcon-end / typeIcon-end;
+    padding-inline-end: 0;
+  }
 }
 
 .spectrum-Dialog-header {
@@ -130,6 +142,12 @@ governing permissions and limitations under the License.
   box-sizing: border-box;
 
   outline: none; /* Hide focus outline around header */
+  min-width: fit-content; /* prevents header with width 0px */
+
+  &.spectrum-Dialog-header--noTypeIcon {
+    grid-area: header-start / header-start / typeIcon-end / typeIcon-end;
+    padding-inline-end: 0;
+  }
 }
 
 .spectrum-Dialog-typeIcon {
@@ -173,6 +191,9 @@ governing permissions and limitations under the License.
   */
   padding: calc(var(--spectrum-global-dimension-size-25) * 2);
   margin: calc(var(--spectrum-global-dimension-size-25) * -2);
+
+  /* for zoom (a11y) and short windows */
+  min-height: var(--spectrum-dialog-content-min-height);
 }
 
 
@@ -210,8 +231,8 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
-  grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding);
-  grid-template-rows: auto var(--spectrum-dialog-padding) auto auto 1fr auto var(--spectrum-dialog-padding);
+  grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding-x);
+  grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto 1fr auto var(--spectrum-dialog-padding-y);
   grid-template-areas:
     "hero hero    hero    hero        hero        hero        hero"
     ".    .       .       .           .           closeButton closeButton"
@@ -232,7 +253,7 @@ governing permissions and limitations under the License.
 .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-closeButton {
   grid-area: closeButton;
   /* align and justify so it doesn't do the default 'stretch' and end up with forced height/width */
-  align-self: start;
+  align-self: flex-start;
   justify-self: end;
 
   margin-inline-end: var(--spectrum-dialog-close-button-padding);
@@ -252,6 +273,7 @@ governing permissions and limitations under the License.
   width: 100%;
   height: 100%;
 
+  border-style: none;
   border-radius: 0;
 }
 /** @unofficial */
@@ -262,8 +284,8 @@ governing permissions and limitations under the License.
 
   &.spectrum-Dialog .spectrum-Dialog-grid {
     display: grid;
-    grid-template-columns: var(--spectrum-dialog-padding) 1fr auto auto var(--spectrum-dialog-padding);
-    grid-template-rows: var(--spectrum-dialog-padding) auto auto 1fr var(--spectrum-dialog-padding);
+    grid-template-columns: var(--spectrum-dialog-padding-x) 1fr auto auto var(--spectrum-dialog-padding-x);
+    grid-template-rows: var(--spectrum-dialog-padding-y) auto auto 1fr var(--spectrum-dialog-padding-y);
     grid-template-areas:
       ".    .       .       .            ."
       ".    heading header  buttonGroup  ."
@@ -274,6 +296,23 @@ governing permissions and limitations under the License.
 
   .spectrum-Dialog-heading {
     font-size: var(--spectrum-dialog-fullscreen-header-text-size);
+
+    &.spectrum-Dialog-heading--noHeader {
+      grid-area: heading-start / heading-start / header-end / header-end;
+      padding-inline-end: 0;
+    }
+
+    /* there will never be a typeIcon here */
+    &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+      grid-area: heading-start / heading-start / header-end / header-end;
+      padding-inline-end: 0;
+    }
+  }
+  .spectrum-Dialog-header {
+    &.spectrum-Dialog-header--noTypeIcon {
+      grid-area: header;
+      padding-inline-end: 0;
+    }
   }
 
   .spectrum-Dialog-content {
@@ -295,10 +334,14 @@ governing permissions and limitations under the License.
 }
 
 @media screen and (max-width: 700px) {
+  /* for zoom (a11y) */
+  .spectrum-Dialog {
+    --spectrum-dialog-padding: var(--spectrum-global-dimension-static-size-300);
+  }
 
   .spectrum-Dialog .spectrum-Dialog-grid {
-    grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding);
-    grid-template-rows: auto var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+    grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding-x);
+    grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(--spectrum-dialog-padding-y);
     grid-template-areas:
       "hero hero    hero    hero        hero        hero"
       ".    .       .       .           .           ."
@@ -309,10 +352,25 @@ governing permissions and limitations under the License.
       ".    footer  footer  buttonGroup buttonGroup ."
       ".    .       .       .           .           .";
   }
+  .spectrum-Dialog-heading {
+    &.spectrum-Dialog-heading--noHeader {
+      grid-area: heading;
+    }
+
+    /* match specificity from above where it had noHeader, but here header won't prevent heading from expanding */
+    &.spectrum-Dialog-heading--noTypeIcon.spectrum-Dialog-heading--noTypeIcon {
+      grid-area: heading-start / heading-start / typeIcon-end / typeIcon-end;
+    }
+  }
+  .spectrum-Dialog-header {
+    &.spectrum-Dialog-header--noTypeIcon {
+      grid-area: header;
+    }
+  }
 
   .spectrum-Dialog.spectrum-Dialog--dismissable .spectrum-Dialog-grid {
-    grid-template-columns: var(--spectrum-dialog-padding) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding);
-    grid-template-rows: auto var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+    grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) minmax(0, var(--spectrum-dialog-close-button-size)) var(--spectrum-dialog-padding-x);
+    grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(--spectrum-dialog-padding-y);
     grid-template-areas:
       "hero hero    hero    hero        hero        hero        hero"
       ".    .       .       .           .           closeButton closeButton"
@@ -328,13 +386,21 @@ governing permissions and limitations under the License.
     justify-content: flex-start;
   }
 
+  .spectrum-Dialog-footer {
+    min-width: fit-content;
+  }
+
+  .spectrum-Dialog-buttonGroup {
+    min-width: 0;
+  }
+
   .spectrum-Dialog--fullscreen,
   .spectrum-Dialog--fullscreenTakeover {
 
     &.spectrum-Dialog .spectrum-Dialog-grid {
        display: grid;
-       grid-template-columns: var(--spectrum-dialog-padding) 1fr var(--spectrum-dialog-padding);
-       grid-template-rows: var(--spectrum-dialog-padding) auto auto auto 1fr auto var(--spectrum-dialog-padding);
+       grid-template-columns: var(--spectrum-dialog-padding-x) 1fr var(--spectrum-dialog-padding-x);
+       grid-template-rows: var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(--spectrum-dialog-padding-y);
        grid-template-areas:
          ".    .            ."
          ".    heading      ."
@@ -343,6 +409,118 @@ governing permissions and limitations under the License.
          ".    content      ."
          ".    buttonGroup  ."
          ".    .            .";
+    }
+    .spectrum-Dialog-heading {
+      &.spectrum-Dialog-heading--noHeader,
+      &.spectrum-Dialog-heading--noTypeIcon {
+        grid-area: heading;
+      }
+
+      /* there will never be a typeIcon here */
+      &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+        grid-area: heading;
+      }
+    }
+    .spectrum-Dialog-header {
+      &.spectrum-Dialog-header--noTypeIcon {
+        grid-area: header;
+      }
+    }
+
+    .spectrum-Dialog-buttonGroup {
+      padding-block-start: var(--spectrum-global-dimension-static-size-500);
+    }
+
+    .spectrum-Dialog-heading {
+      font-size: var(--spectrum-dialog-title-text-size);
+    }
+  }
+}
+
+/* additional a11y support by moving scrolling from content to dialog */
+@media screen and (max-height: 400px) {
+  .spectrum-Dialog .spectrum-Dialog-grid {
+    border-top-left-radius: var(--spectrum-dialog-border-radius);
+    border-top-right-radius: var(--spectrum-dialog-border-radius);
+    overflow-y: auto;
+
+    grid-template-columns: var(--spectrum-dialog-padding-x) auto 1fr auto minmax(0, auto) var(--spectrum-dialog-padding-x);
+    grid-template-rows: auto var(--spectrum-dialog-padding-y) auto auto auto 1fr auto auto var(--spectrum-dialog-padding-y);
+    grid-template-areas:
+      "hero hero        hero        hero        hero        hero"
+      ".    .           .           .           .           ."
+      ".    heading     heading     heading     typeIcon    ."
+      ".    header      header      header      header      ."
+      ".    divider     divider     divider     divider     ."
+      ".    content     content     content     content     ."
+      ".    footer      footer      footer      footer      ."
+      ".    buttonGroup buttonGroup buttonGroup buttonGroup ."
+      ".    .           .           .           .           .";
+  }
+
+  .spectrum-Dialog-heading {
+    &.spectrum-Dialog-heading--noHeader {
+      grid-area: heading;
+      padding-inline-end: 0;
+    }
+
+    /* match specificity from above where it had noHeader, but here header won't prevent heading from expanding */
+
+    &.spectrum-Dialog-heading--noTypeIcon.spectrum-Dialog-heading--noTypeIcon {
+      grid-area: heading-start / heading-start / typeIcon-end / typeIcon-end;
+      padding-inline-end: 0;
+    }
+  }
+
+  .spectrum-Dialog-header {
+    &.spectrum-Dialog-header--noTypeIcon {
+      grid-area: header;
+      padding-inline-end: 0;
+    }
+  }
+
+  .spectrum-Dialog-content {
+    overflow-y: visible;
+    height: min-content;
+    display: inline-table;
+  }
+
+  .spectrum-Dialog-footer + .spectrum-Dialog-buttonGroup {
+    padding-block-start: calc(var(--spectrum-global-dimension-size-25) * 2);
+  }
+}
+@media screen and (max-height: 400px) and (max-width: 700px) {
+  .spectrum-Dialog--fullscreen,
+  .spectrum-Dialog--fullscreenTakeover {
+
+    &.spectrum-Dialog .spectrum-Dialog-grid {
+      display: grid;
+      grid-template-columns: var(--spectrum-dialog-padding-x) 1fr var(--spectrum-dialog-padding-x);
+      grid-template-rows: var(--spectrum-dialog-padding-y) auto auto auto 1fr auto var(--spectrum-dialog-padding-y);
+      grid-template-areas:
+         ".    .            ."
+         ".    heading      ."
+         ".    header       ."
+         ".    divider      ."
+         ".    content      ."
+         ".    buttonGroup  ."
+         ".    .            .";
+    }
+    .spectrum-Dialog-heading {
+      &.spectrum-Dialog-heading--noHeader,
+      &.spectrum-Dialog-heading--noTypeIcon {
+        grid-area: heading;
+      }
+
+      /* there will never be a typeIcon here */
+      &.spectrum-Dialog-heading--noHeader.spectrum-Dialog-heading--noTypeIcon {
+        grid-area: heading;
+      }
+    }
+    .spectrum-Dialog-header {
+      &.spectrum-Dialog-header--noTypeIcon {
+        grid-area: header;
+      }
     }
 
     .spectrum-Dialog-buttonGroup {

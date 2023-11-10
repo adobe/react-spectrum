@@ -11,7 +11,7 @@
  */
 
 import {AriaToggleProps} from '@react-types/checkbox';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
 import {InputHTMLAttributes, RefObject} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 import {useFocusable} from '@react-aria/focus';
@@ -21,23 +21,33 @@ export interface ToggleAria {
   /**
    * Props to be spread on the input element.
    */
-  inputProps: InputHTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Whether the toggle is selected. */
+  isSelected: boolean,
+  /** Whether the toggle is in a pressed state. */
+  isPressed: boolean,
+  /** Whether the toggle is disabled. */
+  isDisabled: boolean,
+  /** Whether the toggle is read only. */
+  isReadOnly: boolean,
+  /** Whether the toggle is invalid. */
+  isInvalid: boolean
 }
 
 /**
  * Handles interactions for toggle elements, e.g. Checkboxes and Switches.
  */
-export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLElement>): ToggleAria {
+export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefObject<HTMLInputElement>): ToggleAria {
   let {
     isDisabled = false,
-    isRequired,
-    isReadOnly,
+    isReadOnly = false,
     value,
     name,
     children,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    validationState = 'valid'
+    validationState = 'valid',
+    isInvalid
   } = props;
 
   let onChange = (e) => {
@@ -54,7 +64,7 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   }
 
   // This handles focusing the input on pointer down, which Safari does not do by default.
-  let {pressProps} = usePress({
+  let {pressProps, isPressed} = usePress({
     isDisabled
   });
 
@@ -62,19 +72,25 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
   let interactions = mergeProps(pressProps, focusableProps);
   let domProps = filterDOMProps(props, {labelable: true});
 
+  useFormReset(ref, state.isSelected, state.setSelected);
+
   return {
     inputProps: mergeProps(domProps, {
-      'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-invalid': isInvalid || validationState === 'invalid' || undefined,
       'aria-errormessage': props['aria-errormessage'],
       'aria-controls': props['aria-controls'],
       'aria-readonly': isReadOnly || undefined,
       onChange,
       disabled: isDisabled,
-      required: isRequired,
-      value,
+      ...(value == null ? {} : {value}),
       name,
       type: 'checkbox',
       ...interactions
-    })
+    }),
+    isSelected: state.isSelected,
+    isPressed,
+    isDisabled,
+    isReadOnly,
+    isInvalid: isInvalid || validationState === 'invalid'
   };
 }

@@ -12,4 +12,11 @@
 
 import {CheckboxGroupState} from '@react-stately/checkbox';
 
-export const checkboxGroupNames = new WeakMap<CheckboxGroupState, string>();
+interface CheckboxGroupData {
+  name: string,
+  descriptionId: string,
+  errorMessageId: string,
+  validationBehavior: 'aria' | 'native'
+}
+
+export const checkboxGroupData = new WeakMap<CheckboxGroupState, CheckboxGroupData>();

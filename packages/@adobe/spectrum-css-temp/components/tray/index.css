@@ -27,12 +27,7 @@
   display: flex;
   justify-content: center;
   width: 100%;
-
-  /* On mobile browsers, vh units are fixed based on the maximum height of the screen.
-   * However, when you scroll, the toolbar and address bar shrink, making the viewport resize.
-   * The visual viewport also shrinks when the keyboard is displayed. We use the VisualViewport
-   * API in JS to set this CSS variable to ensure the height is correct. */
-  height: var(--spectrum-visual-viewport-height);
+  height: 100vh;
 
   /* Don't catch clicks */
   pointer-events: none;
@@ -42,21 +37,34 @@
 }
 
 .spectrum-Tray {
-  @inherit: %spectrum-overlay;
+  composes: spectrum-overlay;
 
   /* defined here so it can be accessed from JS */
   --spectrum-tray-margin-top: 64px;
+  /* Overridden so that trays are full width on modern iPhone displays.
+   * iPhone 13 Pro Max has a width of 428px. Add some buffer to be safe. */
+  --spectrum-tray-max-width: 450px;
 
   width: var(--spectrum-tray-width);
   max-width: var(--spectrum-tray-max-width);
   min-height: var(--spectrum-tray-min-height);
+  /* On mobile browsers, vh units are fixed based on the maximum height of the screen.
+   * However, when you scroll, the toolbar and address bar shrink, making the viewport resize.
+   * The visual viewport also shrinks when the keyboard is displayed. We use the VisualViewport
+   * API in JS to set this CSS variable to ensure the height is correct. */
   max-height: calc(var(--spectrum-visual-viewport-height) - var(--spectrum-tray-margin-top));
+  /* Add padding at the bottom to account for the rest of the viewport height behind the keyboard.
+   * This is necessary so that there isn't a visible gap that appears while the keyboard is animating
+   * in and out. Fall back to the safe area inset to account for things like iOS home indicator. */
+  padding-bottom: max(calc(100vh - var(--spectrum-visual-viewport-height)), env(safe-area-inset-bottom));
   position: absolute;
   bottom: 0;
   outline: none;
   display: flex;
   flex-direction: column;
-  padding-bottom: env(safe-area-inset-bottom);
+
+  overflow-x: hidden;
+  overflow-y: auto;
 
   border-radius: var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-full-width-border-radius) var(--spectrum-tray-border-radius) var(--spectrum-tray-border-radius);
 
@@ -66,16 +74,16 @@
   /* Exit animations */
   transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
     transform var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay);
+}
 
-  &.is-open {
-    @inherit: %spectrum-overlay--open;
+.is-open {
+  composes: spectrum-overlay--open;
 
-    /* Entry animations */
-    transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
-                opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
+  /* Entry animations */
+  transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
+              opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
 
-    transform: translateY(0);
-  }
+  transform: translateY(0);
 }
 
 .spectrum-Tray--fixedHeight {
@@ -84,8 +92,15 @@
 }
 
 /* Should match --spectrum-tray-max-width above */
-@media (max-width: 375px) {
+@media (max-width: 450px) {
   .spectrum-Tray {
     border-radius: var(--spectrum-tray-border-radius);
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Tray {
+    border-width: var(--spectrum-alias-border-size-thin);
+    border-style: solid solid none;
   }
 }

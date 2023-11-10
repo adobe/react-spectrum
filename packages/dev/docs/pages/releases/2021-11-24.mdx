@@ -1,0 +1,160 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: As we head into the holiday season, our latest release focuses on kick-starting some of our pre-release components as well a whole list of fixes, and to top it all off, a new selection mode!
+date: 2021-11-24
+---
+
+# November 24, 2021 Release
+
+As we head into the holiday season, our latest release focuses on kick-starting some of our pre-release components as well a whole list of fixes, and to top it all off, a new selection mode!
+
+Our `@react-aria/interactions` package now includes a new `useLongPress` hook for handling long press interactions across both mouse and touch devices. This hook automatically supports preventing text selection and context menus, allowing customizable time thresholds, and an accessibility description to help discoverability with assistive technology users. Take a look at the documentation in our [React Aria docs](https://react-spectrum.adobe.com/react-aria/useLongPress.html).
+
+Highlight selection is an alternative selection behavior that works similarly to native platforms such as macOS and Windows, which can be used when checkboxes on each item are undesired. The `onAction` prop enables actions on each item, such as navigating to a detail view, to be triggered via double click or the Enter key. It also takes advantage of the new `useLongPress` hook to provide a multi-selection mode on touch devices. For examples on use and implementation, visit our [TableView](https://react-spectrum.adobe.com/react-spectrum/TableView.html#highlight-selection) and [useTable](https://react-spectrum.adobe.com/react-aria/useTable.html#selection-behavior) docs.
+
+Thank you to all our contributors for their help with this release.
+
+## New features
+- Add additional loading message to Combobox - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/2358)
+- Add support for highlight selection and `onAction` to React Aria selection hooks, and `TableView` component in React Spectrum - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2363)
+- Add new `useLongPress` hook to `@react-aria/interactions` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2363)
+
+## Fixed
+- Restrict resize updates to `TextArea` only - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2344)
+- Add focus hook to `useLink` to fix Tooltips on `Link` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2276)
+- Update `CheckboxGroup`, `RadioGroup`, `useToggle` to use `aria-required` - [@paulkenney](https://github.com/paulkenney) - [PR](https://github.com/adobe/react-spectrum/pull/2377)
+- Update generic types for `useTextField` - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/2369)
+- Remove browser added UI for invalid form validation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2401)
+- Add `noValidate` prop to `Form` to hide native validation - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2402)
+- Fix help text alignment - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2367)
+- Add `shouldFocusWrap` to `useComboBox` - [@alexichristakis](https://github.com/alexichristakis) - [PR](https://github.com/adobe/react-spectrum/pull/2348)
+- Fix `ComboBox` id association with help text - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2410)
+- Update `useHover` to always return `currentTarget` - [@cedeber](https://github.com/cedeber) - [PR](https://github.com/adobe/react-spectrum/pull/2428)
+- Remove additional `stopPropagation` in `useMenuTrigger` - [@Anuragtech02](https://github.com/Anuragtech02) - [PR](https://github.com/adobe/react-spectrum/pull/2354)
+- Add missing `AsyncListOptions` type for `useAsyncList`  - [@mattywong](https://github.com/mattywong) - [PR](https://github.com/adobe/react-spectrum/pull/2417)
+- Restrict disabled text selection in `usePress` to iOS - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2440)
+- Fix id association when switching between help text props - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/2332)
+- Fix sort icon overflow in `TableView` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2318)
+- Restore focus when error in help text is loaded - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/2422)
+- Enable `Enter` keypress on `ActionMenu` with `Tooltip` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2366)
+- Update NumberField to take allowed DOM props - [@hayes](https://github.com/hayes) - [PR](https://github.com/adobe/react-spectrum/pull/2453)
+- Only update when breakpoints change in `BreakpointProvider` - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/2412)
+- Remove unsupported aria props from `Radio` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/2427)
+- Update `useObjectRef` to use `useLayoutEffect` - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/2458)
+- Add useFormProps to ComboBox - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/2351)
+- Remove additional `onChangeEnd` event in `useColorWheel` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/2448)
+- Update `ActionGroup` to honor `disabledKeys` when collapsed - [@solimant](https://github.com/solimant) - [PR](https://github.com/adobe/react-spectrum/pull/2463)
+- Improve content visibility in Dialogs when zoomed - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/2490)
+- Add checks in `useCloseOnScroll` when target is `window` - [@alirezamirian](https://github.com/alirezamirian) - [PR](https://github.com/adobe/react-spectrum/pull/2341)
+- Add `autocomplete` aria prop to HiddenSelect for autofill functionality - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/2477)
+- Clean removed selections when `items` are updated in `TableView` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2441)
+- Update `Menu` and `ComboBox` to stop interactions when disabled - [@Onyinye91-ctrl](https://github.com/Onyinye91-ctrl) - [PR](https://github.com/adobe/react-spectrum/pull/2479)
+- Add additional null check on `key` in `Virtualizer` - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/2560)
+- Fix generate function overload types in Parcel patch - [@kherock](https://github.com/kherock) - [PR](https://github.com/adobe/react-spectrum/pull/2565)
+
+## Documentation
+- Fix prop table layout in docs template - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/2470)
+
+## Under construction
+
+Pre-release versions of the following components have been released. Please feel free to try them out, and report any issues you encounter.
+
+- ColorSlider beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorSlider.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorSlider.html)
+- ColorWheel beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorWheel.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorWheel.html)
+- ColorField beta
+    - [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/ColorField.html)
+    - [React Aria](https://react-spectrum.adobe.com/react-aria/useColorField.html)
+- SearchWithin alpha
+- Calendar alpha
+- DatePicker alpha
+- ListView alpha
+- CardView alpha
+- Card alpha
+
+## Released packages
+
+```
+- @adobe/react-spectrum@3.15.0
+- @internationalized/date@3.0.0-alpha.0
+- @react-aria/autocomplete@3.0.0-alpha.1
+- @react-aria/calendar@3.0.0-alpha.0
+- @react-aria/color@3.0.0-beta.5
+- @react-aria/combobox@3.2.0
+- @react-aria/datepicker@3.0.0-alpha.0
+- @react-aria/grid@3.1.0
+- @react-aria/i18n@3.3.3
+- @react-aria/interactions@3.7.0
+- @react-aria/label@3.2.1
+- @react-aria/link@3.2.0
+- @react-aria/listbox@3.4.0
+- @react-aria/menu@3.3.0
+- @react-aria/numberfield@3.1.1
+- @react-aria/overlays@3.7.3
+- @react-aria/radio@3.1.6
+- @react-aria/searchfield@3.2.1
+- @react-aria/select@3.6.0
+- @react-aria/selection@3.7.0
+- @react-aria/table@3.1.0
+- @react-aria/tabs@3.1.0
+- @react-aria/textfield@3.5.0
+- @react-aria/toggle@3.1.5
+- @react-aria/utils@3.10.0
+- @react-aria/virtualizer@3.3.5
+- @react-spectrum/accordion@3.0.0-alpha.3
+- @react-spectrum/actiongroup@3.3.1
+- @react-spectrum/autocomplete@3.0.0-alpha.1
+- @react-spectrum/breadcrumbs@3.2.4
+- @react-spectrum/buttongroup@3.2.3
+- @react-spectrum/calendar@3.0.0-alpha.0
+- @react-spectrum/card@3.0.0-alpha.1
+- @react-spectrum/color@3.0.0-beta.5
+- @react-spectrum/combobox@3.2.0
+- @react-spectrum/datepicker@3.0.0-alpha.0
+- @react-spectrum/form@3.2.4
+- @react-spectrum/label@3.4.1
+- @react-spectrum/list@3.0.0-alpha.4
+- @react-spectrum/numberfield@3.1.1
+- @react-spectrum/picker@3.5.0
+- @react-spectrum/radio@3.1.5
+- @react-spectrum/searchfield@3.2.1
+- @react-spectrum/searchwithin@3.0.0-alpha.1
+- @react-spectrum/table@3.1.0
+- @react-spectrum/tabs@3.1.0
+- @react-spectrum/textfield@3.3.0
+- @react-spectrum/utils@3.6.3
+- @react-stately/calendar@3.0.0-alpha.0
+- @react-stately/color@3.0.0-beta.5
+- @react-stately/data@3.4.3
+- @react-stately/datepicker@3.0.0-alpha.0
+- @react-stately/grid@3.1.0
+- @react-stately/list@3.4.0
+- @react-stately/selection@3.8.0
+- @react-stately/table@3.1.0
+- @react-stately/utils@3.3.0
+- @react-stately/virtualizer@3.1.6
+- @react-types/calendar@3.0.0-alpha.0
+- @react-types/card@3.0.0-alpha.1
+- @react-types/combobox@3.2.0
+- @react-types/datepicker@3.0.0-alpha.0
+- @react-types/link@3.2.0
+- @react-types/select@3.5.0
+- @react-types/shared@3.10.0
+- @react-types/table@3.1.0
+- react-aria@3.11.0
+- react-stately@3.10.0
+```

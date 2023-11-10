@@ -11,19 +11,19 @@
  */
 
 import {AriaSideNavProps} from '@react-types/sidenav';
+import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {HTMLAttributes, RefObject} from 'react';
-import {KeyboardDelegate} from '@react-types/shared';
+import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableCollection} from '@react-aria/selection';
 
 interface SideNavAriaOptions<T> extends AriaSideNavProps<T> {
-  layout?: KeyboardDelegate
+  layout: KeyboardDelegate
 }
 
 interface SideNavAria {
-  navProps: HTMLAttributes<HTMLDivElement>,
-  listProps: HTMLAttributes<HTMLUListElement>
+  navProps: DOMAttributes,
+  listProps: DOMAttributes
 }
 
 export function useSideNav<T>(props: SideNavAriaOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): SideNavAria {
@@ -52,7 +52,7 @@ export function useSideNav<T>(props: SideNavAriaOptions<T>, state: TreeState<T>,
       id
     }),
     listProps: {
-      'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : null),
+      'aria-labelledby': ariaLabeldBy || (ariaLabel ? id : undefined),
       role: 'list',
       ...collectionProps
     }

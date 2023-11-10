@@ -1,0 +1,6 @@
+{
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorNameAndValue": "{name}: {value}",
+  "colorPicker": "Seletor de cores",
+  "twoDimensionalSlider": "Controle deslizante 2D"
+}

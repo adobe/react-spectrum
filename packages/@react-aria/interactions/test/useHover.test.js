@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@testing-library/react';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
-import {installMouseEvent, installPointerEvent} from '@react-spectrum/test-utils';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -22,7 +21,7 @@ import {useHover} from '../';
 
 function Example(props) {
   let {hoverProps, isHovered} = useHover(props);
-  return <div {...hoverProps}>test{isHovered && '-hovered'}</div>;
+  return <div {...hoverProps}>test{isHovered && '-hovered'}<div data-testid="inner-target" /></div>;
 }
 
 function pointerEvent(type, opts) {
@@ -75,6 +74,43 @@ describe('useHover', function () {
       let el = res.getByText('test');
       fireEvent(el, pointerEvent('pointerover', {pointerType: 'mouse'}));
       fireEvent(el, pointerEvent('pointerout', {pointerType: 'mouse'}));
+
+      expect(events).toEqual([
+        {
+          type: 'hoverstart',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: true
+        },
+        {
+          type: 'hoverend',
+          target: el,
+          pointerType: 'mouse'
+        },
+        {
+          type: 'hoverchange',
+          isHovering: false
+        }
+      ]);
+    });
+
+    it('hover event target should be the same element we attached listeners to even if we hover over inner elements', function () {
+      let events = [];
+      let addEvent = (e) => events.push(e);
+      let res = render(
+        <Example
+          onHoverStart={addEvent}
+          onHoverEnd={addEvent}
+          onHoverChange={isHovering => addEvent({type: 'hoverchange', isHovering})} />
+      );
+
+      let el = res.getByText('test');
+      let inner = res.getByTestId('inner-target');
+      fireEvent(inner, pointerEvent('pointerover', {pointerType: 'mouse'}));
+      fireEvent(inner, pointerEvent('pointerout', {pointerType: 'mouse'}));
 
       expect(events).toEqual([
         {
@@ -496,9 +532,6 @@ describe('useHover', function () {
     beforeAll(() => {
       jest.useFakeTimers();
     });
-    afterAll(() => {
-      jest.useRealTimers();
-    });
 
     let matchMedia;
     beforeEach(() => {
@@ -511,9 +544,9 @@ describe('useHover', function () {
       // Ensure we close any dialogs before unmounting to avoid warning.
       let dialog = document.querySelector('[role="dialog"]');
       if (dialog) {
+        fireEvent.keyDown(dialog, {key: 'Escape'});
+        fireEvent.keyUp(dialog, {key: 'Escape'});
         act(() => {
-          fireEvent.keyDown(dialog, {key: 'Escape'});
-          fireEvent.keyUp(dialog, {key: 'Escape'});
           jest.runAllTimers();
         });
       }

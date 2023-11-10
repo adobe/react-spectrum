@@ -1,11 +1,11 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
@@ -13,13 +13,9 @@ export default Layout;
 import docs from 'docs:@react-aria/color';
 import statelyDocs from 'docs:@react-stately/color';
 import typesDocs from 'docs:@react-types/color';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/color/package.json';
 import Anatomy from './ColorSliderAnatomy.svg';
-
-```jsx import
-import {useColorSlider} from '@react-aria/color';
-```
 
 ---
 category: Color
@@ -28,13 +24,13 @@ keywords: [color slider, color picker, aria]
 
 # useColorSlider
 
-<p>{docs.exports.useColorSlider.description}</p>
+<PageDescription>{docs.exports.useColorSlider.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
   componentNames={['useColorSlider']}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices-1.2/#slider'}
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/slider/'}
   ]} />
 
 ## API
@@ -54,7 +50,6 @@ touch-friendly color sliders that can be styled as needed.
 * Pressing on the track moves the thumb to that position
 * Supports using the arrow keys, as well as page up/down, home, and end keys
 * Support for both horizontal and vertical orientations
-* Support for custom step values with handling for rounding errors
 * Support for disabling the color slider
 * Prevents text selection while dragging
 * Exposed to assistive technology as a `slider` element via ARIA
@@ -67,7 +62,9 @@ touch-friendly color sliders that can be styled as needed.
 
 ## Anatomy
 
-<Anatomy />
+<Anatomy
+  role="img"
+  aria-label="Color slider anatomy diagram: Shows a color slider component with labels pointing to its parts, including the track, thumb, label, and output elements." />
 
 A color slider consists of a track element and a thumb that the user can drag to change a single channel of a color value.
 It may also include optional label and `<output>` elements to display the color channel name and current numeric value, respectively.
@@ -100,6 +97,7 @@ using the [VisuallyHidden](VisuallyHidden.html) component. The thumb also uses t
 grow in size when it is keyboard focused (try tabbing to it).
 
 ```tsx example export=true
+import {useColorSlider} from '@react-aria/color';
 import {useColorSliderState} from '@react-stately/color';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useLocale} from '@react-aria/i18n';
@@ -111,8 +109,8 @@ const THUMB_SIZE = 20;
 function ColorSlider(props) {
   let {locale} = useLocale();
   let state = useColorSliderState({...props, locale});
-  let trackRef = React.useRef();
-  let inputRef = React.useRef();
+  let trackRef = React.useRef(null);
+  let inputRef = React.useRef(null);
 
   // Default label to the channel name in the current locale
   let label = props.label || state.value.getChannelName(props.channel, locale);
@@ -188,9 +186,9 @@ by passing an `aria-label` prop to `useColorSlider`.
 function ColorSlider(props) {
   let {locale} = useLocale();
   let state = useColorSliderState({...props, locale});
-  let trackRef = React.useRef();
-  let inputRef = React.useRef();
-  let {groupProps, trackProps, thumbProps, inputProps} = useColorSlider({
+  let trackRef = React.useRef(null);
+  let inputRef = React.useRef(null);
+  let {trackProps, thumbProps, inputProps} = useColorSlider({
     ...props,
     orientation: 'vertical',
     trackRef,
@@ -201,7 +199,6 @@ function ColorSlider(props) {
 
   return (
     <div
-      {...groupProps}
       style={{
         height: 200
       }}>
@@ -302,14 +299,6 @@ function Example() {
 }
 ```
 
-### Step
-
-The `step` prop can be used to make a `ColorSlider` snap its value to specific increments.
-
-```tsx example
-<ColorSlider channel="hue" defaultValue="hsl(0, 100%, 50%)" step={30} />
-```
-
 ### onChangeEnd
 
 The `onChangeEnd` prop can be used to handle when a user stops dragging a color slider, whereas the `onChange`
@@ -334,6 +323,17 @@ It's up to you to style your color slider to appear disabled accordingly.
 
 ```tsx example
 <ColorSlider channel="red" defaultValue="#7f007f" isDisabled />
+```
+
+### HTML forms
+
+ColorSlider supports the `name` prop for integration with HTML forms. The value will be submitted as a number between the minimum and maximum value for the displayed channel.
+
+```tsx example
+<ColorSlider
+  defaultValue="#7f0000"
+  channel="red"
+  name="red" />
 ```
 
 ## Internationalization

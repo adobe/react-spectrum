@@ -11,25 +11,27 @@
 */
 
 import {AriaTabListProps} from '@react-types/tabs';
-import {HTMLAttributes, RefObject, useMemo} from 'react';
+import {DOMAttributes} from '@react-types/shared';
 import {mergeProps, useId, useLabels} from '@react-aria/utils';
+import {RefObject, useMemo} from 'react';
 import {TabListState} from '@react-stately/tabs';
 import {tabsIds} from './utils';
 import {TabsKeyboardDelegate} from './TabsKeyboardDelegate';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableCollection} from '@react-aria/selection';
 
-interface TabListAria {
-  /** Props for the tablist container. */
-  tabListProps: HTMLAttributes<HTMLElement>
-}
+export interface AriaTabListOptions<T> extends Omit<AriaTabListProps<T>, 'children'> {}
 
+export interface TabListAria {
+  /** Props for the tablist container. */
+  tabListProps: DOMAttributes
+}
 
 /**
  * Provides the behavior and accessibility implementation for a tab list.
  * Tabs organize content into multiple sections and allow users to navigate between them.
  */
-export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>, ref: RefObject<HTMLElement>): TabListAria {
+export function useTabList<T>(props: AriaTabListOptions<T>, state: TabListState<T>, ref: RefObject<HTMLElement>): TabListAria {
   let {
     orientation = 'horizontal',
     keyboardActivation = 'automatic'
@@ -51,7 +53,9 @@ export function useTabList<T>(props: AriaTabListProps<T>, state: TabListState<T>
     selectionManager: manager,
     keyboardDelegate: delegate,
     selectOnFocus: keyboardActivation === 'automatic',
-    disallowEmptySelection: true
+    disallowEmptySelection: true,
+    scrollRef: ref,
+    linkBehavior: 'selection'
   });
 
   // Compute base id for all tabs

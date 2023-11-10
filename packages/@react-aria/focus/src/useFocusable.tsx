@@ -10,42 +10,46 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusableDOMProps, FocusableProps} from '@react-types/shared';
-import {mergeProps, useSyncRef} from '@react-aria/utils';
-import React, {HTMLAttributes, MutableRefObject, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import {DOMAttributes, FocusableDOMProps, FocusableElement, FocusableProps} from '@react-types/shared';
+import {focusSafely} from './';
+import {mergeProps, useObjectRef, useSyncRef} from '@react-aria/utils';
+import React, {ForwardedRef, MutableRefObject, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {useFocus, useKeyboard} from '@react-aria/interactions';
 
-interface FocusableOptions extends FocusableProps, FocusableDOMProps {
+export interface FocusableOptions extends FocusableProps, FocusableDOMProps {
   /** Whether focus should be disabled. */
   isDisabled?: boolean
 }
 
-interface FocusableProviderProps extends HTMLAttributes<HTMLElement> {
+export interface FocusableProviderProps extends DOMAttributes {
   /** The child element to provide DOM props to. */
   children?: ReactNode
 }
 
 interface FocusableContextValue extends FocusableProviderProps {
-  ref?: MutableRefObject<HTMLElement>
+  ref?: MutableRefObject<FocusableElement>
 }
 
-let FocusableContext = React.createContext<FocusableContextValue>(null);
+let FocusableContext = React.createContext<FocusableContextValue | null>(null);
 
-function useFocusableContext(ref: RefObject<HTMLElement>): FocusableContextValue {
+function useFocusableContext(ref: RefObject<FocusableElement>): FocusableContextValue {
   let context = useContext(FocusableContext) || {};
   useSyncRef(context, ref);
 
-  return context;
+  // eslint-disable-next-line
+  let {ref: _, ...otherProps} = context;
+  return otherProps;
 }
 
 /**
  * Provides DOM props to the nearest focusable child.
  */
-function FocusableProvider(props: FocusableProviderProps, ref: RefObject<HTMLElement>) {
+function FocusableProvider(props: FocusableProviderProps, ref: ForwardedRef<FocusableElement>) {
   let {children, ...otherProps} = props;
+  let objRef = useObjectRef(ref);
   let context = {
     ...otherProps,
-    ref
+    ref: objRef
   };
 
   return (
@@ -58,10 +62,15 @@ function FocusableProvider(props: FocusableProviderProps, ref: RefObject<HTMLEle
 let _FocusableProvider = React.forwardRef(FocusableProvider);
 export {_FocusableProvider as FocusableProvider};
 
+export interface FocusableAria {
+  /** Props for the focusable element. */
+  focusableProps: DOMAttributes
+}
+
 /**
  * Used to make an element focusable and capable of auto focus.
  */
-export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElement>) {
+export function useFocusable(props: FocusableOptions, domRef: RefObject<FocusableElement>): FocusableAria {
   let {focusProps} = useFocus(props);
   let {keyboardProps} = useKeyboard(props);
   let interactions = mergeProps(focusProps, keyboardProps);
@@ -71,10 +80,10 @@ export function useFocusable(props: FocusableOptions, domRef: RefObject<HTMLElem
 
   useEffect(() => {
     if (autoFocusRef.current && domRef.current) {
-      domRef.current.focus();
+      focusSafely(domRef.current);
     }
     autoFocusRef.current = false;
-  }, []);
+  }, [domRef]);
 
   return {
     focusableProps: mergeProps(

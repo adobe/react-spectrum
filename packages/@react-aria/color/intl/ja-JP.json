@@ -1,0 +1,6 @@
+{
+  "colorInputLabel": "{label}、{channelLabel}",
+  "colorNameAndValue": "{name} : {value}",
+  "colorPicker": "カラーピッカー",
+  "twoDimensionalSlider": "2D スライダー"
+}

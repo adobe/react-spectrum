@@ -11,114 +11,358 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {BackgroundColorValue} from '@react-types/shared';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
-import React, {ElementType} from 'react';
+import React, {ElementType, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
-import {storiesOf} from '@storybook/react';
 import {Text} from '@react-spectrum/text';
+import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
+import {View} from '@react-spectrum/view';
 
-storiesOf('Button', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'variant: cta',
-    () => render({variant: 'cta'})
-  )
-  .add(
-    'with icon',
-    () => (
-      <Flex gap="size-200">
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          variant="primary">
-          <Bell />
-          <Text>Default</Text>
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isDisabled
-          variant="primary">
-          <Text>Disabled</Text>
-          <Bell />
-        </Button>
-        <Button
-          onPress={action('press')}
-          onPressStart={action('pressstart')}
-          onPressEnd={action('pressend')}
-          isQuiet
-          variant="primary">
-          <Bell />
-          <Text>Quiet</Text>
-        </Button>
-      </Flex>
-    )
-  )
-  .add(
-    'variant: overBackground',
-    () => (
-      <div style={{backgroundColor: 'rgb(15, 121, 125)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
-        {render({variant: 'overBackground'})}
-      </div>
-    )
-  )
-  .add(
-    'variant: primary',
-    () => render({variant: 'primary'})
-  )
-  .add(
-    'variant: secondary',
-    () => render({variant: 'secondary'})
-  )
-  .add(
-    'variant: negative',
-    () => render({variant: 'negative'})
-  )
-  .add(
-    'element: a',
-    () => render({elementType: 'a', variant: 'primary'})
-  )
-  .add(
-    'element: a, href: \'//example.com\', target: \'_self\'',
-    () => render({elementType: 'a', href: '//example.com', target: '_self', variant: 'primary'})
-  )
-  .add(
-    'element: a, rel: \'noopener noreferrer\'',
-    () => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', variant: 'primary'})
-  );
+export type ButtonStory = ComponentStoryObj<typeof Button>;
+
+export default {
+  title: 'Button',
+  component: Button,
+  args: {
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend'),
+    onPressUp: action('pressup'),
+    onFocus: action('focus'),
+    onBlur: action('blur')
+  },
+  argTypes: {
+    onPress: {
+      table: {
+        disable: true
+      }
+    },
+    onPressStart: {
+      table: {
+        disable: true
+      }
+    },
+    onPressEnd: {
+      table: {
+        disable: true
+      }
+    },
+    onPressUp: {
+      table: {
+        disable: true
+      }
+    },
+    autoFocus: {
+      control: 'boolean'
+    },
+    variant: {
+      control: 'select',
+      options: ['accent', 'primary', 'secondary', 'negative', 'cta', 'overBackground'],
+      defaultValue: 'accent'
+    },
+    style: {
+      control: 'select',
+      options: [undefined, 'fill', 'outline']
+    },
+    staticColor: {
+      control: 'select',
+      options: [undefined, 'white', 'black']
+    },
+    isPending: {
+      control: 'boolean',
+      defaultValue: false
+    }
+  }
+} as ComponentMeta<typeof Button>;
+
+export const Default: ButtonStory = {
+  render: (args) => render(args)
+};
+
+export const WithIcon: ButtonStory = {
+  render: (args) => renderIconText(args)
+};
+
+export const IconOnly: ButtonStory = {
+  render: (args) => renderIconOnly(args)
+};
+
+export const AnchorElement: ButtonStory = {
+  render: (args) => render({elementType: 'a', ...args}),
+  name: 'element: a'
+};
+
+export const AnchorElementWithSelf: ButtonStory = {
+  render: (args) => render({elementType: 'a',  href: '//example.com', target: '_self', ...args}),
+  name: 'element: a, href: \'//example.com\', target: \'_self\''
+};
+
+export const AnchorElementNoRefferer: ButtonStory = {
+  render: (args) => render({elementType: 'a', href: '//example.com', rel: 'noopener noreferrer', ...args}),
+  name: 'element: a, rel: \'noopener noreferrer\''
+};
+
+export const UserSelect: ButtonStory = {
+  render: () => <Example />,
+  parameters: {
+    description: {
+      data: 'Pressing and holding on either buttons shouldn\'t trigger text selection on the button labels (wait for buttons to turn red).'
+    }
+  }
+};
+
+export const PendingSpinner: ButtonStory = {
+  render: (args) => <Pending {...args} />
+};
 
 function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
+  let buttons = (
+    <Flex gap="size-200">
+      <Button {...props}>
+        Default
+      </Button>
+      <Button {...props} isDisabled>
+        Disabled
+      </Button>
+    </Flex>
+  );
+
+  if (props.variant === 'overBackground' || props.staticColor === 'white') {
+    return (
+      <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </View>
+    );
+  }
+
+  if (props.staticColor === 'black') {
+    return (
+      <div style={{backgroundColor: 'rgb(206, 247, 243)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  return buttons;
+}
+
+function renderIconText<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
+  let buttons = (
+    <Flex gap="size-200">
+      <Button {...props}>
+        <Bell />
+        <Text>Default</Text>
+      </Button>
+      <Button {...props} isDisabled>
+        <Bell />
+        <Text>Disabled</Text>
+      </Button>
+    </Flex>
+  );
+
+  if (props.variant === 'overBackground' || props.staticColor === 'white') {
+    return (
+      <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </View>
+    );
+  }
+
+  if (props.staticColor === 'black') {
+    return (
+      <div style={{backgroundColor: 'rgb(206, 247, 243)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  return buttons;
+}
+
+function renderIconOnly<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
+  let buttons = (
+    <Flex gap="size-200">
+      <TooltipTrigger offset={2}>
+        <Button {...props} aria-label="Notifications">
+          <Bell />
+        </Button>
+        <Tooltip>Notifications</Tooltip>
+      </TooltipTrigger>
+      <TooltipTrigger offset={2}>
+        <Button {...props} aria-label="Notifications (disabled)" isDisabled>
+          <Bell />
+        </Button>
+        <Tooltip>Notifications</Tooltip>
+      </TooltipTrigger>
+    </Flex>
+  );
+
+  if (props.variant === 'overBackground' || props.staticColor === 'white') {
+    return (
+      <View backgroundColor="static-blue-700" UNSAFE_style={{padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </View>
+    );
+  }
+
+  if (props.staticColor === 'black') {
+    return (
+      <div style={{backgroundColor: 'rgb(206, 247, 243)', color: 'rgb(15, 121, 125)', padding: '15px 20px', display: 'inline-block'}}>
+        {buttons}
+      </div>
+    );
+  }
+
+  return buttons;
+}
+
+function Example() {
+  let [show, setShow] = React.useState(false);
+  let [show2, setShow2] = React.useState(false);
+
   return (
     <Flex gap="size-200">
       <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        {...props}>
-        Default
+        variant="cta"
+        UNSAFE_style={show ? undefined : {background: 'red', userSelect: 'text'}}
+        onPressStart={() => setTimeout(() => setShow(true), 3000)}>
+        Press and hold (overwrite)
       </Button>
       <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isDisabled
-        {...props}>
-        Disabled
+        variant="cta"
+        UNSAFE_style={show2 ? undefined : {background: 'red'}}
+        onPressStart={() => setTimeout(() => setShow2(true), 3000)}>
+        Press and hold (no overwrite)
       </Button>
-      {props.variant !== 'cta' && (
-      <Button
-        onPress={action('press')}
-        onPressStart={action('pressstart')}
-        onPressEnd={action('pressend')}
-        isQuiet
-        {...props}>
-        Quiet
-      </Button>
-      )}
     </Flex>
+  );
+}
+
+function PendingButtonContainerComponent(props) {
+  let {children, ...otherProps} = props;
+
+  function containerBackgroundColor(variant, staticColor): BackgroundColorValue | undefined {
+    if (variant === 'overBackground' || staticColor === 'white') {
+      return 'static-blue-700';
+    }
+    if (staticColor === 'black') {
+      return 'static-yellow-200';
+    }
+    return;
+  }
+
+  return (
+    <View backgroundColor={containerBackgroundColor(otherProps.variant, otherProps.staticColor)} padding={16} {...otherProps}>
+      {children}
+    </View>
+  );
+}
+
+function Pending(props) {
+
+  return (
+    <div>
+      <Flex wrap="wrap">
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent {...props}>click me!</PendingButtonComponent>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent
+            {...props}>
+            <Bell />
+            <Text>I have an icon</Text>
+          </PendingButtonComponent>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonOnClickComponent
+            {...props}>
+            <Text>with onClick</Text>
+          </PendingButtonOnClickComponent>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent isDisabled {...props}>disabled</PendingButtonComponent>
+        </PendingButtonContainerComponent>
+      </Flex>
+
+      <View flexBasis={'100%'} paddingTop={16}>Controlled:</View>
+
+      <Flex wrap="wrap">
+        <PendingButtonContainerComponent {...props}>
+          <TooltipTrigger offset={2}>
+            <Button {...props} aria-label="Notifications" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+              <Bell />
+            </Button>
+            <Tooltip>Notifications</Tooltip>
+          </TooltipTrigger>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <Button {...props} aria-label="No tooltip" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+            <Bell />
+          </Button>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <Button {...props} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+            <Bell />
+          </Button>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <Button {...props} isPending={props.isPending} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+            <Text>Controlled pending</Text>
+          </Button>
+        </PendingButtonContainerComponent>
+      </Flex>
+    </div>
+  );
+}
+let timerValue = 5000;
+function PendingButtonComponent(props) {
+  let [isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('press')(e);
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, timerValue);
+  };
+
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onPress={handlePress}>
+      {props.children}
+    </Button>
+  );
+}
+
+function PendingButtonOnClickComponent(props) {
+  let [isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('click')(e);
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, timerValue);
+  };
+
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onClick={handlePress}>
+      {props.children}
+    </Button>
   );
 }

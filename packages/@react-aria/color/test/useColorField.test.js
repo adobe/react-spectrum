@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {parseColor} from '@react-stately/color';
+import {parseColor, useColorFieldState} from '@react-stately/color';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useColorField} from '../';
 
 describe('useColorField', function () {
@@ -20,16 +20,14 @@ describe('useColorField', function () {
 
   beforeEach(() => {
     ref = React.createRef();
-    ref.current = {};
-    ref.current.addEventListener = () => {};
-    ref.current.removeEventListener = () => {};
+    ref.current = document.createElement('input');
   });
 
-  let renderColorFieldHook = (props, state = {}) => {
+  let renderColorFieldHook = (props) => {
     let {result} = renderHook(() => useColorField({
       'aria-label': 'Primary Color',
       ...props
-    }, state, ref));
+    }, useColorFieldState(props), ref));
     return result.current;
   };
 
@@ -50,11 +48,12 @@ describe('useColorField', function () {
     expect(inputProps['aria-invalid']).toBeUndefined();
     expect(inputProps.disabled).toBe(false);
     expect(inputProps.readOnly).toBe(false);
+    expect(inputProps.spellCheck).toBe('false');
   });
 
   it('should return props for colorValue provided', function () {
     let colorValue = parseColor('#ff88a0');
-    let {inputProps} = renderColorFieldHook({}, {colorValue, inputValue: colorValue.toString('hex')});
+    let {inputProps} = renderColorFieldHook({value: colorValue});
     expect(inputProps['aria-valuenow']).toBeNull();
     expect(inputProps['aria-valuetext']).toBeNull();
     expect(inputProps['value']).toBe('#FF88A0');
@@ -73,7 +72,7 @@ describe('useColorField', function () {
   });
 
   it('should return prop for invalid', function () {
-    let {inputProps} = renderColorFieldHook({validationState: 'invalid'});
+    let {inputProps} = renderColorFieldHook({isInvalid: true});
     expect(inputProps['aria-invalid']).toBe(true);
   });
 

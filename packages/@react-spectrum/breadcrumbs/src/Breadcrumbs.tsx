@@ -11,17 +11,16 @@
  */
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
-import {classNames, useDOMRef, useStyleProps, useValueEffect} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {DOMRef, Key} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {Key, ReactElement, useCallback, useRef} from 'react';
+import React, {ReactElement, useCallback, useRef} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect, useResizeObserver, useValueEffect} from '@react-aria/utils';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useResizeObserver} from '@react-aria/utils';
 
 const MIN_VISIBLE_ITEMS = 1;
 const MAX_VISIBLE_ITEMS = 4;
@@ -35,13 +34,17 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     showRoot,
     isDisabled,
     onAction,
+    autoFocusCurrent,
     ...otherProps
   } = props;
 
   // Not using React.Children.toArray because it mutates the key prop.
   let childArray: ReactElement[] = [];
-  React.Children.forEach(children, child => {
+  React.Children.forEach(children, (child, index) => {
     if (React.isValidElement(child)) {
+      if (child.key == null) {
+        child = React.cloneElement(child, {key: index});
+      }
       childArray.push(child);
     }
   });
@@ -55,14 +58,17 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
   let {styleProps} = useStyleProps(otherProps);
 
   let updateOverflow = useCallback(() => {
-    let computeVisibleItems = (visibleItems: number) => {
+    let computeVisibleItems = (visibleItems: number): number => {
       // Refs can be null at runtime.
       let currListRef: HTMLUListElement | null = listRef.current;
       if (!currListRef) {
-        return;
+        return visibleItems;
       }
 
       let listItems = Array.from(currListRef.children) as HTMLLIElement[];
+      if (listItems.length <= 0) {
+        return visibleItems;
+      }
       let containerWidth = currListRef.offsetWidth;
       let isShowingMenu = childArray.length > visibleItems;
       let calculatedWidth = 0;
@@ -70,12 +76,12 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
       let maxVisibleItems = MAX_VISIBLE_ITEMS;
 
       if (showRoot) {
-        calculatedWidth += listItems.shift().offsetWidth;
+        calculatedWidth += (listItems.shift() as HTMLLIElement).offsetWidth;
         newVisibleItems++;
       }
 
       if (isShowingMenu) {
-        calculatedWidth += listItems.shift().offsetWidth;
+        calculatedWidth += (listItems.shift() as HTMLLIElement).offsetWidth;
         maxVisibleItems--;
       }
 
@@ -88,16 +94,18 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         listItems.pop();
         newVisibleItems++;
       } else {
-        // Ensure the last breadcrumb isn't truncated when we measure it.
-        let last = listItems.pop();
-        last.style.overflow = 'visible';
+        if (listItems.length > 0) {
+          // Ensure the last breadcrumb isn't truncated when we measure it.
+          let last = (listItems.pop() as HTMLLIElement);
+          last.style.overflow = 'visible';
 
-        calculatedWidth += last.offsetWidth;
-        if (calculatedWidth < containerWidth) {
-          newVisibleItems++;
+          calculatedWidth += last.offsetWidth;
+          if (calculatedWidth < containerWidth) {
+            newVisibleItems++;
+          }
+
+          last.style.overflow = '';
         }
-
-        last.style.overflow = '';
       }
 
       for (let breadcrumb of listItems.reverse()) {
@@ -124,11 +132,17 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
         yield computeVisibleItems(newVisibleItems);
       }
     });
-  }, [listRef, children, setVisibleItems, showRoot, isMultiline]);
+  }, [childArray.length, setVisibleItems, showRoot, isMultiline]);
 
   useResizeObserver({ref: domRef, onResize: updateOverflow});
 
-  useLayoutEffect(updateOverflow, [children]);
+  let lastChildren = useRef<typeof children | null>(null);
+  useLayoutEffect(() => {
+    if (children !== lastChildren.current) {
+      lastChildren.current = children;
+      updateOverflow();
+    }
+  });
 
   let contents = childArray;
   if (childArray.length > visibleItems) {
@@ -142,9 +156,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     };
 
     let menuItem = (
-      <BreadcrumbItem key="menu">
+      <BreadcrumbItem key="menu" isMenu>
         <MenuTrigger>
           <ActionButton
+            UNSAFE_className={classNames(styles, 'spectrum-Breadcrumbs-actionButton')}
             aria-label="…"
             isQuiet
             isDisabled={isDisabled}>
@@ -161,7 +176,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     let breadcrumbs = [...childArray];
     let endItems = visibleItems;
     if (showRoot && visibleItems > 1) {
-      contents.unshift(breadcrumbs.shift());
+      let rootItem = breadcrumbs.shift();
+      if (rootItem) {
+        contents.unshift(rootItem);
+      }
       endItems--;
     }
     contents.push(...breadcrumbs.slice(-endItems));
@@ -179,7 +197,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
     return (
       <li
-        key={key}
+        key={index}
         className={
           classNames(
             styles,
@@ -187,9 +205,12 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
           )
         }>
         <BreadcrumbItem
+          {...child.props}
+          key={key}
           isCurrent={isCurrent}
           isDisabled={isDisabled}
-          onPress={onPress}>
+          onPress={onPress}
+          autoFocus={isCurrent && autoFocusCurrent}>
           {child.props.children}
         </BreadcrumbItem>
       </li>

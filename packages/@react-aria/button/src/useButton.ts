@@ -19,11 +19,12 @@ import {
   RefObject
 } from 'react';
 import {AriaButtonProps} from '@react-types/button';
-import {filterDOMProps} from '@react-aria/utils';
-import {mergeProps} from '@react-aria/utils';
+import {DOMAttributes} from '@react-types/shared';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
+export interface AriaButtonOptions<E extends ElementType> extends Omit<AriaButtonProps<E>, 'children'> {}
 
 export interface ButtonAria<T> {
   /** Props for the button element. */
@@ -32,30 +33,32 @@ export interface ButtonAria<T> {
   isPressed: boolean
 }
 
-/* eslint-disable no-redeclare */
-export function useButton(props: AriaButtonProps<'a'>, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
-export function useButton(props: AriaButtonProps<'button'>, ref: RefObject<HTMLButtonElement>): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
-export function useButton(props: AriaButtonProps<'div'>, ref: RefObject<HTMLDivElement>): ButtonAria<HTMLAttributes<HTMLDivElement>>;
-export function useButton(props: AriaButtonProps<'input'>, ref: RefObject<HTMLInputElement>): ButtonAria<InputHTMLAttributes<HTMLInputElement>>;
-export function useButton(props: AriaButtonProps<'span'>, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
-export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<HTMLElement>): ButtonAria<HTMLAttributes<HTMLElement>>;
+// Order with overrides is important: 'button' should be default
+export function useButton(props: AriaButtonOptions<'button'>, ref: RefObject<HTMLButtonElement>): ButtonAria<ButtonHTMLAttributes<HTMLButtonElement>>;
+export function useButton(props: AriaButtonOptions<'a'>, ref: RefObject<HTMLAnchorElement>): ButtonAria<AnchorHTMLAttributes<HTMLAnchorElement>>;
+export function useButton(props: AriaButtonOptions<'div'>, ref: RefObject<HTMLDivElement>): ButtonAria<HTMLAttributes<HTMLDivElement>>;
+export function useButton(props: AriaButtonOptions<'input'>, ref: RefObject<HTMLInputElement>): ButtonAria<InputHTMLAttributes<HTMLInputElement>>;
+export function useButton(props: AriaButtonOptions<'span'>, ref: RefObject<HTMLSpanElement>): ButtonAria<HTMLAttributes<HTMLSpanElement>>;
+export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<Element>): ButtonAria<DOMAttributes>;
 /**
  * Provides the behavior and accessibility implementation for a button component. Handles mouse, keyboard, and touch interactions,
  * focus behavior, and ARIA props for both native button elements and custom element types.
  * @param props - Props to be applied to the button.
  * @param ref - A ref to a DOM element for the button.
  */
-export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<any>): ButtonAria<HTMLAttributes<any>> {
-/* eslint-enable no-redeclare */
+export function useButton(props: AriaButtonOptions<ElementType>, ref: RefObject<any>): ButtonAria<HTMLAttributes<any>> {
   let {
     elementType = 'button',
     isDisabled,
     onPress,
     onPressStart,
     onPressEnd,
+    onPressUp,
     onPressChange,
     // @ts-ignore - undocumented
     preventFocusOnPress,
+    // @ts-ignore - undocumented
+    allowFocusWhenDisabled,
     // @ts-ignore
     onClick: deprecatedOnClick,
     href,
@@ -87,14 +90,17 @@ export function useButton(props: AriaButtonProps<ElementType>, ref: RefObject<an
     onPressEnd,
     onPressChange,
     onPress,
+    onPressUp,
     isDisabled,
     preventFocusOnPress,
     ref
   });
 
   let {focusableProps} = useFocusable(props, ref);
-  let buttonProps = mergeProps(focusableProps, pressProps);
-  buttonProps = mergeProps(buttonProps, filterDOMProps(props, {labelable: true}));
+  if (allowFocusWhenDisabled) {
+    focusableProps.tabIndex = isDisabled ? -1 : focusableProps.tabIndex;
+  }
+  let buttonProps = mergeProps(focusableProps, pressProps, filterDOMProps(props, {labelable: true}));
 
   return {
     isPressed, // Used to indicate press state for visual

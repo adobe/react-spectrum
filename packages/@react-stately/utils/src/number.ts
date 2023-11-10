@@ -18,7 +18,9 @@ export function clamp(value: number, min: number = -Infinity, max: number = Infi
   return newValue;
 }
 
-export function snapValueToStep(value: number, min: number, max: number, step: number): number {
+export function snapValueToStep(value: number, min: number | undefined, max: number | undefined, step: number): number {
+  min = Number(min);
+  max = Number(max);
   let remainder = ((value - (isNaN(min) ? 0 : min)) % step);
   let snappedValue = Math.abs(remainder) * 2 >= step
     ? value + Math.sign(remainder) * (step - Math.abs(remainder))
@@ -45,4 +47,11 @@ export function snapValueToStep(value: number, min: number, max: number, step: n
   }
 
   return snappedValue;
+}
+
+/* Takes a value and rounds off to the number of digits. */
+export function toFixedNumber(value: number, digits: number, base: number = 10): number {
+  const pow = Math.pow(base, digits);
+
+  return Math.round(value * pow) / pow;
 }

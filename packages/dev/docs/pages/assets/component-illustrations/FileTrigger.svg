@@ -1,0 +1,9 @@
+<svg style="background:var(--anatomy-gray-100);padding:60px 10px" height="32" viewBox="0 0 102 32" aria-hidden="true">
+  <g fill="var(--anatomy-gray-600)" stroke="rgba(0,0,0,0)">
+    <rect width="102" height="32" rx="16" stroke="none"></rect>
+    <rect x="0.5" y="0.5" width="101" height="31" rx="15.5" fill="none"></rect>
+  </g>
+  <text transform="translate(18 20)" fill="#fff" font-size="14" font-family="Adobe-Clean" font-weight="700">
+    <tspan x="0" y="0">Select a file</tspan>
+  </text>
+</svg>

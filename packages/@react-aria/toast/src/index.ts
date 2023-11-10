@@ -9,5 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+export {useToast} from './useToast';
+export {useToastRegion} from './useToastRegion';
 
-export * from './useToast';
+export type {AriaToastRegionProps, ToastRegionAria} from './useToastRegion';
+export type {AriaToastProps, ToastAria} from './useToast';

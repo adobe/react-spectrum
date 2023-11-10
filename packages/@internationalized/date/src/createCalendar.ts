@@ -21,6 +21,7 @@ import {JapaneseCalendar} from './calendars/JapaneseCalendar';
 import {PersianCalendar} from './calendars/PersianCalendar';
 import {TaiwanCalendar} from './calendars/TaiwanCalendar';
 
+/** Creates a `Calendar` instance from a Unicode calendar identifier string. */
 export function createCalendar(name: string): Calendar {
   switch (name) {
     case 'buddhist':
@@ -45,7 +46,7 @@ export function createCalendar(name: string): Calendar {
       return new JapaneseCalendar();
     case 'persian':
       return new PersianCalendar();
-    case 'taiwan':
+    case 'roc':
       return new TaiwanCalendar();
     case 'gregory':
     default:

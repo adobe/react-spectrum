@@ -1,0 +1,320 @@
+{/* Copyright 2022 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-spectrum/datepicker';
+import i18nDocs from 'docs:@internationalized/date';
+import {HeaderInfo, PropTable, PageDescription, TypeLink} from '@react-spectrum/docs';
+import packageData from '@react-spectrum/datepicker/package.json';
+
+```jsx import
+import {TimeField} from '@react-spectrum/datepicker';
+import {Flex} from '@react-spectrum/layout';
+```
+
+---
+category: Date and Time
+keywords: [input, form, field, time]
+---
+
+# TimeField
+
+<PageDescription>{docs.exports.TimeField.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['TimeField']}
+  sourceData={[]}
+  since="3.19.0" />
+
+## Example
+
+```tsx example
+<TimeField label="Event time" />
+```
+
+## Value
+
+A `TimeField` displays a placeholder by default. An initial, uncontrolled value can be provided to the `TimeField` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Time values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date and time manipulation across calendars, time zones, and other localization concerns.
+
+`TimeField` only supports selecting times, but values with date components are also accepted. By default, `TimeField` will emit <TypeLink links={i18nDocs.links} type={i18nDocs.exports.Time} /> objects in the `onChange` event, but if a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is passed as the `value` or `defaultValue`, values of that type will be emitted, changing only the time and preserving the date components.
+
+```tsx example
+import {Time} from '@internationalized/date';
+
+function Example() {
+  let [value, setValue] = React.useState(new Time(11, 45));
+
+  return (
+    <Flex gap="size-150" wrap>
+      <TimeField
+        label="Time (uncontrolled)"
+        defaultValue={new Time(11, 45)} />
+      <TimeField
+        label="Time (controlled)"
+        value={value}
+        onChange={setValue} />
+    </Flex>
+  );
+}
+```
+
+`Time` values may also be parsed from strings using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseTime} /> function. This accepts [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601#Times) formatted time strings such as `"04:45:23.123"`. The `toString` method of a `Time` object can also be used to convert a time object to a string.
+
+### Time zones
+
+`TimeField` is time zone aware when a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account when the value is manipulated.
+
+In most cases, your data will come from and be sent to a server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string. [@internationalized/date](../internationalized/date/) includes functions for parsing strings in multiple formats into <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> objects. Which format you use will depend on what information you need to store.
+
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} /> – This function parses a date with an explicit time zone and optional UTC offset attached (e.g. `"2021-11-07T00:45[America/Los_Angeles]"` or `"2021-11-07T00:45-07:00[America/Los_Angeles]"`). This format preserves the maximum amount of information. If the exact local time and time zone that a user selected is important, use this format. Storing the time zone and offset that was selected rather than converting to UTC ensures that the local time is correct regardless of daylight saving rule changes (e.g. if a locale abolishes DST). Examples where this applies include calendar events, reminders, and other times that occur in a particular location.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} /> – This function parses an absolute date and time that occurs at the same instant at all locations on Earth. It can be represented in UTC (e.g. `"2021-11-07T07:45:00Z"`), or stored with a particular offset (e.g. `"2021-11-07T07:45:00-07:00"`). A time zone identifier, e.g. `America/Los_Angeles`, must be passed, and the result will be converted into that time zone. Absolute times are the best way to represent events that occurred in the past, or future events where an exact time is needed, regardless of time zone.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> – This function parses an absolute date and time into the current user's local time zone. It is a shortcut for `parseAbsolute`, and accepts the same formats.
+
+```tsx example
+import {parseZonedDateTime} from '@internationalized/date';
+
+<TimeField
+  label="Event time"
+  defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
+```
+
+`TimeField` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+
+```tsx example
+import {parseAbsoluteToLocal} from '@internationalized/date';
+
+<TimeField
+  label="Event time"
+  defaultValue={parseAbsoluteToLocal('2021-11-07T07:45:00Z')}
+/>
+```
+
+### Granularity
+
+The `granularity` prop allows you to control the smallest unit that is displayed by a `TimeField`. By default, times are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
+
+```tsx example
+<TimeField
+  label="Event time"
+  granularity="second"
+  defaultValue={parseAbsoluteToLocal('2021-04-07T18:45:22Z')} />
+```
+
+### HTML forms
+
+TimeField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string, e.g. `"08:45:00"`.
+
+```tsx example
+<TimeField label="Meeting time" name="meetingTime" />
+```
+
+## Labeling
+
+A visual label should be provided for the `TimeField` using the `label` prop. If the `TimeField` is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
+
+```tsx example
+<Flex gap="size-150" wrap>
+  <TimeField label="Event time" />
+  <TimeField label="Event time" isRequired necessityIndicator="icon" />
+  <TimeField label="Event time" isRequired necessityIndicator="label" />
+  <TimeField label="Event time" necessityIndicator="label" />
+</Flex>
+```
+
+### Accessibility
+
+If a visible label isn't specified, an `aria-label` must be provided to the `TimeField` for
+accessibility. If the field is labeled by a separate element, an `aria-labelledby` prop must be provided using
+the `id` of the labeling element instead.
+
+### Internationalization
+
+In order to internationalize a `TimeField`, a localized string should be passed to the `label` or `aria-label` prop.
+When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
+
+## Events
+
+`TimeField` accepts an `onChange` prop which is triggered whenever the time is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter. The `TimeField` allows editing the time components while keeping the date fixed.
+
+```tsx example
+import {useDateFormatter} from '@adobe/react-spectrum';
+
+function Example() {
+  let [date, setDate] = React.useState(parseAbsoluteToLocal('2021-04-07T18:45:22Z'));
+  let formatter = useDateFormatter({dateStyle: 'long', timeStyle: 'long'});
+
+  return (
+    <>
+      <TimeField label="Time" value={date} onChange={setDate} />
+      <p>Selected date and time: {(date?.toDate && formatter.format(date.toDate())) || (date && date.toString()) || '--'}</p>
+    </>
+  );
+}
+```
+
+## Validation
+
+TimeField supports the `isRequired` prop to ensure the user enters a value, as well as minimum and maximum values, and custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the time field or submits the form.
+
+```tsx example
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <TimeField label="Meeting time" name="time" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+By default, `TimeField` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
+### Minimum and maximum values
+
+The `minValue` and `maxValue` props can also be used to ensure the value is within a specific range. This example only accepts times between 9 AM and 5 PM.
+
+```tsx example
+<Form validationBehavior="native" maxWidth="size-3000">
+  <TimeField
+    label="Meeting time"
+    /*- begin highlight -*/
+    minValue={new Time(9)}
+    maxValue={new Time(17)}
+    /*- end highlight -*/
+    defaultValue={new Time(8)} />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+### Custom validation
+
+The `validate` function can be used to perform custom validation logic. It receives the current field value, and should return a string or array of strings representing one or more error messages if the value is invalid.
+
+This example validates that the selected time is on a 15 minute increment.
+
+```tsx example
+<Form validationBehavior="native" maxWidth="size-3000">
+  <TimeField
+    label="Meeting time"
+    /*- begin highlight -*/
+    validate={time => time?.minute % 15 !== 0 ? 'Meetings start every 15 minutes.' : null}
+    /*- end highlight -*/
+    defaultValue={new Time(9, 25)} />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+## Props
+
+<PropTable component={docs.exports.TimeField} links={docs.links} />
+
+## Visual options
+
+### Quiet
+
+```tsx example
+<TimeField label="Event time" isQuiet />
+```
+
+### Disabled
+
+```tsx example
+<TimeField label="Event time" isDisabled />
+```
+
+### Read only
+
+The `isReadOnly` boolean prop makes the TimeField's value immutable. Unlike `isDisabled`, the TimeField remains focusable.
+
+```tsx example
+<TimeField label="Event time" value={new Time(11)} isReadOnly />
+```
+
+### Label alignment and position
+[View guidelines](https://spectrum.adobe.com/page/text-field/#Label-position)
+
+By default, the label is positioned above the `TimeField`. The `labelPosition` prop can be used to position the label to the side. The `labelAlign` prop can be used to align the label as "start" or "end". For left-to-right (LTR) languages, "start" refers to the left most edge of the `TimeField` and "end" refers to the right most edge. For right-to-left (RTL) languages, this is flipped.
+
+```tsx example
+<TimeField label="Event time" labelPosition="side" labelAlign="end" />
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
+
+Both a description and an error message can be supplied to a TimeField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+<Flex gap="size-100" wrap>
+  <TimeField label="Time" defaultValue={new Time(9)} validationState="valid" description="Select a meeting time." />
+  <TimeField label="Time" validationState="invalid" errorMessage="Empty input is not allowed." />
+</Flex>
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a TimeField.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<TimeField
+  label="Appointment time"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Appointment changes</Heading>
+      <Content>Your appointment time cannot be changed once it is scheduled.</Content>
+    </ContextualHelp>
+  } />
+```
+
+### Placeholder value
+
+When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys. By default, the `placeholderValue` is midnight, but you can set it to a more appropriate value if needed.
+
+```tsx example
+<TimeField label="Appointment time" placeholderValue={new Time(9)} />
+```
+
+### Hide time zone
+
+When a `ZonedDateTime` object is provided as the value of a `TimeField`, the time zone abbreviation is displayed by default. However, if this is displayed elsewhere or implicit based on the usecase, it can be hidden using the `hideTimeZone` option.
+
+```tsx example
+<TimeField
+  label="Appointment time"
+  defaultValue={parseZonedDateTime('2022-11-07T10:45[America/Los_Angeles]')}
+  hideTimeZone />
+```
+
+### Hour cycle
+
+By default, `TimeField` displays times in either 12 or 24 hour hour format depending on the user's locale. However, this can be overridden using the `hourCycle` prop if needed for a specific usecase. This example forces the `TimeField` to use 24-hour time, regardless of the locale.
+
+```tsx example
+<TimeField
+  label="Appointment time"
+  hourCycle={24} />
+```

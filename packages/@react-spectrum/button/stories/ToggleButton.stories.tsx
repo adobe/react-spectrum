@@ -12,62 +12,127 @@
 
 import {action} from '@storybook/addon-actions';
 import Add from '@spectrum-icons/workflow/Add';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex, Text, View} from '@adobe/react-spectrum';
-import React from 'react';
-import {storiesOf} from '@storybook/react';
+import React, {useState} from 'react';
 import {ToggleButton} from '../';
 
-storiesOf('Button/ToggleButton', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'default',
-    () => render()
-  ).add(
-    'emphasized',
-    () => render({isEmphasized: true})
-  ).add(
-    'isQuiet',
-    () => render({isQuiet: true})
-  ).add(
-    'isQuiet & emphasized',
-    () => render({isEmphasized: true, isQuiet: true})
-  )
-  .add(
-    'staticColor: white',
-    () => (
-      <View backgroundColor="static-seafoam-600" padding="size-1000">
-        <Flex direction="column" rowGap="size-150">
-          {render({staticColor: 'white'})}
-          {render({staticColor: 'white', isQuiet: true})}
-        </Flex>
-      </View>
-    )
-  )
-  .add(
-    'staticColor: black',
-    () => (
-      <View backgroundColor="static-yellow-400" padding="size-1000">
-        <Flex direction="column" rowGap="size-150">
-          {render({staticColor: 'black'})}
-          {render({staticColor: 'black', isQuiet: true})}
-        </Flex>
-      </View>
-    )
-  );
+export type ToggleButtonStory = ComponentStoryObj<typeof ToggleButton>;
+
+export default {
+  title: 'Button/ToggleButton',
+  component: ToggleButton,
+  args: {
+    onPress: action('press'),
+    onPressStart: action('pressstart'),
+    onPressEnd: action('pressend'),
+    variant: 'cta'
+  },
+  argTypes: {
+    onPress: {
+      table: {
+        disable: true
+      }
+    },
+    onPressStart: {
+      table: {
+        disable: true
+      }
+    },
+    onPressEnd: {
+      table: {
+        disable: true
+      }
+    },
+    staticColor: {
+      table: {
+        disable: true
+      }
+    },
+    isQuiet: {
+      control: 'boolean'
+    },
+    isEmphasized: {
+      control: 'boolean'
+    },
+    isDisabled: {
+      control: 'boolean'
+    },
+    autoFocus: {
+      control: 'boolean'
+    }
+  }
+} as ComponentMeta<typeof ToggleButton>;
+
+export const Default: ToggleButtonStory = {
+  render: (args) => render(args)
+};
+
+export const StaticWhite: ToggleButtonStory = {
+  args: {staticColor: 'white'},
+  render: (args) => (
+    <View backgroundColor="static-blue-700" padding="size-1000">
+      <Flex direction="column" rowGap="size-150">
+        {render(args)}
+      </Flex>
+    </View>
+  ),
+  name: 'staticColor: white'
+};
+
+export const StaticBlack: ToggleButtonStory = {
+  args: {staticColor: 'black'},
+  render: (args) => (
+    <View backgroundColor="static-yellow-400" padding="size-1000">
+      <Flex direction="column" rowGap="size-150">
+        {render(args)}
+      </Flex>
+    </View>
+  ),
+  name: 'staticColor: black'
+};
+
+export const WHCM: ToggleButtonStory = {
+  render: () => (
+    <View backgroundColor="static-yellow-400" padding="size-1000">
+      <Flex direction="column" rowGap="size-150">
+        {render()}
+        {render({isEmphasized: true})}
+        {render({isQuiet: true})}
+        {render({isQuiet: true, isEmphasized: true})}
+      </Flex>
+    </View>
+  ),
+  name: 'styles to check WHCM support'
+};
+
+export const Controlled: ToggleButtonStory = {
+  render: () => <ControlledToggleButton />,
+  name: 'controlled state'
+};
 
 function render(props = {}) {
-  return (<Flex gap="size-100">
-    <ToggleButton onChange={action('change')} onPress={action('press')} {...props}>
-      <Add />
-      <Text>Default</Text>
-    </ToggleButton>
-    <ToggleButton onChange={action('change')} onPress={action('press')} defaultSelected {...props}>
-      <Add />
-      <Text>Selected</Text>
-    </ToggleButton>
-    <ToggleButton defaultSelected isDisabled {...props}>
-      <Add />
-      <Text>Disabled + selected</Text>
-    </ToggleButton>
-  </Flex>);
+  return (
+    <Flex gap="size-100">
+      <ToggleButton onChange={action('change')} onPress={action('press')} {...props}>
+        <Add />
+        <Text>Default</Text>
+      </ToggleButton>
+      <ToggleButton onChange={action('change')} onPress={action('press')} defaultSelected {...props}>
+        <Add />
+        <Text>Selected</Text>
+      </ToggleButton>
+    </Flex>
+  );
+}
+
+function ControlledToggleButton() {
+  let [selected, setSelected] = useState(false);
+  return (
+    <div>
+      <ToggleButton isSelected={selected} onChange={setSelected}>Press Me</ToggleButton>
+      <br />
+      {selected ? 'true' : 'false'}
+    </div>
+  );
 }

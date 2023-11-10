@@ -10,25 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-export type {CheckboxGroupState} from '@react-stately/checkbox';
-export type {ComboBoxState} from '@react-stately/combobox';
-export type {ListData} from '@react-stately/data';
+export type {CalendarState, CalendarStateOptions, RangeCalendarState, RangeCalendarStateOptions} from '@react-stately/calendar';
+export type {CheckboxGroupProps, CheckboxGroupState} from '@react-stately/checkbox';
+export type {ComboBoxState, ComboBoxStateOptions} from '@react-stately/combobox';
+export type {DateFieldState, DateFieldStateOptions, DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, DateSegment, SegmentType as DateSegmentType, TimeFieldStateOptions, TimeFieldState} from '@react-stately/datepicker';
+export type {DraggableCollectionStateOptions, DraggableCollectionState, DroppableCollectionStateOptions, DroppableCollectionState} from '@react-stately/dnd';
+export type {AsyncListData, AsyncListOptions, ListData, ListOptions, TreeData, TreeOptions} from '@react-stately/data';
 export type {ListProps, ListState, SingleSelectListProps, SingleSelectListState} from '@react-stately/list';
-export type {MenuTriggerState} from '@react-stately/menu';
-export type {OverlayTriggerState} from '@react-stately/overlays';
-export type {RadioGroupState} from '@react-stately/radio';
-export type {SearchFieldState} from '@react-stately/searchfield';
-export type {SelectState} from '@react-stately/select';
-export type {SliderState} from '@react-stately/slider';
+export type {MenuTriggerProps, MenuTriggerState} from '@react-stately/menu';
+export type {OverlayTriggerProps, OverlayTriggerState} from '@react-stately/overlays';
+export type {RadioGroupProps, RadioGroupState} from '@react-stately/radio';
+export type {SearchFieldProps, SearchFieldState} from '@react-stately/searchfield';
+export type {SelectProps, SelectState, SelectStateOptions} from '@react-stately/select';
+export type {SliderState, SliderStateOptions} from '@react-stately/slider';
 export type {MultipleSelectionManager, MultipleSelectionState, SingleSelectionState} from '@react-stately/selection';
-export type {NumberFieldState} from '@react-stately/numberfield';
-export type {TabListState} from '@react-stately/tabs';
-export type {ToggleState} from '@react-stately/toggle';
-export type {TooltipTriggerState} from '@react-stately/tooltip';
+export type {NumberFieldState, NumberFieldStateOptions} from '@react-stately/numberfield';
+export type {TableState, TableStateProps, TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps, TableColumnResizeState, TableColumnResizeStateProps} from '@react-stately/table';
+export type {TabListProps, TabListState} from '@react-stately/tabs';
+export type {ToggleProps, ToggleState} from '@react-stately/toggle';
+export type {TooltipTriggerProps, TooltipTriggerState} from '@react-stately/tooltip';
 export type {TreeProps, TreeState} from '@react-stately/tree';
+export type {ItemProps, Key, SectionProps, Collection, Node, Orientation, DisabledBehavior, Selection, SelectionBehavior, SelectionMode, SortDescriptor, SortDirection, ValidationState} from '@react-types/shared';
 
+export {useCalendarState, useRangeCalendarState} from '@react-stately/calendar';
 export {useCheckboxGroupState} from '@react-stately/checkbox';
 export {useComboBoxState} from '@react-stately/combobox';
+export {useDateFieldState, useDatePickerState, useDateRangePickerState, useTimeFieldState} from '@react-stately/datepicker';
+export {useDraggableCollectionState, useDroppableCollectionState} from '@react-stately/dnd';
 export {Item, Section, useCollection} from '@react-stately/collections';
 export {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 export {useListState, useSingleSelectListState} from '@react-stately/list';
@@ -40,7 +48,9 @@ export {useSearchFieldState} from '@react-stately/searchfield';
 export {useSelectState} from '@react-stately/select';
 export {useSliderState} from '@react-stately/slider';
 export {useMultipleSelectionState} from '@react-stately/selection';
+export {useTableState, TableHeader, TableBody, Column, Row, Cell, useTableColumnResizeState} from '@react-stately/table';
 export {useTabListState} from '@react-stately/tabs';
 export {useToggleState} from '@react-stately/toggle';
 export {useTooltipTriggerState} from '@react-stately/tooltip';
 export {useTreeState} from '@react-stately/tree';
+export {FormValidationContext} from '@react-stately/form';

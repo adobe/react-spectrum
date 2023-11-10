@@ -1,24 +1,21 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/numberfield';
 import statelyDocs from 'docs:@react-stately/numberfield';
-import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink} from '@react-spectrum/docs';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/numberfield/package.json';
 import Anatomy from './anatomy.svg';
-
-```jsx import
-import {useNumberField} from '@react-aria/numberfield';
-```
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 
 ---
 category: Forms
@@ -27,13 +24,13 @@ keywords: [number field, input, form, aria]
 
 # useNumberField
 
-<p>{docs.exports.useNumberField.description}</p>
+<PageDescription>{docs.exports.useNumberField.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
   componentNames={['useNumberField']}
   sourceData={[
-    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-practices-1.2/#spinbutton'}
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/'}
   ]} />
 
 ## API
@@ -61,9 +58,12 @@ formatting options and can be styled as needed.
 * Handles floating point rounding errors when incrementing, decrementing, and snapping to step
 * Supports using the scroll wheel to increment and decrement the value
 * Exposed to assistive technology as a text field with a custom localized role description using ARIA
-* Follows the [spinbutton](https://www.w3.org/TR/wai-aria-practices-1.2/#spinbutton) ARIA pattern
+* Follows the [spinbutton](https://www.w3.org/WAI/ARIA/apg/patterns/spinbutton/) ARIA pattern
 * Works around bugs in VoiceOver with the spinbutton role
 * Uses an ARIA live region to ensure that value changes are announced
+* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
+
+Read our [blog post](../blog/how-we-internationalized-our-numberfield.html) for more details about the interactions and internationalization support implemented by `useNumberField`.
 
 ## Anatomy
 
@@ -72,6 +72,10 @@ formatting options and can be styled as needed.
 Number fields consist of an input element that shows the current value and allows the user to type a new value,
 optional stepper buttons to increment and decrement the value, a group containing the input and stepper buttons,
 and a label.
+
+`useNumberField` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
 
 `useNumberField` returns props for each of these, which you should spread onto the appropriate elements:
 
@@ -88,8 +92,8 @@ to identify the element to screen readers.
 ## Example
 
 The following example shows how to build a simple number field. It includes an input element where the user can
-type a number, along with increment and decrement buttons on either side. The buttons are built using
-the [useButton](useButton.html) hook, using the props returned by `useNumberField`.
+type a number, along with increment and decrement buttons on either side. The `Button` component used in this example
+is independent and can be used separately from `NumberField`.
 
 **Note:** Due to [a bug](https://bugs.webkit.org/show_bug.cgi?id=219188) in Safari on macOS, pointer events may not
 be dispatched after a `<button>` element is disabled while the mouse is pressed. This may require the user to click
@@ -97,15 +101,20 @@ twice when incrementing or decrementing the value from the minimum or maximum va
 you may wish to use a `<div>` element instead of a `<button>` to avoid this issue. See the [useButton docs](useButton.html#custom-element-type)
 for an example of a button with a custom element type.
 
+In addition, see [useTextField](useTextField.html) for an example of the description and error message elements.
+
 ```tsx example export=true
+import {useNumberField} from '@react-aria/numberfield';
 import {useNumberFieldState} from '@react-stately/numberfield';
 import {useLocale} from '@react-aria/i18n';
-import {useButton} from '@react-aria/button';
+
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
 
 function NumberField(props) {
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
-  let inputRef = React.useRef();
+  let inputRef = React.useRef(null);
   let {
     labelProps,
     groupProps,
@@ -114,16 +123,13 @@ function NumberField(props) {
     decrementButtonProps
   } = useNumberField(props, state, inputRef);
 
-  let {buttonProps: incrementProps} = useButton(incrementButtonProps);
-  let {buttonProps: decrementProps} = useButton(decrementButtonProps);
-
   return (
     <div>
       <label {...labelProps}>{props.label}</label>
       <div {...groupProps}>
-        <button {...decrementProps}>-</button>
+        <Button {...decrementButtonProps}>-</Button>
         <input {...inputProps} ref={inputRef} />
-        <button {...incrementProps}>+</button>
+        <Button {...incrementButtonProps}>+</Button>
       </div>
     </div>
   );
@@ -137,6 +143,25 @@ function NumberField(props) {
     currency: 'USD'
   }} />
 ```
+
+### Button
+
+The `Button` component is used in the above example to increment and decrement the value. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = React.useRef(null);
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref}>{props.children}</button>;
+}
+```
+
+</details>
 
 ## Usage
 

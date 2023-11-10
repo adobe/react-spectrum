@@ -1,0 +1,6 @@
+{
+  "colorInputLabel": "{label}, {channelLabel}",
+  "colorNameAndValue": "{name}: {value}",
+  "colorPicker": "Επιλογέας χρωμάτων",
+  "twoDimensionalSlider": "Ρυθμιστικό 2D"
+}

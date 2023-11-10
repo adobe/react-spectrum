@@ -5,10 +5,6 @@ PATH := ./node_modules/.bin:$(PATH)
 
 all: node_modules
 
-adobe_setup:
-	mkdir packages/dev/v2-test-deps
-	cp scripts/v2-package.json packages/dev/v2-test-deps/package.json
-
 node_modules: package.json
 	yarn install
 	touch $@
@@ -23,10 +19,20 @@ clean:
 clean_all:
 	$(MAKE) clean
 	$(MAKE) clean_node_modules
+	$(MAKE) clean_dist
+	$(MAKE) clean_parcel
 
 clean_node_modules:
 	rm -rf node_modules
 	rm -rf packages/*/*/node_modules
+	rm -rf examples/*/node_modules
+
+clean_dist:
+	rm -rf packages/*/*/dist
+	rm -rf packages/{react-aria,react-aria-components,react-stately}/dist
+
+clean_parcel:
+	rm -rf .parcel-cache
 
 packages/@spectrum-icons/workflow/src: packages/@spectrum-icons/workflow/package.json
 	yarn workspace @spectrum-icons/workflow make-icons
@@ -69,6 +75,9 @@ icons: packages/@spectrum-icons/workflow/src packages/@spectrum-icons/color/src 
 storybook:
 	NODE_ENV=production yarn build:storybook
 
+storybook-16:
+	yarn build:storybook-16
+
 storybook-17:
 	yarn build:storybook-17
 
@@ -83,7 +92,19 @@ publish-nightly: build
 	yarn publish:nightly
 
 build:
-	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/*/ --no-minify
+	parcel build packages/@react-{spectrum,aria,stately}/*/ packages/@internationalized/{message,string,date,number}/ packages/react-aria-components --no-optimize
+	yarn lerna run prepublishOnly
+	for pkg in packages/@react-{spectrum,aria,stately}/*/  packages/@internationalized/{message,string,date,number}/ packages/@adobe/react-spectrum/ packages/react-aria/ packages/react-stately/ packages/react-aria-components/; \
+		do cp $$pkg/dist/module.js $$pkg/dist/import.mjs; \
+	done
+	sed -i.bak s/\.js/\.mjs/ packages/@react-aria/i18n/dist/import.mjs
+	sed -i.bak 's/@react-aria\/i18n/.\/real-main.js/' packages/@react-aria/i18n/dist/useMessageFormatter.js
+	sed -i.bak 's/@react-aria\/i18n/.\/real-module.js/' packages/@react-aria/i18n/dist/useMessageFormatter.module.js
+	sed -i.bak 's/@react-aria\/i18n/.\/real-module.mjs/' packages/@react-aria/i18n/dist/useMessageFormatter.module.mjs
+	rm packages/@react-aria/i18n/dist/import.mjs.bak
+	rm packages/@react-aria/i18n/dist/useMessageFormatter.js.bak
+	rm packages/@react-aria/i18n/dist/useMessageFormatter.module.js.bak
+	rm packages/@react-aria/i18n/dist/useMessageFormatter.module.mjs.bak
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
@@ -91,4 +112,7 @@ website:
 website-production:
 	node scripts/buildWebsite.js
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
-	node scripts/brotli.js
+
+check-examples:
+	node scripts/extractExamples.mjs
+	yarn tsc --project dist/docs-examples/tsconfig.json

@@ -12,7 +12,17 @@
 
 import type {GridCollection} from '@react-types/grid';
 import type {GridState} from '@react-stately/grid';
-import type {KeyboardDelegate} from '@react-types/shared';
+import type {Key, KeyboardDelegate} from '@react-types/shared';
 
-// Used to share keyboard delegate between useGrid and useGridCell
-export const gridKeyboardDelegates = new WeakMap<GridState<unknown, GridCollection<unknown>>, KeyboardDelegate>();
+interface GridMapShared {
+  keyboardDelegate: KeyboardDelegate,
+  actions: {
+    onRowAction: (key: Key) => void,
+    onCellAction: (key: Key) => void
+  }
+}
+
+// Used to share:
+// keyboard delegate between useGrid and useGridCell
+// onRowAction/onCellAction across hooks
+export const gridMap = new WeakMap<GridState<unknown, GridCollection<unknown>>, GridMapShared>();

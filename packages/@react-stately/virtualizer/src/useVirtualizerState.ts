@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection} from '@react-types/shared';
-import {Key, useCallback, useEffect, useMemo, useState} from 'react';
+import {Collection, Key} from '@react-types/shared';
 import {Layout} from './Layout';
 import {Rect} from './Rect';
 import {ReusableView} from './ReusableView';
 import {Size} from './Size';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {Virtualizer} from './Virtualizer';
 
@@ -77,24 +77,40 @@ export function useVirtualizerState<T extends object, V, W>(opts: VirtualizerPro
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => virtualizer.willUnmount();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return {
+  let setVisibleRect = useCallback((rect) => {
+    virtualizer.visibleRect = rect;
+  }, [virtualizer]);
+  let startScrolling = useCallback(() => {
+    virtualizer.startScrolling();
+    setScrolling(true);
+  }, [virtualizer]);
+  let endScrolling = useCallback(() => {
+    virtualizer.endScrolling();
+    setScrolling(false);
+  }, [virtualizer]);
+
+  let state = useMemo(() => ({
     virtualizer,
     visibleViews,
-    setVisibleRect: useCallback((rect) => {
-      virtualizer.visibleRect = rect;
-    }, [virtualizer]),
+    setVisibleRect,
     contentSize,
     isAnimating,
     isScrolling,
-    startScrolling: useCallback(() => {
-      virtualizer.startScrolling();
-      setScrolling(true);
-    }, [virtualizer]),
-    endScrolling: useCallback(() => {
-      virtualizer.endScrolling();
-      setScrolling(false);
-    }, [virtualizer])
-  };
+    startScrolling,
+    endScrolling
+  }), [
+    virtualizer,
+    visibleViews,
+    setVisibleRect,
+    contentSize,
+    isAnimating,
+    isScrolling,
+    startScrolling,
+    endScrolling
+  ]);
+
+  return state;
 }

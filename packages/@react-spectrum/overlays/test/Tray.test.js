@@ -10,23 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@testing-library/react';
+import {act, fireEvent, render, waitFor} from '@react-spectrum/test-utils';
 import {Dialog} from '@react-spectrum/dialog';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tray} from '../';
+import {useOverlayTriggerState} from '@react-stately/overlays';
+
+function TestTray(props) {
+  let state = useOverlayTriggerState(props);
+  return <Tray {...props} state={state} />;
+}
 
 describe('Tray', function () {
   beforeAll(() => jest.useFakeTimers());
-  afterAll(() => jest.useRealTimers());
 
   it('should render nothing if isOpen is not set', function () {
     let {queryByRole} = render(
       <Provider theme={theme}>
-        <Tray>
+        <TestTray>
           <div role="dialog">contents</div>
-        </Tray>
+        </TestTray>
       </Provider>
     );
 
@@ -37,9 +42,9 @@ describe('Tray', function () {
   it('should render when isOpen is true', function () {
     let {getByRole} = render(
       <Provider theme={theme}>
-        <Tray isOpen>
+        <TestTray isOpen>
           <div role="dialog">contents</div>
-        </Tray>
+        </TestTray>
       </Provider>
     );
 
@@ -49,12 +54,12 @@ describe('Tray', function () {
   });
 
   it('hides the tray when pressing the escape key', async function () {
-    let onClose = jest.fn();
+    let onOpenChange = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme}>
-        <Tray isOpen onClose={onClose}>
+        <TestTray isOpen onOpenChange={onOpenChange}>
           <div role="dialog">contents</div>
-        </Tray>
+        </TestTray>
       </Provider>
     );
 
@@ -65,16 +70,17 @@ describe('Tray', function () {
 
     let dialog = await getByRole('dialog');
     fireEvent.keyDown(dialog, {key: 'Escape'});
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
   });
 
   it('hides the tray when clicking outside', async function () {
-    let onClose = jest.fn();
+    let onOpenChange = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme}>
-        <Tray isOpen onClose={onClose}>
+        <TestTray isOpen onOpenChange={onOpenChange}>
           <div role="dialog">contents</div>
-        </Tray>
+        </TestTray>
       </Provider>
     );
 
@@ -85,16 +91,16 @@ describe('Tray', function () {
 
     fireEvent.mouseDown(document.body);
     fireEvent.mouseUp(document.body);
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
   });
 
   it('hides the tray on blur when shouldCloseOnBlur is true', async function () {
-    let onClose = jest.fn();
+    let onOpenChange = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme}>
-        <Tray isOpen onClose={onClose} shouldCloseOnBlur>
+        <TestTray isOpen onOpenChange={onOpenChange} shouldCloseOnBlur>
           <Dialog>contents</Dialog>
-        </Tray>
+        </TestTray>
       </Provider>
     );
 
@@ -105,11 +111,25 @@ describe('Tray', function () {
 
     let dialog = await getByRole('dialog');
     expect(document.activeElement).toBe(dialog);
-    // The iOS Safari workaround blurs and refocuses the dialog after 0.5s
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledTimes(0);
 
     act(() => {dialog.blur();});
-    // (The iOS Safari workaround) + (the actual onClose) = 2
-    expect(onClose).toHaveBeenCalledTimes(2);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+  });
+
+  it('should have hidden dismiss buttons for screen readers', function () {
+    let onOpenChange = jest.fn();
+    let {getAllByRole} = render(
+      <Provider theme={theme}>
+        <TestTray isOpen onOpenChange={onOpenChange} />
+      </Provider>
+    );
+
+    let buttons = getAllByRole('button');
+    expect(buttons[0]).toHaveAttribute('aria-label', 'Dismiss');
+    expect(buttons[1]).toHaveAttribute('aria-label', 'Dismiss');
+
+    fireEvent.click(buttons[0]);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
   });
 });

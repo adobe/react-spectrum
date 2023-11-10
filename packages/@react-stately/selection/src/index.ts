@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useMultipleSelectionState';
-export * from './SelectionManager';
-export * from './types';
+export type {MultipleSelectionStateProps} from './useMultipleSelectionState';
+export type {FocusState, SingleSelectionState, MultipleSelectionState, MultipleSelectionManager} from './types';
+export {useMultipleSelectionState} from './useMultipleSelectionState';
+export {SelectionManager} from './SelectionManager';

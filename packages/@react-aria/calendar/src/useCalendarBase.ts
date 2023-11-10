@@ -11,43 +11,47 @@
  */
 
 import {announce} from '@react-aria/live-announcer';
-import {CalendarAria} from './types';
+import {AriaButtonProps} from '@react-types/button';
+import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {CalendarPropsBase} from '@react-types/calendar';
-import {CalendarStateBase} from '@react-stately/calendar';
-import {DOMProps} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId, useLabels, useUpdateEffect} from '@react-aria/utils';
+import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
+import {filterDOMProps, mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
+import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {KeyboardEvent, useRef} from 'react';
-import {toDate} from '@internationalized/date';
-import {useDateFormatter, useLocale, useMessageFormatter} from '@react-aria/i18n';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useState} from 'react';
 
-export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: CalendarStateBase, selectedDateDescription: string): CalendarAria {
-  let {
-    isReadOnly = false,
-    isDisabled = false
-  } = props;
+export interface CalendarAria {
+  /** Props for the calendar grouping element. */
+  calendarProps: DOMAttributes,
+  /** Props for the next button. */
+  nextButtonProps: AriaButtonProps,
+  /** Props for the previous button. */
+  prevButtonProps: AriaButtonProps,
+  /** Props for the error message element, if any. */
+  errorMessageProps: DOMAttributes,
+  /** A description of the visible date range, for use in the calendar title. */
+  title: string
+}
 
-  let domProps = filterDOMProps(props, {labelable: true});
-  let formatMessage = useMessageFormatter(intlMessages);
-  let monthFormatter = useDateFormatter({month: 'long', year: 'numeric'});
-  let calendarBody = useRef(null); // TODO: should this be in RSP?
-  let calendarId = useId(props.id);
-  let calendarTitleId = useId();
-  let captionId = useId();
-  let {direction} = useLocale();
+export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabelingProps, state: CalendarState | RangeCalendarState): CalendarAria {
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let domProps = filterDOMProps(props);
 
-  // Announce when the current month changes
+  let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);
+  let visibleRangeDescription = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, true);
+
+  // Announce when the visible date range changes
   useUpdateEffect(() => {
-    // announce the new month with a change from the Previous or Next button
+    // only when pressing the Previous or Next button
     if (!state.isFocused) {
-      announce(monthFormatter.format(toDate(state.currentMonth, state.timeZone)));
+      announce(visibleRangeDescription);
     }
-    // handle an update to the current month from the Previous or Next button
-    // rather than move focus, we announce the new month value
-  }, [state.currentMonth]);
+  }, [visibleRangeDescription]);
 
   // Announce when the selected value changes
+  let selectedDateDescription = useSelectedDateDescription(state);
   useUpdateEffect(() => {
     if (selectedDateDescription) {
       announce(selectedDateDescription, 'polite', 4000);
@@ -55,106 +59,57 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps, state: Cale
     // handle an update to the caption that describes the currently selected range, to announce the new value
   }, [selectedDateDescription]);
 
-  let onKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
-        state.selectFocusedDate();
-        break;
-      case 'PageUp':
-        e.preventDefault();
-        if (e.shiftKey) {
-          state.focusPreviousYear();
-        } else {
-          state.focusPreviousMonth();
-        }
-        break;
-      case 'PageDown':
-        e.preventDefault();
-        if (e.shiftKey) {
-          state.focusNextYear();
-        } else {
-          state.focusNextMonth();
-        }
-        break;
-      case 'End':
-        e.preventDefault();
-        state.focusEndOfMonth();
-        break;
-      case 'Home':
-        e.preventDefault();
-        state.focusStartOfMonth();
-        break;
-      case 'ArrowLeft':
-        e.preventDefault();
-        if (direction === 'rtl') {
-          state.focusNextDay();
-        } else {
-          state.focusPreviousDay();
-        }
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        state.focusPreviousWeek();
-        break;
-      case 'ArrowRight':
-        e.preventDefault();
-        if (direction === 'rtl') {
-          state.focusPreviousDay();
-        } else {
-          state.focusNextDay();
-        }
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        state.focusNextWeek();
-        break;
-    }
-  };
+  let errorMessageId = useSlotId([Boolean(props.errorMessage), props.isInvalid, props.validationState]);
 
-  // aria-label logic
+  // Pass the label to the child grid elements.
+  hookData.set(state, {
+    ariaLabel: props['aria-label'],
+    ariaLabelledBy: props['aria-labelledby'],
+    errorMessageId,
+    selectedDateDescription
+  });
+
+  // If the next or previous buttons become disabled while they are focused, move focus to the calendar body.
+  let [nextFocused, setNextFocused] = useState(false);
+  let nextDisabled = props.isDisabled || state.isNextVisibleRangeInvalid();
+  if (nextDisabled && nextFocused) {
+    setNextFocused(false);
+    state.setFocused(true);
+  }
+
+  let [previousFocused, setPreviousFocused] = useState(false);
+  let previousDisabled = props.isDisabled || state.isPreviousVisibleRangeInvalid();
+  if (previousDisabled && previousFocused) {
+    setPreviousFocused(false);
+    state.setFocused(true);
+  }
+
   let labelProps = useLabels({
-    id: calendarId,
-    'aria-label': props['aria-label'],
-    'aria-labelledby': `${props['aria-labelledby'] || ''} ${props['aria-label'] ? calendarId : ''} ${calendarTitleId}`
+    id: props['id'],
+    'aria-label': [props['aria-label'], visibleRangeDescription].filter(Boolean).join(', '),
+    'aria-labelledby': props['aria-labelledby']
   });
 
   return {
-    calendarProps: mergeProps(domProps, {
-      ...labelProps,
-      id: calendarId,
-      role: 'group'
+    calendarProps: mergeProps(domProps, labelProps, {
+      role: 'application',
+      'aria-describedby': props['aria-describedby'] || undefined
     }),
-    calendarTitleProps: {
-      id: calendarTitleId
-    },
     nextButtonProps: {
-      onPress: () => state.focusNextMonth(),
-      'aria-label': formatMessage('next'),
-      isDisabled: props.isDisabled || state.isNextMonthInvalid()
+      onPress: () => state.focusNextPage(),
+      'aria-label': stringFormatter.format('next'),
+      isDisabled: nextDisabled,
+      onFocusChange: setNextFocused
     },
     prevButtonProps: {
-      onPress: () => state.focusPreviousMonth(),
-      'aria-label': formatMessage('previous'),
-      isDisabled: props.isDisabled || state.isPreviousMonthInvalid()
+      onPress: () => state.focusPreviousPage(),
+      'aria-label': stringFormatter.format('previous'),
+      isDisabled: previousDisabled,
+      onFocusChange: setPreviousFocused
     },
-    calendarBodyProps: {
-      ref: calendarBody,
-      role: 'grid',
-      'aria-readonly': isReadOnly || null,
-      'aria-disabled': isDisabled || null,
-      'aria-labelledby': labelProps['aria-labelledby'],
-      'aria-describedby': selectedDateDescription ? captionId : null,
-      'aria-colcount': 7,
-      'aria-rowcount': state.weeksInMonth + 1,
-      onKeyDown,
-      onFocus: () => state.setFocused(true),
-      onBlur: () => state.setFocused(false)
+    errorMessageProps: {
+      id: errorMessageId
     },
-    captionProps: {
-      id: captionId,
-      children: selectedDateDescription
-    }
+    title
   };
 }

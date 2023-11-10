@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useMemo, useState} from 'react';
-import {Selection} from '@react-types/shared';
+import {Key, Selection} from '@react-types/shared';
+import {useMemo, useState} from 'react';
 
-interface ListOptions<T> {
+export interface ListOptions<T> {
   /** Initial items in the list. */
   initialItems?: T[],
   /** The keys for the initially selected items. */
@@ -105,14 +105,14 @@ export interface ListData<T> {
    * @param key - The key of the item to move the items before.
    * @param keys - The keys of the items to move.
    */
-  moveBefore(key: Key, keys: Key[]): void,
+  moveBefore(key: Key, keys: Iterable<Key>): void,
 
   /**
    * Moves one or more items after a given key.
    * @param key - The key of the item to move the items after.
    * @param keys - The keys of the items to move.
    */
-  moveAfter(key: Key, keys: Key[]): void,
+  moveAfter(key: Key, keys: Iterable<Key>): void,
 
   /**
    * Updates an item in the list.
@@ -126,6 +126,10 @@ export interface ListState<T> {
   items: T[],
   selectedKeys: Selection,
   filterText: string
+}
+
+interface CreateListOptions<T, C> extends ListOptions<T> {
+  cursor?: C
 }
 
 /**
@@ -162,8 +166,8 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
   };
 }
 
-export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
-  let {getKey} = opts;
+export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch: (updater: (state: ListState<T>) => ListState<T>) => void): Omit<ListData<T>, 'items' | 'selectedKeys' | 'getItem' | 'filterText'> {
+  let {cursor, getKey} = opts;
   return {
     setSelectedKeys(selectedKeys: Selection) {
       dispatch(state => ({
@@ -184,7 +188,11 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
       dispatch(state => {
         let index = state.items.findIndex(item => getKey(item) === key);
         if (index === -1) {
-          return;
+          if (state.items.length === 0) {
+            index = 0;
+          } else {
+            return state;
+          }
         }
 
         return insert(state, index, ...values);
@@ -194,7 +202,11 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
       dispatch(state => {
         let index = state.items.findIndex(item => getKey(item) === key);
         if (index === -1) {
-          return;
+          if (state.items.length === 0) {
+            index = 0;
+          } else {
+            return state;
+          }
         }
 
         return insert(state, index + 1, ...values);
@@ -211,9 +223,15 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
         let keySet = new Set(keys);
         let items = state.items.filter(item => !keySet.has(getKey(item)));
 
-        let selection = new Set(state.selectedKeys);
-        for (let key of keys) {
-          selection.delete(key);
+        let selection: Selection = 'all';
+        if (state.selectedKeys !== 'all') {
+          selection = new Set(state.selectedKeys);
+          for (let key of keys) {
+            selection.delete(key);
+          }
+        }
+        if (cursor == null && items.length === 0) {
+          selection = new Set();
         }
 
         return {
@@ -258,7 +276,7 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
         };
       });
     },
-    moveBefore(key: Key, keys: Key[]) {
+    moveBefore(key: Key, keys: Iterable<Key>) {
       dispatch(state => {
         let toIndex = state.items.findIndex(item => getKey(item) === key);
         if (toIndex === -1) {
@@ -266,18 +284,20 @@ export function createListActions<T>(opts: ListOptions<T>, dispatch: (updater: (
         }
 
         // Find indices of keys to move. Sort them so that the order in the list is retained.
-        let indices = keys.map(key => state.items.findIndex(item => getKey(item) === key)).sort();
+        let keyArray = Array.isArray(keys) ? keys : [...keys];
+        let indices = keyArray.map(key => state.items.findIndex(item => getKey(item) === key)).sort();
         return move(state, indices, toIndex);
       });
     },
-    moveAfter(key: Key, keys: Key[]) {
+    moveAfter(key: Key, keys: Iterable<Key>) {
       dispatch(state => {
         let toIndex = state.items.findIndex(item => getKey(item) === key);
         if (toIndex === -1) {
           return state;
         }
 
-        let indices = keys.map(key => state.items.findIndex(item => getKey(item) === key)).sort();
+        let keyArray = Array.isArray(keys) ? keys : [...keys];
+        let indices = keyArray.map(key => state.items.findIndex(item => getKey(item) === key)).sort();
         return move(state, indices, toIndex + 1);
       });
     },
@@ -314,11 +334,7 @@ function insert<T>(state: ListState<T>, index: number, ...values: T[]): ListStat
 
 function move<T>(state: ListState<T>, indices: number[], toIndex: number): ListState<T> {
   // Shift the target down by the number of items being moved from before the target
-  for (let index of indices) {
-    if (index < toIndex) {
-      toIndex--;
-    }
-  }
+  toIndex -= indices.filter(index => index < toIndex).length;
 
   let moves = indices.map(from => ({
     from,

@@ -1,0 +1,8 @@
+{
+  "deselectedItem": "{item} ikke valgt.",
+  "longPressToSelect": "Lav et langt tryk for at aktivere valgtilstand.",
+  "select": "Vælg",
+  "selectedAll": "Alle elementer valgt.",
+  "selectedCount": "{count, plural, =0 {Ingen elementer valgt} one {# element valgt} other {# elementer valgt}}.",
+  "selectedItem": "{item} valgt."
+}

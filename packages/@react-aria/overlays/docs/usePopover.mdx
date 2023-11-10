@@ -1,0 +1,346 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:@react-aria/overlays';
+import focusDocs from 'docs:@react-aria/focus';
+import dialogDocs from 'docs:@react-aria/dialog';
+import statelyDocs from 'docs:@react-stately/overlays';
+import typesDocs from 'docs:@react-types/overlays';
+import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+import packageData from '@react-aria/overlays/package.json';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import Anatomy from './popover-anatomy.svg';
+
+---
+category: Overlays
+keywords: [overlays, dialog, modal, aria]
+---
+
+# usePopover
+
+<PageDescription>{docs.exports.usePopover.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['usePopover']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/dialogmodal/'}
+  ]} />
+
+## API
+
+<FunctionAPI function={docs.exports.usePopover} links={docs.links} />
+
+## Features
+
+There is no built in way to create popovers in
+HTML. <TypeLink links={docs.links} type={docs.exports.usePopover} />,
+helps achieve accessible popovers that can be styled as needed.
+
+* **Accessible** – The trigger and popover are automatically associated semantically via ARIA. Content outside the popover is hidden from assistive technologies while it is open. The popover closes when interacting outside, or pressing the <Keyboard>Escape</Keyboard> key.
+* **Focus management** – Focus is moved into the popover on mount, and restored to the trigger element on unmount.
+* **Positioning** – The popover is positioned relative to the trigger element, and automatically flips and adjusts to avoid overlapping with the edge of the browser window. Scrolling is prevented outside the popover to avoid unintentionally repositioning or closing it.
+
+**Note**: `usePopover` only handles the overlay itself. It should be combined
+with [useDialog](useDialog.html) to create fully accessible popovers. Other overlays
+such as menus may also be placed in a popover.
+
+## Anatomy
+
+<Anatomy />
+
+A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger. The overlay may contain a [dialog](useDialog.html), or another element such as a [menu](useMenu.html) or [listbox](useListBox.html) when used within a component such as a [select](useSelect.html) or [combobox](useComboBox.html).
+
+`usePopover` returns props that you should spread onto the appropriate elements, as well as the computed placement of the popover relative to the trigger:
+
+<TypeContext.Provider value={docs.links}>
+  <InterfaceType properties={docs.links[docs.exports.usePopover.return.id].properties} />
+</TypeContext.Provider>
+
+State is managed by the <TypeLink links={statelyDocs.links} type={statelyDocs.exports.useOverlayTriggerState} />
+hook in `@react-stately/overlays`. The state object should be passed as an argument to `usePopover`.
+
+## Example
+
+This example shows how to build a typical popover overlay that is positioned relative to
+a trigger button. The content of the popover is a dialog, built
+with <TypeLink links={dialogDocs.links} type={dialogDocs.exports.useDialog} />. The `Dialog` component used in this example can also be reused within a [modal](useModalOverlay.html) or other types of overlays. The implementation is available below.
+
+The `Popover` component uses an &lt;<TypeLink links={docs.links} type={docs.exports.Overlay} />&gt; to render its contents in a React [Portal](https://reactjs.org/docs/portals.html) at the end of the document body, which ensures it is not clipped by other elements. It also acts as a focus scope, containing focus within the popover and restoring it to the trigger when it unmounts. <TypeLink links={docs.links} type={docs.exports.usePopover} /> handles positioning the popover relative to the trigger element, and closing it when the user interacts outside or presses the <Keyboard>Escape</Keyboard> key.
+
+<TypeLink links={docs.links} type={docs.exports.usePopover} /> also hides content outside the popover from screen readers, which is important since the surrounding content won't be in context of the original trigger due to the portal. To allow screen reader users to dismiss the popover without a keyboard (e.g. on mobile), visually hidden &lt;<TypeLink links={docs.links} type={docs.exports.DismissButton} />&gt; elements are added at the start and end of the popover. An underlay is also used to prevent scrolling and interacting with elements outside the popover with a pointer, to avoid unintentially repositioning or closing it.
+
+```tsx example export=true render=false
+import type {AriaPopoverProps} from 'react-aria';
+import type {OverlayTriggerState} from 'react-stately';
+import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
+
+interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
+  children: React.ReactNode,
+  state: OverlayTriggerState
+}
+
+function Popover({children, state, offset = 8, ...props}: PopoverProps) {
+  let popoverRef = React.useRef(null);
+  let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
+    ...props,
+    offset,
+    popoverRef
+  }, state);
+
+  return (
+    <Overlay>
+      <div {...underlayProps} className="underlay" />
+      <div
+        {...popoverProps}
+        ref={popoverRef}
+        className="popover">
+        <svg {...arrowProps} className="arrow" data-placement={placement} viewBox="0 0 12 12">
+          <path d="M0 0 L6 6 L12 0" />
+        </svg>
+        <DismissButton onDismiss={state.close} />
+        {children}
+        <DismissButton onDismiss={state.close} />
+      </div>
+    </Overlay>
+  );
+}
+```
+
+The above `Popover` component can be used as part of many different patterns, such as [ComboBox](useComboBox.html), [Select](useSelect.html), and [DatePicker](useDatePicker.html). To use it standalone, we need a trigger element. The below `PopoverTrigger` component uses the <TypeLink links={docs.links} type={docs.exports.useOverlayTrigger} /> hook to trigger the popover when a button is pressed. This hook also ensures that the button and popover are semantically connected via ARIA.
+
+```tsx example export=true render=false
+import {useOverlayTriggerState} from '@react-stately/overlays';
+import {useOverlayTrigger} from '@react-aria/overlays';
+
+// Reuse the Button from your component library. See below for details.
+import {Button} from 'your-component-library';
+
+function PopoverTrigger({label, children, ...props}) {
+  let ref = React.useRef(null);
+  let state = useOverlayTriggerState(props);
+  let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, ref);
+
+  return <>
+    <Button {...triggerProps} buttonRef={ref}>{label}</Button>
+    {state.isOpen &&
+      <Popover {...props} triggerRef={ref} state={state}>
+        {React.cloneElement(children, overlayProps)}
+      </Popover>
+    }
+  </>;
+}
+```
+
+Now, we can render an example popover containing a dialog.
+
+```tsx example
+// Reuse the Dialog from your component library. See below for details.
+import {Dialog} from 'your-component-library';
+
+<PopoverTrigger label="Open Popover">
+  <Dialog title="Popover title">
+    This is the content of the popover.
+  </Dialog>
+</PopoverTrigger>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.underlay {
+  position: fixed;
+  inset: 0;
+}
+
+.popover {
+  background: var(--page-background);
+  border: 1px solid var(--spectrum-global-color-gray-400);
+  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
+  border-radius: 6px;
+}
+
+.arrow {
+  position: absolute;
+  fill: var(--page-background);
+  stroke: var(--spectrum-global-color-gray-400);
+  stroke-width: 1px;
+  width: 12px;
+  height: 12px;
+}
+
+.arrow[data-placement=top] {
+  top: 100%;
+  transform: translateX(-50%);
+}
+
+.arrow[data-placement=bottom] {
+  bottom: 100%;
+  transform: translateX(-50%) rotate(180deg);
+}
+
+.arrow[data-placement=left] {
+  left: 100%;
+  transform: translateY(-50%) rotate(-90deg);
+}
+
+.arrow[data-placement=right] {
+  right: 100%;
+  transform: translateY(-50%) rotate(90deg);
+}
+```
+
+</details>
+
+### Dialog
+
+The `Dialog` component is rendered within the `Popover` component. It is built using the [useDialog](useDialog.html) hook, and can also be used in other overlay containers such as [modals](useModalOverlay.html).
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import type {AriaDialogProps} from '@react-aria/dialog';
+import {useDialog} from '@react-aria/dialog';
+
+interface DialogProps extends AriaDialogProps {
+  title?: React.ReactNode,
+  children: React.ReactNode
+}
+
+function Dialog({title, children, ...props}: DialogProps) {
+  let ref = React.useRef(null);
+  let {dialogProps, titleProps} = useDialog(props, ref);
+
+  return (
+    <div {...dialogProps} ref={ref} style={{padding: 30, maxWidth: 200, outline: 'none'}}>
+      {title &&
+        <h3 {...titleProps} style={{marginTop: 0}}>
+          {title}
+        </h3>
+      }
+      {children}
+    </div>
+  );
+}
+```
+
+</details>
+
+### Button
+
+The `Button` component is used in the above example to toggle the popover. It is built using the [useButton](useButton.html) hook, and can be shared with many other components.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
+
+```tsx example export=true render=false
+import {useButton} from '@react-aria/button';
+
+function Button(props) {
+  let ref = props.buttonRef;
+  let {buttonProps} = useButton(props, ref);
+  return <button {...buttonProps} ref={ref} style={props.style}>{props.children}</button>;
+}
+```
+
+</details>
+
+## Usage
+
+The following examples show how to use the `Popover` and `PopoverTrigger` components created in the above example.
+
+### Placement
+
+The popover's placement with respect to its anchor element can be adjusted using the `placement`
+prop. See <TypeLink links={typesDocs.links} type={typesDocs.links[typesDocs.exports.Placement.id]} /> for a full list of available placement combinations.
+
+```tsx example
+<div style={{ display: 'flex', gap: 8 }}>
+  <PopoverTrigger placement="start" label="⬅️">
+    <Dialog>In left-to-right, this is on the left. In right-to-left, this is on the right.</Dialog>
+  </PopoverTrigger>
+  <PopoverTrigger placement="top" label="⬆️">
+    <Dialog>This popover is above the button.</Dialog>
+  </PopoverTrigger>
+  <PopoverTrigger placement="bottom" label="⬇️">
+    <Dialog>This popover is below the button.</Dialog>
+  </PopoverTrigger>
+  <PopoverTrigger placement="end" label="➡️">
+    <Dialog>In left-to-right, this is on the right. In right-to-left, this is on the left.</Dialog>
+  </PopoverTrigger>
+</div>
+```
+
+### Offset and cross offset
+
+The popover's offset with respect to its anchor element can be adjusted using the `offset` and
+`crossOffset` props. The `offset` prop controls the spacing applied along the main axis between the element and its
+anchor element whereas the `crossOffset` prop handles the spacing applied along the cross axis.
+
+Below is a popover offset by an additional 50px above the trigger.
+
+```tsx example
+<PopoverTrigger placement="top" offset={50} label="Trigger">
+  <Dialog>
+    Offset by an additional 50px.
+  </Dialog>
+</PopoverTrigger>
+```
+
+Below is a popover cross offset by an additional 100px to the right of the trigger.
+
+```tsx example
+<PopoverTrigger placement="top" crossOffset={100} label="Trigger">
+  <Dialog>
+    Offset by an additional 100px.
+  </Dialog>
+</PopoverTrigger>
+```
+
+### Flipping
+
+By default, `usePopover` attempts to flip popovers on the main axis in situations where the original placement
+would cause it to render out of view. This can be overridden by setting `shouldFlip={false}`.
+To see the difference between the two options, scroll this page so that the example below is near the bottom of the window.
+
+```tsx example
+<PopoverTrigger placement="bottom" label="Default">
+  <Dialog>
+    This is a popover that will flip if it can't fully render below the button.
+  </Dialog>
+</PopoverTrigger>
+
+<PopoverTrigger placement="bottom" shouldFlip={false} label="shouldFlip=false">
+  <Dialog>
+    This is a popover that won't flip if it can't fully render below the button.
+  </Dialog>
+</PopoverTrigger>
+```
+
+### Container padding
+
+You can control the minimum padding required between the popover and the
+surrounding container via the `containerPadding` prop. This affects the positioning
+breakpoints that determine when it will attempt to flip.
+
+The example below will maintain at least 50px between the popover and the edge of the browser window.
+
+```tsx example
+<PopoverTrigger placement="top" containerPadding={50} label="Trigger">
+  <Dialog>
+    This is a popover.
+  </Dialog>
+</PopoverTrigger>
+```

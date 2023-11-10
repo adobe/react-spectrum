@@ -11,19 +11,28 @@
  */
 
 import {ColorSlider} from '../';
+import {Content} from '@react-spectrum/view';
+import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
-import {Meta, Story} from '@storybook/react';
+import {Heading} from '@react-spectrum/text';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {SpectrumColorSliderProps} from '@react-types/color';
 
 let states = [
   {isDisabled: true},
   {label: [null, 'custom label']},
-  {showValueLabel: false}
+  {showValueLabel: false},
+  {contextualHelp: (
+    <ContextualHelp>
+      <Heading>What is a segment?</Heading>
+      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+    </ContextualHelp>
+  )}
 ];
 
-let combinations = generatePowerset(states, (merged) => merged.label === null && merged.showValueLabel === false);
+let combinations = generatePowerset(states, (merged) => merged.label === null && (merged.showValueLabel === false || merged.contextualHelp));
 
 function shortName(key, value) {
   let returnVal = '';
@@ -50,7 +59,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: Story<SpectrumColorSliderProps> = (args) => (
+const Template: StoryFn<SpectrumColorSliderProps> = (args) => (
   <Grid columns={repeat(states.length, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -62,7 +71,7 @@ const Template: Story<SpectrumColorSliderProps> = (args) => (
   </Grid>
 );
 
-const VerticalTemplate: Story<SpectrumColorSliderProps> = (args) => (
+const VerticalTemplate: StoryFn<SpectrumColorSliderProps> = (args) => (
   <Grid columns={repeat(5, '1fr')} autoFlow="row" gap="size-300">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -74,30 +83,44 @@ const VerticalTemplate: Story<SpectrumColorSliderProps> = (args) => (
   </Grid>
 );
 
-export const PropChannelRed = Template.bind({});
-PropChannelRed.storyName = 'channel: red';
-PropChannelRed.args = {channel: 'red', defaultValue: '#7f0000'};
+export const PropChannelRed = {
+  render: Template,
+  name: 'channel: red',
+  args: {channel: 'red', defaultValue: '#7f0000'}
+};
 
-export const PropChannelAlpha = Template.bind({});
-PropChannelAlpha.storyName = 'channel: alpha';
-PropChannelAlpha.args = {channel: 'alpha', defaultValue: '#7f0000'};
+export const PropChannelAlpha = {
+  render: Template,
+  name: 'channel: alpha',
+  args: {channel: 'alpha', defaultValue: '#7f0000'}
+};
 
-export const PropChannelLightness = Template.bind({});
-PropChannelLightness.storyName = 'channel: lightness';
-PropChannelLightness.args = {channel: 'lightness', defaultValue: 'hsla(0, 100%, 50%, 0.5)'};
+export const PropChannelLightness = {
+  render: Template,
+  name: 'channel: lightness',
+  args: {channel: 'lightness', defaultValue: 'hsla(0, 100%, 50%, 0.5)'}
+};
 
-export const PropChannelBrightness = Template.bind({});
-PropChannelBrightness.storyName = 'channel: brightness';
-PropChannelBrightness.args = {channel: 'brightness', defaultValue: 'hsba(0, 100%, 50%, 0.5)'};
+export const PropChannelBrightness = {
+  render: Template,
+  name: 'channel: brightness',
+  args: {channel: 'brightness', defaultValue: 'hsba(0, 100%, 50%, 0.5)'}
+};
 
-export const PropVertical = VerticalTemplate.bind({});
-PropVertical.storyName = 'orientation: vertical';
-PropVertical.args = {channel: 'red', defaultValue: '#7f0000'};
+export const PropVertical = {
+  render: VerticalTemplate,
+  name: 'orientation: vertical',
+  args: {channel: 'red', defaultValue: '#7f0000'}
+};
 
-export const PropCustomWidth = Template.bind({});
-PropCustomWidth.storyName = 'custom width';
-PropCustomWidth.args = {channel: 'red', defaultValue: '#7f0000', width: 'size-3600'};
+export const PropCustomWidth = {
+  render: Template,
+  name: 'custom width',
+  args: {channel: 'red', defaultValue: '#7f0000', width: 'size-3600'}
+};
 
-export const PropCustomHeight = VerticalTemplate.bind({});
-PropCustomHeight.storyName = 'custom height';
-PropCustomHeight.args = {channel: 'red', defaultValue: '#7f0000', height: 'size-3600'};
+export const PropCustomHeight = {
+  render: VerticalTemplate,
+  name: 'custom height',
+  args: {channel: 'red', defaultValue: '#7f0000', height: 'size-3600'}
+};

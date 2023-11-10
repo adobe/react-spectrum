@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {ProgressCircle} from '../';
 import React, {CSSProperties} from 'react';
 import {SpectrumProgressCircleProps} from '@react-types/progress';
@@ -31,26 +31,55 @@ const grayedBoxStyle: CSSProperties = {
   justifyContent: 'center'
 };
 
-const Template = (): Story<SpectrumProgressCircleProps> => (args) => (
-  <ProgressCircle {...args} />
-);
+export const Default = {
+  args: {label: 'Progress label', value: 50}
+};
 
+export const SizeS = {
+  args: {...Default.args, size: 'S'}
+};
 
-export const Default = Template().bind({});
-Default.args = {label: 'Progress label', value: 50};
+export const SizeL = {
+  args: {...Default.args, size: 'L'}
+};
 
-export const SizeS = Template().bind({});
-SizeS.args = {...Default.args, size: 'S'};
+export const OverBackground = {
+  args: {...Default.args, variant: 'overBackground'},
+  decorators: [
+    (Story) => (
+      <div style={grayedBoxStyle}>
+        <Story />
+      </div>
+    )
+  ]
+};
 
-export const SizeL = Template().bind({});
-SizeL.args = {...Default.args, size: 'L'};
+export const StaticColorWhite = {
+  args: {...Default.args, staticColor: 'white'},
+  decorators: [
+    (Story) => (
+      <div style={grayedBoxStyle}>
+        <Story />
+      </div>
+    )
+  ]
+};
 
-export const OverBackground = Template().bind({});
-OverBackground.args = {...Default.args, variant: 'overBackground'};
-OverBackground.decorators = [(Story) => <div style={grayedBoxStyle}><Story /></div>];
+export const StaticColorBlack = {
+  args: {...Default.args, staticColor: 'black'},
+  decorators: [
+    (Story) => (
+      <div style={{...grayedBoxStyle, backgroundColor: 'rgb(206, 247, 243)'}}>
+        <Story />
+      </div>
+    )
+  ]
+};
 
-export const Value0 = Template().bind({});
-Value0.args = {...Default.args, value: 0};
+export const Value0 = {
+  args: {...Default.args, value: 0}
+};
 
-export const Value100 = Template().bind({});
-Value100.args = {...Default.args, value: 100};
+export const Value100 = {
+  args: {...Default.args, value: 100}
+};

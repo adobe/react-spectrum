@@ -11,29 +11,68 @@
  */
 
 import {Accordion, Item} from '../src';
-import React from 'react';
-import {storiesOf} from '@storybook/react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Key} from '@react-types/shared';
+import React, {useState} from 'react';
+import {SpectrumAccordionProps} from '@react-types/accordion';
 
-storiesOf('Accordion', module)
-  .add(
-    'default',
-    () => render({})
-  )
-  .add(
-    'disabledKeys: files, shared',
-    () => render({disabledKeys: ['files', 'shared']})
-  )
-  .add('defaultExpandedKeys: files', () => render({
-    defaultExpandedKeys: ['files']
-  }))
-  .add('disabledKeys: files, shared, defaultExpandedKeys: files', () => render({
-    defaultExpandedKeys: ['files'],
-    disabledKeys: ['files', 'shared']
-  }));
+type ItemType = {
+  key: Key,
+  title: string
+};
 
-function render(props = {}) {
+export default {
+  title: 'Accordion',
+  component: Accordion,
+  argTypes: {}
+} as ComponentMeta<typeof Accordion>;
+
+export type AccordionStory = ComponentStoryObj<typeof Accordion>;
+
+export const Default: AccordionStory = {
+  args: {
+    items: [
+      {key: 'files', title: 'Your files'},
+      {key: 'shared', title: 'Shared with you'},
+      {key: 'last', title: 'Last item'}
+    ]
+  },
+  render: (args) => (
+    <Accordion {...args}>
+      {(item) => <Item key={(item as ItemType).key} title={(item as ItemType).title}>{(item as ItemType).key}</Item>}
+    </Accordion>
+  )
+};
+
+export const DefaultExpandedKeys: AccordionStory = {
+  args: {...Default.args, defaultExpandedKeys: ['files']},
+  render: Default.render,
+  name: 'defaultExpandedKeys: files'
+};
+
+export const DisabledKeys: AccordionStory = {
+  args: {...Default.args, disabledKeys: ['files', 'shared']},
+  render: Default.render,
+  name: 'disabledKeys: files, shared'
+};
+
+export const DisabledDefaultExpandedKeys: AccordionStory = {
+  args: {...Default.args, defaultExpandedKeys: ['files'], disabledKeys: ['files', 'shared']},
+  render: Default.render,
+  name: 'defaultExpandedKeys: files, disabledKeys: files, shared'
+};
+
+export const ControlledExpandedKeys: AccordionStory = {
+  args: {...Default.args, defaultExpandedKeys: ['files']},
+  render: (args) => <ControlledAccordion {...args} />,
+  name: 'controlled ExpandedKeys'
+};
+
+
+function ControlledAccordion<T>(props: SpectrumAccordionProps<T>) {
+  let [openKeys, setOpenKeys] = useState<Set<Key>>(new Set(['files']));
   return (
-    <Accordion {...props} >
+    <Accordion {...props} expandedKeys={openKeys} onExpandedChange={setOpenKeys} >
       <Item key="files" title="Your files">
         files
       </Item>

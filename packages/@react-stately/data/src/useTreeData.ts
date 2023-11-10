@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useMemo, useState} from 'react';
+import {Key} from '@react-types/shared';
+import {useMemo, useState} from 'react';
 
-interface TreeOptions<T extends object> {
+export interface TreeOptions<T extends object> {
   /** Initial root items in the tree. */
   initialItems?: T[],
   /** The keys for the initially selected items. */
@@ -34,7 +35,7 @@ interface TreeNode<T extends object> {
   children: TreeNode<T>[]
 }
 
-interface TreeData<T extends object> {
+export interface TreeData<T extends object> {
   /** The root nodes in the tree. */
   items: TreeNode<T>[],
 
@@ -101,10 +102,10 @@ interface TreeData<T extends object> {
   /**
    * Moves an item within the tree.
    * @param key - The key of the item to move.
-   * @param toParentKey - The key of the new parent to insert into.
+   * @param toParentKey - The key of the new parent to insert into. `null` for the root.
    * @param index - The index within the new parent to insert at.
    */
-  move(key: Key, toParentKey: Key, index: number): void,
+  move(key: Key, toParentKey: Key | null, index: number): void,
 
   /**
    * Updates an item in the tree.
@@ -123,7 +124,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     initialItems = [],
     initialSelectedKeys,
     getKey = (item: any) => item.id || item.key,
-    getChildren = (item: any) => item.children || []
+    getChildren = (item: any) => item.children
   } = options;
   let map = useMemo(() => new Map<Key, TreeNode<T>>(), []);
 
@@ -133,7 +134,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   let [items, setItems] = useState(initialNodes);
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
-  function buildTree(initialItems: T[], parentKey?: Key | null) {
+  function buildTree(initialItems: T[] = [], parentKey?: Key | null) {
     return initialItems.map(item => {
       let node: TreeNode<T> = {
         key: getKey(item),
@@ -308,7 +309,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     removeSelectedItems() {
       this.remove(...selectedKeys);
     },
-    move(key: Key, toParentKey: Key, index: number) {
+    move(key: Key, toParentKey: Key | null, index: number) {
       setItems(items => {
         let node = map.get(key);
         if (!node) {
@@ -322,6 +323,16 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           parentKey: toParentKey
         };
 
+        // If parentKey is null, insert into the root.
+        if (toParentKey == null) {
+          return [
+            ...items.slice(0, index),
+            movedNode,
+            ...items.slice(index)
+          ];
+        }
+
+        // Otherwise, update the parent node and its ancestors.
         return updateTree(items, toParentKey, parentNode => ({
           key: parentNode.key,
           parentKey: parentNode.parentKey,

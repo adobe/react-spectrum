@@ -10,56 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
-import React from 'react';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {StatusLight} from '../';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('StatusLight', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'variant: celery',
-    () => render({variant: 'celery'})
-  ).add(
-    'variant: yellow',
-    () => render({variant: 'yellow'})
-  ).add(
-    'variant: fuchsia',
-    () => render({variant: 'fuchsia'})
-  ).add(
-    'variant: indigo',
-    () => render({variant: 'indigo'})
-  ).add(
-    'variant: seafoam',
-    () => render({variant: 'seafoam'})
-  ).add(
-    'variant: chartreuse',
-    () => render({variant: 'chartreuse'})
-  ).add(
-    'variant: magenta',
-    () => render({variant: 'magenta'})
-  ).add(
-    'variant: purple',
-    () => render({variant: 'purple'})
-  ).add(
-    'variant: neutral',
-    () => render({variant: 'neutral'})
-  ).add(
-    'variant: info',
-    () => render({variant: 'info'})
-  ).add(
-    'variant: positive',
-    () => render({variant: 'positive'})
-  ).add(
-    'variant: notice',
-    () => render({variant: 'notice'})
-  ).add(
-    'variant: negative',
-    () => render({variant: 'negative'})
-  ).add(
-    'isDisabled: true',
-    () => render({variant: 'positive', isDisabled: true})
-  );
+type StatusLightStory = ComponentStoryObj<typeof StatusLight>;
 
-function render(props: any = {}) {
-  return <StatusLight {...props}>Status light of love</StatusLight>;
-}
+export default {
+  title: 'StatusLight',
+  component: StatusLight,
+  argTypes: {
+    variant: {
+      control: {
+        type: 'select',
+        options: ['positive', 'negative', 'notice', 'info', 'neutral', 'celery', 'chartreuse', 'yellow', 'magenta', 'fuchsia', 'purple', 'indigo', 'seafoam']
+      }
+    },
+    isDisabled: {
+      control: 'boolean'
+    }
+  }
+} as ComponentMeta<typeof StatusLight>;
+
+export const Default: StatusLightStory = {
+  args: {children: 'Status light of love', variant: 'positive'},
+  name: 'Default'
+};

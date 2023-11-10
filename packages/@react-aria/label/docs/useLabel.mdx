@@ -1,22 +1,18 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/label';
-import {FunctionAPI, HeaderInfo} from '@react-spectrum/docs';
+import {FunctionAPI, HeaderInfo, PageDescription} from '@react-spectrum/docs';
 import packageData from '@react-aria/label/package.json';
-
-```tsx import
-import {useLabel} from '@react-aria/label';
-```
 
 ---
 category: Utilities
@@ -25,7 +21,7 @@ keywords: [label, form, aria]
 
 # useLabel
 
-<p>{docs.exports.useLabel.description}</p>
+<PageDescription>{docs.exports.useLabel.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
@@ -41,6 +37,8 @@ The `useLabel` hook associates a label with a field. It automatically handles
 creating an id for the field and associates the label with it.
 
 ```tsx example
+import {useLabel} from '@react-aria/label';
+
 function ColorField(props) {
   let {labelProps, fieldProps} = useLabel(props);
 

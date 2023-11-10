@@ -1,12 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {ActionButton} from '@react-spectrum/button';
 import addons, { makeDecorator } from '@storybook/addons';
-import {Content} from '@react-spectrum/view';
 import {getQueryParams} from '@storybook/client-api';
 import {Provider} from '@react-spectrum/provider';
-import {Text} from '@react-spectrum/text';
-import {themes, defaultTheme} from '../../constants';
-import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
+import {expressThemes, themes, defaultTheme} from '../../constants';
 
 document.body.style.margin = '0';
 
@@ -21,11 +17,11 @@ function ProviderUpdater(props) {
   let [localeValue, setLocale] = useState(providerValuesFromUrl.locale || undefined);
   let [themeValue, setTheme] = useState(providerValuesFromUrl.theme || undefined);
   let [scaleValue, setScale] = useState(providerValuesFromUrl.scale || undefined);
-  let [toastPositionValue, setToastPosition] = useState(providerValuesFromUrl.toastPosition || 'bottom');
-  let [storyReady, setStoryReady] = useState(window.parent === window); // reduce content flash because it takes a moment to get the provider details
+  let [expressValue, setExpress] = useState(providerValuesFromUrl.express === 'true');
+  let [storyReady, setStoryReady] = useState(window.parent === window || window.parent !== window.top); // reduce content flash because it takes a moment to get the provider details
   // Typically themes are provided with both light + dark, and both scales.
   // To build our selector to see all themes, we need to hack it a bit.
-  let theme = themes[themeValue] || defaultTheme;
+  let theme = (expressValue ? expressThemes : themes)[themeValue || 'light'] || defaultTheme;
   let colorScheme = themeValue && themeValue.replace(/est$/, '');
   useEffect(() => {
     let channel = addons.getChannel();
@@ -33,7 +29,7 @@ function ProviderUpdater(props) {
       setLocale(event.locale);
       setTheme(event.theme === 'Auto' ? undefined : event.theme);
       setScale(event.scale === 'Auto' ? undefined : event.scale);
-      setToastPosition(event.toastPosition);
+      setExpress(event.express);
       setStoryReady(true);
     };
 
@@ -44,19 +40,21 @@ function ProviderUpdater(props) {
     };
   }, []);
 
-  return (
-    <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue} toastPlacement={toastPositionValue}>
-      <div style={{position: 'absolute', paddingTop: '20px', paddingLeft: '20px', paddingRight: '20px'}}>
-        {props.context.parameters.note && (<DialogTrigger type="popover">
-          <ActionButton>Note</ActionButton>
-          <Dialog>
-            <Content><Text>{props.context.parameters.note}</Text></Content>
-          </Dialog>
-        </DialogTrigger>)}
-      </div>
-      {storyReady && props.children}
-    </Provider>
-  );
+  if (props.options.mainElement == null) {
+    return (
+      <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue}>
+        <main>
+          {storyReady && props.children}
+        </main>
+      </Provider>
+    );
+  } else {
+    return (
+      <Provider theme={theme} colorScheme={colorScheme} scale={scaleValue} locale={localeValue}>
+        {storyReady && props.children}
+      </Provider>
+    );
+  }
 }
 
 export const withProviderSwitcher = makeDecorator({

@@ -12,8 +12,9 @@
 
 import {DialogContext} from './context';
 import {Modal} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef} from 'react';
+import React, {ReactElement, useState} from 'react';
 import {SpectrumDialogContainerProps} from '@react-types/dialog';
+import {useOverlayTriggerState} from '@react-stately/overlays';
 
 /**
  * A DialogContainer accepts a single Dialog as a child, and manages showing and hiding
@@ -34,10 +35,19 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
     throw new Error('Only a single child can be passed to DialogContainer.');
   }
 
-  let lastChild = useRef<ReactElement>(null);
-  let child = React.isValidElement(childArray[0]) ? childArray[0] : null;
-  if (child) {
-    lastChild.current = child;
+  let [lastChild, setLastChild] = useState<ReactElement | null>(null);
+
+  // React.Children.toArray mutates the children, and we need them to be stable
+  // between renders so that the lastChild comparison works.
+  let child = null;
+  if (Array.isArray(children)) {
+    child = children.find(React.isValidElement);
+  } else if (React.isValidElement(children)) {
+    child = children;
+  }
+
+  if (child && child !== lastChild) {
+    setLastChild(child);
   }
 
   let context = {
@@ -46,15 +56,23 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
     isDismissable
   };
 
+  let state = useOverlayTriggerState({
+    isOpen: !!child,
+    onOpenChange: isOpen => {
+      if (!isOpen) {
+        onDismiss();
+      }
+    }
+  });
+
   return (
     <Modal
-      isOpen={!!child}
-      onClose={onDismiss}
+      state={state}
       type={type}
       isDismissable={isDismissable}
       isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
       <DialogContext.Provider value={context}>
-        {lastChild.current}
+        {lastChild}
       </DialogContext.Provider>
     </Modal>
   );

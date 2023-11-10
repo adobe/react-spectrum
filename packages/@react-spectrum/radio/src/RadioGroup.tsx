@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef, LabelPosition} from '@react-types/shared';
-import {Label} from '@react-spectrum/label';
-import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
+import {classNames, useDOMRef} from '@react-spectrum/utils';
+import {DOMRef} from '@react-types/shared';
+import {Field} from '@react-spectrum/label';
 import {RadioContext} from './context';
 import React from 'react';
 import {SpectrumRadioGroupProps} from '@react-types/radio';
@@ -23,59 +22,28 @@ import {useProviderProps} from '@react-spectrum/provider';
 import {useRadioGroup} from '@react-aria/radio';
 import {useRadioGroupState} from '@react-stately/radio';
 
-function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>) {
+function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
   let {
     isEmphasized,
-    isRequired,
-    necessityIndicator,
-    label,
-    labelPosition = 'top' as LabelPosition,
-    labelAlign,
-    validationState,
     children,
-    orientation = 'vertical',
-    ...otherProps
+    orientation = 'vertical'
   } = props;
-  let domRef = useDOMRef(ref);
-  let {styleProps} = useStyleProps(otherProps);
 
+  let domRef = useDOMRef(ref);
   let state = useRadioGroupState(props);
-  let {radioGroupProps, labelProps} = useRadioGroup(props, state);
+  let {radioGroupProps, ...otherProps} = useRadioGroup(props, state);
 
   return (
-    <div
-      {...styleProps}
-      {...radioGroupProps}
-      className={
-        classNames(
-          styles,
-          'spectrum-FieldGroup',
-          {
-            'spectrum-FieldGroup--positionSide': labelPosition === 'side'
-          },
-          // This is so radio works inside a <Form>
-          classNames(
-            labelStyles,
-            'spectrum-Field'
-          ),
-          styleProps.className
-        )
-      }
-      ref={domRef}>
-      {label &&
-        <Label
-          {...labelProps}
-          elementType="span"
-          labelPosition={labelPosition}
-          labelAlign={labelAlign}
-          isRequired={isRequired}
-          necessityIndicator={necessityIndicator}>
-          {label}
-        </Label>
-      }
+    <Field
+      {...props}
+      {...otherProps}
+      ref={domRef}
+      wrapperClassName={classNames(styles, 'spectrum-FieldGroup')}
+      elementType="span">
       <div
+        {...radioGroupProps}
         className={
           classNames(
             styles,
@@ -88,14 +56,12 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLDivElement>)
         <RadioContext.Provider
           value={{
             isEmphasized,
-            isRequired,
-            validationState,
             state
           }}>
           {children}
         </RadioContext.Provider>
       </div>
-    </div>
+    </Field>
   );
 }
 

@@ -11,87 +11,140 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {CalendarAria} from '@react-aria/calendar';
+import {AriaButtonProps} from '@react-types/button';
+import {CalendarMonth} from './CalendarMonth';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {CalendarTableBody} from './CalendarTableBody';
-import {CalendarTableHeader} from './CalendarTableHeader';
 import ChevronLeft from '@spectrum-icons/ui/ChevronLeftLarge';
 import ChevronRight from '@spectrum-icons/ui/ChevronRightLarge';
 import {classNames, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, StyleProps} from '@react-types/shared';
-import React from 'react';
+import {HelpText} from '@react-spectrum/label';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import React, {HTMLAttributes, RefObject} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
-import {toDate} from '@internationalized/date';
-import {useDateFormatter, useLocale} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useDateFormatter, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
-interface CalendarBaseProps extends CalendarPropsBase, DOMProps, StyleProps {
-  state: CalendarState | RangeCalendarState,
-  aria: CalendarAria
+interface CalendarBaseProps<T extends CalendarState | RangeCalendarState> extends CalendarPropsBase, DOMProps, StyleProps {
+  state: T,
+  visibleMonths?: number,
+  calendarProps: HTMLAttributes<HTMLElement>,
+  nextButtonProps: AriaButtonProps,
+  prevButtonProps: AriaButtonProps,
+  errorMessageProps: HTMLAttributes<HTMLElement>,
+  calendarRef: RefObject<HTMLDivElement>
 }
 
-export function CalendarBase(props: CalendarBaseProps) {
-  props = useProviderProps(props);
+export function CalendarBase<T extends CalendarState | RangeCalendarState>(props: CalendarBaseProps<T>) {
   let {
     state,
-    aria,
-    ...otherProps
+    calendarProps,
+    nextButtonProps,
+    prevButtonProps,
+    errorMessageProps,
+    calendarRef: ref,
+    visibleMonths = 1
   } = props;
+  let {styleProps} = useStyleProps(props);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let {direction} = useLocale();
+  let currentMonth = state.visibleRange.start;
   let monthDateFormatter = useDateFormatter({
     month: 'long',
     year: 'numeric',
-    era: state.currentMonth.calendar.identifier !== 'gregory' ? 'long' : undefined,
-    calendar: state.currentMonth.calendar.identifier
+    era: currentMonth.calendar.identifier === 'gregory' && currentMonth.era === 'BC' ? 'short' : undefined,
+    calendar: currentMonth.calendar.identifier,
+    timeZone: state.timeZone
   });
-  let {
-    calendarProps,
-    calendarTitleProps,
-    nextButtonProps,
-    prevButtonProps,
-    calendarBodyProps,
-    captionProps
-  } = aria;
-  let {direction} = useLocale();
-  let {styleProps} = useStyleProps(otherProps);
+
+  let titles = [];
+  let calendars = [];
+  for (let i = 0; i < visibleMonths; i++) {
+    let d = currentMonth.add({months: i});
+    titles.push(
+      <div key={i} className={classNames(styles, 'spectrum-Calendar-monthHeader')}>
+        {i === 0 &&
+          <ActionButton
+            {...prevButtonProps}
+            UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
+            isQuiet>
+            {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
+          </ActionButton>
+        }
+        <h2
+          // We have a visually hidden heading describing the entire visible range,
+          // and the calendar itself describes the individual month
+          // so we don't need to repeat that here for screen reader users.
+          aria-hidden
+          className={classNames(styles, 'spectrum-Calendar-title')}>
+          {monthDateFormatter.format(d.toDate(state.timeZone))}
+        </h2>
+        {i === visibleMonths - 1 &&
+          <ActionButton
+            {...nextButtonProps}
+            UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
+            isQuiet>
+            {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
+          </ActionButton>
+        }
+      </div>
+    );
+
+    calendars.push(
+      <CalendarMonth
+        {...props}
+        key={i}
+        state={state}
+        startDate={d} />
+    );
+  }
 
   return (
     <div
       {...styleProps}
       {...calendarProps}
+      ref={ref}
       className={
         classNames(styles,
           'spectrum-Calendar',
           styleProps.className
         )
       }>
+      {/* Add a screen reader only description of the entire visible range rather than
+        * a separate heading above each month grid. This is placed first in the DOM order
+        * so that it is the first thing a touch screen reader user encounters.
+        * In addition, VoiceOver on iOS does not announce the aria-label of the grid
+        * elements, so the aria-label of the Calendar is included here as well. */}
+      <VisuallyHidden>
+        <h2>{calendarProps['aria-label']}</h2>
+      </VisuallyHidden>
       <div className={classNames(styles, 'spectrum-Calendar-header')}>
-        <h2
-          {...calendarTitleProps}
-          className={classNames(styles, 'spectrum-Calendar-title')}>
-          {monthDateFormatter.format(toDate(state.currentMonth, state.timeZone))}
-        </h2>
-        <ActionButton
-          {...prevButtonProps}
-          UNSAFE_className={classNames(styles, 'spectrum-Calendar-prevMonth')}
-          isQuiet>
-          {direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}
-        </ActionButton>
-        <ActionButton
-          {...nextButtonProps}
-          UNSAFE_className={classNames(styles, 'spectrum-Calendar-nextMonth')}
-          isQuiet>
-          {direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}
-        </ActionButton>
+        {titles}
       </div>
-      <table
-        {...calendarBodyProps}
-        className={classNames(styles, 'spectrum-Calendar-body', 'spectrum-Calendar-table')}>
-        <VisuallyHidden elementType="caption" {...captionProps} />
-        <CalendarTableHeader weekDays={state.weekDays} />
-        <CalendarTableBody state={state} />
-      </table>
+      <div className={classNames(styles, 'spectrum-Calendar-months')}>
+        {calendars}
+      </div>
+      {/* For touch screen readers, add a visually hidden next button after the month grid
+        * so it's easy to navigate after reaching the end without going all the way
+        * back to the start of the month. */}
+      <VisuallyHidden>
+        <button
+          aria-label={nextButtonProps['aria-label']}
+          disabled={nextButtonProps.isDisabled}
+          onClick={() => state.focusNextPage()}
+          tabIndex={-1} />
+      </VisuallyHidden>
+      {state.isValueInvalid &&
+        <HelpText
+          showErrorIcon
+          errorMessage={props.errorMessage || stringFormatter.format('invalidSelection', {selectedCount: 'highlightedRange' in state ? 2 : 1})}
+          errorMessageProps={errorMessageProps}
+          isInvalid
+          // Intentionally a global class name so it can be targeted in DatePicker CSS...
+          UNSAFE_className="spectrum-Calendar-helpText" />
+      }
     </div>
   );
 }

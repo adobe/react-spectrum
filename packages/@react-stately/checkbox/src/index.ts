@@ -10,4 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-export * from './useCheckboxGroupState';
+export {useCheckboxGroupState} from './useCheckboxGroupState';
+
+export type {CheckboxGroupProps} from '@react-types/checkbox';
+export type {CheckboxGroupState} from './useCheckboxGroupState';

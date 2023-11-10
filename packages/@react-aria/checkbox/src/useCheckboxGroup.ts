@@ -11,17 +11,21 @@
  */
 
 import {AriaCheckboxGroupProps} from '@react-types/checkbox';
-import {checkboxGroupNames} from './utils';
+import {checkboxGroupData} from './utils';
 import {CheckboxGroupState} from '@react-stately/checkbox';
+import {DOMAttributes, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {HTMLAttributes} from 'react';
-import {useLabel} from '@react-aria/label';
+import {useField} from '@react-aria/label';
 
-interface CheckboxGroupAria {
+export interface CheckboxGroupAria extends ValidationResult {
   /** Props for the checkbox group wrapper element. */
-  groupProps: HTMLAttributes<HTMLElement>,
+  groupProps: DOMAttributes,
   /** Props for the checkbox group's visible label (if any). */
-  labelProps: HTMLAttributes<HTMLElement>
+  labelProps: DOMAttributes,
+  /** Props for the checkbox group description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the checkbox group error message element, if any. */
+  errorMessageProps: DOMAttributes
 }
 
 /**
@@ -31,19 +35,26 @@ interface CheckboxGroupAria {
  * @param state - State for the checkbox group, as returned by `useCheckboxGroupState`.
  */
 export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxGroupState): CheckboxGroupAria {
-  let {isDisabled, name} = props;
+  let {isDisabled, name, validationBehavior = 'aria'} = props;
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
 
-  let {labelProps, fieldProps} = useLabel({
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     // Checkbox group is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
-    labelElementType: 'span'
+    labelElementType: 'span',
+    isInvalid,
+    errorMessage: props.errorMessage || validationErrors
+  });
+
+  checkboxGroupData.set(state, {
+    name,
+    descriptionId: descriptionProps.id,
+    errorMessageId: errorMessageProps.id,
+    validationBehavior
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
-
-  // Pass name prop from group to all items by attaching to the state.
-  checkboxGroupNames.set(state, name);
 
   return {
     groupProps: mergeProps(domProps, {
@@ -51,6 +62,11 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
       'aria-disabled': isDisabled || undefined,
       ...fieldProps
     }),
-    labelProps
+    labelProps,
+    descriptionProps,
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

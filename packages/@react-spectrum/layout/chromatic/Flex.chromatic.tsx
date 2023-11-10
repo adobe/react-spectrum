@@ -12,10 +12,22 @@
 
 import {Flex} from '@react-spectrum/layout';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 import {View} from '@react-spectrum/view';
 
-let baseColors = ['celery', 'chartreuse', 'yellow', 'magenta', 'fuchsia', 'purple', 'indigo', 'seafoam', 'red', 'orange', 'green', 'blue'];
+let baseColors = [
+  'celery',
+  'chartreuse',
+  'yellow',
+  'magenta',
+  'fuchsia',
+  'purple',
+  'indigo',
+  'seafoam',
+  'red',
+  'orange',
+  'green',
+  'blue'
+];
 let colors = [];
 for (let color of baseColors) {
   for (let i = 4; i <= 7; i++) {
@@ -23,142 +35,172 @@ for (let color of baseColors) {
   }
 }
 
-storiesOf('Flex', module)
-  // we do not care about colors for this one, knowing it lays out correctly is all
-  .addParameters({chromaticProvider: {colorSchemes: ['light']}})
-  .add(
-    'Vertical stack with gap',
-    () => (
-      <Flex direction="column" width="size-2000" gap="size-100">
-        <View backgroundColor="celery-600" height="size-800" />
-        <View backgroundColor="blue-600" height="size-800" />
-        <View backgroundColor="magenta-600" height="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'Horizontal stack with gap',
-    () => (
-      <Flex direction="row" height="size-800" gap="size-100">
-        <View backgroundColor="celery-600" width="size-800" />
-        <View backgroundColor="blue-600" width="size-800" />
-        <View backgroundColor="magenta-600" width="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'Wrapping with gap',
-    () => (
-      <View maxWidth="80%" borderWidth="thin" borderColor="dark">
-        <Flex direction="row" gap="size-100" wrap>
-          {colors.map(color =>
-            <View key={color} backgroundColor={color} width="size-800" height="size-800" />
-          )}
-        </Flex>
-      </View>
-    )
-  )
-  .add(
-    'Nested flex with gap',
-    () => (
-      <Flex direction="column" gap="size-150">
-        <View backgroundColor="celery-600" height="size-800" />
-        <Flex direction="row" height="size-800" gap="size-100">
-          <View backgroundColor="indigo-600" width="size-800" />
-          <View backgroundColor="seafoam-600" width="size-800" />
-          <View backgroundColor="blue-600" width="size-800" />
-        </Flex>
-        <View backgroundColor="magenta-600" height="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'Align center',
-    () => (
-      <Flex direction="row" gap="size-100" alignItems="center">
-        <View backgroundColor="celery-600"  width="size-800" height="size-800" />
-        <View backgroundColor="blue-600"  width="size-800" height="size-2000" />
-        <View backgroundColor="magenta-600" width="size-800" height="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'Align end',
-    () => (
-      <Flex direction="row" gap="size-100" alignItems="end">
-        <View backgroundColor="celery-600"  width="size-800" height="size-800" />
-        <View backgroundColor="blue-600"  width="size-800" height="size-2000" />
-        <View backgroundColor="magenta-600" width="size-800" height="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'Justify start',
-    () => (
-      <Flex direction="row" gap="size-100" justifyContent="start" width="80%">
-        <View backgroundColor="celery-600"  width="size-800" height="size-800" />
-        <View backgroundColor="blue-600"  width="size-800" height="size-800" />
-        <View backgroundColor="magenta-600" width="size-800" height="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'Justify center',
-    () => (
-      <Flex direction="row" gap="size-100" justifyContent="center" width="80%">
-        <View backgroundColor="celery-600"  width="size-800" height="size-800" />
-        <View backgroundColor="blue-600"  width="size-800" height="size-800" />
-        <View backgroundColor="magenta-600" width="size-800" height="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'Justify end',
-    () => (
-      <Flex direction="row" gap="size-100" justifyContent="end" width="80%">
-        <View backgroundColor="celery-600"  width="size-800" height="size-800" />
-        <View backgroundColor="blue-600"  width="size-800" height="size-800" />
-        <View backgroundColor="magenta-600" width="size-800" height="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'Justify space-around',
-    () => (
-      <Flex direction="row" gap="size-100" justifyContent="space-around" width="80%">
-        <View backgroundColor="celery-600"  width="size-800" height="size-800" />
-        <View backgroundColor="blue-600"  width="size-800" height="size-800" />
-        <View backgroundColor="magenta-600" width="size-800" height="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'Justify space-between',
-    () => (
-      <Flex direction="row" gap="size-100" justifyContent="space-between" width="80%">
-        <View backgroundColor="celery-600"  width="size-800" height="size-800" />
-        <View backgroundColor="blue-600"  width="size-800" height="size-800" />
-        <View backgroundColor="magenta-600" width="size-800" height="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'Justify space-evenly',
-    () => (
-      <Flex direction="row" gap="size-100" justifyContent="space-evenly" width="80%">
-        <View backgroundColor="celery-600"  width="size-800" height="size-800" />
-        <View backgroundColor="blue-600"  width="size-800" height="size-800" />
-        <View backgroundColor="magenta-600" width="size-800" height="size-800" />
-      </Flex>
-    )
-  )
-  .add(
-    'ordered',
-    () => (
-      <Flex direction="row" gap="size-100" justifyContent="space-evenly" width="80%">
-        <View backgroundColor="celery-600" order={2} width="size-800" height="size-800" />
-        <View backgroundColor="blue-600" width="size-800" height="size-800" />
-        <View backgroundColor="magenta-600" order={1} width="size-800" height="size-800" />
-      </Flex>
-    )
-  );
+export default {
+  title: 'Flex',
+
+  parameters: {
+    chromaticProvider: {colorSchemes: ['light']}
+  }
+};
+
+export const VerticalStackWithGap = () => (
+  <Flex direction="column" width="size-2000" gap="size-100">
+    <View backgroundColor="celery-600" height="size-800" />
+    <View backgroundColor="blue-600" height="size-800" />
+    <View backgroundColor="magenta-600" height="size-800" />
+  </Flex>
+);
+
+VerticalStackWithGap.story = {
+  name: 'Vertical stack with gap'
+};
+
+export const HorizontalStackWithGap = () => (
+  <Flex direction="row" height="size-800" gap="size-100">
+    <View backgroundColor="celery-600" width="size-800" />
+    <View backgroundColor="blue-600" width="size-800" />
+    <View backgroundColor="magenta-600" width="size-800" />
+  </Flex>
+);
+
+HorizontalStackWithGap.story = {
+  name: 'Horizontal stack with gap'
+};
+
+export const WrappingWithGap = () => (
+  <View maxWidth="80%" borderWidth="thin" borderColor="dark">
+    <Flex direction="row" gap="size-100" wrap>
+      {colors.map((color) => (
+        <View key={color} backgroundColor={color} width="size-800" height="size-800" />
+      ))}
+    </Flex>
+  </View>
+);
+
+WrappingWithGap.story = {
+  name: 'Wrapping with gap'
+};
+
+export const NestedFlexWithGap = () => (
+  <Flex direction="column" gap="size-150">
+    <View backgroundColor="celery-600" height="size-800" />
+    <Flex direction="row" height="size-800" gap="size-100">
+      <View backgroundColor="indigo-600" width="size-800" />
+      <View backgroundColor="seafoam-600" width="size-800" />
+      <View backgroundColor="blue-600" width="size-800" />
+    </Flex>
+    <View backgroundColor="magenta-600" height="size-800" />
+  </Flex>
+);
+
+NestedFlexWithGap.story = {
+  name: 'Nested flex with gap'
+};
+
+export const AlignCenter = () => (
+  <Flex direction="row" gap="size-100" alignItems="center">
+    <View backgroundColor="celery-600" width="size-800" height="size-800" />
+    <View backgroundColor="blue-600" width="size-800" height="size-2000" />
+    <View backgroundColor="magenta-600" width="size-800" height="size-800" />
+  </Flex>
+);
+
+AlignCenter.story = {
+  name: 'Align center'
+};
+
+export const AlignEnd = () => (
+  <Flex direction="row" gap="size-100" alignItems="end">
+    <View backgroundColor="celery-600" width="size-800" height="size-800" />
+    <View backgroundColor="blue-600" width="size-800" height="size-2000" />
+    <View backgroundColor="magenta-600" width="size-800" height="size-800" />
+  </Flex>
+);
+
+AlignEnd.story = {
+  name: 'Align end'
+};
+
+export const JustifyStart = () => (
+  <Flex direction="row" gap="size-100" justifyContent="start" width="80%">
+    <View backgroundColor="celery-600" width="size-800" height="size-800" />
+    <View backgroundColor="blue-600" width="size-800" height="size-800" />
+    <View backgroundColor="magenta-600" width="size-800" height="size-800" />
+  </Flex>
+);
+
+JustifyStart.story = {
+  name: 'Justify start'
+};
+
+export const JustifyCenter = () => (
+  <Flex direction="row" gap="size-100" justifyContent="center" width="80%">
+    <View backgroundColor="celery-600" width="size-800" height="size-800" />
+    <View backgroundColor="blue-600" width="size-800" height="size-800" />
+    <View backgroundColor="magenta-600" width="size-800" height="size-800" />
+  </Flex>
+);
+
+JustifyCenter.story = {
+  name: 'Justify center'
+};
+
+export const JustifyEnd = () => (
+  <Flex direction="row" gap="size-100" justifyContent="end" width="80%">
+    <View backgroundColor="celery-600" width="size-800" height="size-800" />
+    <View backgroundColor="blue-600" width="size-800" height="size-800" />
+    <View backgroundColor="magenta-600" width="size-800" height="size-800" />
+  </Flex>
+);
+
+JustifyEnd.story = {
+  name: 'Justify end'
+};
+
+export const JustifySpaceAround = () => (
+  <Flex direction="row" gap="size-100" justifyContent="space-around" width="80%">
+    <View backgroundColor="celery-600" width="size-800" height="size-800" />
+    <View backgroundColor="blue-600" width="size-800" height="size-800" />
+    <View backgroundColor="magenta-600" width="size-800" height="size-800" />
+  </Flex>
+);
+
+JustifySpaceAround.story = {
+  name: 'Justify space-around'
+};
+
+export const JustifySpaceBetween = () => (
+  <Flex direction="row" gap="size-100" justifyContent="space-between" width="80%">
+    <View backgroundColor="celery-600" width="size-800" height="size-800" />
+    <View backgroundColor="blue-600" width="size-800" height="size-800" />
+    <View backgroundColor="magenta-600" width="size-800" height="size-800" />
+  </Flex>
+);
+
+JustifySpaceBetween.story = {
+  name: 'Justify space-between'
+};
+
+export const JustifySpaceEvenly = () => (
+  <Flex direction="row" gap="size-100" justifyContent="space-evenly" width="80%">
+    <View backgroundColor="celery-600" width="size-800" height="size-800" />
+    <View backgroundColor="blue-600" width="size-800" height="size-800" />
+    <View backgroundColor="magenta-600" width="size-800" height="size-800" />
+  </Flex>
+);
+
+JustifySpaceEvenly.story = {
+  name: 'Justify space-evenly'
+};
+
+export const Ordered = () => (
+  <Flex direction="row" gap="size-100" justifyContent="space-evenly" width="80%">
+    <View backgroundColor="celery-600" order={2} width="size-800" height="size-800" />
+    <View backgroundColor="blue-600" width="size-800" height="size-800" />
+    <View backgroundColor="magenta-600" order={1} width="size-800" height="size-800" />
+  </Flex>
+);
+
+Ordered.story = {
+  name: 'ordered'
+};

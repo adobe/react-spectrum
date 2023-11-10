@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {announce} from '@react-aria/live-announcer';
+import {announce, clearAnnouncer} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
-import {HTMLAttributes, useCallback, useEffect, useRef} from 'react';
-import {InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
+import {DOMAttributes, InputBase, RangeInputBase, Validation, ValueBase} from '@react-types/shared';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {useMessageFormatter} from '@react-aria/i18n';
+import {useEffect, useRef} from 'react';
+import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
+import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
-export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
+export interface SpinButtonProps extends InputBase, Validation<number>, ValueBase<number>, RangeInputBase<number> {
   textValue?: string,
   onIncrement?: () => void,
   onIncrementPage?: () => void,
@@ -30,7 +31,7 @@ export interface SpinButtonProps extends InputBase, Validation, ValueBase<number
 }
 
 export interface SpinbuttonAria {
-  spinButtonProps: HTMLAttributes<HTMLDivElement>,
+  spinButtonProps: DOMAttributes,
   incrementButtonProps: AriaButtonProps,
   decrementButtonProps: AriaButtonProps
 }
@@ -54,7 +55,7 @@ export function useSpinButton(
     onDecrementToMin,
     onIncrementToMax
   } = props;
-  const formatMessage = useMessageFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   const clearAsync = () => clearTimeout(_async.current);
 
@@ -125,15 +126,16 @@ export function useSpinButton(
   // This ensures that macOS VoiceOver announces it as "minus" even with other characters between the minus sign
   // and the number (e.g. currency symbol). Otherwise it announces nothing because it assumes the character is a hyphen.
   // In addition, replace the empty string with the word "Empty" so that iOS VoiceOver does not read "50%" for an empty field.
-  textValue = textValue === '' ? formatMessage('Empty') : (textValue || `${value}`).replace('-', '\u2212');
+  textValue = textValue === '' ? stringFormatter.format('Empty') : (textValue || `${value}`).replace('-', '\u2212');
 
   useEffect(() => {
     if (isFocused.current) {
+      clearAnnouncer('assertive');
       announce(textValue, 'assertive');
     }
   }, [textValue]);
 
-  const onIncrementPressStart = useCallback(
+  const onIncrementPressStart = useEffectEvent(
     (initialStepDelay: number) => {
       clearAsync();
       onIncrement();
@@ -146,11 +148,10 @@ export function useSpinButton(
         },
         initialStepDelay
       );
-    },
-    [onIncrement, maxValue, value]
+    }
   );
 
-  const onDecrementPressStart = useCallback(
+  const onDecrementPressStart = useEffectEvent(
     (initialStepDelay: number) => {
       clearAsync();
       onDecrement();
@@ -163,9 +164,14 @@ export function useSpinButton(
         },
         initialStepDelay
       );
-    },
-    [onDecrement, minValue, value]
+    }
   );
+
+  let cancelContextMenu = (e) => {
+    e.preventDefault();
+  };
+
+  let {addGlobalListener, removeAllGlobalListeners} = useGlobalListeners();
 
   return {
     spinButtonProps: {
@@ -182,14 +188,26 @@ export function useSpinButton(
       onBlur
     },
     incrementButtonProps: {
-      onPressStart: () => onIncrementPressStart(400),
-      onPressEnd: clearAsync,
+      onPressStart: () => {
+        onIncrementPressStart(400);
+        addGlobalListener(window, 'contextmenu', cancelContextMenu);
+      },
+      onPressEnd: () => {
+        clearAsync();
+        removeAllGlobalListeners();
+      },
       onFocus,
       onBlur
     },
     decrementButtonProps: {
-      onPressStart: () => onDecrementPressStart(400),
-      onPressEnd: clearAsync,
+      onPressStart: () => {
+        onDecrementPressStart(400);
+        addGlobalListener(window, 'contextmenu', cancelContextMenu);
+      },
+      onPressEnd: () => {
+        clearAsync();
+        removeAllGlobalListeners();
+      },
       onFocus,
       onBlur
     }

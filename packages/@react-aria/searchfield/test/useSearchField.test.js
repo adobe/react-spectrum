@@ -14,7 +14,7 @@
 import intlMessages from '../intl/*.json';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {renderHook} from '@testing-library/react-hooks';
+import {renderHook} from '@react-spectrum/test-utils';
 import {theme} from '@react-spectrum/theme-default';
 import {useSearchField} from '../';
 
@@ -33,7 +33,8 @@ describe('useSearchField hook', () => {
   beforeEach(() => {
     state.value = '';
     state.setValue = setValue;
-    ref.current = {focus};
+    ref.current = document.createElement('input');
+    focus = jest.spyOn(ref.current, 'focus');
   });
 
   afterEach(() => {
@@ -54,6 +55,7 @@ describe('useSearchField hook', () => {
       let preventDefault = jest.fn();
       let stopPropagation = jest.fn();
       let onSubmit = jest.fn();
+      let onKeyDown = jest.fn();
       let event = (key) => ({
         key,
         preventDefault,
@@ -96,6 +98,12 @@ describe('useSearchField hook', () => {
       it('does not return an defaultValue prop', () => {
         let {inputProps} = renderSearchHook({onClear, onSubmit, defaultValue: 'ABC'});
         expect(inputProps.defaultValue).not.toBeDefined();
+      });
+
+      it('onKeyDown prop is called', () => {
+        let {inputProps} = renderSearchHook({onKeyDown});
+        inputProps.onKeyDown(event('Enter'));
+        expect(onKeyDown).toHaveBeenCalledTimes(1);
       });
     });
   });

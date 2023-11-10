@@ -14,15 +14,13 @@ import {RadioGroupState} from '@react-stately/radio';
 import React, {useContext} from 'react';
 
 interface RadioGroupContext {
-  isRequired?: boolean,
   isEmphasized?: boolean,
   name?: string,
-  validationState?: 'valid' | 'invalid',
   state: RadioGroupState
 }
 
 export const RadioContext = React.createContext<RadioGroupContext | null>(null);
 
 export function useRadioProvider(): RadioGroupContext {
-  return useContext(RadioContext);
+  return useContext(RadioContext) || {} as RadioGroupContext;
 }

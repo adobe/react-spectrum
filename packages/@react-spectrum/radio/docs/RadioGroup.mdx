@@ -1,18 +1,18 @@
-<!-- Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2020 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under
 the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
 OF ANY KIND, either express or implied. See the License for the specific language
-governing permissions and limitations under the License. -->
+governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-spectrum/radio';
 import packageData from '@react-spectrum/radio/package.json';
-import {HeaderInfo, PropTable} from '@react-spectrum/docs';
+import {HeaderInfo, PropTable, PageDescription} from '@react-spectrum/docs';
 
 ```jsx import
 import {Radio, RadioGroup} from '@react-spectrum/radio';
@@ -26,14 +26,15 @@ keywords: [radio group, radio]
 
 # RadioGroup
 
-<p>{docs.exports.Radio.description}</p>
+<PageDescription>{docs.exports.Radio.description}</PageDescription>
 
 <HeaderInfo
   packageData={packageData}
   componentNames={['RadioGroup', 'Radio']}
   sourceData={[
   {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/radio-button/'}
-  ]} />
+  ]}
+  since="3.0.0" />
 
 ## Example
 
@@ -74,6 +75,17 @@ function Example() {
     </Flex>
   );
 }
+```
+
+### HTML forms
+
+RadioGroup supports the `name` prop, paired with the Radio `value` prop, for integration with HTML forms.
+
+```tsx example
+<RadioGroup label="Favorite pet" name="pet">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</RadioGroup>
 ```
 
 ## Labeling
@@ -137,15 +149,29 @@ function Example() {
 
 ## Validation
 
-RadioGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the RadioGroup via the `validationState` prop.
+RadioGroup supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically.
 
 ```tsx example
-<RadioGroup label="Favorite avatar" validationState="invalid">
-  <Radio value="wizard">Wizard</Radio>
-  <Radio value="dragon">Dragon</Radio>
-</RadioGroup>
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native">
+  {/*- begin highlight -*/}
+  <RadioGroup label="Favorite pet" name="pet" isRequired>
+  {/*- end highlight -*/}
+    <Radio value="dogs">Dog</Radio>
+    <Radio value="cats">Cat</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `RadioGroup` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## RadioGroup props
 
@@ -182,6 +208,62 @@ and "end" refers to the right most edge. For right-to-left (RTL) languages, this
 <RadioGroup label="Favorite avatar" labelPosition="side" labelAlign="end">
   <Radio value="wizard">Wizard</Radio>
   <Radio value="dragon">Dragon</Radio>
+</RadioGroup>
+```
+
+### Help text
+[View guidelines](https://spectrum.adobe.com/page/radio-group/#Help-text-(description-and-error-message))
+
+Both a description and an error message can be supplied to a RadioGroup. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState('dogs');
+  let isValid = selected === 'dogs';
+
+  return (
+    <RadioGroup
+      aria-label="Favorite pet"
+      onChange={setSelected}
+      isInvalid={!isValid}
+      description="Please select a pet."
+      errorMessage={
+        selected === 'cats'
+          ? 'No cats allowed.'
+          : 'Please select dogs.'
+      }>
+      <Radio value="dogs">
+        Dogs
+      </Radio>
+      <Radio value="cats">
+        Cats
+      </Radio>
+      <Radio value="dragons">
+        Dragons
+      </Radio>
+    </RadioGroup>
+  );
+}
+```
+
+### Contextual help
+
+A [ContextualHelp](ContextualHelp.html) element may be placed next to the label to provide additional information or help about a RadioGroup.
+
+```tsx example
+import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
+
+<RadioGroup
+  label="T-shirt size"
+  contextualHelp={
+    <ContextualHelp variant="info">
+      <Heading>Size and fit</Heading>
+      <Content>Our sizes run on the small side. Choose a size up from your usual.</Content>
+    </ContextualHelp>
+  }>
+  <Radio value="S">Small</Radio>
+  <Radio value="M">Medium</Radio>
+  <Radio value="L">Large</Radio>
 </RadioGroup>
 ```
 
