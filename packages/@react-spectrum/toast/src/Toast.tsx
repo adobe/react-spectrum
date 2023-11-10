@@ -94,11 +94,10 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   useEffect(() => {
     // resize if too big:  If toast isn't first get width and height from first toast
     // quick and dirty solution would be better to get refs to toasts
+    let timer;
     if (props.toast.index !== 0) {
-      setTimeout(() => {
+      timer = setTimeout(() => {
         let el: NodeListOf<HTMLElement> = document.querySelectorAll('[class*="spectrum-Toast--"]');
-        console.log(props.toast.index, el[0]?.offsetWidth, el[0]?.offsetHeight);
-        console.log(domRef.current?.offsetWidth);
         setSize({
           width: el[0]?.offsetWidth,
           height: el[0]?.offsetHeight,
@@ -107,9 +106,12 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       }, 5);
 
     } else {
-      console.log('first');
       setSize(undefined);
     }
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [props.toast.index]);
 
   return (
