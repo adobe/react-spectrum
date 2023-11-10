@@ -48,11 +48,11 @@ The default class names for each component are listed in the Styling section of 
 Components often support multiple UI states (e.g. pressed, hovered, selected, etc.). React Aria Components exposes states using data attributes, which you can target in CSS selectors. They can be thought of like custom CSS pseudo classes. For example:
 
 ```css render=false
-.react-aria-Item[data-selected] {
+.react-aria-ListBoxItem[data-selected] {
   /* ... */
 }
 
-.react-aria-Item[data-focused] {
+.react-aria-ListBoxItem[data-focused] {
   /* ... */
 }
 ```
@@ -66,22 +66,22 @@ All states supported by each component are listed in the Styling section of thei
 The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply.
 
 ```jsx
-<Item className={({isSelected}) => isSelected ? 'selected' : 'unselected'}>
+<ListBoxItem className={({isSelected}) => isSelected ? 'selected' : 'unselected'}>
   Item
-</Item>
+</ListBoxItem>
 ```
 
 Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkmark icon when an item is selected.
 
 ```jsx
-<Item>
+<ListBoxItem>
   {({isSelected}) => (
     <>
       {isSelected && <CheckmarkIcon />}
       <span>Item</span>
     </>
   )}
-</Item>
+</ListBoxItem>
 ```
 
 The render props exposed for each component are listed in the Styling section of their documentation.
@@ -136,9 +136,9 @@ The CSS variables provided by each component are listed in the Styling section o
 [Tailwind CSS](https://tailwindcss.com) is a utility-first CSS framework for rapid styling that works great with React Aria Components. To access [states](#states), you can use [data attributes](https://tailwindcss.com/docs/hover-focus-and-other-states#data-attributes) as modifiers:
 
 ```jsx
-<Item className="data-[selected]:bg-blue-400 data-[disabled]:bg-gray-100">
+<ListBoxItem className="data-[selected]:bg-blue-400 data-[disabled]:bg-gray-100">
   Item
-</Item>
+</ListBoxItem>
 ```
 
 Alternatively, you can use [render props](#render-props) to control which Tailwind classes are applied based on states. This can be useful if you need to apply multiple classes based on a single state:
@@ -184,9 +184,9 @@ module.exports = {
 With the plugin installed, you can now access all states without the `data-` prefix. If you have the [Tailwind VSCode Extension](https://tailwindcss.com/docs/editor-setup#intelli-sense-for-vs-code) installed, you'll also get autocomplete for all states in your editor.
 
 ```jsx
-<Item className="selected:bg-blue-400 disabled:bg-gray-100">
+<ListBoxItem className="selected:bg-blue-400 disabled:bg-gray-100">
   Item
-</Item>
+</ListBoxItem>
 ```
 
 ### Boolean states
@@ -225,9 +225,9 @@ module.exports = {
 With this configured, all states for React Aria Components can be accessed with that prefix.
 
 ```jsx
-<Item className="rac-selected:bg-blue-400 rac-disabled:bg-gray-100">
+<ListBoxItem className="rac-selected:bg-blue-400 rac-disabled:bg-gray-100">
   Item
-</Item>
+</ListBoxItem>
 ```
 
 ## Animation
@@ -288,52 +288,67 @@ This enables using props like [animate](https://www.framer.com/motion/animation/
 ```tsx
 <MotionModal
   initial={{opacity: 0}}
-  animate={{opacity: 1}}
-  exit={{opacity: 0}}>
+  animate={{opacity: 1}}>
   {/* ... */}
 </MotionModal>
 ```
 
-Entry and exit animations can also be done with the [AnimatePresence](https://www.framer.com/motion/animate-presence/) component. Maintain your own `isOpen` state, and use this to control whether the child of `AnimatePresence` is rendered. Then, force the React Aria overlay component to always mount by setting the `isOpen` prop to true. This way, it won't unmount until the animation is complete.
+Overlay exit animations can be implemented using the `isExiting` prop, which keeps the element in the DOM until an animation is complete. Framer Motion's [variants](https://www.framer.com/motion/animation/#variants) are a good way to setup named animation states.
 
 ```tsx
-import {AnimatePresence} from 'framer-motion';
+type AnimationState = 'unmounted' | 'hidden' | 'visible';
 
 function Example() {
-  let [isOpen, setOpen] = React.useState(false);
+  /*- begin highlight -*/
+  // Track animation state.
+  let [animation, setAnimation] = React.useState<AnimationState>('unmounted');
+  /*- end highlight -*/
 
   return (
-    <AnimatePresence>
-      {isOpen &&
-        <MotionModalOverlay
-          // Force mount so that AnimatePresence works.
-          /*- begin highlight -*/
-          isOpen
-          /*- end highlight -*/
-          onOpenChange={setOpen}
-          initial={{opacity: 0}}
-          animate={{opacity: 1}}
-          exit={{opacity: 0}}>
-          <MotionModal
-            initial={{opacity: 0, y: 32}}
-            animate={{opacity: 1, y: 0}}
-            exit={{opacity: 0, y: 32}}>
-            {/* ... */}
-          </MotionModal>
-        </MotionModalOverlay>
-      }
-    </AnimatePresence>
+    <DialogTrigger
+      /*- begin highlight -*/
+      // Start animation when open state changes.
+      onOpenChange={isOpen => setAnimation(isOpen ? 'visible' : 'hidden')}
+      /*- end highlight -*/
+    >
+      <Button>Open dialog</Button>
+      <MotionModalOverlay
+        /*- begin highlight -*/
+        // Prevent modal from unmounting during animation.
+        isExiting={animation === 'hidden'}
+        // Reset animation state once it is complete.
+        onAnimationComplete={animation => {
+          setAnimation(a => animation === 'hidden' && a === 'hidden' ? 'unmounted' : a)
+        }}
+        /*- end highlight -*/
+        variants={{
+          hidden: {opacity: 0},
+          visible: {opacity: 1}
+        }}
+        initial="hidden"
+        animate={animation}>
+        <MotionModal
+          variants={{
+            hidden: {opacity: 0, y: 32},
+            visible: {opacity: 1, y: 0}
+          }}>
+          {/* ... */}
+        </MotionModal>
+      </MotionModalOverlay>
+    </DialogTrigger>
   );
 }
 ```
 
-`AnimatePresence` also allows you to animate when items are added or removed in collection components. Use `array.map` to create children, and make sure each child has a unique `key` in addition to an `id` to ensure Framer Motion can track it.
+**Note**: Framer Motion's `AnimatePresence` component may not work with React Aria overlays in all cases, so the example shown above is the recommended approach for exit animations.
+
+The [AnimatePresence](https://www.framer.com/motion/animate-presence/) component allows you to animate when items are added or removed in collection components. Use `array.map` to create children, and make sure each child has a unique `key` in addition to an `id` to ensure Framer Motion can track it.
 
 ```tsx
-import {GridList, Item} from 'react-aria-components';
+import {GridList, GridListItem} from 'react-aria-components';
 import {motion, AnimatePresence} from 'framer-motion';
 
-const MotionItem = motion(Item);
+const MotionItem = motion(GridListItem);
 
 <GridList>
   <AnimatePresence>

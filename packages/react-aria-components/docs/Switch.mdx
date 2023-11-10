@@ -54,89 +54,87 @@ import {Switch} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer switch {
-  .react-aria-Switch {
-    --label-color: var(--spectrum-alias-text-color);
-    --deselected-color: gray;
-    --deselected-color-pressed: dimgray;
-    --selected-color: slateblue;
-    --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-    --track-color: var(--spectrum-alias-background-color-default);
-    --indicator-color: var(--selected-color);
-    --indicator-color-pressed: var(--selected-color-pressed);
+.react-aria-Switch {
+  --label-color: var(--spectrum-alias-text-color);
+  --deselected-color: gray;
+  --deselected-color-pressed: dimgray;
+  --selected-color: slateblue;
+  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
+  --track-color: var(--spectrum-alias-background-color-default);
+  --indicator-color: var(--selected-color);
+  --indicator-color-pressed: var(--selected-color-pressed);
 
-    display: flex;
-    align-items: center;
-    gap: 0.571rem;
-    font-size: 1.143rem;
-    color: var(--label-color);
+  display: flex;
+  align-items: center;
+  gap: 0.571rem;
+  font-size: 1.143rem;
+  color: var(--label-color);
 
-    .indicator {
-      width: 2rem;
-      height: 1.143rem;
-      border: 2px solid var(--deselected-color);
-      background: var(--track-color);
-      border-radius: 1.143rem;
+  .indicator {
+    width: 2rem;
+    height: 1.143rem;
+    border: 2px solid var(--deselected-color);
+    background: var(--track-color);
+    border-radius: 1.143rem;
+    transition: all 200ms;
+
+    &:before {
+      content: '';
+      display: block;
+      margin: 0.143rem;
+      width: 0.857rem;
+      height: 0.857rem;
+      background: var(--indicator-color);
+      border-radius: 16px;
       transition: all 200ms;
-
-      &:before {
-        content: '';
-        display: block;
-        margin: 0.143rem;
-        width: 0.857rem;
-        height: 0.857rem;
-        background: var(--indicator-color);
-        border-radius: 16px;
-        transition: all 200ms;
-      }
-    }
-
-    &[data-pressed] .indicator {
-      border-color: var(--deselected-color-pressed);
-
-      &:before {
-        background: var(--indicator-color-pressed);
-      }
-    }
-
-    &[data-selected] {
-      .indicator {
-        border-color: var(--selected-color);
-        background: var(--selected-color);
-
-        &:before {
-          background: var(--track-color);
-          transform: translateX(100%);
-        }
-      }
-
-      &[data-pressed] {
-        .indicator {
-          border-color: var(--selected-color-pressed);
-          background: var(--selected-color-pressed);
-        }
-      }
-    }
-
-    &[data-focus-visible] .indicator {
-      box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
     }
   }
 
-  @media (forced-colors: active) {
-    .react-aria-Switch {
-      forced-color-adjust: none;
+  &[data-pressed] .indicator {
+    border-color: var(--deselected-color-pressed);
 
-      --label-color: ButtonText;
-      --deselected-color: ButtonBorder;
-      --deselected-color-pressed: ButtonBorder;
-      --indicator-color: ButtonText;
-      --indicator-color-pressed: ButtonText;
-      --track-color: ButtonFace;
-      --selected-color: Highlight;
-      --selected-color-pressed: Highlight;
-      --spectrum-alias-background-color-default: Canvas;
+    &:before {
+      background: var(--indicator-color-pressed);
     }
+  }
+
+  &[data-selected] {
+    .indicator {
+      border-color: var(--selected-color);
+      background: var(--selected-color);
+
+      &:before {
+        background: var(--track-color);
+        transform: translateX(100%);
+      }
+    }
+
+    &[data-pressed] {
+      .indicator {
+        border-color: var(--selected-color-pressed);
+        background: var(--selected-color-pressed);
+      }
+    }
+  }
+
+  &[data-focus-visible] .indicator {
+    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Switch {
+    forced-color-adjust: none;
+
+    --label-color: ButtonText;
+    --deselected-color: ButtonBorder;
+    --deselected-color-pressed: ButtonBorder;
+    --indicator-color: ButtonText;
+    --indicator-color-pressed: ButtonText;
+    --track-color: ButtonFace;
+    --selected-color: Highlight;
+    --selected-color-pressed: Highlight;
+    --spectrum-alias-background-color-default: Canvas;
   }
 }
 ```
@@ -238,22 +236,20 @@ Switches can be disabled using the `isDisabled` prop.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-@layer switch {
+.react-aria-Switch {
+  &[data-disabled] {
+    opacity: 0.4;
+  }
+}
+
+@media (forced-colors: active) {
   .react-aria-Switch {
     &[data-disabled] {
-      opacity: 0.4;
-    }
-  }
-
-  @media (forced-colors: active) {
-    .react-aria-Switch {
-      &[data-disabled] {
-        opacity: 1;
-        --deselected-color: GrayText;
-        --selected-color: GrayText;
-        --label-color: GrayText;
-        --indicator-color: GrayText;
-      }
+      opacity: 1;
+      --deselected-color: GrayText;
+      --selected-color: GrayText;
+      --label-color: GrayText;
+      --indicator-color: GrayText;
     }
   }
 }

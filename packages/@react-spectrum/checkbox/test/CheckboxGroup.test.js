@@ -485,6 +485,7 @@ describe('CheckboxGroup', () => {
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.activeElement).toBe(checkboxes[0]);
 
         await user.click(checkboxes[0]);
         expect(checkboxes[0].validity.valid).toBe(true);
@@ -523,6 +524,7 @@ describe('CheckboxGroup', () => {
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent(['You must accept all terms']);
+        expect(document.activeElement).toBe(checkboxes[0]);
 
         await user.click(checkboxes[0]);
         expect(group).toHaveAttribute('aria-describedby');
@@ -568,6 +570,7 @@ describe('CheckboxGroup', () => {
 
         expect(group).toHaveAttribute('aria-describedby');
         expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('You must accept the terms. You must accept the cookies.');
+        expect(document.activeElement).toBe(checkboxes[0]);
 
         await user.click(checkboxes[0]);
         expect(checkboxes[0].validity.valid).toBe(true);

@@ -828,10 +828,10 @@ describe('Table', () => {
     resizingTests(render, (tree, ...args) => tree.rerender(...args), ResizableTable, ControlledResizableTable, resizeCol, resizeTable);
 
     function ResizableTable(props) {
-      let {columns, rows} = props;
+      let {columns, rows, onResizeStart, onResize, onResizeEnd, ...otherProps} = props;
       return (
-        <ResizableTableContainer>
-          <Table aria-label="Files">
+        <ResizableTableContainer onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd}>
+          <Table aria-label="Files" {...otherProps}>
             <MyTableHeader columns={columns}>
               {column => (
                 <MyColumn {...column} isRowHeader={column.id === 'name'}>

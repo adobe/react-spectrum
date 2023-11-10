@@ -13,10 +13,10 @@
 import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
 import {DismissButton} from '@react-aria/overlays';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
-import {ItemProps} from '@react-types/shared';
+import {ItemProps, Key} from '@react-types/shared';
 import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
-import React, {Key, ReactElement, useRef} from 'react';
+import React, {ReactElement, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
@@ -123,5 +123,5 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
   };
 };
 
-let _Item = ContextualHelpTrigger as (props: SpectrumMenuDialogTriggerProps) => JSX.Element;
+let _Item = ContextualHelpTrigger as (props: SpectrumMenuDialogTriggerProps) => React.JSX.Element;
 export {_Item as ContextualHelpTrigger};

@@ -107,7 +107,7 @@ const people = [
 ```
 
 ```tsx example standalone
-import {ListBox, Item, Section, Header, Collection, Text} from 'react-aria-components';
+import {ListBox, ListBoxItem, Section, Header, Collection, Text} from 'react-aria-components';
 
 function ContactListExample() {
   return (
@@ -137,12 +137,12 @@ function ContactSection({title, children, items}) {
 
 function Contact({item}) {
   return (
-    <Item id={item.id} textValue={item.name} className="group relative py-1 px-2 outline-none cursor-default grid grid-rows-2 grid-flow-col auto-cols-max gap-x-3 rounded selected:bg-blue-500 text-slate-700 selected:text-white selected:[&:has(+[data-selected])]:rounded-b-none [&[data-selected]+[data-selected]]:rounded-t-none focus-visible:ring-2 ring-offset-2 ring-blue-500">
+    <ListBoxItem id={item.id} textValue={item.name} className="group relative py-1 px-2 outline-none cursor-default grid grid-rows-2 grid-flow-col auto-cols-max gap-x-3 rounded selected:bg-blue-500 text-slate-700 selected:text-white selected:[&:has(+[data-selected])]:rounded-b-none [&[data-selected]+[data-selected]]:rounded-t-none focus-visible:ring-2 ring-offset-2 ring-blue-500">
       <img src={item.avatar} alt="" className="row-span-2 place-self-center h-8 w-8 rounded-full" />
       <Text slot="label" className="font-semibold truncate">{item.name}</Text>
       <Text slot="description" className="truncate text-sm text-slate-600 group-selected:text-white">{item.username}</Text>
       <div className="absolute left-12 right-2 bottom-0 h-px bg-gray-200 group-selected:bg-blue-400 [.group[data-selected]:has(+:not([data-selected]))_&]:hidden [.group:not([data-selected]):has(+[data-selected])_&]:hidden [.group[data-selected]:last-child_&]:hidden" />
-    </Item>
+    </ListBoxItem>
   );
 }
 ```

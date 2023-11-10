@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaButtonProps, mergeProps, useButton, useFocusRing, useHover} from 'react-aria';
+import {AriaButtonProps, HoverEvents, mergeProps, useButton, useFocusRing, useHover} from 'react-aria';
 import {ContextValue, createHideableComponent, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef} from 'react';
@@ -42,7 +42,7 @@ export interface ButtonRenderProps {
   isDisabled: boolean
 }
 
-export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, SlotProps, RenderProps<ButtonRenderProps> {
+export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps> {
   /**
    * The <form> element to associate the button with.
    * The value of this attribute must be the id of a <form> in the same document.

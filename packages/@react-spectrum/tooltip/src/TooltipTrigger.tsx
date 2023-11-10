@@ -123,5 +123,5 @@ TooltipTrigger.getCollectionNode = function* (props: SpectrumTooltipTriggerProps
  * relative to the trigger.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _TooltipTrigger = TooltipTrigger as (props: SpectrumTooltipTriggerProps) => JSX.Element;
+let _TooltipTrigger = TooltipTrigger as (props: SpectrumTooltipTriggerProps) => React.JSX.Element;
 export {_TooltipTrigger as TooltipTrigger};

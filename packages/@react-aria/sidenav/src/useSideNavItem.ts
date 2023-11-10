@@ -21,7 +21,7 @@ interface SideNavItemAria {
   listItemLinkProps: AnchorHTMLAttributes<HTMLAnchorElement>
 }
 
-export function useSideNavItem<T>(props: SpectrumSideNavItemProps<T>, state: TreeState<T>, ref: RefObject<HTMLAnchorElement | null>): SideNavItemAria {
+export function useSideNavItem<T>(props: SpectrumSideNavItemProps<T>, state: TreeState<T>, ref: RefObject<HTMLAnchorElement>): SideNavItemAria {
   let {
     item,
     'aria-current': ariaCurrent

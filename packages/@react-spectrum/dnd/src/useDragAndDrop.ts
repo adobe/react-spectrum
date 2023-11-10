@@ -28,7 +28,7 @@ import {
   useDroppableCollection,
   useDroppableItem
 } from '@react-aria/dnd';
-import {DraggableCollectionProps, DragItem, DroppableCollectionProps} from '@react-types/shared';
+import {DraggableCollectionProps, DragItem, DroppableCollectionProps, Key} from '@react-types/shared';
 import {
   DraggableCollectionState,
   DraggableCollectionStateOptions,
@@ -37,7 +37,7 @@ import {
   useDraggableCollectionState,
   useDroppableCollectionState
 } from '@react-stately/dnd';
-import {Key, RefObject, useMemo} from 'react';
+import React, {RefObject, useMemo} from 'react';
 
 interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}
 
@@ -57,7 +57,7 @@ interface DropHooks {
 
 export interface DragAndDropHooks {
   /** Drag and drop hooks for the collection element.  */
-  dragAndDropHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element}
+  dragAndDropHooks: DragHooks & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => React.JSX.Element}
 }
 
 export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'preview' | 'getItems'>, DroppableCollectionProps {
@@ -67,7 +67,7 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    */
   getItems?: (keys: Set<Key>) => DragItem[],
   /** Provide a custom drag preview. `draggedKey` represents the key of the item the user actually dragged. */
-  renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element
+  renderPreview?: (keys: Set<Key>, draggedKey: Key) => React.JSX.Element
 }
 
 /**
@@ -88,7 +88,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDropHooks {
     let isDraggable = !!getItems;
     let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
 
-    let hooks = {} as DragHooks & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => JSX.Element};
+    let hooks = {} as DragHooks & DropHooks & {isVirtualDragging?: () => boolean, renderPreview?: (keys: Set<Key>, draggedKey: Key) => React.JSX.Element};
     if (isDraggable) {
       hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOptions) {
         return useDraggableCollectionState({...props, ...options});

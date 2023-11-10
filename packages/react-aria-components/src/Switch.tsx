@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSwitchProps, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
+import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, RenderProps<SwitchRenderProps>, SlotProps {}
+export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {}
 
 export interface SwitchRenderProps {
   /**
@@ -91,6 +91,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   });
 
   let {hoverProps, isHovered} = useHover({
+    ...props,
     isDisabled: isInteractionDisabled
   });
 

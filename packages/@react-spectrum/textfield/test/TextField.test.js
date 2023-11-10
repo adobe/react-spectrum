@@ -499,10 +499,10 @@ describe('Shared TextField behavior', () => {
 
         act(() => {getByTestId('form').checkValidity();});
 
+        expect(document.activeElement).toBe(input);
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
 
-        await user.tab();
         await user.keyboard('Devon');
 
         expect(input).toHaveAttribute('aria-describedby');
@@ -533,10 +533,10 @@ describe('Shared TextField behavior', () => {
 
         act(() => {getByTestId('form').checkValidity();});
 
+        expect(document.activeElement).toBe(input);
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name');
 
-        await user.tab();
         await user.keyboard('Devon');
 
         expect(input).toHaveAttribute('aria-describedby');
@@ -588,11 +588,11 @@ describe('Shared TextField behavior', () => {
         await user.click(getByRole('button'));
         act(() => {getByTestId('form').checkValidity();});
 
+        expect(document.activeElement).toBe(input);
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid name.');
         expect(input.validity.valid).toBe(false);
 
-        await user.tab({shift: true});
         await user.keyboard('Devon');
         await user.tab();
 
@@ -620,6 +620,25 @@ describe('Shared TextField behavior', () => {
         act(() => {getByTestId('form').checkValidity();});
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a name');
+      });
+
+      it.each`
+        Name                | Component
+        ${'v3 TextField'}   | ${TextField}
+        ${'v3 TextArea'}    | ${TextArea}
+        ${'v3 SearchField'} | ${SearchField}
+      `('$Name does not auto focus invalid input if default is prevented', async ({Component}) => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form validationBehavior="native" data-testid="form" onInvalid={e => e.preventDefault()}>
+              <Component data-testid="input" label="Name" isRequired />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        act(() => {getByTestId('form').checkValidity();});
+        expect(document.activeElement).not.toBe(input);
       });
     });
 

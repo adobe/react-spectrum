@@ -443,6 +443,10 @@ footer li:last-child:after {
   white-space: nowrap;
 }
 
+.propTable td[data-column="Type"] {
+  word-break: break-word;
+}
+
 .type-description {
   margin-top: 0;
 }

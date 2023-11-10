@@ -24,7 +24,7 @@ import {
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import {ColumnSize, SpectrumColumnProps} from '@react-types/table';
-import {DOMRef, DropTarget, FocusableElement, FocusableRef} from '@react-types/shared';
+import {DOMRef, DropTarget, FocusableElement, FocusableRef, Key} from '@react-types/shared';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
 import type {DraggableCollectionState, DroppableCollectionState} from '@react-stately/dnd';
 import type {DraggableItemResult, DropIndicatorAria, DroppableCollectionResult, DroppableItemResult} from '@react-aria/dnd';
@@ -39,7 +39,7 @@ import {layoutInfoToStyle, ScrollView, setScrollLeft, useVirtualizer, Virtualize
 import ListGripper from '@spectrum-icons/ui/ListGripper';
 import {Nubbin} from './Nubbin';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {DOMAttributes, HTMLAttributes, Key, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {DOMAttributes, HTMLAttributes, ReactElement, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import {Resizer} from './Resizer';
 import {ReusableView, useVirtualizerState} from '@react-stately/virtualizer';
 import {RootDropIndicator} from './RootDropIndicator';

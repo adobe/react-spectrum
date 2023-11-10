@@ -1,7 +1,8 @@
 import {getChildNodes, getFirstItem, getLastItem} from '@react-stately/collections';
 import {GridCollection, GridNode} from '@react-types/grid';
-import {Key, useEffect, useMemo, useRef} from 'react';
+import {Key} from '@react-types/shared';
 import {MultipleSelectionStateProps, SelectionManager, useMultipleSelectionState} from '@react-stately/selection';
+import {useEffect, useMemo, useRef} from 'react';
 
 export interface GridState<T, C extends GridCollection<T>> {
   collection: C,

@@ -47,6 +47,7 @@ import DateRangePicker from '@react-spectrum/docs/pages/assets/component-illustr
 import TagGroup from '@react-spectrum/docs/pages/assets/component-illustrations/TagGroup.svg';
 import FileTrigger from '@react-spectrum/docs/pages/assets/component-illustrations/FileTrigger.svg'
 import DropZone from '@react-spectrum/docs/pages/assets/component-illustrations/DropZone.svg'
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg'
 
 ---
 category: Concepts
@@ -68,7 +69,7 @@ Compared with the React Aria hooks, the components provide a default DOM structu
 
 ## Status
 
-React Aria Components is currently in **beta**. This means most APIs are stable but some changes may still occur, and there are some known bugs. That said, it is based on a solid and battle-tested foundation in React Aria, and we would love for you to try it out and give us feedback! Please report issues and feature requests [on GitHub](https://github.com/adobe/react-spectrum/issues).
+React Aria Components is currently in **RC**. This means APIs are unlikely to change, and we are in the final testing period before our stable release. Please report issues and feature requests [on GitHub](https://github.com/adobe/react-spectrum/issues).
 
 ## Installation
 
@@ -88,7 +89,7 @@ Once installed, you can import and render the components you need. Each componen
 This example renders a custom [Select](Select.html).
 
 ```tsx example
-import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-aria-components';
+import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
 
 <Select>
   <Label>Favorite Animal</Label>
@@ -98,9 +99,9 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
   </Button>
   <Popover>
     <ListBox>
-      <Item>Cat</Item>
-      <Item>Dog</Item>
-      <Item>Kangaroo</Item>
+      <ListBoxItem>Cat</ListBoxItem>
+      <ListBoxItem>Dog</ListBoxItem>
+      <ListBoxItem>Kangaroo</ListBoxItem>
     </ListBox>
   </Popover>
 </Select>
@@ -211,7 +212,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, Item} from 'react-
     padding: 0 0.571rem 0 1.571rem;
   }
 
-  .react-aria-Item {
+  .react-aria-ListBoxItem {
     margin: 2px;
     padding: 0.286rem 0.571rem 0.286rem 1.571rem;
     border-radius: 6px;
@@ -557,6 +558,13 @@ The documentation for each component includes many examples styled using vanilla
   title="Slider"
   description="A slider allows a user to select one or more values within a range.">
   <Slider />
+</ExampleCard>
+
+<ExampleCard
+  url="Form.html"
+  title="Form"
+  description="A form allows users to submit data to a server, with support for validation.">
+  <Form />
 </ExampleCard>
 
 </section>
