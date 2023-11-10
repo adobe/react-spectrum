@@ -92,8 +92,9 @@ function preventScrollStandard() {
 //
 // 1. Prevent default on `touchmove` events that are not in a scrollable element. This prevents touch scrolling
 //    on the window.
-// 2. Prevent default on `touchmove` events inside a scrollable element when the scroll position is at the
-//    top or bottom. This avoids the whole page scrolling instead, but does prevent overscrolling.
+// 2. Set `overscroll-behavior: contain` on nested scrollable regions so they do not scroll the page when at
+//    the top or bottom. Work around a bug where this does not work when the element does not actually overflow
+//    by preventing default in a `touchmove` event.
 // 3. Prevent default on `touchend` events on input elements and handle focusing the element ourselves.
 // 4. When focusing an input, apply a transform to trick Safari into thinking the input is at the top
 //    of the page, which prevents it from scrolling the page. After the input is focused, scroll the element
@@ -105,7 +106,7 @@ function preventScrollStandard() {
 //    to navigate to an input with the next/previous buttons that's outside a modal.
 function preventScrollMobileSafari() {
   let scrollable: Element;
-  let lastY = 0;
+  let restoreScrollableStyles;
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
     scrollable = getScrollParent(e.target as Element);
@@ -113,7 +114,12 @@ function preventScrollMobileSafari() {
       return;
     }
 
-    lastY = e.changedTouches[0].pageY;
+    // Prevent scrolling up when at the top and scrolling down when at the bottom
+    // of a nested scrollable area, otherwise mobile Safari will start scrolling
+    // the window instead.
+    if (scrollable instanceof HTMLElement && window.getComputedStyle(scrollable).overscrollBehavior === 'auto') {
+      restoreScrollableStyles = setStyle(scrollable, 'overscrollBehavior', 'contain');
+    }
   };
 
   let onTouchMove = (e: TouchEvent) => {
@@ -123,23 +129,15 @@ function preventScrollMobileSafari() {
       return;
     }
 
-    // Prevent scrolling up when at the top and scrolling down when at the bottom
-    // of a nested scrollable area, otherwise mobile Safari will start scrolling
-    // the window instead. Unfortunately, this disables bounce scrolling when at
-    // the top but it's the best we can do.
-    let y = e.changedTouches[0].pageY;
-    let scrollTop = scrollable.scrollTop;
-    let bottom = scrollable.scrollHeight - scrollable.clientHeight;
-
-    if (bottom === 0) {
-      return;
-    }
-
-    if ((scrollTop <= 0 && y > lastY) || (scrollTop >= bottom && y < lastY)) {
+    // overscroll-behavior should prevent scroll chaining, but currently does not
+    // if the element doesn't actually overflow. https://bugs.webkit.org/show_bug.cgi?id=243452
+    // This checks that both the width and height do not overflow, otherwise we might
+    // block horizontal scrolling too. In that case, adding `touch-action: pan-x` to
+    // the element will prevent vertical page scrolling. We can't add that automatically
+    // because it must be set before the touchstart event.
+    if (scrollable.scrollHeight === scrollable.clientHeight && scrollable.scrollWidth === scrollable.clientWidth) {
       e.preventDefault();
     }
-
-    lastY = y;
   };
 
   let onTouchEnd = (e: TouchEvent) => {
@@ -158,6 +156,10 @@ function preventScrollMobileSafari() {
       requestAnimationFrame(() => {
         target.style.transform = '';
       });
+    }
+
+    if (restoreScrollableStyles) {
+      restoreScrollableStyles();
     }
   };
 
@@ -234,6 +236,7 @@ function preventScrollMobileSafari() {
 
   return () => {
     // Restore styles and scroll the page back to where it was.
+    restoreScrollableStyles?.();
     restoreStyles?.();
     removeEvents();
   };
