@@ -136,7 +136,11 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   }
 
   .react-aria-Row {
-    border-radius: 6px;
+    --radius-top: 6px;
+    --radius-bottom: 6px;
+    --radius: var(--radius-top) var(--radius-top) var(--radius-bottom) var(--radius-bottom);
+    border-radius: var(--radius);
+    clip-path: inset(0 round var(--radius)); /* firefox */
     outline: none;
     cursor: default;
     color: var(--text-color);
@@ -149,15 +153,13 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
       outline-offset: -2px;
     }
 
-    &[data-pressed] .react-aria-Cell {
+    &[data-pressed] {
       background: var(--spectrum-global-color-gray-200);
     }
 
     &[data-selected] {
-      .react-aria-Cell {
-        background: var(--highlight-background);
-        color: var(--highlight-foreground);
-      }
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
 
       &[data-focus-visible],
       .react-aria-Cell[data-focus-visible] {
@@ -187,26 +189,24 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
     transform: translateZ(0);
 
     &:first-child {
-      border-radius: 6px 0 0 6px;
+      border-radius: var(--radius-top) 0 0 var(--radius-bottom);
     }
 
     &:last-child {
-      border-radius: 0 6px 6px 0;
+      border-radius: 0 var(--radius-top) var(--radius-bottom) 0;
     }
   }
 
   /* join selected items if :has selector is supported */
   @supports selector(:has(.foo)) {
-    .react-aria-Row[data-selected]:has(+ [data-selected]) .react-aria-Cell,
-    .react-aria-Row[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) .react-aria-Cell {
-      border-end-start-radius: 0;
-      border-end-end-radius: 0;
+    .react-aria-Row[data-selected]:has(+ [data-selected]),
+    .react-aria-Row[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) {
+      --radius-bottom: 0px;
     }
 
-    .react-aria-Row[data-selected] + [data-selected] .react-aria-Cell,
-    .react-aria-Row[data-selected] + .react-aria-DropIndicator + [data-selected] .react-aria-Cell {
-      border-start-start-radius: 0;
-      border-start-end-radius: 0;
+    .react-aria-Row[data-selected] + [data-selected],
+    .react-aria-Row[data-selected] + .react-aria-DropIndicator + [data-selected]{
+      --radius-top: 0px;
     }
   }
 }

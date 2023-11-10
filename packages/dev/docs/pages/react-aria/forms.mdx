@@ -7,6 +7,9 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
+import sharedDocs from 'docs:@react-types/shared';
+import {TypeContext, InterfaceType} from '@react-spectrum/docs';
+
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
@@ -311,8 +314,8 @@ React Aria is compatible with errors returned from schema validation libraries l
 import {z} from 'zod';
 
 const schema = z.object({
-  name: z.string().required(),
-  age: z.coerce.number().positive().required(),
+  name: z.string().min(1),
+  age: z.coerce.number().positive()
 });
 
 function handleRequest(formData: FormData) {
@@ -371,7 +374,7 @@ export function AddForm() {
 // app/actions.ts
 'use server';
 
-export function createTodo(prevState: any, formData: FormData) {
+export async function createTodo(prevState: any, formData: FormData) {
   try {
     // Create the todo...
   } catch (err) {
@@ -392,7 +395,7 @@ export function createTodo(prevState: any, formData: FormData) {
 
 ```tsx
 // app/routes/signup.tsx
-import type {ActionArgs} from '@remix-run/node';
+import type {ActionFunctionArgs} from '@remix-run/node';
 import {useActionData, useSubmit} from '@remix-run/react';
 import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-components';
 
@@ -429,7 +432,7 @@ export default function SignupForm() {
   );
 }
 
-export async function action({request}: ActionArgs) {
+export async function action({request}: ActionFunctionArgs) {
   try {
     // Validate data and perform action...
   } catch (err) {
@@ -500,3 +503,31 @@ function App() {
   );
 }
 ```
+
+## Hooks
+
+If you're using React Aria hooks rather than components, native form validation can be enabled using the `validationBehavior="native"` prop. Each hook returns validation information which can be used to render error messages with custom styles.
+
+```tsx
+let {isInvalid, validationErrors, validationDetails} = useTextField(props, ref);
+```
+
+<TypeContext.Provider value={sharedDocs.links}>
+  <InterfaceType properties={sharedDocs.exports.ValidationResult.properties} />
+</TypeContext.Provider>
+
+Server errors can be provided using the `FormValidationContext` directly, or using the `Form` component from `react-aria-components` as described above.
+
+```tsx
+import {FormValidationContext} from 'react-stately';
+
+<FormValidationContext.Provider value={{username: 'This username is taken.'}}>
+  <MyTextField
+    name="username"
+    isRequired
+    validationBehavior="native" />
+  {/* ... */}
+</FormValidationContext.Provider>
+```
+
+See the [useTextField](useTextField.html) docs for an example of how to render validation errors.

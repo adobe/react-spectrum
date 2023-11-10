@@ -49,7 +49,7 @@ softAssert.equal = function (val, val2, message) {
 // Checks if a dependency is actually being imported somewhere
 function isDepUsed(dep, src) {
   let depRegex = new RegExp(`import .* from '${dep}'`);
-  let files = glob.sync(src, {
+  let files = glob.sync(src + '/src', {
     ignore: ['**/node_modules/**', '**/dist/**']
   });
 

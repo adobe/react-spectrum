@@ -26,7 +26,7 @@ function Keyboard(props: KeyboardProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
 
   return (
-    <kbd {...filterDOMProps(otherProps)} {...styleProps} dir="ltr" ref={domRef}>
+    <kbd {...filterDOMProps(otherProps)} {...styleProps} ref={domRef}>
       {children}
     </kbd>
   );

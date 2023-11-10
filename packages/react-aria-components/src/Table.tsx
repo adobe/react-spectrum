@@ -976,7 +976,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       ref={objectRef}
       role="presentation"
       {...renderProps}
-      {...mergeProps(resizerProps, {onPointerDown})}
+      {...mergeProps(resizerProps, {onPointerDown}, hoverProps)}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
@@ -985,7 +985,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       {renderProps.children}
       <input
         ref={inputRef}
-        {...mergeProps(inputProps, focusProps, hoverProps)} />
+        {...mergeProps(inputProps, focusProps)} />
       {isResizing && isMouseDown && ReactDOM.createPortal(<div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />, document.body)}
     </div>
   );
