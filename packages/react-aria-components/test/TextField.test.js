@@ -71,7 +71,10 @@ describe('TextField', () => {
     });
 
     it('should support hover state', async () => {
-      let {getByRole} = render(<TestTextField input={component} inputProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      let hoverStartSpy = jest.fn();
+      let hoverChangeSpy = jest.fn();
+      let hoverEndSpy = jest.fn();
+      let {getByRole} = render(<TestTextField input={component} inputProps={{className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: hoverStartSpy, onHoverChange: hoverChangeSpy, onHoverEnd: hoverEndSpy}} />);
       let input = getByRole('textbox');
 
       expect(input).not.toHaveAttribute('data-hovered');
@@ -80,10 +83,14 @@ describe('TextField', () => {
       await user.hover(input);
       expect(input).toHaveAttribute('data-hovered', 'true');
       expect(input).toHaveClass('hover');
+      expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+      expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
       await user.unhover(input);
       expect(input).not.toHaveAttribute('data-hovered');
       expect(input).not.toHaveClass('hover');
+      expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+      expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
     });
 
     it('should support focus visible state', async () => {
@@ -133,8 +140,8 @@ describe('TextField', () => {
       expect(input).toHaveAttribute('aria-describedby');
       expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
       expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-invalid');
+      expect(document.activeElement).toBe(input);
 
-      await user.tab();
       await user.keyboard('Devon');
 
       expect(input).toHaveAttribute('aria-describedby');
@@ -167,8 +174,8 @@ describe('TextField', () => {
 
       expect(input).toHaveAttribute('aria-describedby');
       expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a name');
+      expect(document.activeElement).toBe(input);
 
-      await user.tab();
       await user.keyboard('Devon');
 
       expect(input).toHaveAttribute('aria-describedby');

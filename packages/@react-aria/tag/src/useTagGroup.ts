@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, HelpTextProps, KeyboardDelegate, LabelableProps, MultipleSelection, SelectionBehavior} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, HelpTextProps, Key, KeyboardDelegate, LabelableProps, MultipleSelection, SelectionBehavior} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {Key, ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import type {ListState} from '@react-stately/list';
+import {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useGridList} from '@react-aria/gridlist';

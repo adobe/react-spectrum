@@ -87,7 +87,10 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
   let inputRef = useRef<HTMLInputElement>(null);
-  useFormValidation(props, state, inputRef);
+  useFormValidation({
+    ...props,
+    focus: () => buttonRef.current?.focus()
+  }, state, inputRef);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
   let errorMessage = props.errorMessage ?? validationErrors.join(' ');

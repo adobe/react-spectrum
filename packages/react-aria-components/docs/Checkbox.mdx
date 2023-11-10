@@ -264,7 +264,7 @@ Implement your own validation logic in your app and set the `isInvalid` prop acc
 .react-aria-Checkbox {
   &[data-invalid] {
     .checkbox {
-      --checkmark-color: black;
+      --checkmark-color: var(--spectrum-gray-50);
       border-color: var(--invalid-color);
     }
 
@@ -304,6 +304,7 @@ Checkboxes can be disabled using the `isDisabled` prop.
     opacity: 0.4;
   }
 }
+
 @media (forced-colors: active) {
   .react-aria-Checkbox {
     &[data-disabled] {

@@ -240,11 +240,11 @@ describe('ComboBox', () => {
 
     act(() => {getByTestId('form').checkValidity();});
 
+    expect(document.activeElement).toBe(input);
     expect(input).toHaveAttribute('aria-describedby');
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
     expect(combobox).toHaveAttribute('data-invalid');
 
-    await user.tab();
     await user.keyboard('C');
 
     let listbox = getByRole('listbox');

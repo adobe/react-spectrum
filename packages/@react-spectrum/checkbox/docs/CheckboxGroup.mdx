@@ -156,54 +156,51 @@ function Example() {
 
 ## Validation
 
-CheckboxGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and set the `isInvalid` prop to either
-the `CheckboxGroup` or an individual `Checkbox` to mark it as invalid.
+CheckboxGroup supports the `isRequired` prop to ensure the user selects at least one item, as well as custom client and server-side validation. Individual checkboxes also support validation, and errors from all checkboxes are aggregated at the group level. CheckboxGroup can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
 
 ### Group validation
 
-If the group as a whole is invalid, for example if the user must choose at least one option but failed
-to do so, then pass `isInvalid` to the `CheckboxGroup`.
-
-The following example shows how to require that at least one option is selected. It sets the `isInvalid`
-prop when no options are selected and removes it otherwise.
+The `isRequired` prop at the `CheckboxGroup` level requires that at least one item is selected. When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically.
 
 ```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState([]);
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 
-  return (
-    <CheckboxGroup label="Sandwich condiments" value={selected} onChange={setSelected} isRequired isInvalid={selected.length === 0}>
-      <Checkbox value="lettuce">Lettuce</Checkbox>
-      <Checkbox value="tomato">Tomato</Checkbox>
-      <Checkbox value="onion">Onion</Checkbox>
-      <Checkbox value="sprouts">Sprouts</Checkbox>
-    </CheckboxGroup>
-  );
-}
+<Form validationBehavior="native">
+  {/*- begin highlight -*/}
+  <CheckboxGroup label="Sandwich condiments" name="condiments" isRequired>
+  {/*- end highlight -*/}
+    <Checkbox value="lettuce">Lettuce</Checkbox>
+    <Checkbox value="tomato">Tomato</Checkbox>
+    <Checkbox value="onion">Onion</Checkbox>
+    <Checkbox value="sprouts">Sprouts</Checkbox>
+  </CheckboxGroup>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `CheckboxGroup` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ### Individual Checkbox validation
 
-If an individual checkbox is invalid, for example if the user must select a particular option but failed
-to do so, then pass `isInvalid` to the `Checkbox` element instead.
-
-The following example shows how to require that all items are selected. It uses the `isRequired` prop on each individual `Checkbox`
-element to indicate to assistive technology that every checkbox is required. By default, the `isRequired` prop on the `CheckboxGroup` only
-indicates that the group is required, not any individual option. In addition, `isInvalid` is set on each checkbox that is not yet checked.
+To require that specific checkboxes are checked, set the `isRequired` prop at the `Checkbox` level instead of the `CheckboxGroup`. The following example shows how to require that all items are selected.
 
 ```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState([]);
-
-  return (
-    <CheckboxGroup label="Agree to the following" isRequired value={selected} onChange={setSelected}>
-      <Checkbox value="terms" isRequired isInvalid={!selected.includes('terms')}>Terms and conditions</Checkbox>
-      <Checkbox value="privacy" isRequired isInvalid={!selected.includes('privacy')}>Privacy policy</Checkbox>
-      <Checkbox value="cookies" isRequired isInvalid={!selected.includes('cookies')}>Cookie policy</Checkbox>
-    </CheckboxGroup>
-  );
-}
+<Form validationBehavior="native">
+  <CheckboxGroup label="Agree to the following" isRequired>
+    {/*- begin highlight -*/}
+    <Checkbox value="terms" isRequired>Terms and conditions</Checkbox>
+    <Checkbox value="privacy" isRequired>Privacy policy</Checkbox>
+    <Checkbox value="cookies" isRequired>Cookie policy</Checkbox>
+    {/*- end highlight -*/}
+  </CheckboxGroup>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
 
 ## Props

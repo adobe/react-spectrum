@@ -21,6 +21,7 @@ import {
   FocusableProps,
   HelpTextProps,
   InputBase,
+  Key,
   LabelableProps,
   SingleSelection,
   SpectrumLabelableProps,
@@ -28,7 +29,6 @@ import {
   TextInputBase,
   Validation
 } from '@react-types/shared';
-import {Key} from 'react';
 
 export interface SelectProps<T> extends CollectionBase<T>, Omit<InputBase, 'isReadOnly'>, Validation<Key>, HelpTextProps, LabelableProps, TextInputBase, Omit<SingleSelection, 'disallowEmptySelection'>, FocusableProps {
   /** Sets the open state of the menu. */

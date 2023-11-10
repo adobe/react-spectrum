@@ -19,7 +19,7 @@ import {
 } from './TableUtils';
 import {ColumnSize, TableCollection} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 
 export interface TableColumnLayoutOptions<T> {
   getDefaultWidth?: (column: GridNode<T>) => ColumnSize | null | undefined,

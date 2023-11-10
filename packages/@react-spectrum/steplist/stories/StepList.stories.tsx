@@ -16,10 +16,10 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
 import {Item} from '@react-stately/collections';
+import {Key} from '@react-types/shared';
 import {Picker} from '@react-spectrum/picker';
-import React, {Key, useCallback, useMemo, useState} from 'react';
-import {SpectrumStepListProps} from '@react-types/steplist';
-import {StepList} from '../';
+import React, {useCallback, useMemo, useState} from 'react';
+import {SpectrumStepListProps, StepList} from '../';
 import {View} from '@react-spectrum/view';
 
 const options = [{
