@@ -112,7 +112,6 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
     }
   }, [props.toast.index]);
 
-
   return (
     <div
       {...styleProps}
@@ -131,6 +130,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
       style={{
         ...styleProps.style,
         ...size,
+
         zIndex: state.visibleToasts.length - props.toast.index
       }}
       data-animation={animation}

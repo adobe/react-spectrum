@@ -119,6 +119,35 @@
     /* --opacity-to: 1; */
     animation: slide-in 300ms;
   }
+
+  /* scale each successive toast backward so it looks like a stack */
+  &[data-index="1"] {
+    --scale: scale(0.9);
+    --slide-from: translateY(0);
+    --slide-to: translateY(-12px);
+  }
+
+  &[data-index="2"] {
+    --scale: scale(0.8);
+    --slide-from: translateY(0);
+    --slide-to: translateY(-24px);
+  }
+
+  /* extra 4th toast will scale back while fading out */
+  &[data-index="3"] {
+    --scale: scale(0.7);
+    --slide-from: translateY(0);
+    --slide-to: translateY(-32px);
+  }
+
+  /* toasts will have queued animation when entering from queue. they will fade and scale in from the back. */
+  &[data-animation=queued] {
+    --scale-from: scale(0.7);
+    --slide-from: translateY(-32px);
+    --opacity-from: 0;
+    --opacity-to: 1;
+    animation: slide-in 300ms;
+  }
 }
 
 @keyframes slide-in {
