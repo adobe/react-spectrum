@@ -286,7 +286,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   // This overrides collection view's renderWrapper to support DOM hierarchy.
   type View = ReusableView<GridNode<T>, ReactNode>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
-    let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent?.layoutInfo, reusableView.virtualizer.contentSize);
+    let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent?.layoutInfo, reusableView.virtualizer.visibleRect);
     if (style.overflow === 'hidden') {
       style.overflow = 'visible'; // needed to support position: sticky
     }
@@ -620,10 +620,11 @@ function TableVirtualizer(props) {
 
   let resizerPosition = layout.getResizerPosition() - 2;
 
-  let resizerAtEdge = resizerPosition > Math.max(state.virtualizer.contentSize.width, state.virtualizer.visibleRect.width) - 3;
+  let visibleRect = state.virtualizer.visibleRect;
+  let resizerAtEdge = resizerPosition > Math.max(state.virtualizer.contentSize.width, visibleRect.width) - 3;
   // this should be fine, every movement of the resizer causes a rerender
   // scrolling can cause it to lag for a moment, but it's always updated
-  let resizerInVisibleRegion = resizerPosition < state.virtualizer.visibleRect.maxX;
+  let resizerInVisibleRegion = resizerPosition < visibleRect.maxX;
   let shouldHardCornerResizeCorner = resizerAtEdge && resizerInVisibleRegion;
 
   // minimize re-render caused on Resizers by memoing this
@@ -655,7 +656,14 @@ function TableVirtualizer(props) {
               transition: state.isAnimating ? `none ${state.virtualizer.transitionDuration}ms` : undefined
             }}
             ref={headerRef}>
-            {state.visibleViews[0]}
+            <div
+              role="presentation"
+              style={{
+                width: state.contentSize.width === visibleRect.width ? undefined : state.contentSize.width,
+                height: headerHeight
+              }}>
+              {state.visibleViews[0]}
+            </div>
           </div>
           <ScrollView
             role="presentation"
