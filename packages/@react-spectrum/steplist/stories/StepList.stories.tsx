@@ -19,8 +19,7 @@ import {Item} from '@react-stately/collections';
 import {Key} from '@react-types/shared';
 import {Picker} from '@react-spectrum/picker';
 import React, {useCallback, useMemo, useState} from 'react';
-import {SpectrumStepListProps} from '@react-types/steplist';
-import {StepList} from '../';
+import {SpectrumStepListProps, StepList} from '../';
 import {View} from '@react-spectrum/view';
 
 const options = [{
