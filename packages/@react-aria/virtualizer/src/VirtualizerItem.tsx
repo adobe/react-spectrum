@@ -11,7 +11,7 @@
  */
 
 import {Direction} from '@react-types/shared';
-import {LayoutInfo} from '@react-stately/virtualizer';
+import {LayoutInfo, Size} from '@react-stately/virtualizer';
 import React, {CSSProperties, ReactNode, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
 import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
@@ -33,14 +33,19 @@ export function VirtualizerItem(props: VirtualizerItemProps) {
   });
 
   return (
-    <div role="presentation" ref={ref} className={className} style={layoutInfoToStyle(layoutInfo, direction, parent)}>
+    <div role="presentation" ref={ref} className={className} style={layoutInfoToStyle(layoutInfo, direction, parent, virtualizer.contentSize)}>
       {children}
     </div>
   );
 }
 
 let cache = new WeakMap();
-export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent?: LayoutInfo | null): CSSProperties {
+export function layoutInfoToStyle(
+  layoutInfo: LayoutInfo,
+  dir: Direction,
+  parent?: LayoutInfo | null,
+  contentSize?: Size
+): CSSProperties {
   let xProperty = dir === 'rtl' ? 'right' : 'left';
   let cached = cache.get(layoutInfo);
   if (cached && cached[xProperty] != null) {
@@ -56,6 +61,13 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     }
   }
 
+  // Determine if the layoutInfo is the full width of its parent.
+  // In this case, we use 100% as the width rather than a pixel value,
+  // which avoids issues with flickering scrollbars.
+  let isFullWidth = parent
+    ? layoutInfo.rect.x === parent.rect.x && layoutInfo.rect.width === parent.rect.width
+    : contentSize && layoutInfo.rect.x === 0 && layoutInfo.rect.width === contentSize.width;
+
   let style: CSSProperties = {
     position: layoutInfo.isSticky ? 'sticky' : 'absolute',
     // Sticky elements are positioned in normal document flow. Display inline-block so that they don't push other sticky columns onto the following rows.
@@ -67,7 +79,7 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     WebkitTransition: 'all',
     WebkitTransitionDuration: 'inherit',
     transitionDuration: 'inherit',
-    width: layoutInfo.rect.width,
+    width: isFullWidth ? '100%' : layoutInfo.rect.width,
     height: layoutInfo.rect.height,
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,

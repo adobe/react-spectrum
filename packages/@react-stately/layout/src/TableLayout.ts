@@ -144,7 +144,7 @@ export class TableLayout<T> extends ListLayout<T> {
     let body = this.buildBody(0);
     this.lastPersistedKeys = null;
 
-    body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width - (2 * this.bodyBorderWidth), body.layoutInfo.rect.width);
+    body.layoutInfo.rect.width = Math.max(header.layoutInfo.rect.width, body.layoutInfo.rect.width);
     this.contentSize = new Size(body.layoutInfo.rect.width, body.layoutInfo.rect.maxY);
     return [
       header,

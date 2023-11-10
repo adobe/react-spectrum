@@ -15,6 +15,7 @@ import {LayoutInfo, Size} from '@react-stately/virtualizer';
 import {useLayoutEffect} from '@react-aria/utils';
 
 interface IVirtualizer {
+  contentSize: Size,
   updateItemSize(key: Key, size: Size): void
 }
 

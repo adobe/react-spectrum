@@ -287,7 +287,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   // This overrides collection view's renderWrapper to support DOM hierarchy.
   type View = ReusableView<GridNode<T>, ReactNode>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {
-    let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo);
+    let style = layoutInfoToStyle(reusableView.layoutInfo, direction, parent?.layoutInfo, reusableView.virtualizer.contentSize);
     if (style.overflow === 'hidden') {
       style.overflow = 'visible'; // needed to support position: sticky
     }

@@ -166,9 +166,20 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     style.overflow = 'auto';
   }
 
+  innerStyle = {
+    // Omit width on inner element if it is equal to the width of the outer element.
+    // Since this is a block element, the browser will automatically make it full width.
+    // This prevents horizontal scrollbars from flickering when not needed.
+    width: contentSize.width === state.width ? undefined : contentSize.width,
+    height: contentSize.height,
+    pointerEvents: isScrolling ? 'none' : 'auto',
+    position: 'relative',
+    ...innerStyle
+  };
+
   return (
     <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
-      <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', position: 'relative', ...innerStyle}}>
+      <div role="presentation" style={innerStyle}>
         {children}
       </div>
     </div>
