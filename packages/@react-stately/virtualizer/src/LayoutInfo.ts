@@ -73,13 +73,6 @@ export class LayoutInfo {
   allowOverflow: boolean;
 
   /**
-   * Whether the layout info should match the parent's pixel width or be a block/percent
-   * when an element should be full width.
-   * @default true
-   */
-  shouldMatchParentWidth: boolean = true;
-
-  /**
    * @param type A string representing the view type. Should be `'item'` for item views.
                             Other types are used by supplementary views.
    * @param key The unique key for this view.
@@ -110,7 +103,6 @@ export class LayoutInfo {
     res.isSticky = this.isSticky;
     res.zIndex = this.zIndex;
     res.allowOverflow = this.allowOverflow;
-    res.shouldMatchParentWidth = this.shouldMatchParentWidth;
     return res;
   }
 }

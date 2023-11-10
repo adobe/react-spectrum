@@ -152,7 +152,6 @@ export class TableLayout<T> extends ListLayout<T> {
   buildHeader(): LayoutNode {
     let rect = new Rect(0, 0, 0, 0);
     let layoutInfo = new LayoutInfo('header', 'header', rect);
-    layoutInfo.shouldMatchParentWidth = false;
 
     let y = 0;
     let width = 0;

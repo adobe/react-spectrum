@@ -79,7 +79,7 @@ export function layoutInfoToStyle(
     WebkitTransition: 'all',
     WebkitTransitionDuration: 'inherit',
     transitionDuration: 'inherit',
-    width: isFullWidth && layoutInfo.shouldMatchParentWidth ? '100%' : layoutInfo.rect.width,
+    width: isFullWidth ? '100%' : layoutInfo.rect.width,
     height: layoutInfo.rect.height,
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
