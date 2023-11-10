@@ -21,8 +21,7 @@ import {TableColumnLayout} from '@react-stately/table';
 
 type TableLayoutOptions<T> = ListLayoutOptions<T> & {
   columnLayout: TableColumnLayout<T>,
-  initialCollection: TableCollection<T>,
-  bodyBorderWidth: number
+  initialCollection: TableCollection<T>
 }
 
 export class TableLayout<T> extends ListLayout<T> {
@@ -40,7 +39,6 @@ export class TableLayout<T> extends ListLayout<T> {
   uncontrolledColumns: Map<Key, GridNode<unknown>>;
   uncontrolledWidths: Map<Key, ColumnSize>;
   resizingColumn: Key | null;
-  bodyBorderWidth = 0;
 
   constructor(options: TableLayoutOptions<T>) {
     super(options);
@@ -52,7 +50,6 @@ export class TableLayout<T> extends ListLayout<T> {
     this.controlledColumns = controlledColumns;
     this.uncontrolledColumns = uncontrolledColumns;
     this.uncontrolledWidths = this.columnLayout.getInitialUncontrolledWidths(uncontrolledColumns);
-    this.bodyBorderWidth = options.bodyBorderWidth;
   }
 
   protected shouldInvalidateEverything(invalidationContext: InvalidationContext<Node<T>, unknown>): boolean {
