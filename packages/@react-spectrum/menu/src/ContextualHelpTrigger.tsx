@@ -148,8 +148,7 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
       childArray.push(child);
     }
   });
-  let [trigger] = childArray;
-  let [, content] = props.children as [ReactElement, ReactElement];
+  let [trigger, content] = childArray;
 
   yield {
     element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true, isTrigger: true}),

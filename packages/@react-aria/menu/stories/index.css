@@ -1,0 +1,24 @@
+.menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 200px;
+}
+
+.menuitem {
+  padding: 2px 5px;
+  outline: none;
+  cursor: default;
+  display: flex;
+  justify-content: space-between;
+  color: black;
+
+  &:focus {
+    background: gray;
+    color: white;
+  }
+
+  &[aria-disabled] {
+    color: gray;
+  }
+}

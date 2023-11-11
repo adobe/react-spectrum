@@ -39,8 +39,9 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
     targetKey
   } = props;
 
+  let menuRef = useRef<HTMLDivElement>(null);
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
+  let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, rootMenuTriggerState, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
   let {submenuTriggerProps, submenuProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
@@ -134,8 +135,8 @@ SubmenuTrigger.getCollectionNode = function* (props: SpectrumSubmenuTriggerProps
       childArray.push(child);
     }
   });
-  let [trigger] = childArray;
-  let [, content] = props.children as [ReactElement, ReactElement];
+
+  let [trigger, content] = childArray;
 
   yield {
     element: React.cloneElement(trigger, {...trigger.props, hasChildItems: true, isTrigger: true}),
