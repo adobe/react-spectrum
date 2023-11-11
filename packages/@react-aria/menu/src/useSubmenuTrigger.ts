@@ -192,6 +192,7 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
   };
 
   let onBlur = (e) => {
+    console.log('blurring', e.relatedTarget)
     if (state.isOpen && parentMenuRef.current.contains(e.relatedTarget)) {
       onSubmenuClose();
     }
@@ -199,9 +200,11 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
 
   let shouldCloseOnInteractOutside = (target) => {
     if (target !== ref.current) {
+      console.log('in shouldclose')
       return true;
     }
 
+    console.log('in shouldclose false')
     return false;
   };
 

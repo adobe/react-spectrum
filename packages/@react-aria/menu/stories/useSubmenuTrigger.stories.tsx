@@ -10,34 +10,22 @@
  * governing permissions and limitations under the License.
  */
 
-// TODO for docs, convert to react-aria and react-stately mono package imports
+import {action} from '@storybook/addon-actions';
 import {AriaPopoverProps, DismissButton, Overlay, usePopover} from '@react-aria/overlays';
 import {Item} from '@react-stately/collections';
 import React, {cloneElement, createContext, MutableRefObject, ReactElement, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import {useButton} from '@react-aria/button';
-import {AriaMenuProps, UNSTABLE_useSubmenuTrigger, useMenu, useMenuItem, useMenuTrigger} from '@react-aria/menu';
+import {AriaMenuProps, UNSTABLE_useSubmenuTrigger, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from '@react-aria/menu';
 import {MenuTriggerProps, MenuTriggerState, UNSTABLE_useSubmenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
+import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {useMenuSection, useSeparator, mergeProps} from 'react-aria';
+import {useSeparator} from '@react-aria/separator';
 import styles from './index.css';
-import { mergeRefs, useLayoutEffect, useObjectRef } from '@react-aria/utils';
-import { action } from '@storybook/addon-actions';
+import { FocusScope } from '@react-aria/focus';
 
 export default {
   title: 'useSubmenuTrigger'
-};
-
-export const BaseExample = {
-  render: () => (
-    <MenuButton label="Actions">
-      <Item key="copy">Copy</Item>
-      <Item key="cut">Cut</Item>
-      <Item key="paste">Paste</Item>
-    </MenuButton>
-
-  ),
-  name: 'base menu example'
 };
 
 export const SubmenuExample = {
@@ -157,11 +145,12 @@ function useMenuStateContext() {
   return useContext(MenuStateContext);
 }
 
-
-interface MenuProps<T> extends AriaMenuProps<T> {}
+interface MenuProps<T> extends AriaMenuProps<T> {
+  menuRef?: MutableRefObject<HTMLUListElement>
+}
 
 function Menu<T extends object>(props: MenuProps<T>) {
-  // TODO: do I need this popover ref? where to render the popover
+  let {menuRef} = props;
   let popoverContainerRef = useRef(null);
   let [leftOffset, setLeftOffset] = useState({left: 0});
   useLayoutEffect(() => {
@@ -169,13 +158,13 @@ function Menu<T extends object>(props: MenuProps<T>) {
     setLeftOffset({left: -1 * left});
   }, []);
 
-
   // Create menu state based on the incoming props
   let state = useTreeState(props);
 
   // Get props for the menu element
   let ref = useRef(null);
-  let {menuProps} = useMenu(props, state, ref);
+  menuRef = menuRef || ref;
+  let {menuProps} = useMenu(props, state, menuRef);
 
   // TODO: how best to communicate the root menu state down to Menu
   // perhaps if wrapper had the ability to accept arbitrary props I could then pass the root menu state via Menu's call of wrapper
@@ -184,31 +173,34 @@ function Menu<T extends object>(props: MenuProps<T>) {
   return (
     // TODO: need popoverCOntainerRef, tree state, domRef to menu??
     <MenuStateContext.Provider value={{menuRef: ref, menuTreeState: state, popoverContainerRef}}>
-      <ul {...menuProps} className={styles.menu} ref={ref}>
-        {[...state.collection].map(item => {
-          if (item.type === 'section') {
-            return (
-              <MenuSection key={item.key} section={item} state={state} />
+      {/* Wrap in FocusScope for updating active scope */}
+      <FocusScope>
+        <ul {...menuProps} className={styles.menu} ref={menuRef}>
+          {[...state.collection].map(item => {
+            if (item.type === 'section') {
+              return (
+                <MenuSection key={item.key} section={item} state={state} />
+              );
+            }
+
+            let menuItem = (
+              <MenuItem
+                key={item.key}
+                item={item}
+                state={state}
+                onAction={props.onAction} />
             );
-          }
 
-          let menuItem = (
-            <MenuItem
-              key={item.key}
-              item={item}
-              state={state}
-              onAction={props.onAction} />
-          );
+            if (item.wrapper) {
+              menuItem = item.wrapper(menuItem);
+            }
 
-          if (item.wrapper) {
-            menuItem = item.wrapper(menuItem);
-          }
-
-          return menuItem;
-
-        })}
-        <div ref={popoverContainerRef} style={{width: '100vw', height: '1px', background: 'red', position: 'absolute', top: -5, ...leftOffset}} />
-      </ul>
+            return menuItem;
+          })}
+        </ul>
+        {/* Add container to which to portal the submenu overlay */}
+        <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} />
+      </FocusScope>
     </MenuStateContext.Provider>
   );
 }
@@ -222,8 +214,8 @@ function MenuItem(props) {
   let isDisabled = state.disabledKeys.has(key);
   let isSelectable = !isSubmenuTrigger && state.selectionManager.selectionMode !== 'none';
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
-  let itemref = useRef<any>(null);
-  let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
+  let itemRef = useRef<any>(null);
+  let ref = useObjectRef(useMemo(() => mergeRefs(itemRef, triggerRef), [itemRef, triggerRef]));
   let {
     menuItemProps
   } = useMenuItem(
@@ -303,7 +295,6 @@ function MenuSection({section, state}) {
 }
 
 function SubmenuTrigger(props) {
-  // TODO: Get root menu state
   let {rootMenuTriggerState} = useRootMenuContext();
 
   let triggerRef = useRef<HTMLDivElement>();
@@ -338,8 +329,7 @@ function SubmenuTrigger(props) {
       triggerRef={triggerRef}
       scrollRef={menuRef}
       placement="end top">
-      {/* TODO: removed menu ref, don't think it is even used */}
-      {cloneElement(menu as ReactElement, {...submenuProps})}
+      {cloneElement(menu as ReactElement, {...submenuProps, menuRef})}
     </Popover>
   );
 

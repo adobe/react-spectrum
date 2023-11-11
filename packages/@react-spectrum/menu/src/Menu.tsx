@@ -17,11 +17,11 @@ import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
+import {MenuStateContext, useMenuContext, useMenuStateContext} from './context';
 import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/utils';
-import React, {ReactElement, useContext, useRef, useState} from 'react';
+import React, {ReactElement, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -30,7 +30,7 @@ import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let isSubmenu = true;
-  let contextProps = useContext(MenuContext);
+  let contextProps = useMenuContext();
   let parentMenuContext = useMenuStateContext();
   let {rootMenuTriggerState, state: parentMenuTreeState} = parentMenuContext || {rootMenuTriggerState: contextProps.state};
   if (!parentMenuContext) {
