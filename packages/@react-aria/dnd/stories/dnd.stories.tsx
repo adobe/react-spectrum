@@ -293,7 +293,7 @@ export function DragPreviewOffset() {
   let preview = useRef(null);
   let {dragProps, isDragging} = useDrag({
     preview,
-    previewOffset: { x: 40, y: 40 },
+    previewOffset: {x: 40, y: 40},
     getItems() {
       return [{
         'text/plain': 'hello world'
@@ -320,18 +320,18 @@ export function DragPreviewOffset() {
 
   return (
     <>
-    <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
-      <div
-        ref={ref}
-        {...mergeProps(dragProps, buttonProps, clipboardProps)}
-        className={classNames(dndStyles, 'draggable', {'is-dragging': isDragging})}>
-        <ShowMenu size="XS" />
-        <span>Drag me</span>
-      </div>
-    </FocusRing>
-    <DragPreview ref={preview}>
-      {() => <div style={{background: 'red', width: 40, height: 40}}/>}
-    </DragPreview>
+      <FocusRing focusRingClass={classNames(dndStyles, 'focus-ring')}>
+        <div
+          ref={ref}
+          {...mergeProps(dragProps, buttonProps, clipboardProps)}
+          className={classNames(dndStyles, 'draggable', {'is-dragging': isDragging})}>
+          <ShowMenu size="XS" />
+          <span>Drag me</span>
+        </div>
+      </FocusRing>
+      <DragPreview ref={preview}>
+        {() => <div style={{background: 'red', width: 40, height: 40}} />}
+      </DragPreview>
     </>
   );
 }
