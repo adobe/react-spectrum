@@ -250,6 +250,22 @@ function Draggable() {
 <DropTarget />
 ```
 
+You can control the position of the `DragPreview` using the `previewOffset` options.
+
+```tsx example
+let {dragProps, isDragging} = useDrag({
+  preview,
+  /*- begin highlight -*/
+  previewOffset: {x: -20, y: -20},
+  /*- end highlight -*/
+  getItems() {
+    return [{
+      'text/plain': 'hello world'
+    }];
+  }
+});
+```
+
 ## Drop operations
 
 A <TypeLink links={sharedDocs.links} type={sharedDocs.links[sharedDocs.exports.DropOperation.id]} /> is an indication of what will happen when dragged data is dropped on a particular drop target. These are:
