@@ -16,7 +16,6 @@ import {RefObject, useCallback} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
 interface IVirtualizer {
-  contentSize: Size,
   updateItemSize(key: Key, size: Size): void
 }
 

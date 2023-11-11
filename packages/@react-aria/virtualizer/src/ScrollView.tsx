@@ -159,7 +159,10 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   if (scrollDirection === 'horizontal') {
     style.overflowX = 'auto';
     style.overflowY = 'hidden';
-  } else if (scrollDirection === 'vertical') {
+  } else if (scrollDirection === 'vertical' || contentSize.width === state.width) {
+    // Set overflow-x: hidden if content size is equal to the width of the scroll view.
+    // This prevents horizontal scrollbars from flickering during resizing due to resize observer
+    // firing slower than the frame rate, which may cause an infinite re-render loop.
     style.overflowY = 'auto';
     style.overflowX = 'hidden';
   } else {
@@ -167,10 +170,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   }
 
   innerStyle = {
-    // Omit width on inner element if it is equal to the width of the outer element.
-    // Since this is a block element, the browser will automatically make it full width.
-    // This prevents horizontal scrollbars from flickering when not needed.
-    width: contentSize.width === state.width ? undefined : contentSize.width,
+    width: contentSize.width,
     height: contentSize.height,
     pointerEvents: isScrolling ? 'none' : 'auto',
     position: 'relative',

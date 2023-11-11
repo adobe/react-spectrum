@@ -28,7 +28,6 @@ export interface SpectrumSideNavItemProps<T> extends HTMLAttributes<HTMLElement>
 }
 
 interface IVirtualizer {
-  contentSize: Size,
   updateItemSize(key: Key, size: Size): void
 }
 
