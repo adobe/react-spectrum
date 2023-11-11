@@ -314,8 +314,8 @@ React Aria is compatible with errors returned from schema validation libraries l
 import {z} from 'zod';
 
 const schema = z.object({
-  name: z.string().required(),
-  age: z.coerce.number().positive().required(),
+  name: z.string().min(1),
+  age: z.coerce.number().positive()
 });
 
 function handleRequest(formData: FormData) {
@@ -374,7 +374,7 @@ export function AddForm() {
 // app/actions.ts
 'use server';
 
-export function createTodo(prevState: any, formData: FormData) {
+export async function createTodo(prevState: any, formData: FormData) {
   try {
     // Create the todo...
   } catch (err) {
@@ -395,7 +395,7 @@ export function createTodo(prevState: any, formData: FormData) {
 
 ```tsx
 // app/routes/signup.tsx
-import type {ActionArgs} from '@remix-run/node';
+import type {ActionFunctionArgs} from '@remix-run/node';
 import {useActionData, useSubmit} from '@remix-run/react';
 import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-components';
 
@@ -432,7 +432,7 @@ export default function SignupForm() {
   );
 }
 
-export async function action({request}: ActionArgs) {
+export async function action({request}: ActionFunctionArgs) {
   try {
     // Validate data and perform action...
   } catch (err) {

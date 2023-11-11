@@ -1,6 +1,6 @@
 {
   "name": "@spectrum-icons/illustrations",
-  "version": "3.6.7",
+  "version": "3.6.8",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "repository": {
@@ -21,8 +21,8 @@
     "build-icons": "yarn build-cjs && yarn build-esm && yarn generate-types"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.21.1",
-    "@react-spectrum/icon": "^3.7.7",
+    "@react-aria/utils": "^3.22.0",
+    "@react-spectrum/icon": "^3.7.8",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

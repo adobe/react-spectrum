@@ -1,6 +1,6 @@
 {
   "name": "@react-stately/menu",
-  "version": "3.5.6",
+  "version": "3.5.7",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,9 +22,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/overlays": "^3.6.3",
-    "@react-types/menu": "^3.9.5",
-    "@react-types/shared": "^3.21.0",
+    "@react-stately/overlays": "^3.6.4",
+    "@react-types/menu": "^3.9.6",
+    "@react-types/shared": "^3.22.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
