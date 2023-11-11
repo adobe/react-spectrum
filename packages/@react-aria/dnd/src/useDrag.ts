@@ -32,6 +32,8 @@ export interface DragOptions {
   getItems: () => DragItem[],
   /** The ref of the element that will be rendered as the drag preview while dragging. */
   preview?: RefObject<DragPreviewRenderer>,
+  /** The offset within the preview at which the drag point should be rendered. */
+  previewOffset?: {x: number, y: number} | 'center',
   /** Function that returns the drop operations that are allowed for the dragged items. If not provided, all drop operations are allowed. */
   getAllowedDropOperations?: () => DropOperation[],
   /**
@@ -137,9 +139,16 @@ export function useDrag(options: DragOptions): DragResult {
         let rect = e.currentTarget.getBoundingClientRect();
         let x = e.clientX - rect.x;
         let y = e.clientY - rect.y;
-        if (x > size.width || y > size.height) {
+
+        if (
+          options.previewOffset === 'center' || 
+          (!options.previewOffset && (x > size.width || y > size.height))
+        ) {
           x = size.width / 2;
           y = size.height / 2;
+        } else if (options.previewOffset) {
+          x = options.previewOffset.x;
+          y = options.previewOffset.y;
         }
 
         // Rounding height to an even number prevents blurry preview seen on some screens
