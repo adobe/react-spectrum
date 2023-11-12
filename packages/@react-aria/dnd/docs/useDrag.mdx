@@ -224,6 +224,8 @@ function Draggable() {
   let {dragProps, isDragging} = useDrag({
     /*- begin highlight -*/
     preview,
+    /* Optionally control the position of the `DragPreview` using the `previewOffset` options. */
+    previewOffset: {x: 20, y: 20},
     /*- end highlight -*/
     getItems() {
       return [{
@@ -248,22 +250,6 @@ function Draggable() {
 
 <Draggable />
 <DropTarget />
-```
-
-You can control the position of the `DragPreview` using the `previewOffset` options.
-
-```tsx example
-let {dragProps, isDragging} = useDrag({
-  preview,
-  /*- begin highlight -*/
-  previewOffset: {x: 20, y: 20},
-  /*- end highlight -*/
-  getItems() {
-    return [{
-      'text/plain': 'hello world'
-    }];
-  }
-});
 ```
 
 ## Drop operations
