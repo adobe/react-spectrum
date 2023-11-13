@@ -134,7 +134,6 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
       // If focus is moving into a child focus scope (e.g. menu inside a dialog),
       // do not close the outer overlay. At this point, the active scope should
       // still be the outer overlay, since blur events run before focus.
-      console.log('blur',e.relatedTarget, isElementInChildOfActiveScope(e.relatedTarget))
       if (!e.relatedTarget || isElementInChildOfActiveScope(e.relatedTarget)) {
         return;
       }

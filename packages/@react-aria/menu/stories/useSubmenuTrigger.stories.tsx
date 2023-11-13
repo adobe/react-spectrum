@@ -11,18 +11,18 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {AriaPopoverProps, DismissButton, Overlay, usePopover} from '@react-aria/overlays';
-import {Item} from '@react-stately/collections';
-import React, {cloneElement, createContext, MutableRefObject, ReactElement, ReactNode, useContext, useMemo, useRef, useState} from 'react';
-import {useButton} from '@react-aria/button';
 import {AriaMenuProps, UNSTABLE_useSubmenuTrigger, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from '@react-aria/menu';
+import {AriaPopoverProps, DismissButton, Overlay, usePopover} from '@react-aria/overlays';
+import {FocusScope} from '@react-aria/focus';
+import {Item} from '@react-stately/collections';
 import {MenuTriggerProps, MenuTriggerState, UNSTABLE_useSubmenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import {TreeState, useTreeState} from '@react-stately/tree';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import {useSeparator} from '@react-aria/separator';
+import React, {cloneElement, createContext, MutableRefObject, ReactElement, ReactNode, useContext, useMemo, useRef, useState} from 'react';
 import styles from './index.css';
-import { FocusScope } from '@react-aria/focus';
+import {TreeState, useTreeState} from '@react-stately/tree';
+import {useButton} from '@react-aria/button';
+import {useSeparator} from '@react-aria/separator';
 
 export default {
   title: 'useSubmenuTrigger'
@@ -33,11 +33,17 @@ export const SubmenuExample = {
     <MenuButton label="Actions" selectionMode="multiple" onAction={action('onaction')}>
       <Item key="copy">Copy</Item>
       <SubmenuTrigger>
-        <Item key="cut">Cut</Item>
-        <Menu>
-          <Item key="Lvl 3 Item 1">Lvl 3 Item 1</Item>
-          <Item key="Lvl 3 Item 2">Lvl 3 Item 2</Item>
-          <Item key="Lvl 3 Item 3">Lvl 3 Item 3</Item>
+        <Item key="Share">Share</Item>
+        <Menu onAction={action('onaction submenu1')}>
+          <Item key="Copy Link">Copy Link</Item>
+          <SubmenuTrigger>
+            <Item key="Email">Email</Item>
+            <Menu onAction={action('onaction submenu2')}>
+              <Item key="Attachment">Email as Attachment</Item>
+              <Item key="Link">Email as Link</Item>
+            </Menu>
+          </SubmenuTrigger>
+          <Item key="SMS">SMS</Item>
         </Menu>
       </SubmenuTrigger>
       <Item key="paste">Paste</Item>
@@ -110,9 +116,15 @@ function Popover({children, state, container, disableFocusManagement, ...props}:
     popoverRef
   }, state);
 
+  // TODO: this is the same workaround we applied to the spectrum submenu to close all menus when clicking outside
+  // perhaps should replace this with a way to detect clicks with the menu tree and clicks outside the tree.
+  let onPointerDown = () => {
+    state.close();
+  };
+
   return (
     <Overlay disableFocusManagement={disableFocusManagement} portalContainer={container}>
-      {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
+      {!props.isNonModal && <div {...mergeProps(underlayProps, {onPointerDown})} style={{position: 'fixed', inset: 0}} />}
       <div
         {...popoverProps}
         ref={popoverRef}
@@ -128,21 +140,14 @@ function Popover({children, state, container, disableFocusManagement, ...props}:
     </Overlay>
   );
 }
-
-// const MenuContext = createContext({});
-// function useMenuContext() {
-//   return useContext(MenuContext);
-// }
-
-// TODO rename menustatecontext to just Menucontext?
-interface MenuStateContextValue<T> {
+interface MenuContextValue<T> {
   menuRef: MutableRefObject<HTMLUListElement>,
   menuTreeState: TreeState<T>,
   popoverContainerRef: MutableRefObject<HTMLDivElement>
 }
-const MenuStateContext = createContext<MenuStateContextValue<any>>(undefined);
-function useMenuStateContext() {
-  return useContext(MenuStateContext);
+const MenuContext = createContext<MenuContextValue<any>>(undefined);
+function useMenuContext() {
+  return useContext(MenuContext);
 }
 
 interface MenuProps<T> extends AriaMenuProps<T> {
@@ -171,9 +176,8 @@ function Menu<T extends object>(props: MenuProps<T>) {
   // same deal with how to pass menuRef and menuTreeState to the SubMenuTrigger here.
   // For now run with context, ask team later
   return (
-    // TODO: need popoverCOntainerRef, tree state, domRef to menu??
-    <MenuStateContext.Provider value={{menuRef: ref, menuTreeState: state, popoverContainerRef}}>
-      {/* Wrap in FocusScope for updating active scope */}
+    <MenuContext.Provider value={{menuRef, menuTreeState: state, popoverContainerRef}}>
+      {/* Wrap in FocusScope so we update the active scope when a submenu opens */}
       <FocusScope>
         <ul {...menuProps} className={styles.menu} ref={menuRef}>
           {[...state.collection].map(item => {
@@ -201,7 +205,7 @@ function Menu<T extends object>(props: MenuProps<T>) {
         {/* Add container to which to portal the submenu overlay */}
         <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} />
       </FocusScope>
-    </MenuStateContext.Provider>
+    </MenuContext.Provider>
   );
 }
 
@@ -235,6 +239,7 @@ function MenuItem(props) {
     <li {...menuItemProps} className={styles.menuitem} ref={ref}>
       {item.rendered}
       {isSelected && <span aria-hidden="true">✅</span>}
+      {isSubmenuTrigger && !isDisabled && <span aria-hidden="true">►</span>}
     </li>
   );
 }
@@ -302,10 +307,10 @@ function SubmenuTrigger(props) {
     children,
     targetKey
   } = props;
-  let menuRef = useRef<HTMLDivElement>(null);
+  let menuRef = useRef<HTMLDivElement>(undefined);
   // TODO replace with children.forEach?
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {popoverContainerRef, menuRef: parentMenuRef, menuTreeState} = useMenuStateContext();
+  let {popoverContainerRef, menuRef: parentMenuRef, menuTreeState} = useMenuContext();
   let triggerNode = menuTreeState.collection.getItem(targetKey);
 
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
@@ -319,12 +324,9 @@ function SubmenuTrigger(props) {
     <Popover
       {...mergeProps(popoverProps, overlayProps)}
       container={popoverContainerRef?.current}
-      offset={-10}
+      offset={-5}
       containerPadding={0}
       crossOffset={-5}
-      // enableBothDismissButtons
-      // UNSAFE_style={{clipPath: 'unset', overflow: 'visible', borderWidth: '0px'}}
-      // hideArrow
       state={submenuTriggerState}
       triggerRef={triggerRef}
       scrollRef={menuRef}

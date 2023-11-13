@@ -49,10 +49,12 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   let modality = useInteractionModality();
 
   useEffect(() => {
-    if (preventPointerEvents && menuRef.current) {
-      (menuRef.current as HTMLElement).style.pointerEvents = 'none';
-    } else {
-      (menuRef.current as HTMLElement).style.pointerEvents = '';
+    if (menuRef.current) {
+      if (preventPointerEvents) {
+        (menuRef.current as HTMLElement).style.pointerEvents = 'none';
+      } else {
+        (menuRef.current as HTMLElement).style.pointerEvents = '';
+      }
     }
   }, [menuRef, preventPointerEvents]);
 
@@ -100,7 +102,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
         reset();
         return;
       }
-    
+
       /* Check if pointer is moving towards submenu.
         Uses the 2-argument arctangent (https://en.wikipedia.org/wiki/Atan2) to calculate:
           - angle between previous pointer and top of submenu
