@@ -45,7 +45,6 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
     autoFocus,
     isQuiet,
     isDisabled,
-    isReadOnly,
     placeholderValue,
     maxVisibleMonths = 1,
     pageBehavior
