@@ -28,7 +28,15 @@ export interface TooltipProps extends PositionProps, OverlayTriggerProps, AriaLa
    *
    * When used within a TooltipTrigger this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element>
+  triggerRef?: RefObject<Element>,
+  /**
+   * Whether the tooltip is currently performing an entry animation.
+   */
+  isEntering?: boolean,
+  /**
+   * Whether the tooltip is currently performing an exit animation.
+   */
+  isExiting?: boolean
 }
 
 export interface TooltipRenderProps {
@@ -84,7 +92,7 @@ function Tooltip(props: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);
   let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
-  let isExiting = useExitAnimation(ref, state.isOpen);
+  let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
   if (!state.isOpen && !isExiting) {
     return null;
   }
@@ -114,7 +122,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     isOpen: state.isOpen
   });
 
-  let isEntering = useEnterAnimation(props.tooltipRef, !!placement);
+  let isEntering = useEnterAnimation(props.tooltipRef, !!placement) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Tooltip',

@@ -54,7 +54,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   props = useSlotProps(props, 'button');
   props = disablePendingProps(props);
   let {
-    elementType: ElementType = 'button',
+    elementType: Element = 'button',
     children,
     variant,
     style = variant === 'accent' || variant === 'cta' ? 'fill' : 'outline',
@@ -103,7 +103,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
-      <ElementType
+      <Element
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
         ref={domRef}
@@ -153,7 +153,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
               aria-labelledby={`${textId} ${spinnerId}`} />
           </>}
         </SlotProvider>
-      </ElementType>
+      </Element>
     </FocusRing>
   );
 }

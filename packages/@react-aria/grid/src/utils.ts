@@ -12,8 +12,7 @@
 
 import type {GridCollection} from '@react-types/grid';
 import type {GridState} from '@react-stately/grid';
-import {Key} from 'react';
-import type {KeyboardDelegate} from '@react-types/shared';
+import type {Key, KeyboardDelegate} from '@react-types/shared';
 
 interface GridMapShared {
   keyboardDelegate: KeyboardDelegate,

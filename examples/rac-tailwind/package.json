@@ -9,7 +9,7 @@
   "dependencies": {
     "@heroicons/react": "^2.0.16",
     "framer-motion": "^10.12.16",
-    "parcel": "^2.9.1",
+    "parcel": "^2.10.2",
     "postcss": "^8.4.21",
     "react": "^18.2.0",
     "react-aria-components": "^1.0.0-alpha.4",

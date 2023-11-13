@@ -1,6 +1,6 @@
 {
   "ascending": "rastući",
-  "ascendingSort": "sortirano po kolonama {columnName} padajućim redosledom",
+  "ascendingSort": "sortirano po kolonama {columnName} rastućim redosledom",
   "columnSize": "{value} piksela",
   "descending": "padajući",
   "descendingSort": "sortirano po kolonama {columnName} padajućim redosledom",

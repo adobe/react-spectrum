@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMProps, ItemElement, ItemRenderer, StyleProps} from '@react-types/shared';
-import {Key, ReactNode} from 'react';
+import {DOMProps, ItemElement, ItemRenderer, Key, StyleProps} from '@react-types/shared';
+import {ReactNode} from 'react';
 
 export interface ActionBarProps<T> {
   /** An list of `Item` elements or a function. If the latter, a list of items must be provided using the `items` prop. */

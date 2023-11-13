@@ -158,7 +158,10 @@ describe('Calendar', () => {
   });
 
   it('should support hover', async () => {
-    let {getByRole} = renderCalendar({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getByRole} = renderCalendar({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: hoverStartSpy, onHoverChange: hoverChangeSpy, onHoverEnd: hoverEndSpy});
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
 
@@ -168,10 +171,14 @@ describe('Calendar', () => {
     await user.hover(cell);
     expect(cell).toHaveAttribute('data-hovered', 'true');
     expect(cell).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(cell);
     expect(cell).not.toHaveAttribute('data-hovered');
     expect(cell).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should support focus ring', async () => {
