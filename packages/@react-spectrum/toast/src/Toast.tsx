@@ -19,7 +19,7 @@ import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import React, {ReactNode, useContext} from 'react';
+import React, {useContext} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import toastContainerStyles from './toastContainer.css';
@@ -28,9 +28,9 @@ import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useToast} from '@react-aria/toast';
 
 export interface SpectrumToastValue {
-  children: ReactNode,
+  children: string,
   variant: 'positive' | 'negative' | 'info' | 'neutral',
-  actionLabel?: ReactNode,
+  actionLabel?: string,
   onAction?: () => void,
   shouldCloseOnAction?: boolean
 }
