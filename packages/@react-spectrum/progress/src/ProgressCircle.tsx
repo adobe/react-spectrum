@@ -10,13 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp} from '@react-aria/utils';
+import {clamp, filterDOMProps} from '@react-aria/utils';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React, {CSSProperties} from 'react';
 import {SpectrumProgressCircleProps} from '@react-types/progress';
 import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
 import {useProgressBar} from '@react-aria/progress';
+
+const allowedAttributes = new Set(['aria-hidden']);
 
 function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
   let {
@@ -57,8 +59,11 @@ function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivE
     console.warn('ProgressCircle requires an aria-label or aria-labelledby attribute for accessibility');
   }
 
+  let domProps = filterDOMProps(props, {propNames: allowedAttributes});
+
   return (
     <div
+      {...domProps}
       {...styleProps}
       {...progressBarProps}
       ref={domRef}
