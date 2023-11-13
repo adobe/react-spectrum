@@ -14,8 +14,8 @@ import {RadioGroupState} from '@react-stately/radio';
 
 interface RadioGroupData {
   name: string,
-  descriptionId: string,
-  errorMessageId: string,
+  descriptionId: string | undefined,
+  errorMessageId: string | undefined,
   validationBehavior: 'aria' | 'native'
 }
 
