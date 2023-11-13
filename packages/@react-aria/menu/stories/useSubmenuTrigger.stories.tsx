@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -16,9 +16,9 @@ import {AriaPopoverProps, DismissButton, Overlay, usePopover} from '@react-aria/
 import {FocusScope} from '@react-aria/focus';
 import {Item} from '@react-stately/collections';
 import {MenuTriggerProps, MenuTriggerState, UNSTABLE_useSubmenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
-import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
-import React, {cloneElement, createContext, MutableRefObject, ReactElement, ReactNode, useContext, useMemo, useRef, useState} from 'react';
+import React, {cloneElement, createContext, MutableRefObject, ReactElement, ReactNode, useContext, useRef, useState} from 'react';
 import styles from './index.css';
 import {TreeState, useTreeState} from '@react-stately/tree';
 import {useButton} from '@react-aria/button';
@@ -116,7 +116,7 @@ function Popover({children, state, container, disableFocusManagement, ...props}:
     popoverRef
   }, state);
 
-  // TODO: this is the same workaround we applied to the spectrum submenu to close all menus when clicking outside
+  // TODO: this is the same workaround we applied to the spectrum submenu to close all menus when clicking outside, assumes only one underlay exists
   // perhaps should replace this with a way to detect clicks with the menu tree and clicks outside the tree.
   let onPointerDown = () => {
     state.close();
@@ -156,20 +156,23 @@ interface MenuProps<T> extends AriaMenuProps<T> {
 
 function Menu<T extends object>(props: MenuProps<T>) {
   let {menuRef} = props;
+
+  // Create menu state based on the incoming props
+  let state = useTreeState(props);
+
+  // Get props for the menu element. Use the menuRef from SubmenuTrigger if provided.
+  let ref = useRef(null);
+  menuRef = menuRef || ref;
+  let {menuProps} = useMenu(props, state, menuRef);
+
+  // Create a container for the menu's submenu to be portalled to. It should span the width of the page for
+  // overlay flipping logic
   let popoverContainerRef = useRef(null);
   let [leftOffset, setLeftOffset] = useState({left: 0});
   useLayoutEffect(() => {
     let {left} = popoverContainerRef.current.getBoundingClientRect();
     setLeftOffset({left: -1 * left});
   }, []);
-
-  // Create menu state based on the incoming props
-  let state = useTreeState(props);
-
-  // Get props for the menu element
-  let ref = useRef(null);
-  menuRef = menuRef || ref;
-  let {menuProps} = useMenu(props, state, menuRef);
 
   // TODO: how best to communicate the root menu state down to Menu
   // perhaps if wrapper had the ability to accept arbitrary props I could then pass the root menu state via Menu's call of wrapper
@@ -212,14 +215,18 @@ function Menu<T extends object>(props: MenuProps<T>) {
 function MenuItem(props) {
   let {item, state, onAction, triggerRef} = props;
   let {key} = item;
-  let isSubmenuTrigger = !!triggerRef;
 
-    // Get props for the menu item element
+  // Calculate various states of the menu item
+  let isSubmenuTrigger = !!triggerRef;
   let isDisabled = state.disabledKeys.has(key);
   let isSelectable = !isSubmenuTrigger && state.selectionManager.selectionMode !== 'none';
   let isSelected = isSelectable && state.selectionManager.isSelected(key);
-  let itemRef = useRef<any>(null);
-  let ref = useObjectRef(useMemo(() => mergeRefs(itemRef, triggerRef), [itemRef, triggerRef]));
+
+  // Use a default ref if the menu item isn't a submenu trigger
+  let ref = useRef(null);
+  triggerRef = triggerRef || ref;
+
+  // Get props for the menu item element
   let {
     menuItemProps
   } = useMenuItem(
@@ -232,11 +239,11 @@ function MenuItem(props) {
       ...props
     },
     state,
-    ref
+    triggerRef
   );
 
   return (
-    <li {...menuItemProps} className={styles.menuitem} ref={ref}>
+    <li {...menuItemProps} className={styles.menuitem} ref={triggerRef}>
       {item.rendered}
       {isSelected && <span aria-hidden="true">✅</span>}
       {isSubmenuTrigger && !isDisabled && <span aria-hidden="true">►</span>}
@@ -300,19 +307,21 @@ function MenuSection({section, state}) {
 }
 
 function SubmenuTrigger(props) {
+  // Grab refs and state information of the parent and root menu to allow submenu hooks
+  // to process focus movement and user interactions across multiple menu levels
   let {rootMenuTriggerState} = useRootMenuContext();
-
-  let triggerRef = useRef<HTMLDivElement>();
+  let {popoverContainerRef, menuRef: parentMenuRef, menuTreeState} = useMenuContext();
   let {
     children,
     targetKey
   } = props;
-  let menuRef = useRef<HTMLDivElement>(undefined);
-  // TODO replace with children.forEach?
-  let [menuTrigger, menu] = React.Children.toArray(children);
-  let {popoverContainerRef, menuRef: parentMenuRef, menuTreeState} = useMenuContext();
-  let triggerNode = menuTreeState.collection.getItem(targetKey);
 
+  let triggerRef = useRef<HTMLDivElement>(null);
+  let menuRef = useRef<HTMLDivElement>(null);
+
+  // Get props and state for the submenu tied to the submenu trigger
+  let [menuTrigger, menu] = React.Children.toArray(children);
+  let triggerNode = menuTreeState.collection.getItem(targetKey);
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
   let {submenuTriggerProps, submenuProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
@@ -343,6 +352,7 @@ function SubmenuTrigger(props) {
   );
 }
 
+// Allow SubmenuTrigger component to wrap Items for collection processing
 SubmenuTrigger.getCollectionNode = function* (props) {
   let childArray = [];
   React.Children.forEach(props.children, child => {
