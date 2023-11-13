@@ -310,9 +310,9 @@ function Pending(props) {
           </PendingButtonComponent>
         </PendingButtonContainerComponent>
 
-        <Text>Aria-label "Button label" on button and aria-label "icon label" on icon</Text>
+        <Text>Aria-label "icon label" on icon</Text>
         <PendingButtonContainerComponent {...props}>
-          <PendingButtonComponent {...props} aria-label="Button label">
+          <PendingButtonComponent {...props}>
             <Bell aria-label="icon label" />
           </PendingButtonComponent>
         </PendingButtonContainerComponent>
@@ -330,7 +330,7 @@ function Pending(props) {
             <Button {...props} isPending={tooltipPending} onPress={handlePress} aria-label="Notifications">
               <Bell />
             </Button>
-            <Tooltip>Notifications</Tooltip>
+            <Tooltip>Click here to view</Tooltip>
           </TooltipTrigger>
         </PendingButtonContainerComponent>
 

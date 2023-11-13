@@ -71,10 +71,15 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let {styleProps} = useStyleProps(otherProps);
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
   let hasIcon = useHasChild(`.${styles['spectrum-Icon']}`, domRef);
+  // an aria label will block children and their labels from being read, this is undesirable for pending state
+  let hasAriaLabel = !!buttonProps['aria-label'] || !!buttonProps['aria-labelledby'];
   let [isProgressVisible, setIsProgressVisible] = useState(false);
+  let backupButtonId = useId();
+  let buttonId = buttonProps.id || backupButtonId;
   let spinnerId = useId();
   let textId = useId();
   let iconId = useId();
+  let auxLabelId = useId();
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -106,11 +111,14 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
       <Element
         {...styleProps}
         {...mergeProps(buttonProps, hoverProps)}
+        id={buttonId}
         ref={domRef}
         data-variant={variant}
         data-style={style}
         data-static-color={staticColor || undefined}
         aria-disabled={isPending || undefined}
+        aria-label={isPending ? undefined : buttonProps['aria-label']}
+        aria-labelledby={isPending ? undefined : buttonProps['aria-labelledby']}
         aria-live={isPending ? 'polite' : undefined}
         className={
           classNames(
@@ -147,10 +155,13 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             size="S"
             UNSAFE_className={classNames(styles, 'spectrum-Button-circleLoader')}
             staticColor={staticColor} />
+            {hasAriaLabel ?
+              <div aria-hidden="true" id={auxLabelId} aria-label={buttonProps['aria-label']} aria-labelledby={buttonProps['aria-labelledby']?.replace(buttonId, auxLabelId)} />
+              : null}
             <div
               id={spinnerId}
               aria-label={stringFormatter.format('pending')}
-              aria-labelledby={`${textId} ${spinnerId}`} />
+              aria-labelledby={`${hasAriaLabel ? '' : iconId} ${hasAriaLabel ? auxLabelId : textId} ${spinnerId}`} />
           </>}
         </SlotProvider>
       </Element>
