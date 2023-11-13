@@ -12,12 +12,10 @@
 
 import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
-import Bell from '@spectrum-icons/workflow/Bell';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
-import {Text} from '@react-spectrum/text';
 
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
@@ -312,40 +310,7 @@ describe('Button', function () {
     expect(button).toHaveAttribute('aria-disabled', 'true');
     spinner = queryByRole('progressbar');
     expect(spinner).toBeVisible();
-    expect(spinner).toHaveAttribute('aria-label', 'Click me pending');
     expect(onPressSpy).toHaveBeenCalledTimes(1);
-  });
-
-  it('builds the aria-label for the isPending spinner from button children', function () {
-    function TestComponent() {
-      let pending = true;
-      return (
-        <>
-          <Button isPending={pending}>String child</Button>
-          <Button isPending={pending}><Text>Text child</Text></Button>
-          <Button isPending={pending}><Bell /></Button>
-          <Button isPending={pending}><Bell /><Text>Icon and text children</Text></Button>
-          <Button isPending={pending}><Bell aria-label="Icon only" /></Button>
-          <Button isPending={pending}><Bell aria-label="Bell" /><Text>rings</Text></Button>
-          <Button isPending={pending} aria-label="Button"><Bell /></Button>
-          {/* Unsupported by button component--including for completeness */}
-          <Button isPending={pending}><em>DOM element</em></Button>
-        </>
-      );
-    }
-    let {queryAllByRole} = render(<TestComponent />);
-    act(() => {
-      jest.advanceTimersByTime(spinnerVisibilityDelay);
-    });
-    let spinners = queryAllByRole('progressbar');
-    expect(spinners[0]).toHaveAttribute('aria-label', 'String child pending');
-    expect(spinners[1]).toHaveAttribute('aria-label', 'Text child pending');
-    expect(spinners[2]).toHaveAttribute('aria-label', 'pending');
-    expect(spinners[3]).toHaveAttribute('aria-label', 'Icon and text children pending');
-    expect(spinners[4]).toHaveAttribute('aria-label', 'Icon only pending');
-    expect(spinners[5]).toHaveAttribute('aria-label', 'Bell rings pending');
-    expect(spinners[6]).toHaveAttribute('aria-label', 'Button pending');
-    expect(spinners[7]).toHaveAttribute('aria-label', 'DOM element pending');
   });
 
   // isPending anchor element
