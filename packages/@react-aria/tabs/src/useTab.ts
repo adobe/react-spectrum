@@ -58,7 +58,7 @@ export function useTab<T>(
   let {tabIndex} = itemProps;
 
   let item = state.collection.getItem(key);
-  let domProps = filterDOMProps(item?.props, {isLink: !!item?.props?.href});
+  let domProps = filterDOMProps(item?.props, {isLink: !!item?.props?.href, labelable: true});
   delete domProps.id;
 
   return {
