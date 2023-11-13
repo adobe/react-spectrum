@@ -27,7 +27,6 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
   props = useFormProps(props);
   let {
     isEmphasized,
-    isDisabled,
     children,
     orientation = 'vertical'
   } = props;
@@ -54,7 +53,7 @@ function CheckboxGroup(props: SpectrumCheckboxGroupProps, ref: DOMRef<HTMLDivEle
             }
           )
         }>
-        <Provider isEmphasized={isEmphasized} isDisabled={isDisabled}>
+        <Provider isEmphasized={isEmphasized}>
           <CheckboxGroupContext.Provider value={state}>
             {children}
           </CheckboxGroupContext.Provider>
