@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, filterDOMProps} from '@react-aria/utils';
+import {clamp} from '@react-aria/utils';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import React, {CSSProperties} from 'react';

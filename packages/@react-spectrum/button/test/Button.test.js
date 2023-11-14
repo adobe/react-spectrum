@@ -335,7 +335,7 @@ describe('Button', function () {
       jest.advanceTimersByTime(spinnerVisibilityDelay);
     });
     expect(button).toHaveAttribute('aria-disabled', 'true');
-    spinner = queryByRole('progressbar');
+    spinner = queryByRole('progressbar', {hidden: true});
     expect(spinner).toBeVisible();
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
