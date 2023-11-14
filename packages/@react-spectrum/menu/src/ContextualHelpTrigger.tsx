@@ -57,7 +57,21 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let slots = {};
   if (isUnavailable) {
     slots = {
-      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog', classNames(styles, !isMobile ? 'spectrum-Menu-subdialog' : ''))},
+      dialog: {
+        UNSAFE_className: classNames(
+          helpStyles,
+          'react-spectrum-ContextualHelp-dialog',
+          {
+            'react-spectrum-ContextualHelp-dialog--isMobile': isMobile
+          },
+          classNames(
+            styles,
+            {
+              'spectrum-Menu-subdialog': !isMobile
+            }
+          )
+        )
+      },
       content: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-content']},
       footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
     };

@@ -133,13 +133,12 @@ export function TrayHeaderWrapper(props) {
             styles,
             'spectrum-Menu-wrapper',
             {
-              'is-mobile': isMobile,
-              'is-expanded': hasOpenSubmenu,
-              'spectrum-Submenu-trayWrapper': isSubmenu
+              'spectrum-Menu-wrapper--isMobile': isMobile,
+              'is-expanded': hasOpenSubmenu
             }
           )
         }>
-        <div role="presentation" style={{display: 'flex', flexDirection: 'column', overflow: 'auto'}} onKeyDown={wrapperKeyDown}>
+        <div role="presentation" className={classNames(styles, {'spectrum-Submenu-wrapper': isMobile})} onKeyDown={wrapperKeyDown}>
           {isMobile && isSubmenu && !hasOpenSubmenu && (
             <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
               <ActionButton
