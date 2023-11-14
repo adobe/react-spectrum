@@ -119,6 +119,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
         aria-disabled={isPending ? 'true' : undefined}
         aria-label={isPending ? undefined : buttonProps['aria-label']}
         aria-labelledby={isPending ? undefined : buttonProps['aria-labelledby']}
+        aria-live={isPending ? 'polite' : undefined}
         className={
           classNames(
             styles,
