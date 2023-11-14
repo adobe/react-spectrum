@@ -123,7 +123,7 @@ export function TrayHeaderWrapper(props) {
   let {direction} = useLocale();
 
   return (
-    <div style={{display: 'flex', overflow: 'hidden', height: !hasOpenSubmenu ? '100%' : undefined}} role="presentation" onKeyDown={wrapperKeyDown}>
+    <>
       <div
         role={headingId ? 'dialog' : undefined}
         aria-labelledby={headingId}
@@ -139,21 +139,23 @@ export function TrayHeaderWrapper(props) {
             }
           )
         }>
-        {isMobile && isSubmenu && !hasOpenSubmenu && (
-          <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
-            <ActionButton
-              aria-label={backButtonLabel}
-              isQuiet
-              onPress={onBackButtonPress}>
-              {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
-              {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
-            </ActionButton>
-            <h1 id={headingId} className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h1>
-          </div>
-        )}
-        {children}
+        <div role="presentation" style={{display: 'flex', flexDirection: 'column', overflow: 'auto'}} onKeyDown={wrapperKeyDown}>
+          {isMobile && isSubmenu && !hasOpenSubmenu && (
+            <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
+              <ActionButton
+                aria-label={backButtonLabel}
+                isQuiet
+                onPress={onBackButtonPress}>
+                {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
+                {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
+              </ActionButton>
+              <h1 id={headingId} className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h1>
+            </div>
+          )}
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
