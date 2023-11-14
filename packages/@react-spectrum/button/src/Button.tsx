@@ -116,10 +116,9 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
         data-variant={variant}
         data-style={style}
         data-static-color={staticColor || undefined}
-        aria-disabled={isPending || undefined}
+        aria-disabled={isPending ? 'true' : undefined}
         aria-label={isPending ? undefined : buttonProps['aria-label']}
         aria-labelledby={isPending ? undefined : buttonProps['aria-labelledby']}
-        aria-live={isPending ? 'polite' : undefined}
         className={
           classNames(
             styles,
@@ -149,20 +148,22 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
           {typeof children === 'string'
             ? <Text>{children}</Text>
             : children}
-          {isProgressVisible && <><ProgressCircle
+          {isPending && <ProgressCircle
             aria-hidden="true"
             isIndeterminate
             size="S"
             UNSAFE_className={classNames(styles, 'spectrum-Button-circleLoader')}
+            UNSAFE_style={{visibility: isProgressVisible ? 'visible' : 'hidden'}}
             staticColor={staticColor} />
-            {hasAriaLabel ?
-              <div aria-hidden="true" id={auxLabelId} aria-label={buttonProps['aria-label']} aria-labelledby={buttonProps['aria-labelledby']?.replace(buttonId, auxLabelId)} />
-              : null}
-            <div
-              id={spinnerId}
-              aria-label={stringFormatter.format('pending')}
-              aria-labelledby={`${hasAriaLabel ? '' : iconId} ${hasAriaLabel ? auxLabelId : textId} ${spinnerId}`} />
-          </>}
+          }
+          {isPending && hasAriaLabel &&
+            <div aria-hidden="true" id={auxLabelId} aria-label={buttonProps['aria-label']} aria-labelledby={buttonProps['aria-labelledby']?.replace(buttonId, auxLabelId)} />
+          }
+          {isPending && <div
+            id={spinnerId}
+            aria-label={stringFormatter.format('pending')}
+            aria-labelledby={`${hasAriaLabel ? '' : iconId} ${hasAriaLabel ? auxLabelId : textId} ${spinnerId}`} />
+          }
         </SlotProvider>
       </Element>
     </FocusRing>
