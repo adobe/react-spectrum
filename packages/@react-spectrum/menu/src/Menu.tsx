@@ -128,6 +128,7 @@ export function TrayHeaderWrapper(props) {
         role={headingId ? 'dialog' : undefined}
         aria-labelledby={headingId}
         aria-hidden={isMobile && hasOpenSubmenu}
+        data-testid="menu-wrapper"
         className={
           classNames(
             styles,
