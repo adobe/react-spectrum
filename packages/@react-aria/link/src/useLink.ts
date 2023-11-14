@@ -12,7 +12,7 @@
 
 import {AriaLinkProps} from '@react-types/link';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {filterDOMProps, mergeProps, shouldClientNavigate, useRouter, withBasename} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, shouldClientNavigate, useRouter, withBasePath} from '@react-aria/utils';
 import React, {RefObject} from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
@@ -66,7 +66,7 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
 
   return {
     isPressed, // Used to indicate press state for visual
-    linkProps: mergeProps(withBasename(router, domProps), {
+    linkProps: mergeProps(withBasePath(router, domProps), {
       ...interactionHandlers,
       ...linkProps,
       'aria-disabled': isDisabled || undefined,

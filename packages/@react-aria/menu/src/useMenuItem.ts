@@ -11,7 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement, Key, PressEvent} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId, withBasename} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId, withBasePath} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
@@ -283,7 +283,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   });
 
-  let domProps = filterDOMProps(withBasename(router, item.props), {isLink: !!item?.props?.href});
+  let domProps = filterDOMProps(withBasePath(router, item.props), {isLink: !!item?.props?.href});
   delete domProps.id;
   return {
     menuItemProps: {
