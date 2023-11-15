@@ -143,9 +143,9 @@ describe('Link', () => {
     expect(navigate).toHaveBeenCalledWith('/foo');
   });
 
-  it('should support router basename', async () => {
+  it('should support router basePath', async () => {
     let navigate = jest.fn();
-    let {getByRole} = render(<RouterProvider basename="/bar" navigate={navigate}><Link href="/foo">Test</Link></RouterProvider>);
+    let {getByRole} = render(<RouterProvider basePath="/bar" navigate={navigate}><Link href="/foo">Test</Link></RouterProvider>);
     let link = getByRole('link');
     await user.click(link);
     expect(link).toHaveAttribute('href', '/bar/foo');
