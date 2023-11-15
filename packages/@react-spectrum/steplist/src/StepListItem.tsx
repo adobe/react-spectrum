@@ -13,7 +13,7 @@ import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {classNames} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import intlMessages from '../intl';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useId} from '@react-aria/utils';
 import {Node} from '@react-types/shared';
 import React, {useContext, useRef} from 'react';
 import {StepListContext} from './StepListContext';
@@ -60,6 +60,9 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
     stepStateText = stringFormatter.format('notCompleted');
   }
 
+  let markerId = useId();
+  let labelId = useId();
+
   return (
     <li
       className={
@@ -70,9 +73,9 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
       }>
       <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
         <a
-          aria-labelledby={`step-marker-${key} step-label-${key}`}
-          ref={ref}
           {...mergeProps(hoverProps, stepProps)}
+          aria-labelledby={`${markerId} ${labelId}`}
+          ref={ref}
           className={classNames(
             styles,
             'spectrum-Steplist-link',
@@ -85,7 +88,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
             }
           )}>
           <VisuallyHidden {...stepStateProps}>{stepStateText}</VisuallyHidden>
-          <span aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-label')}>
+          <span id={labelId} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-label')}>
             {item.rendered}
           </span>
           <div
@@ -102,7 +105,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
                 'is-reversed': direction === 'rtl'
               })} />
           </div>
-          <span aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-marker')}>{numberFormatter.format((item.index || 0) + 1)}</span>
+          <span id={markerId} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-marker')}>{numberFormatter.format((item.index || 0) + 1)}</span>
         </a>
       </FocusRing>
     </li>
