@@ -57,7 +57,6 @@ governing permissions and limitations under the License.
   .spectrum-Steplist-segment {
     align-items: center;
     display: inline-flex;
-    height: 100%;
 
     &.is-completed {
       svg line {
@@ -123,9 +122,6 @@ governing permissions and limitations under the License.
   font-size: var(--spectrum-steplist-font-size);
   gap: var(--spectrum-steplist-chevron-gap);
 
-  .spectrum-Steplist-item {
-    grid-template-columns: auto;
-  }
   .spectrum-Steplist-link {
     gap: var(--spectrum-steplist-marker-label-gap);
 
@@ -133,10 +129,10 @@ governing permissions and limitations under the License.
       width: var(--spectrum-steplist-marker-diameter);
       height: var(--spectrum-steplist-marker-diameter);
       font-size: var(--spectrum-steplist-counter-font-size);
+      padding-block-end: 1px;
     }
   }
   .spectrum-Steplist-chevron {
-    padding-inline-start: calc(var(--spectrum-steplist-chevron-gap) - var(--spectrum-steplist-marker-label-gap));
     transform: scale(var(--spectrum-steplist-chevron-scale));
   }
 }
@@ -199,27 +195,34 @@ governing permissions and limitations under the License.
 /* horizontal version */
 .spectrum-Steplist--horizontal {
   .spectrum-Steplist-link {
-    justify-items: center;
+    display: flex;
     align-items: baseline;
-    grid-template-areas:
-    "marker label chevron";
   }
 
-  .spectrum-Steplist-chevron {
-    grid-area: chevron;
-    align-self: baseline;
+  .spectrum-Steplist-segment {
+    order: 2;
+    display: flex;
+    align-items: center;
+
+    padding-inline-start: calc(var(--spectrum-steplist-chevron-gap) - var(--spectrum-steplist-marker-label-gap));
+    &::before {
+      content: 'x';
+      width: 0;
+      visibility: hidden;
+    }
+  }
+
+  .spectrum-Steplist-label {
+    order: 1;
+  }
+
+  .spectrum-Steplist-marker {
+    order: 0;
+    flex: 0 0 auto;
   }
 
   .spectrum-Steplist-segmentLine {
     display: none;
-  }
-
-  /* Last step overrides */
-  .spectrum-Steplist-item:last-child {
-    .spectrum-Steplist-link {
-      grid-template-areas:
-      "marker label";
-    }
   }
 }
 

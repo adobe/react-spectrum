@@ -88,9 +88,9 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
             }
           )}>
           <VisuallyHidden {...stepStateProps}>{stepStateText}</VisuallyHidden>
-          <span id={labelId} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-label')}>
+          <div id={labelId} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-label')}>
             {item.rendered}
-          </span>
+          </div>
           <div
             className={classNames(
               styles,
@@ -105,7 +105,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
                 'is-reversed': direction === 'rtl'
               })} />
           </div>
-          <span id={markerId} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-marker')}>{numberFormatter.format((item.index || 0) + 1)}</span>
+          <div id={markerId} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-marker')}><div>{numberFormatter.format((item.index || 0) + 1)}</div></div>
         </a>
       </FocusRing>
     </li>
