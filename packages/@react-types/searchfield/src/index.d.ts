@@ -22,4 +22,4 @@ export interface SearchFieldProps extends TextFieldProps {
 }
 
 export interface AriaSearchFieldProps extends SearchFieldProps, AriaTextFieldProps {}
-export interface SpectrumSearchFieldProps extends SpectrumTextInputBase, AriaSearchFieldProps, SpectrumTextFieldProps {}
+export interface SpectrumSearchFieldProps extends SpectrumTextInputBase, Omit<AriaSearchFieldProps, 'isInvalid' | 'validationState'>, SpectrumTextFieldProps {}

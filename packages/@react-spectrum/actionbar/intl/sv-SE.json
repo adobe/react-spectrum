@@ -2,6 +2,6 @@
   "actions": "Åtgärder",
   "actionsAvailable": "Åtgärder finns.",
   "clearSelection": "Rensa markering",
-  "selected": "{count, plural, =0 {Inga markerade} other {# markerade}}",
+  "selected": "{count, plural, =0 {Inga valda} one {# vald} other {# valda}}",
   "selectedAll": "Alla markerade"
 }

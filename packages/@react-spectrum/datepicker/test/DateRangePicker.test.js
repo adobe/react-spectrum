@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, getAllByRole as getAllByRoleInContainer, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, getAllByRole as getAllByRoleInContainer, pointerMap, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {Button} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
 import {DateRangePicker} from '../';
+import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -44,7 +46,7 @@ function getTextValue(el) {
 }
 
 function expectPlaceholder(el, placeholder) {
-  expect(getTextValue(el)).toBe(placeholder);
+  expect(getTextValue(el).replace(' ', ' ')).toBe(placeholder);
 }
 
 function render(el) {
@@ -65,8 +67,13 @@ function render(el) {
 }
 
 describe('DateRangePicker', function () {
+  let user;
+
   // there are live announcers, we need to be able to get rid of them after each test or get a warning in the console about act()
-  beforeAll(() => jest.useFakeTimers());
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+  });
   afterEach(() => {
     act(() => {
       jest.runAllTimers();
@@ -277,7 +284,7 @@ describe('DateRangePicker', function () {
       onKeyUpSpy.mockClear();
     });
 
-    it('should focus field, move a segment, and open popover and does not blur', function () {
+    it('should focus field, move a segment, and open popover and does not blur', async function () {
       let {getByRole, getAllByRole} = render(<DateRangePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
       let button = getByRole('button');
@@ -286,13 +293,13 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[1]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
@@ -308,7 +315,7 @@ describe('DateRangePicker', function () {
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should focus field and leave to blur', function () {
+    it('should focus field and leave to blur', async function () {
       let {getAllByRole} = render(<DateRangePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let segments = getAllByRole('spinbutton');
 
@@ -316,13 +323,13 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onBlurSpy).not.toHaveBeenCalled();
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       expect(document.body).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
@@ -384,21 +391,21 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.body).toHaveFocus();
       expect(onBlurSpy).toHaveBeenCalledTimes(1);
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(2);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should trigger right arrow key event for segment navigation', function () {
+    it('should trigger right arrow key event for segment navigation', async function () {
       let {getAllByRole} = render(<DateRangePicker label="Date" onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
       let segments = getAllByRole('spinbutton');
 
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).not.toHaveBeenCalled();
 
-      userEvent.tab();
+      await user.tab();
       expect(segments[0]).toHaveFocus();
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
@@ -482,8 +489,8 @@ describe('DateRangePicker', function () {
 
       let startDate = getByTestId('start-date');
       let endDate = getByTestId('end-date');
-      expect(getTextValue(startDate)).toBe('2/3/2019, 8:45 AM');
-      expect(getTextValue(endDate)).toBe('5/6/2019, 10:45 AM');
+      expect(getTextValue(startDate)).toBe('2/3/2019, 8:45 AM');
+      expect(getTextValue(endDate)).toBe('5/6/2019, 10:45 AM');
 
       let button = getByRole('button');
       triggerPress(button);
@@ -496,10 +503,10 @@ describe('DateRangePicker', function () {
       expect(selected.children[0]).toHaveAttribute('aria-label', 'Selected Range: Sunday, February 3 to Monday, May 6, 2019, Sunday, February 3, 2019 selected');
 
       let startTimeField = getAllByLabelText('Start time')[0];
-      expect(getTextValue(startTimeField)).toBe('8:45 AM');
+      expect(getTextValue(startTimeField)).toBe('8:45 AM');
 
       let endTimeField = getAllByLabelText('End time')[0];
-      expect(getTextValue(endTimeField)).toBe('10:45 AM');
+      expect(getTextValue(endTimeField)).toBe('10:45 AM');
 
       // selecting a date should not close the popover
       triggerPress(getByLabelText('Sunday, February 10, 2019 selected'));
@@ -508,8 +515,8 @@ describe('DateRangePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 8, 45), end: new CalendarDateTime(2019, 2, 17, 10, 45)});
-      expect(getTextValue(startDate)).toBe('2/10/2019, 8:45 AM');
-      expect(getTextValue(endDate)).toBe('2/17/2019, 10:45 AM');
+      expect(getTextValue(startDate)).toBe('2/10/2019, 8:45 AM');
+      expect(getTextValue(endDate)).toBe('2/17/2019, 10:45 AM');
 
       let hour = within(startTimeField).getByLabelText('hour,');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -524,8 +531,8 @@ describe('DateRangePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(2);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 9, 45), end: new CalendarDateTime(2019, 2, 17, 10, 45)});
-      expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
-      expect(getTextValue(endDate)).toBe('2/17/2019, 10:45 AM');
+      expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
+      expect(getTextValue(endDate)).toBe('2/17/2019, 10:45 AM');
 
       hour = within(endTimeField).getByLabelText('hour,');
       expect(hour).toHaveAttribute('role', 'spinbutton');
@@ -540,8 +547,8 @@ describe('DateRangePicker', function () {
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(3);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDateTime(2019, 2, 10, 9, 45), end: new CalendarDateTime(2019, 2, 17, 11, 45)});
-      expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
-      expect(getTextValue(endDate)).toBe('2/17/2019, 11:45 AM');
+      expect(getTextValue(startDate)).toBe('2/10/2019, 9:45 AM');
+      expect(getTextValue(endDate)).toBe('2/17/2019, 11:45 AM');
     });
 
     it('should not fire onChange until both date range and time range are selected', function () {
@@ -616,7 +623,9 @@ describe('DateRangePicker', function () {
         } else {
           let localTime = today(getLocalTimeZone());
           expect(onChange).toHaveBeenCalledTimes(1);
+          // eslint-disable-next-line no-irregular-whitespace
           expectPlaceholder(startDate, `${localTime.month}/1/${localTime.year}, 12:00 AM`);
+          // eslint-disable-next-line no-irregular-whitespace
           expectPlaceholder(endDate, `${localTime.month}/2/${localTime.year}, 12:00 AM`);
         }
 
@@ -632,11 +641,13 @@ describe('DateRangePicker', function () {
       let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1});
       let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2});
       expect(onChange).toHaveBeenCalledWith({start: startValue, end: endValue});
-      expect(getTextValue(startDate)).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
-      expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
+      // formatToParts gives a different whitespace character than format
+      // https://github.com/nodejs/node/issues/49222
+      expect(getTextValue(startDate).replace(' ', ' ')).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(endDate).replace(' ', ' ')).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
     });
 
-    it('should confirm time placeholders on blur if date range is selected', function () {
+    it('should confirm time placeholders on blur if date range is selected', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getByTestId} = render(
         <Provider theme={theme}>
@@ -663,7 +674,7 @@ describe('DateRangePicker', function () {
       triggerPress(enabledCells[1].firstChild);
       expect(onChange).not.toHaveBeenCalled();
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();
@@ -672,11 +683,11 @@ describe('DateRangePicker', function () {
       let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1});
       let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2});
       expect(onChange).toHaveBeenCalledWith({start: startValue, end: endValue});
-      expect(getTextValue(startDate)).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
-      expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(startDate).replace(' ', ' ')).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(endDate).replace(' ', ' ')).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
     });
 
-    it('should not confirm on blur if date range is not selected', function () {
+    it('should not confirm on blur if date range is not selected', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByLabelText, getByTestId} = render(
         <Provider theme={theme}>
@@ -709,14 +720,14 @@ describe('DateRangePicker', function () {
 
       expect(hour).toHaveAttribute('aria-valuetext', '12 AM');
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       act(() => jest.runAllTimers());
 
       expect(dialog).not.toBeInTheDocument();
       expect(onChange).not.toHaveBeenCalled();
     });
 
-    it('should clear date and time when controlled value is set to null', function () {
+    it('should clear date and time when controlled value is set to null', async function () {
       function ControlledDateRangePicker() {
         let [value, setValue] = React.useState(null);
         return (<>
@@ -767,13 +778,13 @@ describe('DateRangePicker', function () {
         expect(document.activeElement).toHaveAttribute('aria-label', 'AM/PM, ');
       }
 
-      userEvent.click(document.body);
+      await user.click(document.body);
       act(() => jest.runAllTimers());
 
       let startValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 1});
       let endValue = toCalendarDateTime(today(getLocalTimeZone())).set({day: 2});
-      expect(getTextValue(startDate)).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
-      expect(getTextValue(endDate)).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(startDate).replace(' ', ' ')).toBe(formatter.format(startValue.toDate(getLocalTimeZone())));
+      expect(getTextValue(endDate).replace(' ', ' ')).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
 
       let clear = getAllByRole('button')[1];
       triggerPress(clear);
@@ -1022,7 +1033,7 @@ describe('DateRangePicker', function () {
       expect(endField).not.toHaveAttribute('aria-describedby');
 
       let description = group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
-      expect(description).toBe('Selected Range: February 3, 2020 at 8:00 AM to February 10, 2020 at 10:00 AM');
+      expect(description).toBe('Selected Range: February 3, 2020 at 8:00 AM to February 10, 2020 at 10:00 AM');
     });
 
     it('should handle selected range description when start and end dates are the same', function () {
@@ -1475,7 +1486,7 @@ describe('DateRangePicker', function () {
   });
 
   describe('forms', () => {
-    it('supports form reset', () => {
+    it('supports form reset', async () => {
       function Test() {
         let [value, setValue] = React.useState({start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2022, 4, 8)});
         return (
@@ -1506,10 +1517,307 @@ describe('DateRangePicker', function () {
       expect(end).toHaveValue('2022-04-08');
 
       let button = getByTestId('reset');
-      act(() => userEvent.click(button));
+      await user.click(button);
       expect(getDescription()).toBe('Selected Range: February 3, 2020 to April 8, 2022');
       expect(start).toHaveValue('2020-02-03');
       expect(end).toHaveValue('2022-04-08');
+    });
+
+    describe('validation', () => {
+      describe('validationBehavior=native', () => {
+        it('supports isRequired', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateRangePicker label="Date" startName="start" endName="end" isRequired validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let startInput = document.querySelector('input[name=start]');
+          let endInput = document.querySelector('input[name=end]');
+          expect(startInput).toHaveAttribute('required');
+          expect(startInput.validity.valid).toBe(false);
+          expect(endInput).toHaveAttribute('required');
+          expect(endInput.validity.valid).toBe(false);
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Constraints not satisfied');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
+
+          await user.keyboard('[ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+          await user.keyboard('[Tab][ArrowUp][Tab][ArrowUp][Tab][ArrowUp]');
+
+          expect(getDescription()).toContain('Constraints not satisfied');
+          expect(startInput.validity.valid).toBe(true);
+          expect(endInput.validity.valid).toBe(true);
+
+          await user.tab();
+
+          expect(getDescription()).not.toContain('Constraints not satisfied');
+        });
+
+        it('supports minValue and maxValue', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateRangePicker label="Date" startName="start" endName="end" minValue={new CalendarDate(2020, 2, 3)} maxValue={new CalendarDate(2024, 2, 3)} defaultValue={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2025, 2, 3)}} validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let startInput = document.querySelector('input[name=start]');
+          let endInput = document.querySelector('input[name=end]');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(startInput.validity.valid).toBe(false);
+          expect(endInput.validity.valid).toBe(false);
+          expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(getDescription()).toContain('Value must be 2/3/2020 or later. Value must be 2/3/2024 or earlier.');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
+
+          await user.keyboard('[Tab][Tab][ArrowUp]');
+
+          expect(getDescription()).toContain('Value must be 2/3/2020 or later. Value must be 2/3/2024 or earlier.');
+          expect(startInput.validity.valid).toBe(false);
+          expect(endInput.validity.valid).toBe(false);
+
+          await user.tab();
+
+          expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
+          expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
+
+          await user.keyboard('[Tab][Tab][ArrowDown]');
+          expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
+          expect(startInput.validity.valid).toBe(true);
+          expect(endInput.validity.valid).toBe(true);
+          await user.tab();
+
+          expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
+        });
+
+        it('supports validate function', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateRangePicker startName="start" endName="end" label="Value" defaultValue={{start: new CalendarDate(2020, 2, 3), end: new CalendarDate(2021, 2, 3)}} validationBehavior="native" validate={v => v.start.year < 2022 || v.end.year < 2022 ? 'Invalid value' : null} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let startInput = document.querySelector('input[name=start]');
+          let endInput = document.querySelector('input[name=end]');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).not.toContain('Invalid value');
+          expect(startInput.validity.valid).toBe(false);
+          expect(endInput.validity.valid).toBe(false);
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(getDescription()).toContain('Invalid value');
+          expect(document.activeElement).toBe(within(group).getAllByRole('spinbutton')[0]);
+
+          await user.keyboard('[ArrowRight][ArrowRight]2024');
+          expect(getDescription()).toContain('Invalid value');
+          expect(startInput.validity.valid).toBe(false);
+          expect(endInput.validity.valid).toBe(false);
+
+          await user.keyboard('[ArrowRight][ArrowRight]2026');
+          expect(getDescription()).toContain('Invalid value');
+          expect(startInput.validity.valid).toBe(true);
+          expect(endInput.validity.valid).toBe(true);
+
+          await user.tab();
+          expect(getDescription()).not.toContain('Invalid value');
+          expect(startInput.validity.valid).toBe(true);
+          expect(endInput.validity.valid).toBe(true);
+        });
+
+        it('supports server validation', async () => {
+          function Test() {
+            let [serverErrors, setServerErrors] = React.useState({});
+            let onSubmit = e => {
+              e.preventDefault();
+              setServerErrors({
+                start: 'Invalid start date.',
+                end: 'Invalid end date.'
+              });
+            };
+
+            return (
+              <Provider theme={theme}>
+                <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                  <DateRangePicker startName="start" endName="end" label="Value" validationBehavior="native" />
+                  <Button type="submit" data-testid="submit">Submit</Button>
+                </Form>
+              </Provider>
+            );
+          }
+
+          let {getByTestId, getByRole} = render(<Test />);
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=start]');
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          await user.click(getByTestId('submit'));
+
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Invalid start date. Invalid end date.');
+          expect(input.validity.valid).toBe(false);
+
+          await user.tab({shift: true});
+          await user.tab({shift: true});
+          await user.keyboard('2024[ArrowLeft]3[ArrowLeft]2');
+          act(() => document.activeElement.blur());
+
+          expect(group).not.toHaveAttribute('aria-describedby');
+          expect(input.validity.valid).toBe(true);
+        });
+
+        it('supports customizing native error messages', async () => {
+          let {getByTestId, getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateRangePicker startName="start" endName="end" label="Value" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          act(() => {getByTestId('form').checkValidity();});
+          expect(group).toHaveAttribute('aria-describedby');
+          expect(document.getElementById(group.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+        });
+
+        it('clears validation on form reset', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateRangePicker label="Date" startName="start" endName="end" isRequired validationBehavior="native" />
+                <Button type="reset" data-testid="reset">Reset</Button>
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=start]');
+          expect(input).toHaveAttribute('required');
+          expect(input.validity.valid).toBe(false);
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Constraints not satisfied');
+
+          await user.click(getByTestId('reset'));
+
+          expect(group).not.toHaveAttribute('aria-describedby');
+        });
+
+        it('updates when selecting a date with the calendar', async () => {
+          let {getByRole, getByTestId} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateRangePicker label="Date" startName="start" endName="end" isRequired validationBehavior="native" />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let input = document.querySelector('input[name=start]');
+          expect(input).toHaveAttribute('required');
+          expect(input.validity.valid).toBe(false);
+          expect(group).not.toHaveAttribute('aria-describedby');
+
+          act(() => {getByTestId('form').checkValidity();});
+
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Constraints not satisfied');
+
+          await user.click(getByRole('button'));
+          await user.click(document.activeElement);
+          await user.click(document.activeElement);
+
+          expect(input.validity.valid).toBe(true);
+          expect(getDescription()).not.toContain('Constraints not satisfied');
+        });
+      });
+
+      describe('validationBehavior=aria', () => {
+        it('supports minValue and maxValue', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateRangePicker label="Date" minValue={new CalendarDate(2020, 2, 3)} maxValue={new CalendarDate(2024, 2, 3)} defaultValue={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2025, 2, 3)}} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Value must be 2/3/2020 or later. Value must be 2/3/2024 or earlier.');
+
+          await user.keyboard('[Tab][Tab][Tab][ArrowUp]');
+          expect(getDescription()).not.toContain('Value must be 2/3/2020 or later.');
+          expect(getDescription()).toContain('Value must be 2/3/2024 or earlier.');
+
+          await user.keyboard('[Tab][Tab][Tab][ArrowDown]');
+          expect(getDescription()).not.toContain('Value must be 2/3/2024 or earlier.');
+        });
+
+        it('supports validate function', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form data-testid="form">
+                <DateRangePicker label="Value" defaultValue={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2025, 2, 3)}} validate={v => v.start.year < 2022 ? 'Invalid value' : null} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Invalid value');
+
+          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024');
+          expect(getDescription()).not.toContain('Invalid value');
+        });
+
+        it('supports server validation', async () => {
+          let {getByRole} = render(
+            <Provider theme={theme}>
+              <Form validationErrors={{start: 'Invalid start date.', end: 'Invalid end date.'}}>
+                <DateRangePicker label="Value" startName="start" endName="end" defaultValue={{start: new CalendarDate(2019, 2, 3), end: new CalendarDate(2025, 2, 3)}} />
+              </Form>
+            </Provider>
+          );
+
+          let group = getByRole('group');
+          expect(group).toHaveAttribute('aria-describedby');
+          let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
+          expect(getDescription()).toContain('Invalid start date. Invalid end date.');
+
+          await user.keyboard('[Tab][ArrowRight][ArrowRight]2024[Tab]');
+          expect(getDescription()).not.toContain('Invalid start date. Invalid end date.');
+        });
+      });
     });
   });
 });

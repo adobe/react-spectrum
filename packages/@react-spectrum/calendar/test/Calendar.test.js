@@ -320,11 +320,11 @@ describe('Calendar', () => {
       expect(onChange).toHaveBeenCalledTimes(2);
     });
 
-    it('should support validationState', () => {
+    it('should support invalid state', () => {
       let {getByRole} = render(
         <Calendar
           defaultValue={new CalendarDate(2022, 3, 11)}
-          validationState="invalid" />
+          isInvalid />
       );
 
       let cell = getByRole('button', {name: 'Friday, March 11, 2022 selected'});
@@ -340,7 +340,7 @@ describe('Calendar', () => {
       let {getByRole} = render(
         <Calendar
           defaultValue={new CalendarDate(2022, 3, 11)}
-          validationState="invalid"
+          isInvalid
           errorMessage="Selection dates cannot include weekends." />
       );
 
@@ -353,7 +353,7 @@ describe('Calendar', () => {
       expect(description).toBe('Selection dates cannot include weekends.');
     });
 
-    it('does not show error message without validationState="invalid"', () => {
+    it('does not show error message without isInvalid', () => {
       let {getByRole} = render(
         <Calendar
           defaultValue={new CalendarDate(2022, 3, 11)}

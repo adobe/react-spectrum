@@ -127,7 +127,7 @@ const customMenuItem = (item) => {
   let Icon = iconMap[item.icon];
   return (
     <Item childItems={item.children} textValue={item.name} key={item.name}>
-      {item.icon && <Icon size="S" />}
+      {item.icon && <Icon />}
       <Text>{item.name}</Text>
       {item.shortcut && <Keyboard>{item.shortcut}</Keyboard>}
     </Item>

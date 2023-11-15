@@ -96,7 +96,7 @@ governing permissions and limitations under the License.
     }
   }
 
-  &:focus-ring {
+  &:focus-visible {
     + .spectrum-Radio-button {
       &:after {
         margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);

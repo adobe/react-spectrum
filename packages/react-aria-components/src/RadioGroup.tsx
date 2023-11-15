@@ -10,16 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRadioGroupProps, AriaRadioProps, Orientation, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
+import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
-import {RadioGroupState, useRadioGroupState, ValidationState} from 'react-stately';
+import {RadioGroupState, useRadioGroupState} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
 import {TextContext} from './Text';
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage'>, RenderProps<RadioGroupRenderProps>, SlotProps {}
-export interface RadioProps extends Omit<AriaRadioProps, 'children'>, RenderProps<RadioRenderProps>, SlotProps {}
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
+export interface RadioProps extends Omit<AriaRadioProps, 'children'>, HoverEvents, RenderProps<RadioRenderProps>, SlotProps {}
 
 export interface RadioGroupRenderProps {
   /**
@@ -43,10 +44,10 @@ export interface RadioGroupRenderProps {
    */
   isRequired: boolean,
   /**
-   * The validation state of the radio group.
-   * @selector [data-validation-state="valid | invalid"]
+   * Whether the radio group is invalid.
+   * @selector [data-invalid]
    */
-  validationState: ValidationState | null,
+  isInvalid: boolean,
   /**
    * State of the radio group.
    */
@@ -90,10 +91,10 @@ export interface RadioRenderProps {
    */
   isReadOnly: boolean,
   /**
-   * Whether the radio is valid or invalid.
-   * @selector [data-validation-state="valid | invalid"]
+   * Whether the radio is invalid.
+   * @selector [data-invalid]
    */
-  validationState: ValidationState | null,
+  isInvalid: boolean,
   /**
    * Whether the checkbox is required.
    * @selector [data-required]
@@ -103,15 +104,20 @@ export interface RadioRenderProps {
 
 export const RadioGroupContext = createContext<ContextValue<RadioGroupProps, HTMLDivElement>>(null);
 export const RadioContext = createContext<ContextValue<Partial<RadioProps>, HTMLInputElement>>(null);
-let InternalRadioContext = createContext<RadioGroupState | null>(null);
+export const RadioGroupStateContext = createContext<RadioGroupState | null>(null);
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
-  let state = useRadioGroupState(props);
-  let [labelRef, label] = useSlot();
-  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup({
+  let state = useRadioGroupState({
     ...props,
-    label
+    validationBehavior: props.validationBehavior ?? 'native'
+  });
+
+  let [labelRef, label] = useSlot();
+  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps, ...validation} = useRadioGroup({
+    ...props,
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
   }, state);
 
   let renderProps = useRenderProps({
@@ -121,7 +127,7 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       isDisabled: state.isDisabled,
       isReadOnly: state.isReadOnly,
       isRequired: state.isRequired,
-      validationState: state.validationState,
+      isInvalid: state.isInvalid,
       state
     },
     defaultClassName: 'react-aria-RadioGroup'
@@ -132,22 +138,23 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
       {...radioGroupProps}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-orientation={props.orientation || 'vertical'}
-      data-validation-state={state.validationState || undefined}
+      data-invalid={state.isInvalid || undefined}
       data-disabled={state.isDisabled || undefined}
       data-readonly={state.isReadOnly || undefined}
       data-required={state.isRequired || undefined}>
       <Provider
         values={[
-          [InternalRadioContext, state],
+          [RadioGroupStateContext, state],
           [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
           [TextContext, {
             slots: {
               description: descriptionProps,
               errorMessage: errorMessageProps
             }
-          }]
+          }],
+          [FieldErrorContext, validation]
         ]}>
         {renderProps.children}
       </Provider>
@@ -157,10 +164,10 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, RadioContext);
-  let state = React.useContext(InternalRadioContext)!;
+  let state = React.useContext(RadioGroupStateContext)!;
   let domRef = useObjectRef(ref);
   let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio({
-    ...props,
+    ...removeDataAttributes<RadioProps>(props),
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, domRef);
@@ -185,6 +192,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
   });
 
   let {hoverProps, isHovered} = useHover({
+    ...props,
     isDisabled: interactionDisabled
   });
 
@@ -201,7 +209,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
       isFocusVisible,
       isDisabled,
       isReadOnly: state.isReadOnly,
-      validationState: state.validationState,
+      isInvalid: state.isInvalid,
       isRequired: state.isRequired
     }
   });
@@ -219,7 +227,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLInputElement>) {
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
       data-readonly={state.isReadOnly || undefined}
-      data-validation-state={state.validationState || undefined}
+      data-invalid={state.isInvalid || undefined}
       data-required={state.isRequired || undefined}>
       <VisuallyHidden elementType="span">
         <input {...mergeProps(inputProps, focusProps)} ref={domRef} />

@@ -12,10 +12,10 @@
 import {ActionButton} from '@react-spectrum/button';
 import {BreadcrumbItem} from './BreadcrumbItem';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, Key} from '@react-types/shared';
 import FolderBreadcrumb from '@spectrum-icons/ui/FolderBreadcrumb';
 import {Menu, MenuTrigger} from '@react-spectrum/menu';
-import React, {Key, ReactElement, useCallback, useRef} from 'react';
+import React, {ReactElement, useCallback, useRef} from 'react';
 import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 import styles from '@adobe/spectrum-css-temp/components/breadcrumb/vars.css';
 import {useBreadcrumbs} from '@react-aria/breadcrumbs';
@@ -40,8 +40,11 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
 
   // Not using React.Children.toArray because it mutates the key prop.
   let childArray: ReactElement[] = [];
-  React.Children.forEach(children, child => {
+  React.Children.forEach(children, (child, index) => {
     if (React.isValidElement(child)) {
+      if (child.key == null) {
+        child = React.cloneElement(child, {key: index});
+      }
       childArray.push(child);
     }
   });
@@ -153,9 +156,10 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
     };
 
     let menuItem = (
-      <BreadcrumbItem key="menu">
+      <BreadcrumbItem key="menu" isMenu>
         <MenuTrigger>
           <ActionButton
+            UNSAFE_className={classNames(styles, 'spectrum-Breadcrumbs-actionButton')}
             aria-label="…"
             isQuiet
             isDisabled={isDisabled}>
@@ -201,6 +205,7 @@ function Breadcrumbs<T>(props: SpectrumBreadcrumbsProps<T>, ref: DOMRef) {
           )
         }>
         <BreadcrumbItem
+          {...child.props}
           key={key}
           isCurrent={isCurrent}
           isDisabled={isDisabled}

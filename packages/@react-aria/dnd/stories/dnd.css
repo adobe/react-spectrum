@@ -47,7 +47,7 @@
     outline: none;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     border-color: var(--spectrum-dnd-draggable-border-color-focus);
     box-shadow: 0 0 0 1px var(--spectrum-dnd-draggable-border-color-focus);
     forced-color-adjust: none;
@@ -117,7 +117,7 @@
     outline: none;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     border-color: var(--spectrum-dnd-droppable-border-color-selected-hover);
     box-shadow: 0 0 0 1px var(--spectrum-dnd-droppable-border-color-selected-hover);
   }
@@ -146,7 +146,7 @@
     outline: none;
   }
 
-  &:focus-ring {
+  &:focus-visible {
     box-shadow: 0 0 0 2px var(--spectrum-dnd-draggable-border-color-selected-hover);
   }
 }
@@ -255,7 +255,7 @@
     --spectrum-dnd-droppable-badge-text-color: HighlightText;
     --spectrum-dnd-droppable-badge-background-color: Highlight;
 
-    &:focus-ring {
+    &:focus-visible {
       forced-color-adjust: none;
     }
 
@@ -273,7 +273,7 @@
   }
 
   .drag-handle {
-    &:focus-ring {
+    &:focus-visible {
       forced-color-adjust: none;
       --spectrum-dnd-draggable-border-color-selected-hover: Highlight;
     }

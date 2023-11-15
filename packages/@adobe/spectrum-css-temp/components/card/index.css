@@ -154,14 +154,14 @@ user-provided
 
 .spectrum-Card-image {
   grid-area: preview;
-  & img {
+  img {
     -webkit-user-drag: none;
     user-drag: none;
   }
 }
 .spectrum-Card-illustration {
   grid-area: preview;
-  & svg {
+  svg {
     -webkit-user-drag: none;
     user-drag: none;
   }

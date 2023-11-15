@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps} from '@react-types/shared';
+import {AriaLabelingProps, HoverEvents} from '@react-types/shared';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
+import {DropOptions, mergeProps, useClipboard, useDrop, useFocusRing, useHover, useLocalizedStringFormatter, VisuallyHidden} from 'react-aria';
 import {filterDOMProps, useLabels, useSlotId} from '@react-aria/utils';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
@@ -40,7 +42,7 @@ export interface DropZoneRenderProps {
   isDropTarget: boolean
 }
 
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
@@ -48,12 +50,17 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover(props);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
   let textId = useSlotId();
-  let ariaLabel = props['aria-label'] || 'DropZone';
-  let labelProps = useLabels({'aria-label': ariaLabel, 'aria-labelledby': textId});
+  let dropzoneId = useSlotId();
+  let ariaLabel = props['aria-label'] || stringFormatter.format('dropzoneLabel');
+  let messageId = props['aria-labelledby'];
+  // Chrome + VO will not announce the drop zone's accessible name if useLabels combines an aria-label and aria-labelledby
+  let ariaLabelledby = [dropzoneId, textId, messageId].filter(Boolean).join(' ');
+  let labelProps = useLabels({'aria-labelledby': ariaLabelledby});
 
   let {clipboardProps} = useClipboard({
     onPaste: (items) => props.onDrop?.({
@@ -65,14 +72,14 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
     })
   });
 
-  let renderProps = useRenderProps({ 
+  let renderProps = useRenderProps({
     ...props,
     values: {isHovered, isFocused, isFocusVisible, isDropTarget},
     defaultClassName: 'react-aria-DropZone'
   });
   let DOMProps = filterDOMProps(props);
   delete DOMProps.id;
-  
+
   return (
     <Provider
       values={[
@@ -80,18 +87,22 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
       ]}>
       {/* eslint-disable-next-line */}
       <div
-        {...mergeProps(dropProps, hoverProps, DOMProps)} 
+        {...mergeProps(dropProps, hoverProps, DOMProps)}
         {...renderProps}
-        slot={props.slot}
+        slot={props.slot || undefined}
+        ref={ref}
         onClick={() => buttonRef.current?.focus()}
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-drop-target={isDropTarget || undefined} >
         <VisuallyHidden>
+          {/* Added as a workaround for a Chrome + VO bug where it will not announce the aria label */}
+          <div id={dropzoneId} aria-hidden="true">
+            {ariaLabel}
+          </div>
           <button
             {...mergeProps(dropButtonProps, focusProps, clipboardProps, labelProps)}
-            aria-label={ariaLabel}
             ref={buttonRef} />
         </VisuallyHidden>
         {renderProps.children}

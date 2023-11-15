@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:@react-aria/tabs';
+import utilsDocs from 'docs:@react-aria/utils';
 import statelyDocs from 'docs:@react-stately/tabs';
 import collectionsDocs from 'docs:@react-stately/collections';
 import {HeaderInfo, FunctionAPI, TypeContext, InterfaceType, TypeLink, PageDescription} from '@react-spectrum/docs';
@@ -359,6 +360,73 @@ to the `items` prop. See [Collections](../react-stately/collections.html) for mo
   <Item key="keyboard">Keyboard Settings</Item>
   <Item key="gamepad">Gamepad Settings</Item>
 </Tabs>
+```
+
+### Links
+
+Tabs may be rendered as links to different routes in your application. This can be achieved by passing the `href` prop to the `<Item>` component. You'll need to update the `Tab` component to render an `<a>` element when an `href` prop is passed to an item.
+
+```tsx
+function Tab({item, state}) {
+  let ref = React.useRef(null);
+  let {tabProps} = useTab({key: item.key}, state, ref);
+  /*- begin highlight -*/
+  let ElementType = item.props.href ? 'a' : 'div';
+  /*- end highlight -*/
+  return (
+    <ElementType {...tabProps} ref={ref}>
+      {item.rendered}
+    </ElementType>
+  );
+}
+```
+
+By default, links perform native browser navigation. However, you'll usually want to synchronize the selected tab with the URL from your client side router. This takes two steps:
+
+1. Set up a <TypeLink links={utilsDocs.links} type={utilsDocs.exports.RouterProvider} /> at the root of your app. This will handle link navigation from all React Aria components using your framework or router. See the [client side routing guide](routing.html) to learn how to set this up.
+2. Use the `selectedKey` prop to set the selected tab based on the URL, as [described above](#selection).
+
+This example uses [React Router](https://reactrouter.com/en/main) to setup routes for each tab and synchronize the selection with the URL.
+
+```tsx
+import {useLocation, useNavigate, BrowserRouter, Routes, Route} from 'react-router-dom';
+import {RouterProvider} from 'react-aria';
+
+function AppTabs() {
+  let {pathname} = useLocation();
+
+  return (
+    <Tabs selectedKey={pathname}>
+      <TabList aria-label="Tabs">
+        <Tab id="/" href="/">Home</Tab>
+        <Tab id="/shared" href="/shared">Shared</Tab>
+        <Tab id="/deleted" href="/deleted">Deleted</Tab>
+      </TabList>
+      <TabPanel id={pathname}>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/shared" element={<SharedPage />} />
+          <Route path="/deleted" element={<DeletedPage />} />
+        </Routes>
+      </TabPanel>
+    </Tabs>
+  );
+}
+
+function App() {
+  let navigate = useNavigate();
+  return (
+    <RouterProvider navigate={navigate}>
+      <Routes>
+        <Route path="/*" element={<AppTabs />} />
+      </Routes>
+    </RouterProvider>
+  );
+}
+
+<BrowserRouter>
+  <App />
+</BrowserRouter>
 ```
 
 ## Internationalization

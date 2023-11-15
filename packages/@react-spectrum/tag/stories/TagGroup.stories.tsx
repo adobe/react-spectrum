@@ -21,7 +21,7 @@ import {Item, SpectrumTagGroupProps, TagGroup} from '../src';
 import {Link} from '@react-spectrum/link';
 import React, {useState} from 'react';
 
-let manyItems = [];
+let manyItems: {key: number}[] = [];
 for (let i = 0; i < 50; i++) {
   let item = {key: i};
   manyItems.push(item);
@@ -91,9 +91,8 @@ export default {
       control: 'select',
       options: ['start', 'end']
     },
-    validationState: {
-      control: 'select',
-      options: [null, 'valid', 'invalid']
+    isInvalid: {
+      control: 'boolean'
     },
     description: {
       control: 'text'
@@ -281,3 +280,13 @@ function OnRemoveExample(props) {
     </TagGroup>
   );
 }
+
+export const Links: TagGroupStory = {
+  render: (args) => (
+    <TagGroup aria-label="Tag group with links" {...args}>
+      <Item href="https://adobe.com">Adobe</Item>
+      <Item href="https://google.com">Google</Item>
+      <Item href="https://apple.com">Apple</Item>
+    </TagGroup>
+  )
+};

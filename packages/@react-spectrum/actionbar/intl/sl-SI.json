@@ -2,6 +2,6 @@
   "actions": "Dejanja",
   "actionsAvailable": "Na voljo so dejanja.",
   "clearSelection": "Počisti izbor",
-  "selected": "{count, plural, =0 {Nič izbranih} other {# izbranih}}",
+  "selected": "Izbrano: {count}",
   "selectedAll": "Vsi izbrani"
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
@@ -73,8 +73,10 @@ function toggleBrowserWindow() {
 
 describe('LandmarkManager', function () {
   let offsetWidth, offsetHeight;
+  let user;
 
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
@@ -89,7 +91,7 @@ describe('LandmarkManager', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  it('can tab into a landmark region', function () {
+  it('can tab into a landmark region', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -109,7 +111,7 @@ describe('LandmarkManager', function () {
     expect(navigation).toBeInTheDocument();
     expect(main).toBeInTheDocument();
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
   });
 
@@ -286,7 +288,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement!).toBe(main);
   });
 
-  it('can F6 to the next landmark region', function () {
+  it('can F6 to the next landmark region', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -303,7 +305,7 @@ describe('LandmarkManager', function () {
     );
     let main = tree.getByRole('main');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
 
     fireEvent.keyDown(document.activeElement!, {key: 'F6'});
@@ -312,7 +314,7 @@ describe('LandmarkManager', function () {
   });
 
 
-  it('landmark navigation forward wraps', function () {
+  it('landmark navigation forward wraps', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -329,7 +331,7 @@ describe('LandmarkManager', function () {
     );
     let main = tree.getByRole('main');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
 
     fireEvent.keyDown(document.activeElement!, {key: 'F6'});
@@ -341,7 +343,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
   });
 
-  it('can shift+tab into a landmark region', function () {
+  it('can shift+tab into a landmark region', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -357,10 +359,10 @@ describe('LandmarkManager', function () {
       </div>
     );
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement!).toBe(tree.getByRole('textbox'));
 
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement!).toBe(tree.getAllByRole('link')[2]);
   });
 
@@ -391,7 +393,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement!).toBe(navigation);
   });
 
-  it('can shift+F6 to the previous landmark region', function () {
+  it('can shift+F6 to the previous landmark region', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -407,10 +409,10 @@ describe('LandmarkManager', function () {
       </div>
     );
 
-    userEvent.tab();
-    userEvent.tab();
-    userEvent.tab();
-    userEvent.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
     expect(document.activeElement!).toBe(tree.getByRole('textbox'));
 
     fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
@@ -418,7 +420,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement!).toBe(tree.getAllByRole('link')[2]);
   });
 
-  it('landmark navigation backward wraps', function () {
+  it('landmark navigation backward wraps', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -435,7 +437,7 @@ describe('LandmarkManager', function () {
     );
     let main = tree.getByRole('main');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
 
     fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
@@ -443,7 +445,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement!).toBe(main);
   });
 
-  it('F6 should focus the last focused element in a landmark region', function () {
+  it('F6 should focus the last focused element in a landmark region', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -459,10 +461,10 @@ describe('LandmarkManager', function () {
       </div>
     );
 
-    userEvent.tab();
-    userEvent.tab();
-    userEvent.tab();
-    userEvent.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
     expect(document.activeElement!).toBe(tree.getByRole('textbox'));
 
     fireEvent.keyDown(document.activeElement!, {key: 'F6'});
@@ -470,7 +472,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement!).toBe(tree.getAllByRole('link')[2]);
   });
 
-  it('components that already handle focus management, should handle focus themselves', function () {
+  it('components that already handle focus management, should handle focus themselves', async function () {
     let tree = render(
       <Provider theme={theme}>
         <div>
@@ -516,13 +518,13 @@ describe('LandmarkManager', function () {
     let rows = within(table).getAllByRole('row');
     let cells = within(rows[1]).getAllByRole('gridcell');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement!).toBe(buttons[0]);
     fireEvent.keyDown(document.activeElement!, {key: 'ArrowRight'});
     fireEvent.keyUp(document.activeElement!, {key: 'ArrowRight'});
     expect(document.activeElement!).toBe(buttons[1]);
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement!).toBe(rows[1]);
     fireEvent.keyDown(document.activeElement!, {key: 'ArrowRight'});
     fireEvent.keyUp(document.activeElement!, {key: 'ArrowRight'});
@@ -1003,7 +1005,7 @@ describe('LandmarkManager', function () {
     expect(nav).toHaveAttribute('tabIndex', '-1');
   });
 
-  it('loses the tabIndex=-1 if something else is focused', function () {
+  it('loses the tabIndex=-1 if something else is focused', async function () {
     let {getByRole, getAllByRole} = render(
       <div>
         <Navigation>
@@ -1025,7 +1027,7 @@ describe('LandmarkManager', function () {
     expect(nav).toHaveAttribute('tabIndex', '-1');
     expect(document.activeElement!).toBe(nav);
 
-    userEvent.tab();
+    await user.tab();
 
     expect(document.activeElement!).toBe(getAllByRole('link')[0]);
     expect(nav).not.toHaveAttribute('tabIndex');
@@ -1158,7 +1160,7 @@ describe('LandmarkManager', function () {
     expect(document.activeElement!).toBe(nav);
   });
 
-  it('landmark navigation fires custom event when wrapping forward', function () {
+  it('landmark navigation fires custom event when wrapping forward', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -1178,7 +1180,7 @@ describe('LandmarkManager', function () {
     let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
     window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
 
     fireEvent.keyDown(document.activeElement!, {key: 'F6'});
@@ -1198,7 +1200,7 @@ describe('LandmarkManager', function () {
     window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
   });
 
-  it('landmark navigation fires custom event when wrapping backward', function () {
+  it('landmark navigation fires custom event when wrapping backward', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -1217,7 +1219,7 @@ describe('LandmarkManager', function () {
     let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
     window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
 
     fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
@@ -1301,7 +1303,7 @@ describe('LandmarkManager', function () {
       window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
     });
 
-    it('should navigate forward', function () {
+    it('should navigate forward', async function () {
       let tree = render(
         <div>
           <Navigation>
@@ -1317,7 +1319,7 @@ describe('LandmarkManager', function () {
         </div>
       );
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
 
       let controller = createLandmarkController();

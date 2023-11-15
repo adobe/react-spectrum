@@ -52,11 +52,8 @@ export default {
     autoFocus: {
       control: 'boolean'
     },
-    validationState: {
-      control: {
-        type: 'select',
-        options: [null, 'valid', 'invalid']
-      }
+    isInvalid: {
+      control: 'boolean'
     }
   }
 } as ComponentMeta<typeof Checkbox>;
@@ -91,8 +88,8 @@ export const WHCM: CheckboxStory = {
       {renderRow({isIndeterminate: true, isEmphasized: true})}
       {renderRow({isSelected: true, isEmphasized: false})}
       {renderRow({isIndeterminate: true, isEmphasized: false})}
-      {renderRow({validationState: 'invalid'})}
-      {renderRow({isSelected: true, validationState: 'invalid'})}
+      {renderRow({isInvalid: true})}
+      {renderRow({isSelected: true, isInvalid: true})}
     </Flex>
   )
 };

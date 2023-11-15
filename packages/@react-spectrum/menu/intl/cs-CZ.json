@@ -1,4 +1,5 @@
 {
+  "backButton": "Návrat na {prevMenuButton}",
   "moreActions": "Další akce",
-  "unavailable": "Podrobnosti zobrazíte rozbalením"
+  "unavailable": "Není k dispozici, rozbalením zobrazíte podrobnosti"
 }

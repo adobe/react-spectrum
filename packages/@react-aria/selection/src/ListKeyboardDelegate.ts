@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Direction, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
+import {Collection, Direction, Key, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
 import {isScrollable} from '@react-aria/utils';
-import {Key, RefObject} from 'react';
+import {RefObject} from 'react';
 
 interface ListKeyboardDelegateOptions<T> {
   collection: Collection<Node<T>>,
   ref: RefObject<HTMLElement>,
+  collator?: Intl.Collator,
   layout?: 'stack' | 'grid',
   orientation?: Orientation,
   direction?: Direction,
@@ -27,7 +28,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
   private disabledKeys: Set<Key>;
   private ref: RefObject<HTMLElement>;
-  private collator: Intl.Collator;
+  private collator: Intl.Collator | undefined;
   private layout: 'stack' | 'grid';
   private orientation?: Orientation;
   private direction?: Direction;
@@ -39,6 +40,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       let opts = args[0] as ListKeyboardDelegateOptions<T>;
       this.collection = opts.collection;
       this.ref = opts.ref;
+      this.collator = opts.collator;
       this.disabledKeys = opts.disabledKeys || new Set();
       this.orientation = opts.orientation;
       this.direction = opts.direction;

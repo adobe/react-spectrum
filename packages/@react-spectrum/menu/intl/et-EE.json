@@ -1,4 +1,5 @@
 {
+  "backButton": "Tagasi {prevMenuButton}",
   "moreActions": "Veel toiminguid",
-  "unavailable": "Laiendage üksikasjade kuvamiseks"
+  "unavailable": "Pole kättesaadav, üksikasjade vaatamiseks laiendage"
 }

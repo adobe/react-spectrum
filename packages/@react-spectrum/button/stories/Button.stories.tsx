@@ -11,11 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {BackgroundColorValue} from '@react-types/shared';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Button} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Flex} from '@react-spectrum/layout';
-import React, {ElementType} from 'react';
+import React, {ElementType, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
@@ -29,7 +30,10 @@ export default {
   args: {
     onPress: action('press'),
     onPressStart: action('pressstart'),
-    onPressEnd: action('pressend')
+    onPressEnd: action('pressend'),
+    onPressUp: action('pressup'),
+    onFocus: action('focus'),
+    onBlur: action('blur')
   },
   argTypes: {
     onPress: {
@@ -47,6 +51,11 @@ export default {
         disable: true
       }
     },
+    onPressUp: {
+      table: {
+        disable: true
+      }
+    },
     autoFocus: {
       control: 'boolean'
     },
@@ -57,11 +66,15 @@ export default {
     },
     style: {
       control: 'select',
-      options: ['fill', 'outline']
+      options: [undefined, 'fill', 'outline']
     },
     staticColor: {
       control: 'select',
-      options: ['white', 'black']
+      options: [undefined, 'white', 'black']
+    },
+    isPending: {
+      control: 'boolean',
+      defaultValue: false
     }
   }
 } as ComponentMeta<typeof Button>;
@@ -100,6 +113,10 @@ export const UserSelect: ButtonStory = {
       data: 'Pressing and holding on either buttons shouldn\'t trigger text selection on the button labels (wait for buttons to turn red).'
     }
   }
+};
+
+export const PendingSpinner: ButtonStory = {
+  render: (args) => <Pending {...args} />
 };
 
 function render<T extends ElementType = 'button'>(props: SpectrumButtonProps<T> = {variant: 'primary'}) {
@@ -222,5 +239,130 @@ function Example() {
         Press and hold (no overwrite)
       </Button>
     </Flex>
+  );
+}
+
+function PendingButtonContainerComponent(props) {
+  let {children, ...otherProps} = props;
+
+  function containerBackgroundColor(variant, staticColor): BackgroundColorValue | undefined {
+    if (variant === 'overBackground' || staticColor === 'white') {
+      return 'static-blue-700';
+    }
+    if (staticColor === 'black') {
+      return 'static-yellow-200';
+    }
+    return;
+  }
+
+  return (
+    <View backgroundColor={containerBackgroundColor(otherProps.variant, otherProps.staticColor)} padding={16} {...otherProps}>
+      {children}
+    </View>
+  );
+}
+
+function Pending(props) {
+
+  return (
+    <div>
+      <Flex wrap="wrap">
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent {...props}>click me!</PendingButtonComponent>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent
+            {...props}>
+            <Bell />
+            <Text>I have an icon</Text>
+          </PendingButtonComponent>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonOnClickComponent
+            {...props}>
+            <Text>with onClick</Text>
+          </PendingButtonOnClickComponent>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent isDisabled {...props}>disabled</PendingButtonComponent>
+        </PendingButtonContainerComponent>
+      </Flex>
+
+      <View flexBasis={'100%'} paddingTop={16}>Controlled:</View>
+
+      <Flex wrap="wrap">
+        <PendingButtonContainerComponent {...props}>
+          <TooltipTrigger offset={2}>
+            <Button {...props} aria-label="Notifications" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+              <Bell />
+            </Button>
+            <Tooltip>Notifications</Tooltip>
+          </TooltipTrigger>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <Button {...props} aria-label="No tooltip" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+            <Bell />
+          </Button>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <Button {...props} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+            <Bell />
+          </Button>
+        </PendingButtonContainerComponent>
+
+        <PendingButtonContainerComponent {...props}>
+          <Button {...props} isPending={props.isPending} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+            <Text>Controlled pending</Text>
+          </Button>
+        </PendingButtonContainerComponent>
+      </Flex>
+    </div>
+  );
+}
+let timerValue = 5000;
+function PendingButtonComponent(props) {
+  let [isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('press')(e);
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, timerValue);
+  };
+
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onPress={handlePress}>
+      {props.children}
+    </Button>
+  );
+}
+
+function PendingButtonOnClickComponent(props) {
+  let [isPending, setPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('click')(e);
+    setPending(true);
+    setTimeout(() => {
+      setPending(false);
+    }, timerValue);
+  };
+
+  return (
+    <Button
+      {...props}
+      isPending={isPending}
+      onClick={handlePress}>
+      {props.children}
+    </Button>
   );
 }

@@ -27,23 +27,20 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
   props = useFormProps(props);
   let {
     isEmphasized,
-    validationState,
     children,
     orientation = 'vertical'
   } = props;
 
   let domRef = useDOMRef(ref);
   let state = useRadioGroupState(props);
-  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup(props, state);
+  let {radioGroupProps, ...otherProps} = useRadioGroup(props, state);
 
   return (
     <Field
       {...props}
+      {...otherProps}
       ref={domRef}
       wrapperClassName={classNames(styles, 'spectrum-FieldGroup')}
-      labelProps={labelProps}
-      descriptionProps={descriptionProps}
-      errorMessageProps={errorMessageProps}
       elementType="span">
       <div
         {...radioGroupProps}
@@ -59,7 +56,6 @@ function RadioGroup(props: SpectrumRadioGroupProps, ref: DOMRef<HTMLElement>) {
         <RadioContext.Provider
           value={{
             isEmphasized,
-            validationState,
             state
           }}>
           {children}

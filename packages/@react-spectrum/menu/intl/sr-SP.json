@@ -1,4 +1,5 @@
 {
+  "backButton": "Povratak na {prevMenuButton}",
   "moreActions": "Dodatne radnje",
-  "unavailable": "Expand for details"
+  "unavailable": "Nije dostupno, proširite za detalje"
 }

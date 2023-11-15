@@ -12,11 +12,12 @@
 
 import {Accordion, Item} from '../src';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Key} from '@react-types/shared';
 import React, {useState} from 'react';
 import {SpectrumAccordionProps} from '@react-types/accordion';
 
 type ItemType = {
-  key: React.Key,
+  key: Key,
   title: string
 };
 
@@ -69,7 +70,7 @@ export const ControlledExpandedKeys: AccordionStory = {
 
 
 function ControlledAccordion<T>(props: SpectrumAccordionProps<T>) {
-  let [openKeys, setOpenKeys] = useState<Set<React.Key>>(new Set(['files']));
+  let [openKeys, setOpenKeys] = useState<Set<Key>>(new Set(['files']));
   return (
     <Accordion {...props} expandedKeys={openKeys} onExpandedChange={setOpenKeys} >
       <Item key="files" title="Your files">

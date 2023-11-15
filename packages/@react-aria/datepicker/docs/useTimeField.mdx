@@ -111,7 +111,7 @@ export function TimeField(props) {
         {state.segments.map((segment, i) =>
           <DateSegment key={i} segment={segment} state={state} />
         )}
-        {state.validationState === 'invalid' &&
+        {state.isInvalid &&
           <span aria-hidden="true">🚫</span>
         }
       </div>
@@ -166,7 +166,7 @@ function DateSegment({segment, state}) {
 }
 
 .segment.placeholder {
-  color: var(--react-spectrum-datepicker-placeholder-color);
+  color: var(--spectrum-gray-600);
 }
 
 .segment:focus {

@@ -11,13 +11,15 @@
  */
 
 import {AriaTagGroupProps, useFocusRing, useHover, useTag, useTagGroup} from 'react-aria';
-import {BaseCollection, CollectionProps, Document, ItemProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
 import {ButtonContext} from './Button';
+import {CollectionDocumentContext, CollectionProps, ItemRenderProps, useCachedChildren, useCollectionDocument, useCollectionPortal, useSSRCollectionNode} from './Collection';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useObjectRef} from '@react-aria/utils';
+import {Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, Key, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
+import {ListStateContext} from './ListBox';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps {}
@@ -37,23 +39,20 @@ export interface TagListRenderProps {
    * Whether the tag list is currently keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean
+  isFocusVisible: boolean,
+  /**
+   * State of the TagGroup.
+   */
+  state: ListState<unknown>
 }
 
 export interface TagListProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, StyleRenderProps<TagListRenderProps> {
   /** Provides content to display when there are no items in the tag list. */
-  renderEmptyState?: () => ReactNode
-}
-
-interface InternalTagGroupContextValue {
-  state: ListState<any>,
-  document: Document<any, BaseCollection<any>>,
-  gridProps: HTMLAttributes<HTMLElement>,
-  tagListRef: RefObject<HTMLDivElement>
+  renderEmptyState?: (props: TagListRenderProps) => ReactNode
 }
 
 export const TagGroupContext = createContext<ContextValue<TagGroupProps, HTMLDivElement>>(null);
-const InternalTagGroupContext = createContext<InternalTagGroupContextValue | null>(null);
+export const TagListContext = createContext<ContextValue<TagListProps<any>, HTMLDivElement>>(null);
 
 function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TagGroupContext);
@@ -84,13 +83,15 @@ function TagGroup(props: TagGroupProps, ref: ForwardedRef<HTMLDivElement>) {
     <div
       {...domProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
       className={props.className ?? 'react-aria-TagGroup'}
       style={props.style}>
       <Provider
         values={[
           [LabelContext, {...labelProps, elementType: 'span', ref: labelRef}],
-          [InternalTagGroupContext, {state, document, gridProps, tagListRef}],
+          [TagListContext, {...gridProps, ref: tagListRef}],
+          [ListStateContext, state],
+          [CollectionDocumentContext, document],
           [TextContext, {
             slots: {
               description: descriptionProps,
@@ -112,8 +113,7 @@ export {_TagGroup as TagGroup};
 
 function TagList<T extends object>(props: TagListProps<T>, forwardedRef: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
-  let {document} = useContext(InternalTagGroupContext)!;
-  let portal = useCollectionPortal(props, document);
+  let portal = useCollectionPortal(props);
   return (
     <>
       {portal}
@@ -128,8 +128,10 @@ interface TagListInnerProps<T> {
 }
 
 function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps<T>) {
-  let {state, gridProps, tagListRef} = useContext(InternalTagGroupContext)!;
-  let ref = mergeRefs(tagListRef, forwardedRef);
+  let state = useContext(ListStateContext)!;
+  let [gridProps, ref] = useContextProps(props, forwardedRef, TagListContext);
+  delete gridProps.items;
+  delete gridProps.renderEmptyState;
 
   let children = useCachedChildren({
     items: state.collection,
@@ -144,27 +146,28 @@ function TagListInner<T extends object>({props, forwardedRef}: TagListInnerProps
   });
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let renderValues = {
+    isEmpty: state.collection.size === 0,
+    isFocused,
+    isFocusVisible,
+    state
+  };
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-TagList',
-    values: {
-      isEmpty: state.collection.size === 0,
-      isFocused,
-      isFocusVisible
-    }
+    values: renderValues
   });
 
   return (
     <div
       {...mergeProps(gridProps, focusProps)}
       {...renderProps}
-      {...filterDOMProps(props as any)}
       ref={ref}
       data-empty={state.collection.size === 0 || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}>
-      {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState() : children}
+      {state.collection.size === 0 && props.renderEmptyState ? props.renderEmptyState(renderValues) : children}
     </div>
   );
 }
@@ -183,7 +186,7 @@ export interface TagRenderProps extends Omit<ItemRenderProps, 'allowsDragging' |
   allowsRemoving: boolean
 }
 
-export interface TagProps extends RenderProps<TagRenderProps> {
+export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps {
   /** A unique id for the tag. */
   id?: Key,
   /**
@@ -193,7 +196,7 @@ export interface TagProps extends RenderProps<TagRenderProps> {
   textValue?: string
 }
 
-function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): React.JSX.Element | null {
   return useSSRCollectionNode('item', props, ref, props.children);
 }
 
@@ -204,7 +207,7 @@ const _Tag = /*#__PURE__*/ (forwardRef as forwardRefType)(Tag);
 export {_Tag as Tag};
 
 function TagItem({item}) {
-  let {state} = useContext(InternalTagGroupContext)!;
+  let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {focusProps, isFocusVisible} = useFocusRing({within: true});
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
@@ -213,7 +216,7 @@ function TagItem({item}) {
     isDisabled: !states.allowsSelection
   });
 
-  let props: ItemProps<unknown> = item.props;
+  let props: TagProps = item.props;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -245,8 +248,9 @@ function TagItem({item}) {
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
-      data-allows-removing={states.allowsRemoving || undefined}>
-      <div {...gridCellProps}>
+      data-allows-removing={states.allowsRemoving || undefined}
+      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
+      <div {...gridCellProps} style={{display: 'contents'}}>
         <Provider
           values={[
             [ButtonContext, {

@@ -11,8 +11,9 @@
  */
 
 import {Calendar, DateFormatter, getMinimumDayInMonth, getMinimumMonthInYear, GregorianCalendar, toCalendar} from '@internationalized/date';
-import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, isInvalid, useDefaultProps} from './utils';
+import {convertValue, createPlaceholderDate, FieldOptions, getFormatOptions, getValidationResult, useDefaultProps} from './utils';
 import {DatePickerProps, DateValue, Granularity} from '@react-types/datepicker';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {getPlaceholder} from './placeholders';
 import {useControlledState} from '@react-stately/utils';
 import {useEffect, useMemo, useRef, useState} from 'react';
@@ -38,7 +39,7 @@ export interface DateSegment {
   isEditable: boolean
 }
 
-export interface DateFieldState {
+export interface DateFieldState extends FormValidationState {
   /** The current field value. */
   value: DateValue,
   /** The current value, converted to a native JavaScript `Date` object.  */
@@ -51,8 +52,13 @@ export interface DateFieldState {
   segments: DateSegment[],
   /** A date formatter configured for the current locale and format. */
   dateFormatter: DateFormatter,
-  /** The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props. */
+  /**
+   * The current validation state of the date field, based on the `validationState`, `minValue`, and `maxValue` props.
+   * @deprecated Use `isInvalid` instead.
+   */
   validationState: ValidationState,
+  /** Whether the date field is invalid, based on the `isInvalid`, `minValue`, and `maxValue` props. */
+  isInvalid: boolean,
   /** The granularity for the field, based on the `granularity` prop and current value. */
   granularity: Granularity,
   /** The maximum date or time unit that is displayed in the field. */
@@ -144,7 +150,10 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     hideTimeZone,
     isDisabled,
     isReadOnly,
-    isRequired
+    isRequired,
+    minValue,
+    maxValue,
+    isDateUnavailable
   } = props;
 
   let v: DateValue = (props.value || props.defaultValue || props.placeholderValue);
@@ -309,10 +318,25 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     }
   };
 
-  let validationState: ValidationState = props.validationState ||
-    (isInvalid(calendarValue, props.minValue, props.maxValue) ? 'invalid' : null);
+  let builtinValidation = useMemo(() => getValidationResult(
+    value,
+    minValue,
+    maxValue,
+    isDateUnavailable,
+    formatOpts
+  ), [value, minValue, maxValue, isDateUnavailable, formatOpts]);
+
+  let validation = useFormValidationState({
+    ...props,
+    value,
+    builtinValidation
+  });
+
+  let isValueInvalid = validation.displayValidation.isInvalid;
+  let validationState: ValidationState = props.validationState || (isValueInvalid ? 'invalid' : null);
 
   return {
+    ...validation,
     value: calendarValue,
     dateValue,
     calendar,
@@ -320,6 +344,7 @@ export function useDateFieldState<T extends DateValue = DateValue>(props: DateFi
     segments,
     dateFormatter,
     validationState,
+    isInvalid: isValueInvalid,
     granularity,
     maxGranularity: props.maxGranularity ?? 'year',
     isDisabled,

@@ -53,7 +53,8 @@ const withTM = require("next-transpile-modules")([
   '@react-spectrum/well',
   '@spectrum-icons/illustrations',
   '@spectrum-icons/ui',
-  '@spectrum-icons/workflow'
+  '@spectrum-icons/workflow',
+  '@spectrum-icons/express'
 ]);
 
 module.exports = withTM({

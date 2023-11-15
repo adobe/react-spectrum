@@ -15,13 +15,13 @@ import {screen, testSSR} from '@react-spectrum/test-utils';
 describe('Breadcrumbs SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {Breadcrumbs, Item} from '../';
+      import {Breadcrumbs, Breadcrumb} from '../';
 
       <React.StrictMode>
         <Breadcrumbs>
-          <Item>One</Item>
-          <Item>Two</Item>
-          <Item>Three</Item>
+          <Breadcrumb>One</Breadcrumb>
+          <Breadcrumb>Two</Breadcrumb>
+          <Breadcrumb>Three</Breadcrumb>
         </Breadcrumbs>
       </React.StrictMode>
     `, () => {

@@ -59,7 +59,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabeli
     // handle an update to the caption that describes the currently selected range, to announce the new value
   }, [selectedDateDescription]);
 
-  let errorMessageId = useSlotId([Boolean(props.errorMessage), props.validationState]);
+  let errorMessageId = useSlotId([Boolean(props.errorMessage), props.isInvalid, props.validationState]);
 
   // Pass the label to the child grid elements.
   hookData.set(state, {

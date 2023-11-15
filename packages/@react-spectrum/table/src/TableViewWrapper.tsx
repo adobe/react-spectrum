@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import type {AriaLabelingProps, DOMProps, DOMRef, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import type {AriaLabelingProps, DOMProps, DOMRef, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import type {ColumnSize, TableProps} from '@react-types/table';
 import type {DragAndDropHooks} from '@react-spectrum/dnd';
-import React, {Key, ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 import {tableNestedRows} from '@react-stately/flags';
 import {TableView} from './TableView';
 import {TreeGridTableView} from './TreeGridTableView';
@@ -32,7 +32,7 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   /** Whether the TableView should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Sets what the TableView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element,
+  renderEmptyState?: () => React.JSX.Element,
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
   /**

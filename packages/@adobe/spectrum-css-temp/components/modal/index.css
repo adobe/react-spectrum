@@ -61,7 +61,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Modal {
-  @inherit: %spectrum-overlay;
+  composes: spectrum-overlay;
 
   /* Start offset by the animation distance */
   transform: translateY(var(--spectrum-dialog-entry-animation-distance));
@@ -83,16 +83,16 @@ governing permissions and limitations under the License.
   transition: opacity var(--spectrum-dialog-exit-animation-duration) cubic-bezier(0.5, 0, 1, 1) var(--spectrum-dialog-exit-animation-delay),
               visibility 0ms linear calc(var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration)),
               transform 0ms linear calc(var(--spectrum-dialog-exit-animation-delay) + var(--spectrum-dialog-exit-animation-duration));
+}
 
-  &.is-open {
-    @inherit: %spectrum-overlay--open;
+.is-open {
+  composes: spectrum-overlay--open;
 
-    /* Entry animations */
-    transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
-                opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
+  /* Entry animations */
+  transition: transform var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay),
+              opacity var(--spectrum-dialog-entry-animation-duration) cubic-bezier(0, 0, 0.40, 1) var(--spectrum-dialog-entry-animation-delay);
 
-    transform: translateY(0);
-  }
+  transform: translateY(0);
 }
 
 /* Responsive modals will fill the screen on small viewports */

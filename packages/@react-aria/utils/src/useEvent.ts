@@ -16,7 +16,7 @@ import {useEffectEvent} from './useEffectEvent';
 export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
   ref: RefObject<EventTarget>,
   event: K,
-  handler: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
+  handler?: (this: Document, ev: GlobalEventHandlersEventMap[K]) => any,
   options?: boolean | AddEventListenerOptions
 ) {
   let handleEvent = useEffectEvent(handler);

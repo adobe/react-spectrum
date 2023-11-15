@@ -108,12 +108,7 @@ export const LabelPositionSide = {
 
 export const ValidationStateInvalid = {
   render: Template,
-  args: {...Default.args, validationState: 'invalid'}
-};
-
-export const ValidationStateValid = {
-  render: Template,
-  args: {...Default.args, validationState: 'valid'}
+  args: {...Default.args, isInvalid: true}
 };
 
 export const ComplexItems = {

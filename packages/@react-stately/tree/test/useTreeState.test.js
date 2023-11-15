@@ -10,15 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {KeyboardNavigation} from '../stories/useTreeState.stories';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('useTreeState', () => {
-  it('should be keyboard navigable', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+  it('should be keyboard navigable', async () => {
     let {getAllByRole} = render(<KeyboardNavigation />);
-    userEvent.tab();
+    await user.tab();
     let items = getAllByRole('treeitem');
     expect(items.length).toBe(2);
     expect(document.activeElement).toBe(items[0]);

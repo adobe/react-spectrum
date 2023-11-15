@@ -2,6 +2,6 @@
   "actions": "Działania",
   "actionsAvailable": "Dostępne działania.",
   "clearSelection": "Wyczyść zaznaczenie",
-  "selected": "{count, plural, =0 {Nie zaznaczono żadnego elementu} other {# zaznaczonych}}",
+  "selected": "Zaznaczono: {count}",
   "selectedAll": "Wszystkie zaznaczone"
 }

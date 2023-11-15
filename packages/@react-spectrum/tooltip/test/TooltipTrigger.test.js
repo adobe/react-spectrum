@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '../';
+import userEvent from '@testing-library/user-event';
 
 // Sync with useTooltipTriggerState.ts
 const TOOLTIP_DELAY = 1500;
@@ -24,8 +25,10 @@ let CLOSE_TIME = 350;
 
 describe('TooltipTrigger', function () {
   let onOpenChange = jest.fn();
+  let user;
 
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 
@@ -73,7 +76,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('opens for hover',  () => {
+    it('opens for hover',  async () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -82,16 +85,14 @@ describe('TooltipTrigger', function () {
           </TooltipTrigger>
         </Provider>
       );
-      fireEvent.mouseDown(document.body);
-      fireEvent.mouseUp(document.body);
+      await user.click(document.body);
 
       let button = getByLabelText('trigger');
-      fireEvent.mouseEnter(button);
-      fireEvent.mouseMove(button);
+      await user.hover(button);
       expect(onOpenChange).toHaveBeenCalledWith(true);
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
-      fireEvent.mouseLeave(button);
+      await user.unhover(button);
       act(() => {
         jest.advanceTimersByTime(CLOSE_TIME);
       });
@@ -108,7 +109,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('if hovered and focused, will hide if hover leaves',  () => {
+    it('if hovered and focused, will hide if hover leaves',  async () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -120,23 +121,18 @@ describe('TooltipTrigger', function () {
 
       let button = getByLabelText('trigger');
       // add focus
-      act(() => {
-        button.focus();
-      });
+      await user.tab();
       expect(onOpenChange).toHaveBeenCalledWith(true);
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
-      // add hover
-      fireEvent.mouseEnter(button);
-      fireEvent.mouseMove(button);
+      await user.hover(button);
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       act(() => {
         jest.runAllTimers();
       });
       expect(tooltip).toBeVisible();
 
-      // remove hover
-      fireEvent.mouseLeave(button);
+      await user.unhover(button);
       act(() => {
         jest.runAllTimers();
       });
@@ -158,7 +154,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('if hovered and focused, will hide if focus leaves',  () => {
+    it('if hovered and focused, will hide if focus leaves',  async () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -169,16 +165,12 @@ describe('TooltipTrigger', function () {
       );
 
       let button = getByLabelText('trigger');
-      // add focus
-      act(() => {
-        button.focus();
-      });
+      await user.tab();
       expect(onOpenChange).toHaveBeenCalledWith(true);
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
       // add hover
-      fireEvent.mouseEnter(button);
-      fireEvent.mouseMove(button);
+      await user.hover(button);
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       act(() => {
         jest.runAllTimers();
@@ -196,7 +188,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
 
       // remove hover
-      fireEvent.mouseLeave(button);
+      await user.unhover(button);
       expect(onOpenChange).toHaveBeenCalledTimes(2);
       expect(onOpenChange).toHaveBeenCalledWith(false);
       act(() => {
@@ -205,7 +197,7 @@ describe('TooltipTrigger', function () {
       expect(tooltip).not.toBeInTheDocument();
     });
 
-    it('can be keyboard force closed',  () => {
+    it('can be keyboard force closed',  async () => {
       let {queryByRole, getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -216,9 +208,7 @@ describe('TooltipTrigger', function () {
       );
 
       let button = getByLabelText('trigger');
-      act(() => {
-        button.focus();
-      });
+      await user.tab();
       expect(onOpenChange).toHaveBeenCalledWith(true);
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
@@ -238,7 +228,7 @@ describe('TooltipTrigger', function () {
       expect(queryByRole('tooltip')).toBeNull();
     });
 
-    it('can be keyboard force closed from anywhere',  () => {
+    it('can be keyboard force closed from anywhere',  async () => {
       let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -248,16 +238,14 @@ describe('TooltipTrigger', function () {
           <input type="text" />
         </Provider>
       );
-      fireEvent.mouseDown(document.body);
-      fireEvent.mouseUp(document.body);
+      await user.click(document.body);
 
       let button = getByLabelText('trigger');
       let input = getByRole('textbox');
       act(() => {
         input.focus();
       });
-      fireEvent.mouseEnter(button);
-      fireEvent.mouseMove(button);
+      await user.hover(button);
       expect(onOpenChange).toHaveBeenCalledWith(true);
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
@@ -271,14 +259,14 @@ describe('TooltipTrigger', function () {
       act(() => {
         input.blur();
       });
-      fireEvent.mouseLeave(button);
+      await user.unhover(button);
       act(() => {
         jest.runAllTimers();
       });
       expect(queryByRole('tooltip')).toBeNull();
     });
 
-    it('is closed if the trigger is clicked',  () => {
+    it('is closed if the trigger is clicked',  async () => {
       let {getByRole, queryByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -287,11 +275,10 @@ describe('TooltipTrigger', function () {
           </TooltipTrigger>
         </Provider>
       );
-      fireEvent.mouseDown(document.body);
-      fireEvent.mouseUp(document.body);
+      await user.click(document.body);
 
       let button = getByLabelText('trigger');
-      fireEvent.mouseEnter(button);
+      await user.hover(button);
       expect(onOpenChange).toHaveBeenCalledWith(true);
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
@@ -311,7 +298,7 @@ describe('TooltipTrigger', function () {
     });
   });
 
-  it('is closed if the trigger is clicked with the keyboard',  () => {
+  it('is closed if the trigger is clicked with the keyboard',  async () => {
     let {getByRole, queryByRole, getByLabelText} = render(
       <Provider theme={theme}>
         <TooltipTrigger onOpenChange={onOpenChange} delay={0}>
@@ -322,9 +309,7 @@ describe('TooltipTrigger', function () {
     );
 
     let button = getByLabelText('trigger');
-    act(() => {
-      button.focus();
-    });
+    await user.tab();
     expect(onOpenChange).toHaveBeenCalledWith(true);
     let tooltip = getByRole('tooltip');
     expect(tooltip).toBeVisible();
