@@ -24,7 +24,7 @@ import {useStepListState} from '@react-stately/steplist';
 function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef<HTMLOListElement>) {
   const {size = 'M', orientation = 'horizontal'} = props;
   props = useProviderProps(props);
-  const {isDisabled, isEmphasized, isReadOnly} = props;
+  const {isDisabled, isEmphasized} = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
@@ -51,7 +51,6 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
           <StepListItem
             key={item.key}
             isDisabled={isDisabled}
-            isReadOnly={isReadOnly}
             item={item} />
           )
         )}

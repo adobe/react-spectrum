@@ -33,7 +33,6 @@ interface SpectrumStepListItemProps<T> {
 export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
   let {
     isDisabled,
-    isReadOnly,
     item
   } = props;
   let {key} = item;
