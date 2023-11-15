@@ -60,7 +60,7 @@ If multiple landmarks are registered with the same role, they should have unique
 
 ```tsx example export=true
 import {useLandmark} from '@react-aria/landmark';
-import {useRef} from 'react';
+import {SyntheticEvent, useRef} from 'react';
 
 function Navigation(props) {
   let ref = useRef();
@@ -124,7 +124,7 @@ import {useEffect, useMemo, useRef} from 'react';
 function Example() {
 
   // Create a controller instance to manage focus between landmarks.
-  let controller = React.useMemo(() => createLandmarkController(), []);
+  let controller = useMemo(() => createLandmarkController(), []);
 
   // Cleanup the controller when the component unmounts.
   useEffect(() => () => controller.dispose(), [controller]);
@@ -225,4 +225,6 @@ function Example() {
     </>
   );
 }
+
+<Example />
 ```
