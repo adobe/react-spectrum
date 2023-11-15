@@ -27,6 +27,7 @@ governing permissions and limitations under the License.
   --spectrum-steplist-incomplete-segment-color: var(--spectrum-global-color-gray-400);
   --spectrum-steplist-incomplete-label-text-color: var(--spectrum-global-color-gray-600);
   --spectrum-steplist-incomplete-marker-color: var(--spectrum-global-color-gray-400);
+  --spectrum-steplist-incomplete-marker-text-color: var(--spectrum-global-color-gray-500);
 
   --spectrum-steplist-emphasized-current-label-text-color: var(--spectrum-accent-color-900);
   --spectrum-steplist-emphasized-current-marker-color: var(--spectrum-accent-color-900);
@@ -48,7 +49,7 @@ governing permissions and limitations under the License.
   /* Default Marker Style is 'incomplete' */
   .spectrum-Steplist-marker {
     border-color: var(--spectrum-steplist-incomplete-marker-color);
-    color: var(--spectrum-steplist-incomplete-marker-color);
+    color: var(--spectrum-steplist-incomplete-marker-text-color);
   }
 
   /* Default Line Style is 'incomplete' */
@@ -202,6 +203,7 @@ governing permissions and limitations under the License.
     --spectrum-steplist-incomplete-segment-color: CanvasText;
     --spectrum-steplist-incomplete-label-text-color: ButtonText;
     --spectrum-steplist-incomplete-marker-color: ButtonText;
+    --spectrum-steplist-incomplete-marker-text-color: ButtonText;
 
     --spectrum-steplist-emphasized-current-label-text-color: CanvasText;
     --spectrum-steplist-emphasized-current-marker-color: ButtonText;
