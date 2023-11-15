@@ -20,6 +20,7 @@ const t = require('@babel/types');
 const lightningcss = require('lightningcss');
 const fs = require('fs');
 const path = require('path');
+const processCSS = require('./processCSS');
 
 const IMPORT_MAPPINGS = {
   '@react-spectrum/theme-default': {
@@ -45,8 +46,6 @@ module.exports = new Transformer({
 
     let visit = (await import('unist-util-visit')).visit;
     let unified = (await import('unified')).unified;
-    let remarkParse = (await import('remark-parse')).default;
-    let remarkMdx = (await import('remark-mdx')).default;
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
         if (node.type === 'code') {
@@ -169,50 +168,7 @@ module.exports = new Transformer({
     );
 
     let appendCSS = () => async (tree) => {
-      let transformed = await lightningcss.bundleAsync({
-        filename: `${asset.filePath}.lightning`,
-        minify: true,
-        drafts: {
-          nesting: true
-        },
-        targets: {
-          chrome: 95 << 16,
-          safari: 15 << 16
-        },
-        resolver: {
-          resolve(specifier, parent) {
-            if (specifier.startsWith('.')) {
-              return path.resolve(path.dirname(parent), specifier);
-            }
-
-            let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
-            return path.resolve(options.projectRoot, baseDir, specifier);
-          },
-          read(filePath) {
-            if (filePath === `${asset.filePath}.lightning`) {
-              return cssCode.join('\n');
-            }
-            let result = '';
-            try {
-              let contents = fs.readFileSync(filePath, 'utf8');
-              // get all css blocks and concat
-              let ast = unified().use(remarkParse).use(remarkMdx).parse(contents);
-              visit(ast, 'code', node => {
-                if (node.lang !== 'css' || node?.meta?.includes('render=false') || node?.meta?.includes('hidden')) {
-                  return;
-                }
-                let code = node.value;
-                code = code.replace(/@import.*/g, '');
-                result += code;
-              });
-            } catch (e) {
-              console.log(e);
-            }
-            return result;
-          }
-        }
-      });
-      let css = transformed.code.toString();
+      let css = await processCSS(cssCode, asset, options);
 
       tree.children.push(
         {
