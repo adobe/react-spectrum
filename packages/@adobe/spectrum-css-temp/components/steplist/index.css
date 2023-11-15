@@ -136,6 +136,7 @@ governing permissions and limitations under the License.
     }
   }
   .spectrum-Steplist-chevron {
+    padding-inline-start: calc(var(--spectrum-steplist-chevron-gap) - var(--spectrum-steplist-marker-label-gap));
     transform: scale(var(--spectrum-steplist-chevron-scale));
   }
 }
@@ -148,7 +149,7 @@ governing permissions and limitations under the License.
   --spectrum-steplist-marker-diameter: var(--spectrum-steplist-marker-diameter-small);
   --spectrum-steplist-counter-font-size: 0;
   --spectrum-steplist-chevron-scale: 0.75;
-  --spectrum-steplist-segment-height-adjust: 2px;
+  --spectrum-steplist-segment-height-adjust: 0px;
   .spectrum-Steplist-marker {
     align-self: center;
   }

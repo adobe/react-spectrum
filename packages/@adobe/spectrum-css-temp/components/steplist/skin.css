@@ -14,7 +14,7 @@ governing permissions and limitations under the License.
   /* Copied mostly from spectrum-css/vars/.../steplist.
      However, that didn't have all the variables we needed, so I've added the remaining set here.
    */
-  --spectrum-steplist-complete-segment-color: var(--spectrum-global-color-gray-500);
+  --spectrum-steplist-complete-segment-color: var(--spectrum-global-color-gray-400);
   --spectrum-steplist-complete-label-text-color: var(--spectrum-global-color-gray-700);
   --spectrum-steplist-complete-marker-text-color: var(--spectrum-global-color-gray-50);
   --spectrum-steplist-complete-marker-color: var(--spectrum-global-color-gray-600);
@@ -24,20 +24,20 @@ governing permissions and limitations under the License.
   --spectrum-steplist-current-marker-text-color: var(--spectrum-global-color-gray-50);
   --spectrum-steplist-current-marker-color: var(--spectrum-global-color-gray-800);
 
-  --spectrum-steplist-incomplete-segment-color: var(--spectrum-global-color-gray-300);
+  --spectrum-steplist-incomplete-segment-color: var(--spectrum-global-color-gray-400);
   --spectrum-steplist-incomplete-label-text-color: var(--spectrum-global-color-gray-600);
-  --spectrum-steplist-incomplete-marker-color: var(--spectrum-global-color-gray-300);
+  --spectrum-steplist-incomplete-marker-color: var(--spectrum-global-color-gray-400);
 
   --spectrum-steplist-emphasized-current-label-text-color: var(--spectrum-accent-color-900);
   --spectrum-steplist-emphasized-current-marker-color: var(--spectrum-accent-color-900);
 
   --spectrum-steplist-disabled-complete-marker-color: var(--spectrum-global-color-gray-400);
   --spectrum-steplist-disabled-complete-marker-text-color: var(--spectrum-global-color-gray-50);
-  --spectrum-steplist-disabled-complete-segment-color: var(--spectrum-global-color-gray-500);
+  --spectrum-steplist-disabled-complete-segment-color: var(--spectrum-global-color-gray-400);
   --spectrum-steplist-disabled-complete-label-text-color: var(--spectrum-global-color-gray-500);
   --spectrum-steplist-disabled-incomplete-marker-color: var(--spectrum-global-color-gray-300);
-  --spectrum-steplist-disabled-incomplete-marker-text-color: var(--spectrum-global-color-gray-50);
-  --spectrum-steplist-disabled-incomplete-segment-color: var(--spectrum-global-color-gray-500);
+  --spectrum-steplist-disabled-incomplete-marker-text-color: var(--spectrum-global-color-gray-400);
+  --spectrum-steplist-disabled-incomplete-segment-color: var(--spectrum-global-color-gray-400);
   --spectrum-steplist-disabled-incomplete-label-text-color: var(--spectrum-global-color-gray-400);
 
   /* Default Label Style is 'incomplete' */
