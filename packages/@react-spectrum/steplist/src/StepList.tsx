@@ -24,13 +24,13 @@ import {useStepListState} from '@react-stately/steplist';
 function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef<HTMLOListElement>) {
   const {size = 'M', orientation = 'horizontal'} = props;
   props = useProviderProps(props);
+  const {isDisabled, isEmphasized, isReadOnly} = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
   let state = useStepListState(props);
   let {listProps} = useStepList(props, state, domRef);
 
-  const {isDisabled, isEmphasized, isReadOnly} = props;
 
   return (
     <ol
@@ -38,11 +38,11 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
       {...styleProps}
       ref={domRef}
       className={classNames(styles, 'spectrum-Steplist', styleProps.className, {
-        'spectrum-Steplist--interactive': !isReadOnly && !isDisabled,
         'spectrum-Steplist--small': size === 'S',
         'spectrum-Steplist--medium': size === 'M',
         'spectrum-Steplist--large': size === 'L',
         'spectrum-Steplist--xlarge': size === 'XL',
+        'spectrum-Steplist--emphasized': isEmphasized,
         'spectrum-Steplist--horizontal': orientation === 'horizontal',
         'spectrum-Steplist--vertical': orientation === 'vertical'
       })}>
@@ -51,7 +51,6 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
           <StepListItem
             key={item.key}
             isDisabled={isDisabled}
-            isEmphasized={isEmphasized}
             isReadOnly={isReadOnly}
             item={item} />
           )

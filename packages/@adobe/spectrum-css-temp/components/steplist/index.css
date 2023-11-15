@@ -13,21 +13,6 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 :root {
-  /* The color of step text */
-  --spectrum-steplist-default-color: var(--spectrum-global-color-gray-600);
-  /* The default border color */
-  --spectrum-steplist-border-color: var(--spectrum-global-color-gray-400);
-  /* The color of the selected step */
-  --spectrum-steplist-current-color: var(--spectrum-global-color-gray-800);
-  --spectrum-steplist-current-text-color: var(--spectrum-global-color-gray-50);
-  /* The color of the emphasized step */
-  --spectrum-steplist-emphasized-color: var(--spectrum-global-color-blue-400);
-  /* The color of the disabled step label */
-  --spectrum-steplist-disabled-border-color: var(--spectrum-global-color-gray-400);
-  /* The color of the disabled step marker */
-  --spectrum-steplist-disabled-marker-color: var(--spectrum-global-color-gray-300);
-  --spectrum-steplist-disabled-color: var(--spectrum-alias-text-color-disabled);
-
   /* The diameter of the marker */
   --spectrum-steplist-marker-diameter-small: 8px;
   --spectrum-steplist-marker-diameter-medium: 16px;
@@ -68,11 +53,6 @@ governing permissions and limitations under the License.
 .spectrum-Steplist-item {
   display: grid;
   min-width: 0;
-
-  &.focus-ring {
-    outline: 2px;
-    outline-offset: 2px;
-  }
 
   .spectrum-Steplist-segment {
     align-items: center;

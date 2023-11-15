@@ -33,7 +33,7 @@ interface SpectrumStepListItemProps<T> {
 export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
   let {
     isDisabled,
-    isEmphasized,
+    isReadOnly,
     item
   } = props;
   let {key} = item;
@@ -41,12 +41,13 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
   let ref = useRef();
   let {direction} = useLocale();
   let state = useContext(StepListContext);
+  const isSelected = state.selectedKey === key;
   const isCompleted = state.isCompleted(key);
   const isItemDisabled = isDisabled || state.disabledKeys.has(key);
   let {stepProps, stepStateProps} = useStepListItem({...props, key}, state, ref);
 
-  let {hoverProps, isHovered} = useHover(props);
-  const isSelected = state.selectedKey === key;
+  let {hoverProps, isHovered} = useHover({...props, isDisabled: isItemDisabled || isSelected || props.isReadOnly});
+
 
   let stepStateText = '';
   const stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -62,7 +63,6 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
 
   return (
     <li
-      key={key}
       className={
         classNames(
           styles,
@@ -81,12 +81,11 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
               'is-selected': isSelected && !isItemDisabled,
               'is-disabled': isItemDisabled,
               'is-hovered': isHovered,
-              'is-emphasized': isEmphasized && isSelected,
-              'is-completed': isCompleted
+              'is-completed': isCompleted,
+              'is-selectable': state.isSelectable(key) && !isSelected
             }
           )}>
           <VisuallyHidden {...stepStateProps}>{stepStateText}</VisuallyHidden>
-          <span id={`step-marker-${key}`} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-marker')}>{numberFormatter.format((item.index || 0) + 1)}</span>
           <span id={`step-label-${key}`} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-label')}>
             {item.rendered}
           </span>
@@ -104,6 +103,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
                 'is-reversed': direction === 'rtl'
               })} />
           </div>
+          <span id={`step-marker-${key}`} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-marker')}>{numberFormatter.format((item.index || 0) + 1)}</span>
         </a>
       </FocusRing>
     </li>
