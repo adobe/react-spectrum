@@ -149,7 +149,7 @@ async function build() {
   // Copy package.json for each package into docs dir so we can find the correct version numbers
   console.log('moving over from node_modules');
   for (let p of packages) {
-    if (!p.includes('spectrum-css') && fs.existsSync(path.join(dir, 'node_modules', p))) {
+    if (!p.includes('spectrum-css') && !p.includes('example-theme') && fs.existsSync(path.join(dir, 'node_modules', p))) {
       fs.moveSync(path.join(dir, 'node_modules', path.dirname(p)), path.join(dir, 'packages', path.dirname(p)));
       fs.removeSync(path.join(dir, 'packages', path.dirname(p), 'dist'));
       let json = JSON.parse(fs.readFileSync(path.join(dir, 'packages', p)), 'utf8');

@@ -17,9 +17,6 @@ const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const yaml = require('js-yaml');
 const dprint = require('dprint-node');
 const t = require('@babel/types');
-const lightningcss = require('lightningcss');
-const fs = require('fs');
-const path = require('path');
 const processCSS = require('./processCSS');
 
 const IMPORT_MAPPINGS = {
@@ -45,7 +42,6 @@ module.exports = new Transformer({
     let preRelease = preReleaseParts ? preReleaseParts[0] : '';
 
     let visit = (await import('unist-util-visit')).visit;
-    let unified = (await import('unified')).unified;
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
         if (node.type === 'code') {
