@@ -35,6 +35,11 @@ module.exports = async function processCSS(cssCode, asset, options) {
           return path.resolve(path.dirname(parent), specifier);
         }
 
+        if (path.extname(specifier) === '') {
+          // Assume this is a package.
+          specifier += '/src/index.css';
+        }
+
         let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
         return path.resolve(options.projectRoot, baseDir, specifier);
       },
@@ -89,7 +94,7 @@ module.exports = async function processCSS(cssCode, asset, options) {
                 loc: m.value.loc,
                 declarations: m.value.rules[0].value.declarations
               }
-            }
+            };
           }
         }
       }
@@ -97,4 +102,4 @@ module.exports = async function processCSS(cssCode, asset, options) {
   });
 
   return transformed.code.toString();
-}
+};
