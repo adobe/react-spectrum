@@ -214,6 +214,11 @@ governing permissions and limitations under the License.
     }
   }
 
+  .spectrum-Steplist-chevron {
+    /* Aides vertical centering between chevron and circle. */
+    padding-top: 1px;
+  }
+
   .spectrum-Steplist-label {
     order: 1;
   }
