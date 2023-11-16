@@ -21,7 +21,7 @@ import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
 import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/utils';
-import React, {ReactElement, useContext, useRef, useState} from 'react';
+import React, {ReactElement, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -48,7 +48,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   let [leftOffset, setLeftOffset] = useState({left: 0});
-  useLayoutEffect(() => {
+  useEffect(() => {
     let {left} = popoverContainerRef.current.getBoundingClientRect();
     setLeftOffset({left: -1 * left});
   }, []);
@@ -104,8 +104,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
             })}
           </div>
         </TrayHeaderWrapper>
-        {/* Make the portal container for submenus wide enough so that the submenu items can render as wide as they need to be */}
-        <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} />
+        {rootMenuTriggerState.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} /> }
       </FocusScope>
     </MenuStateContext.Provider>
   );
