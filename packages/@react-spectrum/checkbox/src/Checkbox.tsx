@@ -32,13 +32,11 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
   let {
     isIndeterminate = false,
     isEmphasized = false,
-    isDisabled = false,
     autoFocus,
     children,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let {hoverProps, isHovered} = useHover({isDisabled});
 
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
@@ -47,7 +45,7 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
   // This is a bit unorthodox. Typically, hooks cannot be called in a conditional,
   // but since the checkbox won't move in and out of a group, it should be safe.
   let groupState = useContext(CheckboxGroupContext);
-  let {inputProps, isInvalid} = groupState
+  let {inputProps, isInvalid, isDisabled} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
       ...props,
@@ -63,6 +61,8 @@ function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelEleme
     }, groupState, inputRef)
     // eslint-disable-next-line react-hooks/rules-of-hooks
     : useCheckbox(props, useToggleState(props), inputRef);
+
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   let markIcon = isIndeterminate
     ? <DashSmall UNSAFE_className={classNames(styles, 'spectrum-Checkbox-partialCheckmark')} />
