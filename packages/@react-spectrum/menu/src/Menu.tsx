@@ -20,7 +20,7 @@ import intlMessages from '../intl/*.json';
 import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/utils';
+import {mergeProps, useSlotId, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
