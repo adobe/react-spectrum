@@ -105,7 +105,9 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
                 'is-reversed': direction === 'rtl'
               })} />
           </div>
-          <div id={markerId} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-marker')}><div>{numberFormatter.format((item.index || 0) + 1)}</div></div>
+          <div id={markerId} aria-hidden="true" className={classNames(styles, 'spectrum-Steplist-markerWrapper')}>
+            <div  className={classNames(styles, 'spectrum-Steplist-marker')}>{numberFormatter.format((item.index || 0) + 1)}</div>
+          </div>
         </a>
       </FocusRing>
     </li>

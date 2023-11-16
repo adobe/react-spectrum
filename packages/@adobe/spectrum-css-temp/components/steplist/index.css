@@ -78,8 +78,10 @@ governing permissions and limitations under the License.
   text-decoration: none;
   outline: none;
 
-  .spectrum-Steplist-marker {
+  .spectrum-Steplist-markerWrapper {
     grid-area: marker;
+  }
+  .spectrum-Steplist-marker {
     box-sizing: border-box; /* So we can stroke nicely */
     border-radius: 50%;
     border-style: solid;
@@ -216,9 +218,16 @@ governing permissions and limitations under the License.
     order: 1;
   }
 
-  .spectrum-Steplist-marker {
+  .spectrum-Steplist-markerWrapper {
     order: 0;
     flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    &::before {
+      content: 'x';
+      width: 0;
+      visibility: hidden;
+    }
   }
 
   .spectrum-Steplist-segmentLine {
