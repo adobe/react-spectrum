@@ -67,7 +67,7 @@ governing permissions and limitations under the License.
 
   .spectrum-Steplist-chevron {
     &.is-reversed {
-      transform: scale(-1);
+      transform: scaleX(-1);
     }
   }
 }
@@ -147,7 +147,7 @@ governing permissions and limitations under the License.
   --spectrum-steplist-marker-diameter: var(--spectrum-steplist-marker-diameter-small);
   --spectrum-steplist-counter-font-size: 0;
   --spectrum-steplist-chevron-scale: 0.75;
-  --spectrum-steplist-segment-height-adjust: 0px;
+  --spectrum-steplist-segment-height-adjust: -4px;
   .spectrum-Steplist-marker {
     padding-top: 1px;
   }
@@ -171,7 +171,7 @@ governing permissions and limitations under the License.
   --spectrum-steplist-marker-diameter: var(--spectrum-steplist-marker-diameter-medium);
   --spectrum-steplist-counter-font-size: var(--spectrum-global-dimension-font-size-75);
   --spectrum-steplist-chevron-scale: 1;
-  --spectrum-steplist-segment-height-adjust: 8px;
+  --spectrum-steplist-segment-height-adjust: 0px;
 }
 
 /* Large size */
@@ -182,7 +182,7 @@ governing permissions and limitations under the License.
   --spectrum-steplist-marker-diameter: var(--spectrum-steplist-marker-diameter-large);
   --spectrum-steplist-counter-font-size: var(--spectrum-global-dimension-font-size-100);
   --spectrum-steplist-chevron-scale: 1.25;
-  --spectrum-steplist-segment-height-adjust: 8px;
+  --spectrum-steplist-segment-height-adjust: 6px;
 }
 
 /* XLarge size */
@@ -193,7 +193,7 @@ governing permissions and limitations under the License.
   --spectrum-steplist-marker-diameter: var(--spectrum-steplist-marker-diameter-xlarge);
   --spectrum-steplist-counter-font-size: var(--spectrum-global-dimension-font-size-200);
   --spectrum-steplist-chevron-scale: 1.5;
-  --spectrum-steplist-segment-height-adjust: 8px;
+  --spectrum-steplist-segment-height-adjust: 6px;
 }
 
 /* Last step overrides */
@@ -274,10 +274,17 @@ governing permissions and limitations under the License.
   .spectrum-Steplist-chevron {
     display: none;
   }
-  .spectrum-Steplist-marker {
+  .spectrum-Steplist-markerWrapper {
     align-self: baseline;
     min-width: 0;
     min-height: 0;
+    display: flex;
+    align-items: center;
+    &::before {
+      content: 'x';
+      width: 0;
+      visibility: hidden;
+    }
   }
   &.spectrum-Steplist--small {
     .spectrum-Steplist-marker {
