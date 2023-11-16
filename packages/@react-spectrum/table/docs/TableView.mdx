@@ -1687,6 +1687,8 @@ Here is how you would control expanded rows for the above example. Additionally,
 parent `Row`'s `UNSTABLE_childItems` prop.
 
 ```tsx example
+import type {Key} from '@react-types/shared';
+
 interface ColumnDefinition {
   name: string,
   key: string,
@@ -1710,7 +1712,7 @@ function TableExample(props) {
     ]}
   ];
 
-  let [expandedKeys, setExpandedKeys] = React.useState<'all' | Set<React.Key>>('all');
+  let [expandedKeys, setExpandedKeys] = React.useState<'all' | Iterable<Key>>('all');
 
   return (
     <TableView aria-label="Example table with controlled expandable rows" UNSTABLE_allowsExpandableRows UNSTABLE_expandedKeys={expandedKeys} UNSTABLE_onExpandedChange={setExpandedKeys} height="size-4600">
