@@ -29,7 +29,7 @@ import {SpectrumButtonProps} from '@react-types/button';
 import styles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
-import {useHover} from '@react-aria/interactions';
+import {useFocus, useHover} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProviderProps} from '@react-spectrum/provider';
 
@@ -67,6 +67,8 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let domRef = useFocusableRef(ref);
   let {buttonProps, isPressed} = useButton(props, domRef);
   let {hoverProps, isHovered} = useHover({isDisabled});
+  let [isFocused, onFocusChange] = useState(false);
+  let {focusProps} = useFocus({onFocusChange, isDisabled});
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {styleProps} = useStyleProps(otherProps);
   let hasLabel = useHasChild(`.${styles['spectrum-Button-label']}`, domRef);
@@ -110,7 +112,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <Element
         {...styleProps}
-        {...mergeProps(buttonProps, hoverProps)}
+        {...mergeProps(buttonProps, hoverProps, focusProps)}
         id={buttonId}
         ref={domRef}
         data-variant={variant}
@@ -119,7 +121,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
         aria-disabled={isPending ? 'true' : undefined}
         aria-label={isPending ? undefined : buttonProps['aria-label']}
         aria-labelledby={isPending ? undefined : buttonProps['aria-labelledby']}
-        aria-live={isPending ? 'polite' : undefined}
+        aria-live={isPending && isFocused ? 'polite' : undefined}
         className={
           classNames(
             styles,
