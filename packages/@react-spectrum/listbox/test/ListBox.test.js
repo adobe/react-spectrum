@@ -968,6 +968,7 @@ describe('ListBox', function () {
             </ListBox>
           </Provider>
         );
+        act(() => jest.runAllTimers());
 
         let items = getAllByRole('option');
         for (let item of items) {
@@ -992,6 +993,7 @@ describe('ListBox', function () {
             </ListBox>
           </Provider>
         );
+        act(() => jest.runAllTimers());
 
         let items = getAllByRole('option');
         for (let item of items) {
@@ -1026,6 +1028,7 @@ describe('ListBox', function () {
             </ListBox>
           </Provider>
         );
+        act(() => jest.runAllTimers());
 
         let items = getAllByRole('option');
         trigger(items[0]);
