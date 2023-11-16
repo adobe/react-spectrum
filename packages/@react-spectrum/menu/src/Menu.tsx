@@ -49,8 +49,10 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   useSyncRef(contextProps, domRef);
   let [leftOffset, setLeftOffset] = useState({left: 0});
   useEffect(() => {
-    let {left} = popoverContainerRef.current.getBoundingClientRect();
-    setLeftOffset({left: -1 * left});
+    if (popoverContainerRef.current) {
+      let {left} = popoverContainerRef.current.getBoundingClientRect();
+      setLeftOffset({left: -1 * left});
+    }
   }, []);
 
   let menuLevel = contextProps.submenuLevel ?? -1;
@@ -104,7 +106,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
             })}
           </div>
         </TrayHeaderWrapper>
-        {rootMenuTriggerState.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} /> }
+        {rootMenuTriggerState?.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} /> }
       </FocusScope>
     </MenuStateContext.Provider>
   );
