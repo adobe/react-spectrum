@@ -22,7 +22,6 @@ export {DropZone, DropZoneContext} from './DropZone';
 export {FieldError} from './FieldError';
 export {FileTrigger} from './FileTrigger';
 export {Form} from './Form';
-export {FormValidationContext} from '@react-stately/form';
 export {GridList, GridListItem, GridListContext} from './GridList';
 export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
@@ -58,6 +57,7 @@ export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider} from 'react-aria';
+export {FormValidationContext} from 'react-stately';
 
 export type {BreadcrumbsProps, BreadcrumbProps} from './Breadcrumbs';
 export type {ButtonProps, ButtonRenderProps} from './Button';

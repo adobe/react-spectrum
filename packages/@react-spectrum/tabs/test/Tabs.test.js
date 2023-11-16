@@ -782,6 +782,30 @@ describe('Tabs', function () {
     expect(tabPanelInput.value).toBe('');
   });
 
+  it('Tabs can be aria-labelled', () => {
+    let {getAllByRole, getByLabelText} = render(
+      <Provider theme={theme}>
+        <Tabs aria-label="Tab Example" maxWidth={500}>
+          <TabList>
+            <Item aria-label="Foo">Tab 1</Item>
+            <Item>Tab 2</Item>
+          </TabList>
+          <TabPanels>
+            <Item>
+              <input data-testid="panel1_input" />
+            </Item>
+            <Item>
+              <input disabled data-testid="panel2_input" />
+            </Item>
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+
+    let tab = getByLabelText('Foo');
+    expect(tab).toBe(getAllByRole('tab')[0]);
+  });
+
   it('supports custom props for parent tabs element', function () {
     let {getByTestId} = renderComponent({'data-testid': 'tabs1'});
     let tabs = getByTestId('tabs1');

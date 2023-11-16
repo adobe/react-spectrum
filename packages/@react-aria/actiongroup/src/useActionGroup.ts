@@ -35,12 +35,9 @@ export function useActionGroup<T>(props: AriaActionGroupProps<T>, state: ListSta
   } = props;
 
   let [isInToolbar, setInToolbar] = useState(false);
-  // should be safe because re-calling set state with the same value it already has is a no-op
-  // this will allow us to react should a parent re-render and change its role though
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useLayoutEffect(() => {
     setInToolbar(!!(ref.current && ref.current.parentElement?.closest('[role="toolbar"]')));
-  });
+  }, [ref]);
 
   let allKeys = [...state.collection.getKeys()];
   if (!allKeys.some(key => !state.disabledKeys.has(key))) {
