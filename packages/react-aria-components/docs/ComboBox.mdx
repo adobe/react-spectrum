@@ -80,11 +80,9 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
 ```
 
 ```css
-.react-aria-ComboBox {
-  --border-color: var(--spectrum-alias-border-color);
-  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
-  --button-background: slateblue;
+@import "@react-aria/example-theme";
 
+.react-aria-ComboBox {
   .react-aria-Input {
     margin: 0;
     font-size: 1.072rem;
@@ -95,14 +93,15 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
 
     &[data-focused] {
       outline: none;
-      border-color: slateblue;
-      box-shadow: 0 0 0 1px slateblue;
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
     }
   }
 
   .react-aria-Button {
-    background: slateblue;
-    color: white;
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    forced-color-adjust: none;
     border-radius: 4px;
     border: none;
     margin-left: -1.714rem;
@@ -136,7 +135,7 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
     padding: 0.286rem 0.571rem 0.286rem 1.571rem;
 
     &[data-focus-visible] {
-      box-shadow: unset;
+      outline: none;
     }
 
     &[data-selected] {
@@ -152,29 +151,12 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
         top: 4px;
         left: 4px;
       }
-
-      &[data-focus-visible] {
-        box-shadow: unset;
-      }
     }
 
     &[data-focused],
     &[data-pressed] {
       background: var(--highlight-background);
       color: var(--highlight-foreground);
-    }
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ComboBox {
-    --border-color: ButtonBorder;
-    --border-color-disabled: GrayText;
-
-    .react-aria-Button {
-      background: ButtonFace;
-      color: ButtonText;
-      border: 1px solid ButtonBorder;
     }
   }
 }
@@ -384,16 +366,11 @@ function MyItem(props: ListBoxItemProps) {
       top: 4px;
       left: 4px;
     }
-
-    &.focused {
-      box-shadow: unset;
-    }
   }
 
   &.focused {
     background: #e70073;
     color: white;
-    box-shadow: unset;
   }
 }
 
@@ -973,16 +950,6 @@ A `ComboBox` can be fully disabled using the isDisabled prop.
     }
   }
 }
-
-@media (forced-colors: active) {
-  .react-aria-ComboBox {
-    .react-aria-Button {
-      &[data-disabled] {
-        background: transparent;
-      }
-    }
-  }
-}
 ```
 
 </details>
@@ -1046,23 +1013,14 @@ import {Form, FieldError} from 'react-aria-components';
 ```css
 .react-aria-ComboBox {
   .react-aria-Input {
-    &[data-invalid] {
-      border-color: var(--spectrum-global-color-red-600);
-      &[data-focused] {
-        border-color: slateblue;
-      }
+    &[data-invalid]:not([data-focused]) {
+      border-color: var(--invalid-color);
     }
   }
 
   .react-aria-FieldError {
     font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
-  }
-
-  @media (forced-colors: active) {
-    .react-aria-FieldError {
-      color: LinkText;
-    }
+    color: var(--invalid-color);
   }
 }
 ```
@@ -1485,7 +1443,7 @@ function ComboBoxClearButton() {
   }
 
   &[data-focus-visible] {
-    outline: 2px solid slateblue;
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
   }
 

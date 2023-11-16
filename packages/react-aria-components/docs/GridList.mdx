@@ -82,14 +82,9 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
 ```
 
 ```css
-.react-aria-GridList {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+@import "@react-aria/example-theme";
 
+.react-aria-GridList {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -98,7 +93,8 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
   padding: 4px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: var(--background-color);
+  background: var(--overlay-background);
+  forced-color-adjust: none;
   outline: none;
   width: 250px;
   max-height: 300px;
@@ -106,8 +102,8 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
   box-sizing: border-box;
 
   &[data-focus-visible] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
   }
 
   .react-aria-GridListItem {
@@ -125,26 +121,28 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
     transform: translateZ(0);
 
     &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px var(--highlight-background);
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -2px;
     }
 
     &[data-pressed] {
-      background: var(--spectrum-global-color-gray-200);
+      background: var(--gray-100);
     }
 
     &[data-selected] {
       background: var(--highlight-background);
       color: var(--highlight-foreground);
+      --focus-ring-color: var(--highlight-foreground);
 
       &[data-focus-visible] {
-        box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
+        outline-color: var(--highlight-foreground);
+        outline-offset: -4px;
       }
 
       .react-aria-Button {
         color: var(--highlight-foreground);
-        --focus-ring-color: var(--highlight-foreground);
-        --hover-highlight: rgb(255 255 255 / 0.1);
-        --active-highlight: rgb(255 255 255 / 0.2);
+        --highlight-hover: rgb(255 255 255 / 0.1);
+        --highlight-pressed: rgb(255 255 255 / 0.2);
       }
     }
 
@@ -161,22 +159,16 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
       border: none;
       font-size: 1.2rem;
       line-height: 1.2em;
-      outline: none;
       padding: 0.286rem 0.429rem;
       transition: background 200ms;
-      --hover-highlight: var(--spectrum-alias-highlight-hover);
-      --active-highlight: var(--spectrum-alias-highlight-active);
 
       &[data-hovered] {
-        background: var(--hover-highlight);
+        background: var(--highlight-hover);
       }
 
       &[data-pressed] {
-        background: var(--active-highlight);
-      }
-
-      &[data-focus-visible] {
-        box-shadow: 0 0 0 2px var(--focus-ring-color);
+        background: var(--highlight-pressed);
+        box-shadow: none;
       }
     }
   }
@@ -198,66 +190,11 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
     }
   }
 
-  .react-aria-Checkbox {
-    --focus-ring-color: slateblue;
-    &[data-focus-visible] .checkbox {
-      box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
-    }
-    &[data-selected],
-    &[data-indeterminate] {
-      &[data-focus-visible] .checkbox {
-        box-shadow: 0 0 0 2px var(--background-color), 0 0 0 4px var(--selected-color);
-      }
-    }
-  }
-
   :where(.react-aria-GridListItem) .react-aria-Checkbox {
-    --selected-color: white;
-    --selected-color-pressed: #ddd;
-    --checkmark-color: slateblue;
+    --selected-color: var(--highlight-foreground);
+    --selected-color-pressed: var(--highlight-foreground-pressed);
+    --checkmark-color: var(--highlight-background);
     --background-color: var(--highlight-background);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-GridList {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-
-    .react-aria-Checkbox {
-      forced-color-adjust: none;
-
-      --deselected-color: ButtonBorder;
-      --deselected-color-pressed: ButtonBorder;
-      --selected-color: Highlight;
-      --selected-color-pressed: Highlight;
-      --checkmark-color: HighlightText;
-      --spectrum-alias-background-color-default: Canvas;
-      --focus-ring-color: Highlight;
-
-      &[data-disabled] {
-        opacity: 1;
-        --deselected-color: GrayText;
-        --selected-color: GrayText;
-      }
-    }
-
-    .react-aria-Checkbox {
-      --selected-color: ButtonFace;
-      --selected-color-pressed: ButtonFace;
-      --checkmark-color: ButtonText;
-    }
-
-    .react-aria-Button {
-      forced-color-adjust: none;
-      --focus-ring-color: Highlight;
-    }
   }
 }
 ```
@@ -784,13 +721,7 @@ function Example() {
 
     &[data-focus-visible] {
       border-radius: 4px;
-      box-shadow: 0 0 0 2px var(--highlight-background);
-    }
-  }
-
-  &[data-selected] {
-    [slot=drag][data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--highlight-foreground);
+      outline: 2px solid var(--focus-ring-color);
     }
   }
 }
@@ -877,13 +808,13 @@ function Example() {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  background: slateblue;
-  color: white;
+  background: var(--highlight-background);
+  color: var(--highlight-foreground);
   border-radius: 4px;
 
   .badge {
-    background: white;
-    color: slateblue;
+    background: var(--highlight-foreground);
+    color: var(--highlight-background);
     padding: 0 8px;
     border-radius: 4px;
   }
@@ -990,9 +921,9 @@ function Example() {
 
 ```css
 .react-aria-GridList[data-drop-target] {
-  border-color: var(--highlight-background);
-  box-shadow: 0 0 0 1px var(--highlight-background);
-  background: rgb(from slateblue r g b / 15%);
+  outline: 2px solid var(--highlight-background);
+  outline-offset: -1px;
+  background: var(--highlight-overlay);
 }
 ```
 
@@ -1031,8 +962,8 @@ function Example() {
 
 ```css
 .react-aria-GridListItem[data-drop-target] {
-  box-shadow: inset 0 0 0 2px var(--highlight-background);
-  background: rgb(from slateblue r g b / 15%);
+  outline: 2px solid var(--highlight-background);
+  background:var(--highlight-overlay);
 }
 ```
 

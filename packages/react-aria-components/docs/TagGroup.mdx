@@ -63,17 +63,9 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
 ```
 
 ```css
-.react-aria-TagGroup {
-  --border-color: var(--spectrum-gray-600);
-  --border-color-hovered: var(--spectrum-gray-900);
-  --background-selected: var(--spectrum-gray-900);
-  --text-color: var(--spectrum-gray-800);
-  --text-color-selected: var(--spectrum-gray-50);
-  --remove-button-color: var(--spectrum-gray-700);
-  --remove-button-color-hovered: var(--spectrum-gray-900);
-  --focus-ring-color: slateblue;
-  --invalid-color: var(--spectrum-global-color-red-600);
+@import "@react-aria/example-theme";
 
+.react-aria-TagGroup {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -89,6 +81,7 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
 .react-aria-Tag {
   color: var(--text-color);
   border: 1px solid var(--border-color);
+  forced-color-adjust: none;
   border-radius: 4px;
   padding: 2px 8px;
   font-size: 0.929rem;
@@ -99,7 +92,7 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
   transition: border-color 200ms;
 
   &[data-hovered] {
-    border-color: var(--border-color-hovered);
+    border-color: var(--border-color-hover);
   }
 
   &[data-focus-visible] {
@@ -108,24 +101,9 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
   }
 
   &[data-selected] {
-    border-color: var(--background-selected);
-    background: var(--background-selected);
-    color: var(--text-color-selected);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-TagGroup {
-    forced-color-adjust: none;
-    --border-color: ButtonBorder;
-    --border-color-hovered: ButtonBorder;
-    --background-selected: Highlight;
-    --text-color: ButtonText;
-    --text-color-selected: HighlightText;
-    --remove-button-color: ButtonText;
-    --remove-button-color-hovered: Highlight;
-    --focus-ring-color: Highlight;
-    --invalid-color: LinkText;
+    border-color: var(--highlight-background);
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
   }
 }
 ```
@@ -303,13 +281,13 @@ function Example() {
     border: none;
     padding: 0;
     margin-left: 8px;
-    color: var(--remove-button-color);
+    color: var(--text-color-base);
     transition: color 200ms;
     outline: none;
     font-size: 0.95em;
 
     &[data-hovered] {
-      color: var(--remove-button-color-hovered);
+      color: var(--text-color-hover);
     }
   }
 }
@@ -406,18 +384,8 @@ See [Collections](../react-stately/collections.html) for more details.
 .react-aria-TagList {
   .react-aria-Tag {
     &[data-disabled] {
-      opacity: 0.4;
-    }
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-TagGroup {
-    .react-aria-Tag[data-disabled] {
-      opacity: 1;
-      --border-color: GrayText;
-      --border-color-hovered: GrayText;
-      --text-color: GrayText;
+      border-color: var(--border-color-disabled);
+      color: var(--text-color-disabled);
     }
   }
 }
