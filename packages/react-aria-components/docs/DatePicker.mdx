@@ -121,11 +121,9 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   }
 }
 
-@layer popover {
-  .react-aria-Popover {
-    max-width: unset;
-    padding: 1.25rem;
-  }
+.react-aria-Popover[data-trigger=DatePicker] {
+  max-width: unset;
+  padding: 1.25rem;
 }
 ```
 
@@ -943,6 +941,14 @@ A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, o
 The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the DatePicker in the DOM. It supports the following states and render props:
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
+
+Within a DatePicker, the popover will have the `data-trigger="DatePicker"` attribute, which can be used to define date picker-specific styles.
+
+```css render=false
+.react-aria-Popover[data-trigger=DatePicker] {
+  /* ... */
+}
+```
 
 ### Dialog
 
