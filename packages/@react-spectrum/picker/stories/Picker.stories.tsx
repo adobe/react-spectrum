@@ -15,6 +15,7 @@ import {ActionButton} from '@react-spectrum/button';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {Avatar} from '@react-spectrum/avatar';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {Content, View} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
@@ -402,6 +403,10 @@ function ComplexItemsPicker(props: SpectrumPickerProps<object>) {
         <Item textValue="Floof">
           <AlignRight />
           <Text>Floof</Text>
+        </Item>
+        <Item textValue="User">
+          <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+          <Text>User</Text>
         </Item>
       </Section>
     </Picker>

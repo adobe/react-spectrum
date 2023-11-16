@@ -13,6 +13,7 @@
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {Avatar} from '@react-spectrum/avatar';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
@@ -40,12 +41,14 @@ let hardModeProgrammatic = [
   {name: 'Section 1', children: [
     {name: 'Copy', icon: 'Copy'},
     {name: 'Cut', icon: 'Cut'},
-    {name: 'Paste', icon: 'Paste'}
+    {name: 'Paste', icon: 'Paste'},
+    {name: 'Person 1', avatar: 'https://i.imgur.com/kJOwAdv.png'}
   ]},
   {name: 'Section 2', children: [
     {name: 'Puppy', icon: 'AlignLeft'},
     {name: 'Doggo', icon: 'AlignCenter'},
-    {name: 'Floof', icon: 'AlignRight'}
+    {name: 'Floof', icon: 'AlignRight'},
+    {name: 'Person 2', avatar: 'https://i.imgur.com/kJOwAdv.png'}
   ]}
 ];
 
@@ -121,6 +124,7 @@ let customOption = (item) => {
   return (
     <Item textValue={item.name} key={item.name}>
       {item.icon && <Icon size="S" />}
+      {item.avatar && <Avatar src={item.avatar} alt="default Adobe avatar" />}
       <Text>{item.name}</Text>
     </Item>
   );
@@ -158,4 +162,9 @@ export const ComplexItems = {
   render: TemplateComplex,
   name: 'complex items',
   args: {selectedKeys: ['Puppy', 'Cut'], disabledKeys: ['Paste'], selectionMode: 'multiple'}
+};
+
+export const WithAvatar = {
+  render: TemplateComplex,
+  name: 'with avatar'
 };

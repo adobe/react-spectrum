@@ -21,6 +21,7 @@ import Book from '@spectrum-icons/workflow/Book';
 import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Text} from '@react-spectrum/text';
+import {Avatar} from "@react-spectrum/avatar";
 ```
 
 ---
@@ -267,7 +268,7 @@ function DynamicExample() {
 ```
 
 ## Complex Items
-Items within ListBox also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+Items within ListBox also allow for additional content used to better communicate options. Icons, avatars, and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
 
 ```tsx example
 <ListBox width="size-2400" aria-label="Options" selectionMode="single">
@@ -285,6 +286,11 @@ Items within ListBox also allow for additional content used to better communicat
     <Item textValue="Admin">
       <BulkEditUsers size="S" />
       <Text>Admin</Text>
+      <Text slot="description">Full access</Text>
+    </Item>
+    <Item textValue="User 1">
+      <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+      <Text>User 1</Text>
       <Text slot="description">Full access</Text>
     </Item>
   </Section>
