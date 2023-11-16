@@ -74,13 +74,9 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 ```
 
 ```css
-.react-aria-Tabs {
-  --highlight-color: slateblue;
-  --text-color: var(--spectrum-global-color-gray-700);
-  --text-color-hover: var(--spectrum-global-color-gray-800);
-  --text-color-selected: var(--spectrum-global-color-gray-900);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+@import "@react-aria/example-theme";
 
+.react-aria-Tabs {
   display: flex;
 
   &[data-orientation=horizontal] {
@@ -92,10 +88,10 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
   display: flex;
 
   &[data-orientation=horizontal] {
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid var(--border-color);
 
     .react-aria-Tab {
-      border-bottom: 3px solid var(--border-color, transparent);
+      border-bottom: 3px solid var(--border-color);
     }
   }
 }
@@ -105,8 +101,10 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
   cursor: default;
   outline: none;
   position: relative;
-  color: var(--text-color);
+  color: var(--text-color-base);
   transition: color 200ms;
+  --border-color: transparent;
+  forced-color-adjust: none;
 
   &[data-hovered],
   &[data-focused] {
@@ -114,8 +112,8 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
   }
 
   &[data-selected] {
-    --border-color: var(--highlight-color);
-    color: var(--text-color-selected);
+    --border-color: var(--highlight-background);
+    color: var(--text-color);
   }
 
   &[data-disabled] {
@@ -130,7 +128,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
     position: absolute;
     inset: 4px;
     border-radius: 4px;
-    border: 2px solid var(--highlight-color);
+    border: 2px solid var(--focus-ring-color);
   }
 }
 
@@ -141,20 +139,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
   outline: none;
 
   &[data-focus-visible] {
-    box-shadow: inset 0 0 0 2px var(--highlight-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Tabs {
-    forced-color-adjust: none;
-    color: CanvasText;
-
-    --highlight-color: Highlight;
-    --text-color: ButtonText;
-    --text-color-hover: ButtonText;
-    --text-color-selected: ButtonText;
-    --text-color-disabled: GrayText;
+    outline: 2px solid var(--focus-ring-color);
   }
 }
 ```
@@ -444,7 +429,7 @@ All tabs can be disabled using the `isDisabled` prop.
   &[data-disabled] {
     color: var(--text-color-disabled);
     &[data-selected] {
-      --border-color: var(--text-color-disabled);
+      --border-color: var(--border-color-disabled);
     }
   }
 }

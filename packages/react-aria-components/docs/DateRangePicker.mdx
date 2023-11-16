@@ -90,16 +90,9 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 ```
 
 ```css
-.react-aria-DateRangePicker {
-  --field-border: var(--spectrum-global-color-gray-400);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-placeholder: var(--spectrum-global-color-gray-700);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
+@import "@react-aria/example-theme";
 
+.react-aria-DateRangePicker {
   color: var(--text-color);
 
   .react-aria-Group {
@@ -111,15 +104,15 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     box-sizing: border-box;
     overflow: auto;
     position: relative;
-    padding: 2px 2px 2px 8px;
-    border: 1px solid var(--field-border);
+    padding: 4px 4px 4px 8px;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     background: var(--field-background);
     white-space: nowrap;
 
     &[data-focus-within] {
-      border-color: var(--highlight-background);
-      box-shadow: 0 0 0 1px var(--highlight-background);
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
     }
   }
 
@@ -133,8 +126,10 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
   }
 
   .react-aria-Button {
-    background: slateblue;
-    color: white;
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    border: 2px solid var(--field-background);
+    forced-color-adjust: none;
     border-radius: 4px;
     border: none;
     margin-left: auto;
@@ -144,12 +139,12 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     font-size: 0.857rem;
     box-sizing: content-box;
     flex-shrink: 0;
-    border: 2px solid var(--page-background);
     position: sticky;
     right: 0;
 
     &[data-focus-visible] {
-      box-shadow: 0 0 0 2px slateblue;
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: 2px;
     }
   }
 
@@ -158,7 +153,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     min-width: unset;
     padding: unset;
     border: unset;
-    box-shadow: unset;
+    outline: unset;
   }
 }
 
@@ -166,52 +161,6 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
   .react-aria-Popover {
     max-width: unset;
     padding: 1.25rem;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-DateRangePicker {
-    forced-color-adjust: none;
-
-    --field-border: ButtonBorder;
-    --field-background: Field;
-    --text-color: FieldText;
-    --text-color-placeholder: FieldText;
-    --text-color-invalid: LinkText;
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --highlight-background-invalid: LinkText;
-
-    .react-aria-Button {
-      forced-color-adjust: none;
-
-      --focus-ring-color: Highlight;
-      background: ButtonFace;
-      color: ButtonText;
-      border: 1px solid ButtonBorder;
-
-      &[data-focus-visible] {
-        border-color: Highlight;
-        box-shadow: 0 0 0 1px Highlight;
-      }
-    }
-  }
-
-  .react-aria-RangeCalendar {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --button-border: ButtonBorder;
-    --button-border-disabled: GrayText;
-    --button-background: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --text-color-invalid: LinkText;
-    --unavailable-color: GrayText;
-    --invalid-color: LinkText;
-    --pressed-color: Canvas;
-    --spectrum-alias-background-color-default: Canvas;
   }
 }
 ```
@@ -649,7 +598,7 @@ import {Form, FieldError} from 'react-aria-components';
 
   .react-aria-FieldError {
     font-size: 12px;
-    color: var(--text-color-invalid);
+    color: var(--invalid-color);
   }
 }
 ```
@@ -1184,15 +1133,9 @@ fieldset {
 }
 
 .invalid {
-  color: var(--spectrum-global-color-red-600);
+  color: var(--invalid-color);
   margin-top: 1em;
   display: block;
-}
-
-@media (forced-colors: active) {
-  .invalid {
-    color: LinkText;
-  }
 }
 ```
 
@@ -1312,7 +1255,7 @@ function DateRangePickerClearButton() {
   }
 
   &[data-focus-visible] {
-    outline: 2px solid slateblue;
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
   }
 

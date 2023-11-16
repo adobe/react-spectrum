@@ -61,11 +61,14 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
 ```
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-Tooltip {
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 4px;
-  background: slateblue;
-  color: white;
+  background: var(--highlight-background);
+  color: var(--highlight-foreground);
+  forced-color-adjust: none;
   outline: none;
   padding: 2px 8px;
   max-width: 150px;
@@ -103,7 +106,7 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
 
   & .react-aria-OverlayArrow svg {
     display: block;
-    fill: slateblue;
+    fill: var(--highlight-background);
   }
 
   &[data-entering] {
@@ -112,18 +115,6 @@ import {TooltipTrigger, Tooltip, OverlayArrow, Button} from 'react-aria-componen
 
   &[data-exiting] {
     animation: slide 200ms reverse ease-in;
-  }
-}
-@media (forced-colors: active) {
-  .react-aria-Tooltip {
-    border: 1px solid ButtonBorder;
-    background: ButtonFace;
-    color: ButtonText;
-
-    & .react-aria-OverlayArrow svg {
-      fill: ButtonFace;
-      stroke: ButtonBorder;
-    }
   }
 }
 
