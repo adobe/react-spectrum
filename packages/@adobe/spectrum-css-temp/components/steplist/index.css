@@ -149,7 +149,17 @@ governing permissions and limitations under the License.
   --spectrum-steplist-chevron-scale: 0.75;
   --spectrum-steplist-segment-height-adjust: 0px;
   .spectrum-Steplist-marker {
-    align-self: center;
+    padding-top: 1px;
+  }
+  &.spectrum-Steplist--horizontal {
+    /* Tweaks for vertical centering. */
+    .spectrum-Steplist-marker {
+      margin-top: 1px;
+    }
+
+    .spectrum-Steplist-chevron {
+      padding-top: 2px;
+    }
   }
 }
 
