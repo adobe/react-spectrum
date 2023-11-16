@@ -63,15 +63,9 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
 ```
 
 ```css
-.react-aria-SearchField {
-  --field-border: var(--spectrum-alias-border-color);
-  --field-border-disabled: var(--spectrum-alias-border-color-disabled);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --focus-ring-color: slateblue;
-  --invalid-color: var(--spectrum-global-color-red-600);
+@import "@react-aria/example-theme";
 
+.react-aria-SearchField {
   display: grid;
   grid-template-areas: "label label"
                        "input button"
@@ -84,10 +78,11 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
     grid-area: input;
     padding: 0.286rem 1.714rem 0.286rem 0.286rem;
     margin: 0;
-    border: 1px solid var(--field-border);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     background: var(--field-background);
     font-size: 1.143rem;
+    color: var(--field-text-color);
 
     &::-webkit-search-cancel-button,
     &::-webkit-search-decoration {
@@ -95,9 +90,8 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
     }
 
     &[data-focused] {
-      outline: none;
-      border-color: var(--focus-ring-color);
-      box-shadow: 0 0 0 1px var(--focus-ring-color);
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
     }
   }
 
@@ -111,30 +105,18 @@ import {SearchField, Label, Input, Button} from 'react-aria-components';
     line-height: 0.857rem;
     vertical-align: middle;
     text-align: center;
-    background: gray;
-    color: white;
+    background: var(--gray-500);
+    color: var(--gray-50);
     border: none;
     padding: 0;
 
     &[data-pressed] {
-      background: dimgray;
+      background: var(--gray-600);
     }
   }
 
   &[data-empty] button {
     display: none;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-SearchField {
-    --field-border: ButtonBorder;
-    --field-border-disabled: GrayText;
-    --field-background: Field;
-    --text-color: FieldText;
-    --text-color-disabled: GrayText;
-    --focus-ring-color: Highlight;
-    --invalid-color: LinkText;
   }
 }
 ```
@@ -353,12 +335,6 @@ import {Form, FieldError} from 'react-aria-components';
   .react-aria-Input{
     &[data-invalid] {
       border-color: var(--invalid-color);
-
-      &[data-focused] {
-        outline: none;
-        border-color: var(--focus-ring-color);
-        box-shadow: 0 0 0 1px var(--focus-ring-color);
-      }
     }
   }
 
@@ -419,7 +395,7 @@ A SearchField can be disabled using the `isDisabled` prop.
 .react-aria-SearchField {
   .react-aria-Input {
     &[data-disabled] {
-      border-color: var(--field-border-disabled);
+      border-color: var(--border-color-disabled);
       color: var(--text-color-disabled);
     }
   }
@@ -436,32 +412,6 @@ and the contents can still be copied. See [the MDN docs](https://developer.mozil
 ```tsx example
 <MySearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
 ```
-
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-SearchField {
-  .react-aria-Button {
-    &[data-disabled] {
-      opacity: 0.4;
-    }
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-SearchField {
-    .react-aria-Button {
-      &[data-disabled] {
-        opacity: 1;
-      }
-    }
-  }
-}
-```
-
-</details>
 
 ## Props
 

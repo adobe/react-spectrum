@@ -87,16 +87,9 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 ```
 
 ```css
-.react-aria-DatePicker {
-  --field-border: var(--spectrum-global-color-gray-400);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-placeholder: var(--spectrum-global-color-gray-700);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
+@import "@react-aria/example-theme";
 
+.react-aria-DatePicker {
   .react-aria-Group {
     display: flex;
     width: fit-content;
@@ -104,8 +97,10 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   }
 
   .react-aria-Button {
-    background: slateblue;
-    color: white;
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    border: 2px solid var(--field-background);
+    forced-color-adjust: none;
     border-radius: 4px;
     border: none;
     margin-left: -1.929rem;
@@ -114,10 +109,10 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     padding: 0;
     font-size: 0.857rem;
     box-sizing: content-box;
-    border: 2px solid var(--page-background);
 
     &[data-focus-visible] {
-      box-shadow: 0 0 0 2px slateblue;
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: 2px;
     }
   }
 
@@ -130,38 +125,6 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   .react-aria-Popover {
     max-width: unset;
     padding: 1.25rem;
-  }
-}
-
-.react-aria-Calendar {
-  .react-aria-CalendarCell {
-    border-color: var(--page-background);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-DatePicker {
-    --text-color-invalid: LinkText;
-
-    .react-aria-Button {
-      forced-color-adjust: none;
-
-      --focus-ring-color: Highlight;
-      background: ButtonFace;
-      color: ButtonText;
-      border: 1px solid ButtonBorder;
-
-      &[data-focus-visible] {
-        border-color: Highlight;
-        box-shadow: 0 0 0 1px Highlight;
-      }
-    }
-  }
-
-  .react-aria-Calendar {
-    .react-aria-CalendarCell {
-      border-color: Canvas;
-    }
   }
 }
 ```
@@ -572,7 +535,7 @@ import {Form, FieldError} from 'react-aria-components';
 
 .react-aria-FieldError {
   font-size: 12px;
-  color: var(--text-color-invalid);
+  color: var(--invalid-color);
 }
   ```
 
@@ -1079,15 +1042,9 @@ fieldset {
 }
 
 .invalid {
-  color: var(--spectrum-global-color-red-600);
+  color: var(--invalid-color);
   margin-top: 1em;
   display: block;
-}
-
-@media (forced-colors: active) {
-  .invalid {
-    color: LinkText;
-  }
 }
 ```
 
@@ -1204,7 +1161,7 @@ function DatePickerClearButton() {
   }
 
   &[data-focus-visible] {
-    outline: 2px solid slateblue;
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
   }
 

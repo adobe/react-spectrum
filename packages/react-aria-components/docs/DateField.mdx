@@ -63,30 +63,22 @@ import {DateField, Label, DateInput, DateSegment} from 'react-aria-components';
 ```
 
 ```css
-.react-aria-DateField {
-  --field-border: var(--spectrum-global-color-gray-400);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-placeholder: var(--spectrum-global-color-gray-700);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
-}
+@import "@react-aria/example-theme";
 
 .react-aria-DateInput {
   display: flex;
   padding: 4px;
-  border: 1px solid var(--field-border);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   background: var(--field-background);
   width: fit-content;
   min-width: 150px;
   white-space: nowrap;
+  forced-color-adjust: none;
 
   &[data-focus-within] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
   }
 }
 
@@ -111,21 +103,6 @@ import {DateField, Label, DateInput, DateSegment} from 'react-aria-components';
     outline: none;
     border-radius: 4px;
     caret-color: transparent;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-DateField {
-    forced-color-adjust: none;
-    --text-color-invalid: LinkText;
-    --field-border: ButtonBorder;
-    --field-background: Field;
-    --text-color: FieldText;
-    --text-color-placeholder: FieldText;
-    --text-color-invalid: LinkText;
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --highlight-background-invalid: LinkText;
   }
 }
 ```
@@ -429,7 +406,7 @@ import {Form, FieldError, Button} from 'react-aria-components';
 ```css
 .react-aria-DateSegment {
   &[data-invalid] {
-    color: var(--text-color-invalid);
+    color: var(--invalid-color);
 
     &:focus {
       background: var(--highlight-background-invalid);
@@ -440,7 +417,7 @@ import {Form, FieldError, Button} from 'react-aria-components';
 
 .react-aria-FieldError {
   font-size: 12px;
-  color: var(--text-color-invalid);
+  color: var(--invalid-color);
 }
 ```
 
@@ -750,15 +727,9 @@ fieldset {
 }
 
 .invalid {
-  color: var(--spectrum-global-color-red-600);
+  color: var(--invalid-color);
   margin-top: 1em;
   display: block;
-}
-
-@media (forced-colors: active) {
-  .invalid {
-    color: LinkText;
-  }
 }
 ```
 
