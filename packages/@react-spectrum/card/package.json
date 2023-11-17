@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/card",
-  "version": "3.0.0-alpha.25",
+  "version": "3.0.0-alpha.27",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -41,7 +41,7 @@
     "@react-aria/i18n": "^3.9.0",
     "@react-aria/interactions": "^3.20.0",
     "@react-aria/utils": "^3.22.0",
-    "@react-aria/virtualizer": "^3.9.5",
+    "@react-aria/virtualizer": "^3.9.7",
     "@react-spectrum/checkbox": "^3.9.0",
     "@react-spectrum/progress": "^3.7.2",
     "@react-spectrum/utils": "^3.11.2",

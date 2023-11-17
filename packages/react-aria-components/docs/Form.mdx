@@ -54,6 +54,7 @@ import {Form, TextField, Label, Input, FieldError, Button} from 'react-aria-comp
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css hidden
+@import "@react-aria/example-theme";
 @import './TextField.mdx' layer(textfield);
 @import './Button.mdx' layer(button);
 ```
@@ -205,15 +206,15 @@ function Example() {
 
 ```css
 .react-aria-Form [role=alert] {
-  border: 2px solid var(--spectrum-red-800);
-  background: var(--spectrum-gray-50);
+  border: 2px solid var(--invalid-color);
+  background: var(--overlay-background);
   border-radius: 6px;
   padding: 12px;
   max-width: 250px;
   outline: none;
 
   &:focus-visible {
-    outline: 2px solid slateblue;
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
   }
 

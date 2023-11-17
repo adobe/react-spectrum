@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/table",
-  "version": "3.12.2",
+  "version": "3.12.4",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -42,7 +42,7 @@
     "@react-aria/interactions": "^3.20.0",
     "@react-aria/table": "^3.13.2",
     "@react-aria/utils": "^3.22.0",
-    "@react-aria/virtualizer": "^3.9.5",
+    "@react-aria/virtualizer": "^3.9.7",
     "@react-aria/visually-hidden": "^3.8.7",
     "@react-spectrum/checkbox": "^3.9.0",
     "@react-spectrum/dnd": "^3.3.5",

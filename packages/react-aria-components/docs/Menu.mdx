@@ -69,13 +69,9 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
 ```
 
 ```css
-.react-aria-Menu {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --separator-color: var(--spectrum-global-color-gray-500);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+@import "@react-aria/example-theme";
 
+.react-aria-Menu {
   max-height: inherit;
   box-sizing: border-box;
   overflow: auto;
@@ -99,22 +95,11 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
                       "desc  kbd";
   align-items: center;
   column-gap: 20px;
+  forced-color-adjust: none;
 
   &[data-focused] {
     background: var(--highlight-background);
     color: var(--highlight-foreground);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Menu {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --separator-color: ButtonBorder;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -266,6 +251,7 @@ function MyItem(props: MenuItemProps) {
 
 @media (forced-colors: active) {
   .my-item.focused {
+    forced-color-adjust: none;
     background: Highlight;
     color: HighlightText;
   }
@@ -535,7 +521,7 @@ import {Separator} from 'react-aria-components';
 .react-aria-Menu {
   .react-aria-Separator {
     height: 1px;
-    background: var(--separator-color);
+    background: var(--border-color);
     margin: 2px 4px;
   }
 }
