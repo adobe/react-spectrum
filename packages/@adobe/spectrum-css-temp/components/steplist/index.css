@@ -13,19 +13,6 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 :root {
-  /* The color of step text */
-  --spectrum-steplist-default-color: var(--spectrum-global-color-gray-600);
-  /* The default border color */
-  --spectrum-steplist-border-color: var(--spectrum-global-color-gray-400);
-  /* The color of the selected step */
-  --spectrum-steplist-current-color: var(--spectrum-global-color-gray-800);
-  /* The color of the emphasized step */
-  --spectrum-steplist-emphasized-color: var(--spectrum-global-color-blue-400);
-  /* The color of the disabled step label */
-  --spectrum-steplist-disabled-border-color: var(--spectrum-global-color-gray-400);
-  /* The color of the disabled step marker */
-  --spectrum-steplist-disabled-marker-color: var(--spectrum-global-color-gray-300);
-
   /* The diameter of the marker */
   --spectrum-steplist-marker-diameter-small: 8px;
   --spectrum-steplist-marker-diameter-medium: 16px;
@@ -65,54 +52,45 @@ governing permissions and limitations under the License.
 
 .spectrum-Steplist-item {
   display: grid;
-  justify-items: center;
-  align-items: start;
   min-width: 0;
-  grid-template-rows: auto;
-  grid-template-areas:
-    "link chevron";
-
-  &.focus-ring {
-    outline: 2px;
-    outline-offset: 2px;
-  }
 
   .spectrum-Steplist-segment {
     align-items: center;
     display: inline-flex;
-    height: 100%;
+
+    &.is-completed {
+      svg line {
+        stroke-dasharray: none;
+      }
+    }
   }
 
   .spectrum-Steplist-chevron {
     &.is-reversed {
-      transform: scale(-1);
+      transform: scaleX(-1);
     }
   }
 }
 
 .spectrum-Steplist-link {
-  grid-area: link;
   cursor: default;
   display: grid;
-  justify-items: center;
-  align-items: center;
-  grid-template-areas: "number label";
   text-decoration: none;
   outline: none;
 
+  .spectrum-Steplist-markerWrapper {
+    grid-area: marker;
+  }
   .spectrum-Steplist-marker {
-    grid-area: number;
     box-sizing: border-box; /* So we can stroke nicely */
     border-radius: 50%;
     border-style: solid;
     border-width: var(--spectrum-steplist-marker-border-width);
-    color: transparent;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    padding-bottom: 1px;
   }
   .spectrum-Steplist-label {
     grid-area: label;
@@ -121,130 +99,153 @@ governing permissions and limitations under the License.
   /* Completed State */
   &.is-completed {
     .spectrum-Steplist-marker {
-      border: none;
+      border-style: none;
+      border-width: 0;
     }
   }
 
   /* Selected state */
   &.is-selected {
    .spectrum-Steplist-marker {
-      border: none;
+     border-style: none;
+     border-width: 0;
     }
   }
+
   &.is-hovered {
     &.is-completed .spectrum-Steplist-marker {
-      border: none;
+      border-style: none;
+      border-width: 0;
     }
+  }
+}
+
+.spectrum-Steplist {
+  font-size: var(--spectrum-steplist-font-size);
+  gap: var(--spectrum-steplist-chevron-gap);
+
+  .spectrum-Steplist-link {
+    gap: var(--spectrum-steplist-marker-label-gap);
+
+    .spectrum-Steplist-marker {
+      width: var(--spectrum-steplist-marker-diameter);
+      height: var(--spectrum-steplist-marker-diameter);
+      font-size: var(--spectrum-steplist-counter-font-size);
+      padding-block-end: 1px;
+    }
+  }
+  .spectrum-Steplist-chevron {
+    transform: scale(var(--spectrum-steplist-chevron-scale));
   }
 }
 
 /* Small size */
 .spectrum-Steplist--small {
-  font-size: var(--spectrum-global-dimension-font-size-75);
-  gap: var(--spectrum-steplist-chevron-gap-small);
-
-  .spectrum-Steplist-item {
-    gap: var(--spectrum-steplist-chevron-gap-small);
-    grid-template-columns: auto;
+  --spectrum-steplist-font-size: var(--spectrum-global-dimension-font-size-75);
+  --spectrum-steplist-chevron-gap: var(--spectrum-steplist-chevron-gap-small);
+  --spectrum-steplist-marker-label-gap: var(--spectrum-steplist-marker-label-gap-small);
+  --spectrum-steplist-marker-diameter: var(--spectrum-steplist-marker-diameter-small);
+  --spectrum-steplist-counter-font-size: 0;
+  --spectrum-steplist-chevron-scale: 0.75;
+  --spectrum-steplist-segment-height-adjust: -4px;
+  .spectrum-Steplist-marker {
+    padding-top: 1px;
   }
-  .spectrum-Steplist-link {
-    gap: var(--spectrum-steplist-marker-label-gap-small);
-
+  &.spectrum-Steplist--horizontal {
+    /* Tweaks for vertical centering. */
     .spectrum-Steplist-marker {
-      width: var(--spectrum-steplist-marker-diameter-small);
-      height: var(--spectrum-steplist-marker-diameter-small);
-      font-size: 0;
+      margin-top: 1px;
     }
-  }
-  .spectrum-Steplist-chevron {
-    transform: scale(0.75);
+
+    .spectrum-Steplist-chevron {
+      padding-top: 2px;
+    }
   }
 }
 
 /* Medium size */
 .spectrum-Steplist--medium {
-  font-size: var(--spectrum-global-dimension-font-size-100);
-  gap: var(--spectrum-steplist-chevron-gap-medium);
-
-  .spectrum-Steplist-item {
-    gap: var(--spectrum-steplist-chevron-gap-medium);
-    grid-template-columns: auto;
-
-    .spectrum-Steplist-link {
-      .spectrum-Steplist-marker:not(.is-completed) {
-        color: transparent;
-      }
-
-      &.is-disabled .spectrum-Steplist-marker:not(.is-completed) {
-        color: transparent;
-      }
-    }
-  }
-
-  .spectrum-Steplist-link {
-    gap: var(--spectrum-steplist-marker-label-gap-medium);
-
-    .spectrum-Steplist-marker {
-      width: var(--spectrum-steplist-marker-diameter-medium);
-      height: var(--spectrum-steplist-marker-diameter-medium);
-      font-size: var(--spectrum-global-dimension-font-size-75);
-    }
-  }
+  --spectrum-steplist-font-size: var(--spectrum-global-dimension-font-size-100);
+  --spectrum-steplist-chevron-gap: var(--spectrum-steplist-chevron-gap-medium);
+  --spectrum-steplist-marker-label-gap: var(--spectrum-steplist-marker-label-gap-medium);
+  --spectrum-steplist-marker-diameter: var(--spectrum-steplist-marker-diameter-medium);
+  --spectrum-steplist-counter-font-size: var(--spectrum-global-dimension-font-size-75);
+  --spectrum-steplist-chevron-scale: 1;
+  --spectrum-steplist-segment-height-adjust: 0px;
 }
 
-/* large size */
+/* Large size */
 .spectrum-Steplist--large {
-  font-size: var(--spectrum-global-dimension-font-size-200);
-  gap: var(--spectrum-steplist-chevron-gap-large);
-
-  .spectrum-Steplist-item {
-    gap: var(--spectrum-steplist-chevron-gap-large);
-    grid-template-columns: auto;
-  }
-  .spectrum-Steplist-link {
-    gap: var(--spectrum-steplist-marker-label-gap-large);
-
-    .spectrum-Steplist-marker {
-      width: var(--spectrum-steplist-marker-diameter-large);
-      height: var(--spectrum-steplist-marker-diameter-large);
-      font-size: var(--spectrum-global-dimension-font-size-100);
-    }
-  }
-  .spectrum-Steplist-chevron {
-    transform: scale(1.25);
-  }
+  --spectrum-steplist-font-size: var(--spectrum-global-dimension-font-size-200);
+  --spectrum-steplist-chevron-gap: var(--spectrum-steplist-chevron-gap-large);
+  --spectrum-steplist-marker-label-gap: var(--spectrum-steplist-marker-label-gap-large);
+  --spectrum-steplist-marker-diameter: var(--spectrum-steplist-marker-diameter-large);
+  --spectrum-steplist-counter-font-size: var(--spectrum-global-dimension-font-size-100);
+  --spectrum-steplist-chevron-scale: 1.25;
+  --spectrum-steplist-segment-height-adjust: 6px;
 }
 
-/* xlarge size */
+/* XLarge size */
 .spectrum-Steplist--xlarge {
-  font-size: var(--spectrum-global-dimension-font-size-300);
-  gap: var(--spectrum-steplist-chevron-gap-xlarge);
+  --spectrum-steplist-font-size: var(--spectrum-global-dimension-font-size-300);
+  --spectrum-steplist-chevron-gap: var(--spectrum-steplist-chevron-gap-xlarge);
+  --spectrum-steplist-marker-label-gap: var(--spectrum-steplist-marker-label-gap-xlarge);
+  --spectrum-steplist-marker-diameter: var(--spectrum-steplist-marker-diameter-xlarge);
+  --spectrum-steplist-counter-font-size: var(--spectrum-global-dimension-font-size-200);
+  --spectrum-steplist-chevron-scale: 1.5;
+  --spectrum-steplist-segment-height-adjust: 6px;
+}
 
-  .spectrum-Steplist-item {
-    gap: var(--spectrum-steplist-chevron-gap-xlarge);
-    grid-template-columns: auto;
-  }
-  .spectrum-Steplist-link {
-    gap: var(--spectrum-steplist-marker-label-gap-xlarge);
-
-    .spectrum-Steplist-marker {
-      width: var(--spectrum-steplist-marker-diameter-xlarge);
-      height: var(--spectrum-steplist-marker-diameter-xlarge);
-      font-size: var(--spectrum-global-dimension-font-size-200);
-    }
-  }
-  .spectrum-Steplist-chevron {
-    transform: scale(1.5);
+/* Last step overrides */
+.spectrum-Steplist-item:last-child {
+  .spectrum-Steplist-segment {
+    /* Not visible for last step */
+    display: none;
   }
 }
 
+/* horizontal version */
+.spectrum-Steplist--horizontal {
+  .spectrum-Steplist-link {
+    display: flex;
+    align-items: baseline;
+  }
 
-/* First step overrides */
-.spectrum-Steplist-item:last-child {
-  grid-template-areas: "link";
-  grid-template-columns: auto;
   .spectrum-Steplist-segment {
-    /* Not visible for first step */
+    order: 2;
+    display: flex;
+    align-items: center;
+
+    padding-inline-start: calc(var(--spectrum-steplist-chevron-gap) - var(--spectrum-steplist-marker-label-gap));
+    &::before {
+      content: 'x';
+      width: 0;
+      visibility: hidden;
+    }
+  }
+
+  .spectrum-Steplist-chevron {
+    /* Aides vertical centering between chevron and circle. */
+    padding-top: 1px;
+  }
+
+  .spectrum-Steplist-label {
+    order: 1;
+  }
+
+  .spectrum-Steplist-markerWrapper {
+    order: 0;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    &::before {
+      content: 'x';
+      width: 0;
+      visibility: hidden;
+    }
+  }
+
+  .spectrum-Steplist-segmentLine {
     display: none;
   }
 }
@@ -253,58 +254,80 @@ governing permissions and limitations under the License.
 /* vertical version */
 .spectrum-Steplist--vertical {
   flex-direction: column;
-  gap: 2px;
+  column-gap: 2px;
+  row-gap: 0;
+
   .spectrum-Steplist-item {
-    grid-template-areas: "link link"
-                         "line .";
+    list-style: none;
+    display: unset;
+  }
+  .spectrum-Steplist-link {
+    display: grid;
+    grid-template-areas: "marker label"
+                         "line   label";
+    grid-template-columns: minmax(0, min-content) 1fr;
+    grid-template-rows: minmax(16px, min-content) 1fr;
     justify-items: start;
-    .spectrum-Steplist-segment.is-completed {
-      border-color: var(--spectrum-steplist-border-color);
-      border-left-style: solid;
-    }
-    gap: 2px;
-  }
-  &.spectrum-Steplist--small {
-    .spectrum-Steplist-item {
-      grid-template-columns: 8px auto;
-
-      .spectrum-Steplist-link {
-        line-height: var(--spectrum-steplist-marker-diameter-small);
-      }
-    }
-  }
-  &.spectrum-Steplist--medium {
-    .spectrum-Steplist-item {
-      grid-template-columns: 16px auto;
-
-      .spectrum-Steplist-link {
-        line-height: var(--spectrum-steplist-marker-diameter-medium);
-      }
-    }
-  }
-  &.spectrum-Steplist--large {
-    .spectrum-Steplist-item {
-      grid-template-columns: 24px auto;
-    }
-  }
-  &.spectrum-Steplist--xlarge {
-    .spectrum-Steplist-item {
-      grid-template-columns: 32px auto;
-    }
+    column-gap: 6px;
+    row-gap: 0px;
   }
   .spectrum-Steplist-chevron {
     display: none;
   }
+  .spectrum-Steplist-markerWrapper {
+    align-self: baseline;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    &::before {
+      content: 'x';
+      width: 0;
+      visibility: hidden;
+    }
+  }
+  &.spectrum-Steplist--small {
+    .spectrum-Steplist-marker {
+      align-self: center;
+    }
+  }
+  .spectrum-Steplist-label {
+    align-self: baseline;
+    /* pushes elements too far apart if we don't set this, it doesn't cut off descenders/ascenders */
+    line-height: 16px;
+    min-width: 0;
+    min-height: 0;
+  }
   .spectrum-Steplist-segment {
     grid-area: line;
     justify-self: center;
-    display: block;
     box-sizing: content-box;
-    height: var(--spectrum-steplist-vertical-separation);
-    width: 0;
-    border-color: var(--spectrum-steplist-border-color);
-    border-width: 0;
-    border-left-width: 2px;
-    border-left-style: dashed;
+    min-height: var(--spectrum-steplist-vertical-separation);
+    width: 2px;
+    pointer-events: none;
+    min-width: 0;
+
+    .spectrum-Steplist-segmentLine {
+      /* don't cut off the rounded linecap, but also line must go exactly to the edges
+       so that we don't scale the gap at each edge of the svg
+       */
+      overflow: visible;
+      width: 2px;
+      height: calc(100% - var(--spectrum-steplist-segment-height-adjust));
+
+      & line {
+        stroke-width: 2px;
+        stroke-dasharray: 6 4;
+        stroke-linecap: round;
+      }
+    }
+  }
+
+  /* Last step overrides */
+  .spectrum-Steplist-item:last-child {
+    .spectrum-Steplist-link {
+      grid-template-areas: "marker label";
+      grid-template-rows: minmax(16px, min-content);
+    }
   }
 }
