@@ -57,10 +57,10 @@ import {Meter, Label} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-Meter {
-  --bar-color: var(--spectrum-global-color-gray-500);
   --fill-color: forestgreen;
-  --text-color: var(--spectrum-alias-text-color);
 
   display: grid;
   grid-template-areas: "label value"
@@ -76,7 +76,8 @@ import {Meter, Label} from 'react-aria-components';
 
   .bar {
     grid-area: bar;
-    box-shadow: inset 0px 0px 0px 1px var(--bar-color);
+    box-shadow: inset 0px 0px 0px 1px var(--border-color);
+    forced-color-adjust: none;
     height: 10px;
     border-radius: 5px;
     overflow: hidden;
@@ -90,14 +91,7 @@ import {Meter, Label} from 'react-aria-components';
 
 @media (forced-colors: active) {
   .react-aria-Meter {
-    --bar-color: ButtonFace;
-    --text-color: ButtonText;
     --fill-color: Highlight;
-
-    .bar {
-      border: 1px solid ButtonBorder;
-      box-sizing: border-box;
-    }
   }
 }
 ```

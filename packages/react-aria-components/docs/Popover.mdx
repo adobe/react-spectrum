@@ -73,18 +73,13 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
 @import './Button.mdx' layer(button);
 @import './Dialog.mdx' layer(dialog);
 @import './Switch.mdx' layer(switch);
-
-.flex-col {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
 ```
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-Popover {
-  --background-color: var(--page-background);
-  --border-color: var(--spectrum-global-color-gray-400);
+  --background-color: var(--overlay-background);
 
   border: 1px solid var(--border-color);
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
@@ -154,13 +149,6 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
   }
 }
 
-@media (forced-colors: active) {
-  .react-aria-Popover {
-    --background-color: Canvas;
-    --border-color: ButtonBorder;
-  }
-}
-
 @keyframes popover-slide {
   from {
     transform: var(--origin);
@@ -171,6 +159,14 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} f
     transform: translateY(0);
     opacity: 1;
   }
+}
+```
+
+```css hidden
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 ```
 

@@ -56,6 +56,8 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-Breadcrumbs {
   display: flex;
   align-items: center;
@@ -72,12 +74,7 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
   }
 
   .react-aria-Link {
-    --focus-ring-color: slateblue;
-    --text-color: var(--spectrum-global-color-gray-800);
-    --text-color-current: var(--spectrum-global-color-gray-900);
-    --text-color-disabled: gray;
-
-    color: var(--text-color);
+    color: var(--link-color-secondary);
     outline: none;
     position: relative;
     text-decoration: none;
@@ -88,7 +85,7 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
     }
 
     &[data-current] {
-      color: var(--text-color-current);
+      color: var(--text-color);
       font-weight: bold;
     }
 
@@ -99,15 +96,6 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
       border-radius: 6px;
       border: 2px solid var(--focus-ring-color);
     }
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Breadcrumbs .react-aria-Link {
-    --focus-ring-color: Highlight;
-    --text-color: LinkText;
-    --text-color-current: CanvasText;
-    --text-color-disabled: GrayText;
   }
 }
 ```
