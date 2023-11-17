@@ -155,6 +155,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     if (isOldReact) {
       raf.current ??= requestAnimationFrame(() => {
         updateSize();
+        raf.current = null;
       });
     } else {
       updateSize();
