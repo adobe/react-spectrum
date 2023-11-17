@@ -44,10 +44,16 @@ export interface PressEvent {
   /** Whether the meta keyboard modifier was held during the press event. */
   metaKey: boolean,
   /** Whether the alt keyboard modifier was held during the press event. */
-  altKey: boolean
+  altKey: boolean,
+  /**
+   * By default, press events stop propagation to parent elements.
+   * In cases where a handler decides not to handle a specific event,
+   * it can call `continuePropagation()` to allow a parent to handle it.
+   */
+  continuePropagation(): void
 }
 
-export interface LongPressEvent extends Omit<PressEvent, 'type'> {
+export interface LongPressEvent extends Omit<PressEvent, 'type' | 'continuePropagation'> {
   /** The type of long press event being fired. */
   type: 'longpressstart' | 'longpressend' | 'longpress'
 }

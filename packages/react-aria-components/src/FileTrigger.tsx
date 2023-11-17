@@ -10,15 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps} from '@react-types/shared';
-import {ContextValue, DOMProps, SlotProps, useContextProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Input} from './Input';
 import {PressResponder} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
-import {VisuallyHidden} from 'react-aria';
+import React, {ForwardedRef, forwardRef, ReactNode} from 'react';
 
-export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps {
+export interface FileTriggerProps {
   /**
    * Specifies what mime type of files are allowed.
    */
@@ -34,40 +31,44 @@ export interface FileTriggerProps extends SlotProps, DOMProps, AriaLabelingProps
   /**
    * Handler when a user selects a file.
    */
-  onChange?: (files: FileList | null) => void
+  onSelect?: (files: FileList | null) => void,
+  /**
+   * The children of the component.
+   */
+  children?: ReactNode
 }
 
-export const FileTriggerContext = createContext<ContextValue<FileTriggerProps, HTMLDivElement>>(null);
-
-function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, FileTriggerContext);
-  let {onChange, acceptedFileTypes, className, allowsMultiple, defaultCamera, children, ...otherProps} = props;
-  let inputRef = useRef<HTMLInputElement>(null);
+function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
+  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, ...rest} = props;
+  let inputRef = useObjectRef(ref);
+  let domProps = filterDOMProps(rest);
 
   return (
-    <div
-      className={className || 'react-aria-FileTrigger'}
-      {...filterDOMProps(otherProps)}
-      ref={ref}
-      slot={props.slot}>
-      <PressResponder onPress={() => inputRef.current?.click()}>
+    <>
+      <PressResponder 
+        onPress={() => {
+          if (inputRef.current.value) {
+            inputRef.current.value = '';
+          }
+          inputRef.current?.click();
+        }}>
         {children}
       </PressResponder>
-      <VisuallyHidden>
-        <Input 
-          type="file" 
-          ref={inputRef} 
-          accept={acceptedFileTypes?.toString()} 
-          onChange={(e) => onChange?.(e.target.files)} 
-          capture={defaultCamera} 
-          multiple={allowsMultiple} /> 
-      </VisuallyHidden>
-    </div>
+      <Input
+        {...domProps}
+        type="file"
+        ref={inputRef}
+        style={{display: 'none'}}
+        accept={acceptedFileTypes?.toString()}
+        onChange={(e) => onSelect?.(e.target.files)}
+        capture={defaultCamera}
+        multiple={allowsMultiple} />
+    </>
   );
 }
 
 /**
- * A FileTrigger allows a user to access the file system with either a Button or Link.
+ * A FileTrigger allows a user to access the file system with any pressable React Aria or React Spectrum component, or custom components built with usePress.
  */
 const _FileTrigger = forwardRef(FileTrigger);
 export {_FileTrigger  as FileTrigger};

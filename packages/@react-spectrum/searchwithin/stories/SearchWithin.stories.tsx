@@ -106,7 +106,7 @@ isRequiredFalse_necessityIndicator.name = 'isRequired: false, necessityIndicator
 export const InputValidationSateInvalid = () => render({}, {validationState: 'invalid'});
 InputValidationSateInvalid.name = 'input validationState: invalid';
 
-export const PickerValidationSateInvalid = () => render({}, {}, {validationState: 'invalid'});
+export const PickerValidationSateInvalid = () => render({}, {}, {isInvalid: true});
 PickerValidationSateInvalid.name = 'picker validationState: invalid';
 
 export const PickerDisabled = () => render({}, {}, {isDisabled: true});

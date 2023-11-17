@@ -11,11 +11,12 @@
  */
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
 import {useCallback, useMemo, useState} from 'react';
 
-export interface NumberFieldState {
+export interface NumberFieldState extends FormValidationState {
   /**
    * The current text value of the input. Updated as the user types,
    * and formatted according to `formatOptions` on blur.
@@ -42,6 +43,8 @@ export interface NumberFieldState {
   validate(value: string): boolean,
   /** Sets the current text value of the input. */
   setInputValue(val: string): void,
+  /** Sets the number value. */
+  setNumberValue(val: number): void,
   /**
    * Commits the current input value. The value is parsed to a number, clamped according
    * to the minimum and maximum values of the field, and snapped to the nearest step value.
@@ -95,6 +98,11 @@ export function useNumberFieldState(
   let formatter = useMemo(() => new NumberFormatter(locale, {...formatOptions, numberingSystem}), [locale, formatOptions, numberingSystem]);
   let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
   let format = useCallback((value: number) => (isNaN(value) || value === null) ? '' : formatter.format(value), [formatter]);
+
+  let validation = useFormValidationState({
+    ...props,
+    value: numberValue
+  });
 
   let clampStep = !isNaN(step) ? step : 1;
   if (intlOptions.style === 'percent' && isNaN(step)) {
@@ -181,6 +189,7 @@ export function useNumberFieldState(
     }
 
     setNumberValue(newValue);
+    validation.commitValidation();
   };
 
   let decrement = () => {
@@ -191,17 +200,20 @@ export function useNumberFieldState(
     }
 
     setNumberValue(newValue);
+    validation.commitValidation();
   };
 
   let incrementToMax = () => {
     if (maxValue != null) {
       setNumberValue(snapValueToStep(maxValue, minValue, maxValue, clampStep));
+      validation.commitValidation();
     }
   };
 
   let decrementToMin = () => {
     if (minValue != null) {
       setNumberValue(minValue);
+      validation.commitValidation();
     }
   };
 
@@ -230,6 +242,7 @@ export function useNumberFieldState(
   let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
 
   return {
+    ...validation,
     validate,
     increment,
     incrementToMax,
@@ -240,6 +253,7 @@ export function useNumberFieldState(
     minValue,
     maxValue,
     numberValue: parsedValue,
+    setNumberValue,
     setInputValue,
     inputValue,
     commit

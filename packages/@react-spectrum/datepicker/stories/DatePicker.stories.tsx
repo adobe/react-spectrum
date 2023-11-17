@@ -22,6 +22,7 @@ import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
+import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {useLocale} from '@react-aria/i18n';
@@ -119,6 +120,9 @@ export default {
       options: [12, 24]
     },
     hideTimeZone: {
+      control: 'boolean'
+    },
+    shouldForceLeadingZeros: {
       control: 'boolean'
     },
     isDisabled: {
@@ -324,7 +328,7 @@ const calendars = [
 
 function Example(props) {
   let [locale, setLocale] = React.useState('');
-  let [calendar, setCalendar] = React.useState<React.Key>(calendars[0].key);
+  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);
@@ -360,7 +364,7 @@ function Example(props) {
 }
 
 function ControlledExample(props) {
-  let [value, setValue] = React.useState(null);
+  let [value, setValue] = React.useState(props.value);
 
   return (
     <Flex direction="column" alignItems="center" gap="size-150">

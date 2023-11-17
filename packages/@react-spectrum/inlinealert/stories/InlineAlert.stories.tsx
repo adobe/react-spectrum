@@ -11,11 +11,11 @@
  */
 
 import {Button} from '@react-spectrum/button';
-import {Content, Header} from '@react-spectrum/view';
-import {InlineAlert} from '../';
+import {Content} from '@react-spectrum/view';
+import {Heading} from '@react-spectrum/text';
+import {InlineAlert, SpectrumInlineAlertProps} from '../';
 import {Meta} from '@storybook/react';
 import React, {useState} from 'react';
-import {SpectrumInlineAlertProps} from '@react-types/inlinealert';
 
 type StoryArgs = SpectrumInlineAlertProps & {title: string, content: string};
 
@@ -45,7 +45,7 @@ export default meta;
 export const Default = {
   render: (args) => (
     <InlineAlert {...args}>
-      <Header>{args.title}</Header>
+      <Heading>{args.title}</Heading>
       <Content>{args.content}</Content>
     </InlineAlert>
   )
@@ -62,8 +62,8 @@ function DynamicExample(args) {
     <>
       <Button variant="primary" onPress={() => setShown(!shown)}>{shown ? 'Hide Alert' : 'Show Alert'}</Button>
       {shown &&
-        <InlineAlert {...args}>
-          <Header>{args.title}</Header>
+        <InlineAlert {...args} autoFocus>
+          <Heading>{args.title}</Heading>
           <Content>{args.content}</Content>
         </InlineAlert>
       }

@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/checkbox/docs/checkbox-anatomy.svg';
@@ -57,26 +57,23 @@ import {Checkbox} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-Checkbox {
-  --label-color: var(--spectrum-alias-text-color);
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --checkmark-color: white;
-  --invalid-color: var(--spectrum-global-color-static-red-600);
-  --invalid-color-pressed: var(--spectrum-global-color-static-red-700);
+  --selected-color: var(--highlight-background);
+  --selected-color-pressed: var(--highlight-background-pressed);
+  --checkmark-color: var(--highlight-foreground);
 
   display: flex;
   align-items: center;
   gap: 0.571rem;
   font-size: 1.143rem;
-  color: var(--label-color);
+  forced-color-adjust: none;
 
   .checkbox {
     width: 1.143rem;
     height: 1.143rem;
-    border: 2px solid var(--deselected-color);
+    border: 2px solid var(--border-color);
     border-radius: 4px;
     transition: all 200ms;
     display: flex;
@@ -84,7 +81,7 @@ import {Checkbox} from 'react-aria-components';
     justify-content: center;
   }
 
-  & svg {
+  svg {
     width: 1rem;
     height: 1rem;
     fill: none;
@@ -96,7 +93,12 @@ import {Checkbox} from 'react-aria-components';
   }
 
   &[data-pressed] .checkbox {
-    border-color: var(--deselected-color-pressed);
+    border-color: var(--border-color-pressed);
+  }
+
+  &[data-focus-visible] .checkbox {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
   }
 
   &[data-selected],
@@ -111,29 +113,8 @@ import {Checkbox} from 'react-aria-components';
       background: var(--selected-color-pressed);
     }
 
-    & svg {
+    svg {
       stroke-dashoffset: 44;
-    }
-  }
-
-  &[data-validation-state=invalid] {
-    .checkbox {
-      border-color: var(--invalid-color);
-    }
-
-    &[data-pressed] .checkbox {
-      border-color: var(--invalid-color-pressed);
-    }
-
-    &[data-selected],
-    &[data-indeterminate] {
-      .checkbox {
-        background: var(--invalid-color);
-      }
-
-      &[data-pressed] .checkbox {
-        background: var(--invalid-color-pressed);
-      }
     }
   }
 
@@ -141,37 +122,6 @@ import {Checkbox} from 'react-aria-components';
     & svg {
       stroke: none;
       fill: var(--checkmark-color);
-    }
-  }
-
-  &[data-focus-visible] .checkbox {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Checkbox {
-    forced-color-adjust: none;
-
-    --label-color: ButtonText;
-    --deselected-color: ButtonBorder;
-    --deselected-color-pressed: ButtonBorder;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --checkmark-color: HighlightText;
-    --invalid-color: LinkText;
-    --invalid-color-pressed: LinkText;
-    --spectrum-alias-background-color-default: Canvas;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
-      --label-color: GrayText;
     }
   }
 }
@@ -198,59 +148,6 @@ to toggle the selection state, or use the <Keyboard>Tab</Keyboard> key to naviga
 In most cases, checkboxes should have a visual label. If the checkbox does not have a visible label,
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
 technology.
-
-## Props
-
-<PropTable component={docs.exports.Checkbox} links={docs.links} />
-
-## Styling
-
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
-
-```css
-.react-aria-Checkbox {
-  /* ... */
-}
-```
-
-A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
-
-```jsx
-<Checkbox className="my-checkbox">
-  {/* ... */}
-</Checkbox>
-```
-
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
-
-```css
-.react-aria-Checkbox[data-pressed] {
-  /* ... */
-}
-```
-
-The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
-
-```jsx
-<Checkbox className={({isPressed}) => isPressed ? 'bg-gray-700' : 'bg-gray-600'} />
-```
-
-Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render an extra element when the checkbox is selected.
-
-```jsx
-<Checkbox>
-  {({isSelected}) => (
-    <>
-      {isSelected && <CheckIcon />}
-      Subscribe
-    </>
-  )}
-</Checkbox>
-```
-
-The states, selectors, and render props for `Checkbox` are documented below.
-
-<StateTable properties={docs.exports.CheckboxRenderProps.properties} />
 
 ## Reusable wrappers
 
@@ -282,9 +179,7 @@ function MyCheckbox({children, ...props}: CheckboxProps) {
 <MyCheckbox>Unsubscribe</MyCheckbox>
 ```
 
-## Usage
-
-The following examples show how to use the `MyCheckbox` component created in the above example.
+## Value
 
 ### Default value
 
@@ -323,22 +218,76 @@ The Checkbox will visually remain indeterminate until the `isIndeterminate` prop
 <MyCheckbox isIndeterminate>Subscribe</MyCheckbox>
 ```
 
-### Validation
+### HTML forms
 
-Checkboxes can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the Checkbox via the `validationState` prop.
+Checkbox supports the `name` and `value` props for integration with HTML forms.
 
 ```tsx example
-<MyCheckbox validationState="invalid">I accept the terms and conditions</MyCheckbox>
+<MyCheckbox name="newsletter" value="subscribe">Subscribe</MyCheckbox>
 ```
 
-### Disabled
+## Validation
+
+Checkboxes can display a validation state to communicate to the user if the current value is invalid.
+Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
+
+```tsx example
+<MyCheckbox isInvalid>I accept the terms and conditions</MyCheckbox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Checkbox {
+  &[data-invalid] {
+    .checkbox {
+      --checkmark-color: var(--gray-50);
+      border-color: var(--invalid-color);
+    }
+
+    &[data-pressed] .checkbox {
+      border-color: var(--invalid-color-pressed);
+    }
+
+    &[data-selected],
+    &[data-indeterminate] {
+      .checkbox {
+        background: var(--invalid-color);
+      }
+
+      &[data-pressed] .checkbox {
+        background: var(--invalid-color-pressed);
+      }
+    }
+  }
+}
+```
+</details>
+
+## Disabled
 
 Checkboxes can be disabled using the `isDisabled` prop.
 
 ```tsx example
 <MyCheckbox isDisabled>Subscribe</MyCheckbox>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Checkbox {
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+
+    .checkbox {
+      border-color: var(--border-color-disabled);
+    }
+  }
+}
+```
+</details>
 
 ### Read only
 
@@ -349,17 +298,115 @@ See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/
 <MyCheckbox isSelected isReadOnly>Agree</MyCheckbox>
 ```
 
+## Props
 
-### HTML forms
+<PropTable component={docs.exports.Checkbox} links={docs.links} />
 
-Checkbox supports the `name` and `value` props for integration with HTML forms.
+## Styling
 
-```tsx example
-<MyCheckbox name="newsletter" value="subscribe">Subscribe</MyCheckbox>
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Checkbox {
+  /* ... */
+}
 ```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Checkbox className="my-checkbox">
+  {/* ... */}
+</Checkbox>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-Checkbox[data-pressed] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Checkbox className={({isPressed}) => isPressed ? 'bg-gray-700' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render an extra element when the checkbox is selected.
+
+```jsx
+<Checkbox>
+  {({isSelected}) => (
+    <>
+      {isSelected && <CheckIcon />}
+      Subscribe
+    </>
+  )}
+</Checkbox>
+```
+
+The states, selectors, and render props for `Checkbox` are documented below.
+
+<StateTable properties={docs.exports.CheckboxRenderProps.properties} />
 
 ## Advanced customization
 
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Checkbox']} docs={docs} />
+
+This example shows a `CheckboxDescription` component that accepts a checkbox in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the checkbox via the `aria-describedby` attribute passed to the `CheckboxContext` provider.
+
+```tsx example
+import {CheckboxContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface CheckboxDescriptionProps {
+  children?: React.ReactNode,
+  description?: string
+}
+
+function CheckboxDescription({children, description}: CheckboxDescriptionProps) {
+  let descriptionId = useId();
+  return (
+    <div>
+      {/*- begin highlight -*/}
+      <CheckboxContext.Provider value={{'aria-describedby': descriptionId}}>
+      {/*- end highlight -*/}
+        {children}
+      </CheckboxContext.Provider>
+      <small id={descriptionId}>{description}</small>
+    </div>
+  );
+}
+
+<CheckboxDescription description="You will receive our newsletter once per week. Unsubscribe at any time.">
+  <MyCheckbox defaultSelected>Subscribe</MyCheckbox>
+</CheckboxDescription>
+```
+
 ### Hooks
 
-If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useCheckbox](useCheckbox.html) for more details.
+If you need to customize things further, such as intercepting events or customizing DOM structure, you can drop down to the lower level Hook-based API. Consume from `CheckboxContext` in your component with <TypeLink links={docs.links} type={docs.exports.useContextProps} /> to make it compatible with other React Aria Components. See [useCheckbox](useCheckbox.html) for more details.
+
+```tsx
+import type {CheckboxProps} from 'react-aria-components';
+import {CheckboxContext, useContextProps} from 'react-aria-components';
+import {useToggleState} from 'react-stately';
+import {useCheckbox} from 'react-aria';
+
+const MyCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, CheckboxContext);
+  ///- end highlight -///
+
+  let state = useToggleState(props);
+  let {inputProps} = useCheckbox(props, state, ref);
+  return <input {...inputProps} ref={ref} />;
+});
+```

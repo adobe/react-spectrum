@@ -3,7 +3,9 @@
 exports[`DocsTransformer - API builtins writes export entry for referenced function 1`] = `
 {
   "exports": {
-    "d": {},
+    "d": {
+      "type": "any",
+    },
   },
   "links": {},
 }
@@ -12,7 +14,9 @@ exports[`DocsTransformer - API builtins writes export entry for referenced funct
 exports[`DocsTransformer - API builtins writes export entry for referenced string 1`] = `
 {
   "exports": {
-    "c": {},
+    "c": {
+      "type": "any",
+    },
   },
   "links": {},
 }
@@ -21,7 +25,9 @@ exports[`DocsTransformer - API builtins writes export entry for referenced strin
 exports[`DocsTransformer - API builtins writes export entry for static number 1`] = `
 {
   "exports": {
-    "a": {},
+    "a": {
+      "type": "any",
+    },
   },
   "links": {},
 }
@@ -30,7 +36,9 @@ exports[`DocsTransformer - API builtins writes export entry for static number 1`
 exports[`DocsTransformer - API builtins writes export entry for static string 1`] = `
 {
   "exports": {
-    "b": {},
+    "b": {
+      "type": "any",
+    },
   },
   "links": {},
 }
@@ -44,6 +52,7 @@ exports[`DocsTransformer - API components writes export entry for React componen
       "id": "/test/src/index.tsx:App1",
       "name": "App1",
       "props": null,
+      "ref": null,
       "type": "component",
       "typeParameters": [],
     },
@@ -60,6 +69,7 @@ exports[`DocsTransformer - API components writes export entry for localName Reac
       "id": "/test/src/index.tsx:App2",
       "name": "AppReal",
       "props": null,
+      "ref": null,
       "type": "component",
       "typeParameters": [],
     },
@@ -84,6 +94,7 @@ exports[`DocsTransformer - API identifiers writes export entry for identifiers 1
             "properties": {
               "id": {
                 "default": null,
+                "indexType": null,
                 "name": "id",
                 "optional": false,
                 "type": "property",
@@ -142,6 +153,7 @@ exports[`DocsTransformer - API interfaces follows imported interfaces 1`] = `
       "properties": {
         "a": {
           "default": null,
+          "indexType": null,
           "name": "a",
           "optional": false,
           "type": "property",
@@ -167,6 +179,7 @@ exports[`DocsTransformer - API interfaces writes export entry for interface 1`] 
       "properties": {
         "a": {
           "default": null,
+          "indexType": null,
           "name": "a",
           "optional": false,
           "type": "property",

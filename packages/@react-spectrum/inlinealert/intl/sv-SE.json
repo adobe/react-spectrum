@@ -1,6 +1,6 @@
 {
-  "negative": "Fel",
   "info": "Information",
-  "positive": "Lyckades",
-  "notice": "Varning"
+  "negative": "Fel",
+  "notice": "Varning",
+  "positive": "Lyckades"
 }

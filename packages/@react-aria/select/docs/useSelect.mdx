@@ -58,7 +58,7 @@ select components that can be styled as needed without compromising on high qual
 * Support for disabled options
 * Support for sections
 * Labeling support for accessibility
-* Support for description and error message help text linked to the input via ARIA
+* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
 * Support for mouse, touch, and keyboard interactions
 * Tab stop focus management
 * Keyboard support for opening the listbox using the arrow keys, including automatically focusing
@@ -506,6 +506,9 @@ function Example() {
 }
 ```
 
+### Links
+
+By default, interacting with an item in a Select triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a `Select` are not selectable. See the [links](useListBox.html#links) section in the `useListBox` docs for details on how to support this.
 
 ## Internationalization
 
@@ -520,3 +523,17 @@ content that is passed into the select.
 In right-to-left languages, the select should be mirrored. The arrow should be on the left,
 and the selected value should be on the right. In addition, the content of list options should
 flip. Ensure that your CSS accounts for this.
+
+## Accessibility
+
+### False positives
+
+The HiddenSelect may trigger a [known accessibility false positive](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#picker)
+from automated accessibility testing tools. This is because the HiddenSelect is included to specifically aid with browser form autocomplete
+and is hidden from screen readers via `aria-hidden` since users don't need to interact with it. We manage focus internally
+so that focusing this hidden select element will always shift focus to the Select's trigger button instead. Automated accessibility testing tools have no way of
+knowing that we manage the focus in this way and thus throw this false positive.
+
+To facilitate the suppression of this false positive, the `data-a11y-ignore="aria-hidden-focus"` data attribute is automatically applied to the
+problematic element and references the relevant `AXE` rule. Please use this data attribute to target the problematic element and exclude it
+from your automated accessibility tests as shown [here](./accessibility.html#false-positives).

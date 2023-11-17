@@ -1,7 +1,7 @@
 import {AriaSliderThumbProps} from '@react-types/slider';
-import {clamp, focusWithoutScrolling, mergeProps, useGlobalListeners} from '@react-aria/utils';
+import {clamp, focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners} from '@react-aria/utils';
 import {DOMAttributes} from '@react-types/shared';
-import {getSliderThumbId, sliderIds} from './utils';
+import {getSliderThumbId, sliderData} from './utils';
 import React, {ChangeEvent, InputHTMLAttributes, LabelHTMLAttributes, RefObject, useCallback, useEffect, useRef} from 'react';
 import {SliderState} from '@react-stately/slider';
 import {useFocusable} from '@react-aria/focus';
@@ -48,9 +48,11 @@ export function useSliderThumb(
     index = 0,
     isRequired,
     validationState,
+    isInvalid,
     trackRef,
     inputRef,
-    orientation = state.orientation
+    orientation = state.orientation,
+    name
   } = opts;
 
   let isDisabled = opts.isDisabled || state.isDisabled;
@@ -59,11 +61,11 @@ export function useSliderThumb(
   let {direction} = useLocale();
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
-  let labelId = sliderIds.get(state);
+  let data = sliderData.get(state);
   const {labelProps, fieldProps} = useLabel({
     ...opts,
     id: getSliderThumbId(state, index),
-    'aria-labelledby': `${labelId} ${opts['aria-labelledby'] ?? ''}`.trim()
+    'aria-labelledby': `${data.id} ${opts['aria-labelledby'] ?? ''}`.trim()
   });
 
   const value = state.values[index];
@@ -223,6 +225,10 @@ export function useSliderThumb(
     }
   ) : {};
 
+  useFormReset(inputRef, value, (v) => {
+    state.setThumbValue(index, v);
+  });
+
   // We install mouse handlers for the drag motion on the thumb div, but
   // not the key handler for moving the thumb with the slider.  Instead,
   // we focus the range input, and let the browser handle the keyboard
@@ -235,12 +241,15 @@ export function useSliderThumb(
       max: state.getThumbMaxValue(index),
       step: state.step,
       value: value,
+      name,
       disabled: isDisabled,
       'aria-orientation': orientation,
       'aria-valuetext': state.getThumbValueLabel(index),
       'aria-required': isRequired || undefined,
-      'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-invalid': isInvalid || validationState === 'invalid' || undefined,
       'aria-errormessage': opts['aria-errormessage'],
+      'aria-describedby': [data['aria-describedby'], opts['aria-describedby']].filter(Boolean).join(' '),
+      'aria-details': [data['aria-details'], opts['aria-details']].filter(Boolean).join(' '),
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         state.setThumbValue(index, parseFloat(e.target.value));
       }

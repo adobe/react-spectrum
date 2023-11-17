@@ -1,6 +1,6 @@
 {
-  "negative": "Hata",
   "info": "Bilgiler",
-  "positive": "Başarılı",
-  "notice": "Uyarı"
+  "negative": "Hata",
+  "notice": "Uyarı",
+  "positive": "Başarılı"
 }

@@ -11,7 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/meter/docs/anatomy.svg';
@@ -57,10 +57,10 @@ import {Meter, Label} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-Meter {
-  --bar-color: var(--spectrum-global-color-gray-500);
   --fill-color: forestgreen;
-  --text-color: var(--spectrum-alias-text-color);
 
   display: grid;
   grid-template-areas: "label value"
@@ -76,7 +76,8 @@ import {Meter, Label} from 'react-aria-components';
 
   .bar {
     grid-area: bar;
-    box-shadow: inset 0px 0px 0px 1px var(--bar-color);
+    box-shadow: inset 0px 0px 0px 1px var(--border-color);
+    forced-color-adjust: none;
     height: 10px;
     border-radius: 5px;
     overflow: hidden;
@@ -90,14 +91,7 @@ import {Meter, Label} from 'react-aria-components';
 
 @media (forced-colors: active) {
   .react-aria-Meter {
-    --bar-color: ButtonFace;
-    --text-color: ButtonText;
     --fill-color: Highlight;
-
-    .bar {
-      border: 1px solid ButtonBorder;
-      box-sizing: border-box;
-    }
   }
 }
 ```
@@ -127,6 +121,14 @@ represent the value visually, while a wrapper element represents the meter to
 assistive technology using the [meter](https://www.w3.org/WAI/ARIA/apg/patterns/meter/)
 ARIA role.
 
+```tsx
+import {Meter, Label} from 'react-aria-components';
+
+<Meter>
+  <Label />
+</Meter>
+```
+
 If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
 to identify the element to screen readers.
 
@@ -144,6 +146,83 @@ A `Meter` uses the following components, which may also be used standalone or re
 </ExampleCard>
 
 </section>
+
+## Reusable wrappers
+
+If you will use a Meter in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Meter` and all of its children together into a single component which accepts a `label` prop that is passed to the right place.
+
+```tsx example export=true
+import type {MeterProps} from 'react-aria-components';
+
+interface MyMeterProps extends MeterProps {
+  label?: string
+}
+
+function MyMeter({label, ...props}: MyMeterProps) {
+  return (
+    <Meter {...props}>
+      {({percentage, valueText}) => <>
+        <Label>{label}</Label>
+        <span className="value">{valueText}</span>
+        <div className="bar">
+          <div className="fill" style={{width: percentage + '%'}} />
+        </div>
+      </>}
+    </Meter>
+  );
+}
+
+<MyMeter label="Storage space" value={80} />
+```
+
+## Value
+
+Meters are controlled with the `value` prop. By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
+
+```tsx example
+<MyMeter
+  label="Storage space"
+  value={25} />
+```
+
+### Custom value scale
+
+A custom value scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx example
+<MyMeter
+  label="Widgets Used"
+  minValue={50}
+  maxValue={150}
+  value={100} />
+```
+
+## Labeling
+
+### Value formatting
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<MyMeter
+  label="Currency"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  value={60} />
+```
+
+### Custom value label
+
+The `valueLabel` prop allows the formatted value to be replaced with a custom string.
+
+```tsx example
+<MyMeter
+  label="Space used"
+  valueLabel="54 of 60GB"
+  value={90} />
+```
 
 ## Props
 
@@ -187,76 +266,24 @@ A `Meter` can be targeted with the `.react-aria-Meter` CSS selector, or by overr
 
 A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by adding a custom `className`.
 
-## Reusable wrappers
-
-If you will use a Meter in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `Meter` and all of its children together into a single component which accepts a `label` prop that is passed to the right place.
-
-```tsx example export=true
-import type {MeterProps} from 'react-aria-components';
-
-interface MyMeterProps extends MeterProps {
-  label?: string
-}
-
-function MyMeter({label, ...props}: MyMeterProps) {
-  return (
-    <Meter {...props}>
-      {({percentage, valueText}) => <>
-        <Label>{label}</Label>
-        <span className="value">{valueText}</span>
-        <div className="bar">
-          <div className="fill" style={{width: percentage + '%'}} />
-        </div>
-      </>}
-    </Meter>
-  );
-}
-
-<MyMeter label="Storage space" value={80} />
-```
-
-## Usage
-
-The following examples show how to use the `MyMeter` component created in the above example.
-
-### Custom value scale
-
-By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively. Alternatively, a different scale can be used by setting the `minValue` and `maxValue` props.
-
-```tsx example
-<MyMeter
-  label="Widgets Used"
-  minValue={50}
-  maxValue={150}
-  value={100} />
-```
-
-### Value formatting
-
-Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
-`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
-
-```tsx example
-<MyMeter
-  label="Currency"
-  formatOptions={{style: 'currency', currency: 'JPY'}}
-  value={60} />
-```
-
-### Custom value label
-
-The `valueLabel` prop allows the formatted value to be replaced with a custom string.
-
-```tsx example
-<MyMeter
-  label="Space used"
-  valueLabel="54 of 60GB"
-  value={90} />
-```
-
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Meter']} docs={docs} />
+
+This example sets the `formatOptions` via context, which applies to all nested meters.
+
+```tsx example
+import {MeterContext} from 'react-aria-components';
+
+<MeterContext.Provider value={{formatOptions: {style: 'decimal'}}}>
+  <MyMeter label="Widgets" value={28.5} />
+  <MyMeter label="Cookies" value={68.75} />
+</MeterContext.Provider>
+```
 
 ### Hooks
 

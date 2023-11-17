@@ -15,8 +15,9 @@ import {Table as BackwardCompatTable} from './example-backwards-compat';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
 import {ColumnSize} from '@react-types/table';
 import {Table as DocsTable} from './example-docs';
+import {Key} from '@react-types/shared';
 import {Meta, StoryFn} from '@storybook/react';
-import React, {Key, useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {Table as ResizingTable} from './example-resizing';
 import {SpectrumTableProps} from '@react-spectrum/table';
 import {Table} from './example';
@@ -106,12 +107,28 @@ export const ScrollTesting = {
 
 export const ActionTesting = {
   render: Template,
-  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')}
+  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')},
+  parameters: {
+    a11y: {
+      config: {
+        // False positive, tabbing into the table is handled by us and will focus the row
+        rules: [{id: 'scrollable-region-focusable', enabled: false}]
+      }
+    }
+  }
 };
 
 export const BackwardCompatActionTesting = {
   render: TemplateBackwardsCompat,
-  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')}
+  args: {selectionBehavior: 'replace', selectionStyle: 'highlight', onAction: action('onAction')},
+  parameters: {
+    a11y: {
+      config: {
+        // False positive, tabbing into the table is handled by us and will focus the row
+        rules: [{id: 'scrollable-region-focusable', enabled: false}]
+      }
+    }
+  }
 };
 
 export const TableWithResizingNoProps = {

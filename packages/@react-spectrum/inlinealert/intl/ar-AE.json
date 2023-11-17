@@ -1,6 +1,6 @@
 {
-  "negative": "خطأ",
   "info": "معلومات",
-  "positive": "تم بنجاح",
-  "notice": "تحذير"
+  "negative": "خطأ",
+  "notice": "تحذير",
+  "positive": "تم بنجاح"
 }

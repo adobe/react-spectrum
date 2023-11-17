@@ -1,0 +1,257 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {BlogPostLayout, Hero} from '@react-spectrum/docs';
+export default BlogPostLayout;
+
+---
+description: Our summer release is delivering new features, bug fixes, a new version of React Aria Components, and improved compatibility with new React features. React Spectrum and React Aria can now be run in React Strict Mode, and we now use the builtin React.useId hook to generate ids in React 18. Calendar and DatePicker have been updated to allow for controlling page behavior and locale overrides as well as fixing a number of other related bugs. Lastly, we have released a new version of React Aria Components, which includes the addition of TagGroup, an update to Tabs, and support for standalone Popovers.
+date: 2023-06-27
+---
+
+# June 27, 2023 Release
+
+Our summer release is delivering new features, bug fixes, a new version of React Aria Components, and improved compatibility with new React features. React Spectrum and React Aria can now be run in [React Strict Mode](https://react.dev/reference/react/StrictMode), and we now use the builtin `React.useId` hook to generate ids in React 18 ([see below](#useid-changes)). `Calendar` and `DatePicker` have been updated to allow for controlling page behavior and locale overrides as well as fixing a number of other related bugs. Lastly, we have released a new version of React Aria Components, which includes the addition of `TagGroup` [(see docs)](/react-aria/TagGroup.html), an update to `Tabs` [(see updates)](#under-construction), and support for standalone Popovers.
+
+Thank you to our community for their support and contributions!
+
+## Enhancements
+* Fix remaining React strict mode issues - now fully supported - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4564)
+* Use React.useId if available - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4347)
+* Add `pageBehavior` prop to `Calendar` to control page duration - [@confix](https://github.com/confix) - [PR](https://github.com/adobe/react-spectrum/pull/4587)
+* Add `shouldForceLeadingZeros` leading zeros prop to `DatePicker` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4671)
+
+### useId changes
+
+In this release, we updated our [useId](https://react-spectrum.adobe.com/react-aria/useId.html) hook, which all of our components use to generate unique DOM `id` attributes. If you're using React 18, we now use React's builtin [useId](https://react.dev/reference/react/useId) hook internally. This enables better compatibility with React's new streaming server side renderer and concurrent features, and improves performance.
+
+After you update, you can remove the `SSRProvider` component wrapping your app completely if you are using React 18. It is now unnecessary, and does nothing in modern React versions. You'll see a console warning recommending this after you update. The algorithm for generating ids has also changed, so if you use snapshot testing you will see some changes in the output. Otherwise, the changes should be completely transparent.
+
+If you're using React 17 or 16, the old implementation of `useId` will continue to be used, so you should see no changes. You'll need to keep `SSRProvider` until you update to React 18.
+
+## Fixes
+* Ensure that `useObjectRef` only calls function refs once in strict mode - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4586)
+* Ensure scrollable is set before onTouchMove - [@bbutler522](https://github.com/bbutler522) - [PR](https://github.com/adobe/react-spectrum/pull/3749)
+* ContextualHelp button should be labeled by the label in `Field` - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/4319)
+* `isLoading` state should include "Loading..." in the description in `Picker` - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/4109)
+* useLabels/useLabel consider reordering IDREFs so that aria-label comes before aria-labelledby - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/4191)
+* Update start of week definitions to add missing locales including AU - [@rvramesh](https://github.com/rvramesh) - [PR](https://github.com/adobe/react-spectrum/pull/4598)
+* Fix `SSRProvider` return type - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4627)
+* Fix re-rendering for `useOverlayTriggerState` - [@aam051102](https://github.com/aam051102) - [PR](https://github.com/adobe/react-spectrum/pull/4155)
+* Enable horizontal scrolling in `usePreventScroll` - [@jhyj0521](https://github.com/jhyj0521) - [PR](https://github.com/adobe/react-spectrum/pull/3780)
+* Fix `Section` headings within `ListBox` and `Menu` on mobile screen readers - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/4037)
+* Adds null check to selectTime in `useDatePickerState` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/4647)
+* Update nested drop regions to correctly focus child drop target - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/3843)
+* Fix UTC offset format acceptance in date parsers - [@rvillescas](https://github.com/rvillescas) - [PR](https://github.com/adobe/react-spectrum/pull/4660)
+* Improve DatePicker support with screen reader (NVDA) - [@majornista](https://github.com/majornista) - [PR](https://github.com/adobe/react-spectrum/pull/4639)
+* Improve Firefox `Popover` synthetic blur on disabled button - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/4670)
+
+## Docs
+* Disable hidden select if select is disabled in `useSelect` example - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4552)
+* Fix broken `Collections` link in `Breadcrumbs` React Aria Components page - [@abdmmar](https://github.com/abdmmar) - [PR](https://github.com/adobe/react-spectrum/pull/4569)
+* Update broken link in `@internationalized` date readme - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4596)
+* Fix scroll position jump on mobile for column resize examples in `TableView` - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4646)
+* Remove unused variables from examples in `useTabList` - [@ryo-manba](https://github.com/ryo-manba) - [PR](https://github.com/adobe/react-spectrum/pull/4690)
+* Add a11y info for `Checkbox` `validationState` - [@jnurthen](https://github.com/jnurthen) - [PR](https://github.com/adobe/react-spectrum/pull/4003)
+* Fix typo in `useDialog` example - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/4704)
+* Upgrade to TypeScript 5 - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4635)
+
+
+## Under construction
+
+Fixes to pre-released components are listed below. Please feel free to try them out, and report any issues you encounter.
+
+### React Aria Components (Alpha)
+* Use span for VisuallyHidden when inside a `label` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4590)
+* Refactor React Aria Components Tabs API - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4540)
+* Add AnimatedCalendar example with framer-motion - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4623)
+* Update @types/react version, and fix forwardRef type with render props - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4600)
+* Add support for standalone React Aria Components popovers - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4656)
+* Add `pageBehavior` to React Aria Components/Spectrum Calendar and RangeCalendar - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4650)
+* Add `DropZone` component to React Aria Components - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/4451)
+* Add `TagGroup` component to React Aria Components - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4661)
+* Fix file upload dialog in React Aria Components `DropZone` - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/4681)
+* Make React Aria Components overlay open props override `DialogTrigger` state - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4684)
+* Add layout and orientation props to React Aria Components `ListBox` - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/4669)
+* Update React Aria Component `Calendar` docs to show 3 months in `visibleDuration` - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/4709)
+
+#### React Aria Components Tabs API changes
+
+In this release, we updated the [Tabs](https://react-spectrum.adobe.com/react-aria/Tabs.html) API in React Aria Components. The `<TabPanels>` component is no longer necessary and has been removed. Instead, each individual `<TabPanel>` now chooses whether to render itself based on the selected tab state. In addition, a new `shouldForceMount` prop has been added to force even non-selected tabs to render to the DOM. This can be used to implement animations between tabs or preserve state when a tab is not visible. Check out the [updated documentation](https://react-spectrum.adobe.com/react-aria/Tabs.html) for more details.
+
+### InlineAlert (rc)
+* [React Spectrum docs](https://react-spectrum.adobe.com/react-spectrum/InlineAlert.html)
+
+
+## Released packages
+
+```
+- @adobe/react-spectrum@3.28.0
+- @internationalized/date@3.3.0
+- @internationalized/message@3.1.1
+- @internationalized/number@3.2.1
+- @internationalized/string-compiler@3.2.1
+- @internationalized/string@3.1.1
+- @react-aria/accordion@3.0.0-alpha.19
+- @react-aria/actiongroup@3.6.0
+- @react-aria/aria-modal-polyfill@3.7.3
+- @react-aria/autocomplete@3.0.0-alpha.18
+- @react-aria/breadcrumbs@3.5.3
+- @react-aria/button@3.8.0
+- @react-aria/calendar@3.4.0
+- @react-aria/checkbox@3.9.2
+- @react-aria/color@3.0.0-beta.22
+- @react-aria/combobox@3.6.2
+- @react-aria/datepicker@3.5.0
+- @react-aria/dialog@3.5.3
+- @react-aria/dnd@3.3.0
+- @react-aria/focus@3.13.0
+- @react-aria/grid@3.8.0
+- @react-aria/gridlist@3.5.0
+- @react-aria/i18n@3.8.0
+- @react-aria/interactions@3.16.0
+- @react-aria/label@3.6.0
+- @react-aria/landmark@3.0.0-beta.2
+- @react-aria/link@3.5.2
+- @react-aria/listbox@3.10.0
+- @react-aria/live-announcer@3.3.1
+- @react-aria/menu@3.10.0
+- @react-aria/meter@3.4.3
+- @react-aria/numberfield@3.6.0
+- @react-aria/overlays@3.15.0
+- @react-aria/progress@3.4.3
+- @react-aria/radio@3.6.2
+- @react-aria/searchfield@3.5.3
+- @react-aria/select@3.11.0
+- @react-aria/selection@3.16.0
+- @react-aria/separator@3.3.3
+- @react-aria/slider@3.5.0
+- @react-aria/spinbutton@3.5.0
+- @react-aria/ssr@3.7.0
+- @react-aria/switch@3.5.2
+- @react-aria/table@3.10.0
+- @react-aria/tabs@3.6.1
+- @react-aria/tag@3.1.0
+- @react-aria/textfield@3.10.0
+- @react-aria/toast@3.0.0-beta.2
+- @react-aria/toggle@3.6.2
+- @react-aria/tooltip@3.6.0
+- @react-aria/utils@3.18.0
+- @react-aria/virtualizer@3.9.0
+- @react-aria/visually-hidden@3.8.2
+- @react-spectrum/accordion@3.0.0-alpha.21
+- @react-spectrum/actionbar@3.1.0
+- @react-spectrum/actiongroup@3.9.0
+- @react-spectrum/autocomplete@3.0.0-alpha.19
+- @react-spectrum/avatar@3.0.2
+- @react-spectrum/badge@3.1.3
+- @react-spectrum/breadcrumbs@3.8.0
+- @react-spectrum/button@3.12.3
+- @react-spectrum/buttongroup@3.6.3
+- @react-spectrum/calendar@3.3.0
+- @react-spectrum/card@3.0.0-alpha.20
+- @react-spectrum/checkbox@3.7.3
+- @react-spectrum/color@3.0.0-beta.23
+- @react-spectrum/combobox@3.9.0
+- @react-spectrum/contextualhelp@3.6.0
+- @react-spectrum/datepicker@3.6.0
+- @react-spectrum/dialog@3.8.0
+- @react-spectrum/divider@3.5.3
+- @react-spectrum/dnd@3.3.0
+- @react-spectrum/form@3.6.3
+- @react-spectrum/icon@3.7.3
+- @react-spectrum/illustratedmessage@3.4.3
+- @react-spectrum/image@3.4.3
+- @react-spectrum/inlinealert@3.0.0-rc.0
+- @react-spectrum/label@3.13.0
+- @react-spectrum/labeledvalue@3.1.3
+- @react-spectrum/layout@3.5.3
+- @react-spectrum/link@3.5.3
+- @react-spectrum/list@3.6.0
+- @react-spectrum/listbox@3.11.0
+- @react-spectrum/menu@3.12.0
+- @react-spectrum/meter@3.4.3
+- @react-spectrum/numberfield@3.6.3
+- @react-spectrum/overlays@5.2.0
+- @react-spectrum/picker@3.11.0
+- @react-spectrum/progress@3.6.0
+- @react-spectrum/provider@3.8.0
+- @react-spectrum/radio@3.5.3
+- @react-spectrum/searchfield@3.7.3
+- @react-spectrum/slider@3.5.3
+- @react-spectrum/statuslight@3.5.3
+- @react-spectrum/switch@3.4.3
+- @react-spectrum/table@3.10.0
+- @react-spectrum/tabs@3.7.0
+- @react-spectrum/tag@3.1.0
+- @react-spectrum/text@3.4.3
+- @react-spectrum/textfield@3.10.3
+- @react-spectrum/theme-dark@3.5.3
+- @react-spectrum/theme-default@3.5.3
+- @react-spectrum/theme-express@3.0.0-alpha.5
+- @react-spectrum/theme-light@3.4.3
+- @react-spectrum/toast@3.0.0-beta.2
+- @react-spectrum/tooltip@3.5.2
+- @react-spectrum/utils@3.10.0
+- @react-spectrum/view@3.6.0
+- @react-spectrum/well@3.4.3
+- @react-stately/calendar@3.3.0
+- @react-stately/checkbox@3.4.3
+- @react-stately/collections@3.9.0
+- @react-stately/color@3.4.0
+- @react-stately/combobox@3.5.2
+- @react-stately/data@3.10.0
+- @react-stately/datepicker@3.5.0
+- @react-stately/dnd@3.2.2
+- @react-stately/flags@3.0.0-alpha.0
+- @react-stately/grid@3.7.0
+- @react-stately/layout@3.12.2
+- @react-stately/list@3.9.0
+- @react-stately/menu@3.5.3
+- @react-stately/numberfield@3.5.0
+- @react-stately/overlays@3.6.0
+- @react-stately/radio@3.8.2
+- @react-stately/searchfield@3.4.3
+- @react-stately/select@3.5.2
+- @react-stately/selection@3.13.2
+- @react-stately/slider@3.4.0
+- @react-stately/table@3.10.0
+- @react-stately/tabs@3.5.0
+- @react-stately/toast@3.0.0-beta.1
+- @react-stately/toggle@3.6.0
+- @react-stately/tooltip@3.4.2
+- @react-stately/tree@3.7.0
+- @react-stately/utils@3.7.0
+- @react-stately/virtualizer@3.6.0
+- @react-types/actionbar@3.1.0
+- @react-types/breadcrumbs@3.6.0
+- @react-types/calendar@3.3.0
+- @react-types/card@3.0.0-alpha.16
+- @react-types/contextualhelp@3.2.3
+- @react-types/datepicker@3.4.0
+- @react-types/dialog@3.5.3
+- @react-types/inlinealert@3.0.0-rc.0
+- @react-types/link@3.4.3
+- @react-types/list@3.2.4
+- @react-types/menu@3.9.2
+- @react-types/overlays@3.8.0
+- @react-types/table@3.7.0
+- @react-types/tooltip@3.4.2
+- @spectrum-icons/color@3.5.3
+- @spectrum-icons/express@3.0.0-alpha.7
+- @spectrum-icons/illustrations@3.6.3
+- @spectrum-icons/ui@3.5.3
+- @spectrum-icons/workflow@4.2.2
+- react-aria@3.26.0
+- react-aria-components@1.0.0-alpha.5
+- react-stately@3.24.0
+```
+
+
+

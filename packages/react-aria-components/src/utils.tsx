@@ -12,8 +12,9 @@
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {createContext, CSSProperties, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, CSSProperties, ForwardedRef, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
+import {useIsSSR} from 'react-aria';
 
 // Override forwardRef types so generics work.
 declare function forwardRef<T, P = {}>(
@@ -30,10 +31,11 @@ interface SlottedValue<T> {
   [slotCallbackSymbol]?: (value: T) => void
 }
 
-export type ContextValue<T extends SlotProps, E extends Element> = SlottedValue<WithRef<T, E>> | WithRef<T, E> | null | undefined;
+export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
+export type ContextValue<T, E extends Element> = SlottedContextValue<WithRef<T, E>>;
 
-type ProviderValue<T> = [React.Context<T>, T];
-type ProviderValues<A, B, C, D, E, F, G, H> =
+type ProviderValue<T> = [Context<T>, T];
+type ProviderValues<A, B, C, D, E, F, G, H, I, J, K> =
   | [ProviderValue<A>]
   | [ProviderValue<A>, ProviderValue<B>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>]
@@ -41,20 +43,23 @@ type ProviderValues<A, B, C, D, E, F, G, H> =
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>]
   | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>]
-  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>];
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>]
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>]
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>]
+  | [ProviderValue<A>, ProviderValue<B>, ProviderValue<C>, ProviderValue<D>, ProviderValue<E>, ProviderValue<F>, ProviderValue<G>, ProviderValue<H>, ProviderValue<I>, ProviderValue<J>, ProviderValue<K>];
 
-interface ProviderProps<A, B, C, D, E, F, G, H> {
-  values: ProviderValues<A, B, C, D, E, F, G, H>,
-  children: React.ReactNode
+interface ProviderProps<A, B, C, D, E, F, G, H, I, J, K> {
+  values: ProviderValues<A, B, C, D, E, F, G, H, I, J, K>,
+  children: ReactNode
 }
 
-export function Provider<A, B, C, D, E, F, G, H>({values, children}: ProviderProps<A, B, C, D, E, F, G, H>): JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H, I, J, K>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J, K>): React.JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;
   }
 
-  return children as JSX.Element;
+  return children as React.JSX.Element;
 }
 
 export interface StyleProps {
@@ -125,34 +130,63 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
     return {
       className: computedClassName ?? defaultClassName,
       style: computedStyle,
-      children: computedChildren
+      children: computedChildren,
+      'data-rac': ''
     };
   }, [className, style, children, defaultClassName, defaultChildren, values]);
 }
 
-export type WithRef<T, E> = T & {ref?: React.ForwardedRef<E>};
+export type WithRef<T, E> = T & {ref?: ForwardedRef<E>};
 export interface SlotProps {
-  /** A slot name for the component. Slots allow the component to receive props from a parent component. */
-  slot?: string
+  /**
+   * A slot name for the component. Slots allow the component to receive props from a parent component.
+   * An explicit `null` value indicates that the local props completely override all props received from a parent.
+   */
+  slot?: string | null
 }
 
-export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: React.ForwardedRef<E>, context: React.Context<ContextValue<U, E>>): [T, React.RefObject<E>] {
-  let ctx = useContext(context) || {};
-  if ('slots' in ctx && ctx.slots) {
-    if (!props.slot && !ctx.slots[defaultSlot]) {
-      throw new Error('A slot prop is required');
-    }
-    let slot = props.slot || defaultSlot;
-    if (!ctx.slots[slot]) {
-      // @ts-ignore
-      throw new Error(`Invalid slot "${props.slot}". Valid slot names are ` + new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`)) + '.');
-    }
-    ctx = ctx.slots[slot];
+export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, slot?: string | null): T | null | undefined {
+  let ctx = useContext(context);
+  if (slot === null) {
+    // An explicit `null` slot means don't use context.
+    return null;
   }
+  if (ctx && typeof ctx === 'object' && 'slots' in ctx && ctx.slots) {
+    let availableSlots = new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`));
+
+    if (!slot && !ctx.slots[defaultSlot]) {
+      throw new Error(`A slot prop is required. Valid slot names are ${availableSlots}.`);
+    }
+    let slotKey = slot || defaultSlot;
+    if (!ctx.slots[slotKey]) {
+      // @ts-ignore
+      throw new Error(`Invalid slot "${slot}". Valid slot names are ${availableSlots}.`);
+    }
+    return ctx.slots[slotKey];
+  }
+  // @ts-ignore
+  return ctx;
+}
+
+export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E>] {
+  let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
   let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;
   let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));
   let mergedProps = mergeProps(contextProps, props) as unknown as T;
+
+  // mergeProps does not merge `style`. Adding this there might be a breaking change.
+  if (
+    'style' in contextProps &&
+    contextProps.style &&
+    typeof contextProps.style === 'object' &&
+    'style' in props &&
+    props.style &&
+    typeof props.style === 'object'
+  ) {
+    // @ts-ignore
+    mergedProps.style = {...contextProps.style, ...props.style};
+  }
 
   // A parent component might need the props from a child, so call slot callback if needed.
   useEffect(() => {
@@ -236,7 +270,7 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
     if (isActive && ref.current) {
       // Make sure there's actually an animation, and it wasn't there before we triggered the update.
       let computedStyle = window.getComputedStyle(ref.current);
-      if (computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
+      if (computedStyle.animationName && computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
         let onAnimationEnd = (e: AnimationEvent) => {
           if (e.target === ref.current) {
             element.removeEventListener('animationend', onAnimationEnd);
@@ -256,4 +290,93 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
   }, [ref, isActive, onEnd]);
 }
 
+// React doesn't understand the <template> element, which doesn't have children like a normal element.
+// It will throw an error during hydration when it expects the firstChild to contain content rendered
+// on the server, when in reality, the browser will have placed this inside the `content` document fragment.
+// This monkey patches the firstChild property for our special hidden template elements to work around this error.
+// See https://github.com/facebook/react/issues/19932
+if (typeof HTMLTemplateElement !== 'undefined') {
+  const getFirstChild = Object.getOwnPropertyDescriptor(Node.prototype, 'firstChild')!.get!;
+  Object.defineProperty(HTMLTemplateElement.prototype, 'firstChild', {
+    configurable: true,
+    enumerable: true,
+    get: function () {
+      if (this.dataset.reactAriaHidden) {
+        return this.content.firstChild;
+      } else {
+        return getFirstChild.call(this);
+      }
+    }
+  });
+}
+
 export const HiddenContext = createContext<boolean>(false);
+
+// Portal to nowhere
+const hiddenFragment = typeof DocumentFragment !== 'undefined' ? new DocumentFragment() : null;
+
+export function Hidden(props: {children: ReactNode}) {
+  let isHidden = useContext(HiddenContext);
+  let isSSR = useIsSSR();
+  if (isHidden) {
+    // Don't hide again if we are already hidden.
+    return <>{props.children}</>;
+  }
+
+  let children = (
+    <HiddenContext.Provider value>
+      {props.children}
+    </HiddenContext.Provider>
+  );
+
+  // In SSR, portals are not supported by React. Instead, render into a <template>
+  // element, which the browser will never display to the user. In addition, the
+  // content is not part of the DOM tree, so it won't affect ids or other accessibility attributes.
+  return isSSR
+    ? <template data-react-aria-hidden>{children}</template>
+    : ReactDOM.createPortal(children, hiddenFragment!);
+}
+
+// Creates a component that forwards its ref and returns null if it is in a <Hidden> subtree.
+// Note: this function is handled specially in the documentation generator. If you change it, you'll need to update DocsTransformer as well.
+export function createHideableComponent<T, P = {}>(fn: (props: P, ref: React.Ref<T>) => React.ReactElement | null): (props: P & React.RefAttributes<T>) => React.ReactElement | null {
+  let Wrapper = (props: P, ref: React.Ref<T>) => {
+    let isHidden = useContext(HiddenContext);
+    if (isHidden) {
+      return null;
+    }
+
+    return fn(props, ref);
+  };
+  // @ts-ignore - for react dev tools
+  Wrapper.displayName = fn.displayName || fn.name;
+  return (React.forwardRef as forwardRefType)(Wrapper);
+}
+
+/**
+ * Filters out `data-*` attributes to keep them from being passed down and duplicated.
+ * @param props
+ */
+export function removeDataAttributes<T>(props: T): T {
+  const prefix = /^(data-.*)$/;
+  let filteredProps = {} as T;
+
+  for (const prop in props) {
+    if (!prefix.test(prop)) {
+      filteredProps[prop] = props[prop];
+    }
+  }
+
+  return filteredProps;
+}
+
+// Override base type to change the default.
+export interface RACValidation {
+  /**
+   * Whether to use native HTML form validation to prevent form submission
+   * when the value is missing or invalid, or mark the field as required
+   * or invalid via ARIA.
+   * @default 'native'
+   */
+  validationBehavior?: 'native' | 'aria'
+}

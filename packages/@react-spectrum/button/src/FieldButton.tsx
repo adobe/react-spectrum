@@ -24,6 +24,7 @@ interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
   isQuiet?: boolean,
   isActive?: boolean,
   validationState?: 'valid' | 'invalid',
+  isInvalid?: boolean,
   focusRingClass?: string
 }
 
@@ -34,6 +35,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
     isQuiet,
     isDisabled,
     validationState,
+    isInvalid,
     children,
     autoFocus,
     isActive,
@@ -58,7 +60,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
               'spectrum-FieldButton--quiet': isQuiet,
               'is-active': isActive || isPressed,
               'is-disabled': isDisabled,
-              'spectrum-FieldButton--invalid': validationState === 'invalid',
+              'spectrum-FieldButton--invalid': isInvalid || validationState === 'invalid',
               'is-hovered': isHovered
             },
             styleProps.className

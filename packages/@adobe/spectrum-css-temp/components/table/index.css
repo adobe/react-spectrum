@@ -163,7 +163,7 @@ svg.spectrum-Table-sortedIcon {
 }
 
 /* Helper for shared drop target overlay */
-%drop-target {
+.is-drop-target {
   &::before {
     content: '';
     position: absolute;
@@ -186,9 +186,6 @@ svg.spectrum-Table-sortedIcon {
   /* Fix scrollbars on iOS with sticky row headers */
   transform: translate3d(0, 0, 0);
 
-  &.is-drop-target {
-    @inherit: %drop-target;
-  }
   &.spectrum-Table-body--resizerAtTableEdge {
     border-start-end-radius: 0;
   }
@@ -219,27 +216,36 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
+.spectrum-Table--regular {
+  --spectrum-table-cell-padding-y: var(--spectrum-table-cell-regular-padding-y);
+}
+
+.spectrum-Table--compact .spectrum-Table-cell {
+  --spectrum-table-cell-padding-y: var(--spectrum-table-cell-compact-padding-y);
+}
+
+.spectrum-Table--spacious .spectrum-Table-cell {
+  --spectrum-table-cell-padding-y: var(--spectrum-table-cell-spacious-padding-y);
+}
+
 .spectrum-Table-cell {
   box-sizing: border-box;
   font-size: var(--spectrum-table-cell-text-size);
   font-weight: var(--spectrum-table-cell-text-font-weight);
   /* need to subtract 1px here because 14px * 1.5 + 14px + 14px = 49px, and we want 48px */
   line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
-  padding: var(--spectrum-table-cell-regular-padding-y) var(--spectrum-table-cell-padding-x);
-}
-.spectrum-Table--regular {}
+  padding: var(--spectrum-table-cell-padding-y) var(--spectrum-table-cell-padding-x);
 
-.spectrum-Table--compact .spectrum-Table-cell {
-  padding-top: var(--spectrum-table-cell-compact-padding-y);
-  padding-bottom: var(--spectrum-table-cell-compact-padding-y);
-}
-
-.spectrum-Table--spacious .spectrum-Table-cell {
-  padding-top: var(--spectrum-table-cell-spacious-padding-y);
-  padding-bottom: var(--spectrum-table-cell-spacious-padding-y);
+  &.spectrum-Table-cell--hasExpandCollapseButton {
+    display: grid;
+    grid-template-columns: var(--spectrum-global-dimension-size-400) 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "expand-button contents";
+  }
 }
 
 .spectrum-Table-cellContents {
+  grid-area: contents;
   flex: 1 1 0%;
   /* To ensure the flex child only takes up available width, see https://makandracards.com/makandra/66994-css-flex-and-min-width */
   min-width: 0px;
@@ -252,6 +258,26 @@ svg.spectrum-Table-sortedIcon {
   /* allow focus ring of child to extend outside the bounds */
   padding: 4px;
   margin: -4px;
+}
+
+.spectrum-Table-expandButton {
+  grid-area: expand-button;
+  height: var(--spectrum-global-dimension-size-400);
+  margin: calc(var(--spectrum-table-cell-padding-y) * -1) 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  outline: none;
+  transition: transform ease var(--spectrum-global-animation-duration-100);
+  &.is-open {
+    [dir='ltr'] & {
+      transform: rotate(90deg);
+    }
+    [dir='rtl'] & {
+      transform: rotate(-90deg);
+    }
+  }
 }
 
 .spectrum-Table-cell--hideHeader {
@@ -272,7 +298,7 @@ svg.spectrum-Table-sortedIcon {
     outline: none;
   }
 
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     outline: none;
 
@@ -328,7 +354,7 @@ svg.spectrum-Table-sortedIcon {
 
 .spectrum-Table-headCell,
 .spectrum-Table-headCellButton {
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     &::before {
       top: var(--spectrum-table-border-size);
@@ -348,12 +374,16 @@ svg.spectrum-Table-sortedIcon {
   cursor: default;
   transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
 
+  &[data-href] {
+    cursor: pointer;
+  }
+
   &:focus {
     outline: 0;
   }
 
   /* The focus ring should be sticky so it is visible at all horizontal scroll positions. */
-  &:focus-ring {
+  &:focus-visible {
     &:before {
       display: inline-block;
       content: '';
@@ -369,10 +399,6 @@ svg.spectrum-Table-sortedIcon {
       display: inline-block;
       vertical-align: top;
     }
-  }
-
-  &.is-drop-target {
-    @inherit: %drop-target;
   }
 }
 
@@ -424,8 +450,8 @@ svg.spectrum-Table-sortedIcon {
   }
 }
 
-/* the CSS logical properties postcss plugin doesn't seem to work with :focus-ring. */
-[dir="rtl"] .spectrum-Table-row:focus-ring:before {
+/* the CSS logical properties postcss plugin doesn't seem to work with :focus-visible. */
+[dir="rtl"] .spectrum-Table-row:focus-visible:before {
   right: 0;
 }
 
@@ -499,7 +525,7 @@ svg.spectrum-Table-sortedIcon {
 
 @media (forced-colors: active) {
   .spectrum-Table-row {
-    &:focus-ring {
+    &:focus-visible {
       /* Adds a full outline style to the focused row to better distinguish between
       the selected, not selected, selected + focused and selected + not focused
       states without using a background color on the row in forced-colors: active mode. */

@@ -43,7 +43,7 @@ function MaybePortal({children, isPortaled}: {children: ReactNode, isPortaled: b
 
   return ReactDOM.createPortal(
     <>{children}</>,
-    document.getElementById(dialogsRoot)
+    document.getElementById(dialogsRoot)!
   );
 }
 
@@ -94,12 +94,11 @@ export function Example({isPortaled, contain}: StoryProps) {
 
   return (
     <div>
-      <input />
-
+      <input aria-label="input before" />
       <button type="button" onClick={() => setOpen(true)}>
         Open dialog
       </button>
-      <input />
+      <input aria-label="input after" />
       {open && <NestedDialog onClose={() => setOpen(false)} isPortaled={isPortaled} contain={contain} />}
 
       <div id={dialogsRoot} />
@@ -136,7 +135,7 @@ function FocusableFirstInScopeExample() {
       </>
     );
   }
-  const contents = [];
+  const contents: React.JSX.Element[] = [];
   for (let i = 0; i < 3; i++) {
     contents.push(DialogContent(i));
   }

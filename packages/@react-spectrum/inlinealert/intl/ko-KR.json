@@ -1,6 +1,6 @@
 {
-  "negative": "오류",
   "info": "정보",
-  "positive": "성공",
-  "notice": "경고"
+  "negative": "오류",
+  "notice": "경고",
+  "positive": "성공"
 }

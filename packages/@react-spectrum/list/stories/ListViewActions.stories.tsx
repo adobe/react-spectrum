@@ -68,7 +68,7 @@ export default {
 export type ListViewStory = ComponentStoryObj<typeof ListView>;
 
 export const ActionButtons: ListViewStory = {
-  render: (args) => renderActionsExample(props => <ActionButton {...props}><Copy /></ActionButton>, args),
+  render: (args) => renderActionsExample(props => <ActionButton {...props} aria-label="copy"><Copy /></ActionButton>, args),
   name: 'ActionButton'
 };
 

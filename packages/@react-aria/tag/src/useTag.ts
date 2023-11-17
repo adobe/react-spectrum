@@ -12,7 +12,7 @@
 
 import {AriaButtonProps} from '@react-types/button';
 import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {filterDOMProps, getSyntheticLinkProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 import {hookData} from './useTagGroup';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -80,7 +80,8 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
 
   let isFocused = item.key === state.selectionManager.focusedKey;
   // @ts-ignore - data attributes are ok but TS doesn't know about them.
-  let domProps = filterDOMProps(props);
+  let domProps = filterDOMProps(item.props);
+  let linkProps = getSyntheticLinkProps(item.props);
   return {
     removeButtonProps: {
       'aria-label': stringFormatter.format('removeButtonLabel'),
@@ -89,7 +90,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
       onPress: () => onRemove ? onRemove(new Set([item.key])) : null,
       excludeFromTabOrder: true
     },
-    rowProps: mergeProps(rowProps, domProps, {
+    rowProps: mergeProps(rowProps, domProps, linkProps, {
       tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
       onKeyDown: onRemove ? onKeyDown : undefined,
       'aria-describedby': descProps['aria-describedby']

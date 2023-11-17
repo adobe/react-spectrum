@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Calendar, RangeCalendar} from '../';
 import {CalendarDate, GregorianCalendar, today} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
@@ -23,7 +23,10 @@ let headingFormatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'n
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
 
 describe('CalendarBase', () => {
+  let user;
+
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 
@@ -234,7 +237,7 @@ describe('CalendarBase', () => {
       Name                    | Calendar              | props
       ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new CalendarDate(2019, 3, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
       ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new CalendarDate(2019, 3, 10), end: new CalendarDate(2019, 3, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
-    `('$Name should move focus when the previous or next buttons become disabled', ({Calendar, props}) => {
+    `('$Name should move focus when the previous or next buttons become disabled', async ({Calendar, props}) => {
       let {getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
 
       let prevButton = getByLabelText('Previous');
@@ -243,18 +246,18 @@ describe('CalendarBase', () => {
       expect(prevButton).not.toHaveAttribute('disabled');
       expect(nextButton).not.toHaveAttribute('disabled');
 
-      act(() => userEvent.click(prevButton));
+      await user.click(prevButton);
       expect(prevButton).toHaveAttribute('disabled');
       expect(nextButton).not.toHaveAttribute('disabled');
       expect(document.activeElement.getAttribute('aria-label').startsWith('Sunday, February 10, 2019')).toBe(true);
 
-      act(() => userEvent.click(nextButton));
+      await user.click(nextButton);
 
       expect(prevButton).not.toHaveAttribute('disabled');
       expect(nextButton).not.toHaveAttribute('disabled');
       expect(document.activeElement).toBe(nextButton);
 
-      act(() => userEvent.click(nextButton));
+      await user.click(nextButton);
       expect(prevButton).not.toHaveAttribute('disabled');
       expect(nextButton).toHaveAttribute('disabled');
       expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, April 10, 2019')).toBe(true);

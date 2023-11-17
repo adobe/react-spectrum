@@ -1,6 +1,8 @@
 {
+  "collapse": "Samenvouwen",
   "columnResizer": "Groottewijziging van kolom",
   "drag": "Slepen",
+  "expand": "Uitvouwen",
   "loading": "Laden...",
   "loadingMore": "Meer laden...",
   "resizeColumn": "Kolomgrootte wijzigen",

@@ -96,6 +96,16 @@
   --spectrum-fieldbutton-border-color-error-key-focus: var(--spectrum-fieldbutton-border-color-error);
   --spectrum-fieldbutton-border-color-down: var(--spectrum-actionbutton-border-color-down);
 
+  --spectrum-breadcrumb-button-gap: var(--spectrum-global-dimension-static-size-50);
+  --spectrum-breadcrumb-ui-icon-color: var(--spectrum-gray-800);
+  --spectrum-breadcrumb-ui-icon-width: var(--spectrum-global-dimension-size-225);
+  --spectrum-breadcrumb-ui-icon-height: var(--spectrum-global-dimension-size-225);
+  --spectrum-breadcrumb-item-padding-x: var(--spectrum-global-dimension-size-50);
+  --spectrum-breadcrumb-separator-icon-position-adjustment: 0;
+
+  --spectrum-icon-chevron-right-small-height: var(--spectrum-global-dimension-size-225);
+  --spectrum-icon-chevron-right-small-width: var(--spectrum-global-dimension-size-225);
+
   --spectrum-combobox-fieldbutton-inset: var(--spectrum-global-dimension-size-75);
   --spectrum-combobox-fieldbutton-border-left-width: 0;
   --spectrum-combobox-fieldbutton-focus-ring-border-radius: var(--spectrum-alias-border-radius-regular);
@@ -161,4 +171,10 @@
 
 .express.large {
   --spectrum-switch-track-width: 36px;
+}
+
+@media (forced-colors: active) {
+  .express.express {
+    --spectrum-popover-border-size: var(--spectrum-alias-border-size-thin);
+  }
 }

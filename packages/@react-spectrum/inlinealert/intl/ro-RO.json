@@ -1,6 +1,6 @@
 {
+  "info": "Informații",
   "negative": "Eroare",
-  "info": "Informaţii",
-  "positive": "Succes",
-  "notice": "Avertisment"
+  "notice": "Avertisment",
+  "positive": "Succes"
 }

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {BuddhistCalendar, CalendarDate, CalendarDateTime, CopticCalendar, EthiopicAmeteAlemCalendar, EthiopicCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar} from '..';
+import {BuddhistCalendar, CalendarDate, CalendarDateTime, CopticCalendar, EthiopicAmeteAlemCalendar, EthiopicCalendar, HebrewCalendar, IndianCalendar, IslamicCivilCalendar, IslamicTabularCalendar, IslamicUmalquraCalendar, JapaneseCalendar, PersianCalendar, TaiwanCalendar, ZonedDateTime} from '..';
 
 describe('CalendarDate manipulation', function () {
   describe('add', function () {
@@ -687,6 +687,10 @@ describe('CalendarDateTime manipulation', function () {
   describe('add', function () {
     it.each`
       Unit              | Expected
+      ${'years'}        | ${new CalendarDateTime(2025, 1, 1, 0, 0, 0, 0)}
+      ${'months'}       | ${new CalendarDateTime(2020, 6, 1, 0, 0, 0, 0)}
+      ${'weeks'}        | ${new CalendarDateTime(2020, 2, 5, 0, 0, 0, 0)}
+      ${'days'}         | ${new CalendarDateTime(2020, 1, 6, 0, 0, 0, 0)}
       ${'hours'}        | ${new CalendarDateTime(2020, 1, 1, 5, 0, 0, 0)}
       ${'minutes'}      | ${new CalendarDateTime(2020, 1, 1, 0, 5, 0, 0)}
       ${'seconds'}      | ${new CalendarDateTime(2020, 1, 1, 0, 0, 5, 0)}
@@ -700,12 +704,54 @@ describe('CalendarDateTime manipulation', function () {
   describe('subtract', function () {
     it.each`
       Unit              | Expected
+      ${'years'}        | ${new CalendarDateTime(2015, 1, 1, 5, 5, 5, 5)}
+      ${'months'}       | ${new CalendarDateTime(2019, 8, 1, 5, 5, 5, 5)}
+      ${'weeks'}        | ${new CalendarDateTime(2019, 11, 27, 5, 5, 5, 5)}
+      ${'days'}         | ${new CalendarDateTime(2019, 12, 27, 5, 5, 5, 5)}
       ${'hours'}        | ${new CalendarDateTime(2020, 1, 1, 0, 5, 5, 5)}
       ${'minutes'}      | ${new CalendarDateTime(2020, 1, 1, 5, 0, 5, 5)}
       ${'seconds'}      | ${new CalendarDateTime(2020, 1, 1, 5, 5, 0, 5)}
       ${'milliseconds'} | ${new CalendarDateTime(2020, 1, 1, 5, 5, 5, 0)}
     `('should subtract $Unit', ({Unit, Expected}) => {
       let date = new CalendarDateTime(2020, 1, 1, 5, 5, 5, 5);
+      expect(date.subtract({[`${Unit}`]: 5})).toEqual(Expected);
+    });
+  });
+});
+
+
+describe('ZonedDateTime manipulation', function () {
+  describe('add', function () {
+    it.each`
+      Unit              | Expected
+      ${'years'}        | ${new ZonedDateTime(2025, 1, 1, 'UTC', 0, 0, 0, 0, 0)}
+      ${'months'}       | ${new ZonedDateTime(2020, 6, 1, 'UTC', 0, 0, 0, 0, 0)}
+      ${'weeks'}        | ${new ZonedDateTime(2020, 2, 5, 'UTC', 0, 0, 0, 0, 0)}
+      ${'days'}         | ${new ZonedDateTime(2020, 1, 6, 'UTC', 0, 0, 0, 0, 0)}
+      ${'hours'}        | ${new ZonedDateTime(2020, 1, 1, 'UTC', 0, 5, 0, 0, 0)}
+      ${'minutes'}      | ${new ZonedDateTime(2020, 1, 1, 'UTC', 0, 0, 5, 0, 0)}
+      ${'seconds'}      | ${new ZonedDateTime(2020, 1, 1, 'UTC', 0, 0, 0, 5, 0)}
+      ${'milliseconds'} | ${new ZonedDateTime(2020, 1, 1, 'UTC', 0, 0, 0, 0, 5)}
+    `('should add $Unit', ({Unit, Expected}) => {
+      let date = new ZonedDateTime(2020, 1, 1, 'UTC', 0, 0, 0, 0, 0);
+      expect(date.add({[`${Unit}`]: 5})).toEqual(Expected);
+    });
+  });
+
+  describe('subtract', function () {
+    it.each`
+      Unit              | Expected
+      ${'years'}        | ${new ZonedDateTime(2015, 1, 1, 'UTC', 0, 5, 5, 5, 5)}
+      ${'months'}       | ${new ZonedDateTime(2019, 8, 1, 'UTC', 0, 5, 5, 5, 5)}
+      ${'weeks'}        | ${new ZonedDateTime(2019, 11, 27, 'UTC', 0, 5, 5, 5, 5)}
+      ${'days'}         | ${new ZonedDateTime(2019, 12, 27, 'UTC', 0,  5, 5, 5, 5)}
+      ${'hours'}        | ${new ZonedDateTime(2020, 1, 1, 'UTC', 0, 0, 5, 5, 5)}
+      ${'hours'}        | ${new ZonedDateTime(2020, 1, 1, 'UTC', 0, 0, 5, 5, 5)}
+      ${'minutes'}      | ${new ZonedDateTime(2020, 1, 1, 'UTC', 0, 5, 0, 5, 5)}
+      ${'seconds'}      | ${new ZonedDateTime(2020, 1, 1, 'UTC', 0, 5, 5, 0, 5)}
+      ${'milliseconds'} | ${new ZonedDateTime(2020, 1, 1, 'UTC', 0, 5, 5, 5, 0)}
+    `('should subtract $Unit', ({Unit, Expected}) => {
+      let date = new ZonedDateTime(2020, 1, 1, 'UTC', 0, 5, 5, 5, 5);
       expect(date.subtract({[`${Unit}`]: 5})).toEqual(Expected);
     });
   });

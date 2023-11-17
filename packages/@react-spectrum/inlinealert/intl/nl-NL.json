@@ -1,6 +1,6 @@
 {
-  "negative": "Fout",
   "info": "Informatie",
-  "positive": "Geslaagd",
-  "notice": "Waarschuwing"
+  "negative": "Fout",
+  "notice": "Waarschuwing",
+  "positive": "Geslaagd"
 }

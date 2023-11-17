@@ -76,9 +76,8 @@ export default {
       control: 'select',
       options: ['top', 'side']
     },
-    validationState: {
-      control: 'select',
-      options: [null, 'valid', 'invalid']
+    isInvalid: {
+      control: 'boolean'
     },
     description: {
       control: 'text'

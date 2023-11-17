@@ -78,6 +78,7 @@ let itemsNoThinImages = [
   {width: 1516, height: 1009, src: 'https://i.imgur.com/1nScMIH.jpg', id: 21, title: 'Bob 5'}
 ];
 
+// TODO: accessibility failures regarding article element with role="gridcell", will need to double check when we pick CardView back up
 export default {
   title: 'CardView/Gallery layout',
   component: CardView,

@@ -73,7 +73,7 @@ export interface PositionAria {
 }
 
 // @ts-ignore
-let visualViewport = typeof window !== 'undefined' && window.visualViewport;
+let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 /**
  * Handles positioning overlays like popovers and menus relative to a trigger
@@ -217,6 +217,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     },
     placement: position.placement,
     arrowProps: {
+      'aria-hidden': 'true',
+      role: 'presentation',
       style: {
         left: position.arrowOffsetLeft,
         top: position.arrowOffsetTop

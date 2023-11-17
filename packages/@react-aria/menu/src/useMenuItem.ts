@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, PressEvent} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key, PressEvent} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useEffectEvent, useLayoutEffect, useRouter, useSlotId} from '@react-aria/utils';
 import {focusSafely} from '@react-aria/focus';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useHover, useKeyboard, usePress} from '@react-aria/interactions';
-import {Key, RefObject, useCallback, useRef} from 'react';
 import {menuData} from './useMenu';
-import {mergeProps, useEffectEvent, useLayoutEffect, useSlotId} from '@react-aria/utils';
+import {RefObject, useCallback, useRef} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useLocale} from '@react-aria/i18n';
 import {useSelectableItem} from '@react-aria/selection';
@@ -103,7 +103,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   } = props;
   let {direction} = useLocale();
 
-  let isMenuDialogTrigger = state.collection.getItem(key).hasChildNodes;
+  let isTrigger = !!hasPopup;
   let isOpen = state.expandedKeys.has(key);
 
   let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
@@ -133,7 +133,17 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     // will need to disable this lint rule when using useEffectEvent https://react.dev/learn/separating-events-from-effects#logic-inside-effects-is-reactive
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  let onAction = isMenuDialogTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
+  let onAction = isTrigger ? onActionMenuDialogTrigger : props.onAction || data.onAction;
+  let router = useRouter();
+  let performAction = (e: PressEvent) => {
+    if (onAction) {
+      onAction(key);
+    }
+
+    if (e.target instanceof HTMLAnchorElement) {
+      router.open(e.target, e);
+    }
+  };
 
   let role = 'menuitem';
   if (state.selectionManager.selectionMode === 'single') {
@@ -158,8 +168,9 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-checked'] = isSelected;
   }
 
+  let item = state.collection.getItem(key);
   if (isVirtualized) {
-    ariaProps['aria-posinset'] = state.collection.getItem(key).index;
+    ariaProps['aria-posinset'] = item?.index;
     ariaProps['aria-setsize'] = getItemCount(state.collection);
   }
 
@@ -169,20 +180,18 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   }
 
   let onPressStart = (e: PressEvent) => {
-    if (e.pointerType === 'keyboard' && onAction) {
-      onAction(key);
+    if (e.pointerType === 'keyboard') {
+      performAction(e);
     }
   };
 
   let onPressUp = (e: PressEvent) => {
     if (e.pointerType !== 'keyboard') {
-      if (onAction) {
-        onAction(key);
-      }
+      performAction(e);
 
       // Pressing a menu item should close by default in single selection mode but not multiple
       // selection mode, except if overridden by the closeOnSelect prop.
-      if (!isMenuDialogTrigger && onClose && (closeOnSelect ?? state.selectionManager.selectionMode !== 'multiple')) {
+      if (!isTrigger && onClose && (closeOnSelect ?? (state.selectionManager.selectionMode !== 'multiple' || state.selectionManager.isLink(key)))) {
         onClose();
       }
     }
@@ -193,14 +202,23 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     key,
     ref,
     shouldSelectOnPressUp: true,
-    allowsDifferentPressOrigin: true
+    allowsDifferentPressOrigin: true,
+    // Disable all handling of links in useSelectable item
+    // because we handle it ourselves. The behavior of menus
+    // is slightly different from other collections because
+    // actions are performed on key down rather than key up.
+    linkBehavior: 'none'
   });
 
-  let {pressProps, isPressed} = usePress({onPressStart, onPressUp, isDisabled: isDisabled || (isMenuDialogTrigger && state.expandedKeys.has(key))});
+  let {pressProps, isPressed} = usePress({
+    onPressStart,
+    onPressUp,
+    isDisabled: isDisabled || (isTrigger && state.expandedKeys.has(key))
+  });
   let {hoverProps} = useHover({
     isDisabled,
     onHoverStart() {
-      if (!isFocusVisible() && !(isMenuDialogTrigger && state.expandedKeys.has(key))) {
+      if (!isFocusVisible() && !(isTrigger && state.expandedKeys.has(key))) {
         state.selectionManager.setFocused(true);
         state.selectionManager.setFocusedKey(key);
         // focus immediately so that a focus scope opened on hover has the correct restore node
@@ -211,7 +229,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       }
     },
     onHoverChange: isHovered => {
-      if (isHovered && isMenuDialogTrigger && !state.expandedKeys.has(key)) {
+      if (isHovered && isTrigger && !state.expandedKeys.has(key)) {
         if (!openTimeout.current) {
           openTimeout.current = setTimeout(() => {
             onSubmenuOpen();
@@ -234,25 +252,25 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
 
       switch (e.key) {
         case ' ':
-          if (!isDisabled && state.selectionManager.selectionMode === 'none' && !isMenuDialogTrigger && closeOnSelect !== false && onClose) {
+          if (!isDisabled && state.selectionManager.selectionMode === 'none' && !isTrigger && closeOnSelect !== false && onClose) {
             onClose();
           }
           break;
         case 'Enter':
           // The Enter key should always close on select, except if overridden.
-          if (!isDisabled && closeOnSelect !== false && !isMenuDialogTrigger && onClose) {
+          if (!isDisabled && closeOnSelect !== false && !isTrigger && onClose) {
             onClose();
           }
           break;
         case 'ArrowRight':
-          if (isMenuDialogTrigger && direction === 'ltr') {
+          if (isTrigger && direction === 'ltr') {
             onSubmenuOpen();
           } else {
             e.continuePropagation();
           }
           break;
         case 'ArrowLeft':
-          if (isMenuDialogTrigger && direction === 'rtl') {
+          if (isTrigger && direction === 'rtl') {
             onSubmenuOpen();
           } else {
             e.continuePropagation();
@@ -265,10 +283,12 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
   });
 
+  let domProps = filterDOMProps(item.props, {isLink: !!item?.props?.href});
+  delete domProps.id;
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(itemProps, pressProps, hoverProps, keyboardProps)
+      ...mergeProps(domProps, itemProps, pressProps, hoverProps, keyboardProps)
     },
     labelProps: {
       id: labelId

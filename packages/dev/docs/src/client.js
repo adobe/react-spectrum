@@ -16,7 +16,7 @@ import docsStyle from './docs.css';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
 import {listen} from 'quicklink';
 import React, {useEffect, useRef, useState} from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import ShowMenu from '@spectrum-icons/workflow/ShowMenu';
 import {ThemeSwitcher} from './ThemeSwitcher';
 
@@ -182,15 +182,24 @@ function Hamburger() {
   );
 }
 
-ReactDOM.render(<>
-  <Hamburger />
-  <DocSearch />
-  <ThemeSwitcher />
-</>, document.querySelector('.' + docsStyle.pageHeader));
+let pageHeader = document.querySelector('.' + docsStyle.pageHeader);
+if (pageHeader) {
+  ReactDOM.createRoot(pageHeader).render(<>
+    <Hamburger />
+    <DocSearch />
+    <ThemeSwitcher />
+  </>);
+} else {
+  let exampleHeader = document.querySelector('.' + docsStyle.exampleHeader);
+  if (exampleHeader) {
+    ReactDOM.createRoot(exampleHeader).render(<ThemeSwitcher />);
+  }
+}
 
 let pathToPage = document.querySelector('[data-github-src]').getAttribute('data-github-src');
-if (pathToPage) {
-  ReactDOM.render(
+let editPage = document.querySelector('#edit-page');
+if (pathToPage && editPage) {
+  ReactDOM.createRoot(editPage).render(
     <Link>
       <a
         href={encodeURI(`https://github.com/adobe/react-spectrum/tree/main/${encodeURI(pathToPage)}`)}
@@ -199,8 +208,7 @@ if (pathToPage) {
           <span>Edit this page</span><LinkOut size="S" />
         </Flex>
       </a>
-    </Link>,
-    document.querySelector('#edit-page')
+    </Link>
   );
 }
 
@@ -230,15 +238,17 @@ let lastScrollPosition = sessionStorage.getItem('sidebarScrollPosition');
 
 // If we have a recorded scroll position, and the last selected item is in the sidebar
 // (e.g. we're in the same category), then restore the scroll position.
-if (lastSelectedItem && lastScrollPosition && [...sidebar.querySelectorAll('a')].some(a => a.pathname === lastSelectedItem)) {
+if (sidebar && lastSelectedItem && lastScrollPosition && [...sidebar.querySelectorAll('a')].some(a => a.pathname === lastSelectedItem)) {
   sidebar.scrollTop = parseInt(lastScrollPosition, 10);
 }
 
-// Save scroll position of the sidebar when we're about to navigate
-window.addEventListener('pagehide', () => {
-  sessionStorage.setItem('sidebarSelectedItem', location.pathname);
-  sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
-});
+if (sidebar) {
+  // Save scroll position of the sidebar when we're about to navigate
+  window.addEventListener('pagehide', () => {
+    sessionStorage.setItem('sidebarSelectedItem', location.pathname);
+    sessionStorage.setItem('sidebarScrollPosition', sidebar.scrollTop);
+  });
+}
 
 // Disable autoplay for videos when the prefers-reduced-motion media query is enabled.
 function reducedMotionCheck(e) {
@@ -279,3 +289,29 @@ function reducedMotionCheck(e) {
 let prefersReducedMotion = matchMedia('(prefers-reduced-motion)');
 reducedMotionCheck(prefersReducedMotion);
 prefersReducedMotion.addEventListener('change', reducedMotionCheck);
+
+// We replace :hover with .is-hovered in CSS so hover states are not applied on touch.
+// For components rendered client side, the hover class will already be applied.
+// For server rendered components, a data-hover attribute is added with the class
+// that should be applied on hover and we do that here using global listeners.
+let ignoreSimulatedMouseEvents = false;
+document.addEventListener('touchstart', () => {
+  ignoreSimulatedMouseEvents = true;
+}, true);
+
+document.addEventListener('mouseenter', e => {
+  if (ignoreSimulatedMouseEvents) {
+    ignoreSimulatedMouseEvents = false;
+    return;
+  }
+
+  if (e.target instanceof Element && e.target.dataset.hover) {
+    e.target.classList.add(e.target.dataset.hover);
+  }
+}, true);
+
+document.addEventListener('mouseleave', e => {
+  if (e.target instanceof Element && e.target.dataset.hover) {
+    e.target.classList.remove(e.target.dataset.hover);
+  }
+}, true);

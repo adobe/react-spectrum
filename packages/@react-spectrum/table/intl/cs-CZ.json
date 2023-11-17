@@ -1,6 +1,8 @@
 {
+  "collapse": "Zmenšit",
   "columnResizer": "Změna velikosti sloupce",
   "drag": "Přetáhnout",
+  "expand": "Roztáhnout",
   "loading": "Načítání...",
   "loadingMore": "Načítání dalších...",
   "resizeColumn": "Změnit velikost sloupce",

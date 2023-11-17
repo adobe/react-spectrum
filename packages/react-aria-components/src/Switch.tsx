@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSwitchProps, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
+import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
-import {useToggleState} from 'react-stately';
+import {ToggleState, useToggleState} from 'react-stately';
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, RenderProps<SwitchRenderProps>, SlotProps {}
+export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {}
 
 export interface SwitchRenderProps {
   /**
@@ -53,7 +53,11 @@ export interface SwitchRenderProps {
    * Whether the switch is read only.
    * @selector [data-readonly]
    */
-  isReadOnly: boolean
+  isReadOnly: boolean,
+  /**
+   * State of the switch.
+   */
+  state: ToggleState
 }
 
 export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLInputElement>>(null);
@@ -62,7 +66,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
   let state = useToggleState(props);
   let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch({
-    ...props,
+    ...removeDataAttributes(props),
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
   }, state, ref);
@@ -87,6 +91,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   });
 
   let {hoverProps, isHovered} = useHover({
+    ...props,
     isDisabled: isInteractionDisabled
   });
 
@@ -102,7 +107,8 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
       isFocused,
       isFocusVisible,
       isDisabled,
-      isReadOnly
+      isReadOnly,
+      state
     }
   });
 
@@ -112,7 +118,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <label
       {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
-      slot={props.slot}
+      slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-pressed={pressed || undefined}
       data-hovered={isHovered || undefined}

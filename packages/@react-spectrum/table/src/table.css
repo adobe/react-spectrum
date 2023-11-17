@@ -187,7 +187,7 @@
       border-radius: var(--spectrum-alias-border-radius-regular);
       padding: var(--spectrum-global-dimension-size-10);
 
-      &:focus-ring {
+      &:focus-visible {
         box-shadow: inset 0 0 0 2px var(--spectrum-table-cell-border-color-key-focus);
         outline: none;
 

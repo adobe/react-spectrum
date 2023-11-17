@@ -213,8 +213,10 @@ The `key` prop from the selected item will be passed into the callback.
 
 To continue to capturing actions when `selectionMode` is `none`, utilize the `onAction` prop.
 ```tsx example
+import type {Key} from '@adobe/react-spectrum';
+
 function Example() {
-  let [actionKey, setActionKey] = React.useState<React.Key>('');
+  let [actionKey, setActionKey] = React.useState<Key>('');
   return (
     <>
       <ActionGroup onAction={setActionKey}>

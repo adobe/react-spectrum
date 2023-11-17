@@ -13,7 +13,7 @@
 import {AriaColorAreaProps, ColorChannel} from '@react-types/color';
 import {ColorAreaState} from '@react-stately/color';
 import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
+import {focusWithoutScrolling, isAndroid, isIOS, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef, useState} from 'react';
@@ -54,7 +54,9 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     inputXRef,
     inputYRef,
     containerRef,
-    'aria-label': ariaLabel
+    'aria-label': ariaLabel,
+    xName,
+    yName
   } = props;
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
 
@@ -68,13 +70,20 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       focusWithoutScrolling(inputRef.current);
     }
   }, [inputXRef]);
-  let [valueChangedViaKeyboard, setValueChangedViaKeyboard] = useState(false);
 
+  useFormReset(inputXRef, [state.xValue, state.yValue], ([x, y]) => {
+    let newColor = state.value
+      .withChannelValue(state.channels.xChannel, x)
+      .withChannelValue(state.channels.yChannel, y);
+    state.setValue(newColor);
+  });
+
+  let [valueChangedViaKeyboard, setValueChangedViaKeyboard] = useState(false);
   let {xChannel, yChannel, zChannel} = state.channels;
   let xChannelStep = state.xChannelStep;
   let yChannelStep = state.yChannelStep;
 
-  let currentPosition = useRef<{x: number, y: number}>(null);
+  let currentPosition = useRef<{x: number, y: number} | null>(null);
 
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
@@ -137,7 +146,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       if (currentPosition.current == null) {
         currentPosition.current = getThumbPosition();
       }
-      let {width, height} = containerRef.current.getBoundingClientRect();
+      let {width, height} = containerRef.current?.getBoundingClientRect() || {width: 0, height: 0};
       let valueChanged = deltaX !== 0 || deltaY !== 0;
       if (pointerType === 'keyboard') {
         let deltaXValue = shiftKey && xChannelPageStep > xChannelStep ? xChannelPageStep : xChannelStep;
@@ -162,7 +171,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       }
     },
     onMoveEnd() {
-      isOnColorArea.current = undefined;
+      isOnColorArea.current = false;
       state.setDragging(false);
       let input = focusedInput === 'x' ? inputXRef : inputYRef;
       focusInput(input);
@@ -198,7 +207,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   });
 
-  let onThumbDown = (id: number | null) => {
+  let onThumbDown = (id: number | null | undefined) => {
     if (!state.isDragging) {
       currentPointer.current = id;
       setValueChangedViaKeyboard(false);
@@ -231,7 +240,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     }
   };
 
-  let onColorAreaDown = (colorArea: Element, id: number | null, clientX: number, clientY: number) => {
+  let onColorAreaDown = (colorArea: Element, id: number | null | undefined, clientX: number, clientY: number) => {
     let rect = colorArea.getBoundingClientRect();
     let {width, height} = rect;
     let x = (clientX - rect.x) / width;
@@ -410,6 +419,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       'aria-valuetext': getAriaValueTextForChannel(xChannel),
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),
+      name: xName,
       tabIndex: (isMobile || !focusedInput || focusedInput === 'x' ? undefined : -1),
       /*
         So that only a single "2d slider" control shows up when listing form elements for screen readers,
@@ -434,6 +444,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       'aria-orientation': 'vertical',
       disabled: isDisabled,
       value: state.value.getChannelValue(yChannel),
+      name: yName,
       tabIndex: (isMobile || focusedInput === 'y' ? undefined : -1),
       /*
         So that only a single "2d slider" control shows up when listing form elements for screen readers,

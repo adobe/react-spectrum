@@ -36,6 +36,7 @@ import React, {ReactElement, useCallback, useRef, useState} from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
 import styles from '@adobe/spectrum-css-temp/components/dropdown/vars.css';
 import {Text} from '@react-spectrum/text';
+import {useFormProps} from '@react-spectrum/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSelectState} from '@react-stately/select';
@@ -43,6 +44,7 @@ import {useSelectState} from '@react-stately/select';
 function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'picker');
   props = useProviderProps(props);
+  props = useFormProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
   let {
     autoComplete,
@@ -51,7 +53,6 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     align = 'start',
     shouldFlip = true,
     placeholder = stringFormatter.format('placeholder'),
-    validationState,
     isQuiet,
     label,
     labelPosition = 'top' as LabelPosition,
@@ -76,7 +77,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   // so that the layout information can be cached even while the listbox is not mounted.
   // We also use the layout as the keyboard delegate for type to select.
   let layout = useListBoxLayout(state, isLoadingMore);
-  let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps} = useSelect({
+  let {labelProps, triggerProps, valueProps, menuProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSelect({
     ...props,
     'aria-describedby': (isLoadingInitial ? progressCircleId : undefined),
     keyboardDelegate: layout
@@ -166,7 +167,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           styles,
           'spectrum-Dropdown',
           {
-            'is-invalid': validationState === 'invalid' && !isDisabled,
+            'is-invalid': isInvalid && !isDisabled,
             'is-disabled': isDisabled,
             'spectrum-Dropdown--quiet': isQuiet
           }
@@ -185,7 +186,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           isActive={state.isOpen}
           isQuiet={isQuiet}
           isDisabled={isDisabled}
-          validationState={validationState}
+          isInvalid={isInvalid}
           autoFocus={autoFocus}
           UNSAFE_className={classNames(styles, 'spectrum-Dropdown-trigger', {'is-hovered': isHovered})}>
           <SlotProvider
@@ -213,7 +214,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
               aria-label={stringFormatter.format('loading')}
               UNSAFE_className={classNames(styles, 'spectrum-Dropdown-progressCircle')} />
           }
-          {validationState === 'invalid' && !isLoadingInitial && !isDisabled &&
+          {isInvalid && !isLoadingInitial && !isDisabled &&
             <AlertMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-invalidIcon')} />
           }
           <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
@@ -240,6 +241,9 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
       labelProps={labelProps}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      isInvalid={isInvalid}
+      validationErrors={validationErrors}
+      validationDetails={validationDetails}
       showErrorIcon={false}
       includeNecessityIndicatorInAccessibilityName
       elementType="span">

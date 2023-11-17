@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 @import '../commons/index.css';
 
 .spectrum {
-  @extends %i18nFontFamily;
+  composes: i18nFontFamily;
   font-size: var(--spectrum-text-size);
   color: var(--spectrum-body-text-color, var(--spectrum-global-color-gray-800));
 }

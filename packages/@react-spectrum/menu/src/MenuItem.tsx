@@ -12,14 +12,14 @@
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
-import {DOMAttributes, Node} from '@react-types/shared';
-import {filterDOMProps, mergeProps, mergeRefs, useObjectRef, useSlotId} from '@react-aria/utils';
+import {DOMAttributes, Key, Node} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {Key, useMemo, useRef} from 'react';
+import {mergeRefs, useObjectRef, useSlotId} from '@react-aria/utils';
+import React, {useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
@@ -52,10 +52,9 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     isUnavailable = menuDialogContext.isUnavailable;
   }
 
-  let domProps = filterDOMProps(item.props);
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
 
   let {
-    onClose,
     closeOnSelect
   } = useMenuContext();
 
@@ -67,7 +66,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
   let isSelected = state.selectionManager.isSelected(key);
   let isDisabled = state.disabledKeys.has(key);
 
-  let itemref = useRef<HTMLLIElement>(null);
+  let itemref = useRef<any>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
 
   let {
@@ -81,11 +80,10 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       isDisabled,
       'aria-label': item['aria-label'],
       key,
-      onClose,
       closeOnSelect,
       isVirtualized,
       onAction,
-      'aria-haspopup': isMenuDialogTrigger ? 'dialog' : undefined
+      'aria-haspopup': isMenuDialogTrigger && isUnavailable ? 'dialog' : undefined
     },
     state,
     ref
@@ -96,9 +94,6 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     endProps.id = endId;
     menuItemProps['aria-describedby'] = [menuItemProps['aria-describedby'], endId].filter(Boolean).join(' ');
   }
-  if (isUnavailable) {
-    menuItemProps['aria-disabled'] = 'true';
-  }
 
   let contents = typeof rendered === 'string'
     ? <Text>{rendered}</Text>
@@ -106,8 +101,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
-      <li
-        {...mergeProps(menuItemProps, domProps)}
+      <ElementType
+        {...menuItemProps}
         ref={ref}
         className={classNames(
           styles,
@@ -152,7 +147,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
             </SlotProvider>
           </ClearSlots>
         </Grid>
-      </li>
+      </ElementType>
     </FocusRing>
   );
 }

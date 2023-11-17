@@ -475,7 +475,8 @@ export type BorderSizeValue =
   | 'thin'
   | 'thick'
   | 'thicker'
-  | 'thickest';
+  | 'thickest'
+  | 'none';
 
 export type BorderRadiusValue =
   | 'xsmall'

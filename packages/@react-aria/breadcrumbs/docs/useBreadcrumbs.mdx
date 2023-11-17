@@ -46,7 +46,6 @@ Breadcrumbs provide a list of links to parent pages of the current page in hiera
 * Support for navigation links via `<a>` elements or custom element types via ARIA
 * Localized ARIA labeling support for landmark navigation region
 * Support for disabled breadcrumbs
-* Support for breadcrumbs as a heading
 
 ## Anatomy
 
@@ -55,8 +54,7 @@ Breadcrumbs provide a list of links to parent pages of the current page in hiera
 Breadcrumbs consist of a navigation landmark element and a list of links, typically with a visual separator
 icon between each item. The last link represents the current page in the hierarchy, with the previous links representing the
 parent pages of the current page. Each of these parent links can be clicked, tapped, or
-triggered via the <Keyboard>Enter</Keyboard> key to navigate to that page. Optionally, breadcrumbs can be used
-in place of a page title, in which case the last breadcrumb acts as a heading.
+triggered via the <Keyboard>Enter</Keyboard> key to navigate to that page.
 
 `useBreadcrumbs` returns props to be spread onto the navigation element:
 
@@ -177,85 +175,6 @@ function BreadcrumbItem(props) {
       {!props.isCurrent &&
         <span aria-hidden="true" style={{padding: '0 5px'}}>{'›'}</span>
       }
-    </li>
-  );
-}
-
-<Breadcrumbs>
-  <BreadcrumbItem href="/">Home</BreadcrumbItem>
-  <BreadcrumbItem href="/react-aria">React Aria</BreadcrumbItem>
-  <BreadcrumbItem>useBreadcrumbs</BreadcrumbItem>
-</Breadcrumbs>
-```
-
-## Breadcrumbs as a heading
-
-If you use breadcrumbs in the context where a heading would normally be used,
-you should make sure that the proper `elementType` for each breadcrumb is communicated to
-`useBreadcrumbItem` so that you receive the correct `breadcrumbItemProps` to spread on your breadcrumb.
-This can be seen in the example below where we update the `BreadcrumbItem` component to specify that
-the current has elementType `h3` and all other breadcrumbs are of type `a`.
-
-```tsx example
-///- begin collapse -///
-function Breadcrumbs(props) {
-  let {navProps} = useBreadcrumbs(props);
-  let childCount = React.Children.count(props.children);
-
-  return (
-    <nav {...navProps}>
-      <ol style={{display: 'flex', listStyle: 'none', margin: 0, padding: 0}}>
-        {React.Children.map(props.children, (child, i) =>
-          React.cloneElement(child, {isCurrent: i === childCount - 1})
-        )}
-      </ol>
-    </nav>
-  )
-}
-///- end collapse -///
-function BreadcrumbItem(props) {
-  let ref = React.useRef(null);
-  let {itemProps} = useBreadcrumbItem({
-    ...props,
-    elementType: props.isCurrent ? 'h3' : 'a'
-  }, ref);
-  let breadcrumbContent;
-  if (props.isCurrent) {
-    breadcrumbContent = (
-      <h3
-        {...itemProps}
-        ref={ref}
-        style={{
-          margin: 0,
-          fontSize: '1em',
-          color: 'var(--blue)'
-        }}>
-        {props.children}
-      </h3>
-    );
-  } else {
-    breadcrumbContent = (
-      <>
-        <a
-          {...itemProps}
-          ref={ref}
-          href={props.href}
-          style={{
-            color: props.isDisabled ? 'var(--gray)' : 'var(--blue)',
-            textDecoration: props.isCurrent || props.isDisabled ? 'none' : 'underline',
-            fontWeight: props.isCurrent ? 'bold' : null,
-            cursor: props.isCurrent || props.isDisabled ? 'default' : 'pointer'
-          }}>
-          {props.children}
-        </a>
-        <span aria-hidden="true" style={{padding: '0 5px'}}>{'›'}</span>
-      </>
-    );
-  }
-
-  return (
-    <li>
-      {breadcrumbContent}
     </li>
   );
 }

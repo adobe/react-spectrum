@@ -1,6 +1,8 @@
 {
+  "collapse": "Strni",
   "columnResizer": "Prilagojevalnik velikosti stolpcev",
   "drag": "Povleci",
+  "expand": "Razširi",
   "loading": "Nalaganje...",
   "loadingMore": "Nalaganje več vsebine...",
   "resizeColumn": "Spremeni velikost stolpca",

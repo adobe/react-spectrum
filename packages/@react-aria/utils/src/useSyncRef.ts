@@ -18,7 +18,7 @@ interface ContextValue<T> {
 }
 
 // Syncs ref from context with ref passed to hook
-export function useSyncRef<T>(context: ContextValue<T>, ref: RefObject<T>) {
+export function useSyncRef<T>(context?: ContextValue<T> | null, ref?: RefObject<T>) {
   useLayoutEffect(() => {
     if (context && context.ref && ref) {
       context.ref.current = ref.current;
@@ -26,5 +26,5 @@ export function useSyncRef<T>(context: ContextValue<T>, ref: RefObject<T>) {
         context.ref.current = null;
       };
     }
-  }, [context, ref]);
+  });
 }

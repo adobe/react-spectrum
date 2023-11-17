@@ -167,7 +167,7 @@ PopoverWithMobileTypeTray.story = {
 
 export const NestedModals = () => (
   <div style={{paddingTop: 100}}>
-    <input />
+    <input aria-label="test input" />
     <Provider colorScheme="dark" UNSAFE_style={{padding: 40, marginTop: 10}}>
       <DialogTrigger isDismissable>
         <ActionButton>Trigger</ActionButton>
@@ -300,7 +300,14 @@ export const PopoverInsideScrollView = () => (
 );
 
 PopoverInsideScrollView.story = {
-  name: 'popover inside scroll view'
+  name: 'popover inside scroll view',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [{id: 'scrollable-region-focusable', enabled: false}]
+      }
+    }
+  }
 };
 
 export const ShouldFlipWithWidth = (args) =>

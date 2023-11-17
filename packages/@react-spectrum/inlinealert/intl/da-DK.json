@@ -1,6 +1,6 @@
 {
-  "negative": "Fejl",
   "info": "Oplysninger",
-  "positive": "Fuldført",
-  "notice": "Advarsel"
+  "negative": "Fejl",
+  "notice": "Advarsel",
+  "positive": "Fuldført"
 }

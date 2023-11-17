@@ -70,7 +70,7 @@ IsEmphasized.story = {
 };
 
 export const ValidationStateInvalid = () =>
-  render({validationState: 'invalid', value: 'dragons'});
+  render({isInvalid: true, value: 'dragons'});
 
 ValidationStateInvalid.story = {
   name: 'validationState: "invalid"'
@@ -90,7 +90,7 @@ LongRadioLabel.story = {
 };
 
 export const ShowErrorIcon = () =>
-  render({validationState: 'invalid', errorMessage: 'Error message.', showErrorIcon: true});
+  render({isInvalid: true, errorMessage: 'Error message.', showErrorIcon: true});
 
 ShowErrorIcon.story = {
   name: 'show error icon'

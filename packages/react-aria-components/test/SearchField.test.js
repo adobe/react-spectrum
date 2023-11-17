@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Input, Label, SearchField, SearchFieldContext, Text} from '../';
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {Button, FieldError, Input, Label, SearchField, SearchFieldContext, Text} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
+import userEvent from '@testing-library/user-event';
 
 let TestSearchField = (props) => (
   <SearchField defaultValue="test" data-foo="bar" {...props}>
@@ -25,6 +26,11 @@ let TestSearchField = (props) => (
 );
 
 describe('SearchField', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('provides slots', () => {
     let {getByRole} = render(<TestSearchField />);
 
@@ -40,7 +46,7 @@ describe('SearchField', () => {
 
     expect(input).toHaveAttribute('aria-describedby');
     expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
-  
+
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Clear search');
   });
@@ -60,12 +66,12 @@ describe('SearchField', () => {
   it('should support render props', () => {
     let {getByRole} = render(
       <SearchField defaultValue="test">
-        {({value}) => (
+        {({state}) => (
           <>
             <Label>Test</Label>
             <Input />
             <Button>x</Button>
-            <Text slot="description">You are looking for "{value}"</Text>
+            <Text slot="description">You are looking for "{state.value}"</Text>
           </>
         )}
       </SearchField>
@@ -74,5 +80,50 @@ describe('SearchField', () => {
     let searchbox = getByRole('searchbox');
     let description = document.getElementById(searchbox.getAttribute('aria-describedby'));
     expect(description).toHaveTextContent('You are looking for "test"');
+  });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <SearchField data-testid="search-field">
+        <Label>Search</Label>
+        <Input />
+        <Button>✕</Button>
+      </SearchField>
+    );
+    let outerEl = getAllByTestId('search-field');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-SearchField');
+  });
+
+  it('supports validation errors', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <SearchField isRequired>
+          <Label>Test</Label>
+          <Input />
+          <FieldError />
+        </SearchField>
+      </form>
+    );
+
+    let input = getByRole('searchbox');
+    expect(input).toHaveAttribute('required');
+    expect(input).not.toHaveAttribute('aria-required');
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(false);
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(document.activeElement).toBe(input);
+
+    await user.keyboard('Devon');
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(true);
+
+    await user.tab();
+    expect(input).not.toHaveAttribute('aria-describedby');
   });
 });

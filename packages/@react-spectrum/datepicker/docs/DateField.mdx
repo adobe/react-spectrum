@@ -166,6 +166,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+DateField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string according to the granularity of the value. For example, if the date field allows selecting only a date then a string such as `"2023-02-03"` will be submitted, and if it allows selecting a time then a string such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
+
+```tsx example
+<DateField label="Birth date" name="birthday" />
+```
+
 ## Labeling
 
 A visual label should be provided for the `DateField` using the `label` prop. If the `DateField` is required, the `isRequired` and `necessityIndicator` props can be used to show a required state.
@@ -213,41 +221,75 @@ function Example() {
 
 ## Validation
 
-`DateField` can display a validation state to communicate to the user whether the current value is valid or invalid. Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` via the `validationState` prop. The `errorMessage` prop can be used to communicate errors to the user.
+DateField supports the `isRequired` prop to ensure the user enters a value, as well as minimum and maximum values, and custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the date field or submits the form.
+
+```tsx example
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <DateField label="Appointment date" name="date" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+By default, `DateField` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
+### Minimum and maximum values
+
+The `minValue` and `maxValue` props can also be used to ensure the value is within a specific range. This example only accepts dates after today.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  <DateField
+    label="Appointment date"
+    /*- begin highlight -*/
+    minValue={today(getLocalTimeZone())}
+    /*- end highlight -*/
+    defaultValue={parseDate('2022-02-03')} />
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+### Custom validation
+
+The `validate` function can be used to perform custom validation logic. It receives the current field value, and should return a string or array of strings representing one or more error messages if the value is invalid.
 
 This example validates that the selected date is a weekday and not a weekend according to the current locale.
 
 ```tsx example
-import {today, isWeekend} from '@internationalized/date';
+import {isWeekend} from '@internationalized/date';
 import {useLocale} from '@adobe/react-spectrum';
 
 function Example() {
-  let [date, setDate] = React.useState(today(getLocalTimeZone()));
   let {locale} = useLocale();
 
   return (
-    <DateField
-      label="Appointment date"
-      value={date}
-      onChange={setDate}
-      validationState={isWeekend(date, locale) ? 'invalid' : 'valid'}
-      description="Select a weekday"
-      errorMessage="We are closed on weekends" />
+    <Form validationBehavior="native" maxWidth="size-3000">
+      <DateField
+        label="Appointment date"
+        /*- begin highlight -*/
+        validate={date => date && isWeekend(date, locale) ? 'We are closed on weekends.' : null}
+        /*- end highlight -*/
+        defaultValue={parseDate('2023-10-28')} />
+      <ButtonGroup>
+        <Button type="submit" variant="primary">Submit</Button>
+        <Button type="reset" variant="secondary">Reset</Button>
+      </ButtonGroup>
+    </Form>
   );
 }
-```
-
-### Minimum and maximum values
-
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This displays an invalid state if the user enters an invalid date.
-
-This example only accepts dates after today.
-
-```tsx example
-<DateField
-  label="Appointment date"
-  minValue={today(getLocalTimeZone())}
-  defaultValue={parseDate('2022-02-03')} />
 ```
 
 ## Props
@@ -288,7 +330,14 @@ By default, the label is positioned above the `DateField`. The `labelPosition` p
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
 
-Both a description and an error message can be supplied to a DateField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized. See the [Validation](#validation) section above for an example.
+Both a description and an error message can be supplied to a DateField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+
+```tsx example
+<Flex gap="size-100" wrap>
+  <DateField label="Date" defaultValue={today(getLocalTimeZone())} validationState="valid" description="Select a meeting date." />
+  <DateField label="Date" validationState="invalid" errorMessage="Empty input is not allowed." />
+</Flex>
+```
 
 `DateField` also supports displaying the expected date format for the user's locale automatically using the `showFormatHelpText` prop.
 

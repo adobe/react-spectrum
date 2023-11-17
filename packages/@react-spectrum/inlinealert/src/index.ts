@@ -13,3 +13,4 @@
 /// <reference types="css-module-types" />
 
 export {InlineAlert} from './InlineAlert';
+export type {SpectrumInlineAlertProps} from './InlineAlert';

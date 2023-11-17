@@ -1,4 +1,5 @@
 {
+  "backButton": "Επιστροφή στο {prevMenuButton}",
   "moreActions": "Περισσότερες ενέργειες",
-  "unavailable": "Μη διαθέσιμο"
+  "unavailable": "Μη διαθέσιμο, ανάπτυξη για λεπτομέρειες"
 }

@@ -32,6 +32,9 @@ keywords: [search field, input]
 <HeaderInfo
   packageData={packageData}
   componentNames={['SearchField']}
+  sourceData={[
+  {type: 'Spectrum', url: 'https://spectrum.adobe.com/page/search-field/'}
+  ]}
   since="3.0.0" />
 
 ## Example
@@ -72,6 +75,14 @@ function Example() {
     </Flex>
   );
 }
+```
+
+### HTML forms
+
+SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<SearchField label="Email" name="email" type="email" />
 ```
 
 ## Labeling
@@ -128,6 +139,28 @@ function Example() {
 }
 ```
 
+## Validation
+
+SearchField supports native HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation) props such as `isRequired`, `minLength`, and `pattern`, as well as custom validation functions, realtime validation, and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the search field or submits the form.
+
+```tsx example
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <SearchField label="Search" name="search" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+By default, `SearchField` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
 ## Props
 
 <PropTable component={docs.exports.SearchField} links={docs.links} />
@@ -166,25 +199,13 @@ By default, the label is positioned above the SearchField. The `labelPosition` p
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/help-text/#Usage-guidelines)
 
-Both a description and an error message can be supplied to a ComboBox. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+Both a description and an error message can be supplied to a SearchField. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
 
 ```tsx example
-function Example() {
-  let [value, setValue] = React.useState('0');
-  let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
-
-  return (
-    <SearchField
-      validationState={isValid ? 'valid' : 'invalid'}
-      value={value}
-      onChange={setValue}
-      label="Search your favorite number"
-      maxLength={1}
-      description="Enter a single digit number."
-      errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9.'}
-    />
-  );
-}
+<Flex gap="size-100" wrap>
+  <SearchField label="Search" defaultValue="Burritos" validationState="valid" description="Enter a query." />
+  <SearchField label="Search" validationState="invalid" errorMessage="Empty input is not allowed." />
+</Flex>
 ```
 
 ### Contextual help

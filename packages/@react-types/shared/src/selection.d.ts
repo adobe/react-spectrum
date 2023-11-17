@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 
 export interface SingleSelection {
   /** Whether the collection allows empty selection. */
@@ -31,8 +31,6 @@ export interface MultipleSelection {
   selectionMode?: SelectionMode,
   /** Whether the collection allows empty selection. */
   disallowEmptySelection?: boolean,
-  /** Whether the collection allows the user to select all items via keyboard shortcut. */
-  disallowSelectAll?: boolean,
   /** The currently selected keys in the collection (controlled). */
   selectedKeys?: 'all' | Iterable<Key>,
   /** The initial selected keys in the collection (uncontrolled). */

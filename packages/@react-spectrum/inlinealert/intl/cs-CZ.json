@@ -1,6 +1,6 @@
 {
-  "negative": "Chyba",
   "info": "Informace",
-  "positive": "Úspěch",
-  "notice": "Upozornění"
+  "negative": "Chyba",
+  "notice": "Varování",
+  "positive": "Úspěch"
 }

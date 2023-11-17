@@ -111,7 +111,7 @@ export function TimeField(props) {
         {state.segments.map((segment, i) =>
           <DateSegment key={i} segment={segment} state={state} />
         )}
-        {state.validationState === 'invalid' &&
+        {state.isInvalid &&
           <span aria-hidden="true">🚫</span>
         }
       </div>
@@ -166,7 +166,7 @@ function DateSegment({segment, state}) {
 }
 
 .segment.placeholder {
-  color: var(--react-spectrum-datepicker-placeholder-color);
+  color: var(--spectrum-gray-600);
 }
 
 .segment:focus {
@@ -264,7 +264,7 @@ function Example() {
   return (
     <>
       <TimeField label="Time" value={date} onChange={setDate} />
-      <p>Selected date and time: {formatter.format(date.toDate())}</p>
+      <p>Selected date and time: {(date?.toDate && formatter.format(date.toDate())) || (date && date.toString()) || '--'}</p>
     </>
   );
 }

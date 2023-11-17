@@ -10,10 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, snapValueToStep} from '@react-aria/utils';
+import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
-import {useControlledState} from '@react-stately/utils';
 import {useMemo, useRef, useState} from 'react';
 
 export interface SliderState {
@@ -231,7 +230,7 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
 
     // Round value to multiple of step, clamp value between min and max
     value = snapValueToStep(value, thisMin, thisMax, step);
-    let newValues = replaceIndex(values, index, value);
+    let newValues = replaceIndex(valuesRef.current, index, value);
     setValues(newValues);
   }
 

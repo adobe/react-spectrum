@@ -139,6 +139,23 @@ TagGroup supports an `onAction` handler that, when used with the `actionLabel` p
 </TagGroup>
 ```
 
+## Links
+
+Tags may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component.
+
+```tsx example
+<TagGroup label="Links">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</TagGroup>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
 ## Props
 
 <PropTable component={{
@@ -155,19 +172,19 @@ TagGroup supports an `onAction` handler that, when used with the `actionLabel` p
 
 ```tsx example
 <TagGroup aria-label="TagGroup with icons example">
-  <Item>
+  <Item textValue="News">
     <News />
     <Text>News</Text>
   </Item>
-  <Item>
+  <Item textValue="Travel">
     <Airplane />
     <Text>Travel</Text>
   </Item>
-  <Item>
+  <Item textValue="Gaming">
     <Game />
     <Text>Gaming</Text>
   </Item>
-  <Item>
+  <Item textValue="Shopping">
     <ShoppingCart />
     <Text>Shopping</Text>
   </Item>
@@ -178,19 +195,19 @@ TagGroup supports an `onAction` handler that, when used with the `actionLabel` p
 
 ```tsx example
 <TagGroup aria-label="TagGroup with avatars example">
-  <Item>
+  <Item textValue="Person 1">
     <Avatar src="https://i.imgur.com/kJOwAdv.png" />
     <Text>Person 1</Text>
   </Item>
-  <Item>
+  <Item textValue="Person 2">
     <Avatar src="https://i.imgur.com/kJOwAdv.png" />
     <Text>Person 2</Text>
   </Item>
-  <Item>
+  <Item textValue="Person 3">
     <Avatar src="https://i.imgur.com/kJOwAdv.png" />
     <Text>Person 3</Text>
   </Item>
-  <Item>
+  <Item textValue="Person 4">
     <Avatar src="https://i.imgur.com/kJOwAdv.png" />
     <Text>Person 4</Text>
   </Item>
@@ -217,7 +234,7 @@ and "end" refers to the right most edge. For right-to-left (RTL) languages, this
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/help-text/)
 
-Both a description and an error message can be supplied to a TagGroup. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+Both a description and an error message can be supplied to a TagGroup. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
 
 ```tsx example
 function Example() {
@@ -242,7 +259,7 @@ function Example() {
       items={items}
       onRemove={onRemove}
       aria-label="TagGroup help text example"
-      validationState={isValid ? 'valid' : 'invalid'}
+      isInvalid={!isValid}
       description="Please include tags for related categories."
       errorMessage="Must contain no more than 3 tags. Please remove some."
       >

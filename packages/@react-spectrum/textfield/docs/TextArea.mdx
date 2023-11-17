@@ -64,6 +64,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+TextArea supports the `name` prop for integration with HTML forms.
+
+```tsx example
+<TextArea label="Comment" name="comment" />
+```
+
 ## Labeling
 
 A visual label should be provided for the TextArea using the `label` prop. If the TextArea is required, the `isRequired` and
@@ -114,24 +122,25 @@ function Example() {
 
 ## Validation
 
-TextAreas can display a validation state to communicate to the user whether the current value is valid or invalid.
-Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the TextArea via the `validationState` prop.
+TextArea supports native HTML [constraint validation](https://developer.mozilla.org/en-US/docs/Web/HTML/Constraint_validation) props such as `isRequired` and `minLength`, as well as custom validation functions, realtime validation, and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
 
-The example below illustrates how one would validate if the user entered more than 20 characters into the TextArea.
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the text area or submits the form.
+
 ```tsx example
-function Example() {
-  let [value, setValue] = React.useState('Lorem ipsum dolor sit');
-  let isValid = React.useMemo(() => value.length <= 20, [value]);
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 
-  return (
-    <TextArea
-      validationState={isValid ? 'valid' : 'invalid'}
-      value={value}
-      onChange={setValue}
-      label="Description" />
-  );
-}
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <TextArea label="Comment" name="comment" isRequired minLength={10} />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `TextArea` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## Props
 
@@ -179,22 +188,10 @@ By default, the label is positioned above the TextArea. The `labelPosition` prop
 Both a description and an error message can be supplied to a TextArea. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
 
 ```tsx example
-function Example() {
-  let [value, setValue] = React.useState('0');
-  let isValid = React.useMemo(() => /^\d$/.test(value), [value]);
-
-  return (
-    <TextArea
-      validationState={isValid ? 'valid' : 'invalid'}
-      value={value}
-      onChange={setValue}
-      label="Favorite number"
-      maxLength={1}
-      description="Enter a single digit number."
-      errorMessage={value === '' ? 'Empty input not allowed.' : 'Single digit numbers are 0-9.'}
-    />
-  );
-}
+<Flex gap="size-100" wrap>
+  <TextArea label="Comment" defaultValue="Awesome!" validationState="valid" description="Enter a comment." />
+  <TextArea label="Comment" validationState="invalid" errorMessage="Empty input is not allowed." />
+</Flex>
 ```
 
 ### Contextual help

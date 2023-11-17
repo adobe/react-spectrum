@@ -92,6 +92,9 @@ export function useDrag(options: DragOptions): DragResult {
       return;
     }
 
+    // Prevent the drag event from propagating to any parent draggables
+    e.stopPropagation();
+
     // If this drag was initiated by a mobile screen reader (e.g. VoiceOver or TalkBack), enter virtual dragging mode.
     if (modalityOnPointerDown.current === 'virtual') {
       e.preventDefault();
@@ -164,6 +167,9 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let onDrag = (e: DragEvent) => {
+    // Prevent the drag event from propagating to any parent draggables
+    e.stopPropagation();
+
     if (e.clientX === state.x && e.clientY === state.y) {
       return;
     }
@@ -181,6 +187,9 @@ export function useDrag(options: DragOptions): DragResult {
   };
 
   let onDragEnd = (e: DragEvent) => {
+    // Prevent the drag event from propagating to any parent draggables
+    e.stopPropagation();
+
     if (typeof options.onDragEnd === 'function') {
       let event: DragEndEvent = {
         type: 'dragend',

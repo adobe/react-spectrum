@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Content, Header} from '@react-spectrum/view';
-import {InlineAlert} from '../';
+import {Content} from '@react-spectrum/view';
+import {Heading} from '@react-spectrum/text';
+import {InlineAlert, SpectrumInlineAlertProps} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
-import {SpectrumInlineAlertProps} from '@react-types/inlinealert';
 
 const meta: Meta<SpectrumInlineAlertProps> = {
   title: 'InlineAlert',
@@ -27,7 +27,7 @@ export const Default = {
   args: {
     children: (
       <>
-        <Header>In-line Alert Header</Header>
+        <Heading>In-line Alert Heading</Heading>
         <Content>This is a React Spectrum InlineAlert</Content>
       </>
     )
@@ -39,7 +39,7 @@ export const Informative = {
     variant: 'info',
     children: (
       <>
-        <Header>In-Line Alert Informative Header</Header>
+        <Heading>In-Line Alert Informative Heading</Heading>
         <Content>This is a React Spectrum InlineAlert</Content>
       </>
     )
@@ -51,7 +51,7 @@ export const Positive = {
     variant: 'positive',
     children: (
       <>
-        <Header>In-Line Alert Positive Header</Header>
+        <Heading>In-Line Alert Positive Heading</Heading>
         <Content>This is a React Spectrum InlineAlert</Content>
       </>
     )
@@ -63,7 +63,7 @@ export const Notice = {
     variant: 'notice',
     children: (
       <>
-        <Header>In-Line Alert Notice Header</Header>
+        <Heading>In-Line Alert Notice Heading</Heading>
         <Content>This is a React Spectrum InlineAlert</Content>
       </>
     )
@@ -75,7 +75,7 @@ export const Negative = {
     variant: 'negative',
     children: (
       <>
-        <Header>In-Line Alert Negative Header</Header>
+        <Heading>In-Line Alert Negative Heading</Heading>
         <Content>This is a React Spectrum InlineAlert</Content>
       </>
     )
@@ -89,7 +89,7 @@ export const LongContent = {
   render: (args) => (
     <div style={{width: '300px'}}>
       <InlineAlert {...args}>
-        <Header>In-line Alert Header that goes on and on my friend</Header>
+        <Heading>In-line Alert Heading that goes on and on my friend</Heading>
         <Content>This is a React Spectrum InlineAlert that started announcing without knowing what it was. This is the inline alert that doesn't end. Yes, it goes on and on, my friend.</Content>
       </InlineAlert>
     </div>

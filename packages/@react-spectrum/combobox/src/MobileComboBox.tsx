@@ -27,9 +27,9 @@ import {FocusRing, focusSafely, FocusScope} from '@react-aria/focus';
 import intlMessages from '../intl/*.json';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {ListBoxBase, useListBoxLayout} from '@react-spectrum/listbox';
-import {mergeProps, useId} from '@react-aria/utils';
+import {mergeProps, useFormReset, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import searchStyles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {setInteractionModality, useHover} from '@react-aria/interactions';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
@@ -42,6 +42,7 @@ import {useComboBox} from '@react-aria/combobox';
 import {useDialog} from '@react-aria/dialog';
 import {useField} from '@react-aria/label';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useFormValidation} from '@react-aria/form';
 import {useProviderProps} from '@react-spectrum/provider';
 
 export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
@@ -50,9 +51,16 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let {
     isQuiet,
     isDisabled,
-    validationState,
-    isReadOnly
+    isReadOnly,
+    isRequired,
+    validationBehavior,
+    name,
+    formValue = 'text',
+    allowsCustomValue
   } = props;
+  if (allowsCustomValue) {
+    formValue = 'text';
+  }
 
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
@@ -69,9 +77,20 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let domRef = useFocusableRef(ref, buttonRef);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
-  let {labelProps, fieldProps} = useField({
+  let inputRef = useRef<HTMLInputElement>(null);
+  useFormValidation({
     ...props,
-    labelElementType: 'span'
+    focus: () => buttonRef.current.focus()
+  }, state, inputRef);
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
+  let validationState = props.validationState || (isInvalid ? 'invalid' : null);
+  let errorMessage = props.errorMessage ?? validationErrors.join(' ');
+
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+    ...props,
+    labelElementType: 'span',
+    isInvalid,
+    errorMessage
   });
 
   // Focus the button and show focus ring when clicking on the label
@@ -82,11 +101,35 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     }
   };
 
+  let inputProps: InputHTMLAttributes<HTMLInputElement> = {
+    type: 'hidden',
+    name,
+    value: formValue === 'text' ? state.inputValue : state.selectedKey
+  };
+
+  if (validationBehavior === 'native') {
+    // Use a hidden <input type="text"> rather than <input type="hidden">
+    // so that an empty value blocks HTML form submission when the field is required.
+    inputProps.type = 'text';
+    inputProps.hidden = true;
+    inputProps.required = isRequired;
+    // Ignore react warning.
+    inputProps.onChange = () => {};
+  }
+
+  useFormReset(inputRef, inputProps.value, formValue === 'text' ? state.setInputValue : state.setSelectedKey);
+
   return (
     <>
       <Field
         {...props}
         labelProps={labelProps}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        validationState={validationState}
+        isInvalid={isInvalid}
+        validationErrors={validationErrors}
+        validationDetails={validationDetails}
         elementType="span"
         ref={domRef}
         includeNecessityIndicatorInAccessibilityName>
@@ -101,6 +144,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
           {state.inputValue || props.placeholder || ''}
         </ComboBoxButton>
       </Field>
+      <input {...inputProps} ref={inputRef} />
       <Tray state={state} isFixedHeight {...overlayProps}>
         <ComboBoxTray
           {...props}
@@ -301,23 +345,26 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
       buttonRef: unwrapDOMRef(buttonRef),
       popoverRef: popoverRef,
       listBoxRef,
-      inputRef
+      inputRef,
+      // Handled outside the tray.
+      name: undefined
     },
     state
   );
 
   React.useEffect(() => {
     focusSafely(inputRef.current);
+  }, []);
 
-    // When the tray unmounts, set state.isFocused (i.e. the tray input's focus tracker) to false.
+  React.useEffect(() => {
+    // When the tray closes, set state.isFocused (i.e. the tray input's focus tracker) to false.
     // This is to prevent state.isFocused from being set to true when the tray closes via tapping on the underlay
     // (FocusScope attempts to restore focus to the tray input when tapping outside the tray due to "contain")
     // Have to do this manually since React doesn't call onBlur when a component is unmounted: https://github.com/facebook/react/issues/12363
-    return () => {
+    if (!state.isOpen && state.isFocused) {
       state.setFocused(false);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    }
+  });
 
   let {dialogProps} = useDialog({
     'aria-labelledby': useId(labelProps.id)

@@ -1,6 +1,6 @@
 {
-  "negative": "שגיאה",
   "info": "מידע",
-  "positive": "הצלחה",
-  "notice": "אזהרה"
+  "negative": "שגיאה",
+  "notice": "אזהרה",
+  "positive": "הצלחה"
 }

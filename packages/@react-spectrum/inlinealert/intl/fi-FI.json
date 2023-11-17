@@ -1,6 +1,6 @@
 {
-  "negative": "Virhe",
   "info": "Tiedot",
-  "positive": "Onnistui",
-  "notice": "Varoitus"
+  "negative": "Virhe",
+  "notice": "Varoitus",
+  "positive": "Onnistui"
 }

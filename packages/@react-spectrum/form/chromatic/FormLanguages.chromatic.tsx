@@ -49,7 +49,6 @@ let TranslateForm = (props) => {
       <CheckboxGroup
         defaultValue={['cow', 'goat']}
         label={strings.format('ruminants')}
-        validationState="valid"
         description={strings.format('areRuminats')}
         contextualHelp={(
           <ContextualHelp>
@@ -86,7 +85,7 @@ let TranslateForm = (props) => {
       <Picker
         label={strings.format('ruminants')}
         defaultSelectedKey={strings.format('chicken')}
-        validationState="invalid"
+        isInvalid
         errorMessage={strings.format('notRuminatError')}
         contextualHelp={(
           <ContextualHelp>
@@ -102,7 +101,6 @@ let TranslateForm = (props) => {
       <RadioGroup
         label={strings.format('ruminants')}
         defaultValue={strings.format('sheep')}
-        validationState="valid"
         description={strings.format('areRuminats')}
         contextualHelp={(
           <ContextualHelp>

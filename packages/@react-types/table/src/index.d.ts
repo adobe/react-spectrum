@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, DOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, DOMProps, Key, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
-import {Key, ReactElement, ReactNode} from 'react';
+import React, {ReactElement, ReactNode} from 'react';
 
 /** Widths that result in a constant pixel value for the same Table width. */
 export type ColumnStaticSize = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/
@@ -49,7 +49,7 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
   /** Whether the TableView should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Sets what the TableView should render when there is no content to display. */
-  renderEmptyState?: () => JSX.Element,
+  renderEmptyState?: () => React.JSX.Element,
   /** Handler that is called when a user performs an action on a row. */
   onAction?: (key: Key) => void,
   /**
@@ -122,20 +122,25 @@ export interface SpectrumColumnProps<T> extends ColumnProps<T> {
   hideHeader?: boolean
 }
 
-export type RowElement = ReactElement<RowProps>;
+export type RowElement<T> = ReactElement<RowProps<T>>;
 export interface TableBodyProps<T> extends Omit<AsyncLoadable, 'isLoading'> {
   /** The contents of the table body. Supports static items or a function for dynamic rendering. */
-  children: RowElement | RowElement[] | ((item: T) => RowElement),
+  children: RowElement<T> | RowElement<T>[] | ((item: T) => RowElement<T>),
   /** A list of row objects in the table body used when dynamically rendering rows. */
   items?: Iterable<T>,
   /** The current loading state of the table. */
   loadingState?: LoadingState
 }
 
-export interface RowProps {
-  // treeble case? Unsupported props for now
-  // /** A list of child item objects used when dynamically rendering row children. */
-  // childItems?: Iterable<T>,
+export interface RowProps<T> extends LinkDOMProps {
+  /**
+   * A list of child item objects used when dynamically rendering row children. Requires the feature flag to be
+   * enabled along with UNSTABLE_allowsExpandableRows, see https://react-spectrum.adobe.com/react-spectrum/TableView.html#expandable-rows.
+   * @version alpha
+   * @private
+   */
+  UNSTABLE_childItems?: Iterable<T>,
+  // TODO: update when async loading is supported for expandable rows
   // /** Whether this row has children, even if not loaded yet. */
   // hasChildItems?: boolean,
   /** Rendered contents of the row or row child items. */

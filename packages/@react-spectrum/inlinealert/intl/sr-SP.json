@@ -1,6 +1,6 @@
 {
-  "negative": "Greška",
   "info": "Informacije",
-  "positive": "Uspešno",
-  "notice": "Upozorenje"
+  "negative": "Greška",
+  "notice": "Upozorenje",
+  "positive": "Uspešno"
 }

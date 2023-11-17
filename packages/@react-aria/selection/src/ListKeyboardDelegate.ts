@@ -10,13 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Direction, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
+import {Collection, Direction, Key, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
 import {isScrollable} from '@react-aria/utils';
-import {Key, RefObject} from 'react';
+import {RefObject} from 'react';
 
 interface ListKeyboardDelegateOptions<T> {
   collection: Collection<Node<T>>,
   ref: RefObject<HTMLElement>,
+  collator?: Intl.Collator,
+  layout?: 'stack' | 'grid',
   orientation?: Orientation,
   direction?: Direction,
   disabledKeys?: Set<Key>
@@ -26,7 +28,8 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
   private disabledKeys: Set<Key>;
   private ref: RefObject<HTMLElement>;
-  private collator: Intl.Collator;
+  private collator: Intl.Collator | undefined;
+  private layout: 'stack' | 'grid';
   private orientation?: Orientation;
   private direction?: Direction;
 
@@ -37,18 +40,29 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       let opts = args[0] as ListKeyboardDelegateOptions<T>;
       this.collection = opts.collection;
       this.ref = opts.ref;
+      this.collator = opts.collator;
       this.disabledKeys = opts.disabledKeys || new Set();
       this.orientation = opts.orientation;
       this.direction = opts.direction;
+      this.layout = opts.layout || 'stack';
     } else {
       this.collection = args[0];
       this.disabledKeys = args[1];
       this.ref = args[2];
       this.collator = args[3];
+      this.layout = 'stack';
+      this.orientation = 'vertical';
+    }
+
+    // If this is a vertical stack, remove the left/right methods completely
+    // so they aren't called by useDroppableCollection.
+    if (this.layout === 'stack' && this.orientation === 'vertical') {
+      this.getKeyLeftOf = undefined;
+      this.getKeyRightOf = undefined;
     }
   }
 
-  getKeyBelow(key: Key) {
+  getNextKey(key: Key) {
     key = this.collection.getKeyAfter(key);
     while (key != null) {
       let item = this.collection.getItem(key);
@@ -62,7 +76,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return null;
   }
 
-  getKeyAbove(key: Key) {
+  getPreviousKey(key: Key) {
     key = this.collection.getKeyBefore(key);
     while (key != null) {
       let item = this.collection.getItem(key);
@@ -76,17 +90,77 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     return null;
   }
 
+  private findKey(
+    key: Key,
+    nextKey: (key: Key) => Key,
+    shouldSkip: (prevRect: DOMRect, itemRect: DOMRect) => boolean
+  ) {
+    let item = this.getItem(key);
+    if (!item) {
+      return null;
+    }
+
+    // Find the item above or below in the same column.
+    let prevRect = item.getBoundingClientRect();
+    do {
+      key = nextKey(key);
+      item = this.getItem(key);
+    } while (item && shouldSkip(prevRect, item.getBoundingClientRect()));
+
+    return key;
+  }
+
+  private isSameRow(prevRect: DOMRect, itemRect: DOMRect) {
+    return prevRect.top === itemRect.top || prevRect.left !== itemRect.left;
+  }
+
+  private isSameColumn(prevRect: DOMRect, itemRect: DOMRect) {
+    return prevRect.left === itemRect.left || prevRect.top !== itemRect.top;
+  }
+
+  getKeyBelow(key: Key) {
+    if (this.layout === 'grid' && this.orientation === 'vertical') {
+      return this.findKey(key, (key) => this.getNextKey(key), this.isSameRow);
+    } else {
+      return this.getNextKey(key);
+    }
+  }
+
+  getKeyAbove(key: Key) {
+    if (this.layout === 'grid' && this.orientation === 'vertical') {
+      return this.findKey(key, (key) => this.getPreviousKey(key), this.isSameRow);
+    } else {
+      return this.getPreviousKey(key);
+    }
+  }
+
+  private getNextColumn(key: Key, right: boolean) {
+    return right ? this.getPreviousKey(key) : this.getNextKey(key);
+  }
+
   getKeyRightOf(key: Key) {
-    if (this.orientation === 'horizontal') {
-      return this.direction === 'rtl' ? this.getKeyAbove(key) : this.getKeyBelow(key);
+    if (this.layout === 'grid') {
+      if (this.orientation === 'vertical') {
+        return this.getNextColumn(key, this.direction === 'rtl');
+      } else {
+        return this.findKey(key, (key) => this.getNextColumn(key, this.direction === 'rtl'), this.isSameColumn);
+      }
+    } else if (this.orientation === 'horizontal') {
+      return this.getNextColumn(key, this.direction === 'rtl');
     }
 
     return null;
   }
 
   getKeyLeftOf(key: Key) {
-    if (this.orientation === 'horizontal') {
-      return this.direction === 'rtl' ? this.getKeyBelow(key) : this.getKeyAbove(key);
+    if (this.layout === 'grid') {
+      if (this.orientation === 'vertical') {
+        return this.getNextColumn(key, this.direction === 'ltr');
+      } else {
+        return this.findKey(key, (key) => this.getNextColumn(key, this.direction === 'ltr'), this.isSameColumn);
+      }
+    } else if (this.orientation === 'horizontal') {
+      return this.getNextColumn(key, this.direction === 'ltr');
     }
 
     return null;

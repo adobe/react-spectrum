@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
 import {MenuContext, MenuStateContext} from './context';
@@ -23,7 +23,7 @@ import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
-function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLUListElement>) {
+function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let contextProps = useContext(MenuContext);
   let completeProps = {
     ...mergeProps(contextProps, props)
@@ -35,12 +35,13 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
+  let isMobile = useIsMobileDevice();
 
   return (
     <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
       <FocusScope contain={state.expandedKeys.size > 0}>
-        <div ref={scopedRef} style={{display: 'inline-flex', overflow: 'hidden'}}>
-          <ul
+        <div className={classNames(styles, !isMobile ? 'spectrum-Menu-wrapper' : '')}>
+          <div
             {...menuProps}
             {...styleProps}
             ref={domRef}
@@ -76,8 +77,9 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
 
               return menuItem;
             })}
-          </ul>
+          </div>
         </div>
+        <div ref={scopedRef} />
       </FocusScope>
     </MenuStateContext.Provider>
   );
@@ -88,5 +90,5 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLULi
  */
 // forwardRef doesn't support generic parameters, so cast the result to the correct type
 // https://stackoverflow.com/questions/58469229/react-with-typescript-generics-while-using-react-forwardref
-const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLUListElement>}) => ReactElement;
+const _Menu = React.forwardRef(Menu) as <T>(props: SpectrumMenuProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
 export {_Menu as Menu};

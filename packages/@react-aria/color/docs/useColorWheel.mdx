@@ -189,6 +189,14 @@ It's up to you to style your color wheel to appear disabled accordingly.
 <ColorWheel defaultValue="hsl(80, 100%, 50%)" isDisabled />
 ```
 
+### HTML forms
+
+ColorWheel supports the `name` prop for integration with HTML forms. The value will be submitted as a number between 0 and 360 degrees.
+
+```tsx example
+<ColorWheel name="hue" />
+```
+
 ## Internationalization
 
 ### Labeling

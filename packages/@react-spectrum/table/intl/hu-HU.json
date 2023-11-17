@@ -1,6 +1,8 @@
 {
+  "collapse": "Összecsukás",
   "columnResizer": "Oszlopátméretező",
   "drag": "Húzás",
+  "expand": "Kibontás",
   "loading": "Betöltés folyamatban…",
   "loadingMore": "Továbbiak betöltése folyamatban…",
   "resizeColumn": "Oszlop átméretezése",

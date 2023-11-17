@@ -18,8 +18,10 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item, TabList, TabPanels, Tabs} from '..';
+import {Key} from '@react-types/shared';
 import {Picker} from '@react-spectrum/picker';
 import React, {ReactNode, useState} from 'react';
+import {RouterProvider} from '@react-aria/utils';
 import {SpectrumTabsProps} from '@react-types/tabs';
 import {TextField} from '@react-spectrum/textfield';
 
@@ -369,6 +371,37 @@ ChangingSelectionProgramatically.story = {
   name: 'changing selection programatically'
 };
 
+export const Links = (args) => {
+  let [url, setUrl] = useState('/one');
+
+  return (
+    <RouterProvider navigate={setUrl}>
+      <Tabs selectedKey={url} aria-label="Some tabs" width={args.collapsed ? 200 : 300}>
+        <TabList>
+          <Item key="/one" href="/one">Tab 1</Item>
+          <Item key="/two" href="/two">Tab 2</Item>
+          <Item key="/three" href="/three">Tab 3</Item>
+          <Item key="/four" href="/four">Tab 4</Item>
+          <Item key="/five" href="/five">Tab 5</Item>
+        </TabList>
+        <TabPanels>
+          <Item key="/one">Foo</Item>
+          <Item key="/two">Bar</Item>
+          <Item key="/three">Tab 3</Item>
+          <Item key="/four">Tab 4</Item>
+          <Item key="/five">Tab 5</Item>
+        </TabPanels>
+      </Tabs>
+    </RouterProvider>
+  );
+};
+
+Links.story = {
+  args: {
+    collapsed: false
+  }
+};
+
 function render(props = {}) {
   return (
     <Tabs
@@ -664,12 +697,12 @@ interface DynamicTabItem {
 }
 
 let items = [
-  {name: 'Tab 1', children: 'Tab Body 1', icon: <Dashboard size="S" />},
-  {name: 'Tab 2', children: 'Tab Body 2', icon: <Calendar size="S" />},
-  {name: 'Tab 3', children: 'Tab Body 3', icon: <Bookmark size="S" />},
-  {name: 'Tab 4', children: 'Tab Body 4', icon: <Dashboard size="S" />},
-  {name: 'Tab 5', children: 'Tab Body 5', icon: <Calendar size="S" />},
-  {name: 'Tab 6', children: 'Tab Body 6', icon: <Bookmark size="S" />}
+  {name: 'Tab 1', children: 'Tab Body 1', icon: <Dashboard />},
+  {name: 'Tab 2', children: 'Tab Body 2', icon: <Calendar />},
+  {name: 'Tab 3', children: 'Tab Body 3', icon: <Bookmark />},
+  {name: 'Tab 4', children: 'Tab Body 4', icon: <Dashboard />},
+  {name: 'Tab 5', children: 'Tab Body 5', icon: <Calendar />},
+  {name: 'Tab 6', children: 'Tab Body 6', icon: <Bookmark />}
 ] as DynamicTabItem[];
 
 let DynamicTabs = (props: Omit<SpectrumTabsProps<DynamicTabItem>, 'children'>) => {
@@ -825,7 +858,7 @@ let DynamicTabsWithDecoration = (props = {}) => {
 };
 
 let ControlledSelection = () => {
-  let [selectedKey, setSelectedKey] = useState<React.Key>('Tab 1');
+  let [selectedKey, setSelectedKey] = useState<Key>('Tab 1');
 
   return (
     <div style={{width: '80%'}}>

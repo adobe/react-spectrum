@@ -11,7 +11,8 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import docs from 'docs:react-aria-components';
-import {PropTable, HeaderInfo, PageDescription, StateTable} from '@react-spectrum/docs';
+import statelyDocs from 'docs:@react-stately/list';
+import {PropTable, HeaderInfo, PageDescription, StateTable, ContextTable, TypeLink} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/tag/docs/anatomy.svg';
@@ -19,6 +20,8 @@ import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
 
 ---
 category: Collections
@@ -55,73 +58,52 @@ import {TagGroup, TagList, Tag, Label} from 'react-aria-components';
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './ToggleButton.mdx' layer(togglebutton);
+```
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-TagGroup {
   display: flex;
   flex-direction: column;
   gap: 2px;
   font-size: small;
-
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
-  }
 }
 
 .react-aria-TagList {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
+}
 
-  .react-aria-Tag {
-    border: 1px solid var(--spectrum-gray-600);;
-    border-radius: 4px;
-    padding: 2px 8px;
-    font-size: 0.929rem;
-    outline: none;
-    cursor: default;
-    display: flex;
-    align-items: center;
-    transition: border-color 200ms;
+.react-aria-Tag {
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  forced-color-adjust: none;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.929rem;
+  outline: none;
+  cursor: default;
+  display: flex;
+  align-items: center;
+  transition: border-color 200ms;
 
-    &[data-hovered] {
-      border-color: var(--spectrum-gray-900);
-    }
+  &[data-hovered] {
+    border-color: var(--border-color-hover);
+  }
 
-    &[data-focus-visible] {
-      outline: 2px solid slateblue;
-      outline-offset: 2px;
-    }
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
 
-    &[aria-selected=true] {
-      border-color: var(--spectrum-gray-900);
-      background: var(--spectrum-gray-900);
-      color: var(--spectrum-gray-50);
-    }
-
-    &[aria-disabled] {
-      opacity: 0.4;
-    }
-
-    [slot=remove] {
-      background: none;
-      border: none;
-      padding: 0;
-      margin-left: 8px;
-      color: var(--spectrum-gray-700);
-      transition: color 200ms;
-      outline: none;
-      font-size: 0.95em;
-
-      &[data-hovered] {
-        color: var(--spectrum-gray-900);
-      }
-    }
+  &[data-selected] {
+    border-color: var(--highlight-background);
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
   }
 }
 ```
@@ -150,12 +132,42 @@ A tag group consists of label and a list of tags. Each tag should include a visu
 to provide more context about the tag group, and any validation messages. These are linked with the
 tag group via the `aria-describedby` attribute.
 
+```tsx
+import {TagGroup, TagList, Tag, Label, Button, Text} from 'react-aria-components';
+
+<TagGroup>
+  <Label />
+  <TagList>
+    <Tag>
+      <Button slot="remove" />
+    </Tag>
+  </TagList>
+  <Text slot="description" />
+  <Text slot="errorMessage" />
+</TagGroup>
+```
+
 ### Concepts
 
 `TagGroup` makes use of the following concepts:
 
-* [Collections](../react-stately/Collections.html)
-* [Selection](../react-stately/Selection.html)
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../react-stately/collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
+
+<ExampleCard
+  url="../react-stately/selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
+
+</section>
 
 ### Composed components
 
@@ -178,109 +190,6 @@ A `TagGroup` uses the following components, which may also be used standalone or
 </ExampleCard>
 
 </section>
-
-## Props
-
-### TagGroup
-
-<PropTable component={docs.exports.TagGroup} links={docs.links} />
-
-### TagList
-
-A `<TagList>` is a list of tags within a `<TagGroup>`.
-
-<PropTable component={docs.exports.TagList} links={docs.links} />
-
-### Tag
-
-An `<Tag>` defines a single item within a `<TagList>`. If the children are not plain text, then the `textValue` prop must also be set to a plain text representation for accessibility.
-
-<PropTable component={docs.exports.Tag} links={docs.links} />
-
-### Label
-
-A `<Label>` accepts all HTML attributes.
-
-### Text
-
-`<Text>` accepts all HTML attributes.
-
-## Styling
-
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
-
-```css
-.react-aria-TagGroup {
-  /* ... */
-}
-```
-
-A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
-
-```jsx
-<TagGroup className="my-tag-group">
-  {/* ... */}
-</TagGroup>
-```
-
-In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
-
-```css
-.react-aria-Tag[aria-selected=true] {
-  /* ... */
-}
-
-.react-aria-Tag[data-focused] {
-  /* ... */
-}
-```
-
-The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
-
-```jsx
-<Tag className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
-  Item
-</Tag>
-```
-
-Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a remove button only when removal is allowed.
-
-```jsx
-<Tag>
-  {({allowsRemoving}) => (
-    <>
-      Item
-      {allowsRemoving && <RemoveButton />}
-    </>
-  )}
-</Tag>
-```
-
-The states and selectors for each component used in a `TagGroup` are documented below.
-
-### TagGroup
-
-A `TagGroup` can be targeted with the `.react-aria-TagGroup` CSS selector, or by overriding with a custom `className`.
-
-### TagList
-
-A `TagList` can be targeted with the `.react-aria-TagList` CSS selector, or by overriding with a custom `className`.
-
-### Tag
-
-A `Tag` can be targeted with the `.react-aria-Tag` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
-
-<StateTable properties={docs.exports.TagRenderProps.properties} />
-
-Tags also accept a `<Button slot="remove">` element as a child, which allows them to be removed. This can be conditionally rendered using the `allowsRemoving` render prop, as shown below.
-
-### Label
-
-A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
-
-### Text
-
-The help text elements within a `TagGroup` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
 
 ## Reusable wrappers
 
@@ -331,9 +240,7 @@ function MyTag({children, ...props}: TagProps) {
 </MyTagGroup>
 ```
 
-## Usage
-
-### Remove tags
+## Removing tags
 
 The `onRemove` prop can be used to allow the user to remove tags. In the above example, an additional `<Button slot="remove>` element is rendered when a tag group allows removing. The user can also press the backspace key while a tag is focused to remove the tag from the group. Additionally, when [selection](#selection) is enabled, all selected items will be deleted when pressing the backspace key on a selected tag.
 
@@ -364,7 +271,31 @@ function Example() {
 }
 ```
 
-### Selection
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Tag {
+  [slot=remove] {
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: 8px;
+    color: var(--text-color-base);
+    transition: color 200ms;
+    outline: none;
+    font-size: 0.95em;
+
+    &[data-hovered] {
+      color: var(--text-color-hover);
+    }
+  }
+}
+```
+
+</details>
+
+## Selection
 
  TagGroup supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
  Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
@@ -398,31 +329,71 @@ function Example() {
  }
  ```
 
- ### Disabled tags
+## Links
 
- TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
- corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
- to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
- See [Collections](../react-stately/collections.html) for more details.
+Tags may be links to another page or website. This can be achieved by passing the `href` prop to the `<Tag>` component. Tags with an `href` are not selectable.
 
- ```tsx example
- <MyTagGroup
-   label="Sandwich contents"
-   selectionMode="multiple"
-   ///- begin highlight -///
-   disabledKeys={['tuna']}
-   ///- end highlight -///
- >
-   <MyTag id="lettuce">Lettuce</MyTag>
-   <MyTag id="tomato">Tomato</MyTag>
-   <MyTag id="cheese">Cheese</MyTag>
-   <MyTag id="tuna">Tuna Salad</MyTag>
-   <MyTag id="egg">Egg Salad</MyTag>
-   <MyTag id="ham">Ham</MyTag>
- </MyTagGroup>
- ```
+```tsx example
+<MyTagGroup label="Links">
+  <MyTag href="https://adobe.com/" target="_blank">Adobe</MyTag>
+  <MyTag href="https://apple.com/" target="_blank">Apple</MyTag>
+  <MyTag href="https://google.com/" target="_blank">Google</MyTag>
+  <MyTag href="https://microsoft.com/" target="_blank">Microsoft</MyTag>
+</MyTagGroup>
+```
 
- ### Empty state
+```css hidden
+.react-aria-Tag[data-href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
+### Client side routing
+
+The `<Tag>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Disabled tags
+
+TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
+corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
+to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
+See [Collections](../react-stately/collections.html) for more details.
+
+```tsx example
+<MyTagGroup
+ label="Sandwich contents"
+ selectionMode="multiple"
+ ///- begin highlight -///
+ disabledKeys={['tuna']}
+ ///- end highlight -///
+>
+  <MyTag id="lettuce">Lettuce</MyTag>
+  <MyTag id="tomato">Tomato</MyTag>
+  <MyTag id="cheese">Cheese</MyTag>
+  <MyTag id="tuna">Tuna Salad</MyTag>
+  <MyTag id="egg">Egg Salad</MyTag>
+  <MyTag id="ham">Ham</MyTag>
+</MyTagGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TagList {
+  .react-aria-Tag {
+    &[data-disabled] {
+      border-color: var(--border-color-disabled);
+      color: var(--text-color-disabled);
+    }
+  }
+}
+```
+
+</details>
+
+## Empty state
 
 Use the `renderEmptyState` prop to customize what a `TagList` will display if there are no items.
 
@@ -436,6 +407,8 @@ Use the `renderEmptyState` prop to customize what a `TagList` will display if th
   </TagList>
 </TagGroup>
 ```
+
+## Help text
 
 ### Description
 
@@ -456,6 +429,24 @@ The `description` slot can be used to associate additional help text with a `Tag
 </TagGroup>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-TagGroup {
+  [slot=description] {
+    font-size: 12px;
+  }
+
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+```
+
+</details>
+
 ### Error message
 
 The `errorMessage` slot can be used to help the user fix a validation error.
@@ -475,6 +466,111 @@ The `errorMessage` slot can be used to help the user fix a validation error.
 </TagGroup>
 ```
 
+## Props
+
+### TagGroup
+
+<PropTable component={docs.exports.TagGroup} links={docs.links} />
+
+### TagList
+
+A `<TagList>` is a list of tags within a `<TagGroup>`.
+
+<PropTable component={docs.exports.TagList} links={docs.links} />
+
+### Tag
+
+A `<Tag>` defines a single item within a `<TagList>`. If the children are not plain text, then the `textValue` prop must also be set to a plain text representation for accessibility.
+
+<PropTable component={docs.exports.Tag} links={docs.links} />
+
+### Label
+
+A `<Label>` accepts all HTML attributes.
+
+### Text
+
+`<Text>` accepts all HTML attributes.
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-TagGroup {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<TagGroup className="my-tag-group">
+  {/* ... */}
+</TagGroup>
+```
+
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-Tag[data-selected] {
+  /* ... */
+}
+
+.react-aria-Tag[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Tag className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  Item
+</Tag>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a remove button only when removal is allowed.
+
+```jsx
+<Tag>
+  {({allowsRemoving}) => (
+    <>
+      Item
+      {allowsRemoving && <RemoveButton />}
+    </>
+  )}
+</Tag>
+```
+
+The states and selectors for each component used in a `TagGroup` are documented below.
+
+### TagGroup
+
+A `TagGroup` can be targeted with the `.react-aria-TagGroup` CSS selector, or by overriding with a custom `className`.
+
+### TagList
+
+A `TagList` can be targeted with the `.react-aria-TagList` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TagListRenderProps.properties} />
+
+### Tag
+
+A `Tag` can be targeted with the `.react-aria-Tag` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.TagRenderProps.properties} />
+
+Tags also accept a `<Button slot="remove">` element as a child, which allows them to be removed. This can be conditionally rendered using the `allowsRemoving` render prop, as shown below.
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
+
+### Text
+
+The help text elements within a `TagGroup` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
 ## Advanced customization
 
 ### Composition
@@ -487,6 +583,110 @@ function MyTag(props) {
 }
 ```
 
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['TagGroup']} docs={docs} />
+
+This example shows a component that accepts a `TagGroup` and a [ToggleButton](ToggleButton.html) as children, and allows the user to turn edit mode for the tag group on and off by pressing the button.
+
+```tsx example render=false export=true
+import {ToggleButtonContext, TagGroupContext} from 'react-aria-components';
+
+function Removable({children, onRemove}) {
+  let [isSelected, onChange] = React.useState(false);
+  return (
+    <ToggleButtonContext.Provider value={{isSelected, onChange}}>
+      {/*- begin highlight -*/}
+      <TagGroupContext.Provider value={{onRemove: isSelected && onRemove}}>
+      {/*- end highlight -*/}
+        {children}
+      </TagGroupContext.Provider>
+    </ToggleButtonContext.Provider>
+  );
+}
+```
+
+The `Removable` component can be reused to make the edit mode of any nested `TagGroup` controlled by a `ToggleButton`.
+
+```tsx example
+import {ToggleButton} from 'react-aria-components';
+
+<Removable onRemove={ids => alert(`Remove ${[...ids]}`)}>
+  <MyTagGroup label="Ice cream flavor">
+    <MyTag id="chocolate">Chocolate</MyTag>
+    <MyTag id="mint">Mint</MyTag>
+    <MyTag id="strawberry">Strawberry</MyTag>
+    <MyTag id="vanilla">Vanilla</MyTag>
+  </MyTagGroup>
+  <ToggleButton style={{marginTop: '8px'}}>Edit</ToggleButton>
+</Removable>
+```
+
+### Custom children
+
+TagGroup passes props to its child components, such as the label, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Button', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by TagGroup.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `TagGroup`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<TagGroup>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  {/* ... */}
+</TagGroup>
+```
+
+### State
+
+TagGroup provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.ListState} /> object to its children via `ListStateContext`. This can be used to access and manipulate the TagGroup's state.
+
+This example shows a `SelectionCount` component that can be placed within a `TagGroup` to display the number of selected tags.
+
+```tsx example
+import {ListStateContext} from 'react-aria-components';
+
+function SelectionCount() {
+  /*- begin highlight -*/
+  let state = React.useContext(ListStateContext)!;
+  /*- end highlight -*/
+  let selected = state.selectionManager.selectedKeys.size;
+  return <small>{selected} tags selected.</small>;
+}
+
+<TagGroup selectionMode="multiple">
+  <Label>Tags</Label>
+  <TagList>
+    <Tag>News</Tag>
+    <Tag>Travel</Tag>
+    <Tag>Gaming</Tag>
+    <Tag>Shopping</Tag>
+  </TagList>
+  <SelectionCount />
+</TagGroup>
+```
+
 ### Hooks
 
-If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTagGroup](useTagGroup.html) for more details.
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useTagGroup](useTagGroup.html) for more details.

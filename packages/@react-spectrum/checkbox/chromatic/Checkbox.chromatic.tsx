@@ -19,7 +19,7 @@ export default {
 };
 
 export const Default = () => render();
-export const ValidationStateInvalid = () => render({validationState: 'invalid'});
+export const ValidationStateInvalid = () => render({isInvalid: true});
 
 ValidationStateInvalid.story = {
   name: 'validationState: "invalid"'
@@ -38,7 +38,7 @@ IsEmphasizedTrue.story = {
 };
 
 export const IsEmphasizedTrueValidationStateInvalid = () =>
-  render({isEmphasized: true, validationState: 'invalid'});
+  render({isEmphasized: true, isInvalid: true});
 
 IsEmphasizedTrueValidationStateInvalid.story = {
   name: 'isEmphasized: true, validationState: "invalid"'

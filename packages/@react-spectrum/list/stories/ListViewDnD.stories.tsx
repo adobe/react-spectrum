@@ -61,7 +61,7 @@ let getAllowedDropOperationsAction = action('getAllowedDropOperationsAction');
 export const DragOut: ListViewStory = {
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
-      <input />
+      <input aria-label="input before" />
       <Droppable />
       <DragExample
         dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}}
@@ -74,7 +74,7 @@ export const DragOut: ListViewStory = {
 export const CustomDragPreview: ListViewStory = {
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
-      <input />
+      <input aria-label="input before" />
       <Droppable />
       <DragExample
         dragHookOptions={{
@@ -146,7 +146,7 @@ export const DragBetweenRootOnly: ListViewStory = {
 export const DraggableOnAction: ListViewStory = {
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
-      <input />
+      <input aria-label="input before" />
       <Droppable />
       <DragExample listViewProps={{onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd')}} />
     </Flex>
@@ -162,7 +162,7 @@ export const DraggableOnAction: ListViewStory = {
 export const DraggableCopyLink: ListViewStory = {
   render: (args) => (
     <Flex direction="row" wrap alignItems="center">
-      <input />
+      <input aria-label="input before" />
       <Droppable />
       <DragExample listViewProps={{onAction: action('onAction'), ...args}} dragHookOptions={{onDragStart: action('dragStart'), onDragEnd: action('dragEnd'), getAllowedDropOperations: () => { getAllowedDropOperationsAction(); return ['copy', 'link', 'cancel'];}}} />
     </Flex>

@@ -3,12 +3,13 @@
   "private": true,
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build src/index.html"
+    "build": "parcel build src/index.html",
+    "install-17": "yarn add -W react@^17 react-dom@^17"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.16",
     "framer-motion": "^10.12.16",
-    "parcel": "^2.8.3",
+    "parcel": "^2.10.2",
     "postcss": "^8.4.21",
     "react": "^18.2.0",
     "react-aria-components": "^1.0.0-alpha.4",
