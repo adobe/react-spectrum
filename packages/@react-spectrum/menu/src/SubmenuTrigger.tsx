@@ -81,7 +81,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
       overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
     }
   } else {
-    let onDismiss = () => {
+    let onDismissButtonPress = () => {
       submenuTriggerState.close();
       parentMenuRef.current?.focus();
     };
@@ -89,7 +89,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
     overlay = (
       <Popover
         {...mergeProps(popoverProps, overlayProps)}
-        onDismiss={onDismiss}
+        onDismissButtonPress={onDismissButtonPress}
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
         container={popoverContainerRef.current}
         offset={-10}

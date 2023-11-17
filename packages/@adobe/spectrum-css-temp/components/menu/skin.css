@@ -91,6 +91,7 @@ governing permissions and limitations under the License.
 .spectrum-Submenu-popover {
   filter: unset;
   -webkit-filter: unset;
+  transition: none;
 }
 
 .spectrum-Submenu-heading {
