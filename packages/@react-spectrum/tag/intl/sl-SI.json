@@ -1,5 +1,6 @@
 {
   "actions": "Dejanja",
   "hideButtonLabel": "Prikaži manj",
+  "noTags": "Nič",
   "showAllButtonLabel": "Prikaž vse ({tagCount, number})"
 }

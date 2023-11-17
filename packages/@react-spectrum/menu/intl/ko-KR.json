@@ -1,3 +1,5 @@
 {
-  "moreActions": "기타 액션"
+  "backButton": "{prevMenuButton}(으)로 돌아가기",
+  "moreActions": "기타 액션",
+  "unavailable": "사용할 수 없음, 자세히 보려면 펼치기"
 }

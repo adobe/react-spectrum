@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {Button, FieldError, Group, Input, Label, NumberField, NumberFieldContext, Text} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestNumberField = (props) => (
@@ -29,6 +29,10 @@ let TestNumberField = (props) => (
 );
 
 describe('NumberField', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   it('provides slots', () => {
     let {getByRole, getAllByRole} = render(<TestNumberField />);
 
@@ -66,23 +70,23 @@ describe('NumberField', () => {
     expect(textbox).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support hover state', () => {
+  it('should support hover state', async () => {
     let {getByRole} = render(<TestNumberField groupProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
     let group = getByRole('group');
 
     expect(group).not.toHaveAttribute('data-hovered');
     expect(group).not.toHaveClass('hover');
 
-    userEvent.hover(group);
+    await user.hover(group);
     expect(group).toHaveAttribute('data-hovered', 'true');
     expect(group).toHaveClass('hover');
 
-    userEvent.unhover(group);
+    await user.unhover(group);
     expect(group).not.toHaveAttribute('data-hovered');
     expect(group).not.toHaveClass('hover');
   });
 
-  it('should support focus visible state', () => {
+  it('should support focus visible state', async () => {
     let {getByRole} = render(<TestNumberField groupProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''}} />);
     let group = getByRole('group');
     let input = getByRole('textbox');
@@ -90,12 +94,12 @@ describe('NumberField', () => {
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(input);
     expect(group).toHaveAttribute('data-focus-visible', 'true');
     expect(group).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(group).not.toHaveAttribute('data-focus-visible');
     expect(group).not.toHaveClass('focus');
   });
@@ -103,9 +107,9 @@ describe('NumberField', () => {
   it('should support render props', () => {
     let {getByRole} = render(
       <NumberField defaultValue={1024} minValue={300} maxValue={1400}>
-        {({minValue, maxValue}) => (
+        {({state}) => (
           <>
-            <Label>Width (min: {minValue}, max: {maxValue})</Label>
+            <Label>Width (min: {state.minValue}, max: {state.maxValue})</Label>
             <Group>
               <Button slot="decrement">-</Button>
               <Input />
@@ -119,5 +123,63 @@ describe('NumberField', () => {
     let input = getByRole('textbox');
     let label = document.getElementById(input.getAttribute('aria-labelledby'));
     expect(label).toHaveTextContent('Width (min: 300, max: 1400)');
+  });
+
+  it('should support form value', () => {
+    let {rerender} = render(<TestNumberField name="test" value={25} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    let input = document.querySelector('input[name=test]');
+    expect(input).toHaveValue('25');
+
+    rerender(<TestNumberField name="test" value={null} formatOptions={{style: 'currency', currency: 'USD'}} />);
+    expect(input).toHaveValue('');
+  });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <TestNumberField data-testid="number-field" />
+    );
+    let outerEl = getAllByTestId('number-field');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-NumberField');
+  });
+
+  it('supports validation errors', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <NumberField isRequired>
+          <Label>Width</Label>
+          <Group>
+            <Button slot="decrement">-</Button>
+            <Input />
+            <Button slot="increment">+</Button>
+          </Group>
+          <FieldError />
+        </NumberField>
+      </form>
+    );
+
+    let input = getByRole('textbox');
+    let numberfield = input.closest('.react-aria-NumberField');
+    expect(input).toHaveAttribute('required');
+    expect(input).not.toHaveAttribute('aria-required');
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(false);
+    expect(numberfield).not.toHaveAttribute('data-invalid');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(numberfield).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(input);
+
+    await user.keyboard('3');
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(true);
+
+    await user.tab();
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(numberfield).not.toHaveAttribute('data-invalid');
   });
 });

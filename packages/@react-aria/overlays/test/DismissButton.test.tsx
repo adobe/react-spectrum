@@ -44,7 +44,7 @@ describe('DismissButton', function () {
         <DismissButton aria-labelledby="span-id" aria-label="foo" id="self" />
       </>
     );
-    expect(getByRole('button', {hidden: true})).toHaveAttribute('aria-labelledby', 'span-id self');
+    expect(getByRole('button', {hidden: true})).toHaveAttribute('aria-labelledby', 'self span-id');
     expect(getByRole('button', {hidden: true})).toHaveAttribute('aria-label', 'foo');
   });
 

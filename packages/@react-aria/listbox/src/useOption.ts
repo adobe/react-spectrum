@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key} from '@react-types/shared';
+import {filterDOMProps, isMac, isWebKit, mergeProps, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
-import {isMac, isWebKit, mergeProps, useSlotId} from '@react-aria/utils';
-import {Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
+import {RefObject} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 
 export interface OptionAria extends SelectableItemStates {
@@ -118,8 +118,9 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     optionProps['aria-describedby'] = descriptionId;
   }
 
+  let item = state.collection.getItem(key);
   if (isVirtualized) {
-    let index = Number(state.collection.getItem(key)?.index);
+    let index = Number(item?.index);
     optionProps['aria-posinset'] = Number.isNaN(index) ? undefined : index + 1;
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
@@ -133,7 +134,8 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     isVirtualized,
     shouldUseVirtualFocus,
     isDisabled,
-    onAction: data?.onAction ? () => data?.onAction?.(key) : undefined
+    onAction: data?.onAction ? () => data?.onAction?.(key) : undefined,
+    linkBehavior: data?.linkBehavior
   });
 
   let {hoverProps} = useHover({
@@ -146,10 +148,13 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     }
   });
 
+  let domProps = filterDOMProps(item?.props, {isLink: !!item?.props?.href});
+  delete domProps.id;
+
   return {
     optionProps: {
       ...optionProps,
-      ...mergeProps(itemProps, hoverProps),
+      ...mergeProps(domProps, itemProps, hoverProps),
       id: getItemId(state, key)
     },
     labelProps: {

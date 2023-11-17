@@ -14,47 +14,29 @@ import {Flex} from '@react-spectrum/layout';
 import React from 'react';
 import {SpectrumStatusLightProps} from '@react-types/statuslight';
 import {StatusLight} from '../';
-import {storiesOf} from '@storybook/react';
 import {View} from '@react-spectrum/view';
 
 let variants = ['celery', 'yellow', 'fuchsia', 'indigo', 'seafoam', 'chartreuse', 'magenta', 'purple', 'neutral', 'info', 'positive', 'notice', 'negative', 'positive'] as SpectrumStatusLightProps['variant'][];
 
-storiesOf('StatusLight', module)
-  .add(
-    'all variants',
-    () => render()
-  )
-  .add(
-    'multiline',
-    () => (
-      <View width="size-3000">
-        <StatusLight variant="celery">Super long status light label. Sample text. Arma virumque cano, Troiae qui primus ab oris.</StatusLight>
-      </View>
-    )
-  );
+export default {
+  title: 'StatusLight'
+};
 
-storiesOf('Languages/StatusLight', module)
-  .addParameters({
-    chromaticProvider: {
-      colorSchemes: ['light'],
-      express: false,
-      locales: ['ar-AE', 'zh-CN', 'zh-TW', 'ja-JP', 'ko-KR'],
-      scales: ['large', 'medium']
-    }
-  })
-  .add(
-    'Neutral: no italic in CCJK',
-    () => (
-      <Flex gap="size-200" direction="row" wrap>
-        <StatusLight variant="neutral">Help</StatusLight>
-        <StatusLight variant="neutral">مساعدة</StatusLight>
-        <StatusLight variant="neutral">帮助</StatusLight>
-        <StatusLight variant="neutral">說明</StatusLight>
-        <StatusLight variant="neutral">ヘルプ</StatusLight>
-        <StatusLight variant="neutral">도움말</StatusLight>
-      </Flex>
-    )
-  );
+export const AllVariants = () => render();
+
+AllVariants.story = {
+  name: 'all variants'
+};
+
+export const Multiline = () => (
+  <View width="size-3000">
+    <StatusLight variant="celery">Super long status light label. Sample text. Arma virumque cano, Troiae qui primus ab oris.</StatusLight>
+  </View>
+);
+
+Multiline.story = {
+  name: 'multiline'
+};
 
 function render() {
   return (

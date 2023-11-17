@@ -215,6 +215,23 @@ describe('DatePickerBase', function () {
       let button = getAllByRole('button')[0];
       expect(button).toHaveAttribute('disabled');
     });
+
+    it.each`
+      Name                   | Component          | props
+      ${'DatePicker'}        | ${DatePicker}      | ${{defaultValue: new CalendarDate(2019, 7, 5)}}
+      ${'DateRangePicker'}   | ${DateRangePicker} | ${{defaultValue: {start: new CalendarDate(2019, 7, 5), end: new CalendarDate(2019, 7, 8)}}}
+    `('$Name should support shouldForceLeadingZeros', ({Component, props}) => {
+      let {getAllByRole} = render(<Component label="Date" {...props} shouldForceLeadingZeros />);
+
+      let segments = getAllByRole('spinbutton');
+      for (let segment of segments) {
+        if (segment.getAttribute('data-testid') !== 'year') {
+          // ignore placeholder text.
+          let textContent = [...segment.childNodes].map(el => el.nodeType === 3 ? el.textContent : '').join('');
+          expect(textContent.startsWith('0')).toBeTruthy();
+        }
+      }
+    });
   });
 
   describe('calendar popover', function () {

@@ -58,7 +58,7 @@ export default {
 
 export const Default: BreadcrumbsStory = {
   render: (args) => render(args),
-  storyName: '3 items'
+  name: '3 items'
 };
 
 export const DefaultTruncated: BreadcrumbsStory = {
@@ -67,7 +67,7 @@ export const DefaultTruncated: BreadcrumbsStory = {
       {render(args)}
     </div>
   ),
-  storyName: 'truncated'
+  name: 'truncated'
 };
 
 export const RenderMany: BreadcrumbsStory = {
@@ -76,7 +76,7 @@ export const RenderMany: BreadcrumbsStory = {
       {renderMany(args)}
     </div>
   ),
-  storyName: '7 items, resizable container'
+  name: '7 items, resizable container'
 };
 
 export const OneItem: BreadcrumbsStory = {
@@ -85,7 +85,19 @@ export const OneItem: BreadcrumbsStory = {
       <Item>Root</Item>
     </Breadcrumbs>
   ),
-  storyName: '1 item'
+  name: '1 item'
+};
+
+export const Links: BreadcrumbsStory = {
+  render: (args) => (
+    <Breadcrumbs {...args}>
+      <Item href="https://example.com">Example.com</Item>
+      <Item href="https://example.com/foo">Foo</Item>
+      <Item href="https://example.com/foo/bar">Bar</Item>
+      <Item href="https://example.com/foo/bar/baz">Baz</Item>
+      <Item href="https://example.com/foo/bar/baz/qux">Qux</Item>
+    </Breadcrumbs>
+  )
 };
 
 function render(props) {

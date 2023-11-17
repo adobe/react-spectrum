@@ -11,14 +11,14 @@
  */
 
 import {AriaButtonProps} from '@react-types/button';
-import {clearGlobalDnDState, isInternalDropOperation, setDraggingKeys} from './utils';
+import {clearGlobalDnDState, isInternalDropOperation, setDraggingKeys, useDragModality} from './utils';
 import {DraggableCollectionState} from '@react-stately/dnd';
-import {HTMLAttributes, Key} from 'react';
+import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {Key} from '@react-types/shared';
 import {useDescription} from '@react-aria/utils';
 import {useDrag} from './useDrag';
-import {useDragModality} from './utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface DraggableItemProps {

@@ -11,10 +11,11 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, render, screen, triggerPress, typeText, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, screen, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import Filter from '@spectrum-icons/workflow/Filter';
+import {Form} from '@react-spectrum/form';
 import {Item, SearchAutocomplete, Section} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -105,7 +106,7 @@ function testSearchAutocompleteOpen(searchAutocomplete, listbox, focusedItemInde
 
   expect(listbox).toBeVisible();
   expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
-  expect(listbox).toHaveAttribute('aria-labelledby', `${searchAutocompleteLabelledBy} ${listbox.id}`);
+  expect(listbox).toHaveAttribute('aria-labelledby', `${listbox.id} ${searchAutocompleteLabelledBy}`);
   expect(searchAutocomplete).toHaveAttribute('aria-controls', listbox.id);
   expect(searchAutocomplete).toHaveAttribute('aria-expanded', 'true');
 
@@ -138,13 +139,15 @@ function testSearchAutocompleteOpen(searchAutocomplete, listbox, focusedItemInde
 }
 
 describe('SearchAutocomplete', function () {
+  let user;
+
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(cb, 0));
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -191,11 +194,14 @@ describe('SearchAutocomplete', function () {
     expect(spyWarn).toHaveBeenCalledWith('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
   });
 
-  it('can be disabled', function () {
+  it('can be disabled', async function () {
     let {getByRole, queryByRole} = renderSearchAutocomplete({isDisabled: true});
 
     let searchAutocomplete = getByRole('combobox');
-    typeText(searchAutocomplete, 'One');
+    act(() => {
+      searchAutocomplete.focus();
+    });
+    await user.keyboard('One');
     act(() => {
       jest.runAllTimers();
     });
@@ -204,9 +210,9 @@ describe('SearchAutocomplete', function () {
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onFocus).not.toHaveBeenCalled();
 
+    fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+    fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
     act(() => {
-      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
       jest.runAllTimers();
     });
 
@@ -214,11 +220,14 @@ describe('SearchAutocomplete', function () {
     expect(onOpenChange).not.toHaveBeenCalled();
   });
 
-  it('can be readonly', function () {
+  it('can be readonly', async function () {
     let {getByRole, queryByRole} = renderSearchAutocomplete({isReadOnly: true, defaultInputValue: 'Blargh'});
 
     let searchAutocomplete = getByRole('combobox');
-    typeText(searchAutocomplete, 'One');
+    act(() => {
+      searchAutocomplete.focus();
+    });
+    await user.keyboard('One');
     act(() => {
       jest.runAllTimers();
     });
@@ -228,9 +237,9 @@ describe('SearchAutocomplete', function () {
     expect(onOpenChange).not.toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalled();
 
+    fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+    fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
     act(() => {
-      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
       jest.runAllTimers();
     });
 
@@ -238,7 +247,7 @@ describe('SearchAutocomplete', function () {
     expect(onOpenChange).not.toHaveBeenCalled();
   });
 
-  it('features default behavior of completionMode suggest and menuTrigger input', function () {
+  it('features default behavior of completionMode suggest and menuTrigger input', async function () {
     let {getByRole} = renderSearchAutocomplete();
 
     let searchAutocomplete = getByRole('combobox');
@@ -246,7 +255,10 @@ describe('SearchAutocomplete', function () {
     expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
     expect(searchAutocomplete).toHaveAttribute('aria-autocomplete', 'list');
 
-    typeText(searchAutocomplete, 'On');
+    act(() => {
+      searchAutocomplete.focus();
+    });
+    await user.keyboard('On');
     act(() => {
       jest.runAllTimers();
     });
@@ -261,9 +273,9 @@ describe('SearchAutocomplete', function () {
     expect(searchAutocomplete).toHaveAttribute('aria-controls', listbox.id);
     expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
 
+    fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+    fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
     act(() => {
-      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
       jest.runAllTimers();
     });
 
@@ -362,7 +374,7 @@ describe('SearchAutocomplete', function () {
         testSearchAutocompleteOpen(searchAutocomplete, listbox, 2);
       });
 
-      it('opens the menu on user typing', function () {
+      it('opens the menu on user typing', async function () {
         let {getByRole, queryByRole} = renderSearchAutocomplete();
 
         let searchAutocomplete = getByRole('combobox');
@@ -370,7 +382,7 @@ describe('SearchAutocomplete', function () {
         expect(queryByRole('listbox')).toBeNull();
         expect(onOpenChange).not.toHaveBeenCalled();
 
-        typeText(searchAutocomplete, 'Two');
+        await user.keyboard('Two');
         act(() => {
           jest.runAllTimers();
         });
@@ -391,12 +403,12 @@ describe('SearchAutocomplete', function () {
         expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
       });
 
-      it('doesn\'t select an item on matching input if it is a disabled key', function () {
+      it('doesn\'t select an item on matching input if it is a disabled key', async function () {
         let {getByRole} = renderSearchAutocomplete({disabledKeys: ['2']});
         let searchAutocomplete = getByRole('combobox');
         act(() => {searchAutocomplete.focus();});
         expect(onOpenChange).not.toHaveBeenCalled();
-        typeText(searchAutocomplete, 'Two');
+        await user.keyboard('Two');
 
         act(() => {
           jest.runAllTimers();
@@ -416,13 +428,13 @@ describe('SearchAutocomplete', function () {
         expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
       });
 
-      it('closes the menu if there are no matching items', function () {
+      it('closes the menu if there are no matching items', async function () {
         let {getByRole, queryByRole} = renderSearchAutocomplete();
 
         let searchAutocomplete = getByRole('combobox');
         expect(onOpenChange).not.toHaveBeenCalled();
         act(() => {searchAutocomplete.focus();});
-        typeText(searchAutocomplete, 'One');
+        await user.keyboard('One');
         act(() => jest.runAllTimers());
 
         expect(onOpenChange).toHaveBeenCalledTimes(1);
@@ -432,19 +444,19 @@ describe('SearchAutocomplete', function () {
         let items = within(listbox).getAllByRole('option');
         expect(items).toHaveLength(1);
 
-        typeText(searchAutocomplete, 'z');
+        await user.keyboard('z');
         act(() => jest.runAllTimers());
         expect(queryByRole('listbox')).toBeNull();
         expect(searchAutocomplete).not.toHaveAttribute('aria-controls');
         expect(searchAutocomplete).toHaveAttribute('aria-expanded', 'false');
       });
 
-      it('doesn\'t open the menu if no items match', function () {
+      it('doesn\'t open the menu if no items match', async function () {
         let {getByRole, queryByRole} = renderSearchAutocomplete();
 
         let searchAutocomplete = getByRole('combobox');
         act(() => searchAutocomplete.focus());
-        typeText(searchAutocomplete, 'X', {skipClick: true});
+        await user.keyboard('X', {skipClick: true});
         act(() => {
           jest.runAllTimers();
         });
@@ -455,11 +467,14 @@ describe('SearchAutocomplete', function () {
     });
   });
   describe('showing menu', function () {
-    it('keeps the menu open if the user clears the input field if menuTrigger = focus', function () {
+    it('keeps the menu open if the user clears the input field if menuTrigger = focus', async function () {
       let {getByRole} = renderSearchAutocomplete({menuTrigger: 'focus'});
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'Two');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('Two');
       act(() => {
         jest.runAllTimers();
       });
@@ -468,8 +483,8 @@ describe('SearchAutocomplete', function () {
       let items = within(listbox).getAllByRole('option');
       expect(items).toHaveLength(1);
 
+      fireEvent.change(searchAutocomplete, {target: {value: ''}});
       act(() => {
-        fireEvent.change(searchAutocomplete, {target: {value: ''}});
         jest.runAllTimers();
       });
 
@@ -487,11 +502,14 @@ describe('SearchAutocomplete', function () {
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
     });
 
-    it('allows the user to navigate the menu via arrow keys', function () {
+    it('allows the user to navigate the menu via arrow keys', async function () {
       let {getByRole} = renderSearchAutocomplete();
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'o');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('o');
       act(() => {
         jest.runAllTimers();
       });
@@ -502,34 +520,31 @@ describe('SearchAutocomplete', function () {
       expect(document.activeElement).toBe(searchAutocomplete);
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
 
-      act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-      });
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
 
       expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[0].id);
 
-      act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-      });
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
 
       expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[1].id);
 
-      act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowUp', code: 38, charCode: 38});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowUp', code: 38, charCode: 38});
-      });
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowUp', code: 38, charCode: 38});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowUp', code: 38, charCode: 38});
 
       expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[0].id);
     });
 
-    it('allows the user to select an item via Enter', function () {
+    it('allows the user to select an item via Enter', async function () {
       let {getByRole, queryByRole} = renderSearchAutocomplete();
 
       let searchAutocomplete = getByRole('combobox');
       expect(searchAutocomplete.value).toBe('');
-      typeText(searchAutocomplete, 'o');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('o');
       act(() => {
         jest.runAllTimers();
       });
@@ -555,18 +570,21 @@ describe('SearchAutocomplete', function () {
       expect(searchAutocomplete.value).toBe('One');
     });
 
-    it('doesn\'t focus the first key if the previously focused key is filtered out of the list', function () {
+    it('doesn\'t focus the first key if the previously focused key is filtered out of the list', async function () {
       let {getByRole} = renderSearchAutocomplete();
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'O');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('O');
       act(() => {
         jest.runAllTimers();
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
       });
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
 
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
@@ -574,7 +592,7 @@ describe('SearchAutocomplete', function () {
       expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[1].id);
       expect(items[1].textContent).toBe('Two');
 
-      typeText(searchAutocomplete, 'n');
+      await user.keyboard('n');
       act(() => {
         jest.runAllTimers();
       });
@@ -592,18 +610,18 @@ describe('SearchAutocomplete', function () {
 
       let searchAutocomplete = getByRole('combobox');
       act(() => searchAutocomplete.focus());
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
       act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
         jest.runAllTimers();
       });
 
       let listbox = getByRole('listbox');
       expect(listbox).toBeTruthy();
 
+      fireEvent.keyDown(searchAutocomplete, {key: 'Enter', code: 13, charCode: 13});
+      fireEvent.keyUp(searchAutocomplete, {key: 'Enter', code: 13, charCode: 13});
       act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'Enter', code: 13, charCode: 13});
-        fireEvent.keyUp(searchAutocomplete, {key: 'Enter', code: 13, charCode: 13});
         jest.runAllTimers();
       });
 
@@ -612,7 +630,7 @@ describe('SearchAutocomplete', function () {
   });
 
   describe('typing in the textfield', function () {
-    it('can be uncontrolled', function () {
+    it('can be uncontrolled', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <SearchAutocomplete label="Test" onOpenChange={onOpenChange}>
@@ -624,12 +642,15 @@ describe('SearchAutocomplete', function () {
       );
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'Bul');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('Bul');
 
       expect(onOpenChange).toHaveBeenCalled();
     });
 
-    it('can select by mouse', function () {
+    it('can select by mouse', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <SearchAutocomplete label="Test" onOpenChange={onOpenChange}>
@@ -641,7 +662,10 @@ describe('SearchAutocomplete', function () {
       );
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'Che');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('Che');
 
       act(() => {
         jest.runAllTimers();
@@ -651,17 +675,20 @@ describe('SearchAutocomplete', function () {
 
       let listbox = getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
+      triggerPress(items[1]);
       act(() => {
-        triggerPress(items[1]);
         jest.runAllTimers();
       });
     });
 
-    it('filters searchAutocomplete items using contains strategy', function () {
+    it('filters searchAutocomplete items using contains strategy', async function () {
       let {getByRole} = renderSearchAutocomplete();
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'o');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('o');
 
       act(() => {
         jest.runAllTimers();
@@ -677,11 +704,14 @@ describe('SearchAutocomplete', function () {
       expect(items[1]).toHaveTextContent('Two');
     });
 
-    it('should not match any items if input is just a space', function () {
+    it('should not match any items if input is just a space', async function () {
       let {getByRole, queryByRole} = renderSearchAutocomplete();
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, ' ');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard(' ');
 
       act(() => {
         jest.runAllTimers();
@@ -690,11 +720,14 @@ describe('SearchAutocomplete', function () {
       expect(queryByRole('listbox')).toBeNull();
     });
 
-    it('doesn\'t focus the first item in searchAutocomplete menu if you completely clear your textfield and menuTrigger = focus', function () {
+    it('doesn\'t focus the first item in searchAutocomplete menu if you completely clear your textfield and menuTrigger = focus', async function () {
       let {getByRole} = renderSearchAutocomplete({menuTrigger: 'focus'});
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'o');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('o');
       act(() => {
         jest.runAllTimers();
       });
@@ -705,8 +738,8 @@ describe('SearchAutocomplete', function () {
       let items = within(listbox).getAllByRole('option');
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
 
+      await user.clear(searchAutocomplete);
       act(() => {
-        userEvent.clear(searchAutocomplete);
         jest.runAllTimers();
       });
 
@@ -717,11 +750,14 @@ describe('SearchAutocomplete', function () {
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
     });
 
-    it('doesn\'t closes the menu if you completely clear your textfield and menuTrigger != focus', function () {
+    it('doesn\'t closes the menu if you completely clear your textfield and menuTrigger != focus', async function () {
       let {getByRole} = renderSearchAutocomplete();
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'o');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('o');
 
       act(() => {
         jest.runAllTimers();
@@ -730,8 +766,8 @@ describe('SearchAutocomplete', function () {
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
 
+      fireEvent.change(searchAutocomplete, {target: {value: ''}});
       act(() => {
-        fireEvent.change(searchAutocomplete, {target: {value: ''}});
         jest.runAllTimers();
       });
 
@@ -768,11 +804,14 @@ describe('SearchAutocomplete', function () {
       expect(items[0].textContent).toBe('Two');
     });
 
-    it('should close the menu when no items match', function () {
+    it('should close the menu when no items match', async function () {
       let {getByRole, queryByRole} = renderSearchAutocomplete();
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'O');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('O');
 
       act(() => {
         jest.runAllTimers();
@@ -782,11 +821,13 @@ describe('SearchAutocomplete', function () {
       expect(onOpenChange).toHaveBeenCalledTimes(1);
       expect(onOpenChange).toHaveBeenCalledWith(true, 'input');
 
-      typeText(searchAutocomplete, 'x');
+      await user.keyboard('x');
 
       act(() => {
         searchAutocomplete.focus();
-        fireEvent.change(searchAutocomplete, {target: {value: 'x'}});
+      });
+      fireEvent.change(searchAutocomplete, {target: {value: 'x'}});
+      act(() => {
         jest.runAllTimers();
       });
 
@@ -795,11 +836,14 @@ describe('SearchAutocomplete', function () {
       expect(onOpenChange).toHaveBeenLastCalledWith(false, undefined);
     });
 
-    it('should clear the focused item when typing', function () {
+    it('should clear the focused item when typing', async function () {
       let {getByRole} = renderSearchAutocomplete();
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'w');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('w');
 
       act(() => {
         jest.runAllTimers();
@@ -810,21 +854,19 @@ describe('SearchAutocomplete', function () {
       expect(items).toHaveLength(1);
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
 
-      act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
-      });
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
 
       expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[0].id);
 
-      typeText(searchAutocomplete, 'o');
+      await user.keyboard('o');
 
       items = within(listbox).getAllByRole('option');
       expect(items).toHaveLength(1);
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
     });
 
-    it('input events are only fired once', function () {
+    it('input events are only fired once', async function () {
       let onKeyDown = jest.fn();
       let onKeyUp = jest.fn();
       let onFocus = jest.fn();
@@ -834,7 +876,10 @@ describe('SearchAutocomplete', function () {
       let {getByRole} = renderSearchAutocomplete({onKeyDown, onKeyUp, onFocus, onInputChange, onBlur, onFocusChange});
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'w');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('w');
 
       act(() => {
         jest.runAllTimers();
@@ -847,16 +892,14 @@ describe('SearchAutocomplete', function () {
       expect(onFocusChange).toHaveBeenCalledTimes(1);
       expect(onBlur).toHaveBeenCalledTimes(0);
 
-      act(() => {
-        userEvent.tab();
-      });
+      await user.tab();
 
       expect(onBlur).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('blur', function () {
-    it('closes and commits selection on blur (clicking to blur)', function () {
+    it('closes and commits selection on blur (clicking to blur)', async function () {
       let {queryByRole, getByRole} = render(
         <Provider theme={theme}>
           <SearchAutocomplete label="Test" onOpenChange={onOpenChange} onInputChange={onInputChange}>
@@ -870,17 +913,24 @@ describe('SearchAutocomplete', function () {
 
       let searchAutocomplete = getByRole('combobox');
       act(() => {
-        typeText(searchAutocomplete, 'b');
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('b');
+      act(() => {
         jest.runAllTimers();
       });
 
       let listbox = getByRole('listbox');
       expect(listbox).toBeVisible();
 
+      fireEvent.change(searchAutocomplete, {target: {value: 'Bulba'}});
       act(() => {
-        fireEvent.change(searchAutocomplete, {target: {value: 'Bulba'}});
         jest.runAllTimers();
+      });
+      act(() => {
         searchAutocomplete.blur();
+      });
+      act(() => {
         jest.runAllTimers();
       });
 
@@ -891,7 +941,7 @@ describe('SearchAutocomplete', function () {
       expect(queryByRole('listbox')).toBeFalsy();
     });
 
-    it('closes and commits custom value', function () {
+    it('closes and commits custom value', async function () {
       let {getByRole, queryByRole} = render(
         <Provider theme={theme}>
           <SearchAutocomplete label="Test" allowsCustomValue onOpenChange={onOpenChange}>
@@ -903,19 +953,20 @@ describe('SearchAutocomplete', function () {
       );
 
       let searchAutocomplete = getByRole('combobox');
+      await user.click(searchAutocomplete);
       act(() => {
-        userEvent.click(searchAutocomplete);
         jest.runAllTimers();
       });
+      fireEvent.change(searchAutocomplete, {target: {value: 'Bulba'}});
       act(() => {
-        fireEvent.change(searchAutocomplete, {target: {value: 'Bulba'}});
         jest.runAllTimers();
-
       });
       expect(onOpenChange).toHaveBeenLastCalledWith(true, 'input');
 
       act(() => {
         searchAutocomplete.blur();
+      });
+      act(() => {
         jest.runAllTimers();
       });
 
@@ -924,7 +975,7 @@ describe('SearchAutocomplete', function () {
       expect(queryByRole('listbox')).toBeNull();
     });
 
-    it('retains selected key on blur if input value matches', function () {
+    it('retains selected key on blur if input value matches', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <SearchAutocomplete label="Test" allowsCustomValue onOpenChange={onOpenChange}>
@@ -937,8 +988,8 @@ describe('SearchAutocomplete', function () {
 
       let searchAutocomplete = getByRole('combobox');
 
+      await user.click(searchAutocomplete);
       act(() => {
-        userEvent.click(searchAutocomplete);
         jest.runAllTimers();
       });
 
@@ -946,12 +997,14 @@ describe('SearchAutocomplete', function () {
 
       act(() => {
         searchAutocomplete.blur();
+      });
+      act(() => {
         jest.runAllTimers();
       });
 
     });
 
-    it('propagates blur event outside of the component', function () {
+    it('propagates blur event outside of the component', async function () {
       let {getByRole} = render(
         <Provider theme={theme}>
           <div onBlur={outerBlur}>
@@ -971,9 +1024,7 @@ describe('SearchAutocomplete', function () {
       expect(onBlur).toHaveBeenCalledTimes(0);
       expect(outerBlur).toHaveBeenCalledTimes(0);
 
-      act(() => {
-        userEvent.tab();
-      });
+      await user.tab();
 
       expect(onBlur).toHaveBeenCalledTimes(1);
       expect(outerBlur).toHaveBeenCalledTimes(1);
@@ -1007,7 +1058,7 @@ describe('SearchAutocomplete', function () {
     });
 
     describe('custom filter', function () {
-      it('updates items with custom filter onInputChange', () => {
+      it('updates items with custom filter onInputChange', async () => {
         let customFilterItems = [
           {name: 'The first item', id: '1'},
           {name: 'The second item', id: '2'},
@@ -1033,7 +1084,10 @@ describe('SearchAutocomplete', function () {
         );
 
         let searchAutocomplete = getByRole('combobox');
-        typeText(searchAutocomplete, 'second');
+        act(() => {
+          searchAutocomplete.focus();
+        });
+        await user.keyboard('second');
         act(() => {
           jest.runAllTimers();
         });
@@ -1044,11 +1098,13 @@ describe('SearchAutocomplete', function () {
       });
     });
 
-    it('updates the list of items when items update', function () {
+    it('updates the list of items when items update', async function () {
       let {getByRole, rerender} = render(<ControlledValueSearchAutocomplete items={initialFilterItems} />);
       let searchAutocomplete = getByRole('combobox');
-
-      typeText(searchAutocomplete, 'o');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('o');
       act(() => {
         jest.runAllTimers();
       });
@@ -1079,7 +1135,7 @@ describe('SearchAutocomplete', function () {
       expect(items[2].textContent).toBe('Item 3');
     });
 
-    it('updates the list of items when items update (items provided by map)', function () {
+    it('updates the list of items when items update (items provided by map)', async function () {
       function SearchAutocompleteWithMap(props) {
         let defaultItems = initialFilterItems;
         let {
@@ -1101,7 +1157,10 @@ describe('SearchAutocomplete', function () {
       let {getByRole, rerender} = render(<SearchAutocompleteWithMap />);
       let searchAutocomplete = getByRole('combobox');
 
-      typeText(searchAutocomplete, 'a');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('a');
       act(() => {
         jest.runAllTimers();
       });
@@ -1159,7 +1218,7 @@ describe('SearchAutocomplete', function () {
   });
 
   describe('uncontrolled searchAutocomplete', function () {
-    it('should update both input value and selected item freely', function () {
+    it('should update both input value and selected item freely', async function () {
       let {getByRole, queryByRole} = renderSearchAutocomplete();
       let searchAutocomplete = getByRole('combobox');
       expect(searchAutocomplete.value).toBe('');
@@ -1167,7 +1226,7 @@ describe('SearchAutocomplete', function () {
       act(() => {
         searchAutocomplete.focus();
       });
-      typeText(searchAutocomplete, 'T');
+      await user.keyboard('T');
       act(() => {
         jest.runAllTimers();
       });
@@ -1176,7 +1235,7 @@ describe('SearchAutocomplete', function () {
       expect(listbox).toBeVisible();
       let items = within(listbox).getAllByRole('option');
       expect(items).toHaveLength(2);
-      typeText(searchAutocomplete, 'wo');
+      await user.keyboard('wo');
 
       act(() => {
         jest.runAllTimers();
@@ -1233,7 +1292,7 @@ describe('SearchAutocomplete', function () {
       expect(onInputChange).toHaveBeenCalledWith('');
     });
 
-    it('defaultInputValue should not set selected item', function () {
+    it('defaultInputValue should not set selected item', async function () {
       let {getByRole} = renderSearchAutocomplete({defaultInputValue: 'Tw'});
       let searchAutocomplete = getByRole('combobox');
       expect(searchAutocomplete.value).toBe('Tw');
@@ -1241,7 +1300,7 @@ describe('SearchAutocomplete', function () {
       act(() => {
         searchAutocomplete.focus();
       });
-      typeText(searchAutocomplete, 'o');
+      await user.keyboard('o');
       act(() => {
         jest.runAllTimers();
       });
@@ -1288,9 +1347,12 @@ describe('SearchAutocomplete', function () {
       expect(queryByRole('progressbar')).toBeNull();
     });
 
-    it('searchAutocomplete should not render a loading circle until a delay of 500ms passes (loadingState: loading)', function () {
+    it('searchAutocomplete should not render a loading circle until a delay of 500ms passes (loadingState: loading)', async function () {
       let {getByRole, queryByRole} = renderSearchAutocomplete({loadingState: 'loading'});
       let searchAutocomplete = getByRole('combobox');
+      act(() => {
+        searchAutocomplete.focus();
+      });
 
       act(() => {jest.advanceTimersByTime(250);});
       expect(queryByRole('progressbar')).toBeNull();
@@ -1298,34 +1360,40 @@ describe('SearchAutocomplete', function () {
       act(() => {jest.advanceTimersByTime(250);});
       expect(() => within(searchAutocomplete).getByRole('progressbar')).toBeTruthy();
 
+      await user.keyboard('o');
       act(() => {
-        typeText(searchAutocomplete, 'o');
         jest.runAllTimers();
       });
       expect(() => within(searchAutocomplete).getByRole('progressbar')).toBeTruthy();
     });
 
-    it('searchAutocomplete should not render a loading circle until a delay of 500ms passes and the menu is open (loadingState: filtering)', function () {
+    it('searchAutocomplete should not render a loading circle until a delay of 500ms passes and the menu is open (loadingState: filtering)', async function () {
       let {getByRole, queryByRole} = renderSearchAutocomplete({loadingState: 'filtering'});
       let searchAutocomplete = getByRole('combobox');
+      act(() => {
+        searchAutocomplete.focus();
+      });
 
       act(() => {jest.advanceTimersByTime(500);});
       expect(queryByRole('progressbar')).toBeNull();
 
+      await user.keyboard('o');
       act(() => {
-        typeText(searchAutocomplete, 'o');
         jest.runAllTimers();
       });
       expect(() => within(searchAutocomplete).getByRole('progressbar')).toBeTruthy();
     });
 
-    it('searchAutocomplete should hide the loading circle when loadingState changes to a non-loading state', function () {
+    it('searchAutocomplete should hide the loading circle when loadingState changes to a non-loading state', async function () {
       let {getByRole, queryByRole, rerender} = render(<ExampleSearchAutocomplete loadingState="filtering" />);
       let searchAutocomplete = getByRole('combobox');
+      act(() => {
+        searchAutocomplete.focus();
+      });
       expect(queryByRole('progressbar')).toBeNull();
 
+      await user.keyboard('o');
       act(() => {
-        typeText(searchAutocomplete, 'o');
         jest.runAllTimers();
       });
       act(() => {jest.advanceTimersByTime(500);});
@@ -1337,13 +1405,16 @@ describe('SearchAutocomplete', function () {
       expect(queryByRole('progressbar')).toBeNull();
     });
 
-    it('searchAutocomplete should hide the loading circle when if the menu closes', function () {
+    it('searchAutocomplete should hide the loading circle when if the menu closes', async function () {
       let {getByRole, queryByRole} = render(<ExampleSearchAutocomplete loadingState="filtering" />);
       let searchAutocomplete = getByRole('combobox');
 
       expect(queryByRole('progressbar')).toBeNull();
 
-      typeText(searchAutocomplete, 'o');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('o');
       act(() => {
         jest.runAllTimers();
       });
@@ -1386,14 +1457,17 @@ describe('SearchAutocomplete', function () {
       expect(() => within(searchAutocomplete).getByRole('progressbar')).toBeTruthy();
     });
 
-    it('searchAutocomplete should reset the 500ms progress circle delay timer when input text changes', function () {
+    it('searchAutocomplete should reset the 500ms progress circle delay timer when input text changes', async function () {
       let {getByRole, queryByRole} = render(<ExampleSearchAutocomplete loadingState="loading" menuTrigger="manual" />);
       let searchAutocomplete = getByRole('combobox');
+      act(() => {
+        searchAutocomplete.focus();
+      });
 
       act(() => {jest.advanceTimersByTime(250);});
       expect(queryByRole('progressbar')).toBeNull();
 
-      typeText(searchAutocomplete, 'O');
+      await user.keyboard('O');
       act(() => {jest.advanceTimersByTime(250);});
       expect(queryByRole('progressbar')).toBeNull();
 
@@ -1407,9 +1481,12 @@ describe('SearchAutocomplete', function () {
       ${'filtering'} | ${null}
       ${'loading'}   | ${'invalid'}
       ${'filtering'} | ${'invalid'}
-    `('should render the loading swirl in the input field when loadingState="$LoadingState" and validationState="$ValidationState"', ({LoadingState, ValidationState}) => {
+    `('should render the loading swirl in the input field when loadingState="$LoadingState" and validationState="$ValidationState"', async ({LoadingState, ValidationState}) => {
       let {getByRole} = renderSearchAutocomplete({loadingState: LoadingState, validationState: ValidationState});
       let searchAutocomplete = getByRole('combobox');
+      act(() => {
+        searchAutocomplete.focus();
+      });
       act(() => {jest.advanceTimersByTime(500);});
 
       if (ValidationState) {
@@ -1419,8 +1496,8 @@ describe('SearchAutocomplete', function () {
       // validation icon should not be present
       expect(within(searchAutocomplete).queryByRole('img', {hidden: true})).toBeNull();
 
+      await user.keyboard('o');
       act(() => {
-        typeText(searchAutocomplete, 'o');
         jest.runAllTimers();
       });
 
@@ -1433,13 +1510,16 @@ describe('SearchAutocomplete', function () {
       expect(within(listbox).queryByRole('progressbar')).toBeNull();
     });
 
-    it('should render the loading swirl in the listbox when loadingState="loadingMore"', function () {
+    it('should render the loading swirl in the listbox when loadingState="loadingMore"', async function () {
       let {getByRole, queryByRole} = renderSearchAutocomplete({loadingState: 'loadingMore'});
       let searchAutocomplete = getByRole('combobox');
+      act(() => {
+        searchAutocomplete.focus();
+      });
 
       expect(queryByRole('progressbar')).toBeNull();
 
-      typeText(searchAutocomplete, 'o');
+      await user.keyboard('o');
       act(() => jest.runAllTimers());
 
       let listbox = getByRole('listbox');
@@ -1524,7 +1604,7 @@ describe('SearchAutocomplete', function () {
       let {getByRole, getByText} = renderSearchAutocomplete({'aria-labelledby': 'label-id'});
       let button = getByRole('button');
 
-      expect(button).toHaveAttribute('aria-labelledby', `label-id ${getByText('Test').id} ${button.getElementsByTagName('span')[0].id}`);
+      expect(button).toHaveAttribute('aria-labelledby', `${getByText('Test').id} label-id ${button.getElementsByTagName('span')[0].id}`);
     });
 
     it('readonly searchAutocomplete should not open on press', function () {
@@ -1585,7 +1665,7 @@ describe('SearchAutocomplete', function () {
       expect(document.activeElement).toBe(button);
     });
 
-    it('height of the tray remains fixed even if the number of items changes', function () {
+    it('height of the tray remains fixed even if the number of items changes', async function () {
       let {getByRole, getByTestId} = renderSearchAutocomplete();
       let button = getByRole('button');
 
@@ -1603,7 +1683,10 @@ describe('SearchAutocomplete', function () {
       let trayInput = within(tray).getByRole('searchbox');
       // Save the height style for comparison later
       let style = tray.getAttribute('style');
-      typeText(trayInput, 'One');
+      act(() => {
+        trayInput.focus();
+      });
+      await user.keyboard('One');
 
       act(() => {
         jest.runAllTimers();
@@ -1658,7 +1741,7 @@ describe('SearchAutocomplete', function () {
       expect(input).toHaveAttribute('aria-activedescendant', items[0].id);
     });
 
-    it('user can filter the menu options by typing in the tray input', function () {
+    it('user can filter the menu options by typing in the tray input', async function () {
       let {getByRole, getByTestId} = renderSearchAutocomplete();
       let button = getByRole('button');
 
@@ -1673,7 +1756,10 @@ describe('SearchAutocomplete', function () {
       let trayInput = within(tray).getByRole('searchbox');
 
       testSearchAutocompleteTrayOpen(trayInput, tray, listbox);
-      typeText(trayInput, 'r');
+      act(() => {
+        trayInput.focus();
+      });
+      await user.keyboard('r');
 
       act(() => {
         jest.runAllTimers();
@@ -1695,7 +1781,7 @@ describe('SearchAutocomplete', function () {
       expect(items[2].textContent).toBe('Three');
     });
 
-    it('tray input can be cleared using a clear button', function () {
+    it('tray input can be cleared using a clear button', async function () {
       let {getByRole, getByTestId} = renderSearchAutocomplete();
       let button = getByRole('button');
 
@@ -1712,7 +1798,10 @@ describe('SearchAutocomplete', function () {
       expect(() => within(tray).getByLabelText('Clear')).toThrow();
 
       testSearchAutocompleteTrayOpen(trayInput, tray, listbox);
-      typeText(trayInput, 'r');
+      act(() => {
+        trayInput.focus();
+      });
+      await user.keyboard('r');
 
       act(() => {
         jest.runAllTimers();
@@ -1735,7 +1824,7 @@ describe('SearchAutocomplete', function () {
       expect(trayInput.value).toBe('');
     });
 
-    it('"No results" placeholder is shown if user types something that doesnt match any of the available options', function () {
+    it('"No results" placeholder is shown if user types something that doesnt match any of the available options', async function () {
       let {getByRole, getByTestId} = renderSearchAutocomplete();
       let button = getByRole('button');
 
@@ -1750,7 +1839,10 @@ describe('SearchAutocomplete', function () {
 
       let trayInput = within(tray).getByRole('searchbox');
       testSearchAutocompleteTrayOpen(trayInput, tray, listbox);
-      typeText(trayInput, 'blah');
+      act(() => {
+        trayInput.focus();
+      });
+      await user.keyboard('blah');
 
       act(() => {
         jest.runAllTimers();
@@ -1954,7 +2046,7 @@ describe('SearchAutocomplete', function () {
       expect(tray).toBeVisible();
       let listbox = getByRole('listbox');
       expect(listbox).toHaveAttribute('aria-label', 'Suggestions');
-      expect(listbox).toHaveAttribute('aria-labelledby', `${label.id} ${listbox.id}`);
+      expect(listbox).toHaveAttribute('aria-labelledby', `${listbox.id} ${label.id}`);
       let trayInput = within(tray).getByRole('searchbox');
       expect(trayInput).toHaveAttribute('aria-labelledby', label.id);
     });
@@ -2068,12 +2160,12 @@ describe('SearchAutocomplete', function () {
       expect(() => getByTestId('tray')).not.toThrow();
     });
 
-    it('should focus the button when clicking on the label', function () {
+    it('should focus the button when clicking on the label', async function () {
       let {getByRole, getByText} = renderSearchAutocomplete();
       let label = getByText('Test');
       let button = getByRole('button');
 
-      userEvent.click(label);
+      await user.click(label);
       act(() => {
         jest.runAllTimers();
       });
@@ -2236,7 +2328,7 @@ describe('SearchAutocomplete', function () {
         expect(within(tray).queryByRole('progressbar')).toBeNull();
       });
 
-      it('tray input loading circle timer should reset on input value change', function () {
+      it('tray input loading circle timer should reset on input value change', async function () {
         let {getByRole, getByTestId, rerender} = render(<ExampleSearchAutocomplete />);
         let button = getByRole('button');
 
@@ -2252,7 +2344,10 @@ describe('SearchAutocomplete', function () {
         act(() => {jest.advanceTimersByTime(250);});
 
         let trayInput = within(tray).getByRole('searchbox');
-        typeText(trayInput, 'One');
+        act(() => {
+          trayInput.focus();
+        });
+        await user.keyboard('One');
         act(() => {jest.advanceTimersByTime(250);});
         expect(within(tray).queryByRole('progressbar')).toBeNull();
 
@@ -2349,6 +2444,545 @@ describe('SearchAutocomplete', function () {
     });
   });
 
+  describe('forms', () => {
+    describe('desktop', () => {
+      beforeAll(function () {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+      });
+
+      afterAll(function () {
+        jest.clearAllMocks();
+      });
+
+      it('should support form reset', async () => {
+        let {getByRole, getByTestId} = render(
+          <form>
+            <ExampleSearchAutocomplete name="test" />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+
+        let combobox = getByRole('combobox');
+        expect(combobox).toHaveAttribute('name', 'test');
+        await user.tab();
+        await user.keyboard('Tw');
+
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let listbox = getByRole('listbox');
+        let items = within(listbox).getAllByRole('option');
+        await user.click(items[0]);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        expect(combobox).toHaveValue('Two');
+
+        let button = getByTestId('reset');
+        await user.click(button);
+        expect(combobox).toHaveValue('');
+      });
+
+      describe('validation', () => {
+        describe('validationBehavior=native', () => {
+          it('supports isRequired', async () => {
+            let {getByTestId, getByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native"  />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).toHaveAttribute('required');
+            expect(input).not.toHaveAttribute('aria-required');
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(false);
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(document.activeElement).toBe(input);
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+            await user.keyboard('Tw');
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).toHaveAttribute('aria-describedby');
+
+            await user.tab();
+            expect(input).not.toHaveAttribute('aria-describedby');
+          });
+
+          it('supports validate function', async () => {
+            let {getByTestId, getByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" defaultInputValue="Two" validationBehavior="native" validate={v => v === 'Two' ? 'Invalid value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(false);
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(document.activeElement).toBe(input);
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+            await user.clear(input);
+            await user.keyboard('On');
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).toHaveAttribute('aria-describedby');
+
+            await user.tab();
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+
+          it('supports server validation', async () => {
+            function Test() {
+              let [serverErrors, setServerErrors] = React.useState({});
+              let onSubmit = e => {
+                e.preventDefault();
+                setServerErrors({
+                  value: 'Invalid value.'
+                });
+              };
+
+              return (
+                <Provider theme={theme}>
+                  <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                    <ExampleSearchAutocomplete data-testid="input" name="value" validationBehavior="native" />
+                    <Button type="submit" data-testid="submit">Submit</Button>
+                  </Form>
+                </Provider>
+              );
+            }
+
+            let {getByTestId, getByRole} = render(<Test />);
+
+            let input = getByTestId('input');
+            expect(input).not.toHaveAttribute('aria-describedby');
+
+            await user.click(getByTestId('submit'));
+
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
+            expect(input.validity.valid).toBe(false);
+
+            await user.tab({shift: true});
+            await user.keyboard('Tw');
+
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).toHaveAttribute('aria-describedby');
+            await user.tab();
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+
+          it('supports customizing native error messages', async () => {
+            let {getByTestId} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+          });
+        });
+
+        describe('validationBehavior=aria', () => {
+          it('supports validate function', async () => {
+            let {getByTestId, getByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" defaultInputValue="Two" validate={v => v === 'Two' ? 'Invalid value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(input).toHaveAttribute('aria-invalid', 'true');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+            expect(input.validity.valid).toBe(true);
+
+            await user.tab();
+            await user.keyboard('On');
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input).not.toHaveAttribute('aria-invalid');
+          });
+
+          it('supports server validation', async () => {
+            let {getByTestId, getByRole} = render(
+              <Provider theme={theme}>
+                <Form validationErrors={{value: 'Invalid value'}}>
+                  <ExampleSearchAutocomplete data-testid="input" name="value" />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(input).toHaveAttribute('aria-invalid', 'true');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+            await user.tab();
+            await user.keyboard('Tw');
+
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            await user.tab();
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input).not.toHaveAttribute('aria-invalid');
+          });
+
+          it('only commits on blur if the value changed', async () => {
+            let {getByTestId} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native"  />
+                </Form>
+              </Provider>
+            );
+
+            let input = getByTestId('input');
+            expect(input).toHaveAttribute('required');
+            expect(input).not.toHaveAttribute('aria-required');
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(false);
+
+            await user.tab();
+            await user.tab({shift: true});
+            expect(input).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(input).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+          });
+        });
+      });
+    });
+
+    describe('mobile', () => {
+      beforeEach(() => {
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+      });
+
+      afterEach(() => {
+        act(() => jest.runAllTimers());
+        jest.clearAllMocks();
+      });
+
+      it('should support form reset', async () => {
+        let {getByRole, getAllByRole, getByTestId} = render(
+          <form>
+            <ExampleSearchAutocomplete name="test" />
+            <input type="reset" data-testid="reset" />
+          </form>
+        );
+
+        let button = getAllByRole('button')[0];
+
+        await user.click(button);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let tray = getByTestId('tray');
+        expect(tray).toBeVisible();
+        let combobox = getByRole('searchbox');
+        expect(combobox).not.toHaveAttribute('name');
+        let listbox = getByRole('listbox');
+
+        let items = within(listbox).getAllByRole('option');
+        await user.click(items[0]);
+        act(() => {
+          jest.runAllTimers();
+        });
+
+        let input = document.querySelector('input[name=test]');
+        expect(input).toHaveValue('One');
+
+        let reset = getByTestId('reset');
+        await user.click(reset);
+        expect(input).toHaveValue('');
+      });
+
+      describe('validation', () => {
+        describe('validationBehavior=native', () => {
+          it('supports isRequired', async () => {
+            let {getByTestId, getByRole, getAllByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete name="test" isRequired validationBehavior="native"  />
+                </Form>
+              </Provider>
+            );
+
+            let input = document.querySelector('input[name=test]');
+            expect(input).toHaveAttribute('required');
+            expect(input).not.toHaveAttribute('aria-required');
+            expect(input.validity.valid).toBe(false);
+
+            let button = getAllByRole('button')[0];
+            expect(button).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+            await user.click(button);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+          });
+
+          it('supports validate function', async () => {
+            let {getByTestId, getByRole, getAllByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete name="test" defaultInputValue="Two" validationBehavior="native" validate={v => v === 'Two' ? 'Invalid value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let input = document.querySelector('input[name=test]');
+            expect(input.validity.valid).toBe(false);
+
+            let button = getAllByRole('button')[0];
+            expect(button).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+            await user.click(button);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+
+          it('supports server validation', async () => {
+            function Test() {
+              let [serverErrors, setServerErrors] = React.useState({});
+              let onSubmit = e => {
+                e.preventDefault();
+                setServerErrors({
+                  value: 'Invalid value.'
+                });
+              };
+
+              return (
+                <Provider theme={theme}>
+                  <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                    <ExampleSearchAutocomplete name="value" validationBehavior="native" />
+                    <Button type="submit" data-testid="submit">Submit</Button>
+                  </Form>
+                </Provider>
+              );
+            }
+
+            let {getByTestId, getByRole, getAllByRole} = render(<Test />);
+
+            let input = document.querySelector('input[name=value]');
+            let button = getAllByRole('button')[0];
+            expect(button).not.toHaveAttribute('aria-describedby');
+
+            await user.click(getByTestId('submit'));
+
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
+            expect(input.validity.valid).toBe(false);
+
+            await user.click(button);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+
+          it('supports customizing native error messages', async () => {
+            let {getByTestId, getAllByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete name="test" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let button = getAllByRole('button')[0];
+            expect(button).not.toHaveAttribute('aria-describedby');
+
+            act(() => {getByTestId('form').checkValidity();});
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+          });
+        });
+
+        describe('validationBehavior=aria', () => {
+          it('supports validate function', async () => {
+            let {getAllByRole, getByRole} = render(
+              <Provider theme={theme}>
+                <Form data-testid="form">
+                  <ExampleSearchAutocomplete name="test" defaultInputValue="Two" validate={v => v === 'Two' ? 'Invalid value' : null} />
+                </Form>
+              </Provider>
+            );
+
+            let input = document.querySelector('input[name=test]');
+            expect(input.validity.valid).toBe(true);
+
+            let button = getAllByRole('button')[0];
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+            await user.click(button);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+
+          it('supports server validation', async () => {
+            let {getByRole, getAllByRole} = render(
+              <Provider theme={theme}>
+                <Form validationErrors={{value: 'Invalid value'}}>
+                  <ExampleSearchAutocomplete name="value" />
+                </Form>
+              </Provider>
+            );
+
+            let input = document.querySelector('input[name=value]');
+            let button = getAllByRole('button')[0];
+            expect(button).toHaveAttribute('aria-describedby');
+            expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+            await user.click(button);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            let listbox = getByRole('listbox');
+            let items = within(listbox).getAllByRole('option');
+            await user.click(items[0]);
+            act(() => {
+              jest.runAllTimers();
+            });
+
+            expect(input).not.toHaveAttribute('aria-describedby');
+            expect(input.validity.valid).toBe(true);
+          });
+        });
+      });
+    });
+  });
+
   describe('accessibility', function () {
     beforeAll(function () {
       jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
@@ -2358,11 +2992,14 @@ describe('SearchAutocomplete', function () {
       jest.restoreAllMocks();
     });
     // NVDA workaround so that letters are read out when user presses left/right arrow to navigate through what they typed
-    it('clears aria-activedescendant when user presses left/right arrow (NVDA fix)', function () {
+    it('clears aria-activedescendant when user presses left/right arrow (NVDA fix)', async function () {
       let {getByRole} = renderSearchAutocomplete();
 
       let searchAutocomplete = getByRole('combobox');
-      typeText(searchAutocomplete, 'One');
+      act(() => {
+        searchAutocomplete.focus();
+      });
+      await user.keyboard('One');
       act(() => {
         jest.runAllTimers();
       });
@@ -2370,9 +3007,9 @@ describe('SearchAutocomplete', function () {
       expect(listbox).toBeVisible();
       expect(searchAutocomplete).toHaveAttribute('aria-controls', listbox.id);
 
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
       act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
         jest.runAllTimers();
       });
 
@@ -2381,25 +3018,25 @@ describe('SearchAutocomplete', function () {
       expect(items[0]).toHaveTextContent('One');
       expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[0].id);
 
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowLeft', code: 37, charCode: 37});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowLeft', code: 37, charCode: 37});
       act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowLeft', code: 37, charCode: 37});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowLeft', code: 37, charCode: 37});
         jest.runAllTimers();
       });
 
       expect(searchAutocomplete).not.toHaveAttribute('aria-activedescendant');
 
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
       act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown', code: 40, charCode: 40});
         jest.runAllTimers();
       });
 
       expect(searchAutocomplete).toHaveAttribute('aria-activedescendant', items[0].id);
 
+      fireEvent.keyDown(searchAutocomplete, {key: 'ArrowRight', code: 39, charCode: 39});
+      fireEvent.keyUp(searchAutocomplete, {key: 'ArrowRight', code: 39, charCode: 39});
       act(() => {
-        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowRight', code: 39, charCode: 39});
-        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowRight', code: 39, charCode: 39});
         jest.runAllTimers();
       });
 
@@ -2423,17 +3060,17 @@ describe('SearchAutocomplete', function () {
           let {getByRole} = renderSearchAutocomplete();
           let searchAutocomplete = getByRole('combobox');
 
+          fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
+          fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
           act(() => {
-            fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
-            fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
             jest.runAllTimers();
           });
 
           expect(announce).toHaveBeenLastCalledWith('One');
 
+          fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
+          fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
           act(() => {
-            fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
-            fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
             jest.runAllTimers();
           });
 
@@ -2444,28 +3081,31 @@ describe('SearchAutocomplete', function () {
           let {getByRole} = renderSectionSearchAutocomplete();
           let searchAutocomplete = getByRole('combobox');
 
+          fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
+          fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
           act(() => {
-            fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
-            fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
             jest.runAllTimers();
           });
 
           expect(announce).toHaveBeenLastCalledWith('Entered group Section One, with 3 options. One');
 
+          fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
+          fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
           act(() => {
-            fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
-            fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
             jest.runAllTimers();
           });
 
           expect(announce).toHaveBeenLastCalledWith('Two');
         });
 
-        it('should announce when navigating into a section with a single item', function () {
+        it('should announce when navigating into a section with a single item', async function () {
           let {getByRole} = renderSectionSearchAutocomplete({defaultInputValue: 'Tw'});
           let searchAutocomplete = getByRole('combobox');
+          act(() => {
+            searchAutocomplete.focus();
+          });
 
-          typeText(searchAutocomplete, 'o');
+          await user.keyboard('o');
           act(() => {
             jest.runAllTimers();
           });
@@ -2480,18 +3120,21 @@ describe('SearchAutocomplete', function () {
       });
 
       describe('filtering', function () {
-        it('should announce the number of options available when filtering', function () {
+        it('should announce the number of options available when filtering', async function () {
           let {getByRole} = renderSearchAutocomplete();
           let searchAutocomplete = getByRole('combobox');
+          act(() => {
+            searchAutocomplete.focus();
+          });
 
-          typeText(searchAutocomplete, 'o');
+          await user.keyboard('o');
           act(() => {
             jest.runAllTimers();
           });
 
           expect(announce).toHaveBeenLastCalledWith('2 options available.');
 
-          typeText(searchAutocomplete, 'n');
+          await user.keyboard('n');
           act(() => {
             jest.runAllTimers();
           });
@@ -2499,12 +3142,15 @@ describe('SearchAutocomplete', function () {
           expect(announce).toHaveBeenLastCalledWith('1 option available.');
         });
 
-        it('should announce the number of options available when opening the menu', function () {
+        it('should announce the number of options available when opening the menu', async function () {
           let {getByRole} = renderSearchAutocomplete();
           let searchAutocomplete = getByRole('combobox');
-
           act(() => {
-            typeText(searchAutocomplete, 'o');
+            searchAutocomplete.focus();
+          });
+
+          await user.keyboard('o');
+          act(() => {
             jest.runAllTimers();
           });
 
@@ -2519,16 +3165,18 @@ describe('SearchAutocomplete', function () {
 
           act(() => {
             searchAutocomplete.focus();
-            fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
-            fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
+          });
+          fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
+          fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
+          act(() => {
             jest.runAllTimers();
           });
 
           expect(announce).toHaveBeenLastCalledWith('One');
 
+          fireEvent.keyDown(searchAutocomplete, {key: 'Enter'});
+          fireEvent.keyUp(searchAutocomplete, {key: 'Enter'});
           act(() => {
-            fireEvent.keyDown(searchAutocomplete, {key: 'Enter'});
-            fireEvent.keyUp(searchAutocomplete, {key: 'Enter'});
             jest.runAllTimers();
           });
 
@@ -2554,8 +3202,10 @@ describe('SearchAutocomplete', function () {
 
         act(() => {
           searchAutocomplete.focus();
-          fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
-          fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
+        });
+        fireEvent.keyDown(searchAutocomplete, {key: 'ArrowDown'});
+        fireEvent.keyUp(searchAutocomplete, {key: 'ArrowDown'});
+        act(() => {
           jest.runAllTimers();
         });
 

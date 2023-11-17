@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Calendar, RangeCalendar} from '../';
 import {CalendarDate, GregorianCalendar, today} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
@@ -23,9 +23,11 @@ let headingFormatter = new Intl.DateTimeFormat('en-US', {month: 'long', year: 'n
 let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40};
 
 describe('CalendarBase', () => {
+  let user;
+
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -43,7 +45,7 @@ describe('CalendarBase', () => {
     `('$Name shows the current month by default', ({Calendar, props}) => {
       let {getByLabelText, getAllByLabelText, getByRole, getAllByRole} = render(<Calendar {...props} />);
 
-      let calendar = getByRole('group');
+      let calendar = getByRole('application');
       expect(calendar).toBeVisible();
 
       let heading = getByRole('heading');
@@ -235,7 +237,7 @@ describe('CalendarBase', () => {
       Name                    | Calendar              | props
       ${'v3 Calendar'}        | ${Calendar}           | ${{defaultValue: new CalendarDate(2019, 3, 10), minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
       ${'v3 RangeCalendar'}   | ${RangeCalendar}      | ${{defaultValue: {start: new CalendarDate(2019, 3, 10), end: new CalendarDate(2019, 3, 15)}, minValue: new CalendarDate(2019, 2, 3), maxValue: new CalendarDate(2019, 4, 20)}}
-    `('$Name should move focus when the previous or next buttons become disabled', ({Calendar, props}) => {
+    `('$Name should move focus when the previous or next buttons become disabled', async ({Calendar, props}) => {
       let {getByLabelText, getAllByLabelText} = render(<Calendar {...props} />);
 
       let prevButton = getByLabelText('Previous');
@@ -244,18 +246,18 @@ describe('CalendarBase', () => {
       expect(prevButton).not.toHaveAttribute('disabled');
       expect(nextButton).not.toHaveAttribute('disabled');
 
-      act(() => userEvent.click(prevButton));
+      await user.click(prevButton);
       expect(prevButton).toHaveAttribute('disabled');
       expect(nextButton).not.toHaveAttribute('disabled');
       expect(document.activeElement.getAttribute('aria-label').startsWith('Sunday, February 10, 2019')).toBe(true);
 
-      act(() => userEvent.click(nextButton));
+      await user.click(nextButton);
 
       expect(prevButton).not.toHaveAttribute('disabled');
       expect(nextButton).not.toHaveAttribute('disabled');
       expect(document.activeElement).toBe(nextButton);
 
-      act(() => userEvent.click(nextButton));
+      await user.click(nextButton);
       expect(prevButton).not.toHaveAttribute('disabled');
       expect(nextButton).toHaveAttribute('disabled');
       expect(document.activeElement.getAttribute('aria-label').startsWith('Wednesday, April 10, 2019')).toBe(true);
@@ -312,7 +314,7 @@ describe('CalendarBase', () => {
     `('$Name should show era for BC dates', ({Calendar}) => {
       let {getByRole} = render(<Calendar defaultFocusedValue={new CalendarDate('BC', 2, 1, 5)} />);
 
-      let group = getByRole('group');
+      let group = getByRole('application');
       expect(group).toHaveAttribute('aria-label', 'January 2 BC');
 
       let heading = getByRole('heading');
@@ -465,7 +467,7 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar}
     `('$Name should pass through data attributes', ({Calendar}) => {
       let {getByTestId} = render(<Calendar data-testid="foo" />);
-      expect(getByTestId('foo')).toHaveAttribute('role', 'group');
+      expect(getByTestId('foo')).toHaveAttribute('role', 'application');
     });
 
     it.each`
@@ -478,7 +480,7 @@ describe('CalendarBase', () => {
       expect(ref.current).toHaveProperty('UNSAFE_getDOMNode');
 
       let wrapper = ref.current.UNSAFE_getDOMNode();
-      expect(wrapper).toHaveAttribute('role', 'group');
+      expect(wrapper).toHaveAttribute('role', 'application');
     });
 
     it.each`
@@ -513,7 +515,7 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should be labeled by month heading by default', async ({Calendar, props}) => {
       let {getByRole} = render(<Calendar  {...props} />);
-      let calendar = getByRole('group');
+      let calendar = getByRole('application');
       let body = getByRole('grid');
       expect(calendar).toHaveAttribute('id');
       expect(calendar).toHaveAttribute('aria-label', 'June 2019');
@@ -526,7 +528,7 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should support labeling with aria-label', ({Calendar, props}) => {
       let {getByRole} = render(<Calendar {...props} aria-label="foo" />);
-      let calendar = getByRole('group');
+      let calendar = getByRole('application');
       let body = getByRole('grid');
       expect(calendar).toHaveAttribute('id');
       expect(calendar).toHaveAttribute('aria-label', 'foo, June 2019');
@@ -539,14 +541,14 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should support labeling with aria-labelledby', ({Calendar, props}) => {
       let {getByRole} = render(<Calendar {...props} aria-labelledby="foo" />);
-      let calendar = getByRole('group');
+      let calendar = getByRole('application');
       let body = getByRole('grid');
       expect(calendar).toHaveAttribute('id');
       expect(calendar).toHaveAttribute('aria-label', 'June 2019');
-      expect(calendar).toHaveAttribute('aria-labelledby', `foo ${calendar.id}`);
+      expect(calendar).toHaveAttribute('aria-labelledby', `${calendar.id} foo`);
       expect(body).toHaveAttribute('aria-label', 'June 2019');
       expect(body).toHaveAttribute('id');
-      expect(body).toHaveAttribute('aria-labelledby', `foo ${body.id}`);
+      expect(body).toHaveAttribute('aria-labelledby', `${body.id} foo`);
     });
 
     it.each`
@@ -555,14 +557,14 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should support labeling with aria-labelledby and aria-label', ({Calendar, props}) => {
       let {getByRole} = render(<Calendar {...props} aria-label="cal" aria-labelledby="foo" />);
-      let calendar = getByRole('group');
+      let calendar = getByRole('application');
       let body = getByRole('grid');
       expect(calendar).toHaveAttribute('id');
       expect(calendar).toHaveAttribute('aria-label', 'cal, June 2019');
-      expect(calendar).toHaveAttribute('aria-labelledby', `foo ${calendar.id}`);
+      expect(calendar).toHaveAttribute('aria-labelledby', `${calendar.id} foo`);
       expect(body).toHaveAttribute('aria-label', 'cal, June 2019');
       expect(body).toHaveAttribute('id');
-      expect(body).toHaveAttribute('aria-labelledby', `foo ${body.id}`);
+      expect(body).toHaveAttribute('aria-labelledby', `${body.id} foo`);
     });
 
     it.each`
@@ -571,14 +573,14 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should support labeling with a custom id', ({Calendar, props}) => {
       let {getByRole} = render(<Calendar {...props} id="hi" aria-label="cal" aria-labelledby="foo" />);
-      let calendar = getByRole('group');
+      let calendar = getByRole('application');
       let body = getByRole('grid');
       expect(calendar).toHaveAttribute('id', 'hi');
       expect(calendar).toHaveAttribute('aria-label', 'cal, June 2019');
-      expect(calendar).toHaveAttribute('aria-labelledby', `foo ${calendar.id}`);
+      expect(calendar).toHaveAttribute('aria-labelledby', `${calendar.id} foo`);
       expect(body).toHaveAttribute('aria-label', 'cal, June 2019');
       expect(body).toHaveAttribute('id');
-      expect(body).toHaveAttribute('aria-labelledby', `foo ${body.id}`);
+      expect(body).toHaveAttribute('aria-labelledby', `${body.id} foo`);
     });
 
     it.each`
@@ -587,7 +589,7 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 5)}}}
     `('$Name should support labeling with multiple visible months', ({Calendar, props}) => {
       let {getByRole, getAllByRole} = render(<Calendar {...props} aria-label="Calendar" visibleMonths={3} />);
-      let calendar = getByRole('group');
+      let calendar = getByRole('application');
       let months = getAllByRole('grid');
       expect(months).toHaveLength(3);
       expect(calendar).toHaveAttribute('id');

@@ -12,14 +12,20 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import sharedDocs from 'docs:@react-types/shared';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '@react-aria/gridlist/docs/anatomy.svg';
+import Anatomy from './GridListAnatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
+import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
 
 ---
 category: Collections
@@ -41,44 +47,44 @@ type: component
 ## Example
 
 ```tsx example
-import {GridList, Item, Button} from 'react-aria-components';
+import {GridList, GridListItem, Button} from 'react-aria-components';
 
 <GridList aria-label="Favorite pokemon" selectionMode="multiple">
-  <Item textValue="Charizard">
+  <GridListItem textValue="Charizard">
     <MyCheckbox />
     Charizard
     <Button aria-label="Info">ⓘ</Button>
-  </Item>
-  <Item textValue="Blastoise">
+  </GridListItem>
+  <GridListItem textValue="Blastoise">
     <MyCheckbox />
     Blastoise
     <Button aria-label="Info">ⓘ</Button>
-  </Item>
-  <Item textValue="Venusaur">
+  </GridListItem>
+  <GridListItem textValue="Venusaur">
     <MyCheckbox />
     Venusaur
     <Button aria-label="Info">ⓘ</Button>
-  </Item>
-  <Item textValue="Pikachu">
+  </GridListItem>
+  <GridListItem textValue="Pikachu">
     <MyCheckbox />
     Pikachu
     <Button aria-label="Info">ⓘ</Button>
-  </Item>
+  </GridListItem>
 </GridList>
 ```
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './Checkbox.mdx' layer(checkbox);
+@import './ToggleButton.mdx' layer(togglebutton);
+```
 
 ```css
-.react-aria-GridList {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+@import "@react-aria/example-theme";
 
+.react-aria-GridList {
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -87,25 +93,24 @@ import {GridList, Item, Button} from 'react-aria-components';
   padding: 4px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: var(--background-color);
+  background: var(--overlay-background);
+  forced-color-adjust: none;
   outline: none;
   width: 250px;
   max-height: 300px;
   min-height: 100px;
   box-sizing: border-box;
 
-  &[data-empty] {
-    align-items: center;
-    justify-content: center;
-    font-style: italic;
-  }
-
   &[data-focus-visible] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
   }
 
-  .react-aria-Item {
+  .react-aria-GridListItem {
+    display: flex;
+    align-items: center;
+    gap: 0.571rem;
+    min-height: 28px;
     padding: 0.286rem 0.286rem 0.286rem 0.571rem;
     border-radius: 6px;
     outline: none;
@@ -116,42 +121,55 @@ import {GridList, Item, Button} from 'react-aria-components';
     transform: translateZ(0);
 
     &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px var(--highlight-background);
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -2px;
     }
 
     &[data-pressed] {
-      background: var(--spectrum-global-color-gray-200);
+      background: var(--gray-100);
     }
 
-    &[aria-selected=true] {
+    &[data-selected] {
       background: var(--highlight-background);
       color: var(--highlight-foreground);
+      --focus-ring-color: var(--highlight-foreground);
 
       &[data-focus-visible] {
-        box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
+        outline-color: var(--highlight-foreground);
+        outline-offset: -4px;
       }
 
       .react-aria-Button {
         color: var(--highlight-foreground);
-        --focus-ring-color: var(--highlight-foreground);
-        --hover-highlight: rgb(255 255 255 / 0.1);
-        --active-highlight: rgb(255 255 255 / 0.2);
+        --highlight-hover: rgb(255 255 255 / 0.1);
+        --highlight-pressed: rgb(255 255 255 / 0.2);
       }
     }
 
-    &[aria-disabled] {
+    &[data-disabled] {
       color: var(--text-color-disabled);
-    }
-
-    [role=gridcell] {
-      display: flex;
-      align-items: center;
-      gap: 0.571rem;
-      min-height: 28px;
     }
 
     .react-aria-Button:not([slot]) {
       margin-left: auto;
+    }
+
+    .react-aria-Button {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      line-height: 1.2em;
+      padding: 0.286rem 0.429rem;
+      transition: background 200ms;
+
+      &[data-hovered] {
+        background: var(--highlight-hover);
+      }
+
+      &[data-pressed] {
+        background: var(--highlight-pressed);
+        box-shadow: none;
+      }
     }
   }
 
@@ -159,143 +177,24 @@ import {GridList, Item, Button} from 'react-aria-components';
   @supports selector(:has(.foo)) {
     gap: 0;
 
-    .react-aria-Item[aria-selected=true]:has(+ [aria-selected=true]),
-    .react-aria-Item[aria-selected=true]:has(+ .react-aria-DropIndicator + [aria-selected=true]) {
+    .react-aria-GridListItem[data-selected]:has(+ [data-selected]),
+    .react-aria-GridListItem[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) {
       border-end-start-radius: 0;
       border-end-end-radius: 0;
     }
 
-    .react-aria-Item[aria-selected=true] + [aria-selected=true],
-    .react-aria-Item[aria-selected=true] + .react-aria-DropIndicator + [aria-selected=true] {
+    .react-aria-GridListItem[data-selected] + [data-selected],
+    .react-aria-GridListItem[data-selected] + .react-aria-DropIndicator + [data-selected] {
       border-start-start-radius: 0;
       border-start-end-radius: 0;
     }
   }
-}
 
-.react-aria-Checkbox {
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --selected-color: white;
-  --selected-color-pressed: #ddd;
-  --checkmark-color: slateblue;
-  --focus-ring-color: slateblue;
-
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid var(--deselected-color);
-  border-radius: 4px;
-  transition: all 200ms;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  & svg {
-    width: 0.857rem;
-    height: 0.857rem;
-    fill: none;
-    stroke: var(--checkmark-color);
-    stroke-width: 3px;
-    stroke-dasharray: 22px;
-    stroke-dashoffset: 66;
-    transition: all 200ms;
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--focus-ring-color);
-  }
-
-  &[data-pressed] {
-    border-color: var(--deselected-color-pressed);
-  }
-
-  &[data-selected] {
-    border-color: var(--selected-color);
-    background: var(--selected-color);
-
-    &[data-pressed] {
-      border-color: var(--selected-color-pressed);
-      background: var(--selected-color-pressed);
-    }
-
-    &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--focus-ring-color), 0 0 0 4px var(--selected-color);
-    }
-
-    & svg {
-      stroke-dashoffset: 44;
-    }
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
-  }
-}
-
-.react-aria-Button {
-  background: transparent;
-  border: none;
-  border-radius: 4px;
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.2rem;
-  text-align: center;
-  line-height: 1.2em;
-  margin: 0;
-  outline: none;
-  padding: 0.286rem 0.429rem;
-  transition: background 200ms;
-  color: var(--spectrum-alias-text-color);
-  --focus-ring-color: slateblue;
-  --hover-highlight: var(--spectrum-alias-highlight-hover);
-  --active-highlight: var(--spectrum-alias-highlight-active);
-
-  &[data-hovered] {
-    background: var(--hover-highlight);
-  }
-
-  &[data-pressed] {
-    background: var(--active-highlight);
-  }
-
-  &[data-focus-visible] {
-    box-shadow: 0 0 0 2px var(--focus-ring-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-GridList {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-  }
-
-  .react-aria-Checkbox {
-    forced-color-adjust: none;
-
-    --deselected-color: ButtonBorder;
-    --deselected-color-pressed: ButtonBorder;
-    --selected-color: ButtonFace;
-    --selected-color-pressed: ButtonFace;
-    --checkmark-color: ButtonText;
-    --spectrum-alias-background-color-default: Canvas;
-    --focus-ring-color: Highlight;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
-    }
-  }
-
-  .react-aria-Button {
-    forced-color-adjust: none;
-    --focus-ring-color: Highlight;
+  :where(.react-aria-GridListItem) .react-aria-Checkbox {
+    --selected-color: var(--highlight-foreground);
+    --selected-color-pressed: var(--highlight-foreground-pressed);
+    --checkmark-color: var(--highlight-background);
+    --background-color: var(--highlight-background);
   }
 }
 ```
@@ -311,8 +210,9 @@ HTML lists are meant for static content, rather than lists with rich interaction
 * **Item selection** – Single or multiple selection, with optional checkboxes, disabled rows, and both `toggle` and `replace` selection behaviors.
 * **Interactive children** – List items may include interactive elements such as buttons, checkboxes, menus, etc.
 * **Actions** – Items support optional row actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
-* **Async loading** – Support for loading items asynchronously, with infinite and virtualized scrolling.
+* **Async loading** – Support for loading items asynchronously.
 * **Keyboard navigation** – List items and focusable children can be navigated using the arrow keys, along with page up/down, home/end, etc. Typeahead, auto scrolling, and selection modifier keys are supported as well.
+* **Drag and drop** – GridList supports drag and drop to reorder, insert, or update items via mouse, touch, keyboard, and screen reader interactions.
 * **Touch friendly** – Selection and actions adapt their behavior depending on the device. For example, selection is activated via long press on touch when item actions are present.
 * **Accessible** – Follows the [ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/), with additional selection announcements via an ARIA live region. Extensively tested across many devices and [assistive technologies](accessibility.html#testing) to ensure announcements and behaviors are consistent.
 
@@ -320,108 +220,85 @@ HTML lists are meant for static content, rather than lists with rich interaction
 
 ## Anatomy
 
-<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a selection checkbox, a list item row, and a list item cell." />
+<Anatomy role="img" aria-label="Anatomy diagram of a list container, consisting of multiple list items. Each list item contains a drag button, a selection checkbox, an icon, a title, and a description." />
 
 A grid list consists of a container element, with rows of data inside. The rows within a list may contain focusable elements or plain text content.
 If the list supports row selection, each row can optionally include a selection checkbox.
+
+```tsx
+import {GridList, GridListItem, Checkbox, Button} from 'react-aria-components';
+
+<GridList>
+  <GridListItem>
+    <Button slot="drag" />
+    <Checkbox slot="selection" />
+  </GridListItem>
+</GridList>
+```
 
 ### Concepts
 
 `GridList` makes use of the following concepts:
 
-* [Collections](../react-stately/Collections.html)
-* [Selection](../react-stately/Selection.html)
+<section className={styles.cardGroup} data-size="small">
 
-## Props
+<ExampleCard
+  url="../react-stately/collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
 
-### GridList
+<ExampleCard
+  url="../react-stately/selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
 
-<PropTable component={docs.exports.GridList} links={docs.links} />
+<ExampleCard
+  url="dnd.html"
+  title="Drag and drop"
+  description="Concepts and interactions for an accessible drag and drop experience.">
+  <DragAndDrop />
+</ExampleCard>
 
-### Item
+</section>
 
-An `<Item>` defines a single option within a `<GridList>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for typeahead in the GridList.
+### Composed components
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+A `GridList` uses the following components, which may also be used standalone or reused in other components.
 
-<PropTable component={docs.exports.Item} links={docs.links} />
+<section className={styles.cardGroup} data-size="small">
 
-</details>
+<ExampleCard
+  url="Checkbox.html"
+  title="Checkbox"
+  description="A checkbox allows a user to select an individual option.">
+  <Checkbox />
+</ExampleCard>
 
-## Styling
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
 
-React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+</section>
 
-```css
-.react-aria-GridList {
-  /* ... */
-}
-```
+## Examples
 
-A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
-
-```jsx
-<GridList className="my-gridlist">
-  {/* ... */}
-</GridList>
-```
-
-In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
-
-```css
-.react-aria-Item[aria-selected=true] {
-  /* ... */
-}
-
-.react-aria-Item[data-focused] {
-  /* ... */
-}
-```
-
-The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
-
-```jsx
-<Item className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
-  Item
-</Item>
-```
-
-Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkbox only when selection is enabled.
-
-```jsx
-<Item>
-  {({selectionMode}) => (
-    <>
-      {selectionMode !== 'none' && <Checkbox />}
-      Item
-    </>
-  )}
-</Item>
-```
-
-The states and selectors for each component used in a `GridList` are documented below.
-
-### GridList
-
-A `GridList` can be targeted with the `.react-aria-GridList` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
-
-<StateTable properties={docs.exports.GridListRenderProps.properties} />
-
-### Item
-
-An `Item` can be targeted with the `.react-aria-Item` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
-
-<StateTable properties={docs.exports.ItemRenderProps.properties} />
+<ExampleList tag="gridlist" />
 
 ## Reusable wrappers
 
 If you will use a GridList in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `Item` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag handle when [drag and drop](#drag-and-drop) is enabled.
+This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `GridListItem` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag handle when [drag and drop](#drag-and-drop) is enabled.
 
 ```tsx example export=true
-import type {GridListProps, ItemProps} from 'react-aria-components';
+import type {GridListProps, GridListItemProps} from 'react-aria-components';
 import {Button, Checkbox} from 'react-aria-components';
 
 function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
@@ -432,22 +309,35 @@ function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
   );
 }
 
-function MyItem({children, ...props}: ItemProps) {
+function MyItem({children, ...props}: GridListItemProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
-    <Item textValue={textValue} {...props}>
+    <GridListItem textValue={textValue} {...props}>
       {({selectionMode, selectionBehavior, allowsDragging}) => <>
         {/* Add elements for drag and drop and selection. */}
         {allowsDragging && <Button slot="drag">≡</Button>}
         {selectionMode === 'multiple' && selectionBehavior === 'toggle' && <MyCheckbox />}
         {children}
       </>}
-    </Item>
+    </GridListItem>
   );
 }
 
 function MyCheckbox() {
-  return <Checkbox slot="selection"><svg viewBox="0 0 18 18" aria-hidden="true"><polyline points="1 9 7 14 15 4" /></svg></Checkbox>;
+  return (
+    <Checkbox slot="selection">
+      {({isIndeterminate}) => (
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" />
+            }
+          </svg>
+        </div>
+      )}
+    </Checkbox>
+  );
 }
 
 <MyGridList aria-label="Ice cream flavors" selectionMode="multiple">
@@ -458,12 +348,7 @@ function MyCheckbox() {
 </MyGridList>
 ```
 
-## Usage
-
-
-The following examples show how to use the `MyGridList` and `MyItem` components created in the above example.
-
-### Dynamic collections
+## Content
 
 So far, our examples have shown static collections, where the data is hard coded.
 Dynamic collections, as shown below, can be used when the data comes from an external data source such as an API, or updates over time.
@@ -484,7 +369,13 @@ function ExampleList(props: GridListProps<ItemValue>) {
   ];
 
   return (
-    <MyGridList aria-label="Example dynamic collection List" selectionMode="multiple" items={rows} {...props}>
+    <MyGridList
+      aria-label="Example dynamic collection List"
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      items={rows}
+      /*- end highlight -*/
+      {...props}>
       {item => (
         <MyItem textValue={item.name}>
           {item.name}
@@ -496,17 +387,25 @@ function ExampleList(props: GridListProps<ItemValue>) {
 }
 ```
 
+## Selection
+
 ### Single selection
 
 By default, `GridList` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
 Note that the value of the selected keys must match the `id` prop of the row.
 
-The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with key equal to "2".
+The example below enables single selection mode, and uses `defaultSelectedKeys` to select the id with key equal to `2`.
 A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
 
 ```tsx example
 // Using the example above
-<ExampleList aria-label="List with single selection" selectionMode="single" selectionBehavior="replace" defaultSelectedKeys={[2]} />
+<ExampleList
+  aria-label="List with single selection"
+  /*- begin highlight -*/
+  selectionMode="single"
+  defaultSelectedKeys={[2]}
+  /*- end highlight -*/
+/>
 ```
 
 ### Multiple selection
@@ -514,7 +413,12 @@ A user can click on a different row to change the selection, or click on the sam
 Multiple selection can be enabled by setting `selectionMode` to `multiple`. Our example displays checkboxes when the list allows multiple selection.
 
 ```tsx example
-<ExampleList aria-label="List with multiple selection" selectionMode="multiple" defaultSelectedKeys={[2, 4]} />
+<ExampleList
+  aria-label="List with multiple selection"
+  /*- begin highlight -*/
+  selectionMode="multiple"
+  /*- end highlight -*/
+  defaultSelectedKeys={[2, 4]} />
 ```
 
 ### Disallow empty selection
@@ -523,7 +427,14 @@ Multiple selection can be enabled by setting `selectionMode` to `multiple`. Our 
 In this mode, if a single row is selected and the user presses it, it will not be deselected.
 
 ```tsx example
-<ExampleList aria-label="List with disallowed empty selection" selectionMode="multiple" defaultSelectedKeys={[2]} disallowEmptySelection />
+<ExampleList
+  aria-label="List with disallowed empty selection"
+  selectionMode="multiple"
+  defaultSelectedKeys={[2]}
+  /*- begin highlight -*/
+  disallowEmptySelection
+  /*- end highlight -*/
+/>
 ```
 
 ### Controlled selection
@@ -545,28 +456,19 @@ function PokemonList(props: GridListProps<ItemValue>) {
   let [selectedKeys, setSelectedKeys] = React.useState<Selection>(new Set([2]));
 
   return (
-    <MyGridList aria-label="List with controlled selection" items={rows} selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys} {...props}>
+    <MyGridList
+      aria-label="List with controlled selection"
+      items={rows}
+      selectionMode="multiple"
+      /*- begin highlight -*/
+      selectedKeys={selectedKeys}
+      onSelectionChange={setSelectedKeys}
+      /*- end highlight -*/
+      {...props}>
       {item => <MyItem>{item.name}</MyItem>}
     </MyGridList>
   );
 }
-```
-
-### Disabled rows
-
-You can disable specific rows by providing an array of keys to `GridList` via the `disabledKeys` prop. This will disable all interactions on disabled rows,
-unless the `disabledBehavior` prop is used to change this behavior.
-Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
-
-```tsx example
-// Using the example above
-<PokemonList aria-label="List with disabled rows" selectionMode="multiple" disabledKeys={[3]} />
-```
-
-When `disabledBehavior` is set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
-
-```tsx example
-<PokemonList aria-label="List with selection disabled for disabled rows" selectionMode="multiple" disabledKeys={[3]} disabledBehavior="selection" />
 ```
 
 ### Selection behavior
@@ -575,13 +477,19 @@ By default, `GridList` uses the `"toggle"` selection behavior, which behaves lik
 
 When `selectionBehavior` is set to `"replace"`, clicking a row with the mouse replaces the selection with only that row. Using the arrow keys moves both focus and selection. To select multiple rows, modifier keys such as <Keyboard>Ctrl</Keyboard>, <Keyboard>Cmd</Keyboard>, and <Keyboard>Shift</Keyboard> can be used. On touch screen devices, selection always behaves as toggle since modifier keys may not be available.
 
-These selection styles implement the behaviors defined in [Aria Practices](https://w3c.github.io/aria-practices/#listbox_kbd_interaction).
+These selection styles implement the behaviors defined in [Aria Practices](https://www.w3.org/WAI/ARIA/apg/patterns/listbox/#keyboardinteraction).
 
 ```tsx example
-<PokemonList aria-label="List with replace selection behavior" selectionMode="multiple" selectionBehavior="replace" />
+<PokemonList
+  aria-label="List with replace selection behavior"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  selectionBehavior="replace"
+  /*- end highlight -*/
+/>
 ```
 
-### Row actions
+## Row actions
 
 `GridList` supports row actions via the `onAction` prop, which is useful for functionality such as navigation. When nothing is selected, the list performs actions by default when clicking or tapping a row.
 Items may be selected using the checkbox, or by long pressing on touch devices. When at least one item is selected, the list is in selection mode, and clicking or tapping a row toggles the selection. Actions may also
@@ -591,12 +499,79 @@ This behavior is slightly different when `selectionBehavior="replace"`, where si
 
 ```tsx example
 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24 }}>
-  <ExampleList aria-label="Checkbox selection list with row actions" selectionMode="multiple" selectionBehavior="toggle" onAction={key => alert(`Opening item ${key}...`)} />
-  <ExampleList aria-label="Highlight selection list with row actions" selectionMode="multiple" selectionBehavior="replace" onAction={key => alert(`Opening item ${key}...`)} />
+  <ExampleList
+    aria-label="Checkbox selection list with row actions"
+    selectionMode="multiple"
+    /*- begin highlight -*/
+    selectionBehavior="toggle"
+    onAction={key => alert(`Opening item ${key}...`)}
+    /*- end highlight -*/
+  />
+  <ExampleList
+    aria-label="Highlight selection list with row actions"
+    selectionMode="multiple"
+    /*- begin highlight -*/
+    selectionBehavior="replace"
+    onAction={key => alert(`Opening item ${key}...`)}
+    /*- end highlight -*/
+  />
 </div>
 ```
 
-### Asynchronous loading
+### Links
+
+Items in a GridList may also be links to another page or website. This can be achieved by passing the `href` prop to the `<GridListItem>` component. Links behave the same way as described above for row actions depending on the `selectionMode` and `selectionBehavior`.
+
+```tsx example
+<MyGridList aria-label="Links" selectionMode="multiple">
+  <MyItem href="https://adobe.com/" target="_blank">Adobe</MyItem>
+  <MyItem href="https://apple.com/" target="_blank">Apple</MyItem>
+  <MyItem href="https://google.com/" target="_blank">Google</MyItem>
+  <MyItem href="https://microsoft.com/" target="_blank">Microsoft</MyItem>
+</MyGridList>
+```
+
+```css hidden
+.react-aria-GridListItem[data-href] {
+  cursor: pointer;
+}
+```
+
+#### Client side routing
+
+The `<GridListItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Disabled items
+
+You can disable specific rows by providing an array of keys to `GridList` via the `disabledKeys` prop. This will disable all interactions on disabled rows,
+unless the `disabledBehavior` prop is used to change this behavior.
+Note that you are responsible for the styling of disabled rows, however, the selection checkbox will be automatically disabled.
+
+```tsx example
+// Using the example above
+<PokemonList
+  aria-label="List with disabled rows"
+  selectionMode="multiple"
+  /*- begin highlight -*/
+  disabledKeys={[3]}
+  /*- end highlight -*/
+/>
+```
+
+When `disabledBehavior` is set to `selection`, interactions such as focus, dragging, or actions can still be performed on disabled rows.
+
+```tsx example
+<PokemonList
+  aria-label="List with selection disabled for disabled rows"
+  selectionMode="multiple"
+  disabledKeys={[3]}
+  /*- begin highlight -*/
+  disabledBehavior="selection"
+  /*- end highlight -*/
+/>
+```
+
+## Asynchronous loading
 
 This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading of data from a server. You may additionally want to display a spinner to indicate the loading state to the user, or support features like infinite scroll to load more data.
 
@@ -637,15 +612,35 @@ function AsyncList() {
 }
 ```
 
-### Empty state
+## Empty state
 
 Use the `renderEmptyState` prop to customize what the `GridList` will display if there are no items.
 
 ```tsx example
-<GridList aria-label="Search results" renderEmptyState={() => 'No results found.'}>
+<GridList
+  aria-label="Search results"
+  /*- begin highlight -*/
+  renderEmptyState={() => 'No results found.'}
+  /*- end highlight -*/
+>
   {[]}
 </GridList>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-GridList {
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+}
+```
+
+</details>
 
 ## Drag and drop
 
@@ -710,8 +705,8 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Item {
-  &[draggable] {
+.react-aria-GridListItem {
+  &[data-allows-dragging] {
     padding-left: 4px;
   }
 
@@ -726,13 +721,7 @@ function Example() {
 
     &[data-focus-visible] {
       border-radius: 4px;
-      box-shadow: 0 0 0 2px var(--highlight-background);
-    }
-  }
-
-  &[aria-selected=true] {
-    [slot=drag][data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--highlight-foreground);
+      outline: 2px solid var(--focus-ring-color);
     }
   }
 }
@@ -819,13 +808,13 @@ function Example() {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  background: slateblue;
-  color: white;
+  background: var(--highlight-background);
+  color: var(--highlight-foreground);
   border-radius: 4px;
 
   .badge {
-    background: white;
-    color: slateblue;
+    background: var(--highlight-foreground);
+    color: var(--highlight-background);
     padding: 0 8px;
     border-radius: 4px;
   }
@@ -920,7 +909,7 @@ function Example() {
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DraggableGridList />
       <MyGridList aria-label="Droppable list" items={items} dragAndDropHooks={dragAndDropHooks} renderEmptyState={() => 'Drop items here'}>
-        {item => <Item>{item.name}</Item>}
+        {item => <GridListItem>{item.name}</GridListItem>}
       </MyGridList>
     </div>
   );
@@ -932,9 +921,9 @@ function Example() {
 
 ```css
 .react-aria-GridList[data-drop-target] {
-  border-color: var(--highlight-background);
-  box-shadow: 0 0 0 1px var(--highlight-background);
-  background: rgb(from slateblue r g b / 15%);
+  outline: 2px solid var(--highlight-background);
+  outline-offset: -1px;
+  background: var(--highlight-overlay);
 }
 ```
 
@@ -972,9 +961,9 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Item[data-drop-target] {
-  box-shadow: inset 0 0 0 2px var(--highlight-background);
-  background: rgb(from slateblue r g b / 15%);
+.react-aria-GridListItem[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  background:var(--highlight-overlay);
 }
 ```
 
@@ -1015,7 +1004,7 @@ function Example() {
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DraggableGridList />
       <MyGridList aria-label="Droppable list" items={list.items} dragAndDropHooks={dragAndDropHooks}>
-        {item => <Item>{item.name}</Item>}
+        {item => <GridListItem>{item.name}</GridListItem>}
       </MyGridList>
     </div>
   );
@@ -1088,7 +1077,7 @@ function Example() {
     <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
       <DraggableGridList />
       <MyGridList aria-label="Droppable list" items={list.items} dragAndDropHooks={dragAndDropHooks}>
-        {item => <Item>{item.name}</Item>}
+        {item => <GridListItem>{item.name}</GridListItem>}
       </MyGridList>
     </div>
   );
@@ -1661,18 +1650,182 @@ function DndGridList(props: DndGridListProps) {
 </div>
 ```
 
+## Props
+
+### GridList
+
+<PropTable component={docs.exports.GridList} links={docs.links} />
+
+### GridListItem
+
+A `<GridListItem>` defines a single option within a `<GridList>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for typeahead in the GridList.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.GridListItem} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-GridList {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<GridList className="my-gridlist">
+  {/* ... */}
+</GridList>
+```
+
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-GridListItem[data-selected] {
+  /* ... */
+}
+
+.react-aria-GridListItem[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<GridListItem className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  Item
+</GridListItem>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkbox only when selection is enabled.
+
+```jsx
+<GridListItem>
+  {({selectionMode}) => (
+    <>
+      {selectionMode !== 'none' && <Checkbox />}
+      Item
+    </>
+  )}
+</GridListItem>
+```
+
+The states and selectors for each component used in a `GridList` are documented below.
+
+### GridList
+
+A `GridList` can be targeted with the `.react-aria-GridList` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.GridListRenderProps.properties} />
+
+### GridListItem
+
+A `GridListItem` can be targeted with the `.react-aria-GridListItem` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.GridListItemRenderProps.properties} showOptional />
+
 ## Advanced customization
 
 ### Composition
 
-If you need to customize one of the components within a `GridList`, such as `Item` or `Section`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+If you need to customize one of the components within a `GridList`, such as `GridListItem` or `Section`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
 
 ```tsx
 function MyItem(props) {
-  return <Item {...props} className="my-item" />
+  return <GridListItem {...props} className="my-item" />
 }
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['GridList']} docs={docs} />
+
+This example shows a component that accepts a `GridList` and a [ToggleButton](ToggleButton.html) as children, and allows the user to turn selection mode for the list on and off by pressing the button.
+
+```tsx example render=false export=true
+import type {SelectionMode} from 'react-aria-components';
+import {ToggleButtonContext, GridListContext} from 'react-aria-components';
+
+function Selectable({children}) {
+  let [isSelected, onChange] = React.useState(false);
+  let selectionMode: SelectionMode = isSelected ? 'multiple' : 'none';
+  return (
+    <ToggleButtonContext.Provider value={{isSelected, onChange}}>
+      {/*- begin highlight -*/}
+      <GridListContext.Provider value={{selectionMode}}>
+      {/*- end highlight -*/}
+        {children}
+      </GridListContext.Provider>
+    </ToggleButtonContext.Provider>
+  );
+}
+```
+
+The `Selectable` component can be reused to make the selection mode of any nested `GridList` controlled by a `ToggleButton`.
+
+```tsx example
+import {ToggleButton} from 'react-aria-components';
+
+<Selectable>
+  <ToggleButton style={{marginBottom: '8px'}}>Select</ToggleButton>
+  <GridList aria-label="Ice cream flavors">
+    <MyItem>Chocolate</MyItem>
+    <MyItem>Mint</MyItem>
+    <MyItem>Strawberry</MyItem>
+    <MyItem>Vanilla</MyItem>
+  </GridList>
+</Selectable>
+```
+
+### Custom children
+
+GridList passes props to its child components, such as the selection checkboxes, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Checkbox', 'Button', 'Text']} docs={docs} />
+
+This example consumes from `CheckboxContext` in an existing styled checkbox component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by GridList. See [useCheckbox](useCheckbox.html) for more details about the hooks used in this example.
+
+```tsx
+import type {CheckboxProps} from 'react-aria-components';
+import {CheckboxContext, useContextProps} from 'react-aria-components';
+import {useToggleState} from 'react-stately';
+import {useCheckbox} from 'react-aria';
+
+const MyCustomCheckbox = React.forwardRef((props: CheckboxProps, ref: React.ForwardedRef<HTMLInputElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, CheckboxContext);
+  ///- end highlight -///
+
+  let state = useToggleState(props);
+  let {inputProps} = useCheckbox(props, state, ref);
+  return <input {...inputProps} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomCheckbox` within a `GridList`, in place of the builtin React Aria Components `Checkbox`.
+
+```tsx
+<GridList>
+  <GridListItem>
+    {/*- begin highlight -*/}
+    <MyCustomCheckbox slot="selection" />
+    {/*- end highlight -*/}
+    {/* ... */}
+  </GridListItem>
+</GridList>
 ```
 
 ### Hooks
 
-If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useGridList](useGridList.html) for more details.
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useGridList](useGridList.html) for more details.

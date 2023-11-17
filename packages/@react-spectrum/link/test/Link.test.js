@@ -30,11 +30,7 @@ describe('Link', function () {
   let onOpenChange = jest.fn();
 
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -70,6 +66,14 @@ describe('Link', function () {
     expect(link).toBeDefined();
     expect(link.nodeName).toBe('SPAN');
     expect(link).toHaveAttribute('tabIndex', '0');
+  });
+
+  it('supports href', () => {
+    let {getByRole} = render(<Link href="https://adobe.com">Click me</Link>);
+    let link = getByRole('link');
+    expect(link).toBeDefined();
+    expect(link.nodeName).toBe('A');
+    expect(link.href).toBe('https://adobe.com/');
   });
 
   it('Wraps custom child element', () => {
@@ -141,5 +145,13 @@ describe('Link', function () {
     });
     expect(onOpenChange).toHaveBeenCalledTimes(2);
     expect(tooltip).not.toBeInTheDocument();
+  });
+
+  it('supports RouterProvider', () => {
+    let navigate = jest.fn();
+    let {getByRole} = render(<Provider theme={theme} router={{navigate}}><Link href="/foo">Click me</Link></Provider>);
+    let link = getByRole('link');
+    triggerPress(link);
+    expect(navigate).toHaveBeenCalledWith('/foo');
   });
 });

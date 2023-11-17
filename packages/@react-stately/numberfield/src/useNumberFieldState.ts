@@ -11,11 +11,12 @@
  */
 
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {NumberFieldProps} from '@react-types/numberfield';
 import {NumberFormatter, NumberParser} from '@internationalized/number';
-import {useCallback, useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 
-export interface NumberFieldState {
+export interface NumberFieldState extends FormValidationState {
   /**
    * The current text value of the input. Updated as the user types,
    * and formatted according to `formatOptions` on blur.
@@ -42,6 +43,8 @@ export interface NumberFieldState {
   validate(value: string): boolean,
   /** Sets the current text value of the input. */
   setInputValue(val: string): void,
+  /** Sets the number value. */
+  setNumberValue(val: number): void,
   /**
    * Commits the current input value. The value is parsed to a number, clamped according
    * to the minimum and maximum values of the field, and snapped to the nearest step value.
@@ -96,6 +99,11 @@ export function useNumberFieldState(
   let intlOptions = useMemo(() => formatter.resolvedOptions(), [formatter]);
   let format = useCallback((value: number) => (isNaN(value) || value === null) ? '' : formatter.format(value), [formatter]);
 
+  let validation = useFormValidationState({
+    ...props,
+    value: numberValue
+  });
+
   let clampStep = !isNaN(step) ? step : 1;
   if (intlOptions.style === 'percent' && isNaN(step)) {
     clampStep = 0.01;
@@ -104,21 +112,17 @@ export function useNumberFieldState(
   // Update the input value when the number value or format options change. This is done
   // in a useEffect so that the controlled behavior is correct and we only update the
   // textfield after prop changes.
-  let prevValue = useRef(numberValue);
-  let prevLocale = useRef(locale);
-  let prevFormatOptions = useRef(formatOptions);
-  if (!Object.is(numberValue, prevValue.current) || locale !== prevLocale.current || formatOptions !== prevFormatOptions.current) {
+  let [prevValue, setPrevValue] = useState(numberValue);
+  let [prevLocale, setPrevLocale] = useState(locale);
+  let [prevFormatOptions, setPrevFormatOptions] = useState(formatOptions);
+  if (!Object.is(numberValue, prevValue) || locale !== prevLocale || formatOptions !== prevFormatOptions) {
     setInputValue(format(numberValue));
-    prevValue.current = numberValue;
-    prevLocale.current = locale;
-    prevFormatOptions.current = formatOptions;
+    setPrevValue(numberValue);
+    setPrevLocale(locale);
+    setPrevFormatOptions(formatOptions);
   }
 
-  // Store last parsed value in a ref so it can be used by increment/decrement below
   let parsedValue = useMemo(() => numberParser.parse(inputValue), [numberParser, inputValue]);
-  let parsed = useRef(0);
-  parsed.current = parsedValue;
-
   let commit = () => {
     // Set to empty state if input value is empty
     if (!inputValue.length) {
@@ -128,7 +132,7 @@ export function useNumberFieldState(
     }
 
     // if it failed to parse, then reset input to formatted version of current number
-    if (isNaN(parsed.current)) {
+    if (isNaN(parsedValue)) {
       setInputValue(format(numberValue));
       return;
     }
@@ -136,9 +140,9 @@ export function useNumberFieldState(
     // Clamp to min and max, round to the nearest step, and round to specified number of digits
     let clampedValue: number;
     if (isNaN(step)) {
-      clampedValue = clamp(parsed.current, minValue, maxValue);
+      clampedValue = clamp(parsedValue, minValue, maxValue);
     } else {
-      clampedValue = snapValueToStep(parsed.current, minValue, maxValue, step);
+      clampedValue = snapValueToStep(parsedValue, minValue, maxValue, step);
     }
 
     clampedValue = numberParser.parse(format(clampedValue));
@@ -149,7 +153,7 @@ export function useNumberFieldState(
   };
 
   let safeNextStep = (operation: '+' | '-', minMax: number) => {
-    let prev = parsed.current;
+    let prev = parsedValue;
 
     if (isNaN(prev)) {
       // if the input is empty, start from the min/max value when incrementing/decrementing,
@@ -185,6 +189,7 @@ export function useNumberFieldState(
     }
 
     setNumberValue(newValue);
+    validation.commitValidation();
   };
 
   let decrement = () => {
@@ -195,17 +200,20 @@ export function useNumberFieldState(
     }
 
     setNumberValue(newValue);
+    validation.commitValidation();
   };
 
   let incrementToMax = () => {
     if (maxValue != null) {
       setNumberValue(snapValueToStep(maxValue, minValue, maxValue, clampStep));
+      validation.commitValidation();
     }
   };
 
   let decrementToMin = () => {
     if (minValue != null) {
       setNumberValue(minValue);
+      validation.commitValidation();
     }
   };
 
@@ -234,6 +242,7 @@ export function useNumberFieldState(
   let validate = (value: string) => numberParser.isValidPartialNumber(value, minValue, maxValue);
 
   return {
+    ...validation,
     validate,
     increment,
     incrementToMax,
@@ -244,6 +253,7 @@ export function useNumberFieldState(
     minValue,
     maxValue,
     numberValue: parsedValue,
+    setNumberValue,
     setInputValue,
     inputValue,
     commit

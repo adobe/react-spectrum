@@ -24,6 +24,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   let {visibleMonths = 1} = props;
+  visibleMonths = Math.max(visibleMonths, 1);
   let visibleDuration = useMemo(() => ({months: visibleMonths}), [visibleMonths]);
   let {locale} = useLocale();
   let state = useCalendarState({
@@ -46,6 +47,7 @@ function Calendar<T extends DateValue>(props: SpectrumCalendarProps<T>, ref: Foc
   return (
     <CalendarBase
       {...props}
+      visibleMonths={visibleMonths}
       state={state}
       calendarRef={domRef}
       calendarProps={calendarProps}

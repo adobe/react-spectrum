@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {Key, RefObject, useEffect, useRef} from 'react';
+import {DOMAttributes, FocusableElement, Key} from '@react-types/shared';
 import {ListState} from '@react-stately/list';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useEffectEvent} from '@react-aria/utils';
 import {PressProps} from '@react-aria/interactions';
+import {RefObject, useEffect} from 'react';
 
 export interface AriaActionGroupItemProps {
   key: Key
@@ -43,18 +43,18 @@ export function useActionGroupItem<T>(props: AriaActionGroupItemProps, state: Li
   }
 
   let isFocused = props.key === state.selectionManager.focusedKey;
-  let lastRender = useRef({isFocused, state});
-  lastRender.current = {isFocused, state};
+  let onRemovedWithFocus = useEffectEvent(() => {
+    if (isFocused) {
+      state.selectionManager.setFocusedKey(null);
+    }
+  });
 
   // If the focused item is removed from the DOM, reset the focused key to null.
-  // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => {
-      if (lastRender.current.isFocused) {
-        lastRender.current.state.selectionManager.setFocusedKey(null);
-      }
+      onRemovedWithFocus();
     };
-  }, []);
+  }, [onRemovedWithFocus]);
 
   return {
     buttonProps: mergeProps(buttonProps, {

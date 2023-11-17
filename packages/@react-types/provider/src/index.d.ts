@@ -56,6 +56,10 @@ interface ContextProps {
   validationState?: ValidationState
 }
 
+interface Router {
+  navigate: (path: string) => void
+}
+
 export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
   /** The content of the Provider. */
   children: ReactNode,
@@ -88,7 +92,11 @@ export interface ProviderProps extends ContextProps, DOMProps, StyleProps {
    * Do not use `base` property.
    * @default {S:380,M:768,L:1024}
    */
-  breakpoints?: Breakpoints
+  breakpoints?: Breakpoints,
+  /**
+   * Provides a client side router to all nested React Spectrum links to enable client side navigation.
+   */
+  router?: Router
 }
 
 export interface ProviderContext extends ContextProps {

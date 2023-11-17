@@ -11,7 +11,6 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
-import type {ITypeOpts} from '@testing-library/user-event';
 import userEvent from '@testing-library/user-event';
 
 // Triggers a "press" event on an element.
@@ -78,7 +77,7 @@ export function installPointerEvent() {
         this._init = init;
       }
       get pointerType() {
-        return this._init.pointerType;
+        return this._init.pointerType ?? 'mouse';
       }
       get pointerId() {
         return this._init.pointerId;
@@ -110,8 +109,9 @@ export function installPointerEvent() {
  * But we want to run all event handles after every character.
  * @param el The input element to type into.
  * @param value The text.
+ * @deprecated Use `user.keyboard` instead.
  */
-export function typeText(el: HTMLElement, value: string, opts?: ITypeOpts) {
+export function typeText(el: HTMLElement, value: string, opts?: any) {
   let skipClick = document.activeElement === el;
   for (let char of value) {
     act(() => {

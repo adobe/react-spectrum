@@ -1,6 +1,8 @@
 {
+  "collapse": "折りたたむ",
   "columnResizer": "列リサイザー",
   "drag": "ドラッグ",
+  "expand": "展開",
   "loading": "読み込み中...",
   "loadingMore": "さらに読み込み中...",
   "resizeColumn": "列幅を変更",

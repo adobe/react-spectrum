@@ -10,15 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
 import {Button, Dialog, DialogTrigger, OverlayArrow, Popover} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
-let TestPopover = () => (
+let TestPopover = (props) => (
   <DialogTrigger>
     <Button />
-    <Popover>
+    <Popover {...props}>
       <OverlayArrow>
         <svg width={12} height={12}>
           <path d="M0 0,L6 6,L12 0" />
@@ -30,18 +30,27 @@ let TestPopover = () => (
 );
 
 describe('Popover', () => {
-  it('works with a dialog', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+  });
+  afterEach(() => {
+    act(() => jest.runAllTimers());
+  });
+
+  it('works with a dialog', async () => {
     let {getByRole, queryByRole} = render(<TestPopover />);
 
     let button = getByRole('button');
     expect(queryByRole('dialog')).not.toBeInTheDocument();
 
-    userEvent.click(button);
+    await user.click(button);
 
     let dialog = getByRole('dialog');
     expect(dialog).toBeInTheDocument();
 
-    userEvent.click(document.body);
+    await user.click(document.body);
 
     expect(dialog).not.toBeInTheDocument();
   });
@@ -51,17 +60,18 @@ describe('Popover', () => {
 
     let button = getByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(button).toHaveFocus();
 
-    userEvent.click(button);
+    await user.click(button);
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveFocus();
 
-    userEvent.click(document.body);
+    await user.click(document.body);
+    act(() => jest.runAllTimers());
 
-    expect(document.body).toHaveFocus();
+    expect(button).toHaveFocus();
   });
 
   it('should support render props', async () => {
@@ -76,9 +86,68 @@ describe('Popover', () => {
 
     let button = getByRole('button');
 
-    userEvent.click(button);
+    await user.click(button);
 
     let dialog = getByRole('dialog');
     expect(dialog).toHaveTextContent('Popover at bottom');
+  });
+
+  it('should support being used standalone', async () => {
+    let triggerRef = React.createRef();
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(<>
+      <span ref={triggerRef}>Trigger</span>
+      <Popover isOpen triggerRef={triggerRef} onOpenChange={onOpenChange}>
+        <Dialog aria-label="Popover">A popover</Dialog>
+      </Popover>
+    </>);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveTextContent('A popover');
+
+    await user.click(document.body);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('isOpen and defaultOpen should override state from context', async () => {
+    let onOpenChange = jest.fn();
+    let {getByRole} = render(<>
+      <DialogTrigger>
+        <Button />
+        <Popover isOpen onOpenChange={onOpenChange}>
+          <Dialog>A popover</Dialog>
+        </Popover>
+      </DialogTrigger>
+    </>);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveTextContent('A popover');
+
+    await user.click(document.body);
+    expect(onOpenChange).toHaveBeenCalledTimes(1);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('supports isEntering and isExiting props', async () => {
+    let {getByRole, rerender} = render(<TestPopover isEntering />);
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let popover = getByRole('dialog').closest('.react-aria-Popover');
+    expect(popover).toHaveAttribute('data-entering');
+
+    rerender(<TestPopover />);
+    expect(popover).not.toHaveAttribute('data-entering');
+
+    rerender(<TestPopover isExiting />);
+    await user.click(button);
+
+    expect(popover).toBeInTheDocument();
+    expect(popover).toHaveAttribute('data-exiting');
+
+    rerender(<TestPopover />);
+    expect(popover).not.toBeInTheDocument();
   });
 });

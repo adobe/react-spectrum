@@ -54,7 +54,7 @@ checkbox groups that can be styled as needed.
 * Checkbox groups are exposed to assistive technology via ARIA
 * Each checkbox is built with a native HTML `<input>` element, which can be optionally visually
   hidden to allow custom styling
-* Full support for browser features like form autofill
+* Full support for browser features like form autofill and validation
 * Keyboard focus management and cross browser normalization
 * Group and checkbox labeling support for assistive technology
 
@@ -105,9 +105,9 @@ import {useCheckboxGroupState} from '@react-stately/checkbox';
 let CheckboxGroupContext = React.createContext(null);
 
 function CheckboxGroup(props) {
-  let {children, label, description, errorMessage, validationState} = props;
+  let {children, label, description} = props;
   let state = useCheckboxGroupState(props);
-  let {groupProps, labelProps, descriptionProps, errorMessageProps} = useCheckboxGroup(props, state);
+  let {groupProps, labelProps, descriptionProps, errorMessageProps, isInvalid, validationErrors} = useCheckboxGroup(props, state);
 
   return (
     <div {...groupProps}>
@@ -116,8 +116,8 @@ function CheckboxGroup(props) {
         {children}
       </CheckboxGroupContext.Provider>
       {description && <div {...descriptionProps} style={{fontSize: 12}}>{description}</div>}
-      {errorMessage && validationState === 'invalid' &&
-        <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{errorMessage}</div>
+      {isInvalid &&
+        <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{validationErrors.join(' ')}</div>
       }
     </div>
   );
@@ -212,17 +212,46 @@ The `description` prop can be used to associate additional help text with a chec
 </CheckboxGroup>
 ```
 
-### Error message
+### Group validation
 
-The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `validationState` prop to
-semantically mark the checkbox group as invalid for assistive technologies.
+CheckboxGroup supports the `isRequired` prop to ensure the user selects at least one item, as well as custom client and server-side validation. Individual checkboxes also support validation, and errors from all checkboxes are aggregated at the group level. CheckboxGroup can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When a CheckboxGroup has the `validationBehavior="native"` prop, validation errors block form submission. The `isRequired` prop at the `CheckboxGroup` level requires that at least one item is selected. To display validation errors, use the `validationErrors` and `errorMessageProps` returned by `useCheckboxGroup`. This allows you to render error messages from all of the above sources with consistent custom styles.
 
 ```tsx example
-<CheckboxGroup label="Favorite sports" errorMessage="Invalid selection of sports." validationState="invalid">
-  <Checkbox value="soccer">Soccer</Checkbox>
-  <Checkbox value="baseball">Baseball</Checkbox>
-  <Checkbox value="basketball">Basketball</Checkbox>
-</CheckboxGroup>
+<form>
+  <CheckboxGroup
+    label="Sandwich condiments"
+    name="condiments"
+    /*- begin highlight -*/
+    isRequired
+    validationBehavior="native"
+    /*- end highlight -*/
+  >
+    <Checkbox value="lettuce">Lettuce</Checkbox>
+    <Checkbox value="tomato">Tomato</Checkbox>
+    <Checkbox value="onion">Onion</Checkbox>
+    <Checkbox value="sprouts">Sprouts</Checkbox>
+  </CheckboxGroup>
+  <input type="submit" style={{marginTop: 8}} />
+</form>
+```
+
+### Individual Checkbox validation
+
+To require that specific checkboxes are checked, set the `isRequired` prop at the `Checkbox` level instead of the `CheckboxGroup`. The following example shows how to require that all items are selected.
+
+```tsx example
+<form>
+  <CheckboxGroup label="Agree to the following" validationBehavior="native">
+    {/*- begin highlight -*/}
+    <Checkbox value="terms" isRequired>Terms and conditions</Checkbox>
+    <Checkbox value="privacy" isRequired>Privacy policy</Checkbox>
+    <Checkbox value="cookies" isRequired>Cookie policy</Checkbox>
+    {/*- end highlight -*/}
+  </CheckboxGroup>
+  <input type="submit" style={{marginTop: 8}} />
+</form>
 ```
 
 ### Disabled

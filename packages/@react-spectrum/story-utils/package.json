@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@react-aria/utils": "^3.8.0",
-    "@swc/helpers": "^0.4.14"
+    "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",

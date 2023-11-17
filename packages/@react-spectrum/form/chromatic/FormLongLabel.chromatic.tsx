@@ -15,7 +15,7 @@ import {ColorField} from '@react-spectrum/color';
 import {ComboBox} from '@react-spectrum/combobox';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
@@ -36,7 +36,7 @@ let flatOptions = [
   {id: 3, name: 'Snake'}
 ];
 
-const Template = (): Story<SpectrumFormProps> => (args) => (
+const Template = (args) => (
   <Form {...args}>
     <CheckboxGroup defaultValue={['dragons']} label="Pets are family fun for all, two real and two fantasy">
       <Checkbox value="dogs">Dogs</Checkbox>
@@ -66,43 +66,68 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
   </Form>
 );
 
-// No need to make a set of all permutations, rely on each individual component story to do that for us. Just make sure Form is passing the options down
-export const Default = Template().bind({});
-Default.storyName = 'default';
-Default.args = {};
+export const Default = {
+  render: Template,
+  name: 'default',
+  args: {}
+};
 
-export const DefaultNarrow = Template().bind({});
-DefaultNarrow.storyName = 'default, width: 200px';
-DefaultNarrow.args = {width: '200px'};
+export const DefaultNarrow = {
+  render: Template,
+  name: 'default, width: 200px',
+  args: {width: '200px'}
+};
 
-export const LabelPositionSide = Template().bind({});
-LabelPositionSide.storyName = 'label position: side';
-LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
+export const LabelPositionSide = {
+  render: Template,
+  name: 'label position: side',
+  args: {...Default.args, labelPosition: 'side'}
+};
 
-export const LabelAlignEnd = Template().bind({});
-LabelAlignEnd.storyName = 'label align: end';
-LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
+export const LabelAlignEnd = {
+  render: Template,
+  name: 'label align: end',
+  args: {...Default.args, labelAlign: 'end'}
+};
 
-export const NecessityIndicatorLabel = Template().bind({});
-NecessityIndicatorLabel.storyName = 'necessity indicator: label';
-NecessityIndicatorLabel.args = {...Default.args, necessityIndicator: 'label'};
+export const NecessityIndicatorLabel = {
+  render: Template,
+  name: 'necessity indicator: label',
+  args: {...Default.args, necessityIndicator: 'label'}
+};
 
-export const LabelPositionSideRequiredNecessityIndicatorLabel = Template().bind({});
-LabelPositionSideRequiredNecessityIndicatorLabel.storyName = 'label position: side, isRequired, necessity indicator: label';
-LabelPositionSideRequiredNecessityIndicatorLabel.args = {...Default.args, labelPosition: 'side', necessityIndicator: 'label', isRequired: true};
+export const LabelPositionSideRequiredNecessityIndicatorLabel = {
+  render: Template,
+  name: 'label position: side, isRequired, necessity indicator: label',
+  args: {...Default.args, labelPosition: 'side', necessityIndicator: 'label', isRequired: true}
+};
 
-export const LabelPositionSideRequiredNecessityIndicatorLabelNarrow = Template().bind({});
-LabelPositionSideRequiredNecessityIndicatorLabelNarrow.storyName = 'label position: side, isRequired, necessity indicator: label, width: 200px';
-LabelPositionSideRequiredNecessityIndicatorLabelNarrow.args = {...Default.args, labelPosition: 'side', necessityIndicator: 'label', isRequired: true, width: '200px'};
+export const LabelPositionSideRequiredNecessityIndicatorLabelNarrow = {
+  render: Template,
+  name: 'label position: side, isRequired, necessity indicator: label, width: 200px',
+  args: {
+    ...Default.args,
+    labelPosition: 'side',
+    necessityIndicator: 'label',
+    isRequired: true,
+    width: '200px'
+  }
+};
 
-export const Quiet = Template().bind({});
-Quiet.storyName = 'isQuiet';
-Quiet.args = {...Default.args, isQuiet: true};
+export const Quiet = {
+  render: Template,
+  name: 'isQuiet',
+  args: {...Default.args, isQuiet: true}
+};
 
-export const QuietLabelPositionSideAlignEnd = Template().bind({});
-QuietLabelPositionSideAlignEnd.storyName = 'isQuiet, label position: side, label align: end';
-QuietLabelPositionSideAlignEnd.args = {...Default.args, isQuiet: true, labelPosition: 'side', labelAlign: 'end'};
+export const QuietLabelPositionSideAlignEnd = {
+  render: Template,
+  name: 'isQuiet, label position: side, label align: end',
+  args: {...Default.args, isQuiet: true, labelPosition: 'side', labelAlign: 'end'}
+};
 
-export const QuietLabelPositionSideNarrow = Template().bind({});
-QuietLabelPositionSideNarrow.storyName = 'isQuiet, label position: side, width: 200px';
-QuietLabelPositionSideNarrow.args = {...Default.args, isQuiet: true, labelPosition: 'side', width: '200px'};
+export const QuietLabelPositionSideNarrow = {
+  render: Template,
+  name: 'isQuiet, label position: side, width: 200px',
+  args: {...Default.args, isQuiet: true, labelPosition: 'side', width: '200px'}
+};

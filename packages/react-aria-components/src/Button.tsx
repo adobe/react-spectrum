@@ -9,9 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaButtonProps, mergeProps, useButton, useFocusRing, useHover} from 'react-aria';
-import {ContextValue, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import React, {createContext, ForwardedRef, forwardRef} from 'react';
+import {AriaButtonProps, HoverEvents, mergeProps, useButton, useFocusRing, useHover} from 'react-aria';
+import {ContextValue, createHideableComponent, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
+import React, {createContext, ForwardedRef} from 'react';
 
 export interface ButtonRenderProps {
   /**
@@ -26,7 +27,7 @@ export interface ButtonRenderProps {
   isPressed: boolean,
   /**
    * Whether the button is focused, either via a mouse or keyboard.
-   * @selector :focus
+   * @selector [data-focused]
    */
   isFocused: boolean,
   /**
@@ -36,15 +37,41 @@ export interface ButtonRenderProps {
   isFocusVisible: boolean,
   /**
    * Whether the button is disabled.
-   * @selector :disabled
+   * @selector [data-disabled]
    */
   isDisabled: boolean
 }
 
-export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, SlotProps, RenderProps<ButtonRenderProps> {}
+export interface ButtonProps extends Omit<AriaButtonProps, 'children' | 'href' | 'target' | 'rel' | 'elementType'>, HoverEvents, SlotProps, RenderProps<ButtonRenderProps> {
+  /**
+   * The <form> element to associate the button with.
+   * The value of this attribute must be the id of a <form> in the same document.
+   */
+  form?: string,
+  /**
+   * The URL that processes the information submitted by the button.
+   * Overrides the action attribute of the button's form owner.
+   */
+  formAction?: string,
+  /** Indicates how to encode the form data that is submitted. */
+  formEncType?: string,
+  /** Indicates the HTTP method used to submit the form. */
+  formMethod?: string,
+  /** Indicates that the form is not to be validated when it is submitted. */
+  formNoValidate?: boolean,
+  /** Overrides the target attribute of the button's form owner. */
+  formTarget?: string,
+  /** Submitted as a pair with the button's value as part of the form data. */
+  name?: string,
+  /** The value associated with the button's name when it's submitted with the form data. */
+  value?: string
+}
+
 interface ButtonContextValue extends ButtonProps {
   isPressed?: boolean
 }
+
+const additionalButtonHTMLAttributes = new Set(['form', 'formAction', 'formEncType', 'formMethod', 'formNoValidate', 'formTarget', 'name', 'value']);
 
 export const ButtonContext = createContext<ContextValue<ButtonContextValue, HTMLButtonElement>>({});
 
@@ -62,12 +89,15 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
 
   return (
     <button
+      {...filterDOMProps(props, {propNames: additionalButtonHTMLAttributes})}
       {...mergeProps(buttonProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
-      slot={props.slot}
+      slot={props.slot || undefined}
+      data-disabled={props.isDisabled || undefined}
       data-pressed={ctx.isPressed || isPressed || undefined}
       data-hovered={isHovered || undefined}
+      data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined} />
   );
 }
@@ -75,5 +105,5 @@ function Button(props: ButtonProps, ref: ForwardedRef<HTMLButtonElement>) {
 /**
  * A button allows a user to perform an action, with mouse, touch, and keyboard interactions.
  */
-const _Button = forwardRef(Button);
+const _Button = /*#__PURE__*/ createHideableComponent(Button);
 export {_Button as Button};

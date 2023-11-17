@@ -17,11 +17,11 @@ import {Label} from './Label';
 import {LabelPosition} from '@react-types/shared';
 import labelStyles from '@adobe/spectrum-css-temp/components/fieldlabel/vars.css';
 import {mergeProps, useId} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import React, {ReactNode, Ref, RefObject} from 'react';
 import {SpectrumFieldProps} from '@react-types/label';
 import {useFormProps} from '@react-spectrum/form';
 
-function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
+function Field(props: SpectrumFieldProps, ref: Ref<HTMLElement>) {
   let formProps = useFormProps(props);
   let isInForm = formProps !== props;
   props = formProps;
@@ -33,13 +33,16 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     necessityIndicator,
     includeNecessityIndicatorInAccessibilityName,
     validationState,
+    isInvalid,
     description,
-    errorMessage,
+    errorMessage = e => e.validationErrors.join(' '),
+    validationErrors,
+    validationDetails,
     isDisabled,
     showErrorIcon,
     contextualHelp,
     children,
-    labelProps,
+    labelProps = {},
     // Not every component that uses <Field> supports help text.
     descriptionProps = {},
     errorMessageProps = {},
@@ -49,8 +52,25 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
-  let hasHelpText = !!description || errorMessage && validationState === 'invalid';
+  let errorMessageString: ReactNode = null;
+  if (typeof errorMessage === 'function') {
+    errorMessageString = isInvalid != null && validationErrors != null && validationDetails != null
+      ? errorMessage({
+        isInvalid,
+        validationErrors,
+        validationDetails
+      })
+      : null;
+  } else {
+    errorMessageString = errorMessage;
+  }
+  let hasHelpText = !!description || errorMessageString && (isInvalid || validationState === 'invalid');
   let contextualHelpId = useId();
+
+  let fallbackLabelPropsId = useId();
+  if (label && contextualHelp && !labelProps.id) {
+    labelProps.id = fallbackLabelPropsId;
+  }
 
   let labelWrapperClass = classNames(
       labelStyles,
@@ -77,11 +97,12 @@ function Field(props: SpectrumFieldProps, ref: RefObject<HTMLElement>) {
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
       description={description}
-      errorMessage={errorMessage}
+      errorMessage={errorMessageString}
       validationState={validationState}
+      isInvalid={isInvalid}
       isDisabled={isDisabled}
       showErrorIcon={showErrorIcon}
-      gridArea="helpText" />
+      gridArea={labelStyles.helpText} />
     );
 
   let renderChildren = () => {

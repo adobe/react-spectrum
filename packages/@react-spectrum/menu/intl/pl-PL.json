@@ -1,3 +1,5 @@
 {
-  "moreActions": "Więcej akcji"
+  "backButton": "Wróć do: {prevMenuButton}",
+  "moreActions": "Więcej akcji",
+  "unavailable": "Niedostępne, rozwiń, aby zobaczyć szczegóły"
 }

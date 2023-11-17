@@ -103,7 +103,7 @@ function DimensionViewer() {
   );
 }
 
-ReactDOM.render(<DimensionViewer />, document.getElementById('dimension-viewer'));
+ReactDOM.createRoot(document.getElementById('dimension-viewer')).render(<DimensionViewer />);
 ```
 
 <div id="dimension-viewer" />
@@ -219,7 +219,7 @@ function ColorViewer() {
   );
 }
 
-ReactDOM.render(<ColorViewer />, document.getElementById('color-viewer'));
+ReactDOM.createRoot(document.getElementById('color-viewer')).render(<ColorViewer />);
 ```
 
 <div id="color-viewer" />

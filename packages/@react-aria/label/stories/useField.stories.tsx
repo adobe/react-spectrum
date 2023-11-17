@@ -1,4 +1,4 @@
-import {Meta, Story} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React, {useRef} from 'react';
 import {useField} from '../';
 import {ValidationState} from '@react-types/shared';
@@ -30,23 +30,25 @@ export default {
   title: 'useField'
 } as Meta;
 
-const TextInputFieldTemplate: Story<TextFieldProps> = (args) => (
-  <TextInputField {...args} />
-);
+const TextInputFieldTemplate: StoryFn<TextFieldProps> = (args) => <TextInputField {...args} />;
 
-export const NoError = TextInputFieldTemplate.bind({});
-NoError.args = {
-  label: 'Test label',
-  value: 'Test value',
-  description: 'I describe the field.',
-  errorMessage: 'I\'m a helpful error for the field.'
+export const NoError = {
+  render: TextInputFieldTemplate,
+  args: {
+    label: 'Test label',
+    value: 'Test value',
+    description: 'I describe the field.',
+    errorMessage: "I'm a helpful error for the field."
+  }
 };
 
-export const WithError = TextInputFieldTemplate.bind({});
-WithError.args = {
-  label: 'Test label',
-  value: 'Test value',
-  description: 'I describe the field.',
-  errorMessage: 'I\'m a helpful error for the field.',
-  validationState: 'invalid'
+export const WithError = {
+  render: TextInputFieldTemplate,
+  args: {
+    label: 'Test label',
+    value: 'Test value',
+    description: 'I describe the field.',
+    errorMessage: "I'm a helpful error for the field.",
+    validationState: 'invalid'
+  }
 };

@@ -12,7 +12,7 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/datepicker/docs/daterangepicker-anatomy.svg';
@@ -50,56 +50,31 @@ import {Button} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Button {
-  --border-color: var(--spectrum-alias-border-color);
-  --border-color-pressed: var(--spectrum-alias-border-color-down);
-  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
-  --background-color: var(--spectrum-global-color-gray-50);
-  --background-color-pressed: var(--spectrum-global-color-gray-100);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --focus-ring-color: slateblue;
+@import "@react-aria/example-theme";
 
+.react-aria-Button {
   color: var(--text-color);
-  background: var(--background-color);
+  background: var(--button-background);
   border: 1px solid var(--border-color);
   border-radius: 4px;
   appearance: none;
   vertical-align: middle;
-  font-size: 1.2rem;
+  font-size: 1rem;
   text-align: center;
   margin: 0;
   outline: none;
-  padding: 4px 12px;
+  padding: 6px 10px;
+  text-decoration: none;
 
   &[data-pressed] {
     box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--background-color-pressed);
+    background: var(--button-background-pressed);
     border-color: var(--border-color-pressed);
   }
 
   &[data-focus-visible] {
-    border-color: var(--focus-ring-color);
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
-  }
-
-  &:disabled {
-    border-color: var(--border-color-disabled);
-    color: var(--text-color-disabled);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Button {
-    forced-color-adjust: none;
-    --border-color: ButtonBorder;
-    --border-color-pressed: ButtonBorder;
-    --border-color-disabled: GrayText;
-    --background-color: ButtonFace;
-    --background-color-pressed: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --focus-ring-color: Highlight;
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
   }
 }
 ```
@@ -127,6 +102,63 @@ buttons using the <Keyboard>Space</Keyboard> or <Keyboard>Enter</Keyboard> keys.
 If a visual label is not provided (e.g. an icon only button), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the button to assistive technology.
 
+## Events
+
+`Button` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the button.
+
+Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](usePress.html) for more details.
+
+```tsx example
+function Example() {
+  let [pointerType, setPointerType] = React.useState('');
+
+  return (
+    <>
+      <Button
+        onPressStart={e => setPointerType(e.pointerType)}
+        onPressEnd={() => setPointerType('')}>
+        Press me
+      </Button>
+      <p>{pointerType ? `You are pressing the button with a ${pointerType}!` : 'Ready to be pressed.'}</p>
+    </>
+  )
+}
+```
+
+## Disabled
+
+A `Button` can be disabled using the `isDisabled` prop.
+
+```tsx example
+<Button isDisabled>Pin</Button>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Button {
+  &[data-disabled]{
+    border-color: var(--border-color-disabled);
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
+
+## Link buttons
+
+The `Button` component always represents a button semantically. To create a link that visually looks like a button, use the [Link](Link.html) component instead. You can reuse the same styles you apply to the `Button` component on the `Link`.
+
+```tsx example
+import {Link} from 'react-aria-components';
+
+<Link className="react-aria-Button" href="https://adobe.com/" target="_blank">
+  Adobe
+</Link>
+```
+
 ## Props
 
 <PropTable component={docs.exports.Button} links={docs.links} />
@@ -149,7 +181,7 @@ A custom `className` can also be specified on any component. This overrides the 
 </Button>
 ```
 
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 
 ```css
 .react-aria-Button[data-pressed] {
@@ -180,41 +212,70 @@ The states, selectors, and render props for `Button` are documented below.
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
-## Usage
-
-### Events
-
-`Button` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the button.
-
-Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](usePress.html) for more details.
-
-```tsx example
-function Example() {
-  let [pointerType, setPointerType] = React.useState('');
-
-  return (
-    <>
-      <Button
-        onPressStart={e => setPointerType(e.pointerType)}
-        onPressEnd={() => setPointerType('')}>
-        Press me
-      </Button>
-      <p>{pointerType ? `You are pressing the button with a ${pointerType}!` : 'Ready to be pressed.'}</p>
-    </>
-  )
-}
-```
-
-### Disabled
-
-A `Button` can be disabled using the `isDisabled` prop.
-
-```tsx example
-<Button isDisabled>Pin</Button>
-```
-
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Button']} docs={docs} />
+
+This example shows a `ButtonGroup` component that renders a group of buttons. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child buttons via the `ButtonContext` provider.
+
+```tsx example
+import {ButtonContext} from 'react-aria-components';
+
+interface ButtonGroupProps {
+  children?: React.ReactNode,
+  isDisabled?: boolean
+}
+
+function ButtonGroup({children, isDisabled}: ButtonGroupProps) {
+  return (
+    <div style={{display: 'flex', gap: 8}}>
+      {/*- begin highlight -*/}
+      <ButtonContext.Provider value={{isDisabled}}>
+      {/*- end highlight -*/}
+        {children}
+      </ButtonContext.Provider>
+    </div>
+  );
+}
+
+<ButtonGroup isDisabled>
+  <Button>Save</Button>
+  <Button>Publish</Button>
+</ButtonGroup>
+```
 
 ### Hooks
 
-If you need to customize things further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useButton](useButton.html) for more details.
+If you need to customize things further, such as intercepting events or customizing DOM elements, you can drop down to the lower level Hook-based API. Consume from `ButtonContext` in your component with <TypeLink links={docs.links} type={docs.exports.useContextProps} /> to make it compatible with other React Aria Components. See [useButton](useButton.html) for more details.
+
+This example uses [Framer Motion](https://www.framer.com/motion/) to create an `AnimatedButton` component that animates based on the `isPressed` state provided by `useButton`. It can be used standalone or as a part of any React Aria component.
+
+```tsx
+import type {ButtonProps} from 'react-aria-components';
+import {ButtonContext, useContextProps} from 'react-aria-components';
+import {useButton} from 'react-aria';
+import {motion} from 'framer-motion';
+
+const AnimatedButton = React.forwardRef((props: ButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, ButtonContext);
+  ///- end highlight -///
+
+  let {buttonProps, isPressed} = useButton(props, ref);
+  return (
+    <motion.button
+      {...buttonProps}
+      ref={ref}
+      animate={{
+        scale: isPressed ? 0.9 : 1
+      }}>
+      {props.children}
+    </motion.button>
+  );
+});
+```

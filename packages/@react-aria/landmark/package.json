@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/landmark",
-  "version": "3.0.0-beta.0",
+  "version": "3.0.0-beta.7",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -22,10 +22,9 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/focus": "^3.12.0",
-    "@react-aria/utils": "^3.16.0",
-    "@react-types/shared": "^3.18.0",
-    "@swc/helpers": "^0.4.14",
+    "@react-aria/utils": "^3.22.0",
+    "@react-types/shared": "^3.22.0",
+    "@swc/helpers": "^0.5.0",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {

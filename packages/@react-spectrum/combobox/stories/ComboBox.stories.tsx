@@ -25,13 +25,12 @@ import Copy from '@spectrum-icons/workflow/Copy';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
-import {Heading} from '@react-spectrum/text';
+import {Heading, Text} from '@react-spectrum/text';
+import {Key} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import React, {useRef, useState} from 'react';
-import {Text} from '@react-spectrum/text';
-import {useAsyncList} from '@react-stately/data';
+import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
-import {useListData, useTreeData} from '@react-stately/data';
 
 let items = [
   {name: 'Aardvark', id: '1'},
@@ -201,7 +200,7 @@ export default {
 
 export const Default: ComboBoxStory = {
   render: (args) => render(args),
-  storyName: 'static items'
+  name: 'static items'
 };
 
 export const Dynamic: ComboBoxStory = {
@@ -211,19 +210,19 @@ export const Dynamic: ComboBoxStory = {
       {(item: any) => <Item>{item.name}</Item>}
     </ComboBox>
   ),
-  storyName: 'dynamic items'
+  name: 'dynamic items'
 };
 
 export const NoItems: ComboBoxStory = {
   ...Dynamic,
   args: {defaultItems: []},
-  storyName: 'no items'
+  name: 'no items'
 };
 
 export const MappedItems: ComboBoxStory = {
   args: {defaultSelectedKey: '2'},
   render: (args) => <ComboBoxWithMap {...args} />,
-  storyName: 'with mapped items (defaultItem and items undef)'
+  name: 'with mapped items (defaultItem and items undef)'
 };
 
 export const Sections: ComboBoxStory = {
@@ -237,13 +236,13 @@ export const Sections: ComboBoxStory = {
       )}
     </ComboBox>
   ),
-  storyName: 'with sections'
+  name: 'with sections'
 };
 
 export const ManySections: ComboBoxStory = {
   ...Sections,
   args: {defaultItems: lotsOfSections},
-  storyName: 'with many sections'
+  name: 'with many sections'
 };
 
 export const ComplexItems: ComboBoxStory = {
@@ -318,7 +317,7 @@ export const ContextualHelpStory: ComboBoxStory = {
       </ContextualHelp>
     )
   },
-  storyName: 'contextual help'
+  name: 'contextual help'
 };
 
 export const Resize: ComboBoxStory = {
@@ -331,55 +330,55 @@ export const SmallDiv: ComboBoxStory = {
       {render(args)}
     </Flex>
   ),
-  storyName: 'in small div'
+  name: 'in small div'
 };
 
 export const ControlledInputValueStory: ComboBoxStory = {
   args: {inputValue: 'Snake', disabledKeys: ['2', '6']},
   render: (args) => <ControlledValueComboBox {...args} />,
-  storyName: 'inputValue (controlled)'
+  name: 'inputValue (controlled)'
 };
 
 export const DefaultInputValue: ComboBoxStory = {
   ...Default,
   args: {defaultInputValue: 'Item Three', disabledKeys: ['two']},
-  storyName: 'defaultInputValue (uncontrolled)'
+  name: 'defaultInputValue (uncontrolled)'
 };
 
 export const ControlledSelectedKey: ComboBoxStory = {
   args: {selectedKey: '4', disabledKeys: ['2', '6']},
   render: (args) => <ControlledKeyComboBox {...args} />,
-  storyName: 'selectedKey (controlled)'
+  name: 'selectedKey (controlled)'
 };
 
 export const DefaultSelectedKey: ComboBoxStory = {
   ...Default,
   args: {defaultSelectedKey: 'two', disabledKeys: ['one']},
-  storyName: 'defaultSelectedKey (uncontrolled)'
+  name: 'defaultSelectedKey (uncontrolled)'
 };
 
 export const AllControlled: ComboBoxStory = {
   args: {selectedKey: '2', inputValue: 'Kangaroo', disabledKeys: ['2', '6']},
   render: (args) => <AllControlledComboBox {...args} />,
-  storyName: 'inputValue and selectedKey (controlled)'
+  name: 'inputValue and selectedKey (controlled)'
 };
 
 export const DefaultInputAndKey: ComboBoxStory = {
   ...Default,
   args: {defaultInputValue: 'Item Two', defaultSelectedKey: 'two', disabledKeys: ['two']},
-  storyName: 'defaultInputValue and defaultSelectedKey (uncontrolled)'
+  name: 'defaultInputValue and defaultSelectedKey (uncontrolled)'
 };
 
 export const ControlledInputDefaultKey: ComboBoxStory = {
   ...ControlledInputValueStory,
   args: {inputValue: 'K', defaultSelectedKey: 'two', disabledKeys: ['2', '6']},
-  storyName: 'inputValue and defaultSelectedKey (controlled by inputvalue)'
+  name: 'inputValue and defaultSelectedKey (controlled by inputvalue)'
 };
 
 export const ControlledInputValue: ComboBoxStory = {
   ...ControlledSelectedKey,
   args: {defaultInputValue: 'Blah', selectedKey: '2', disabledKeys: ['2', '6']},
-  storyName: 'defaultInputValue and selectedKey (controlled by selectedKey)'
+  name: 'defaultInputValue and selectedKey (controlled by selectedKey)'
 };
 
 export const CustomFilter: ComboBoxStory = {
@@ -392,27 +391,27 @@ export const LoadingState: ComboBoxStory = {
 
 export const FilteringListData: ComboBoxStory = {
   render: (args) => <ListDataExample {...args} />,
-  storyName: 'filtering with useListData'
+  name: 'filtering with useListData'
 };
 
 export const SeverSideFiltering: ComboBoxStory = {
   render: (args) => <AsyncLoadingExample {...args} />,
-  storyName: 'server side filtering with useAsyncList'
+  name: 'server side filtering with useAsyncList'
 };
 
 export const SeverSideFilteringControlled: ComboBoxStory = {
   render: (args) => <AsyncLoadingExampleControlledKey {...args} />,
-  storyName: 'server side filtering with useAsyncList (controlled key)'
+  name: 'server side filtering with useAsyncList (controlled key)'
 };
 
 export const SeverSideFilteringControlledReset: ComboBoxStory = {
   render: (args) => <AsyncLoadingExampleControlledKeyWithReset {...args} />,
-  storyName: 'server side filtering with controlled key and inputValue reset if not focused'
+  name: 'server side filtering with controlled key and inputValue reset if not focused'
 };
 
 export const InDialog: ComboBoxStory = {
   render: (args) => <ComboBoxWithinDialog {...args} />,
-  storyName: 'within a dialog'
+  name: 'within a dialog'
 };
 
 export const WHCM: ComboBoxStory = {
@@ -429,6 +428,16 @@ export const WHCM: ComboBoxStory = {
       {renderRow({validationState: 'invalid'})}
       {renderRow({validationState: 'invalid', isQuiet: true})}
     </Flex>
+  )
+};
+
+export const Links: ComboBoxStory = {
+  render: (args) => (
+    <ComboBox {...args}>
+      <Item key="foo">Foo</Item>
+      <Item key="bar">Bar</Item>
+      <Item href="https://google.com">Google</Item>
+    </ComboBox>
   )
 };
 
@@ -571,7 +580,7 @@ function AsyncLoadingExampleControlledKey(props) {
     list.setFilterText(value);
   };
 
-  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  let selectedKey = (list.selectedKeys as Set<Key>).values().next().value;
   return (
     <ComboBox
       label="Star Wars Character Lookup"
@@ -607,7 +616,7 @@ function AsyncLoadingExampleControlledKeyWithReset(props) {
       let json = await res.json();
 
       let selectedText;
-      let selectedKey = (selectedKeys as Set<React.Key>).values().next().value;
+      let selectedKey = (selectedKeys as Set<Key>).values().next().value;
 
       // If selectedKey exists and combobox is performing intial load, update the input value with the selected key text
       if (!isFocused.current && selectedKey) {
@@ -639,7 +648,7 @@ function AsyncLoadingExampleControlledKeyWithReset(props) {
     list.setFilterText(value);
   };
 
-  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  let selectedKey = (list.selectedKeys as Set<Key>).values().next().value;
   return (
     <ComboBox
       label="Star Wars Character Lookup"
@@ -691,7 +700,7 @@ function AllControlledComboBox(props) {
     initialItems: withSection
   });
 
-  let onSelectionChange = (key: React.Key) => {
+  let onSelectionChange = (key: Key) => {
     setFieldState(prevState => ({
       inputValue: list.getItem(key)?.value.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
       selectedKey: key

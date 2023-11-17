@@ -10,24 +10,29 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Label, Slider, SliderContext, SliderOutput, SliderThumb, SliderTrack} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let TestSlider = ({sliderProps, thumbProps, trackProps}) => (
+let TestSlider = ({sliderProps, thumbProps, trackProps, outputProps}) => (
   <Slider {...sliderProps}>
     <Label>Opacity</Label>
-    <SliderOutput />
+    <SliderOutput {...outputProps} />
     <SliderTrack {...trackProps}>
       <SliderThumb {...thumbProps} />
     </SliderTrack>
   </Slider>
 );
 
-let renderSlider = (sliderProps, thumbProps, trackProps) => render(<TestSlider {...{sliderProps, thumbProps, trackProps}} />);
+let renderSlider = (sliderProps, thumbProps, trackProps, outputProps) => render(<TestSlider {...{sliderProps, thumbProps, trackProps, outputProps}} />);
 
 describe('Slider', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a button with default class', () => {
     let {getByRole} = renderSlider();
     let group = getByRole('group');
@@ -46,11 +51,12 @@ describe('Slider', () => {
   });
 
   it('should support DOM props', () => {
-    let {getByRole} = renderSlider({'data-foo': 'bar'}, {'data-bar': 'foo'}, {'data-test': 'test'});
+    let {getByRole} = renderSlider({'data-foo': 'bar'}, {'data-bar': 'foo'}, {'data-test': 'test'}, {'data-output': 'output'});
     let group = getByRole('group');
     expect(group).toHaveAttribute('data-foo', 'bar');
     expect(group.querySelector('.react-aria-SliderThumb')).toHaveAttribute('data-bar', 'foo');
     expect(group.querySelector('.react-aria-SliderTrack')).toHaveAttribute('data-test', 'test');
+    expect(group.querySelector('.react-aria-SliderOutput')).toHaveAttribute('data-output', 'output');
   });
 
   it('should support render props', () => {
@@ -82,7 +88,7 @@ describe('Slider', () => {
     expect(group).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = renderSlider({}, {className: ({isFocusVisible}) => `thumb ${isFocusVisible ? 'focus' : ''}`});
     let slider = getByRole('slider');
     let thumb = slider.closest('.thumb');
@@ -90,12 +96,12 @@ describe('Slider', () => {
     expect(thumb).not.toHaveAttribute('data-focus-visible');
     expect(thumb).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(slider);
     expect(thumb).toHaveAttribute('data-focus-visible', 'true');
     expect(thumb).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(thumb).not.toHaveAttribute('data-focus-visible');
     expect(thumb).not.toHaveClass('focus');
   });
@@ -116,20 +122,45 @@ describe('Slider', () => {
     expect(thumb).not.toHaveClass('dragging');
   });
 
-  it('should support hover state', () => {
-    let {getByRole} = renderSlider({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`});
+  it('should support hover state', async () => {
+    let hoverStartTrackSpy = jest.fn();
+    let hoverChangeTrackSpy = jest.fn();
+    let hoverEndTrackSpy = jest.fn();
+    let hoverStartThumbSpy = jest.fn();
+    let hoverChangeThumbSpy = jest.fn();
+    let hoverEndThumbSpy = jest.fn();
+    let {getByRole} = renderSlider({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartThumbSpy, onHoverChange: hoverChangeThumbSpy, onHoverEnd: hoverEndThumbSpy}, {className: ({isHovered}) => `track ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartTrackSpy, onHoverChange: hoverChangeTrackSpy, onHoverEnd: hoverEndTrackSpy});
     let thumb = getByRole('slider').closest('.thumb');
+    let track = getByRole('slider').closest('.track');
 
     expect(thumb).not.toHaveAttribute('data-hovered');
     expect(thumb).not.toHaveClass('hovered');
+    expect(track).not.toHaveAttribute('data-hovered');
+    expect(track).not.toHaveClass('hovered');
 
-    userEvent.hover(thumb);
+    await user.hover(thumb);
     expect(thumb).toHaveAttribute('data-hovered', 'true');
     expect(thumb).toHaveClass('hovered');
+    expect(hoverStartThumbSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeThumbSpy).toHaveBeenCalledTimes(1);
 
-    userEvent.unhover(thumb);
+    await user.unhover(thumb);
     expect(thumb).not.toHaveAttribute('data-hovered');
     expect(thumb).not.toHaveClass('hovered');
+    expect(hoverEndThumbSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeThumbSpy).toHaveBeenCalledTimes(2);
+
+    await user.hover(track);
+    expect(track).toHaveAttribute('data-hovered', 'true');
+    expect(track).toHaveClass('hovered');
+    expect(hoverStartTrackSpy).toHaveBeenCalledTimes(2);
+    expect(hoverChangeTrackSpy).toHaveBeenCalledTimes(3);
+
+    await user.unhover(track);
+    expect(track).not.toHaveAttribute('data-hovered');
+    expect(track).not.toHaveClass('hovered');
+    expect(hoverEndTrackSpy).toHaveBeenCalledTimes(2);
+    expect(hoverChangeTrackSpy).toHaveBeenCalledTimes(4);
   });
 
   it('should support disabled state', () => {
@@ -161,10 +192,10 @@ describe('Slider', () => {
       <Slider defaultValue={[30, 60]}>
         <Label>Test</Label>
         <SliderOutput>
-          {(state) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
+          {({state}) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
         </SliderOutput>
         <SliderTrack>
-          {(state) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
+          {({state}) => state.values.map((_, i) => <SliderThumb key={i} index={i} />)}
         </SliderTrack>
       </Slider>
     );
@@ -176,5 +207,15 @@ describe('Slider', () => {
 
     let output = getByRole('status');
     expect(output).toHaveTextContent('30 – 60');
+  });
+
+  it('should support clicking on the track to move the thumb', async () => {
+    let onChange = jest.fn();
+    let {getByRole} = renderSlider({onChange});
+    let group = getByRole('group');
+    let track = group.querySelector('.react-aria-SliderTrack');
+
+    await user.pointer([{target: track, keys: '[MouseLeft]', coords: {x: 20}}]);
+    expect(onChange).toHaveBeenCalled();
   });
 });

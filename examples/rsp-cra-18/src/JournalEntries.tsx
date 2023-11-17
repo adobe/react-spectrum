@@ -9,7 +9,7 @@ function JournalEntries(props : {list : Journal[]}){
             <p>Your day was: {item.rate} </p>
             <p>{item.description}</p>
         </li>
-        
+
     ))
 
     return (

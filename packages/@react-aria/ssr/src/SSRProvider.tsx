@@ -23,8 +23,7 @@ import React, {ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState
 // consistent ids regardless of the loading order.
 interface SSRContextValue {
   prefix: string,
-  current: number,
-  isSSR: boolean
+  current: number
 }
 
 // Default context value to use in case there is no SSRProvider. This is fine for
@@ -34,22 +33,19 @@ interface SSRContextValue {
 // SSR case multiple copies of React Aria is not supported.
 const defaultContext: SSRContextValue = {
   prefix: String(Math.round(Math.random() * 10000000000)),
-  current: 0,
-  isSSR: false
+  current: 0
 };
 
 const SSRContext = React.createContext<SSRContextValue>(defaultContext);
+const IsSSRContext = React.createContext(false);
 
 export interface SSRProviderProps {
   /** Your application here. */
   children: ReactNode
 }
 
-/**
- * When using SSR with React Aria, applications must be wrapped in an SSRProvider.
- * This ensures that auto generated ids are consistent between the client and server.
- */
-export function SSRProvider(props: SSRProviderProps): JSX.Element {
+// This is only used in React < 18.
+function LegacySSRProvider(props: SSRProviderProps): React.JSX.Element {
   let cur = useContext(SSRContext);
   let counter = useCounter(cur === defaultContext);
   let [isSSR, setIsSSR] = useState(true);
@@ -57,13 +53,12 @@ export function SSRProvider(props: SSRProviderProps): JSX.Element {
     // If this is the first SSRProvider, start with an empty string prefix, otherwise
     // append and increment the counter.
     prefix: cur === defaultContext ? '' : `${cur.prefix}-${counter}`,
-    current: 0,
-    isSSR
-  }), [cur, counter, isSSR]);
+    current: 0
+  }), [cur, counter]);
 
   // If on the client, and the component was initially server rendered,
   // then schedule a layout effect to update the component after hydration.
-  if (typeof window !== 'undefined') {
+  if (typeof document !== 'undefined') {
     // This if statement technically breaks the rules of hooks, but is safe
     // because the condition never changes after mounting.
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -74,9 +69,28 @@ export function SSRProvider(props: SSRProviderProps): JSX.Element {
 
   return (
     <SSRContext.Provider value={value}>
-      {props.children}
+      <IsSSRContext.Provider value={isSSR}>
+        {props.children}
+      </IsSSRContext.Provider>
     </SSRContext.Provider>
   );
+}
+
+let warnedAboutSSRProvider = false;
+
+/**
+ * When using SSR with React Aria in React 16 or 17, applications must be wrapped in an SSRProvider.
+ * This ensures that auto generated ids are consistent between the client and server.
+ */
+export function SSRProvider(props: SSRProviderProps): React.JSX.Element {
+  if (typeof React['useId'] === 'function') {
+    if (process.env.NODE_ENV !== 'test' && !warnedAboutSSRProvider) {
+      console.warn('In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.');
+      warnedAboutSSRProvider = true;
+    }
+    return <>{props.children}</>;
+  }
+  return <LegacySSRProvider {...props} />;
 }
 
 let canUseDOM = Boolean(
@@ -90,6 +104,7 @@ let componentIds = new WeakMap();
 function useCounter(isDisabled = false) {
   let ctx = useContext(SSRContext);
   let ref = useRef<number | null>(null);
+  // eslint-disable-next-line rulesdir/pure-render
   if (ref.current === null && !isDisabled) {
     // In strict mode, React renders components twice, and the ref will be reset to null on the second render.
     // This means our id counter will be incremented twice instead of once. This is a problem because on the
@@ -119,14 +134,15 @@ function useCounter(isDisabled = false) {
       }
     }
 
+    // eslint-disable-next-line rulesdir/pure-render
     ref.current = ++ctx.current;
   }
 
+  // eslint-disable-next-line rulesdir/pure-render
   return ref.current;
 }
 
-/** @private */
-export function useSSRSafeId(defaultId?: string): string {
+function useLegacySSRSafeId(defaultId?: string): string {
   let ctx = useContext(SSRContext);
 
   // If we are rendering in a non-DOM environment, and there's no SSRProvider,
@@ -136,7 +152,34 @@ export function useSSRSafeId(defaultId?: string): string {
   }
 
   let counter = useCounter(!!defaultId);
-  return defaultId || `react-aria${ctx.prefix}-${counter}`;
+  let prefix = ctx === defaultContext && process.env.NODE_ENV === 'test' ? 'react-aria' : `react-aria${ctx.prefix}`;
+  return defaultId || `${prefix}-${counter}`;
+}
+
+function useModernSSRSafeId(defaultId?: string): string {
+  // @ts-ignore
+  let id = React.useId();
+  let [didSSR] = useState(useIsSSR());
+  let prefix = didSSR || process.env.NODE_ENV === 'test' ? 'react-aria' : `react-aria${defaultContext.prefix}`;
+  return defaultId || `${prefix}-${id}`;
+}
+
+// Use React.useId in React 18 if available, otherwise fall back to our old implementation.
+/** @private */
+export const useSSRSafeId = typeof React['useId'] === 'function' ? useModernSSRSafeId : useLegacySSRSafeId;
+
+function getSnapshot() {
+  return false;
+}
+
+function getServerSnapshot() {
+  return true;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function subscribe(onStoreChange: () => void): () => void {
+  // noop
+  return () => {};
 }
 
 /**
@@ -145,6 +188,11 @@ export function useSSRSafeId(defaultId?: string): string {
  * until after hydration.
  */
 export function useIsSSR(): boolean {
-  let cur = useContext(SSRContext);
-  return cur.isSSR;
+  // In React 18, we can use useSyncExternalStore to detect if we're server rendering or hydrating.
+  if (typeof React['useSyncExternalStore'] === 'function') {
+    return React['useSyncExternalStore'](subscribe, getSnapshot, getServerSnapshot);
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  return useContext(IsSSRContext);
 }

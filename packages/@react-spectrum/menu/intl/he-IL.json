@@ -1,3 +1,5 @@
 {
-  "moreActions": "פעולות נוספות"
+  "backButton": "חזור אל {prevMenuButton}",
+  "moreActions": "פעולות נוספות",
+  "unavailable": "לא זמין, הרחב לפרטים"
 }

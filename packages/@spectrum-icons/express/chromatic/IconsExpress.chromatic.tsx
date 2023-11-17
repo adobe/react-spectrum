@@ -13,34 +13,38 @@
 import Add from '../Add';
 import Alert from '@spectrum-icons/express/Alert';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
-import {Flex} from "@react-spectrum/layout";
+import {Flex} from '@react-spectrum/layout';
 
-storiesOf('Icons/Express', module)
-  .addParameters({chromaticProvider: {express: true}})
-  .add(
-    'icon: Add with sizes',
-    () => renderIconSizes(Add, {'aria-label': 'Add'})
-  )
-  .add('Colors',
-    () => (
-      <Flex gap="size-200">
-        <Alert aria-label="info default" />
-        <Alert color="informative" aria-label="info alert" />
-        <Alert color="negative" aria-label="negative alert" />
-        <Alert color="positive" aria-label="positive alert" />
-        <Alert color="notice" aria-label="notice alert" />
-      </Flex>
-    )
-  );
+export default {
+  title: 'Icons/Express',
+  parameters: {
+    chromaticProvider: {express: true},
+  }
+};
+
+export const IconAddWithSizes = () => renderIconSizes(Add, { 'aria-label': 'Add' });
+
+IconAddWithSizes.story = {
+  name: 'icon: Add with sizes',
+};
+
+export const Colors = () => (
+  <Flex gap="size-200">
+    <Alert aria-label="info default" />
+    <Alert color="informative" aria-label="info alert" />
+    <Alert color="negative" aria-label="negative alert" />
+    <Alert color="positive" aria-label="positive alert" />
+    <Alert color="notice" aria-label="notice alert" />
+  </Flex>
+);
 
 function renderIconSizes(Component, props) {
   let sizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
   return (
     <div>
-      {sizes.map(size => {
-        return <Component margin="15px" size={size} {...props} />
+      {sizes.map((size) => {
+        return <Component margin="15px" size={size} {...props} />;
       })}
     </div>
-  )
+  );
 }

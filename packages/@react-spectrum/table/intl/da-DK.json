@@ -1,6 +1,8 @@
 {
+  "collapse": "Skjul",
   "columnResizer": "Kolonneændring",
   "drag": "Træk",
+  "expand": "Udvid",
   "loading": "Indlæser ...",
   "loadingMore": "Indlæser flere ...",
   "resizeColumn": "Tilpas størrelse på kolonne",

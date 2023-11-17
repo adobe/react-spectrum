@@ -325,6 +325,17 @@ It's up to you to style your color slider to appear disabled accordingly.
 <ColorSlider channel="red" defaultValue="#7f007f" isDisabled />
 ```
 
+### HTML forms
+
+ColorSlider supports the `name` prop for integration with HTML forms. The value will be submitted as a number between the minimum and maximum value for the displayed channel.
+
+```tsx example
+<ColorSlider
+  defaultValue="#7f0000"
+  channel="red"
+  name="red" />
+```
+
 ## Internationalization
 
 ### Labeling

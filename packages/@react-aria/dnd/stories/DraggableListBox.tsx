@@ -37,7 +37,7 @@ export function DraggableListBox(props) {
   useDraggableCollection({}, dragState, ref);
 
   return (
-    <ul {...listBoxProps} ref={ref} className={dndStyles['draggable-listbox']}>
+    <ul {...listBoxProps} ref={ref} className={dndStyles['draggable-listbox']} aria-label="example draggable listbox">
       {[...state.collection].map((item) => (
         <Option
           key={item.key}

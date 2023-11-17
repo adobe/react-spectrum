@@ -66,6 +66,21 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+NumberField supports the `name` prop for integration with HTML forms. The value will be submitted to the server as a raw number (e.g. `45`), not as a locale-dependent formatted string (e.g. `"$45.00"`).
+
+```tsx example
+<NumberField
+  label="Transaction amount"
+  name="amount"
+  defaultValue={45}
+  formatOptions={{
+    style: 'currency',
+    currency: 'USD'
+  }} />
+```
+
 ## Labeling
 
 A visual label should be provided for the NumberField using the `label` prop. If the NumberField is required, the `isRequired` and
@@ -252,25 +267,25 @@ function Example() {
 
 ## Validation
 
-NumberFields can display a validation state to communicate to the user whether the current value is valid or invalid.
-Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the NumberField via the `validationState` prop.
+NumberField supports the `isRequired` prop to ensure the user enters a value, as well as custom validation functions, realtime validation, and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
 
-The example below illustrates how one would validate if the user has entered a [FizzBuzz](https://en.wikipedia.org/wiki/Fizz_buzz) number into the NumberField.
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the number field or submits the form.
+
 ```tsx example
-function Example() {
-  let [value, setValue] = React.useState(15);
-  let isValid = React.useMemo(() => value % 3 === 0 && value % 5 === 0, [value]);
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 
-  return (
-    <NumberField
-      validationState={isValid ? 'valid' : 'invalid'}
-      value={value}
-      onChange={setValue}
-      label="FizzBuzz values only"
-    />
-  );
-}
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <NumberField label="Width" name="width" isRequired />
+  {/*- end highlight -*/}
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `NumberField` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## Props
 
@@ -324,11 +339,11 @@ Both a description and an error message can be supplied to a NumberField. The de
 ```tsx example
 function Example() {
   let [value, setValue] = React.useState(1);
-  let isValid = React.useMemo(() => value > 0 || value === NaN, [value]);
+  let isValid = React.useMemo(() => value > 0 || Number.isNaN(value), [value]);
 
   return (
     <NumberField
-      validationState={value === NaN ? undefined : (isValid ? 'valid' : 'invalid')}
+      validationState={Number.isNaN(value) ? undefined : (isValid ? 'valid' : 'invalid')}
       value={value}
       onChange={setValue}
       label="Positive numbers only"

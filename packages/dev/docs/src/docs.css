@@ -228,7 +228,13 @@ html, body {
     vertical-align: text-bottom;
   }
 }
-
+.editPageContainer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px 0;
+  width: 100%;
+  max-width: 967px;
+}
 .highlights {
   display: flex;
   flex-wrap: wrap;
@@ -360,6 +366,14 @@ main {
   align-items: center;
 }
 
+main.noToc {
+  margin-right: 0;
+}
+
+main.examplePage {
+  margin: 0;
+}
+
 .article {
   max-width: 967px;
   flex: 1;
@@ -427,6 +441,10 @@ footer li:last-child:after {
 
 .propTable td[data-column="CSS Selector"] code {
   white-space: nowrap;
+}
+
+.propTable td[data-column="Type"] {
+  word-break: break-word;
 }
 
 .type-description {
@@ -500,6 +518,7 @@ footer li:last-child:after {
 
 .article pre {
   background: var(--spectrum-global-color-gray-75);
+  border: 1px solid var(--spectrum-gray-200);
   --code-padding: 18px;
   padding: var(--code-padding);
   border-radius: 4px;
@@ -509,6 +528,7 @@ footer li:last-child:after {
 
 .article pre:global(.example) {
   border-radius: 4px 4px 0 0;
+  border-bottom: none;
   margin-bottom: 0;
 }
 
@@ -520,6 +540,33 @@ footer li:last-child:after {
 
 .article pre + div > .example {
   border-radius: 0 0 4px 4px;
+  border: 1px solid var(--spectrum-gray-200);
+  border-top: none;
+}
+
+:global(.flip) > .example {
+  border-radius: 4px 4px 0 0;
+  border: 1px solid var(--spectrum-gray-200);
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+:global(.flip) ~ pre:global(.example) {
+  border-radius: 0 0 4px 4px;
+  border-top: none;
+  border-bottom: 1px solid var(--spectrum-gray-200);
+  margin-top: 0;
+}
+
+:global(.standalone) > .example {
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+:global(.standalone) ~ pre:global(.example) {
+  border-radius: 4px;
+  border: 1px solid var(--spectrum-gray-200);
 }
 
 code {
@@ -657,6 +704,11 @@ h2.sectionHeader {
   margin-bottom: 8px;
 }
 
+h3.sectionHeader.sectionHeader,
+h4.sectionHeader.sectionHeader  {
+  margin-top: 2em;
+}
+
 .anchor {
   opacity: 0;
   transition: all 125ms ease-in-out;
@@ -698,6 +750,12 @@ h2.sectionHeader {
   }
 
   z-index: 1;
+}
+
+.exampleHeader {
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 
 .docSearchBoxThemeProvider {
@@ -907,7 +965,7 @@ body.docsearch-open [data-testid="popover"] {
   }
 }
 
-@define-mixin small-propTable {
+.small-propTable {
   /* Collapse the prop table into a list with key/value pairs */
   .propTable {
     tr, td, th {
@@ -1056,8 +1114,6 @@ body.docsearch-open [data-testid="popover"] {
   .article pre {
     --code-padding: 8px;
   }
-
-  @mixin small-propTable;
 }
 
 @media (max-width: 500px) {
@@ -1082,7 +1138,7 @@ body.docsearch-open [data-testid="popover"] {
 }
 
 .popover {
-  @mixin small-propTable;
+  composes: small-propTable;
 }
 
 .cardGroup {

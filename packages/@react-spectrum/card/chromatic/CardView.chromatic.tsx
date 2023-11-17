@@ -14,7 +14,7 @@ import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '..';
 import {Content} from '@react-spectrum/view';
 import {Heading, Text} from '@react-spectrum/text';
 import {Image} from '@react-spectrum/image';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React, {useMemo} from 'react';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {useCollator} from '@react-aria/i18n';
@@ -72,14 +72,20 @@ function DynamicCardView(props: SpectrumCardViewProps<object>) {
   );
 }
 
-const Template = (): Story<SpectrumCardViewProps<object>> => (props) => <DynamicCardView {...props} />;
+const Template = (props) =>
+  <DynamicCardView {...props} />;
 
+export const DefaultGrid = {
+  render: Template,
+  args: {items: itemsLowVariance}
+};
 
-export const DefaultGrid = Template().bind({});
-DefaultGrid.args = {items: itemsLowVariance};
+export const DefaultGallery = {
+  render: Template,
+  args: {items: itemsLowVariance, layout: GalleryLayout}
+};
 
-export const DefaultGallery = Template().bind({});
-DefaultGallery.args = {items: itemsLowVariance, layout: GalleryLayout};
-
-export const DefaultWaterfall = Template().bind({});
-DefaultWaterfall.args = {items: itemsLowVariance, layout: WaterfallLayout};
+export const DefaultWaterfall = {
+  render: Template,
+  args: {items: itemsLowVariance, layout: WaterfallLayout}
+};

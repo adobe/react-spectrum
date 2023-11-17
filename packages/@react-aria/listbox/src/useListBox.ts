@@ -12,12 +12,11 @@
 
 import {AriaListBoxProps} from '@react-types/listbox';
 import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
 import {RefObject} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
-import {useId} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -47,7 +46,16 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
   shouldSelectOnPressUp?: boolean,
 
   /** Whether options should be focused when the user hovers over them. */
-  shouldFocusOnHover?: boolean
+  shouldFocusOnHover?: boolean,
+
+  /**
+   * The behavior of links in the collection.
+   * - 'action': link behaves like onAction.
+   * - 'selection': link follows selection interactions (e.g. if URL drives selection).
+   * - 'override': links override all other interactions (link items are not selectable).
+   * @default 'override'
+   */
+  linkBehavior?: 'action' | 'selection' | 'override'
 }
 
 /**
@@ -58,12 +66,23 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
  */
 export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): ListBoxAria {
   let domProps = filterDOMProps(props, {labelable: true});
+  // Use props instead of state here. We don't want this to change due to long press.
+  let selectionBehavior = props.selectionBehavior || 'toggle';
+  let linkBehavior = props.linkBehavior || (selectionBehavior === 'replace' ? 'action' : 'override');
+  if (selectionBehavior === 'toggle' && linkBehavior === 'action') {
+    // linkBehavior="action" does not work with selectionBehavior="toggle" because there is no way
+    // to initiate selection (checkboxes are not allowed inside a listbox). Link items will not be
+    // selectable in this configuration.
+    linkBehavior = 'override';
+  }
+
   let {listProps} = useSelectableList({
     ...props,
     ref,
     selectionManager: state.selectionManager,
     collection: state.collection,
-    disabledKeys: state.disabledKeys
+    disabledKeys: state.disabledKeys,
+    linkBehavior
   });
 
   let {focusWithinProps} = useFocusWithin({
@@ -80,7 +99,8 @@ export function useListBox<T>(props: AriaListBoxOptions<T>, state: ListState<T>,
     shouldSelectOnPressUp: props.shouldSelectOnPressUp,
     shouldFocusOnHover: props.shouldFocusOnHover,
     isVirtualized: props.isVirtualized,
-    onAction: props.onAction
+    onAction: props.onAction,
+    linkBehavior
   });
 
   let {labelProps, fieldProps} = useLabel({

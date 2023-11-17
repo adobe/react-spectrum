@@ -25,7 +25,7 @@ for (let i = 0; i < 50; i++) {
   lotsOfItems.push({name: 'Item ' + i, contents: 'Contents ' + i});
 }
 
-const Template = () => (props) => (
+const Template = (props) => (
   <Tabs aria-label="example" items={lotsOfItems} {...props}>
     {(item) => (
       <Item key={item.name} title={item.name}>
@@ -35,8 +35,11 @@ const Template = () => (props) => (
   </Tabs>
 );
 
-export const ScrollTesting = Template().bind({});
-ScrollTesting.args = {};
+export const ScrollTesting = {
+  render: Template
+};
 
-export const OnPressEndSelection = Template().bind({});
-OnPressEndSelection.args = {shouldSelectOnPressUp: true};
+export const OnPressEndSelection = {
+  render: Template,
+  args: {shouldSelectOnPressUp: true}
+};

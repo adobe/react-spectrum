@@ -13,7 +13,7 @@
 import {AriaColorWheelProps} from '@react-types/color';
 import {ColorWheelState} from '@react-stately/color';
 import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, mergeProps, useGlobalListeners, useLabels} from '@react-aria/utils';
+import {focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners, useLabels} from '@react-aria/utils';
 import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
@@ -43,7 +43,8 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     isDisabled,
     innerRadius,
     outerRadius,
-    'aria-label': ariaLabel
+    'aria-label': ariaLabel,
+    name
   } = props;
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
@@ -56,10 +57,9 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   }, [inputRef]);
 
-  let stateRef = useRef<ColorWheelState>(null);
-  stateRef.current = state;
+  useFormReset(inputRef, state.hue, state.setHue);
 
-  let currentPosition = useRef<{x: number, y: number}>(null);
+  let currentPosition = useRef<{x: number, y: number} | null>(null);
 
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
@@ -71,18 +71,18 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
       // same handling as useMove, don't need to stop propagation, useKeyboard will do that for us
       e.preventDefault();
       // remember to set this and unset it so that onChangeEnd is fired
-      stateRef.current.setDragging(true);
+      state.setDragging(true);
       switch (e.key) {
         case 'PageUp':
           e.preventDefault();
-          state.increment(stateRef.current.pageStep);
+          state.increment(state.pageStep);
           break;
         case 'PageDown':
           e.preventDefault();
-          state.decrement(stateRef.current.pageStep);
+          state.decrement(state.pageStep);
           break;
       }
-      stateRef.current.setDragging(false);
+      state.setDragging(false);
     }
   });
 
@@ -93,22 +93,22 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     },
     onMove({deltaX, deltaY, pointerType, shiftKey}) {
       if (currentPosition.current == null) {
-        currentPosition.current = stateRef.current.getThumbPosition(thumbRadius);
+        currentPosition.current = state.getThumbPosition(thumbRadius);
       }
       currentPosition.current.x += deltaX;
       currentPosition.current.y += deltaY;
       if (pointerType === 'keyboard') {
         if (deltaX > 0 || deltaY < 0) {
-          state.increment(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
+          state.increment(shiftKey ? state.pageStep : state.step);
         } else if (deltaX < 0 || deltaY > 0) {
-          state.decrement(shiftKey ? stateRef.current.pageStep : stateRef.current.step);
+          state.decrement(shiftKey ? state.pageStep : state.step);
         }
       } else {
-        stateRef.current.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);
+        state.setHueFromPoint(currentPosition.current.x, currentPosition.current.y, thumbRadius);
       }
     },
     onMoveEnd() {
-      isOnTrack.current = undefined;
+      isOnTrack.current = false;
       state.setDragging(false);
       focusInput();
     }
@@ -135,7 +135,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   });
 
-  let onThumbDown = (id: number | null) => {
+  let onThumbDown = (id: number | null | undefined) => {
     if (!state.isDragging) {
       currentPointer.current = id;
       focusInput();
@@ -167,7 +167,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     }
   };
 
-  let onTrackDown = (track: Element, id: number | null, pageX: number, pageY: number) => {
+  let onTrackDown = (track: Element, id: number | null | undefined, pageX: number, pageY: number) => {
     let rect = track.getBoundingClientRect();
     let x = pageX - rect.x - rect.width / 2;
     let y = pageY - rect.y - rect.height / 2;
@@ -175,7 +175,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     if (innerRadius < radius && radius < outerRadius && !state.isDragging && currentPointer.current === undefined) {
       isOnTrack.current = true;
       currentPointer.current = id;
-      stateRef.current.setHueFromPoint(x, y, radius);
+      state.setHueFromPoint(x, y, radius);
 
       focusInput();
       state.setDragging(true);
@@ -314,6 +314,7 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         'aria-valuetext': state.value.formatChannelValue('hue', locale),
         disabled: isDisabled,
         value: `${state.value.getChannelValue('hue')}`,
+        name,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
           state.setHue(parseFloat(e.target.value));
         }

@@ -11,6 +11,7 @@
  */
 
 import {OverlayTriggerProps} from '@react-types/overlays';
+import {useCallback} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 export interface OverlayTriggerState {
@@ -33,17 +34,23 @@ export interface OverlayTriggerState {
 export function useOverlayTriggerState(props: OverlayTriggerProps): OverlayTriggerState  {
   let [isOpen, setOpen] = useControlledState(props.isOpen, props.defaultOpen || false, props.onOpenChange);
 
+  const open = useCallback(() => {
+    setOpen(true);
+  }, [setOpen]);
+
+  const close = useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
+
+  const toggle = useCallback(() => {
+    setOpen(!isOpen);
+  }, [setOpen, isOpen]);
+
   return {
     isOpen,
     setOpen,
-    open() {
-      setOpen(true);
-    },
-    close() {
-      setOpen(false);
-    },
-    toggle() {
-      setOpen(!isOpen);
-    }
+    open,
+    close,
+    toggle
   };
 }

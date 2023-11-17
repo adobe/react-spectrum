@@ -53,6 +53,7 @@ module.exports = {
   }, {
     files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**', '**/__tests__/**'],
     rules: {
+      'rsp-rules/no-react-key': [ERROR],
       'rsp-rules/act-events-test': ERROR,
       'rsp-rules/no-getByRole-toThrow': ERROR,
       'rulesdir/imports': OFF,
@@ -64,6 +65,21 @@ module.exports = {
     rules: {
       'jsdoc/require-jsdoc': OFF,
       'jsdoc/require-description': OFF
+    }
+  }, {
+    files: ['packages/@react-aria/interactions/**/*.ts', 'packages/@react-aria/interactions/**/*.tsx'],
+    rules: {
+      'no-restricted-globals': [
+        WARN,
+        {
+          'name': 'window',
+          'message': 'Use getOwnerWindow from @react-aria/utils instead.'
+        },
+        {
+          'name': 'document',
+          'message': 'Use getOwnerDocument from @react-aria/utils instead.'
+        }
+      ]
     }
   }],
   env: {
@@ -131,6 +147,7 @@ module.exports = {
     'no-nested-ternary': ERROR,
     'no-multiple-empty-lines': ERROR,
     'no-unneeded-ternary': ERROR,
+    'no-duplicate-imports': ERROR,
 
     // Below are rules that are needed for linter functionality when using React
     'react/display-name': OFF,
@@ -166,9 +183,11 @@ module.exports = {
     'react-hooks/exhaustive-deps': WARN,
 
     // custom rules
-    'rulesdir/sort-imports': [ERROR],
+    'rsp-rules/no-react-key': [ERROR],
+    'rsp-rules/sort-imports': [ERROR],
     'rulesdir/imports': [ERROR],
     'rulesdir/useLayoutEffectRule': [ERROR],
+    'rulesdir/pure-render': [ERROR],
 
     // jsx-a11y rules
     'jsx-a11y/accessible-emoji': ERROR,

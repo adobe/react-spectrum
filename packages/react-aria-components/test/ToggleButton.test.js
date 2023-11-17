@@ -10,12 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {ToggleButton, ToggleButtonContext} from '../';
 import userEvent from '@testing-library/user-event';
 
 describe('ToggleButton', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a toggle button with default class', () => {
     let {getByRole} = render(<ToggleButton>Test</ToggleButton>);
     let button = getByRole('button');
@@ -34,12 +39,12 @@ describe('ToggleButton', () => {
     expect(button).toHaveAttribute('data-foo', 'bar');
   });
 
-  it('should support render props', () => {
+  it('should support render props', async () => {
     let {getByRole} =  render(<ToggleButton>{({isSelected}) => isSelected ? 'On' : 'Off'}</ToggleButton>);
     let button = getByRole('button');
     expect(button).toHaveTextContent('Off');
 
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveTextContent('On');
   });
 
@@ -55,35 +60,35 @@ describe('ToggleButton', () => {
     expect(button).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getByRole} = render(<ToggleButton className={({isHovered}) => isHovered ? 'hover' : ''}>Test</ToggleButton>);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-hovered');
     expect(button).not.toHaveClass('hover');
 
-    userEvent.hover(button);
+    await user.hover(button);
     expect(button).toHaveAttribute('data-hovered', 'true');
     expect(button).toHaveClass('hover');
 
-    userEvent.unhover(button);
+    await user.unhover(button);
     expect(button).not.toHaveAttribute('data-hovered');
     expect(button).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = render(<ToggleButton className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</ToggleButton>);
     let button = getByRole('button');
-    
+
     expect(button).not.toHaveAttribute('data-focus-visible');
     expect(button).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(button);
     expect(button).toHaveAttribute('data-focus-visible', 'true');
     expect(button).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(button).not.toHaveAttribute('data-focus-visible');
     expect(button).not.toHaveClass('focus');
   });
@@ -115,7 +120,7 @@ describe('ToggleButton', () => {
     expect(button).toHaveClass('disabled');
   });
 
-  it('should support selected state', () => {
+  it('should support selected state', async () => {
     let onChange = jest.fn();
     let {getByRole} = render(<ToggleButton onChange={onChange} className={({isSelected}) => isSelected ? 'selected' : ''}>Test</ToggleButton>);
     let button = getByRole('button');
@@ -123,12 +128,12 @@ describe('ToggleButton', () => {
     expect(button).toHaveAttribute('aria-pressed', 'false');
     expect(button).not.toHaveClass('selected');
 
-    userEvent.click(button);
+    await user.click(button);
     expect(onChange).toHaveBeenLastCalledWith(true);
     expect(button).toHaveAttribute('aria-pressed', 'true');
     expect(button).toHaveClass('selected');
 
-    userEvent.click(button);
+    await user.click(button);
     expect(onChange).toHaveBeenLastCalledWith(false);
     expect(button).toHaveAttribute('aria-pressed', 'false');
     expect(button).not.toHaveClass('selected');

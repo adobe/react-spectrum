@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMAttributes, DOMProps, Validation} from '@react-types/shared';
+import {AriaLabelingProps, CollectionBase, DOMAttributes, DOMProps, HelpTextProps, Key, KeyboardDelegate, LabelableProps, MultipleSelection, SelectionBehavior} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {ListKeyboardDelegate} from '@react-aria/selection';
 import type {ListState} from '@react-stately/list';
-import {RefObject, useState} from 'react';
-import {TagGroupProps} from '@react-types/tag';
-import {TagKeyboardDelegate} from './TagKeyboardDelegate';
+import {ReactNode, RefObject, useEffect, useRef, useState} from 'react';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useGridList} from '@react-aria/gridlist';
@@ -32,35 +31,74 @@ export interface TagGroupAria {
   errorMessageProps: DOMAttributes
 }
 
-export interface AriaTagGroupProps<T> extends TagGroupProps<T>, DOMProps, AriaLabelingProps, Validation {
+export interface AriaTagGroupProps<T> extends CollectionBase<T>, MultipleSelection, DOMProps, LabelableProps, AriaLabelingProps, Omit<HelpTextProps, 'errorMessage'> {
+  /** How multiple selection should behave in the collection. */
+  selectionBehavior?: SelectionBehavior,
+  /** Handler that is called when a user deletes a tag.  */
+  onRemove?: (keys: Set<Key>) => void,
+  /** An error message for the field. */
+  errorMessage?: ReactNode
+}
+
+export interface AriaTagGroupOptions<T> extends Omit<AriaTagGroupProps<T>, 'children'> {
   /**
    * An optional keyboard delegate to handle arrow key navigation,
    * to override the default.
    */
-  keyboardDelegate?: TagKeyboardDelegate<T>
+  keyboardDelegate?: KeyboardDelegate
 }
+
+interface HookData {
+  onRemove?: (keys: Set<Key>) => void
+}
+
+export const hookData = new WeakMap<ListState<any>, HookData>();
 
 /**
  * Provides the behavior and accessibility implementation for a tag group component.
- * A tag group is a focusable list of labels, categories, keywords, or other items, with support for keyboard navigation and removal.
+ * A tag group is a focusable list of labels, categories, keywords, filters, or other items, with support for keyboard navigation, selection, and removal.
  * @param props - Props to be applied to the tag group.
  * @param state - State for the tag group, as returned by `useListState`.
  * @param ref - A ref to a DOM element for the tag group.
  */
-export function useTagGroup<T>(props: AriaTagGroupProps<T>, state: ListState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
+export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T>, ref: RefObject<HTMLElement>): TagGroupAria {
   let {direction} = useLocale();
-  let keyboardDelegate = props.keyboardDelegate || new TagKeyboardDelegate(state.collection, direction);
-  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField(props);
-  let {gridProps} = useGridList({...props, ...fieldProps, keyboardDelegate}, state, ref);
-
-  // Don't want the grid to be focusable or accessible via keyboard
-  delete gridProps.tabIndex;
+  let keyboardDelegate = props.keyboardDelegate || new ListKeyboardDelegate({
+    collection: state.collection,
+    ref,
+    orientation: 'horizontal',
+    direction,
+    disabledKeys: state.disabledKeys
+  });
+  let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
+    ...props,
+    labelElementType: 'span'
+  });
+  let {gridProps} = useGridList({
+    ...props,
+    ...fieldProps,
+    keyboardDelegate,
+    shouldFocusWrap: true,
+    linkBehavior: 'override'
+  }, state, ref);
 
   let [isFocusWithin, setFocusWithin] = useState(false);
   let {focusWithinProps} = useFocusWithin({
     onFocusWithinChange: setFocusWithin
   });
   let domProps = filterDOMProps(props);
+
+  // If the last tag is removed, focus the container.
+  let prevCount = useRef(state.collection.size);
+  useEffect(() => {
+    if (prevCount.current > 0 && state.collection.size === 0 && isFocusWithin) {
+      ref.current.focus();
+    }
+    prevCount.current = state.collection.size;
+  }, [state.collection.size, isFocusWithin, ref]);
+
+  hookData.set(state, {onRemove: props.onRemove});
+
   return {
     gridProps: mergeProps(gridProps, domProps, {
       role: state.collection.size ? 'grid' : null,

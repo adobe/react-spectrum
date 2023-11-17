@@ -10,12 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
-import {Link, LinkContext} from '../';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {Link, LinkContext, RouterProvider} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 describe('Link', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render a link with default class', () => {
     let {getByRole} = render(<Link>Test</Link>);
     let link = getByRole('link');
@@ -35,11 +40,11 @@ describe('Link', () => {
     expect(link).toHaveAttribute('data-foo', 'bar');
   });
 
-  it('should support render props', () => {
+  it('should support render props', async () => {
     let {getByRole} = render(<Link>{({isHovered}) => isHovered ? 'Hovered' : 'Test'}</Link>);
     let link = getByRole('link');
     expect(link).toHaveTextContent('Test');
-    userEvent.hover(link);
+    await user.hover(link);
     expect(link).toHaveTextContent('Hovered');
   });
 
@@ -56,41 +61,48 @@ describe('Link', () => {
   });
 
   it('should render a link with <a> element', () => {
-    let {getByRole} = render(<Link><a href="test">Test</a></Link>);
+    let {getByRole} = render(<Link href="test">Test</Link>);
     let link = getByRole('link');
     expect(link.tagName).toBe('A');
     expect(link).toHaveAttribute('class', 'react-aria-Link');
   });
 
-  it('should support hover', () => {
-    let {getByRole} = render(<Link className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Link>);
+  it('should support hover', async () => {
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getByRole} = render(<Link className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Link>);
     let link = getByRole('link');
 
     expect(link).not.toHaveAttribute('data-hovered');
     expect(link).not.toHaveClass('hover');
 
-    userEvent.hover(link);
+    await user.hover(link);
     expect(link).toHaveAttribute('data-hovered', 'true');
     expect(link).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
-    userEvent.unhover(link);
+    await user.unhover(link);
     expect(link).not.toHaveAttribute('data-hovered');
     expect(link).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = render(<Link className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Link>);
     let link = getByRole('link');
-    
+
     expect(link).not.toHaveAttribute('data-focus-visible');
     expect(link).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(link);
     expect(link).toHaveAttribute('data-focus-visible', 'true');
     expect(link).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(link).not.toHaveAttribute('data-focus-visible');
     expect(link).not.toHaveClass('focus');
   });
@@ -120,5 +132,13 @@ describe('Link', () => {
 
     expect(link).toHaveAttribute('aria-disabled', 'true');
     expect(link).toHaveClass('disabled');
+  });
+
+  it('should work with RouterProvider', async () => {
+    let navigate = jest.fn();
+    let {getByRole} = render(<RouterProvider navigate={navigate}><Link href="/foo">Test</Link></RouterProvider>);
+    let link = getByRole('link');
+    await user.click(link);
+    expect(navigate).toHaveBeenCalledWith('/foo');
   });
 });

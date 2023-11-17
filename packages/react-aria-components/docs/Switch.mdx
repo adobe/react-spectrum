@@ -12,13 +12,14 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/shared/src/events.d.ts';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
 import Anatomy from '@react-aria/switch/docs/anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 
 ---
@@ -53,27 +54,21 @@ import {Switch} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Switch {
-  --label-color: var(--spectrum-alias-text-color);
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --track-color: var(--spectrum-alias-background-color-default);
-  --indicator-color: var(--selected-color);
-  --indicator-color-pressed: var(--selected-color-pressed);
+@import "@react-aria/example-theme";
 
+.react-aria-Switch {
   display: flex;
   align-items: center;
   gap: 0.571rem;
   font-size: 1.143rem;
-  color: var(--label-color);
+  color: var(--text-color);
+  forced-color-adjust: none;
 
   .indicator {
     width: 2rem;
     height: 1.143rem;
-    border: 2px solid var(--deselected-color);
-    background: var(--track-color);
+    border: 2px solid var(--border-color);
+    background: var(--background-color);
     border-radius: 1.143rem;
     transition: all 200ms;
 
@@ -83,69 +78,42 @@ import {Switch} from 'react-aria-components';
       margin: 0.143rem;
       width: 0.857rem;
       height: 0.857rem;
-      background: var(--indicator-color);
+      background: var(--highlight-background);
       border-radius: 16px;
       transition: all 200ms;
     }
   }
 
   &[data-pressed] .indicator {
-    border-color: var(--deselected-color-pressed);
+    border-color: var(--border-color-pressed);
 
     &:before {
-      background: var(--indicator-color-pressed);
+      background: var(--highlight-background-pressed);
     }
   }
 
   &[data-selected] {
     .indicator {
-      border-color: var(--selected-color);
-      background: var(--selected-color);
+      border-color: var(--highlight-background);
+      background: var(--highlight-background);
 
       &:before {
-        background: var(--track-color);
+        background: var(--field-background);
         transform: translateX(100%);
       }
     }
 
     &[data-pressed] {
       .indicator {
-        border-color: var(--selected-color-pressed);
-        background: var(--selected-color-pressed);
+        border-color: var(--highlight-background-pressed);
+        background: var(--highlight-background-pressed);
       }
     }
   }
 
   &[data-focus-visible] .indicator {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Switch {
-    forced-color-adjust: none;
-
-    --label-color: ButtonText;
-    --deselected-color: ButtonBorder;
-    --deselected-color-pressed: ButtonBorder;
-    --indicator-color: ButtonText;
-    --indicator-color-pressed: ButtonText;
-    --track-color: ButtonFace;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --spectrum-alias-background-color-default: Canvas;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
-      --label-color: GrayText;
-      --indicator-color: GrayText;
-    }
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
   }
 }
 ```
@@ -171,6 +139,108 @@ In most cases, switches should have a visual label. If the switch does not have 
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
 technology.
 
+## Examples
+
+<ExampleList tag="switch" />
+
+## Reusable wrappers
+
+If you will use a Switch in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Switch` and all of its children together into a single component.
+
+```tsx example export=true
+import type {SwitchProps} from 'react-aria-components';
+
+interface MySwitchProps extends Omit<SwitchProps, 'children'> {
+  children: React.ReactNode
+}
+
+function MySwitch({children, ...props}: MySwitchProps) {
+  return (
+    <Switch {...props}>
+      <div className="indicator" />
+      {children}
+    </Switch>
+  );
+}
+
+<MySwitch>Wi-Fi</MySwitch>
+```
+
+## Value
+
+### Default value
+
+Switches are not selected by default. The `defaultSelected` prop can be used to set the default state.
+
+```tsx example
+<MySwitch defaultSelected>Wi-Fi</MySwitch>
+```
+
+### Controlled value
+
+The `isSelected` prop can be used to make the selected state controlled. The `onChange` event is fired when the user presses the switch, and receives the new value.
+
+```tsx example
+function Example() {
+  let [selected, setSelected] = React.useState(false);
+
+  return (
+    <>
+      <MySwitch onChange={setSelected}>Low power mode</MySwitch>
+      <p>{selected ? 'Low' : 'High'} power mode active.</p>
+    </>
+  );
+}
+```
+
+### HTML forms
+
+Switch supports the `name` and `value` props for integration with HTML forms.
+
+```tsx example
+<MySwitch name="power" value="low">Low power mode</MySwitch>
+```
+
+## Disabled
+
+Switches can be disabled using the `isDisabled` prop.
+
+```tsx example
+<MySwitch isDisabled>Airplane Mode</MySwitch>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Switch {
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+
+    .indicator {
+      border-color: var(--border-color-disabled);
+
+      &:before {
+        background: var(--border-color-disabled);
+      }
+    }
+  }
+}
+```
+
+</details>
+
+### Read only
+
+The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the Switch remains focusable.
+See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<MySwitch isSelected isReadOnly>Bluetooth</MySwitch>
+```
+
 ## Props
 
 <PropTable component={docs.exports.Switch} links={docs.links} />
@@ -193,8 +263,7 @@ A custom `className` can also be specified on any component. This overrides the 
 </Switch>
 ```
 
-In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using DOM attributes, which you can target in CSS selectors. These are ARIA attributes wherever possible, or data attributes when a relevant ARIA attribute does not exist. For example:
-
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
 ```css
 .react-aria-Switch[data-pressed] {
   /* ... */
@@ -224,83 +293,43 @@ The states, selectors, and render props for `Switch` are documented below.
 
 <StateTable properties={docs.exports.SwitchRenderProps.properties} />
 
-## Reusable wrappers
-
-If you will use a Switch in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `Switch` and all of its children together into a single component.
-
-```tsx example export=true
-import type {SwitchProps} from 'react-aria-components';
-
-function MySwitch({children, ...props}: SwitchProps) {
-  return (
-    <Switch {...props}>
-      <div className="indicator" />
-      {children}
-    </Switch>
-  );
-}
-
-<MySwitch>Wi-Fi</MySwitch>
-```
-
-## Usage
-
-The following examples show how to use the `MySwitch` component created in the above example.
-
-### Default value
-
-Switches are not selected by default. The `defaultSelected` prop can be used to set the default state.
-
-```tsx example
-<MySwitch defaultSelected>Wi-Fi</MySwitch>
-```
-
-### Controlled value
-
-The `isSelected` prop can be used to make the selected state controlled. The `onChange` event is fired when the user presses the switch, and receives the new value.
-
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState(false);
-
-  return (
-    <>
-      <MySwitch onChange={setSelected}>Low power mode</MySwitch>
-      <p>{selected ? 'Low' : 'High'} power mode active.</p>
-    </>
-  );
-}
-```
-
-### Disabled
-
-Switches can be disabled using the `isDisabled` prop.
-
-```tsx example
-<MySwitch isDisabled>Airplane Mode</MySwitch>
-```
-
-### Read only
-
-The `isReadOnly` prop makes the selection immutable. Unlike `isDisabled`, the Switch remains focusable.
-See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
-
-```tsx example
-<MySwitch isSelected isReadOnly>Bluetooth</MySwitch>
-```
-
-
-### HTML forms
-
-Switch supports the `name` and `value` props for integration with HTML forms.
-
-```tsx example
-<MySwitch name="power" value="low">Low power mode</MySwitch>
-```
-
 ## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Switch']} docs={docs} />
+
+This example shows a `SwitchDescription` component that accepts a switch in its children and renders a description element below it. It uses the [useId](useId.html) hook to generate a unique id for the description, and associates it with the switch via the `aria-describedby` attribute passed to the `SwitchContext` provider.
+
+```tsx example
+import {SwitchContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface SwitchDescriptionProps {
+  children?: React.ReactNode,
+  description?: string
+}
+
+function SwitchDescription({children, description}: SwitchDescriptionProps) {
+  let descriptionId = useId();
+  return (
+    <div>
+      {/*- begin highlight -*/}
+      <SwitchContext.Provider value={{'aria-describedby': descriptionId}}>
+      {/*- end highlight -*/}
+        {children}
+      </SwitchContext.Provider>
+      <small id={descriptionId}>{description}</small>
+    </div>
+  );
+}
+
+<SwitchDescription description="Connected to 'Starbucks Wifi'.">
+  <MySwitch defaultSelected>Wi-Fi</MySwitch>
+</SwitchDescription>
+```
 
 ### Hooks
 

@@ -10,17 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {mergeProps} from '@react-aria/utils';
+import {ContextValue, forwardRefType, RenderProps, useContextProps, useRenderProps} from './utils';
 import {PlacementAxis} from 'react-aria';
-import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes, useContext} from 'react';
-import {RenderProps, useRenderProps} from './utils';
+import React, {createContext, CSSProperties, ForwardedRef, forwardRef, HTMLAttributes} from 'react';
 
-interface OverlayArrowContextValue {
-  arrowProps: HTMLAttributes<HTMLElement>,
+interface OverlayArrowContextValue extends OverlayArrowProps {
   placement: PlacementAxis
 }
 
-export const OverlayArrowContext = createContext<OverlayArrowContextValue | null>(null);
+export const OverlayArrowContext = createContext<ContextValue<OverlayArrowContextValue, HTMLDivElement>>({
+  placement: 'bottom'
+});
 
 export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'children'>, RenderProps<OverlayArrowRenderProps> {}
 
@@ -33,9 +33,9 @@ export interface OverlayArrowRenderProps {
 }
 
 function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {arrowProps, placement} = useContext(OverlayArrowContext)!;
+  [props, ref] = useContextProps(props, ref, OverlayArrowContext);
+  let placement = (props as OverlayArrowContextValue).placement;
   let style: CSSProperties = {
-    ...arrowProps.style,
     position: 'absolute',
     [placement]: '100%',
     transform: placement === 'top' || placement === 'bottom' ? 'translateX(-50%)' : 'translateY(-50%)'
@@ -51,7 +51,7 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
 
   return (
     <div
-      {...mergeProps(arrowProps, props)}
+      {...props}
       {...renderProps}
       style={{
         ...renderProps.style,
@@ -66,5 +66,5 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
  * An OverlayArrow renders a custom arrow element relative to an overlay element
  * such as a popover or tooltip such that it aligns with a trigger element.
  */
-const _OverlayArrow = forwardRef(OverlayArrow);
+const _OverlayArrow = /*#__PURE__*/ (forwardRef as forwardRefType)(OverlayArrow);
 export {_OverlayArrow as OverlayArrow};

@@ -11,24 +11,34 @@
  */
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
-import {ContextValue, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {ContextValue, forwardRefType, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
+import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
-import {OverlayTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, RefObject} from 'react';
+import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
+import {OverlayTriggerStateContext} from './Dialog';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext} from 'react';
 
-export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, RenderProps<PopoverRenderProps>, SlotProps {
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
    * The ref for the element which the popover positions itself with respect to.
    *
    * When used within a trigger component such as DialogTrigger, MenuTrigger, Select, etc.,
    * this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element>
+  triggerRef?: RefObject<Element>,
+  /**
+   * Whether the popover is currently performing an entry animation.
+   */
+  isEntering?: boolean,
+  /**
+   * Whether the popover is currently performing an exit animation.
+   */
+  isExiting?: boolean
 }
 
 export interface PopoverRenderProps {
   /**
-   * The placement of the tooltip relative to the trigger.
+   * The placement of the popover relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
    */
   placement: PlacementAxis,
@@ -44,27 +54,38 @@ export interface PopoverRenderProps {
   isExiting: boolean
 }
 
-interface PopoverContextValue extends PopoverProps {
-  state: OverlayTriggerState,
-  preserveChildren?: boolean,
-  triggerRef: RefObject<Element>
-}
-
-export const PopoverContext = createContext<ContextValue<PopoverContextValue, HTMLElement>>(null);
+export const PopoverContext = createContext<ContextValue<PopoverProps, HTMLElement>>(null);
 
 function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, PopoverContext);
-  let {preserveChildren, state, triggerRef} = props as PopoverContextValue;
-  let isExiting = useExitAnimation(ref, state.isOpen);
+  let contextState = useContext(OverlayTriggerStateContext);
+  let localState = useOverlayTriggerState(props);
+  let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
+  let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
+  let isHidden = useContext(HiddenContext);
+
+  // If we are in a hidden tree, we still need to preserve our children.
+  if (isHidden) {
+    let children = props.children;
+    if (typeof children === 'function') {
+      children = children({
+        placement: 'bottom',
+        isEntering: false,
+        isExiting: false
+      });
+    }
+
+    return <>{children}</>;
+  }
 
   if (state && !state.isOpen && !isExiting) {
-    return preserveChildren ? <HiddenContext.Provider value>{props.children}</HiddenContext.Provider> : null;
+    return null;
   }
 
   return (
     <PopoverInner
       {...props}
-      triggerRef={triggerRef}
+      triggerRef={props.triggerRef!}
       state={state}
       popoverRef={ref}
       isExiting={isExiting} />
@@ -74,11 +95,12 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
 /**
  * A popover is an overlay element positioned relative to a trigger.
  */
-const _Popover = forwardRef(Popover);
+const _Popover = /*#__PURE__*/ (forwardRef as forwardRefType)(Popover);
 export {_Popover as Popover};
 
 interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, SlotProps {
   state: OverlayTriggerState,
+  isEntering?: boolean,
   isExiting: boolean
 }
 
@@ -89,7 +111,7 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   }, state);
 
   let ref = props.popoverRef as RefObject<HTMLDivElement>;
-  let isEntering = useEnterAnimation(ref, !!placement);
+  let isEntering = useEnterAnimation(ref, !!placement) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Popover',
@@ -103,19 +125,19 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   let style = {...renderProps.style, ...popoverProps.style};
 
   return (
-    <Overlay>
-      {!props.isNonModal && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
+    <Overlay isExiting={isExiting}>
+      {!props.isNonModal && state.isOpen && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
-        {...popoverProps}
+        {...mergeProps(filterDOMProps(props as any), popoverProps)}
         {...renderProps}
         ref={ref}
-        slot={props.slot}
+        slot={props.slot || undefined}
         style={style}
         data-placement={placement}
         data-entering={isEntering || undefined}
         data-exiting={isExiting || undefined}>
         {!props.isNonModal && <DismissButton onDismiss={state.close} />}
-        <OverlayArrowContext.Provider value={{arrowProps, placement}}>
+        <OverlayArrowContext.Provider value={{...arrowProps, placement}}>
           {renderProps.children}
         </OverlayArrowContext.Provider>
         <DismissButton onDismiss={state.close} />

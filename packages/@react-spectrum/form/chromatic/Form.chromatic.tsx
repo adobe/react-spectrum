@@ -17,7 +17,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Form} from '../';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker} from '@react-spectrum/picker';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {NumberField} from '@react-spectrum/numberfield';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React from 'react';
@@ -38,7 +38,7 @@ let flatOptions = [
   {id: 3, name: 'Snake'}
 ];
 
-const Template = (): Story<SpectrumFormProps> => (args) => (
+const Template = (args) => (
   <Form {...args}>
     <CheckboxGroup defaultValue={['dragons']} label="Pets">
       <Checkbox value="dogs">Dogs</Checkbox>
@@ -74,51 +74,74 @@ const Template = (): Story<SpectrumFormProps> => (args) => (
   </Form>
 );
 
-// No need to make a set of all permutations, rely on each individual component story to do that for us. Just make sure Form is passing the options down
-export const Default = Template().bind({});
-Default.storyName = 'default';
-Default.args = {};
+export const Default = {
+  render: Template,
+  name: 'default',
+  args: {}
+};
 
-export const LabelPositionSide = Template().bind({});
-LabelPositionSide.storyName = 'label position: side';
-LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
+export const LabelPositionSide = {
+  render: Template,
+  name: 'label position: side',
+  args: {...Default.args, labelPosition: 'side'}
+};
 
-export const LabelAlignEnd = Template().bind({});
-LabelAlignEnd.storyName = 'label align: end';
-LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
+export const LabelAlignEnd = {
+  render: Template,
+  name: 'label align: end',
+  args: {...Default.args, labelAlign: 'end'}
+};
 
-export const LabelAlignSideEnd = Template().bind({});
-LabelAlignSideEnd.storyName = 'label position: side, label align: end';
-LabelAlignSideEnd.args = {...Default.args, labelPosition: 'side', labelAlign: 'end'};
+export const LabelAlignSideEnd = {
+  render: Template,
+  name: 'label position: side, label align: end',
+  args: {...Default.args, labelPosition: 'side', labelAlign: 'end'}
+};
 
-export const Required = Template().bind({});
-Required.storyName = 'isRequired';
-Required.args = {...Default.args, isRequired: true};
+export const Required = {
+  render: Template,
+  name: 'isRequired',
+  args: {...Default.args, isRequired: true}
+};
 
-export const NecessityIndicatorLabel = Template().bind({});
-NecessityIndicatorLabel.storyName = 'necessity indicator: label';
-NecessityIndicatorLabel.args = {...Default.args, necessityIndicator: 'label'};
+export const NecessityIndicatorLabel = {
+  render: Template,
+  name: 'necessity indicator: label',
+  args: {...Default.args, necessityIndicator: 'label'}
+};
 
-export const Quiet = Template().bind({});
-Quiet.storyName = 'isQuiet';
-Quiet.args = {...Default.args, isQuiet: true};
+export const Quiet = {
+  render: Template,
+  name: 'isQuiet',
+  args: {...Default.args, isQuiet: true}
+};
 
-export const Emphasized = Template().bind({});
-Emphasized.storyName = 'isEmphasized';
-Emphasized.args = {...Default.args, isEmphasized: true};
+export const Emphasized = {
+  render: Template,
+  name: 'isEmphasized',
+  args: {...Default.args, isEmphasized: true}
+};
 
-export const Disabled = Template().bind({});
-Disabled.storyName = 'isDisabled';
-Disabled.args = {...Default.args, isDisabled: true};
+export const Disabled = {
+  render: Template,
+  name: 'isDisabled',
+  args: {...Default.args, isDisabled: true}
+};
 
-export const ReadOnly = Template().bind({});
-ReadOnly.storyName = 'isReadOnly';
-ReadOnly.args = {...Default.args, isReadOnly: true};
+export const ReadOnly = {
+  render: Template,
+  name: 'isReadOnly',
+  args: {...Default.args, isReadOnly: true}
+};
 
-export const ValidationStateInvalid = Template().bind({});
-ValidationStateInvalid.storyName = 'validationState: invalid';
-ValidationStateInvalid.args = {...Default.args, validationState: 'invalid'};
+export const ValidationStateInvalid = {
+  render: Template,
+  name: 'validationState: invalid',
+  args: {...Default.args, validationState: 'invalid'}
+};
 
-export const ValidationStateValid = Template().bind({});
-ValidationStateValid.storyName = 'validationState: valid';
-ValidationStateValid.args = {...Default.args, validationState: 'valid'};
+export const ValidationStateValid = {
+  render: Template,
+  name: 'validationState: valid',
+  args: {...Default.args, validationState: 'valid'}
+};

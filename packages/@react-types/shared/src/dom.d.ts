@@ -17,6 +17,8 @@ import {
   CompositionEventHandler,
   CSSProperties,
   FormEventHandler,
+  HTMLAttributeAnchorTarget,
+  HTMLAttributeReferrerPolicy,
   DOMAttributes as ReactDOMAttributes,
   ReactEventHandler
 } from 'react';
@@ -121,9 +123,16 @@ export interface TextInputDOMEvents {
    onInput?: FormEventHandler<HTMLInputElement>
 }
 
+export interface InputDOMProps {
+  /**
+   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
+   */
+  name?: string
+}
+
 // DOM props that apply to all text inputs
 // Ensure this is synced with useTextField
-export interface TextInputDOMProps extends DOMProps, TextInputDOMEvents {
+export interface TextInputDOMProps extends DOMProps, InputDOMProps, TextInputDOMEvents {
   /**
    * Describes the type of autocomplete functionality the input should provide if any. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefautocomplete).
    */
@@ -138,11 +147,6 @@ export interface TextInputDOMProps extends DOMProps, TextInputDOMEvents {
    * The minimum number of characters required by the input. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefminlength).
    */
   minLength?: number,
-
-  /**
-   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
-   */
-  name?: string,
 
   /**
    * Regex pattern that the value of the input must match to be valid. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefpattern).
@@ -165,6 +169,22 @@ export interface TextInputDOMProps extends DOMProps, TextInputDOMEvents {
   inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
 }
 
+// Make sure to update filterDOMProps.ts when updating this.
+export interface LinkDOMProps {
+  /** A URL to link to. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#href). */
+  href?: string,
+  /** The target window for the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target). */
+  target?: HTMLAttributeAnchorTarget,
+  /** The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). */
+  rel?: string,
+  /** Causes the browser to download the linked URL. A string may be provided to suggest a file name. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#download). */
+  download?: boolean | string,
+  /** A space-separated list of URLs to ping when the link is followed. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#ping). */
+  ping?: string,
+  /** How much of the referrer to send when following the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#referrerpolicy). */
+  referrerPolicy?: HTMLAttributeReferrerPolicy
+}
+
 /** Any focusable element, including both HTML and SVG elements. */
 export interface FocusableElement extends Element, HTMLOrSVGElement {}
 
@@ -175,4 +195,8 @@ export interface DOMAttributes<T = FocusableElement> extends AriaAttributes, Rea
   tabIndex?: number | undefined,
   style?: CSSProperties | undefined,
   className?: string | undefined
+}
+
+export interface GroupDOMAttributes extends Omit<DOMAttributes<HTMLElement>, 'role'> {
+  role?: 'group' | 'region' | 'presentation'
 }
