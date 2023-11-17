@@ -81,6 +81,7 @@ describe('DatePicker', () => {
     expect(dialog).toHaveAttribute('aria-labelledby');
     expect(dialog.getAttribute('aria-labelledby')).toContain(label.id);
     expect(dialog.closest('.react-aria-Popover')).toBeInTheDocument();
+    expect(dialog.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'DatePicker');
 
     expect(getByRole('grid')).toHaveClass('react-aria-CalendarGrid');
   });

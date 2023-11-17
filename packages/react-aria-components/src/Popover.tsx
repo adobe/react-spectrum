@@ -20,6 +20,12 @@ import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext} f
 
 export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
+   * The name of the component that triggered the popover. This is reflected on the element
+   * as the `data-trigger` attribute, and can be used to provide specific
+   * styles for the popover depending on which element triggered it.
+   */
+  trigger?: string,
+  /**
    * The ref for the element which the popover positions itself with respect to.
    *
    * When used within a trigger component such as DialogTrigger, MenuTrigger, Select, etc.,
@@ -37,6 +43,11 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
 }
 
 export interface PopoverRenderProps {
+  /**
+   * The name of the component that triggered the popover, e.g. "DialogTrigger" or "ComboBox".
+   * @selector [data-trigger="..."]
+   */
+  trigger: string | null,
   /**
    * The placement of the popover relative to the trigger.
    * @selector [data-placement="left | right | top | bottom"]
@@ -69,6 +80,7 @@ function Popover(props: PopoverProps, ref: ForwardedRef<HTMLElement>) {
     let children = props.children;
     if (typeof children === 'function') {
       children = children({
+        trigger: props.trigger || null,
         placement: 'bottom',
         isEntering: false,
         isExiting: false
@@ -101,7 +113,8 @@ export {_Popover as Popover};
 interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderProps>, SlotProps {
   state: OverlayTriggerState,
   isEntering?: boolean,
-  isExiting: boolean
+  isExiting: boolean,
+  trigger?: string
 }
 
 function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
@@ -116,6 +129,7 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
     ...props,
     defaultClassName: 'react-aria-Popover',
     values: {
+      trigger: props.trigger || null,
       placement,
       isEntering,
       isExiting
@@ -133,6 +147,7 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
         ref={ref}
         slot={props.slot || undefined}
         style={style}
+        data-trigger={props.trigger}
         data-placement={placement}
         data-entering={isEntering || undefined}
         data-exiting={isExiting || undefined}>

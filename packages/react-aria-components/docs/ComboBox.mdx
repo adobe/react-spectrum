@@ -112,13 +112,9 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
   }
 }
 
-@layer popover {
-  .react-aria-Popover {
+.react-aria-Popover[data-trigger=ComboBox] {
     width: var(--trigger-width);
-  }
-}
 
-@layer listbox {
   .react-aria-ListBox {
     display: block;
     width: unset;
@@ -1230,12 +1226,14 @@ A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS select
 
 ### Popover
 
-The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the ComboBox in the DOM.
+The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the ComboBox in the DOM. It supports the following states and render props:
 
-The `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the combobox.
+<StateTable properties={docs.exports.PopoverRenderProps.properties} />
+
+Within a ComboBox, the popover will have the `data-trigger="ComboBox"` attribute, which can be used to define combobox-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the combobox.
 
 ```css render=false
-.react-aria-Popover {
+.react-aria-Popover[data-trigger=ComboBox] {
   width: var(--trigger-width);
 }
 ```
