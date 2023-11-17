@@ -38,10 +38,10 @@ export interface TooltipProps extends PositionProps, OverlayTriggerProps, AriaLa
    */
   isExiting?: boolean,
   /**
-   * The container element in which the overlay portal will be placed.
+   * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
    */
-  portalContainer?: Element
+  UNSTABLE_portalContainer?: Element
 }
 
 export interface TooltipRenderProps {
@@ -92,7 +92,7 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps) {
   );
 }
 
-function Tooltip({portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
+function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TooltipContext);
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);
@@ -103,7 +103,7 @@ function Tooltip({portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HT
   }
 
   return (
-    <OverlayContainer portalContainer={portalContainer}>
+    <OverlayContainer portalContainer={UNSTABLE_portalContainer}>
       <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
     </OverlayContainer>
   );
