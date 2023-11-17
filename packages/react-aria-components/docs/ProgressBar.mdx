@@ -58,11 +58,9 @@ import {ProgressBar, Label} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-ProgressBar {
-  --bar-color: var(--spectrum-global-color-gray-500);
-  --circle-color: var(--bar-color);
-  --fill-color: slateblue;
+@import "@react-aria/example-theme";
 
+.react-aria-ProgressBar {
   display: grid;
   grid-template-areas: "label value"
                        "bar bar";
@@ -76,7 +74,8 @@ import {ProgressBar, Label} from 'react-aria-components';
 
   .bar {
     grid-area: bar;
-    box-shadow: inset 0px 0px 0px 1px var(--bar-color);
+    box-shadow: inset 0px 0px 0px 1px var(--border-color);
+    forced-color-adjust: none;
     height: 10px;
     border-radius: 5px;
     overflow: hidden;
@@ -84,21 +83,8 @@ import {ProgressBar, Label} from 'react-aria-components';
   }
 
   .fill {
-    background: var(--fill-color);
+    background: var(--highlight-background);
     height: 100%;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ProgressBar {
-    --bar-color: ButtonFace;
-    --circle-color: ButtonBorder;
-    --fill-color: Highlight;
-
-    .bar {
-      border: 1px solid ButtonBorder;
-      box-sizing: border-box;
-    }
   }
 }
 ```
@@ -284,13 +270,13 @@ let c = 2 * r * Math.PI;
 <ProgressBar aria-label="Loading…" value={60}>
   {({percentage}) => <>
     <svg width={64} height={64} viewBox="0 0 32 32" fill="none" strokeWidth={strokeWidth}>
-      <circle cx={center} cy={center} r={r - (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
-      <circle cx={center} cy={center} r={r + (strokeWidth / 2 - 0.25)} stroke="var(--circle-color)" strokeWidth={0.5} />
+      <circle cx={center} cy={center} r={r - (strokeWidth / 2 - 0.25)} stroke="var(--border-color)" strokeWidth={0.5} />
+      <circle cx={center} cy={center} r={r + (strokeWidth / 2 - 0.25)} stroke="var(--border-color)" strokeWidth={0.5} />
       <circle
         cx={center}
         cy={center}
         r={r}
-        stroke="var(--fill-color)"
+        stroke="var(--highlight-background)"
         strokeDasharray={`${c} ${c}`}
         strokeDashoffset={c - percentage / 100 * c}
         strokeLinecap="round"

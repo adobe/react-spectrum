@@ -187,7 +187,10 @@
     "browserslist": "4.20.3"
   },
   "@parcel/transformer-css": {
-    "cssModules": true,
+    "cssModules": {
+      "global": true,
+      "exclude": ["**/*.global.css", "packages/@react-aria/example-theme/**"]
+    },
     "drafts": {
       "nesting": true
     },

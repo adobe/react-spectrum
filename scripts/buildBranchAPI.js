@@ -114,7 +114,7 @@ async function build() {
   // Copy packages over to temp dir
   console.log('copying over');
   for (let p of packages) {
-    if (!p.includes('spectrum-css') && !p.includes('dev/')) {
+    if (!p.includes('spectrum-css') && !p.includes('example-theme') && !p.includes('dev/')) {
       let json = JSON.parse(fs.readFileSync(path.join(srcDir, 'packages', p)), 'utf8');
 
       if (json.name in excludeList) {

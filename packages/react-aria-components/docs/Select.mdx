@@ -79,15 +79,10 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
 ```
 
 ```css
-.react-aria-Select {
-  --border-color: var(--spectrum-alias-border-color);
-  --border-color-disabled: var(--spectrum-alias-border-color-disabled);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --focus-ring-color: slateblue;
+@import "@react-aria/example-theme";
 
+.react-aria-Select {
   .react-aria-Button {
-    background: var(--spectrum-global-color-gray-50);
     box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
     border-radius: 6px;
     font-size: 1.072rem;
@@ -96,29 +91,27 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     align-items: center;
     max-width: 250px;
 
-    &[data-pressed] {
-      background: var(--spectrum-global-color-gray-150);
-    }
-
     &[data-focus-visible] {
-      box-shadow: 0 0 0 1px var(--focus-ring-color);
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
     }
   }
 
   .react-aria-SelectValue {
     &[data-placeholder] {
       font-style: italic;
-      color: var(--spectrum-global-color-gray-700);
+      color: var(--text-color-placeholder);
     }
   }
 
-  & span[aria-hidden] {
+  span[aria-hidden] {
     width: 1.5rem;
     line-height: 1.375rem;
     margin-left: 1rem;
     padding: 1px;
-    background: slateblue;
-    color: white;
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    forced-color-adjust: none;
     border-radius: 4px;
     font-size: 0.857rem;
   }
@@ -147,7 +140,7 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
     padding: 0.286rem 0.571rem 0.286rem 1.571rem;
 
     &[data-focus-visible] {
-      box-shadow: unset;
+      outline: none;
     }
 
     &[data-selected] {
@@ -163,10 +156,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
         top: 4px;
         left: 4px;
       }
-
-      &[data-focus-visible] {
-        box-shadow: unset;
-      }
     }
 
     &[data-focused],
@@ -174,16 +163,6 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
       background: var(--highlight-background);
       color: var(--highlight-foreground);
     }
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Select {
-    --border-color: ButtonBorder;
-    --border-color-disabled: GrayText;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --focus-ring-color: Highlight;
   }
 }
 ```
@@ -387,16 +366,11 @@ function MyItem(props: ListBoxItemProps) {
       top: 4px;
       left: 4px;
     }
-
-    &.focused {
-      box-shadow: unset;
-    }
   }
 
   &.focused {
     background: #e70073;
     color: white;
-    box-shadow: unset;
   }
 }
 
@@ -694,7 +668,7 @@ A Select can be fully disabled using the `isDisabled` prop.
     &[data-disabled] {
       border-color: var(--border-color-disabled);
       color: var(--text-color-disabled);
-      & span[aria-hidden] {
+      span[aria-hidden] {
         background: var(--border-color-disabled);
         color: var(--text-color-disabled);
       }
@@ -707,11 +681,9 @@ A Select can be fully disabled using the `isDisabled` prop.
     }
   }
 }
+
 @media (forced-colors: active) {
   .react-aria-Select {
-    span[aria-hidden] {
-      background: transparent;
-    }
     .react-aria-Button {
       &[data-disabled] span[aria-hidden] {
         background: 0 0;
@@ -785,13 +757,7 @@ import {Form, FieldError} from 'react-aria-components';
 ```css
 .react-aria-FieldError {
   font-size: 12px;
-  color: var(--spectrum-global-color-red-600);
-}
-
-@media (forced-colors: active) {
-  .react-aria-FieldError {
-    color: LinkText;
-  }
+  color: var(--invalid-color);
 }
 ```
 
