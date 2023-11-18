@@ -61,9 +61,9 @@ the DOM structure that you render. For example, you may need to add extra elemen
 You also get complete control over how you style your components: you could use CSS classes, inline styles, CSS-in-JS, etc.
 
 Start by importing the hook you wish to use, and calling it in your component. You'll typically pass through the props
-from your component, along with a [ref](https://reactjs.org/docs/refs-and-the-dom.html) to the DOM node in some cases.
+from your component, along with a [ref](https://react.dev/learn/referencing-values-with-refs#refs-and-the-dom) to the DOM node in some cases.
 The hook will return one or more sets of DOM props which you should pass through to the appropriate element. This can be
-done by [spreading the props](https://reactjs.org/docs/jsx-in-depth.html#spread-attributes) returned from the hook onto
+done by [spreading the props](https://react.dev/learn/passing-props-to-a-component#forwarding-props-with-the-jsx-spread-syntax) returned from the hook onto
 the element that you render.
 
 This example shows a very simple button component built with the [useButton](useButton.html) hook.
