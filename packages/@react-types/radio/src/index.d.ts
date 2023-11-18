@@ -26,14 +26,18 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import {ReactElement, ReactNode} from 'react';
+import {FocusEvent, ReactElement, ReactNode} from 'react';
 
 export interface RadioGroupProps extends ValueBase<string>, InputBase, InputDOMProps, Validation<string | null>, LabelableProps, HelpTextProps {
   /**
    * The axis the Radio Button(s) should align with.
    * @default 'vertical'
    */
-  orientation?: Orientation
+  orientation?: Orientation,
+  /**
+   * Handler that is called when the element loses focus.
+   */
+  onBlur?: (e: FocusEvent<HTMLDivElement>) => void
 }
 
 export interface RadioProps extends FocusableProps {

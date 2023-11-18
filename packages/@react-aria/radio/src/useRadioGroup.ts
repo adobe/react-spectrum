@@ -43,6 +43,7 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     isReadOnly,
     isRequired,
     isDisabled,
+    onBlur,
     orientation = 'vertical',
     validationBehavior = 'aria'
   } = props;
@@ -70,6 +71,14 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       }
     }
   });
+
+  // This onBlur handler is designed to handle two different scenarios:
+  // 1. `focusWithinProps.onBlur` is triggered when the focus leaves the entire RadioGroup.
+  // 2. The `onBlur` prop is triggered when individual Radio buttons within the group lose focus.
+  let handleOnBlur = (e) => {
+    focusWithinProps.onBlur?.(e);
+    onBlur?.(e);
+  };
 
   let onKeyDown = (e) => {
     let nextDir;
@@ -140,7 +149,8 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
       'aria-disabled': isDisabled || undefined,
       'aria-orientation': orientation,
       ...fieldProps,
-      ...focusWithinProps
+      ...focusWithinProps,
+      onBlur: handleOnBlur
     }),
     labelProps,
     descriptionProps,

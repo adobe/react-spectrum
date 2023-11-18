@@ -452,4 +452,16 @@ describe('RadioGroup', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
   });
+
+  it('should call onBlur when focus leaves the radio', async() => {
+    let onBlur = jest.fn();
+    let {getAllByRole} = renderGroup({onBlur});
+    let radio = getAllByRole('radio')[0];
+
+    act(() => radio.focus());
+    expect(document.activeElement).toBe(radio);
+
+    act(() => radio.blur());
+    expect(onBlur).toHaveBeenCalledTimes(1);
+  });
 });
