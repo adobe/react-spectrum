@@ -117,13 +117,9 @@ import {Select, SelectValue, Label, Button, Popover, ListBox, ListBoxItem} from 
   }
 }
 
-@layer popover {
-  .react-aria-Popover {
+.react-aria-Popover[data-trigger=Select] {
     min-width: var(--trigger-width);
-  }
-}
 
-@layer listbox {
   .react-aria-ListBox {
     display: block;
     width: unset;
@@ -994,12 +990,14 @@ A `SelectValue` can be targed with the `.react-aria-SelectValue` CSS selector, o
 
 ### Popover
 
-The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the Select in the DOM.
+The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the Select in the DOM. It supports the following states and render props:
 
-The `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
+<StateTable properties={docs.exports.PopoverRenderProps.properties} />
+
+Within a Select, the popover will have the `data-trigger="Select"` attribute, which can be used to define select-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
 
 ```css render=false
-.react-aria-Popover {
+.react-aria-Popover[data-trigger=Select] {
   width: var(--trigger-width);
 }
 ```

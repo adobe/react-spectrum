@@ -122,7 +122,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {triggerRef: groupRef, placement: 'bottom start'}],
+        [PopoverContext, {trigger: 'DatePicker', triggerRef: groupRef, placement: 'bottom start'}],
         [DialogContext, dialogProps],
         [TextContext, {
           slots: {
@@ -205,7 +205,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {triggerRef: groupRef, placement: 'bottom start'}],
+        [PopoverContext, {trigger: 'DateRangePicker', triggerRef: groupRef, placement: 'bottom start'}],
         [DialogContext, dialogProps],
         [DateFieldContext, {
           slots: {

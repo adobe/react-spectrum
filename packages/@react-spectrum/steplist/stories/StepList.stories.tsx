@@ -96,19 +96,70 @@ export const DefaultCompleted: DefaultStory = {
   name: 'Default - Completed'
 };
 
-export const DisabledKeys: StepListStory = {
+export const DisabledAllKeys: StepListStory = {
   args: {
     children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
     defaultSelectedKey: options[1].key,
     defaultLastCompletedStep: options[1].key,
     disabledKeys: options.map(o => o.key)
   },
+  name: 'disabledAllKeys'
+};
+
+export const DisabledKey: StepListStory = {
+  args: {
+    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
+    defaultSelectedKey: options[1].key,
+    defaultLastCompletedStep: options[1].key,
+    disabledKeys: new Set(['select-offers'])
+  },
   name: 'disabledKeys'
+};
+
+export const Disabled: StepListStory = {
+  args: {
+    isDisabled: true,
+    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
+    defaultSelectedKey: options[1].key,
+    defaultLastCompletedStep: options[1].key
+  },
+  name: 'disabled'
+};
+
+export const ReadOnly: StepListStory = {
+  args: {
+    isReadOnly: true,
+    children: options.map((o) => <Item key={o.key}>{o.value}</Item>),
+    defaultSelectedKey: options[1].key,
+    defaultLastCompletedStep: options[1].key
+  },
+  name: 'readonly'
 };
 
 export const WithButtonsDefault: StepListStory = {
   render: (args) => <WithButtons {...args} />,
   name: 'Control Selected Key'
+};
+
+export const VerticalWithOddLengths: StepListStory = {
+  args: {
+    orientation: 'vertical',
+    width: 75,
+    children: options.map((o) => <Item key={o.key}>{`${o.value} ${o.value} ${o.value}`}</Item>),
+    defaultSelectedKey: options[1].key,
+    defaultLastCompletedStep: options[1].key
+  },
+  name: 'Vertical Odd names'
+};
+
+export const HorizontalWithOddLengths: StepListStory = {
+  args: {
+    width: 600,
+    children: options.map((o) => <Item key={o.key}>{`${o.value} ${o.value} ${o.value}`}</Item>),
+    defaultSelectedKey: options[1].key,
+    defaultLastCompletedStep: options[1].key
+  },
+  name: 'Horizontal Odd names'
 };
 
 export const WithButtonsDefaultCompletedStep: StepListStory = {

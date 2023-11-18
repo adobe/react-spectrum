@@ -800,6 +800,14 @@ The [Popover](Popover.html) component can be targeted with the `.react-aria-Popo
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
 
+Within a MenuTrigger, the popover will have the `data-trigger="MenuTrigger"` attribute, which can be used to define menu-specific styles.
+
+```css render=false
+.react-aria-Popover[data-trigger=MenuTrigger] {
+  /* ... */
+}
+```
+
 ### Menu
 
 A `Menu` can be targeted with the `.react-aria-Menu` CSS selector, or by overriding with a custom `className`.

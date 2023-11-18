@@ -49,6 +49,7 @@ describe('Popover', () => {
 
     let dialog = getByRole('dialog');
     expect(dialog).toBeInTheDocument();
+    expect(dialog.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'DialogTrigger');
 
     await user.click(document.body);
 
