@@ -4277,7 +4277,7 @@
   dependencies:
     "@parcel/plugin" "2.10.2"
 
-"@parcel/plugin@2.10.2", "@parcel/plugin@^2.10.2", "@parcel/plugin@^2.9.2":
+"@parcel/plugin@2.10.2", "@parcel/plugin@^2.10.2":
   version "2.10.2"
   resolved "https://registry.yarnpkg.com/@parcel/plugin/-/plugin-2.10.2.tgz#46d0b80dd83583f75a4e925a3144cea055c5dfb4"
   integrity sha512-1u+GJhuqqlYjMAQLBbMExfFCbsbtuSAm6wXmMmTse5cBpFqxgsMumMeztAhcTy0oMnMhbZg2AKZV0XVSMrIgng==
