@@ -80,8 +80,6 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-/* We only import styles up to one page away, we don't follow those pages dependencies, so
-* import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx' layer(button);
 @import './Popover.mdx' layer(popover);
 @import './DateField.mdx' layer(datefield);

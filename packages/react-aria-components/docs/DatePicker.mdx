@@ -77,8 +77,6 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-/* We only import styles up to one page away, we don't follow those pages dependencies, so
-* import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx' layer(button);
 @import './Popover.mdx' layer(popover);
 @import './DateField.mdx' layer(datefield);
@@ -90,6 +88,8 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 @import "@react-aria/example-theme";
 
 .react-aria-DatePicker {
+  color: var(--text-color);
+
   .react-aria-Group {
     display: flex;
     width: fit-content;
@@ -529,11 +529,11 @@ import {Form, FieldError} from 'react-aria-components';
       text-align: end;
     }
   }
-}
 
-.react-aria-FieldError {
-  font-size: 12px;
-  color: var(--invalid-color);
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
 }
   ```
 
