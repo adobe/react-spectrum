@@ -453,7 +453,7 @@ describe('RadioGroup', () => {
     expect(group).not.toHaveAttribute('data-invalid');
   });
 
-  it('should call onBlur when focus leaves the radio', async() => {
+  it('should call onBlur when focus leaves the radio', async () => {
     let onBlur = jest.fn();
     let {getAllByRole} = renderGroup({onBlur});
     let radio = getAllByRole('radio')[0];
