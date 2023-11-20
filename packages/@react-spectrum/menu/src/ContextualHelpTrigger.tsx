@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, SlotProvider, unwrapDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
@@ -45,10 +45,11 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let {popoverContainerRef, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
+  let submenuRef = unwrapDOMRef(popoverRef);
   let {submenuTriggerProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
-    submenuRef: popoverRef,
+    submenuRef,
     submenuType: 'dialog',
     isDisabled: !isUnavailable
   }, submenuTriggerState, triggerRef);

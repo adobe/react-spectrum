@@ -28,9 +28,9 @@ export interface AriaSubmenuTriggerProps {
   /** Type of the submenu being rendered. */
   submenuType?: 'dialog' | 'menu',
   /** Ref of the menu that contains the submenu trigger. */
-  parentMenuRef: RefObject<HTMLDivElement>,
+  parentMenuRef: RefObject<HTMLElement>,
   /** Ref of the submenu opened by the submenu trigger. */
-  submenuRef: RefObject<HTMLDivElement>
+  submenuRef: RefObject<HTMLElement>
 }
 
 interface SubmenuTriggerProps extends AriaMenuItemProps {
