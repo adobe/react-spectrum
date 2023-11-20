@@ -1,5 +1,6 @@
 import {RefObject, useEffect, useRef, useState} from 'react';
 import {useInteractionModality} from '@react-aria/interactions';
+import {useResizeObserver} from '@react-aria/utils';
 
 interface SafelyMouseToSubmenuOptions {
   /** Ref for the parent menu. */
@@ -31,15 +32,13 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   let movementsTowardsSubmenuCount = useRef<number>(2);
   let [preventPointerEvents, setPreventPointerEvents] = useState(false);
 
-  // TODO: Fix for ContextualHelpTrigger so we can do this
-  // let updateSubmenuRect = () => {
-  //   if (submenuRef.current) {
-  //     submenuRect.current = submenuRef.current.getBoundingClientRect();
-  //     submenuSide.current = undefined;
-  //   }
-  // };
-
-  // useResizeObserver({ref: submenuRef, onResize: updateSubmenuRect});
+  let updateSubmenuRect = () => {
+    if (submenuRef.current) {
+      submenuRect.current = submenuRef.current.getBoundingClientRect();
+      submenuSide.current = undefined;
+    }
+  };
+  useResizeObserver({ref: submenuRef, onResize: updateSubmenuRect});
 
   let reset = () => {
     setPreventPointerEvents(false);
@@ -57,8 +56,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   }, [menuRef, preventPointerEvents]);
 
   useEffect(() => {
-    // TODO: Fix for ContextualHelpTrigger so we can just use submenuRef.current
-    let submenu = (submenuRef.current as any)?.UNSAFE_getDOMNode ? (submenuRef.current as any)?.UNSAFE_getDOMNode() : submenuRef.current;
+    let submenu = submenuRef.current;
     let menu = menuRef.current;
 
     if (isDisabled || !submenu || !isOpen || modality !== 'pointer') {
