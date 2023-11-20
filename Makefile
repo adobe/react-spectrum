@@ -110,9 +110,16 @@ website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
 
 website-production:
-	node scripts/buildWebsite.js
+	node scripts/buildWebsite.js $$PUBLIC_URL
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+	$(MAKE) starter
+	cd starters/docs && zip -r react-aria-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	mv starters/docs/react-aria-starter.zip dist/production/docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
 
 check-examples:
 	node scripts/extractExamples.mjs
 	yarn tsc --project dist/docs-examples/tsconfig.json
+
+starter:
+	node scripts/extractStarter.mjs
+	cd starters/docs && yarn && yarn tsc
