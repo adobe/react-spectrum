@@ -122,14 +122,12 @@ A file trigger can accept multiple files by passsing the `allowsMultiple` proper
 
 ## Directory Selection
 
-To enable selecting directories instead of files, use the `UNSAFE_directory` property. 
+To enable selecting directories instead of files, use the `directory` property. 
 
-This reflects the webkitdirectory HTML attribute and allows users to select directories and their contents.
-
-The `UNSAFE_` prefix is used to signify that this feature's behavior may vary across different browsers and versions.
+This reflects the [webkitdirectory](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/webkitdirectory) HTML attribute and allows users to select directories and their contents.
 
 ```tsx example
-<FileTrigger UNSAFE_directory>
+<FileTrigger directory>
   <Button>Select a directory</Button>
 </FileTrigger>
 ```

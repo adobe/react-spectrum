@@ -89,9 +89,9 @@ describe('FileTrigger', () => {
     expect(ref.current).toBe(input);
   });
 
-  it('should allow directory uploads when UNSAFE_directory is true', () => {
+  it('should allow directory uploads when directory is true', () => {
     render(
-      <FileTrigger UNSAFE_directory>
+      <FileTrigger directory>
         <Button>Upload Directory</Button>
       </FileTrigger>
     );
