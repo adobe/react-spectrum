@@ -291,6 +291,12 @@ function Example() {
       color: var(--text-color-hover);
     }
   }
+
+  &[data-selected] {
+    [slot=remove] {
+      color: inherit;
+    }
+  }
 }
 ```
 

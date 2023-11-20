@@ -101,6 +101,7 @@ theme = `/* Base styles */
 :root {
   font-family: system-ui;
   font-size: 14px;
+  line-height: 1.5;
   background: var(--background-color);
 }
 

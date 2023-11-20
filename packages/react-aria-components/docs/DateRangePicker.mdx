@@ -109,6 +109,11 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     background: var(--field-background);
     white-space: nowrap;
 
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
+
     &[data-focus-within] {
       outline: 2px solid var(--focus-ring-color);
       outline-offset: -1px;
