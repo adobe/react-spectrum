@@ -122,4 +122,4 @@ check-examples:
 
 starter:
 	node scripts/extractStarter.mjs
-	cd starters/docs &&  ../../node_modules/.bin/tsc
+	cd starters/docs && yarn tsc

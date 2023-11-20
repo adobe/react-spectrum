@@ -17,7 +17,8 @@
     "react-aria-components": "^1.0.0-rc.0",
     "react-dom": "^18.2.0",
     "storybook": "^7.5.3",
-    "storybook-dark-mode": "^3.0.1"
+    "storybook-dark-mode": "^3.0.1",
+    "typescript": "^5.3.2"
   },
   "resolutions": {
     "jackspeak": "2.1.1"
