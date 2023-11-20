@@ -140,7 +140,7 @@ export function TrayHeaderWrapper(props) {
             }
           )
         }>
-        <div role="presentation" className={classNames(styles, {'spectrum-Submenu-wrapper': isMobile})} onKeyDown={wrapperKeyDown}>
+        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper')} onKeyDown={wrapperKeyDown}>
           {isMobile && isSubmenu && !hasOpenSubmenu && (
             <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
               <ActionButton

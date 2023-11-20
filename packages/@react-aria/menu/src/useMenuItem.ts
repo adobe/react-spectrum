@@ -266,7 +266,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
       // cannot sufficiently distinguish when propagation should be continued or stopped in this section of code.
       // It should only stop propagation if handling the ArrowRight case when the submenutrigger's menu is open and focus is on the trigger,
       ...mergeProps(domProps, itemProps, pressProps, hoverProps, keyboardProps, focusProps, {onKeyDown, onKeyUp}),
-      tabIndex: -1
+      tabIndex: itemProps.tabIndex != null ? -1 : undefined
     },
     labelProps: {
       id: labelId
