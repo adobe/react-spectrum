@@ -458,10 +458,10 @@ describe('RadioGroup', () => {
     let {getAllByRole} = renderGroup({onBlur});
     let radio = getAllByRole('radio')[0];
 
-    act(() => radio.focus());
+    await user.tab();
     expect(document.activeElement).toBe(radio);
 
-    act(() => radio.blur());
+    await user.keyboard('[ArrowRight]');
     expect(onBlur).toHaveBeenCalledTimes(1);
   });
 });
