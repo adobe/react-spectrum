@@ -129,7 +129,6 @@ then
 
   # Build starter storybook
   cd ../../starters/docs
-  yarn install
   yarn build-storybook
   mv storybook-static ../../$verdaccio_path/starter-storybook
 
