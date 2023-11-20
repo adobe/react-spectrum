@@ -266,9 +266,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      // Key down from useSubmenuTrigger's submenuTriggerProps is not incorporated into useKeyboard here since we
-      // cannot sufficiently distinguish when propagation should be continued or stopped in this section of code.
-      // It should only stop propagation if handling the ArrowRight case when the submenutrigger's menu is open and focus is on the trigger,
       ...mergeProps(domProps, itemProps, pressProps, hoverProps, keyboardProps, focusProps),
       tabIndex: itemProps.tabIndex != null ? -1 : undefined
     },
