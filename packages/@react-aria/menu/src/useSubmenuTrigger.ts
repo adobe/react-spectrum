@@ -90,14 +90,14 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
   let submenuKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowLeft':
-        if (direction === 'ltr') {
+        if (direction === 'ltr' && e.currentTarget.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
           ref.current.focus();
         }
         break;
       case 'ArrowRight':
-        if (direction === 'rtl') {
+        if (direction === 'rtl' && e.currentTarget.contains(e.target as Element)) {
           e.stopPropagation();
           onSubmenuClose();
           ref.current.focus();
@@ -132,8 +132,9 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
               onSubmenuOpen('first');
             }
           } else if (state.isOpen) {
-            e.stopPropagation();
             onSubmenuClose();
+          } else {
+            e.continuePropagation();
           }
         }
 
@@ -147,10 +148,17 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
               onSubmenuOpen('first');
             }
           } else if (state.isOpen) {
-            e.stopPropagation();
             onSubmenuClose();
+          } else {
+            e.continuePropagation();
           }
         }
+        break;
+      case 'Escape':
+        state.closeAll();
+        break;
+      default:
+        e.continuePropagation();
         break;
     }
   };
