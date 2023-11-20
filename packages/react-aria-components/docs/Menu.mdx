@@ -322,31 +322,29 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Menu {
-  .react-aria-MenuItem {
-    &[data-selection-mode] {
-      padding-left: 24px;
+.react-aria-MenuItem {
+  &[data-selection-mode] {
+    padding-left: 24px;
 
-      &::before {
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
+    &::before {
+      position: absolute;
+      left: 4px;
+      font-weight: 600;
+    }
 
-      &[data-selection-mode=multiple][data-selected]::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
+    &[data-selection-mode=multiple][data-selected]::before {
+      content: '✓';
+      content: '✓' / '';
+      alt: ' ';
+      position: absolute;
+      left: 4px;
+      font-weight: 600;
+    }
 
-      &[data-selection-mode=single][data-selected]::before {
-        content: '●';
-        content: '●' / '';
-        transform: scale(0.7)
-      }
+    &[data-selection-mode=single][data-selected]::before {
+      content: '●';
+      content: '●' / '';
+      transform: scale(0.7)
     }
   }
 }
@@ -799,6 +797,14 @@ A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS select
 The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the MenuTrigger in the DOM. It supports the following states and render props:
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
+
+Within a MenuTrigger, the popover will have the `data-trigger="MenuTrigger"` attribute, which can be used to define menu-specific styles.
+
+```css render=false
+.react-aria-Popover[data-trigger=MenuTrigger] {
+  /* ... */
+}
+```
 
 ### Menu
 

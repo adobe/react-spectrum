@@ -80,10 +80,9 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-/* We only import styles up to one page away, we don't follow those pages dependencies, so
-* import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx' layer(button);
 @import './Popover.mdx' layer(popover);
+@import './Dialog.mdx' layer(dialog);
 @import './DateField.mdx' layer(datefield);
 @import './RangeCalendar.mdx' layer(rangecalendar);
 @import './Form.mdx' layer(form);
@@ -109,6 +108,11 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     border-radius: 6px;
     background: var(--field-background);
     white-space: nowrap;
+
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
 
     &[data-focus-within] {
       outline: 2px solid var(--focus-ring-color);
@@ -157,11 +161,8 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
   }
 }
 
-@layer popover {
-  .react-aria-Popover {
-    max-width: unset;
-    padding: 1.25rem;
-  }
+.react-aria-Popover[data-trigger=DateRangePicker] {
+  max-width: unset;
 }
 ```
 
@@ -1034,6 +1035,14 @@ A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, o
 The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the DateRangePicker in the DOM. It supports the following states and render props:
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
+
+Within a DateRangePicker, the popover will have the `data-trigger="DateRangePicker"` attribute, which can be used to define date range picker-specific styles.
+
+```css render=false
+.react-aria-Popover[data-trigger=DateRangePicker] {
+  /* ... */
+}
+```
 
 ### Dialog
 
