@@ -15,7 +15,6 @@ import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps, Key} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
 import {Popover} from '@react-spectrum/overlays';
 import React, {ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
@@ -46,7 +45,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let {popoverContainerRef, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
-  let {submenuTriggerProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
+  let {submenuTriggerProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
     submenuRef: popoverRef,
@@ -126,7 +125,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     overlay = (
       <Popover
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
-        {...mergeProps(popoverProps, overlayProps)}
+        {...popoverProps}
         onBlurWithin={onBlurWithin}
         container={popoverContainerRef.current}
         state={submenuTriggerState}

@@ -12,7 +12,7 @@
 
 import {AriaMenuItemProps} from './useMenuItem';
 import {AriaMenuOptions} from './useMenu';
-import type {AriaPopoverProps} from '@react-aria/overlays';
+import type {AriaPopoverProps, OverlayProps} from '@react-aria/overlays';
 import {FocusableElement, FocusStrategy, KeyboardEvent, PressEvent, Node as RSNode} from '@react-types/shared';
 import {RefObject, useCallback, useRef} from 'react';
 import type {SubmenuTriggerState} from '@react-stately/menu';
@@ -49,14 +49,7 @@ export interface SubmenuTriggerAria<T> {
   /** Props for the submenu controlled by the submenu trigger menu item. */
   submenuProps: SubmenuProps<T>,
   /** Props for the submenu's popover container. */
-  popoverProps: Pick<AriaPopoverProps, 'isNonModal'>,
-  /** Props for the submenu's popover overlay container. */
-  overlayProps: {
-    /** Whether the overlay should manage restoring and containing focus. */
-    disableFocusManagement: boolean,
-    /** Callback called to determine if the overlay should be closed when the user interacts with a element outside. */
-    shouldCloseOnInteractOutside: (element: Element) => boolean
-  }
+  popoverProps: Pick<AriaPopoverProps, 'isNonModal' | 'shouldCloseOnInteractOutside'> & Pick<OverlayProps, 'disableFocusManagement'>
 }
 
 /**
@@ -222,9 +215,7 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
     },
     submenuProps,
     popoverProps: {
-      isNonModal: true
-    },
-    overlayProps: {
+      isNonModal: true,
       disableFocusManagement: true,
       shouldCloseOnInteractOutside
     }

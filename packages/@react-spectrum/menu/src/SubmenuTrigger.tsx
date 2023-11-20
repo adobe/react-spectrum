@@ -43,7 +43,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
-  let {submenuTriggerProps, submenuProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
+  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
     submenuRef: menuRef
@@ -88,7 +88,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
 
     overlay = (
       <Popover
-        {...mergeProps(popoverProps, overlayProps)}
+        {...popoverProps}
         onDismissButtonPress={onDismissButtonPress}
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
         container={popoverContainerRef.current}
