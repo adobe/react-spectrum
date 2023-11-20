@@ -15,6 +15,7 @@ import {
   AriaValidationProps,
   DOMProps,
   FocusableProps,
+  FocusEvents,
   HelpTextProps,
   InputBase,
   InputDOMProps,
@@ -26,18 +27,14 @@ import {
   Validation,
   ValueBase
 } from '@react-types/shared';
-import {FocusEvent, ReactElement, ReactNode} from 'react';
+import {ReactElement, ReactNode} from 'react';
 
-export interface RadioGroupProps extends ValueBase<string>, InputBase, InputDOMProps, Validation<string | null>, LabelableProps, HelpTextProps {
+export interface RadioGroupProps extends ValueBase<string>, InputBase, InputDOMProps, Validation<string | null>, LabelableProps, HelpTextProps, FocusEvents {
   /**
    * The axis the Radio Button(s) should align with.
    * @default 'vertical'
    */
-  orientation?: Orientation,
-  /**
-   * Handler that is called when the element loses focus.
-   */
-  onBlur?: (e: FocusEvent<HTMLDivElement>) => void
+  orientation?: Orientation
 }
 
 export interface RadioProps extends FocusableProps {

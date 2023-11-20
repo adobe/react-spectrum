@@ -453,15 +453,28 @@ describe('RadioGroup', () => {
     expect(group).not.toHaveAttribute('data-invalid');
   });
 
-  it('should call onBlur when focus leaves the radio', async () => {
+  it('should support focus events', async () => {
     let onBlur = jest.fn();
-    let {getAllByRole} = renderGroup({onBlur});
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+
+    let {getAllByRole} = renderGroup({onBlur, onFocus, onFocusChange});
     let radio = getAllByRole('radio')[0];
 
     await user.tab();
     expect(document.activeElement).toBe(radio);
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
 
     await user.keyboard('[ArrowRight]');
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+
+    await user.tab();
     expect(onBlur).toHaveBeenCalledTimes(1);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);
   });
 });
