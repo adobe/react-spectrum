@@ -35,11 +35,16 @@ export interface FileTriggerProps {
   /**
    * The children of the component.
    */
-  children?: ReactNode
+  children?: ReactNode,
+  /**
+   * Enables the selection of directories instead of individual files.
+   * Note: This feature's behavior may vary across different browsers and versions.
+   */
+  UNSAFE_directory?: boolean
 }
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
-  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, ...rest} = props;
+  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, UNSAFE_directory, ...rest} = props;
   let inputRef = useObjectRef(ref);
   let domProps = filterDOMProps(rest);
 
@@ -62,7 +67,9 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
         accept={acceptedFileTypes?.toString()}
         onChange={(e) => onSelect?.(e.target.files)}
         capture={defaultCamera}
-        multiple={allowsMultiple} />
+        multiple={allowsMultiple} 
+        // @ts-expect-error
+        webkitdirectory={UNSAFE_directory ? '' : undefined} />
     </>
   );
 }
