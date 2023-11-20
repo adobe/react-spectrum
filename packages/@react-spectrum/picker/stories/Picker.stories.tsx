@@ -134,6 +134,14 @@ export default {
     isQuiet: {
       control: 'boolean'
     },
+    direction: {
+      control: 'radio',
+      options: ['top', 'bottom']
+    },
+    align: {
+      control: 'radio',
+      options: ['start', 'end']
+    },
     width: {
       control: {
         type: 'radio',
