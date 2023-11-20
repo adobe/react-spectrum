@@ -120,6 +120,20 @@ A file trigger can accept multiple files by passsing the `allowsMultiple` proper
 </FileTrigger>
 ```
 
+## Directory Selection
+
+To enable selecting directories instead of files, use the `UNSAFE_directory` property. 
+
+This reflects the webkitdirectory HTML attribute and allows users to select directories and their contents.
+
+The `UNSAFE_` prefix is used to signify that this feature's behavior may vary across different browsers and versions.
+
+```tsx example
+<FileTrigger UNSAFE_directory>
+  <Button>Select a directory</Button>
+</FileTrigger>
+```
+
 ## Media capture
 
 To specify the media capture mechanism to capture media on the spot, pass `user` for the user-facing camera or `environment` for the outward-facing camera via the `defaultCamera` prop.
