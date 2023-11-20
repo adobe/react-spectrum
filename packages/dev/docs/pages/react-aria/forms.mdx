@@ -486,14 +486,13 @@ function App() {
             value={value}
             onChange={onChange}
             onBlur={onBlur}
-            ref={ref}
             isRequired
             // Let React Hook Form handle validation instead of the browser.
             validationBehavior="aria"
             isInvalid={invalid}
           >
             <Label>Name</Label>
-            <Input />
+            <Input ref={ref}/> // Assign React Hook Form ref to Input so it can focus the inut after validation
             <FieldError>{error?.message}</FieldError>
           </TextField>
         )}
