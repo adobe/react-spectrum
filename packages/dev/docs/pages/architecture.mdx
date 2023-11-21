@@ -61,17 +61,17 @@ and time, and reducing duplicated effort across the industry.
 
 <figure className={style.float}>
   <Flex direction="column" gap="size-125">
-    <View backgroundColor="magenta-600" height="size-900">
+    <View backgroundColor="static-magenta-600" height="size-900">
       <Flex alignItems="center" justifyContent="center" height="100%">
         <span style={{color: 'white', fontSize: 18}}>Component</span>
       </Flex>
     </View>
-    <View backgroundColor="green-600" height="size-900">
+    <View backgroundColor="static-green-600" height="size-900">
       <Flex alignItems="center" justifyContent="center" height="100%">
         <span style={{color: 'white', fontSize: 18}}>Behavior Hook</span>
       </Flex>
     </View>
-    <View backgroundColor="blue-500" height="size-900">
+    <View backgroundColor="static-blue-600" height="size-900">
       <Flex alignItems="center" justifyContent="center" height="100%">
         <span style={{color: 'white', fontSize: 18}}>State Hook</span>
       </Flex>
@@ -89,7 +89,7 @@ other components, so each component has the pieces of this architecture
 that make sense for their purpose.
 
 This architecture is made possible by
-[React Hooks](https://reactjs.org/docs/hooks-intro.html), which enable
+[React Hooks](https://react.dev/reference/react/hooks), which enable
 the ability to reuse behavior between multiple components. Hooks allow
 accessing React features like state and effects from functions which
 can be called from any component. If you're unfamiliar with hooks,
@@ -147,25 +147,30 @@ the state from the state hook to adjust its visual appearance.
 This allows complete control over the rendering of the component, including
 things like adding extra elements as needed for styling or layout control.
 
+The component itself may be split into unstyled and styled parts. Unstyled components
+compose together hooks and abstract away the glue code necessary to connect them together
+by providing reusable contexts, DOM structure, and styling APIs. This simplifies design system
+components while retaining the flexibility to drop down to lower-level APIs when needed.
+
 <div style={{clear: 'both'}} />
 
 ## Implementation
 
 <figure className={style.float}>
   <Flex direction="column" gap="size-125">
-    <View backgroundColor="magenta-600" height="size-900">
+    <View backgroundColor="static-magenta-600" height="size-900">
       <Flex alignItems="center" justifyContent="center" height="100%">
-        <span style={{color: 'white', fontSize: 18}}>@react-spectrum</span>
+        <span style={{color: 'white', fontSize: 18}}>React Spectrum</span>
       </Flex>
     </View>
-    <View backgroundColor="green-600" height="size-900">
+    <View backgroundColor="static-green-600" height="size-900">
       <Flex alignItems="center" justifyContent="center" height="100%">
-        <span style={{color: 'white', fontSize: 18}}>@react-aria</span>
+        <span style={{color: 'white', fontSize: 18}}>React Aria</span>
       </Flex>
     </View>
-    <View backgroundColor="blue-500" height="size-900">
+    <View backgroundColor="static-blue-600" height="size-900">
       <Flex alignItems="center" justifyContent="center" height="100%">
-        <span style={{color: 'white', fontSize: 18}}>@react-stately</span>
+        <span style={{color: 'white', fontSize: 18}}>React Stately</span>
       </Flex>
     </View>
   </Flex>
@@ -208,7 +213,7 @@ by reading the docs.
 ### React Aria
 
 [React Aria](react-aria/index.html) implements behavior and [accessibility](react-aria/accessibility.html)
-for the web according to [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/).
+for the web according to the W3C's [ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/).
 It includes full screen reader and keyboard navigation support, along with
 mouse and touch [interactions](react-aria/interactions.html) that have been
 tested across a wide variety of devices and browsers. It also implements
@@ -216,12 +221,13 @@ tested across a wide variety of devices and browsers. It also implements
 languages, including right-to-left specific behavior, localized date and
 number formatting, and more.
 
-Most importantly, React Aria is **fully customizable**, since it doesn't
-implement any rendering or impose a DOM structure or styling methodology.
-You just need to spread the props returned by each React Aria hook onto
-the appropriate DOM elements, and you get high quality interactions,
-behavior, and accessibility pretty much for free. All you need to do is
-provide the styling.
+Most importantly, React Aria is **fully customizable**. It offers both high-level
+unstyled components and low-level hooks depending on the level of customization you need.
+The components provide a default DOM structure and styling API, and handle all
+of the glue code necessary to connect the hooks together on your behalf.
+If you need even more control, you can drop down to the lower-level hook-based API,
+which enables [advanced customization](react-aria/advanced.html) use cases such
+as overriding DOM elements, intercepting events, customizing behavior, and more.
 
 [Read more](react-aria/why.html) about React Aria and
 the problems it solves, and check out the docs to [get started](react-aria/getting-started.html)

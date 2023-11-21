@@ -80,10 +80,9 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-/* We only import styles up to one page away, we don't follow those pages dependencies, so
-* import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx' layer(button);
 @import './Popover.mdx' layer(popover);
+@import './Dialog.mdx' layer(dialog);
 @import './DateField.mdx' layer(datefield);
 @import './RangeCalendar.mdx' layer(rangecalendar);
 @import './Form.mdx' layer(form);
@@ -109,6 +108,11 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     border-radius: 6px;
     background: var(--field-background);
     white-space: nowrap;
+
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
 
     &[data-focus-within] {
       outline: 2px solid var(--focus-ring-color);
@@ -159,7 +163,6 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 
 .react-aria-Popover[data-trigger=DateRangePicker] {
   max-width: unset;
-  padding: 1.25rem;
 }
 ```
 

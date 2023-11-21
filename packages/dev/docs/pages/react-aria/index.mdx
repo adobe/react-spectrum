@@ -66,6 +66,8 @@ import FocusWithin from '../assets/component-illustrations/useFocusWithin.svg';
 import Focus from '../assets/component-illustrations/useFocus.svg';
 import TagGroup from '../assets/component-illustrations/TagGroup.svg';
 import DropZone from '../assets/component-illustrations/DropZone.svg';
+import FileTrigger from '../assets/component-illustrations/FileTrigger.svg'
+import Form from '../assets/component-illustrations/Form.svg'
 
 ---
 category: Libraries
@@ -96,7 +98,7 @@ A library of React Hooks that provides accessible UI primitives for your design 
 <Highlights items={[
   {
     title: 'Accessible',
-    description: <>React Aria provides accessibility and behavior according to <a href="https://www.w3.org/TR/wai-aria-practices-1.2/" target="_blank">WAI-ARIA Authoring Practices</a>, including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.</>
+    description: <>React Aria provides accessibility and behavior according to <a href="https://www.w3.org/WAI/ARIA/apg/" target="_blank">ARIA Authoring Practices</a>, including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.</>
   },
   {
     title: 'Adaptive',
@@ -119,17 +121,24 @@ A library of React Hooks that provides accessible UI primitives for your design 
 <section className={styles.cardGroup}>
 
 <ExampleCard
-  url="useButton.html"
+  url="Button.html"
   title="Button"
   description="A button allows a user to perform an action with a mouse, touch, or keyboard.">
   <Button />
 </ExampleCard>
 
 <ExampleCard
-  url="useToggleButton.html"
+  url="ToggleButton.html"
   title="ToggleButton"
   description="A toggle button allows a user to toggle between two states.">
   <ToggleButton />
+</ExampleCard>
+
+<ExampleCard
+  url="FileTrigger.html"
+  title="FileTrigger"
+  description="A file trigger allows a user to access the file system with a Button.">
+  <FileTrigger />
 </ExampleCard>
 
 </section>
@@ -139,14 +148,14 @@ A library of React Hooks that provides accessible UI primitives for your design 
 <section className={styles.cardGroup}>
 
 <ExampleCard
-  url="useComboBox.html"
+  url="ComboBox.html"
   title="ComboBox"
   description="A combobox combines a text input with a listbox, and allows a user to filter a list of options.">
   <ComboBoxAnatomy />
 </ExampleCard>
 
 <ExampleCard
-  url="useSelect.html"
+  url="Select.html"
   title="Select"
   description="A select displays a collapsible list of options, and allows a user to select one of them.">
   <SelectAnatomy />
@@ -159,35 +168,35 @@ A library of React Hooks that provides accessible UI primitives for your design 
 <section className={styles.cardGroup}>
 
 <ExampleCard
-  url="useMenu.html"
+  url="Menu.html"
   title="Menu"
   description="A menu displays a list of actions or options that a user can choose.">
   <Menu />
 </ExampleCard>
 
 <ExampleCard
-  url="useListBox.html"
+  url="ListBox.html"
   title="ListBox"
   description="A listbox displays a list of options, and allows a user to select one or more of them.">
   <ListBox />
 </ExampleCard>
 
 <ExampleCard
-  url="useGridList.html"
+  url="GridList.html"
   title="GridList"
   description="A grid list displays a list of interactive items, with keyboard navigation, row selection, and actions.">
   <ListView />
 </ExampleCard>
 
 <ExampleCard
-  url="useTable.html"
+  url="Table.html"
   title="Table"
   description="A table displays data in rows and columns, with row selection and sorting.">
   <Table />
 </ExampleCard>
-  
+
 <ExampleCard
-  url="useTagGroup.html"
+  url="TagGroup.html"
   title="TagGroup"
   description="A tag group displays a list of items, with support for keyboard navigation, selection, and removal.">
   <TagGroup />
@@ -200,42 +209,42 @@ A library of React Hooks that provides accessible UI primitives for your design 
 <section className={styles.cardGroup}>
 
 <ExampleCard
-  url="useDatePicker.html"
+  url="DatePicker.html"
   title="DatePicker"
   description="A date picker combines a DateField and a Calendar popover.">
   <DatePicker />
 </ExampleCard>
 
 <ExampleCard
-  url="useDateRangePicker.html"
+  url="DateRangePicker.html"
   title="DateRangePicker"
   description="A date range picker combines two DateFields and a RangeCalendar popover.">
   <DateRangePicker />
 </ExampleCard>
 
 <ExampleCard
-  url="useDateField.html"
+  url="DateField.html"
   title="DateField"
   description="A date field allows a user to enter and edit date values using a keyboard.">
   <DateField />
 </ExampleCard>
 
 <ExampleCard
-  url="useTimeField.html"
+  url="TimeField.html"
   title="TimeField"
   description="A time field allows a user to enter and edit time values using a keyboard.">
   <TimeField />
 </ExampleCard>
 
 <ExampleCard
-  url="useCalendar.html"
+  url="Calendar.html"
   title="Calendar"
   description="A calendar allows a user to select a single date from a date grid.">
   <Calendar />
 </ExampleCard>
 
 <ExampleCard
-  url="useRangeCalendar.html"
+  url="RangeCalendar.html"
   title="RangeCalendar"
   description="A range calendar allows a user to select a contiguous range of dates.">
   <RangeCalendar />
@@ -248,21 +257,21 @@ A library of React Hooks that provides accessible UI primitives for your design 
 <section className={styles.cardGroup}>
 
 <ExampleCard
-  url="useDialog.html"
+  url="Dialog.html"
   title="Dialog"
   description="A dialog is an overlay shown above other content in an application.">
   <Dialog />
 </ExampleCard>
 
 <ExampleCard
-  url="usePopover.html"
+  url="Popover.html"
   title="Popover"
   description="A popover displays interactive content in context with a trigger element.">
   <Popover />
 </ExampleCard>
 
 <ExampleCard
-  url="useTooltipTrigger.html"
+  url="Tooltip.html"
   title="Tooltip"
   description="A tooltip displays a description of an element on hover or focus.">
   <Tooltip />
@@ -275,59 +284,66 @@ A library of React Hooks that provides accessible UI primitives for your design 
 <section className={styles.cardGroup}>
 
 <ExampleCard
-  url="useCheckbox.html"
+  url="Checkbox.html"
   title="Checkbox"
   description="A checkbox allows a user to select an individual option.">
   <Checkbox />
 </ExampleCard>
 
 <ExampleCard
-  url="useCheckboxGroup.html"
+  url="CheckboxGroup.html"
   title="CheckboxGroup"
   description="A checkbox group allows a user to select one or more items in a list of options.">
   <CheckboxGroup />
 </ExampleCard>
 
 <ExampleCard
-  url="useRadioGroup.html"
+  url="RadioGroup.html"
   title="RadioGroup"
   description="A radio group allows a user to select a single item from a list of options.">
   <RadioGroup />
 </ExampleCard>
 
 <ExampleCard
-  url="useSwitch.html"
+  url="Switch.html"
   title="Switch"
   description="A switch allows a user to turn a setting on or off.">
   <Switch />
 </ExampleCard>
 
 <ExampleCard
-  url="useTextField.html"
+  url="TextField.html"
   title="TextField"
   description="A text field allows a user to enter a plain text value with a keyboard.">
   <TextField />
 </ExampleCard>
 
 <ExampleCard
-  url="useSearchField.html"
+  url="SearchField.html"
   title="SearchField"
   description="A search field allows a user to enter and clear a search query.">
   <SearchField />
 </ExampleCard>
 
 <ExampleCard
-  url="useNumberField.html"
+  url="NumberField.html"
   title="NumberField"
   description="A number field allows a user to enter, increment, or decrement a numeric value.">
   <NumberField />
 </ExampleCard>
 
 <ExampleCard
-  url="useSlider.html"
+  url="Slider.html"
   title="Slider"
   description="A slider allows a user to select one or more values within a range.">
   <Slider />
+</ExampleCard>
+
+<ExampleCard
+  url="Form.html"
+  title="Form"
+  description="A form allows users to submit data to a server, with support for validation.">
+  <Form />
 </ExampleCard>
 
 </section>
@@ -337,21 +353,21 @@ A library of React Hooks that provides accessible UI primitives for your design 
 <section className={styles.cardGroup}>
 
 <ExampleCard
-  url="useTabList.html"
+  url="Tabs.html"
   title="Tabs"
   description="Tabs organize content into multiple sections, and allow a user to view one at a time.">
   <Tabs />
 </ExampleCard>
 
 <ExampleCard
-  url="useLink.html"
+  url="Link.html"
   title="Link"
   description="A link allows a user to navigate to another page.">
   <Link />
 </ExampleCard>
 
 <ExampleCard
-  url="useBreadcrumbs.html"
+  url="Breadcrumbs.html"
   title="Breadcrumbs"
   description="Breadcrumbs display a heirarchy of links to the current page or resource.">
   <Breadcrumbs />
@@ -364,14 +380,14 @@ A library of React Hooks that provides accessible UI primitives for your design 
 <section className={styles.cardGroup}>
 
 <ExampleCard
-  url="useProgressBar.html"
+  url="ProgressBar.html"
   title="ProgressBar"
   description="A progress bar shows progress of an operation over time.">
   <ProgressBar />
 </ExampleCard>
 
 <ExampleCard
-  url="useMeter.html"
+  url="Meter.html"
   title="Meter"
   description="A meter represents a quantity within a known range, or a fractional value.">
   <Meter />
