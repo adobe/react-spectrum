@@ -61,6 +61,7 @@ describe('ComboBox', () => {
     let listbox = getByRole('listbox');
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
     expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();
+    expect(listbox.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'ComboBox');
 
     let options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(3);
