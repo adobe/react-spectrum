@@ -219,7 +219,6 @@ governing permissions and limitations under the License.
     padding-inline-start: calc(var(--spectrum-steplist-chevron-gap) - var(--spectrum-steplist-marker-label-gap));
     &::before {
       content: "*";
-      content: "*" / "";
       width: 0;
       visibility: hidden;
     }
@@ -241,7 +240,6 @@ governing permissions and limitations under the License.
     align-items: center;
     &::before {
       content: "*";
-      content: "*" / "";
       width: 0;
       visibility: hidden;
     }
@@ -284,7 +282,6 @@ governing permissions and limitations under the License.
     align-items: center;
     &::before {
       content: "*";
-      content: "*" / "";
       width: 0;
       visibility: hidden;
     }
