@@ -270,10 +270,29 @@ export const ComplexItems: ComboBoxStory = {
         <Text>Report</Text>
         <Text slot="description">Report an issue/violation.</Text>
       </Item>
-      <Item textValue="Subscribe to channel">
+    </ComboBox>
+  )
+};
+
+export const WithAvatars: ComboBoxStory = {
+  args: {label: 'Select a user'},
+  render: (args) => (
+    <ComboBox {...args}>
+      <Item textValue="User 1">
         <Avatar src="https://i.imgur.com/kJOwAdv.png" />
-        <Text>Subscribe to channel</Text>
-        <Text slot="description">Subscribe to this channel.</Text>
+        <Text>User 1</Text>
+      </Item>
+      <Item textValue="User 2">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 2</Text>
+      </Item>
+      <Item textValue="User 3">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 3</Text>
+      </Item>
+      <Item textValue="User 4">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 4</Text>
       </Item>
     </ComboBox>
   )

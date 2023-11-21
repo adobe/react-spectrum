@@ -1019,7 +1019,7 @@ Links.story = {
   }
 };
 
-export const WithAvatar = {
+export const WithAvatars = {
   render: () => (
     <ListBox aria-label="Listbox with avatars" width="350px">
       <Item textValue="Person 1">

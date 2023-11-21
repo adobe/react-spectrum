@@ -221,6 +221,30 @@ export const ComplexItems: ComplexItemsStory = {
   name: 'complex items'
 };
 
+export const WithAvatars: PickerStory = {
+  args: {label: 'Select a user'},
+  render: (args) => (
+    <Picker {...args}>
+      <Item textValue="User 1">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 1</Text>
+      </Item>
+      <Item textValue="User 2">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 2</Text>
+      </Item>
+      <Item textValue="User 3">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 3</Text>
+      </Item>
+      <Item textValue="User 4">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 4</Text>
+      </Item>
+    </Picker>
+  )
+};
+
 export const LongItemText: PickerStory = {
   args: {
     children: (item: any) => <Item key={item.key}>{item.name}</Item>,
@@ -403,10 +427,6 @@ function ComplexItemsPicker(props: SpectrumPickerProps<object>) {
         <Item textValue="Floof">
           <AlignRight />
           <Text>Floof</Text>
-        </Item>
-        <Item textValue="User">
-          <Avatar src="https://i.imgur.com/kJOwAdv.png" />
-          <Text>User</Text>
         </Item>
       </Section>
     </Picker>
