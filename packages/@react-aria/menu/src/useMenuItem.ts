@@ -266,7 +266,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(domProps, itemProps, pressProps, hoverProps, keyboardProps, focusProps),
+      ...mergeProps(domProps, isTrigger ? {onFocus: itemProps.onFocus} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
       tabIndex: itemProps.tabIndex != null ? -1 : undefined
     },
     labelProps: {
