@@ -308,12 +308,30 @@ Items within Picker also allow for additional content used to better communicate
       <Text>Admin</Text>
       <Text slot="description">Full access</Text>
     </Item>
-    <Item textValue="User 1">
-      <Avatar src="https://i.imgur.com/kJOwAdv.png" />
-      <Text>User 1</Text>
-      <Text slot="description">Full access</Text>
-    </Item>
   </Section>
+</Picker>
+```
+
+### With avatars
+
+```tsx example
+<Picker label="Select a user">
+  <Item textValue="User 1">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 1</Text>
+  </Item>
+  <Item textValue="User 2">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 2</Text>
+  </Item>
+  <Item textValue="User 3">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 3</Text>
+  </Item>
+  <Item textValue="User 4">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 4</Text>
+  </Item>
 </Picker>
 ```
 
