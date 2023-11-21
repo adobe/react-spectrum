@@ -68,6 +68,7 @@ module.exports = {
     }
   }, {
     files: ['packages/@react-aria/focus/**/*.ts', 'packages/@react-aria/focus/**/*.tsx'],
+    ignorePatterns: ['packages/@react-aria/focus/**/*.stories.tsx'],
     rules: {
       'no-restricted-globals': [
         ERROR,
