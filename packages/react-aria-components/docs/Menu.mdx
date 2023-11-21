@@ -322,31 +322,29 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Menu {
-  .react-aria-MenuItem {
-    &[data-selection-mode] {
-      padding-left: 24px;
+.react-aria-MenuItem {
+  &[data-selection-mode] {
+    padding-left: 24px;
 
-      &::before {
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
+    &::before {
+      position: absolute;
+      left: 4px;
+      font-weight: 600;
+    }
 
-      &[data-selection-mode=multiple][data-selected]::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
+    &[data-selection-mode=multiple][data-selected]::before {
+      content: '✓';
+      content: '✓' / '';
+      alt: ' ';
+      position: absolute;
+      left: 4px;
+      font-weight: 600;
+    }
 
-      &[data-selection-mode=single][data-selected]::before {
-        content: '●';
-        content: '●' / '';
-        transform: scale(0.7)
-      }
+    &[data-selection-mode=single][data-selected]::before {
+      content: '●';
+      content: '●' / '';
+      transform: scale(0.7)
     }
   }
 }

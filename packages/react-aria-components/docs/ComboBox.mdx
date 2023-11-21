@@ -83,9 +83,13 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
 @import "@react-aria/example-theme";
 
 .react-aria-ComboBox {
+  color: var(--text-color);
+
   .react-aria-Input {
     margin: 0;
     font-size: 1.072rem;
+    background: var(--field-background);
+    color: var(--field-text-color);
     border: 1px solid var(--border-color);
     border-radius: 6px;
     padding: 0.286rem 2rem 0.286rem 0.571rem;
@@ -109,11 +113,16 @@ import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'rea
     height: 1.429rem;
     padding: 0;
     font-size: 0.857rem;
+
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
   }
 }
 
 .react-aria-Popover[data-trigger=ComboBox] {
-    width: var(--trigger-width);
+  width: var(--trigger-width);
 
   .react-aria-ListBox {
     display: block;

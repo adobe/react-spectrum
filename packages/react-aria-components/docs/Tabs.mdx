@@ -67,8 +67,6 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-/* We only import styles up to one page away, we don't follow those pages dependencies, so
-* import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx' layer(button);
 @import './Link.mdx' layer(link);
 ```
@@ -78,6 +76,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 
 .react-aria-Tabs {
   display: flex;
+  color: var(--text-color);
 
   &[data-orientation=horizontal] {
     flex-direction: column;
