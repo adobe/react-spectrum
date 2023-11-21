@@ -10,3 +10,4 @@ packages/react-aria-components/dist
 packages/react-stately/dist
 packages/dev/storybook-builder-parcel/preview.js
 examples/**
+starters/**

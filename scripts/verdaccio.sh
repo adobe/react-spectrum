@@ -74,8 +74,7 @@ npm set registry $registry
 if [ "$ci" = true ];
 then
   # build prod docs with a public url of /reactspectrum/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
-  node scripts/buildWebsite.js /reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs
-  cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+  PUBLIC_URL=/reactspectrum/`git rev-parse HEAD~1`/verdaccio/docs make website-production
 
   # Rename the dist folder from dist/production/docs to verdaccio_dist/COMMIT_HASH_BEFORE_PUBLISH/verdaccio/docs
   # This is so we can have verdaccio build in a separate stream from deploy and deploy_prod
@@ -127,6 +126,11 @@ then
   yarn install
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-spectrum-tailwind
+
+  # Build starter storybook
+  cd ../../starters/docs
+  yarn build-storybook
+  mv storybook-static ../../$verdaccio_path/starter-storybook
 
   cd ../..
 
