@@ -50,7 +50,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     node: triggerNode,
     parentMenuRef,
     submenuRef,
-    submenuType: 'dialog',
+    type: 'dialog',
     isDisabled: !isUnavailable
   }, submenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
@@ -123,10 +123,17 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
       overlay = ReactDOM.createPortal(tray, trayContainerRef.current);
     }
   } else {
+    let onDismissButtonPress = () => {
+      submenuTriggerState.close();
+      parentMenuRef.current?.focus();
+    };
+
     overlay = (
       <Popover
-        UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
         {...popoverProps}
+        UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
+        UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
+        onDismissButtonPress={onDismissButtonPress}
         onBlurWithin={onBlurWithin}
         container={popoverContainerRef.current}
         state={submenuTriggerState}

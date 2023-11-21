@@ -25,8 +25,8 @@ export interface AriaSubmenuTriggerProps {
   node: RSNode<unknown>,
   /** Whether the submenu trigger is disabled. */
   isDisabled?: boolean,
-  /** Type of the submenu being rendered. */
-  submenuType?: 'dialog' | 'menu',
+  /** The type of the contents that the submenu trigger opens. */
+  type?: 'dialog' | 'menu',
   /** Ref of the menu that contains the submenu trigger. */
   parentMenuRef: RefObject<HTMLElement>,
   /** Ref of the submenu opened by the submenu trigger. */
@@ -59,7 +59,7 @@ export interface SubmenuTriggerAria<T> {
  * @param ref - Ref to the submenu trigger element.
  */
 export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement>): SubmenuTriggerAria<T> {
-  let {parentMenuRef, submenuRef, submenuType = 'menu', isDisabled, node} = props;
+  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, node} = props;
   let submenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
@@ -114,7 +114,7 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
     id: overlayId,
     'aria-label': node.textValue,
     submenuLevel: state.submenuLevel,
-    ...(submenuType === 'menu' && {
+    ...(type === 'menu' && {
       onClose: state.closeAll,
       autoFocus: state.focusStrategy,
       onKeyDown: submenuKeyDown
@@ -126,7 +126,7 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
       case 'ArrowRight':
         if (!isDisabled) {
           if (direction === 'ltr') {
-            if (submenuType === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
+            if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
               submenuRef.current.focus();
             } else {
               onSubmenuOpen('first');
@@ -142,7 +142,7 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
       case 'ArrowLeft':
         if (!isDisabled) {
           if (direction === 'rtl') {
-            if (submenuType === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
+            if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
               submenuRef.current.focus();
             } else {
               onSubmenuOpen('first');
@@ -212,7 +212,7 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
     submenuTriggerProps: {
       id: submenuTriggerId,
       'aria-controls': state.isOpen ? overlayId : undefined,
-      'aria-haspopup': !isDisabled ? submenuType : undefined,
+      'aria-haspopup': !isDisabled ? type : undefined,
       'aria-expanded': state.isOpen ? 'true' : 'false',
       onPressStart,
       onPress,
