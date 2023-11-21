@@ -132,7 +132,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
 
   useLayoutEffect(onResize, [scale, onResize]);
 
-  let width = isQuiet ? null : menuWidth;
+  let width = isQuiet ? undefined : menuWidth;
   let style = {
     width: customMenuWidth ? dimensionValue(customMenuWidth) : width,
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
