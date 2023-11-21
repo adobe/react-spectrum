@@ -49,7 +49,7 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
 
   return (
     <>
-      <PressResponder 
+      <PressResponder
         onPress={() => {
           if (inputRef.current.value) {
             inputRef.current.value = '';
@@ -66,7 +66,7 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
         accept={acceptedFileTypes?.toString()}
         onChange={(e) => onSelect?.(e.target.files)}
         capture={defaultCamera}
-        multiple={allowsMultiple} 
+        multiple={allowsMultiple}
         // @ts-expect-error
         webkitdirectory={directory ? '' : undefined} />
     </>
