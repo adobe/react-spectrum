@@ -542,6 +542,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
 
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean, contain?: boolean) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
+  // eslint-disable-next-line no-restricted-globals
   const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined).activeElement as FocusableElement : null);
 
   // restoring scopes should all track if they are active regardless of contain, but contain already tracks it plus logic to contain the focus
