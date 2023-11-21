@@ -17,6 +17,7 @@ const path = require('path');
 const glob = require('fast-glob');
 const semver = require('semver');
 const spawn = require('cross-spawn');
+const spawnSync = require('child_process').spawnSync;
 
 build().catch(err => {
   console.error(err.stack);
@@ -30,6 +31,7 @@ async function build() {
   console.log(`Building into ${dir}...`);
 
   // Generate a package.json containing just what we need to build the website
+  let gitHash = spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout;
   let pkg = {
     name: 'rsp-website',
     version: '0.0.0',
@@ -67,7 +69,7 @@ async function build() {
     browserslist: packageJSON.browserslist,
     scripts: {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
-      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
+      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process GIT_HASH=${gitHash} parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package'
     },
     '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
