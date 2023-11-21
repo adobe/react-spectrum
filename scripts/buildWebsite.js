@@ -57,6 +57,7 @@ async function build() {
     ),
     dependencies: {
       '@adobe/react-spectrum': 'latest',
+      '@react-aria/example-theme': 'latest',
       'react-aria': 'latest',
       'react-stately': 'latest',
       'react-aria-components': 'latest',

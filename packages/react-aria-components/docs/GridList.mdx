@@ -51,22 +51,22 @@ import {GridList, GridListItem, Button} from 'react-aria-components';
 
 <GridList aria-label="Favorite pokemon" selectionMode="multiple">
   <GridListItem textValue="Charizard">
-    <MyCheckbox />
+    <MyCheckbox slot="selection" />
     Charizard
     <Button aria-label="Info">ⓘ</Button>
   </GridListItem>
   <GridListItem textValue="Blastoise">
-    <MyCheckbox />
+    <MyCheckbox slot="selection" />
     Blastoise
     <Button aria-label="Info">ⓘ</Button>
   </GridListItem>
   <GridListItem textValue="Venusaur">
-    <MyCheckbox />
+    <MyCheckbox slot="selection" />
     Venusaur
     <Button aria-label="Info">ⓘ</Button>
   </GridListItem>
   <GridListItem textValue="Pikachu">
-    <MyCheckbox />
+    <MyCheckbox slot="selection" />
     Pikachu
     <Button aria-label="Info">ⓘ</Button>
   </GridListItem>
@@ -298,7 +298,7 @@ If you will use a GridList in multiple places in your app, you can wrap all of t
 This example wraps `GridList` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. The `GridListItem` component is also wrapped to include a custom [checkbox](Checkbox.html) component automatically when the item is multi-selectable, and a drag handle when [drag and drop](#drag-and-drop) is enabled.
 
 ```tsx example export=true
-import type {GridListProps, GridListItemProps} from 'react-aria-components';
+import type {GridListProps, GridListItemProps, CheckboxProps} from 'react-aria-components';
 import {Button, Checkbox} from 'react-aria-components';
 
 function MyGridList<T extends object>({children, ...props}: GridListProps<T>) {
@@ -316,17 +316,17 @@ function MyItem({children, ...props}: GridListItemProps) {
       {({selectionMode, selectionBehavior, allowsDragging}) => <>
         {/* Add elements for drag and drop and selection. */}
         {allowsDragging && <Button slot="drag">≡</Button>}
-        {selectionMode === 'multiple' && selectionBehavior === 'toggle' && <MyCheckbox />}
+        {selectionMode === 'multiple' && selectionBehavior === 'toggle' && <MyCheckbox slot="selection" />}
         {children}
       </>}
     </GridListItem>
   );
 }
 
-function MyCheckbox() {
+function MyCheckbox({children, ...props}: CheckboxProps) {
   return (
-    <Checkbox slot="selection">
-      {({isIndeterminate}) => (
+    <Checkbox {...props}>
+      {({isIndeterminate}) => <>
         <div className="checkbox">
           <svg viewBox="0 0 18 18" aria-hidden="true">
             {isIndeterminate
@@ -335,7 +335,8 @@ function MyCheckbox() {
             }
           </svg>
         </div>
-      )}
+        {children}
+      </>}
     </Checkbox>
   );
 }

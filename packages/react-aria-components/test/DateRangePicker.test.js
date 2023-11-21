@@ -279,4 +279,19 @@ describe('DateRangePicker', () => {
     await user.click(selected.nextSibling.children[1]);
     expect(dialog).toBeInTheDocument();
   });
+
+  it('should disable button and date input when DatePicker is disabled', () => {
+    let {getByRole} = render(<TestDateRangePicker isDisabled />);
+
+    let button = getByRole('button');
+    expect(button).toBeDisabled();
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('aria-disabled', 'true');
+
+    let spinbuttons = within(group).getAllByRole('spinbutton');
+    for (let spinbutton of spinbuttons) {
+      expect(spinbutton).toHaveAttribute('aria-disabled', 'true');
+    }
+  });
 });
