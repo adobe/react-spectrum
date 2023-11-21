@@ -89,7 +89,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     targetRef: triggerRef,
     overlayRef: popoverRef,
     isOpen: state.isOpen,
-    onClose: !(isNonModal || !state.isOpen) ? state.close : null
+    onClose: isNonModal ? state.close : null
   });
 
   usePreventScroll({
