@@ -70,6 +70,7 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
   display: flex;
   flex-direction: column;
   gap: 8px;
+  color: var(--text-color);
 }
 
 .react-aria-Radio {
@@ -319,9 +320,11 @@ import {Form, FieldError, Button} from 'react-aria-components';
   }
 }
 
-.react-aria-FieldError {
-  font-size: 12px;
-  color: var(--invalid-color);
+.react-aria-RadioGroup {
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
 }
 ```
 

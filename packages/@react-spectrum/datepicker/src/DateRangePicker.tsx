@@ -44,7 +44,6 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
   let {
     isQuiet,
     isDisabled,
-    isReadOnly,
     autoFocus,
     placeholderValue,
     maxVisibleMonths = 1,
@@ -170,8 +169,7 @@ function DateRangePicker<T extends DateValue>(props: SpectrumDateRangePickerProp
             {...mergeProps(buttonProps, focusPropsButton)}
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
-            validationState={validationState}
-            isDisabled={isDisabled || isReadOnly}>
+            validationState={validationState}>
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>
