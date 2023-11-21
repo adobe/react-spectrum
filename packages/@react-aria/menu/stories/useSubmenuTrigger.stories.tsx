@@ -106,10 +106,11 @@ interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef'> {
   children: ReactNode,
   state: OverlayTriggerState,
   container?: Element,
-  disableFocusManagement?: boolean
+  disableFocusManagement?: boolean,
+  onDismissButtonPress?: () => void
 }
 
-function Popover({children, state, container, disableFocusManagement, ...props}: PopoverProps) {
+function Popover({children, state, container, disableFocusManagement, onDismissButtonPress, ...props}: PopoverProps) {
   let popoverRef = React.useRef(null);
   let {popoverProps, underlayProps} = usePopover({
     ...props,
@@ -133,9 +134,9 @@ function Popover({children, state, container, disableFocusManagement, ...props}:
           background: 'lightgray',
           border: '1px solid gray'
         }}>
-        <DismissButton onDismiss={state.close} />
+        <DismissButton onDismiss={onDismissButtonPress} />
         {children}
-        <DismissButton onDismiss={state.close} />
+        <DismissButton onDismiss={onDismissButtonPress} />
       </div>
     </Overlay>
   );
@@ -323,15 +324,21 @@ function SubmenuTrigger(props) {
   let [menuTrigger, menu] = React.Children.toArray(children);
   let triggerNode = menuTreeState.collection.getItem(targetKey);
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
-  let {submenuTriggerProps, submenuProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
+  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
     submenuRef: menuRef
   }, submenuTriggerState, triggerRef);
 
+  let onDismissButtonPress = () => {
+    submenuTriggerState.close();
+    parentMenuRef.current?.focus();
+  };
+
   let overlay = (
     <Popover
-      {...mergeProps(popoverProps, overlayProps)}
+      {...popoverProps}
+      onDismissButtonPress={onDismissButtonPress}
       container={popoverContainerRef?.current}
       offset={-5}
       containerPadding={0}
