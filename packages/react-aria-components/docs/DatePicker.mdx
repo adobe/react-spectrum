@@ -77,25 +77,19 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-/* We only import styles up to one page away, we don't follow those pages dependencies, so
-* import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx' layer(button);
 @import './Popover.mdx' layer(popover);
+@import './Dialog.mdx' layer(dialog);
 @import './DateField.mdx' layer(datefield);
 @import './Calendar.mdx' layer(calendar);
 @import './Form.mdx' layer(form);
 ```
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-DatePicker {
-  --field-border: var(--spectrum-global-color-gray-400);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-placeholder: var(--spectrum-global-color-gray-700);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
+  color: var(--text-color);
 
   .react-aria-Group {
     display: flex;
@@ -104,8 +98,10 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   }
 
   .react-aria-Button {
-    background: slateblue;
-    color: white;
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    border: 2px solid var(--field-background);
+    forced-color-adjust: none;
     border-radius: 4px;
     border: none;
     margin-left: -1.929rem;
@@ -114,10 +110,15 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
     padding: 0;
     font-size: 0.857rem;
     box-sizing: content-box;
-    border: 2px solid var(--page-background);
+
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
 
     &[data-focus-visible] {
-      box-shadow: 0 0 0 2px slateblue;
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: 2px;
     }
   }
 
@@ -126,43 +127,8 @@ import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, Calen
   }
 }
 
-@layer popover {
-  .react-aria-Popover {
-    max-width: unset;
-    padding: 1.25rem;
-  }
-}
-
-.react-aria-Calendar {
-  .react-aria-CalendarCell {
-    border-color: var(--page-background);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-DatePicker {
-    --text-color-invalid: LinkText;
-
-    .react-aria-Button {
-      forced-color-adjust: none;
-
-      --focus-ring-color: Highlight;
-      background: ButtonFace;
-      color: ButtonText;
-      border: 1px solid ButtonBorder;
-
-      &[data-focus-visible] {
-        border-color: Highlight;
-        box-shadow: 0 0 0 1px Highlight;
-      }
-    }
-  }
-
-  .react-aria-Calendar {
-    .react-aria-CalendarCell {
-      border-color: Canvas;
-    }
-  }
+.react-aria-Popover[data-trigger=DatePicker] {
+  max-width: unset;
 }
 ```
 
@@ -568,11 +534,11 @@ import {Form, FieldError} from 'react-aria-components';
       text-align: end;
     }
   }
-}
 
-.react-aria-FieldError {
-  font-size: 12px;
-  color: var(--text-color-invalid);
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
 }
   ```
 
@@ -981,6 +947,14 @@ The [Popover](Popover.html) component can be targeted with the `.react-aria-Popo
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
 
+Within a DatePicker, the popover will have the `data-trigger="DatePicker"` attribute, which can be used to define date picker-specific styles.
+
+```css render=false
+.react-aria-Popover[data-trigger=DatePicker] {
+  /* ... */
+}
+```
+
 ### Dialog
 
 A [Dialog](Dialog.html) can be targeted with the `.react-aria-Dialog` CSS selector, or by overriding with a custom `className`.
@@ -1079,15 +1053,9 @@ fieldset {
 }
 
 .invalid {
-  color: var(--spectrum-global-color-red-600);
+  color: var(--invalid-color);
   margin-top: 1em;
   display: block;
-}
-
-@media (forced-colors: active) {
-  .invalid {
-    color: LinkText;
-  }
 }
 ```
 
@@ -1204,7 +1172,7 @@ function DatePickerClearButton() {
   }
 
   &[data-focus-visible] {
-    outline: 2px solid slateblue;
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
   }
 

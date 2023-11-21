@@ -147,6 +147,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       'aria-labelledby': `${buttonId} ${labelledBy}`,
       'aria-describedby': ariaDescribedBy,
       'aria-expanded': state.isOpen,
+      isDisabled: props.isDisabled || props.isReadOnly,
       onPress: () => state.setOpen(true)
     },
     dialogProps: {

@@ -192,6 +192,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
           triggerRef: inputRef,
           placement: 'bottom start',
           isNonModal: true,
+          trigger: 'ComboBox',
           style: {'--trigger-width': menuWidth} as React.CSSProperties
         }],
         [ListBoxContext, {...listBoxProps, ref: listBoxRef}],

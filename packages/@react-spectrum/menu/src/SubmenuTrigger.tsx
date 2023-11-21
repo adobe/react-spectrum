@@ -44,7 +44,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, rootMenuTriggerState, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
-  let {submenuTriggerProps, submenuProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
+  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
     submenuRef: menuRef
@@ -58,7 +58,6 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   };
 
   let {direction} = useLocale();
-  // Delay for the parent menu in the tray to no longer be display: none so focus can properly be moved to the parent submenu trigger
   let mobileSubmenuKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
       case 'ArrowLeft':
@@ -83,9 +82,15 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
       overlay = ReactDOM.createPortal(menu, trayContainerRef.current);
     }
   } else {
+    let onDismissButtonPress = () => {
+      submenuTriggerState.close();
+      parentMenuRef.current?.focus();
+    };
+
     overlay = (
       <Popover
-        {...mergeProps(popoverProps, overlayProps)}
+        {...popoverProps}
+        onDismissButtonPress={onDismissButtonPress}
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
         container={popoverContainerRef.current}
         offset={-10}

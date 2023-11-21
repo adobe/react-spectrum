@@ -815,9 +815,13 @@ describe('Submenu', function () {
 
       let menus = within(tray).getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(2);
+      let menuWrappers = tree.getAllByTestId('menu-wrapper');
       // All menus other than the latest sub menu should be in the tray but hidden from view
       // Visibility check no longer works after using className instead of inline styles, rely on Chromatic instead
-      expect(menus[1].parentElement).toHaveAttribute('aria-hidden', 'true');
+      expect(menuWrappers[0]).not.toHaveAttribute('aria-hidden', 'true');
+      expect(menuWrappers[1]).toHaveAttribute('aria-hidden', 'true');
+      expect(menuWrappers[1]).toContainElement(menus[1]);
+
       let submenu1 = menus[0];
       expect(document.activeElement).toBe(submenu1);
       expect(submenu1).toHaveAttribute('aria-label', submenuTrigger1.textContent);
@@ -835,8 +839,13 @@ describe('Submenu', function () {
 
       menus = within(tray).getAllByRole('menu', {hidden: true});
       expect(menus).toHaveLength(3);
-      expect(menus[1].parentElement).toHaveAttribute('aria-hidden', 'true');
-      expect(menus[2].parentElement).toHaveAttribute('aria-hidden', 'true');
+      menuWrappers = tree.getAllByTestId('menu-wrapper');
+      expect(menuWrappers[0]).not.toHaveAttribute('aria-hidden', 'true');
+      expect(menuWrappers[1]).toHaveAttribute('aria-hidden', 'true');
+      expect(menuWrappers[1]).toContainElement(menus[1]);
+      expect(menuWrappers[2]).toHaveAttribute('aria-hidden', 'true');
+      expect(menuWrappers[2]).toContainElement(menus[2]);
+
       let submenu2 = menus[0];
       expect(document.activeElement).toBe(submenu2);
       expect(submenu2).toHaveAttribute('aria-label', submenuTrigger2.textContent);

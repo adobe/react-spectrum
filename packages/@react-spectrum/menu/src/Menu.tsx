@@ -20,8 +20,8 @@ import intlMessages from '../intl/*.json';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
 import {MenuStateContext, useMenuContext, useMenuStateContext} from './context';
-import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/utils';
-import React, {ReactElement, useRef, useState} from 'react';
+import {mergeProps, useSlotId, useSyncRef} from '@react-aria/utils';
+import React, {ReactElement, useEffect, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -47,9 +47,11 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   let [leftOffset, setLeftOffset] = useState({left: 0});
-  useLayoutEffect(() => {
-    let {left} = popoverContainerRef.current.getBoundingClientRect();
-    setLeftOffset({left: -1 * left});
+  useEffect(() => {
+    if (popoverContainerRef.current) {
+      let {left} = popoverContainerRef.current.getBoundingClientRect();
+      setLeftOffset({left: -1 * left});
+    }
   }, []);
 
   let menuLevel = contextProps.submenuLevel ?? -1;
@@ -103,8 +105,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
             })}
           </div>
         </TrayHeaderWrapper>
-        {/* Make the portal container for submenus wide enough so that the submenu items can render as wide as they need to be */}
-        <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} />
+        {rootMenuTriggerState?.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} /> }
       </FocusScope>
     </MenuStateContext.Provider>
   );
@@ -122,37 +123,39 @@ export function TrayHeaderWrapper(props) {
   let {direction} = useLocale();
 
   return (
-    <div style={{display: 'flex', overflow: 'hidden', height: !hasOpenSubmenu ? '100%' : undefined}} role="presentation" onKeyDown={wrapperKeyDown}>
+    <>
       <div
         role={headingId ? 'dialog' : undefined}
         aria-labelledby={headingId}
         aria-hidden={isMobile && hasOpenSubmenu}
+        data-testid="menu-wrapper"
         className={
           classNames(
             styles,
             'spectrum-Menu-wrapper',
             {
-              'is-mobile': isMobile,
-              'is-expanded': hasOpenSubmenu,
-              'spectrum-Submenu-trayWrapper': isSubmenu
+              'spectrum-Menu-wrapper--isMobile': isMobile,
+              'is-expanded': hasOpenSubmenu
             }
           )
         }>
-        {isMobile && isSubmenu && !hasOpenSubmenu && (
-          <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
-            <ActionButton
-              aria-label={backButtonLabel}
-              isQuiet
-              onPress={onBackButtonPress}>
-              {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
-              {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
-            </ActionButton>
-            <h1 id={headingId} className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h1>
-          </div>
-        )}
-        {children}
+        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper')} onKeyDown={wrapperKeyDown}>
+          {isMobile && isSubmenu && !hasOpenSubmenu && (
+            <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
+              <ActionButton
+                aria-label={backButtonLabel}
+                isQuiet
+                onPress={onBackButtonPress}>
+                {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
+                {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
+              </ActionButton>
+              <h1 id={headingId} className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h1>
+            </div>
+          )}
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

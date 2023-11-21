@@ -243,7 +243,15 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Menu-wrapper {
-  &.is-mobile {
+  overflow: auto;
+
+  .spectrum-Submenu-wrapper {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  &.spectrum-Menu-wrapper--isMobile {
     width: 100%;
     border: none;
     background-color: unset;
@@ -255,25 +263,19 @@ governing permissions and limitations under the License.
       border: 0;
     }
 
-    &:not(.is-expanded).spectrum-Submenu-trayWrapper {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-    }
-
     .spectrum-Submenu-headingWrapper {
       display: flex;
       margin: 4px 4px 0px 4px;
-    }
 
-    .spectrum-Submenu-heading {
-      display: flex;
-      margin-top: 7px;
-      margin-bottom: 0px;
-      margin-inline-start: 4px;
-      font-weight: var(--spectrum-selectlist-heading-text-font-weight);
-      font-size: var(--spectrum-dialog-title-text-size);
-      line-height: var(--spectrum-dialog-title-text-line-height);
+      .spectrum-Submenu-heading {
+        display: flex;
+        margin-top: 7px;
+        margin-bottom: 0px;
+        margin-inline-start: 4px;
+        font-weight: var(--spectrum-selectlist-heading-text-font-weight);
+        font-size: var(--spectrum-dialog-title-text-size);
+        line-height: var(--spectrum-dialog-title-text-line-height);
+      }
     }
   }
 }

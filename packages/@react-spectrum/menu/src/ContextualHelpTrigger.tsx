@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
+import {classNames, SlotProvider, unwrapDOMRef, useIsMobileDevice} from '@react-spectrum/utils';
 import {FocusScope} from '@react-aria/focus';
 import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps, Key} from '@react-types/shared';
-import {mergeProps} from '@react-aria/utils';
 import {Popover} from '@react-spectrum/overlays';
 import React, {ReactElement, useRef} from 'react';
 import ReactDOM from 'react-dom';
@@ -46,18 +45,33 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let {popoverContainerRef, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
-  let {submenuTriggerProps, popoverProps, overlayProps} = UNSTABLE_useSubmenuTrigger({
+  let submenuRef = unwrapDOMRef(popoverRef);
+  let {submenuTriggerProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
     node: triggerNode,
     parentMenuRef,
-    submenuRef: popoverRef,
-    submenuType: 'dialog',
+    submenuRef,
+    type: 'dialog',
     isDisabled: !isUnavailable
   }, submenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
   let slots = {};
   if (isUnavailable) {
     slots = {
-      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog', classNames(styles, !isMobile ? 'spectrum-Menu-subdialog' : ''))},
+      dialog: {
+        UNSAFE_className: classNames(
+          helpStyles,
+          'react-spectrum-ContextualHelp-dialog',
+          {
+            'react-spectrum-ContextualHelp-dialog--isMobile': isMobile
+          },
+          classNames(
+            styles,
+            {
+              'spectrum-Menu-subdialog': !isMobile
+            }
+          )
+        )
+      },
       content: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-content']},
       footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
     };
@@ -109,10 +123,17 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
       overlay = ReactDOM.createPortal(tray, trayContainerRef.current);
     }
   } else {
+    let onDismissButtonPress = () => {
+      submenuTriggerState.close();
+      parentMenuRef.current?.focus();
+    };
+
     overlay = (
       <Popover
+        {...popoverProps}
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
-        {...mergeProps(popoverProps, overlayProps)}
+        UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
+        onDismissButtonPress={onDismissButtonPress}
         onBlurWithin={onBlurWithin}
         container={popoverContainerRef.current}
         state={submenuTriggerState}

@@ -52,7 +52,7 @@ let complex = [
     {textValue: 'Baseline section', isSection: true, children: [
       {name: 'Baseline', children: [
         {name: 'Use default'},
-        {name: 'Superscript'},
+        {name: 'Superscript very very very very very very very very v very very very very very long'},
         {name: 'Subscript'}
       ]}
     ]}

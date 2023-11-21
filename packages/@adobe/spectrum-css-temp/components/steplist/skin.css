@@ -11,116 +11,222 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Steplist {
+  /* Copied mostly from spectrum-css/vars/.../steplist.
+     However, that didn't have all the variables we needed, so I've added the remaining set here.
+   */
+  --spectrum-steplist-complete-segment-color: var(--spectrum-global-color-gray-400);
+  --spectrum-steplist-complete-label-text-color: var(--spectrum-global-color-gray-700);
+  --spectrum-steplist-complete-marker-text-color: var(--spectrum-global-color-gray-50);
+  --spectrum-steplist-complete-marker-color: var(--spectrum-global-color-gray-600);
+  --spectrum-steplist-complete-marker-color-hover: var(--spectrum-global-color-gray-700);
+
+  --spectrum-steplist-current-label-text-color: var(--spectrum-global-color-gray-800);
+  --spectrum-steplist-current-marker-text-color: var(--spectrum-global-color-gray-50);
+  --spectrum-steplist-current-marker-color: var(--spectrum-global-color-gray-800);
+
+  --spectrum-steplist-incomplete-segment-color: var(--spectrum-global-color-gray-400);
+  --spectrum-steplist-incomplete-label-text-color: var(--spectrum-global-color-gray-600);
+  --spectrum-steplist-incomplete-marker-color: var(--spectrum-global-color-gray-400);
+  --spectrum-steplist-incomplete-marker-text-color: var(--spectrum-global-color-gray-500);
+
+  --spectrum-steplist-emphasized-current-label-text-color: var(--spectrum-accent-color-900);
+  --spectrum-steplist-emphasized-current-marker-color: var(--spectrum-accent-color-900);
+
+  --spectrum-steplist-disabled-complete-marker-color: var(--spectrum-global-color-gray-400);
+  --spectrum-steplist-disabled-complete-marker-text-color: var(--spectrum-global-color-gray-50);
+  --spectrum-steplist-disabled-complete-segment-color: var(--spectrum-global-color-gray-400);
+  --spectrum-steplist-disabled-complete-label-text-color: var(--spectrum-global-color-gray-500);
+  --spectrum-steplist-disabled-incomplete-marker-color: var(--spectrum-global-color-gray-300);
+  --spectrum-steplist-disabled-incomplete-marker-text-color: var(--spectrum-global-color-gray-400);
+  --spectrum-steplist-disabled-incomplete-segment-color: var(--spectrum-global-color-gray-400);
+  --spectrum-steplist-disabled-incomplete-label-text-color: var(--spectrum-global-color-gray-400);
+
   /* Default Label Style is 'incomplete' */
   .spectrum-Steplist-label {
-    color: var(--spectrum-steplist-default-color);
+    color: var(--spectrum-steplist-incomplete-label-text-color);
   }
 
   /* Default Marker Style is 'incomplete' */
   .spectrum-Steplist-marker {
-    border-color: var(--spectrum-steplist-border-color);
-    color: var(--spectrum-steplist-default-color);
+    border-color: var(--spectrum-steplist-incomplete-marker-color);
+    color: var(--spectrum-steplist-incomplete-marker-text-color);
   }
 
   /* Default Line Style is 'incomplete' */
   .spectrum-Steplist-segment {
     .spectrum-Steplist-chevron {
-      color: var(--spectrum-steplist-border-color);
+      color: var(--spectrum-steplist-incomplete-segment-color);
+    }
+    svg line {
+      stroke: var(--spectrum-steplist-incomplete-segment-color);
     }
   }
 
   .spectrum-Steplist-item {
     .spectrum-Steplist-link {
+      &.is-disabled {
+        .spectrum-Steplist-label {
+          color: var(--spectrum-steplist-disabled-incomplete-label-text-color);
+        }
+
+        .spectrum-Steplist-marker {
+          border-color: var(--spectrum-steplist-disabled-incomplete-marker-color);
+          color: var(--spectrum-steplist-disabled-incomplete-marker-text-color);
+        }
+
+        .spectrum-Steplist-segment {
+          .spectrum-Steplist-chevron {
+            color: var(--spectrum-steplist-disabled-incomplete-segment-color);
+          }
+          svg line {
+            stroke: var(--spectrum-steplist-disabled-incomplete-segment-color);
+          }
+        }
+      }
+
       /* Step Completed */
       &.is-completed {
+        .spectrum-Steplist-label {
+          color: var(--spectrum-steplist-complete-label-text-color);
+        }
+
         .spectrum-Steplist-marker {
-          background-color: var(--spectrum-steplist-default-color)
+          background-color: var(--spectrum-steplist-complete-marker-color);
+          border-color: var(--spectrum-steplist-complete-marker-color);
+          color: var(--spectrum-steplist-complete-marker-text-color);
+        }
+
+        .spectrum-Steplist-segment {
+          .spectrum-Steplist-chevron {
+            color: var(--spectrum-steplist-complete-segment-color);
+          }
+          svg line {
+            stroke: var(--spectrum-steplist-complete-segment-color);
+          }
+        }
+
+        &.is-hovered {
+          .spectrum-Steplist-marker {
+            background-color: var(--spectrum-steplist-complete-marker-color-hover);
+            border-color: var(--spectrum-steplist-complete-marker-color-hover);
+          }
+        }
+
+        &.is-disabled {
+          .spectrum-Steplist-label {
+            color: var(--spectrum-steplist-disabled-complete-label-text-color);
+          }
+
+          .spectrum-Steplist-marker {
+            background-color: var(--spectrum-steplist-disabled-complete-marker-color);
+            border-color: var(--spectrum-steplist-disabled-complete-marker-color);
+            color: var(--spectrum-steplist-disabled-complete-marker-text-color);
+          }
+
+          .spectrum-Steplist-segment {
+            .spectrum-Steplist-chevron {
+              color: var(--spectrum-steplist-disabled-complete-segment-color);
+            }
+            svg line {
+              stroke: var(--spectrum-steplist-disabled-complete-segment-color);
+            }
+          }
         }
       }
 
       /* Step Selected aka Current */
       &.is-selected {
         .spectrum-Steplist-label {
-          color: var(--spectrum-steplist-current-color)
+          color: var(--spectrum-steplist-current-label-text-color);
         }
+
         .spectrum-Steplist-marker {
-          background-color: var(--spectrum-steplist-current-color)
+          background-color: var(--spectrum-steplist-current-marker-color);
+          border-color: var(--spectrum-steplist-current-marker-color);
+          color: var(--spectrum-steplist-current-marker-text-color);
+        }
+
+        .spectrum-Steplist-segment {
+          .spectrum-Steplist-chevron {
+            color: var(--spectrum-steplist-complete-segment-color);
+          }
+          svg line {
+            stroke: var(--spectrum-steplist-complete-segment-color);
+          }
         }
       }
 
-      &.is-completed,
-      &.is-selected {
-        .spectrum-Steplist-marker {
-          color: var(--spectrum-global-color-gray-50);
-        }
-      }
-
-      /* Steplist emphasized*/
-      &.is-emphasized {
-        .spectrum-Steplist-label {
-          color: var(--spectrum-steplist-emphasized-color)
-        }
-        .spectrum-Steplist-marker {
-          background-color: var(--spectrum-steplist-emphasized-color)
-        }
-      }
       &.focus-ring {
-        outline: none;
-
         .spectrum-Steplist-marker {
-          outline: solid 2px var(--spectrum-steplist-emphasized-color);
+          outline: solid 2px var(--spectrum-high-contrast-focus-ring-color, var(--spectrum-alias-focus-ring-color));
           outline-offset: 2px;
-          z-index: 999;
-        }
-      }
-
-      &.is-disabled {
-        .spectrum-Steplist-label {
-         
-          color: var(--spectrum-alias-text-color-disabled);
-        }
-        .spectrum-Steplist-marker {
-          border-color: var(--spectrum-steplist-disabled-border-color);
-          color: var(--spectrum-alias-text-color-disabled);
-        }
-        &.is-completed {
-          .spectrum-Steplist-marker {
-            background-color: var(--spectrum-steplist-disabled-marker-color);
-            color: var(--spectrum-global-color-gray-50);
-          }
-        }
-      }
-    }
-  }
-
-  /* Interactivity Styles */
-  &.spectrum-Steplist--interactive {
-    .spectrum-Steplist-link {
-      &.is-hovered {
-        &.is-completed:not(.is-disabled) {
-          .spectrum-Steplist-label {
-            color: var(--spectrum-steplist-current-color)
-          }
-          .spectrum-Steplist-marker {
-            background-color: var(--spectrum-steplist-current-color);
-            color: var(--spectrum-global-color-gray-50);
-          }
-        }
-      }
-      &:not(.is-selected):not([aria-disabled]) {
-        cursor: pointer;
-      }
-      /* Steplist emphasized*/
-      &.is-emphasized {
-        &.is-completed {
-          .spectrum-Steplist-label {
-            color: var(--spectrum-global-color-blue-400)
-          }
-          .spectrum-Steplist-marker {
-            background-color: var(--spectrum-global-color-blue-400)
-          }
         }
       }
     }
   }
 }
+
+/* Visually hides the number in the marker. */
+.spectrum-Steplist--medium {
+  .spectrum-Steplist-item {
+    .spectrum-Steplist-link:not(.is-completed):not(.is-selected) {
+      .spectrum-Steplist-marker {
+        color: transparent;
+      }
+
+      &.is-disabled .spectrum-Steplist-marker {
+        color: transparent;
+      }
+    }
+  }
+}
+
+.spectrum-Steplist--emphasized {
+  --spectrum-steplist-current-label-text-color: var(--spectrum-steplist-emphasized-current-label-text-color);
+  --spectrum-steplist-current-marker-color: var(--spectrum-steplist-emphasized-current-marker-color);
+}
+
+
+@media (forced-colors: active) {
+  .spectrum-Steplist {
+    forced-color-adjust: none;
+    --spectrum-steplist-complete-segment-color: CanvasText;
+    --spectrum-steplist-complete-label-text-color: LinkText;
+    --spectrum-steplist-complete-marker-text-color: Canvas;
+    --spectrum-steplist-complete-marker-color: LinkText;
+    --spectrum-steplist-complete-marker-color-hover: LinkText;
+
+    --spectrum-steplist-current-label-text-color: Highlight;
+    --spectrum-steplist-current-marker-text-color: Canvas;
+    --spectrum-steplist-current-marker-color: Highlight;
+
+    --spectrum-steplist-incomplete-segment-color: CanvasText;
+    --spectrum-steplist-incomplete-label-text-color: ButtonText;
+    --spectrum-steplist-incomplete-marker-color: ButtonText;
+    --spectrum-steplist-incomplete-marker-text-color: ButtonText;
+
+    --spectrum-steplist-emphasized-current-label-text-color: CanvasText;
+    --spectrum-steplist-emphasized-current-marker-color: ButtonText;
+
+    --spectrum-steplist-disabled-complete-marker-color: GrayText;
+    --spectrum-steplist-disabled-complete-marker-text-color: Canvas;
+    --spectrum-steplist-disabled-complete-segment-color: CanvasText;
+    --spectrum-steplist-disabled-complete-label-text-color: GrayText;
+    --spectrum-steplist-disabled-incomplete-marker-color: GrayText;
+    --spectrum-steplist-disabled-incomplete-marker-text-color: ButtonText;
+    --spectrum-steplist-disabled-incomplete-segment-color: CanvasText;
+    --spectrum-steplist-disabled-incomplete-label-text-color: GrayText;
+
+    --spectrum-high-contrast-focus-ring-color: ButtonText;
+
+    .spectrum-Steplist-item {
+      .spectrum-Steplist-link {
+        .spectrum-Steplist-marker {
+          border-style: solid;
+          border-width: var(--spectrum-steplist-marker-border-width);
+        }
+      }
+    }
+  }
+}
+
