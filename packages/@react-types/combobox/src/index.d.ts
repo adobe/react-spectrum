@@ -98,7 +98,7 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
    * @default true
    */
   shouldFlip?: boolean,
-  /** Width of the menu. */
+  /** Width of the menu. By default, matches width of the trigger. */
   menuWidth?: DimensionValue,
   /**
    * Whether the text or key of the selected item is submitted as part of an HTML form.
