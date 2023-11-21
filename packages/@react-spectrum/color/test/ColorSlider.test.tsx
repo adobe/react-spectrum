@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {ColorSlider} from '../';
 import {parseColor} from '@react-stately/color';
 import React from 'react';
@@ -19,8 +19,10 @@ import userEvent from '@testing-library/user-event';
 describe('ColorSlider', () => {
   let onChangeSpy = jest.fn();
   let onChangeEndSpy = jest.fn();
+  let user;
 
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     // @ts-ignore
     jest.spyOn(window.HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({top: 0, left: 0, width: 100, height: 100}));
     jest.useFakeTimers();
@@ -222,7 +224,7 @@ describe('ColorSlider', () => {
     });
   });
 
-  it('the slider is focusable', () => {
+  it('the slider is focusable', async () => {
     let {getAllByRole, getByRole} = render(<div>
       <button>A</button>
       <ColorSlider defaultValue="#000000" channel="red" />
@@ -231,17 +233,17 @@ describe('ColorSlider', () => {
     let slider = getByRole('slider');
     let [buttonA, buttonB] = getAllByRole('button');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(slider);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(slider);
   });
 
-  it('disabled', () => {
+  it('disabled', async () => {
     let {getAllByRole, getByRole} = render(<div>
       <button>A</button>
       <ColorSlider defaultValue="#000000" channel="red" isDisabled />
@@ -251,12 +253,42 @@ describe('ColorSlider', () => {
     let [buttonA, buttonB] = getAllByRole('button');
     expect(slider).toHaveAttribute('disabled');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttonA);
+  });
+
+  it('supports form name', () => {
+    let {getByRole} = render(<ColorSlider defaultValue="#7f0000" channel="red" name="redColor" />);
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('name', 'redColor');
+    expect(input).toHaveValue('127');
+  });
+
+  it('supports form reset', async () => {
+    function Test() {
+      let [value, setValue] = React.useState(parseColor('#7f0000'));
+      return (
+        <form>
+          <ColorSlider channel="red" value={value} onChange={setValue} />
+          <input type="reset" data-testid="reset" />
+        </form>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let input = getByRole('slider');
+
+    expect(input).toHaveValue('127');
+    fireEvent.change(input, {target: {value: '255'}});
+    expect(input).toHaveValue('255');
+
+    let button = getByTestId('reset');
+    await user.click(button);
+    expect(input).toHaveValue('127');
   });
 
   describe('keyboard events', () => {

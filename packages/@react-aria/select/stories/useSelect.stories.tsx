@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {Select} from './example';
@@ -26,11 +25,12 @@ for (let i = 0; i < 50; i++) {
   lotsOfItems.push({name: 'Item ' + i});
 }
 
-const Template = () => () => (
+const Template = () => (
   <Select label="Example" items={lotsOfItems}>
     {(item: any) => <Item key={item.name}>{item.name}</Item>}
   </Select>
 );
 
-export const ScrollTesting = Template().bind({});
-ScrollTesting.args = {};
+export const ScrollTesting = {
+  render: Template
+};

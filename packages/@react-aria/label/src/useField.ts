@@ -14,7 +14,7 @@ import {DOMAttributes, HelpTextProps, Validation} from '@react-types/shared';
 import {LabelAria, LabelAriaProps, useLabel} from './useLabel';
 import {mergeProps, useSlotId} from '@react-aria/utils';
 
-export interface AriaFieldProps extends LabelAriaProps, HelpTextProps, Omit<Validation, 'isRequired'> {}
+export interface AriaFieldProps extends LabelAriaProps, HelpTextProps, Omit<Validation<any>, 'isRequired'> {}
 
 export interface FieldAria extends LabelAria {
   /** Props for the description element, if any. */
@@ -29,11 +29,11 @@ export interface FieldAria extends LabelAria {
  * @param props - Props for the Field.
  */
 export function useField(props: AriaFieldProps): FieldAria {
-  let {description, errorMessage, validationState} = props;
+  let {description, errorMessage, isInvalid, validationState} = props;
   let {labelProps, fieldProps} = useLabel(props);
 
-  let descriptionId = useSlotId([Boolean(description), Boolean(errorMessage), validationState]);
-  let errorMessageId = useSlotId([Boolean(description), Boolean(errorMessage), validationState]);
+  let descriptionId = useSlotId([Boolean(description), Boolean(errorMessage), isInvalid, validationState]);
+  let errorMessageId = useSlotId([Boolean(description), Boolean(errorMessage), isInvalid, validationState]);
 
   fieldProps = mergeProps(fieldProps, {
     'aria-describedby': [

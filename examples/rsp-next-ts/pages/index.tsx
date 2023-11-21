@@ -69,6 +69,8 @@ import {
   View,
   Well,
   DialogContainer,
+  Avatar,
+  TagGroup
 } from "@adobe/react-spectrum";
 import Edit from "@spectrum-icons/workflow/Edit";
 import NotFound from "@spectrum-icons/illustrations/NotFound";
@@ -81,6 +83,22 @@ import {
 } from "@react-spectrum/color";
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
+import {InlineAlert} from '@react-spectrum/inlinealert'
+
+let nestedItems = [
+  {foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', baz: 'Lvl 1 Baz 1', childRows: [
+    {foo: 'Lvl 2 Foo 1', bar: 'Lvl 2 Bar 1', baz: 'Lvl 2 Baz 1', childRows: [
+      {foo: 'Lvl 3 Foo 1', bar: 'Lvl 3 Bar 1', baz: 'Lvl 3 Baz 1'}
+    ]},
+    {foo: 'Lvl 2 Foo 2', bar: 'Lvl 2 Bar 2', baz: 'Lvl 2 Baz 2'}
+  ]}
+];
+
+let columns = [
+  {name: 'Foo', key: 'foo'},
+  {name: 'Bar', key: 'bar'},
+  {name: 'Baz', key: 'baz'}
+];
 
 export default function Home() {
   let [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -139,7 +157,7 @@ export default function Home() {
             <ReorderableListView />
             <MenuTrigger>
               <ActionButton>Menu</ActionButton>
-              <Menu onAction={(key) => ToastQueue.positive(key)}>
+              <Menu onAction={(key) => ToastQueue.positive(key.toString())}>
                 <Item key="cut">Cut</Item>
                 <Item key="copy">Copy</Item>
                 <Item key="paste">Paste</Item>
@@ -149,6 +167,7 @@ export default function Home() {
             <MenuTrigger>
               <ActionButton>Menu Trigger</ActionButton>
               <Menu>
+                <Item href="/foo">Link to /foo</Item>
                 <Item>Cut</Item>
                 <Item>Copy</Item>
                 <Item>Paste</Item>
@@ -184,6 +203,20 @@ export default function Home() {
                   <Cell>Text Document</Cell>
                   <Cell>1/18/2016</Cell>
                 </Row>
+              </TableBody>
+            </TableView>
+            <TableView aria-label="example table with nested rows" UNSTABLE_allowsExpandableRows width={500} height={200} >
+              <TableHeader columns={columns}>
+                {column => <Column>{column.name}</Column>}
+              </TableHeader>
+              <TableBody items={nestedItems}>
+                {(item: any) =>
+                  (<Row key={item.foo} UNSTABLE_childItems={item.childRows}>
+                    {(key) => {
+                      return <Cell>{item[key.toString()]}</Cell>;
+                    }}
+                  </Row>)
+                }
               </TableBody>
             </TableView>
           </Section>
@@ -236,15 +269,13 @@ export default function Home() {
               <Item key="march 2020 assets">March 2020 Assets</Item>
             </Breadcrumbs>
 
-            <Link>
-              <a
-                href="https://www.imdb.com/title/tt6348138/"
-                target="_blank"
-                rel="noreferrer"
-              >
-                The missing link.
-              </a>
+            <Link
+              href="https://www.imdb.com/title/tt6348138/"
+              target="_blank"
+              rel="noreferrer">
+              The missing link.
             </Link>
+            <Link href="/foo">Foo</Link>
 
             <Tabs aria-label="History of Ancient Rome">
               <TabList>
@@ -381,9 +412,22 @@ export default function Home() {
             <ProgressCircle aria-label="Loading…" isIndeterminate />
 
             <StatusLight variant="positive">Ready</StatusLight>
+
+            <TagGroup aria-label="Static TagGroup items example">
+              <Item>News</Item>
+              <Item>Travel</Item>
+              <Item>Gaming</Item>
+              <Item>Shopping</Item>
+            </TagGroup>
+            <InlineAlert>
+              <Heading>Payment Information</Heading>
+              <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
+            </InlineAlert>
           </Section>
 
           <Section title="Content">
+            <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+
             <Content>Content is king</Content>
 
             <Flex direction="column" gap="size-125">

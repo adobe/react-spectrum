@@ -33,7 +33,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Textfield {
-  @inherit: %spectrum-FocusRing;
+  composes: spectrum-FocusRing;
 
   display: inline-flex;
   position: relative;
@@ -48,7 +48,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Textfield--quiet {
-  @inherit: %spectrum-FocusRing--quiet;
+  composes: spectrum-FocusRing--quiet;
 }
 
 .spectrum-Textfield-input {
@@ -74,9 +74,9 @@ governing permissions and limitations under the License.
   overflow: visible;
 
   /* Change the input font styles in all browsers */
-  @extend %i18nFontFamily;
+  composes: i18nFontFamily;
   font-size: var(--spectrum-textfield-text-size);
-  line-height: var(--spectrum-textfield-text-line-height);
+  line-height: var(--spectrum-textfield-height);
   text-overflow: ellipsis;
 
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out,
@@ -206,6 +206,10 @@ governing permissions and limitations under the License.
   flex: 1 1 auto;
   min-height: 0;
 
+  .spectrum-Textfield-input {
+    line-height: var(--spectrum-textfield-text-line-height);
+  }
+
   &.spectrum-Textfield--quiet {
     /* quiet textfields grow based on text content, up to the height of the container. */
     /* but we need to keep help text next to input */
@@ -259,7 +263,7 @@ governing permissions and limitations under the License.
 }
 
 /* styles the textfield properly if the left icon is provided */
-.spectrum-Textfield-inputIcon {
+.spectrum-Textfield-input.spectrum-Textfield-inputIcon {
   /* Use padding instead of text-indent so long strings don't overlap the icon */
   /* These values have real names in a spectrum-css update, when we update, use those. */
   padding-inline-start: calc(

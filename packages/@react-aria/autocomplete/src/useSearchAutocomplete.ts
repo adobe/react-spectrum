@@ -14,13 +14,13 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSearchAutocompleteProps} from '@react-types/autocomplete';
 import {ComboBoxState} from '@react-stately/combobox';
-import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, KeyboardDelegate, ValidationResult} from '@react-types/shared';
 import {InputHTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useComboBox} from '@react-aria/combobox';
 import {useSearchField} from '@react-aria/searchfield';
 
-export interface SearchAutocompleteAria<T> {
+export interface SearchAutocompleteAria<T> extends ValidationResult {
   /** Props for the label element. */
   labelProps: DOMAttributes,
   /** Props for the search input element. */
@@ -28,7 +28,11 @@ export interface SearchAutocompleteAria<T> {
   /** Props for the list box, to be passed to [useListBox](useListBox.html). */
   listBoxProps: AriaListBoxOptions<T>,
   /** Props for the search input's clear button. */
-  clearButtonProps: AriaButtonProps
+  clearButtonProps: AriaButtonProps,
+  /** Props for the search autocomplete description element, if any. */
+  descriptionProps: DOMAttributes,
+  /** Props for the search autocomplete error message element, if any. */
+  errorMessageProps: DOMAttributes
 }
 
 export interface AriaSearchAutocompleteOptions<T> extends AriaSearchAutocompleteProps<T> {
@@ -55,11 +59,18 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     listBoxRef,
     keyboardDelegate,
     onSubmit = () => {},
-    onClear
+    onClear,
+    onKeyDown,
+    onKeyUp,
+    isInvalid,
+    validationState,
+    validationBehavior,
+    isRequired,
+    ...otherProps
   } = props;
 
   let {inputProps, clearButtonProps} = useSearchField({
-    ...props,
+    ...otherProps,
     value: state.inputValue,
     onChange: state.setInputValue,
     autoComplete: 'off',
@@ -74,22 +85,32 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
       if (state.selectionManager.focusedKey === null) {
         onSubmit(value, null);
       }
-    } 
+    },
+    onKeyDown,
+    onKeyUp
   }, {
     value: state.inputValue,
     setValue: state.setInputValue
   }, inputRef);
-  
 
-  let {listBoxProps, labelProps, inputProps: comboBoxInputProps} = useComboBox(
+
+  let {listBoxProps, labelProps, inputProps: comboBoxInputProps, ...validation} = useComboBox(
     {
-      ...props,
+      ...otherProps,
       keyboardDelegate,
       popoverRef,
       listBoxRef,
       inputRef,
       onFocus: undefined,
-      onBlur: undefined
+      onFocusChange: undefined,
+      onBlur: undefined,
+      onKeyDown: undefined,
+      onKeyUp: undefined,
+      isInvalid,
+      validationState,
+      validationBehavior,
+      isRequired,
+      validate: undefined
     },
     state
   );
@@ -98,6 +119,7 @@ export function useSearchAutocomplete<T>(props: AriaSearchAutocompleteOptions<T>
     labelProps,
     inputProps: mergeProps(inputProps, comboBoxInputProps),
     listBoxProps,
-    clearButtonProps
+    clearButtonProps,
+    ...validation
   };
 }

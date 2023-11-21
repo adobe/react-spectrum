@@ -49,7 +49,7 @@ export default {
 } as ComponentMeta<typeof Card>;
 
 export const CardGrid: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args, layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridDecorator
@@ -90,7 +90,7 @@ let CardGridDecorator = (props) => {
 
 
 export const CardWaterfall: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args, layout: 'waterfall'},
   decorators: [(Story, context) => (
     <CardWaterfallDecorator
@@ -133,7 +133,7 @@ const CardWaterfallDecorator = (props) => {
 };
 
 export const CardGallery: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args, layout: 'gallery'},
   decorators: [(Story, context) => (
     <CardGalleryDecorator
@@ -174,7 +174,7 @@ const CardGalleryDecorator = (props) => {
 };
 
 export const CardFloat: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args},
   decorators: [(Story, context) => (
     <CardFloatDecorator
@@ -212,7 +212,7 @@ const CardFloatDecorator = (props) => {
 };
 
 export const CardGridNoDescription: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args, layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridNoDescriptionDecorator
@@ -252,7 +252,7 @@ const CardGridNoDescriptionDecorator = (props) => {
 };
 
 export const CardGridIllustrations: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args, layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridIllustrationsDecorator
@@ -280,7 +280,7 @@ const CardGridIllustrationsDecorator = (props) => {
           let url = getImage(index);
           return (
             <Story {...args} key={`${index}${url}`}>
-              <File slot="illustration" />
+              <File slot="illustration" alt="test illustration" />
               <Heading>Title {index}</Heading>
               <Text slot="detail">PNG</Text>
             </Story>
@@ -292,7 +292,7 @@ const CardGridIllustrationsDecorator = (props) => {
 };
 
 export const CardGridLongTitle: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args, layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridLongTitleDecorator
@@ -333,7 +333,7 @@ const CardGridLongTitleDecorator = (props) => {
 };
 
 export const CardGridTallRows: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args, layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridTallRowsDecorator
@@ -374,7 +374,7 @@ const CardGridTallRowsDecorator = (props) => {
 };
 
 export const CardGridMessyText: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args, layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridMessyTextDecorator
@@ -414,7 +414,7 @@ const CardGridMessyTextDecorator = (props) => {
 };
 
 export const CardWaterfallMessyText: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args, layout: 'waterfall'},
   decorators: [(Story, context) => (
     <CardWaterfallMessyTextDecorator
@@ -457,7 +457,7 @@ const CardWaterfallMessyTextDecorator = (props) => {
 };
 
 export const CardGalleryMessyText: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Quiet.args, layout: 'gallery'},
   decorators: [(Story, context) => (
     <CardGalleryMessyTextDecorator

@@ -22,7 +22,7 @@ import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef} from 
 import {Underlay} from './Underlay';
 import {useViewportSize} from '@react-aria/utils';
 
-interface ModalProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef'> {
+interface ModalProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
   children: ReactNode,
   state: OverlayTriggerState,
   type?: 'modal' | 'fullscreen' | 'fullscreenTakeover'

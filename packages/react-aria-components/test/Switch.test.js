@@ -10,12 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Switch, SwitchContext} from '../';
 import userEvent from '@testing-library/user-event';
 
 describe('Switch', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   it('should render a s with default class', () => {
     let {getByRole} = render(<Switch>Test</Switch>);
     let s = getByRole('switch').closest('label');
@@ -28,10 +32,27 @@ describe('Switch', () => {
     expect(s).toHaveAttribute('class', 'test');
   });
 
-  it('should support DOM props', () => {
-    let {getByRole} =  render(<Switch data-foo="bar">Test</Switch>);
+  it('should support data- props on label element', () => {
+    let {getByRole} = render(<Switch data-foo="bar" >Test</Switch>);
     let s = getByRole('switch');
-    expect(s).toHaveAttribute('data-foo', 'bar');
+    let label = s.closest('label');
+    expect(label).toHaveAttribute('data-foo', 'bar');
+    expect(s).not.toHaveAttribute('data-foo');
+  });
+
+  it('should support render props', async () => {
+    let {getByRole} = render(
+      <Switch>{({isSelected}) => isSelected ? 'On' : 'Off'}</Switch>
+    );
+    let s = getByRole('switch');
+    let label = s.closest('label');
+    expect(s).not.toBeChecked();
+    expect(label).toHaveTextContent('Off');
+
+    await user.click(s);
+
+    expect(s).toBeChecked();
+    expect(label).toHaveTextContent('On');
   });
 
   it('should support slot', () => {
@@ -46,36 +67,43 @@ describe('Switch', () => {
     expect(s).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should support hover', () => {
-    let {getByRole} = render(<Switch className={({isHovered}) => isHovered ? 'hover' : ''}>Test</Switch>);
+  it('should support hover', async () => {
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getByRole} = render(<Switch className={({isHovered}) => isHovered ? 'hover' : ''} onHoverStart={hoverStartSpy} onHoverChange={hoverChangeSpy} onHoverEnd={hoverEndSpy}>Test</Switch>);
     let s = getByRole('switch').closest('label');
 
     expect(s).not.toHaveAttribute('data-hovered');
     expect(s).not.toHaveClass('hover');
 
-    userEvent.hover(s);
+    await user.hover(s);
     expect(s).toHaveAttribute('data-hovered', 'true');
     expect(s).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
-    userEvent.unhover(s);
+    await user.unhover(s);
     expect(s).not.toHaveAttribute('data-hovered');
     expect(s).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = render(<Switch className={({isFocusVisible}) => isFocusVisible ? 'focus' : ''}>Test</Switch>);
     let s = getByRole('switch');
     let label = s.closest('label');
-    
+
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(s);
     expect(label).toHaveAttribute('data-focus-visible', 'true');
     expect(label).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
   });
@@ -106,7 +134,7 @@ describe('Switch', () => {
     expect(label).toHaveClass('disabled');
   });
 
-  it('should support selected state', () => {
+  it('should support selected state', async () => {
     let onChange = jest.fn();
     let {getByRole} = render(<Switch onChange={onChange} className={({isSelected}) => isSelected ? 'selected' : ''}>Test</Switch>);
     let s = getByRole('switch');
@@ -116,13 +144,13 @@ describe('Switch', () => {
     expect(label).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
 
-    userEvent.click(s);
+    await user.click(s);
     expect(onChange).toHaveBeenLastCalledWith(true);
     expect(s).toBeChecked();
     expect(label).toHaveAttribute('data-selected', 'true');
     expect(label).toHaveClass('selected');
 
-    userEvent.click(s);
+    await user.click(s);
     expect(onChange).toHaveBeenLastCalledWith(false);
     expect(s).not.toBeChecked();
     expect(label).not.toHaveAttribute('data-selected');
@@ -137,5 +165,14 @@ describe('Switch', () => {
     expect(s).toHaveAttribute('aria-readonly', 'true');
     expect(label).toHaveAttribute('data-readonly');
     expect(label).toHaveClass('readonly');
+  });
+
+  it('should render data- attributes only on the outer element', () => {
+    let {getAllByTestId} = render(
+      <Switch data-testid="switch-test">Test</Switch>
+    );
+    let outerEl = getAllByTestId('switch-test');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-Switch');
   });
 });

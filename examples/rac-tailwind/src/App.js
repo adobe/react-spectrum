@@ -1,16 +1,20 @@
-import { ArrowUpIcon, BellIcon, CheckCircleIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import { ArrowUpIcon, BellIcon, CheckCircleIcon, CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { ChatBubbleOvalLeftEllipsisIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { useMemo, useState } from 'react';
-import { Button, Calendar, CalendarCell, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Item, Label, ListBox, Menu, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, TabPanels, Tabs, Text } from 'react-aria-components';
+import { Button, Cell, Collection, Column, ComboBox, DateInput, DatePicker, DateSegment, Dialog, DialogTrigger, Group, Header, Heading, Input, Label, ListBox, ListBoxItem, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, OverlayArrow, Popover, ProgressBar, Radio, RadioGroup, Row, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, Text } from 'react-aria-components';
 import { useAsyncList } from 'react-stately';
 import { people } from './people.js';
 import stocks from './stocks.json';
+import {AnimatedCalendar} from './AnimatedCalendar';
 
 export function App() {
   return (
     <>
-      <h1 className="text-center text-4xl font-serif font-semibold mb-8">React Aria Components 🤝 Tailwind CSS</h1>
-      <div className="grid gap-4 grid-cols-[repeat(auto-fit,theme(width.96))] auto-rows-fr justify-center">
+      <h1 className="text-center text-4xl font-serif font-semibold mb-3">React Aria Components 🤝 Tailwind CSS</h1>
+      <p className="text-center font-serif mb-8">
+        <a className="hover:text-blue-100 transition underline" target="_blank" href="https://github.com/adobe/react-spectrum/blob/main/examples/rac-tailwind/src/App.js">Example code</a> • <a className="hover:text-blue-100 transition underline" target="_blank" href="https://react-spectrum.adobe.com/react-aria/react-aria-components.html">Docs</a>
+      </p>
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-[repeat(auto-fit,theme(width.96))] auto-rows-fr justify-center">
         <MenuExample />
         <SelectExample />
         <DatePickerExample />
@@ -37,13 +41,13 @@ function MenuExample() {
         <OverlayButton aria-label="Menu">☰</OverlayButton>
         <Popover className="p-1 w-56 overflow-auto rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 data-[entering]:animate-in data-[entering]:fade-in data-[entering]:zoom-in-95 data-[exiting]:animate-out data-[exiting]:fade-out data-[exiting]:zoom-out-95 fill-mode-forwards origin-top-left">
           <Menu className="outline-none">
-            <MenuItem id="new">New…</MenuItem>
-            <MenuItem id="open">Open…</MenuItem>
+            <MyMenuItem id="new">New…</MyMenuItem>
+            <MyMenuItem id="open">Open…</MyMenuItem>
             <Separator className="border-b border-b-gray-300 mx-3 my-1" />
-            <MenuItem id="save">Save</MenuItem>
-            <MenuItem id="save-as">Save as…</MenuItem>
+            <MyMenuItem id="save">Save</MyMenuItem>
+            <MyMenuItem id="save-as">Save as…</MyMenuItem>
             <Separator className="border-b border-b-gray-300 mx-3 my-1" />
-            <MenuItem id="print">Print…</MenuItem>
+            <MyMenuItem id="print">Print…</MyMenuItem>
           </Menu>
         </Popover>
       </MenuTrigger>
@@ -51,15 +55,15 @@ function MenuExample() {
   );
 }
 
-function MenuItem(props) {
-  return <Item {...props} className={({ isFocused }) => `
-    group flex w-full items-center rounded-md px-3 py-2 text-sm outline-none cursor-default
+function MyMenuItem(props) {
+  return <MenuItem {...props} className={({ isFocused }) => `
+    group flex w-full items-center rounded-md px-3 py-2 sm:text-sm outline-none cursor-default
     ${isFocused ? 'bg-violet-500 text-white' : 'text-gray-900'}
   `} />;
 }
 
 function OverlayButton(props) {
-  return <Button {...props} className="inline-flex items-center justify-center rounded-md bg-black bg-opacity-20 bg-clip-padding border border-white/20 px-3.5 py-2 text-sm font-medium text-white data-[hovered]:bg-opacity-30 data-[pressed]:bg-opacity-40 transition-colors cursor-default outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-white/75" />;
+  return <Button {...props} className="inline-flex items-center justify-center rounded-md bg-black bg-opacity-20 bg-clip-padding border border-white/20 px-3.5 py-2 sm:text-sm font-medium text-white data-[hovered]:bg-opacity-30 data-[pressed]:bg-opacity-40 transition-colors cursor-default outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-white/75" />;
 }
 
 function SelectExample() {
@@ -67,19 +71,19 @@ function SelectExample() {
     <div className="bg-gradient-to-r from-amber-500 to-rose-500 p-8 rounded-lg flex justify-center">
       <Select className="flex flex-col gap-1 w-5/6">
         <Label className="text-sm">Favorite Animal</Label>
-        <Button className="flex relative w-full cursor-default rounded-lg bg-white bg-white bg-opacity-90 data-[pressed]:bg-opacity-100 transition py-2 pl-3 pr-2 text-left shadow-md text-gray-700 focus:outline-none data-[focus-visible]:border-indigo-500 data-[focus-visible]:ring-2 data-[focus-visible]:ring-black text-sm">
+        <Button className="flex relative w-full cursor-default rounded-lg bg-white bg-white bg-opacity-90 data-[pressed]:bg-opacity-100 transition py-2 pl-3 pr-2 text-left shadow-md text-gray-700 focus:outline-none data-[focus-visible]:border-indigo-500 data-[focus-visible]:ring-2 data-[focus-visible]:ring-black sm:text-sm">
           <SelectValue className="flex-1 truncate data-[placeholder]:italic" />
           <ChevronUpDownIcon
             className="h-5 w-5 text-gray-500"
             aria-hidden="true" />
         </Button>
-        <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 text-sm data-[entering]:animate-in data-[entering]:fade-in data-[exiting]:animate-out data-[exiting]:fade-out fill-mode-forwards">
+        <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 sm:text-sm data-[entering]:animate-in data-[entering]:fade-in data-[exiting]:animate-out data-[exiting]:fade-out fill-mode-forwards">
           <ListBox className="outline-none p-1 [--focus-bg:theme(colors.rose.600)]">
-            <ListBoxItem>Aardvark</ListBoxItem>
-            <ListBoxItem>Cat</ListBoxItem>
-            <ListBoxItem>Dog</ListBoxItem>
-            <ListBoxItem>Kangaroo</ListBoxItem>
-            <ListBoxItem>Panda</ListBoxItem>
+            <MyListBoxItem>Aardvark</MyListBoxItem>
+            <MyListBoxItem>Cat</MyListBoxItem>
+            <MyListBoxItem>Dog</MyListBoxItem>
+            <MyListBoxItem>Kangaroo</MyListBoxItem>
+            <MyListBoxItem>Panda</MyListBoxItem>
           </ListBox>
         </Popover>
       </Select>
@@ -87,9 +91,9 @@ function SelectExample() {
   );
 }
 
-function ListBoxItem(props) {
+function MyListBoxItem(props) {
   return (
-    <Item
+    <ListBoxItem
       {...props}
       textValue={props.children}
       className={({isFocused}) => `
@@ -106,7 +110,7 @@ function ListBoxItem(props) {
           }
         </>
       )}
-    </Item>
+    </ListBoxItem>
   );
 }
 
@@ -116,7 +120,7 @@ function ComboBoxExample() {
       <ComboBox className="flex flex-col gap-1 w-5/6">
         <Label className="text-sm text-black">Favorite Animal</Label>
         <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition text-left shadow-md [&:has([data-focus-visible])]:ring-2 [&:has([data-focus-visible])]:ring-black sm:text-sm">
-          <Input className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 bg-transparent outline-none" />
+          <Input className="w-full border-none py-2 pl-3 pr-10 sm:text-sm leading-5 text-gray-900 bg-transparent outline-none" />
           <Button className="absolute inset-y-0 right-0 flex items-center px-2 cursor-default transition border-l border-l-sky-200 data-[pressed]:bg-sky-100">
             <ChevronUpDownIcon
               className="h-5 w-5 text-gray-500"
@@ -125,11 +129,11 @@ function ComboBoxExample() {
         </div>
         <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black ring-opacity-5 sm:text-sm data-[exiting]:animate-out data-[exiting]:fade-out fill-mode-forwards duration-100 ease-in">
           <ListBox className="outline-none p-1 [--focus-bg:theme(colors.sky.600)]">
-            <ListBoxItem>Aardvark</ListBoxItem>
-            <ListBoxItem>Cat</ListBoxItem>
-            <ListBoxItem>Dog</ListBoxItem>
-            <ListBoxItem>Kangaroo</ListBoxItem>
-            <ListBoxItem>Panda</ListBoxItem>
+            <MyListBoxItem>Aardvark</MyListBoxItem>
+            <MyListBoxItem>Cat</MyListBoxItem>
+            <MyListBoxItem>Dog</MyListBoxItem>
+            <MyListBoxItem>Kangaroo</MyListBoxItem>
+            <MyListBoxItem>Panda</MyListBoxItem>
           </ListBox>
         </Popover>
       </ComboBox>
@@ -146,29 +150,27 @@ function TabsExample() {
           <MyTab id="releases">Releases</MyTab>
           <MyTab id="docs">Docs</MyTab>
         </TabList>
-        <TabPanels>
-          <MyTabPanel id="blog">
-            <div className="flex flex-col">
-              <Article title="Taming the dragon: Accessible drag and drop" summary="We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input." />
-              <Article title="Date and Time Pickers for All" summary="We are very excited to announce the release of the React Aria and React Spectrum date and time picker components! This includes a full suite of fully featured components and hooks including calendars, date and time fields, and range pickers, all with a focus on internationalization and accessibility. It also includes @internationalized/date, a brand new framework-agnostic library for locale-aware date and time manipulation." />
-              <Article title="Creating an accessible autocomplete experience" summary="After many months of research, development, and testing, we’re excited to announce that the React Spectrum ComboBox component and React Aria useComboBox hook are now available! In this post we'll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox." />
-            </div>
-          </MyTabPanel>
-          <MyTabPanel id="releases">
-            <div className="flex flex-col">
-              <Article title="February 23, 2023 Release" summary="In this release, we have added support for Node ESM to all of our packages. We have also been busy at work on our pre-releases and improving our focus management in collections." />
-              <Article title="December 16, 2022 Release" summary="It is our last release of the year and we are happy to share a new TableView feature, now in beta. Using the new allowsResizing prop on a Column in TableView gives users the ability to dynamically adjust the width of that column. TableView column resizing supports mouse, keyboard, touch, and screen reader interactions to allow all users to take advantage of a customizable table." />
-              <Article title="November 15, 2022 Release" summary="We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions. There is also an update to all Spectrum colors, aligning React Spectrum with the latest Spectrum designs. Finally, React Aria includes a new simplified API for overlays such as popovers and modals." />
-            </div>
-          </MyTabPanel>
-          <MyTabPanel id="docs">
-            <div className="flex flex-col">
-              <Article title="React Stately" summary="A library of React Hooks that provides cross-platform state management for your design system." />
-              <Article title="React Aria" summary="A library of React Hooks that provides accessible UI primitives for your design system." />
-              <Article title="React Spectrum" summary="A React implementation of Spectrum, Adobe’s design system." />
-            </div>
-          </MyTabPanel>
-        </TabPanels>
+        <MyTabPanel id="blog">
+          <div className="flex flex-col">
+            <Article title="Taming the dragon: Accessible drag and drop" summary="We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions, with support for both mouse and touch, as well as full parity for keyboard and screen reader input." />
+            <Article title="Date and Time Pickers for All" summary="We are very excited to announce the release of the React Aria and React Spectrum date and time picker components! This includes a full suite of fully featured components and hooks including calendars, date and time fields, and range pickers, all with a focus on internationalization and accessibility. It also includes @internationalized/date, a brand new framework-agnostic library for locale-aware date and time manipulation." />
+            <Article title="Creating an accessible autocomplete experience" summary="After many months of research, development, and testing, we’re excited to announce that the React Spectrum ComboBox component and React Aria useComboBox hook are now available! In this post we'll take a deeper look into some of the challenges we faced when building an accessible and mobile friendly ComboBox." />
+          </div>
+        </MyTabPanel>
+        <MyTabPanel id="releases">
+          <div className="flex flex-col">
+            <Article title="February 23, 2023 Release" summary="In this release, we have added support for Node ESM to all of our packages. We have also been busy at work on our pre-releases and improving our focus management in collections." />
+            <Article title="December 16, 2022 Release" summary="It is our last release of the year and we are happy to share a new TableView feature, now in beta. Using the new allowsResizing prop on a Column in TableView gives users the ability to dynamically adjust the width of that column. TableView column resizing supports mouse, keyboard, touch, and screen reader interactions to allow all users to take advantage of a customizable table." />
+            <Article title="November 15, 2022 Release" summary="We are excited to announce the release of drag and drop support in React Aria and React Spectrum! This includes a suite of hooks for implementing drag and drop interactions. There is also an update to all Spectrum colors, aligning React Spectrum with the latest Spectrum designs. Finally, React Aria includes a new simplified API for overlays such as popovers and modals." />
+          </div>
+        </MyTabPanel>
+        <MyTabPanel id="docs">
+          <div className="flex flex-col">
+            <Article title="React Stately" summary="A library of React Hooks that provides cross-platform state management for your design system." />
+            <Article title="React Aria" summary="A library of React Hooks that provides accessible UI primitives for your design system." />
+            <Article title="React Spectrum" summary="A React implementation of Spectrum, Adobe’s design system." />
+          </div>
+        </MyTabPanel>
       </Tabs>
     </div>
   );
@@ -179,9 +181,9 @@ function MyTab(props) {
     <Tab
       {...props}
       className={({isSelected, isFocusVisible}) => `
-        w-full rounded-full py-2.5 text-sm font-medium leading-5 text-center cursor-default ring-black outline-none transition-colors
+        w-full rounded-full py-2.5 sm:text-sm font-medium leading-5 text-center cursor-default ring-black outline-none transition-colors
         ${isFocusVisible ? 'ring-2' : ''}
-        ${isSelected ? 'text-emerald-700 bg-white shadow' : 'text-lime-50 hover:bg-white/[0.12] hover:text-white'}
+        ${isSelected ? 'text-emerald-700 bg-white shadow' : 'text-lime-50 data-[hovered]:bg-white/[0.12] data-[hovered]:text-white data-[pressed]:bg-white/[0.12] data-[pressed]:text-white'}
       `} />
   );
 }
@@ -355,12 +357,12 @@ function SliderExample() {
   return (
     <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-8 rounded-lg flex items-center justify-center">
       <Slider defaultValue={30} className="w-5/6">
-        <div className="flex text-sm">
+        <div className="flex sm:text-sm">
           <Label className="flex-1">Opacity</Label>
           <SliderOutput />
         </div>
         <SliderTrack className="relative w-full h-7">
-          {(state) => <>
+          {({state}) => <>
             <div className="absolute h-2 top-[50%] transform translate-y-[-50%] w-full rounded-full bg-white bg-opacity-40" />
             <div className="absolute h-2 top-[50%] transform translate-y-[-50%] rounded-full bg-white" style={{width: state.getThumbPercent(0) * 100 + '%'}} />
             <SliderThumb className="h-7 w-7 top-[50%] rounded-full border border-purple-800/75 bg-white transition-colors data-[dragging]:bg-purple-100 outline-none data-[focus-visible]:ring-2 data-[focus-visible]:ring-black" />
@@ -395,7 +397,7 @@ function DatePickerExample() {
       <DatePicker className="flex flex-col gap-1 w-5/6">
         <Label className="text-sm">Date</Label>
         <Group className="flex rounded-lg bg-white/90 focus-within:bg-white [&:has([data-pressed])]:bg-white transition pl-3 text-left shadow-md text-gray-700 focus:outline-none data-[focus-visible]:[&:not(:has(button[data-focus-visible]))]:ring-2 data-[focus-visible]:ring-black">
-          <DateInput className="flex flex-1 py-2 text-sm input">
+          <DateInput className="flex flex-1 py-2 sm:text-sm input">
             {(segment) => <DateSegment segment={segment} className="px-0.5 box-content tabular-nums text-right outline-none rounded-sm focus:bg-violet-700 focus:text-white group caret-transparent data-[placeholder]:italic" />}
           </DateInput>
           <Button className="cursor-default outline-none px-2 transition border-l border-l-purple-200 rounded-r-lg data-[pressed]:bg-purple-100 data-[focus-visible]:ring-2 data-[focus-visible]:ring-black">
@@ -406,21 +408,7 @@ function DatePickerExample() {
         </Group>
         <MyPopover>
           <Dialog className="p-6 text-gray-600">
-            <Calendar>
-              <header className="flex items-center pb-4 px-1 font-serif w-full">
-                <Heading className="flex-1 font-semibold text-2xl ml-2" />
-                <Button slot="previous" className="w-9 h-9 ml-4 outline-none cursor-default rounded-full flex items-center justify-center data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[focus-visible]:ring data-[focus-visible]:ring-violet-600 data-[focus-visible]:ring-opacity-70 data-[focus-visible]:ring-offset-2"><ChevronLeftIcon className="h-6 w-6" /></Button>
-                <Button slot="next" className="w-9 h-9 outline-none cursor-default rounded-full flex items-center justify-center data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[focus-visible]:ring data-[focus-visible]:ring-violet-600 data-[focus-visible]:ring-opacity-70 data-[focus-visible]:ring-offset-2"><ChevronRightIcon className="h-6 w-6" /></Button>
-              </header>
-              <CalendarGrid className="border-spacing-1 border-separate">
-                <CalendarGridHeader>
-                  {day => <CalendarHeaderCell className="text-xs text-gray-500 font-semibold">{day}</CalendarHeaderCell>}
-                </CalendarGridHeader>
-                <CalendarGridBody>
-                  {date => <CalendarCell date={date} className="w-9 h-9 outline-none cursor-default rounded-full text-sm flex items-center justify-center data-[outside-month]:text-gray-300 data-[hovered]:bg-gray-100 data-[pressed]:bg-gray-200 data-[selected]:data-[hovered]:bg-violet-700 data-[selected]:bg-violet-700 data-[selected]:text-white data-[focus-visible]:ring data-[focus-visible]:ring-violet-600 data-[focus-visible]:ring-opacity-70 data-[focus-visible]:ring-offset-2" />}
-                </CalendarGridBody>
-              </CalendarGrid>
-            </Calendar>
+            <AnimatedCalendar />
           </Dialog>
         </MyPopover>
       </DatePicker>
@@ -458,12 +446,12 @@ function ContactSection({title, children, items}) {
 
 function Contact({id, avatar, name, handle}) {
   return (
-    <Item id={id} textValue={name} className="group peer relative py-1 px-2 text-sm outline-none cursor-default grid grid-rows-2 grid-flow-col auto-cols-max gap-x-3 rounded aria-selected:bg-blue-500 text-slate-700 aria-selected:text-white aria-selected:[&:has(+[aria-selected=true])]:rounded-b-none aria-selected:peer-aria-selected:rounded-t-none data-[focus-visible]:ring-2 ring-offset-2 ring-blue-500 [&[aria-selected=false]:has(+[aria-selected=false])_.divider]:block [&[aria-selected=true]:has(+[aria-selected=true])_.divider]:block">
+    <ListBoxItem id={id} textValue={name} className="group peer relative py-1 px-2 text-sm outline-none cursor-default grid grid-rows-2 grid-flow-col auto-cols-max gap-x-3 rounded aria-selected:bg-blue-500 text-slate-700 aria-selected:text-white aria-selected:[&:has(+[aria-selected=true])]:rounded-b-none aria-selected:peer-aria-selected:rounded-t-none data-[focus-visible]:ring-2 ring-offset-2 ring-blue-500 [&[aria-selected=false]:has(+[aria-selected=false])_.divider]:block [&[aria-selected=true]:has(+[aria-selected=true])_.divider]:block">
       <img src={avatar} alt="" className="row-span-2 place-self-center h-8 w-8 rounded-full" />
       <Text slot="label" className="font-medium truncate">{name}</Text>
       <Text slot="description" className="truncate text-xs text-slate-600 group-aria-selected:text-white">{handle}</Text>
       <div className="divider hidden absolute left-12 right-2 bottom-0 h-px bg-gray-200 group-aria-selected:bg-blue-400" />
-    </Item>
+    </ListBoxItem>
   );
 }
 
@@ -485,10 +473,10 @@ function ImageGridExample() {
     <div className="bg-gradient-to-r from-sky-500 to-teal-500 p-8 rounded-lg flex justify-center">
       <ListBox aria-label="Images" items={list.items} selectionMode="single" selectionBehavior="replace" className="max-h-[280px] overflow-auto outline-none bg-white rounded-lg shadow p-2 grid grid-cols-3 gap-2">
         {item => (
-          <Item textValue={item.user.name} className="rounded outline-none group cursor-default">
+          <ListBoxItem textValue={item.user.name} className="rounded outline-none group cursor-default">
             <img src={item.urls.regular} alt={item.alt_description} className="w-full h-[80px] object-cover rounded group-aria-selected:ring group-aria-selected:ring-2 group-aria-selected:ring-offset-2 group-aria-selected:ring-sky-600" />
             <Text slot="label" className="text-[11px] text-gray-700 font-semibold overflow-hidden text-ellipsis whitespace-nowrap max-w-full block mt-1">{item.user.name}</Text>
-          </Item>
+          </ListBoxItem>
         )}
       </ListBox>
     </div>
@@ -510,7 +498,7 @@ function TableExample() {
   }, [sortDescriptor]);
 
   return (
-    <div className="bg-gradient-to-r from-indigo-500 to-violet-500 p-8 rounded-lg flex items-center justify-center col-span-2">
+    <div className="bg-gradient-to-r from-indigo-500 to-violet-500 p-8 rounded-lg flex items-center justify-center md:col-span-2">
       <div className="max-h-[280px] overflow-auto relative bg-white rounded-lg shadow text-gray-600">
         <Table aria-label="Stocks" selectionMode="single" selectionBehavior="replace" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor} className="border-separate border-spacing-0">
           <TableHeader>

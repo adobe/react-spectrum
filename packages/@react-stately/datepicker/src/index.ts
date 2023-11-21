@@ -18,4 +18,4 @@ export {useTimeFieldState} from './useTimeFieldState';
 export type {DateFieldStateOptions, DateFieldState, DateSegment, SegmentType} from './useDateFieldState';
 export type {DatePickerStateOptions, DatePickerState} from './useDatePickerState';
 export type {DateRangePickerStateOptions, DateRangePickerState} from './useDateRangePickerState';
-export type {TimeFieldStateOptions} from './useTimeFieldState';
+export type {TimeFieldStateOptions, TimeFieldState} from './useTimeFieldState';

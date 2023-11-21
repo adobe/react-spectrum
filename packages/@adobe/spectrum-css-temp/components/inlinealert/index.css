@@ -1,0 +1,128 @@
+/*
+Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  /* Font */
+  --spectrum-inlinealert-heading-font-weight: var(--spectrum-alias-heading-text-font-weight-regular);
+  --spectrum-inlinealert-heading-font-style: var(--spectrum-global-font-style-regular);
+  --spectrum-inlinealert-heading-font-size: var(--spectrum-alias-heading-xxs-text-size);
+  --spectrum-inlinealert-heading-line-height: var(--spectrum-alias-heading-text-line-height);
+
+  --spectrum-inlinealert-content-font-weight: var(--spectrum-alias-body-text-font-weight);
+  --spectrum-inlinealert-content-font-style: var(--spectrum-global-font-style-regular);
+  --spectrum-inlinealert-content-font-size: var(--spectrum-global-dimension-font-size-100);
+  --spectrum-inlinealert-content-line-height: var(--spectrum-alias-line-height-body);
+
+  /* Size */
+  --spectrum-inlinealert-border-width: var(--spectrum-alias-border-size-thick);
+  --spectrum-inlinealert-border-radius: var(--spectrum-border-radius);
+  --spectrum-inlinealert-icon-size: var(--spectrum-global-dimension-size-225);
+  --spectrum-inlinealert-min-inline-size: 240px;
+  --spectrum-inlinealert-heading-min-block-size: var(--spectrum-global-dimension-size-250);
+
+  /* Spacing */
+  --spectrum-inlinealert-spacing-edge-to-text: var(--spectrum-global-dimension-static-size-300);
+  --spectrum-inlinealert-spacing-heading-to-icon: var(--spectrum-global-dimension-static-size-300);
+  --spectrum-inlinealert-spacing-heading-content-button: var(--spectrum-global-dimension-static-size-200);
+
+  /* Color */
+  --spectrum-inlinealert-background-color: var(--spectrum-global-color-gray-50);
+  --spectrum-inlinealert-border-and-icon-color: var(--spectrum-gray-visual-color);
+  --spectrum-inlinealert-heading-color: var(--spectrum-alias-heading-text-color);
+  --spectrum-inlinealert-content-color: var(--spectrum-alias-text-color);
+  --spectrum-inlinealert-border-and-icon-color-info: var(--spectrum-informative-visual-color);
+  --spectrum-inlinealert-border-and-icon-color-positive: var(--spectrum-positive-visual-color);
+  --spectrum-inlinealert-border-and-icon-color-notice: var(--spectrum-notice-visual-color);
+  --spectrum-inlinealert-border-and-icon-color-negative: var(--spectrum-negative-visual-color);
+}
+
+.spectrum-InLineAlert {
+  composes: spectrum-FocusRing;
+  --spectrum-focus-ring-gap: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-focus-ring-border-size: var(--spectrum-inlinealert-border-width);
+  --spectrum-focus-ring-border-radius: var(--spectrum-inlinealert-border-radius);
+  --spectrum-focus-ring-size: var(--spectrum-button-primary-focus-ring-size-key-focus);
+
+  position: relative;
+
+  display: inline-block;
+  box-sizing: border-box;
+  min-inline-size: var(--spectrum-inlinealert-min-inline-size);
+
+  padding-block: var(--spectrum-inlinealert-spacing-edge-to-text);
+  padding-inline: var(--spectrum-inlinealert-spacing-edge-to-text);
+
+  border-block-width: var(--spectrum-inlinealert-border-width);
+  border-inline-width: var(--spectrum-inlinealert-border-width);
+  border-style: solid;
+  border-radius: var(--spectrum-inlinealert-border-radius);
+
+  outline: none;
+}
+
+.spectrum-InLineAlert .spectrum-InLineAlert-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto auto;
+  column-gap: var(--spectrum-inlinealert-spacing-heading-to-icon);
+  grid-template-areas:
+    "heading      icon   "
+    "content     content";
+  width: 100%;
+}
+
+.spectrum-InLineAlert.spectrum-InLineAlert--neutral .spectrum-InLineAlert-grid {
+  column-gap: 0;
+  grid-template-areas: "heading" "content";
+}
+
+.spectrum-InLineAlert-icon {
+  grid-area: icon;
+
+  inline-size: var(--spectrum-inlinealert-icon-size);
+  block-size: var(--spectrum-inlinealert-icon-size);
+}
+
+.spectrum-InLineAlert-heading {
+  display: block;
+  grid-area: heading;
+
+  font-weight: var(--spectrum-inlinealert-heading-font-weight);
+  font-style: var(--spectrum-inlinealert-heading-font-style);
+  font-size: var(--spectrum-inlinealert-heading-font-size);
+  line-height: var(--spectrum-inlinealert-heading-line-height);
+  text-transform: none;
+
+  min-block-size: var(--spectrum-inlinealert-heading-min-block-size);
+  margin-block-start: 0;
+  margin-block-end: 0;
+}
+
+.spectrum-InLineAlert-content {
+  display: block;
+  grid-area: content;
+
+  margin-block-start: var(--spectrum-inlinealert-spacing-heading-content-button);
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding: 0;
+
+  word-wrap: break-word;
+
+  font-weight: var(--spectrum-inlinealert-content-font-weight);
+  font-style: var(--spectrum-inlinealert-content-font-style);
+  font-size: var(--spectrum-inlinealert-content-font-size);
+  line-height: var(--spectrum-inlinealert-content-line-height);
+}

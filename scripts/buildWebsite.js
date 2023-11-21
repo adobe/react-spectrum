@@ -35,7 +35,8 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
-      'packages/*/*'
+      'packages/*/*',
+      'packages/react-aria-components'
     ],
     devDependencies: Object.fromEntries(
       Object.entries(packageJSON.devDependencies)
@@ -47,27 +48,35 @@ async function build() {
           name.startsWith('postcss') ||
           name.startsWith('@adobe') ||
           name === 'sharp' ||
-          name === 'recast'
+          name === 'recast' ||
+          name === 'framer-motion' ||
+          name === 'tailwindcss-animate' ||
+          name === 'tailwindcss' ||
+          name === 'autoprefixer'
         )
     ),
     dependencies: {
       '@adobe/react-spectrum': 'latest',
+      '@react-aria/example-theme': 'latest',
       'react-aria': 'latest',
-      'react-stately': 'latest'
+      'react-stately': 'latest',
+      'react-aria-components': 'latest',
+      'tailwindcss-react-aria-components': 'latest'
     },
     resolutions: packageJSON.resolutions,
     browserslist: packageJSON.browserslist,
     scripts: {
       // Add a public url if provided via arg (for verdaccio prod doc website build since we want a commit hash)
-      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
+      build: `DOCS_ENV=production PARCEL_WORKER_BACKEND=process parcel build 'docs/*/*/docs/*.mdx' 'docs/react-aria-components/docs/**/*.mdx' 'packages/dev/docs/pages/**/*.mdx' ${publicUrlFlag}`,
       postinstall: 'patch-package'
-    }
+    },
+    '@parcel/transformer-css': packageJSON['@parcel/transformer-css']
   };
 
   // Add dependencies on each published package to the package.json, and
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(__dirname, '..', 'packages');
-  let packages = glob.sync('*/*/package.json', {cwd: packagesDir});
+  let packages = glob.sync('*/*/package.json', {cwd: packagesDir}).concat('react-aria-components/package.json');
   for (let p of packages) {
     let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
     if (!json.private && json.name !== '@adobe/react-spectrum') {
@@ -110,6 +119,7 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
+  fs.copySync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
   let devPkg = JSON.parse(fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8'));
@@ -122,7 +132,7 @@ async function build() {
   }
 
   // Only copy babel and parcel patches over
-  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel'));
+  let patches = fs.readdirSync(path.join(__dirname, '..', 'patches')).filter(name => name.startsWith('@babel') || name.startsWith('@parcel') || name.startsWith('@spectrum-css') || name.startsWith('postcss'));
   for (let patch of patches) {
     fs.copySync(path.join(__dirname, '..', 'patches', patch), path.join(dir, 'patches', patch));
   }
@@ -136,6 +146,12 @@ async function build() {
       fs.copySync(path.join(dir, 'node_modules', p), path.join(dir, 'docs', p));
     }
   }
+
+  // Patch react-aria-components package.json for example CSS.
+  let p = path.join(dir, 'docs', 'react-aria-components', 'package.json');
+  let json = JSON.parse(fs.readFileSync(p));
+  json.sideEffects = ['*.css'];
+  fs.writeFileSync(p, JSON.stringify(json, false, 2));
 
   // TEMP HACK: Patch textfield css to workaround parcel bug
   fs.copySync(path.join(dir, 'node_modules', '@react-spectrum', 'label', 'dist', 'main.css'), path.join(dir, 'node_modules', '@react-spectrum', 'textfield', 'dist', 'label.css'));

@@ -16,7 +16,7 @@ governing permissions and limitations under the License.
   }
 
   &:focus {
-    &:focus-ring,
+    &:focus-visible,
     &.is-focused {
       background-color: var(--spectrum-miller-column-item-background-color-hover);
       &::before {

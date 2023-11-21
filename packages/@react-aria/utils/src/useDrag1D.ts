@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+ /* eslint-disable rulesdir/pure-render */
+
 import {getOffset} from './getOffset';
 import {Orientation} from '@react-types/shared';
 import React, {HTMLAttributes, MutableRefObject, useRef} from 'react';

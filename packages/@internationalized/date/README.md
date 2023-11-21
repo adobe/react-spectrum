@@ -9,7 +9,7 @@ The `@internationalized/date` package provides objects and functions for represe
 * **Manipulation** – Add and subtract durations, set and cycle fields, and more.
 * **Conversion** – Convert between calendar systems, time zones, string representations, and object types.
 * **Queries** – Compare dates and times for ordering or full/partial equality. Determine locale-specific metadata such as day of week, weekend/weekday, etc.
-* **Time zone aware** – The [ZonedDateTime](https://react-specrum.adobe.com/internationalized/date/ZonedDateTime.html) object supports time zone aware date and time manipulation.
+* **Time zone aware** – The [ZonedDateTime](https://react-spectrum.adobe.com/internationalized/date/ZonedDateTime.html) object supports time zone aware date and time manipulation.
 * **Predictable** – The API is designed to resolve ambiguity in all operations explicitly, including time zone conversions, arithmetic involving daylight saving time, locale-specific queries, and more.
 * **Small bundle size** – The entire library including all calendars and functions is 8 kB minified and compressed with Brotli.
 * **Tree shakeable** – Only include the functions and calendar systems you need. For example, if you only use the Gregorian calendar and builtin `CalendarDate` methods, it's just 2.8 kB.

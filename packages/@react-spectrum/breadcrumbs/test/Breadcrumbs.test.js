@@ -19,7 +19,7 @@ import {theme} from '@react-spectrum/theme-default';
 
 describe('Breadcrumbs', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
   beforeEach(() => {
     jest.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(function () {
@@ -31,7 +31,6 @@ describe('Breadcrumbs', function () {
     });
 
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => cb());
   });
 
   afterEach(() => {
@@ -410,5 +409,64 @@ describe('Breadcrumbs', function () {
     );
     let breadcrumbs = getByRole('navigation');
     expect(breadcrumbs).toHaveAttribute('data-testid', 'test');
+  });
+
+  it('should support links', function () {
+    let {getByRole, getAllByRole} = render(
+      <Provider theme={theme}>
+        <Breadcrumbs>
+          <Item href="https://example.com">Example.com</Item>
+          <Item href="https://example.com/foo">Foo</Item>
+          <Item href="https://example.com/foo/bar">Bar</Item>
+          <Item href="https://example.com/foo/bar/baz">Baz</Item>
+          <Item href="https://example.com/foo/bar/baz/qux">Qux</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let links = getAllByRole('link');
+    expect(links).toHaveLength(3);
+    expect(links[0]).toHaveAttribute('href', 'https://example.com/foo/bar');
+    expect(links[1]).toHaveAttribute('href', 'https://example.com/foo/bar/baz');
+    expect(links[2]).toHaveAttribute('href', 'https://example.com/foo/bar/baz/qux');
+
+    let menuButton = getByRole('button');
+    triggerPress(menuButton);
+    act(() => {jest.runAllTimers();});
+
+    let menu = getByRole('menu');
+    let items = within(menu).getAllByRole('menuitemradio');
+    expect(items).toHaveLength(5);
+    expect(items[0].tagName).toBe('A');
+    expect(items[0]).toHaveAttribute('href', 'https://example.com');
+  });
+
+  it('should support RouterProvider', () => {
+    let navigate = jest.fn();
+    let {getByRole, getAllByRole} = render(
+      <Provider theme={theme} router={{navigate}}>
+        <Breadcrumbs>
+          <Item href="/">Example.com</Item>
+          <Item href="/foo">Foo</Item>
+          <Item href="/foo/bar">Bar</Item>
+          <Item href="/foo/bar/baz">Baz</Item>
+          <Item href="/foo/bar/baz/qux">Qux</Item>
+        </Breadcrumbs>
+      </Provider>
+    );
+
+    let links = getAllByRole('link');
+    triggerPress(links[0]);
+    expect(navigate).toHaveBeenCalledWith('/foo/bar');
+    navigate.mockReset();
+
+    let menuButton = getByRole('button');
+    triggerPress(menuButton);
+    act(() => {jest.runAllTimers();});
+
+    let menu = getByRole('menu');
+    let items = within(menu).getAllByRole('menuitemradio');
+    triggerPress(items[1]);
+    expect(navigate).toHaveBeenCalledWith('/foo');
   });
 });

@@ -24,7 +24,7 @@ export function StateTable({properties, showOptional}) {
   }
 
   return (
-    <table className={`${tableStyles['spectrum-Table']} ${tableStyles['spectrum-Table--quiet']} ${styles.propTable}`}>
+    <table className={`${tableStyles['spectrum-Table']} ${styles.propTable}`}>
       <thead>
         <tr>
           <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Name</td>

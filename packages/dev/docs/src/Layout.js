@@ -37,7 +37,7 @@ import {ToC} from './ToC';
 import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
 import {VersionBadge} from './VersionBadge';
 
-const ENABLE_PAGE_TYPES = false;
+const ENABLE_PAGE_TYPES = true;
 const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
 const TLD = 'react-spectrum.adobe.com';
 const HERO = {
@@ -55,28 +55,28 @@ const mdxComponents = {
   ),
   h2: ({children, ...props}) => (
     <>
-      <h2 {...props} className={clsx(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+      <h2 {...props} className={clsx(typographyStyles['spectrum-Heading3'], docStyles['sectionHeader'], docStyles['docsHeader'])} data-hover={docStyles['is-hovered']}>
         {children}
         <span className={clsx(docStyles['headingAnchor'])}>
-          <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+          <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} data-hover={docStyles['is-hovered']} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
         </span>
       </h2>
       <Divider marginBottom="33px" />
     </>
   ),
   h3: ({children, ...props}) => (
-    <h3 {...props} className={clsx(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+    <h3 {...props} className={clsx(typographyStyles['spectrum-Heading4'], docStyles['sectionHeader'], docStyles['docsHeader'])} data-hover={docStyles['is-hovered']}>
       {children}
       <span className={docStyles['headingAnchor']}>
-        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} data-hover={docStyles['is-hovered']} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
       </span>
     </h3>
   ),
   h4: ({children, ...props}) => (
-    <h4 {...props} className={clsx(typographyStyles['spectrum-Heading5'], docStyles['sectionHeader'], docStyles['docsHeader'])}>
+    <h4 {...props} className={clsx(typographyStyles['spectrum-Heading5'], docStyles['sectionHeader'], docStyles['docsHeader'])} data-hover={docStyles['is-hovered']}>
       {children}
       <span className={docStyles['headingAnchor']}>
-        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
+        <a className={clsx(linkStyle['spectrum-Link'], docStyles.link, docStyles.anchor)} data-hover={docStyles['is-hovered']} href={`#${props.id}`} aria-label={`Direct link to ${children}`}>#</a>
       </span>
     </h4>
   ),
@@ -109,7 +109,7 @@ function isBlogSection(section) {
   return section === 'blog' || section === 'releases';
 }
 
-function Page({children, currentPage, publicUrl, styles, scripts}) {
+function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let parts = currentPage.name.split('/');
   let isBlog = isBlogSection(parts[0]);
   let isSubpage = parts.length > 1 && !INDEX_RE.test(currentPage.name);
@@ -123,6 +123,12 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
   let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
   let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
+  let githubLink = pathToPage;
+  if (githubLink.startsWith('/tmp/')) {
+    githubLink = githubLink.slice(5);
+    githubLink = githubLink.substring(githubLink.indexOf('/') + 1);
+    githubLink = githubLink.replace(/docs/, 'packages');
+  }
 
   return (
     <html
@@ -153,6 +159,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
             let style = document.documentElement.style;
             let dark = window.matchMedia('(prefers-color-scheme: dark)');
             let fine = window.matchMedia('(any-pointer: fine)');
+            let small = window.matchMedia('(max-width: 1020px)');
             let update = () => {
               if (localStorage.theme === "dark" || (!localStorage.theme && dark.matches)) {
                 classList.remove("${theme.light['spectrum--light']}");
@@ -171,6 +178,12 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
                 classList.add("${theme.medium['spectrum--medium']}", "${docStyles.medium}");
                 classList.remove("${theme.large['spectrum--large']}", "${docStyles.large}");
               }
+
+              if (small.matches) {
+                 classList.add("${docStyles['small-propTable']}");
+               } else {
+                 classList.remove("${docStyles['small-propTable']}");
+               }
             };
 
             update();
@@ -179,6 +192,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
               update();
             });
             fine.addListener(update);
+            small.addListener(update);
             window.addEventListener('storage', update);
           })();
         `.replace(/\n|\s{2,}/g, '')}} />
@@ -198,6 +212,7 @@ function Page({children, currentPage, publicUrl, styles, scripts}) {
         <meta property="og:image" content={heroUrl} />
         <meta property="og:description" content={description} />
         <meta property="og:locale" content="en_US" />
+        <meta data-github-src={githubLink} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{__html: JSON.stringify(
@@ -349,6 +364,9 @@ function Nav({currentPageName, pages}) {
   } else if (currentPageName.startsWith('internationalized/') && currentPageName !== 'internationalized/index.html') {
     sectionIndex = '../index.html';
     back = '../../index.html';
+  } else if (currentPageName === 'react-aria/examples/index.html') {
+    sectionIndex = '../index.html';
+    back = '../../index.html';
   }
 
   function SideNavItem({name, url, title, preRelease}) {
@@ -357,6 +375,7 @@ function Nav({currentPageName, pages}) {
       <li className={clsx(sideNavStyles['spectrum-SideNav-item'], {[sideNavStyles['is-selected']]: isCurrentPage || (name === blogIndex && isBlog)})}>
         <a
           className={clsx(sideNavStyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)}
+          data-hover={sideNavStyles['is-hovered']}
           href={url}
           aria-current={isCurrentPage ? 'page' : null}
           {...getAnchorProps(url)}>{title}
@@ -365,7 +384,6 @@ function Nav({currentPageName, pages}) {
       </li>
     );
   }
-
   let isActive = (pageMap) => {
     for (let key in pageMap) {
       if (pageMap[key].some(p => p.name === currentPageName)) {
@@ -376,8 +394,11 @@ function Nav({currentPageName, pages}) {
 
   let sections = [];
   if (currentPageName.startsWith('react-aria') && ENABLE_PAGE_TYPES) {
-    let {Introduction, Concepts, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
-    sections.push({pages: {Introduction, Concepts}});
+    let {Introduction, Concepts, Guides, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
+    let interactions = {...pagesByType.interaction, Interactions, Focus};
+    let utilities = {Internationalization, 'Server Side Rendering': ssr, Utilities};
+    hooks = {...hooks, ...pagesByType.hook};
+    sections.push({pages: {Introduction, Concepts, Guides}});
     sections.push({
       title: 'Components',
       pages: pagesByType.component,
@@ -388,20 +409,22 @@ function Nav({currentPageName, pages}) {
       pages: hooks,
       isActive: isActive(hooks)
     });
-    sections.push({
-      title: 'Patterns',
-      pages: pagesByType.pattern,
-      isActive: isActive(pagesByType.pattern)
-    });
+    if (pagesByType.pattern) {
+      sections.push({
+        title: 'Patterns',
+        pages: pagesByType.pattern,
+        isActive: isActive(pagesByType.pattern)
+      });
+    }
     sections.push({
       title: 'Interactions',
-      pages: {Interactions, Focus},
-      isActive: isActive({Interactions, Focus})
+      pages: interactions,
+      isActive: isActive(interactions)
     });
     sections.push({
       title: 'Utilities',
-      pages: {Internationalization, 'Server Side Rendering': ssr, Utilities},
-      isActive: isActive({Internationalization, 'Server Side Rendering': ssr, Utilities})
+      pages: utilities,
+      isActive: isActive(utilities)
     });
   } else {
     sections.push({
@@ -436,22 +459,27 @@ function Nav({currentPageName, pages}) {
           </h2>
         </a>
       </header>
-      {sections.map(section => {
+      {sections.map((section, i) => {
         let contents = categories.filter(c => section.pages[c]?.length).map(key => {
           const headingId = `${section.title ? section.title.toLowerCase() + '-' : ''}${key.trim().toLowerCase().replace(/\s+/g, '-')}-heading`;
           return (
-            <>
+            <React.Fragment key={headingId}>
               <h3 className={sideNavStyles['spectrum-SideNav-heading']} id={headingId}>{key}</h3>
               <ul className={sideNavStyles['spectrum-SideNav']} aria-labelledby={headingId}>
-                {section.pages[key].sort((a, b) => (a.order || 0) < (b.order || 0) || a.title < b.title ? -1 : 1).map(p => <SideNavItem {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
+                {section.pages[key].sort((a, b) => {
+                  if (a.order !== b.order) {
+                    return (a.order || 0) - (b.order || 0);
+                  }
+                  return a.title < b.title ? -1 : 1;
+                }).map(p => <SideNavItem key={p.title} {...p} preRelease={section.title === 'Components' ? '' : p.preRelease} />)}
               </ul>
-            </>
+            </React.Fragment>
           );
         });
 
         if (section.title) {
           return (
-            <details open={section.isActive}>
+            <details key={section.title} open={section.isActive}>
               <summary style={{fontWeight: 'bold'}}>
                 <ChevronRight size="S" /> {section.title}
                 {section.title === 'Components' && <VersionBadge version={Object.values(section.pages)[0][0].preRelease} style={{marginLeft: 'auto', fontWeight: 'normal'}} />}
@@ -460,7 +488,7 @@ function Nav({currentPageName, pages}) {
             </details>
           );
         } else {
-          return <>{contents}</>;
+          return <React.Fragment key={i}>{contents}</React.Fragment>;
         }
       })}
     </nav>
@@ -482,15 +510,15 @@ function Footer() {
     </footer>
   );
 }
-
 export const PageContext = React.createContext();
 export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+  let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
   return (
-    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage}>
+    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
       <div style={{isolation: 'isolate'}}>
         <header className={docStyles.pageHeader} />
         <Nav currentPageName={currentPage.name} pages={pages} />
-        <main>
+        <main className={toc.length === 0 ? docStyles.noToc : null}>
           <MDXProvider components={mdxComponents}>
             <ImageContext.Provider value={publicUrl}>
               <LinkProvider>
@@ -503,6 +531,12 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
             </ImageContext.Provider>
           </MDXProvider>
           {toc.length ? <ToC toc={toc} /> : null}
+          {!(
+            pathToPage.includes('index.mdx') ||
+            pathToPage.includes('/blog/') ||
+            pathToPage.includes('/releases/') ||
+            pathToPage.includes('react-aria-components.mdx')
+          ) && <div id="edit-page" className={docStyles.editPageContainer} />}
           <Footer />
         </main>
       </div>
@@ -568,5 +602,38 @@ export function Time({date}) {
       className={typographyStyles['spectrum-Body4']}>
       {localDate.toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
     </time>
+  );
+}
+
+export function ExampleLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+  let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
+  return (
+    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
+      <div style={{isolation: 'isolate'}}>
+        <div className={docStyles.exampleHeader} />
+        <main className={docStyles.examplePage}>
+          <MDXProvider components={mdxComponents}>
+            <ImageContext.Provider value={publicUrl}>
+              <LinkProvider>
+                <PageContext.Provider value={{pages, currentPage}}>
+                  <SlotProvider slots={{keyboard: {UNSAFE_className: docStyles['keyboard']}}}>
+                    <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(currentPage.name)})}>
+                      <div style={{display: 'flex', alignItems: 'center'}}>
+                        <a href="../" className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)}>React Aria</a>
+                        <ChevronRight size="XS" />
+                        <a href="./" className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)}>Examples</a>
+                      </div>
+                      {children}
+                    </article>
+                  </SlotProvider>
+                </PageContext.Provider>
+              </LinkProvider>
+            </ImageContext.Provider>
+          </MDXProvider>
+          {!pathToPage.includes('index.mdx') && <div id="edit-page" className={docStyles.editPageContainer} />}
+          <Footer />
+        </main>
+      </div>
+    </Page>
   );
 }

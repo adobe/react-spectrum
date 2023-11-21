@@ -1,3 +1,4 @@
 {
-  "remove": "Nyomja meg a szóköz vagy a Delete billentyűt a címke eltávolításához."
+  "removeButtonLabel": "Eltávolítás",
+  "removeDescription": "Nyomja meg a Delete billentyűt a címke eltávolításához."
 }

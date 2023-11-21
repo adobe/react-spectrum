@@ -11,7 +11,7 @@
  */
 
 import {AriaToastRegionProps} from '@react-aria/toast';
-import React, {ReactElement, ReactNode, useEffect, useRef} from 'react';
+import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
 import {Toaster} from './Toaster';
 import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
@@ -21,7 +21,7 @@ export interface SpectrumToastContainerProps extends AriaToastRegionProps {}
 
 export interface SpectrumToastOptions extends Omit<ToastOptions, 'priority'> {
   /** A label for the action button within the toast. */
-  actionLabel?: ReactNode,
+  actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
   onAction?: () => void,
   /** Whether the toast should automatically close when an action is performed. */
@@ -55,6 +55,12 @@ function subscribe(fn: () => void) {
   return () => subscriptions.delete(fn);
 }
 
+function triggerSubscriptions() {
+  for (let fn of subscriptions) {
+    fn();
+  }
+}
+
 function getActiveToastContainer() {
   return toastProviders.values().next().value;
 }
@@ -73,10 +79,12 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // We use a ref to do this, since it will have a stable identity
   // over the lifetime of the component.
   let ref = useRef();
-  toastProviders.add(ref);
 
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
+    toastProviders.add(ref);
+    triggerSubscriptions();
+
     return () => {
       // When this toast provider unmounts, reset all animations so that
       // when the new toast provider renders, it is seamless.
@@ -88,9 +96,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
       // This will cause all other instances to re-render,
       // and the first one to become the new active toast provider.
       toastProviders.delete(ref);
-      for (let fn of subscriptions) {
-        fn();
-      }
+      triggerSubscriptions();
     };
   }, []);
 
@@ -113,7 +119,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   return null;
 }
 
-function addToast(children: ReactNode, variant: SpectrumToastValue['variant'], options: SpectrumToastOptions = {}) {
+function addToast(children: string, variant: SpectrumToastValue['variant'], options: SpectrumToastOptions = {}) {
   // Dispatch a custom event so that toasts can be intercepted and re-targeted, e.g. when inside an iframe.
   if (typeof CustomEvent !== 'undefined' && typeof window !== 'undefined') {
     let event = new CustomEvent('react-spectrum-toast', {
@@ -151,19 +157,19 @@ function addToast(children: ReactNode, variant: SpectrumToastValue['variant'], o
 
 const SpectrumToastQueue = {
   /** Queues a neutral toast. */
-  neutral(children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  neutral(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'neutral', options);
   },
   /** Queues a positive toast. */
-  positive(children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  positive(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'positive', options);
   },
   /** Queues a negative toast. */
-  negative(children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  negative(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'negative', options);
   },
   /** Queues an informational toast. */
-  info(children: ReactNode, options: SpectrumToastOptions = {}): CloseFunction {
+  info(children: string, options: SpectrumToastOptions = {}): CloseFunction {
     return addToast(children, 'info', options);
   }
 };

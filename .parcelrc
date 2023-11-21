@@ -9,6 +9,7 @@
     "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
     "*.{md,mdx}": ["parcel-transformer-mdx-docs"],
     "*.svg": ["@parcel/transformer-svg-react"],
+    "packages/@react-aria/example-theme/**/*.css": ["@parcel/transformer-css"],
     "*.css": ["...", "parcel-transformer-css-env"],
     "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
       "@parcel/transformer-js",
@@ -18,10 +19,9 @@
   "namers": ["parcel-namer-docs", "..."],
   "packagers": {
     "*.json": "parcel-packager-docs",
-    "*.html": "@parcel/packager-js"
+    "*.html": "parcel-packager-ssg"
   },
   "optimizers": {
-    "*.html": ["parcel-optimizer-ssg", "..."],
-    "*.css": ["@parcel/optimizer-css"]
+    "*.js": ["@parcel/optimizer-terser"]
   }
 }

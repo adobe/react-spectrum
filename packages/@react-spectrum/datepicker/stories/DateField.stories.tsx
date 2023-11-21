@@ -19,6 +19,7 @@ import {DateField} from '../';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {Item, Picker, Section} from '@react-spectrum/picker';
+import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {useLocale} from '@react-aria/i18n';
@@ -109,6 +110,9 @@ export default {
     hideTimeZone: {
       control: 'boolean'
     },
+    shouldForceLeadingZeros: {
+      control: 'boolean'
+    },
     isDisabled: {
       control: 'boolean'
     },
@@ -175,7 +179,7 @@ export const ControlledValue: DateFieldStory = {
 export const DefaultValueZoned: DateFieldStory = {
   ...Default,
   args: {defaultValue: toZoned(parseDate('2020-02-03'), 'America/Los_Angeles')},
-  storyName: 'defaultValue date, zoned'
+  name: 'defaultValue date, zoned'
 };
 
 export const DateTimeValue: DateFieldStory = {
@@ -201,31 +205,49 @@ export const DateTimeValueAbsoluteZoned: DateFieldStory = {
 export const MinMaxValue: DateFieldStory = {
   ...Default,
   args: {minValue: new CalendarDate(2010, 0, 1), maxValue: new CalendarDate(2020, 0, 1)},
-  storyName: 'minValue: 2010/1/1, maxValue: 2020/1/1'
+  name: 'minValue: 2010/1/1, maxValue: 2020/1/1'
+};
+
+export const IsDateUnavailable: DateFieldStory = {
+  ...Default,
+  args: {
+    isDateUnavailable: (date) => {
+      return date.compare(new CalendarDate(1980, 1, 1)) >= 0 
+          && date.compare(new CalendarDate(1980, 1, 8)) <= 0;
+    },
+    errorMessage: 'Date unavailable.',
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>Which dates are unavailable?</Heading>
+        <Content>Any date between 1/1/1980 and 1/8/1980 are unavailable.</Content>
+      </ContextualHelp>
+    )
+  },
+  parameters: {description: {data: 'Any date between 1/1/1980 and 1/8/1980 are unavailable and will display a "Date unavailable" error to the user'}}
 };
 
 export const PlaceholderVal: DateFieldStory = {
   ...Default,
   args: {placeholderValue: new CalendarDate(1980, 1, 1)},
-  storyName: 'placeholder value: 1980/1/1'
+  name: 'placeholder value: 1980/1/1'
 };
 
 export const PlaceholderValTime: DateFieldStory = {
   ...Default,
   args: {placeholderValue: new CalendarDateTime(1980, 1, 1, 8)},
-  storyName: 'placeholder value: 1980/1/1 8AM'
+  name: 'placeholder value: 1980/1/1 8AM'
 };
 
 export const PlaceholderValTimeZoned: DateFieldStory = {
   ...Default,
   args: {placeholderValue: toZoned(new CalendarDate(1980, 1, 1), 'America/Los_Angeles')},
-  storyName: 'placeholder value: 1980/1/1 zoned'
+  name: 'placeholder value: 1980/1/1 zoned'
 };
 
 export const AllEvents: DateFieldStory = {
   ...Default,
   args: {onBlur: action('onBlur'), onFocus: action('onFocus'), onFocusChange: action('onFocusChange'), onKeyDown: action('onKeyDown'), onKeyUp: action('onKeyUp')},
-  storyName: 'all the events'
+  name: 'all the events'
 };
 
 export const ContextualHelpStory: DateFieldStory = {
@@ -238,7 +260,7 @@ export const ContextualHelpStory: DateFieldStory = {
       </ContextualHelp>
     )
   },
-  storyName: 'contextual help'
+  name: 'contextual help'
 };
 
 function render(props = {}) {
@@ -288,7 +310,7 @@ const calendars = [
 
 function Example(props) {
   let [locale, setLocale] = React.useState('');
-  let [calendar, setCalendar] = React.useState<React.Key>(calendars[0].key);
+  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);

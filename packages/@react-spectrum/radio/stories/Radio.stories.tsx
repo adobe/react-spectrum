@@ -11,121 +11,152 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
-import {Flex} from '@adobe/react-spectrum';
+import {Button, Content, ContextualHelp, Flex, Heading} from '@adobe/react-spectrum';
 import {Provider} from '@react-spectrum/provider';
 import {Radio, RadioGroup} from '../src';
 import React, {useState} from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('RadioGroup', module)
-  .addParameters({
-    providerSwitcher: {status: 'positive'},
-    args: {
-      label: 'Favorite pet',
-      isEmphasized: false,
-      isDisabled: false,
-      isReadOnly: false,
-      isRequired: false,
-      necessityIndicator: 'icon',
-      labelPosition: 'top',
-      labelAlign: 'start',
-      validationState: null,
-      orientation: 'vertical'
+export default {
+  title: 'RadioGroup',
+  providerSwitcher: {status: 'positive'},
+  args: {
+    label: 'Favorite pet',
+    isEmphasized: false,
+    isDisabled: false,
+    isReadOnly: false,
+    isRequired: false,
+    necessityIndicator: 'icon',
+    labelPosition: 'top',
+    labelAlign: 'start',
+    isInvalid: false,
+    orientation: 'vertical'
+  },
+  argTypes: {
+    labelPosition: {
+      control: {
+        type: 'radio',
+        options: ['top', 'side']
+      }
     },
-    argTypes: {
-      labelPosition: {
-        control: {
-          type: 'radio',
-          options: ['top', 'side']
-        }
-      },
-      necessityIndicator: {
-        control: {
-          type: 'radio',
-          options: ['icon', 'label']
-        }
-      },
-      labelAlign: {
-        control: {
-          type: 'radio',
-          options: ['start', 'end']
-        }
-      },
-      validationState: {
-        control: {
-          type: 'radio',
-          options: [null, 'valid', 'invalid']
-        }
-      },
-      orientation: {
-        control: {
-          type: 'radio',
-          options: ['horizontal', 'vertical']
-        }
+    necessityIndicator: {
+      control: {
+        type: 'radio',
+        options: ['icon', 'label']
+      }
+    },
+    labelAlign: {
+      control: {
+        type: 'radio',
+        options: ['start', 'end']
+      }
+    },
+    orientation: {
+      control: {
+        type: 'radio',
+        options: ['horizontal', 'vertical']
       }
     }
-  })
-  .add(
-    'default',
-    args => render(args)
-  )
-  .add(
-    'defaultValue: dragons',
-    args => render({...args, defaultValue: 'dragons'})
-  )
-  .add(
-    'controlled: dragons',
-    args => render({...args, value: 'dragons'})
-  )
-  .add(
-    'isDisabled on one radio',
-    args => render(args, [{}, {isDisabled: true}, {}])
-  )
-  .add(
-    'with description',
-    args => render({...args, description: 'Please select a pet.'})
-  )
-  .add(
-    'with error message',
-    args => render({...args, errorMessage: 'Please select a pet.', validationState: 'invalid'})
-  )
-  .add(
-    'with error message and error icon',
-    args => render({...args, errorMessage: 'Please select a pet.', validationState: 'invalid', showErrorIcon: true})
-  )
-  .add(
-    'with description, error message and validation, fixed width',
-    args => renderWithDescriptionErrorMessageAndValidation(args)
-  )
-  .add(
-    'contextual help',
-    args => render({
-      ...args,
-      contextualHelp: (
-        <ContextualHelp>
-          <Heading>What is a segment?</Heading>
-          <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-        </ContextualHelp>
-      )
-    })
-  )
-  .add(
-    'no visible label',
-    args => render({...args, label: null, 'aria-label': 'Favorite pet'})
-  )
-  .add(
-    'long radio label',
-    args => renderLongLabel(args)
-  )
-  .add(
-    'provider control: isDisabled',
-    () => renderFormControl()
-  )
-  .add(
-    'autoFocus on one radio',
-    args => render(args, [{}, {autoFocus: true}, {}])
-  );
+  }
+};
+
+export const Default = (args) => render(args);
+
+Default.story = {
+  name: 'default'
+};
+
+export const DefaultValueDragons = (args) => render({...args, defaultValue: 'dragons'});
+
+DefaultValueDragons.story = {
+  name: 'defaultValue: dragons'
+};
+
+export const ControlledDragons = (args) => render({...args, value: 'dragons'});
+
+ControlledDragons.story = {
+  name: 'controlled: dragons'
+};
+
+export const IsDisabledOnOneRadio = (args) => render(args, [{}, {isDisabled: true}, {}]);
+
+IsDisabledOnOneRadio.story = {
+  name: 'isDisabled on one radio'
+};
+
+export const WithDescription = (args) => render({...args, description: 'Please select a pet.'});
+
+WithDescription.story = {
+  name: 'with description'
+};
+
+export const WithErrorMessage = (args) =>
+  render({...args, errorMessage: 'Please select a pet.', isInvalid: true});
+
+WithErrorMessage.story = {
+  name: 'with error message'
+};
+
+export const WithErrorMessageAndErrorIcon = (args) =>
+  render({
+    ...args,
+    errorMessage: 'Please select a pet.',
+    isInvalid: true,
+    showErrorIcon: true
+  });
+
+WithErrorMessageAndErrorIcon.story = {
+  name: 'with error message and error icon'
+};
+
+export const WithDescriptionErrorMessageAndValidationFixedWidth = (args) =>
+  renderWithDescriptionErrorMessageAndValidation(args);
+
+WithDescriptionErrorMessageAndValidationFixedWidth.story = {
+  name: 'with description, error message and validation, fixed width'
+};
+
+export const _ContextualHelp = (args) =>
+  render({
+    ...args,
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
+      </ContextualHelp>
+    )
+  });
+
+_ContextualHelp.story = {
+  name: 'contextual help'
+};
+
+export const NoVisibleLabel = (args) =>
+  render({...args, label: null, 'aria-label': 'Favorite pet'});
+
+NoVisibleLabel.story = {
+  name: 'no visible label'
+};
+
+export const LongRadioLabel = (args) => renderLongLabel(args);
+
+LongRadioLabel.story = {
+  name: 'long radio label'
+};
+
+export const ProviderControlIsDisabled = () => renderFormControl();
+
+ProviderControlIsDisabled.story = {
+  name: 'provider control: isDisabled'
+};
+
+export const AutoFocusOnOneRadio = (args) => render(args, [{}, {autoFocus: true}, {}]);
+
+AutoFocusOnOneRadio.story = {
+  name: 'autoFocus on one radio'
+};
 
 function render(props, radioProps = [{}, {}, {}]) {
   return (
@@ -199,7 +230,7 @@ function renderWithDescriptionErrorMessageAndValidation(props) {
           {...props}
           aria-label="Favorite pet"
           onChange={setSelected}
-          validationState={isValid ? 'valid' : 'invalid'}
+          isInvalid={!isValid}
           description="Please select a pet."
           errorMessage={
           selected === 'cats'
@@ -222,3 +253,30 @@ function renderWithDescriptionErrorMessageAndValidation(props) {
 
   return <Example />;
 }
+
+export const ControlledRovingTab = () => {
+  const [selected, setSelected] = useState('1');
+
+  return (
+    <Flex direction="column" gap="16px" alignItems="center" margin="16px">
+      <Button variant="primary" onPress={() => setSelected('2')}>
+        Make it "Two"
+      </Button>
+      <RadioGroup
+        label="Lucky number? (controlled)"
+        value={selected}
+        onChange={setSelected}>
+        <Radio value="1">One</Radio>
+        <Radio value="2">Two</Radio>
+        <Radio value="3">Three</Radio>
+        <Radio value="4">Four</Radio>
+      </RadioGroup>
+      <Button variant="primary" onPress={() => setSelected('3')}>
+        Make it "Three"
+      </Button>
+    </Flex>
+  );
+};
+ControlledRovingTab.story = {
+  name: 'controlled roving tab'
+};

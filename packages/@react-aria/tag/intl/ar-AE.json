@@ -1,3 +1,4 @@
 {
-  "remove": "اضغط على زر Space أو Delete لإزالة العلامة."
+  "removeButtonLabel": "إزالة",
+  "removeDescription": "اضغط على مفتاح DELETE لإزالة علامة."
 }

@@ -35,6 +35,16 @@ governing permissions and limitations under the License.
   --spectrum-menu-max-width: 320px;
 }
 
+.spectrum-Menu-wrapper,
+.spectrum-Menu-subdialog {
+  overflow: hidden;
+  max-height: 100%;
+  display: inline-flex;
+  border-radius: var(--spectrum-alias-border-radius-regular);
+  border-style: solid;
+  border-width: var(--spectrum-popover-border-size);
+}
+
 .spectrum-Menu-popover {
   max-width: var(--spectrum-menu-max-width);
 }
@@ -77,6 +87,7 @@ governing permissions and limitations under the License.
 .spectrum-Menu-item {
   cursor: default;
   position: relative;
+  display: block;
 
   box-sizing: border-box;
 
@@ -89,8 +100,16 @@ governing permissions and limitations under the License.
   font-style: normal;
   text-decoration: none;
 
+  &[href] {
+    cursor: pointer;
+  }
+
   &:focus {
     outline: none;
+  }
+
+  &.is-disabled {
+    cursor: default;
   }
 
   &.is-selected {
@@ -150,6 +169,15 @@ governing permissions and limitations under the License.
   line-height: var(--spectrum-text-body-line-height);
 }
 
+.spectrum-Menu-section--noHeading {
+  &.spectrum-Menu-section--isFirst {
+    padding-top: 0;
+  }
+  &.spectrum-Menu-section--isLast {
+    padding-bottom: 0;
+  }
+}
+
 .spectrum-Menu .spectrum-Menu {
   /* Fill parent menu when nested */
   display: block;
@@ -177,12 +205,12 @@ governing permissions and limitations under the License.
   }
 }
 
-/* Added .spectrum-Menu so paddings from component styles are overriden */
+/* Added .spectrum-Menu so paddings from component styles are overridden */
 .spectrum-Menu .spectrum-Menu-end {
   grid-area: end;
   justify-self: end;
   align-self: flex-start;
-  padding-inline-start: var(--spectrum-global-dimension-size-125);
+  padding-inline-start: var(--spectrum-global-dimension-size-250);
 }
 .spectrum-Menu-icon {
   grid-area: icon;
@@ -202,4 +230,5 @@ governing permissions and limitations under the License.
   /* override default browser styling. */
   /* keyboard shortcuts are always ASCII, so use base font */
   font-family: var(--spectrum-font-family-base);
+  unicode-bidi: plaintext;
 }

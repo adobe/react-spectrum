@@ -1,3 +1,4 @@
 {
-  "remove": "태그를 제거하려면 Space 또는 Delete 키를 누르십시오."
+  "removeButtonLabel": "제거",
+  "removeDescription": "태그를 제거하려면 Delete 키를 누르십시오."
 }

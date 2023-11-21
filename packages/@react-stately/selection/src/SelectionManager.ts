@@ -11,10 +11,10 @@
  */
 
 import {
-  Collection,
-  DisabledBehavior,
+  Collection, DisabledBehavior,
   FocusStrategy,
   Selection as ISelection,
+  Key,
   LongPressEvent,
   Node,
   PressEvent,
@@ -22,7 +22,6 @@ import {
   SelectionMode
 } from '@react-types/shared';
 import {compareNodeOrder, getChildNodes, getFirstItem} from '@react-stately/collections';
-import {Key} from 'react';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 
@@ -402,7 +401,7 @@ export class SelectionManager implements MultipleSelectionManager {
    * Selects all items in the collection.
    */
   selectAll() {
-    if (this.selectionMode === 'multiple') {
+    if (!this.isSelectAll && this.selectionMode === 'multiple') {
       this.state.setSelectedKeys('all');
     }
   }
@@ -490,5 +489,9 @@ export class SelectionManager implements MultipleSelectionManager {
 
   isDisabled(key: Key) {
     return this.state.disabledKeys.has(key) && this.state.disabledBehavior === 'all';
+  }
+
+  isLink(key: Key) {
+    return !!this.collection.getItem(key)?.props?.href;
   }
 }

@@ -47,7 +47,7 @@ export function useLabel(props: LabelAriaProps): LabelAria {
   let labelId = useId();
   let labelProps = {};
   if (label) {
-    ariaLabelledby = ariaLabelledby ? `${ariaLabelledby} ${labelId}` : labelId;
+    ariaLabelledby = ariaLabelledby ? `${labelId} ${ariaLabelledby}` : labelId;
     labelProps = {
       id: labelId,
       htmlFor: labelElementType === 'label' ? id : undefined

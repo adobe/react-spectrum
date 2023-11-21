@@ -21,17 +21,6 @@
   pointer-events: none;
   outline: none;
 
-  > :first-child {
-    @inherit %spectrum-FocusRing-ring;
-    --spectrum-focus-ring-border-radius: var(--spectrum-toast-border-radius);
-    --spectrum-focus-ring-gap: var(--spectrum-alias-focus-ring-gap);
-    --spectrum-focus-ring-size: var(--spectrum-alias-focus-ring-size);
-  }
-
-  &:focus-ring > :first-child {
-    @inherit %spectrum-FocusRing-active;
-  }
-
   .spectrum-Toast {
     position: absolute;
     margin: 16px;
@@ -78,6 +67,11 @@
 }
 
 .spectrum-Toast {
+  composes: spectrum-FocusRing;
+  --spectrum-focus-ring-border-radius: var(--spectrum-toast-border-radius);
+  --spectrum-focus-ring-gap: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-focus-ring-size: var(--spectrum-alias-focus-ring-size);
+
   &[data-animation=entering] {
     animation: slide-in 300ms;
   }

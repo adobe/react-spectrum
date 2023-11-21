@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, ReactElement, ReactNode} from 'react';
+import {Key} from '@react-types/shared';
+import {LinkDOMProps} from './dom';
+import {ReactElement, ReactNode} from 'react';
 
-export interface ItemProps<T> {
+export interface ItemProps<T> extends LinkDOMProps {
   /** Rendered contents of the item or child items. */
   children: ReactNode,
   /** Rendered contents of the item if `children` contains child items. */

@@ -19,8 +19,8 @@ interface UnderlayProps {
   isTransparent?: boolean
 }
 
-export function Underlay({isOpen, isTransparent}: UnderlayProps) {
+export function Underlay({isOpen, isTransparent, ...otherProps}: UnderlayProps) {
   return (
-    <div className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen, 'spectrum-Underlay--transparent': isTransparent})} />
+    <div data-testid="underlay" {...otherProps} className={classNames(underlayStyles, 'spectrum-Underlay', {'is-open': isOpen, 'spectrum-Underlay--transparent': isTransparent})} />
   );
 }

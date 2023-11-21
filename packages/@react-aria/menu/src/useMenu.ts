@@ -11,9 +11,9 @@
  */
 
 import {AriaMenuProps} from '@react-types/menu';
-import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, Key, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {Key, RefObject} from 'react';
+import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 import {useSelectableList} from '@react-aria/selection';
 
@@ -63,7 +63,8 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     selectionManager: state.selectionManager,
     collection: state.collection,
     disabledKeys: state.disabledKeys,
-    shouldFocusWrap
+    shouldFocusWrap,
+    linkBehavior: 'override'
   });
 
   menuData.set(state, {
@@ -74,7 +75,15 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   return {
     menuProps: mergeProps(domProps, {
       role: 'menu',
-      ...listProps
+      // this forces AT to move their cursors into any open sub dialogs, the sub dialogs contain hidden close buttons in order to come back to this level of the menu
+      'aria-hidden': state.expandedKeys.size > 0 ? true : undefined,
+      ...listProps,
+      onKeyDown: (e) => {
+        // don't clear the menu selected keys if the user is presses escape since escape closes the menu
+        if (e.key !== 'Escape') {
+          listProps.onKeyDown(e);
+        }
+      }
     })
   };
 }

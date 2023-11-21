@@ -137,6 +137,14 @@ Tooltips appear after a short delay when hovering the trigger, or instantly when
 <TooltipButton tooltip="Save" delay={0}>💾</TooltipButton>
 ```
 
+### Close Delay
+
+Tooltips disappear after a short delay when no longer hovering the trigger, or instantly when using keyboard focus. This delay can be adjusted for hover using the `closeDelay` prop.
+
+```tsx example
+<TooltipButton tooltip="Refresh" closeDelay={0}>🔄</TooltipButton>
+```
+
 ### Trigger
 
 By default, tooltips appear both on hover and on focus. The `trigger` prop can be set to `"focus"` to display the tooltip only on focus, and not on hover.

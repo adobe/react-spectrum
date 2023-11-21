@@ -13,17 +13,22 @@
 import {Flex} from '@react-spectrum/layout';
 import {LogicButton} from '../';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Button/LogicButton', module)
-  .add(
-    'logic variant: and',
-    () => render({variant: 'and', label: 'and'})
-  )
-  .add(
-    'logic variant: or',
-    () => render({variant: 'or', label: 'or'})
-  );
+export default {
+  title: 'Button/LogicButton'
+};
+
+export const LogicVariantAnd = () => render({variant: 'and', label: 'and'});
+
+LogicVariantAnd.story = {
+  name: 'logic variant: and'
+};
+
+export const LogicVariantOr = () => render({variant: 'or', label: 'or'});
+
+LogicVariantOr.story = {
+  name: 'logic variant: or'
+};
 
 function render(props: any = {}) {
   return (

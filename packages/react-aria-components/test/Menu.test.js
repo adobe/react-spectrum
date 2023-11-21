@@ -10,29 +10,34 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Header, Item, Keyboard, Menu, MenuContext, MenuTrigger, Popover, Section, Separator, Text} from '../';
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {Button, Header, Keyboard, Menu, MenuContext, MenuItem, MenuTrigger, Popover, Section, Separator, Text} from '../';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestMenu = ({menuProps, itemProps}) => (
   <Menu aria-label="Test" {...menuProps}>
-    <Item {...itemProps} id="cat">Cat</Item>
-    <Item {...itemProps} id="dog">Dog</Item>
-    <Item {...itemProps} id="kangaroo">Kangaroo</Item>
+    <MenuItem {...itemProps} id="cat">Cat</MenuItem>
+    <MenuItem {...itemProps} id="dog">Dog</MenuItem>
+    <MenuItem {...itemProps} id="kangaroo">Kangaroo</MenuItem>
   </Menu>
 );
 
 let renderMenu = (menuProps, itemProps) => render(<TestMenu {...{menuProps, itemProps}} />);
 
 describe('Menu', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('should render with default classes', () => {
     let {getByRole, getAllByRole} = renderMenu();
     let menu = getByRole('menu');
     expect(menu).toHaveAttribute('class', 'react-aria-Menu');
 
     for (let menuitem of getAllByRole('menuitem')) {
-      expect(menuitem).toHaveAttribute('class', 'react-aria-Item');
+      expect(menuitem).toHaveAttribute('class', 'react-aria-MenuItem');
     }
   });
 
@@ -68,14 +73,30 @@ describe('Menu', () => {
     expect(menu).toHaveAttribute('aria-label', 'test');
   });
 
+  it('should support refs', () => {
+    let listBoxRef = React.createRef();
+    let sectionRef = React.createRef();
+    let itemRef = React.createRef();
+    render(
+      <Menu aria-label="Test" ref={listBoxRef}>
+        <Section ref={sectionRef}>
+          <MenuItem ref={itemRef}>Cat</MenuItem>
+        </Section>
+      </Menu>
+    );
+    expect(listBoxRef.current).toBeInstanceOf(HTMLElement);
+    expect(sectionRef.current).toBeInstanceOf(HTMLElement);
+    expect(itemRef.current).toBeInstanceOf(HTMLElement);
+  });
+
   it('should support slots', () => {
     let {getByRole} = render(
       <Menu aria-label="Actions">
-        <Item textValue="Copy">
+        <MenuItem textValue="Copy">
           <Text slot="label">Copy</Text>
           <Text slot="description">Copy the selected text</Text>
           <Keyboard>⌘C</Keyboard>
-        </Item>
+        </MenuItem>
       </Menu>
     );
 
@@ -89,9 +110,9 @@ describe('Menu', () => {
   it('should support separators', () => {
     let {getByRole} = render(
       <Menu aria-label="Actions">
-        <Item>Foo</Item>
+        <MenuItem>Foo</MenuItem>
         <Separator />
-        <Item>Bar</Item>
+        <MenuItem>Bar</MenuItem>
       </Menu>
     );
 
@@ -102,9 +123,9 @@ describe('Menu', () => {
   it('should support separators with custom class names', () => {
     let {getByRole} = render(
       <Menu aria-label="Actions">
-        <Item>Foo</Item>
+        <MenuItem>Foo</MenuItem>
         <Separator className="my-separator" />
-        <Item>Bar</Item>
+        <MenuItem>Bar</MenuItem>
       </Menu>
     );
 
@@ -117,15 +138,15 @@ describe('Menu', () => {
       <Menu aria-label="Sandwich contents" selectionMode="multiple">
         <Section>
           <Header>Veggies</Header>
-          <Item id="lettuce">Lettuce</Item>
-          <Item id="tomato">Tomato</Item>
-          <Item id="onion">Onion</Item>
+          <MenuItem id="lettuce">Lettuce</MenuItem>
+          <MenuItem id="tomato">Tomato</MenuItem>
+          <MenuItem id="onion">Onion</MenuItem>
         </Section>
         <Section>
           <Header>Protein</Header>
-          <Item id="ham">Ham</Item>
-          <Item id="tuna">Tuna</Item>
-          <Item id="tofu">Tofu</Item>
+          <MenuItem id="ham">Ham</MenuItem>
+          <MenuItem id="tuna">Tuna</MenuItem>
+          <MenuItem id="tofu">Tofu</MenuItem>
         </Section>
       </Menu>
     );
@@ -140,14 +161,29 @@ describe('Menu', () => {
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
   });
 
-  it('should support focus ring', () => {
+  it('should support dynamic collections', () => {
+    let items = [
+      {id: 'cat', name: 'Cat'},
+      {id: 'dog', name: 'Dog'}
+    ];
+
+    let {getAllByRole} = render(
+      <Menu aria-label="Test" items={items}>
+        {(item) => <MenuItem id={item.id}>{item.name}</MenuItem>}
+      </Menu>
+    );
+
+    expect(getAllByRole('menuitem').map((it) => it.textContent)).toEqual(['Cat', 'Dog']);
+  });
+
+  it('should support focus ring', async () => {
     let {getAllByRole} = renderMenu({}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let menuitem = getAllByRole('menuitem')[0];
 
     expect(menuitem).not.toHaveAttribute('data-focus-visible');
     expect(menuitem).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(menuitem);
     expect(menuitem).toHaveAttribute('data-focus-visible', 'true');
     expect(menuitem).toHaveClass('focus');
@@ -174,18 +210,18 @@ describe('Menu', () => {
     expect(menuitem).not.toHaveClass('pressed');
   });
 
-  it('should support selection state', () => {
+  it('should support selection state', async () => {
     let {getAllByRole} = renderMenu({selectionMode: 'multiple'}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let menuitem = getAllByRole('menuitemcheckbox')[0];
 
     expect(menuitem).not.toHaveAttribute('aria-checked', 'true');
     expect(menuitem).not.toHaveClass('selected');
 
-    userEvent.click(menuitem);
+    await user.click(menuitem);
     expect(menuitem).toHaveAttribute('aria-checked', 'true');
     expect(menuitem).toHaveClass('selected');
 
-    userEvent.click(menuitem);
+    await user.click(menuitem);
     expect(menuitem).not.toHaveAttribute('aria-checked', 'true');
     expect(menuitem).not.toHaveClass('selected');
   });
@@ -198,18 +234,18 @@ describe('Menu', () => {
     expect(menuitem).toHaveClass('disabled');
   });
 
-  it('should support menu trigger', () => {
+  it('should support menu trigger', async () => {
     let onAction = jest.fn();
     let {getByRole, getAllByRole} = render(
       <MenuTrigger>
         <Button aria-label="Menu">☰</Button>
         <Popover>
           <Menu onAction={onAction}>
-            <Item id="open">Open</Item>
-            <Item id="rename">Rename…</Item>
-            <Item id="duplicate">Duplicate</Item>
-            <Item id="share">Share…</Item>
-            <Item id="delete">Delete…</Item>
+            <MenuItem id="open">Open</MenuItem>
+            <MenuItem id="rename">Rename…</MenuItem>
+            <MenuItem id="duplicate">Duplicate</MenuItem>
+            <MenuItem id="share">Share…</MenuItem>
+            <MenuItem id="delete">Delete…</MenuItem>
           </Menu>
         </Popover>
       </MenuTrigger>
@@ -218,7 +254,7 @@ describe('Menu', () => {
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('data-pressed');
 
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
 
     let menu = getByRole('menu');
@@ -226,8 +262,50 @@ describe('Menu', () => {
 
     let popover = menu.closest('.react-aria-Popover');
     expect(popover).toBeInTheDocument();
+    expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
 
-    userEvent.click(getAllByRole('menuitem')[1]);
+    await user.click(getAllByRole('menuitem')[1]);
     expect(onAction).toHaveBeenLastCalledWith('rename');
+  });
+
+  describe('supports links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', async function (selectionMode) {
+        let onAction = jest.fn();
+        let onSelectionChange = jest.fn();
+        let tree = render(
+          <Menu aria-label="menu" selectionMode={selectionMode} onSelectionChange={onSelectionChange} onAction={onAction}>
+            <MenuItem href="https://google.com">One</MenuItem>
+            <MenuItem href="https://adobe.com">Two</MenuItem>
+          </Menu>
+        );
+
+        let role = {
+          none: 'menuitem',
+          single: 'menuitemradio',
+          multiple: 'menuitemcheckbox'
+        }[selectionMode];
+        let items = tree.getAllByRole(role);
+        expect(items).toHaveLength(2);
+        expect(items[0].tagName).toBe('A');
+        expect(items[0]).toHaveAttribute('href', 'https://google.com');
+        expect(items[1].tagName).toBe('A');
+        expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick);
+
+        if (type === 'mouse') {
+          await user.click(items[1]);
+        } else {
+          fireEvent.keyDown(items[1], {key: 'Enter'});
+          fireEvent.keyUp(items[1], {key: 'Enter'});
+        }
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onSelectionChange).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
+        document.removeEventListener('click', onClick);
+      });
+    });
   });
 });

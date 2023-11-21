@@ -1,5 +1,6 @@
 {
   "actions": "Acties",
   "hideButtonLabel": "Minder weergeven",
-  "showAllButtonLabel": "Alles weergeven ({tagCount, number})"
+  "noTags": "Geen",
+  "showAllButtonLabel": "Alles tonen ({tagCount, number})"
 }

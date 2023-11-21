@@ -1,3 +1,5 @@
 {
-  "moreActions": "További lehetőségek"
+  "backButton": "Vissza ide: {prevMenuButton}",
+  "moreActions": "További lehetőségek",
+  "unavailable": "Nem érhető el, a részletekért bontsa ki"
 }

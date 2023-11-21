@@ -16,7 +16,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
-import {Meta, Story} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {SpectrumComboBoxProps} from '@react-types/combobox';
 
@@ -73,7 +73,7 @@ let items = [
   {name: 'Snake', id: '3'}
 ];
 
-const Template: Story<SpectrumComboBoxProps<object>> = (args) => (
+const Template: StoryFn<SpectrumComboBoxProps<object>> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -91,7 +91,7 @@ const Template: Story<SpectrumComboBoxProps<object>> = (args) => (
 );
 
 // Chromatic can't handle the size of the side label story so removed some extraneous props that don't matter for side label case.
-const TemplateSideLabel: Story<SpectrumComboBoxProps<object>> = (args) => (
+const TemplateSideLabel: StoryFn<SpectrumComboBoxProps<object>> = (args) => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200" width={800}>
     {combinations.filter(combo => !(combo.isReadOnly || combo.isDisabled)).map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -108,47 +108,67 @@ const TemplateSideLabel: Story<SpectrumComboBoxProps<object>> = (args) => (
   </Grid>
 );
 
-export const PropDefaults = Template.bind({});
-PropDefaults.storyName = 'default';
-PropDefaults.args = {};
+export const PropDefaults = {
+  render: Template,
+  name: 'default',
+  args: {}
+};
 
-export const PropSelectedKey = Template.bind({});
-PropSelectedKey.storyName = 'selectedKey: 2';
-PropSelectedKey.args = {selectedKey: '2'};
+export const PropSelectedKey = {
+  render: Template,
+  name: 'selectedKey: 2',
+  args: {selectedKey: '2'}
+};
 
-export const PropInputValue = Template.bind({});
-PropInputValue.storyName = 'inputValue: Blah';
-PropInputValue.args = {inputValue: 'Blah'};
+export const PropInputValue = {
+  render: Template,
+  name: 'inputValue: Blah',
+  args: {inputValue: 'Blah'}
+};
 
-export const PropAriaLabelled = Template.bind({});
-PropAriaLabelled.storyName = 'aria-label';
-PropAriaLabelled.args = {'aria-label': 'Label'};
+export const PropAriaLabelled = {
+  render: Template,
+  name: 'aria-label',
+  args: {'aria-label': 'Label'}
+};
 
-export const PropLabelEnd = Template.bind({});
-PropLabelEnd.storyName = 'label end';
-PropLabelEnd.args = {...PropDefaults.args, labelAlign: 'end'};
+export const PropLabelEnd = {
+  render: Template,
+  name: 'label end',
+  args: {...PropDefaults.args, labelAlign: 'end'}
+};
 
-export const PropLabelSide = TemplateSideLabel.bind({});
-PropLabelSide.storyName = 'label side';
-PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side'};
+export const PropLabelSide = {
+  render: TemplateSideLabel,
+  name: 'label side',
+  args: {...PropDefaults.args, labelPosition: 'side'}
+};
 
-export const PropCustomWidth = Template.bind({});
-PropCustomWidth.storyName = 'custom width';
-PropCustomWidth.args = {...PropDefaults.args, width: 'size-1600'};
-PropCustomWidth.parameters = {
-  chromaticProvider: {
-    express: false
+export const PropCustomWidth = {
+  render: Template,
+  name: 'custom width',
+  args: {...PropDefaults.args, width: 'size-1600'},
+
+  parameters: {
+    chromaticProvider: {
+      express: false
+    }
   }
 };
 
-export const PropContextualHelp = Template.bind({});
-PropContextualHelp.storyName = 'contextual help';
-PropContextualHelp.args = {
-  ...PropDefaults.args,
-  contextualHelp: (
-    <ContextualHelp>
-      <Heading>What is a segment?</Heading>
-      <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
-    </ContextualHelp>
-  )
+export const PropContextualHelp = {
+  render: Template,
+  name: 'contextual help',
+  args: {
+    ...PropDefaults.args,
+    contextualHelp: (
+      <ContextualHelp>
+        <Heading>What is a segment?</Heading>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
+      </ContextualHelp>
+    )
+  }
 };

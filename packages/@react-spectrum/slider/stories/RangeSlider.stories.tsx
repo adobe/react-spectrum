@@ -18,79 +18,114 @@ import {Heading} from '@react-spectrum/text';
 import {RangeSlider} from '../';
 import React from 'react';
 import {SpectrumRangeSliderProps} from '@react-types/slider';
-import {storiesOf} from '@storybook/react';
 
 let message = 'Your browser may not support this set of format options.';
 
-storiesOf('Slider/RangeSlider', module)
-  .addDecorator(story => (
-    <ErrorBoundary message={message}>{story()}</ErrorBoundary>
-  ))
-  .addParameters({
-    args: {
-      label: 'Label',
-      isDisabled: false,
-      labelPosition: 'top'
-    },
-    argTypes: {
-      labelPosition: {
-        control: {
-          type: 'radio',
-          options: ['top', 'side']
-        }
+export default {
+  title: 'Slider/RangeSlider',
+  decorators: [(story) => <ErrorBoundary message={message}>{story()}</ErrorBoundary>],
+  args: {
+    label: 'Label',
+    isDisabled: false,
+    labelPosition: 'top'
+  },
+  argTypes: {
+    labelPosition: {
+      control: {
+        type: 'radio',
+        options: ['top', 'side']
       }
     }
-  })
-  .add(
-    'Default',
-    args => render({...args, 'aria-label': 'Label', label: undefined})
-  )
-  .add(
-    'label',
-    args => render(args)
-  )
-  .add(
-    'custom width',
-    args => render({...args, width: '300px'})
-  )
-  .add(
-    'label overflow',
-    args => render({...args, label: 'This is a rather long label for this narrow slider element.', maxValue: 1000, width: '300px'})
-  )
-  .add(
-    'showValueLabel: false',
-    args => render({...args, showValueLabel: false})
-  )
-  .add(
-    'formatOptions percent',
-    args => render({...args, minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}})
-  )
-  .add(
-    'formatOptions centimeter',
-    // @ts-ignore TODO why is "unit" even missing? How well is it supported?
-    args => render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}})
-  )
-  .add(
-    'custom valueLabel',
-    args => render({...args, getValueLabel: (value) => `${value.start} <-> ${value.end}`})
-  )
-  .add(
-    'custom valueLabel with label overflow',
-    args => render({...args, label: 'This is a rather long label for this narrow slider element.', getValueLabel: (value) => `${value.start} <-> ${value.end}`})
-  )
-  .add(
-    'min/max',
-    args => render({...args, minValue: 30, maxValue: 70})
-  )
-  .add(
-    'contextual help',
-    args => render({...args, label: 'Label', contextualHelp: (
+  }
+};
+
+export const Default = (args) => render({...args, 'aria-label': 'Label', label: undefined});
+export const Label = (args) => render(args);
+
+Label.story = {
+  name: 'label'
+};
+
+export const CustomWidth = (args) => render({...args, width: '300px'});
+
+CustomWidth.story = {
+  name: 'custom width'
+};
+
+export const LabelOverflow = (args) =>
+  render({
+    ...args,
+    label: 'This is a rather long label for this narrow slider element.',
+    maxValue: 1000,
+    width: '300px'
+  });
+
+LabelOverflow.story = {
+  name: 'label overflow'
+};
+
+export const ShowValueLabelFalse = (args) => render({...args, showValueLabel: false});
+
+ShowValueLabelFalse.story = {
+  name: 'showValueLabel: false'
+};
+
+export const FormatOptionsPercent = (args) =>
+  render({...args, minValue: 0, maxValue: 1, step: 0.01, formatOptions: {style: 'percent'}});
+
+FormatOptionsPercent.story = {
+  name: 'formatOptions percent'
+};
+
+export const FormatOptionsCentimeter = (args) => // @ts-ignore TODO why is "unit" even missing? How well is it supported?
+  render({...args, maxValue: 1000, formatOptions: {style: 'unit', unit: 'centimeter'}});
+
+FormatOptionsCentimeter.story = {
+  name: 'formatOptions centimeter'
+};
+
+export const CustomValueLabel = (args) =>
+  render({...args, getValueLabel: (value) => `${value.start} <-> ${value.end}`});
+
+CustomValueLabel.story = {
+  name: 'custom valueLabel'
+};
+
+export const CustomValueLabelWithLabelOverflow = (args) =>
+  render({
+    ...args,
+    label: 'This is a rather long label for this narrow slider element.',
+    getValueLabel: (value) => `${value.start} <-> ${value.end}`
+  });
+
+CustomValueLabelWithLabelOverflow.story = {
+  name: 'custom valueLabel with label overflow'
+};
+
+export const MinMax = (args) => render({...args, minValue: 30, maxValue: 70});
+
+MinMax.story = {
+  name: 'min/max'
+};
+
+export const _ContextualHelp = (args) =>
+  render({
+    ...args,
+    label: 'Label',
+    contextualHelp: (
       <ContextualHelp>
         <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Content>
+          Segments identify who your visitors are, what devices and services they use, where they
+          navigated from, and much more.
+        </Content>
       </ContextualHelp>
-    )})
-  );
+    )
+  });
+
+_ContextualHelp.story = {
+  name: 'contextual help'
+};
 
 function render(props: SpectrumRangeSliderProps = {}) {
   if (props.onChange == null) {
@@ -103,5 +138,5 @@ function render(props: SpectrumRangeSliderProps = {}) {
       action('changeEnd')(v.start, v.end);
     };
   }
-  return  <RangeSlider {...props} />;
+  return <RangeSlider {...props} />;
 }

@@ -23,6 +23,8 @@ interface Position {
 interface Dimensions {
   width: number,
   height: number,
+  totalWidth: number,
+  totalHeight: number,
   top: number,
   left: number,
   scroll: Position
@@ -91,19 +93,26 @@ const AXIS_SIZE = {
   left: 'width'
 };
 
+const TOTAL_SIZE = {
+  width: 'totalWidth',
+  height: 'totalHeight'
+};
+
 const PARSED_PLACEMENT_CACHE = {};
 
 // @ts-ignore
-let visualViewport = typeof window !== 'undefined' && window.visualViewport;
+let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 
 function getContainerDimensions(containerNode: Element): Dimensions {
-  let width = 0, height = 0, top = 0, left = 0;
+  let width = 0, height = 0, totalWidth = 0, totalHeight = 0, top = 0, left = 0;
   let scroll: Position = {};
 
   if (containerNode.tagName === 'BODY') {
     let documentElement = document.documentElement;
-    width = visualViewport?.width ?? documentElement.clientWidth;
-    height = visualViewport?.height ?? documentElement.clientHeight;
+    totalWidth = documentElement.clientWidth;
+    totalHeight = documentElement.clientHeight;
+    width = visualViewport?.width ?? totalWidth;
+    height = visualViewport?.height ?? totalHeight;
 
     scroll.top = documentElement.scrollTop || containerNode.scrollTop;
     scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
@@ -111,9 +120,11 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     ({width, height, top, left} = getOffset(containerNode));
     scroll.top = containerNode.scrollTop;
     scroll.left = containerNode.scrollLeft;
+    totalWidth = width;
+    totalHeight = height;
   }
 
-  return {width, height, scroll, top, left};
+  return {width, height, totalWidth, totalHeight, scroll, top, left};
 }
 
 function getScroll(node: Element): Offset {
@@ -129,19 +140,26 @@ function getDelta(
   axis: Axis,
   offset: number,
   size: number,
+  // The dimensions of the boundary element that the popover is
+  // positioned within (most of the time this is the <body>).
+  boundaryDimensions: Dimensions,
+  // The dimensions of the containing block element that the popover is
+  // positioned relative to (e.g. parent with position: relative).
+  // Usually this is the same as the boundary element, but if the popover
+  // is portaled somewhere other than the body and has an ancestor with
+  // position: relative/absolute, it will be different.
   containerDimensions: Dimensions,
   padding: number
 ) {
   let containerScroll = containerDimensions.scroll[axis];
-  let containerHeight = containerDimensions[AXIS_SIZE[axis]];
-
+  let boundaryHeight = boundaryDimensions[AXIS_SIZE[axis]];
   let startEdgeOffset = offset - padding - containerScroll;
   let endEdgeOffset = offset + padding - containerScroll + size;
 
   if (startEdgeOffset < 0) {
     return -startEdgeOffset;
-  } else if (endEdgeOffset > containerHeight) {
-    return Math.max(containerHeight - endEdgeOffset, -startEdgeOffset);
+  } else if (endEdgeOffset > boundaryHeight) {
+    return Math.max(boundaryHeight - endEdgeOffset, -startEdgeOffset);
   } else {
     return 0;
   }
@@ -219,7 +237,7 @@ function computePosition(
     // height, as `bottom` will be relative to this height.  But if the container is static,
     // then it can only be the `document.body`, and `bottom` will be relative to _its_
     // container, which should be as large as boundaryDimensions.
-    const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary[size] : boundaryDimensions[size]);
+    const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary[size] : boundaryDimensions[TOTAL_SIZE[size]]);
     position[FLIPPED_DIRECTION[axis]] = Math.floor(containerHeight - childOffset[axis] + offset);
   } else {
     position[axis] = Math.floor(childOffset[axis] + childOffset[size] + offset);
@@ -276,6 +294,7 @@ export function calculatePositionInternal(
   padding: number,
   flip: boolean,
   boundaryDimensions: Dimensions,
+  containerDimensions: Dimensions,
   containerOffsetWithBoundary: Offset,
   offset: number,
   crossOffset: number,
@@ -318,7 +337,7 @@ export function calculatePositionInternal(
     }
   }
 
-  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
+  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding);
   position[crossAxis] += delta;
 
   let maxHeight = getMaxHeight(
@@ -337,7 +356,7 @@ export function calculatePositionInternal(
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
   position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
-  delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, padding);
+  delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding);
   position[crossAxis] += delta;
 
   let arrowPosition: Position = {};
@@ -382,17 +401,17 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     offset,
     crossOffset,
     maxHeight,
-    arrowSize,
+    arrowSize = 0,
     arrowBoundaryOffset = 0
   } = opts;
 
-  let container = ((overlayNode instanceof HTMLElement && overlayNode.offsetParent) || document.body) as Element;
-  let isBodyContainer = container.tagName === 'BODY';
+  let container = overlayNode instanceof HTMLElement ? getContainingBlock(overlayNode) : document.documentElement;
+  let isViewportContainer = container === document.documentElement;
   const containerPositionStyle = window.getComputedStyle(container).position;
   let isContainerPositioned = !!containerPositionStyle && containerPositionStyle !== 'static';
-  let childOffset: Offset = isBodyContainer ? getOffset(targetNode) : getPosition(targetNode, container);
+  let childOffset: Offset = isViewportContainer ? getOffset(targetNode) : getPosition(targetNode, container);
 
-  if (!isBodyContainer) {
+  if (!isViewportContainer) {
     let {marginTop, marginLeft} = window.getComputedStyle(targetNode);
     childOffset.top += parseInt(marginTop, 10) || 0;
     childOffset.left += parseInt(marginLeft, 10) || 0;
@@ -405,6 +424,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
 
   let scrollSize = getScroll(scrollNode);
   let boundaryDimensions = getContainerDimensions(boundaryElement);
+  let containerDimensions = getContainerDimensions(container);
   let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container) : getPosition(container, boundaryElement);
 
   return calculatePositionInternal(
@@ -416,6 +436,7 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
     padding,
     shouldFlip,
     boundaryDimensions,
+    containerDimensions,
     containerOffsetWithBoundary,
     offset,
     crossOffset,
@@ -456,4 +477,55 @@ function getPosition(node: Element, parent: Element): Offset {
   offset.top -= parseInt(style.marginTop, 10) || 0;
   offset.left -= parseInt(style.marginLeft, 10) || 0;
   return offset;
+}
+
+// Returns the containing block of an element, which is the element that
+// this element will be positioned relative to.
+// https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block
+function getContainingBlock(node: HTMLElement): Element {
+  // The offsetParent of an element in most cases equals the containing block.
+  // https://w3c.github.io/csswg-drafts/cssom-view/#dom-htmlelement-offsetparent
+  let offsetParent = node.offsetParent;
+
+  // The offsetParent algorithm terminates at the document body,
+  // even if the body is not a containing block. Double check that
+  // and use the documentElement if so.
+  if (
+    offsetParent &&
+    offsetParent === document.body &&
+    window.getComputedStyle(offsetParent).position === 'static' &&
+    !isContainingBlock(offsetParent)
+  ) {
+    offsetParent = document.documentElement;
+  }
+
+  // TODO(later): handle table elements?
+
+  // The offsetParent can be null if the element has position: fixed, or a few other cases.
+  // We have to walk up the tree manually in this case because fixed positioned elements
+  // are still positioned relative to their containing block, which is not always the viewport.
+  if (offsetParent == null) {
+    offsetParent = node.parentElement;
+    while (offsetParent && !isContainingBlock(offsetParent)) {
+      offsetParent = offsetParent.parentElement;
+    }
+  }
+
+  // Fall back to the viewport.
+  return offsetParent || document.documentElement;
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_block#identifying_the_containing_block
+function isContainingBlock(node: Element): boolean {
+  let style = window.getComputedStyle(node);
+  return (
+    style.transform !== 'none' ||
+    /transform|perspective/.test(style.willChange) ||
+    style.filter !== 'none' ||
+    style.contain === 'paint' ||
+    // @ts-ignore
+    ('backdropFilter' in style && style.backdropFilter !== 'none') ||
+    // @ts-ignore
+    ('WebkitBackdropFilter' in style && style.WebkitBackdropFilter !== 'none')
+  );
 }

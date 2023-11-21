@@ -1,5 +1,6 @@
 {
   "actions": "Akce",
   "hideButtonLabel": "Zobrazit méně",
+  "noTags": "Žádný",
   "showAllButtonLabel": "Zobrazit vše ({tagCount, number})"
 }

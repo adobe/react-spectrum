@@ -68,10 +68,20 @@ export let IsQuietSecondary: LinkStory = {
   name: 'isQuiet: true, variant: secondary'
 };
 
+export let WithHref: LinkStory = {
+  ...Default,
+  args: {...Default.args, href: '//example.com'},
+  name: 'href'
+};
+
 export let WithChildren: LinkStory = {
   ...Default,
   args: {children: <a href="//example.com" target="_self">This is a React Spectrum Link</a>},
   name: 'children: a'
+};
+
+export let BlockNavigation: LinkStory = {
+  args: {children: <a href="//example.com" target="_self" onClick={(e) => e.preventDefault()}>This is a React Spectrum Link</a>}
 };
 
 export let OnClick: LinkStory = {

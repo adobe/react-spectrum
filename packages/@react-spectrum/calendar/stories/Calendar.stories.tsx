@@ -18,6 +18,7 @@ import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import {DateValue} from '@react-types/calendar';
 import {Flex} from '@react-spectrum/layout';
 import {Item, Picker, Section} from '@react-spectrum/picker';
+import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {TimeField} from '@react-spectrum/datepicker';
@@ -75,9 +76,12 @@ export default {
     visibleMonths: {
       control: 'number'
     },
-    validationState: {
+    pageBehavior: {
       control: 'select',
-      options: [null, 'valid', 'invalid']
+      options: [null, 'single', 'visible']
+    },
+    isInvalid: {
+      control: 'boolean'
     },
     'aria-label': {
       control: 'text'
@@ -108,19 +112,19 @@ export const WithTime: CalendarStory = {
 
 export const ZonedTime: CalendarStory = {
   render: (args) => <CalendarWithZonedTime {...args} />,
-  storyName: 'with zoned time'
+  name: 'with zoned time'
 };
 
 export const OneWeek: CalendarStory = {
   ...Default,
   args: {minValue: today(getLocalTimeZone()), maxValue: today(getLocalTimeZone()).add({weeks: 1})},
-  storyName: 'minValue: today, maxValue: 1 week from now'
+  name: 'minValue: today, maxValue: 1 week from now'
 };
 
 export const DefaultMinMax: CalendarStory = {
   ...Default,
   args: {defaultValue: new CalendarDate(2019, 6, 10), minValue: new CalendarDate(2019, 6, 5), maxValue: new CalendarDate(2019, 6, 20)},
-  storyName: 'defaultValue + minValue + maxValue'
+  name: 'defaultValue + minValue + maxValue'
 };
 
 export const DateUnavailable: CalendarStory = {
@@ -133,30 +137,30 @@ export const DateUnavailable: CalendarStory = {
         return disabledIntervals.some((interval) => date.compare(interval[0]) > 0 && date.compare(interval[1]) < 0);
       }} />
   ),
-  storyName: 'isDateUnavailable'
+  name: 'isDateUnavailable'
 };
 
 export const MinValue: CalendarStory = {
   ...Default,
   args: {minValue: today(getLocalTimeZone())},
-  storyName: 'minValue: today'
+  name: 'minValue: today'
 };
 
 export const MinValueDefaultVal: CalendarStory = {
   ...Default,
   args: {minValue: today(getLocalTimeZone()), defaultValue: new CalendarDate(2019, 6, 5)},
-  storyName: 'minValue: today, defaultValue'
+  name: 'minValue: today, defaultValue'
 };
 
 export const DefaultFocusedValue: CalendarStory = {
   ...Default,
   args: {defaultFocusedValue: new CalendarDate(2019, 6, 5)},
-  storyName: 'defaultFocusedValue'
+  name: 'defaultFocusedValue'
 };
 
 export const FocusedValue: CalendarStory = {
   render: (args) => <ControlledFocus {...args} />,
-  storyName: 'focusedValue'
+  name: 'focusedValue'
 };
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
@@ -195,7 +199,7 @@ const calendars = [
 
 function Example(props) {
   let [locale, setLocale] = React.useState('');
-  let [calendar, setCalendar] = React.useState<React.Key>(calendars[0].key);
+  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
 
   let pref = preferences.find(p => p.locale === locale);
