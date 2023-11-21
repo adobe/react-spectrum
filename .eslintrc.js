@@ -67,8 +67,7 @@ module.exports = {
       'jsdoc/require-description': OFF
     }
   }, {
-    files: ['packages/@react-aria/focus/**/*.ts', 'packages/@react-aria/focus/**/*.tsx'],
-    ignorePatterns: ['packages/@react-aria/focus/**/*.stories.tsx'],
+    files: ['packages/@react-aria/focus/src/**/*.ts', 'packages/@react-aria/focus/src/**/*.tsx'],
     rules: {
       'no-restricted-globals': [
         ERROR,
@@ -84,7 +83,7 @@ module.exports = {
     }
   },
   {
-    files: ['packages/@react-aria/interactions/**/*.ts', 'packages/@react-aria/interactions/**/*.tsx'],
+    files: ['packages/@react-aria/interactions/src/**/*.ts', 'packages/@react-aria/interactions/src/**/*.tsx'],
     rules: {
       'no-restricted-globals': [
         WARN,
