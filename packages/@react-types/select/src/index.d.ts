@@ -67,7 +67,7 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, AsyncLoadabl
    * @default true
    */
   shouldFlip?: boolean,
-  /** Width of the menu. */
+  /** Width of the menu. By default, matches width of the trigger. */
   menuWidth?: DimensionValue,
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean
