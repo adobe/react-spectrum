@@ -29,6 +29,8 @@ governing permissions and limitations under the License.
 .spectrum-Menu {
   --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
   background-color: var(--spectrum-selectlist-background-color);
+  /* Define this var so it can be read from JS */
+  --spectrum-submenu-offset-distance-x: var(--spectrum-global-dimension-size-50);
 }
 
 .spectrum-Submenu-headingWrapper {
@@ -91,6 +93,9 @@ governing permissions and limitations under the License.
 .spectrum-Submenu-popover {
   filter: unset;
   -webkit-filter: unset;
+  transition: opacity var(--spectrum-global-animation-duration-100) ease-in-out,
+              visibility 0ms linear var(--spectrum-global-animation-duration-100);
+  transform: none;
 }
 
 .spectrum-Submenu-heading {

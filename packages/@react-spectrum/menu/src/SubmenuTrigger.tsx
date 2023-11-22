@@ -13,9 +13,9 @@
 import {classNames, useIsMobileDevice} from '@react-spectrum/utils';
 import {Key} from '@react-types/shared';
 import {MenuContext, SubmenuTriggerContext, useMenuStateContext} from './context';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Popover} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef} from 'react';
+import React, {ReactElement, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
@@ -73,6 +73,13 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   };
 
   let overlay;
+  let [offset, setOffset] = useState(0);
+  useLayoutEffect(() => {
+    if (parentMenuRef.current) {
+      setOffset(-1 * parseInt(window?.getComputedStyle(parentMenuRef?.current).getPropertyValue('--spectrum-submenu-offset-distance-x'), 10));
+    }
+  }, [parentMenuRef]);
+
   if (isMobile)  {
     delete submenuTriggerProps.onBlur;
     delete submenuTriggerProps.onHoverChange;
@@ -92,9 +99,9 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
         onDismissButtonPress={onDismissButtonPress}
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
         container={popoverContainerRef.current}
-        offset={-10}
+        offset={offset}
         containerPadding={0}
-        crossOffset={-5}
+        crossOffset={offset - 1}
         enableBothDismissButtons
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible', borderWidth: '0px'}}
         state={submenuTriggerState}

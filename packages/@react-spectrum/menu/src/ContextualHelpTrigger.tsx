@@ -16,13 +16,14 @@ import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps, Key} from '@react-types/shared';
 import {Popover} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef} from 'react';
+import React, {ReactElement, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
 import {TrayHeaderWrapper} from './Menu';
 import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 import {UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
+import {useLayoutEffect} from '@react-aria/utils';
 
 interface MenuDialogTriggerProps {
   /** Whether the menu item is currently unavailable. */
@@ -95,6 +96,12 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
       parentMenuRef.current.focus();
     }
   };
+  let [offset, setOffset] = useState(0);
+  useLayoutEffect(() => {
+    if (parentMenuRef.current) {
+      setOffset(-1 * parseInt(window?.getComputedStyle(parentMenuRef?.current).getPropertyValue('--spectrum-submenu-offset-distance-x'), 10));
+    }
+  }, [parentMenuRef]);
 
   if (isMobile) {
     delete submenuTriggerProps.onBlur;
@@ -141,8 +148,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         triggerRef={triggerRef}
         placement="end top"
         containerPadding={0}
-        crossOffset={-5}
-        offset={-10}
+        crossOffset={offset - 1}
+        offset={offset}
         hideArrow
         enableBothDismissButtons>
         <FocusScope restoreFocus>
