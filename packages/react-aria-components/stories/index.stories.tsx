@@ -1415,3 +1415,27 @@ ToolbarExample.argTypes = {
     options: ['horizontal', 'vertical']
   }
 };
+
+export const ToolbarWithNativeButtons = {
+  render: (props) => (
+    <div>
+      <label htmlFor="before">Input Before Toolbar</label>
+      <input id="before" type="text" />
+      <Toolbar {...props}>
+        <div role="group" aria-label="Text style">
+          <button onFocus={action('focus B')} onBlur={action('blur B')} className={classNames(styles, 'toggleButtonExample')}><strong>B</strong></button>
+          <button onFocus={action('focus U')} onBlur={action('blur U')} className={classNames(styles, 'toggleButtonExample')}><div style={{textDecoration: 'underline'}}>U</div></button>
+          <button onFocus={action('focus I')} onBlur={action('blur I')} className={classNames(styles, 'toggleButtonExample')}><i>I</i></button>
+        </div>
+      </Toolbar>
+      <label htmlFor="after">Input After Toolbar</label>
+      <input id="after" type="text" />
+    </div>
+  ),
+  parameters: {
+    description: {
+      data: `Tab into the toolbar. Arrow key navigate to the middle button. Tab to exit, then shift tab to return. All focus actions should be in order, there should not be
+      any double blur follow by double focus.`
+    }
+  }
+};
