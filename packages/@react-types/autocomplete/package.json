@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@react-types/combobox": "^3.9.0",
+    "@react-types/overlays": "^3.8.4",
     "@react-types/searchfield": "^3.5.2",
     "@react-types/shared": "^3.22.0"
   },

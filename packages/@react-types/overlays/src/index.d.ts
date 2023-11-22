@@ -21,6 +21,7 @@ export type Placement = 'bottom' | 'bottom left' | 'bottom right' | 'bottom star
 export type Axis = 'top' | 'bottom' | 'left' | 'right';
 export type SizeAxis = 'width' | 'height';
 export type PlacementAxis = Axis | 'center';
+export type OverlayAlign = 'start' | 'end';
 
 export interface PositionProps {
   /**

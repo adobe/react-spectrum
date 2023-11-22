@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Alignment, AriaLabelingProps, AsyncLoadable, CollectionBase, DimensionValue, DOMProps, Key, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DimensionValue, DOMProps, Key, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
 import {AriaSearchFieldProps, SearchFieldProps} from '@react-types/searchfield';
 import {MenuTriggerAction} from '@react-types/combobox';
+import {OverlayAlign} from '@react-types/overlays';
 import {ReactElement} from 'react';
 
 export interface SearchAutocompleteProps<T> extends CollectionBase<T>, Omit<SearchFieldProps, 'onSubmit' | 'defaultValue' | 'value'> {
@@ -57,7 +58,7 @@ export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBas
   /** Alignment of the menu relative to the input target.
    * @default 'start'
    */
-  align?: Alignment,
+  align?: OverlayAlign,
   /**
    * Direction the menu will render relative to the SearchAutocomplete.
    * @default 'bottom'

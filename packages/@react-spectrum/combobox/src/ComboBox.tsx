@@ -74,7 +74,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
-    align = 'end',  // for backward compatibility
+    align = 'end',
     isQuiet,
     loadingState,
     onLoadMore,
@@ -167,7 +167,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           inputRef={inputRef}
           triggerProps={buttonProps}
           triggerRef={buttonRef}
-          validationState={props.validationState || (isInvalid ? 'invalid' : null)} 
+          validationState={props.validationState || (isInvalid ? 'invalid' : null)}
           ref={inputGroupRef} />
       </Field>
       {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}

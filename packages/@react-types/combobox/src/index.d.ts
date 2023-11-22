@@ -11,7 +11,6 @@
  */
 
 import {
-  Alignment,
   AriaLabelingProps,
   AsyncLoadable,
   CollectionBase,
@@ -32,6 +31,7 @@ import {
   TextInputBase,
   Validation
 } from '@react-types/shared';
+import {OverlayAlign} from '@react-types/overlays';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
@@ -83,9 +83,9 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
   /** Whether the ComboBox should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Alignment of the menu relative to the input target.
-   * @default 'start'
+   * @default 'end'
    */
-  align?: Alignment,
+  align?: OverlayAlign,
   /**
    * Direction the menu will render relative to the ComboBox.
    * @default 'bottom'
