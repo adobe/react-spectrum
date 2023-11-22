@@ -31,7 +31,6 @@ import {
   TextInputBase,
   Validation
 } from '@react-types/shared';
-import {OverlayAlign} from '@react-types/overlays';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
@@ -85,7 +84,7 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
   /** Alignment of the menu relative to the input target.
    * @default 'end'
    */
-  align?: OverlayAlign,
+  align?: 'start' | 'end',
   /**
    * Direction the menu will render relative to the ComboBox.
    * @default 'bottom'
