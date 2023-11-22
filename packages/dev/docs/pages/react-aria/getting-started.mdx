@@ -12,6 +12,8 @@ export default Layout;
 
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import styles from '@react-spectrum/docs/src/docs.css';
+import {ResourceCard} from '@react-spectrum/docs/src/ResourceCard';
+import {spawnSync} from 'child_process';
 
 ---
 category: Introduction
@@ -217,6 +219,15 @@ This is a quick way to get started, but you can also create your own custom clas
 </details>
 
 Check out our [styling guide](styling.html) to learn more about styling, states, render props, working with Tailwind CSS, and animation.
+
+## Starter kit
+
+To help kick-start your project, we offer a starter kit that includes example implementations of all React Aria components, along with styles from the docs. It also comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<ResourceCard
+  type="Storybook"
+  url={`../react-aria-starter.${process.env.GIT_HASH || spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout}.zip`}
+  style={{marginTop: 36}} />
 
 ## Hooks
 

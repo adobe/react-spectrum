@@ -88,4 +88,16 @@ describe('FileTrigger', () => {
     let input = getByTestId('foo');
     expect(ref.current).toBe(input);
   });
+
+  it('should allow directory uploads when directory is true', () => {
+    render(
+      <FileTrigger directory>
+        <Button>Upload Directory</Button>
+      </FileTrigger>
+    );
+  
+    let input = document.querySelector('input[type="file"]');
+    expect(input).toHaveAttribute('webkitdirectory');
+  });
+  
 });
