@@ -126,10 +126,12 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
       case 'ArrowRight':
         if (!isDisabled) {
           if (direction === 'ltr') {
+            if (!state.isOpen) {
+              onSubmenuOpen('first');
+            }
+
             if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
               submenuRef.current.focus();
-            } else {
-              onSubmenuOpen('first');
             }
           } else if (state.isOpen) {
             onSubmenuClose();
@@ -142,10 +144,12 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
       case 'ArrowLeft':
         if (!isDisabled) {
           if (direction === 'rtl') {
+            if (!state.isOpen) {
+              onSubmenuOpen('first');
+            }
+
             if (type === 'menu' && !!submenuRef?.current && document.activeElement === ref?.current) {
               submenuRef.current.focus();
-            } else {
-              onSubmenuOpen('first');
             }
           } else if (state.isOpen) {
             onSubmenuClose();
