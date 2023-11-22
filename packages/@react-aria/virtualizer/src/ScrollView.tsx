@@ -38,6 +38,8 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
 
+let isOldReact = React.version.startsWith('16.') || React.version.startsWith('17.');
+
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   let {
     contentSize,
@@ -148,7 +150,25 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   useLayoutEffect(() => {
     updateSize();
   }, [updateSize]);
-  useResizeObserver({ref, onResize: updateSize});
+  let raf = useRef<ReturnType<typeof requestAnimationFrame> | null>();
+  let onResize = () => {
+    if (isOldReact) {
+      raf.current ??= requestAnimationFrame(() => {
+        updateSize();
+        raf.current = null;
+      });
+    } else {
+      updateSize();
+    }
+  };
+  useResizeObserver({ref, onResize});
+  useEffect(() => {
+    return () => {
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
+  }, []);
 
   let style: React.CSSProperties = {
     // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
