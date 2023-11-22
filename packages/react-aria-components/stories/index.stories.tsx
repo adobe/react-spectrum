@@ -1166,6 +1166,16 @@ export const FileTriggerButton = (props) => (
   </FileTrigger>
 );
 
+export const FileTriggerDirectories = (props) => (
+  <FileTrigger
+    directory
+    onSelect={action('onSelect')}
+    data-testid="filetrigger-example"
+    {...props} >
+    <Button>Upload</Button>
+  </FileTrigger>
+);
+
 export const FileTriggerLinkAllowsMultiple = (props) => (
   <FileTrigger
     {...props}

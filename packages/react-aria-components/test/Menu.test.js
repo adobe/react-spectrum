@@ -262,6 +262,7 @@ describe('Menu', () => {
 
     let popover = menu.closest('.react-aria-Popover');
     expect(popover).toBeInTheDocument();
+    expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
 
     await user.click(getAllByRole('menuitem')[1]);
     expect(onAction).toHaveBeenLastCalledWith('rename');

@@ -148,6 +148,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
           [OverlayTriggerStateContext, state],
           [PopoverContext, {
+            trigger: 'Select',
             triggerRef: buttonRef,
             placement: 'bottom start',
             style: {'--trigger-width': buttonWidth} as React.CSSProperties
