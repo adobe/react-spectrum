@@ -1,5 +1,5 @@
 import './App.css';
-import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView, Content, Heading} from '@adobe/react-spectrum';
+import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView, Content, Heading, Form, ComboBox, Button} from '@adobe/react-spectrum';
 import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
@@ -56,6 +56,17 @@ function App() {
           <Heading>Payment Information</Heading>
           <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
         </InlineAlert>
+        <Form>
+          <ComboBox label="Favorite Animal">
+            <Item key="red panda">Red Panda</Item>
+            <Item key="cat">Cat</Item>
+            <Item key="dog">Dog</Item>
+            <Item key="aardvark">Aardvark</Item>
+            <Item key="kangaroo">Kangaroo</Item>
+            <Item key="snake">Snake</Item>
+          </ComboBox>
+          <Button variant="cta">Click Me</Button>
+        </Form>
       </div>
     </Provider>
   );
