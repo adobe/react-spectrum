@@ -27,8 +27,7 @@ function App() {
 
   return (
     <Provider theme={defaultTheme}
-              colorScheme={selected ? "light" : "dark"}
-              height="100%">
+              colorScheme={selected ? "light" : "dark"}>
       <div className="content-padding">
         <Lighting selected={selected} switch={setSelection}/>
         <TagGroup aria-label="Static TagGroup items example">
@@ -56,7 +55,7 @@ function App() {
           <Heading>Payment Information</Heading>
           <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
         </InlineAlert>
-        <Form>
+        <Form width="250px">
           <ComboBox label="Favorite Animal">
             <Item key="red panda">Red Panda</Item>
             <Item key="cat">Cat</Item>
