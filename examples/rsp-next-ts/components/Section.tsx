@@ -3,7 +3,7 @@ import React from "react";
 
 interface SectionProps {
   title: string;
-  children: JSX.Element | JSX.Element[];
+  children: React.JSX.Element | React.JSX.Element[];
 }
 
 export default function Section(props: SectionProps) {

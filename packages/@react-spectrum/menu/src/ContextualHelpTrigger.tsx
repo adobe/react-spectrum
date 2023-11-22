@@ -13,18 +13,27 @@
 import {classNames, SlotProvider, useIsMobileDevice} from '@react-spectrum/utils';
 import {DismissButton} from '@react-aria/overlays';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
-import {ItemProps} from '@react-types/shared';
+import {ItemProps, Key} from '@react-types/shared';
 import {MenuDialogContext, useMenuStateContext} from './context';
 import {Modal, Popover} from '@react-spectrum/overlays';
-import React, {Key, ReactElement, useRef} from 'react';
+import React, {ReactElement, useRef} from 'react';
+import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-export interface SpectrumMenuDialogTriggerProps<T> extends ItemProps<T> {
+interface MenuDialogTriggerProps {
+  /** Whether the menu item is currently unavailable. */
   isUnavailable?: boolean,
+  /** The triggering Item and the Dialog, respectively. */
+  children: [ReactElement, ReactElement]
+}
+
+interface InternalMenuDialogTriggerProps extends MenuDialogTriggerProps {
   targetKey: Key
 }
 
-function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): ReactElement {
+export interface SpectrumMenuDialogTriggerProps extends MenuDialogTriggerProps {}
+
+function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElement {
   let {isUnavailable} = props;
 
   let triggerRef = useRef<HTMLLIElement>(null);
@@ -37,18 +46,17 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
       }
     }
   }});
+  let isMobile = useIsMobileDevice();
   let slots = {};
   if (isUnavailable) {
     slots = {
-      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog')},
+      dialog: {UNSAFE_className: classNames(helpStyles, 'react-spectrum-ContextualHelp-dialog', classNames(styles, !isMobile ? 'spectrum-Menu-subdialog' : ''))},
       content: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-content']},
       footer: {UNSAFE_className: helpStyles['react-spectrum-ContextualHelp-footer']}
     };
   }
   let [trigger] = React.Children.toArray(props.children);
   let [, content] = props.children as [ReactElement, ReactElement];
-
-  let isMobile = useIsMobileDevice();
 
   let onExit = () => {
     // if focus was already moved back to a menu item, don't need to do anything
@@ -78,6 +86,7 @@ function ContextualHelpTrigger<T>(props: SpectrumMenuDialogTriggerProps<T>): Rea
             </Modal>
           ) : (
             <Popover
+              UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
               onExit={onExit}
               onBlurWithin={onBlurWithin}
               container={container.current}
@@ -114,5 +123,5 @@ ContextualHelpTrigger.getCollectionNode = function* getCollectionNode<T>(props: 
   };
 };
 
-let _Item = ContextualHelpTrigger as <T>(props: ItemProps<T> & {isUnavailable?: boolean}) => JSX.Element;
+let _Item = ContextualHelpTrigger as (props: SpectrumMenuDialogTriggerProps) => React.JSX.Element;
 export {_Item as ContextualHelpTrigger};

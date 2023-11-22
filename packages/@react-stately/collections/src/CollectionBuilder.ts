@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionBase, CollectionElement, Node} from '@react-types/shared';
+import {CollectionBase, CollectionElement, Key, Node} from '@react-types/shared';
 import {PartialNode} from './types';
-import React, {Key, ReactElement} from 'react';
+import React, {ReactElement} from 'react';
 
 interface CollectionBuilderState {
   renderer?: (value: any) => ReactElement

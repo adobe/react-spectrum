@@ -28,7 +28,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-InputGroup {
-  @inherit: %spectrum-FocusRing;
+  composes: spectrum-FocusRing;
 
   position: relative;
   display: inline-flex;
@@ -98,14 +98,15 @@ governing permissions and limitations under the License.
   flex: 1 1 auto;
 }
 
-.spectrum-InputGroup-input {
+/* override .spectrum-Textfield-input */
+.spectrum-InputGroup-input.spectrum-InputGroup-input {
   border-start-end-radius: var(--spectrum-combobox-textfield-border-top-right-radius);
   border-end-end-radius: var(--spectrum-combobox-textfield-border-bottom-right-radius);
   border-inline-end-style: none;
 }
 
 .spectrum-InputGroup--quiet {
-  @inherit: %spectrum-FocusRing--quiet;
+  composes: spectrum-FocusRing--quiet;
 
   border-radius: var(--spectrum-combobox-quiet-fieldbutton-border-radius);
   min-width: calc(2 * var(--spectrum-dropdown-height));

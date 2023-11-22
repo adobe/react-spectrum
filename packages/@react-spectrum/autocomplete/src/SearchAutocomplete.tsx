@@ -41,12 +41,14 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
 function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
 
   if (props.placeholder) {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
@@ -71,7 +73,8 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
     isQuiet,
     loadingState,
     onLoadMore,
-    onSubmit = () => {}
+    onSubmit = () => {},
+    validate
   } = props;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -91,12 +94,13 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
       allowsCustomValue: true,
       onSelectionChange: (key) => key !== null && onSubmit(null, key),
       selectedKey: undefined,
-      defaultSelectedKey: undefined
+      defaultSelectedKey: undefined,
+      validate: useCallback(v => validate?.(v.inputValue), [validate])
     }
   );
   let layout = useListBoxLayout(state, loadingState === 'loadingMore');
 
-  let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchAutocomplete(
+  let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSearchAutocomplete(
     {
       ...props,
       keyboardDelegate: layout,
@@ -138,6 +142,9 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}
         labelProps={labelProps}
+        isInvalid={isInvalid}
+        validationErrors={validationErrors}
+        validationDetails={validationDetails}
         ref={domRef}>
         <SearchAutocompleteInput
           {...props}
@@ -145,7 +152,8 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           loadingState={loadingState}
           inputProps={inputProps}
           inputRef={inputRef}
-          clearButtonProps={clearButtonProps} />
+          clearButtonProps={clearButtonProps}
+          validationState={props.validationState || (isInvalid ? 'invalid' : undefined)} />
       </Field>
       <Popover
         state={state}

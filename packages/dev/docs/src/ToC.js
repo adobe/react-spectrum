@@ -44,7 +44,7 @@ function SideNav(props) {
   if (node.children.length > 0) {
     return (
       <li className={clsx(sidenavstyles['spectrum-SideNav-item'])}>
-        <a className={clsx(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={`#${node.id}`} id={`toc-${node.id}-heading`}>{node.textContent}</a>
+        <a className={clsx(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} data-hover={sidenavstyles['is-hovered']} href={`#${node.id}`} id={`toc-${node.id}-heading`}>{node.textContent}</a>
         <ul className={clsx(sidenavstyles['spectrum-SideNav'], sidenavstyles['spectrum-SideNav--multiLevel'])} aria-labelledby={`toc-${node.id}-heading`}>
           {node.children.map(child => <SideNav key={child.id} node={child} />)}
         </ul>
@@ -53,7 +53,7 @@ function SideNav(props) {
   } else {
     return (
       <li className={clsx(sidenavstyles['spectrum-SideNav-item'])}>
-        <a className={clsx(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} href={`#${node.id}`}>{node.textContent}</a>
+        <a className={clsx(sidenavstyles['spectrum-SideNav-itemLink'], docStyles.sideNavItem)} data-hover={sidenavstyles['is-hovered']} href={`#${node.id}`}>{node.textContent}</a>
       </li>
     );
   }

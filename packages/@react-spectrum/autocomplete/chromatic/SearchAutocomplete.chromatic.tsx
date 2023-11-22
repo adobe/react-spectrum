@@ -64,7 +64,8 @@ const meta: Meta<SpectrumSearchAutocompleteProps<object>> = {
       locales: ['en-US'],
       scales: ['medium', 'large']
     }
-  }
+  },
+  excludeStories: ['Template']
 };
 
 export default meta;
@@ -75,7 +76,7 @@ let items = [
   {name: 'Snake', id: '3'}
 ];
 
-const Template: StoryFn<SpectrumSearchAutocompleteProps<object>> = (args) => (
+export const Template: StoryFn<SpectrumSearchAutocompleteProps<object>> = (args) => (
   <Grid columns={repeat(4, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');

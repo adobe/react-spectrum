@@ -119,6 +119,8 @@ Setting a selected option can be done by using the `defaultSelectedKey` or `sele
 Additionally see the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
+import type {Key} from '@adobe/react-spectrum';
+
 function Example() {
   let options = [
     {name: 'Koala'},
@@ -128,7 +130,7 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
-  let [animal, setAnimal] = React.useState<React.Key>("Bison");
+  let [animal, setAnimal] = React.useState<Key>("Bison");
 
   return (
     <Flex gap="size-150" wrap>
@@ -167,6 +169,23 @@ Picker supports the `name` prop for integration with HTML forms. The `key` of th
   <Item key="dog">Dog</Item>
 </Picker>
 ```
+
+## Links
+
+By default, interacting with an item in a Picker triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a `Picker` are not selectable.
+
+```tsx example
+<Picker label="Project">
+  <Item href="https://example.com/" target="_blank">Create new…</Item>
+  <Item>Proposal</Item>
+  <Item>Budget</Item>
+  <Item>Onboarding</Item>
+</Picker>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Sections
 Picker supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
@@ -332,6 +351,35 @@ function AsyncLoadingExample() {
   );
 }
 ```
+
+## Validation
+
+Picker supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically.
+
+```tsx example
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <Picker label="Favorite animal" name="animal" isRequired>
+  {/*- end highlight -*/}
+    <Item>Aardvark</Item>
+    <Item>Cat</Item>
+    <Item>Dog</Item>
+    <Item>Kangaroo</Item>
+    <Item>Panda</Item>
+    <Item>Snake</Item>
+  </Picker>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+By default, `Picker` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## Props
 

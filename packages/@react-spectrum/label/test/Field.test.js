@@ -12,8 +12,8 @@
 
 import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import {Field} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import {useField} from '@react-aria/label';
 import userEvent from '@testing-library/user-event';
 
@@ -49,6 +49,11 @@ function renderField(props = {}) {
 }
 
 describe('Field', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('renders correctly', function () {
     let {getByLabelText} = renderField();
 
@@ -163,14 +168,14 @@ describe('Field', function () {
         expect(input).not.toHaveAttribute('aria-describedby');
       });
 
-      it('does not lose focus when no visible label and validation state changes', function () {
+      it('does not lose focus when no visible label and validation state changes', async function () {
         let {getByRole, getByText, rerender} = renderField();
 
         let input = getByRole('textbox');
 
-        userEvent.tab();
+        await user.tab();
         expect(document.activeElement).toBe(input);
-        userEvent.type(input, 'Test');
+        await user.keyboard('Test');
         expect(document.activeElement).toBe(input);
 
         rerender(<ExampleField validationState="invalid" errorMessage="Error message" />);

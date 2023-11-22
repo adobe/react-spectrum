@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Grid} from '../stories/example';
 import {Item} from '@react-stately/collections';
 import React from 'react';
@@ -38,17 +38,20 @@ function renderGrid(props = {}) {
 }
 
 describe('useGrid', () => {
+  let user;
+
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
   afterEach(() => {
     // run out notifications
     act(() => {jest.runAllTimers();});
   });
-  it('gridFocusMode = row, cellFocusMode = cell', () => {
+  it('gridFocusMode = row, cellFocusMode = cell', async () => {
     let tree = renderGrid({gridFocusMode: 'row', cellFocusMode: 'cell'});
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
@@ -78,10 +81,10 @@ describe('useGrid', () => {
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
   });
 
-  it('gridFocusMode = row, cellFocusMode = child', () => {
+  it('gridFocusMode = row, cellFocusMode = child', async () => {
     let tree = renderGrid({gridFocusMode: 'row', cellFocusMode: 'child'});
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
@@ -106,10 +109,10 @@ describe('useGrid', () => {
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
   });
 
-  it('gridFocusMode = cell, cellFocusMode = child', () => {
+  it('gridFocusMode = cell, cellFocusMode = child', async () => {
     let tree = renderGrid({gridFocusMode: 'cell', cellFocusMode: 'child'});
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
@@ -128,10 +131,10 @@ describe('useGrid', () => {
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
   });
 
-  it('gridFocusMode = cell, cellFocusMode = cell', () => {
+  it('gridFocusMode = cell, cellFocusMode = cell', async () => {
     let tree = renderGrid({gridFocusMode: 'cell', cellFocusMode: 'cell'});
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
 
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});

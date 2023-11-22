@@ -11,6 +11,7 @@
  */
 
 import {CollectionStateBase} from '@react-types/shared';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {MenuTriggerState, useMenuTriggerState} from '@react-stately/menu';
 import {SelectProps} from '@react-types/select';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
@@ -18,7 +19,7 @@ import {useState} from 'react';
 
 export interface SelectStateOptions<T> extends Omit<SelectProps<T>, 'children'>, CollectionStateBase<T> {}
 
-export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState {
+export interface SelectState<T> extends SingleSelectListState<T>, MenuTriggerState, FormValidationState {
   /** Whether the select is currently focused. */
   readonly isFocused: boolean,
 
@@ -41,12 +42,19 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
       }
 
       triggerState.close();
+      validationState.commitValidation();
     }
+  });
+
+  let validationState = useFormValidationState({
+    ...props,
+    value: listState.selectedKey
   });
 
   let [isFocused, setFocused] = useState(false);
 
   return {
+    ...validationState,
     ...listState,
     ...triggerState,
     open() {

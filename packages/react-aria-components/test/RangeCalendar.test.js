@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Button, CalendarCell, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Heading, RangeCalendar, RangeCalendarContext} from 'react-aria-components';
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
 import React from 'react';
@@ -32,6 +32,10 @@ let TestCalendar = ({calendarProps, gridProps, cellProps}) => (
 let renderCalendar = (calendarProps, gridProps, cellProps) => render(<TestCalendar {...{calendarProps, gridProps, cellProps}} />);
 
 describe('RangeCalendar', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   it('should render with default classes', () => {
     let {getByRole} = renderCalendar();
     let group = getByRole('application');
@@ -178,7 +182,7 @@ describe('RangeCalendar', () => {
     expect(grids[1]).toHaveAttribute('aria-label', 'Trip dates, ' + formatter.format(today(getLocalTimeZone()).add({months: 1}).toDate(getLocalTimeZone())));
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getByRole} = renderCalendar({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
@@ -186,16 +190,16 @@ describe('RangeCalendar', () => {
     expect(cell).not.toHaveAttribute('data-hovered');
     expect(cell).not.toHaveClass('hover');
 
-    userEvent.hover(cell);
+    await user.hover(cell);
     expect(cell).toHaveAttribute('data-hovered', 'true');
     expect(cell).toHaveClass('hover');
 
-    userEvent.unhover(cell);
+    await user.unhover(cell);
     expect(cell).not.toHaveAttribute('data-hovered');
     expect(cell).not.toHaveClass('hover');
   });
 
-  it('should support focus ring', () => {
+  it('should support focus ring', async () => {
     let {getByRole} = renderCalendar({}, {}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
@@ -203,13 +207,13 @@ describe('RangeCalendar', () => {
     expect(cell).not.toHaveAttribute('data-focus-visible');
     expect(cell).not.toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     act(() => cell.focus());
     expect(document.activeElement).toBe(cell);
     expect(cell).toHaveAttribute('data-focus-visible', 'true');
     expect(cell).toHaveClass('focus');
 
-    userEvent.tab();
+    await user.tab();
     expect(cell).not.toHaveAttribute('data-focus-visible');
     expect(cell).not.toHaveClass('focus');
   });
@@ -231,7 +235,7 @@ describe('RangeCalendar', () => {
     expect(cell).not.toHaveClass('pressed');
   });
 
-  it('should support selected state', () => {
+  it('should support selected state', async () => {
     let {getByRole} = renderCalendar({}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
     let grid = getByRole('grid');
     let cell = within(grid).getAllByRole('button')[7];
@@ -239,12 +243,12 @@ describe('RangeCalendar', () => {
     expect(cell).not.toHaveAttribute('data-selected');
     expect(cell).not.toHaveClass('selected');
 
-    userEvent.click(cell);
+    await user.click(cell);
     expect(cell).toHaveAttribute('data-selected', 'true');
     expect(cell).toHaveClass('selected');
   });
 
-  it('should support selected range states', () => {
+  it('should support selected range states', async () => {
     let {getByRole} = renderCalendar({}, {}, {className: ({isSelectionStart, isSelectionEnd}) => `${isSelectionStart ? 'start' : ''} ${isSelectionEnd ? 'end' : ''}`});
     let grid = getByRole('grid');
     let cells = within(grid).getAllByRole('button');
@@ -253,7 +257,7 @@ describe('RangeCalendar', () => {
     expect(cells[7]).not.toHaveClass('start');
     expect(cells[7]).not.toHaveClass('end');
 
-    userEvent.click(cells[7]);
+    await user.click(cells[7]);
     expect(cells[7]).toHaveAttribute('data-selection-start', 'true');
     expect(cells[7]).toHaveClass('start');
     expect(cells[7]).toHaveAttribute('data-selection-end', 'true');
@@ -264,7 +268,7 @@ describe('RangeCalendar', () => {
     expect(cells[8]).not.toHaveAttribute('data-selection-end', 'true');
     expect(cells[8]).not.toHaveClass('end');
 
-    userEvent.click(cells[10]);
+    await user.click(cells[10]);
     expect(cells[7]).toHaveAttribute('data-selection-start', 'true');
     expect(cells[7]).toHaveClass('start');
     expect(cells[7]).not.toHaveAttribute('data-selection-end', 'true');

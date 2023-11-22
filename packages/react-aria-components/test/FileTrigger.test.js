@@ -10,11 +10,15 @@
  * governing permissions and limitations under the License.
  */
 import {Button, FileTrigger, Link} from '../';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 describe('FileTrigger', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
   it('should render a FileTrigger with Link', () => {
     let {getByRole} = render(
       <FileTrigger>
@@ -32,28 +36,31 @@ describe('FileTrigger', () => {
         <Button>Upload</Button>
       </FileTrigger>
     );
-    
+
     let button = getByRole('button');
     expect(button).toHaveAttribute('class', 'react-aria-Button');
   });
 
-  it('should upload a file with Button', () => {
+  it('should upload a file with Button', async () => {
     let file = new File(['hello'], 'hello.png', {type: 'image/png'});
     let {getByRole} = render(
-      <FileTrigger>
+      <FileTrigger data-testid="testid">
         <Button>Upload</Button>
       </FileTrigger>
     );
+
     let button = getByRole('button');
+    // cannot use RTL to target the input because it doesn't have a label or id or anything and it's hidden
+    let input = document.querySelector('input[type="file"]');
     expect(button).toHaveAttribute('class', 'react-aria-Button');
 
-    userEvent.upload(button, file);
-    expect(button.files[0]).toStrictEqual(file);
-    expect(button.files.item(0)).toStrictEqual(file);
-    expect(button.files).toHaveLength(1);
+    await userEvent.upload(input, file);
+    expect(input.files[0]).toStrictEqual(file);
+    expect(input.files.item(0)).toStrictEqual(file);
+    expect(input.files).toHaveLength(1);
   });
 
-  it('should upload a file with Link', () => {
+  it('should upload a file with Link', async () => {
     let file = new File(['hello'], 'hello.png', {type: 'image/png'});
     let {getByRole} = render(
       <FileTrigger>
@@ -61,11 +68,36 @@ describe('FileTrigger', () => {
       </FileTrigger>
     );
     let link = getByRole('link');
+    let input = document.querySelector('input[type="file"]');
     expect(link).toHaveAttribute('class', 'react-aria-Link');
 
-    userEvent.upload(link, file);
-    expect(link.files[0]).toStrictEqual(file);
-    expect(link.files.item(0)).toStrictEqual(file);
-    expect(link.files).toHaveLength(1);
+    await user.upload(input, file);
+    expect(input.files[0]).toStrictEqual(file);
+    expect(input.files.item(0)).toStrictEqual(file);
+    expect(input.files).toHaveLength(1);
   });
+
+  it('should attach a ref to the input', () => {
+    let ref = React.createRef();
+    let {getByTestId} = render(
+      <FileTrigger ref={ref} data-testid="foo">
+        <Button>Upload</Button>
+      </FileTrigger>
+    );
+
+    let input = getByTestId('foo');
+    expect(ref.current).toBe(input);
+  });
+
+  it('should allow directory uploads when directory is true', () => {
+    render(
+      <FileTrigger directory>
+        <Button>Upload Directory</Button>
+      </FileTrigger>
+    );
+  
+    let input = document.querySelector('input[type="file"]');
+    expect(input).toHaveAttribute('webkitdirectory');
+  });
+  
 });

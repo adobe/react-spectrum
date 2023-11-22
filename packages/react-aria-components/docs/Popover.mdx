@@ -19,6 +19,7 @@ import Anatomy from '@react-aria/overlays/docs/popover-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 
 ---
@@ -41,16 +42,26 @@ type: component
 ## Example
 
 ```tsx example
-import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-components';
+import {DialogTrigger, Popover, Dialog, Button, OverlayArrow, Heading, Switch} from 'react-aria-components';
 
 <DialogTrigger>
-  <Button>Open popover</Button>
+  <Button>Settings</Button>
   <Popover>
     <OverlayArrow>
-      <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+      <svg width={12} height={12} viewBox="0 0 12 12"><path d="M0 0 L6 6 L12 0" /></svg>
     </OverlayArrow>
     <Dialog>
-      This is a popover.
+      <div className="flex-col">
+        <Switch defaultSelected>
+          <div className="indicator" /> Wi-Fi
+        </Switch>
+        <Switch defaultSelected>
+          <div className="indicator" /> Bluetooth
+        </Switch>
+        <Switch>
+          <div className="indicator" /> Mute
+        </Switch>
+      </div>
     </Dialog>
   </Popover>
 </DialogTrigger>
@@ -58,19 +69,26 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './Dialog.mdx' layer(dialog);
+@import './Switch.mdx' layer(switch);
+```
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-Popover {
-  --background-color: var(--page-background);
-  --border-color: var(--spectrum-global-color-gray-400);
+  --background-color: var(--overlay-background);
 
   border: 1px solid var(--border-color);
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
   background: var(--background-color);
+  color: var(--text-color);
   outline: none;
-  padding: 30px;
   max-width: 250px;
+  box-sizing: border-box;
 
   .react-aria-OverlayArrow svg {
     display: block;
@@ -80,44 +98,59 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
   }
 
   &[data-placement=top] {
-    margin-bottom: 6px;
     --origin: translateY(8px);
+
+    &:has(.react-aria-OverlayArrow) {
+      margin-bottom: 6px;
+    }
   }
 
   &[data-placement=bottom] {
-    margin-top: 6px;
     --origin: translateY(-8px);
-    & .react-aria-OverlayArrow svg {
+
+    &:has(.react-aria-OverlayArrow) {
+      margin-top: 6px;
+    }
+
+    .react-aria-OverlayArrow svg {
       transform: rotate(180deg);
     }
   }
 
   &[data-placement=right] {
-    margin-left: 6px;
     --origin: translateX(-8px);
-    & .react-aria-OverlayArrow svg {
+
+    &:has(.react-aria-OverlayArrow) {
+      margin-left: 6px;
+    }
+
+    .react-aria-OverlayArrow svg {
       transform: rotate(90deg);
     }
   }
 
   &[data-placement=left] {
-    margin-right: 6px;
     --origin: translateX(8px);
-    & .react-aria-OverlayArrow svg {
+
+    &:has(.react-aria-OverlayArrow) {
+      margin-right: 6px;
+    }
+
+    .react-aria-OverlayArrow svg {
       transform: rotate(-90deg);
     }
   }
 
   &[data-entering] {
-    animation: slide 200ms;
+    animation: popover-slide 200ms;
   }
 
   &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
+    animation: popover-slide 200ms reverse ease-in;
   }
 }
 
-@keyframes slide {
+@keyframes popover-slide {
   from {
     transform: var(--origin);
     opacity: 0;
@@ -128,46 +161,13 @@ import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-c
     opacity: 1;
   }
 }
+```
 
-.react-aria-Dialog {
-  outline: none;
-}
-
-.react-aria-Button {
-  background: var(--spectrum-global-color-gray-50);
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  border-radius: 4px;
-  color: var(--spectrum-alias-text-color);
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.2rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-  padding: 6px;
-  transition: border-color 200ms;
-
-  &[data-hovered] {
-    border-color: var(--spectrum-global-color-gray-500);
-  }
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--spectrum-global-color-gray-100);
-    border-color: var(--spectrum-global-color-gray-600);
-  }
-
-  &[data-focus-visible] {
-    border-color: slateblue;
-    box-shadow: 0 0 0 1px slateblue;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Popover {
-    --background-color: Canvas;
-    --border-color: ButtonBorder;
-  }
+```css hidden
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 ```
 
@@ -189,6 +189,187 @@ Note: `Popover` only provides the overlay itself. It should be combined with [Di
 <Anatomy />
 
 A popover consists of a trigger element (e.g. button) and an overlay, which is positioned relative to the trigger. The overlay may contain a [Dialog](Dialog.html), or another element such as a [Menu](Menu.html) or [ListBox](ListBox.html) when used within a component such as a [Select](Select.html) or [ComboBox](ComboBox.html).
+
+```tsx
+import {DialogTrigger, Popover, Dialog, Button, OverlayArrow} from 'react-aria-components';
+
+<DialogTrigger>
+  <Button />
+  <Popover>
+    <OverlayArrow />
+    <Dialog />
+  </Popover>
+</DialogTrigger>
+```
+
+## Examples
+
+<ExampleList tag="popover" />
+
+## Reusable wrappers
+
+If you will use a Popover in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Popover` and all of its children together into a single component. Since the `Dialog` is built in, this means it can't be used for components like Select, Menu, and ComboBox. Exclude the dialog if your popover will be reused in these components.
+
+```tsx example export=true
+import type {PopoverProps} from 'react-aria-components';
+
+interface MyPopoverProps extends Omit<PopoverProps, 'children'> {
+  children: React.ReactNode
+}
+
+function MyPopover({children, ...props}: MyPopoverProps) {
+  return (
+    <Popover {...props}>
+      <OverlayArrow>
+        <svg width={12} height={12} viewBox="0 0 12 12"><path d="M0 0 L6 6 L12 0" /></svg>
+      </OverlayArrow>
+      <Dialog>
+        {children}
+      </Dialog>
+    </Popover>
+  );
+}
+
+<DialogTrigger>
+  <Button aria-label="Help">ⓘ</Button>
+  <MyPopover>
+    <Heading slot="title">Help</Heading>
+    <p>For help accessing your account, please contact support.</p>
+  </MyPopover>
+</DialogTrigger>
+```
+
+## Positioning
+
+### Placement
+
+The popover's placement with respect to its anchor element can be adjusted using the `placement`
+prop. See <TypeLink links={typesDocs.links} type={typesDocs.links[typesDocs.exports.Placement.id]} /> for a full list of available placement combinations.
+Popovers will also automatically [flip](#flipping) to the opposite direction if there isn't enough space.
+
+```tsx example
+<div style={{display: 'flex', gap: 8}}>
+  <DialogTrigger>
+    <Button>⬅️</Button>
+    <MyPopover placement="start">In left-to-right, this is on the left. In right-to-left, this is on the right.</MyPopover>
+  </DialogTrigger>
+  <DialogTrigger>
+    <Button>⬆️</Button>
+    <MyPopover placement="top">This popover is above the button.</MyPopover>
+  </DialogTrigger>
+  <DialogTrigger>
+    <Button>⬇️</Button>
+    <MyPopover placement="bottom">This popover is below the button.</MyPopover>
+  </DialogTrigger>
+  <DialogTrigger>
+    <Button>➡️</Button>
+    <MyPopover placement="end">In left-to-right, this is on the right. In right-to-left, this is on the left.</MyPopover>
+  </DialogTrigger>
+</div>
+
+```
+
+### Offset and cross offset
+
+The popover's offset with respect to its anchor element can be adjusted using the `offset` and
+`crossOffset` props. The `offset` prop controls the spacing applied along the main axis between the element and its
+anchor element whereas the `crossOffset` prop handles the spacing applied along the cross axis.
+
+Below is a popover offset by an additional 50px above the trigger.
+
+```tsx example
+<DialogTrigger>
+  <Button>Offset</Button>
+  <MyPopover placement="top" offset={50}>
+    Offset by an additional 50px.
+  </MyPopover>
+</DialogTrigger>
+```
+
+Below is a popover cross offset by an additional 100px to the right of the trigger.
+
+```tsx example
+<DialogTrigger>
+  <Button>Cross offset</Button>
+  <MyPopover placement="top" crossOffset={100}>
+    Offset by an additional 100px.
+  </MyPopover>
+</DialogTrigger>
+```
+
+### Flipping
+
+By default, `usePopover` attempts to flip popovers on the main axis in situations where the original placement
+would cause it to render out of view. This can be overridden by setting `shouldFlip={false}`.
+To see the difference between the two options, scroll this page so that the example below is near the bottom of the window.
+
+```tsx example
+<div className="flex-row">
+  <DialogTrigger>
+    <Button>Default</Button>
+    <MyPopover placement="bottom">
+      This is a popover that will flip if it can't fully render below the button.
+    </MyPopover>
+  </DialogTrigger>
+
+  <DialogTrigger>
+    <Button>shouldFlip=false</Button>
+    <MyPopover placement="bottom" shouldFlip={false}>
+      This is a popover that won't flip if it can't fully render below the button.
+    </MyPopover>
+  </DialogTrigger>
+</div>
+```
+
+```css hidden
+.flex-row {
+  display: flex;
+  gap: 8px;
+}
+```
+
+### Container padding
+
+You can control the minimum padding required between the popover and the
+surrounding container via the `containerPadding` prop. This affects the positioning
+breakpoints that determine when it will attempt to flip.
+
+The example below will maintain at least 50px between the popover and the edge of the browser window.
+
+```tsx example
+<DialogTrigger>
+  <Button>Container padding</Button>
+  <MyPopover placement="top" containerPadding={50}>
+    This is a popover.
+  </MyPopover>
+</DialogTrigger>
+```
+
+## Controlled open state
+
+The above examples have shown `Popover` used within a `<DialogTrigger>`, which handles opening the popover when a button is clicked, and positioning relative to the trigger. This is convenient, but there are cases where you want to show a popover programmatically rather than as a result of a user action, or render the `<Popover>` in a different part of the JSX tree.
+
+To do this, you can manage the popover's `isOpen` state yourself and provide it as a prop to the `<Popover>` element. The `onOpenChange` prop will be called when the user closes the popover, and should be used to update your state. In addition, the `triggerRef` prop must be set to the element that the popover should be positioned relative to.
+
+```tsx example
+function Example() {
+  let [isOpen, setOpen] = React.useState(false);
+  let triggerRef = React.useRef(null);
+
+  return (
+    <>
+      <Button onPress={() => setOpen(true)}>Trigger</Button>
+      <span ref={triggerRef} style={{paddingLeft: 12}}>Popover will be positioned relative to me</span>
+      <MyPopover triggerRef={triggerRef} isOpen={isOpen} onOpenChange={setOpen}>
+        <Heading slot="title">Popover</Heading>
+        <div>I'm over here!</div>
+      </MyPopover>
+    </>
+  );
+}
+```
 
 ## Props
 
@@ -264,160 +445,6 @@ A `OverlayArrow` can be targeted with the `.react-aria-OverlayArrow` CSS selecto
 
 <StateTable properties={docs.exports.OverlayArrowRenderProps.properties} />
 
-## Reusable wrappers
-
-If you will use a Popover in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
-
-This example wraps `Popover` and all of its children together into a single component. Since the `Dialog` is built in, this means it can't be used for components like Select, Menu, and ComboBox. Exclude the dialog if your popover will be reused in these components.
-
-```tsx example export=true
-import type {PopoverProps} from 'react-aria-components';
-
-interface MyPopoverProps extends Omit<PopoverProps, 'children'> {
-  children: React.ReactNode
-}
-
-function MyPopover({children, ...props}: MyPopoverProps) {
-  return (
-    <Popover {...props}>
-      <OverlayArrow>
-        <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
-      </OverlayArrow>
-      <Dialog>
-        {children}
-      </Dialog>
-    </Popover>
-  );
-}
-
-<DialogTrigger>
-  <Button>Open popover</Button>
-  <MyPopover>This is an example popover.</MyPopover>
-</DialogTrigger>
-```
-
-## Usage
-
-The following examples show how to use the `MyPopover` component created in the above example.
-
-### Placement
-
-The popover's placement with respect to its anchor element can be adjusted using the `placement`
-prop. See <TypeLink links={typesDocs.links} type={typesDocs.links[typesDocs.exports.Placement.id]} /> for a full list of available placement combinations.
-Popovers will also automatically [flip](#flipping) to the opposite direction if there isn't enough space.
-
-```tsx example
-<div style={{display: 'flex', gap: 8}}>
-  <DialogTrigger>
-    <Button>⬅️</Button>
-    <MyPopover placement="start">In left-to-right, this is on the left. In right-to-left, this is on the right.</MyPopover>
-  </DialogTrigger>
-  <DialogTrigger>
-    <Button>⬆️</Button>
-    <MyPopover placement="top">This popover is above the button.</MyPopover>
-  </DialogTrigger>
-  <DialogTrigger>
-    <Button>⬇️</Button>
-    <MyPopover placement="bottom">This popover is below the button.</MyPopover>
-  </DialogTrigger>
-  <DialogTrigger>
-    <Button>➡️</Button>
-    <MyPopover placement="end">In left-to-right, this is on the right. In right-to-left, this is on the left.</MyPopover>
-  </DialogTrigger>
-</div>
-
-```
-
-### Offset and cross offset
-
-The popover's offset with respect to its anchor element can be adjusted using the `offset` and
-`crossOffset` props. The `offset` prop controls the spacing applied along the main axis between the element and its
-anchor element whereas the `crossOffset` prop handles the spacing applied along the cross axis.
-
-Below is a popover offset by an additional 50px above the trigger.
-
-```tsx example
-<DialogTrigger>
-  <Button>Open popover</Button>
-  <MyPopover placement="top" offset={50}>
-    Offset by an additional 50px.
-  </MyPopover>
-</DialogTrigger>
-```
-
-Below is a popover cross offset by an additional 100px to the right of the trigger.
-
-```tsx example
-<DialogTrigger>
-  <Button>Open popover</Button>
-  <MyPopover placement="top" crossOffset={100}>
-    Offset by an additional 100px.
-  </MyPopover>
-</DialogTrigger>
-```
-
-### Flipping
-
-By default, `usePopover` attempts to flip popovers on the main axis in situations where the original placement
-would cause it to render out of view. This can be overridden by setting `shouldFlip={false}`.
-To see the difference between the two options, scroll this page so that the example below is near the bottom of the window.
-
-```tsx example
-<DialogTrigger>
-  <Button>Default</Button>
-  <MyPopover placement="bottom">
-    This is a popover that will flip if it can't fully render below the button.
-  </MyPopover>
-</DialogTrigger>
-
-<DialogTrigger>
-  <Button>shouldFlip=false</Button>
-  <MyPopover placement="bottom" shouldFlip={false}>
-    This is a popover that won't flip if it can't fully render below the button.
-  </MyPopover>
-</DialogTrigger>
-```
-
-### Container padding
-
-You can control the minimum padding required between the popover and the
-surrounding container via the `containerPadding` prop. This affects the positioning
-breakpoints that determine when it will attempt to flip.
-
-The example below will maintain at least 50px between the popover and the edge of the browser window.
-
-```tsx example
-<DialogTrigger>
-  <Button>Trigger</Button>
-  <MyPopover placement="top" containerPadding={50}>
-    This is a popover.
-  </MyPopover>
-</DialogTrigger>
-```
-
-### Controlled open state
-
-The above examples have shown `Popover` used within a `<DialogTrigger>`, which handles opening the popover when a button is clicked, and positioning relative to the trigger. This is convenient, but there are cases where you want to show a popover programmatically rather than as a result of a user action, or render the `<Popover>` in a different part of the JSX tree.
-
-To do this, you can manage the popover's `isOpen` state yourself and provide it as a prop to the `<Popover>` element. The `onOpenChange` prop will be called when the user closes the popover, and should be used to update your state. In addition, the `triggerRef` prop must be set to the element that the popover should be positioned relative to.
-
-```tsx example
-function Example() {
-  let [isOpen, setOpen] = React.useState(false);
-  let triggerRef = React.useRef(null);
-
-  return (
-    <>
-      <Button onPress={() => setOpen(true)}>Trigger</Button>
-      <span ref={triggerRef} style={{paddingLeft: 12}}>Popover will be positioned relative to me</span>
-      <MyPopover triggerRef={triggerRef} isOpen={isOpen} onOpenChange={setOpen}>
-        This is a popover.
-      </MyPopover>
-    </>
-  );
-}
-```
-
 ## Advanced customization
 
 ### Contexts
@@ -458,7 +485,8 @@ function HelpTrigger({children}: HelpTriggerProps) {
 <HelpTrigger>
   <Button>Press ? for help</Button>
   <MyPopover>
-    Do you need help?
+    <Heading slot="title">Help</Heading>
+    <div>Do you need help?</div>
   </MyPopover>
 </HelpTrigger>
 ```

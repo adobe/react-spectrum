@@ -21,10 +21,6 @@ module.exports = {
       // TODO: Ideally would have a selector target for the storybook's sb main body element
       rules: [
         {
-          id: 'color-contrast',
-          selector: 'body *:not([data-a11y-ignore="color-contrast"])'
-        },
-        {
           id: 'aria-hidden-focus',
           selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])',
         },

@@ -19,14 +19,14 @@ orbs:
 executors:
   rsp:
     docker:
-      - image: cimg/node:16.20.0
+      - image: cimg/node:18.17.1
     environment:
       CACHE_VERSION: v1
     working_directory: ~/react-spectrum
 
   rsp-large:
     docker:
-      - image: cimg/node:16.20.0
+      - image: cimg/node:18.17.1
     resource_class: large
     environment:
       CACHE_VERSION: v1
@@ -34,7 +34,7 @@ executors:
 
   rsp-xlarge:
     docker:
-      - image: cimg/node:16.20.0
+      - image: cimg/node:18.17.1
     resource_class: xlarge
     environment:
       CACHE_VERSION: v1
@@ -42,7 +42,7 @@ executors:
 
   rsp-xlarge-nodeupdate:
     docker:
-      - image: cimg/node:16.18.0
+      - image: cimg/node:18.17.1
     resource_class: xlarge
     environment:
       CACHE_VERSION: v1

@@ -1,4 +1,5 @@
 {
+  "backButton": "Terug naar {prevMenuButton}",
   "moreActions": "Meer handelingen",
-  "unavailable": "Uitvouwen voor meer informatie"
+  "unavailable": "Niet beschikbaar, uitvouwen voor meer informatie"
 }

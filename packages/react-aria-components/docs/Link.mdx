@@ -43,10 +43,8 @@ type: component
 ```tsx example
 import {Link} from 'react-aria-components';
 
-<Link>
-  <a href="https://www.imdb.com/title/tt6348138/" target="_blank">
-    The missing link
-  </a>
+<Link href="https://www.imdb.com/title/tt6348138/" target="_blank">
+  The missing link
 </Link>
 ```
 
@@ -54,13 +52,10 @@ import {Link} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Link {
-  --focus-ring-color: slateblue;
-  --text-color: var(--spectrum-global-color-blue-600);
-  --text-color-pressed: var(--spectrum-global-color-blue-700);
-  --text-color-disabled: gray;
+@import "@react-aria/example-theme";
 
-  color: var(--text-color);
+.react-aria-Link {
+  color: var(--link-color);
   font-size: 18px;
   transition: all 200ms;
   text-decoration: underline;
@@ -73,12 +68,7 @@ import {Link} from 'react-aria-components';
   }
 
   &[data-pressed] {
-    color: var(--text-color-pressed);
-  }
-
-  &[data-disabled] {
-    cursor: default;
-    color: var(--text-color-disabled);
+    color: var(--link-color-pressed);
   }
 
   &[data-focus-visible]:after {
@@ -87,15 +77,6 @@ import {Link} from 'react-aria-components';
     inset: -3px -6px;
     border-radius: 6px;
     border: 2px solid var(--focus-ring-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Link {
-    --focus-ring-color: Highlight;
-    --text-color: LinkText;
-    --text-color-pressed: LinkText;
-    --text-color-disabled: GrayText;
   }
 }
 ```
@@ -109,7 +90,7 @@ element with an `href` attribute. However, if the link does not have an href, an
 handled client side with JavaScript instead, it will not be exposed to assistive technology properly.
 `Link` helps achieve accessible links with either native HTML elements or custom element types.
 
-* **Flexible** – Support for navigation links, JavaScript handled links, or custom element types (e.g. router links). Disabled links are also supported.
+* **Flexible** – Support for HTML navigation links, JavaScript handled links, and client side routing. Disabled links are also supported.
 * **Accessible** – Implemented as a custom ARIA link when handled via JavaScript, and otherwise as a native HTML link.
 * **Styleable** – Hover, press, and keyboard focus states are provided for easy styling. These states only apply when interacting with an appropriate input device, unlike CSS pseudo classes.
 
@@ -121,6 +102,76 @@ keyboard users may activate links using the <Keyboard>Enter</Keyboard> key.
 
 If a visual label is not provided (e.g. an icon or image only link), then an `aria-label` or
 `aria-labelledby` prop must be passed to identify the link to assistive technology.
+
+## Content
+
+Links accept content as children. If the link has an href prop, it will be rendered as an `<a>` element.
+
+```tsx example
+<Link href="https://adobe.com" target="_blank">Adobe.com</Link>
+```
+
+### JavaScript handled links
+
+When a `<Link`> does not have an `href` prop, it is rendered as a `<span role="link">` instead of an `<a>`. Events will need to be handled in JavaScript with the `onPress` prop.
+
+Note: this will not behave like a native link. Browser features like context menus and open in new tab will not apply.
+
+```tsx example
+<Link onPress={() => alert('Pressed link')}>Adobe</Link>
+```
+
+## Events
+
+`Link` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the link.
+
+Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](usePress.html) for more details.
+
+```tsx example
+function Example() {
+  let [pointerType, setPointerType] = React.useState('');
+
+  return (
+    <>
+      <Link
+        onPressStart={e => setPointerType(e.pointerType)}
+        onPressEnd={() => setPointerType('')}>
+        Press me
+      </Link>
+      <p>{pointerType ? `You are pressing the link with a ${pointerType}!` : 'Ready to be pressed.'}</p>
+    </>
+  )
+}
+```
+
+### Client side routing
+
+The `<Link>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Disabled
+
+A link can be disabled by passing the `isDisabled` property. This will work with both native
+link elements as well as client handled links. Native navigation will be disabled, and the `onPress`
+event will not be fired. The link will be exposed as disabled to assistive technology with ARIA.
+
+```tsx example
+<Link isDisabled href="https://adobe.com" target="_blank">Disabled link</Link>
+```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Link {
+  &[data-disabled] {
+    cursor: default;
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
 
 ## Props
 
@@ -175,63 +226,6 @@ The states, selectors, and render props for `Link` are documented below.
 
 <StateTable properties={docs.exports.LinkRenderProps.properties} />
 
-## Usage
-
-### Router links
-
-The `<Link>` component can wrap a custom link element provided by a router like [React Router](https://reactrouter.com/en/main).
-
-```tsx
-import {Link as RouterLink} from 'react-router-dom';
-
-<Link>
-  <RouterLink to="/foo">Foo</RouterLink>
-</Link>
-```
-
-### Client handled links
-
-When the content is plain text, a `<Link>` is rendered as a `<span>` but exposed to assistive technologies as a link. Events will need to be handled in JavaScript with the `onPress` prop.
-
-Note: this will not behave like a native link. Browser features like context menus and open in new tab will not apply.
-
-```tsx example
-<Link onPress={() => alert('Pressed link')}>Adobe</Link>
-```
-
-### Events
-
-`Link` supports user interactions via mouse, keyboard, and touch. You can handle all of these via the `onPress` prop. This is similar to the standard `onClick` event, but normalized to support all interaction methods equally. In addition, the `onPressStart`, `onPressEnd`, and `onPressChange` events are fired as the user interacts with the link.
-
-Each of these handlers receives a <TypeLink links={typesDocs.links} type={typesDocs.exports.PressEvent} />, which exposes information about the target and the type of event that triggered the interaction. See [usePress](usePress.html) for more details.
-
-```tsx example
-function Example() {
-  let [pointerType, setPointerType] = React.useState('');
-
-  return (
-    <>
-      <Link
-        onPressStart={e => setPointerType(e.pointerType)}
-        onPressEnd={() => setPointerType('')}>
-        Press me
-      </Link>
-      <p>{pointerType ? `You are pressing the link with a ${pointerType}!` : 'Ready to be pressed.'}</p>
-    </>
-  )
-}
-```
-
-### Disabled
-
-A link can be disabled by passing the `isDisabled` property. This will work with both native
-link elements as well as client handled links. Native navigation will be disabled, and the `onPress`
-event will not be fired. The link will be exposed as disabled to assistive technology with ARIA.
-
-```tsx example
-<Link isDisabled><a href="https://adobe.com" target="_blank">Disabled link</a></Link>
-```
-
 ## Advanced customization
 
 ### Contexts
@@ -276,7 +270,7 @@ Now any `Link` inside a `Router` will update the router state when it is pressed
 ```
 
 ```css hidden
-ul {
+ul:not([class]) {
   padding: 0px;
 }
 ```

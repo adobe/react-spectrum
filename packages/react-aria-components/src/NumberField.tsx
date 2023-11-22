@@ -12,7 +12,8 @@
 
 import {AriaNumberFieldProps, useLocale, useNumberField} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
@@ -39,14 +40,20 @@ export interface NumberFieldRenderProps {
   state: NumberFieldState
 }
 
-export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState'>, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps {}
+export interface NumberFieldProps extends Omit<AriaNumberFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, InputDOMProps, RenderProps<NumberFieldRenderProps>, SlotProps {}
 
 export const NumberFieldContext = createContext<ContextValue<NumberFieldProps, HTMLDivElement>>(null);
+export const NumberFieldStateContext = createContext<NumberFieldState | null>(null);
 
 function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, NumberFieldContext);
   let {locale} = useLocale();
-  let state = useNumberFieldState({...props, locale});
+  let state = useNumberFieldState({
+    ...props,
+    locale,
+    validationBehavior: props.validationBehavior ?? 'native'
+  });
+
   let inputRef = useRef<HTMLInputElement>(null);
   let [labelRef, label] = useSlot();
   let {
@@ -56,15 +63,20 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
     incrementButtonProps,
     decrementButtonProps,
     descriptionProps,
-    errorMessageProps
-  } = useNumberField({...props, label}, state, inputRef);
+    errorMessageProps,
+    ...validation
+  } = useNumberField({
+    ...removeDataAttributes(props),
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state, inputRef);
 
   let renderProps = useRenderProps({
     ...props,
     values: {
       state,
       isDisabled: props.isDisabled || false,
-      isInvalid: props.isInvalid || false
+      isInvalid: validation.isInvalid || false
     },
     defaultClassName: 'react-aria-NumberField'
   });
@@ -75,6 +87,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
   return (
     <Provider
       values={[
+        [NumberFieldStateContext, state],
         [GroupContext, groupProps],
         [InputContext, {...inputProps, ref: inputRef}],
         [LabelContext, {...labelProps, ref: labelRef}],
@@ -89,15 +102,16 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FieldErrorContext, validation]
       ]}>
       <div
         {...DOMProps}
         {...renderProps}
         ref={ref}
-        slot={props.slot}
+        slot={props.slot || undefined}
         data-disabled={props.isDisabled || undefined}
-        data-invalid={props.isInvalid || undefined} />
+        data-invalid={validation.isInvalid || undefined} />
       {props.name && <input type="hidden" name={props.name} value={isNaN(state.numberValue) ? '' : state.numberValue} />}
     </Provider>
   );

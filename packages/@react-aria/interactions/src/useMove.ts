@@ -59,7 +59,7 @@ export function useMove(props: MoveEvents): MoveResult {
         altKey: originalEvent.altKey
       });
     }
-    onMove({
+    onMove?.({
       type: 'move',
       pointerType,
       deltaX: deltaX,
@@ -96,7 +96,7 @@ export function useMove(props: MoveEvents): MoveResult {
     if (typeof PointerEvent === 'undefined') {
       let onMouseMove = (e: MouseEvent) => {
         if (e.button === 0) {
-          move(e, 'mouse', e.pageX - state.current.lastPosition.pageX, e.pageY - state.current.lastPosition.pageY);
+          move(e, 'mouse', e.pageX - (state.current.lastPosition?.pageX ?? 0), e.pageY - (state.current.lastPosition?.pageY ?? 0));
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
         }
       };
@@ -122,7 +122,7 @@ export function useMove(props: MoveEvents): MoveResult {
         let touch = [...e.changedTouches].findIndex(({identifier}) => identifier === state.current.id);
         if (touch >= 0) {
           let {pageX, pageY} = e.changedTouches[touch];
-          move(e, 'touch', pageX - state.current.lastPosition.pageX, pageY - state.current.lastPosition.pageY);
+          move(e, 'touch', pageX - (state.current.lastPosition?.pageX ?? 0), pageY - (state.current.lastPosition?.pageY ?? 0));
           state.current.lastPosition = {pageX, pageY};
         }
       };
@@ -159,7 +159,7 @@ export function useMove(props: MoveEvents): MoveResult {
           // Problems with PointerEvent#movementX/movementY:
           // 1. it is always 0 on macOS Safari.
           // 2. On Chrome Android, it's scaled by devicePixelRatio, but not on Chrome macOS
-          move(e, pointerType, e.pageX - state.current.lastPosition.pageX, e.pageY - state.current.lastPosition.pageY);
+          move(e, pointerType, e.pageX - (state.current.lastPosition?.pageX ?? 0), e.pageY - (state.current.lastPosition?.pageY ?? 0));
           state.current.lastPosition = {pageX: e.pageX, pageY: e.pageY};
         }
       };

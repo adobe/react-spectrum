@@ -11,7 +11,16 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, installPointerEvent, render as renderComponent, waitFor, within} from '@react-spectrum/test-utils';
+import {
+  act,
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render as renderComponent,
+  triggerPress,
+  waitFor,
+  within
+} from '@react-spectrum/test-utils';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
@@ -49,6 +58,7 @@ describe('ListView', function () {
     onItemDrop: async (e) => onItemDrop(e),
     onRootDrop: async (e) => onRootDrop(e)
   };
+  let user;
 
   let checkSelection = (onSelectionChange, selectedKeys) => {
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -56,6 +66,7 @@ describe('ListView', function () {
   };
 
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     scrollHeight = jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
@@ -260,10 +271,16 @@ describe('ListView', function () {
 
         let droppable = getByText('Drop here');
         let rows = getAllByRole('row');
-        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
-        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
-        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
-        act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
+
+        triggerPress(within(rows[0]).getByRole('checkbox'));
+        triggerPress(within(rows[1]).getByRole('checkbox'));
+        triggerPress(within(rows[2]).getByRole('checkbox'));
+        triggerPress(within(rows[3]).getByRole('checkbox'));
+        // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+        // await user.click(within(rows[0]).getByRole('checkbox'));
+        // await user.click(within(rows[1]).getByRole('checkbox'));
+        // await user.click(within(rows[2]).getByRole('checkbox'));
+        // await user.click(within(rows[3]).getByRole('checkbox'));
 
         expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['a', 'b', 'c', 'd']));
 
@@ -438,8 +455,11 @@ describe('ListView', function () {
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
         expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Four');
 
-        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
-        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
+        triggerPress(within(rows[1]).getByRole('checkbox'));
+        triggerPress(within(rows[2]).getByRole('checkbox'));
+        // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+        // await user.click(within(rows[1]).getByRole('checkbox'));
+        // await user.click(within(rows[2]).getByRole('checkbox'));
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(cell, {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
@@ -542,8 +562,11 @@ describe('ListView', function () {
         expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Eight');
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
 
-        act(() => userEvent.click(within(list1rows[0]).getByRole('checkbox')));
-        act(() => userEvent.click(within(list1rows[2]).getByRole('checkbox')));
+        triggerPress(within(list1rows[0]).getByRole('checkbox'));
+        triggerPress(within(list1rows[2]).getByRole('checkbox'));
+        // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+        // await user.click(within(list1rows[0]).getByRole('checkbox'));
+        // await user.click(within(list1rows[2]).getByRole('checkbox'));
 
         let dataTransfer = new DataTransfer();
         fireEvent.pointerDown(list1rows[0], {pointerType: 'mouse', button: 0, pointerId: 1, clientX: 0, clientY: 0});
@@ -636,10 +659,15 @@ describe('ListView', function () {
         let grid = getByRole('grid');
         let droppable = getByText('Drop here');
         let rows = getAllByRole('row');
-        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
-        act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
-        act(() => userEvent.click(within(rows[2]).getByRole('checkbox')));
-        act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
+        triggerPress(within(rows[0]).getByRole('checkbox'));
+        triggerPress(within(rows[1]).getByRole('checkbox'));
+        triggerPress(within(rows[2]).getByRole('checkbox'));
+        triggerPress(within(rows[3]).getByRole('checkbox'));
+        // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+        // await user.click(within(rows[0]).getByRole('checkbox'));
+        // await user.click(within(rows[1]).getByRole('checkbox'));
+        // await user.click(within(rows[2]).getByRole('checkbox'));
+        // await user.click(within(rows[3]).getByRole('checkbox'));
 
         expect(new Set(onSelectionChange.mock.calls[3][0])).toEqual(new Set(['a', 'b', 'c', 'd']));
 
@@ -678,7 +706,9 @@ describe('ListView', function () {
 
         let grid = getByRole('grid');
         let rows = getAllByRole('row');
-        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
+        triggerPress(within(rows[0]).getByRole('checkbox'));
+        // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+        // await user.click(within(rows[0]).getByRole('checkbox'));
         let cellA = within(rows[0]).getByRole('gridcell');
 
         let dataTransfer = new DataTransfer();
@@ -733,7 +763,9 @@ describe('ListView', function () {
         let rows = within(list).getAllByRole('row');
         let internalFolder = rows[2];
 
-        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
+        triggerPress(within(rows[0]).getByRole('checkbox'));
+        // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+        // await user.click(within(rows[0]).getByRole('checkbox'));
         let dragCell = within(rows[0]).getByRole('gridcell');
         let dataTransfer = new DataTransfer();
 
@@ -760,9 +792,12 @@ describe('ListView', function () {
       });
 
       describe('using util handlers', function () {
-        function dragWithinList(rows, dropTarget, targetX = 1, targetY = 1) {
-          act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(rows[1]).getByRole('checkbox')));
+        async function dragWithinList(rows, dropTarget, targetX = 1, targetY = 1) {
+          triggerPress(within(rows[0]).getByRole('checkbox'));
+          triggerPress(within(rows[1]).getByRole('checkbox'));
+          // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+          // await user.click(within(rows[0]).getByRole('checkbox'));
+          // await user.click(within(rows[1]).getByRole('checkbox'));
           let dragCell = within(rows[0]).getByRole('gridcell');
 
           let dataTransfer = new DataTransfer();
@@ -780,9 +815,12 @@ describe('ListView', function () {
           act(() => jest.runAllTimers());
         }
 
-        function dragBetweenLists(sourceRows, dropTarget, targetX = 1, targetY = 1) {
-          act(() => userEvent.click(within(sourceRows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(sourceRows[1]).getByRole('checkbox')));
+        async function dragBetweenLists(sourceRows, dropTarget, targetX = 1, targetY = 1) {
+          triggerPress(within(sourceRows[0]).getByRole('checkbox'));
+          triggerPress(within(sourceRows[1]).getByRole('checkbox'));
+          // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+          // await user.click(within(sourceRows[0]).getByRole('checkbox'));
+          // await user.click(within(sourceRows[1]).getByRole('checkbox'));
           let dragCell = within(sourceRows[0]).getByRole('gridcell');
 
           let dataTransfer = new DataTransfer();
@@ -810,7 +848,7 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget);
+          await dragBetweenLists(list2Rows, dropTarget);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
@@ -859,7 +897,7 @@ describe('ListView', function () {
           let grids = getAllByRole('grid');
           let rows = within(grids[0]).getAllByRole('row');
           let dropTarget = rows[4];
-          dragWithinList(rows, dropTarget, 1, 150);
+          await dragWithinList(rows, dropTarget, 1, 150);
 
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
@@ -877,7 +915,7 @@ describe('ListView', function () {
 
         });
 
-        it('should call onReorder when performing a insert drop in the source list', function () {
+        it('should call onReorder when performing a insert drop in the source list', async function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
@@ -885,7 +923,7 @@ describe('ListView', function () {
           let grids = getAllByRole('grid');
           let rows = within(grids[0]).getAllByRole('row');
           let dropTarget = rows[4];
-          dragWithinList(rows, dropTarget, 1, 150);
+          await dragWithinList(rows, dropTarget, 1, 150);
           expect(onReorder).toHaveBeenCalledTimes(1);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(0);
@@ -912,7 +950,7 @@ describe('ListView', function () {
 
           let dropTarget = grids[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget);
+          await dragBetweenLists(list2Rows, dropTarget);
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(1);
@@ -1016,7 +1054,7 @@ describe('ListView', function () {
 
           let dropTarget = grids[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget);
+          await dragBetweenLists(list2Rows, dropTarget);
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
           expect(onRootDrop).toHaveBeenCalledTimes(1);
@@ -1058,7 +1096,7 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[4];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          await dragBetweenLists(list2Rows, dropTarget, 1, 185);
           expect(onDragEnd).toHaveBeenCalledTimes(1);
           expect(onDragEnd).toHaveBeenCalledWith({
             type: 'dragend',
@@ -1108,7 +1146,7 @@ describe('ListView', function () {
 
           let list1Rows = within(grids[0]).getAllByRole('row');
           dropTarget = within(grids[0]).getAllByRole('row')[2];
-          dragWithinList(list1Rows, dropTarget, 1, 100);
+          await dragWithinList(list1Rows, dropTarget, 1, 100);
           expect(onItemDrop).toHaveBeenCalledWith({
             target: {
               key: '3',
@@ -1143,7 +1181,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should allow acceptedDragTypes to specify what drag items the list should accept', function () {
+        it('should allow acceptedDragTypes to specify what drag items the list should accept', async function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['randomType']}} />
           );
@@ -1153,7 +1191,7 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget);
+          await dragBetweenLists(list2Rows, dropTarget);
           // Shouldn't allow a insert because the type from 2nd list isn't of "randomType"
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
@@ -1161,7 +1199,7 @@ describe('ListView', function () {
           expect(onInsert).toHaveBeenCalledTimes(0);
         });
 
-        it('should default acceptedDragTypes to "all" if not provided by the user', function () {
+        it('should default acceptedDragTypes to "all" if not provided by the user', async function () {
           let shouldAcceptItemDrop = jest.fn();
           shouldAcceptItemDrop.mockReturnValue(true);
           let {getAllByRole} = render(
@@ -1173,7 +1211,7 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[4];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          await dragBetweenLists(list2Rows, dropTarget, 1, 185);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
@@ -1211,7 +1249,7 @@ describe('ListView', function () {
           expect(shouldAcceptItemDrop.mock.calls[3][1]).toEqual(new Set(['text/plain', 'file']));
         });
 
-        it('should allow the user to specify what a valid drop target is via shouldAcceptItemDrop', function () {
+        it('should allow the user to specify what a valid drop target is via shouldAcceptItemDrop', async function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex
               firstListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop: () => false}}
@@ -1224,7 +1262,7 @@ describe('ListView', function () {
           // Perform same drop operation as the onItemDrop test, but this time it should do a insertion drop since we are disallowing all "on" drops
           let dropTarget = within(grids[0]).getAllByRole('row')[4];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          await dragBetweenLists(list2Rows, dropTarget, 1, 185);
           expect(onDragEnd).toHaveBeenCalledTimes(1);
           expect(onDragEnd).toHaveBeenCalledWith({
             type: 'dragend',
@@ -1273,8 +1311,11 @@ describe('ListView', function () {
           let list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
           expect(list1Rows).toHaveLength(6);
           let list2Rows = within(grids[1]).getAllByRole('row');
-          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(list2Rows[1]).getByRole('checkbox')));
+          triggerPress(within(list2Rows[0]).getByRole('checkbox'));
+          triggerPress(within(list2Rows[1]).getByRole('checkbox'));
+          // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+          // await user.click(within(list2Rows[0]).getByRole('checkbox'));
+          // await user.click(within(list2Rows[1]).getByRole('checkbox'));
           let dragCell = within(list2Rows[0]).getByRole('gridcell');
 
           let dataTransfer = new DataTransfer();
@@ -1293,7 +1334,7 @@ describe('ListView', function () {
           expect(list1Rows).toHaveLength(6);
         });
 
-        it('should allow the user to override the util handlers via onDrop and getDropOperations', function () {
+        it('should allow the user to override the util handlers via onDrop and getDropOperations', async function () {
           let getDropOperationMock = () => {
             getDropOperation();
             return 'copy';
@@ -1308,7 +1349,7 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget);
+          await dragBetweenLists(list2Rows, dropTarget);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
@@ -1318,7 +1359,7 @@ describe('ListView', function () {
           expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
         });
 
-        it('should be able to perform drops if onDrop is provided without getDropOperation', function () {
+        it('should be able to perform drops if onDrop is provided without getDropOperation', async function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onDrop, acceptedDragTypes: 'all'}} />
           );
@@ -1328,7 +1369,7 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget);
+          await dragBetweenLists(list2Rows, dropTarget);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
@@ -1337,7 +1378,7 @@ describe('ListView', function () {
           expect(onDrop).toHaveBeenCalledTimes(1);
         });
 
-        it('should be able to perform drops if getDropOperation is provided without onDrop', function () {
+        it('should be able to perform drops if getDropOperation is provided without onDrop', async function () {
           let getDropOperationMock = () => {
             getDropOperation();
             return 'copy';
@@ -1352,7 +1393,7 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget);
+          await dragBetweenLists(list2Rows, dropTarget);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
@@ -1543,8 +1584,11 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          act(() => userEvent.click(within(list2Rows[0]).getByRole('checkbox')));
-          act(() => userEvent.click(within(list2Rows[6]).getByRole('checkbox')));
+          triggerPress(within(list2Rows[0]).getByRole('checkbox'));
+          triggerPress(within(list2Rows[6]).getByRole('checkbox'));
+          // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+          // await user.click(within(list2Rows[0]).getByRole('checkbox'));
+          // await user.click(within(list2Rows[6]).getByRole('checkbox'));
           let dragCell = within(list2Rows[0]).getByRole('gridcell');
 
           let dataTransfer = new DataTransfer();
@@ -1750,7 +1794,7 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[4];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget, 1, 185);
+          await dragBetweenLists(list2Rows, dropTarget, 1, 185);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(1);
@@ -1796,7 +1840,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should use user provided getDropOperation to determine default drop operation if provided', function () {
+        it('should use user provided getDropOperation to determine default drop operation if provided', async function () {
           // Take what ever drop operation is allowed except move
           let getDropOperation = (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0];
           let {getAllByRole} = render(
@@ -1808,7 +1852,7 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          dragBetweenLists(list2Rows, dropTarget);
+          await dragBetweenLists(list2Rows, dropTarget);
 
           expect(onReorder).toHaveBeenCalledTimes(0);
           expect(onItemDrop).toHaveBeenCalledTimes(0);
@@ -1855,7 +1899,7 @@ describe('ListView', function () {
         expect(cell).toHaveTextContent('Adobe Photoshop');
         expect(row).toHaveAttribute('draggable', 'true');
 
-        userEvent.tab();
+        await user.tab();
         let draghandle = within(cell).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
         expect(draghandle).toHaveAttribute('draggable', 'true');
@@ -1914,7 +1958,7 @@ describe('ListView', function () {
         expect(cellD).toHaveTextContent('Adobe InDesign');
         expect(rows[3]).toHaveAttribute('draggable', 'true');
 
-        userEvent.tab();
+        await user.tab();
         let draghandle = within(cellA).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
 
@@ -1953,7 +1997,7 @@ describe('ListView', function () {
         });
       });
 
-      it('should update the global DnD state properly if dropping on a non-collection', function () {
+      it('should update the global DnD state properly if dropping on a non-collection', async function () {
         let {getAllByRole, getByRole, getByText} = render(
           <DraggableListView listViewProps={{selectedKeys: ['a', 'b', 'c', 'd']}} />
         );
@@ -1963,7 +2007,7 @@ describe('ListView', function () {
         let rows = getAllByRole('row');
 
         let cellA = within(rows[0]).getByRole('gridcell');
-        userEvent.tab();
+        await user.tab();
         let draghandle = within(cellA).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
 
@@ -1991,7 +2035,7 @@ describe('ListView', function () {
         });
       });
 
-      it('should reset the global drop state on drag end even if a drop doesn\'t happen', function () {
+      it('should reset the global drop state on drag end even if a drop doesn\'t happen', async function () {
         let {getAllByRole, getByRole, getByText} = render(
           <DraggableListView listViewProps={{selectedKeys: ['a', 'b', 'c', 'd']}} />
         );
@@ -2001,7 +2045,7 @@ describe('ListView', function () {
         let rows = getAllByRole('row');
 
         let cellA = within(rows[0]).getByRole('gridcell');
-        userEvent.tab();
+        await user.tab();
         let draghandle = within(cellA).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
 
@@ -2021,7 +2065,7 @@ describe('ListView', function () {
         expect(dndState).toEqual({draggingKeys: new Set()});
       });
 
-      it('should update the dropCollectionRef during drag operations', function () {
+      it('should update the dropCollectionRef during drag operations', async function () {
         let {getAllByRole} = render(
           <DragBetweenListsComplex firstListDnDOptions={{onDragEnd}} />
         );
@@ -2030,7 +2074,7 @@ describe('ListView', function () {
         let rows = within(list).getAllByRole('row');
         let cell = within(rows[0]).getByRole('gridcell');
 
-        userEvent.tab();
+        await user.tab();
         let draghandle = within(cell).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
         expect(draghandle).toHaveAttribute('draggable', 'true');
@@ -2059,14 +2103,14 @@ describe('ListView', function () {
       });
 
       describe('using util handlers', function () {
-        function beginDrag(tree) {
+        async function beginDrag(tree) {
           let grids = tree.getAllByRole('grid');
           let row = within(grids[0]).getAllByRole('row')[0];
           let cell = within(row).getByRole('gridcell');
           expect(cell).toHaveTextContent('Adobe Photoshop');
           expect(row).toHaveAttribute('draggable', 'true');
 
-          userEvent.tab();
+          await user.tab();
           let draghandle = within(cell).getAllByRole('button')[0];
           expect(draghandle).toBeTruthy();
           expect(draghandle).toHaveAttribute('draggable', 'true');
@@ -2080,9 +2124,9 @@ describe('ListView', function () {
             <DragBetweenListsComplex secondListDnDOptions={mockUtilityOptions} />
           );
 
-          beginDrag(tree);
+          await beginDrag(tree);
           // Move to 2nd list's first insert indicator
-          userEvent.tab();
+          await user.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
@@ -2117,12 +2161,12 @@ describe('ListView', function () {
           });
         });
 
-        it('should call onReorder when performing a insert drop in the source list', function () {
+        it('should call onReorder when performing a insert drop in the source list', async function () {
           let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
 
-          beginDrag(tree);
+          await beginDrag(tree);
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
@@ -2150,8 +2194,8 @@ describe('ListView', function () {
             <DragBetweenListsComplex firstListDnDOptions={{onDragEnd}} secondListDnDOptions={mockUtilityOptions} />
           );
 
-          beginDrag(tree);
-          userEvent.tab();
+          await beginDrag(tree);
+          await user.tab();
 
           expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on');
           fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -2192,8 +2236,8 @@ describe('ListView', function () {
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onDragEnd}} secondListDnDOptions={mockUtilityOptions} />
           );
 
-          beginDrag(tree);
-          userEvent.tab();
+          await beginDrag(tree);
+          await user.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
@@ -2240,7 +2284,7 @@ describe('ListView', function () {
           });
 
           // Drop on folder in same list
-          beginDrag(tree);
+          await beginDrag(tree);
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
@@ -2286,14 +2330,14 @@ describe('ListView', function () {
           });
         });
 
-        it('should allow acceptedDragTypes to specify what drag items the list should accept', function () {
+        it('should allow acceptedDragTypes to specify what drag items the list should accept', async function () {
           let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['randomType']}} secondListDnDOptions={{acceptedDragTypes: ['randomType']}} />
           );
 
           let totalRows = tree.getAllByRole('row', {hidden: true});
           expect(totalRows).toHaveLength(13);
-          beginDrag(tree);
+          await beginDrag(tree);
           // No drop indicators should appear
           totalRows = tree.getAllByRole('row', {hidden: true});
           expect(totalRows).toHaveLength(13);
@@ -2306,8 +2350,8 @@ describe('ListView', function () {
               secondListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop: (target) => target.type === 'item'}} />
           );
 
-          beginDrag(tree);
-          userEvent.tab();
+          await beginDrag(tree);
+          await user.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
@@ -2359,13 +2403,13 @@ describe('ListView', function () {
           });
         });
 
-        it('should automatically disallow various drops if their respective util handler isn\'t provided', function () {
+        it('should automatically disallow various drops if their respective util handler isn\'t provided', async function () {
           let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={mockUtilityOptions} />
           );
 
-          beginDrag(tree);
-          userEvent.tab();
+          await beginDrag(tree);
+          await user.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
           // Should allow insert since we provide all handlers
@@ -2374,8 +2418,8 @@ describe('ListView', function () {
           fireEvent.keyUp(document.activeElement, {key: 'Escape'});
 
           tree.rerender(<DragBetweenListsComplex secondListDnDOptions={{...mockUtilityOptions, onRootDrop: null, onInsert: null}} />);
-          beginDrag(tree);
-          userEvent.tab();
+          await beginDrag(tree);
+          await user.tab();
           // Should automatically jump to the folder target since we didn't provide onRootDrop and onInsert
           expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Pictures');
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
@@ -2383,7 +2427,7 @@ describe('ListView', function () {
           expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Apps');
         });
 
-        it('should allow the user to override the util handlers via onDrop and getDropOperations', function () {
+        it('should allow the user to override the util handlers via onDrop and getDropOperations', async function () {
           let getDropOperationMock = () => {
             getDropOperation();
             return 'copy';
@@ -2393,8 +2437,8 @@ describe('ListView', function () {
           );
 
           expect(getDropOperation).toHaveBeenCalledTimes(0);
-          beginDrag(tree);
-          userEvent.tab();
+          await beginDrag(tree);
+          await user.tab();
           fireEvent.keyDown(document.activeElement, {key: 'Enter'});
           fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
@@ -2406,13 +2450,13 @@ describe('ListView', function () {
           expect(getDropOperation.mock.calls.length).toBeGreaterThan(0);
         });
 
-        it('should be able to perform drops if onDrop is provided without getDropOperation', function () {
+        it('should be able to perform drops if onDrop is provided without getDropOperation', async function () {
           let tree = render(
             <DragBetweenListsComplex secondListDnDOptions={{...mockUtilityOptions, onDrop, acceptedDragTypes: 'all'}} />
           );
 
-          beginDrag(tree);
-          userEvent.tab();
+          await beginDrag(tree);
+          await user.tab();
           fireEvent.keyDown(document.activeElement, {key: 'Enter'});
           fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
@@ -2423,7 +2467,7 @@ describe('ListView', function () {
           expect(onDrop).toHaveBeenCalledTimes(1);
         });
 
-        it('should be able to perform drops if getDropOperation is provided without onDrop', function () {
+        it('should be able to perform drops if getDropOperation is provided without onDrop', async function () {
           let getDropOperationMock = () => {
             getDropOperation();
             return 'copy';
@@ -2432,8 +2476,8 @@ describe('ListView', function () {
             <DragBetweenListsComplex secondListDnDOptions={{...mockUtilityOptions, getDropOperation: getDropOperationMock}} />
           );
 
-          beginDrag(tree);
-          userEvent.tab();
+          await beginDrag(tree);
+          await user.tab();
           fireEvent.keyDown(document.activeElement, {key: 'Enter'});
           fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
@@ -2462,8 +2506,8 @@ describe('ListView', function () {
               secondListDnDOptions={{...mockUtilityOptions, acceptedDragTypes: ['file']}} />
           );
 
-          beginDrag(tree);
-          userEvent.tab();
+          await beginDrag(tree);
+          await user.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
           expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Pictures');
@@ -2513,8 +2557,8 @@ describe('ListView', function () {
             <DragBetweenListsComplex listViewProps={{selectedKeys: ['1', '3']}} firstListDnDOptions={{...mockUtilityOptions, onDragEnd}} secondListDnDOptions={{...mockUtilityOptions, shouldAcceptItemDrop}} />
           );
 
-          beginDrag(tree);
-          userEvent.tab();
+          await beginDrag(tree);
+          await user.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
@@ -2561,16 +2605,16 @@ describe('ListView', function () {
           });
         });
 
-        it('should use user provided getDropOperation to determine default drop operation if provided', function () {
+        it('should use user provided getDropOperation to determine default drop operation if provided', async function () {
           // Take what ever drop operation is allowed except move
           let getDropOperation = (_, __, allowedOperations) => allowedOperations.filter(op => op !== 'move')[0];
           let tree = render(
             <DragBetweenListsComplex firstListDnDOptions={{getAllowedDropOperations: () => ['move', 'link']}} secondListDnDOptions={{...mockUtilityOptions, getDropOperation}} />
           );
 
-          beginDrag(tree);
+          await beginDrag(tree);
           // Move to 2nd list's first insert indicator
-          userEvent.tab();
+          await user.tab();
           fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
           fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
 
@@ -2608,7 +2652,7 @@ describe('ListView', function () {
         expect(within(rows[1]).getByRole('gridcell')).toHaveTextContent('Item Two');
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
 
-        userEvent.tab();
+        await user.tab();
         let draghandle = within(getAllByRole('row')[1]).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
 
@@ -2650,7 +2694,7 @@ describe('ListView', function () {
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
         expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Four');
 
-        userEvent.tab();
+        await user.tab();
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
@@ -2710,7 +2754,7 @@ describe('ListView', function () {
         expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Eight');
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
 
-        userEvent.tab();
+        await user.tab();
 
         let draghandle = within(getAllByRole('row')[0]).getAllByRole('button')[0];
         expect(draghandle).toBeTruthy();
@@ -2725,7 +2769,7 @@ describe('ListView', function () {
 
         act(() => jest.runAllTimers());
 
-        userEvent.tab();
+        await user.tab();
         expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -2769,7 +2813,7 @@ describe('ListView', function () {
         expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Eight');
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
 
-        userEvent.tab();
+        await user.tab();
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
         fireEvent.keyUp(document.activeElement, {key: 'Enter'});
@@ -2791,7 +2835,7 @@ describe('ListView', function () {
 
         act(() => jest.runAllTimers());
 
-        userEvent.tab();
+        await user.tab();
         expect(document.activeElement).toHaveAttribute('aria-label', 'Insert before Item Seven');
 
         fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -2827,7 +2871,7 @@ describe('ListView', function () {
         let rows = within(grid).getAllByRole('row');
         expect(rows).toHaveLength(9);
 
-        userEvent.tab();
+        await user.tab();
 
         fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
@@ -2885,20 +2929,22 @@ describe('ListView', function () {
       let row = getAllByRole('row')[0];
       expect(row).toHaveAttribute('aria-selected', 'false');
       expect(row).toHaveAttribute('draggable', 'true');
-      act(() => userEvent.click(within(row).getByRole('checkbox')));
+      triggerPress(within(row).getByRole('checkbox'));
+      // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+      // await user.click(within(row).getByRole('checkbox'));
       expect(row).toHaveAttribute('aria-selected', 'true');
       expect(onDragStart).toHaveBeenCalledTimes(0);
       checkSelection(onSelectionChange, ['a']);
     });
 
-    it('should only display the drag handle on keyboard focus for dragggable items', function () {
+    it('should only display the drag handle on keyboard focus for dragggable items', async function () {
       let {getAllByRole} = render(
         <DraggableListView listViewProps={{selectionMode: 'single'}} />
     );
 
       let rows = getAllByRole('row');
       let cellA = within(rows[0]).getByRole('gridcell');
-      userEvent.click(cellA, {pointerType: 'mouse'});
+      await user.click(cellA, {pointerType: 'mouse'});
       expect(document.activeElement).toBe(rows[0]);
       let dragHandle = within(cellA).getAllByRole('button')[0];
       // If the dragHandle has a style applied, it is visually hidden
@@ -2923,7 +2969,7 @@ describe('ListView', function () {
       expect(dragHandle.style.position).toBe('');
     });
 
-    it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', function () {
+    it('should not display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items', async function () {
       function hasDragHandle(el) {
         let buttons = within(el).getAllByRole('button');
         return buttons[0].getAttribute('draggable');
@@ -2937,7 +2983,7 @@ describe('ListView', function () {
       let cellA = within(rows[0]).getByRole('gridcell');
       let cellB = within(rows[1]).getByRole('gridcell');
 
-      userEvent.tab();
+      await user.tab();
       expect(hasDragHandle(cellA)).toBeFalsy();
       moveFocus('ArrowDown');
       expect(hasDragHandle(cellB)).toBeTruthy();
@@ -2956,7 +3002,7 @@ describe('ListView', function () {
       expect(hasDragHandle(cellB)).toBeTruthy();
     });
 
-    it('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items with disabledBehavior="selection"', function () {
+    it('should display the drag handle on hover, press, or keyboard focus for disabled/non dragggable items with disabledBehavior="selection"', async function () {
       function hasDragHandle(el) {
         let buttons = within(el).getAllByRole('button');
         return buttons[0].getAttribute('draggable');
@@ -2970,7 +3016,7 @@ describe('ListView', function () {
       let cellA = within(rows[0]).getByRole('gridcell');
       let cellB = within(rows[1]).getByRole('gridcell');
 
-      userEvent.tab();
+      await user.tab();
       expect(hasDragHandle(cellA)).toBeTruthy();
       moveFocus('ArrowDown');
       expect(hasDragHandle(cellB)).toBeTruthy();
@@ -2989,7 +3035,7 @@ describe('ListView', function () {
       expect(hasDragHandle(cellB)).toBeTruthy();
     });
 
-    it('should open a menu upon click', function () {
+    it('should open a menu upon click', async function () {
       let {getAllByRole, getByRole} = render(
         <DraggableListView />
       );
@@ -3001,7 +3047,7 @@ describe('ListView', function () {
       let menuButton = within(row).getAllByRole('button')[1];
       expect(menuButton).toHaveAttribute('aria-expanded', 'false');
 
-      userEvent.click(menuButton, {pointerType: 'mouse'});
+      await user.click(menuButton, {pointerType: 'mouse'});
       act(() => {jest.runAllTimers();});
 
       let menu = getByRole('menu');
@@ -3021,12 +3067,12 @@ describe('ListView', function () {
     ${['4']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
     ${['5']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
     ${['6']}     | ${['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'before']}
-    `('should be able to insert next to a disabled key, disabled key is $disabledKeys', function ({disabledKeys, itemLabels}) {
+    `('should be able to insert next to a disabled key, disabled key is $disabledKeys', async function ({disabledKeys, itemLabels}) {
       render(
         <Reorderable disabledKeys={disabledKeys} />
       );
 
-      userEvent.tab();
+      await user.tab();
 
       fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
       fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
@@ -3060,7 +3106,7 @@ describe('ListView', function () {
         <DragIntoItemExample dragHookOptions={{onDragStart, onDragEnd}} listViewProps={{onSelectionChange, disabledKeys: []}} dropHookOptions={{onDrop}} />
       );
 
-      userEvent.tab();
+      await user.tab();
       let rows = getAllByRole('row');
       expect(rows).toHaveLength(9);
       let droppable = rows[8];
@@ -3232,7 +3278,7 @@ describe('ListView', function () {
       }
     });
 
-    it('should support getAllowedDropOperations to limit allowed operations', () => {
+    it('should support getAllowedDropOperations to limit allowed operations', async () => {
       let getAllowedDropOperations = jest.fn().mockImplementation(() => ['copy']);
       let {getAllByRole, getByText} = render(
         <DraggableListView dragHookOptions={{getAllowedDropOperations}} />
@@ -3242,7 +3288,7 @@ describe('ListView', function () {
       let row = getAllByRole('row')[0];
       let cell = within(row).getByRole('gridcell');
 
-      userEvent.tab();
+      await user.tab();
       let draghandle = within(cell).getAllByRole('button')[0];
 
       fireEvent.keyDown(draghandle, {key: 'Enter'});
@@ -3297,12 +3343,16 @@ describe('ListView', function () {
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag Adobe InDesign');
 
         // After selecting row 4, the aria-label should reflect 4 selected items rather than just "Drag Adobe InDesign"
-        act(() => userEvent.click(within(rows[3]).getByRole('checkbox')));
+        triggerPress(within(rows[3]).getByRole('checkbox'));
+        // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+        // await user.click(within(rows[3]).getByRole('checkbox'));
         expect(dragButtonA).toHaveAttribute('aria-label', 'Drag 4 selected items');
         expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 4 selected items');
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 4 selected items');
 
-        act(() => userEvent.click(within(rows[0]).getByRole('checkbox')));
+        triggerPress(within(rows[0]).getByRole('checkbox'));
+        // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
+        // await user.click(within(rows[0]).getByRole('checkbox'));
         expect(dragButtonA).toHaveAttribute('aria-label', 'Drag Adobe Photoshop');
         expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 3 selected items');
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 3 selected items');

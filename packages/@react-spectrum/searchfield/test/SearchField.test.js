@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import React from 'react';
 import {SearchField} from '../';
@@ -33,6 +33,11 @@ describe('Search', () => {
   let onFocus = jest.fn();
   let onSubmit = jest.fn();
   let onClear = jest.fn();
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
 
   afterEach(() => {
     onChange.mockClear();
@@ -76,7 +81,7 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name should display the clear button icon only if text is present', ({Component}) => {
+  `('$Name should display the clear button icon only if text is present', async ({Component}) => {
     let tree = renderComponent(Component, {defaultValue: inputText});
     let clearButton = tree.getByLabelText('Clear search');
     expect(clearButton).toBeTruthy();
@@ -85,8 +90,11 @@ describe('Search', () => {
     fireEvent.change(input, {target: {value: ''}});
     clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBeNull();
+    act(() => {
+      input.focus();
+    });
 
-    userEvent.type(input, 'bleh');
+    await user.keyboard('bleh');
     clearButton = tree.queryByLabelText('Clear search');
     expect(clearButton).toBeTruthy();
   });
@@ -195,12 +203,12 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name doesn\'t clear the input field if the clear button is pressed and the field is controlled', ({Component}) => {
+  `('$Name doesn\'t clear the input field if the clear button is pressed and the field is controlled', async ({Component}) => {
     let tree = renderComponent(Component, {value: inputText, onChange, onClear});
     let input = tree.getByTestId(testId);
     let clearButton = tree.getByLabelText('Clear search');
     expect(input.value).toBe(inputText);
-    userEvent.click(clearButton);
+    await user.click(clearButton);
     expect(onChange).toBeCalledTimes(1);
 
     expect(onChange).toHaveBeenLastCalledWith('');
@@ -215,12 +223,12 @@ describe('Search', () => {
   it.each`
     Name                | Component        | props
     ${'v3 SearchField'} | ${SearchField}   | ${{isDisabled: true}}
-  `('$Name doesn\'t clear the input field if the clear button is pressed and the field is disabled', ({Component, props}) => {
+  `('$Name doesn\'t clear the input field if the clear button is pressed and the field is disabled', async ({Component, props}) => {
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear, ...props});
     let input = tree.getByTestId(testId);
     let clearButton = tree.getByLabelText('Clear search');
     expect(input.value).toBe(inputText);
-    userEvent.click(clearButton);
+    await user.click(clearButton);
     expect(onChange).toBeCalledTimes(0);
     expect(input.value).toBe(inputText);
 

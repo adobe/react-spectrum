@@ -9,10 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Input} from './Input';
 import {PressResponder} from '@react-aria/interactions';
 import React, {ForwardedRef, forwardRef, ReactNode} from 'react';
-import {useObjectRef} from '@react-aria/utils';
 
 export interface FileTriggerProps {
   /**
@@ -30,35 +31,44 @@ export interface FileTriggerProps {
   /**
    * Handler when a user selects a file.
    */
-  onChange?: (files: FileList | null) => void,
-  /**
-   * The name of the input element, used when submitting an HTML form. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#htmlattrdefname).
-   */
-  name?: string,
+  onSelect?: (files: FileList | null) => void,
   /**
    * The children of the component.
    */
-  children?: ReactNode
+  children?: ReactNode,
+  /**
+   * Enables the selection of directories instead of individual files.
+   */
+  directory?: boolean
 }
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
-  let {onChange, acceptedFileTypes, allowsMultiple, defaultCamera, name, children} = props; 
+  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, directory, ...rest} = props;
   let inputRef = useObjectRef(ref);
+  let domProps = filterDOMProps(rest);
 
   return (
     <>
-      <PressResponder onPress={() => inputRef.current?.click()}>
+      <PressResponder
+        onPress={() => {
+          if (inputRef.current.value) {
+            inputRef.current.value = '';
+          }
+          inputRef.current?.click();
+        }}>
         {children}
       </PressResponder>
-      <Input 
+      <Input
+        {...domProps}
         type="file"
         ref={inputRef}
         style={{display: 'none'}}
-        accept={acceptedFileTypes?.toString()} 
-        onChange={(e) => onChange?.(e.target.files)} 
-        capture={defaultCamera} 
+        accept={acceptedFileTypes?.toString()}
+        onChange={(e) => onSelect?.(e.target.files)}
+        capture={defaultCamera}
         multiple={allowsMultiple}
-        name={name} /> 
+        // @ts-expect-error
+        webkitdirectory={directory ? '' : undefined} />
     </>
   );
 }

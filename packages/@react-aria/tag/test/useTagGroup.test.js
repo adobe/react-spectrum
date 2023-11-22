@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render, within} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {useButton} from '@react-aria/button';
@@ -61,7 +61,11 @@ function Button(props) {
 }
 
 describe('useTagGroup', function () {
-  it('should support selection', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+  it('should support selection', async () => {
     let onRemove = jest.fn();
     let {getAllByRole} = render(
       <TagGroup
@@ -85,7 +89,7 @@ describe('useTagGroup', function () {
     expect(tags[3]).toHaveAttribute('aria-selected', 'false');
     expect(tags[4]).toHaveAttribute('aria-selected', 'false');
 
-    userEvent.click(tags[3]);
+    await user.click(tags[3]);
     expect(tags[0]).toHaveAttribute('aria-selected', 'false');
     expect(tags[1]).toHaveAttribute('aria-selected', 'false');
     expect(tags[2]).toHaveAttribute('aria-selected', 'true');
@@ -105,7 +109,7 @@ describe('useTagGroup', function () {
     expect(onRemove).toHaveBeenLastCalledWith(new Set(['laundry']));
 
     let button = within(tags[3]).getByRole('button');
-    userEvent.click(button);
+    await user.click(button);
 
     expect(onRemove).toHaveBeenCalledTimes(3);
     expect(onRemove).toHaveBeenLastCalledWith(new Set(['pool']));

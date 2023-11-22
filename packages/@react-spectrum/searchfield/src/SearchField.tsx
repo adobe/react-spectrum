@@ -13,18 +13,20 @@
 import {classNames, useSlotProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import Magnifier from '@spectrum-icons/ui/Magnifier';
-import React, {forwardRef, RefObject, useRef} from 'react';
+import React, {forwardRef, ReactElement, Ref, useRef} from 'react';
 import {SpectrumSearchFieldProps} from '@react-types/searchfield';
 import styles from '@adobe/spectrum-css-temp/components/search/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
 import {TextFieldRef} from '@react-types/textfield';
+import {useFormProps} from '@react-spectrum/form';
 import {useProviderProps} from '@react-spectrum/provider';
 import {useSearchField} from '@react-aria/searchfield';
 import {useSearchFieldState} from '@react-stately/searchfield';
 
-function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRef>) {
+function SearchField(props: SpectrumSearchFieldProps, ref: Ref<TextFieldRef>) {
   props = useSlotProps(props, 'searchfield');
   props = useProviderProps(props);
+  props = useFormProps(props);
   let defaultIcon = (
     <Magnifier data-testid="searchicon" />
   );
@@ -42,8 +44,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
   }
 
   let state = useSearchFieldState(props);
-  let inputRef = useRef<HTMLInputElement>();
-  let {labelProps, inputProps, clearButtonProps, descriptionProps, errorMessageProps} = useSearchField(props, state, inputRef);
+  let inputRef = useRef<HTMLInputElement>(null);
+  let {clearButtonProps, ...result} = useSearchField(props, state, inputRef);
 
   let clearButton = (
     <ClearButton
@@ -58,13 +60,13 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       isDisabled={isDisabled} />
   );
 
+  let validationState = props.validationState || (result.isInvalid ? 'invalid' : undefined);
+
   return (
     <TextFieldBase
       {...otherProps}
-      labelProps={labelProps}
-      inputProps={inputProps}
-      descriptionProps={descriptionProps}
-      errorMessageProps={errorMessageProps}
+      {...result}
+      validationState={validationState}
       UNSAFE_className={
         classNames(
           styles,
@@ -73,8 +75,8 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
           {
             'is-disabled': isDisabled,
             'is-quiet': props.isQuiet,
-            'spectrum-Search--invalid': props.validationState === 'invalid' && !isDisabled,
-            'spectrum-Search--valid': props.validationState === 'valid' && !isDisabled
+            'spectrum-Search--invalid': validationState === 'invalid' && !isDisabled,
+            'spectrum-Search--valid': validationState === 'valid' && !isDisabled
           },
           UNSAFE_className
         )
@@ -84,12 +86,12 @@ function SearchField(props: SpectrumSearchFieldProps, ref: RefObject<TextFieldRe
       inputRef={inputRef}
       isDisabled={isDisabled}
       icon={icon}
-      wrapperChildren={(state.value !== '' && !props.isReadOnly) && clearButton} />
+      wrapperChildren={(state.value !== '' && !props.isReadOnly) ? clearButton : undefined} />
   );
 }
 
 /**
  * A SearchField is a text field designed for searches.
  */
-let _SearchField = forwardRef(SearchField);
+let _SearchField = forwardRef(SearchField) as (props: SpectrumSearchFieldProps & {ref?: Ref<TextFieldRef>}) => ReactElement;
 export {_SearchField as SearchField};

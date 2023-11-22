@@ -1,4 +1,5 @@
 {
+  "backButton": "Voltar ao {prevMenuButton}",
   "moreActions": "Mais ações",
-  "unavailable": "Expandir para obter mais pormenores"
+  "unavailable": "Indisponível, expandir para mais detalhes"
 }

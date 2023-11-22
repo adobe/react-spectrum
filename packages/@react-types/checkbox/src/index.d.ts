@@ -29,7 +29,7 @@ import {
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
-export interface ToggleProps extends InputBase, Validation, FocusableProps {
+export interface ToggleProps extends InputBase, Validation<boolean>, FocusableProps {
   /**
    * The label for the element.
    */
@@ -59,7 +59,7 @@ export interface AriaToggleProps extends ToggleProps, FocusableDOMProps, AriaLab
   'aria-controls'?: string
 }
 
-export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, LabelableProps, HelpTextProps, Validation {}
+export interface CheckboxGroupProps extends ValueBase<string[]>, InputBase, InputDOMProps, LabelableProps, HelpTextProps, Validation<string[]> {}
 
 export interface CheckboxProps extends ToggleProps {
   /**
@@ -71,7 +71,7 @@ export interface CheckboxProps extends ToggleProps {
 
 export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
 
-export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, InputDOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
 
 export interface AriaCheckboxGroupItemProps extends Omit<AriaCheckboxProps, 'isSelected' | 'defaultSelected'> {
   value: string
@@ -84,7 +84,7 @@ export interface SpectrumCheckboxProps extends AriaCheckboxProps, StyleProps {
   isEmphasized?: boolean
 }
 
-export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation, StyleProps, SpectrumHelpTextProps {
+export interface SpectrumCheckboxGroupProps extends AriaCheckboxGroupProps, SpectrumLabelableProps, Validation<string[]>, StyleProps, SpectrumHelpTextProps {
   /**
    * The Checkboxes contained within the CheckboxGroup.
    */

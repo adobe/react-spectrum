@@ -107,15 +107,17 @@ governing permissions and limitations under the License.
 .spectrum-BarLoader--indeterminate .spectrum-BarLoader-fill {
   inline-size: var(--spectrum-barloader-large-indeterminate-fill-width);
   position: relative;
+  animation-duration: var(--spectrum-barloader-large-indeterminate-duration);
+  animation-iteration-count: infinite;
   animation-timing-function: var(--spectrum-barloader-large-indeterminate-animation-ease);
   will-change: transform;
-}
 
-[dir='ltr'] .spectrum-BarLoader--indeterminate .spectrum-BarLoader-fill {
-  animation: indeterminate-loop-ltr var(--spectrum-barloader-large-indeterminate-duration) infinite;
-}
-[dir='rtl'] .spectrum-BarLoader--indeterminate .spectrum-BarLoader-fill {
-  animation: indeterminate-loop-rtl var(--spectrum-barloader-large-indeterminate-duration) infinite;
+  [dir='ltr'] & {
+    animation-name: indeterminate-loop-ltr;
+  }
+  [dir='rtl'] & {
+    animation-name: indeterminate-loop-rtl;
+  }
 }
 
 @keyframes indeterminate-loop-ltr {

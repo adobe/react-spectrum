@@ -11,7 +11,15 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, installPointerEvent, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
+import {
+  act,
+  fireEvent,
+  installPointerEvent,
+  pointerMap,
+  render as renderComponent,
+  triggerPress,
+  within
+} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {composeStories} from '@storybook/testing-react';
 import {enableTableNestedRows} from '@react-stately/flags';
@@ -73,10 +81,12 @@ let rerender = (tree, children, scale = 'medium' as Scale) => {
 };
 
 describe('TableView with expandable rows', function () {
+  let user;
   beforeAll(function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
+    user = userEvent.setup({delay: null, pointerMap});
     enableTableNestedRows();
   });
 
@@ -1268,7 +1278,7 @@ describe('TableView with expandable rows', function () {
         Name
         ${'mouse'}
         ${'touch'}
-      `('should trigger onAction when clicking nested rows with $Name', ({Name}) => {
+      `('should trigger onAction when clicking nested rows with $Name', async ({Name}) => {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="checkbox" disabledKeys={null} onAction={onAction} />);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
@@ -1282,7 +1292,7 @@ describe('TableView with expandable rows', function () {
         checkRowSelection([rows[2]], false);
 
         let checkbox = within(rows[0]).getByRole('checkbox');
-        userEvent.click(checkbox);
+        await user.click(checkbox);
         act(() => jest.runAllTimers());
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         checkSelection(onSelectionChange, ['Row 1 Lvl 1']);
@@ -1381,9 +1391,9 @@ describe('TableView with expandable rows', function () {
         checkRowSelection([rows[0], rows[2]], true);
       });
 
-      it('should support long press to enter selection mode on touch', function () {
+      it('should support long press to enter selection mode on touch', async function () {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={onAction} />);
-        userEvent.click(document.body);
+        await user.click(document.body);
         let rowgroups = treegrid.getAllByRole('rowgroup');
         let rows = within(rowgroups[1]).getAllByRole('row');
         let firstCell = getCell(treegrid, 'Row 1, Lvl 3, Foo');
@@ -1421,7 +1431,7 @@ describe('TableView with expandable rows', function () {
         checkRowSelection(rows, false);
       });
 
-      it('should support double click to perform onAction with mouse', function () {
+      it('should support double click to perform onAction with mouse', async function () {
         let treegrid = render(<ManyRowsExpandableTable onSelectionChange={onSelectionChange} selectionMode="multiple" selectionStyle="highlight" disabledKeys={null} onAction={onAction} />);
         expect(treegrid.queryByLabelText('Select All')).toBeNull();
 
@@ -1439,7 +1449,7 @@ describe('TableView with expandable rows', function () {
         expect(onAction).not.toHaveBeenCalled();
         onSelectionChange.mockReset();
         // @ts-ignore
-        userEvent.dblClick(cell, {pointerType: 'mouse'});
+        await user.dblClick(cell);
         act(() => jest.runAllTimers());
         expect(announce).toHaveBeenCalledTimes(1);
         expect(onSelectionChange).not.toHaveBeenCalled();

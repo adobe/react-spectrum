@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
@@ -158,6 +158,11 @@ let DynamicTable = ({tableProps, tableHeaderProps, tableBodyProps, rowProps}) =>
 let renderTable = (props) => render(<TestTable {...props} />);
 
 describe('Table', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -257,7 +262,7 @@ describe('Table', () => {
     }
   });
 
-  it('should render checkboxes for selection', () => {
+  it('should render checkboxes for selection', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'}
     });
@@ -270,7 +275,7 @@ describe('Table', () => {
     let checkbox = getAllByRole('checkbox')[0];
     expect(checkbox).toHaveAttribute('aria-label', 'Select All');
 
-    userEvent.click(checkbox);
+    await user.click(checkbox);
 
     for (let row of getAllByRole('row')) {
       let checkbox = within(row).getByRole('checkbox');
@@ -278,7 +283,7 @@ describe('Table', () => {
     }
   });
 
-  it('should not render checkboxes for selection with selectionBehavior=replace', () => {
+  it('should not render checkboxes for selection with selectionBehavior=replace', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {
         selectionMode: 'multiple',
@@ -293,7 +298,7 @@ describe('Table', () => {
 
     let row = getAllByRole('row')[1];
     expect(row).toHaveAttribute('aria-selected', 'false');
-    userEvent.click(row);
+    await user.click(row);
     expect(row).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -302,7 +307,7 @@ describe('Table', () => {
     expect(getAllByRole('row')).toHaveLength(5);
   });
 
-  it('should support hover', () => {
+  it('should support hover', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},
       rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
@@ -312,16 +317,16 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
 
-    userEvent.hover(row);
+    await user.hover(row);
     expect(row).toHaveAttribute('data-hovered', 'true');
     expect(row).toHaveClass('hover');
 
-    userEvent.unhover(row);
+    await user.unhover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
   });
 
-  it('should not show hover state when item is not interactive', () => {
+  it('should not show hover state when item is not interactive', async () => {
     let {getAllByRole} = renderTable({
       rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
     });
@@ -330,7 +335,7 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
 
-    userEvent.hover(row);
+    await user.hover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
   });
@@ -348,7 +353,7 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-focus-visible');
     expect(row).not.toHaveClass('focus');
 
-    act(() => userEvent.tab());
+    await user.tab();
     expect(document.activeElement).toBe(row);
     expect(row).toHaveAttribute('data-focus-visible', 'true');
     expect(row).toHaveClass('focus');
@@ -432,7 +437,7 @@ describe('Table', () => {
     expect(onRowAction).toHaveBeenCalledTimes(1);
   });
 
-  it('should support disabled state', () => {
+  it('should support disabled state', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple', disabledKeys: ['2'], disabledBehavior: 'all'},
       rowProps: {className: ({isDisabled}) => isDisabled ? 'disabled' : ''}
@@ -444,7 +449,7 @@ describe('Table', () => {
     expect(row).toHaveClass('disabled');
     expect(within(row).getByRole('checkbox')).toBeDisabled();
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(rows[1]);
     fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
@@ -466,7 +471,7 @@ describe('Table', () => {
     expect(columns[2]).not.toHaveTextContent('▲');
   });
 
-  it('should support nested column headers', () => {
+  it('should support nested column headers', async () => {
     let columns = [
       {name: 'Name', key: 'name', children: [
         {name: 'First Name', key: 'first', isRowHeader: true},
@@ -503,7 +508,7 @@ describe('Table', () => {
     expect(cells[0]).toHaveAttribute('aria-colspan', '2');
     expect(cells[1]).toHaveAttribute('aria-colspan', '2');
 
-    userEvent.tab();
+    await user.tab();
     fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
 
@@ -551,10 +556,10 @@ describe('Table', () => {
     expect(cell).toHaveTextContent('No results');
   });
 
-  it('supports removing rows', () => {
+  it('supports removing rows', async () => {
     let {getAllByRole, rerender} = render(<DynamicTable tableBodyProps={{rows}} />);
 
-    userEvent.tab();
+    await user.tab();
     fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
@@ -603,6 +608,49 @@ describe('Table', () => {
     expect(bodyRef.current).toBeInstanceOf(HTMLTableSectionElement);
     expect(rowRef.current).toBeInstanceOf(HTMLTableRowElement);
     expect(cellRef.current).toBeInstanceOf(HTMLTableCellElement);
+  });
+
+  it('should support row render function and not call it with state', () => {
+    let renderRow = jest.fn(() => {});
+    render(
+      <Table aria-label="Search results">
+        <TableHeader columns={[columns[0]]}>
+          {column => (
+            <Column isRowHeader={column.isRowHeader}>
+              {column.name}
+            </Column>
+          )}
+        </TableHeader>
+        <TableBody items={[rows[0]]}>
+          {item => (
+            <Row columns={[columns[0]]}>
+              {column => {
+                renderRow(column);
+                return (
+                  <Cell>
+                    {item[column.key]}
+                  </Cell>
+                );
+              }}
+            </Row>
+          )}
+        </TableBody>
+      </Table>
+    );
+
+    // React canary only calls render function once, vs twice in React 18, 17 and 16.
+    // Every call should be the same, so just loop over them.
+    expect(renderRow.mock.calls.length).toBeGreaterThanOrEqual(1);
+    renderRow.mock.calls.forEach((call) => {
+      expect(call[0]).toBe(columns[0]);
+    });
+    renderRow.mockReset();
+
+    // We do not currently call the renderProps function on any of these changes
+    // let rowElems = getAllByRole('row');
+    // let cells = getAllByRole('rowheader');
+    // act(() => rowElems[1].focus());
+    // expect(cells[0]).toHaveTextContent('Games focused');
   });
 
   it('should support cell render props', () => {
@@ -780,10 +828,10 @@ describe('Table', () => {
     resizingTests(render, (tree, ...args) => tree.rerender(...args), ResizableTable, ControlledResizableTable, resizeCol, resizeTable);
 
     function ResizableTable(props) {
-      let {columns, rows} = props;
+      let {columns, rows, onResizeStart, onResize, onResizeEnd, ...otherProps} = props;
       return (
-        <ResizableTableContainer>
-          <Table aria-label="Files">
+        <ResizableTableContainer onResizeStart={onResizeStart} onResize={onResize} onResizeEnd={onResizeEnd}>
+          <Table aria-label="Files" {...otherProps}>
             <MyTableHeader columns={columns}>
               {column => (
                 <MyColumn {...column} isRowHeader={column.id === 'name'}>
@@ -828,5 +876,154 @@ describe('Table', () => {
         </ResizableTableContainer>
       );
     }
+  });
+
+  describe('links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = async (item, key = 'Enter') => {
+        if (type === 'mouse') {
+          await user.click(item);
+        } else {
+          fireEvent.keyDown(item, {key});
+          fireEvent.keyUp(item, {key});
+        }
+      };
+
+      it('should support links with selectionMode="none"', async function () {
+        let {getAllByRole} = render(
+          <Table aria-label="Table">
+            <MyTableHeader>
+              <Column isRowHeader>Foo</Column>
+              <Column>Bar</Column>
+              <Column>Baz</Column>
+            </MyTableHeader>
+            <TableBody>
+              <MyRow href="https://google.com">
+                <Cell>Foo 1</Cell>
+                <Cell>Bar 1</Cell>
+                <Cell>Baz 1</Cell>
+              </MyRow>
+              <MyRow href="https://adobe.com">
+                <Cell>Foo 2</Cell>
+                <Cell>Bar 2</Cell>
+                <Cell>Baz 2</Cell>
+              </MyRow>
+            </TableBody>
+          </Table>
+        );
+
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        await trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionBehavior="toggle" selectionMode="%s"', async function (selectionMode) {
+        let {getAllByRole} = render(
+          <Table aria-label="Table" selectionMode={selectionMode}>
+            <MyTableHeader>
+              <Column isRowHeader>Foo</Column>
+              <Column>Bar</Column>
+              <Column>Baz</Column>
+            </MyTableHeader>
+            <TableBody>
+              <MyRow href="https://google.com">
+                <Cell>Foo 1</Cell>
+                <Cell>Bar 1</Cell>
+                <Cell>Baz 1</Cell>
+              </MyRow>
+              <MyRow href="https://adobe.com">
+                <Cell>Foo 2</Cell>
+                <Cell>Bar 2</Cell>
+                <Cell>Baz 2</Cell>
+              </MyRow>
+            </TableBody>
+          </Table>
+        );
+
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        await trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+
+        await user.click(within(items[0]).getByRole('checkbox'));
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        await trigger(items[1], ' ');
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[1]).toHaveAttribute('aria-selected', 'true');
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionBehavior="replace" selectionMode="%s"', async function (selectionMode) {
+        let {getAllByRole} = render(
+          <Table aria-label="Table" selectionMode={selectionMode} selectionBehavior="replace">
+            <MyTableHeader>
+              <Column isRowHeader>Foo</Column>
+              <Column>Bar</Column>
+              <Column>Baz</Column>
+            </MyTableHeader>
+            <TableBody>
+              <MyRow href="https://google.com">
+                <Cell>Foo 1</Cell>
+                <Cell>Bar 1</Cell>
+                <Cell>Baz 1</Cell>
+              </MyRow>
+              <MyRow href="https://adobe.com">
+                <Cell>Foo 2</Cell>
+                <Cell>Bar 2</Cell>
+                <Cell>Baz 2</Cell>
+              </MyRow>
+            </TableBody>
+          </Table>
+        );
+
+        let items = getAllByRole('row').slice(1);
+        for (let item of items) {
+          expect(item.tagName).not.toBe('A');
+          expect(item).toHaveAttribute('data-href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        if (type === 'mouse') {
+          await user.click(items[0]);
+        } else {
+          fireEvent.keyDown(items[0], {key: ' '});
+          fireEvent.keyUp(items[0], {key: ' '});
+        }
+        expect(onClick).not.toHaveBeenCalled();
+        expect(items[0]).toHaveAttribute('aria-selected', 'true');
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        if (type === 'mouse') {
+          await user.dblClick(items[0], {pointerType: 'mouse'});
+        } else {
+          fireEvent.keyDown(items[0], {key: 'Enter'});
+          fireEvent.keyUp(items[0], {key: 'Enter'});
+        }
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+    });
   });
 });

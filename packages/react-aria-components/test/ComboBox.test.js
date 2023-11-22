@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, ComboBoxContext, Header, Input, Item, Label, ListBox, Popover, Section, Text} from '../';
+import {act} from '@testing-library/react';
+import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, Popover, Section, Text} from '../';
+import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestComboBox = (props) => (
@@ -24,16 +25,20 @@ let TestComboBox = (props) => (
     <Text slot="errorMessage">Error</Text>
     <Popover>
       <ListBox>
-        <Item id="1">Cat</Item>
-        <Item id="2">Dog</Item>
-        <Item id="3">Kangaroo</Item>
+        <ListBoxItem id="1">Cat</ListBoxItem>
+        <ListBoxItem id="2">Dog</ListBoxItem>
+        <ListBoxItem id="3">Kangaroo</ListBoxItem>
       </ListBox>
     </Popover>
   </ComboBox>
 );
 
 describe('ComboBox', () => {
-  it('provides slots', () => {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+  it('provides slots', async () => {
     let {getByRole} = render(<TestComboBox />);
 
     let input = getByRole('combobox');
@@ -51,16 +56,17 @@ describe('ComboBox', () => {
     expect(input.getAttribute('aria-describedby').split(' ').map(id => document.getElementById(id).textContent).join(' ')).toBe('Description Error');
 
     let button = getByRole('button');
-    userEvent.click(button);
+    await user.click(button);
 
     let listbox = getByRole('listbox');
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
     expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();
+    expect(listbox.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'ComboBox');
 
     let options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(3);
 
-    userEvent.click(options[1]);
+    await user.click(options[1]);
     expect(input).toHaveValue('Dog');
   });
 
@@ -76,16 +82,16 @@ describe('ComboBox', () => {
     expect(combobox).toHaveAttribute('aria-label', 'test');
   });
 
-  it('should apply isPressed state to button when expanded', () => {
+  it('should apply isPressed state to button when expanded', async () => {
     let {getByRole} = render(<TestComboBox />);
     let button = getByRole('button');
 
     expect(button).not.toHaveAttribute('data-pressed');
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveAttribute('data-pressed');
   });
 
-  it('should support filtering sections', () => {
+  it('should support filtering sections', async () => {
     let {getByRole} = render(
       <ComboBox>
         <Label>Preferred fruit or vegetable</Label>
@@ -95,13 +101,13 @@ describe('ComboBox', () => {
           <ListBox>
             <Section>
               <Header>Fruit</Header>
-              <Item id="Apple">Apple</Item>
-              <Item id="Banana">Banana</Item>
+              <ListBoxItem id="Apple">Apple</ListBoxItem>
+              <ListBoxItem id="Banana">Banana</ListBoxItem>
             </Section>
             <Section>
               <Header>Vegetable</Header>
-              <Item id="Cabbage">Cabbage</Item>
-              <Item id="Broccoli">Broccoli</Item>
+              <ListBoxItem id="Cabbage">Cabbage</ListBoxItem>
+              <ListBoxItem id="Broccoli">Broccoli</ListBoxItem>
             </Section>
           </ListBox>
         </Popover>
@@ -109,7 +115,10 @@ describe('ComboBox', () => {
     );
 
     let input = getByRole('combobox');
-    userEvent.type(input, 'p');
+    act(() => {
+      input.focus();
+    });
+    await user.keyboard('p');
 
     let listbox = getByRole('listbox');
     let groups = within(listbox).getAllByRole('group');
@@ -121,7 +130,7 @@ describe('ComboBox', () => {
     expect(options).toHaveLength(1);
   });
 
-  it('should support dynamic collections', () => {
+  it('should support dynamic collections', async () => {
     let defaultItems = [
       {id: 1, name: 'Cat'},
       {id: 2, name: 'Dog'},
@@ -136,21 +145,24 @@ describe('ComboBox', () => {
         <Text slot="errorMessage">Error</Text>
         <Popover>
           <ListBox>
-            {item => <Item>{item.name}</Item>}
+            {item => <ListBoxItem>{item.name}</ListBoxItem>}
           </ListBox>
         </Popover>
       </ComboBox>
     );
 
     let input = getByRole('combobox');
-    userEvent.type(input, 'c');
+    act(() => {
+      input.focus();
+    });
+    await user.keyboard('c');
 
     let listbox = getByRole('listbox');
     let options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(1);
   });
 
-  it('should support render props', () => {
+  it('should support render props', async () => {
     let {getByRole} = render(
       <ComboBox>
         {({isOpen}) => (
@@ -160,9 +172,9 @@ describe('ComboBox', () => {
             <Button>{isOpen ? 'close' : 'open'}</Button>
             <Popover>
               <ListBox>
-                <Item>Cat</Item>
-                <Item>Dog</Item>
-                <Item>Kangaroo</Item>
+                <ListBoxItem>Cat</ListBoxItem>
+                <ListBoxItem>Dog</ListBoxItem>
+                <ListBoxItem>Kangaroo</ListBoxItem>
               </ListBox>
             </Popover>
           </>
@@ -173,7 +185,7 @@ describe('ComboBox', () => {
     let button = getByRole('button');
     expect(button).toHaveTextContent('open');
 
-    userEvent.click(button);
+    await user.click(button);
     expect(button).toHaveTextContent('close');
   });
 
@@ -189,5 +201,62 @@ describe('ComboBox', () => {
     rerender(<TestComboBox name="test" formValue="text" selectedKey="2" />);
     expect(input).toHaveAttribute('name', 'test');
     expect(document.querySelector('input[type=hidden]')).toBeNull();
+  });
+
+  it('should render data- attributes on outer element', () => {
+    let {getAllByTestId} = render(
+      <TestComboBox data-testid="combo-box" />
+    );
+    let outerEl = getAllByTestId('combo-box');
+    expect(outerEl).toHaveLength(1);
+    expect(outerEl[0]).toHaveClass('react-aria-ComboBox');
+  });
+
+  it('should support validation errors', async () => {
+    let {getByRole, getByTestId} = render(
+      <form data-testid="form">
+        <ComboBox isRequired>
+          <Label>Favorite Animal</Label>
+          <Input />
+          <Button />
+          <FieldError />
+          <Popover>
+            <ListBox>
+              <ListBoxItem id="1">Cat</ListBoxItem>
+              <ListBoxItem id="2">Dog</ListBoxItem>
+              <ListBoxItem id="3">Kangaroo</ListBoxItem>
+            </ListBox>
+          </Popover>
+        </ComboBox>
+      </form>
+    );
+
+    let input = getByRole('combobox');
+    let combobox = input.closest('.react-aria-ComboBox');
+    expect(input).toHaveAttribute('required');
+    expect(input).not.toHaveAttribute('aria-required');
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(false);
+    expect(combobox).not.toHaveAttribute('data-invalid');
+
+    act(() => {getByTestId('form').checkValidity();});
+
+    expect(document.activeElement).toBe(input);
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+    expect(combobox).toHaveAttribute('data-invalid');
+
+    await user.keyboard('C');
+
+    let listbox = getByRole('listbox');
+    let options = within(listbox).getAllByRole('option');
+    await user.click(options[0]);
+
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input.validity.valid).toBe(true);
+
+    await user.tab();
+    expect(input).not.toHaveAttribute('aria-describedby');
+    expect(combobox).not.toHaveAttribute('data-invalid');
   });
 });

@@ -20,7 +20,7 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   closeOnSelect?: boolean,
   shouldFocusWrap?: boolean,
   autoFocus?: boolean | FocusStrategy,
-  ref?: MutableRefObject<HTMLUListElement>,
+  ref?: MutableRefObject<HTMLDivElement>,
   state?: MenuTriggerState
 }
 
@@ -32,7 +32,7 @@ export function useMenuContext(): MenuContextValue {
 
 export interface MenuDialogContextValue {
   isUnavailable?: boolean,
-  triggerRef?: MutableRefObject<HTMLLIElement>
+  triggerRef?: MutableRefObject<HTMLElement>
 }
 
 export const MenuDialogContext = React.createContext<MenuDialogContextValue | undefined>(undefined);
@@ -44,7 +44,7 @@ export function useMenuDialogContext(): MenuDialogContextValue {
 export interface MenuStateContextValue<T> {
   state?: TreeState<T>,
   container?: RefObject<HTMLElement>,
-  menu?: RefObject<HTMLUListElement>
+  menu?: RefObject<HTMLDivElement>
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>({});

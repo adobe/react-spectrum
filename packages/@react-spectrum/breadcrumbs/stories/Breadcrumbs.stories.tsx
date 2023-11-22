@@ -88,6 +88,18 @@ export const OneItem: BreadcrumbsStory = {
   name: '1 item'
 };
 
+export const Links: BreadcrumbsStory = {
+  render: (args) => (
+    <Breadcrumbs {...args}>
+      <Item href="https://example.com">Example.com</Item>
+      <Item href="https://example.com/foo">Foo</Item>
+      <Item href="https://example.com/foo/bar">Bar</Item>
+      <Item href="https://example.com/foo/bar/baz">Baz</Item>
+      <Item href="https://example.com/foo/bar/baz/qux">Qux</Item>
+    </Breadcrumbs>
+  )
+};
+
 function render(props) {
   return (
     <Breadcrumbs {...props}>

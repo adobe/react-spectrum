@@ -15,7 +15,7 @@ import {fireEvent, screen, testSSR, within} from '@react-spectrum/test-utils';
 describe('ListBox SSR', function () {
   it('should render without errors', async function () {
     await testSSR(__filename, `
-      import {ListBox, Item} from '../';
+      import {ListBox, ListBoxItem} from '../';
 
       function Test() {
         let [show, setShow] = React.useState(false);
@@ -23,10 +23,10 @@ describe('ListBox SSR', function () {
           <>
             <button onClick={() => setShow(true)}>Show</button>
             <ListBox aria-label="Listbox">
-              <Item key="1">Left</Item>
-              <Item key="2">Middle</Item>
-              {show && <Item key="4">Extra</Item>}
-              <Item key="3">Right</Item>
+              <ListBoxItem key="1">Left</ListBoxItem>
+              <ListBoxItem key="2">Middle</ListBoxItem>
+              {show && <ListBoxItem key="4">Extra</ListBoxItem>}
+              <ListBoxItem key="3">Right</ListBoxItem>
             </ListBox>
           </>
         );
@@ -54,21 +54,21 @@ describe('ListBox SSR', function () {
 
   it('should render with sections', async function () {
     await testSSR(__filename, `
-      import {ListBox, Section, Item, Header} from '../';
+      import {ListBox, Section, ListBoxItem, Header} from '../';
 
       <React.StrictMode>
         <ListBox aria-label="Listbox">
           <Section>
             <Header>Veggies</Header>
-            <Item id="lettuce">Lettuce</Item>
-            <Item id="tomato">Tomato</Item>
-            <Item id="onion">Onion</Item>
+            <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+            <ListBoxItem id="tomato">Tomato</ListBoxItem>
+            <ListBoxItem id="onion">Onion</ListBoxItem>
           </Section>
           <Section>
             <Header>Protein</Header>
-            <Item id="ham">Ham</Item>
-            <Item id="tuna">Tuna</Item>
-            <Item id="tofu">Tofu</Item>
+            <ListBoxItem id="ham">Ham</ListBoxItem>
+            <ListBoxItem id="tuna">Tuna</ListBoxItem>
+            <ListBoxItem id="tofu">Tofu</ListBoxItem>
           </Section>
         </ListBox>
       </React.StrictMode>

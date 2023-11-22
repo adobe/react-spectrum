@@ -54,7 +54,7 @@ Autocomplete for search fields can be implemented using the [&lt;datalist&gt;](h
 * Support for controlled and uncontrolled options, selection, input value, and open state
 * Support for custom filter functions
 * Async loading and infinite scrolling support
-* Support for virtualized scrolling for performance with long lists
+* Support for use with virtualized lists
 * Exposed to assistive technology as a `combobox` with ARIA
 * Labeling support for accessibility
 * Required and invalid states exposed to assistive technology via ARIA
@@ -571,6 +571,10 @@ function AsyncLoadingExample() {
   );
 }
 ```
+
+### Links
+
+By default, interacting with an item in a SearchAutocomplete updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Interacting with link items navigates to the provided URL and does not update the input value. See the [links](useListBox.html#links) section in the `useListBox` docs for details on how to support this.
 
 ## Internationalization
 
