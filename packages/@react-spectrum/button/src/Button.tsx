@@ -159,6 +159,10 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             UNSAFE_style={{visibility: isProgressVisible ? 'visible' : 'hidden'}}
             staticColor={staticColor} />
           }
+          {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
+           Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
+           https://a11ysupport.io/tests/tech__html__button-name-change#assertion-aria-aria-label_attribute-convey_name_change-html-button_element-vo_macos-safari
+           The aria-live does cause extra announcements in other browsers. */}
           {isPending && hasAriaLabel &&
             <div aria-hidden="true" id={auxLabelId} aria-label={buttonProps['aria-label']} aria-labelledby={buttonProps['aria-labelledby']?.replace(buttonId, auxLabelId)} />
           }
