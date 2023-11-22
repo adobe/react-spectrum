@@ -1,0 +1,53 @@
+@import "./theme.css";
+
+.react-aria-Breadcrumbs {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 18px;
+  color: var(--text-color);
+
+  .react-aria-Breadcrumb:not(:last-child)::after {
+    content: '›';
+    content: '›' / '';
+    alt: ' ';
+    padding: 0 5px;
+  }
+
+  .react-aria-Link {
+    color: var(--link-color-secondary);
+    outline: none;
+    position: relative;
+    text-decoration: none;
+    cursor: pointer;
+
+    &[data-hovered] {
+      text-decoration: underline;
+    }
+
+    &[data-current] {
+      color: var(--text-color);
+      font-weight: bold;
+    }
+
+    &[data-focus-visible]:after {
+      content: '';
+      position: absolute;
+      inset: -2px -4px;
+      border-radius: 6px;
+      border: 2px solid var(--focus-ring-color);
+    }
+  }
+
+  .react-aria-Link {
+    &[data-disabled] {
+      cursor: default;
+
+      &:not([data-current]) {
+        color: var(--text-color-disabled);
+      }
+    }
+  }
+}

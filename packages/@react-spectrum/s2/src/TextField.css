@@ -1,0 +1,49 @@
+@import './Button.css';
+@import "./theme.css";
+
+.react-aria-TextField {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  color: var(--text-color);
+
+  .react-aria-Input,
+  .react-aria-TextArea {
+    padding: 0.286rem;
+    margin: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--field-background);
+    font-size: 1.143rem;
+    color: var(--field-text-color);
+
+    &[data-focused] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
+    }
+  }
+
+  .react-aria-Input,
+  .react-aria-TextArea {
+    &[data-invalid] {
+      border-color: var(--invalid-color);
+    }
+  }
+
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+
+  .react-aria-Input,
+  .react-aria-TextArea {
+    &[data-disabled] {
+      border-color: var(--border-color-disabled);
+      color: var(--text-color-disabled);
+    }
+  }
+}

@@ -1,0 +1,184 @@
+@import './Button.css';
+@import './Checkbox.css';
+@import './ToggleButton.css';
+@import "./theme.css";
+
+.react-aria-GridList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: inherit;
+  overflow: auto;
+  padding: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--overlay-background);
+  forced-color-adjust: none;
+  outline: none;
+  width: 250px;
+  max-height: 300px;
+  min-height: 100px;
+  box-sizing: border-box;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+
+  .react-aria-GridListItem {
+    display: flex;
+    align-items: center;
+    gap: 0.571rem;
+    min-height: 28px;
+    padding: 0.286rem 0.286rem 0.286rem 0.571rem;
+    border-radius: 6px;
+    outline: none;
+    cursor: default;
+    color: var(--text-color);
+    font-size: 1.072rem;
+    position: relative;
+    transform: translateZ(0);
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -2px;
+    }
+
+    &[data-pressed] {
+      background: var(--gray-100);
+    }
+
+    &[data-selected] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+      --focus-ring-color: var(--highlight-foreground);
+
+      &[data-focus-visible] {
+        outline-color: var(--highlight-foreground);
+        outline-offset: -4px;
+      }
+
+      .react-aria-Button {
+        color: var(--highlight-foreground);
+        --highlight-hover: rgb(255 255 255 / 0.1);
+        --highlight-pressed: rgb(255 255 255 / 0.2);
+      }
+    }
+
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+
+    .react-aria-Button:not([slot]) {
+      margin-left: auto;
+    }
+
+    .react-aria-Button {
+      background: transparent;
+      border: none;
+      font-size: 1.2rem;
+      line-height: 1.2em;
+      padding: 0.286rem 0.429rem;
+      transition: background 200ms;
+
+      &[data-hovered] {
+        background: var(--highlight-hover);
+      }
+
+      &[data-pressed] {
+        background: var(--highlight-pressed);
+        box-shadow: none;
+      }
+    }
+  }
+
+  /* join selected items if :has selector is supported */
+  @supports selector(:has(.foo)) {
+    gap: 0;
+
+    .react-aria-GridListItem[data-selected]:has(+ [data-selected]),
+    .react-aria-GridListItem[data-selected]:has(+ .react-aria-DropIndicator + [data-selected]) {
+      border-end-start-radius: 0;
+      border-end-end-radius: 0;
+    }
+
+    .react-aria-GridListItem[data-selected] + [data-selected],
+    .react-aria-GridListItem[data-selected] + .react-aria-DropIndicator + [data-selected] {
+      border-start-start-radius: 0;
+      border-start-end-radius: 0;
+    }
+  }
+
+  :where(.react-aria-GridListItem) .react-aria-Checkbox {
+    --selected-color: var(--highlight-foreground);
+    --selected-color-pressed: var(--highlight-foreground-pressed);
+    --checkmark-color: var(--highlight-background);
+    --background-color: var(--highlight-background);
+  }
+}
+
+.react-aria-GridListItem[data-href] {
+  cursor: pointer;
+}
+
+.react-aria-GridList {
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+}
+
+.react-aria-GridListItem {
+  &[data-allows-dragging] {
+    padding-left: 4px;
+  }
+
+  &[data-dragging] {
+    opacity: 0.6;
+  }
+
+  [slot=drag] {
+    all: unset;
+    width: 15px;
+    text-align: center;
+
+    &[data-focus-visible] {
+      border-radius: 4px;
+      outline: 2px solid var(--focus-ring-color);
+    }
+  }
+}
+
+.react-aria-DropIndicator {
+  &[data-drop-target] {
+    outline: 1px solid var(--highlight-background);
+  }
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
+}
+
+.react-aria-GridList[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  outline-offset: -1px;
+  background: var(--highlight-overlay);
+}
+
+.react-aria-GridListItem[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  background:var(--highlight-overlay);
+}
+
+.react-aria-DropIndicator {
+  &[data-drop-target] {
+    outline: 1px solid var(--highlight-background);
+  }
+
+  @supports not selector(:has(.foo)) {
+    /* Undo gap in browsers that don't support :has */
+    margin-bottom: -2px;
+  }
+}

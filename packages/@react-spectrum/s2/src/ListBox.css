@@ -1,0 +1,223 @@
+@import './Checkbox.css';
+@import "./theme.css";
+
+.react-aria-ListBox {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+  overflow: auto;
+  padding: 2px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--overlay-background);
+  forced-color-adjust: none;
+  outline: none;
+  width: 250px;
+  max-height: 300px;
+  min-height: 100px;
+  box-sizing: border-box;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
+  }
+}
+
+.react-aria-ListBoxItem {
+  margin: 2px;
+  padding: 0.286rem 0.571rem;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font-size: 1.072rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -2px;
+  }
+
+  &[data-selected] {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+
+    &[data-focus-visible] {
+      outline-color: var(--highlight-foreground);
+      outline-offset: -4px;
+    }
+  }
+}
+
+.react-aria-ListBoxItem[href] {
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-touch-callout: none;
+}
+
+.react-aria-ListBox {
+  .react-aria-Section:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-Header {
+    font-size: 1.143rem;
+    font-weight: bold;
+    padding: 0 0.714rem;
+  }
+}
+
+.react-aria-ListBoxItem {
+  [slot=label] {
+    font-weight: bold;
+  }
+
+  [slot=description] {
+    font-size: small;
+  }
+}
+
+.react-aria-ListBox[data-orientation=horizontal],
+.react-aria-ListBox[data-layout=grid] {
+  flex-direction: row;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px;
+
+  .react-aria-ListBoxItem {
+    position: relative;
+    margin: 0;
+    padding: 4px;
+
+    & img {
+      object-fit: cover;
+      aspect-ratio: 1/1;
+      max-width: 150px;
+      margin-bottom: 4px;
+      border-radius: 4px;
+      transition: box-shadow 200ms;
+    }
+
+    &[data-hovered] {
+      & img {
+        box-shadow: 0 0 8px rgb(from slateblue r g b / 0.5);
+      }
+    }
+
+    &[data-selected] {
+      background: none;
+      color: inherit;
+
+      & img {
+        box-shadow: 0 0 12px rgb(from slateblue r g b / 0.8);
+      }
+
+      &:after {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: var(--highlight-background);
+        border: 2px solid var(--highlight-foreground);
+        color: var(--highlight-foreground);
+        width: 22px;
+        height: 22px;
+        border-radius: 22px;
+        box-sizing: border-box;
+        font-size: 14px;
+        line-height: 1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 8px rgb(0 0 0 / .5);
+      }
+    }
+  }
+}
+
+.react-aria-ListBox[data-layout=grid] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  scrollbar-gutter: stable;
+}
+
+.react-aria-ListBox[data-layout=grid][data-orientation=horizontal] {
+  width: 100%;
+  max-width: none;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: 58px 58px;
+  grid-template-columns: none;
+  grid-auto-columns: 250px;
+  max-height: 200px;
+  gap: 8px;
+
+  .react-aria-ListBoxItem {
+    display: grid;
+    grid-template-areas: "image ."
+                         "image title"
+                         "image description"
+                         "image .";
+    grid-template-columns: auto 1fr;
+    grid-template-rows: 1fr auto auto 1fr;
+    column-gap: 8px;
+
+    & img {
+      width: 50px;
+      height: 50px;
+      grid-area: image;
+      margin-bottom: 0;
+    }
+
+    [slot=label] {
+      grid-area: title;
+    }
+
+    [slot=description] {
+      grid-area: description;
+    }
+  }
+}
+
+.react-aria-ListBoxItem {
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+}
+
+.react-aria-ListBox {
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+}
+
+.react-aria-ListBoxItem {
+  &[data-dragging] {
+    opacity: 0.6;
+  }
+}
+
+.react-aria-DropIndicator[data-drop-target] {
+  outline: 1px solid var(--highlight-background);
+}
+
+.react-aria-ListBox[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  outline-offset: -1px;
+  background: var(--highlight-overlay)
+}
+
+.react-aria-ListBoxItem[data-drop-target] {
+  outline: 2px solid var(--highlight-background);
+  background: var(--highlight-overlay)
+}
+
+.react-aria-DropIndicator[data-drop-target] {
+  outline: 1px solid var(--highlight-background);
+}

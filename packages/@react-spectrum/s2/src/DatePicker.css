@@ -1,0 +1,71 @@
+@import './Button.css';
+@import './Popover.css';
+@import './Dialog.css';
+@import './DateField.css';
+@import './Calendar.css';
+@import './Form.css';
+@import "./theme.css";
+
+.react-aria-DatePicker {
+  color: var(--text-color);
+
+  .react-aria-Group {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+  }
+
+  .react-aria-Button {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    border: 2px solid var(--field-background);
+    forced-color-adjust: none;
+    border-radius: 4px;
+    border: none;
+    margin-left: -1.929rem;
+    width: 1.429rem;
+    height: 1.429rem;
+    padding: 0;
+    font-size: 0.857rem;
+    box-sizing: content-box;
+
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: 2px;
+    }
+  }
+
+  .react-aria-DateInput {
+    padding: 4px 2.5rem 4px 8px;
+  }
+}
+
+.react-aria-Popover[data-trigger=DatePicker] {
+  max-width: unset;
+}
+
+.react-aria-DatePicker {
+  &[data-invalid] {
+    .react-aria-DateInput:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+    }
+  }
+
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+}

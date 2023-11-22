@@ -1,0 +1,81 @@
+@import './Button.css';
+@import "./theme.css";
+
+.react-aria-Calendar {
+  width: fit-content;
+  max-width: 100%;
+  color: var(--text-color);
+
+  header {
+    display: flex;
+    align-items: center;
+    margin: 0 4px .5rem 4px;
+
+    .react-aria-Heading {
+      flex: 1;
+      margin: 0;
+      text-align: center;
+      font-size: 1.375rem;
+    }
+  }
+
+  .react-aria-Button {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+  }
+
+  .react-aria-CalendarCell {
+    width: 2rem;
+    line-height: 2rem;
+    text-align: center;
+    border-radius: 6px;
+    cursor: default;
+    outline: none;
+    margin: 1px;
+    forced-color-adjust: none;
+
+    &[data-outside-month] {
+      display: none;
+    }
+
+    &[data-pressed] {
+      background: var(--gray-100);
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: 2px;
+    }
+
+    &[data-selected] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+    }
+  }
+
+  .react-aria-CalendarCell {
+    &[data-disabled] {
+      color: var(--text-color-disabled);
+    }
+  }
+
+  .react-aria-CalendarCell {
+    &[data-unavailable] {
+      text-decoration: line-through;
+      color: var(--invalid-color);
+    }
+  }
+
+  .react-aria-CalendarCell {
+    &[data-invalid] {
+      background: var(--invalid-color);
+      color: var(--highlight-foreground);
+    }
+  }
+
+  [slot=errorMessage] {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}

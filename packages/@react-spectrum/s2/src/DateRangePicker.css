@@ -1,0 +1,104 @@
+@import './Button.css';
+@import './Popover.css';
+@import './Dialog.css';
+@import './DateField.css';
+@import './RangeCalendar.css';
+@import './Form.css';
+@import "./theme.css";
+
+.react-aria-DateRangePicker {
+  color: var(--text-color);
+
+  .react-aria-Group {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    min-width: 220px;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: auto;
+    position: relative;
+    padding: 4px 4px 4px 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--field-background);
+    white-space: nowrap;
+
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
+
+    &[data-focus-within] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
+    }
+  }
+
+  [slot=start] + span {
+    padding: 0 4px;
+  }
+
+  [slot=end] {
+    margin-right: 2rem;
+    flex: 1;
+  }
+
+  .react-aria-Button {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    border: 2px solid var(--field-background);
+    forced-color-adjust: none;
+    border-radius: 4px;
+    border: none;
+    margin-left: auto;
+    width: 1.429rem;
+    height: 1.429rem;
+    padding: 0;
+    font-size: 0.857rem;
+    box-sizing: content-box;
+    flex-shrink: 0;
+    position: sticky;
+    right: 0;
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: 2px;
+    }
+  }
+
+  .react-aria-DateInput {
+    width: unset;
+    min-width: unset;
+    padding: unset;
+    border: unset;
+    outline: unset;
+  }
+}
+
+.react-aria-Popover[data-trigger=DateRangePicker] {
+  max-width: unset;
+}
+
+.react-aria-DateRangePicker {
+  &[data-invalid] {
+    [slot=end]:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+      margin-left: 1.5rem;
+      margin-right: -1.5rem;
+    }
+  }
+
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+}

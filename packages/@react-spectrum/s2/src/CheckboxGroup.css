@@ -1,0 +1,20 @@
+@import './Checkbox.css';
+@import './Form.css';
+@import './Button.css';
+@import "./theme.css";
+
+.react-aria-CheckboxGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.571rem;
+  color: var(--text-color);
+
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+
+  [slot=description] {
+    font-size: 12px;
+  }
+}
