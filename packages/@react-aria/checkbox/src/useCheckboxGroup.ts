@@ -48,9 +48,9 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
   });
 
   checkboxGroupData.set(state, {
-    name: name ?? '',
-    descriptionId: descriptionProps.id ?? '',
-    errorMessageId: errorMessageProps.id ?? '',
+    name,
+    descriptionId: descriptionProps.id,
+    errorMessageId: errorMessageProps.id,
     validationBehavior
   });
 
