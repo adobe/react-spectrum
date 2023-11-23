@@ -60,7 +60,7 @@ export interface FormProps extends AriaLabelingProps {
    * A nonstandard attribute used by iOS Safari that controls how textual form elements should be automatically capitalized.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#autocapitalize).
    */
-  autoCapitalize?: 'off' | 'on',
+  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters',
   /**
    * An ARIA role override to apply to the form element.
    */
