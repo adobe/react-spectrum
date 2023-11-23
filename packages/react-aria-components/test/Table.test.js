@@ -307,6 +307,38 @@ describe('Table', () => {
     expect(getAllByRole('row')).toHaveLength(5);
   });
 
+  it('should support column hover when sorting is allowed', async () => {
+    let {getAllByRole} = renderTable({
+      columnProps: {allowsSorting: true, className: ({isHovered}) => isHovered ? 'hover' : ''}
+    });
+    let column = getAllByRole('columnheader')[0];
+
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+
+    await user.hover(column);
+    expect(column).toHaveAttribute('data-hovered', 'true');
+    expect(column).toHaveClass('hover');
+
+    await user.unhover(column);
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+  });
+
+  it('should not show column hover state when column is not sortable', async () => {
+    let {getAllByRole} = renderTable({
+      columnProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
+    });
+    let column = getAllByRole('columnheader')[0];
+
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+
+    await user.hover(column);
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+  });
+
   it('should support hover', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},

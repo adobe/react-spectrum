@@ -804,7 +804,6 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     ref
   );
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
 
   let layoutState = useContext(TableColumnResizeStateContext);
   let isResizing = false;
@@ -819,6 +818,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
   }
 
   let props: ColumnProps<unknown> = column.props;
+  let {hoverProps, isHovered} = useHover({isDisabled: !props.allowsSorting});
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -859,6 +859,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       style={style}
       colSpan={column.colspan}
       ref={ref}
+      data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
