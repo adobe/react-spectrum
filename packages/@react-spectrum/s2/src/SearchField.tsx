@@ -9,7 +9,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 
-import './SearchField.css';
+
 
 export interface SearchFieldProps extends AriaSearchFieldProps {
   label?: string;

@@ -13,7 +13,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 
-import './ComboBox.css';
+
 
 export interface ComboBoxProps<T extends object>
   extends Omit<AriaComboBoxProps<T>, 'children'> {

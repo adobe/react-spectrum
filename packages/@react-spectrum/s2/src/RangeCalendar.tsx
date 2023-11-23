@@ -9,7 +9,7 @@ import {
   Text
 } from 'react-aria-components';
 
-import './RangeCalendar.css';
+
 
 export interface RangeCalendarProps<T extends DateValue>
   extends AriaRangeCalendarProps<T> {

@@ -4,7 +4,7 @@ import {
   MeterProps as AriaMeterProps
 } from 'react-aria-components';
 
-import './Meter.css';
+
 
 export interface MeterProps extends AriaMeterProps {
   label?: string;

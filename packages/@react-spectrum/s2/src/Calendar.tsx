@@ -9,7 +9,7 @@ import {
   Text
 } from 'react-aria-components';
 
-import './Calendar.css';
+
 
 export interface CalendarProps<T extends DateValue>
   extends AriaCalendarProps<T> {

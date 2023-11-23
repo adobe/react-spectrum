@@ -5,19 +5,29 @@
     "@storybook/addon-interactions": "^7.5.3",
     "@storybook/addon-links": "^7.5.3",
     "@storybook/addon-onboarding": "^1.0.8",
+    "@storybook/addon-styling-webpack": "^0.0.5",
+    "@storybook/addon-themes": "^7.5.3",
     "@storybook/blocks": "^7.5.3",
     "@storybook/react": "^7.5.3",
     "@storybook/react-webpack5": "^7.5.3",
     "@storybook/testing-library": "^0.2.2",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "autoprefixer": "^10.4.16",
+    "css-loader": "^6.8.1",
     "lightningcss-loader": "^2.1.0",
+    "postcss": "^8.4.31",
+    "postcss-loader": "^7.3.3",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-aria-components": "latest",
     "react-dom": "^18.2.0",
     "storybook": "^7.5.3",
     "storybook-dark-mode": "^3.0.1",
+    "style-loader": "^3.3.3",
+    "tailwindcss": "^3.3.5",
+    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-react-aria-components": "latest",
     "typescript": "^5.3.2"
   },
   "resolutions": {
@@ -25,6 +35,7 @@
   },
   "scripts": {
     "start": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "storybook": "storybook dev -p 6006"
   }
 }

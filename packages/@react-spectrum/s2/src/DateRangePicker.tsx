@@ -18,7 +18,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 
-import './DateRangePicker.css';
+
 
 export interface DateRangePickerProps<T extends DateValue>
   extends AriaDateRangePickerProps<T> {

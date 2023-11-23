@@ -13,7 +13,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 
-import './Select.css';
+
 
 export interface SelectProps<T extends object>
   extends Omit<AriaSelectProps<T>, 'children'> {

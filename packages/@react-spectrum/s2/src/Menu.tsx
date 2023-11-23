@@ -9,7 +9,7 @@ import {
   Popover
 } from 'react-aria-components';
 
-import './Menu.css';
+
 
 export interface MenuButtonProps<T>
   extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {

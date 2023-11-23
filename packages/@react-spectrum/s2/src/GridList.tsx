@@ -7,7 +7,7 @@ import {
 } from 'react-aria-components';
 
 import {Checkbox} from './Checkbox';
-import './GridList.css';
+
 
 export function GridList<T extends object>(
   { children, ...props }: GridListProps<T>

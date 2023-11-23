@@ -1,0 +1,4 @@
+@config "../tailwind-spectrum.js";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

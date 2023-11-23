@@ -14,7 +14,7 @@ import {
 } from 'react-aria-components';
 
 import {Checkbox} from './Checkbox';
-import './Table.css';
+
 
 export function Table(props: TableProps) {
   return <AriaTable {...props} />;

@@ -1,6 +1,10 @@
 import {Button as RACButton, ButtonProps} from 'react-aria-components';
-import './Button.css';
 
 export function Button(props: ButtonProps) {
-  return <RACButton {...props} />;
+    return (
+        <>
+            <div className="text-white text-3xl font-bold underline">Button</div>
+            <RACButton {...props} />
+        </>
+    );
 }

@@ -10,7 +10,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 
-import './DateField.css';
+
 
 export interface DateFieldProps<T extends DateValue>
   extends AriaDateFieldProps<T> {
