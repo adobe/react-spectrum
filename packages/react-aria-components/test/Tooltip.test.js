@@ -115,4 +115,43 @@ describe('Tooltip', () => {
     rerender(<TestTooltip />);
     expect(tooltip).not.toBeInTheDocument();
   });
+  describe('portalContainer', () => {
+    function InfoTooltip(props) {
+      return (
+        <TooltipTrigger delay={0}>
+          <Button><span aria-hidden="true">✏️</span></Button>
+          <Tooltip UNSTABLE_portalContainer={props.container} data-test="tooltip" {...props}>
+            <OverlayArrow>
+              <svg width={8} height={8}>
+                <path d="M0 0,L4 4,L8 0" />
+              </svg>
+            </OverlayArrow>
+            Edit
+          </Tooltip>
+        </TooltipTrigger>
+      );
+    }
+    function App() {
+      let [container, setContainer] = React.useState();
+      return (
+        <>
+          <InfoTooltip container={container} />
+          <div ref={setContainer} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the tooltip in the portal container', async () => {
+      let {getByRole, getByTestId} = render(<App />);
+      let button = getByRole('button');
+
+      fireEvent.mouseMove(document.body);
+      await user.hover(button);
+      act(() => jest.runAllTimers());
+
+      expect(getByRole('tooltip').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+
+      await user.unhover(button);
+      act(() => jest.runAllTimers());
+    });
+  });
 });
