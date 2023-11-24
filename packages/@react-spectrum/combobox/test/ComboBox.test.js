@@ -1029,6 +1029,17 @@ describe('ComboBox', function () {
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
+    it('should close menu on scroll', async () => {
+      let {getByRole} = renderComboBox();
+  
+      let button = getByRole('button');
+      userEvent.click(button);
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeInTheDocument();
+      fireEvent.scroll(document.body);
+      expect(listbox).not.toBeInTheDocument();
+    });
+
     describe.each`
       Name                                   | Component
       ${'uncontrolled items (defaultItems)'} | ${ControlledKeyComboBox}
