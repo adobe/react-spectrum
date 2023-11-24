@@ -12,7 +12,7 @@
 
 import {Button, ComboBox, ComboBoxContext, Input, Item, Label, ListBox, Popover, Text} from '../';
 import React from 'react';
-import {render, within} from '@react-spectrum/test-utils';
+import {fireEvent, render, within} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 
 let TestComboBox = (props) => (
@@ -83,5 +83,16 @@ describe('ComboBox', () => {
     expect(button).not.toHaveAttribute('data-pressed');
     userEvent.click(button);
     expect(button).toHaveAttribute('data-pressed');
+  });
+
+   it('should close on scroll', async () => {
+    let {getByRole} = render(<TestComboBox />);
+
+    let button = getByRole('button');
+    userEvent.click(button);
+    let listbox = getByRole('listbox');
+    expect(listbox).toBeInTheDocument();
+    fireEvent.scroll(document.body);
+    expect(listbox).not.toBeInTheDocument();
   });
 });
