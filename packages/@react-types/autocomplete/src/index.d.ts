@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, Key, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, CollectionBase, DimensionValue, DOMProps, Key, LoadingState, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps} from '@react-types/shared';
 import {AriaSearchFieldProps, SearchFieldProps} from '@react-types/searchfield';
 import {MenuTriggerAction} from '@react-types/combobox';
 import {ReactElement} from 'react';
@@ -54,6 +54,10 @@ export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBas
   menuTrigger?: MenuTriggerAction,
   /** Whether the SearchAutocomplete should be displayed with a quiet style. */
   isQuiet?: boolean,
+  /** Alignment of the menu relative to the input target.
+   * @default 'start'
+   */
+  align?: 'start' | 'end',
   /**
    * Direction the menu will render relative to the SearchAutocomplete.
    * @default 'bottom'
@@ -66,6 +70,8 @@ export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBas
    * @default true
    */
   shouldFlip?: boolean,
+  /** Width of the menu. By default, matches width of the trigger. */
+  menuWidth?: DimensionValue,
   onLoadMore?: () => void,
   /** An icon to display at the start of the input. */
   icon?: ReactElement | null
