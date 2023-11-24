@@ -27,14 +27,15 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper {
-  @inherit: %spectrum-FocusRing;
+  composes: spectrum-FocusRing;
 
   display: inline-grid;
   position: relative;
 
   block-size: max-content;
 
-  inline-size: var(--spectrum-stepper-default-width-desktop);
+  --spectrum-stepper-width: var(--spectrum-stepper-default-width-desktop);
+  inline-size: var(--spectrum-stepper-width);
   line-height: 0;
   transition: border-color var(--spectrum-global-animation-duration-100) ease-in-out, box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
 
@@ -59,7 +60,8 @@ governing permissions and limitations under the License.
     }
   }
   &.spectrum-Stepper--isMobile {
-    inline-size: var(--spectrum-stepper-default-width-mobile);
+    /* Use a variable here rather than inline-size directly so we don't conflict with form style override. */
+    --spectrum-stepper-width: var(--spectrum-stepper-default-width-mobile);
     grid-template-rows: auto;
     grid-template-columns: auto 1fr auto;
     grid-template-areas: 'decrement field increment';
@@ -159,8 +161,6 @@ governing permissions and limitations under the License.
     }
   }
   &.spectrum-Stepper--isQuiet {
-    @inherit: %spectrum-FocusRing--quiet;
-
     .spectrum-Stepper-icon {
       inset-inline-end: 0px;
     }
@@ -214,6 +214,10 @@ governing permissions and limitations under the License.
   }
 }
 
+.spectrum-Stepper--isQuiet {
+  composes: spectrum-FocusRing--quiet;
+}
+
 /* this is specific to handling default width */
 .spectrum-Stepper-container {
   /* ensure we have higher specificity than .spectrum-Field */
@@ -228,7 +232,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Stepper-button {
-  @inherit: %spectrum-BaseButton;
+  composes: spectrum-BaseButton;
 
   border-width: 0;
 

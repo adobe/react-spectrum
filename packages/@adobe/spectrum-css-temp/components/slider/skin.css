@@ -158,7 +158,7 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Dial-labelContainer {
-  @inherit: .spectrum-Slider-labelContainer;
+  composes: spectrum-Slider-labelContainer;
 }
 
 .spectrum-Dial-handle {

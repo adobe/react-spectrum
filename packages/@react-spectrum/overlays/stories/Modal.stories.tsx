@@ -19,19 +19,26 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Modal} from '../';
 import React, {Fragment} from 'react';
-import {storiesOf} from '@storybook/react';
 import {useOverlayTriggerState} from '@react-stately/overlays';
 
-storiesOf('Modal', module)
-  .addParameters({providerSwitcher: {status: 'notice'}})
-  .add(
-    'default',
-    () => <ModalExample />
-  )
-  .add(
-    'unmounting trigger',
-    () => <UnmountingTrigger />
-  );
+export default {
+  title: 'Modal',
+  parameters: {
+    providerSwitcher: {status: 'notice'}
+  }
+};
+
+export const Default = () => <ModalExample />;
+
+Default.story = {
+  name: 'default'
+};
+
+export const _UnmountingTrigger = () => <UnmountingTrigger />;
+
+_UnmountingTrigger.story = {
+  name: 'unmounting trigger'
+};
 
 function ModalExample() {
   let state = useOverlayTriggerState({});
@@ -43,8 +50,14 @@ function ModalExample() {
         <Dialog>
           <Heading>Title</Heading>
           <Divider />
-          <Content><Text>I am a dialog</Text></Content>
-          <ButtonGroup><Button variant="cta" onPress={state.close}>Close</Button></ButtonGroup>
+          <Content>
+            <Text>I am a dialog</Text>
+          </Content>
+          <ButtonGroup>
+            <Button variant="cta" onPress={state.close}>
+              Close
+            </Button>
+          </ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>
@@ -63,7 +76,10 @@ function UnmountingTrigger() {
   // Ideally this would be a menu, but we don't have those implemented yet...
   return (
     <Fragment>
-      <DialogTrigger type="popover" isOpen={popoverState.isOpen} onOpenChange={popoverState.setOpen}>
+      <DialogTrigger
+        type="popover"
+        isOpen={popoverState.isOpen}
+        onOpenChange={popoverState.setOpen}>
         <ActionButton>Open popover</ActionButton>
         <Dialog>
           <Heading>Title</Heading>
@@ -80,8 +96,14 @@ function UnmountingTrigger() {
         <Dialog>
           <Heading>Title</Heading>
           <Divider />
-          <Content><Text>I am a dialog</Text></Content>
-          <ButtonGroup><Button variant="cta" onPress={modalState.close}>Close</Button></ButtonGroup>
+          <Content>
+            <Text>I am a dialog</Text>
+          </Content>
+          <ButtonGroup>
+            <Button variant="cta" onPress={modalState.close}>
+              Close
+            </Button>
+          </ButtonGroup>
         </Dialog>
       </Modal>
     </Fragment>

@@ -11,39 +11,114 @@
  */
 import {AriaComboBoxProps, useComboBox, useFilter} from 'react-aria';
 import {ButtonContext} from './Button';
-import {ComboBoxState, useComboBoxState} from 'react-stately';
-import {ContextValue, forwardRefType, Provider, RenderProps, slotCallbackSymbol, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {Collection, ComboBoxState, Node, useComboBoxState} from 'react-stately';
+import {CollectionDocumentContext, useCollectionDocument} from './Collection';
+import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {FieldErrorContext} from './FieldError';
+import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
-import {ListBoxContext, ListBoxProps} from './ListBox';
+import {ListBoxContext, ListStateContext} from './ListBox';
+import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useCallback, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
-import {useCollection} from './Collection';
-import {useResizeObserver} from '@react-aria/utils';
 
-export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'name' | 'label' | 'description' | 'errorMessage'>, RenderProps<ComboBoxState<T>>, SlotProps {
+export interface ComboBoxRenderProps {
+  /**
+   * Whether the combobox is currently open.
+   * @selector [data-open]
+   */
+  isOpen: boolean,
+  /**
+   * Whether the combobox is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
+   * Whether the combobox is invalid.
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean,
+  /**
+   * Whether the combobox is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean
+}
+
+export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children' | 'placeholder' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<ComboBoxRenderProps>, SlotProps {
   /** The filter function used to determine if a option should be included in the combo box list. */
-  defaultFilter?: (textValue: string, inputValue: string) => boolean
+  defaultFilter?: (textValue: string, inputValue: string) => boolean,
+  /**
+   * Whether the text or key of the selected item is submitted as part of an HTML form.
+   * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
+   * @default 'key'
+   */
+  formValue?: 'text' | 'key'
 }
 
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
+export const ComboBoxStateContext = createContext<ComboBoxState<any> | null>(null);
 
 function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, ComboBoxContext);
-  let [propsFromListBox, setListBoxProps] = useState<ListBoxProps<T>>({children: []});
+  let {collection, document} = useCollectionDocument();
+  let {children, isDisabled = false, isInvalid = false, isRequired = false} = props;
+  children = useMemo(() => (
+    typeof children === 'function'
+      ? children({
+        isOpen: false,
+        isDisabled,
+        isInvalid,
+        isRequired
+      })
+      : children
+  ), [children, isDisabled, isInvalid, isRequired]);
+
+  return (
+    <>
+      {/* Render a hidden copy of the children so that we can build the collection even when the popover is not open.
+        * This should always come before the real DOM content so we have built the collection by the time it renders during SSR. */}
+      <Hidden>
+        <Provider
+          values={[
+            [CollectionDocumentContext, document],
+            [ListBoxContext, {items: props.items ?? props.defaultItems}]
+          ]}>
+          {children}
+        </Provider>
+      </Hidden>
+      <ComboBoxInner props={props} collection={collection} comboBoxRef={ref} />
+    </>
+  );
+}
+
+interface ComboBoxInnerProps<T extends object> {
+  props: ComboBoxProps<T>,
+  collection: Collection<Node<T>>,
+  comboBoxRef: RefObject<HTMLDivElement>
+}
+
+function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: ComboBoxInnerProps<T>) {
+  let {
+    name,
+    formValue = 'key',
+    allowsCustomValue
+  } = props;
+  if (allowsCustomValue) {
+    formValue = 'text';
+  }
 
   let {contains} = useFilter({sensitivity: 'base'});
-  let {portal, collection} = useCollection({
-    items: props.items ?? props.defaultItems ?? propsFromListBox.items,
-    children: propsFromListBox.children
-  });
   let state = useComboBoxState({
     defaultFilter: props.defaultFilter || contains,
     ...props,
-    items: propsFromListBox ? (props.items ?? propsFromListBox.items) : [],
+    // If props.items isn't provided, rely on collection filtering (aka listbox.items is provided or defaultItems provided to Combobox)
+    items: props.items,
     children: undefined,
-    collection
+    collection,
+    validationBehavior: props.validationBehavior ?? 'native'
   });
 
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -57,16 +132,18 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     listBoxProps,
     labelProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    ...validation
   } = useComboBox({
-    ...props,
+    ...removeDataAttributes(props),
     label,
     inputRef,
     buttonRef,
     listBoxRef,
-    popoverRef
-  },
-  state);
+    popoverRef,
+    name: formValue === 'text' ? name : undefined,
+    validationBehavior: props.validationBehavior ?? 'native'
+  }, state);
 
   // Make menu width match input + button
   let [menuWidth, setMenuWidth] = useState<string | null>(null);
@@ -85,39 +162,60 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
     onResize: onResize
   });
 
+  // Only expose a subset of state to renderProps function to avoid infinite render loop
+  let renderPropsState = useMemo(() => ({
+    isOpen: state.isOpen,
+    isDisabled: props.isDisabled || false,
+    isInvalid: validation.isInvalid || false,
+    isRequired: props.isRequired || false
+  }), [state.isOpen, props.isDisabled, validation.isInvalid, props.isRequired]);
+
   let renderProps = useRenderProps({
     ...props,
-    values: state,
+    values: renderPropsState,
     defaultClassName: 'react-aria-ComboBox'
   });
+
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
 
   return (
     <Provider
       values={[
+        [ComboBoxStateContext, state],
         [LabelContext, {...labelProps, ref: labelRef}],
         [ButtonContext, {...buttonProps, ref: buttonRef, isPressed: state.isOpen}],
         [InputContext, {...inputProps, ref: inputRef}],
+        [OverlayTriggerStateContext, state],
         [PopoverContext, {
-          state,
           ref: popoverRef,
           triggerRef: inputRef,
           placement: 'bottom start',
-          preserveChildren: true,
           isNonModal: true,
+          trigger: 'ComboBox',
           style: {'--trigger-width': menuWidth} as React.CSSProperties
         }],
-        [ListBoxContext, {state, [slotCallbackSymbol]: setListBoxProps, ...listBoxProps, ref: listBoxRef}],
+        [ListBoxContext, {...listBoxProps, ref: listBoxRef}],
+        [ListStateContext, state],
         [TextContext, {
           slots: {
             description: descriptionProps,
             errorMessage: errorMessageProps
           }
-        }]
+        }],
+        [FieldErrorContext, validation]
       ]}>
-      <div {...renderProps} ref={ref} slot={props.slot}>
-        {props.children}
-      </div>
-      {portal}
+      <div
+        {...DOMProps}
+        {...renderProps}
+        ref={ref}
+        slot={props.slot || undefined}
+        data-focused={state.isFocused || undefined}
+        data-open={state.isOpen || undefined}
+        data-disabled={props.isDisabled || undefined}
+        data-invalid={validation.isInvalid || undefined}
+        data-required={props.isRequired || undefined} />
+      {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
     </Provider>
   );
 }
@@ -125,5 +223,5 @@ function ComboBox<T extends object>(props: ComboBoxProps<T>, ref: ForwardedRef<H
 /**
  * A combo box combines a text input with a listbox, allowing users to filter a list of options to items matching a query.
  */
-const _ComboBox = (forwardRef as forwardRefType)(ComboBox);
+const _ComboBox = /*#__PURE__*/ (forwardRef as forwardRefType)(ComboBox);
 export {_ComboBox as ComboBox};

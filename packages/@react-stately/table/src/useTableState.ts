@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {CollectionStateBase, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {GridState, useGridState} from '@react-stately/grid';
-import {TableCollection as ITableCollection} from '@react-types/table';
-import {Key, useMemo, useState} from 'react';
+import {TableCollection as ITableCollection, TableBodyProps, TableHeaderProps} from '@react-types/table';
+import {Key, Node, SelectionMode, Sortable, SortDescriptor, SortDirection} from '@react-types/shared';
 import {MultipleSelectionStateProps} from '@react-stately/selection';
+import {ReactElement, useCallback, useMemo, useState} from 'react';
 import {TableCollection} from './TableCollection';
 import {useCollection} from '@react-stately/collections';
 
@@ -40,7 +40,13 @@ export interface CollectionBuilderContext<T> {
   columns: Node<T>[]
 }
 
-export interface TableStateProps<T> extends CollectionStateBase<T, ITableCollection<T>>, MultipleSelectionStateProps, Sortable {
+export interface TableStateProps<T> extends MultipleSelectionStateProps, Sortable {
+  /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
+  children?: [ReactElement<TableHeaderProps<T>>, ReactElement<TableBodyProps<T>>],
+  /** A list of row keys to disable. */
+  disabledKeys?: Iterable<Key>,
+  /** A pre-constructed collection to use instead of building one from items and children. */
+  collection?: ITableCollection<T>,
   /** Whether the row selection checkboxes should be displayed. */
   showSelectionCheckboxes?: boolean,
   /** Whether the row drag button should be displayed.
@@ -60,19 +66,19 @@ const OPPOSITE_SORT_DIRECTION = {
  */
 export function useTableState<T extends object>(props: TableStateProps<T>): TableState<T> {
   let [isKeyboardNavigationDisabled, setKeyboardNavigationDisabled] = useState(false);
-  let {selectionMode = 'none'} = props;
+  let {selectionMode = 'none', showSelectionCheckboxes, showDragButtons} = props;
 
   let context = useMemo(() => ({
-    showSelectionCheckboxes: props.showSelectionCheckboxes && selectionMode !== 'none',
-    showDragButtons: props.showDragButtons,
+    showSelectionCheckboxes: showSelectionCheckboxes && selectionMode !== 'none',
+    showDragButtons: showDragButtons,
     selectionMode,
     columns: []
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [props.children, props.showSelectionCheckboxes, selectionMode, props.showDragButtons]);
+  }), [props.children, showSelectionCheckboxes, selectionMode, showDragButtons]);
 
   let collection = useCollection<T, ITableCollection<T>>(
     props,
-    (nodes, prev) => new TableCollection(nodes, prev, context),
+    useCallback((nodes) => new TableCollection(nodes, null, context), [context]),
     context
   );
   let {disabledKeys, selectionManager} = useGridState({

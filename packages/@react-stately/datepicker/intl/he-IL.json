@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "הערך חייב להיות {maxValue} או מוקדם יותר.",
+  "rangeReversed": "תאריך ההתחלה חייב להיות לפני תאריך הסיום.",
+  "rangeUnderflow": "הערך חייב להיות {minValue} או מאוחר יותר.",
+  "unavailableDate": "התאריך הנבחר אינו זמין."
+}

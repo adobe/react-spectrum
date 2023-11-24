@@ -48,7 +48,7 @@ export const Default: ButtonGroupStory = {
 
 export const ConstantContainer: ButtonGroupStory = {
   render: (args) => <ExpandingSibling {...args} />,
-  storyName: 'constant container, changing siblings'
+  name: 'constant container, changing siblings'
 };
 
 function render(props) {

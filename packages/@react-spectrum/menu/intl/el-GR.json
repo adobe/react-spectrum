@@ -1,3 +1,5 @@
 {
-  "moreActions": "Περισσότερες ενέργειες"
+  "backButton": "Επιστροφή στο {prevMenuButton}",
+  "moreActions": "Περισσότερες ενέργειες",
+  "unavailable": "Μη διαθέσιμο, ανάπτυξη για λεπτομέρειες"
 }

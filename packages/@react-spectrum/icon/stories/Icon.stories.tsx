@@ -12,11 +12,20 @@
 
 import {Icon} from '../';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Icons/Custom', module)
-  .addParameters({providerSwitcher: {status: 'positive'}})
-  .add(
-    'exciting square',
-    () => <Icon><svg viewBox="0 0 25 25"><rect x="0" y="0" width="25" height="25" /></svg></Icon>
-  );
+export default {
+  title: 'Icons/Custom',
+  providerSwitcher: {status: 'positive'}
+};
+
+export const ExcitingSquare = () => (
+  <Icon>
+    <svg viewBox="0 0 25 25">
+      <rect x="0" y="0" width="25" height="25" />
+    </svg>
+  </Icon>
+);
+
+ExcitingSquare.story = {
+  name: 'exciting square'
+};

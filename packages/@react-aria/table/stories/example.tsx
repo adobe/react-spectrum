@@ -11,10 +11,9 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useFocusRing} from '@react-aria/focus';
-import {useRef} from 'react';
 import {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';

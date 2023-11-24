@@ -9,11 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
 import {getFirstItem, getLastItem} from '@react-stately/collections';
 import {GridCollection} from '@react-stately/grid';
 import {GridNode} from '@react-types/grid';
 import {TableCollection as ITableCollection} from '@react-types/table';
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 
 interface GridCollectionOptions {
   showSelectionCheckboxes?: boolean,
@@ -184,7 +185,6 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
     let rowHeaderColumnKeys: Set<Key> = new Set();
     let body: GridNode<T>;
     let columns: GridNode<T>[] = [];
-
     // Add cell for selection checkboxes if needed.
     if (opts?.showSelectionCheckboxes) {
       let rowHeaderColumn: GridNode<T> = {

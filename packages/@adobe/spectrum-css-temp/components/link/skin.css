@@ -10,14 +10,12 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-:root {
+.spectrum-Link {
   --spectrum-link-text-color: var(--spectrum-accent-color-1000);
   --spectrum-link-text-color-hover: var(--spectrum-accent-color-1000);
   --spectrum-link-text-color-down: var(--spectrum-accent-color-1100);
   --spectrum-link-text-color-key-focus: var(--spectrum-accent-color-1000);
-}
 
-.spectrum-Link {
   color: var(--spectrum-link-text-color);
 
   &:hover {
@@ -28,7 +26,7 @@ governing permissions and limitations under the License.
     color: var(--spectrum-link-text-color-down);
   }
 
-  &:focus-ring {
+  &:focus-visible {
     color: var(--spectrum-link-text-color-key-focus);
   }
 
@@ -37,7 +35,7 @@ governing permissions and limitations under the License.
   }
 }
 
-.spectrum-Link--secondary{
+.spectrum-Link--secondary {
   color: inherit;
 
   &:hover {
@@ -70,5 +68,23 @@ governing permissions and limitations under the License.
 
   &.is-disabled {
     color: var(--spectrum-link-over-background-text-color-disabled);
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Link {
+    color: LinkText;
+
+    &:hover {
+      color: LinkText;
+    }
+
+    &:active {
+      color: LinkText;
+    }
+
+    &:focus {
+      color: LinkText;
+    }
   }
 }

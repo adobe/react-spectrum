@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, render, triggerPress, typeText} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
 import Filter from '@spectrum-icons/workflow/Filter';
 import {Item, Picker} from '@react-spectrum/picker';
 import {Provider} from '@react-spectrum/provider';
@@ -17,6 +17,7 @@ import React from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {SearchWithin} from '../src';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 let defaultProps = {
   label: 'Test'
@@ -39,8 +40,11 @@ function renderSearchWithin(props = {}, searchFieldProps = {}, pickerProps = {})
 }
 
 describe('SearchWithin', function () {
+  let user;
+
   beforeAll(function () {
-    jest.useFakeTimers('legacy');
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
@@ -79,14 +83,14 @@ describe('SearchWithin', function () {
     expect(queryByTestId('searchicon')).toBeNull();
   });
 
-  it('can type in search and get onChange', function () {
+  it('can type in search and get onChange', async function () {
     let onChange = jest.fn();
     let {getByRole} = renderSearchWithin({}, {onChange});
     let searchfield = getByRole('searchbox');
     expect(searchfield).toHaveAttribute('value', '');
 
     act(() => {searchfield.focus();});
-    typeText(searchfield, 'test search');
+    await user.keyboard('test search');
     act(() => {searchfield.blur();});
     expect(searchfield).toHaveAttribute('value', 'test search');
     expect(onChange).toBeCalledTimes(11);
@@ -187,7 +191,7 @@ describe('SearchWithin labeling', function () {
 
     expect(group).not.toHaveAttribute('aria-labelledby');
     expect(searchfield).toHaveAttribute('aria-labelledby', `${hiddenLabel.id} ${picker.id}`);
-    expect(picker).toHaveAttribute('aria-labelledby', `${hiddenLabel.id} ${picker.childNodes[0].id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${hiddenLabel.id}`);
   });
 
   it('label = foo', function () {
@@ -203,7 +207,7 @@ describe('SearchWithin labeling', function () {
 
     expect(group).toHaveAttribute('aria-labelledby', label.id);
     expect(searchfield).toHaveAttribute('aria-labelledby', `${label.id} ${hiddenLabel.id} ${picker.id}`);
-    expect(picker).toHaveAttribute('aria-labelledby', `${label.id} ${hiddenLabel.id} ${picker.childNodes[0].id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${label.id} ${hiddenLabel.id}`);
 
     expect(label).toHaveAttribute('for', searchfield.id);
   });
@@ -220,7 +224,7 @@ describe('SearchWithin labeling', function () {
 
     expect(group).not.toHaveAttribute('aria-labelledby');
     expect(searchfield).toHaveAttribute('aria-labelledby', `${group.id} ${hiddenLabel.id} ${picker.id}`);
-    expect(picker).toHaveAttribute('aria-labelledby', `${group.id} ${hiddenLabel.id} ${picker.childNodes[0].id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} ${group.id} ${hiddenLabel.id}`);
   });
 
   it('aria-labelledby = {id}', function () {
@@ -251,6 +255,6 @@ describe('SearchWithin labeling', function () {
     expect(group).toHaveAttribute('aria-labelledby', 'id-foo-label');
     expect(searchfield).toHaveAttribute('aria-labelledby', `id-foo-label ${hiddenLabel.id} ${picker.id}`);
     expect(searchfield).toHaveAttribute('id', 'id-searchfield');
-    expect(picker).toHaveAttribute('aria-labelledby', `id-foo-label ${hiddenLabel.id} ${picker.childNodes[0].id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${picker.childNodes[0].id} id-foo-label ${hiddenLabel.id}`);
   });
 });

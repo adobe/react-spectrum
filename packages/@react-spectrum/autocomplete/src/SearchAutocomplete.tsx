@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaButtonProps} from '@react-types/button';
-import {classNames, useFocusableRef, useIsMobileDevice, useResizeObserver, useUnwrapDOMRef} from '@react-spectrum/utils';
+import {classNames, dimensionValue, useFocusableRef, useIsMobileDevice, useResizeObserver, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {DOMRefValue, FocusableRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
@@ -41,12 +41,14 @@ import {TextFieldBase} from '@react-spectrum/textfield';
 import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.css';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {useSearchAutocomplete} from '@react-aria/autocomplete';
 
 function SearchAutocomplete<T extends object>(props: SpectrumSearchAutocompleteProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
 
   if (props.placeholder) {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead.');
@@ -68,10 +70,13 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
+    align = 'end',
     isQuiet,
+    menuWidth: customMenuWidth,
     loadingState,
     onLoadMore,
-    onSubmit = () => {}
+    onSubmit = () => {},
+    validate
   } = props;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
@@ -91,12 +96,13 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
       allowsCustomValue: true,
       onSelectionChange: (key) => key !== null && onSubmit(null, key),
       selectedKey: undefined,
-      defaultSelectedKey: undefined
+      defaultSelectedKey: undefined,
+      validate: useCallback(v => validate?.(v.inputValue), [validate])
     }
   );
-  let layout = useListBoxLayout(state);
+  let layout = useListBoxLayout(state, loadingState === 'loadingMore');
 
-  let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete(
+  let {inputProps, listBoxProps, labelProps, clearButtonProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useSearchAutocomplete(
     {
       ...props,
       keyboardDelegate: layout,
@@ -126,21 +132,31 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
 
   useLayoutEffect(onResize, [scale, onResize]);
 
+  let width = isQuiet ? undefined : menuWidth;
   let style = {
-    width: isQuiet ? undefined : menuWidth,
+    width: customMenuWidth ? dimensionValue(customMenuWidth) : width,
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
   return (
     <>
-      <Field {...props} labelProps={labelProps} ref={domRef}>
+      <Field
+        {...props}
+        descriptionProps={descriptionProps}
+        errorMessageProps={errorMessageProps}
+        labelProps={labelProps}
+        isInvalid={isInvalid}
+        validationErrors={validationErrors}
+        validationDetails={validationDetails}
+        ref={domRef}>
         <SearchAutocompleteInput
           {...props}
           isOpen={state.isOpen}
           loadingState={loadingState}
           inputProps={inputProps}
           inputRef={inputRef}
-          clearButtonProps={clearButtonProps} />
+          clearButtonProps={clearButtonProps}
+          validationState={props.validationState || (isInvalid ? 'invalid' : undefined)} />
       </Field>
       <Popover
         state={state}
@@ -148,7 +164,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
         UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
         triggerRef={inputRef}
-        placement={`${direction} end`}
+        placement={`${direction} ${align}`}
         hideArrow
         isNonModal
         shouldFlip={shouldFlip}>
@@ -162,7 +178,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
           layout={layout}
           state={state}
           shouldUseVirtualFocus
-          isLoading={loadingState === 'loadingMore'}
+          isLoading={loadingState === 'loading' || loadingState === 'loadingMore'}
           onLoadMore={onLoadMore}
           renderEmptyState={() => isAsync && (
             <span className={classNames(searchAutocompleteStyles, 'no-results')}>

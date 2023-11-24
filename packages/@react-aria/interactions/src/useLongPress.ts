@@ -63,12 +63,13 @@ export function useLongPress(props: LongPressProps): LongPressResult {
     accessibilityDescription
   } = props;
 
-  const timeRef = useRef(null);
+  const timeRef = useRef<ReturnType<typeof setTimeout> | undefined>();
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 
   let {pressProps} = usePress({
     isDisabled,
     onPressStart(e) {
+      e.continuePropagation();
       if (e.pointerType === 'mouse' || e.pointerType === 'touch') {
         if (onLongPressStart) {
           onLongPressStart({
@@ -86,7 +87,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
               type: 'longpress'
             });
           }
-          timeRef.current = null;
+          timeRef.current = undefined;
         }, threshold);
 
         // Prevent context menu, which may be opened on long press on touch devices
@@ -120,7 +121,7 @@ export function useLongPress(props: LongPressProps): LongPressResult {
     }
   });
 
-  let descriptionProps = useDescription(onLongPress && !isDisabled ? accessibilityDescription : null);
+  let descriptionProps = useDescription(onLongPress && !isDisabled ? accessibilityDescription : undefined);
 
   return {
     longPressProps: mergeProps(pressProps, descriptionProps)

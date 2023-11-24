@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {act, fireEvent, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
-import {fireEvent, render, triggerPress} from '@react-spectrum/test-utils';
 import {Form} from '@react-spectrum/form';
 import {Provider} from '@react-spectrum/provider';
-import React from 'react';
+import React, {useState} from 'react';
+import userEvent from '@testing-library/user-event';
 
 /**
  * Logic Button has no tests outside of this file because functionally it is identical
@@ -25,6 +26,17 @@ import React from 'react';
 
 describe('Button', function () {
   let onPressSpy = jest.fn();
+  let spinnerVisibilityDelay = 1000;
+  let onPressStartSpy = jest.fn();
+  let onPressEndSpy = jest.fn();
+  let onPressUpSpy = jest.fn();
+  let onPressChangeSpy = jest.fn();
+  let user;
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
+  });
 
   afterEach(() => {
     onPressSpy.mockClear();
@@ -35,12 +47,32 @@ describe('Button', function () {
     ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy}}
     ${'Button'}       | ${Button}      | ${{onPress: onPressSpy}}
     ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy}}
-  `('$Name handles defaults', function ({Component, props}) {
+  `('$Name handles defaults', async function ({Component, props}) {
     let {getByRole, getByText} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    triggerPress(button);
+    await user.click(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
+
+    let text = getByText('Click Me');
+    expect(text).not.toBeNull();
+  });
+
+  it.each`
+    Name              | Component      | props
+    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+  `('$Name supports press events', async function ({Component, props}) {
+    let {getByRole, getByText} = render(<Component {...props}>Click Me</Component>);
+
+    let button = getByRole('button');
+    await user.click(button);
+    expect(onPressStartSpy).toHaveBeenCalledTimes(1);
+    expect(onPressSpy).toHaveBeenCalledTimes(1);
+    expect(onPressEndSpy).toHaveBeenCalledTimes(1);
+    expect(onPressUpSpy).toHaveBeenCalledTimes(1);
+    expect(onPressChangeSpy).toHaveBeenCalledTimes(2);
 
     let text = getByText('Click Me');
     expect(text).not.toBeNull();
@@ -273,6 +305,51 @@ describe('Button', function () {
     expect(eventDown.defaultPrevented).toBeFalsy();
   });
 
+  // isPending state
+  it('displays a spinner after a short delay when isPending prop is true', function () {
+    let onPressSpy = jest.fn();
+    function TestComponent() {
+      let [pending, setPending] = useState(false);
+      return (
+        <Button
+          onPress={(pending) => {
+            setPending(true);
+            onPressSpy();
+          }}
+          isPending={pending}>
+          Click me
+        </Button>
+      );
+    }
+    let {getByRole, queryByRole} = render(<TestComponent />);
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('aria-disabled');
+    triggerPress(button);
+    // Button is disabled immediately, but spinner visibility is delayed
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    let spinner = queryByRole('progressbar');
+    expect(spinner).not.toBeInTheDocument();
+    // Multiple clicks shouldn't call onPressSpy
+    triggerPress(button);
+    act(() => {
+      jest.advanceTimersByTime(spinnerVisibilityDelay);
+    });
+    expect(button).toHaveAttribute('aria-disabled', 'true');
+    spinner = queryByRole('progressbar', {hidden: true});
+    expect(spinner).toBeVisible();
+    expect(onPressSpy).toHaveBeenCalledTimes(1);
+  });
+
+  // isPending anchor element
+  it('removes href attribute from anchor element when isPending is true', () => {
+    let {getByRole} = render(
+      <Button elementType="a" href="//example.com" isPending>
+        Click Me
+      </Button>
+    );
+    let button = getByRole('button');
+    expect(button).not.toHaveAttribute('href');
+  });
 
   // 'implicit submission' can't be tested https://github.com/testing-library/react-testing-library/issues/487
 });

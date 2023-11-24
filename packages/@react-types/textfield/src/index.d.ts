@@ -19,6 +19,7 @@ import {
   HelpTextProps,
   InputBase,
   LabelableProps,
+  SpectrumFieldValidation,
   SpectrumLabelableProps,
   SpectrumTextInputBase,
   StyleProps,
@@ -29,7 +30,7 @@ import {
 } from '@react-types/shared';
 import {ReactElement} from 'react';
 
-export interface TextFieldProps extends InputBase, Validation, HelpTextProps, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
+export interface TextFieldProps extends InputBase, Validation<string>, HelpTextProps, FocusableProps, TextInputBase, ValueBase<string>, LabelableProps {}
 
 export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, FocusableDOMProps, TextInputDOMProps, AriaValidationProps {
   // https://www.w3.org/TR/wai-aria-1.2/#textbox
@@ -44,12 +45,14 @@ export interface AriaTextFieldProps extends TextFieldProps, AriaLabelingProps, F
   'aria-haspopup'?: boolean | 'false' | 'true' | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
 }
 
-export interface SpectrumTextFieldProps extends SpectrumTextInputBase, AriaTextFieldProps, SpectrumLabelableProps, StyleProps {
+export interface SpectrumTextFieldProps extends SpectrumTextInputBase, Omit<AriaTextFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<string>, SpectrumLabelableProps, StyleProps {
   /** An icon to display at the start of the input. */
   icon?: ReactElement | null,
   /** Whether the input should be displayed with a quiet style. */
   isQuiet?: boolean
 }
+
+export interface SpectrumTextAreaProps extends Omit<SpectrumTextFieldProps, 'type' | 'pattern'> {}
 
 export interface TextFieldRef extends FocusableRefValue<HTMLInputElement | HTMLTextAreaElement, HTMLDivElement> {
   select(): void,

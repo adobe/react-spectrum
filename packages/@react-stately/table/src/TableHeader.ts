@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {CollectionBuilderContext} from './useTableState';
 import {PartialNode} from '@react-stately/collections';
 import React, {ReactElement} from 'react';
 import {TableHeaderProps} from '@react-types/table';
@@ -18,8 +19,12 @@ function TableHeader<T>(props: TableHeaderProps<T>): ReactElement { // eslint-di
   return null;
 }
 
-TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeaderProps<T>): Generator<PartialNode<T>, void, any> {
+TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeaderProps<T>, context: CollectionBuilderContext<T>): Generator<PartialNode<T>, void, any> {
   let {children, columns} = props;
+
+  // Clear columns so they aren't double added in strict mode.
+  context.columns = [];
+
   if (typeof children === 'function') {
     if (!columns) {
       throw new Error('props.children was a function but props.columns is missing');
@@ -50,5 +55,5 @@ TableHeader.getCollectionNode = function* getCollectionNode<T>(props: TableHeade
  * as children, or generated dynamically using a function based on the data passed to the `columns` prop.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _TableHeader = TableHeader as <T>(props: TableHeaderProps<T>) => JSX.Element;
+let _TableHeader = TableHeader as <T>(props: TableHeaderProps<T>) => React.JSX.Element;
 export {_TableHeader as TableHeader};

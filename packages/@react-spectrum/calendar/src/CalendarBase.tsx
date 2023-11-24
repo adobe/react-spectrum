@@ -136,12 +136,12 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
           onClick={() => state.focusNextPage()}
           tabIndex={-1} />
       </VisuallyHidden>
-      {state.validationState === 'invalid' &&
+      {state.isValueInvalid &&
         <HelpText
           showErrorIcon
           errorMessage={props.errorMessage || stringFormatter.format('invalidSelection', {selectedCount: 'highlightedRange' in state ? 2 : 1})}
           errorMessageProps={errorMessageProps}
-          validationState="invalid"
+          isInvalid
           // Intentionally a global class name so it can be targeted in DatePicker CSS...
           UNSAFE_className="spectrum-Calendar-helpText" />
       }

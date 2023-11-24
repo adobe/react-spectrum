@@ -77,6 +77,17 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+RadioGroup supports the `name` prop, paired with the Radio `value` prop, for integration with HTML forms.
+
+```tsx example
+<RadioGroup label="Favorite pet" name="pet">
+  <Radio value="dogs">Dogs</Radio>
+  <Radio value="cats">Cats</Radio>
+</RadioGroup>
+```
+
 ## Labeling
 A visual label should be provided for the RadioGroup using the `label` prop. If the RadioGroup is required, the `isRequired` and
 `necessityIndicator` props can be used to show a required state.
@@ -138,15 +149,29 @@ function Example() {
 
 ## Validation
 
-RadioGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the RadioGroup via the `validationState` prop.
+RadioGroup supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically.
 
 ```tsx example
-<RadioGroup label="Favorite avatar" validationState="invalid">
-  <Radio value="wizard">Wizard</Radio>
-  <Radio value="dragon">Dragon</Radio>
-</RadioGroup>
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native">
+  {/*- begin highlight -*/}
+  <RadioGroup label="Favorite pet" name="pet" isRequired>
+  {/*- end highlight -*/}
+    <Radio value="dogs">Dog</Radio>
+    <Radio value="cats">Cat</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `RadioGroup` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## RadioGroup props
 
@@ -189,7 +214,7 @@ and "end" refers to the right most edge. For right-to-left (RTL) languages, this
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/radio-group/#Help-text-(description-and-error-message))
 
-Both a description and an error message can be supplied to a RadioGroup. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+Both a description and an error message can be supplied to a RadioGroup. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
 
 ```tsx example
 function Example() {
@@ -200,7 +225,7 @@ function Example() {
     <RadioGroup
       aria-label="Favorite pet"
       onChange={setSelected}
-      validationState={isValid ? 'valid' : 'invalid'}
+      isInvalid={!isValid}
       description="Please select a pet."
       errorMessage={
         selected === 'cats'

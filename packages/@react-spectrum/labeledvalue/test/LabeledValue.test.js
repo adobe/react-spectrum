@@ -107,6 +107,7 @@ describe('LabeledValue', function () {
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
     expect(staticField).toHaveTextContent('Feb 3, 2020, 12:23:24 PM');
+
   });
 
   it('renders correctly with ZonedDateTime value', function () {
@@ -119,7 +120,8 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('February 3, 2020, 12:00 AM PST');
+    expect(staticField).toHaveTextContent('February 3, 2020 at 12:00 AM PST');
+
   });
 
   it('renders correctly with ZonedDateTime value with user provided format options', function () {
@@ -190,7 +192,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('July 5, 2019, 12:00 AM – July 10, 2019, 12:00 AM');
+    expect(staticField).toHaveTextContent('July 5, 2019 at 12:00 AM – July 10, 2019 at 12:00 AM');
   });
 
   it('renders correctly with RangeValue<Time>', function () {
@@ -217,7 +219,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('February 3, 2020, 12:00 AM PST – March 3, 2020, 12:00 AM PST');
+    expect(staticField).toHaveTextContent('February 3, 2020 at 12:00 AM PST – March 3, 2020 at 12:00 AM PST');
   });
 
   it('renders correctly with RangeValue<CalendarDateTime>', function () {
@@ -230,7 +232,7 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('February 3, 2020, 12:23 PM – March 3, 2020, 12:23 PM');
+    expect(staticField).toHaveTextContent('February 3, 2020 at 12:23 PM – March 3, 2020 at 12:23 PM');
   });
 
   it('renders correctly with RangeValue<CalendarDate>', function () {

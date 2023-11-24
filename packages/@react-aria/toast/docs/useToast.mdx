@@ -111,7 +111,7 @@ interface ToastRegionProps<T> extends AriaToastRegionProps {
   state: ToastState<T>
 }
 
-function ToastRegion<T>({state, ...props}: ToastRegionProps<T>) {
+function ToastRegion<T extends React.ReactNode>({state, ...props}: ToastRegionProps<T>) {
   let ref = React.useRef(null);
   let {regionProps} = useToastRegion(props, state, ref);
 
@@ -138,7 +138,7 @@ interface ToastProps<T> extends AriaToastProps<T> {
   state: ToastState<T>
 }
 
-function Toast<T>({state, ...props}: ToastProps<T>) {
+function Toast<T extends React.ReactNode>({state, ...props}: ToastProps<T>) {
   let ref = React.useRef(null);
   let {toastProps, titleProps, closeButtonProps} = useToast(props, state, ref);
 
@@ -313,6 +313,7 @@ In the above examples, each `ToastProvider` has a separate queue. This setup is 
 
 ```tsx example export=true hidden
 import {ToastQueue, useToastQueue} from '@react-stately/toast';
+import {createPortal} from 'react-dom';
 
 // Create a global toast queue.
 ///- begin highlight -///
@@ -329,7 +330,7 @@ function GlobalToastRegion(props) {
 
   // Render toast region.
   return state.visibleToasts.length > 0
-    ? ReactDOM.createPortal(<ToastRegion {...props} state={state} />, document.body)
+    ? createPortal(<ToastRegion {...props} state={state} />, document.body)
     : null;
 }
 

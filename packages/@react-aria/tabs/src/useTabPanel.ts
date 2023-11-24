@@ -34,7 +34,7 @@ export function useTabPanel<T>(props: AriaTabPanelProps, state: TabListState<T>,
   // within the tabpanel.
   let tabIndex = useHasTabbableChild(ref) ? undefined : 0;
 
-  const id = generateId(state, state?.selectedKey, 'tabpanel');
+  const id = generateId(state, props.id ?? state?.selectedKey, 'tabpanel');
   const tabPanelProps = useLabels({...props, id, 'aria-labelledby': generateId(state, state?.selectedKey, 'tab')});
 
   return {

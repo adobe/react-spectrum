@@ -1,4 +1,4 @@
-import {Meta, Story} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React, {useRef} from 'react';
 import {useTextField} from '../';
 
@@ -37,23 +37,23 @@ export default {
   title: 'useTextField'
 } as Meta;
 
-const TextInputFieldTemplate: Story<TextFieldProps> = (args) => (
-  <TextInputField {...args} />
-);
+const TextInputFieldTemplate: StoryFn<TextFieldProps> = (args) => <TextInputField {...args} />;
 
-const TextAreaFieldTemplate: Story<TextFieldProps> = (args) => (
-  <TextAreaField {...args} />
-);
+const TextAreaFieldTemplate: StoryFn<TextFieldProps> = (args) => <TextAreaField {...args} />;
 
-export const WithHTMLInputElement = TextInputFieldTemplate.bind({});
-WithHTMLInputElement.args = {
-  label: 'Test label',
-  value: 'Test value'
+export const WithHTMLInputElement = {
+  render: TextInputFieldTemplate,
+  args: {
+    label: 'Test label',
+    value: 'Test value'
+  }
 };
 
-export const WithHTMLTextAreaElement = TextAreaFieldTemplate.bind({});
-WithHTMLTextAreaElement.args = {
-  inputElementType: 'textarea',
-  label: 'Test label',
-  value: 'Test value'
+export const WithHTMLTextAreaElement = {
+  render: TextAreaFieldTemplate,
+  args: {
+    inputElementType: 'textarea',
+    label: 'Test label',
+    value: 'Test value'
+  }
 };

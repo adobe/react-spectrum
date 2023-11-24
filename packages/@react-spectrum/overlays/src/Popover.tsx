@@ -13,21 +13,32 @@
 import {AriaPopoverProps, DismissButton, PopoverAria, usePopover} from '@react-aria/overlays';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, StyleProps} from '@react-types/shared';
+import {FocusWithinProps, useFocusWithin} from '@react-aria/interactions';
+import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {Overlay} from './Overlay';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import overrideStyles from './overlays.css';
 import React, {forwardRef, MutableRefObject, ReactNode, RefObject, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/popover/vars.css';
 import {Underlay} from './Underlay';
-import {useLayoutEffect} from '@react-aria/utils';
 
-interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, StyleProps {
+interface PopoverProps extends Omit<AriaPopoverProps, 'popoverRef' | 'maxHeight'>, FocusWithinProps, StyleProps {
   children: ReactNode,
   hideArrow?: boolean,
-  state: OverlayTriggerState
+  state: OverlayTriggerState,
+  shouldContainFocus?: boolean,
+  onEntering?: () => void,
+  onEnter?: () => void,
+  onEntered?: () => void,
+  onExiting?: () => void,
+  onExited?: () => void,
+  onExit?: () => void,
+  container?: HTMLElement,
+  disableFocusManagement?: boolean,
+  enableBothDismissButtons?: boolean
 }
 
-interface PopoverWrapperProps extends PopoverProps {
+interface PopoverWrapperProps extends PopoverProps, FocusWithinProps {
   isOpen?: boolean,
   wrapperRef: MutableRefObject<HTMLDivElement>
 }
@@ -79,6 +90,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
     isOpen,
     hideArrow,
     isNonModal,
+    enableBothDismissButtons,
     state,
     wrapperRef
   } = props;
@@ -89,21 +101,31 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   let borderDiagonal = borderWidth * Math.SQRT2;
   let primary = size + borderDiagonal;
   let secondary = primary * 2;
-  let {popoverProps, arrowProps, underlayProps, placement} = usePopover({
+  let {
+    popoverProps,
+    arrowProps,
+    underlayProps,
+    placement
+  } = usePopover({
     ...props,
     popoverRef: ref,
     maxHeight: null,
     arrowSize: hideArrow ? 0 : secondary,
     arrowBoundaryOffset: borderRadius
   }, state);
+  let {focusWithinProps} = useFocusWithin(props);
+
+  let onPointerDown = () => {
+    state.close();
+  };
 
   // Attach Transition's nodeRef to outermost wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
   return (
     <div ref={wrapperRef}>
-      {!isNonModal && <Underlay isTransparent {...underlayProps} isOpen={isOpen} /> }
+      {!isNonModal && <Underlay isTransparent {...mergeProps(underlayProps, {onPointerDown})} isOpen={isOpen} /> }
       <div
         {...styleProps}
-        {...popoverProps}
+        {...mergeProps(popoverProps, focusWithinProps)}
         style={{
           ...styleProps.style,
           ...popoverProps.style
@@ -116,7 +138,8 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
             `spectrum-Popover--${placement}`,
             {
               'spectrum-Popover--withTip': !hideArrow,
-              'is-open': isOpen
+              'is-open': isOpen,
+              [`is-open--${placement}`]: isOpen
             },
             classNames(
               overrideStyles,
@@ -128,7 +151,7 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
         }
         role="presentation"
         data-testid="popover">
-        {!isNonModal && <DismissButton onDismiss={state.close} />}
+        {(!isNonModal || enableBothDismissButtons) && <DismissButton onDismiss={state.close} />}
         {children}
         {hideArrow ? null : (
           <Arrow

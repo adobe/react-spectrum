@@ -62,7 +62,6 @@ governing permissions and limitations under the License.
          color: var(--spectrum-tag-removable-button-icon-color-key-focus);
       }
       &:hover {
-        background-color: var(--spectrum-tag-removable-button-background-color-hover);
         color: var(--spectrum-tag-removable-button-icon-color-hover);
       }
     }
@@ -81,7 +80,6 @@ governing permissions and limitations under the License.
     --spectrum-tag-border-color-hover: Highlight;
     --spectrum-tag-border-color-key-focus: Highlight;
     --spectrum-tag-removable-border-color-key-focus: Highlight;
-    --spectrum-tag-removable-button-background-color-hover: ButtonFace;
     --spectrum-tag-removable-button-background-color-key-focus: ButtonFace;
     --spectrum-tag-removable-button-icon-color-hover: Highlight;
     --spectrum-tag-removable-button-icon-color-key-focus: Highlight;

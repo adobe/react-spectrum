@@ -1,5 +1,6 @@
 {
   "actions": "Eylemler",
   "hideButtonLabel": "Daha az göster",
+  "noTags": "Hiçbiri",
   "showAllButtonLabel": "Tümünü göster ({tagCount, number})"
 }

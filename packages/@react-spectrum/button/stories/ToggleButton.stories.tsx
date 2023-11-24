@@ -77,7 +77,7 @@ export const StaticWhite: ToggleButtonStory = {
       </Flex>
     </View>
   ),
-  storyName: 'staticColor: white'
+  name: 'staticColor: white'
 };
 
 export const StaticBlack: ToggleButtonStory = {
@@ -89,7 +89,7 @@ export const StaticBlack: ToggleButtonStory = {
       </Flex>
     </View>
   ),
-  storyName: 'staticColor: black'
+  name: 'staticColor: black'
 };
 
 export const WHCM: ToggleButtonStory = {
@@ -103,12 +103,12 @@ export const WHCM: ToggleButtonStory = {
       </Flex>
     </View>
   ),
-  storyName: 'styles to check WHCM support'
+  name: 'styles to check WHCM support'
 };
 
 export const Controlled: ToggleButtonStory = {
   render: () => <ControlledToggleButton />,
-  storyName: 'controlled state'
+  name: 'controlled state'
 };
 
 function render(props = {}) {

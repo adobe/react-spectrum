@@ -16,7 +16,6 @@ import {ListLayout} from '@react-stately/layout';
 import React from 'react';
 import {useComboBox} from '../';
 import {useComboBoxState} from '@react-stately/combobox';
-import {useSingleSelectListState} from '@react-stately/list';
 
 describe('useComboBox', function () {
   let preventDefault = jest.fn();
@@ -30,7 +29,7 @@ describe('useComboBox', function () {
   });
 
   let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
-  let {result} = renderHook(() => useSingleSelectListState(defaultProps));
+  let {result} = renderHook(() => useComboBoxState(defaultProps));
   let mockLayout = new ListLayout({
     rowHeight: 40
   });
@@ -58,7 +57,7 @@ describe('useComboBox', function () {
   });
 
   it('should return default props for all the button group elements', function () {
-    let {result} = renderHook(() => useComboBox(props, useSingleSelectListState(defaultProps)));
+    let {result} = renderHook(() => useComboBox(props, useComboBoxState(defaultProps)));
     let {buttonProps, inputProps, listBoxProps, labelProps} = result.current;
 
     expect(labelProps.id).toBeTruthy();
@@ -70,7 +69,7 @@ describe('useComboBox', function () {
     expect(inputProps['aria-controls']).toBeFalsy();
     expect(inputProps['aria-activedescendant']).toBeFalsy();
     expect(listBoxProps.id).toBeTruthy();
-    expect(listBoxProps['aria-labelledby']).toBe(`${labelProps.id} ${listBoxProps.id}`);
+    expect(listBoxProps['aria-labelledby']).toBe(`${listBoxProps.id} ${labelProps.id}`);
     expect(buttonProps.id).toBeTruthy();
     expect(buttonProps.excludeFromTabOrder).toBeTruthy();
     expect(buttonProps['aria-haspopup']).toBeTruthy();

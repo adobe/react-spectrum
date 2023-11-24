@@ -21,67 +21,148 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions} from '../src/ToastContainer';
-import {storiesOf} from '@storybook/react';
 import {ToastContainer, ToastQueue} from '../';
 
-storiesOf('Toast', module)
-  .addParameters({
-    args: {
-      shouldCloseOnAction: false,
-      timeout: null
-    },
-    argTypes: {
-      timeout: {
-        control: {
-          type: 'radio',
-          options: [null, 5000]
-        }
+export default {
+  title: 'Toast',
+  decorators: [
+    (story, {parameters}) => (
+      <>
+        {!parameters.disableToastContainer && <ToastContainer />}
+        <MainLandmark>{story()}</MainLandmark>
+      </>
+    )
+  ],
+  args: {
+    shouldCloseOnAction: false,
+    timeout: null
+  },
+  argTypes: {
+    timeout: {
+      control: {
+        type: 'radio',
+        options: [null, 5000]
       }
     }
-  })
-  .addDecorator((story, {parameters}) => (
-    <>
-      {!parameters.disableToastContainer && <ToastContainer />}
-      <MainLandmark>
-        {story()}
-      </MainLandmark>
-    </>
-  ))
-  .add(
-    'Default',
-    args => <RenderProvider {...args} />
-  )
-  .add(
-    'With action',
-    args => <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />
-  )
-  .add(
-    'With dialog',
-    args => (
-      <DialogTrigger isDismissable>
-        <Button variant="accent">Open dialog</Button>
-        <Dialog>
-          <Heading>Toasty</Heading>
-          <Content>
-            <RenderProvider {...args} />
-          </Content>
-        </Dialog>
-      </DialogTrigger>
-    )
-  )
-  .add(
-    'multiple ToastContainers',
-    args => <Multiple {...args} />,
-    {disableToastContainer: true}
-  )
-  .add(
-    'programmatically closing',
-    args => <ToastToggle {...args} />
-  )
-  .add(
-    'with iframe',
-    () => <IframeExample />
-  );
+  }
+};
+
+export const Default = (args) => <RenderProvider {...args} />;
+Default.story = {
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          // Ignore landmark accessibility failures since the extra main is just for testing purposes
+          // and not a explicit part of the Toast component
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+
+export const WithAction = (args) => (
+  <RenderProvider {...args} actionLabel="Action" onAction={action('onAction')} />
+);
+
+WithAction.story = {
+  name: 'With action',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+export const WithDialog = (args) => (
+  <DialogTrigger isDismissable>
+    <Button variant="accent">Open dialog</Button>
+    <Dialog>
+      <Heading>Toasty</Heading>
+      <Content>
+        <RenderProvider {...args} />
+      </Content>
+    </Dialog>
+  </DialogTrigger>
+);
+
+WithDialog.story = {
+  name: 'With dialog',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+export const MultipleToastContainers = (args) => <Multiple {...args} />;
+
+MultipleToastContainers.story = {
+  name: 'multiple ToastContainers',
+  parameters: {
+    disableToastContainer: true,
+    a11y: {
+      config: {
+        rules: [
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+export const ProgrammaticallyClosing = (args) => <ToastToggle {...args} />;
+
+ProgrammaticallyClosing.story = {
+  name: 'programmatically closing',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
+
+export const WithIframe = () => <IframeExample />;
+
+WithIframe.story = {
+  name: 'with iframe',
+  parameters: {
+    a11y: {
+      config: {
+        rules: [
+          {id: 'aria-allowed-role', selector: '*:not(iframe[role="main"])'},
+          {id: 'landmark-main-is-top-level', enabled: false},
+          {id: 'landmark-no-duplicate-main', enabled: false},
+          {id: 'landmark-unique', enabled: false}
+        ]
+      }
+    }
+  }
+};
 
 function RenderProvider(options: SpectrumToastOptions) {
   return (

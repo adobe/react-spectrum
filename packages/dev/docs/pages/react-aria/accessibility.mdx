@@ -46,15 +46,15 @@ with built-in semantics (e.g. `<button>` or `<select>`) for styling reasons, or 
 ARIA is required to make presentational elements (e.g. `<div>`) have semantic meaning. This allows screen readers and
 other assistive technology to understand these elements and announce them properly to the user.
 
-However, ARIA is a contract: it only specifies semantics, and it's up to the developer to implement the
-**behavior** and interactions for each control with JavaScript. There is an additional document published by the W3C
-called the [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/), which provides patterns
+However, ARIA only specifies semantics, and it's up to the developer to implement the
+**behavior** and interactions for each control with JavaScript. The W3C also publishes
+the [ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/), which provides patterns
 and examples of implementing this behavior on top of ARIA. It specifies keyboard interactions that are expected
 by users of these controls, along with the required roles and states to make them accessible to assistive technology.
 
-React Aria provides hooks for many ARIA patterns, which provide the semantics and behavior together. This makes building
-accessible components with custom styling much easier: just spread the props returned by the hooks onto the appropriate
-elements and you get accessibility and behavior pretty much for free. All you need to do is provide the styling.
+React Aria provides implementations of ARIA patterns as unstyled React components and hooks, which include both the
+semantics and behavior out of the box. This makes building accessible components with custom styling much easier, because
+you only need to implement your custom styles and get the accessibility and behavior for free.
 
 ## Labeling
 
@@ -66,13 +66,13 @@ will automatically associate the visible label with the control so that assistiv
 
 In case a visible label is not desired for some reason, or you're using a control that doesn't have a built-in label,
 you must use the `aria-label` or `aria-labelledby` props to identify it to assistive technology. Most React Aria
-hooks will display a console warning if you are missing both a visible label and an ARIA label.
+components will display a console warning if you are missing both a visible label and an ARIA label.
 
 ## Keyboard navigation
 
 React Aria implements keyboard support for all components, which allows users who cannot use a mouse or touch screen
 to navigate your app. It also allows power users to navigate your application more quickly, without lifting their hands
-from the keyboard. All keyboard behavior is implemented according to the [WAI-ARIA Authoring Practices](https://www.w3.org/TR/wai-aria-practices-1.2/) guidelines,
+from the keyboard. All keyboard behavior is implemented according to the W3C's [ARIA Authoring Practices Guide](https://www.w3.org/WAI/ARIA/apg/),
 and is designed to feel familiar to users of most commonly used desktop operating systems.
 
 For more information about keyboard navigation and focus interactions, see the [interactions](interactions.html) overview.
@@ -104,3 +104,24 @@ All React Aria components are tested across a wide variety of devices, browsers,
 * [NVDA](https://www.nvaccess.org) on Windows in Firefox and Chrome
 * [VoiceOver on iOS](https://www.apple.com/accessibility/iphone/vision/)
 * [TalkBack](https://www.android.com/accessibility/) on Android in Chrome
+
+### False positives
+
+There are a number of known accessibility false positives in React Aria and React Spectrum, currently documented here in our [wiki](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives).
+These are commonly caught by automated accessibility testing tools and can cause unnecessary noise in your own accessibility audits.
+To facilitate the suppression of these false positives, the data attribute `data-a11y-ignore` is included on the problematic elements
+with the relevant `AXE` rule set as its value. Below is a list of the currently available data selectors and their equivalent `AXE` rules:
+
+```tsx
+{
+  rules: [
+    {
+      id: 'aria-hidden-focus',
+      selector: 'body *:not([data-a11y-ignore="aria-hidden-focus"])'
+    }
+  ]
+}
+```
+
+This set of rules should be included in your accessibility test framework's `AXE` config, such as in the [automated Storybook test runner](https://storybook.js.org/docs/7.1/react/writing-tests/accessibility-testing#a11y-config-with-the-test-runner)
+or for the [Storybook a11y addon](https://storybook.js.org/docs/7.1/react/writing-tests/accessibility-testing#global-a11y-configuration).

@@ -12,9 +12,9 @@
 
 import {classNames} from '@react-spectrum/utils';
 import {getChildNodes} from '@react-stately/collections';
+import {Key, Node} from '@react-types/shared';
 import {MenuItem} from './MenuItem';
-import {Node} from '@react-types/shared';
-import React, {Fragment, Key} from 'react';
+import React, {Fragment} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {TreeState} from '@react-stately/tree';
 import {useMenuSection} from '@react-aria/menu';
@@ -35,20 +35,25 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
   });
 
   let {separatorProps} = useSeparator({
-    elementType: 'li'
+    elementType: 'div'
   });
+
+  let firstSectionKey = state.collection.getFirstKey();
+  let lastSectionKey = [...state.collection].filter(node => node.type === 'section').at(-1)?.key;
+  let sectionIsFirst = firstSectionKey === item.key && state.collection.getFirstKey() === firstSectionKey;
+  let sectionIsLast = lastSectionKey === item.key && state.collection.getItem(state.collection.getLastKey()).parentKey === lastSectionKey;
 
   return (
     <Fragment>
       {item.key !== state.collection.getFirstKey() &&
-        <li
+        <div
           {...separatorProps}
           className={classNames(
             styles,
             'spectrum-Menu-divider'
           )} />
       }
-      <li {...itemProps}>
+      <div {...itemProps}>
         {item.rendered &&
           <span
             {...headingProps}
@@ -61,12 +66,17 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
             {item.rendered}
           </span>
         }
-        <ul
+        <div
           {...groupProps}
           className={
             classNames(
               styles,
-              'spectrum-Menu'
+                'spectrum-Menu',
+              {
+                'spectrum-Menu-section--noHeading': item.rendered == null,
+                'spectrum-Menu-section--isFirst': sectionIsFirst,
+                'spectrum-Menu-section--isLast': sectionIsLast
+              }
             )
           }>
           {[...getChildNodes(item, state.collection)].map(node => {
@@ -84,8 +94,8 @@ export function MenuSection<T>(props: MenuSectionProps<T>) {
 
             return item;
           })}
-        </ul>
-      </li>
+        </div>
+      </div>
     </Fragment>
   );
 }

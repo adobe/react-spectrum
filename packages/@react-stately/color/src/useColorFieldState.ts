@@ -11,12 +11,13 @@
  */
 
 import {Color, ColorFieldProps} from '@react-types/color';
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {parseColor} from './Color';
 import {useColor} from './useColor';
 import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
+import {useMemo, useState} from 'react';
 
-export interface ColorFieldState {
+export interface ColorFieldState extends FormValidationState {
   /**
    * The current text value of the input. Updated as the user types,
    * and formatted according to `formatOptions` on blur.
@@ -74,6 +75,11 @@ export function useColorFieldState(
   let [colorValue, setColorValue] = useControlledState<Color>(initialValue, initialDefaultValue, onChange);
   let [inputValue, setInputValue] = useState(() => (value || defaultValue) && colorValue ? colorValue.toString('hex') : '');
 
+  let validation = useFormValidationState({
+    ...props,
+    value: colorValue
+  });
+
   let safelySetColorValue = (newColor: Color) => {
     if (!colorValue || !newColor) {
       setColorValue(newColor);
@@ -85,12 +91,11 @@ export function useColorFieldState(
     }
   };
 
-  let prevValue = useRef(colorValue);
-  if (prevValue.current !== colorValue) {
+  let [prevValue, setPrevValue] = useState(colorValue);
+  if (prevValue !== colorValue) {
     setInputValue(colorValue ? colorValue.toString('hex') : '');
-    prevValue.current = colorValue;
+    setPrevValue(colorValue);
   }
-
 
   let parsedValue = useMemo(() => {
     let color;
@@ -101,8 +106,6 @@ export function useColorFieldState(
     }
     return color;
   }, [inputValue]);
-  let parsed = useRef(null);
-  parsed.current = parsedValue;
 
   let commit = () => {
     // Set to empty state if input value is empty
@@ -113,12 +116,12 @@ export function useColorFieldState(
     }
 
     // if it failed to parse, then reset input to formatted version of current number
-    if (parsed.current == null) {
+    if (parsedValue == null) {
       setInputValue(colorValue ? colorValue.toString('hex') : '');
       return;
     }
 
-    safelySetColorValue(parsed.current);
+    safelySetColorValue(parsedValue);
     // in a controlled state, the numberValue won't change, so we won't go back to our old input without help
     let newColorValue = '';
     if (colorValue) {
@@ -128,7 +131,7 @@ export function useColorFieldState(
   };
 
   let increment = () => {
-    let newValue = addColorValue(parsed.current, step);
+    let newValue = addColorValue(parsedValue, step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
@@ -137,9 +140,10 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
+    validation.commitValidation();
   };
   let decrement = () => {
-    let newValue = addColorValue(parsed.current, -step);
+    let newValue = addColorValue(parsedValue, -step);
     // if we've arrived at the same value that was previously in the state, the
     // input value should be updated to match
     // ex type 4, press increment, highlight the number in the input, type 4 again, press increment
@@ -148,6 +152,7 @@ export function useColorFieldState(
       setInputValue(newValue.toString('hex'));
     }
     safelySetColorValue(newValue);
+    validation.commitValidation();
   };
   let incrementToMax = () => safelySetColorValue(MAX_COLOR);
   let decrementToMin = () => safelySetColorValue(MIN_COLOR);
@@ -155,6 +160,7 @@ export function useColorFieldState(
   let validate = (value: string) => value === '' || !!value.match(/^#?[0-9a-f]{0,6}$/i)?.[0];
 
   return {
+    ...validation,
     validate,
     colorValue,
     inputValue,

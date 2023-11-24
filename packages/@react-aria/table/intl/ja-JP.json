@@ -4,6 +4,7 @@
   "columnSize": "{value} ピクセル",
   "descending": "降順",
   "descendingSort": "列 {columnName} を降順で並べ替え",
+  "resizerDescription": "Enter キーを押してサイズ変更を開始",
   "select": "選択",
   "selectAll": "すべて選択",
   "sortable": "並べ替え可能な列"

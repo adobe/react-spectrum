@@ -24,9 +24,8 @@ import React, {
   useState
 } from 'react';
 import {Rect, Size} from '@react-stately/virtualizer';
-import {useLayoutEffect} from '@react-aria/utils';
+import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
-import {useResizeObserver} from '@react-aria/utils';
 
 interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   contentSize: Size,
@@ -38,6 +37,8 @@ interface ScrollViewProps extends HTMLAttributes<HTMLElement> {
   onScrollEnd?: () => void,
   scrollDirection?: 'horizontal' | 'vertical' | 'both'
 }
+
+let isOldReact = React.version.startsWith('16.') || React.version.startsWith('17.');
 
 function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   let {
@@ -149,7 +150,25 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   useLayoutEffect(() => {
     updateSize();
   }, [updateSize]);
-  useResizeObserver({ref, onResize: updateSize});
+  let raf = useRef<ReturnType<typeof requestAnimationFrame> | null>();
+  let onResize = () => {
+    if (isOldReact) {
+      raf.current ??= requestAnimationFrame(() => {
+        updateSize();
+        raf.current = null;
+      });
+    } else {
+      updateSize();
+    }
+  };
+  useResizeObserver({ref, onResize});
+  useEffect(() => {
+    return () => {
+      if (raf.current) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
+  }, []);
 
   let style: React.CSSProperties = {
     // Reset padding so that relative positioning works correctly. Padding will be done in JS layout.
@@ -160,16 +179,27 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   if (scrollDirection === 'horizontal') {
     style.overflowX = 'auto';
     style.overflowY = 'hidden';
-  } else if (scrollDirection === 'vertical') {
+  } else if (scrollDirection === 'vertical' || contentSize.width === state.width) {
+    // Set overflow-x: hidden if content size is equal to the width of the scroll view.
+    // This prevents horizontal scrollbars from flickering during resizing due to resize observer
+    // firing slower than the frame rate, which may cause an infinite re-render loop.
     style.overflowY = 'auto';
     style.overflowX = 'hidden';
   } else {
     style.overflow = 'auto';
   }
 
+  innerStyle = {
+    width: contentSize.width,
+    height: contentSize.height,
+    pointerEvents: isScrolling ? 'none' : 'auto',
+    position: 'relative',
+    ...innerStyle
+  };
+
   return (
     <div {...otherProps} style={style} ref={ref} onScroll={onScroll}>
-      <div role="presentation" style={{width: contentSize.width, height: contentSize.height, pointerEvents: isScrolling ? 'none' : 'auto', position: 'relative', ...innerStyle}}>
+      <div role="presentation" style={innerStyle}>
         {children}
       </div>
     </div>

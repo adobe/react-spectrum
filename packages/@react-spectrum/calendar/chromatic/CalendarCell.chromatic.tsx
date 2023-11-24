@@ -18,7 +18,8 @@ import styles from '@adobe/spectrum-css-temp/components/calendar/vars.css';
 import {useProvider} from '@react-spectrum/provider';
 
 export default {
-  title: 'CalendarCall'
+  title: 'CalendarCall',
+  excludeStories: ['AllStates']
 };
 
 let states = [
@@ -73,7 +74,7 @@ DarkLarge.parameters = {
   }
 };
 
-function AllStates() {
+export function AllStates() {
   let {scale} = useProvider();
   let size = scale === 'medium' ? 40 : 50;
   return (

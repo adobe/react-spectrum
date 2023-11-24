@@ -1,0 +1,13 @@
+diff --git a/node_modules/terser-webpack-plugin/dist/index.js b/node_modules/terser-webpack-plugin/dist/index.js
+index 3acffa7..cbbbb6f 100644
+--- a/node_modules/terser-webpack-plugin/dist/index.js
++++ b/node_modules/terser-webpack-plugin/dist/index.js
+@@ -259,7 +259,7 @@ class TerserPlugin {
+               }
+             } = compilation;
+ 
+-            const hash = _webpack.util.createHash(hashFunction);
++            const hash = _webpack.util.createHash('sha512');
+ 
+             if (hashSalt) {
+               hash.update(hashSalt);

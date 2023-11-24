@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockImplementation, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockImplementation, pointerMap, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {Item, TabList, TabPanels, Tabs} from '../src';
+import {Links as LinksExample} from '../stories/Tabs.stories';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -47,8 +48,10 @@ function renderComponent(props = {}, itemProps) {
 
 describe('Tabs', function () {
   let onSelectionChange = jest.fn();
+  let user;
 
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 
@@ -101,12 +104,11 @@ describe('Tabs', function () {
     expect(ref.current.UNSAFE_getDOMNode()).toBe(tablist.parentElement.parentElement);
   });
 
-  it('allows user to change tab item select via left/right arrow keys with horizontal tabs', function () {
+  it('allows user to change tab item select via arrow keys with horizontal tabs', function () {
     let container = renderComponent({orientation: 'horizontal'});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let selectedItem = tabs[0];
-
     expect(tablist).toHaveAttribute('aria-orientation', 'horizontal');
 
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
@@ -117,14 +119,15 @@ describe('Tabs', function () {
     fireEvent.keyDown(nextSelectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
 
-    /** Doesn't change selection because it's horizontal tabs. */
+    /** Changes selection regardless if it's horizontal tabs. */
     fireEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+    nextSelectedItem = tabs[2];
+    expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
   });
 
-  it('allows user to change tab item select via up/down arrow keys with vertical tabs', function () {
+  it('allows user to change tab item select via arrow keys with vertical tabs', function () {
     let container = renderComponent({orientation: 'vertical'});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -133,17 +136,18 @@ describe('Tabs', function () {
 
     expect(tablist).toHaveAttribute('aria-orientation', 'vertical');
 
-    /** Doesn't change selection because it's vertical tabs. */
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(selectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
-    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
-
     let nextSelectedItem = tabs[1];
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(nextSelectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
+
+    /** Changes selection regardless if it's vertical tabs. */
+    fireEvent.keyDown(selectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
+    nextSelectedItem = tabs[2];
+    expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
+    fireEvent.keyDown(selectedItem, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
   });
 
@@ -191,12 +195,15 @@ describe('Tabs', function () {
     act(() => {firstItem.focus();});
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(firstItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(document.activeElement).toBe(secondItem);
     fireEvent.keyDown(secondItem, {key: 'ArrowRight', code: 39, charCode: 39});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
     expect(thirdItem).toHaveAttribute('aria-selected', 'false');
     expect(document.activeElement).toBe(thirdItem);
     fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
+    fireEvent.keyUp(document.activeElement, {key: 'Enter', code: 13, charCode: 13});
     expect(firstItem).toHaveAttribute('aria-selected', 'false');
     expect(secondItem).toHaveAttribute('aria-selected', 'false');
     expect(thirdItem).toHaveAttribute('aria-selected', 'true');
@@ -266,26 +273,30 @@ describe('Tabs', function () {
     }
   });
 
-  it('should focus the selected tab when tabbing in for the first time', function () {
+  it('should focus the selected tab when tabbing in for the first time', async function () {
     let tree = renderComponent({defaultSelectedKey: defaultItems[1].name});
-    userEvent.tab();
+    await user.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     expect(document.activeElement).toBe(tabs[1]);
   });
 
-  it('should not focus any tabs when isDisabled tabbing in for the first time', function () {
+  it('should not focus any tabs when isDisabled tabbing in for the first time', async function () {
     let tree = renderComponent({defaultSelectedKey: defaultItems[1].name, isDisabled: true});
-    userEvent.tab();
+    await user.tab();
 
     let tabpanel = tree.getByRole('tabpanel');
     expect(document.activeElement).toBe(tabpanel);
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    await user.click(tabs[0]);
   });
 
-  it('disabled tabs cannot be keyboard navigated to', function () {
+  it('disabled tabs cannot be keyboard navigated to', async function () {
     let tree = renderComponent({defaultSelectedKey: defaultItems[0].name, disabledKeys: [defaultItems[1].name], onSelectionChange});
-    userEvent.tab();
+    await user.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -295,20 +306,20 @@ describe('Tabs', function () {
     expect(onSelectionChange).toBeCalledWith(defaultItems[2].name);
   });
 
-  it('disabled tabs cannot be pressed', function () {
+  it('disabled tabs cannot be pressed', async function () {
     let tree = renderComponent({defaultSelectedKey: defaultItems[0].name, disabledKeys: [defaultItems[1].name], onSelectionChange});
-    userEvent.tab();
+    await user.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     expect(document.activeElement).toBe(tabs[0]);
-    userEvent.click(tabs[1]);
+    await user.click(tabs[1]);
     expect(onSelectionChange).not.toBeCalled();
   });
 
-  it('finds the first non-disabled tab if the currently selected one is removed', function () {
+  it('finds the first non-disabled tab if the currently selected one is removed', async function () {
     let tree = renderComponent({disabledKeys: [defaultItems[0].name], onSelectionChange, items: defaultItems});
-    userEvent.tab();
+    await user.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -338,9 +349,9 @@ describe('Tabs', function () {
     expect(onSelectionChange).toBeCalledWith(defaultItems[1].name);
   });
 
-  it('selects first tab if all tabs are disabled', function () {
+  it('selects first tab if all tabs are disabled', async function () {
     let tree = renderComponent({disabledKeys: defaultItems.map(item => item.name), onSelectionChange, items: defaultItems});
-    userEvent.tab();
+    await user.tab();
 
     let tablist = tree.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -395,7 +406,7 @@ describe('Tabs', function () {
     let picker = getByRole('button');
     let pickerLabel = within(picker).getByText('Tab 1');
     expect(picker).toHaveAttribute('aria-label', 'Test Tabs');
-    expect(picker).toHaveAttribute('aria-labelledby', `external label ${picker.id} ${pickerLabel.id}`);
+    expect(picker).toHaveAttribute('aria-labelledby', `${pickerLabel.id} ${picker.id} external label`);
 
     triggerPress(picker);
     act(() => jest.runAllTimers());
@@ -771,6 +782,30 @@ describe('Tabs', function () {
     expect(tabPanelInput.value).toBe('');
   });
 
+  it('Tabs can be aria-labelled', () => {
+    let {getAllByRole, getByLabelText} = render(
+      <Provider theme={theme}>
+        <Tabs aria-label="Tab Example" maxWidth={500}>
+          <TabList>
+            <Item aria-label="Foo">Tab 1</Item>
+            <Item>Tab 2</Item>
+          </TabList>
+          <TabPanels>
+            <Item>
+              <input data-testid="panel1_input" />
+            </Item>
+            <Item>
+              <input disabled data-testid="panel2_input" />
+            </Item>
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+
+    let tab = getByLabelText('Foo');
+    expect(tab).toBe(getAllByRole('tab')[0]);
+  });
+
   it('supports custom props for parent tabs element', function () {
     let {getByTestId} = renderComponent({'data-testid': 'tabs1'});
     let tabs = getByTestId('tabs1');
@@ -835,5 +870,24 @@ describe('Tabs', function () {
     expect(tabs[0]).toHaveAttribute('tabindex', '0');
     expect(tabs[1]).toHaveAttribute('tabindex', '-1');
     expect(tabs[2]).toHaveAttribute('tabindex', '-1');
+  });
+
+  it('should support tabs as links', function () {
+    let {getAllByRole} = render(<Provider theme={theme}><LinksExample /></Provider>);
+
+    let tabs = getAllByRole('tab');
+    expect(tabs[0].tagName).toBe('A');
+    expect(tabs[0]).toHaveAttribute('href', '/one');
+    expect(tabs[1].tagName).toBe('A');
+    expect(tabs[1]).toHaveAttribute('href', '/two');
+    expect(tabs[2].tagName).toBe('A');
+    expect(tabs[2]).toHaveAttribute('href', '/three');
+
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    triggerPress(tabs[1]);
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+
+    fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
   });
 });

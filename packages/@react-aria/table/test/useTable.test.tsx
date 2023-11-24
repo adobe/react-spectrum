@@ -13,7 +13,7 @@
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
-import {installPointerEvent, render} from '@react-spectrum/test-utils';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {
   TableCell,
@@ -100,10 +100,14 @@ let getCell = (tree, text) => {
 };
 
 describe('useTable', () => {
-  describe('actions on rows', () => {
-    installPointerEvent();
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
 
-    it('calls onAction', () => {
+  describe('actions on rows', () => {
+
+    it('calls onAction', async () => {
       let onAction = jest.fn();
       let tree = render(
         <Table
@@ -128,15 +132,13 @@ describe('useTable', () => {
         </Table>
       );
 
-      // @ts-ignore
-      userEvent.click(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
+      await user.click(getCell(tree, 'Squirtle'));
       expect(mockAnnounce).toHaveBeenLastCalledWith('Squirtle selected.');
       expect(mockAnnounce).toHaveBeenCalledTimes(1);
       expect(onAction).not.toHaveBeenCalled();
 
       mockAnnounce.mockReset();
-      // @ts-ignore
-      userEvent.dblClick(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
+      await user.dblClick(getCell(tree, 'Squirtle'));
       expect(mockAnnounce).not.toHaveBeenCalled();
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onAction).toHaveBeenCalledWith(2);

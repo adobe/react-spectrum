@@ -1,6 +1,6 @@
 {
   "dateRange": "{startDate} 至 {endDate}",
-  "dateSelected": "已选定 {date}",
+  "dateSelected": "已选择 {date}",
   "finishRangeSelectionPrompt": "单击以完成选择日期范围",
   "maximumDate": "最后一个可用日期",
   "minimumDate": "第一个可用日期",
@@ -10,5 +10,5 @@
   "selectedRangeDescription": "选定的范围：{dateRange}",
   "startRangeSelectionPrompt": "单击以开始选择日期范围",
   "todayDate": "今天，即 {date}",
-  "todayDateSelected": "已选定今天，即 {date}"
+  "todayDateSelected": "已选择今天，即 {date}"
 }

@@ -10,16 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
 import userEvent from '@testing-library/user-event';
 import {VisuallyHidden} from '../';
 
 describe('VisuallyHidden', function () {
+  let user;
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
-  it('hides element', function () {
+  it('hides element', async function () {
     let {getAllByRole} = render(
       <>
         <button>This is button A</button>
@@ -33,18 +35,18 @@ describe('VisuallyHidden', function () {
     );
 
     let buttons = getAllByRole('button');
-    userEvent.tab();
+    await user.tab();
 
     expect(document.activeElement).toBe(buttons[0]);
     let hiddenStyle = buttons[1].parentElement.getAttribute('style');
     expect(hiddenStyle.length).toBeGreaterThan(0);
 
-    userEvent.tab();
+    await user.tab();
 
     expect(document.activeElement).toBe(buttons[1]);
     expect(buttons[1].parentElement.getAttribute('style')).toEqual(hiddenStyle);
   });
-  it('unhides element if focused and isFocusable', function () {
+  it('unhides element if focused and isFocusable', async function () {
     let {getAllByRole} = render(
       <>
         <button>This is button A</button>
@@ -58,13 +60,13 @@ describe('VisuallyHidden', function () {
     );
 
     let buttons = getAllByRole('button');
-    userEvent.tab();
+    await user.tab();
 
     expect(document.activeElement).toBe(buttons[0]);
     let hiddenStyle = buttons[1].parentElement.getAttribute('style');
     expect(hiddenStyle.length).toBeGreaterThan(0);
 
-    userEvent.tab();
+    await user.tab();
 
     expect(document.activeElement).toBe(buttons[1]);
     expect(buttons[1].parentElement.getAttribute('style')).not.toEqual(hiddenStyle);

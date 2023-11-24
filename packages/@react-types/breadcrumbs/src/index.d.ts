@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, ItemProps, Key, LinkDOMProps, StyleProps} from '@react-types/shared';
 import {AriaLinkProps} from '@react-types/link';
-import {ItemProps} from '@react-types/shared';
-import {Key, ReactElement, ReactNode} from 'react';
+import {ReactElement, ReactNode} from 'react';
 
-export interface BreadcrumbItemProps extends AriaLinkProps {
+export interface BreadcrumbItemProps extends AriaLinkProps, LinkDOMProps {
   /** Whether the breadcrumb item represents the current page. */
   isCurrent?: boolean,
   /**

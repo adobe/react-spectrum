@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key} from 'react';
+import {Key} from '@react-types/shared';
 import {ListState} from '@react-stately/list';
 
 interface ListData {
@@ -19,7 +19,8 @@ interface ListData {
   shouldFocusOnHover?: boolean,
   shouldUseVirtualFocus?: boolean,
   isVirtualized?: boolean,
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  linkBehavior?: 'action' | 'selection' | 'override'
 }
 
 export const listData = new WeakMap<ListState<unknown>, ListData>();

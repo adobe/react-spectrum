@@ -119,6 +119,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
 
 // Support DialogTrigger inside components using CollectionBuilder.
 DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) {
+  // @ts-ignore - seems like types are wrong. Function children work fine.
   let [trigger] = React.Children.toArray(props.children);
   let [, content] = props.children as [ReactElement, SpectrumDialogClose];
   yield {
@@ -139,7 +140,7 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
  */
 
 // We don't want getCollectionNode to show up in the type definition
-let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX.Element;
+let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => React.JSX.Element;
 export {_DialogTrigger as DialogTrigger};
 
 function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props}) {

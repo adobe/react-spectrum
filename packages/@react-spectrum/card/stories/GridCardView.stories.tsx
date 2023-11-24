@@ -21,8 +21,9 @@ import {GridLayoutOptions} from '../src/GridLayout';
 import {Heading, Text} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
+import {Key} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
-import React, {Key, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {Size} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import {TextField} from '@react-spectrum/textfield';
@@ -73,6 +74,7 @@ function renderEmptyState() {
   );
 }
 
+// TODO: accessibility failures regarding article element with role="gridcell", will need to double check when we pick CardView back up
 export default {
   title: 'CardView/Grid layout',
   component: CardView,

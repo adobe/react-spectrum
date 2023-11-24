@@ -117,7 +117,7 @@ export function DateField(props) {
         {state.segments.map((segment, i) =>
           <DateSegment key={i} segment={segment} state={state} />
         )}
-        {state.validationState === 'invalid' &&
+        {state.isInvalid &&
           <span aria-hidden="true">🚫</span>
         }
       </div>
@@ -171,7 +171,7 @@ function DateSegment({segment, state}) {
 }
 
 .segment.placeholder {
-  color: var(--react-spectrum-datepicker-placeholder-color);
+  color: var(--spectrum-gray-600);
 }
 
 .segment:focus {
@@ -241,7 +241,7 @@ function Example() {
   return (
     <>
       <DateField label="Birth date" value={date} onChange={setDate} />
-      <p>Selected date: {formatter.format(date.toDate(getLocalTimeZone()))}</p>
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
     </>
   );
 }

@@ -1,3 +1,5 @@
 {
-  "moreActions": "その他のアクション"
+  "backButton": "{prevMenuButton} に戻る",
+  "moreActions": "その他のアクション",
+  "unavailable": "利用できません。詳しくは、展開して確認してください"
 }

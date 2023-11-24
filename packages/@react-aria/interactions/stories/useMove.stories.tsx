@@ -16,11 +16,24 @@ import {action} from '@storybook/addon-actions';
 import {clamp} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
 import React, {useRef, useState} from 'react';
-import {storiesOf} from '@storybook/react';
 import {useMove} from '../';
 
-function useClampedMove(props) {
-  let currentPosition = useRef<{x?: number, y?: number}>();
+interface IPosition {
+  x: number,
+  y: number
+}
+
+interface ClampedMoveProps {
+  getCurrentState: () => IPosition,
+  onMoveTo: (e: any) => void,
+  onMoveStart?: (e: any) => void,
+  onMoveEnd?: (e: any) => void,
+  reverseX?: boolean,
+  reverseY?: boolean
+}
+
+function useClampedMove(props: ClampedMoveProps) {
+  let currentPosition = useRef<IPosition | null>();
 
   let {getCurrentState, onMoveTo, onMoveStart, onMoveEnd, reverseX = false, reverseY = false} = props;
 
@@ -30,7 +43,7 @@ function useClampedMove(props) {
       onMoveStart?.(e);
     },
     onMove({deltaX, deltaY, pointerType}) {
-      if (currentPosition.current == null) {
+      if (!currentPosition.current) {
         currentPosition.current = getCurrentState();
       }
 
@@ -48,7 +61,6 @@ function Ball1D() {
   let [state, setState] = useState({x: 0, color: 'black'});
 
   let props = useClampedMove({
-    linear: 'horizontal',
     reverseY: true,
     onMoveStart() { setState((state) => ({...state, color: 'red'})); },
     onMoveTo({x}) {
@@ -63,66 +75,77 @@ function Ball1D() {
   </div>);
 }
 
-storiesOf('useMove', module)
-  .add(
-    'Log',
-    () => {
-      let {moveProps} = useMove({
-        onMoveStart(e) { action('onMoveStart')(JSON.stringify(e)); },
-        onMove(e) { action('onMove')(JSON.stringify(e)); },
-        onMoveEnd(e) { action('onMoveEnd')(JSON.stringify(e)); }
-      });
+export default {
+  title: 'useMove'
+};
 
-      return <div {...moveProps} style={{width: '200px', height: '200px', background: 'white', border: '1px solid black', touchAction: 'none'}} />;
-    }
-  )
-  .add(
-    'Ball 1D',
-    () => (<Flex direction="column" gap="size-1000">
+export const Log = () => {
+  let {moveProps} = useMove({
+    onMoveStart(e) { action('onMoveStart')(JSON.stringify(e)); },
+    onMove(e) { action('onMove')(JSON.stringify(e)); },
+    onMoveEnd(e) { action('onMoveEnd')(JSON.stringify(e)); }
+  });
+
+  return <div {...moveProps} style={{width: '200px', height: '200px', background: 'white', border: '1px solid black', touchAction: 'none'}} />;
+};
+
+export const _Ball1D = {
+  render: () => (
+    <Flex direction="column" gap="size-1000">
       <Ball1D />
       <Ball1D />
-    </Flex>)
-  )
-  .add(
-    'Ball 2D',
-    () => {
-      let [state, setState] = useState({x: 0, y: 0, color: 'black'});
+    </Flex>
+  ),
+  name: 'Ball 1D'
+};
 
-      let props = useClampedMove({
-        onMoveStart() { setState((state) => ({...state, color: 'red'})); },
-        onMoveTo({x, y}) {
-          setState((state) => ({...state, x: clamp(x, 0, 200 - 30), y: clamp(y, 0, 200 - 30)}));
-        },
-        getCurrentState() { return {x: state.x, y: state.y}; },
-        onMoveEnd() { setState((state) => ({...state, color: 'black'})); }
-      });
+function Ball2DStory() {
+  let [state, setState] = useState({x: 0, y: 0, color: 'black'});
 
-      return (<div style={{width: '200px', height: '200px', background: 'white', border: '1px solid black', position: 'relative', touchAction: 'none'}}>
-        <div tabIndex={0} {...props} style={{width: '30px', height: '30px', borderRadius: '100%', position: 'absolute', left: state.x + 'px', top: state.y + 'px', background: state.color}} />
-      </div>);
-    }
-  )
-  .add(
-    'Ball nested',
-    () => {
-      let [ballState, setBallState] = useState({x: 0, y: 0, color: 'black'});
-      let [boxState, setBoxState] = useState({x: 100, y: 100, color: 'grey'});
+  let props = useClampedMove({
+    onMoveStart() { setState((state) => ({...state, color: 'red'})); },
+    onMoveTo({x, y}) {
+      setState((state) => ({...state, x: clamp(x, 0, 200 - 30), y: clamp(y, 0, 200 - 30)}));
+    },
+    getCurrentState() { return {x: state.x, y: state.y}; },
+    onMoveEnd() { setState((state) => ({...state, color: 'black'})); }
+  });
 
-      let {moveProps: ballProps} = useMove({
-        onMoveStart() { setBallState((state) => ({...state, color: 'red'})); },
-        onMove(e) { setBallState((state) => ({...state, x: state.x + e.deltaX, y: state.y + e.deltaY})); },
-        onMoveEnd() { setBallState((state) => ({...state, color: 'black'})); }
-      });
-      let {moveProps: boxProps} = useMove({
-        onMoveStart() { setBoxState((state) => ({...state, color: 'orange'})); },
-        onMove(e) { setBoxState((state) => ({...state, x: state.x + e.deltaX, y: state.y + e.deltaY})); },
-        onMoveEnd() { setBoxState((state) => ({...state, color: 'grey'})); }
-      });
-
-      return (
-        <div tabIndex={0} {...boxProps} style={{width: '100px', height: '100px', touchAction: 'none', position: 'absolute', left: boxState.x + 'px', top: boxState.y + 'px', background: boxState.color}}>
-          <div tabIndex={0} {...ballProps} style={{width: '30px', height: '30px', borderRadius: '100%', position: 'absolute', left: ballState.x + 'px', top: ballState.y + 'px', background: ballState.color}} />
-        </div>
-      );
-    }
+  return (
+    <div style={{width: '200px', height: '200px', background: 'white', border: '1px solid black', position: 'relative', touchAction: 'none'}}>
+      <div tabIndex={0} {...props} style={{width: '30px', height: '30px', borderRadius: '100%', position: 'absolute', left: state.x + 'px', top: state.y + 'px', background: state.color}} />
+    </div>
   );
+}
+
+export const Ball2D = {
+  render: () => <Ball2DStory />,
+  name: 'Ball 2D'
+};
+
+function BallNestedStory() {
+  let [ballState, setBallState] = useState({x: 0, y: 0, color: 'black'});
+  let [boxState, setBoxState] = useState({x: 100, y: 100, color: 'grey'});
+
+  let {moveProps: ballProps} = useMove({
+    onMoveStart() { setBallState((state) => ({...state, color: 'red'})); },
+    onMove(e) { setBallState((state) => ({...state, x: state.x + e.deltaX, y: state.y + e.deltaY})); },
+    onMoveEnd() { setBallState((state) => ({...state, color: 'black'})); }
+  });
+  let {moveProps: boxProps} = useMove({
+    onMoveStart() { setBoxState((state) => ({...state, color: 'orange'})); },
+    onMove(e) { setBoxState((state) => ({...state, x: state.x + e.deltaX, y: state.y + e.deltaY})); },
+    onMoveEnd() { setBoxState((state) => ({...state, color: 'grey'})); }
+  });
+
+  return (
+    <div tabIndex={0} {...boxProps} style={{width: '100px', height: '100px', touchAction: 'none', position: 'absolute', left: boxState.x + 'px', top: boxState.y + 'px', background: boxState.color}}>
+      <div tabIndex={0} {...ballProps} style={{width: '30px', height: '30px', borderRadius: '100%', position: 'absolute', left: ballState.x + 'px', top: ballState.y + 'px', background: ballState.color}} />
+    </div>
+  );
+}
+
+export const BallNested = {
+  render: () => <BallNestedStory />,
+  name: 'Ball nested'
+};

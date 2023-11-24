@@ -12,20 +12,20 @@ export default Layout;
 
 import docs from 'docs:react-aria-components';
 import typesDocs from 'docs:@react-types/overlays';
-import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable} from '@react-spectrum/docs';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
 import styles from '@react-spectrum/docs/src/docs.css';
 import packageData from 'react-aria-components/package.json';
-import Anatomy from '/packages/@react-aria/overlays/docs/modal-anatomy.svg';
+import Anatomy from '@react-aria/overlays/docs/modal-anatomy.svg';
 import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 
 ---
 category: Overlays
 keywords: [dialog, popover, aria]
 type: component
-after_version: 1.0.0
 ---
 
 # Modal
@@ -50,7 +50,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
     <Dialog>
       {({close}) => (
         <form>
-          <Heading>Sign up</Heading>
+          <Heading slot="title">Sign up</Heading>
           <TextField autoFocus>
             <Label>First Name: </Label>
             <Input />
@@ -71,8 +71,15 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './TextField.mdx' layer(textfield);
+@import './Dialog.mdx' layer(dialog);
+```
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-ModalOverlay {
   position: fixed;
   top: 0;
@@ -85,29 +92,33 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   justify-content: center;
 
   &[data-entering] {
-    animation: fade 200ms;
+    animation: modal-fade 200ms;
   }
 
   &[data-exiting] {
-    animation: fade 150ms reverse ease-in;
+    animation: modal-fade 150ms reverse ease-in;
   }
 }
 
 .react-aria-Modal {
   box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
   border-radius: 6px;
-  background: var(--page-background);
-  border: 1px solid var(--spectrum-global-color-gray-300);
+  background: var(--overlay-background);
+  color: var(--text-color);
+  border: 1px solid var(--gray-400);
   outline: none;
-  padding: 30px;
-  max-width: 250px;
+  max-width: 300px;
 
   &[data-entering] {
-    animation: zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: modal-zoom 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .react-aria-TextField {
+    margin-bottom: 8px;
   }
 }
 
-@keyframes fade {
+@keyframes modal-fade {
   from {
     opacity: 0;
   }
@@ -117,69 +128,13 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   }
 }
 
-@keyframes zoom {
+@keyframes modal-zoom {
   from {
     transform: scale(0.8);
   }
 
   to {
     transform: scale(1);
-  }
-}
-
-.react-aria-Dialog {
-  outline: none;
-
-  .react-aria-Heading {
-    line-height: 1em;
-    margin-top: 0;
-  }
-
-  .react-aria-Button {
-    margin-top: 20px;
-  }
-}
-
-.react-aria-Button {
-  background: var(--spectrum-global-color-gray-50);
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  border-radius: 4px;
-  color: var(--spectrum-alias-text-color);
-  appearance: none;
-  vertical-align: middle;
-  font-size: 1.2rem;
-  text-align: center;
-  margin: 0;
-  outline: none;
-  padding: 6px;
-  transition: border-color 200ms;
-
-  &[data-hovered] {
-    border-color: var(--spectrum-global-color-gray-500);
-  }
-
-  &[data-pressed] {
-    box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
-    background: var(--spectrum-global-color-gray-100);
-    border-color: var(--spectrum-global-color-gray-600);
-  }
-
-  &[data-focus-visible] {
-    border-color: slateblue;
-    box-shadow: 0 0 0 1px slateblue;
-  }
-}
-
-.react-aria-TextField {
-  margin-bottom: 8px;
-
-  .react-aria-Label {
-    display: inline-block;
-    width: 5.357rem;
-  }
-
-  .react-aria-Input {
-    font-size: 16px;
   }
 }
 ```
@@ -205,6 +160,167 @@ Note: `Modal` only provides the overlay itself. It should be combined with [Dial
 <Anatomy />
 
 A modal consists of an overlay container element, and an underlay. The overlay may contain a [Dialog](Dialog.html), or another element such as a [Menu](Menu.html) or [ListBox](ListBox.html) when used within a component such as a [Select](Select.html) or [ComboBox](ComboBox.html). The underlay is typically a partially transparent element that covers the rest of the screen behind the overlay, and prevents the user from interacting with the elements behind it.
+
+```tsx
+import {Modal, ModalOverlay} from 'react-aria-components';
+
+<ModalOverlay>
+  <Modal />
+</ModalOverlay>
+```
+
+## Examples
+
+<ExampleList tag="modal" />
+
+## Interactions
+
+### Dismissable
+
+If your modal doesn't require the user to make a confirmation, you can set `isDismissable`
+on the `Modal`. This allows the user to click outside to close the dialog.
+
+```tsx example
+<DialogTrigger>
+  <Button>Open dialog</Button>
+  <Modal isDismissable>
+    <Dialog>
+      <Heading slot="title">Notice</Heading>
+      <p>Click outside to close this dialog.</p>
+    </Dialog>
+  </Modal>
+</DialogTrigger>
+```
+
+### Keyboard dismiss disabled
+
+By default, modals can be closed by pressing the <Keyboard>Escape</Keyboard> key. This can be disabled with the `isKeyboardDismissDisabled` prop.
+
+```tsx example
+<DialogTrigger>
+  <Button>Open dialog</Button>
+  <Modal isKeyboardDismissDisabled>
+    <Dialog>
+      {({close}) => <>
+        <Heading slot="title">Notice</Heading>
+        <p>You must close this dialog using the button below.</p>
+        <Button onPress={close}>Close</Button>
+      </>}
+    </Dialog>
+  </Modal>
+</DialogTrigger>
+```
+
+## Custom overlay
+
+`ModalOverlay` can be used to customize the backdrop rendered behind a `Modal`. Together with support for custom entry and exit animations, you can build other types of overlays beyond traditional modal dialogs such as trays or drawers.
+
+```tsx example
+import {ModalOverlay} from 'react-aria-components';
+
+<DialogTrigger>
+  <Button>Open modal</Button>
+  <ModalOverlay className="my-overlay">
+    <Modal className="my-modal">
+      <Dialog>
+        {({close}) => <>
+          <Heading slot="title">Notice</Heading>
+          <p>This is a modal with a custom modal overlay.</p>
+          <Button onPress={close}>Close</Button>
+        </>}
+      </Dialog>
+    </Modal>
+  </ModalOverlay>
+</DialogTrigger>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(45 0 0 / .3);
+  backdrop-filter: blur(10px);
+
+  &[data-entering] {
+    animation: mymodal-blur 300ms;
+  }
+
+  &[data-exiting] {
+    animation: mymodal-blur 300ms reverse ease-in;
+  }
+}
+
+.my-modal {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 300px;
+  background: var(--overlay-background);
+  outline: none;
+  border-left: 1px solid var(--border-color);
+  box-shadow: -8px 0 20px rgba(0 0 0 / 0.1);
+
+  &[data-entering] {
+    animation: mymodal-slide 300ms;
+  }
+
+  &[data-exiting] {
+    animation: mymodal-slide 300ms reverse ease-in;
+  }
+}
+
+@keyframes mymodal-blur {
+  from {
+    background: rgba(45 0 0 / 0);
+    backdrop-filter: blur(0);
+  }
+
+  to {
+    background: rgba(45 0 0 / .3);
+    backdrop-filter: blur(10px);
+  }
+}
+
+@keyframes mymodal-slide {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+```
+
+</details>
+
+## Controlled open state
+
+The above examples have shown `Modal` used within a `<DialogTrigger>`, which handles opening the modal when a button is clicked. This is convenient, but there are cases where you want to show a modal programmatically rather than as a result of a user action, or render the `<Modal>` in a different part of the JSX tree.
+
+To do this, you can manage the modal's `isOpen` state yourself and provide it as a prop to the `<Modal>` element. The `onOpenChange` prop will be called when the user closes the modal, and should be used to update your state.
+
+```tsx example
+function Example() {
+  let [isOpen, setOpen] = React.useState(false);
+
+  return (
+    <>
+      <Button onPress={() => setOpen(true)}>Open dialog</Button>
+      <Modal isDismissable isOpen={isOpen} onOpenChange={setOpen}>
+        <Dialog>
+          <Heading slot="title">Notice</Heading>
+          <p>Click outside to close this dialog.</p>
+        </Dialog>
+      </Modal>
+    </>
+  );
+}
+```
 
 ## Props
 
@@ -273,155 +389,59 @@ The `--visual-viewport-height` CSS custom property will be set on the `ModalOver
 }
 ```
 
-This example also shows how to use a `Modal` to render other types of overlays such as a tray or drawer, as well as support for custom entry and exit animations.
+## Advanced customization
 
-```tsx example
-import {ModalOverlay} from 'react-aria-components';
+### Contexts
 
-<DialogTrigger>
-  <Button>Open modal</Button>
-  <ModalOverlay className="my-overlay">
-    <Modal className="my-modal">
-      <Dialog>
-        {({close}) => <>
-          <Heading>Notice</Heading>
-          <p>This is a modal with a custom modal overlay.</p>
-          <Button onPress={close}>Close</Button>
-        </>}
-      </Dialog>
-    </Modal>
-  </ModalOverlay>
-</DialogTrigger>
-```
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
 
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+<ContextTable components={['Modal']} docs={docs} />
 
-```css
-.my-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(45 0 0 / .3);
-  backdrop-filter: blur(10px);
+This example shows a `KeyboardModalTrigger` component that shows a modal when a user presses a specific key from anywhere on the page. It uses `ModalContext` to set the open state of the nested modal.
 
-  &[data-entering] {
-    animation: blur 300ms;
-  }
+```tsx example render=false export=true
+import {ModalContext} from 'react-aria-components';
 
-  &[data-exiting] {
-    animation: blur 300ms reverse ease-in;
-  }
+interface KeyboardModalTriggerProps {
+  keyboardShortcut: string,
+  children: React.ReactNode
 }
 
-.my-modal {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: 250px;
-  background: var(--page-background);
-  outline: none;
-  padding: 30px;
-  border-left: 1px solid var(--spectrum-global-color-gray-400);
-  box-shadow: -8px 0 20px rgba(0 0 0 / 0.1);
-
-  &[data-entering] {
-    animation: slide 300ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 300ms reverse ease-in;
-  }
-}
-
-@keyframes blur {
-  from {
-    background: rgba(45 0 0 / 0);
-    backdrop-filter: blur(0);
-  }
-
-  to {
-    background: rgba(45 0 0 / .3);
-    backdrop-filter: blur(10px);
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: translateX(100%);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-```
-
-</details>
-
-## Usage
-
-### Dismissable
-
-If your modal doesn't require the user to make a confirmation, you can set `isDismissable`
-on the `Modal`. This allows the user to click outside to close the dialog.
-
-```tsx example
-<DialogTrigger>
-  <Button>Open dialog</Button>
-  <Modal isDismissable>
-    <Dialog>
-      <Heading>Notice</Heading>
-      <p>Click outside to close this dialog.</p>
-    </Dialog>
-  </Modal>
-</DialogTrigger>
-```
-
-### Keyboard dismiss disabled
-
-By default, modals can be closed by pressing the <Keyboard>Escape</Keyboard> key. This can be disabled with the `isKeyboardDismissDisabled` prop.
-
-```tsx example
-<DialogTrigger>
-  <Button>Open dialog</Button>
-  <Modal isKeyboardDismissDisabled>
-    <Dialog>
-      {({close}) => <>
-        <Heading>Notice</Heading>
-        <p>You must close this dialog using the button below.</p>
-        <Button onPress={close}>Close</Button>
-      </>}
-    </Dialog>
-  </Modal>
-</DialogTrigger>
-```
-
-### Controlled open state
-
-The above examples have shown `Modal` used within a `<DialogTrigger>`, which handles opening the modal when a button is clicked. This is convenient, but there are cases where you want to show a modal programmatically rather than as a result of a user action, or render the `<Modal>` in a different part of the JSX tree.
-
-To do this, you can manage the modal's `isOpen` state yourself and provide it as a prop to the `<Modal>` element. The `onOpenChange` prop will be called when the user closes the modal, and should be used to update your state.
-
-```tsx example
-function Example() {
+function KeyboardModalTrigger(props: KeyboardModalTriggerProps) {
   let [isOpen, setOpen] = React.useState(false);
+  React.useEffect(() => {
+    let onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === props.keyboardShortcut) {
+        setOpen(true);
+      }
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [props.keyboardShortcut]);
 
   return (
-    <>
-      <Button onPress={() => setOpen(true)}>Open dialog</Button>
-      <Modal isDismissable isOpen={isOpen} onOpenChange={setOpen}>
-        <Dialog>
-          <Heading>Notice</Heading>
-          <p>Click outside to close this dialog.</p>
-        </Dialog>
-      </Modal>
-    </>
+    /*- begin highlight -*/
+    <ModalContext.Provider value={{isOpen, onOpenChange: setOpen}}>
+    {/*- end highlight -*/}
+      {props.children}
+    </ModalContext.Provider>
   );
 }
 ```
 
-## Advanced customization
+The following example uses `KeyboardModalTrigger` to show a modal when the <Keyboard>/</Keyboard> key is pressed.
+
+```tsx example hidden
+<KeyboardModalTrigger keyboardShortcut="/">
+  <Modal isDismissable>
+    <Dialog>
+      <Heading slot="title">Command palette</Heading>
+      <p>Your cool command palette UI here!</p>
+    </Dialog>
+  </Modal>
+</KeyboardModalTrigger>
+```
 
 ### Hooks
 

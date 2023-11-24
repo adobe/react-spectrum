@@ -14,14 +14,13 @@ import {action} from '@storybook/addon-actions';
 import {Color, SpectrumColorFieldProps} from '@react-types/color';
 import {ColorField} from '../';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
-import {Content} from '@react-spectrum/view';
+import {Content, View} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import {parseColor} from '@react-stately/color';
 import React, {useState} from 'react';
 import {useId} from '@react-aria/utils';
-import {View} from '@react-spectrum/view';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 
 export type ColorFieldStory = ComponentStoryObj<typeof ColorField>;
@@ -77,9 +76,8 @@ export default {
       control: 'select',
       options: ['top', 'side']
     },
-    validationState: {
-      control: 'select',
-      options: [null, 'valid', 'invalid']
+    isInvalid: {
+      control: 'boolean'
     },
     description: {
       control: 'text'
@@ -113,7 +111,7 @@ export const AriaLabelledBy: ColorFieldStory = {
       {render({...args, id: 'colorfield', 'aria-labelledby': 'label'})}
     </>
   ),
-  storyName: 'aria-labelledy'
+  name: 'aria-labelledy'
 };
 
 export const MinWidth: ColorFieldStory = {
@@ -125,7 +123,7 @@ export const MinWidth: ColorFieldStory = {
       </div>
     </Flex>
   ),
-  storyName: 'custom width, 10px for min-width'
+  name: 'custom width, 10px for min-width'
 };
 
 export const ContextualHelpStory: ColorFieldStory = {
@@ -138,7 +136,7 @@ export const ContextualHelpStory: ColorFieldStory = {
       </ContextualHelp>
     )
   },
-  storyName: 'contextual help'
+  name: 'contextual help'
 };
 
 function ControlledColorField(props: SpectrumColorFieldProps) {

@@ -14,39 +14,54 @@ import Add from '../Add';
 import Alert from '../Alert';
 import Bell from '../Bell';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
 
-storiesOf('Icons/Express', module)
-  .add(
-    'icon: Add with sizes',
-    () => renderIconSizes(Add, {'aria-label': 'Add'})
-  )
-  .add(
-    'icon: Bell with sizes',
-    () => renderIconSizes(Bell, {'aria-label': 'Bell'})
-  )
-  .add(
-    'icon: Alert negative',
-    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'negative'})
-  )
-  .add(
-    'icon: Alert informative',
-    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'informative'})
-  )
-  .add(
-    'icon: Alert positive',
-    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'positive'})
-  )
-  .add(
-    'icon: Alert notice',
-    () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'})
-  );
+export default {
+  title: 'Icons/Express'
+};
+
+export const IconAddWithSizes = () => renderIconSizes(Add, {'aria-label': 'Add'});
+
+IconAddWithSizes.story = {
+  name: 'icon: Add with sizes'
+};
+
+export const IconBellWithSizes = () => renderIconSizes(Bell, {'aria-label': 'Bell'});
+
+IconBellWithSizes.story = {
+  name: 'icon: Bell with sizes'
+};
+
+export const IconAlertNegative = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'negative'});
+
+IconAlertNegative.story = {
+  name: 'icon: Alert negative'
+};
+
+export const IconAlertInformative = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'informative'});
+
+IconAlertInformative.story = {
+  name: 'icon: Alert informative'
+};
+
+export const IconAlertPositive = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'positive'});
+
+IconAlertPositive.story = {
+  name: 'icon: Alert positive'
+};
+
+export const IconAlertNotice = () => renderIconSizes(Alert, {'aria-label': 'Alert', color: 'notice'});
+
+IconAlertNotice.story = {
+  name: 'icon: Alert notice'
+};
 
 function renderIconSizes(Component, props) {
   let sizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
   return (
     <div>
-      {sizes.map(size => <Component margin="15px" size={size} {...props} />)}
+      {sizes.map((size) => (
+        <Component margin="15px" size={size} {...props} />
+      ))}
     </div>
   );
 }

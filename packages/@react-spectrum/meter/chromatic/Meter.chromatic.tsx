@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import {Meter} from '../';
-import React from 'react';
 import {SpectrumMeterProps} from '@react-types/meter';
 
 const meta: Meta<SpectrumMeterProps> = {
@@ -22,32 +21,34 @@ const meta: Meta<SpectrumMeterProps> = {
 
 export default meta;
 
+export const Default = {
+  args: {label: 'Meter label', value: 50, variant: 'positive'}
+};
 
-const Template = (): Story<SpectrumMeterProps> => (args) => (
-  <Meter {...args} />
-);
+export const SizeS = {
+  args: {...Default.args, size: 'S'}
+};
 
+export const ShowValueLabelFalse = {
+  args: {...Default.args, showValueLabel: false}
+};
 
-export const Default = Template().bind({});
-Default.args = {label: 'Meter label', value: 50, variant: 'positive'};
+export const LabelPositionSide = {
+  args: {...Default.args, labelPosition: 'side'}
+};
 
-export const SizeS = Template().bind({});
-SizeS.args = {...Default.args, size: 'S'};
+export const Critical = {
+  args: {...Default.args, variant: 'critical'}
+};
 
-export const ShowValueLabelFalse = Template().bind({});
-ShowValueLabelFalse.args = {...Default.args, showValueLabel: false};
+export const Warning = {
+  args: {...Default.args, variant: 'warning'}
+};
 
-export const LabelPositionSide = Template().bind({});
-LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
+export const Value0 = {
+  args: {...Default.args, value: 0}
+};
 
-export const Critical = Template().bind({});
-Critical.args = {...Default.args, variant: 'critical'};
-
-export const Warning = Template().bind({});
-Warning.args = {...Default.args, variant: 'warning'};
-
-export const Value0 = Template().bind({});
-Value0.args = {...Default.args, value: 0};
-
-export const Value100 = Template().bind({});
-Value100.args = {...Default.args, value: 100};
+export const Value100 = {
+  args: {...Default.args, value: 100}
+};

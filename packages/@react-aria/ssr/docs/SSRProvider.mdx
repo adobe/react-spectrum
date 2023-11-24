@@ -29,10 +29,13 @@ keywords: [ssr, server side rendering, aria, next.js, gatsby]
 
 ## Introduction
 
-`SSRProvider` should be used as a wrapper for the entire application during server side rendering.
+If you're using React 16 or 17, `SSRProvider` should be used as a wrapper for the entire application during server side rendering.
 It works together with the [useId](useId.html) hook to ensure that auto generated ids are consistent
 between the client and server by resetting the id internal counter on each request.
 See the [server side rendering](ssr.html) docs for more information.
+
+**Note**: if you're using React 18 or newer, `SSRProvider` is not necessary and can be removed from your app. React Aria uses the
+[React.useId](https://react.dev/reference/react/useId) hook internally when using React 18, which ensures ids are consistent.
 
 ## Props
 

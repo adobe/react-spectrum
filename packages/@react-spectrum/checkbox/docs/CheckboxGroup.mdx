@@ -80,6 +80,18 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+CheckboxGroup supports the `name` prop, paired with the Checkbox `value` prop, for integration with HTML forms.
+
+```tsx example
+<CheckboxGroup label="Condiments" name="condiments">
+  <Checkbox value="mayo">Mayo</Checkbox>
+  <Checkbox value="mustart">Mustard</Checkbox>
+  <Checkbox value="ketchup">Ketchup</Checkbox>
+</CheckboxGroup>
+```
+
 ## Labeling
 A visual label should be provided for the CheckboxGroup using the `label` prop. If the CheckboxGroup requires an option to be selected by the user,
 the `isRequired` and `necessityIndicator` props can be used to show a required state.
@@ -144,54 +156,51 @@ function Example() {
 
 ## Validation
 
-CheckboxGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and pass `"invalid"` to the `validationState` prop to either
-the `CheckboxGroup` or an individual `Checkbox` to mark it as invalid.
+CheckboxGroup supports the `isRequired` prop to ensure the user selects at least one item, as well as custom client and server-side validation. Individual checkboxes also support validation, and errors from all checkboxes are aggregated at the group level. CheckboxGroup can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
 
 ### Group validation
 
-If the group as a whole is invalid, for example if the user must choose at least one option but failed
-to do so, then pass `validationState="invalid"` to the `CheckboxGroup`.
-
-The following example shows how to require that at least one option is selected. It sets the `validationState`
-prop to `"invalid"` when no options are selected and removes it otherwise.
+The `isRequired` prop at the `CheckboxGroup` level requires that at least one item is selected. When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically.
 
 ```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState([]);
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 
-  return (
-    <CheckboxGroup label="Sandwich condiments" value={selected} onChange={setSelected} isRequired validationState={selected.length === 0 ? 'invalid' : null}>
-      <Checkbox value="lettuce">Lettuce</Checkbox>
-      <Checkbox value="tomato">Tomato</Checkbox>
-      <Checkbox value="onion">Onion</Checkbox>
-      <Checkbox value="sprouts">Sprouts</Checkbox>
-    </CheckboxGroup>
-  );
-}
+<Form validationBehavior="native">
+  {/*- begin highlight -*/}
+  <CheckboxGroup label="Sandwich condiments" name="condiments" isRequired>
+  {/*- end highlight -*/}
+    <Checkbox value="lettuce">Lettuce</Checkbox>
+    <Checkbox value="tomato">Tomato</Checkbox>
+    <Checkbox value="onion">Onion</Checkbox>
+    <Checkbox value="sprouts">Sprouts</Checkbox>
+  </CheckboxGroup>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `CheckboxGroup` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ### Individual Checkbox validation
 
-If an individual checkbox is invalid, for example if the user must select a particular option but failed
-to do so, then pass `validationState="invalid"` to the `Checkbox` element instead.
-
-The following example shows how to require that all items are selected. It uses the `isRequired` prop on each individual `Checkbox`
-element to indicate to assistive technology that every checkbox is required. By default, the `isRequired` prop on the `CheckboxGroup` only
-indicates that the group is required, not any individual option. In addition, `validationState="invalid"` is set on each checkbox that is not yet checked.
+To require that specific checkboxes are checked, set the `isRequired` prop at the `Checkbox` level instead of the `CheckboxGroup`. The following example shows how to require that all items are selected.
 
 ```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState([]);
-
-  return (
-    <CheckboxGroup label="Agree to the following" isRequired value={selected} onChange={setSelected}>
-      <Checkbox value="terms" isRequired validationState={!selected.includes('terms') ? 'invalid' : null}>Terms and conditions</Checkbox>
-      <Checkbox value="privacy" isRequired validationState={!selected.includes('privacy') ? 'invalid' : null}>Privacy policy</Checkbox>
-      <Checkbox value="cookies" isRequired validationState={!selected.includes('cookies') ? 'invalid' : null}>Cookie policy</Checkbox>
-    </CheckboxGroup>
-  );
-}
+<Form validationBehavior="native">
+  <CheckboxGroup label="Agree to the following" isRequired>
+    {/*- begin highlight -*/}
+    <Checkbox value="terms" isRequired>Terms and conditions</Checkbox>
+    <Checkbox value="privacy" isRequired>Privacy policy</Checkbox>
+    <Checkbox value="cookies" isRequired>Cookie policy</Checkbox>
+    {/*- end highlight -*/}
+  </CheckboxGroup>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
 
 ## Props
@@ -232,7 +241,7 @@ and "end" refers to the right most edge. For right-to-left (RTL) languages, this
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/checkbox-group/#Help-text-(description-and-error-message))
 
-Both a description and an error message can be supplied to a CheckboxGroup. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+Both a description and an error message can be supplied to a CheckboxGroup. The description is always visible unless the `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
 
 ```tsx example
 function Example() {
@@ -244,7 +253,7 @@ function Example() {
       label="Pets"
       onChange={setChecked}
       value={checked}
-      validationState={isValid ? 'valid' : 'invalid'}
+      isInvalid={!isValid}
       description="Select your pets."
       errorMessage={
         checked.includes('cats')

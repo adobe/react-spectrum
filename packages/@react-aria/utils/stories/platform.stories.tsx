@@ -10,10 +10,18 @@
  * governing permissions and limitations under the License.
  */
 
-import {Story as _Story, Meta} from '@storybook/react';
-import {isAndroid, isAppleDevice, isChrome, isIOS, isIPad, isIPhone, isMac, isWebKit} from '../src';
+import {StoryFn as _Story, Meta} from '@storybook/react';
+import {
+  isAndroid,
+  isAppleDevice,
+  isChrome,
+  isIOS,
+  isIPad,
+  isIPhone,
+  isMac,
+  isWebKit
+} from '../src';
 import React from 'react';
-
 
 /**
  * Helper type so `bind` returns the actual Story type.
@@ -43,6 +51,8 @@ const Template: Story<object> = (args) => (
   </table>
 );
 
-export const Default = Template.bind({});
-Default.storyName = 'all platforms';
-Default.args = {};
+export const Default = {
+  render: Template,
+  name: 'all platforms',
+  args: {}
+};

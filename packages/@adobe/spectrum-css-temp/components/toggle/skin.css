@@ -149,7 +149,7 @@ governing permissions and limitations under the License.
 /* Key Focus */
 .spectrum-ToggleSwitch,
 .spectrum-ToggleSwitch:hover {
-  .spectrum-ToggleSwitch-input:focus-ring {
+  .spectrum-ToggleSwitch-input:focus-visible {
     & + .spectrum-ToggleSwitch-switch {
       &:after {
         box-shadow: 0 0 0 var(--spectrum-switch-focus-ring-size-key-focus) var(--spectrum-switch-focus-ring-color-key-focus);
@@ -172,7 +172,7 @@ governing permissions and limitations under the License.
 
 .spectrum-ToggleSwitch--quiet,
 .spectrum-ToggleSwitch--quiet:hover {
-  .spectrum-ToggleSwitch-input:focus-ring {
+  .spectrum-ToggleSwitch-input:focus-visible {
     /* Selected Key Focus */
     &:checked {
       & + .spectrum-ToggleSwitch-switch {
@@ -198,7 +198,7 @@ governing permissions and limitations under the License.
       }
     }
 
-    &:focus-ring {
+    &:focus-visible {
       &:checked + .spectrum-ToggleSwitch-switch {
         background-color: var(--spectrum-switch-track-color);
 

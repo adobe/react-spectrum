@@ -62,7 +62,7 @@ A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.
 * Support for controlled and uncontrolled options, selection, input value, and open state
 * Support for custom filter functions
 * Async loading and infinite scrolling support
-* Support for virtualized scrolling for performance with long lists
+* Support for use with virtualized lists
 * Exposed to assistive technology as a `combobox` with ARIA
 * Labeling support for accessibility
 * Required and invalid states exposed to assistive technology via ARIA
@@ -74,7 +74,7 @@ A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.
 * Virtual focus management for combo box list box option navigation
 * Hides elements outside the input and list box from assistive technology while the list box is open in a portal
 * Custom localized announcements for option focusing, filtering, and selection using an ARIA live region to work around VoiceOver bugs
-* Support for description and error message help text linked to the input via ARIA
+* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
 
 Read our [blog post](../blog/building-a-combobox.html) for more details about the interactions and accessibility features implemented by `useComboBox`.
 
@@ -670,6 +670,10 @@ function AsyncLoadingExample() {
   );
 }
 ```
+
+### Links
+
+By default, interacting with an item in a ComboBox selects it and updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Interacting with link items navigates to the provided URL and does not update the selection or input value. See the [links](useListBox.html#links) section in the `useListBox` docs for details on how to support this.
 
 ## Internationalization
 

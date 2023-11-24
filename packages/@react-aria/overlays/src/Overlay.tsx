@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {ClearPressResponder} from '@react-aria/interactions';
 import {FocusScope} from '@react-aria/focus';
 import React, {ReactNode, useContext, useMemo, useState} from 'react';
 import ReactDOM from 'react-dom';
@@ -23,7 +24,18 @@ export interface OverlayProps {
    */
   portalContainer?: Element,
   /** The overlay to render in the portal. */
-  children: ReactNode
+  children: ReactNode,
+  /**
+   * Disables default focus management for the overlay, including containment and restoration.
+   * This option should be used very carefully. When focus management is disabled, you must
+   * implement focus containment and restoration to ensure the overlay is keyboard accessible.
+   */
+  disableFocusManagement?: boolean,
+  /**
+   * Whether the overlay is currently performing an exit animation. When true,
+   * focus is allowed to move outside.
+   */
+  isExiting?: boolean
 }
 
 export const OverlayContext = React.createContext(null);
@@ -34,7 +46,7 @@ export const OverlayContext = React.createContext(null);
  */
 export function Overlay(props: OverlayProps) {
   let isSSR = useIsSSR();
-  let {portalContainer = isSSR ? null : document.body} = props;
+  let {portalContainer = isSSR ? null : document.body, isExiting} = props;
   let [contain, setContain] = useState(false);
   let contextValue = useMemo(() => ({contain, setContain}), [contain, setContain]);
 
@@ -42,11 +54,20 @@ export function Overlay(props: OverlayProps) {
     return null;
   }
 
-  let contents = (
-    <OverlayContext.Provider value={contextValue}>
-      <FocusScope restoreFocus contain={contain}>
-        {props.children}
+  let contents = props.children;
+  if (!props.disableFocusManagement) {
+    contents = (
+      <FocusScope restoreFocus contain={contain && !isExiting}>
+        {contents}
       </FocusScope>
+    );
+  }
+
+  contents = (
+    <OverlayContext.Provider value={contextValue}>
+      <ClearPressResponder>
+        {contents}
+      </ClearPressResponder>
     </OverlayContext.Provider>
   );
 

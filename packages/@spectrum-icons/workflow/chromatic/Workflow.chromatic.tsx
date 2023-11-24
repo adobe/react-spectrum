@@ -13,67 +13,74 @@
 import Add from '../Add';
 import Alert from '@spectrum-icons/workflow/Alert';
 import React from 'react';
-import {storiesOf} from '@storybook/react';
-import {Flex} from "@react-spectrum/layout";
+import {Flex} from '@react-spectrum/layout';
 import * as AllIcons from '../src';
 
 let allIcons = Object.keys(AllIcons);
-let alphabet = [...Array(26)]
-  .map((val, i) => String.fromCharCode(i + 65));
+let alphabet = [...Array(26)].map((val, i) => String.fromCharCode(i + 65));
 alphabet = ['_', ...alphabet];
-let alphabetizedIcons = alphabet
-  .reduce((acc, char) => {
-    acc[char] = allIcons.filter(iconName => iconName[0] === char).sort();
-    return acc;
-  }, {});
+let alphabetizedIcons = alphabet.reduce((acc, char) => {
+  acc[char] = allIcons.filter((iconName) => iconName[0] === char).sort();
+  return acc;
+}, {});
 
-storiesOf('Icons/Workflow', module)
-  .addParameters({chromaticProvider: { express: false}})
-  .add(
-    'icon: Add with sizes',
-    () => renderIconSizes(Add, {'aria-label': 'Add'})
-  )
-  .add('Colors',
-    () => (
-      <Flex gap="size-200">
-        <Alert aria-label="info default" />
-        <Alert color="informative" aria-label="info alert" />
-        <Alert color="negative" aria-label="negative alert" />
-        <Alert color="positive" aria-label="positive alert" />
-        <Alert color="notice" aria-label="notice alert" />
-      </Flex>
-    )
-  )
-  .add('All Workflow',
-    () => (
-      <Flex direction="column">
-        {
-          Object.keys(alphabetizedIcons).map(char => (
-            <div style={{height: "calc(12 * var(--spectrum-global-dimension-size-300))"}}>
-              <div>{char}</div>
-              <Flex direction="row" gap="size-50" wrap>
-                {
-                  alphabetizedIcons[char].map(iconName => {
-                    let Icon = AllIcons[iconName].default;
-                    return <Icon key={iconName} id={iconName} />;
-                  })
-                }
-              </Flex>
-            </div>
-          ))
-        }
-      </Flex>
-    ),
-  {chromaticProvider: {colorSchemes: ['light'], locales: ['en-US'], scales: ['medium', 'large'], disableAnimations: true}}
-  );
+export default {
+  title: 'Icons/Workflow',
+  parameters: {
+    chromaticProvider: {express: false},
+  }
+};
+
+export const IconAddWithSizes = () => renderIconSizes(Add, { 'aria-label': 'Add' });
+
+IconAddWithSizes.story = {
+  name: 'icon: Add with sizes',
+};
+
+export const Colors = () => (
+  <Flex gap="size-200">
+    <Alert aria-label="info default" />
+    <Alert color="informative" aria-label="info alert" />
+    <Alert color="negative" aria-label="negative alert" />
+    <Alert color="positive" aria-label="positive alert" />
+    <Alert color="notice" aria-label="notice alert" />
+  </Flex>
+);
+
+export const AllWorkflow = () => (
+  <Flex direction="column">
+    {Object.keys(alphabetizedIcons).map((char) => (
+      <div style={{ height: 'calc(12 * var(--spectrum-global-dimension-size-300))' }}>
+        <div>{char}</div>
+        <Flex direction="row" gap="size-50" wrap>
+          {alphabetizedIcons[char].map((iconName) => {
+            let Icon = AllIcons[iconName].default;
+            return <Icon key={iconName} id={iconName} />;
+          })}
+        </Flex>
+      </div>
+    ))}
+  </Flex>
+);
+
+AllWorkflow.story = {
+  parameters: {
+    chromaticProvider: {
+      colorSchemes: ['light'],
+      locales: ['en-US'],
+      scales: ['medium', 'large'],
+      disableAnimations: true,
+    }
+  }
+};
 
 function renderIconSizes(Component, props) {
   let sizes = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
   return (
     <div>
-      {sizes.map(size => {
-        return <Component margin="15px" size={size} {...props} />
+      {sizes.map((size) => {
+        return <Component margin="15px" size={size} {...props} />;
       })}
     </div>
-  )
+  );
 }

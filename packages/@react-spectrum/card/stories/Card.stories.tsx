@@ -65,7 +65,7 @@ export const Default: CardStory = {
 };
 
 export const CardGrid: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridDecorator
@@ -111,7 +111,7 @@ let CardGridDecorator = (props) => {
 };
 
 export const CardWaterfall: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {layout: 'waterfall'},
   decorators: [(Story, context) => (
     <CardWaterfallDecorator
@@ -154,7 +154,7 @@ let CardWaterfallDecorator = (props) => {
 };
 
 export const CardFloat: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   decorators: [(Story, context) => (
     <CardFloatDecorator
       Story={Story}
@@ -191,7 +191,7 @@ let CardFloatDecorator = (props) => {
 };
 
 export const CardGridMessyText: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Default.args, layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridMessyTextDecorator
@@ -238,7 +238,7 @@ let CardGridMessyTextDecorator = (props) => {
 };
 
 export const CardWaterfallMessyText: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Default.args, layout: 'waterfall'},
   decorators: [(Story, context) => (
     <CardWaterfallMessyTextDecorator
@@ -281,7 +281,7 @@ let CardWaterfallMessyTextDecorator = (props) => {
 };
 
 export const CardGridNoPreview: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {...Default.args, layout: 'grid'},
   decorators: [(Story, context) => (
     <CardGridNoPreviewDecorator
@@ -327,7 +327,7 @@ let CardGridNoPreviewDecorator = (props) => {
 };
 
 export const CardWaterfallNoPreview: CardStory = {
-  render: (args, context) => <Card {...args} {...context} />,
+  render: (args, context) => <Card {...args} {...context} id={null} />,
   args: {layout: 'waterfall'},
   decorators: [(Story, context) => (
     <CardWaterfallNoPreviewDecorator
@@ -411,5 +411,5 @@ let SelectableCard = (props: SpectrumCardProps) => {
 
 export const Selected: CardStory = {
   args: {...Default.args},
-  render: (args) => <SelectableCard {...args} />
+  render: (args) => <SelectableCard {...args} id={null} />
 };

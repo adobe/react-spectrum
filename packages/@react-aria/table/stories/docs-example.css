@@ -54,14 +54,14 @@
   }
 
   .aria-table-resizer {
-    width: 6px;
+    width: 15px;
     background-color: grey;
     cursor: col-resize;
-    height: auto;
+    height: 30px;
     touch-action: none;
     flex: 0 0 auto;
     box-sizing: border-box;
-    border: 2px;
+    border: 5px;
     border-style: none solid;
     border-color: transparent;
     background-clip: content-box;

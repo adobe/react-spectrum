@@ -11,7 +11,7 @@
  */
 
 import {CancelablePromise, easeOut, tween} from './tween';
-import {Collection} from '@react-types/shared';
+import {Collection, Key} from '@react-types/shared';
 import {concatIterators, difference, isSetEqual} from './utils';
 import {
   InvalidationContext,
@@ -20,7 +20,6 @@ import {
   VirtualizerDelegate,
   VirtualizerOptions
 } from './types';
-import {Key} from 'react';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
@@ -185,7 +184,8 @@ export class Virtualizer<T extends object, V, W> {
     this._visibleRect = rect;
 
     if (shouldInvalidate) {
-      this.relayout({
+      // We are already in a layout effect when this method is called, so relayoutNow is appropriate.
+      this.relayoutNow({
         offsetChanged: !rect.pointEquals(current),
         sizeChanged: !rect.sizeEquals(current)
       });
@@ -460,10 +460,6 @@ export class Virtualizer<T extends object, V, W> {
     }
 
     this._invalidationContext = context;
-    this._relayoutRaf = requestAnimationFrame(() => {
-      this._relayoutRaf = null;
-      this.relayoutNow();
-    });
   }
 
   /**
@@ -814,6 +810,12 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   afterRender() {
+    if (this._transactionQueue.length > 0) {
+      this._processTransactionQueue();
+    } else if (this._invalidationContext) {
+      this.relayoutNow();
+    }
+
     if (this.shouldOverscan) {
       this._overscanManager.collectMetrics();
     }
@@ -1112,7 +1114,6 @@ export class Virtualizer<T extends object, V, W> {
     this._transactionQueue.push(this._nextTransaction);
     this._nextTransaction = null;
 
-    this._processTransactionQueue();
     return true;
   }
 

@@ -98,11 +98,15 @@ describe('ListBox', function () {
       expect(section).toHaveAttribute('aria-labelledby');
       let heading = document.getElementById(section.getAttribute('aria-labelledby'));
       expect(heading).toBeTruthy();
-      expect(heading).toHaveAttribute('aria-hidden', 'true');
-    }
+      expect(heading).toHaveAttribute('role', 'presentation');
 
-    let dividers = within(listbox).getAllByRole('separator');
-    expect(dividers.length).toBe(withSection.length - 1);
+      // Separator should render for sections after first section
+      if (section !== sections[0]) {
+        let divider = heading.previousElementSibling;
+        expect(divider).toHaveAttribute('role', 'presentation');
+        expect(divider).toHaveClass('spectrum-Menu-divider');
+      }
+    }
 
     let items = within(listbox).getAllByRole('option');
     expect(items.length).toBe(withSection.reduce((acc, curr) => (acc + curr.children.length), 0));
@@ -853,7 +857,7 @@ describe('ListBox', function () {
       fireEvent.scroll(listbox);
       act(() => jest.runAllTimers());
 
-      expect(onLoadMore).toHaveBeenCalledTimes(2);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
     it('should fire onLoadMore if there aren\'t enough items to fill the ListBox ', async function () {
@@ -880,9 +884,7 @@ describe('ListBox', function () {
       let listbox = getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
       expect(options.length).toBe(5);
-      // onLoadMore called twice from onVisibleRectChange due to ListBox sizeToFit
-      // onLoadMore called twice from useLayoutEffect in React < 18
-      expect(onLoadMore).toHaveBeenCalledTimes(parseInt(React.version, 10) >= 18 ? 3 : 4);
+      expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -943,6 +945,100 @@ describe('ListBox', function () {
       expect(document.activeElement).toBe(options[0]);
       expect(options[0]).toHaveAttribute('aria-posinset', '1');
       expect(options[0]).toHaveAttribute('aria-setsize', '3');
+    });
+  });
+
+  describe('links', function () {
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = (item) => {
+        if (type === 'mouse') {
+          triggerPress(item);
+        } else {
+          fireEvent.keyDown(item, {key: 'Enter'});
+          fireEvent.keyUp(item, {key: 'Enter'});
+        }
+      };
+
+      it('should support links with selectionMode="none"', function () {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <ListBox aria-label="listbox">
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListBox>
+          </Provider>
+        );
+
+        let items = getAllByRole('option');
+        for (let item of items) {
+          expect(item.tagName).toBe('A');
+          expect(item).toHaveAttribute('href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      });
+
+      it.each(['single', 'multiple'])('should support links with selectionMode="%s"', function (selectionMode) {
+        let {getAllByRole} = render(
+          <Provider theme={theme}>
+            <ListBox aria-label="listbox" selectionMode={selectionMode}>
+              <Item href="https://google.com">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListBox>
+          </Provider>
+        );
+
+        let items = getAllByRole('option');
+        for (let item of items) {
+          expect(item.tagName).toBe('A');
+          expect(item).toHaveAttribute('href');
+        }
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[0]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+        expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
+
+        onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        trigger(items[1]);
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://adobe.com/');
+        expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
+      });
+
+      it('works with RouterProvider', async () => {
+        let navigate = jest.fn();
+        let {getAllByRole} = render(
+          <Provider theme={theme} router={{navigate}}>
+            <ListBox aria-label="listbox">
+              <Item href="/one">One</Item>
+              <Item href="https://adobe.com">Two</Item>
+            </ListBox>
+          </Provider>
+        );
+
+        let items = getAllByRole('option');
+        trigger(items[0]);
+        expect(navigate).toHaveBeenCalledWith('/one');
+
+        navigate.mockReset();
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+
+        trigger(items[1]);
+        expect(navigate).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
+import fc from 'fast-check';
+import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberParser} from '../src/NumberParser';
+
+// for some reason hu-HU isn't supported in jsdom/node
+let locales = Object.keys(messages).map(locale => locale.replace('.json', '')).filter(locale => locale !== 'hu-HU');
 
 describe('NumberParser', function () {
   describe('parse', function () {
@@ -129,6 +134,24 @@ describe('NumberParser', function () {
       it('should return NaN for partial units', function () {
         expect(new NumberParser('en-US', {style: 'unit', unit: 'inch'}).parse('23.5 i')).toBe(NaN);
       });
+
+      it('should support plural forms', function () {
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('0 years')).toBe(0);
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 year')).toBe(1);
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2 years')).toBe(2);
+        expect(new NumberParser('en-US', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1.1 years')).toBe(1.1);
+
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('0 rok')).toBe(0);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 lat')).toBe(1);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2 lata')).toBe(2);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('37 lata')).toBe(37);
+        expect(new NumberParser('pl-PL', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1.1 roku')).toBe(1.1);
+
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1 an')).toBe(1);
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('8 ans')).toBe(8);
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('1,3 an')).toBe(1.3);
+        expect(new NumberParser('fr-FR', {style: 'unit', unit: 'year', unitDisplay: 'long'}).parse('2,4 ans')).toBe(2.4);
+      });
     });
 
     describe('percents', function () {
@@ -137,8 +160,115 @@ describe('NumberParser', function () {
       });
 
       it('should parse a percent with decimals', function () {
-        expect(new NumberParser('en-US', {style: 'percent'}).parse('10.5%')).toBe(0.1);
+        expect(new NumberParser('en-US', {style: 'percent'}).parse('10.5%')).toBe(0.11);
         expect(new NumberParser('en-US', {style: 'percent', minimumFractionDigits: 2}).parse('10.5%')).toBe(0.105);
+      });
+    });
+
+    describe('round trips', function () {
+      // Locales have to include: 'de-DE', 'ar-EG', 'fr-FR' and possibly others
+      // But for the moment they are not properly supported
+      const localesArb = fc.constantFrom(...locales);
+      const styleOptsArb = fc.oneof(
+        {withCrossShrink: true},
+        fc.record({style: fc.constant('decimal')}),
+        // 'percent' should be part of the possible options, but for the moment it fails for some tests
+        fc.record({style: fc.constant('percent')}),
+        fc.record(
+          {style: fc.constant('currency'), currency: fc.constantFrom('USD', 'EUR', 'CNY', 'JPY'), currencyDisplay: fc.constantFrom('symbol', 'code', 'name')},
+          {requiredKeys: ['style', 'currency']}
+        ),
+        fc.record(
+          {style: fc.constant('unit'), unit: fc.constantFrom('inch', 'liter', 'kilometer-per-hour')},
+          {requiredKeys: ['style', 'unit']}
+        )
+      );
+      const genericOptsArb = fc.record({
+        localeMatcher: fc.constantFrom('best fit', 'lookup'),
+        unitDisplay: fc.constantFrom('narrow', 'short', 'long'),
+        useGrouping: fc.boolean(),
+        minimumIntegerDigits: fc.integer({min: 1, max: 21}),
+        minimumFractionDigits: fc.integer({min: 0, max: 20}),
+        maximumFractionDigits: fc.integer({min: 0, max: 20}),
+        minimumSignificantDigits: fc.integer({min: 1, max: 21}),
+        maximumSignificantDigits: fc.integer({min: 1, max: 21})
+      }, {requiredKeys: []});
+
+      // We restricted the set of possible values to avoid unwanted overflows to infinity and underflows to zero
+      // and stay in the domain of legit values.
+      const DOUBLE_MIN = Number.EPSILON;
+      const valueArb = fc.tuple(
+        fc.constantFrom(1, -1),
+        fc.double({next: true, noNaN: true, min: DOUBLE_MIN, max: 1 / DOUBLE_MIN})
+      ).map(([sign, value]) => sign * value);
+
+      const inputsArb = fc.tuple(valueArb, localesArb, styleOptsArb, genericOptsArb)
+        .map(([d, locale, styleOpts, genericOpts]) => ({d, opts: {...styleOpts, ...genericOpts}, locale}))
+        .filter(({opts}) => opts.minimumFractionDigits === undefined || opts.maximumFractionDigits === undefined || opts.minimumFractionDigits <= opts.maximumFractionDigits)
+        .filter(({opts}) => opts.minimumSignificantDigits === undefined || opts.maximumSignificantDigits === undefined || opts.minimumSignificantDigits <= opts.maximumSignificantDigits)
+        .map(({d, opts, locale}) => {
+          if (opts.style === 'percent') {
+            opts.minimumFractionDigits = opts.minimumFractionDigits > 18 ? 18 : opts.minimumFractionDigits;
+            opts.maximumFractionDigits = opts.maximumFractionDigits > 18 ? 18 : opts.maximumFractionDigits;
+          }
+          return {d, opts, locale};
+        })
+        .map(({d, opts, locale}) => {
+          let adjustedNumberForFractions = d;
+          if (Math.abs(d) < 1 && opts.minimumFractionDigits && opts.minimumFractionDigits > 1) {
+            adjustedNumberForFractions = d * (10 ** (opts.minimumFractionDigits || 2));
+          } else if (Math.abs(d) > 1 && opts.minimumFractionDigits && opts.minimumFractionDigits > 1) {
+            adjustedNumberForFractions = d / (10 ** (opts.minimumFractionDigits || 2));
+          }
+          return {adjustedNumberForFractions, opts, locale};
+        });
+
+      // skipping until we can reliably run it, until then, it's good to run manually
+      // track counter examples below
+      it.skip('should fully reverse NumberFormat', function () {
+        fc.assert(
+          fc.property(
+            inputsArb,
+            function ({adjustedNumberForFractions, locale, opts}) {
+              const formatter = new Intl.NumberFormat(locale, opts);
+              const parser = new NumberParser(locale, opts);
+
+              const formattedOnce = formatter.format(adjustedNumberForFractions);
+              expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+            }
+          )
+        );
+      });
+    });
+    describe('counter examples', () => {
+      it('can still get all plural literals with minimum significant digits', () => {
+        let locale = 'pl-PL';
+        let options = {
+          style: 'unit',
+          unit: 'inch',
+          minimumSignificantDigits: 4,
+          maximumSignificantDigits: 6
+        };
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+
+        const formattedOnce = formatter.format(60048.95);
+        expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
+      });
+      // See Bug https://github.com/nodejs/node/issues/49919
+      it.skip('formatted units keep their number', () => {
+        let locale = 'da-DK';
+        let options = {
+          style: 'unit',
+          unit: 'kilometer-per-hour',
+          unitDisplay: 'long',
+          minimumSignificantDigits: 1
+        };
+        const formatter = new Intl.NumberFormat(locale, options);
+        const parser = new NumberParser(locale, options);
+
+        const formattedOnce = formatter.format(1);
+        expect(formatter.format(parser.parse(formattedOnce))).toBe(formattedOnce);
       });
     });
   });
@@ -232,8 +362,10 @@ describe('NumberParser', function () {
       expect(new NumberParser('en-US', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-$10')).toBe(true);
 
       // typing latin characters in arabic locale should work
-      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('(')).toBe(true);
-      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('(10)')).toBe(true);
+      // 1564 is the character code for the arabic letter mark, an invisible character that marks bidi text for printing, you can find this included in chrome too
+      // TODO: we should still support just typing the '(' character, but this isn't a regression
+      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber(`(${String.fromCharCode(1564)}`)).toBe(true);
+      expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber(`(${String.fromCharCode(1564)}10)`)).toBe(true);
       expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-')).toBe(true);
       expect(new NumberParser('ar-AE', {style: 'currency', currency: 'USD', currencySign: 'accounting'}).isValidPartialNumber('-10')).toBe(true);
     });

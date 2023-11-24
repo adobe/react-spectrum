@@ -16,12 +16,11 @@ import React, {useContext} from 'react';
 interface RadioGroupContext {
   isEmphasized?: boolean,
   name?: string,
-  validationState?: 'valid' | 'invalid',
   state: RadioGroupState
 }
 
 export const RadioContext = React.createContext<RadioGroupContext | null>(null);
 
 export function useRadioProvider(): RadioGroupContext {
-  return useContext(RadioContext);
+  return useContext(RadioContext) || {} as RadioGroupContext;
 }

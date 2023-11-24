@@ -23,7 +23,7 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Image} from '@react-spectrum/image';
 import Info from '@spectrum-icons/workflow/Info';
 import {Item, ListView} from '../';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 
 let states = [
@@ -89,7 +89,7 @@ const renderActions = (
   </>
 );
 
-const Template = (): Story => ({combos, ...args}) => (
+const Template = ({combos, ...args}) => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combos.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -140,23 +140,31 @@ function renderEmptyState() {
   );
 }
 
-const TemplateEmptyState = (): Story => () => (
+const TemplateEmptyState = () => (
   <ListView width="size-3400" height="size-6000" renderEmptyState={renderEmptyState}>
     {[]}
   </ListView>
 );
 
-export const Default = Template().bind({});
-Default.storyName = 'all visual option combos 1 of 3';
-Default.args = {combos: combinations.slice(0, chunkSize)};
+export const Default = {
+  render: Template,
+  name: 'all visual option combos 1 of 3',
+  args: {combos: combinations.slice(0, chunkSize)}
+};
 
-export const ComboPt2 = Template().bind({});
-ComboPt2.args = {combos: combinations.slice(chunkSize, chunkSize * 2)};
-ComboPt2.storyName = 'all visual option combos 2 of 3';
+export const ComboPt2 = {
+  render: Template,
+  args: {combos: combinations.slice(chunkSize, chunkSize * 2)},
+  name: 'all visual option combos 2 of 3'
+};
 
-export const ComboPt3 = Template().bind({});
-ComboPt3.args = {combos: combinations.slice(chunkSize * 2, chunkSize * 3)};
-ComboPt3.storyName = 'all visual option combos 3 of 3';
+export const ComboPt3 = {
+  render: Template,
+  args: {combos: combinations.slice(chunkSize * 2, chunkSize * 3)},
+  name: 'all visual option combos 3 of 3'
+};
 
-export const Empty = TemplateEmptyState().bind({});
-Empty.storyName = 'empty state';
+export const Empty = {
+  render: TemplateEmptyState,
+  name: 'empty state'
+};

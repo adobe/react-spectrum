@@ -2,6 +2,6 @@
   "actions": "Radnje",
   "actionsAvailable": "Dostupne radnje.",
   "clearSelection": "Poništi odabir",
-  "selected": "{count, plural, =0 {Nijedna nije odabrana} other {# je odabrano}}",
+  "selected": "Odabrano: { count }",
   "selectedAll": "Sve je odabrano"
 }
