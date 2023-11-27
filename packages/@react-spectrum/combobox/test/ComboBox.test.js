@@ -1041,14 +1041,22 @@ describe('ComboBox', function () {
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
-    it('should close menu on scroll', async () => {
+    it('should close menu on scroll', function () {
       let {getByRole} = renderComboBox();
-  
+
       let button = getByRole('button');
-      userEvent.click(button);
+      triggerPress(button);
+      act(() => {
+        jest.runAllTimers();
+      });
+
       let listbox = getByRole('listbox');
       expect(listbox).toBeInTheDocument();
       fireEvent.scroll(document.body);
+      act(() => {
+        jest.runAllTimers();
+      });
+
       expect(listbox).not.toBeInTheDocument();
     });
 

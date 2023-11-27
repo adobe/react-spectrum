@@ -28,7 +28,7 @@ import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
 import {Key} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
-import React, {useRef, useState, useEffect} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
 import {useFilter} from '@react-aria/i18n';
 
@@ -997,20 +997,18 @@ let WithinScrollableContainerComboBox = (props) => {
     <div
       ref={element}
       style={{
-        width: "100%",
-        height: "100vh",
-        overflowY: "auto",
-        position: "relative",
-      }}
-    >
+        width: '100%',
+        height: '100vh',
+        overflowY: 'auto',
+        position: 'relative'
+      }}>
       <div
         style={{
-          paddingTop: "50vh",
-          height: "150vh",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
+          paddingTop: '50vh',
+          height: '150vh',
+          display: 'flex',
+          justifyContent: 'center'
+        }}>
         <ComboBox container={root} label="Combobox" {...props}>
           <Item key="1">Item #1</Item>
           <Item key="2">Item #2</Item>
