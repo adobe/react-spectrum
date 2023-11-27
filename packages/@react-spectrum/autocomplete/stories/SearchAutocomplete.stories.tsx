@@ -160,11 +160,24 @@ export default {
       options: ['focus', 'manual']
     },
     direction: {
-      control: 'select',
+      control: 'radio',
       options: ['top', 'bottom']
     },
+    align: {
+      control: 'radio',
+      options: ['start', 'end']
+    },
     width: {
-      control: 'text'
+      control: {
+        type: 'radio',
+        options: [null, '100px', '480px', 'size-4600']
+      }
+    },
+    menuWidth: {
+      control: {
+        type: 'radio',
+        options: [null, '100px', '480px', 'size-4600']
+      }
     }
   }
 } as ComponentMeta<typeof SearchAutocomplete>;

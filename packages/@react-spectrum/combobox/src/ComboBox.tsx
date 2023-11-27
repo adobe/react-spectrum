@@ -14,6 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
   classNames,
+  dimensionValue,
   useFocusableRef,
   useIsMobileDevice,
   useResizeObserver,
@@ -73,10 +74,12 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
+    align = 'end',
     isQuiet,
     loadingState,
     onLoadMore,
     allowsCustomValue,
+    menuWidth: customMenuWidth,
     name,
     formValue = 'text'
   } = props;
@@ -92,6 +95,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let unwrappedButtonRef = useUnwrapDOMRef(buttonRef);
   let listBoxRef = useRef();
   let inputRef = useRef<HTMLInputElement>();
+  // serve as the new popover `triggerRef` instead of `unwrappedButtonRef` before for better positioning.
+  let inputGroupRef = useRef<HTMLDivElement>();
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -137,8 +142,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   useLayoutEffect(onResize, [scale, onResize]);
 
+  let width = isQuiet ? null : menuWidth;
   let style = {
-    width: isQuiet ? null : menuWidth,
+    width: customMenuWidth ? dimensionValue(customMenuWidth) : width,
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
@@ -161,7 +167,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           inputRef={inputRef}
           triggerProps={buttonProps}
           triggerRef={buttonRef}
-          validationState={props.validationState || (isInvalid ? 'invalid' : null)} />
+          validationState={props.validationState || (isInvalid ? 'invalid' : null)}
+          ref={inputGroupRef} />
       </Field>
       {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
       <Popover
@@ -169,9 +176,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         UNSAFE_style={style}
         UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
-        triggerRef={unwrappedButtonRef}
+        triggerRef={inputGroupRef}
         scrollRef={listBoxRef}
-        placement={`${direction} end`}
+        placement={`${direction} ${align}`}
         hideArrow
         isNonModal
         shouldFlip={shouldFlip}>

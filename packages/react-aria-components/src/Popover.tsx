@@ -39,7 +39,12 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
   /**
    * Whether the popover is currently performing an exit animation.
    */
-  isExiting?: boolean
+  isExiting?: boolean,
+  /**
+   * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: Element
 }
 
 export interface PopoverRenderProps {
@@ -114,10 +119,11 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
   state: OverlayTriggerState,
   isEntering?: boolean,
   isExiting: boolean,
+  UNSTABLE_portalContainer?: Element,
   trigger?: string
 }
 
-function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
+function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: PopoverInnerProps) {
   let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
     ...props,
     offset: props.offset ?? 8
@@ -139,7 +145,7 @@ function PopoverInner({state, isExiting, ...props}: PopoverInnerProps) {
   let style = {...renderProps.style, ...popoverProps.style};
 
   return (
-    <Overlay isExiting={isExiting}>
+    <Overlay isExiting={isExiting} portalContainer={UNSTABLE_portalContainer}>
       {!props.isNonModal && state.isOpen && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
       <div
         {...mergeProps(filterDOMProps(props as any), popoverProps)}
