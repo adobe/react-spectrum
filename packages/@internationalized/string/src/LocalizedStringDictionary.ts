@@ -16,6 +16,10 @@ export type LocalizedStrings<K extends string, T extends LocalizedString> = {
   [lang: string]: Record<K, T>
 };
 
+const localeSymbol = Symbol.for('react-aria.i18n.locale');
+const stringsSymbol = Symbol.for('react-aria.i18n.strings');
+let cachedGlobalStrings: {[packageName: string]: LocalizedStringDictionary<any, any>} | null | undefined = undefined;
+
 /**
  * Stores a mapping of localized strings. Can be used to find the
  * closest available string for a given locale.
@@ -50,6 +54,23 @@ export class LocalizedStringDictionary<K extends string = string, T extends Loca
     }
 
     return strings;
+  }
+
+  static getGlobalDictionaryForPackage<K extends string = string, T extends LocalizedString = string>(packageName: string): LocalizedStringDictionary<K, T> {
+    if (typeof window === 'undefined') {
+      return undefined;
+    }
+
+    let locale = window[localeSymbol];
+    if (cachedGlobalStrings === undefined) {
+      let globalStrings = window[stringsSymbol];
+      cachedGlobalStrings = {};
+      for (let pkg in globalStrings) {
+        cachedGlobalStrings[pkg] = new LocalizedStringDictionary({[locale]: globalStrings[pkg]}, locale);
+      }
+    }
+
+    return cachedGlobalStrings?.[packageName];
   }
 }
 

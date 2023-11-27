@@ -15,7 +15,6 @@ import {useLocale} from './context';
 import {useMemo} from 'react';
 
 const localeSymbol = Symbol.for('react-aria.i18n.locale');
-const stringsSymbol = Symbol.for('react-aria.i18n.strings');
 
 const cache = new WeakMap();
 function getCachedDictionary<K extends string, T extends LocalizedString>(strings: LocalizedStrings<K, T>): LocalizedStringDictionary<K, T> {
@@ -32,8 +31,7 @@ function getCachedDictionary<K extends string, T extends LocalizedString>(string
  * Returns a cached LocalizedStringDictionary for the given strings.
  */
 export function useLocalizedStringDicationary<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>, packageName?: string): LocalizedStringDictionary<K, T> {
-  strings = getGlobalStrings(packageName) || strings;
-  return getCachedDictionary(strings);
+  return (packageName && LocalizedStringDictionary.getGlobalDictionaryForPackage(packageName)) || getCachedDictionary(strings);
 }
 
 /**
@@ -52,23 +50,4 @@ export function useLocalizedStringFormatter<K extends string = string, T extends
   }
   let dictionary = useLocalizedStringDicationary(strings, packageName);
   return useMemo(() => new LocalizedStringFormatter(locale, dictionary), [locale, dictionary]);
-}
-
-let cachedGlobalStrings: LocalizedStrings<any, any> | null | undefined = undefined;
-
-function getGlobalStrings(packageName: string) {
-  if (typeof window === 'undefined') {
-    return undefined;
-  }
-
-  let locale = window[localeSymbol];
-  if (cachedGlobalStrings === undefined) {
-    let globalStrings = window[stringsSymbol];
-    cachedGlobalStrings = {};
-    for (let pkg in globalStrings) {
-      cachedGlobalStrings[pkg] = {[locale]: globalStrings[pkg]};
-    }
-  }
-
-  return cachedGlobalStrings?.[packageName];
 }

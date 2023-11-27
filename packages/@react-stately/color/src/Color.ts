@@ -17,18 +17,7 @@ import intlMessages from '../intl/*.json';
 import {LocalizedStringDictionary} from '@internationalized/string';
 import {NumberFormatter} from '@internationalized/number';
 
-let dictionary: LocalizedStringDictionary | null = null;
-function getDictionary() {
-  if (!dictionary) {
-    let strings = intlMessages;
-    if (typeof window !== 'undefined' && window[Symbol.for('react-aria.i18n.strings')]?.['@react-stately/color']) {
-      let locale = window[Symbol.for('react-aria.i18n.locale')];
-      strings = {[locale]: window[Symbol.for('react-aria.i18n.strings')]['@react-stately/color']};
-    }
-    dictionary = new LocalizedStringDictionary(strings);
-  }
-  return dictionary;
-}
+let dictionary = new LocalizedStringDictionary(intlMessages);
 
 /** Parses a color from a string value. Throws an error if the string could not be parsed. */
 export function parseColor(value: string): IColor {
@@ -78,7 +67,8 @@ abstract class Color implements IColor {
   }
 
   getChannelName(channel: ColorChannel, locale: string) {
-    return getDictionary().getStringForLocale(channel, locale);
+    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/color') || dictionary;
+    return strings.getStringForLocale(channel, locale);
   }
 
   abstract getColorSpace(): ColorFormat
