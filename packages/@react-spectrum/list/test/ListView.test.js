@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
@@ -1013,16 +1014,16 @@ describe('ListView', function () {
 
     describe('selectionStyle highlight', function () {
       installPointerEvent();
-      it('should toggle items in selection highlight with ctrl-click on Mac', async function () {
+      it('should toggle items in selection highlight with meta-click on Mac', async function () {
         let uaMock = jest.spyOn(navigator, 'platform', 'get').mockImplementation(() => 'Mac');
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
 
         let rows = tree.getAllByRole('row');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        await user.keyboard('[ControlLeft>]');
+        await user.keyboard('[MetaLeft>]');
         await user.click(getRow(tree, 'Bar'));
-        await user.keyboard('[/ControlLeft]');
+        await user.keyboard('[/MetaLeft]');
 
         checkSelection(onSelectionChange, ['bar']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1030,16 +1031,24 @@ describe('ListView', function () {
         expect(announce).toHaveBeenCalledTimes(1);
 
         onSelectionChange.mockClear();
-        await user.keyboard('[ControlLeft>]');
-        fireEvent.pointerDown(rows[2], {pointerType: 'mouse', ctrlKey: true});
-        fireEvent.pointerUp(rows[2], {pointerType: 'mouse', ctrlKey: true});
-        fireEvent.click(rows[2], {ctrlKey: true});
-        await user.keyboard('[/ControlLeft]');
+        await user.keyboard('[MetaLeft>]');
+        await user.click(getRow(tree, 'Baz'));
+        await user.keyboard('[/MetaLeft]');
+        checkSelection(onSelectionChange, ['bar', 'baz']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+        expect(announce).toHaveBeenLastCalledWith('Baz selected. 2 items selected.');
+        expect(announce).toHaveBeenCalledTimes(2);
+
+        onSelectionChange.mockClear();
+        await user.keyboard('[MetaLeft>]');
+        await user.click(getRow(tree, 'Bar'));
+        await user.keyboard('[/MetaLeft]');
         checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
-        expect(announce).toHaveBeenLastCalledWith('Baz selected.');
-        expect(announce).toHaveBeenCalledTimes(2);
+        expect(announce).toHaveBeenLastCalledWith('Baz selected. 1 item selected.');
+        expect(announce).toHaveBeenCalledTimes(3);
 
         uaMock.mockRestore();
       });
@@ -1075,18 +1084,16 @@ describe('ListView', function () {
         uaMock.mockRestore();
       });
 
-      it('should toggle items in selection highlight with meta-click on Windows', async function () {
+      it('should toggle items in selection highlight with ctrl-click on Windows', async function () {
         let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Windows');
         let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple', selectionStyle: 'highlight'});
 
         let rows = tree.getAllByRole('row');
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'false');
-        await user.keyboard('[MetaLeft>]');
-        fireEvent.pointerDown(getRow(tree, 'Bar'), {pointerType: 'mouse', metaKey: true});
-        fireEvent.pointerUp(getRow(tree, 'Bar'), {pointerType: 'mouse', metaKey: true});
-        fireEvent.click(getRow(tree, 'Bar'), {metaKey: true});
-        await user.keyboard('[/MetaLeft]');
+        await user.keyboard('[CtrlLeft>]');
+        await user.click(getRow(tree, 'Bar'));
+        await user.keyboard('[/CtrlLeft]');
 
         checkSelection(onSelectionChange, ['bar']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'true');
@@ -1094,16 +1101,24 @@ describe('ListView', function () {
         expect(announce).toHaveBeenCalledTimes(1);
 
         onSelectionChange.mockClear();
-        await user.keyboard('[MetaLeft>]');
-        fireEvent.pointerDown(getRow(tree, 'Baz'), {pointerType: 'mouse', metaKey: true});
-        fireEvent.pointerUp(getRow(tree, 'Baz'), {pointerType: 'mouse', metaKey: true});
-        fireEvent.click(getRow(tree, 'Baz'), {metaKey: true});
-        await user.keyboard('[/MetaLeft]');
+        await user.keyboard('[CtrlLeft>]');
+        await user.click(getRow(tree, 'Baz'));
+        await user.keyboard('[/CtrlLeft]');
+        checkSelection(onSelectionChange, ['bar', 'baz']);
+        expect(rows[1]).toHaveAttribute('aria-selected', 'true');
+        expect(rows[2]).toHaveAttribute('aria-selected', 'true');
+        expect(announce).toHaveBeenLastCalledWith('Baz selected. 2 items selected.');
+        expect(announce).toHaveBeenCalledTimes(2);
+
+        onSelectionChange.mockClear();
+        await user.keyboard('[CtrlLeft>]');
+        await user.click(getRow(tree, 'Bar'));
+        await user.keyboard('[/CtrlLeft]');
         checkSelection(onSelectionChange, ['baz']);
         expect(rows[1]).toHaveAttribute('aria-selected', 'false');
         expect(rows[2]).toHaveAttribute('aria-selected', 'true');
-        expect(announce).toHaveBeenLastCalledWith('Baz selected.');
-        expect(announce).toHaveBeenCalledTimes(2);
+        expect(announce).toHaveBeenLastCalledWith('Baz selected. 1 item selected.');
+        expect(announce).toHaveBeenCalledTimes(3);
 
         uaMock.mockRestore();
       });
@@ -1184,14 +1199,12 @@ describe('ListView', function () {
         expect(announce).toHaveBeenLastCalledWith('Bar selected.');
         expect(announce).toHaveBeenCalledTimes(1);
 
-        fireEvent.keyDown(row, {key: 'Space'});
-        fireEvent.keyUp(row, {key: 'Space'});
+        await user.keyboard('{Space}');
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledTimes(0);
         expect(announce).toHaveBeenCalledTimes(1);
 
-        fireEvent.keyDown(row, {key: 'Enter'});
-        fireEvent.keyUp(row, {key: 'Enter'});
+        await user.keyboard('{Enter}');
         expect(onSelectionChange).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledTimes(1);
         expect(onAction).toHaveBeenCalledWith('bar');
@@ -1413,6 +1426,9 @@ describe('ListView', function () {
       act(() => {
         fireEvent(window, new Event('resize'));
       });
+      act(() => {
+        jest.runAllTimers();
+      });
       await user.tab();
       expect(grid.scrollTop).toBe(0);
 
@@ -1461,6 +1477,9 @@ describe('ListView', function () {
       // fire resize so the new clientHeight is requested
       act(() => {
         fireEvent(window, new Event('resize'));
+      });
+      act(() => {
+        jest.runAllTimers();
       });
       expect(grid.scrollTop).toBe(0);
 

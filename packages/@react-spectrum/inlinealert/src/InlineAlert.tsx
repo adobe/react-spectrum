@@ -14,11 +14,12 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
+import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {ReactNode} from 'react';
+import React, {ReactNode, useEffect, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/inlinealert/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -33,7 +34,11 @@ export interface SpectrumInlineAlertProps extends DOMProps, StyleProps {
   /**
    * The contents of the Inline Alert.
    */
-  children: ReactNode
+  children: ReactNode,
+  /**
+   * Whether to automatically focus the Inline Alert when it first renders.
+   */
+  autoFocus?: boolean
 }
 
 let ICONS = {
@@ -48,6 +53,7 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
   let {
     children,
     variant = 'neutral',
+    autoFocus,
     ...otherProps
   } = props;
 
@@ -67,25 +73,37 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
     iconAlt = stringFormatter.format(variant);
   }
 
+  let autoFocusRef = useRef(props.autoFocus);
+  useEffect(() => {
+    if (autoFocusRef.current && domRef.current) {
+      domRef.current.focus();
+    }
+    autoFocusRef.current = false;
+  }, [domRef]);
+
   return (
-    <div
-      {...filterDOMProps(props)}
-      {...styleProps}
-      ref={domRef}
-      className={classNames(
-        styles,
-        'spectrum-InLineAlert',
-        `spectrum-InLineAlert--${variant}`,
-        styleProps.className
-      )}
-      role="alert">
-      <Grid UNSAFE_className={styles['spectrum-InLineAlert-grid']}>
-        <SlotProvider slots={slots}>
-          {Icon && <Icon UNSAFE_className={styles['spectrum-InLineAlert-icon']} aria-label={iconAlt} />}
-          {children}
-        </SlotProvider>
-      </Grid>
-    </div>
+    <FocusRing focusRingClass={styles['focus-ring']}>
+      <div
+        {...filterDOMProps(props)}
+        {...styleProps}
+        ref={domRef}
+        tabIndex={autoFocus ? -1 : undefined}
+        autoFocus={autoFocus}
+        className={classNames(
+          styles,
+          'spectrum-InLineAlert',
+          `spectrum-InLineAlert--${variant}`,
+          styleProps.className
+        )}
+        role="alert">
+        <Grid UNSAFE_className={styles['spectrum-InLineAlert-grid']}>
+          <SlotProvider slots={slots}>
+            {Icon && <Icon UNSAFE_className={styles['spectrum-InLineAlert-icon']} aria-label={iconAlt} />}
+            {children}
+          </SlotProvider>
+        </Grid>
+      </div>
+    </FocusRing>
   );
 }
 

@@ -20,6 +20,7 @@ clean_all:
 	$(MAKE) clean
 	$(MAKE) clean_node_modules
 	$(MAKE) clean_dist
+	$(MAKE) clean_parcel
 
 clean_node_modules:
 	rm -rf node_modules
@@ -29,6 +30,9 @@ clean_node_modules:
 clean_dist:
 	rm -rf packages/*/*/dist
 	rm -rf packages/{react-aria,react-aria-components,react-stately}/dist
+
+clean_parcel:
+	rm -rf .parcel-cache
 
 packages/@spectrum-icons/workflow/src: packages/@spectrum-icons/workflow/package.json
 	yarn workspace @spectrum-icons/workflow make-icons
@@ -106,9 +110,16 @@ website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
 
 website-production:
-	node scripts/buildWebsite.js
+	node scripts/buildWebsite.js $$PUBLIC_URL
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
+	$(MAKE) starter
+	cd starters/docs && zip -r react-aria-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	mv starters/docs/react-aria-starter.zip dist/production/docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
 
 check-examples:
 	node scripts/extractExamples.mjs
 	yarn tsc --project dist/docs-examples/tsconfig.json
+
+starter:
+	node scripts/extractStarter.mjs
+	cd starters/docs && yarn && yarn tsc

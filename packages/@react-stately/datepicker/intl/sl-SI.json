@@ -1,0 +1,6 @@
+{
+  "rangeOverflow": "Vrednost mora biti {maxValue} ali starejša.",
+  "rangeReversed": "Začetni datum mora biti pred končnim datumom.",
+  "rangeUnderflow": "Vrednost mora biti {minValue} ali novejša.",
+  "unavailableDate": "Izbrani datum ni na voljo."
+}

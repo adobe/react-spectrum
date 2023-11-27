@@ -81,7 +81,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   } else {
     overlay = (
       <Popover
-        UNSAFE_style={{clipPath: 'unset', overflow: 'visible'}}
+        UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
         state={state}
         triggerRef={menuTriggerRef}
         scrollRef={menuRef}

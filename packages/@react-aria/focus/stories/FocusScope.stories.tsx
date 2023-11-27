@@ -43,7 +43,7 @@ function MaybePortal({children, isPortaled}: {children: ReactNode, isPortaled: b
 
   return ReactDOM.createPortal(
     <>{children}</>,
-    document.getElementById(dialogsRoot)
+    document.getElementById(dialogsRoot)!
   );
 }
 
@@ -135,7 +135,7 @@ function FocusableFirstInScopeExample() {
       </>
     );
   }
-  const contents = [];
+  const contents: React.JSX.Element[] = [];
   for (let i = 0; i < 3; i++) {
     contents.push(DialogContent(i));
   }

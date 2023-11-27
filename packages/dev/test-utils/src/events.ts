@@ -77,7 +77,7 @@ export function installPointerEvent() {
         this._init = init;
       }
       get pointerType() {
-        return this._init.pointerType;
+        return this._init.pointerType ?? 'mouse';
       }
       get pointerId() {
         return this._init.pointerId;

@@ -11,7 +11,7 @@
  */
 
 import {CancelablePromise, easeOut, tween} from './tween';
-import {Collection} from '@react-types/shared';
+import {Collection, Key} from '@react-types/shared';
 import {concatIterators, difference, isSetEqual} from './utils';
 import {
   InvalidationContext,
@@ -20,7 +20,6 @@ import {
   VirtualizerDelegate,
   VirtualizerOptions
 } from './types';
-import {Key} from 'react';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';

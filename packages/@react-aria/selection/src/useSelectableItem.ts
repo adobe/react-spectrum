@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key, LongPressEvent, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
-import {Key, RefObject, useEffect, useRef} from 'react';
 import {mergeProps, openLink, useRouter} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
+import {RefObject, useEffect, useRef} from 'react';
 
 export interface SelectableItemOptions {
   /**
@@ -340,7 +340,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Prevent default on link clicks so that we control exactly
   // when they open (to match selection behavior).
   let onClick = manager.isLink(key) ? e => {
-    if (!openLink.isOpening) {
+    if (!(openLink as any).isOpening) {
       e.preventDefault();
     }
   } : undefined;

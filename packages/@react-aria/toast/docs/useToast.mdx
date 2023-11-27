@@ -313,6 +313,7 @@ In the above examples, each `ToastProvider` has a separate queue. This setup is 
 
 ```tsx example export=true hidden
 import {ToastQueue, useToastQueue} from '@react-stately/toast';
+import {createPortal} from 'react-dom';
 
 // Create a global toast queue.
 ///- begin highlight -///
@@ -329,7 +330,7 @@ function GlobalToastRegion(props) {
 
   // Render toast region.
   return state.visibleToasts.length > 0
-    ? ReactDOM.createPortal(<ToastRegion {...props} state={state} />, document.body)
+    ? createPortal(<ToastRegion {...props} state={state} />, document.body)
     : null;
 }
 

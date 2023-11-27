@@ -16,7 +16,6 @@ import React from 'react';
 import {renderHook} from '@react-spectrum/test-utils';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useSearchAutocomplete} from '../';
-import {useSingleSelectListState} from '@react-stately/list';
 
 describe('useSearchAutocomplete', function () {
   let preventDefault = jest.fn();
@@ -28,7 +27,7 @@ describe('useSearchAutocomplete', function () {
   });
 
   let defaultProps = {items: [{id: 1, name: 'one'}], children: (props) => <Item>{props.name}</Item>};
-  let {result} = renderHook(() => useSingleSelectListState(defaultProps));
+  let {result} = renderHook(() => useComboBoxState(defaultProps));
   let mockLayout = new ListLayout({
     rowHeight: 40
   });
@@ -47,7 +46,7 @@ describe('useSearchAutocomplete', function () {
       layout: mockLayout
     };
 
-    let {result} = renderHook(() => useSearchAutocomplete(props, useSingleSelectListState(defaultProps)));
+    let {result} = renderHook(() => useSearchAutocomplete(props, useComboBoxState(defaultProps)));
     let {inputProps, listBoxProps, labelProps} = result.current;
 
     expect(labelProps.id).toBeTruthy();
@@ -69,10 +68,7 @@ describe('useSearchAutocomplete', function () {
       label: 'test label',
       popoverRef: React.createRef(),
       inputRef: {
-        current: {
-          contains: jest.fn(),
-          focus: jest.fn()
-        }
+        current: document.createElement('input')
       },
       listBoxRef: React.createRef(),
       layout: mockLayout

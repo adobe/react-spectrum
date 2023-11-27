@@ -14,6 +14,7 @@ import {AriaButtonProps} from '@react-types/button';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
   classNames,
+  dimensionValue,
   useFocusableRef,
   useIsMobileDevice,
   useResizeObserver,
@@ -47,11 +48,13 @@ import textfieldStyles from '@adobe/spectrum-css-temp/components/textfield/vars.
 import {useComboBox} from '@react-aria/combobox';
 import {useComboBoxState} from '@react-stately/combobox';
 import {useFilter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useFormProps} from '@react-spectrum/form';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function ComboBox<T extends object>(props: SpectrumComboBoxProps<T>, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
 
   if (props.placeholder) {
     console.warn('Placeholders are deprecated due to accessibility issues. Please use help text instead. See the docs for details: https://react-spectrum.adobe.com/react-spectrum/ComboBox.html#help-text');
@@ -71,10 +74,12 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
+    align = 'end',
     isQuiet,
     loadingState,
     onLoadMore,
     allowsCustomValue,
+    menuWidth: customMenuWidth,
     name,
     formValue = 'text'
   } = props;
@@ -90,6 +95,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   let unwrappedButtonRef = useUnwrapDOMRef(buttonRef);
   let listBoxRef = useRef();
   let inputRef = useRef<HTMLInputElement>();
+  // serve as the new popover `triggerRef` instead of `unwrappedButtonRef` before for better positioning.
+  let inputGroupRef = useRef<HTMLDivElement>();
   let domRef = useFocusableRef(ref, inputRef);
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -102,7 +109,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
   );
   let layout = useListBoxLayout(state, loadingState === 'loadingMore');
 
-  let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps} = useComboBox(
+  let {buttonProps, inputProps, listBoxProps, labelProps, descriptionProps, errorMessageProps, isInvalid, validationErrors, validationDetails} = useComboBox(
     {
       ...props,
       keyboardDelegate: layout,
@@ -135,8 +142,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
 
   useLayoutEffect(onResize, [scale, onResize]);
 
+  let width = isQuiet ? null : menuWidth;
   let style = {
-    width: isQuiet ? null : menuWidth,
+    width: customMenuWidth ? dimensionValue(customMenuWidth) : width,
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
@@ -146,6 +154,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         {...props}
         descriptionProps={descriptionProps}
         errorMessageProps={errorMessageProps}
+        isInvalid={isInvalid}
+        validationErrors={validationErrors}
+        validationDetails={validationDetails}
         labelProps={labelProps}
         ref={domRef}>
         <ComboBoxInput
@@ -155,7 +166,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
           inputProps={inputProps}
           inputRef={inputRef}
           triggerProps={buttonProps}
-          triggerRef={buttonRef} />
+          triggerRef={buttonRef}
+          validationState={props.validationState || (isInvalid ? 'invalid' : null)}
+          ref={inputGroupRef} />
       </Field>
       {name && formValue === 'key' && <input type="hidden" name={name} value={state.selectedKey} />}
       <Popover
@@ -163,9 +176,9 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         UNSAFE_style={style}
         UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
-        triggerRef={unwrappedButtonRef}
+        triggerRef={inputGroupRef}
         scrollRef={listBoxRef}
-        placement={`${direction} end`}
+        placement={`${direction} ${align}`}
         hideArrow
         isNonModal
         shouldFlip={shouldFlip}>

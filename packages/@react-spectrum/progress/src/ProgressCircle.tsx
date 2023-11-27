@@ -18,6 +18,7 @@ import {SpectrumProgressCircleProps} from '@react-types/progress';
 import styles from '@adobe/spectrum-css-temp/components/circleloader/vars.css';
 import {useProgressBar} from '@react-aria/progress';
 
+
 function ProgressCircle(props: SpectrumProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
   let {
     value = 0,

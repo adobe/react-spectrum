@@ -22,6 +22,7 @@ import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {TextFieldBase} from '@react-spectrum/textfield';
+import {useFormProps} from '@react-spectrum/form';
 import {useHover} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 import {useNumberField} from '@react-aria/numberfield';
@@ -29,6 +30,7 @@ import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
+  props = useFormProps(props);
   let provider = useProvider();
   let {
     isQuiet,
@@ -50,13 +52,17 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
     incrementButtonProps,
     decrementButtonProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
   } = useNumberField(props, state, inputRef);
   let isMobile = provider.scale === 'large';
   let showStepper = !hideStepper;
 
   let {isHovered, hoverProps} = useHover({isDisabled});
 
+  let validationState = props.validationState || (isInvalid ? 'invalid' : null);
   let className =
     classNames(
       stepperStyle,
@@ -65,7 +71,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         'spectrum-Stepper--isQuiet': isQuiet,
         'is-disabled': isDisabled,
         'spectrum-Stepper--readonly': isReadOnly,
-        'is-invalid': props.validationState === 'invalid' && !isDisabled,
+        'is-invalid': validationState === 'invalid' && !isDisabled,
         'spectrum-Stepper--showStepper': showStepper,
         'spectrum-Stepper--isMobile': isMobile,
         'is-hovered': isHovered,
@@ -79,6 +85,9 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
       {...props as Omit<SpectrumNumberFieldProps, 'onChange'>}
       descriptionProps={descriptionProps}
       errorMessageProps={errorMessageProps}
+      isInvalid={isInvalid}
+      validationErrors={validationErrors}
+      validationDetails={validationDetails}
       labelProps={labelProps}
       ref={domRef}
       wrapperClassName={classNames(
@@ -97,7 +106,8 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         decrementProps={decrementButtonProps}
         className={className}
         style={style}
-        state={state} />
+        state={state}
+        validationState={validationState} />
     </Field>
   );
 }

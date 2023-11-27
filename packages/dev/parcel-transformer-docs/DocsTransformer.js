@@ -113,7 +113,7 @@ module.exports = new Transformer({
       }
       if (path.isVariableDeclarator()) {
         if (!path.node.init) {
-          return;
+          return Object.assign(node, {type: 'any'});
         }
 
         let docs = getJSDocs(path.parentPath);
@@ -296,6 +296,12 @@ module.exports = new Transformer({
             }
           }
 
+          if (left.name === undefined) {
+            return Object.assign(node, {
+              type: 'identifier',
+              name: path.node.left.name + '.' + path.node.right.name
+            });
+          }
           return Object.assign(node, {
             type: 'identifier',
             name: left.name + '.' + path.node.right.name
@@ -607,7 +613,7 @@ module.exports = new Transformer({
 
       if (path.isTSModuleDeclaration()) {
         // TODO: decide how we want to display something from a Global namespace
-        return node;
+        return Object.assign(node, {type: 'any'});
       }
 
       if (path.isTSIndexedAccessType()) {
@@ -619,6 +625,7 @@ module.exports = new Transformer({
       }
 
       console.log('UNKNOWN TYPE', path.node.type);
+      return Object.assign(node, {type: 'any'});
     }
 
     function processParameter(p) {

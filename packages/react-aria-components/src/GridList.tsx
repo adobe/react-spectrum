@@ -9,14 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden, VisuallyHidden} from 'react-aria';
+import {AriaGridListProps, DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useGridList, useGridListItem, useGridListSelectionCheckbox, useHover, useVisuallyHidden} from 'react-aria';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
-import {CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
-import {ContextValue, defaultSlot, forwardRefType, Provider, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
+import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
-import {filterDOMProps, isIOS, isWebKit, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {Key, LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, ReactNode, RefObject, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
@@ -54,7 +55,7 @@ export interface GridListProps<T> extends Omit<AriaGridListProps<T>, 'children'>
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the GridList. */
   dragAndDropHooks?: DragAndDropHooks,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: () => ReactNode
+  renderEmptyState?: (props: GridListRenderProps) => ReactNode
 }
 
 
@@ -93,7 +94,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
     children: (item: Node<T>) => {
       switch (item.type) {
         case 'item':
-          return <GridListItem item={item} />;
+          return <GridListRow item={item} />;
         default:
           throw new Error('Unsupported node type in GridList: ' + item.type);
       }
@@ -118,7 +119,7 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   let dropState: DroppableCollectionState | undefined = undefined;
   let droppableCollection: DroppableCollectionResult | undefined = undefined;
   let isRootDropTarget = false;
-  let dragPreview: JSX.Element | null = null;
+  let dragPreview: React.JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {
@@ -156,55 +157,31 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
   }
 
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
+  let renderValues = {
+    isDropTarget: isRootDropTarget,
+    isEmpty: state.collection.size === 0,
+    isFocused,
+    isFocusVisible,
+    state
+  };
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
     defaultClassName: 'react-aria-GridList',
-    values: {
-      isDropTarget: isRootDropTarget,
-      isEmpty: state.collection.size === 0,
-      isFocused,
-      isFocusVisible,
-      state
-    }
+    values: renderValues
   });
 
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
-    // Ideally we'd use `display: contents` on the row and cell elements so that
-    // they don't affect the layout of the children. However, WebKit currently has
-    // a bug that makes grid elements with display: contents hidden to screen readers.
-    // https://bugs.webkit.org/show_bug.cgi?id=239479
-    let content = props.renderEmptyState();
-    if (isWebKit()) {
-      // For now, when in an empty state, swap the role to group in webkit.
-      emptyStatePropOverrides = {
-        role: 'group',
-        'aria-multiselectable': undefined
-      };
-
-      if (isIOS()) {
-        // iOS VoiceOver also doesn't announce the aria-label of group elements
-        // so try to add a visually hidden label element as well.
-        emptyState = (
-          <>
-            <VisuallyHidden>{gridProps['aria-label']}</VisuallyHidden>
-            {content}
-          </>
-        );
-      } else {
-        emptyState = content;
-      }
-    } else {
-      emptyState = (
-        <div role="row" style={{display: 'contents'}}>
-          <div role="gridcell" style={{display: 'contents'}}>
-            {content}
-          </div>
+    let content = props.renderEmptyState(renderValues);
+    emptyState = (
+      <div role="row" style={{display: 'contents'}}>
+        <div role="gridcell" style={{display: 'contents'}}>
+          {content}
         </div>
-      );
-    }
+      </div>
+    );
   }
 
   return (
@@ -242,7 +219,30 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
 const _GridList = /*#__PURE__*/ (forwardRef as forwardRefType)(GridList);
 export {_GridList as GridList};
 
-function GridListItem({item}) {
+export interface GridListItemRenderProps extends ItemRenderProps {}
+
+export interface GridListItemProps<T = object> extends RenderProps<GridListItemRenderProps>, LinkDOMProps {
+  /** The unique id of the item. */
+  id?: Key,
+  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  value?: T,
+  /** A string representation of the item's contents, used for features like typeahead. */
+  textValue?: string,
+  /** An accessibility label for this item. */
+  'aria-label'?: string
+}
+
+function GridListItem<T extends object>(props: GridListItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+  return useSSRCollectionNode('item', props, ref, props.children);
+}
+
+/**
+ * A GridListItem represents an individual item in a GridList.
+ */
+const _GridListItem = /*#__PURE__*/ (forwardRef as forwardRefType)(GridListItem);
+export {_GridListItem as GridListItem};
+
+function GridListRow({item}) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext);
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
@@ -279,13 +279,13 @@ function GridListItem({item}) {
     }, dropState, dropIndicatorRef);
   }
 
-  let props: ItemProps<unknown> = item.props;
+  let props: GridListItemProps<unknown> = item.props;
   let isDragging = dragState && dragState.isDragging(item.key);
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
     children: item.rendered,
-    defaultClassName: 'react-aria-Item',
+    defaultClassName: 'react-aria-GridListItem',
     values: {
       ...states,
       isHovered,
@@ -309,7 +309,7 @@ function GridListItem({item}) {
 
   useEffect(() => {
     if (!item.textValue) {
-      console.warn('A `textValue` prop is required for <Item> elements with non-plain text children in order to support accessibility features such as type to select.');
+      console.warn('A `textValue` prop is required for <GridListItem> elements with non-plain text children in order to support accessibility features such as type to select.');
     }
   }, [item.textValue]);
 
@@ -339,7 +339,7 @@ function GridListItem({item}) {
         data-dragging={isDragging || undefined}
         data-drop-target={dropIndicator?.isDropTarget || undefined}
         data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
-        <div {...gridCellProps}>
+        <div {...gridCellProps} style={{display: 'contents'}}>
           <Provider
             values={[
               [CheckboxContext, {

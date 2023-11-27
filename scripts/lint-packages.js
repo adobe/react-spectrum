@@ -49,7 +49,7 @@ softAssert.equal = function (val, val2, message) {
 // Checks if a dependency is actually being imported somewhere
 function isDepUsed(dep, src) {
   let depRegex = new RegExp(`import .* from '${dep}'`);
-  let files = glob.sync(src, {
+  let files = glob.sync(src + '/src', {
     ignore: ['**/node_modules/**', '**/dist/**']
   });
 
@@ -92,7 +92,7 @@ for (let pkg of packagePaths) {
     }
   }
 
-  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons')) {
+  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme')) {
     softAssert(json.main, `${pkg} did not have "main"`);
     softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
     softAssert(json.module, `${pkg} did not have "module"`);
@@ -140,7 +140,7 @@ for (let pkg of packagePaths) {
     softAssert(fs.existsSync(path.join(pkg, '..', 'src', 'index.ts')), `${pkg} is missing a src/index.ts`);
   }
 
-  if (!pkg.includes('@spectrum-icons')) {
+  if (!pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme')) {
     softAssert(json.types, `${pkg} did not have "types"`);
     softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
   }
