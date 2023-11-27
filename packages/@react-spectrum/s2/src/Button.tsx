@@ -10,6 +10,7 @@ import {Button as RACButton, ButtonProps} from 'react-aria-components';
 import {tv} from 'tailwind-variants';
 import {FocusRing, useButton, useHover} from "react-aria";
 import React, {useEffect, useState} from "react";
+import {pressScale, usePressScale} from "./usePressScale";
 
 let baseButton = tv({
     base: 'flex items-center justify-center rounded-full font-[inherit] font-bold cursor-default transition outline-none focus-visible:ring disabled:text-disabled',
@@ -200,6 +201,8 @@ function Button(props: ButtonProps, ref) {
         staticColor = 'white';
     }
 
+    usePressScale(domRef, isPressed);
+
     // let styles = hasIcon && !hasLabel ? iconOnlyButton : buttonStyles;
     let styles= staticColor ? staticColorButton : buttonStyles;
     if (staticColor && variant !== 'secondary') {
@@ -217,6 +220,7 @@ function Button(props: ButtonProps, ref) {
                 data-has-icon={hasIcon || undefined}
                 data-icon-only={(hasIcon && !hasLabel) || undefined}
                 aria-live={isPending ? 'polite' : undefined}
+                style={pressScale(domRef, styleProps.style)}
                 className={
                     styles({
                         variant,
