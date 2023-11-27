@@ -60,7 +60,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
             <Label>Last Name</Label>
             <Input />
           </TextField>
-          <Button onPress={close}>
+          <Button onPress={close} style={{marginTop: 8}}>
             Submit
           </Button>
         </form>
@@ -85,14 +85,9 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   outline: none;
   padding: 30px;
 
-  .react-aria-Heading {
+  .react-aria-Heading[slot=title] {
     line-height: 1em;
     margin-top: 0;
-  }
-
-  .react-aria-Button {
-    margin-top: 20px;
-    margin-right: 8px;
   }
 }
 ```
@@ -169,7 +164,7 @@ Alert dialogs are a special type of dialog meant to present a prompt that the us
         <>
           <Heading slot="title">Delete file</Heading>
           <p>This will permanently delete the selected file. Continue?</p>
-          <div>
+          <div style={{display: 'flex', gap: 8}}>
             <Button onPress={close}>Cancel</Button>
             <Button onPress={close}>Delete</Button>
           </div>

@@ -62,6 +62,10 @@ import {TimeField, Label, DateInput, DateSegment} from 'react-aria-components';
 ```css
 @import "@react-aria/example-theme";
 
+.react-aria-TimeField {
+  color: var(--text-color);
+}
+
 .react-aria-DateInput {
   display: flex;
   padding: 4px;
@@ -354,9 +358,11 @@ import {Form, FieldError, Button} from 'react-aria-components';
   }
 }
 
-.react-aria-FieldError {
-  font-size: 12px;
-  color: var(--invalid-color);
+.react-aria-TimeField {
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
 }
 ```
 

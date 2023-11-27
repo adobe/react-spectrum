@@ -14,6 +14,7 @@ import {
   AriaLabelingProps,
   AsyncLoadable,
   CollectionBase,
+  DimensionValue,
   DOMProps,
   FocusableProps,
   HelpTextProps,
@@ -80,6 +81,10 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
   menuTrigger?: MenuTriggerAction,
   /** Whether the ComboBox should be displayed with a quiet style. */
   isQuiet?: boolean,
+  /** Alignment of the menu relative to the input target.
+   * @default 'end'
+   */
+  align?: 'start' | 'end',
   /**
    * Direction the menu will render relative to the ComboBox.
    * @default 'bottom'
@@ -92,6 +97,8 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
    * @default true
    */
   shouldFlip?: boolean,
+  /** Width of the menu. By default, matches width of the trigger. */
+  menuWidth?: DimensionValue,
   /**
    * Whether the text or key of the selected item is submitted as part of an HTML form.
    * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
