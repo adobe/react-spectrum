@@ -76,7 +76,10 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   let [offset, setOffset] = useState(0);
   useLayoutEffect(() => {
     if (parentMenuRef.current) {
-      setOffset(-1 * parseInt(window?.getComputedStyle(parentMenuRef?.current).getPropertyValue('--spectrum-submenu-offset-distance-x'), 10));
+      let offset = window?.getComputedStyle(parentMenuRef?.current)?.getPropertyValue('--spectrum-submenu-offset-distance-x');
+      if (offset !== '') {
+        setOffset(-1 * parseInt(offset, 10));
+      }
     }
   }, [parentMenuRef]);
 
