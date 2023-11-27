@@ -325,7 +325,7 @@
 
 
   /* spectrum-fontGlobals.css */
-  --spectrum-global-font-family-base: adobe-clean, 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
+  --spectrum-global-font-family-base: adobe-clown, 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, 'Trebuchet MS', 'Lucida Grande', sans-serif;
   --spectrum-global-font-family-serif: adobe-clean-serif, 'Source Serif Pro', Georgia, serif;
   --spectrum-global-font-family-code: 'Source Code Pro', Monaco, monospace;
   --spectrum-global-font-weight-thin: 100;

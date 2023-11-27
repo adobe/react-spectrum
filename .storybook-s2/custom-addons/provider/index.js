@@ -3,6 +3,7 @@ import { addons, makeDecorator } from '@storybook/preview-api';
 import {getQueryParams} from '@storybook/client-api';
 import {Provider} from '@react-spectrum/provider';
 import {theme} from '../../../spectrum.js';
+import { useDarkMode } from 'storybook-dark-mode';
 
 document.body.style.margin = '0';
 
@@ -22,7 +23,9 @@ function ProviderUpdater(props) {
   // Typically themes are provided with both light + dark, and both scales.
   // To build our selector to see all themes, we need to hack it a bit.
 
-  let colorScheme = themeValue && themeValue.replace(/est$/, '');
+  // let colorScheme = themeValue && themeValue.replace(/est$/, '');
+  let colorScheme = useDarkMode() ? 'dark' : 'light';
+
   useEffect(() => {
     let channel = addons.getChannel();
     let providerUpdate = (event) => {

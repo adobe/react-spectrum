@@ -10,9 +10,6 @@ const preview = {
       matchers: {
         color: /(background|color)$/i,
       },
-    },
-    docs: {
-      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? themes.dark : themes.light
     }
   },
 };
@@ -32,13 +29,7 @@ export const parameters = {
       ]
     }
   },
-  layout: 'fullscreen',
-  // Stops infinite loop memory crash when saving CSF stories https://github.com/storybookjs/storybook/issues/12747#issuecomment-1151803506
-  docs: {
-    source: {
-      type: 'code'
-    }
-  }
+  layout: 'fullscreen'
 };
 
 

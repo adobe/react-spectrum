@@ -6,7 +6,8 @@ import {
     useSlotProps,
     useStyleProps
 } from '@react-spectrum/utils';
-import {Button as RACButton, ButtonProps} from 'react-aria-components';
+import {Button as RACButton} from 'react-aria-components';
+import {SpectrumButtonProps, Text} from "@adobe/react-spectrum";
 import {tv} from 'tailwind-variants';
 import {FocusRing, useButton, useHover} from "react-aria";
 import React, {useEffect, useState} from "react";
@@ -153,7 +154,7 @@ let staticColorButton = tv({
     ]
 }, {twMerge: false});
 
-function Button(props: ButtonProps, ref) {
+function Button(props: SpectrumButtonProps, ref) {
     props = useSlotProps(props, 'button');
     let {
         elementType: ElementType = 'button',
@@ -212,6 +213,8 @@ function Button(props: ButtonProps, ref) {
     return (
         <FocusRing>
             <RACButton
+                {...styleProps}
+                {...props}
                 ref={domRef}
                 data-variant={variant}
                 data-style={style}
@@ -229,10 +232,28 @@ function Button(props: ButtonProps, ref) {
                         size: 'M',
                         hasIcon,
                         hasLabel
-                    })}>{props.children}</RACButton>
+                    })}>
+                <SlotProvider
+                    slots={{
+                        icon: {
+                            size: 'S',
+                            UNSAFE_className: 'flex-shrink-0 ' + (hasLabel ? '-ml-[2px]' : ''),
+                            'data-icon': true
+                            // UNSAFE_className: classNames(styles, 'spectrum-Icon')
+                        },
+                        text: {
+                            // UNSAFE_className: classNames(styles, 'spectrum-Button-label')
+                            'data-label': true
+                        }
+                    }}>
+                    {typeof children === 'string'
+                        ? <Text>{children}</Text>
+                        : children}
+                </SlotProvider>
+            </RACButton>
         </FocusRing>
     );
 }
 
-let _Button = React.forwardRef(Button);
+let _Button = React.forwardRef(Button) as <T>(props: SpectrumButtonProps<T> & { ref?: React.Ref<HTMLButtonElement> }) => React.ReactElement;
 export {_Button as Button};

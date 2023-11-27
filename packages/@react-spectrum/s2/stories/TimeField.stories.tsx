@@ -6,8 +6,7 @@ const meta: Meta<typeof TimeField> = {
   component: TimeField,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

@@ -13,8 +13,7 @@ const meta: Meta<typeof Form> = {
   component: Form,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

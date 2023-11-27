@@ -6,8 +6,7 @@ const meta: Meta<typeof GridList> = {
   component: GridList,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

@@ -6,8 +6,7 @@ const meta: Meta<typeof TagGroup> = {
   component: TagGroup,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

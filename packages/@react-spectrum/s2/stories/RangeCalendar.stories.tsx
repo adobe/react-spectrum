@@ -6,8 +6,7 @@ const meta: Meta<typeof RangeCalendar> = {
   component: RangeCalendar,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

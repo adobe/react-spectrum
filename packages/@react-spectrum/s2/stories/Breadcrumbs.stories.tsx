@@ -7,8 +7,7 @@ const meta: Meta<typeof Breadcrumbs> = {
   component: Breadcrumbs,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

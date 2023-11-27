@@ -7,8 +7,7 @@ const meta: Meta<typeof CheckboxGroup> = {
   component: CheckboxGroup,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

@@ -6,8 +6,7 @@ const meta: Meta<typeof Slider> = {
   component: Slider,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

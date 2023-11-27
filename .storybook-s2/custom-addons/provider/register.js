@@ -24,17 +24,6 @@ let SCALES = [
   {label: "Large", value: "large"}
 ];
 
-let TOAST_POSITIONS = [
-  {label: 'top', value: 'top'},
-  {label: 'top left', value: 'top left'},
-  {label: 'top center', value: 'top center'},
-  {label: 'top right', value: 'top right'},
-  {label: 'bottom', value: 'bottom'},
-  {label: 'bottom left', value: 'bottom left'},
-  {label: 'bottom center', value: 'bottom center'},
-  {label: 'bottom right', value: 'bottom right'}
-];
-
 function ProviderFieldSetter({api}) {
   let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, express: providerValuesFromUrl.express === 'true'});
   let channel = addons.getChannel();
@@ -46,26 +35,10 @@ function ProviderFieldSetter({api}) {
       return next;
     });
   };
-  let onThemeChange = (e) => {
-    let newValue = e.target.value || undefined;
-    setValues((old) => {
-      let next = {...old, theme: newValue};
-      channel.emit('provider/updated', next);
-      return next;
-    });
-  };
   let onScaleChange = (e) => {
     let newValue = e.target.value || undefined;
     setValues((old) => {
       let next = {...old, scale: newValue};
-      channel.emit('provider/updated', next);
-      return next;
-    });
-  };
-  let onExpressChange = (e) => {
-    let newValue = e.target.checked;
-    setValues((old) => {
-      let next = {...old, express: newValue};
       channel.emit('provider/updated', next);
       return next;
     });
@@ -98,20 +71,10 @@ function ProviderFieldSetter({api}) {
         </select>
       </div>
       <div style={{marginRight: '10px'}}>
-        <label htmlFor="theme">Theme: </label>
-        <select id="theme" name="theme" onChange={onThemeChange} value={values.theme}>
-          {THEMES.map(theme => <option key={theme.label} value={theme.value}>{theme.label}</option>)}
-        </select>
-      </div>
-      <div style={{marginRight: '10px'}}>
         <label htmlFor="scale">Scale: </label>
         <select id="scale" name="scale" onChange={onScaleChange} value={values.scale}>
           {SCALES.map(scale => <option key={scale.label} value={scale.value}>{scale.label}</option>)}
         </select>
-      </div>
-      <div style={{marginRight: '10px'}}>
-        <label htmlFor="express">Express: </label>
-        <input type="checkbox" id="express" name="express" onChange={onExpressChange} checked={values.express} />
       </div>
     </div>
   )

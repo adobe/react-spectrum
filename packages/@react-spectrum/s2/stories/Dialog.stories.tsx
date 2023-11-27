@@ -15,8 +15,7 @@ const meta: Meta<typeof Dialog> = {
   component: Dialog,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

@@ -7,8 +7,7 @@ const meta: Meta<typeof RadioGroup> = {
   component: RadioGroup,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

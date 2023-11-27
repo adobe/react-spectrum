@@ -6,8 +6,7 @@ const meta: Meta<typeof Calendar> = {
   component: Calendar,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

@@ -13,8 +13,7 @@ const meta: Meta<typeof Toolbar> = {
   component: Toolbar,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

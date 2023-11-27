@@ -6,8 +6,7 @@ const meta: Meta<typeof ToggleButton> = {
   component: ToggleButton,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

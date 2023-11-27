@@ -6,8 +6,7 @@ const meta: Meta<typeof ComboBox> = {
   component: ComboBox,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;

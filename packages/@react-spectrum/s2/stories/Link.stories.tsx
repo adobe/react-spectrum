@@ -6,8 +6,7 @@ const meta: Meta<typeof Link> = {
   component: Link,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;
