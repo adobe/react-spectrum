@@ -17,7 +17,7 @@ const {fragmentUnWrap, fragmentWrap} = require('./MDXFragments');
 const yaml = require('js-yaml');
 const dprint = require('dprint-node');
 const t = require('@babel/types');
-const lightningcss = require('lightningcss');
+const processCSS = require('./processCSS');
 
 const IMPORT_MAPPINGS = {
   '@react-spectrum/theme-default': {
@@ -37,8 +37,11 @@ module.exports = new Transformer({
   },
   async transform({asset, options, config}) {
     let exampleCode = [];
+    let cssCode = [];
     let preReleaseParts = config.version.match(/(alpha)|(beta)|(rc)/);
     let preRelease = preReleaseParts ? preReleaseParts[0] : '';
+
+    let visit = (await import('unist-util-visit')).visit;
     const extractExamples = () => (tree, file) => (
       flatMap(tree, node => {
         if (node.type === 'code') {
@@ -147,62 +150,10 @@ module.exports = new Transformer({
             if (node.meta && node.meta.includes('render=false')) {
               return responsiveCode(node);
             }
+            cssCode.push(node.value);
 
-            let transformed = lightningcss.transform({
-              filename: asset.filePath,
-              code: Buffer.from(node.value),
-              minify: true,
-              drafts: {
-                nesting: true
-              },
-              targets: {
-                chrome: 95 << 16,
-                safari: 15 << 16
-              }
-            });
-            let css = transformed.code.toString();
             let code = node.meta && node.meta.includes('hidden') ? [] : responsiveCode(node);
-            return [
-              ...code,
-              {
-                type: 'mdxJsxFlowElement',
-                name: 'style',
-                attributes: [
-                  {
-                    type: 'mdxJsxAttribute',
-                    name: 'dangerouslySetInnerHTML',
-                    value: {
-                      type: 'mdxJsxAttributeValueExpression',
-                      value: JSON.stringify({__html: css}),
-                      data: {
-                        estree: {
-                          type: 'Program',
-                          body: [{
-                            type: 'ExpressionStatement',
-                            expression: {
-                              type: 'ObjectExpression',
-                              properties: [{
-                                type: 'Property',
-                                kind: 'init',
-                                key: {
-                                  type: 'Identifier',
-                                  name: '__html'
-                                },
-                                value: {
-                                  type: 'Literal',
-                                  value: css
-                                }
-                              }]
-                            }
-                          }]
-                        }
-                      }
-                    }
-                  }
-                ],
-                children: []
-              }
-            ];
+            return code;
           }
 
           return transformExample(node, preRelease, keepIndividualImports);
@@ -211,6 +162,52 @@ module.exports = new Transformer({
         return [node];
       })
     );
+
+    let appendCSS = () => async (tree) => {
+      let css = await processCSS(cssCode, asset, options);
+
+      tree.children.push(
+        {
+          type: 'mdxJsxFlowElement',
+          name: 'style',
+          attributes: [
+            {
+              type: 'mdxJsxAttribute',
+              name: 'dangerouslySetInnerHTML',
+              value: {
+                type: 'mdxJsxAttributeValueExpression',
+                value: JSON.stringify({__html: css}),
+                data: {
+                  estree: {
+                    type: 'Program',
+                    body: [{
+                      type: 'ExpressionStatement',
+                      expression: {
+                        type: 'ObjectExpression',
+                        properties: [{
+                          type: 'Property',
+                          kind: 'init',
+                          key: {
+                            type: 'Identifier',
+                            name: '__html'
+                          },
+                          value: {
+                            type: 'Literal',
+                            value: css
+                          }
+                        }]
+                      }
+                    }]
+                  }
+                }
+              }
+            }
+          ],
+          children: []
+        }
+      );
+      return tree;
+    };
 
     let toc = [];
     let title = '';
@@ -328,7 +325,6 @@ module.exports = new Transformer({
       );
     }
 
-    let visit = (await import('unist-util-visit')).visit;
     function highlight(options) {
       return (tree) => {
         visit(tree, 'code', node => {
@@ -436,7 +432,8 @@ module.exports = new Transformer({
         fragmentWrap,
         [frontmatter, {type: 'yaml', anywhere: true, marker: '-'}],
         highlight,
-        fragmentUnWrap
+        fragmentUnWrap,
+        appendCSS
       ],
       rehypePlugins: [
         wrapExamples

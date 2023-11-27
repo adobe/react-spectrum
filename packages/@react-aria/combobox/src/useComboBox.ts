@@ -15,7 +15,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
+import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent, ValidationResult} from '@react-types/shared';
 import {chain, isAppleDevice, mergeProps, useLabels, useRouter} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
@@ -23,6 +23,7 @@ import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
+import {privateValidationStateProp} from '@react-stately/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
@@ -40,7 +41,7 @@ export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'chil
   keyboardDelegate?: KeyboardDelegate
 }
 
-export interface ComboBoxAria<T> {
+export interface ComboBoxAria<T> extends ValidationResult {
   /** Props for the label element. */
   labelProps: DOMAttributes,
   /** Props for the combo box input element. */
@@ -180,6 +181,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     state.setFocused(true);
   };
 
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
@@ -187,7 +189,9 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     onBlur,
     value: state.inputValue,
     onFocus,
-    autoComplete: 'off'
+    autoComplete: 'off',
+    validate: undefined,
+    [privateValidationStateProp]: state
   }, inputRef);
 
   // Press handlers for the ComboBox button
@@ -348,6 +352,9 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       linkBehavior: 'selection' as const
     }),
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

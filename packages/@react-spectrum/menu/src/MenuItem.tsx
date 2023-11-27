@@ -12,14 +12,14 @@
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
-import {DOMAttributes, Node} from '@react-types/shared';
+import {DOMAttributes, Key, Node} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {Grid} from '@react-spectrum/layout';
 import InfoOutline from '@spectrum-icons/workflow/InfoOutline';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeRefs, useObjectRef, useSlotId} from '@react-aria/utils';
-import React, {Key, useMemo, useRef} from 'react';
+import React, {useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';

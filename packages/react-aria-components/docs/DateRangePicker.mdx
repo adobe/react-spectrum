@@ -26,6 +26,7 @@ import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/P
 import DateField from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
 import RangeCalendar from '@react-spectrum/docs/pages/assets/component-illustrations/RangeCalendar.svg';
 import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
 import InternationalizedDate from '@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDate.svg';
 
 ---
@@ -78,18 +79,19 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
 
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './Popover.mdx' layer(popover);
+@import './Dialog.mdx' layer(dialog);
+@import './DateField.mdx' layer(datefield);
+@import './RangeCalendar.mdx' layer(rangecalendar);
+@import './Form.mdx' layer(form);
+```
 
 ```css
-.react-aria-DateRangePicker {
-  --field-border: var(--spectrum-global-color-gray-400);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-placeholder: var(--spectrum-global-color-gray-700);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --highlight-background-invalid: var(--spectrum-global-color-static-red-600);
+@import "@react-aria/example-theme";
 
+.react-aria-DateRangePicker {
   color: var(--text-color);
 
   .react-aria-Group {
@@ -101,15 +103,20 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     box-sizing: border-box;
     overflow: auto;
     position: relative;
-    padding: 2px 2px 2px 8px;
-    border: 1px solid var(--field-border);
+    padding: 4px 4px 4px 8px;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     background: var(--field-background);
     white-space: nowrap;
 
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
+
     &[data-focus-within] {
-      border-color: var(--highlight-background);
-      box-shadow: 0 0 0 1px var(--highlight-background);
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
     }
   }
 
@@ -123,291 +130,39 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
   }
 
   .react-aria-Button {
-    background: slateblue;
-    color: white;
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    border: 2px solid var(--field-background);
+    forced-color-adjust: none;
     border-radius: 4px;
     border: none;
-    appearance: none;
     margin-left: auto;
     width: 1.429rem;
     height: 1.429rem;
     padding: 0;
-    vertical-align: middle;
     font-size: 0.857rem;
-    outline: none;
     box-sizing: content-box;
     flex-shrink: 0;
-    border: 2px solid var(--page-background);
     position: sticky;
     right: 0;
 
     &[data-focus-visible] {
-      box-shadow: 0 0 0 2px slateblue;
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: 2px;
     }
   }
 
-  [slot=description] {
-    font-size: 12px;
-  }
-
-  [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
-  }
-
-  &[data-invalid] {
-    [slot=end]:after {
-      content: '🚫' / '';
-      content: '🚫';
-      alt: ' ';
-      flex: 1;
-      text-align: end;
-      margin-right: -2rem;
-    }
+  .react-aria-DateInput {
+    width: unset;
+    min-width: unset;
+    padding: unset;
+    border: unset;
+    outline: unset;
   }
 }
 
-.react-aria-DateInput {
-  display: flex;
-}
-
-.react-aria-DateSegment {
-  padding: 0 2px;
-  font-variant-numeric: tabular-nums;
-  text-align: end;
-
-  &[data-type=literal] {
-    padding: 0;
-  }
-
-  &[data-placeholder] {
-    color: var(--text-color-placeholder);
-    font-style: italic;
-  }
-
-  &:focus {
-    color: var(--highlight-foreground);
-    background: var(--highlight-background);
-    outline: none;
-    border-radius: 4px;
-    caret-color: transparent;
-  }
-
-  &[data-invalid] {
-    color: var(--text-color-invalid);
-
-    &:focus {
-      background: var(--highlight-background-invalid);
-      color: var(--highlight-foreground);
-    }
-  }
-}
-
-.react-aria-RangeCalendar {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --button-background: var(--spectrum-global-color-gray-50);
-  --button-background-pressed: var(--spectrum-global-color-gray-100);
-  --button-border: var(--spectrum-global-color-gray-400);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --text-color-invalid: var(--spectrum-global-color-red-600);
-  --pressed-color: var(--spectrum-global-color-gray-200);
-  --unavailable-color: var(--spectrum-global-color-red-600);
-  --invalid-color: var(--spectrum-global-color-static-red-600);
-
-  width: fit-content;
-  color: var(--text-color);
-
-  & header {
-    display: flex;
-    align-items: center;
-    margin: 0 4px .5rem 4px;
-
-    .react-aria-Heading {
-      flex: 1;
-      margin: 0;
-      text-align: center;
-      font-size: 1.375rem;
-    }
-
-    .react-aria-Button {
-      background: var(--button-background);
-      border: 1px solid var(--button-border);
-      color: var(--text-color);
-      box-shadow: 0 1px 2px rgba(0 0 0 / 0.1);
-      border-radius: 4px;
-      appearance: none;
-      vertical-align: middle;
-      font-size: 1rem;
-      width: 2rem;
-      height: 2rem;
-      padding: 0;
-      text-align: center;
-      margin: 0;
-      outline: none;
-
-      &[data-focus-visible] {
-        border-color: var(--highlight-background);
-        box-shadow: 0 0 0 1px var(--highlight-background);
-      }
-
-      &[data-pressed] {
-        background: var(--button-background-pressed);
-      }
-    }
-  }
-
-  & table {
-    border-collapse: collapse;
-
-    & td {
-      padding: 2px 0;
-    }
-  }
-
-  .react-aria-CalendarCell {
-    width: 2.286rem;
-    line-height: 2.286rem;
-    text-align: center;
-    border-radius: 6px;
-    cursor: default;
-    outline: none;
-
-    &[data-outside-month] {
-      display: none;
-    }
-
-    &[data-pressed] {
-      background: var(--pressed-color);
-    }
-
-    &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px var(--highlight-background);
-    }
-
-    &[data-selected] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-      border-radius: 0;
-
-      &[data-focus-visible] {
-        box-shadow: inset 0 0 0 1px var(--highlight-background), inset 0 0 0 3px var(--highlight-foreground);
-      }
-    }
-
-    &[data-selection-start] {
-      border-start-start-radius: 6px;
-      border-end-start-radius: 6px;
-    }
-
-    &[data-selection-end] {
-      border-start-end-radius: 6px;
-      border-end-end-radius: 6px;
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    &[data-unavailable] {
-      text-decoration: line-through;
-      color: var(--unavailable-color);
-    }
-
-    &[data-invalid] {
-      background: var(--invalid-color);
-      color: var(--highlight-foreground);
-    }
-  }
-
-  & [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--text-color-invalid);
-  }
-}
-
-.react-aria-Popover {
-  overflow: auto;
-  border: 1px solid var(--spectrum-global-color-gray-400);
-  box-shadow: 0 8px 20px rgba(0 0 0 / 0.1);
-  border-radius: 6px;
-  background: var(--page-background);
-  padding: 1.25rem;
-
-  &[data-placement=top] {
-    --origin: translateY(8px);
-  }
-
-  &[data-placement=bottom] {
-    --origin: translateY(-8px);
-  }
-
-  &[data-entering] {
-    animation: slide 200ms;
-  }
-
-  &[data-exiting] {
-    animation: slide 200ms reverse ease-in;
-  }
-}
-
-@keyframes slide {
-  from {
-    transform: var(--origin);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-DateRangePicker {
-    forced-color-adjust: none;
-
-    --field-border: ButtonBorder;
-    --field-background: Field;
-    --text-color: FieldText;
-    --text-color-placeholder: FieldText;
-    --text-color-invalid: LinkText;
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --highlight-background-invalid: LinkText;
-
-    .react-aria-Button {
-      forced-color-adjust: none;
-
-      --focus-ring-color: Highlight;
-      background: ButtonFace;
-      color: ButtonText;
-      border: 1px solid ButtonBorder;
-
-      &[data-focus-visible] {
-        border-color: Highlight;
-        box-shadow: 0 0 0 1px Highlight;
-      }
-    }
-  }
-
-  .react-aria-RangeCalendar {
-    forced-color-adjust: none;
-
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --button-border: ButtonBorder;
-    --button-border-disabled: GrayText;
-    --button-background: ButtonFace;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
-    --text-color-invalid: LinkText;
-    --unavailable-color: GrayText;
-    --invalid-color: LinkText;
-    --pressed-color: Canvas;
-    --spectrum-alias-background-color-default: Canvas;
-  }
+.react-aria-Popover[data-trigger=DateRangePicker] {
+  max-width: unset;
 }
 ```
 
@@ -422,6 +177,7 @@ A date range picker can be built using two separate `<input type="date">` elemen
 * **Time zone aware** – Dates and times can optionally include a time zone. All modifications follow time zone rules such as daylight saving time.
 * **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale. Users can also open a calendar popover to select date ranges in a standard month grid. Localized screen reader messages are included to announce when the selection and visible date range change.
 * **Touch friendly** – Date segments are editable using an easy to use numeric keypad, date ranges can be selected by dragging over dates in the calendar using a touch screen, and all interactions are accessible using touch-based screen readers.
+* **Validation** – Integrates with HTML forms, supporting required, minimum and maximum values, unavailable dates, custom validation functions, realtime validation, and server-side validation errors.
 * **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
 
 Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `DateRangePicker`.
@@ -435,7 +191,7 @@ A date range picker consists of a label, and group containing two [date fields](
 `DateRangePicker` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
 
 ```tsx
-import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Button, Heading, DateInput, DateSegment, Text} from 'react-aria-components';
+import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Button, Heading, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
 
 <DateRangePicker>
   <Label />
@@ -449,7 +205,7 @@ import {DateRangePicker, Label, Group, Popover, Dialog, RangeCalendar, CalendarG
     <Button />
   </Group>
   <Text slot="description" />
-  <Text slot="errorMessage" />
+  <FieldError />
   <Popover>
     <Dialog>
       <RangeCalendar>
@@ -486,6 +242,13 @@ Note that most of this anatomy is shared with [DatePicker](DatePicker.html), so 
   title="@internationalized/date"
   description="Represent and manipulate dates and times in a locale-aware manner.">
   <InternationalizedDate />
+</ExampleCard>
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
 </ExampleCard>
 
 </section>
@@ -544,16 +307,16 @@ A `DateRangePicker` uses the following components, which may also be used standa
 
 If you will use a DateRangePicker in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `DateRangePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
+This example wraps `DateRangePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation).
 
 ```tsx example export=true
-import type {DateRangePickerProps, DateValue} from 'react-aria-components';
-import {Text} from 'react-aria-components';
+import type {DateRangePickerProps, DateValue, ValidationResult} from 'react-aria-components';
+import {Text, FieldError} from 'react-aria-components';
 
 interface MyDateRangePickerProps<T extends DateValue> extends DateRangePickerProps<T> {
   label?: string,
   description?: string,
-  errorMessage?: string
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 function MyDateRangePicker<T extends DateValue>({label, description, errorMessage, ...props}: MyDateRangePickerProps<T>) {
@@ -571,7 +334,7 @@ function MyDateRangePicker<T extends DateValue>({label, description, errorMessag
         <Button>▼</Button>
       </Group>
       {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      <FieldError>{errorMessage}</FieldError>
       <Popover>
         <Dialog>
           <RangeCalendar>
@@ -583,7 +346,6 @@ function MyDateRangePicker<T extends DateValue>({label, description, errorMessag
             <CalendarGrid>
               {date => <CalendarCell date={date} />}
             </CalendarGrid>
-            {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
           </RangeCalendar>
         </Dialog>
       </Popover>
@@ -774,36 +536,129 @@ function Example() {
 
 ## Validation
 
+DateRangePicker supports the `isRequired` prop to ensure the user enters a value, as well as minimum and maximum values, and custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+To display validation errors, add a `<FieldError>` element as a child of the DateRangePicker. This allows you to render error messages from all of the above sources with consistent custom styles.
+
+```tsx example
+import {Form, FieldError} from 'react-aria-components';
+
+<Form>
+  {/*- begin highlight -*/}
+  <DateRangePicker startName="startDate" endName="endDate" isRequired>
+  {/*- end highlight -*/}
+    <Label>Trip dates</Label>
+    <Group>
+      <DateInput slot="start">
+        {segment => <DateSegment segment={segment} />}
+      </DateInput>
+      <span aria-hidden="true">–</span>
+      <DateInput slot="end">
+        {segment => <DateSegment segment={segment} />}
+      </DateInput>
+      <Button>▼</Button>
+    </Group>
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+    <Popover>
+      <Dialog>
+        <RangeCalendar>
+          <header>
+            <Button slot="previous">◀</Button>
+            <Heading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </RangeCalendar>
+      </Dialog>
+    </Popover>
+  </DateRangePicker>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-DateRangePicker {
+  &[data-invalid] {
+    [slot=end]:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+      margin-left: 1.5rem;
+      margin-right: -1.5rem;
+    }
+  }
+
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+```
+
+</details>
+
+By default, `FieldError` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
 ### Minimum and maximum values
 
-The `minValue` and `maxValue` props can also be used to perform builtin validation. This prevents the user from selecting dates outside the valid range in the calendar, and marks the date fields as invalid using ARIA. `DateRangePicker` also validates that the end date is after the start date. You should implement a visual indication that the date range picker is invalid as well.
-
-This example only accepts dates after today.
+The `minValue` and `maxValue` props can also be used to ensure the value is within a specific range. `DateRangePicker` also validates that the end date is after the start date. This example only accepts dates after today.
 
 ```tsx example
 import {today} from '@internationalized/date';
 
-<MyDateRangePicker
-  label="Trip dates"
-  /*- begin highlight -*/
-  minValue={today(getLocalTimeZone())}
-  /*- end highlight -*/
-  defaultValue={{
-    start: parseDate('2022-02-03'),
-    end: parseDate('2022-05-03')
-  }} />
+<Form>
+  <MyDateRangePicker
+    label="Trip dates"
+    /*- begin highlight -*/
+    minValue={today(getLocalTimeZone())}
+    /*- end highlight -*/
+    defaultValue={{
+      start: parseDate('2022-02-03'),
+      end: parseDate('2022-05-03')
+    }} />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+### Custom validation
+
+The `validate` function can be used to perform custom validation logic. It receives the current date range, and should return a string or array of strings representing one or more error messages if the value is invalid.
+
+This example validates that the selected date range is a maximum of 1 week in duration.
+
+```tsx example
+<Form>
+  <MyDateRangePicker
+    label="Trip dates"
+    /*- begin highlight -*/
+    validate={range => range?.end.compare(range.start) > 7 ? 'Maximum stay duration is 1 week.' : null}
+    /*- end highlight -*/
+    defaultValue={{
+      start: today(getLocalTimeZone()),
+      end: today(getLocalTimeZone()).add({ weeks: 1, days: 3 })
+    }} />
+  <Button type="submit">Submit</Button>
+</Form>
 ```
 
 ### Unavailable dates
 
 `DateRangePicker` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard in the calendar so that navigation is consistent, but cannot be selected by the user. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
 
-Note that by default, users may not select non-contiguous ranges, i.e. ranges that contain unavailable dates within them. Once a start date is selected in the calendar, enabled dates will be restricted to subsequent dates until an unavailable date is hit. While this is handled automatically in the calendar, additional validation logic must be provided to ensure an invalid state is displayed in the date field. This can be achieved using the `isInvalid` prop. See [below](#non-contiguous-ranges) for an example of how to allow non-contiguous ranges.
+Note that by default, users may not select non-contiguous ranges, i.e. ranges that contain unavailable dates within them. Once a start date is selected in the calendar, enabled dates will be restricted to subsequent dates until an unavailable date is hit. While this is handled automatically in the calendar, additional validation logic must be provided to ensure an invalid state is displayed in the date field. This can be achieved using the `validate` prop. See [below](#non-contiguous-ranges) for an example of how to allow non-contiguous ranges.
 
-This example includes multiple unavailable date ranges, e.g. dates when a rental house is not available. The `minValue` prop is also used to prevent selecting dates before today. The `isInvalid` prop is used to mark selected date ranges with unavailable dates in the middle as invalid.
+This example includes multiple unavailable date ranges, e.g. dates when a rental house is not available. The `minValue` prop is also used to prevent selecting dates before today. The `validate` prop is used to mark selected date ranges with unavailable dates in the middle as invalid.
 
 ```tsx example
-import type {DateRange} from 'react-aria-components';
 import {today} from '@internationalized/date';
 
 function Example() {
@@ -814,20 +669,15 @@ function Example() {
     [now.add({days: 23}), now.add({days: 24})],
   ];
 
-  let isDateUnavailable = (date: DateValue) => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
-  let [value, setValue] = React.useState<DateRange | null>(null);
-  let isInvalid = disabledRanges.some(interval => value && value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0);
-
   return (
     <MyDateRangePicker
       label="Trip dates"
       minValue={today(getLocalTimeZone())}
       /*- begin highlight -*/
-      isDateUnavailable={isDateUnavailable}
+      isDateUnavailable={date => disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0)}
+      validate={value => disabledRanges.some(interval => value && value.end.compare(interval[0]) >= 0 && value.start.compare(interval[1]) <= 0) ? 'Selected date range may not include unavailable dates.' : null}
       /*- end highlight -*/
-      value={value}
-      onChange={setValue}
-      isInvalid={isInvalid} />
+     />
   );
 }
 ```
@@ -856,36 +706,55 @@ function Example() {
 }
 ```
 
-### Help text
+### Description
 
-The `description` slot can be used to associate additional help text with a date range picker. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the date range picker as invalid for assistive technologies.
-
-This example validates that the selected date range is a maximum of 1 week in duration.
+The `description` slot can be used to associate additional help text with a date range picker.
 
 ```tsx example
-import {today} from '@internationalized/date';
+<DateRangePicker>
+  <Label>Trip dates</Label>
+  <Group>
+    <DateInput slot="start">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <span aria-hidden="true">–</span>
+    <DateInput slot="end">
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button>▼</Button>
+  </Group>
+  {/*- begin highlight -*/}
+  <Text slot="description">Please your vacation dates.</Text>
+  {/*- end highlight -*/}
+  <Popover>
+    <Dialog>
+      <RangeCalendar>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </RangeCalendar>
+    </Dialog>
+  </Popover>
+</DateRangePicker>
+```
 
-function Example() {
-  let [range, setRange] = React.useState({
-    start: today(getLocalTimeZone()),
-    end: today(getLocalTimeZone()).add({ weeks: 1, days: 3 })
-  });
-  let isInvalid = range?.end.compare(range.start) > 7;
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
-  return (
-    <MyDateRangePicker
-      label="Trip dates"
-      value={range}
-      onChange={setRange}
-      isInvalid={isInvalid}
-      /*- begin highlight -*/
-      description={isInvalid ? undefined : 'Select your vacation dates'}
-      errorMessage={isInvalid ? 'Maximum stay duration is 1 week' : undefined}
-      /*- end highlight -*/
-    />
-  );
+```css
+.react-aria-DateRangePicker {
+  [slot=description] {
+    font-size: 12px;
+  }
 }
 ```
+
+</details>
 
 ## Format options
 
@@ -968,6 +837,17 @@ A `<Button>` accepts its contents as `children`. Other props such as `onPress` a
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
 
 <PropTable component={docs.exports.Button} links={docs.links} />
+
+</details>
+
+### FieldError
+
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.FieldError} links={docs.links} />
 
 </details>
 
@@ -1144,11 +1024,25 @@ A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS select
 
 <StateTable properties={docs.exports.ButtonRenderProps.properties} />
 
+### FieldError
+
+A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, or by overriding with a custom `className`. It supports the following render props:
+
+<StateTable properties={docs.exports.FieldErrorRenderProps.properties} />
+
 ### Popover
 
 The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the DateRangePicker in the DOM. It supports the following states and render props:
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
+
+Within a DateRangePicker, the popover will have the `data-trigger="DateRangePicker"` attribute, which can be used to define date range picker-specific styles.
+
+```css render=false
+.react-aria-Popover[data-trigger=DateRangePicker] {
+  /* ... */
+}
+```
 
 ### Dialog
 
@@ -1248,15 +1142,9 @@ fieldset {
 }
 
 .invalid {
-  color: var(--spectrum-global-color-red-600);
+  color: var(--invalid-color);
   margin-top: 1em;
   display: block;
-}
-
-@media (forced-colors: active) {
-  .invalid {
-    color: LinkText;
-  }
 }
 ```
 
@@ -1376,7 +1264,7 @@ function DateRangePickerClearButton() {
   }
 
   &[data-focus-visible] {
-    outline: 2px solid slateblue;
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
   }
 

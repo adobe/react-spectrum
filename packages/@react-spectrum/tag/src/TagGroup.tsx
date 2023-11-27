@@ -13,7 +13,7 @@
 import {ActionButton} from '@react-spectrum/button';
 import {AriaTagGroupProps, useTagGroup} from '@react-aria/tag';
 import {classNames, useDOMRef} from '@react-spectrum/utils';
-import {DOMRef, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
+import {Collection, DOMRef, Node, SpectrumLabelableProps, StyleProps, Validation} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
 import {FocusRing, FocusScope} from '@react-aria/focus';
 // @ts-ignore
@@ -39,13 +39,13 @@ const TAG_STYLES = {
   }
 };
 
-export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'selectionMode' | 'disallowEmptySelection' | 'selectedKeys' | 'defaultSelectedKeys' | 'onSelectionChange' | 'selectionBehavior' | 'disabledKeys'>, StyleProps, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, Omit<Validation, 'isRequired'> {
+export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'selectionMode' | 'disallowEmptySelection' | 'selectedKeys' | 'defaultSelectedKeys' | 'onSelectionChange' | 'selectionBehavior' | 'disabledKeys'>, StyleProps, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator'>, Pick<Validation<any>, 'isInvalid' | 'validationState'> {
   /** The label to display on the action button.  */
   actionLabel?: string,
   /** Handler that is called when the action button is pressed. */
   onAction?: () => void,
   /** Sets what the TagGroup should render when there are no tags to display. */
-  renderEmptyState?: () => JSX.Element,
+  renderEmptyState?: () => React.JSX.Element,
   /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
   maxRows?: number
 }
@@ -63,7 +63,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   } = props;
   let domRef = useDOMRef(ref);
   let containerRef = useRef(null);
-  let tagsRef = useRef(null);
+  let tagsRef = useRef<HTMLDivElement | null>(null);
   let {direction} = useLocale();
   let {scale} = useProvider();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/tag');
@@ -71,9 +71,9 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let state = useListState(props);
   let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});
   let keyboardDelegate = useMemo(() => {
-    let collection = isCollapsed
+    let collection = (isCollapsed
       ? new ListCollection([...state.collection].slice(0, tagState.visibleTagCount))
-      : new ListCollection([...state.collection]);
+      : new ListCollection([...state.collection])) as Collection<Node<T>>;
     return new ListKeyboardDelegate({
       collection,
       ref: domRef,
@@ -88,7 +88,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let actionsRef = useRef(null);
 
   let updateVisibleTagCount = useCallback(() => {
-    if (maxRows > 0) {
+    if (maxRows && maxRows > 0) {
       let computeVisibleTagCount = () => {
         // Refs can be null at runtime.
         let currContainerRef: HTMLDivElement | null = containerRef.current;
@@ -115,7 +115,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
             rowCount++;
           }
 
-          if (rowCount > maxRows) {
+          if (maxRows && rowCount > maxRows) {
             break;
           }
           tagWidths.push(width);
@@ -124,7 +124,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
 
         // Remove tags until there is space for the collapse button and action button (if present) on the last row.
         let buttons = [...currActionsRef.children];
-        if (buttons.length > 0 && rowCount >= maxRows) {
+        if (maxRows && buttons.length > 0 && rowCount >= maxRows) {
           let buttonsWidth = buttons.reduce((acc, curr) => acc += curr.getBoundingClientRect().width, 0);
           buttonsWidth += TAG_STYLES[scale].margin * 2 * buttons.length;
           let end = direction === 'ltr' ? 'right' : 'left';

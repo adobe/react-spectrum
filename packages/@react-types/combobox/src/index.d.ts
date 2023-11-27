@@ -10,11 +10,38 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, CollectionBase, DOMProps, FocusableProps, HelpTextProps, InputBase, InputDOMProps, LabelableProps, LoadingState, SingleSelection, SpectrumFieldValidation, SpectrumLabelableProps, SpectrumTextInputBase, StyleProps, TextInputBase, Validation} from '@react-types/shared';
+import {
+  AriaLabelingProps,
+  AsyncLoadable,
+  CollectionBase,
+  DimensionValue,
+  DOMProps,
+  FocusableProps,
+  HelpTextProps,
+  InputBase,
+  InputDOMProps,
+  Key,
+  LabelableProps,
+  LoadingState,
+  SingleSelection,
+  SpectrumFieldValidation,
+  SpectrumLabelableProps,
+  SpectrumTextInputBase,
+  StyleProps,
+  TextInputBase,
+  Validation
+} from '@react-types/shared';
 
 export type MenuTriggerAction = 'focus' | 'input' | 'manual';
 
-export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'>, InputBase, TextInputBase, Validation, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
+export interface ComboBoxValidationValue {
+  /** The selected key in the ComboBox. */
+  selectedKey: Key,
+  /** The value of the ComboBox input. */
+  inputValue: string
+}
+
+export interface ComboBoxProps<T> extends CollectionBase<T>, Omit<SingleSelection, 'disallowEmptySelection'>, InputBase, TextInputBase, Validation<ComboBoxValidationValue>, FocusableProps<HTMLInputElement>, LabelableProps, HelpTextProps {
   /** The list of ComboBox items (uncontrolled). */
   defaultItems?: Iterable<T>,
   /** The list of ComboBox items (controlled). */
@@ -46,7 +73,7 @@ export interface AriaComboBoxProps<T> extends ComboBoxProps<T>, DOMProps, InputD
   shouldFocusWrap?: boolean
 }
 
-export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<AriaComboBoxProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
+export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<AriaComboBoxProps<T>, 'menuTrigger' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<ComboBoxValidationValue>, SpectrumLabelableProps, StyleProps, Omit<AsyncLoadable, 'isLoading'> {
   /**
    * The interaction required to display the ComboBox menu. Note that this prop has no effect on the mobile ComboBox experience.
    * @default 'input'
@@ -54,6 +81,10 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
   menuTrigger?: MenuTriggerAction,
   /** Whether the ComboBox should be displayed with a quiet style. */
   isQuiet?: boolean,
+  /** Alignment of the menu relative to the input target.
+   * @default 'end'
+   */
+  align?: 'start' | 'end',
   /**
    * Direction the menu will render relative to the ComboBox.
    * @default 'bottom'
@@ -66,6 +97,8 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
    * @default true
    */
   shouldFlip?: boolean,
+  /** Width of the menu. By default, matches width of the trigger. */
+  menuWidth?: DimensionValue,
   /**
    * Whether the text or key of the selected item is submitted as part of an HTML form.
    * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+
 jest.mock('@react-aria/live-announcer');
 import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
@@ -1425,6 +1426,9 @@ describe('ListView', function () {
       act(() => {
         fireEvent(window, new Event('resize'));
       });
+      act(() => {
+        jest.runAllTimers();
+      });
       await user.tab();
       expect(grid.scrollTop).toBe(0);
 
@@ -1473,6 +1477,9 @@ describe('ListView', function () {
       // fire resize so the new clientHeight is requested
       act(() => {
         fireEvent(window, new Event('resize'));
+      });
+      act(() => {
+        jest.runAllTimers();
       });
       expect(grid.scrollTop).toBe(0);
 

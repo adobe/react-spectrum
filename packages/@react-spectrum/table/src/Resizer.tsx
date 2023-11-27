@@ -10,7 +10,8 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isWebKit, mergeProps} from '@react-aria/utils';
-import React, {Key, RefObject, useEffect, useState} from 'react';
+import {Key} from '@react-types/shared';
+import React, {RefObject, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';

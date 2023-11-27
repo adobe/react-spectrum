@@ -57,5 +57,5 @@ TableBody.getCollectionNode = function* getCollectionNode<T>(props: TableBodyPro
  * as children, or generated dynamically using a function based on the data passed to the `items` prop.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _TableBody = TableBody as <T>(props: TableBodyProps<T>) => JSX.Element;
+let _TableBody = TableBody as <T>(props: TableBodyProps<T>) => React.JSX.Element;
 export {_TableBody as TableBody};

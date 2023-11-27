@@ -288,6 +288,10 @@ describe('Tabs', function () {
 
     let tabpanel = tree.getByRole('tabpanel');
     expect(document.activeElement).toBe(tabpanel);
+
+    let tablist = tree.getByRole('tablist');
+    let tabs = within(tablist).getAllByRole('tab');
+    await user.click(tabs[0]);
   });
 
   it('disabled tabs cannot be keyboard navigated to', async function () {
@@ -776,6 +780,30 @@ describe('Tabs', function () {
 
     tabPanelInput = getByTestId('panel2_input');
     expect(tabPanelInput.value).toBe('');
+  });
+
+  it('Tabs can be aria-labelled', () => {
+    let {getAllByRole, getByLabelText} = render(
+      <Provider theme={theme}>
+        <Tabs aria-label="Tab Example" maxWidth={500}>
+          <TabList>
+            <Item aria-label="Foo">Tab 1</Item>
+            <Item>Tab 2</Item>
+          </TabList>
+          <TabPanels>
+            <Item>
+              <input data-testid="panel1_input" />
+            </Item>
+            <Item>
+              <input disabled data-testid="panel2_input" />
+            </Item>
+          </TabPanels>
+        </Tabs>
+      </Provider>
+    );
+
+    let tab = getByLabelText('Foo');
+    expect(tab).toBe(getAllByRole('tab')[0]);
   });
 
   it('supports custom props for parent tabs element', function () {

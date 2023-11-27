@@ -11,7 +11,8 @@
  */
 
 import {AriaTextFieldProps, useTextField} from 'react-aria';
-import {ContextValue, DOMProps, forwardRefType, Provider, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, DOMProps, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
@@ -32,7 +33,7 @@ export interface TextFieldRenderProps {
   isInvalid: boolean
 }
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState'>, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {
   /** Whether the value is invalid. */
   isInvalid?: boolean
 }
@@ -44,10 +45,11 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   let inputRef = useRef(null);
   let [labelRef, label] = useSlot();
   let [inputElementType, setInputElementType] = useState('input');
-  let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField<any>({
+  let {labelProps, inputProps, descriptionProps, errorMessageProps, ...validation} = useTextField<any>({
     ...removeDataAttributes(props),
     inputElementType,
-    label
+    label,
+    validationBehavior: props.validationBehavior ?? 'native'
   }, inputRef);
 
   // Intercept setting the input ref so we can determine what kind of element we have.
@@ -63,7 +65,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
     ...props,
     values: {
       isDisabled: props.isDisabled || false,
-      isInvalid: props.isInvalid || false
+      isInvalid: validation.isInvalid
     },
     defaultClassName: 'react-aria-TextField'
   });
@@ -75,7 +77,7 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
       ref={ref}
       slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-invalid={props.isInvalid || undefined}>
+      data-invalid={validation.isInvalid || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
@@ -86,7 +88,8 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
               description: descriptionProps,
               errorMessage: errorMessageProps
             }
-          }]
+          }],
+          [FieldErrorContext, validation]
         ]}>
         {renderProps.children}
       </Provider>

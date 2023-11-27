@@ -23,6 +23,7 @@ import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
 import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
 
 ---
 category: Forms
@@ -57,42 +58,28 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
+```css hidden
+@import './Button.mdx' layer(button);
+@import './Form.mdx' layer(form);
+```
+
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-RadioGroup {
   display: flex;
   flex-direction: column;
   gap: 8px;
-
-  &[data-orientation=horizontal] {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  & [slot=description] {
-    font-size: 12px;
-  }
-
-  & [slot=errorMessage] {
-    font-size: 12px;
-    color: var(--spectrum-global-color-red-600);
-  }
+  color: var(--text-color);
 }
 
 .react-aria-Radio {
-  --label-color: var(--spectrum-alias-text-color);
-  --deselected-color: gray;
-  --deselected-color-pressed: dimgray;
-  --background-color: var(--spectrum-global-color-gray-50);
-  --selected-color: slateblue;
-  --selected-color-pressed: lch(from slateblue calc(l - 10%) c h);
-  --invalid-color: var(--spectrum-global-color-red-600);
-  --invalid-color-pressed: var(--spectrum-global-color-red-700);
-
   display: flex;
   align-items: center;
   gap: 0.571rem;
   font-size: 1.143rem;
-  color: var(--label-color);
+  color: var(--text-color);
+  forced-color-adjust: none;
 
   &:before {
     content: '';
@@ -100,66 +87,30 @@ import {RadioGroup, Radio, Label} from 'react-aria-components';
     width: 1.286rem;
     height: 1.286rem;
     box-sizing: border-box;
-    border: 0.143rem solid var(--deselected-color);
-    background: var(--background-color);
+    border: 0.143rem solid var(--border-color);
+    background: var(--field-background);
     border-radius: 1.286rem;
     transition: all 200ms;
   }
 
   &[data-pressed]:before {
-    border-color: var(--deselected-color-pressed);
+    border-color: var(--border-color-pressed);
   }
 
   &[data-selected] {
     &:before {
-      border-color: var(--selected-color);
+      border-color: var(--highlight-background);
       border-width: 0.429rem;
     }
 
     &[data-pressed]:before {
-      border-color: var(--selected-color-pressed);
-    }
-  }
-
-  &[data-invalid] {
-    &:before {
-      border-color: var(--invalid-color);
-    }
-
-    &[data-pressed]:before {
-      border-color: var(--invalid-color-pressed);
+      border-color: var(--highlight-background-pressed);
     }
   }
 
   &[data-focus-visible]:before {
-    box-shadow: 0 0 0 2px var(--spectrum-alias-background-color-default), 0 0 0 4px var(--selected-color);
-  }
-
-  &[data-disabled] {
-    opacity: 0.4;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Radio {
-    forced-color-adjust: none;
-
-    --label-color: ButtonText;
-    --deselected-color: ButtonBorder;
-    --deselected-color-pressed: ButtonBorder;
-    --selected-color: Highlight;
-    --selected-color-pressed: Highlight;
-    --background-color: HighlightText;
-    --invalid-color: LinkText;
-    --invalid-color-pressed: LinkText;
-    --spectrum-alias-background-color-default: Canvas;
-
-    &[data-disabled] {
-      opacity: 1;
-      --deselected-color: GrayText;
-      --selected-color: GrayText;
-      --label-color: GrayText;
-    }
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
   }
 }
 ```
@@ -176,6 +127,7 @@ radio groups that can be styled as needed.
 
 * **Accessible** – Radio groups are exposed to assistive technology via ARIA, and automatically associate a nested `<Label>`. Description and error message help text slots are supported as well.
 * **HTML form integration** – Each individual radio uses a visually hidden `<input>` element under the hood, which enables HTML form integration and autofill.
+* **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, and server-side validation errors.
 * **Cross-browser** – Mouse, touch, keyboard, and focus interactions are normalized to ensure consistency across browsers and devices.
 
 ## Anatomy
@@ -193,19 +145,34 @@ to provide more context about the field, and any validation messages. These are 
 inputs via the `aria-describedby` attribute.
 
 ```tsx
-import {RadioGroup, Radio, Label, Text} from 'react-aria-components';
+import {RadioGroup, Radio, Label, Text, FieldError} from 'react-aria-components';
 
 <RadioGroup>
   <Label />
   <Radio />
   <Text slot="description" />
-  <Text slot="errorMessage" />
+  <FieldError />
 </RadioGroup>
 ```
 
 Individual radio buttons must have a visual label. If the radio group does not have a visible label,
 an `aria-label` or `aria-labelledby` prop must be passed instead to identify the element to assistive
 technology.
+
+### Concepts
+
+`RadioGroup` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
+</ExampleCard>
+
+</section>
 
 ### Composed components
 
@@ -230,17 +197,17 @@ A `RadioGroup` uses the following components, which may also be used standalone 
 
 If you will use a RadioGroup in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `RadioGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` and `errorMessage` slots to render help text ([see below for details](#help-text)).
+This example wraps `RadioGroup` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation).
 
 ```tsx example export=true
-import type {RadioGroupProps} from 'react-aria-components';
-import {Text} from 'react-aria-components';
+import type {RadioGroupProps, ValidationResult} from 'react-aria-components';
+import {Text, FieldError} from 'react-aria-components';
 
 interface MyRadioGroupProps extends Omit<RadioGroupProps, 'children'> {
   children?: React.ReactNode,
   label?: string,
   description?: string,
-  errorMessage?: string
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 function MyRadioGroup({
@@ -255,7 +222,7 @@ function MyRadioGroup({
       <Label>{label}</Label>
       {children}
       {description && <Text slot="description">{description}</Text>}
-      {errorMessage && <Text slot="errorMessage">{errorMessage}</Text>}
+      <FieldError>{errorMessage}</FieldError>
     </RadioGroup>
   );
 }
@@ -314,51 +281,82 @@ RadioGroup supports the `name` prop, paired with the Radio `value` prop, for int
 
 ## Validation
 
-RadioGroups can display a validation state to communicate to the user if the current value is invalid.
-Implement your own validation logic in your app and set the `isInvalid` prop accordingly.
+RadioGroup supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+To display validation errors, add a `<FieldError>` element as a child of the RadioGroup. This allows you to render error messages from all of the above sources with consistent custom styles.
 
 ```tsx example
-<MyRadioGroup label="Favorite avatar" isInvalid>
-  <Radio value="wizard">Wizard</Radio>
-  <Radio value="dragon">Dragon</Radio>
-</MyRadioGroup>
+import {Form, FieldError, Button} from 'react-aria-components';
+
+<Form>
+  {/*- begin highlight -*/}
+  <RadioGroup name="pet" isRequired>
+  {/*- end highlight -*/}
+    <Label>Favorite pet</Label>
+    <Radio value="dogs">Dog</Radio>
+    <Radio value="cats">Cat</Radio>
+    <Radio value="dragon">Dragon</Radio>
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+  </RadioGroup>
+  <Button type="submit">Submit</Button>
+</Form>
 ```
 
-### Help text
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
-The `description` slot can be used to associate additional help text with a radio group. Additionally, the `errorMessage` slot can be used to help the user fix a validation error. It should be combined with the `isInvalid` prop to semantically mark the radio group as invalid for assistive technologies.
+```css
+.react-aria-Radio {
+  &[data-invalid] {
+    &:before {
+      border-color: var(--invalid-color);
+    }
 
-```tsx example
-function Example() {
-  let [selected, setSelected] = React.useState('dogs');
-  let isValid = selected === 'dogs';
+    &[data-pressed]:before {
+      border-color: var(--invalid-color-pressed);
+    }
+  }
+}
 
-  return (
-    <RadioGroup
-      value={selected}
-      onChange={setSelected}
-      /*- begin highlight -*/
-      isInvalid={!isValid}
-      /*- end highlight -*/
-    >
-      <Label>Favorite pet</Label>
-      <Radio value="dogs">
-        Dogs
-      </Radio>
-      <Radio value="cats">
-        Cats
-      </Radio>
-      <Radio value="dragons">
-        Dragons
-      </Radio>
-      {/*- begin highlight -*/}
-      {isValid && <Text slot="description">Please select a pet.</Text>}
-      {!isValid && <Text slot="errorMessage">{selected === 'cats' ? 'No cats allowed.': 'Please select dogs.'}</Text>}
-      {/*- end highlight -*/}
-    </RadioGroup>
-  );
+.react-aria-RadioGroup {
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
 }
 ```
+
+</details>
+
+By default, `FieldError` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
+### Description
+
+The `description` slot can be used to associate additional help text with a radio group.
+
+```tsx example
+<RadioGroup>
+  <Label>Favorite avatar</Label>
+  <Radio value="wizard">Wizard</Radio>
+  <Radio value="dragon">Dragon</Radio>
+  <Text slot="description">Please select an avatar.</Text>
+</RadioGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-RadioGroup {
+  [slot=description] {
+    font-size: 12px;
+  }
+}
+```
+
+</details>
 
 ## Orientation
 
@@ -372,6 +370,21 @@ The `orientation` prop can be used to change the orientation to horizontal.
 </MyRadioGroup>
 ```
 
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-RadioGroup {
+  &[data-orientation=horizontal] {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+```
+
+</details>
+
 ## Disabled
 
 The entire RadioGroup can be disabled with the `isDisabled` prop.
@@ -383,6 +396,23 @@ The entire RadioGroup can be disabled with the `isDisabled` prop.
   <Radio value="basketball">Basketball</Radio>
 </MyRadioGroup>
 ```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-Radio {
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+
+    &:before {
+      border-color: var(--border-color-disabled);
+    }
+  }
+}
+```
+
+</details>
 
 To disable an individual radio, pass `isDisabled` to the `Radio` instead.
 
@@ -415,6 +445,21 @@ See the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/
 ### Radio
 
 <PropTable component={docs.exports.Radio} links={docs.links} />
+
+### Text
+
+`<Text>` accepts all HTML attributes.
+
+### FieldError
+
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.FieldError} links={docs.links} />
+
+</details>
 
 ## Styling
 
@@ -478,6 +523,12 @@ A `Radio` can be targeted with the `.react-aria-Radio` CSS selector, or by overr
 ### Text
 
 The help text elements within a `RadioGroup` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
+### FieldError
+
+A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, or by overriding with a custom `className`. It supports the following render props:
+
+<StateTable properties={docs.exports.FieldErrorRenderProps.properties} />
 
 ## Advanced customization
 
