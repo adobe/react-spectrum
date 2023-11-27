@@ -1,0 +1,179 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+.spectrum-Radio {
+  --spectrum-radio-radius: calc(var(--spectrum-radio-circle-diameter) / 2);
+  --spectrum-radio-border-width-checked: calc(calc(var(--spectrum-radio-circle-diameter) / 2) - calc(var(--spectrum-radio-circle-dot-size) / 2));
+
+  --spectrum-radio-labelbelow-label-margin: var(--spectrum-global-dimension-size-40) 0 0 0;
+  --spectrum-radio-labelbelow-height: auto;
+
+  /* Hardcoded for wrapping study.
+  Will be a DNA token in https://jira.corp.adobe.com/browse/SDS-4466 */
+  --spectrum-radio-label-margin-top: var(--spectrum-global-dimension-size-65);
+
+  /* Fix for inconsistent line-height between browsers that would push the label 1px below the intended baseline */
+  /* more info: https://stackoverflow.com/questions/47700568/css-fonts-render-differently-in-firefox-and-chrome */
+  --spectrum-radio-label-line-height: 1.49;
+
+  --spectrum-radio-emphasized-circle-border-color: var(--spectrum-alias-toggle-color-default);
+  --spectrum-radio-emphasized-circle-border-color-hover: var(--spectrum-alias-toggle-color-hover);
+  --spectrum-radio-emphasized-circle-border-color-key-focus: var(--spectrum-alias-toggle-color-key-focus);
+  --spectrum-radio-quiet-circle-border-color-selected: var(--spectrum-alias-toggle-color-selected);
+  --spectrum-radio-quiet-circle-border-color-selected-hover: var(--spectrum-alias-toggle-color-selected-hover);
+  --spectrum-radio-quiet-circle-border-color-selected-key-focus: var(--spectrum-alias-toggle-color-selected-key-focus);
+
+  --spectrum-radio-emphasized-circle-border-color-selected: var(--spectrum-accent-color-900);
+  --spectrum-radio-emphasized-circle-border-color-selected-hover: var(--spectrum-accent-color-1000);
+  --spectrum-radio-emphasized-circle-border-color-selected-key-focus: var(--spectrum-accent-color-1000);
+  --spectrum-radio-emphasized-circle-border-color-selected-down: var(--spectrum-accent-color-1100);
+}
+
+.spectrum-Radio {
+  display: inline-flex;
+  align-items: flex-start;
+
+  position: relative;
+
+  min-block-size: var(--spectrum-radio-height);
+  max-inline-size: 100%;
+
+  margin-inline-end: calc(var(--spectrum-radio-cursor-hit-x) * 2);
+
+  vertical-align: top;
+
+  isolation: isolate;
+}
+
+.spectrum-Radio-input {
+  /* Change the font styles in all browsers for input. */
+  font-family: inherit;
+  font-size: 100%;
+  line-height: 1.15;
+
+  /* Remove the margin for input in Firefox and Safari. */
+  margin: 0;
+
+  /* Show the overflow for input in Edge. */
+  overflow: visible;
+
+  /* Add the correct box sizing for [type="radio"] in IE 10-. */
+  box-sizing: border-box;
+
+  /* Remove the padding for [type="radio"] in IE 10-. */
+  padding: 0;
+
+  /* Hit area */
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: calc(var(--spectrum-radio-cursor-hit-x) * -1);
+  inline-size: calc(100% + var(--spectrum-radio-cursor-hit-x) * 2);
+  block-size: 100%;
+
+  opacity: .0001;
+  z-index: 1;
+
+  cursor: default;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:checked + .spectrum-Radio-button {
+    &:before {
+      border-width: var(--spectrum-radio-border-width-checked);
+    }
+  }
+
+  &:focus-visible {
+    + .spectrum-Radio-button {
+      &:after {
+        margin: calc(var(--spectrum-alias-focus-ring-gap) * -1);
+      }
+    }
+  }
+}
+
+.spectrum-Radio-label {
+  text-align: start;
+  margin-inline-start: var(--spectrum-radio-text-gap);
+  /* Hardcoded as no good way to calculate this */
+  margin-block-start: var(--spectrum-radio-label-margin-top);
+  font-size: var(--spectrum-radio-text-size);
+  line-height: var(--spectrum-radio-label-line-height);
+  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+}
+
+.spectrum-Radio-button {
+  position: relative;
+  box-sizing: border-box;
+  inline-size: var(--spectrum-radio-circle-diameter);
+  block-size: var(--spectrum-radio-circle-diameter);
+
+  /* Fix vertical alignment when not wrapping since we're flex-start */
+  margin: calc((var(--spectrum-radio-height) - var(--spectrum-radio-circle-diameter)) / 2) 0;
+
+  flex-grow: 0;
+  flex-shrink: 0;
+  &:before {
+    display: block;
+    z-index: 0;
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+
+    width: var(--spectrum-radio-circle-diameter);
+    height: var(--spectrum-radio-circle-diameter);
+
+    border-radius: var(--spectrum-radio-radius);
+    border-width: var(--spectrum-radio-circle-border-size);
+    border-style: solid;
+
+    transition: border var(--spectrum-global-animation-duration-100) ease-in-out,
+                box-shadow var(--spectrum-global-animation-duration-100) ease-in-out;
+  }
+
+  &:after {
+    border-radius: 100%;
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    margin: var(--spectrum-alias-focus-ring-gap);
+    transform: translateX(0);  /* Forces FF to render on the pixel grid */
+
+    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+                margin var(--spectrum-global-animation-duration-100) ease-out;
+  }
+}
+
+.spectrum-Radio--labelBelow {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  block-size: var(--spectrum-radio-labelbelow-height);
+
+  .spectrum-Radio-button {
+    flex-shrink: 0;
+
+    margin: 0;
+  }
+
+  .spectrum-Radio-label {
+    margin: var(--spectrum-radio-labelbelow-label-margin);
+  }
+}

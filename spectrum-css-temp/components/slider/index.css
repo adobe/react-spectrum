@@ -1,0 +1,641 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  --spectrum-slider-controls-margin: calc(var(--spectrum-slider-handle-width) / 2);
+  --spectrum-slider-track-margin-offset: calc(var(--spectrum-slider-controls-margin) * -1);
+
+  --spectrum-slider-handle-margin-top: calc(var(--spectrum-slider-handle-width) / -2);
+  --spectrum-slider-handle-margin-left: calc(var(--spectrum-slider-handle-width) / -2);
+
+  --spectrum-dial-width: var(--spectrum-slider-height);
+  --spectrum-dial-label-gap-y: var(--spectrum-global-dimension-size-65);
+  --spectrum-dial-handle-position: var(--spectrum-global-dimension-size-100);
+
+  --spectrum-slider-track-handleoffset: calc(var(--spectrum-slider-handle-gap));
+  --spectrum-slider-track-middle-handleoffset: calc(var(--spectrum-slider-handle-gap) + calc(var(--spectrum-slider-handle-width) / 2));
+
+  --spectrum-slider-input-top: calc(var(--spectrum-slider-handle-margin-top) / 4);
+  --spectrum-slider-input-left: calc(var(--spectrum-slider-handle-margin-left) / 4);
+
+  --spectrum-dial-handle-size: 100%;
+  --spectrum-dial-min-height: 0;
+  --spectrum-dial-controls-min-height: 0;
+  --spectrum-dial-controls-margin: 0;
+
+  --spectrum-slider-color-min-height: auto;
+  --spectrum-slider-color-track-padding: 0;
+  --spectrum-slider-color-track-top: 0;
+  --spectrum-slider-color-track-margin-top: 0;
+  --spectrum-slider-color-track-margin-left: 0;
+  --spectrum-slider-color-track-margin-right: 0;
+  --spectrum-slider-color-handle-top: 50%;
+
+  --spectrum-slider-ramp-margin-top: 0;
+
+  --spectrum-slider-range-track-reset: 0;
+}
+
+.spectrum-Slider {
+  position: relative;
+
+  /* Don't let z-index'd child elements float above other things on the page */
+  z-index: 1;
+  display: block;
+
+  user-select: none;
+  touch-action: none;
+
+  width: var(--spectrum-global-dimension-size-2400);
+  min-inline-size: var(--spectrum-slider-min-width);
+  flex-shrink: 0;
+
+  &.spectrum-Slider--positionTop {
+    display: inline-flex;
+    flex-direction: column;
+    width: var(--spectrum-component-single-line-width);
+
+    .spectrum-Slider-controls {
+      /* If the user overrides the width of the field, propagate to the inner component */
+      width: calc(100% - calc(var(--spectrum-slider-controls-margin)) * 2);
+    }
+  }
+
+  /* The side label variant of Field is inline, and fills as much space as needed
+   * by default. If an explicit width is set, then the field flexes to fill available space. */
+  &.spectrum-Slider--positionSide {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+
+
+    .spectrum-Slider-controls {
+      flex: 1;
+      width: var(--spectrum-component-single-line-width);
+    }
+
+    .spectrum-Slider-labelContainer {
+      margin-inline-end: calc(var(--spectrum-slider-label-gap-x) / 2);
+    }
+
+    .spectrum-Slider-valueLabelContainer {
+      margin-inline-start: calc(var(--spectrum-slider-label-gap-x) / 2);
+    }
+
+    .spectrum-Slider-value {
+      text-align: start;
+    }
+
+  }
+}
+
+.spectrum-Slider-controls {
+  display: inline-block;
+  box-sizing: border-box;
+
+  position: relative;
+  z-index: auto;
+
+  min-block-size: var(--spectrum-slider-height);
+
+  /* These calculations prevent the track from spilling outside of the control */
+  inline-size: calc(100% - calc(var(--spectrum-slider-controls-margin)));
+  margin-inline-start: var(--spectrum-slider-controls-margin);
+  min-block-size: var(--spectrum-slider-height);
+
+  vertical-align: top;
+}
+
+
+.spectrum-Slider-track,
+.spectrum-Slider-buffer,
+.spectrum-Slider-ramp,
+.spectrum-Slider-fill {
+  block-size: var(--spectrum-slider-track-height);
+  box-sizing: border-box;
+
+  position: absolute;
+  z-index: 1;
+  inset-block-start: calc(var(--spectrum-slider-height) / 2);
+  inset-inline-start: 0;
+  inset-inline-end: auto;
+
+  margin-block-start: calc(var(--spectrum-slider-fill-track-height) / -2);
+
+  pointer-events: none;
+}
+
+.spectrum-Slider-track,
+.spectrum-Slider-buffer,
+.spectrum-Slider-fill {
+  padding-block: 0;
+  padding-inline: 0 var(--spectrum-slider-track-handleoffset);
+  margin-inline-start: var(--spectrum-slider-track-margin-offset);
+
+  &::before {
+    content: '';
+    display: block;
+    block-size: 100%;
+  }
+
+  &:first-of-type::before {
+    border-start-start-radius: var(--spectrum-slider-track-border-radius);
+    border-end-start-radius: var(--spectrum-slider-track-border-radius);
+  }
+
+  &:last-of-type::before {
+    border-start-end-radius: var(--spectrum-slider-track-border-radius);
+    border-end-end-radius: var(--spectrum-slider-track-border-radius);
+  }
+}
+
+.spectrum-Slider-fill {
+  margin-inline-start: 0;
+  padding-block: 0;
+  padding-inline: calc(var(--spectrum-slider-controls-margin) + var(--spectrum-slider-track-handleoffset)) 0;
+  z-index: 2;
+}
+
+.spectrum-Slider-fill--right {
+  padding-block: 0;
+  padding-inline: 0 calc(var(--spectrum-slider-controls-margin) + var(--spectrum-slider-track-handleoffset));
+}
+
+.spectrum-Slider-buffer {
+  padding-block: 0;
+  padding-inline: 0 var(--spectrum-slider-track-handleoffset);
+}
+
+.spectrum-Slider-track ~ .spectrum-Slider-track,
+.spectrum-Slider-buffer ~ .spectrum-Slider-buffer {
+  inset-inline-start: auto;
+  inset-inline-end: var(--spectrum-slider-range-track-reset);
+  padding-block: 0;
+  padding-inline: var(--spectrum-slider-track-handleoffset) 0;
+  margin-inline-start: var(--spectrum-slider-range-track-reset);
+  margin-inline-end: var(--spectrum-slider-track-margin-offset);
+}
+
+.spectrum-Slider-buffer ~ .spectrum-Slider-buffer {
+  margin-inline-end: var(--spectrum-slider-range-track-reset);
+  padding-block: 0;
+  padding-inline: var(--spectrum-slider-track-middle-handleoffset) 0;
+
+  &:after {
+    display: none;
+  }
+}
+
+.spectrum-Slider--range {
+  .spectrum-Slider-track {
+    padding-block: 0;
+    padding-inline: var(--spectrum-slider-track-middle-handleoffset) var(--spectrum-slider-track-middle-handleoffset);
+    inset-inline-start: auto;
+    inset-inline-end: auto;
+
+    &:first-of-type {
+      padding-block: 0;
+      padding-inline: 0 var(--spectrum-slider-track-handleoffset);
+      inset-inline-start: var(--spectrum-slider-range-track-reset);
+      inset-inline-end: auto;
+      margin-inline-start: var(--spectrum-slider-track-margin-offset);
+    }
+    &:last-of-type {
+      padding-block: 0;
+      padding-inline: var(--spectrum-slider-track-handleoffset) 0;
+      inset-inline-start: auto;
+      inset-inline-end: var(--spectrum-slider-range-track-reset);
+      margin-inline-end: var(--spectrum-slider-track-margin-offset);
+    }
+  }
+}
+
+.spectrum-Slider-buffer {
+  /* Appear above track */
+  z-index: 2;
+}
+
+.spectrum-Slider-ramp {
+  margin-block-start: var(--spectrum-slider-ramp-margin-top);
+  block-size: var(--spectrum-slider-ramp-track-height);
+
+  position: absolute;
+  inset-inline-start: var(--spectrum-slider-track-margin-offset);
+  inset-inline-end: var(--spectrum-slider-track-margin-offset);
+  inset-block-start: calc(var(--spectrum-slider-ramp-track-height) / 2);
+
+  svg {
+    inline-size: 100%;
+    block-size: 100%;
+
+    /* Flip the ramp automatically for RTL */
+    transform: logical rotate(0deg);
+  }
+}
+
+.spectrum-Slider-handle {
+  position: absolute;
+  inset-block-start: calc(var(--spectrum-slider-height) / 2);
+  z-index: 2;
+
+  display: inline-block;
+  box-sizing: border-box;
+
+  inline-size: var(--spectrum-slider-handle-width);
+  block-size: var(--spectrum-slider-handle-height);
+
+  border-width: var(--spectrum-slider-handle-border-size);
+  border-style: solid;
+
+  border-radius: var(--spectrum-slider-handle-border-radius);
+
+  transition: border-width var(--spectrum-slider-animation-duration) ease-in-out;
+
+  outline: none;
+  /* cursor: pointer; */
+  /* cursor: grab; */
+
+  &:active,
+  &.is-dragged {
+    border-width: var(--spectrum-slider-handle-border-size-down);
+    /* cursor: ns-resize; */
+    /* cursor: grabbing; */
+  }
+
+  &:active,
+  &.is-focused,
+  &.is-dragged,
+  &.is-tophandle {
+    z-index: 3;
+  }
+
+  &:before {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+
+    transition: box-shadow var(--spectrum-global-animation-duration-100) ease-out,
+                width var(--spectrum-global-animation-duration-100) ease-out,
+                height var(--spectrum-global-animation-duration-100) ease-out;
+
+    width: var(--spectrum-slider-handle-width);
+    height: var(--spectrum-slider-handle-height);
+
+    transform: translate(-50%, -50%);
+
+    border-radius: 100%;
+  }
+
+  &.is-focused {
+    &:before {
+      width: calc(var(--spectrum-slider-handle-width) + var(--spectrum-alias-focus-ring-gap) * 2);
+      height: calc(var(--spectrum-slider-handle-height) + var(--spectrum-alias-focus-ring-gap) * 2);
+    }
+  }
+}
+
+.spectrum-Slider-input {
+  /*  Remove the margin for input in Firefox and Safari. */
+  margin: 0;
+
+  inline-size: var(--spectrum-slider-handle-width);
+  block-size: var(--spectrum-slider-handle-height);
+  padding: 0;
+  position: absolute;
+  inset-block-start: var(--spectrum-slider-input-top);
+  inset-inline-start: var(--spectrum-slider-input-left);
+  overflow: hidden;
+  opacity: .000001;
+  cursor: default;
+  -webkit-appearance: none;
+  border: 0;
+  pointer-events: none;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.spectrum-Slider-labelContainer,
+.spectrum-Slider-valueLabelContainer {
+  display: flex;
+  position: relative;
+
+  inline-size: auto;
+
+
+  font-size: var(--spectrum-text-size-text-label);
+  line-height: var(--spectrum-line-height-text-label);
+}
+
+.spectrum-Slider-labelContainer {
+  display: grid;
+  grid-template-areas: "label contextualHelp value";
+  grid-template-columns: auto 1fr auto;
+  justify-items: start;
+}
+
+.spectrum-Slider-label,
+.spectrum-Dial-label {
+  padding-inline-start: 0;
+  flex-grow: 1;
+}
+
+.spectrum-Slider-value,
+.spectrum-Dial-value {
+  flex-grow: 0;
+  padding-inline-end: 0;
+  cursor: default;
+  font-feature-settings: "tnum";
+  text-align: end;
+}
+
+.spectrum-Slider-value {
+  margin-inline-start: calc(var(--spectrum-slider-label-gap-x) / 2);
+  white-space: nowrap;
+  grid-area: value;
+}
+
+.spectrum-Slider-contextualHelp.spectrum-Slider-contextualHelp {
+  grid-area: contextualHelp;
+  margin-inline-start: var(--spectrum-global-dimension-size-50);
+  margin-top: calc(-1 * var(--spectrum-global-dimension-size-25));
+}
+
+.spectrum-Slider-ticks {
+  display: flex;
+  justify-content: space-between;
+
+  z-index: 0;
+
+  margin: 0 var(--spectrum-slider-track-margin-offset);
+  margin-block-start: calc(var(--spectrum-slider-tick-mark-height) + calc(var(--spectrum-slider-track-height) / 2));
+}
+
+.spectrum-Slider-tick {
+  position: relative;
+
+  inline-size: var(--spectrum-slider-tick-mark-width);
+
+  &:after {
+    display: block;
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: calc(50% - calc(var(--spectrum-slider-tick-mark-width) / 2));
+    content: '';
+    inline-size: var(--spectrum-slider-tick-mark-width);
+    block-size: var(--spectrum-slider-tick-mark-height);
+
+    border-radius: var(--spectrum-slider-tick-mark-border-radius);
+  }
+
+  .spectrum-Slider-tickLabel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-block: var(--spectrum-slider-label-gap-x) 0;
+    margin-inline: calc(var(--spectrum-slider-label-gap-x) * -1) calc(var(--spectrum-slider-label-gap-x) * -1);
+
+    font-size: var(--spectrum-text-size-text-label);
+    line-height: var(--spectrum-line-height-text-label);
+  }
+
+  &:first-of-type,
+  &:last-of-type {
+    .spectrum-Slider-tickLabel {
+      display: block;
+      position: absolute;
+      margin-block: var(--spectrum-slider-label-gap-x) 0;
+      margin-inline: 0;
+    }
+  }
+
+  &:first-of-type {
+    .spectrum-Slider-tickLabel {
+      inset-inline-start: 0;
+    }
+  }
+
+  &:last-of-type {
+    .spectrum-Slider-tickLabel {
+      inset-inline-end: 0;
+    }
+  }
+}
+
+.spectrum-Slider--color {
+  .spectrum-Slider-labelContainer {
+    padding-block-end: var(--spectrum-fieldlabel-padding-bottom);
+  }
+  .spectrum-Slider-controls,
+  .spectrum-Slider-controls::before,
+  .spectrum-Slider-track {
+    min-block-size: var(--spectrum-slider-color-min-height);
+    block-size: var(--spectrum-slider-color-track-height);
+    margin-inline-start: var(--spectrum-slider-color-track-margin-left);
+    inline-size: 100%;
+  }
+  .spectrum-Slider-controls::before {
+    display: block;
+    content: '';
+  }
+  .spectrum-Slider-controls::before,
+  .spectrum-Slider-track {
+    inset-block-start: var(--spectrum-slider-color-track-top);
+    padding: var(--spectrum-slider-color-track-padding);
+    margin-block-start: var(--spectrum-slider-color-track-margin-top);
+    margin-inline-end: var(--spectrum-slider-color-track-margin-right);
+    border-radius: var(--spectrum-alias-border-radius-regular);
+  }
+  .spectrum-Slider-handle {
+    inset-block-start: var(--spectrum-slider-color-handle-top);
+  }
+}
+
+.spectrum-Dial {
+  composes: spectrum-Slider;
+  display: inline-flex;
+  flex-direction: column;
+
+  block-size: auto;
+  min-inline-size: var(--spectrum-dial-min-height);
+  min-block-size: var(--spectrum-dial-min-height);
+  inline-size: var(--spectrum-dial-container-width);
+}
+
+.spectrum-Dial-labelContainer {
+  composes: spectrum-Slider-labelContainer;
+  margin-block-end: var(--spectrum-dial-label-gap-y);
+}
+
+.spectrum-Dial-label {
+  &:only-child {
+    /* Only center if we don't have a value */
+    text-align: center;
+  }
+}
+
+.spectrum-Dial-controls {
+  composes: spectrum-Slider-controls;
+  inline-size: var(--spectrum-dial-width);
+  block-size: var(--spectrum-dial-width);
+  min-block-size: var(--spectrum-dial-controls-min-height);
+
+  border-radius: var(--spectrum-dial-border-radius);
+  position: relative;
+  display: inline-block;
+  margin: var(--spectrum-dial-controls-margin);
+
+  box-sizing: border-box;
+  outline: none;
+
+  &::before,
+  &::after {
+    content: '';
+    inline-size: calc(var(--spectrum-slider-tick-mark-width) * 2);
+    block-size: var(--spectrum-slider-tick-mark-width);
+    border-radius: var(--spectrum-slider-tick-mark-border-radius);
+    position: absolute;
+    inset-block-end: 0;
+  }
+  &::before {
+    inset-inline-start: auto;
+    inset-inline-end: calc(var(--spectrum-slider-tick-mark-width) * -1);
+    transform: rotate(var(--spectrum-dial-min-max-tick-angles));
+  }
+  &::after {
+    inset-inline-start: calc(var(--spectrum-slider-tick-mark-width) * -1);
+    transform: rotate(calc(-1 * var(--spectrum-dial-min-max-tick-angles)));
+  }
+}
+
+.spectrum-Dial-handle {
+  composes: spectrum-Slider-handle;
+  inline-size: var(--spectrum-dial-handle-size);
+  block-size: var(--spectrum-dial-handle-size);
+  border-width: var(--spectrum-slider-handle-border-size);
+  box-shadow: none;
+  position: absolute;
+  inset-block-start: var(--spectrum-dial-handle-position);
+  inset-inline-start: var(--spectrum-dial-handle-position);
+  inset-inline-end: var(--spectrum-dial-handle-position);
+  inset-block-end: var(--spectrum-dial-handle-position);
+  border-radius: var(--spectrum-dial-border-radius);
+  transform: rotate(calc(-1 * var(--spectrum-dial-min-max-tick-angles)));
+  cursor: pointer;
+  cursor: grab;
+
+  transition: background-color var(--spectrum-slider-animation-duration) ease-in-out;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: calc(var(--spectrum-slider-tick-mark-width) * -1);
+    inline-size: var(--spectrum-dial-handle-marker-width);
+    block-size: var(--spectrum-dial-handle-marker-height);
+    border-radius: var(--spectrum-dial-handle-marker-border-radius);
+    transform: translateY(-50%);
+    transition: background-color var(--spectrum-slider-animation-duration) ease-in-out;
+  }
+
+  &:active,
+  &.is-focused,
+  &.is-dragged {
+    border-width: var(--spectrum-slider-handle-border-size);
+    cursor: ns-resize;
+    cursor: grabbing;
+  }
+}
+
+.spectrum-Dial-input {
+  composes: spectrum-Slider-input;
+  inline-size: var(--spectrum-dial-handle-size);
+  block-size: var(--spectrum-dial-handle-size);
+  inset-inline-start: 0;
+  inset-block-start: 0;
+}
+
+.spectrum-Dial--small {
+  .spectrum-Dial-controls {
+    inline-size: var(--spectrum-dial-small-width);
+    block-size: var(--spectrum-dial-small-height);
+  }
+}
+
+.spectrum-Slider,
+.spectrum-Dial {
+  &.is-disabled {
+    cursor: default;
+
+    .spectrum-Slider-handle {
+      cursor: default;
+      pointer-events: none;
+    }
+
+    &.spectrum-Slider--color {
+      .spectrum-Slider-handle {
+        &:hover,
+        &:active {
+          border-width: var(--spectrum-slider-color-handle-outset-border-size);
+        }
+      }
+    }
+  }
+}
+
+.u-isGrabbing {
+  cursor: ns-resize;
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  .spectrum-Dial {
+    .spectrum-Dial-label,
+    .spectrum-Dial-value {
+      cursor: inherit;
+    }
+  }
+
+  .spectrum-Slider {
+    .spectrum-Slider-label,
+    .spectrum-Slider-value {
+      cursor: inherit;
+    }
+  }
+}
+
+.spectrum-Slider-controls {
+  &::before,
+  &::after {
+    content: '';
+    display: block;
+    inline-size: var(--spectrum-slider-controls-margin);
+    position: absolute;
+    block-size: 100%;
+  }
+  &::before {
+    inset-inline-start: calc(var(--spectrum-slider-controls-margin) * -1);
+  }
+  &::after {
+    inset-inline-end: calc(var(--spectrum-slider-controls-margin) * -1);
+  }
+}

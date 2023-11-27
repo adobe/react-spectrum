@@ -1,0 +1,209 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-Calendar-prevMonth {
+  color: var(--spectrum-calendar-button-icon-color);
+}
+
+.spectrum-Calendar-nextMonth {
+  color: var(--spectrum-calendar-button-icon-color);
+}
+
+.spectrum-Calendar-dayOfWeek {
+  color: var(--spectrum-calendar-day-title-text-color);
+}
+
+.spectrum-Calendar-date {
+  --spectrum-calendar-day-background-color-cap-selected: var(--spectrum-accent-background-color-default);
+  --spectrum-calendar-day-background-color-cap-selected-hover: var(--spectrum-accent-background-color-hover);
+  --spectrum-calendar-day-background-color-cap-selected-down: var(--spectrum-accent-background-color-down);
+  --spectrum-calendar-day-background-color-cap-invalid-selected: var(--spectrum-negative-background-color-default);
+  --spectrum-calendar-day-background-color-cap-invalid-selected-hover: var(--spectrum-negative-background-color-hover);
+  --spectrum-calendar-day-background-color-cap-invalid-selected-down: var(--spectrum-negative-background-color-down);
+  --spectrum-calendar-day-background-color-selected-hover: var(--spectrum-alias-highlight-selected);
+  --spectrum-calendar-day-background-color-invalid-selected: var(--spectrum-alias-highlight-invalid);
+  --spectrum-calendar-day-text-color-disabled: var(--spectrum-alias-text-color-disabled);
+  --spectrum-calendar-day-text-color-cap-selected: white;
+  --spectrum-calendar-day-text-color-cap-selected-hover: white;
+  --spectrum-calendar-day-today-background-color: var(--spectrum-global-color-gray-300);
+  --spectrum-calendar-day-today-background-color-hover: var(--spectrum-global-color-gray-400);
+  --spectrum-calendar-day-today-background-color-down: var(--spectrum-global-color-gray-500);
+
+  --background: transparent;
+  &:after {
+    background: var(--background);
+  }
+
+  &.is-range-selection {
+    background: var(--spectrum-calendar-day-background-color-selected);
+
+    &.is-invalid {
+      background: var(--spectrum-calendar-day-background-color-invalid-selected);
+    }
+  }
+
+  &.is-today {
+    color: var(--spectrum-calendar-day-today-text-color);
+    border-color: var(--spectrum-calendar-day-today-background-color);
+    --background: var(--spectrum-calendar-day-today-background-color);
+  }
+
+  &.is-selected:not(.is-range-selection),
+  &.is-selection-start,
+  &.is-selection-end {
+    color: var(--spectrum-calendar-day-text-color-cap-selected);
+    --background: var(--spectrum-calendar-day-background-color-cap-selected);
+
+    &.is-invalid {
+      --background: var(--spectrum-calendar-day-background-color-cap-invalid-selected);
+    }
+  }
+
+  &:hover {
+    color: var(--spectrum-calendar-day-text-color-hover);
+    --background: var(--spectrum-calendar-day-background-color-hover);
+
+    &.is-range-selection {
+      color: var(--spectrum-calendar-day-text-color-selected-hover);
+      --background: var(--spectrum-calendar-day-background-color-selected-hover);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-invalid-selected);
+      }
+    }
+
+    &.is-today {
+      --background: var(--spectrum-calendar-day-today-background-color-hover);
+    }
+
+    &.is-selected:not(.is-range-selection),
+    &.is-selection-start,
+    &.is-selection-end {
+      color: var(--spectrum-calendar-day-text-color-cap-selected-hover);
+      --background: var(--spectrum-calendar-day-background-color-cap-selected-hover);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-cap-invalid-selected-hover);
+      }
+    }
+  }
+
+  &.is-pressed {
+    color: var(--spectrum-calendar-day-text-color-hover);
+    --background: var(--spectrum-calendar-day-background-color-down);
+
+    &.is-range-selection {
+      color: var(--spectrum-calendar-day-text-color-selected-hover);
+      --background:  var(--spectrum-calendar-day-background-color-selected-hover);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-invalid-selected);
+      }
+    }
+
+    &.is-today {
+      --background: var(--spectrum-calendar-day-today-background-color-down);
+    }
+
+    &.is-selected:not(.is-range-selection),
+    &.is-selection-start,
+    &.is-selection-end {
+      color: var(--spectrum-calendar-day-text-color-cap-selected-hover);
+      --background: var(--spectrum-calendar-day-background-color-cap-selected-down);
+
+      &.is-invalid {
+        --background: var(--spectrum-calendar-day-background-color-cap-invalid-selected-down);
+      }
+    }
+  }
+
+  &.is-focused {
+    &:before {
+      box-shadow: 0 0 0 var(--spectrum-calendar-day-border-size-key-focus) var(--spectrum-calendar-day-border-color-key-focus);
+    }
+  }
+
+  &.is-disabled {
+    &,
+    &.is-today {
+      --background: var(--spectrum-calendar-day-background-color-disabled);
+    }
+
+    &,
+    &.is-today,
+    &.is-selected {
+      color: var(--spectrum-calendar-day-text-color-disabled);
+    }
+  }
+
+  &.is-unavailable:not(.is-selected) {
+    &,
+    &.is-today {
+      --background: transparent;
+    }
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Calendar-date {
+    color: CanvasText;
+    forced-color-adjust: none;
+    --spectrum-calendar-button-icon-color: ButtonText;
+    --spectrum-calendar-day-background-color-cap-selected: Highlight;
+    --spectrum-calendar-day-background-color-cap-invalid-selected: Highlight;
+    --spectrum-calendar-day-background-color-cap-invalid-selected-down: Highlight;
+    --spectrum-calendar-day-background-color-cap-invalid-selected-hover: Highlight;
+    --spectrum-calendar-day-background-color-cap-selected-down: Highlight;
+    --spectrum-calendar-day-background-color-cap-selected-hover: Highlight;
+    --spectrum-calendar-day-background-color-disabled: ButtonFace;
+    --spectrum-calendar-day-background-color-down: ButtonFace;
+    --spectrum-calendar-day-background-color-hover: ButtonFace;
+    --spectrum-calendar-day-background-color-invalid-selected: Highlight;
+    --spectrum-calendar-day-background-color-selected-hover: Highlight;
+    --spectrum-calendar-day-background-color-selected: Highlight;
+    --spectrum-calendar-day-border-color-key-focus: ButtonText;
+    --spectrum-calendar-day-text-color-cap-selected: HighlightText;
+    --spectrum-calendar-day-text-color-cap-selected-hover: HighlightText;
+    --spectrum-calendar-day-text-color-disabled: GrayText;
+    --spectrum-calendar-day-text-color-hover: ButtonText;
+    --spectrum-calendar-day-text-color-selected-hover: HighlightText;
+    --spectrum-calendar-day-title-text-color: CanvasText;
+    --spectrum-calendar-day-today-background-color: ButtonText;
+    --spectrum-calendar-day-today-background-color-down: ButtonText;
+    --spectrum-calendar-day-today-background-color-hover: ButtonText;
+    --spectrum-calendar-day-today-text-color: ButtonFace;
+    &.is-range-selection {
+      color: HighlightText;
+    }
+    &.is-disabled {
+      &.is-range-selection {
+        background: Highlight;
+        color: HighlightText;
+      }
+
+      &.is-selected {
+        background: Highlight;
+        color: HighlightText;
+      }
+    }
+    &.is-unavailable {
+      &.is-today {
+        color: var(--spectrum-calendar-day-text-color-hover);
+      }
+    }
+    &:hover {
+      &.is-today {
+        color: var(--spectrum-calendar-day-today-text-color);
+      }
+    }
+  }
+}

@@ -1,0 +1,540 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@import '../commons/index.css';
+
+:root {
+  --spectrum-table-cell-compact-padding-y: var(--spectrum-global-dimension-size-75);
+  --spectrum-table-cell-regular-padding-y: var(--spectrum-global-dimension-size-125);
+  --spectrum-table-cell-spacious-padding-y: var(--spectrum-global-dimension-size-175);
+  --spectrum-table-row-border-radius: calc(var(--spectrum-table-border-radius) - 1px);
+  --spectrum-table-row-sticky-focus-indicator-width: 3px;
+  --spectrum-table-column-resizer-placeholder-width: 10px;
+}
+
+.spectrum-Table {
+  position: relative;
+  border-collapse: separate;
+  border-spacing: 0;
+  outline: none;
+  isolation: isolate;
+}
+
+/* specificity must be higher than `.spectrum-Icon` */
+svg.spectrum-Table-sortedIcon {
+  display: none;
+  flex: 0 0 auto;
+  margin-inline-end: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-arrow-down-small-width);
+
+  vertical-align: middle;
+
+  transition: transform var(--spectrum-global-animation-duration-100) ease-in-out,
+              color var(--spectrum-global-animation-duration-100) ease-in-out;
+}
+
+.spectrum-Table-menuChevron.spectrum-Table-menuChevron {
+  flex: 0 0 auto;
+  margin-inline-start: var(--spectrum-table-header-sort-icon-gap);
+  min-inline-size: var(--spectrum-icon-chevron-down-medium-width);
+
+  vertical-align: middle;
+}
+
+.spectrum-Table-headWrapper {
+  box-sizing: content-box;
+  border-inline-start-width: 1px;
+  border-inline-start-style: solid;
+  border-inline-end-width: 1px;
+  border-inline-end-style: solid;
+  flex: 0 0 auto;
+  padding-bottom: 1px;
+  margin-bottom: -1px;
+  z-index: 1;
+}
+.spectrum-Table-headCellContents {
+  display: inline-block;
+  min-inline-size: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.spectrum-Table-headCell {
+  display: flex;
+  box-sizing: border-box;
+  font-size: var(--spectrum-global-dimension-font-size-100);
+  font-weight: var(--spectrum-table-header-text-font-weight);
+  line-height: var(--spectrum-table-header-text-line-height);
+  min-height: var(--spectrum-table-header-min-height);
+  padding: var(--spectrum-table-header-padding-y) var(--spectrum-table-header-padding-x);
+  transition: color var(--spectrum-global-animation-duration-100) ease-in-out;
+  outline: 0;
+  border-radius: var(--spectrum-table-header-border-radius);
+
+  &.is-sortable {
+    cursor: default;
+  }
+
+  &.is-sorted-asc,
+  &.is-sorted-desc {
+    .spectrum-Table-sortedIcon {
+      display: inline-block;
+      /* offset icon because it's not properly aligned */
+      margin-top: calc(var(--spectrum-global-dimension-size-25) * -1);
+    }
+  }
+
+  &.is-sorted-asc {
+    .spectrum-Table-sortedIcon {
+      transform: rotateZ(180deg);
+    }
+  }
+  &.is-resizable {
+    padding: 0;
+    .spectrum-Table-headCellContents {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .spectrum-Table-headCellButton {
+      box-sizing: border-box;
+
+      /* truncate text with ellipsis */
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.spectrum-Table-columnResizer {
+  display: flex;
+  position: absolute;
+  inset-inline-end: -10px;
+  justify-content: center;
+  box-sizing: border-box;
+  inline-size: 21px;
+  block-size: 100%;
+  user-select: none;
+
+  &::after {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    inline-size: 1px;
+    block-size: 100%;
+  }
+
+  &:active,
+  &.focus-ring {
+    outline: none;
+  }
+}
+.spectrum-Table-columnResizerPlaceholder {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  inline-size: var(--spectrum-table-column-resizer-placeholder-width);
+  block-size: 100%;
+  user-select: none;
+}
+.spectrum-Table-bodyResizeIndicator {
+  display: none;
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  top: 0px;
+}
+
+.spectrum-Table-cell--alignCenter {
+  text-align: center;
+}
+
+.spectrum-Table-cell--alignEnd {
+  text-align: end;
+}
+
+/* Helper for shared drop target overlay */
+.is-drop-target {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+  }
+}
+
+.spectrum-Table-body {
+  position: relative;
+
+  border-width: var(--spectrum-table-border-size);
+  border-radius: var(--spectrum-table-border-radius);
+  overflow: auto;
+  vertical-align: var(--spectrum-table-cell-vertical-alignment);
+
+  /* Fix scrollbars on iOS with sticky row headers */
+  transform: translate3d(0, 0, 0);
+
+  &.spectrum-Table-body--resizerAtTableEdge {
+    border-start-end-radius: 0;
+  }
+}
+
+/* The tbody tag doesn't allow setting a border-radius, so these hacks are to make that work
+   by putting it on the individual cells instead. */
+.spectrum-Table:not(.spectrum-Table--quiet) {
+  tbody.spectrum-Table-body {
+    border-width: var(--spectrum-table-border-size);
+    border-radius: var(--spectrum-table-border-radius);
+
+    .spectrum-Table-row:first-child .spectrum-Table-cell:first-child {
+      border-top-left-radius: var(--spectrum-table-border-radius);
+    }
+
+    .spectrum-Table-row:first-child .spectrum-Table-cell:last-child {
+      border-top-right-radius: var(--spectrum-table-border-radius);
+    }
+
+    .spectrum-Table-row:last-child .spectrum-Table-cell:first-child {
+      border-bottom-left-radius: var(--spectrum-table-border-radius);
+    }
+
+    .spectrum-Table-row:last-child .spectrum-Table-cell:last-child {
+      border-bottom-right-radius: var(--spectrum-table-border-radius);
+    }
+  }
+}
+
+.spectrum-Table--regular {
+  --spectrum-table-cell-padding-y: var(--spectrum-table-cell-regular-padding-y);
+}
+
+.spectrum-Table--compact .spectrum-Table-cell {
+  --spectrum-table-cell-padding-y: var(--spectrum-table-cell-compact-padding-y);
+}
+
+.spectrum-Table--spacious .spectrum-Table-cell {
+  --spectrum-table-cell-padding-y: var(--spectrum-table-cell-spacious-padding-y);
+}
+
+.spectrum-Table-cell {
+  box-sizing: border-box;
+  font-size: var(--spectrum-table-cell-text-size);
+  font-weight: var(--spectrum-table-cell-text-font-weight);
+  /* need to subtract 1px here because 14px * 1.5 + 14px + 14px = 49px, and we want 48px */
+  line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
+  padding: var(--spectrum-table-cell-padding-y) var(--spectrum-table-cell-padding-x);
+
+  &.spectrum-Table-cell--hasExpandCollapseButton {
+    display: grid;
+    grid-template-columns: var(--spectrum-global-dimension-size-400) 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "expand-button contents";
+  }
+}
+
+.spectrum-Table-cellContents {
+  grid-area: contents;
+  flex: 1 1 0%;
+  /* To ensure the flex child only takes up available width, see https://makandracards.com/makandra/66994-css-flex-and-min-width */
+  min-width: 0px;
+
+  /* truncate text with ellipsis */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  /* allow focus ring of child to extend outside the bounds */
+  padding: 4px;
+  margin: -4px;
+}
+
+.spectrum-Table-expandButton {
+  grid-area: expand-button;
+  height: var(--spectrum-global-dimension-size-400);
+  margin: calc(var(--spectrum-table-cell-padding-y) * -1) 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  outline: none;
+  transition: transform ease var(--spectrum-global-animation-duration-100);
+  &.is-open {
+    [dir='ltr'] & {
+      transform: rotate(90deg);
+    }
+    [dir='rtl'] & {
+      transform: rotate(-90deg);
+    }
+  }
+}
+
+.spectrum-Table-cell--hideHeader {
+  padding: 0;
+  justify-content: center;
+}
+
+.spectrum-Table--wrap .spectrum-Table-cellContents {
+  white-space: normal;
+}
+
+.spectrum-Table-cell,
+.spectrum-Table-headCell,
+.spectrum-Table-headCellButton {
+  position: relative;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible,
+  &.is-focused {
+    outline: none;
+
+    &::before {
+      content: '';
+
+      /* Float above border */
+      z-index: 1;
+      position: absolute;
+
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+      border-radius: calc(var(--spectrum-table-cell-border-radius-key-focus) - 1px);
+    }
+  }
+}
+.spectrum-Table-headCellButton {
+  display: flex;
+  align-items: center;
+}
+.spectrum-Table-headCellButton--alignStart {
+  justify-content: flex-start;
+  padding-block-start: var(--spectrum-table-header-padding-y);
+  padding-inline-end: 0;
+  padding-block-end: var(--spectrum-table-header-padding-y);
+  padding-inline-start: var(--spectrum-table-header-padding-x);
+}
+.spectrum-Table-headCellButton--alignCenter {
+  justify-content: center;
+  padding-block-start: var(--spectrum-table-header-padding-y);
+  padding-inline-end: calc(var(--spectrum-table-header-padding-x) - var(--spectrum-table-column-resizer-placeholder-width));
+  padding-block-end: var(--spectrum-table-header-padding-y);
+  padding-inline-start: var(--spectrum-table-header-padding-x);
+}
+.spectrum-Table-headCellButton--alignEnd {
+  justify-content: flex-end;
+  padding-block-start: var(--spectrum-table-header-padding-y);
+  padding-inline-end: calc(var(--spectrum-table-header-padding-x) - var(--spectrum-table-column-resizer-placeholder-width));
+  padding-block-end: var(--spectrum-table-header-padding-y);
+  padding-inline-start: 0;
+}
+
+.spectrum-Table-headerCellText {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.spectrum-Table-headCell,
+.spectrum-Table-headCellButton {
+  &:focus-visible,
+  &.is-focused {
+    &::before {
+      top: var(--spectrum-table-border-size);
+      right: var(--spectrum-table-border-size);
+      bottom: var(--spectrum-table-border-size);
+      left: var(--spectrum-table-border-size);
+    }
+  }
+}
+
+.spectrum-Table-cell--divider {
+  border-inline-end-width: var(--spectrum-table-divider-border-size);
+}
+
+.spectrum-Table-row {
+  position: relative;
+  cursor: default;
+  transition: background-color var(--spectrum-global-animation-duration-100) ease-in-out;
+
+  &[data-href] {
+    cursor: pointer;
+  }
+
+  &:focus {
+    outline: 0;
+  }
+
+  /* The focus ring should be sticky so it is visible at all horizontal scroll positions. */
+  &:focus-visible {
+    &:before {
+      display: inline-block;
+      content: '';
+      position: sticky;
+      inset-inline-start: 0;
+      height: calc(100% - 1px);
+      width: var(--spectrum-table-row-sticky-focus-indicator-width);
+      z-index: 4;
+      margin-inline-end: calc(var(--spectrum-table-row-sticky-focus-indicator-width) * -1);
+    }
+
+    .spectrum-Table-cellWrapper:first-of-type {
+      display: inline-block;
+      vertical-align: top;
+    }
+  }
+}
+
+.spectrum-Table:not(.spectrum-Table--loadingMore):not(.spectrum-Table--quiet) {
+  .spectrum-Table-row {
+    &.spectrum-Table-row--lastRow.spectrum-Table-row--isFlushBottom.is-selected {
+      &:after {
+        border-end-start-radius: var(--spectrum-table-row-border-radius);
+        border-end-end-radius: var(--spectrum-table-row-border-radius);
+      }
+    }
+  }
+}
+
+.spectrum-Table:not(.spectrum-Table--quiet) {
+  .spectrum-Table-row {
+    &.spectrum-Table-row--firstRow.is-selected {
+      &:after {
+        border-start-start-radius: var(--spectrum-table-row-border-radius);
+        border-start-end-radius: var(--spectrum-table-row-border-radius);
+      }
+    }
+  }
+  &.spectrum-Table--isVerticalScrollbarVisible {
+    .spectrum-Table-row {
+      &.spectrum-Table-row--firstRow.is-selected {
+        &:after {
+          border-start-end-radius: 0;
+        }
+      }
+      /* beat specificity of isFlushBottom */
+      &.spectrum-Table-row--lastRow.is-selected.is-selected {
+        &:after {
+          border-end-end-radius: 0;
+        }
+      }
+    }
+  }
+  &.spectrum-Table--isHorizontalScrollbarVisible {
+    .spectrum-Table-row {
+      /* beat specificity of isFlushBottom */
+      &.spectrum-Table-row--lastRow.is-selected.is-selected {
+        &:after {
+          border-end-start-radius: 0;
+          border-end-end-radius: 0;
+        }
+      }
+    }
+  }
+}
+
+/* the CSS logical properties postcss plugin doesn't seem to work with :focus-visible. */
+[dir="rtl"] .spectrum-Table-row:focus-visible:before {
+  right: 0;
+}
+
+.spectrum-Table > .spectrum-Table-body > .spectrum-Table-row:last-of-type {
+  border-bottom-style: none;
+}
+
+.spectrum-Table--quiet {
+  .spectrum-Table-headWrapper {
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .spectrum-Table-body {
+    border-radius: var(--spectrum-table-quiet-border-radius);
+  }
+
+  .spectrum-Table-body,
+  .spectrum-Table-row {
+    &.is-drop-target {
+      &::before {
+        border-radius: var(--spectrum-border-radius);
+      }
+    }
+  }
+}
+
+.spectrum-Table-headCell.spectrum-Table-checkboxCell,
+.spectrum-Table-cell.spectrum-Table-checkboxCell {
+  padding-inline-end: var(--spectrum-table-cell-checkbox-padding-right);
+  /* have to eliminate vertical padding to allow proper vertical alignment */
+  padding-top: 0px;
+  padding-bottom: 0px;
+  vertical-align: var(--spectrum-table-cell-checkbox-vertical-alignment);
+
+  .spectrum-Table-checkbox {
+    padding-inline-end: 0px;
+  }
+}
+
+.spectrum-Table-checkbox {
+  vertical-align: super;
+}
+
+.spectrum-Table-colResizeIndicator {
+  display: none;
+  height: 100%;
+  width: 2px;
+  position: absolute;
+  top: 1px;
+  inset-inline-end: 0;
+  pointer-events: none;
+  &.spectrum-Table-colResizeIndicator--visible {
+    display: block;
+  }
+}
+.spectrum-Table-colResizeNubbin {
+  display: none;
+  pointer-events: none;
+  position: absolute;
+  /* svg top pixel is anti-aliased, this lets through the blue bar in the background, so we move the bar
+   down one pixel and the nubbin circle up one pixel to cover it completely */
+  top: -1px;
+  width: 16px;
+  height: 16px;
+  inset-inline-start: -7px;
+  &.spectrum-Table-colResizeNubbin--visible {
+    display: block;
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Table-row {
+    &:focus-visible {
+      /* Adds a full outline style to the focused row to better distinguish between
+      the selected, not selected, selected + focused and selected + not focused
+      states without using a background color on the row in forced-colors: active mode. */
+      &:after {
+        outline: var(--spectrum-table-row-sticky-focus-indicator-width) solid;
+        outline-offset: calc(-1 * var(--spectrum-table-row-sticky-focus-indicator-width));
+        margin-top: calc(-1 * var(--spectrum-table-border-size));
+        height: calc(100% + var(--spectrum-table-border-size));
+      }
+    }
+  }
+}

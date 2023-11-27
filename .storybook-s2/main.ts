@@ -36,6 +36,10 @@ const config: StorybookConfig = {
               loader: require.resolve("css-loader"),
               options: {
                 importLoaders: 1,
+                modules: {
+                  // css modules but the name is unmodified so we can import it for the theme
+                  localIdentName:'[local]',
+                },
               },
             },{
               loader: require.resolve("postcss-loader"),

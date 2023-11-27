@@ -1,0 +1,374 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+@media (forced-colors: none) {
+  :root {
+    --spectrum-slider-handle-border-color-key-focus: var(--spectrum-global-color-gray-800);
+  }
+}
+:root {
+  --spectrum-slider-focus-ring-size-key-focus: var(--spectrum-alias-focus-ring-size);
+    /* todo: remove when fixed */
+  --spectrum-slider-handle-focus-ring-color-key-focus: var(--spectrum-alias-focus-color);
+}
+
+.spectrum-Slider {
+  --spectrum-slider-track-gradient: var(--spectrum-slider-track-color);
+}
+
+.spectrum-Slider-track {
+  &::before {
+    background: var(--spectrum-slider-track-gradient);
+    background-size: var(--spectrum-track-background-size);
+    background-position: var(--spectrum-track-background-position);
+  }
+}
+
+.spectrum-Slider-labelContainer {
+  color: var(--spectrum-label-text-color);
+}
+
+.spectrum-Slider--filled {
+  .spectrum-Slider-track:first-child {
+    &::before {
+      background: var(--spectrum-slider-fill-track-color);
+    }
+  }
+}
+
+.spectrum-Slider-fill {
+  &::before {
+    background: var(--spectrum-slider-fill-track-color);
+  }
+}
+
+.spectrum-Slider-buffer {
+  &::before,
+  &::after {
+    background: var(--spectrum-slider-player-track-buffer-color);
+  }
+}
+
+.spectrum-Slider-ramp {
+  path {
+    fill: var(--spectrum-slider-track-color);
+  }
+}
+
+.spectrum-Slider-handle {
+  border-color: var(--spectrum-slider-handle-border-color);
+  background: var(--spectrum-slider-handle-background-color);
+
+  &:hover {
+    border-color: var(--spectrum-slider-handle-border-color-hover);
+  }
+
+  &.is-focused {
+    border-color: var(--spectrum-slider-handle-border-color-key-focus);
+
+    &:before {
+      box-shadow: 0 0 0 var(--spectrum-slider-focus-ring-size-key-focus) var(--spectrum-slider-handle-focus-ring-color-key-focus);
+    }
+  }
+
+  &:active,
+  &.is-dragged {
+    border-color: var(--spectrum-slider-handle-border-color-down);
+  }
+}
+
+.spectrum-Slider--ramp {
+  .spectrum-Slider-handle {
+    /* We can't draw this one correctly without this hack : ( */
+    box-shadow: 0 0 0 4px var(--spectrum-alias-background-color-default);
+  }
+}
+
+.spectrum-Slider-input {
+  background: transparent;
+}
+
+.spectrum-Slider-tick {
+  &:after {
+    background-color: var(--spectrum-slider-tick-mark-color);
+  }
+}
+
+.spectrum-Slider-handle {
+  &.is-dragged {
+    border-color: var(--spectrum-slider-handle-border-color-down);
+    background: var(--spectrum-slider-handle-background-color-down);
+  }
+}
+
+.spectrum-Slider--range {
+  .spectrum-Slider-track {
+    &:not(:first-of-type):not(:last-of-type) {
+      &:before {
+        background: var(--spectrum-slider-fill-track-color);
+      }
+    }
+  }
+}
+
+.spectrum-Slider--color {
+  .spectrum-Slider-controls::before {
+    background-color: var(--spectrum-global-color-static-white);
+    /* Add a half-percent to fix diagonal line issue in Chrome on non-retina displays */
+    background-image:
+      linear-gradient(-45deg, transparent 75.5%, var(--spectrum-global-color-static-gray-500) 75.5%),
+      linear-gradient(45deg, transparent 75.5%, var(--spectrum-global-color-static-gray-500) 75.5%),
+      linear-gradient(-45deg, var(--spectrum-global-color-static-gray-500) 25.5%, transparent 25.5%),
+      linear-gradient(45deg, var(--spectrum-global-color-static-gray-500) 25.5%, transparent 25.5%);
+    background-size:
+      var(--spectrum-global-dimension-static-size-200)
+      var(--spectrum-global-dimension-static-size-200);
+    background-position:
+      0 0,
+      0 var(--spectrum-global-dimension-static-size-100),
+      var(--spectrum-global-dimension-static-size-100) calc(-1 * var(--spectrum-global-dimension-static-size-100)),
+      calc(-1 * var(--spectrum-global-dimension-static-size-100)) 0;
+    z-index: 0;
+  }
+  .spectrum-Slider-track {
+    background-color: transparent;
+    background-image: linear-gradient(to right, var(--spectrum-slider-color-track-background-color-gradient-start), var(--spectrum-slider-color-track-background-color-gradient-end));
+    box-shadow: inset 0 0 0 1px var(--spectrum-slider-color-track-border-color);
+    &::before {
+      display: none;
+    }
+  }
+  .spectrum-Slider-handle {
+    box-shadow: inset 0 0 0 1px var(--spectrum-slider-color-handle-inset-border-color), 0 0 0 1px var(--spectrum-slider-color-handle-outset-border-color);
+    border-color: var(--spectrum-slider-color-handle-border-color);
+    background: var(--spectrum-slider-color-handle-color);
+
+    &.is-focused {
+      box-shadow: 0 0 0 1px var(--spectrum-slider-color-handle-outset-border-color-key-focus);
+    }
+  }
+}
+
+.spectrum-Dial-labelContainer {
+  composes: spectrum-Slider-labelContainer;
+}
+
+.spectrum-Dial-handle {
+  box-shadow: none;
+
+  &:before {
+    display: none;
+  }
+
+  &::after {
+    background-color: var(--spectrum-dial-handle-marker-color);
+  }
+
+  &:hover {
+    &::after {
+      background-color: var(--spectrum-dial-handle-marker-color-hover);
+    }
+  }
+
+  &.is-focused {
+    background-color: var(--spectrum-slider-handle-background-color-key-focus);
+
+    border-color: var(--spectrum-slider-handle-border-color-key-focus);
+
+    &::after {
+      background-color: var(--spectrum-dial-handle-marker-color-key-focus);
+    }
+  }
+
+  &:active,
+  &.is-dragged {
+    background-color: var(--spectrum-dial-border-color-hover);
+
+    border-color: var(--spectrum-slider-handle-border-color-down);
+
+    &::after {
+      background-color: var(--spectrum-dial-handle-marker-color-key-focus);
+    }
+  }
+}
+
+.spectrum-Dial-controls {
+  &::before,
+  &::after {
+    background-color: var(--spectrum-dial-min-max-tick-color);
+  }
+}
+
+.spectrum-Dial {
+  &.is-disabled {
+    .spectrum-Dial-labelContainer {
+      color: var(--spectrum-label-text-color-disabled);
+    }
+    .spectrum-Dial-controls {
+      &::after,
+      &::before {
+        background-color: var(--spectrum-slider-handle-border-color-disabled);
+      }
+    }
+    .spectrum-Dial-handle {
+      border-color: var(--spectrum-slider-handle-border-color-disabled);
+      background: var(--spectrum-alias-background-color-default);
+
+      &:hover,
+      &:active {
+        border-color: var(--spectrum-slider-handle-border-color-disabled);
+        background: var(--spectrum-slider-handle-background-color);
+      }
+
+      &::after,
+      &::before {
+        background-color: var(--spectrum-slider-track-color-disabled);
+      }
+    }
+  }
+}
+
+.spectrum-Slider {
+  &.is-disabled {
+    .spectrum-Slider-labelContainer {
+      color: var(--spectrum-label-text-color-disabled);
+    }
+
+    .spectrum-Slider-handle {
+      border-color: var(--spectrum-slider-handle-border-color-disabled);
+      background: var(--spectrum-alias-background-color-default);
+
+      &:hover,
+      &:active {
+        border-color: var(--spectrum-slider-handle-border-color-disabled);
+        background: var(--spectrum-slider-handle-background-color);
+      }
+    }
+    .spectrum-Slider-track {
+      &::before {
+        background: var(--spectrum-slider-track-color-disabled);
+      }
+    }
+    &.spectrum-Slider--filled {
+      .spectrum-Slider-track:first-child {
+        &::before {
+          background: var(--spectrum-slider-fill-track-color-disabled);
+        }
+      }
+    }
+    .spectrum-Slider-fill {
+      &::before {
+        background: var(--spectrum-slider-fill-track-color-disabled);
+      }
+    }
+    .spectrum-Slider-buffer {
+      &::before {
+        background: var(--spectrum-slider-player-track-buffer-color-disabled);
+      }
+    }
+    .spectrum-Slider-ramp {
+      path {
+        fill: var(--spectrum-slider-ramp-track-color-disabled);
+      }
+    }
+
+    &.spectrum-Slider--color {
+      .spectrum-Slider-track {
+        background: var(--spectrum-slider-color-track-color-disabled) !important;
+        box-shadow: none;
+      }
+      .spectrum-Slider-handle {
+        background: var(--spectrum-slider-color-handle-color-disabled);
+        box-shadow: none;
+        border-color: var(--spectrum-slider-color-handle-border-color-disabled);
+
+        &:hover,
+        &:active {
+          background: var(--spectrum-slider-color-handle-color-disabled);
+          box-shadow: none;
+          border-color: var(--spectrum-slider-color-handle-border-color-disabled);
+        }
+      }
+    }
+
+    &.spectrum-Slider--range {
+      .spectrum-Slider-track {
+        &:not(:first-of-type):not(:last-of-type) {
+          &:before {
+            background: var(--spectrum-slider-fill-track-color-disabled);
+          }
+        }
+      }
+    }
+  }
+}
+
+.spectrum-Slider--label-side {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+
+  & > * {
+    display: inline-block;
+  }
+
+  & .spectrum-Slider-labelContainer {
+    padding-top: 0;
+    flex-shrink: 0;
+  }
+
+  & .spectrum-Slider-label {
+    margin-inline-end: var(--spectrum-slider-label-gap-x);
+  }
+}
+@media (forced-colors: active) {
+  :root {
+    --spectrum-slider-handle-border-color-key-focus: Highlight;
+  }
+  .spectrum-Dial {
+    --spectrum-dial-border-color-hover: Highlight;
+    --spectrum-dial-handle-marker-color: ButtonText;
+    --spectrum-dial-handle-marker-color-hover: Highlight;
+    --spectrum-dial-handle-marker-color-key-focus: Highlight;
+    --spectrum-dial-min-max-tick-color: GrayText;
+  }
+  .spectrum-Slider {
+    forced-color-adjust: none;
+    --spectrum-alias-background-color-default: ButtonFace;
+    --spectrum-alias-focus-color: ButtonText;
+    --spectrum-label-text-color: CanvasText;
+    --spectrum-label-text-color-disabled: GrayText;
+    --spectrum-slider-color-handle-border-color: ButtonText;
+    --spectrum-slider-color-handle-border-color-disabled: GrayText;
+    --spectrum-slider-color-handle-color: ButtonFace;
+    --spectrum-slider-color-handle-color-disabled: ButtonFace;
+    --spectrum-slider-color-handle-outset-border-color-key-focus: ButtonText;
+    --spectrum-slider-color-track-border-color: ButtonText;
+    --spectrum-slider-color-track-color-disabled: GrayText;
+    --spectrum-slider-fill-track-color: Highlight;
+    --spectrum-slider-fill-track-color-disabled: GrayText;
+    --spectrum-slider-handle-background-color: ButtonFace;
+    --spectrum-slider-handle-background-color-down: ButtonFace;
+    --spectrum-slider-handle-background-color-key-focus: Highlight;
+    --spectrum-slider-handle-border-color: ButtonText;
+    --spectrum-slider-handle-border-color-disabled: GrayText;
+    --spectrum-slider-handle-border-color-down: Highlight;
+    --spectrum-slider-handle-border-color-hover: Highlight;
+    --spectrum-slider-handle-border-color-key-focus: Highlight;
+    --spectrum-slider-handle-focus-ring-color-key-focus: ButtonText;
+    --spectrum-slider-player-track-buffer-color: ButtonText;
+    --spectrum-slider-player-track-buffer-color-disabled: GrayText;
+    --spectrum-slider-ramp-track-color-disabled: GrayText;
+    --spectrum-slider-tick-mark-color: ButtonText;
+    --spectrum-slider-track-color: ButtonText;
+    --spectrum-slider-track-color-disabled: GrayText;
+  }
+}

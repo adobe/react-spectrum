@@ -1,0 +1,350 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+.spectrum-Card {
+
+  &.is-drop-target {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+    background-color: var(--spectrum-alias-highlight-selected);
+  }
+
+   .spectrum-Card-checkboxWrapper {
+     background-color: var(--spectrum-quickactions-background-color);
+   }
+
+  .spectrum-Card-detail {
+    color: var(--spectrum-card-description-text-color);
+  }
+}
+
+.spectrum-Card-illustration {
+}
+.spectrum-Card-image {
+}
+.spectrum-Card-avatar {
+}
+.spectrum-Card-heading {
+  color: var(--spectrum-global-color-gray-900);
+}
+.spectrum-Card-detail {
+  color: var(--spectrum-global-color-gray-700);
+}
+.spectrum-Card-actions {
+}
+.spectrum-Card-content {
+  color: var(--spectrum-global-color-gray-700);
+}
+.spectrum-Card-divider {
+}
+.spectrum-Card-footer {
+}
+
+.spectrum-Card--default {
+  border-color: var(--spectrum-card-border-color);
+  background-color: var(--spectrum-card-background-color);
+
+  &:hover {
+    border-color: var(--spectrum-card-border-color-hover);
+    &:before {
+      box-shadow: 0 0 0 1px var(--spectrum-card-border-color-hover);
+    }
+  }
+
+  &.is-selected {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    &:before {
+      /* Image needs to go right to the edge, so no border. Adding border on focus causes
+      * a jump in the text and image. So focus ring is only box-shadow
+      */
+      box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+    }
+  }
+
+  &:hover.is-selected {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    &:before {
+      /* Image needs to go right to the edge, so no border. Adding border on focus causes
+      * a jump in the text and image. So focus ring is only box-shadow
+      */
+      box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+    }
+  }
+
+  &:focus-visible {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    &:before {
+      box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+    }
+  }
+
+  &:focus-visible:hover.is-selected {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    &:before {
+      box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+    }
+  }
+
+  &.is-selected {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    &:after {
+      background-color: var(--spectrum-global-color-blue-400);
+      opacity: 0.15;
+    }
+    &:hover {
+      border-color: var(--spectrum-card-border-color-key-focus);
+      &:after {
+        background-color: var(--spectrum-global-color-blue-400);
+        opacity: 0.25;
+      }
+    }
+  }
+  &:before {
+    transition: background-color var(--spectrum-global-animation-duration-100);
+  }
+  &:after {
+    transition: background-color var(--spectrum-global-animation-duration-100),
+                opacity var(--spectrum-global-animation-duration-100);
+    opacity: 0;
+  }
+  .spectrum-Card-grid {
+    &:before {
+      transition: background-color var(--spectrum-global-animation-duration-100);
+      background-color: var(--spectrum-card-quiet-preview-background-color);
+    }
+  }
+
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+    border-block-end-color: var(--spectrum-card-coverphoto-border-color);
+  }
+  .spectrum-Card-image {
+  }
+  .spectrum-Card-avatar {
+  }
+  .spectrum-Card-heading {
+  }
+  .spectrum-Card-detail {
+  }
+  .spectrum-Card-actions {
+  }
+  .spectrum-Card-content {
+    color: var(--spectrum-card-description-text-color);
+  }
+  .spectrum-Card-divider {
+  }
+  .spectrum-Card-footer {
+  }
+}
+
+.spectrum-Card--isQuiet {
+  border-color: transparent;
+  background-color: transparent;
+  &:hover {
+    .spectrum-Card-grid {
+      &:before {
+        background-color: var(--spectrum-card-quiet-preview-background-color-hover);
+        /* TODO do we still want this border on the image itself? */
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-hover);
+      }
+    }
+  }
+
+  &.is-selected {
+    .spectrum-Card-grid {
+      &:after {
+        /* Image needs to go right to the edge, so no border. Adding border on focus causes
+        * a jump in the text and image. So focus ring is only box-shadow
+        */
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &:hover.is-selected {
+    .spectrum-Card-grid {
+      &:after {
+        /* Image needs to go right to the edge, so no border. Adding border on focus causes
+        * a jump in the text and image. So focus ring is only box-shadow
+        */
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &:focus-visible {
+    .spectrum-Card-grid {
+      &:after {
+        box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &:focus-visible:hover.is-selected {
+    .spectrum-Card-grid {
+      &:after {
+        box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &.is-selected {
+    .spectrum-Card-grid {
+      .spectrum-Card-decoration {
+        opacity: 0.15;
+      }
+    }
+    &:hover {
+      .spectrum-Card-grid {
+        .spectrum-Card-decoration {
+          opacity: 0.25;
+        }
+      }
+    }
+  }
+
+  .spectrum-Card-grid {
+    &:before {
+      transition: background-color var(--spectrum-global-animation-duration-100);
+      background-color: var(--spectrum-card-quiet-preview-background-color);
+    }
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+  }
+  .spectrum-Card-image {
+  }
+  .spectrum-Card-avatar {
+  }
+  .spectrum-Card-heading {
+  }
+  .spectrum-Card-detail {
+  }
+  .spectrum-Card-actions {
+  }
+  .spectrum-Card-content {
+  }
+  .spectrum-Card-divider {
+  }
+  .spectrum-Card-footer {
+  }
+  .spectrum-Card-decoration {
+    transition: background-color var(--spectrum-global-animation-duration-100),
+                opacity var(--spectrum-global-animation-duration-100);
+    background-color: var(--spectrum-global-color-blue-400);
+    opacity: 0;
+  }
+}
+
+.spectrum-Card--horizontal {
+  border-color: var(--spectrum-card-border-color);
+  background-color: var(--spectrum-card-background-color);
+  &:hover {
+    border-color: var(--spectrum-card-border-color-hover);
+    .spectrum-Card-grid {
+      &:before {
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-hover);
+      }
+    }
+  }
+
+  &.is-selected {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    .spectrum-Card-grid {
+      &:before {
+        /* Image needs to go right to the edge, so no border. Adding border on focus causes
+        * a jump in the text and image. So focus ring is only box-shadow
+        */
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &:hover.is-selected {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    .spectrum-Card-grid {
+      &:before {
+        /* Image needs to go right to the edge, so no border. Adding border on focus causes
+        * a jump in the text and image. So focus ring is only box-shadow
+        */
+        box-shadow: 0 0 0 1px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &:focus-visible {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    .spectrum-Card-grid {
+      &:before {
+        box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &:focus-visible:hover.is-selected {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    .spectrum-Card-grid {
+      &:before {
+        box-shadow: 0 0 0 2px var(--spectrum-card-border-color-key-focus);
+      }
+    }
+  }
+
+  &.is-selected {
+    border-color: var(--spectrum-card-border-color-key-focus);
+    .spectrum-Card-grid {
+      &:after {
+        background-color: var(--spectrum-global-color-blue-400);
+        opacity: 0.15;
+      }
+    }
+    &:hover {
+      border-color: var(--spectrum-card-border-color-key-focus);
+      .spectrum-Card-grid {
+        &:after {
+          background-color: var(--spectrum-global-color-blue-400);
+          opacity: 0.25;
+        }
+      }
+    }
+  }
+
+  .spectrum-Card-grid {
+    &:after {
+      transition: background-color var(--spectrum-global-animation-duration-100),
+                  opacity var(--spectrum-global-animation-duration-100);
+      opacity: 0;
+    }
+  }
+  .spectrum-Card-image,
+  .spectrum-Card-illustration {
+    border-inline-end-color: var(--spectrum-card-coverphoto-border-color);
+  }
+  .spectrum-Card-image {
+  }
+  .spectrum-Card-illustration {
+  }
+  .spectrum-Card-avatar {
+  }
+  .spectrum-Card-heading {
+  }
+  .spectrum-Card-detail {
+  }
+  .spectrum-Card-actions {
+  }
+  .spectrum-Card-content {
+  }
+  .spectrum-Card-divider {
+  }
+  .spectrum-Card-footer {
+  }
+}

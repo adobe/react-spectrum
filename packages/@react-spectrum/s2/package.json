@@ -1,7 +1,10 @@
 {
   "devDependencies": {
+    "@adobe/spectrum-tokens": "^13.0.0-beta.3",
     "@babel/preset-react": "^7.23.3",
     "@react-spectrum/utils": "latest",
+    "@react-spectrum/provider": "latest",
+    "@storybook/addons": "^7.5.3",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-interactions": "^7.5.3",
     "@storybook/addon-links": "^7.5.3",
@@ -9,6 +12,9 @@
     "@storybook/addon-styling-webpack": "^0.0.5",
     "@storybook/addon-themes": "^7.5.3",
     "@storybook/blocks": "^7.5.3",
+    "@storybook/client-api": "^7.5.3",
+    "@storybook/manager-api": "^7.5.3",
+    "@storybook/preview-api": "^7.5.3",
     "@storybook/react": "^7.5.3",
     "@storybook/react-webpack5": "^7.5.3",
     "@storybook/testing-library": "^0.2.2",
@@ -26,6 +32,8 @@
     "react-dom": "^18.2.0",
     "storybook": "^7.5.3",
     "storybook-dark-mode": "^3.0.1",
+    "style-dictionary": "^3.8.0",
+    "style-dictionary-sets": "^2.3.0",
     "style-loader": "^3.3.3",
     "tailwindcss": "^3.3.5",
     "tailwindcss-animate": "^1.0.7",
@@ -39,6 +47,7 @@
   "scripts": {
     "start": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "storybook": "storybook dev -p 6006"
+    "storybook": "storybook dev -p 6006",
+    "build:tokens": "style-dictionary build --config style-dictionary.config.js"
   }
 }

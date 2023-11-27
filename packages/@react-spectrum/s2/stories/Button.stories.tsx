@@ -12,7 +12,7 @@ const meta: Meta<typeof Button> = {
 
 export default meta;
 
-export const Example = (args: any) => <Button {...args}>Press me</Button>;
+export const Example = (args: any) => <Button variant="accent" {...args}>Press me</Button>;
 
 Example.args = {
   onPress: () => alert('Hello world!')

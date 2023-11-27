@@ -1,0 +1,65 @@
+/*
+Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+@media (forced-colors: active) {
+  .spectrum-InLineAlert {
+    --highcontrast-inlinealert-background-color: Background;
+    --highcontrast-inlinealert-heading-color: CanvasText;
+    --highcontrast-inlinealert-content-color: CanvasText;
+    --highcontrast-inlinealert-border-and-icon-color: ButtonBorder;
+  }
+}
+
+.spectrum-InLineAlert {
+  background-color:var(--highcontrast-inlinealert-background-color, var(--spectrum-inlinealert-background-color));
+  border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color));
+}
+
+.spectrum-InLineAlert-heading {
+  color:var(--highcontrast-inlinealert-heading-color, var(--spectrum-inlinealert-heading-color));
+}
+
+.spectrum-InLineAlert-content {
+ color:var(--highcontrast-inlinealert-content-color, var(--spectrum-inlinealert-content-color));
+}
+
+.spectrum-InLineAlert--info {
+  border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-info));
+}
+
+.spectrum-InLineAlert--info .spectrum-InLineAlert-icon {
+  color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-info));
+}
+
+.spectrum-InLineAlert--notice {
+  border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-notice));
+}
+
+.spectrum-InLineAlert--notice .spectrum-InLineAlert-icon {
+  color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-notice));
+}
+
+.spectrum-InLineAlert--positive {
+  border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-positive));
+}
+
+.spectrum-InLineAlert--positive .spectrum-InLineAlert-icon {
+  color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-positive));
+}
+
+.spectrum-InLineAlert--negative {
+  border-color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-negative));
+}
+
+.spectrum-InLineAlert--negative .spectrum-InLineAlert-icon {
+  color:var(--highcontrast-inlinealert-border-and-icon-color, var(--spectrum-inlinealert-border-and-icon-color-negative));
+}

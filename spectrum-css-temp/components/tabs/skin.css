@@ -1,0 +1,233 @@
+/*
+Copyright 2019 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License.
+*/
+
+:root {
+  --spectrum-tabs-rule-color: var(--spectrum-global-color-gray-300);
+  --spectrum-tabs-vertical-rule-color: var(--spectrum-global-color-gray-300);
+  --spectrum-tabs-emphasized-text-color: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-icon-color: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-selection-indicator-color: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-text-color-hover: var(--spectrum-accent-color-1000);
+  --spectrum-tabs-emphasized-icon-color-hover: var(--spectrum-accent-color-1000);
+  --spectrum-tabs-emphasized-text-color-key-focus: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-icon-color-key-focus: var(--spectrum-accent-color-900);
+  --spectrum-tabs-emphasized-focus-ring-color: var(--spectrum-blue-900);
+}
+
+.spectrum-Tabs {
+  border-block-end-color: var(--spectrum-tabs-rule-color);
+
+  &.spectrum-Tabs--isCollapsed {
+
+    .spectrum-Tabs-picker {
+      width: auto;
+    }
+
+    :focus-visible {
+      /* FieldButton Picker focus ring override */
+      &::after {
+        box-shadow: none;
+      }
+
+      &::before {
+        border-color: var(--spectrum-tabs-focus-ring-color);
+      }
+    }
+  }
+}
+
+.spectrum-Tabs--vertical {
+  border-inline-start-color: var(--spectrum-tabs-vertical-rule-color);
+}
+
+.spectrum-Tabs--emphasized {
+  .spectrum-Tabs-selectionIndicator {
+    background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
+  }
+}
+
+.spectrum-Tabs-selectionIndicator {
+  background-color: var(--spectrum-tabs-selection-indicator-color);
+}
+
+.spectrum-Tabs-item {
+  color: var(--spectrum-tabs-text-color);
+
+  .spectrum-Icon {
+    fill: var(--spectrum-tabs-icon-color)
+  }
+
+  &:hover {
+    color: var(--spectrum-tabs-text-color-hover);
+
+    .spectrum-Icon {
+      fill: var(--spectrum-tabs-icon-color-hover)
+    }
+  }
+
+  &.is-selected {
+    color: var(--spectrum-tabs-text-color-selected);
+
+    .spectrum-Icon {
+      fill: var(--spectrum-tabs-icon-color-selected)
+    }
+  }
+
+  &:focus-visible {
+    color: var(--spectrum-tabs-text-color-key-focus);
+
+    &::before {
+      border-color: var(--spectrum-tabs-focus-ring-color);
+    }
+
+    .spectrum-Icon {
+      fill: var(--spectrum-tabs-icon-color-key-focus)
+    }
+  }
+
+  &.is-disabled {
+    color: var(--spectrum-tabs-text-color-disabled);
+
+    .spectrum-Icon {
+      fill: var(--spectrum-tabs-icon-color-disabled)
+    }
+  }
+}
+
+.spectrum-Tabs--emphasized {
+  .spectrum-Tabs-item {
+    &.is-selected {
+      color: var(--spectrum-tabs-emphasized-text-color);
+
+      .spectrum-Icon {
+        fill: var(--spectrum-tabs-emphasized-icon-color);
+      }
+
+      &:focus-visible {
+        color: var(--spectrum-tabs-emphasized-text-color-key-focus);
+
+        &::before {
+          border-color: var(--spectrum-tabs-emphasized-focus-ring-color);
+        }
+
+        .spectrum-Icon {
+          fill: var(--spectrum-tabs-emphasized-icon-color-key-focus);
+        }
+      }
+
+      &:hover {
+        color: var(--spectrum-tabs-emphasized-text-color-hover);
+
+        .spectrum-Icon {
+          fill: var(--spectrum-tabs-emphasized-icon-color-hover);
+        }
+      }
+    }
+  }
+}
+
+.spectrum-Tabs--quiet {
+  border-block-end-color: var(--spectrum-tabs-quiet-rule-color);
+
+  .spectrum-Tabs-selectionIndicator {
+    background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
+  }
+
+  &.spectrum-Tabs--emphasized {
+    .spectrum-Tabs-selectionIndicator {
+      background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
+    }
+  }
+}
+
+.spectrum-Tabs--vertical {
+  &.spectrum-Tabs--quiet,
+  &.spectrum-Tabs--compact {
+    border-inline-start-color: var(--spectrum-tabs-quiet-vertical-rule-color);
+
+    .spectrum-Tabs-selectionIndicator {
+      background-color: var(--spectrum-tabs-quiet-selection-indicator-color);
+    }
+  }
+
+  &.spectrum-Tabs--emphasized {
+    .spectrum-Tabs-selectionIndicator {
+      background-color: var(--spectrum-tabs-emphasized-selection-indicator-color);
+    }
+  }
+}
+
+.spectrum-TabsPanel-tabpanel {
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    border-color: var(--spectrum-tabs-focus-ring-color);
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Tabs {
+    forced-color-adjust: none;
+    --spectrum-tabs-focus-ring-color: ButtonText;
+    --spectrum-tabs-icon-color: ButtonText;
+    --spectrum-tabs-icon-color-disabled: GrayText;
+    --spectrum-tabs-icon-color-hover: ButtonText;
+    --spectrum-tabs-icon-color-key-focus: ButtonText;
+    --spectrum-tabs-icon-color-selected: HighlightText;
+    --spectrum-tabs-quiet-rule-color: transparent;
+    --spectrum-tabs-quiet-selection-indicator-color: transparent;
+    --spectrum-tabs-quiet-vertical-rule-color: transparent;
+    --spectrum-tabs-rule-color: transparent;
+    --spectrum-tabs-selection-indicator-color: transparent;
+    --spectrum-tabs-text-color: ButtonText;
+    --spectrum-tabs-text-color-disabled: GrayText;
+    --spectrum-tabs-text-color-hover: ButtonText;
+    --spectrum-tabs-text-color-key-focus: ButtonText;
+    --spectrum-tabs-text-color-selected: HighlightText;
+    --spectrum-tabs-vertical-rule-color: transparent;
+    .spectrum-Tabs-item {
+      &:before {
+        background-color: ButtonFace;
+      }
+      .spectrum-Icon {
+        z-index: 1;
+        position: relative;
+      }
+      .spectrum-Tabs-itemLabel {
+        position: relative;
+        z-index: 1;
+      }
+    }
+    .is-selected {
+      color: HighlightText;
+      .spectrum-Icon {
+        fill: HighlightText;
+      }
+      &:before {
+        background-color: Highlight;
+        color: HighlightText;
+      }
+      .spectrum-Tabs-itemLabel {
+        color: HighlightText;
+      }
+    }
+    &.spectrum-Tabs--isCollapsed {
+      :focus-visible {
+        /* FieldButton Picker focus ring override */
+        outline: none;
+      }
+
+    }
+  }
+}
