@@ -226,7 +226,7 @@ To help kick-start your project, we offer a starter kit that includes example im
 
 <ResourceCard
   type="Storybook"
-  url={`../react-aria-starter.${process.env.GIT_HASH || spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout}.zip`}
+  url={`../react-aria-starter.${process.env.GIT_HASH || spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim()}.zip`}
   style={{marginTop: 36}} />
 
 ## Hooks
