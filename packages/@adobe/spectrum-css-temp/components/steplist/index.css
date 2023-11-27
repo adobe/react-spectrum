@@ -218,7 +218,7 @@ governing permissions and limitations under the License.
 
     padding-inline-start: calc(var(--spectrum-steplist-chevron-gap) - var(--spectrum-steplist-marker-label-gap));
     &::before {
-      content: 'x';
+      content: "*";
       width: 0;
       visibility: hidden;
     }
@@ -239,7 +239,7 @@ governing permissions and limitations under the License.
     display: flex;
     align-items: center;
     &::before {
-      content: 'x';
+      content: "*";
       width: 0;
       visibility: hidden;
     }
@@ -281,7 +281,7 @@ governing permissions and limitations under the License.
     display: flex;
     align-items: center;
     &::before {
-      content: 'x';
+      content: "*";
       width: 0;
       visibility: hidden;
     }

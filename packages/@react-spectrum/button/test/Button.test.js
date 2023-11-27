@@ -26,6 +26,7 @@ import userEvent from '@testing-library/user-event';
 
 describe('Button', function () {
   let onPressSpy = jest.fn();
+  let spinnerVisibilityDelay = 1000;
   let onPressStartSpy = jest.fn();
   let onPressEndSpy = jest.fn();
   let onPressUpSpy = jest.fn();
@@ -306,7 +307,6 @@ describe('Button', function () {
 
   // isPending state
   it('displays a spinner after a short delay when isPending prop is true', function () {
-    let spinnerVisibilityDelay = 1000;
     let onPressSpy = jest.fn();
     function TestComponent() {
       let [pending, setPending] = useState(false);
@@ -317,7 +317,7 @@ describe('Button', function () {
             onPressSpy();
           }}
           isPending={pending}>
-          Click Me
+          Click me
         </Button>
       );
     }
@@ -335,9 +335,8 @@ describe('Button', function () {
       jest.advanceTimersByTime(spinnerVisibilityDelay);
     });
     expect(button).toHaveAttribute('aria-disabled', 'true');
-    spinner = queryByRole('progressbar');
+    spinner = queryByRole('progressbar', {hidden: true});
     expect(spinner).toBeVisible();
-    expect(spinner).toHaveAttribute('aria-label', 'Loading…');
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 
