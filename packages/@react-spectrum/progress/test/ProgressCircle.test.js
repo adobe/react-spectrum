@@ -160,4 +160,11 @@ describe('ProgressCircle', function () {
     let progressBar = getByTestId('test');
     expect(progressBar).toBeInTheDocument();
   });
+
+  it('supports aria-hidden', function () {
+    let {getByRole} = render(<ProgressCircle value={25} aria-label="Progress" aria-hidden="true" />);
+    let progressBar = getByRole('progressbar', {hidden: true});
+    expect(progressBar).toBeInTheDocument();
+    expect(progressBar).toHaveAttribute('aria-hidden', 'true');
+  });
 });
