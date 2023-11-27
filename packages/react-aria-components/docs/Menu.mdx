@@ -76,7 +76,7 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-component
   box-sizing: border-box;
   overflow: auto;
   padding: 2px;
-  min-width: min(150px, var(--trigger-width));
+  min-width: 150px;
   box-sizing: border-box;
   outline: none;
 }
@@ -798,7 +798,7 @@ The [Popover](Popover.html) component can be targeted with the `.react-aria-Popo
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
 
-Within a MenuTrigger, the popover will have the `data-trigger="MenuTrigger"` attribute, which can be used to define menu-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the select button.
+Within a MenuTrigger, the popover will have the `data-trigger="MenuTrigger"` attribute, which can be used to define menu-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the menu button.
 
 ```css render=false
 .react-aria-Popover[data-trigger=MenuTrigger] {

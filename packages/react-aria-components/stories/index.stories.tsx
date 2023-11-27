@@ -315,30 +315,6 @@ export const MenuExample = () => (
   </MenuTrigger>
 );
 
-export const MenuTriggerWidthExample = () => (
-  <MenuTrigger>
-    <Button aria-label="Menu">Matches width</Button>
-    <Popover>
-      <Menu className={styles.menuTriggerWidth} onAction={action('onAction')}>
-        <Section className={styles.group}>
-          <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-          <MyMenuItem>Foo</MyMenuItem>
-          <MyMenuItem>Bar</MyMenuItem>
-          <MyMenuItem>Baz</MyMenuItem>
-          <MyMenuItem href="https://google.com">Google</MyMenuItem>
-        </Section>
-        <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-        <Section className={styles.group}>
-          <Header style={{fontSize: '1.2em'}}>Section 2</Header>
-          <MyMenuItem>Foo</MyMenuItem>
-          <MyMenuItem>Bar</MyMenuItem>
-          <MyMenuItem>Baz</MyMenuItem>
-        </Section>
-      </Menu>
-    </Popover>
-  </MenuTrigger>
-);
-
 export const MenuComplex = () => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
