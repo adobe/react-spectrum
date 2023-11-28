@@ -12,12 +12,14 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {Avatar} from '@react-spectrum/avatar';
 import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
 import Filter from '@spectrum-icons/workflow/Filter';
 import {Flex} from '@react-spectrum/layout';
 import {Item, SearchAutocomplete} from '@react-spectrum/autocomplete';
 import {mergeProps} from '@react-aria/utils';
 import React from 'react';
+import {Text} from '@react-spectrum/text';
 
 type SearchAutocompleteStory = ComponentStoryObj<typeof SearchAutocomplete>;
 
@@ -270,4 +272,28 @@ export const iconFilter: SearchAutocompleteStory = {
 export const iconNull: SearchAutocompleteStory = {
   args: {icon: null},
   name: 'icon: null'
+};
+
+export const WithAvatars: SearchAutocompleteStory = {
+  args: {label: 'Search users'},
+  render: (args) => (
+    <SearchAutocomplete {...args}>
+      <Item textValue="User 1">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 1</Text>
+      </Item>
+      <Item textValue="User 2">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 2</Text>
+      </Item>
+      <Item textValue="User 3">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 3</Text>
+      </Item>
+      <Item textValue="User 4">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 4</Text>
+      </Item>
+    </SearchAutocomplete>
+  )
 };
