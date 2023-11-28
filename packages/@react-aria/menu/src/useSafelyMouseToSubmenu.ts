@@ -78,6 +78,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
         return;
       }
       clearTimeout(timeout.current);
+      clearTimeout(autoCloseTimeout.current);
 
       let {clientX: mouseX, clientY: mouseY} = e;
 
