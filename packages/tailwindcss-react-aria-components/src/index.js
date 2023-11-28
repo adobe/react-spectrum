@@ -1,35 +1,45 @@
 import plugin from 'tailwindcss/plugin';
 
+// Order of these is important because it determines which states win in a conflict.
+// We mostly follow Tailwind's defaults, adding our additional states following the categories they define.
+// https://github.com/tailwindlabs/tailwindcss/blob/304c2bad6cb5fcb62754a4580b1c8f4c16b946ea/src/corePlugins.js#L83
 const attributes = {
   boolean: [
+    // Conditions
+    'allows-removing',
+    'allows-sorting',
+    'allows-dragging',
+
+    // States
+    'open',
+    'entering',
+    'exiting',
+    'indeterminate',
+    ['placeholder-shown', 'placeholder'],
+    'current',
+    'required',
+    'unavailable',
+    'invalid',
+    ['read-only', 'readonly'],
+    'outside-month',
+    'outside-visible-range',
+
+    // Content
+    'empty',
+
+    // Interactive states
+    'focus-within',
     ['hover', 'hovered'],
     ['focus', 'focused'],
     'focus-visible',
-    'focus-within',
     'pressed',
-    'disabled',
-    'drop-target',
-    'dragging',
-    'empty',
-    'allows-dragging',
-    'allows-removing',
-    'allows-sorting',
-    ['placeholder-shown', 'placeholder'],
     'selected',
-    'indeterminate',
-    ['read-only', 'readonly'],
-    'required',
-    'entering',
-    'exiting',
-    'open',
-    'unavailable',
-    'outside-month',
-    'outside-visible-range',
     'selection-start',
     'selection-end',
-    'current',
-    'invalid',
-    'resizing'
+    'dragging',
+    'drop-target',
+    'resizing',
+    'disabled'
   ],
   enum: {
     placement: ['left', 'right', 'top', 'bottom'],
@@ -100,21 +110,24 @@ let addVariants = (variantName, selectors, addVariant, matchVariant) => {
 
 module.exports = plugin.withOptions((options) => (({addVariant, matchVariant}) => {
   let prefix = options?.prefix ? `${options.prefix}-` : '';
+
+  // Enum attributes go first because currently they are all non-interactive states.
+  Object.keys(attributes.enum).forEach((attributeName) => {
+    attributes.enum[attributeName].forEach(
+      (attributeValue) => {
+        let name = shortNames[attributeName] || attributeName;
+        let variantName = `${prefix}${name}-${attributeValue}`;
+        let selectors = getSelector(prefix, attributeName, attributeValue);
+        addVariants(variantName, selectors, addVariant, matchVariant);
+      }
+    );
+  });
+
   attributes.boolean.forEach((attribute) => {
     let variantName = Array.isArray(attribute) ? attribute[0] : attribute;
     variantName = `${prefix}${variantName}`;
     let attributeName = Array.isArray(attribute) ? attribute[1] : attribute;
     let selectors = getSelector(prefix, attributeName);
     addVariants(variantName, selectors, addVariant, matchVariant);
-  });
-  Object.keys(attributes.enum).forEach((attributeName) => {
-    attributes.enum[attributeName].forEach(
-        (attributeValue) => {
-          let name = shortNames[attributeName] || attributeName;
-          let variantName = `${prefix}${name}-${attributeValue}`;
-          let selectors = getSelector(prefix, attributeName, attributeValue);
-          addVariants(variantName, selectors, addVariant, matchVariant);
-        }
-      );
   });
 }));
