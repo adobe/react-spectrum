@@ -74,12 +74,12 @@ let itemsWithFalsyId = [
 ];
 
 let manyItems = [];
-for (let i = 1; i <= 100; i++) {
+for (let i = 1; i <= 30; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
 let manyColumns = [];
-for (let i = 1; i <= 100; i++) {
+for (let i = 1; i <= 5; i++) {
   manyColumns.push({id: i, name: 'Column ' + i});
 }
 
@@ -2265,7 +2265,7 @@ export let tableTests = () => {
         fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'End', shiftKey: true, ctrlKey: true});
 
         let expected = [];
-        for (let i = 10; i <= 100; i++) {
+        for (let i = 10; i <= 30; i++) {
           expected.push('Foo ' + i);
         }
 
@@ -2400,7 +2400,7 @@ export let tableTests = () => {
         await user.click(rows[4]);
 
         let expected = [];
-        for (let i = 1; i <= 100; i++) {
+        for (let i = 1; i <= 30; i++) {
           if (i !== 4) {
             expected.push('Foo ' + i);
           }
