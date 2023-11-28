@@ -218,6 +218,12 @@ governing permissions and limitations under the License.
   padding-block-start: var(--spectrum-global-dimension-size-10);
   padding-inline-end: var(--spectrum-global-dimension-size-100);
 }
+.spectrum-Menu-avatar {
+  /* Matches icon. */
+  grid-area: icon;
+  margin-inline-start: var(--spectrum-global-dimension-size-10);
+  margin-inline-end: var(--spectrum-global-dimension-size-100);
+}
 .spectrum-Menu-description {
   grid-area: description;
   line-height: var(--spectrum-global-font-line-height-small);
