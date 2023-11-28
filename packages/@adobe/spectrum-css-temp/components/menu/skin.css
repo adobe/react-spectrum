@@ -29,8 +29,6 @@ governing permissions and limitations under the License.
 .spectrum-Menu {
   --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
   background-color: var(--spectrum-selectlist-background-color);
-  /* Define this var so it can be read from JS */
-  --spectrum-submenu-offset-distance: var(--spectrum-global-dimension-size-65);
 }
 
 .spectrum-Submenu-headingWrapper {

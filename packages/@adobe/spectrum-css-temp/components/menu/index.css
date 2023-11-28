@@ -51,6 +51,11 @@ governing permissions and limitations under the License.
 }
 
 .spectrum-Menu {
+  /*
+    Menu border radius + 1 to match XD designs for submenu offset. No calc use so
+    getComputedStyle + getPropertyValue actually returns a pixel value rather than the calc string.
+  */
+  --spectrum-submenu-offset-distance: var(--spectrum-global-dimension-size-65);
   text-align: start;
   display: block;
 
