@@ -798,11 +798,11 @@ The [Popover](Popover.html) component can be targeted with the `.react-aria-Popo
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
 
-Within a MenuTrigger, the popover will have the `data-trigger="MenuTrigger"` attribute, which can be used to define menu-specific styles.
+Within a MenuTrigger, the popover will have the `data-trigger="MenuTrigger"` attribute, which can be used to define menu-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the menu button.
 
 ```css render=false
 .react-aria-Popover[data-trigger=MenuTrigger] {
-  /* ... */
+  width: var(--trigger-width);
 }
 ```
 
