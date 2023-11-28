@@ -41,14 +41,12 @@ let hardModeProgrammatic = [
   {name: 'Section 1', children: [
     {name: 'Copy', icon: 'Copy'},
     {name: 'Cut', icon: 'Cut'},
-    {name: 'Paste', icon: 'Paste'},
-    {name: 'Person 1', avatar: 'https://i.imgur.com/kJOwAdv.png'}
+    {name: 'Paste', icon: 'Paste'}
   ]},
   {name: 'Section 2', children: [
     {name: 'Puppy', icon: 'AlignLeft'},
     {name: 'Doggo', icon: 'AlignCenter'},
-    {name: 'Floof', icon: 'AlignRight'},
-    {name: 'Person 2', avatar: 'https://i.imgur.com/kJOwAdv.png'}
+    {name: 'Floof', icon: 'AlignRight'}
   ]}
 ];
 
@@ -124,7 +122,6 @@ let customOption = (item) => {
   return (
     <Item textValue={item.name} key={item.name}>
       {item.icon && <Icon size="S" />}
-      {item.avatar && <Avatar src={item.avatar} alt="default Adobe avatar" />}
       <Text>{item.name}</Text>
     </Item>
   );
@@ -136,6 +133,17 @@ const TemplateComplex = (args: SpectrumListBoxProps<object>) => (
       <Section key={item.name} items={item.children} title={item.name}>
         {item => customOption(item)}
       </Section>
+    )}
+  </ListBox>
+);
+
+const TemplateAvatars = (args: SpectrumListBoxProps<object>) => (
+  <ListBox {...args} flexGrow={1} items={flatOptions}>
+    {(item) => (
+      <Item key={item.name}>
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+        <Text>{item.name}</Text>
+      </Item>
     )}
   </ListBox>
 );
@@ -165,6 +173,6 @@ export const ComplexItems = {
 };
 
 export const WithAvatar = {
-  render: TemplateComplex,
+  render: TemplateAvatars,
   name: 'with avatar'
 };
