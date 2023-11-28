@@ -31,7 +31,7 @@ async function build() {
   console.log(`Building into ${dir}...`);
 
   // Generate a package.json containing just what we need to build the website
-  let gitHash = spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout;
+  let gitHash = spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
   let pkg = {
     name: 'rsp-website',
     version: '0.0.0',
