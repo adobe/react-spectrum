@@ -99,7 +99,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let [offset, setOffset] = useState(0);
   useLayoutEffect(() => {
     if (parentMenuRef.current) {
-      let offset = window?.getComputedStyle(parentMenuRef?.current)?.getPropertyValue('--spectrum-submenu-offset-distance-x');
+      let offset = window?.getComputedStyle(parentMenuRef?.current)?.getPropertyValue('--spectrum-submenu-offset-distance');
       if (offset !== '') {
         setOffset(-1 * parseInt(offset, 10));
       }
@@ -151,7 +151,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         triggerRef={triggerRef}
         placement="end top"
         containerPadding={0}
-        crossOffset={offset - 1}
+        crossOffset={offset}
         offset={offset}
         hideArrow
         enableBothDismissButtons>
