@@ -48,8 +48,8 @@ function AlertBanner(props: SpectrumAlertBannerProps, ref: DOMRef<HTMLDivElement
   let {styleProps} = useStyleProps(otherProps);
   let domRef = useDOMRef(ref);
 
-  let Icon = null;
-  let iconLabel: string;
+  let Icon: any = null;
+  let iconLabel = '';
   if (variant in ICONS) {
     Icon = ICONS[variant];
     iconLabel = variant;

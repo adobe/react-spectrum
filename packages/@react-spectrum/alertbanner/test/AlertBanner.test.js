@@ -11,8 +11,8 @@
  */
 
 import {AlertBanner} from '../';
-import {render} from '@react-spectrum/test-utils';
 import React from 'react';
+import {render} from '@react-spectrum/test-utils';
 
 describe('AlertBanner', function () {
   it.each`
