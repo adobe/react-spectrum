@@ -28,7 +28,7 @@ function getCachedDictionary<K extends string, T extends LocalizedString>(string
 /**
  * Returns a cached LocalizedStringDictionary for the given strings.
  */
-export function useLocalizedStringDicationary<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>, packageName?: string): LocalizedStringDictionary<K, T> {
+export function useLocalizedStringDictionary<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>, packageName?: string): LocalizedStringDictionary<K, T> {
   return (packageName && LocalizedStringDictionary.getGlobalDictionaryForPackage(packageName)) || getCachedDictionary(strings);
 }
 
@@ -39,6 +39,6 @@ export function useLocalizedStringDicationary<K extends string = string, T exten
  */
 export function useLocalizedStringFormatter<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>, packageName?: string): LocalizedStringFormatter<K, T> {
   let {locale} = useLocale();
-  let dictionary = useLocalizedStringDicationary(strings, packageName);
+  let dictionary = useLocalizedStringDictionary(strings, packageName);
   return useMemo(() => new LocalizedStringFormatter(locale, dictionary), [locale, dictionary]);
 }
