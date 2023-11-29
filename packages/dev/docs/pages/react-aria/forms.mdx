@@ -493,7 +493,8 @@ function App() {
             isInvalid={invalid}
           >
             <Label>Name</Label>
-            <Input ref={ref}/> // Assign React Hook Form ref to Input so it can focus the inut after validation
+            // Assign React Hook Form ref to Input so it can focus the Input after validation.
+            <Input ref={ref}/>
             <FieldError>{error?.message}</FieldError>
           </TextField>
         )}
