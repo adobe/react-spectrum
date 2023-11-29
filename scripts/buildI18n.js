@@ -1,6 +1,7 @@
 const glob = require('glob').sync;
 const fs = require('fs');
 const {compileStrings} = require('@internationalized/string-compiler');
+const {minifySync} = require('@swc/core');
 
 function build(scope, dist = scope.slice(1)) {
   let languages = {};
@@ -25,8 +26,8 @@ function build(scope, dist = scope.slice(1)) {
     }
     serialized += '};\n';
 
-    fs.writeFileSync(`packages/${dist}/i18n/${lang}.js`, `module.exports = ${serialized}`);
-    fs.writeFileSync(`packages/${dist}/i18n/${lang}.mjs`, `export default ${serialized}`);
+    fs.writeFileSync(`packages/${dist}/i18n/${lang}.js`,  minifySync(`module.exports = ${serialized}`).code);
+    fs.writeFileSync(`packages/${dist}/i18n/${lang}.mjs`,  minifySync(`export default ${serialized}`).code);
   }
 
   fs.writeFileSync(`packages/${dist}/i18n/lang.d.ts`, `import type {LocalizedString} from '@internationalized/string';
@@ -48,7 +49,7 @@ export default PackageLocalizedStrings;
       index += generateImport(lang.replace('-', '_'), `./${lang}${ext}`) + ';\n';
     }
 
-    index += `\nlet dictionary = new LocalizedStringDictionary({\n`;
+    index += '\nlet dictionary = new LocalizedStringDictionary({\n';
     for (let lang in languages) {
       index += `  "${lang}": ${lang.replace('-', '_')},\n`;
     }

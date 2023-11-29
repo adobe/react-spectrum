@@ -65,7 +65,7 @@ First, install `@react-aria/optimize-locales-plugin` with your package manager. 
 
 ```ts
 // next.config.js
-const optimizeLocales = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require('@react-aria/optimize-locales-plugin');
 
 module.exports = {
   // ...
@@ -112,7 +112,7 @@ First, install `@react-aria/optimize-locales-plugin` with your package manager. 
 
 ```ts
 // next.config.js
-const optimizeLocales = require('@react-aria/optimize-locales-plugin');
+const localesPlugin = require('@react-aria/optimize-locales-plugin');
 
 module.exports = {
   // ...
@@ -166,7 +166,7 @@ Remix is supported [when using Vite](https://remix.run/docs/en/main/future/vite)
 import { unstable_vitePlugin as remix } from '@remix-run/dev';
 import { defineConfig } from 'vite';
 /*- begin highlight -*/
-import optimizeLocales from '@react-aria/optimize-locales-plugin';
+import localesPlugin from '@react-aria/optimize-locales-plugin';
 /*- end highlight -*/
 
 export default defineConfig({
@@ -174,7 +174,7 @@ export default defineConfig({
     remix(),
     // Don't include any locale strings in the client JS bundle.
     /*- begin highlight -*/
-    {...optimizeLocales.vite({locales: []}), enforce: 'pre'}
+    {...localesPlugin.vite({locales: []}), enforce: 'pre'}
     /*- end highlight -*/
   ],
 });
