@@ -27,14 +27,20 @@ interface PackageLocalizationProviderProps {
  * needed by the client into the initial HTML.
  */
 export function PackageLocalizationProvider(props: PackageLocalizationProviderProps) {
-  let {locale, strings} = props;
   if (typeof document !== 'undefined') {
     console.log('PackageLocalizationProvider should only be rendered on the server.');
     return null;
   }
 
-  let contents = `window[Symbol.for('react-aria.i18n.locale')] = ${JSON.stringify(locale)};\n${serialize(strings)}`;
-  return <script type="module" dangerouslySetInnerHTML={{__html: contents}} />;
+  let {locale, strings} = props;
+  return <script dangerouslySetInnerHTML={{__html: getPackageLocalizationScript(locale, strings)}} />;
+}
+
+/**
+ * Returns the content for an inline `<script>` tag to inject localized strings into initial HTML.
+ */
+export function getPackageLocalizationScript(locale: string, strings: PackageLocalizedStrings) {
+  return `window[Symbol.for('react-aria.i18n.locale')]=${JSON.stringify(locale)};\n{${serialize(strings)}}`;
 }
 
 const cache = new WeakMap<PackageLocalizedStrings, string>();

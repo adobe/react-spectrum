@@ -41,8 +41,9 @@ export default PackageLocalizedStrings;
   // Generate index files.
   for (let ext of ['.js', '.mjs']) {
     let generateImport = (exports, from) => ext === '.mjs' ? `import ${exports} from '${from}'` : `let ${exports} = require('${from}')`;
-    let index = generateImport('{PackageLocalizationProvider}', '@react-aria/i18n/server') + ';\n';
+    let index = generateImport('{PackageLocalizationProvider, getPackageLocalizationScript}', '@react-aria/i18n/server') + ';\n';
     index += generateImport('{LocalizedStringDictionary}', '@internationalized/string') + ';\n';
+    index += generateImport('{createElement}', 'react') + ';\n';
     for (let lang in languages) {
       index += generateImport(lang.replace('-', '_'), `./${lang}${ext}`) + ';\n';
     }
@@ -56,28 +57,36 @@ export default PackageLocalizedStrings;
 
 function LocalizedStringProvider({locale}) {
   let strings = dictionary.getStringsForLocale(locale);
-  return <PackageLocalizationProvider locale={locale} strings={strings} />;
+  return createElement(PackageLocalizationProvider, {locale, strings});
+}
+
+function getLocalizationScript(locale) {
+  let strings = dictionary.getStringsForLocale(locale);
+  return getPackageLocalizationScript(locale, strings);
 }
 
 `;
 
     if (ext === '.mjs') {
-      index += 'export {LocalizedStringProvider, dictionary};\n';
+      index += 'export {LocalizedStringProvider, getLocalizationScript, dictionary};\n';
     } else {
       index += 'exports.LocalizedStringProvider = LocalizedStringProvider;\n';
+      index += 'exports.getLocalizationScript = getLocalizationScript;\n';
       index += 'exports.dictionary = dictionary;\n';
     }
 
     fs.writeFileSync(`packages/${dist}/i18n/index${ext}`, index);
   }
 
-  fs.writeFileSync(`packages/${dist}/i18n/index.d.ts`, `import type {LocalizedStringDictionary} from '@internationalized/string';
+  fs.writeFileSync(`packages/${dist}/i18n/index.d.ts`, `import React from 'react';
+import type {LocalizedStringDictionary} from '@internationalized/string';
 
 interface LocalizedStringProviderProps {
   locale: string
 }
 
-export declare function LocalizedStringProvider(props: LocalizedStringProviderProps): JSX.Element;
+export declare function LocalizedStringProvider(props: LocalizedStringProviderProps): React.JSX.Element;
+export declare function getLocalizationScript(locale: string): string;
 export declare const dictionary: LocalizedStringDictionary;
 `);
 }

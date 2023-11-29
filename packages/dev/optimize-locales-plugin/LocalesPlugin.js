@@ -15,8 +15,8 @@ module.exports = createUnplugin(({locales}) => {
   locales = locales.map(l => new Intl.Locale(l));
   return {
     name: 'locales-plugin',
-    resolveId(specifier, sourcePath) {
-      if (!/[/\\](@react-stately|@react-aria|@react-spectrum|react-aria-components)[/\\]/.test(sourcePath)) {
+    resolveId(specifier, sourcePath, options) {
+      if (!/[/\\](@react-stately|@react-aria|@react-spectrum|react-aria-components)[/\\]/.test(sourcePath) || options?.ssr) {
         return;
       }
 

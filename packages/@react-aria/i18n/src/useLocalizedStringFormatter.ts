@@ -14,8 +14,6 @@ import {LocalizedString, LocalizedStringDictionary, LocalizedStringFormatter, Lo
 import {useLocale} from './context';
 import {useMemo} from 'react';
 
-const localeSymbol = Symbol.for('react-aria.i18n.locale');
-
 const cache = new WeakMap();
 function getCachedDictionary<K extends string, T extends LocalizedString>(strings: LocalizedStrings<K, T>): LocalizedStringDictionary<K, T> {
   let dictionary = cache.get(strings);
@@ -41,13 +39,6 @@ export function useLocalizedStringDicationary<K extends string = string, T exten
  */
 export function useLocalizedStringFormatter<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>, packageName?: string): LocalizedStringFormatter<K, T> {
   let {locale} = useLocale();
-  if (typeof window !== 'undefined' && window[localeSymbol]) {
-    let serverLocale = window[localeSymbol];
-    if (locale !== serverLocale) {
-      console.warn(`Client locale "${locale} does not match server rendered locale "${serverLocale}". Ensure that your app is wrapped in an I18nProvider with the same locale as passed to LocalizedStringProvider.`);
-    }
-    locale = serverLocale;
-  }
   let dictionary = useLocalizedStringDicationary(strings, packageName);
   return useMemo(() => new LocalizedStringFormatter(locale, dictionary), [locale, dictionary]);
 }
