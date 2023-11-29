@@ -40,7 +40,7 @@ export function PackageLocalizationProvider(props: PackageLocalizationProviderPr
  * Returns the content for an inline `<script>` tag to inject localized strings into initial HTML.
  */
 export function getPackageLocalizationScript(locale: string, strings: PackageLocalizedStrings) {
-  return `window[Symbol.for('react-aria.i18n.locale')]=${JSON.stringify(locale)};\n{${serialize(strings)}}`;
+  return `window[Symbol.for('react-aria.i18n.locale')]=${JSON.stringify(locale)};{${serialize(strings)}}`;
 }
 
 const cache = new WeakMap<PackageLocalizedStrings, string>();
