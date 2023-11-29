@@ -6,11 +6,12 @@ import {
     useSlotProps,
     useStyleProps
 } from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {Button as RACButton} from 'react-aria-components';
 import {SpectrumButtonProps, Text} from "@adobe/react-spectrum";
 import {tv} from 'tailwind-variants';
 import {FocusRing, useButton, useHover} from "react-aria";
-import React, {useEffect, useState} from "react";
+import React, {forwardRef, ElementType, useEffect, useState} from "react";
 import {pressScale, usePressScale} from "./usePressScale";
 
 let baseButton = tv({
@@ -154,7 +155,9 @@ let staticColorButton = tv({
     ]
 }, {twMerge: false});
 
-function Button(props: SpectrumButtonProps, ref) {
+// do forward ref up here so that we get storybook types, at least until someone can figure out why we don't in our
+// normal codebase
+let Button = forwardRef((props: SpectrumButtonProps, ref: FocusableRef<HTMLElement>) => {
     props = useSlotProps(props, 'button');
     let {
         elementType: ElementType = 'button',
@@ -215,7 +218,7 @@ function Button(props: SpectrumButtonProps, ref) {
             <RACButton
                 {...styleProps}
                 {...props}
-                ref={domRef}
+                ref={domRef as any}
                 data-variant={variant}
                 data-style={style}
                 data-static-color={staticColor || undefined}
@@ -223,16 +226,16 @@ function Button(props: SpectrumButtonProps, ref) {
                 data-has-icon={hasIcon || undefined}
                 data-icon-only={(hasIcon && !hasLabel) || undefined}
                 aria-live={isPending ? 'polite' : undefined}
-                style={pressScale(domRef, styleProps.style)}
+                style={pressScale(domRef, styleProps.style as any)}
                 className={
                     styles({
-                        variant,
+                        variant: variant as any,
                         style,
                         staticColor,
                         size: 'M',
-                        hasIcon,
+                        hasIcon: hasIcon as any,
                         hasLabel
-                    })}>
+                    } as any)}>
                 <SlotProvider
                     slots={{
                         icon: {
@@ -253,7 +256,6 @@ function Button(props: SpectrumButtonProps, ref) {
             </RACButton>
         </FocusRing>
     );
-}
+});
 
-let _Button = React.forwardRef(Button) as <T>(props: SpectrumButtonProps<T> & { ref?: React.Ref<HTMLButtonElement> }) => React.ReactElement;
-export {_Button as Button};
+export {Button};

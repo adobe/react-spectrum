@@ -36,13 +36,13 @@ export function usePressScale(ref: RefObject<HTMLElement>, isPressed: boolean) {
 export function pressScale(ref: RefObject<HTMLElement>, style: CSSProperties) {
     return ({isPressed}: {isPressed: boolean}) => {
         if (isPressed) {
-            let height = ref.current.offsetHeight;
-            let width = ref.current.offsetWidth;
+            let height = ref.current!.offsetHeight;
+            let width = ref.current!.offsetWidth;
             let scale = 2;
             if (width > 100) {
                 scale = 1;
             }
-            let transform = window.getComputedStyle(ref.current).transform;
+            let transform = window.getComputedStyle(ref.current!).transform;
             if (transform === 'none') {
                 transform = '';
             }

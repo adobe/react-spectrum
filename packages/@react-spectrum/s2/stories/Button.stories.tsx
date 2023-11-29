@@ -1,14 +1,24 @@
 import {Button} from '../src/Button';
+import {FunctionComponent} from "react";
 
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
+import {SpectrumButtonProps} from "@adobe/react-spectrum";
 
 const meta: Meta<typeof Button> = {
   component: Button,
   parameters: {
     layout: 'centered'
+  },
+  argTypes: {
+    
+  },
+  args: {
+    children: 'Button'
   }
 };
 
 export default meta;
 
-export const Example = (args: any) => <Button variant="accent" {...args}>Press me</Button>;
+type Story = StoryObj<typeof Button>;
+export const Example: Story = {
+};
