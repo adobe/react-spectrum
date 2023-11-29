@@ -35,6 +35,7 @@
         "paths": [
           "./packages/@react-aria/a",
           "./packages/@react-aria/b",
+          "./packages/@react-aria/checkbox",
           "./packages/@react-aria/l",
           "./packages/@react-aria/meter",
           "./packages/@react-aria/color",
