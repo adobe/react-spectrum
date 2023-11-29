@@ -5,17 +5,30 @@ const {minifySync} = require('@swc/core');
 
 function build(scope, dist = scope.slice(1)) {
   let languages = {};
+  let deps = {};
   for (let file of glob(`packages/${scope}/intl/*.json`)) {
     let parts = file.split('/');
     let lang = parts.at(-1).slice(0, -5);
     let pkg = parts[1].startsWith('@') ? parts.slice(1, 3).join('/') : parts[1];
     let compiled = compileStrings(JSON.parse(fs.readFileSync(file, 'utf8'))).replace('module.exports = ', '');
+    let pkgJson = JSON.parse(fs.readFileSync(`packages/${pkg}/package.json`, 'utf8'));
 
     if (!languages[lang]) {
       languages[lang] = {};
     }
 
     languages[lang][pkg] = compiled;
+    deps[pkg] = Object.keys(pkgJson.dependencies);
+  }
+
+  for (let pkg in deps) {
+    deps[pkg] = deps[pkg].filter(dep => !!deps[dep]);
+  }
+
+  for (let pkg in deps) {
+    if (deps[pkg].length === 0) {
+      delete deps[pkg];
+    }
   }
 
   fs.mkdirSync(`packages/${dist}/i18n`, {recursive: true});
@@ -56,24 +69,53 @@ export default PackageLocalizedStrings;
 
     index += `});
 
-function LocalizedStringProvider({locale}) {
-  let strings = dictionary.getStringsForLocale(locale);
+function LocalizedStringProvider({locale, dictionary: dict = dictionary}) {
+  let strings = dict.getStringsForLocale(locale);
   return createElement(PackageLocalizationProvider, {locale, strings});
 }
 
-function getLocalizationScript(locale) {
-  let strings = dictionary.getStringsForLocale(locale);
+function getLocalizationScript(locale, dict = dictionary) {
+  let strings = dict.getStringsForLocale(locale);
   return getPackageLocalizationScript(locale, strings);
 }
 
+let deps = ${JSON.stringify(deps)};
+
+function createLocalizedStringDictionary(packages) {
+  let strings = {};
+  let seen = new Set();
+  let addPkg = (pkg) => {
+    if (seen.has(pkg)) {
+      return;
+    }
+    seen.add(pkg);
+
+    for (let lang in dictionary.strings) {
+      strings[lang] ??= {};
+      strings[lang][pkg] = dictionary.strings[lang][pkg];
+    }
+
+    for (let dep of deps[pkg] || []) {
+      addPkg(dep);
+    }
+  };
+
+  ${dist === 'react-aria-components' ? "addPkg('react-aria-components');\n" : ''}
+  for (let pkg of packages) {
+    addPkg(pkg);
+  }
+
+  return new LocalizedStringDictionary(strings);
+}
 `;
 
     if (ext === '.mjs') {
-      index += 'export {LocalizedStringProvider, getLocalizationScript, dictionary};\n';
+      index += 'export {LocalizedStringProvider, getLocalizationScript, dictionary, createLocalizedStringDictionary};\n';
     } else {
       index += 'exports.LocalizedStringProvider = LocalizedStringProvider;\n';
       index += 'exports.getLocalizationScript = getLocalizationScript;\n';
       index += 'exports.dictionary = dictionary;\n';
+      index += 'exports.createLocalizedStringDictionary = createLocalizedStringDictionary;\n';
     }
 
     fs.writeFileSync(`packages/${dist}/i18n/index${ext}`, index);
@@ -83,12 +125,14 @@ function getLocalizationScript(locale) {
 import type {LocalizedStringDictionary} from '@internationalized/string';
 
 interface LocalizedStringProviderProps {
-  locale: string
+  locale: string,
+  dictionary?: LocalizedStringDictionary
 }
 
 export declare function LocalizedStringProvider(props: LocalizedStringProviderProps): React.JSX.Element;
-export declare function getLocalizationScript(locale: string): string;
+export declare function getLocalizationScript(locale: string, dictionary?: LocalizedStringDictionary): string;
 export declare const dictionary: LocalizedStringDictionary;
+export declare function createLocalizedStringDictionary(packages: string[]): LocalizedStringDictionary;
 `);
 }
 

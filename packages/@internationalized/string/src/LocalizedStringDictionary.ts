@@ -56,21 +56,30 @@ export class LocalizedStringDictionary<K extends string = string, T extends Loca
     return strings;
   }
 
-  static getGlobalDictionaryForPackage<K extends string = string, T extends LocalizedString = string>(packageName: string): LocalizedStringDictionary<K, T> {
+  static getGlobalDictionaryForPackage<K extends string = string, T extends LocalizedString = string>(packageName: string): LocalizedStringDictionary<K, T> | null {
     if (typeof window === 'undefined') {
-      return undefined;
+      return null;
     }
 
     let locale = window[localeSymbol];
     if (cachedGlobalStrings === undefined) {
       let globalStrings = window[stringsSymbol];
+      if (!globalStrings) {
+        return null;
+      }
+
       cachedGlobalStrings = {};
       for (let pkg in globalStrings) {
         cachedGlobalStrings[pkg] = new LocalizedStringDictionary({[locale]: globalStrings[pkg]}, locale);
       }
     }
 
-    return cachedGlobalStrings?.[packageName];
+    let dictionary = cachedGlobalStrings?.[packageName];
+    if (!dictionary) {
+      throw new Error(`Strings for package "${packageName}" were not included by LocalizedStringProvider. Please add it to the list passed to createLocalizedStringDictionary.`);
+    }
+
+    return dictionary;
   }
 }
 
