@@ -392,7 +392,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     style = {
       ...style,
       tableLayout: 'fixed',
-      width: 'fit-content',
+      width: 'fit-content'
     };
   }
 
