@@ -10,8 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
+import {ProviderWrapper} from './ProviderWrapper';
+import React from 'react';
 import {render} from '@testing-library/react';
-import {RenderWrapper} from './StrictModeWrapper';
 
 let reactTestingLibrary = require('@testing-library/react');
 
@@ -28,9 +29,12 @@ if (!renderHook) {
   actHook = rhtl.act;
 }
 
-//  TODO update and move to spectrum utils package. Also update so StrictModeWrapper is both strictmode and provider
 function customRender(ui, options, providerOptions) {
-  return render(ui, {wrapper: RenderWrapper, ...options});
+  return render((
+    <ProviderWrapper {...providerOptions}>
+      {ui}
+    </ProviderWrapper>
+  ), options);
 }
 
 // override render method with
