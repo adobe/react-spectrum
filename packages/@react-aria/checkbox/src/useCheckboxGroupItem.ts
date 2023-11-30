@@ -17,6 +17,7 @@ import {CheckboxGroupState} from '@react-stately/checkbox';
 import {DEFAULT_VALIDATION_RESULT, privateValidationStateProp, useFormValidationState} from '@react-stately/form';
 import {RefObject, useEffect, useRef} from 'react';
 import {useToggleState} from '@react-stately/toggle';
+import {ValidationResult} from '@react-types/shared';
 
 /**
  * Provides the behavior and accessibility implementation for a checkbox component contained within a checkbox group.
@@ -78,7 +79,7 @@ export function useCheckboxGroupItem(props: AriaCheckboxGroupItemProps, state: C
       displayValidation,
       resetValidation: state.resetValidation,
       commitValidation: state.commitValidation,
-      updateValidation(v) {
+      updateValidation(v: ValidationResult) {
         nativeValidation.current = v;
         updateValidation();
       }

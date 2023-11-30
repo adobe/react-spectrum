@@ -13,6 +13,7 @@
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {Avatar} from '@react-spectrum/avatar';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
@@ -82,6 +83,10 @@ const ComplexItemsTemplate = (args: SpectrumPickerProps<object>) => (
       <Item textValue="Floof">
         <AlignRight />
         <Text>Floof</Text>
+      </Item>
+      <Item textValue="User">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User</Text>
       </Item>
     </Section>
   </Picker>
