@@ -55,7 +55,7 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
     // indeterminate is a property, but it can only be set via javascript
     // https://css-tricks.com/indeterminate-checkboxes/
     if (inputRef.current) {
-      inputRef.current.indeterminate = isIndeterminate;
+      inputRef.current.indeterminate = !!isIndeterminate;
     }
   });
 
