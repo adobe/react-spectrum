@@ -10,5 +10,8 @@
       "@parcel/transformer-react-refresh-wrap"
     ]
   },
-  "namers": ["parcel-namer-intl", "..."]
+  "namers": ["parcel-namer-intl", "..."],
+  "optimizers": {
+    "{main,module}.js": ["...", "parcel-optimizer-react-client"]
+  }
 }
