@@ -447,9 +447,9 @@ import type {TableProps} from 'react-aria-components';
 
 function FileTable(props: TableProps) {
   let columns = [
-    {name: 'Name', key: 'name', isRowHeader: true},
-    {name: 'Type', key: 'type'},
-    {name: 'Date Modified', key: 'date'}
+    {name: 'Name', id: 'name', isRowHeader: true},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let rows = [
@@ -835,19 +835,19 @@ The following example is the same as the example above, but defined dynamically.
 ```tsx example
 interface ColumnDefinition {
   name: string,
-  key: string,
+  id: string,
   children?: ColumnDefinition[],
   isRowHeader?: boolean
 }
 
 let columns: ColumnDefinition[] = [
-  {name: 'Name', key: 'name', children: [
-    {name: 'First Name', key: 'first', isRowHeader: true},
-    {name: 'Last Name', key: 'last', isRowHeader: true}
+  {name: 'Name', id: 'name', children: [
+    {name: 'First Name', id: 'first', isRowHeader: true},
+    {name: 'Last Name', id: 'last', isRowHeader: true}
   ]},
-  {name: 'Information', key: 'info', children: [
-    {name: 'Age', key: 'age'},
-    {name: 'Birthday', key: 'birthday'}
+  {name: 'Information', id: 'info', children: [
+    {name: 'Age', id: 'age'},
+    {name: 'Birthday', id: 'birthday'}
   ]}
 ];
 
