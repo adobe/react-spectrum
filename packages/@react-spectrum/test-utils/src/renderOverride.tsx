@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+import {RenderOptions as BaseRenderOptions, render} from '@testing-library/react';
+import type {ProviderProps} from '@react-spectrum/provider';
 import {ProviderWrapper} from './ProviderWrapper';
-import React from 'react';
-import {render} from '@testing-library/react';
+import React, {ReactElement} from 'react';
 
 let reactTestingLibrary = require('@testing-library/react');
 
@@ -29,12 +30,12 @@ if (!renderHook) {
   actHook = rhtl.act;
 }
 
-function customRender(ui, options, providerOptions) {
-  return render((
-    <ProviderWrapper {...providerOptions}>
-      {ui}
-    </ProviderWrapper>
-  ), options);
+interface RenderOptions extends BaseRenderOptions {
+  providerProps: ProviderProps
+}
+
+function customRender(ui: ReactElement, options: RenderOptions) {
+  return render(ui, {wrapper: (props) => <ProviderWrapper {...props} {...options?.providerProps} />, ...options});
 }
 
 // override render method with
