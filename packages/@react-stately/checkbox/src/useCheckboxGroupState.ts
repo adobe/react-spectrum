@@ -129,7 +129,7 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
     },
     validationState: props.validationState ?? (isInvalid ? 'invalid' : null),
     isInvalid,
-    isRequired
+    isRequired: !!isRequired
   };
 
   return state;
