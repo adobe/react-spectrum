@@ -54,8 +54,8 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
       {...props}
       {...renderProps}
       style={{
-        ...renderProps.style,
-        ...style
+        ...style,
+        ...renderProps.style
       }}
       ref={ref}
       data-placement={placement} />
