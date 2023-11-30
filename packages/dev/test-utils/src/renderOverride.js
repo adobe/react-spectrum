@@ -11,7 +11,7 @@
  */
 
 import {render} from '@testing-library/react';
-import {StrictModeWrapper} from './StrictModeWrapper';
+import {RenderWrapper} from './StrictModeWrapper';
 
 let reactTestingLibrary = require('@testing-library/react');
 
@@ -28,8 +28,9 @@ if (!renderHook) {
   actHook = rhtl.act;
 }
 
-function customRender(ui, options) {
-  return render(ui, {wrapper: StrictModeWrapper, ...options});
+//  TODO update and move to spectrum utils package. Also update so StrictModeWrapper is both strictmode and provider
+function customRender(ui, options, providerOptions) {
+  return render(ui, {wrapper: RenderWrapper, ...options});
 }
 
 // override render method with

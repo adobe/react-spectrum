@@ -10,16 +10,28 @@
  * governing permissions and limitations under the License.
  */
 
+import {Provider} from '@react-spectrum/provider';
 import React, {StrictMode} from 'react';
+import {theme} from '@react-spectrum/theme-default';
 
-export function StrictModeWrapper(props) {
+// TODO move over and include Provider
+// first get Provider working here, then move it over
+export function RenderWrapper(props) {
+  console.log('props', props);
+
+  let providerWrapper = (
+    <Provider theme={theme} scale="medium">
+      {props.children}
+    </Provider>
+  );
+
   if (process.env.STRICT_MODE) {
     return (
       <StrictMode>
-        {props.children}
+        {providerWrapper}
       </StrictMode>
     );
   }
 
-  return props.children;
+  return providerWrapper;
 }

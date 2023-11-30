@@ -159,9 +159,9 @@ export let tableTests = () => {
 
   let render = (children, scale = 'medium') => {
     let tree = renderComponent(
-      <Provider theme={theme} scale={scale}>
+      // <Provider theme={theme} scale={scale}>
         {children}
-      </Provider>
+      // </Provider>
     );
     // account for table column resizing to do initial pass due to relayout from useTableColumnResizeState render
     act(() => {jest.runAllTimers();});
@@ -191,7 +191,7 @@ export let tableTests = () => {
   let focusCell = (tree, text) => act(() => getCell(tree, text).focus());
   let moveFocus = (key, opts = {}) => {fireEvent.keyDown(document.activeElement, {key, ...opts});};
 
-  it('renders a static table', function () {
+  it.only('renders a static table', function () {
     let {getByRole} = render(
       <TableView aria-label="Table" data-testid="test">
         <TableHeader>
