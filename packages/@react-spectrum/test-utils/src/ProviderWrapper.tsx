@@ -16,12 +16,12 @@ import {theme} from '@react-spectrum/theme-default';
 
 export function ProviderWrapper(props) {
   let {children, ...providerProps} = props;
+
   let providerWrapper = (
     <Provider theme={theme} scale="medium" {...providerProps}>
       {children}
     </Provider>
   );
-
 
   if (process.env.STRICT_MODE) {
     return (

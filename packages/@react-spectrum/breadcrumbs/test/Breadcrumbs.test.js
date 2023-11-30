@@ -13,9 +13,7 @@
 import {act, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Breadcrumbs} from '../';
 import {Item} from '@react-stately/collections';
-import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
-import {theme} from '@react-spectrum/theme-default';
 
 describe('Breadcrumbs', function () {
   beforeAll(() => {
@@ -126,14 +124,12 @@ describe('Breadcrumbs', function () {
 
   it('shows four items with no menu', () => {
     let {getByText, getByRole} = render(
-      <Provider theme={theme}>
-        <Breadcrumbs>
-          <Item>Folder 1</Item>
-          <Item>Folder 2</Item>
-          <Item>Folder 3</Item>
-          <Item>Folder 4</Item>
-        </Breadcrumbs>
-      </Provider>
+      <Breadcrumbs>
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
+        <Item>Folder 3</Item>
+        <Item>Folder 4</Item>
+      </Breadcrumbs>
     );
     let {children} = getByRole('list');
     expect(within(children[0]).queryByRole('button')).toBeNull();
@@ -145,15 +141,13 @@ describe('Breadcrumbs', function () {
 
   it('shows a maximum of 4 items', () => {
     let {getByText, getByRole} = render(
-      <Provider theme={theme}>
-        <Breadcrumbs>
-          <Item>Folder 1</Item>
-          <Item>Folder 2</Item>
-          <Item>Folder 3</Item>
-          <Item>Folder 4</Item>
-          <Item>Folder 5</Item>
-        </Breadcrumbs>
-      </Provider>
+      <Breadcrumbs>
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
+        <Item>Folder 3</Item>
+        <Item>Folder 4</Item>
+        <Item>Folder 5</Item>
+      </Breadcrumbs>
     );
     let {children} = getByRole('list');
     expect(within(children[0]).getByRole('button')).toBeTruthy();
@@ -166,15 +160,13 @@ describe('Breadcrumbs', function () {
 
   it('shows a maximum of 4 items with showRoot', () => {
     let {getByText, getByRole} = render(
-      <Provider theme={theme}>
-        <Breadcrumbs showRoot>
-          <Item>Folder 1</Item>
-          <Item>Folder 2</Item>
-          <Item>Folder 3</Item>
-          <Item>Folder 4</Item>
-          <Item>Folder 5</Item>
-        </Breadcrumbs>
-      </Provider>
+      <Breadcrumbs showRoot>
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
+        <Item>Folder 3</Item>
+        <Item>Folder 4</Item>
+        <Item>Folder 5</Item>
+      </Breadcrumbs>
     );
     let {children} = getByRole('list');
     expect(getByText('Folder 1')).toBeTruthy();
@@ -209,15 +201,13 @@ describe('Breadcrumbs', function () {
     });
 
     let {getByText, getByRole} = render(
-      <Provider theme={theme}>
-        <Breadcrumbs>
-          <Item>Folder 1</Item>
-          <Item>Folder 2</Item>
-          <Item>Folder 3</Item>
-          <Item>Folder 4</Item>
-          <Item>Folder 5</Item>
-        </Breadcrumbs>
-      </Provider>
+      <Breadcrumbs>
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
+        <Item>Folder 3</Item>
+        <Item>Folder 4</Item>
+        <Item>Folder 5</Item>
+      </Breadcrumbs>
     );
 
     let {children} = getByRole('list');
@@ -239,15 +229,13 @@ describe('Breadcrumbs', function () {
     });
 
     let {getByText, getByRole} = render(
-      <Provider theme={theme}>
-        <Breadcrumbs showRoot>
-          <Item>Folder 1</Item>
-          <Item>Folder 2</Item>
-          <Item>Folder 3</Item>
-          <Item>Folder 4</Item>
-          <Item>Folder 5</Item>
-        </Breadcrumbs>
-      </Provider>
+      <Breadcrumbs showRoot>
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
+        <Item>Folder 3</Item>
+        <Item>Folder 4</Item>
+        <Item>Folder 5</Item>
+      </Breadcrumbs>
     );
 
     let {children} = getByRole('list');
@@ -274,15 +262,13 @@ describe('Breadcrumbs', function () {
     });
 
     let {getByText, getByRole} = render(
-      <Provider theme={theme}>
-        <Breadcrumbs showRoot>
-          <Item>Folder 1</Item>
-          <Item>Folder 2</Item>
-          <Item>Folder 3</Item>
-          <Item>Folder 4</Item>
-          <Item>Folder 5</Item>
-        </Breadcrumbs>
-      </Provider>
+      <Breadcrumbs showRoot>
+        <Item>Folder 1</Item>
+        <Item>Folder 2</Item>
+        <Item>Folder 3</Item>
+        <Item>Folder 4</Item>
+        <Item>Folder 5</Item>
+      </Breadcrumbs>
     );
 
     let {children} = getByRole('list');
@@ -298,15 +284,13 @@ describe('Breadcrumbs', function () {
   it('can open the menu', () => {
     let onAction = jest.fn();
     let {getAllByText, getByRole, getAllByRole} = render(
-      <Provider theme={theme}>
-        <Breadcrumbs showRoot onAction={onAction}>
-          <Item key="Folder 1">Folder 1</Item>
-          <Item>Folder 2</Item>
-          <Item>Folder 3</Item>
-          <Item>Folder 4</Item>
-          <Item>Folder 5</Item>
-        </Breadcrumbs>
-      </Provider>
+      <Breadcrumbs showRoot onAction={onAction}>
+        <Item key="Folder 1">Folder 1</Item>
+        <Item>Folder 2</Item>
+        <Item>Folder 3</Item>
+        <Item>Folder 4</Item>
+        <Item>Folder 5</Item>
+      </Breadcrumbs>
     );
 
     let menuButton = getByRole('button');
@@ -338,15 +322,13 @@ describe('Breadcrumbs', function () {
   it('clicking on current folder does not trigger onAction', () => {
     let onAction = jest.fn();
     let {getByRole, getAllByRole} = render(
-      <Provider theme={theme}>
-        <Breadcrumbs showRoot onAction={onAction}>
-          <Item key="Folder 1">Folder 1</Item>
-          <Item key="Folder 2">Folder 2</Item>
-          <Item key="Folder 3">Folder 3</Item>
-          <Item key="Folder 4">Folder 4</Item>
-          <Item key="Folder 5">Folder 5</Item>
-        </Breadcrumbs>
-      </Provider>
+      <Breadcrumbs showRoot onAction={onAction}>
+        <Item key="Folder 1">Folder 1</Item>
+        <Item key="Folder 2">Folder 2</Item>
+        <Item key="Folder 3">Folder 3</Item>
+        <Item key="Folder 4">Folder 4</Item>
+        <Item key="Folder 5">Folder 5</Item>
+      </Breadcrumbs>
     );
 
     let menuButton = getByRole('button');
@@ -413,15 +395,13 @@ describe('Breadcrumbs', function () {
 
   it('should support links', function () {
     let {getByRole, getAllByRole} = render(
-      <Provider theme={theme}>
-        <Breadcrumbs>
-          <Item href="https://example.com">Example.com</Item>
-          <Item href="https://example.com/foo">Foo</Item>
-          <Item href="https://example.com/foo/bar">Bar</Item>
-          <Item href="https://example.com/foo/bar/baz">Baz</Item>
-          <Item href="https://example.com/foo/bar/baz/qux">Qux</Item>
-        </Breadcrumbs>
-      </Provider>
+      <Breadcrumbs>
+        <Item href="https://example.com">Example.com</Item>
+        <Item href="https://example.com/foo">Foo</Item>
+        <Item href="https://example.com/foo/bar">Bar</Item>
+        <Item href="https://example.com/foo/bar/baz">Baz</Item>
+        <Item href="https://example.com/foo/bar/baz/qux">Qux</Item>
+      </Breadcrumbs>
     );
 
     let links = getAllByRole('link');
@@ -444,16 +424,14 @@ describe('Breadcrumbs', function () {
   it('should support RouterProvider', () => {
     let navigate = jest.fn();
     let {getByRole, getAllByRole} = render(
-      <Provider theme={theme} router={{navigate}}>
-        <Breadcrumbs>
-          <Item href="/">Example.com</Item>
-          <Item href="/foo">Foo</Item>
-          <Item href="/foo/bar">Bar</Item>
-          <Item href="/foo/bar/baz">Baz</Item>
-          <Item href="/foo/bar/baz/qux">Qux</Item>
-        </Breadcrumbs>
-      </Provider>
-    );
+      <Breadcrumbs>
+        <Item href="/">Example.com</Item>
+        <Item href="/foo">Foo</Item>
+        <Item href="/foo/bar">Bar</Item>
+        <Item href="/foo/bar/baz">Baz</Item>
+        <Item href="/foo/bar/baz/qux">Qux</Item>
+      </Breadcrumbs>
+    , {providerProps: {router: {navigate}}});
 
     let links = getAllByRole('link');
     triggerPress(links[0]);

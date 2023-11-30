@@ -45,13 +45,11 @@ let defaultProps = {
 };
 
 const ExampleSearchAutocomplete = React.forwardRef((props = {}, ref) => (
-  <Provider theme={theme}>
-    <SearchAutocomplete {...defaultProps} {...props} ref={ref}>
-      <Item key="1">One</Item>
-      <Item key="2">Two</Item>
-      <Item key="3">Three</Item>
-    </SearchAutocomplete>
-  </Provider>
+  <SearchAutocomplete {...defaultProps} {...props} ref={ref}>
+    <Item key="1">One</Item>
+    <Item key="2">Two</Item>
+    <Item key="3">Three</Item>
+  </SearchAutocomplete>
   ));
 
 function renderSearchAutocomplete(props = {}) {
@@ -60,20 +58,18 @@ function renderSearchAutocomplete(props = {}) {
 
 function renderSectionSearchAutocomplete(props = {}) {
   return render(
-    <Provider theme={theme}>
-      <SearchAutocomplete {...defaultProps} {...props}>
-        <Section title="Section One" key="section 1">
-          <Item key="1">One</Item>
-          <Item key="2">Two</Item>
-          <Item key="3">Three</Item>
-        </Section>
-        <Section title="Section Two" key="section 2">
-          <Item key="4">Four</Item>
-          <Item key="5">Five</Item>
-          <Item key="6">Six</Item>
-        </Section>
-      </SearchAutocomplete>
-    </Provider>
+    <SearchAutocomplete {...defaultProps} {...props}>
+      <Section title="Section One" key="section 1">
+        <Item key="1">One</Item>
+        <Item key="2">Two</Item>
+        <Item key="3">Three</Item>
+      </Section>
+      <Section title="Section Two" key="section 2">
+        <Item key="4">Four</Item>
+        <Item key="5">Five</Item>
+        <Item key="6">Six</Item>
+      </Section>
+    </SearchAutocomplete>
   );
 }
 
@@ -87,11 +83,9 @@ function ControlledValueSearchAutocomplete(props) {
   let [inputValue, setInputValue] = React.useState('');
 
   return (
-    <Provider theme={theme}>
-      <SearchAutocomplete {...defaultProps} label="SearchAutocomplete" defaultItems={items} inputValue={inputValue} onInputChange={setInputValue} {...props}>
-        {(item) => <Item>{item.name}</Item>}
-      </SearchAutocomplete>
-    </Provider>
+    <SearchAutocomplete {...defaultProps} label="SearchAutocomplete" defaultItems={items} inputValue={inputValue} onInputChange={setInputValue} {...props}>
+      {(item) => <Item>{item.name}</Item>}
+    </SearchAutocomplete>
   );
 }
 
@@ -632,13 +626,11 @@ describe('SearchAutocomplete', function () {
   describe('typing in the textfield', function () {
     it('can be uncontrolled', async function () {
       let {getByRole} = render(
-        <Provider theme={theme}>
-          <SearchAutocomplete label="Test" onOpenChange={onOpenChange}>
-            <Item key="1">Bulbasaur</Item>
-            <Item key="2">Squirtle</Item>
-            <Item key="3">Charmander</Item>
-          </SearchAutocomplete>
-        </Provider>
+        <SearchAutocomplete label="Test" onOpenChange={onOpenChange}>
+          <Item key="1">Bulbasaur</Item>
+          <Item key="2">Squirtle</Item>
+          <Item key="3">Charmander</Item>
+        </SearchAutocomplete>
       );
 
       let searchAutocomplete = getByRole('combobox');
@@ -652,13 +644,11 @@ describe('SearchAutocomplete', function () {
 
     it('can select by mouse', async function () {
       let {getByRole} = render(
-        <Provider theme={theme}>
-          <SearchAutocomplete label="Test" onOpenChange={onOpenChange}>
-            <Item key="1">Cheer</Item>
-            <Item key="2">Cheerio</Item>
-            <Item key="3">Cheeriest</Item>
-          </SearchAutocomplete>
-        </Provider>
+        <SearchAutocomplete label="Test" onOpenChange={onOpenChange}>
+          <Item key="1">Cheer</Item>
+          <Item key="2">Cheerio</Item>
+          <Item key="3">Cheeriest</Item>
+        </SearchAutocomplete>
       );
 
       let searchAutocomplete = getByRole('combobox');
@@ -901,14 +891,14 @@ describe('SearchAutocomplete', function () {
   describe('blur', function () {
     it('closes and commits selection on blur (clicking to blur)', async function () {
       let {queryByRole, getByRole} = render(
-        <Provider theme={theme}>
+        <>
           <SearchAutocomplete label="Test" onOpenChange={onOpenChange} onInputChange={onInputChange}>
             <Item key="1">Bulbasaur</Item>
             <Item key="2">Squirtle</Item>
             <Item key="3">Charmander</Item>
           </SearchAutocomplete>
           <Button variant="secondary">Focus move</Button>
-        </Provider>
+        </>
       );
 
       let searchAutocomplete = getByRole('combobox');
@@ -943,13 +933,11 @@ describe('SearchAutocomplete', function () {
 
     it('closes and commits custom value', async function () {
       let {getByRole, queryByRole} = render(
-        <Provider theme={theme}>
-          <SearchAutocomplete label="Test" allowsCustomValue onOpenChange={onOpenChange}>
-            <Item key="1">Bulbasaur</Item>
-            <Item key="2">Squirtle</Item>
-            <Item key="3">Charmander</Item>
-          </SearchAutocomplete>
-        </Provider>
+        <SearchAutocomplete label="Test" allowsCustomValue onOpenChange={onOpenChange}>
+          <Item key="1">Bulbasaur</Item>
+          <Item key="2">Squirtle</Item>
+          <Item key="3">Charmander</Item>
+        </SearchAutocomplete>
       );
 
       let searchAutocomplete = getByRole('combobox');
@@ -977,13 +965,11 @@ describe('SearchAutocomplete', function () {
 
     it('retains selected key on blur if input value matches', async function () {
       let {getByRole} = render(
-        <Provider theme={theme}>
-          <SearchAutocomplete label="Test" allowsCustomValue onOpenChange={onOpenChange}>
-            <Item key="1">Bulbasaur</Item>
-            <Item key="2">Squirtle</Item>
-            <Item key="3">Charmander</Item>
-          </SearchAutocomplete>
-        </Provider>
+        <SearchAutocomplete label="Test" allowsCustomValue onOpenChange={onOpenChange}>
+          <Item key="1">Bulbasaur</Item>
+          <Item key="2">Squirtle</Item>
+          <Item key="3">Charmander</Item>
+        </SearchAutocomplete>
       );
 
       let searchAutocomplete = getByRole('combobox');
@@ -1006,16 +992,14 @@ describe('SearchAutocomplete', function () {
 
     it('propagates blur event outside of the component', async function () {
       let {getByRole} = render(
-        <Provider theme={theme}>
-          <div onBlur={outerBlur}>
-            <SearchAutocomplete label="Test" autoFocus onBlur={onBlur}>
-              <Item key="1">Bulbasaur</Item>
-              <Item key="2">Squirtle</Item>
-              <Item key="3">Charmander</Item>
-            </SearchAutocomplete>
-            <Button variant="primary">Second focus</Button>
-          </div>
-        </Provider>
+        <div onBlur={outerBlur}>
+          <SearchAutocomplete label="Test" autoFocus onBlur={onBlur}>
+            <Item key="1">Bulbasaur</Item>
+            <Item key="2">Squirtle</Item>
+            <Item key="3">Charmander</Item>
+          </SearchAutocomplete>
+          <Button variant="primary">Second focus</Button>
+        </div>
       );
 
       let searchAutocomplete = getByRole('combobox');
@@ -1039,9 +1023,11 @@ describe('SearchAutocomplete', function () {
         expect(searchAutocomplete.value).toBe('Two');
 
         rerender(<ExampleSearchAutocomplete inputValue="One" />);
+        searchAutocomplete = getByRole('combobox');
         expect(searchAutocomplete.value).toBe('One');
 
         rerender(<ExampleSearchAutocomplete inputValue="" />);
+        searchAutocomplete = getByRole('combobox');
         expect(searchAutocomplete.value).toBe('');
       });
     });
@@ -1078,9 +1064,7 @@ describe('SearchAutocomplete', function () {
           );
         };
         let {getByRole} = render(
-          <Provider theme={theme}>
-            <CustomFilterSearchAutocomplete />
-          </Provider>
+          <CustomFilterSearchAutocomplete />
         );
 
         let searchAutocomplete = getByRole('combobox');
@@ -1142,15 +1126,13 @@ describe('SearchAutocomplete', function () {
           listItems = defaultItems
         } = props;
         return (
-          <Provider theme={theme}>
-            <SearchAutocomplete label="SearchAutocomplete" {...props}>
-              {listItems.map((item) => (
-                <Item key={item.id}>
-                  {item.name}
-                </Item>
-              ))}
-            </SearchAutocomplete>
-          </Provider>
+          <SearchAutocomplete label="SearchAutocomplete" {...props}>
+            {listItems.map((item) => (
+              <Item key={item.id}>
+                {item.name}
+              </Item>
+            ))}
+          </SearchAutocomplete>
         );
       }
 
@@ -2024,12 +2006,12 @@ describe('SearchAutocomplete', function () {
 
     it('tray input should recieve the same aria-labelledby as the button if an external label is provided', function () {
       let {getByRole, getByTestId, getByText} = render(
-        <Provider theme={theme}>
+        <>
           <label id="test-label" htmlFor="test-id">SearchAutocomplete</label>
           <SearchAutocomplete id="test-id" aria-labelledby="test-label">
             <Item key="one">Item One</Item>
           </SearchAutocomplete>
-        </Provider>
+        </>
       );
 
       let button = getByRole('button');
@@ -2053,11 +2035,9 @@ describe('SearchAutocomplete', function () {
 
     it('user can open the tray even if there aren\'t any items to show', function () {
       let {getAllByRole, getByTestId} = render(
-        <Provider theme={theme}>
-          <SearchAutocomplete label="SearchAutocomplete" items={[]} inputValue="blah">
-            {(item) => <Item>{item.name}</Item>}
-          </SearchAutocomplete>
-        </Provider>
+        <SearchAutocomplete label="SearchAutocomplete" items={[]} inputValue="blah">
+          {(item) => <Item>{item.name}</Item>}
+        </SearchAutocomplete>
       );
       let button = getAllByRole('button')[0];
 
@@ -2489,11 +2469,9 @@ describe('SearchAutocomplete', function () {
         describe('validationBehavior=native', () => {
           it('supports isRequired', async () => {
             let {getByTestId, getByRole} = render(
-              <Provider theme={theme}>
-                <Form data-testid="form">
-                  <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native"  />
-                </Form>
-              </Provider>
+              <Form data-testid="form">
+                <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native"  />
+              </Form>
             );
 
             let input = getByTestId('input');
@@ -2528,11 +2506,9 @@ describe('SearchAutocomplete', function () {
 
           it('supports validate function', async () => {
             let {getByTestId, getByRole} = render(
-              <Provider theme={theme}>
-                <Form data-testid="form">
-                  <ExampleSearchAutocomplete data-testid="input" defaultInputValue="Two" validationBehavior="native" validate={v => v === 'Two' ? 'Invalid value' : null} />
-                </Form>
-              </Provider>
+              <Form data-testid="form">
+                <ExampleSearchAutocomplete data-testid="input" defaultInputValue="Two" validationBehavior="native" validate={v => v === 'Two' ? 'Invalid value' : null} />
+              </Form>
             );
 
             let input = getByTestId('input');
@@ -2577,12 +2553,10 @@ describe('SearchAutocomplete', function () {
               };
 
               return (
-                <Provider theme={theme}>
-                  <Form onSubmit={onSubmit} validationErrors={serverErrors}>
-                    <ExampleSearchAutocomplete data-testid="input" name="value" validationBehavior="native" />
-                    <Button type="submit" data-testid="submit">Submit</Button>
-                  </Form>
-                </Provider>
+                <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                  <ExampleSearchAutocomplete data-testid="input" name="value" validationBehavior="native" />
+                  <Button type="submit" data-testid="submit">Submit</Button>
+                </Form>
               );
             }
 
@@ -2620,11 +2594,9 @@ describe('SearchAutocomplete', function () {
 
           it('supports customizing native error messages', async () => {
             let {getByTestId} = render(
-              <Provider theme={theme}>
-                <Form data-testid="form">
-                  <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
-                </Form>
-              </Provider>
+              <Form data-testid="form">
+                <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+              </Form>
             );
 
             let input = getByTestId('input');
@@ -2639,11 +2611,9 @@ describe('SearchAutocomplete', function () {
         describe('validationBehavior=aria', () => {
           it('supports validate function', async () => {
             let {getByTestId, getByRole} = render(
-              <Provider theme={theme}>
-                <Form data-testid="form">
-                  <ExampleSearchAutocomplete data-testid="input" defaultInputValue="Two" validate={v => v === 'Two' ? 'Invalid value' : null} />
-                </Form>
-              </Provider>
+              <Form data-testid="form">
+                <ExampleSearchAutocomplete data-testid="input" defaultInputValue="Two" validate={v => v === 'Two' ? 'Invalid value' : null} />
+              </Form>
             );
 
             let input = getByTestId('input');
@@ -2671,11 +2641,9 @@ describe('SearchAutocomplete', function () {
 
           it('supports server validation', async () => {
             let {getByTestId, getByRole} = render(
-              <Provider theme={theme}>
-                <Form validationErrors={{value: 'Invalid value'}}>
-                  <ExampleSearchAutocomplete data-testid="input" name="value" />
-                </Form>
-              </Provider>
+              <Form validationErrors={{value: 'Invalid value'}}>
+                <ExampleSearchAutocomplete data-testid="input" name="value" />
+              </Form>
             );
 
             let input = getByTestId('input');
@@ -2704,11 +2672,9 @@ describe('SearchAutocomplete', function () {
 
           it('only commits on blur if the value changed', async () => {
             let {getByTestId} = render(
-              <Provider theme={theme}>
-                <Form data-testid="form">
-                  <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native"  />
-                </Form>
-              </Provider>
+              <Form data-testid="form">
+                <ExampleSearchAutocomplete data-testid="input" isRequired validationBehavior="native"  />
+              </Form>
             );
 
             let input = getByTestId('input');
@@ -2779,11 +2745,9 @@ describe('SearchAutocomplete', function () {
         describe('validationBehavior=native', () => {
           it('supports isRequired', async () => {
             let {getByTestId, getByRole, getAllByRole} = render(
-              <Provider theme={theme}>
-                <Form data-testid="form">
-                  <ExampleSearchAutocomplete name="test" isRequired validationBehavior="native"  />
-                </Form>
-              </Provider>
+              <Form data-testid="form">
+                <ExampleSearchAutocomplete name="test" isRequired validationBehavior="native"  />
+              </Form>
             );
 
             let input = document.querySelector('input[name=test]');
@@ -2816,11 +2780,9 @@ describe('SearchAutocomplete', function () {
 
           it('supports validate function', async () => {
             let {getByTestId, getByRole, getAllByRole} = render(
-              <Provider theme={theme}>
-                <Form data-testid="form">
-                  <ExampleSearchAutocomplete name="test" defaultInputValue="Two" validationBehavior="native" validate={v => v === 'Two' ? 'Invalid value' : null} />
-                </Form>
-              </Provider>
+              <Form data-testid="form">
+                <ExampleSearchAutocomplete name="test" defaultInputValue="Two" validationBehavior="native" validate={v => v === 'Two' ? 'Invalid value' : null} />
+              </Form>
             );
 
             let input = document.querySelector('input[name=test]');
@@ -2861,12 +2823,10 @@ describe('SearchAutocomplete', function () {
               };
 
               return (
-                <Provider theme={theme}>
-                  <Form onSubmit={onSubmit} validationErrors={serverErrors}>
-                    <ExampleSearchAutocomplete name="value" validationBehavior="native" />
-                    <Button type="submit" data-testid="submit">Submit</Button>
-                  </Form>
-                </Provider>
+                <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                  <ExampleSearchAutocomplete name="value" validationBehavior="native" />
+                  <Button type="submit" data-testid="submit">Submit</Button>
+                </Form>
               );
             }
 
@@ -2900,11 +2860,9 @@ describe('SearchAutocomplete', function () {
 
           it('supports customizing native error messages', async () => {
             let {getByTestId, getAllByRole} = render(
-              <Provider theme={theme}>
-                <Form data-testid="form">
-                  <ExampleSearchAutocomplete name="test" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
-                </Form>
-              </Provider>
+              <Form data-testid="form">
+                <ExampleSearchAutocomplete name="test" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+              </Form>
             );
 
             let button = getAllByRole('button')[0];
@@ -2919,11 +2877,9 @@ describe('SearchAutocomplete', function () {
         describe('validationBehavior=aria', () => {
           it('supports validate function', async () => {
             let {getAllByRole, getByRole} = render(
-              <Provider theme={theme}>
-                <Form data-testid="form">
-                  <ExampleSearchAutocomplete name="test" defaultInputValue="Two" validate={v => v === 'Two' ? 'Invalid value' : null} />
-                </Form>
-              </Provider>
+              <Form data-testid="form">
+                <ExampleSearchAutocomplete name="test" defaultInputValue="Two" validate={v => v === 'Two' ? 'Invalid value' : null} />
+              </Form>
             );
 
             let input = document.querySelector('input[name=test]');
@@ -2951,11 +2907,9 @@ describe('SearchAutocomplete', function () {
 
           it('supports server validation', async () => {
             let {getByRole, getAllByRole} = render(
-              <Provider theme={theme}>
-                <Form validationErrors={{value: 'Invalid value'}}>
-                  <ExampleSearchAutocomplete name="value" />
-                </Form>
-              </Provider>
+              <Form validationErrors={{value: 'Invalid value'}}>
+                <ExampleSearchAutocomplete name="value" />
+              </Form>
             );
 
             let input = document.querySelector('input[name=value]');

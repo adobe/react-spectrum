@@ -16,10 +16,8 @@ import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {createLandmarkController, useLandmark} from '../';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
-import {theme} from '@react-spectrum/theme-default';
 import {useFocusableRef} from '@react-spectrum/utils';
 import userEvent from '@testing-library/user-event';
 
@@ -474,43 +472,41 @@ describe('LandmarkManager', function () {
 
   it('components that already handle focus management, should handle focus themselves', async function () {
     let tree = render(
-      <Provider theme={theme}>
-        <div>
-          <Navigation>
-            <ActionGroup>
-              <Item>One</Item>
-              <Item>Two</Item>
-              <Item>Three</Item>
-            </ActionGroup>
-          </Navigation>
-          <Main>
-            <TableView aria-label="Table">
-              <TableHeader>
-                <Column key="foo" allowsSorting>Foo</Column>
-                <Column key="bar" allowsSorting>Bar</Column>
-                <Column key="baz">Baz</Column>
-              </TableHeader>
-              <TableBody>
-                <Row>
-                  <Cell>Foo 1</Cell>
-                  <Cell>Bar 1</Cell>
-                  <Cell>Baz 1</Cell>
-                </Row>
-                <Row>
-                  <Cell>Foo 2</Cell>
-                  <Cell>Bar 2</Cell>
-                  <Cell>Baz 2</Cell>
-                </Row>
-                <Row>
-                  <Cell>Foo 3</Cell>
-                  <Cell>Bar 3</Cell>
-                  <Cell>Baz 3</Cell>
-                </Row>
-              </TableBody>
-            </TableView>
-          </Main>
-        </div>
-      </Provider>
+      <div>
+        <Navigation>
+          <ActionGroup>
+            <Item>One</Item>
+            <Item>Two</Item>
+            <Item>Three</Item>
+          </ActionGroup>
+        </Navigation>
+        <Main>
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column key="foo" allowsSorting>Foo</Column>
+              <Column key="bar" allowsSorting>Bar</Column>
+              <Column key="baz">Baz</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell>Foo 1</Cell>
+                <Cell>Bar 1</Cell>
+                <Cell>Baz 1</Cell>
+              </Row>
+              <Row>
+                <Cell>Foo 2</Cell>
+                <Cell>Bar 2</Cell>
+                <Cell>Baz 2</Cell>
+              </Row>
+              <Row>
+                <Cell>Foo 3</Cell>
+                <Cell>Bar 3</Cell>
+                <Cell>Baz 3</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
+        </Main>
+      </div>
     );
     act(() => {jest.runAllTimers();});
     let buttons = tree.getAllByRole('button');

@@ -15,9 +15,7 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {theme} from '@react-spectrum/theme-default';
 import {watchModals} from '../';
 
 describe('watchModals', () => {
@@ -63,12 +61,10 @@ describe('watchModals', () => {
     watchModals();
     let {getByLabelText, getByRole, queryByRole} = render(
       <>
-        <Provider theme={theme}>
-          <DialogTrigger>
-            <ActionButton aria-label="Trigger" />
-            <Dialog>contents</Dialog>
-          </DialogTrigger>
-        </Provider>
+        <DialogTrigger>
+          <ActionButton aria-label="Trigger" />
+          <Dialog>contents</Dialog>
+        </DialogTrigger>
         <hr />
       </>
     );
@@ -87,20 +83,18 @@ describe('watchModals', () => {
     watchModals();
     let {getByLabelText, queryByRole, getByRole, getAllByRole, getByText} = render(
       <>
-        <Provider theme={theme}>
-          <DialogTrigger>
-            <ActionButton aria-label="Trigger" />
-            <Dialog>
-              <Content>
-                <div>Outer</div>
-                <DialogTrigger>
-                  <Button variant="primary" aria-label="Nested Trigger" />
-                  <Dialog>Inner</Dialog>
-                </DialogTrigger>
-              </Content>
-            </Dialog>
-          </DialogTrigger>
-        </Provider>
+        <DialogTrigger>
+          <ActionButton aria-label="Trigger" />
+          <Dialog>
+            <Content>
+              <div>Outer</div>
+              <DialogTrigger>
+                <Button variant="primary" aria-label="Nested Trigger" />
+                <Dialog>Inner</Dialog>
+              </DialogTrigger>
+            </Content>
+          </Dialog>
+        </DialogTrigger>
         <hr />
       </>
     );
@@ -180,18 +174,16 @@ describe('watchModals', () => {
     watchModals();
     let {getByLabelText, getByRole, queryByRole} = render(
       <>
-        <Provider theme={theme}>
-          <MenuTrigger>
-            <ActionButton aria-label="Trigger" />
-            <Menu items={withSection}>
-              {item => (
-                <Section key={item.name} items={item.children} title={item.name}>
-                  {item => <Item key={item.name}>{item.name}</Item>}
-                </Section>
-              )}
-            </Menu>
-          </MenuTrigger>
-        </Provider>
+        <MenuTrigger>
+          <ActionButton aria-label="Trigger" />
+          <Menu items={withSection}>
+            {item => (
+              <Section key={item.name} items={item.children} title={item.name}>
+                {item => <Item key={item.name}>{item.name}</Item>}
+              </Section>
+            )}
+          </Menu>
+        </MenuTrigger>
         <hr />
       </>
     );
@@ -219,18 +211,16 @@ describe('watchModals', () => {
     watchModals();
     let {getByLabelText, getByRole, queryByRole} = render(
       <>
-        <Provider theme={theme}>
-          <MenuTrigger>
-            <ActionButton aria-label="Trigger" />
-            <Menu items={withSection}>
-              {item => (
-                <Section key={item.name} items={item.children} title={item.name}>
-                  {item => <Item key={item.name}>{item.name}</Item>}
-                </Section>
-              )}
-            </Menu>
-          </MenuTrigger>
-        </Provider>
+        <MenuTrigger>
+          <ActionButton aria-label="Trigger" />
+          <Menu items={withSection}>
+            {item => (
+              <Section key={item.name} items={item.children} title={item.name}>
+                {item => <Item key={item.name}>{item.name}</Item>}
+              </Section>
+            )}
+          </Menu>
+        </MenuTrigger>
         <hr />
       </>
     );
@@ -249,12 +239,10 @@ describe('watchModals', () => {
     watchModals();
     let {getByLabelText, getByRole, queryByRole} = render(
       <>
-        <Provider theme={theme}>
-          <DialogTrigger type="popover">
-            <ActionButton aria-label="Trigger" />
-            <Dialog>contents</Dialog>
-          </DialogTrigger>
-        </Provider>
+        <DialogTrigger type="popover">
+          <ActionButton aria-label="Trigger" />
+          <Dialog>contents</Dialog>
+        </DialogTrigger>
         <hr />
       </>
     );

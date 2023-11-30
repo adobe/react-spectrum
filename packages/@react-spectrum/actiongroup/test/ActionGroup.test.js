@@ -16,10 +16,8 @@ import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {Item} from '@react-stately/collections';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {Text} from '@react-spectrum/text';
-import {theme} from '@react-spectrum/theme-default';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import userEvent from '@testing-library/user-event';
 
@@ -84,26 +82,24 @@ expect.extend({
 
 function renderComponent(props) {
   return render(
-    <Provider theme={theme} locale="de-DE">
-      <ActionGroup {...props}>
-        <Item key="1">Click me 1</Item>
-        <Item key="2">Click me 2</Item>
-      </ActionGroup>
-    </Provider>
-  );
+    <ActionGroup {...props}>
+      <Item key="1">Click me 1</Item>
+      <Item key="2">Click me 2</Item>
+    </ActionGroup>
+  , {providerProps: {locale: 'de-DE'}});
 }
 
 function renderComponentWithExtraInputs(props) {
   return render(
-    <Provider theme={theme} locale="de-DE">
+    <>
       <Button variant="primary" aria-label="ButtonBefore" />
       <ActionGroup {...props}>
         <Item key="1">Click me 1</Item>
         <Item key="2">Click me 2</Item>
       </ActionGroup>
       <Button variant="primary" aria-label="ButtonAfter" />
-    </Provider>
-  );
+    </>
+    , {providerProps: {locale: 'de-DE'}});
 }
 
 describe('ActionGroup', function () {
@@ -136,12 +132,10 @@ describe('ActionGroup', function () {
   ${'ActionGroup'}   | ${ActionGroup}   | ${Item}
   `('$Name handles defaults', function ({ComponentGroup, Component}) {
     let {getByRole, getAllByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ComponentGroup>
-          <Component >Click me</Component>
-        </ComponentGroup>
-      </Provider>
-    );
+      <ComponentGroup>
+        <Component >Click me</Component>
+      </ComponentGroup>
+    , {providerProps: {locale: 'de-DE'}});
     expect(getByRole('toolbar')).toBeTruthy();
     expect(getAllByRole('button')).toBeTruthy();
   });
@@ -151,12 +145,10 @@ describe('ActionGroup', function () {
     ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{orientation: 'vertical'}}
   `('$Name handles vertical', function ({ComponentGroup, Component, props}) {
     let {getByTestId} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ComponentGroup {...props} data-testid="test-group" >
-          <Component>Click me</Component>
-        </ComponentGroup>
-      </Provider>
-    );
+      <ComponentGroup {...props} data-testid="test-group">
+        <Component>Click me</Component>
+      </ComponentGroup>
+    , {providerProps: {locale: 'de-DE'}});
     let group = getByTestId('test-group');
     expect(group).toHaveAttribute('aria-orientation', 'vertical');
   });
@@ -166,12 +158,10 @@ describe('ActionGroup', function () {
     ${'ActionGroup'}   | ${ActionGroup}   | ${Item}     | ${{selectionMode: 'single', isDisabled: true}}
   `('$Name handles disabled', function ({ComponentGroup, Component, props}) {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ComponentGroup {...props} >
-          <Component>Click me</Component>
-        </ComponentGroup>
-      </Provider>
-    );
+      <ComponentGroup {...props} >
+        <Component>Click me</Component>
+      </ComponentGroup>
+    , {providerProps: {locale: 'de-DE'}});
     let group = getByRole('radiogroup');
     expect(group).toHaveAttribute('aria-disabled', 'true');
   });
@@ -188,14 +178,12 @@ describe('ActionGroup', function () {
     ${'(up/down arrows, rtl + vertical) ActionGroup'}      | ${{locale: 'ar-AE', orientation: 'vertical'}} | ${[{action: tab, result: () => expectedButtonIndices.button1Focused}, {action: pressArrowDown, result: btnBehavior.forward}, {action: pressArrowUp, result: btnBehavior.backward}, {action: pressArrowUp, result: btnBehavior.backward}]}
   `('$Name shifts button focus in the correct direction on key press', async function ({Name, props, orders}) {
     let tree = render(
-      <Provider theme={theme} locale={props.locale}>
-        <ActionGroup orientation={props.orientation} >
-          <Item data-testid="button-1" key="1">Click me 1</Item>
-          <Item data-testid="button-2" key="">Click me 2</Item>
-          <Item data-testid="button-3" key="3">Click me 3</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup orientation={props.orientation} >
+        <Item data-testid="button-1" key="1">Click me 1</Item>
+        <Item data-testid="button-2" key="">Click me 2</Item>
+        <Item data-testid="button-3" key="3">Click me 3</Item>
+      </ActionGroup>
+    , {providerProps: {locale: props.locale}});
 
     let buttons = tree.getAllByRole('button');
 
@@ -220,14 +208,12 @@ describe('ActionGroup', function () {
 
   `('$Name skips disabled keys', async function ({Name, props, disabledKeys, orders}) {
     let tree = render(
-      <Provider theme={theme} locale={props.locale}>
-        <ActionGroup disabledKeys={disabledKeys}>
-          <Item key="0" data-testid="button-1">Click me 1</Item>
-          <Item key="1" data-testid="button-2">Click me 2</Item>
-          <Item key="2" data-testid="button-3">Click me 3</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup disabledKeys={disabledKeys}>
+        <Item key="0" data-testid="button-1">Click me 1</Item>
+        <Item key="1" data-testid="button-2">Click me 2</Item>
+        <Item key="2" data-testid="button-3">Click me 3</Item>
+      </ActionGroup>
+    , {providerProps: {locale: props.locale}});
 
     let buttons = tree.getAllByRole('button');
 
@@ -245,15 +231,13 @@ describe('ActionGroup', function () {
     ${'rtl middle two disabled'} | ${{locale: 'de-DE'}} | ${['1', '2']}  | ${[{action: tab, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowRight, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowRight, result: () => ['0', '-1', '-1', '-1']}, {action: pressArrowLeft, result: () => ['-1', '-1', '-1', '0']}, {action: pressArrowLeft, result: () => ['0', '-1', '-1', '-1']}]}
   `('$Name skips multiple disabled keys', async function ({Name, props, disabledKeys, orders}) {
     let tree = render(
-      <Provider theme={theme} locale={props.locale}>
-        <ActionGroup disabledKeys={disabledKeys}>
-          <Item key="0" data-testid="button-1">Click me 1</Item>
-          <Item key="1" data-testid="button-2">Click me 2</Item>
-          <Item key="2" data-testid="button-3">Click me 3</Item>
-          <Item key="3" data-testid="button-4">Click me 4</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup disabledKeys={disabledKeys}>
+        <Item key="0" data-testid="button-1">Click me 1</Item>
+        <Item key="1" data-testid="button-2">Click me 2</Item>
+        <Item key="2" data-testid="button-3">Click me 3</Item>
+        <Item key="3" data-testid="button-4">Click me 4</Item>
+      </ActionGroup>
+    , {providerProps: {locale: props.locale}});
 
     let buttons = tree.getAllByRole('button');
 
@@ -356,11 +340,9 @@ describe('ActionGroup', function () {
 
   it('ActionGroup handles none selection', function () {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup selectionMode="none">
-          <Item>Click me</Item>
-        </ActionGroup>
-      </Provider>
+      <ActionGroup selectionMode="none">
+        <Item>Click me</Item>
+      </ActionGroup>
     );
 
     let button1 = getByRole('button');
@@ -370,12 +352,10 @@ describe('ActionGroup', function () {
 
   it('ActionGroup should pass className, role and tabIndex', function () {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup selectionMode="single">
-          <Item UNSAFE_className={'test-class'}>Click me</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup selectionMode="single">
+        <Item UNSAFE_className={'test-class'}>Click me</Item>
+      </ActionGroup>
+    , {providerProps: {locale: 'de-DE'}});
 
     let button1 = getByRole('radio');
     expect(button1).not.toHaveAttribute('icon');
@@ -440,12 +420,10 @@ describe('ActionGroup', function () {
 
   it('ActionGroup allows aria-label', function () {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup aria-label="Test">
-          <Item>Click me</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup aria-label="Test">
+        <Item>Click me</Item>
+      </ActionGroup>
+    , {providerProps: {locale: 'de-DE'}});
 
     let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('aria-label', 'Test');
@@ -453,13 +431,13 @@ describe('ActionGroup', function () {
 
   it('ActionGroup allows aria-labelledby', function () {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
+      <>
         <span id="test">Test</span>
         <ActionGroup aria-labelledby="test">
           <Item>Click me</Item>
         </ActionGroup>
-      </Provider>
-    );
+      </>
+    , {providerProps: {locale: 'de-DE'}});
 
     let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('aria-labelledby', 'test');
@@ -467,13 +445,13 @@ describe('ActionGroup', function () {
 
   it('ActionGroup allows aria-describedby', function () {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
+      <>
         <span id="test">Test</span>
         <ActionGroup aria-describedby="test">
           <Item>Click me</Item>
         </ActionGroup>
-      </Provider>
-    );
+      </>
+    , {providerProps: {locale: 'de-DE'}});
 
     let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('aria-describedby', 'test');
@@ -481,12 +459,10 @@ describe('ActionGroup', function () {
 
   it('ActionGroup allow aria-label on Item', function () {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup selectionMode="single">
-          <Item aria-label="Test">Click me</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup selectionMode="single">
+        <Item aria-label="Test">Click me</Item>
+      </ActionGroup>
+    , {providerProps: {locale: 'de-DE'}});
 
     let button1 = getByRole('radio');
     expect(button1).toHaveAttribute('aria-label', 'Test');
@@ -494,12 +470,10 @@ describe('ActionGroup', function () {
 
   it('ActionGroup allows custom props', function () {
     let {getByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup data-testid="test">
-          <Item>Click me</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup data-testid="test">
+        <Item>Click me</Item>
+      </ActionGroup>
+    , {providerProps: {locale: 'de-DE'}});
 
     let button1 = getByRole('toolbar');
     expect(button1).toHaveAttribute('data-testid', 'test');
@@ -507,12 +481,10 @@ describe('ActionGroup', function () {
 
   it('ActionGroup Item allows custom props', function () {
     let {getAllByRole} = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup>
-          <Item data-testid="test">Click me</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup>
+        <Item data-testid="test">Click me</Item>
+      </ActionGroup>
+    , {providerProps: {locale: 'de-DE'}});
 
     let item = getAllByRole('button')[0];
     expect(item).toHaveAttribute('data-testid', 'test');
@@ -521,12 +493,10 @@ describe('ActionGroup', function () {
   it('fires onAction when a button is pressed', function () {
     let onAction = jest.fn();
     let tree = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup selectionMode="none" onAction={onAction}>
-          <Item key="test">Click me</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup selectionMode="none" onAction={onAction}>
+        <Item key="test">Click me</Item>
+      </ActionGroup>
+    , {providerProps: {locale: 'de-DE'}});
 
     let button = tree.getByRole('button');
     triggerPress(button);
@@ -538,12 +508,10 @@ describe('ActionGroup', function () {
   it('does not fire onAction if the action group is disabled', function () {
     let onAction = jest.fn();
     let tree = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup onAction={onAction} isDisabled>
-          <Item key="test">Click me</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup onAction={onAction} isDisabled>
+        <Item key="test">Click me</Item>
+      </ActionGroup>
+    , {providerProps: {locale: 'de-DE'}});
 
     let button = tree.getByRole('button');
     triggerPress(button);
@@ -554,12 +522,10 @@ describe('ActionGroup', function () {
   it('does not fire onAction if the item is disabled', function () {
     let onAction = jest.fn();
     let tree = render(
-      <Provider theme={theme} locale="de-DE">
-        <ActionGroup onAction={onAction} disabledKeys={['test']}>
-          <Item key="test">Click me</Item>
-        </ActionGroup>
-      </Provider>
-    );
+      <ActionGroup onAction={onAction} disabledKeys={['test']}>
+        <Item key="test">Click me</Item>
+      </ActionGroup>
+    , {providerProps: {locale: 'de-DE'}});
 
     let button = tree.getByRole('button');
     triggerPress(button);
@@ -569,16 +535,14 @@ describe('ActionGroup', function () {
 
   it('supports DialogTrigger as a wrapper around items', function () {
     let tree = render(
-      <Provider theme={theme}>
-        <ActionGroup>
-          <DialogTrigger>
-            <Item>Hi</Item>
-            <Dialog>
-              I'm a dialog
-            </Dialog>
-          </DialogTrigger>
-        </ActionGroup>
-      </Provider>
+      <ActionGroup>
+        <DialogTrigger>
+          <Item>Hi</Item>
+          <Dialog>
+            I'm a dialog
+          </Dialog>
+        </DialogTrigger>
+      </ActionGroup>
     );
 
     let button = tree.getByRole('button');
@@ -602,16 +566,14 @@ describe('ActionGroup', function () {
 
   it('supports TooltipTrigger as a wrapper around items', function () {
     let tree = render(
-      <Provider theme={theme}>
-        <ActionGroup>
-          <TooltipTrigger>
-            <Item>Hi</Item>
-            <Tooltip>
-              I'm a tooltip
-            </Tooltip>
-          </TooltipTrigger>
-        </ActionGroup>
-      </Provider>
+      <ActionGroup>
+        <TooltipTrigger>
+          <Item>Hi</Item>
+          <Tooltip>
+            I'm a tooltip
+          </Tooltip>
+        </TooltipTrigger>
+      </ActionGroup>
     );
 
     let button = tree.getByRole('button');
@@ -626,14 +588,14 @@ describe('ActionGroup', function () {
 
   it('no infinite loop if all keys are disabled', async function () {
     let tree = render(
-      <Provider theme={theme}>
+      <>
         <input type="text" id="foo" autoFocus />
         <ActionGroup disabledKeys={['test1', 'test2']} selectionMode="single">
           <Item key="test1">Hi</Item>
           <Item key="test2">Bye</Item>
         </ActionGroup>
         <input type="text" id="bar" />
-      </Provider>
+      </>
     );
 
     let actiongroup = tree.getByRole('radiogroup');
@@ -648,14 +610,14 @@ describe('ActionGroup', function () {
 
   it('not disabled if extraneous disabledKeys are provided', async function () {
     let tree = render(
-      <Provider theme={theme}>
+      <>
         <input type="text" id="foo" autoFocus />
         <ActionGroup disabledKeys={['test1', 'foo']} selectionMode="single">
           <Item key="test1">Hi</Item>
           <Item key="test2">Bye</Item>
         </ActionGroup>
         <input type="text" id="bar" />
-      </Provider>
+      </>
     );
 
     let actiongroup = tree.getByRole('radiogroup');
@@ -671,14 +633,14 @@ describe('ActionGroup', function () {
 
   it('is disabled if extraneous disabledKeys are provided in addition to all keys being disabled', async function () {
     let tree = render(
-      <Provider theme={theme}>
+      <>
         <input type="text" id="foo" autoFocus />
         <ActionGroup disabledKeys={['test1', 'test2', 'foo']} selectionMode="single">
           <Item key="test1">Hi</Item>
           <Item key="test2">Bye</Item>
         </ActionGroup>
         <input type="text" id="bar" />
-      </Provider>
+      </>
     );
 
     let actiongroup = tree.getByRole('radiogroup');
@@ -705,14 +667,12 @@ describe('ActionGroup', function () {
     it('collapses overflowing items into a menu', function () {
       let onAction = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" onAction={onAction}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="four">Four</Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" onAction={onAction}>
+          <Item key="one">One</Item>
+          <Item key="two">Two</Item>
+          <Item key="three">Three</Item>
+          <Item key="four">Four</Item>
+        </ActionGroup>
       );
 
       let actiongroup = tree.getByRole('toolbar');
@@ -739,14 +699,12 @@ describe('ActionGroup', function () {
     it('collapsed menu items can have DOM attributes passed to them', function () {
       let onAction = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" onAction={onAction}>
-            <Item key="one">One</Item>
-            <Item key="two" data-element="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="four">Four</Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" onAction={onAction}>
+          <Item key="one">One</Item>
+          <Item key="two" data-element="two">Two</Item>
+          <Item key="three">Three</Item>
+          <Item key="four">Four</Item>
+        </ActionGroup>
       );
 
       let actiongroup = tree.getByRole('toolbar');
@@ -762,14 +720,12 @@ describe('ActionGroup', function () {
     it('handles keyboard focus management properly', async function () {
       let onAction = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" onAction={onAction}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="four">Four</Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" onAction={onAction}>
+          <Item key="one">One</Item>
+          <Item key="two">Two</Item>
+          <Item key="three">Three</Item>
+          <Item key="four">Four</Item>
+        </ActionGroup>
       );
 
       let actiongroup = tree.getByRole('toolbar');
@@ -790,14 +746,12 @@ describe('ActionGroup', function () {
     it('moves focus if the focused button was removed', function () {
       let onAction = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup onAction={onAction}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="four">Four</Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup onAction={onAction}>
+          <Item key="one">One</Item>
+          <Item key="two">Two</Item>
+          <Item key="three">Three</Item>
+          <Item key="four">Four</Item>
+        </ActionGroup>
       );
 
       let actiongroup = tree.getByRole('toolbar');
@@ -807,13 +761,11 @@ describe('ActionGroup', function () {
 
       act(() => buttons[2].focus());
       tree.rerender(
-        <Provider theme={theme}>
-          <ActionGroup onAction={onAction}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="four">Four</Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup onAction={onAction}>
+          <Item key="one">One</Item>
+          <Item key="two">Two</Item>
+          <Item key="four">Four</Item>
+        </ActionGroup>
       );
       actiongroup = tree.getByRole('toolbar');
       buttons = within(actiongroup).getAllByRole('button');
@@ -833,14 +785,12 @@ describe('ActionGroup', function () {
 
       let onAction = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup aria-label="Test" overflowMode="collapse" onAction={onAction}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="four">Four</Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup aria-label="Test" overflowMode="collapse" onAction={onAction}>
+          <Item key="one">One</Item>
+          <Item key="two">Two</Item>
+          <Item key="three">Three</Item>
+          <Item key="four">Four</Item>
+        </ActionGroup>
       );
 
       expect(tree.queryByRole('toolbar')).toBeNull();
@@ -866,14 +816,12 @@ describe('ActionGroup', function () {
     it('collapses all items if selectionMode="single"', function () {
       let onSelectionChange = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" selectionMode="single" defaultSelectedKeys={['two']} onSelectionChange={onSelectionChange}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="four">Four</Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" selectionMode="single" defaultSelectedKeys={['two']} onSelectionChange={onSelectionChange}>
+          <Item key="one">One</Item>
+          <Item key="two">Two</Item>
+          <Item key="three">Three</Item>
+          <Item key="four">Four</Item>
+        </ActionGroup>
       );
 
       expect(tree.queryByRole('radiogroup')).toBeNull();
@@ -909,14 +857,12 @@ describe('ActionGroup', function () {
     it('collapses all items if selectionMode="multiple"', function () {
       let onSelectionChange = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" selectionMode="multiple" defaultSelectedKeys={['two', 'three']} onSelectionChange={onSelectionChange}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="four">Four</Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" selectionMode="multiple" defaultSelectedKeys={['two', 'three']} onSelectionChange={onSelectionChange}>
+          <Item key="one">One</Item>
+          <Item key="two">Two</Item>
+          <Item key="three">Three</Item>
+          <Item key="four">Four</Item>
+        </ActionGroup>
       );
 
       expect(tree.queryByRole('radiogroup')).toBeNull();
@@ -952,14 +898,12 @@ describe('ActionGroup', function () {
     it('menu button should be disabled if action group is disabled', function () {
       let onAction = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" onAction={onAction} isDisabled>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="four">Four</Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" onAction={onAction} isDisabled>
+          <Item key="one">One</Item>
+          <Item key="two">Two</Item>
+          <Item key="three">Three</Item>
+          <Item key="four">Four</Item>
+        </ActionGroup>
       );
 
       let actiongroup = tree.getByRole('toolbar');
@@ -977,14 +921,12 @@ describe('ActionGroup', function () {
       const handleOnAction = jest.fn();
 
       render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" onAction={handleOnAction} disabledKeys={['two', 'four']}>
-            <Item key="one">One</Item>
-            <Item key="two">Two</Item>
-            <Item key="three">Three</Item>
-            <Item key="four">Four</Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" onAction={handleOnAction} disabledKeys={['two', 'four']}>
+          <Item key="one">One</Item>
+          <Item key="two">Two</Item>
+          <Item key="three">Three</Item>
+          <Item key="four">Four</Item>
+        </ActionGroup>
       );
 
       const actionGroup = screen.getByRole('toolbar');
@@ -1026,18 +968,16 @@ describe('ActionGroup', function () {
   describe('buttonLabelBehavior', function () {
     it('should show the text in a tooltip with buttonLabelBehavior="hide"', function () {
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" buttonLabelBehavior="hide">
-            <Item key="one">
-              <Edit />
-              <Text>One</Text>
-            </Item>
-            <Item key="two">
-              <Edit />
-              <Text>Two</Text>
-            </Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" buttonLabelBehavior="hide">
+          <Item key="one">
+            <Edit />
+            <Text>One</Text>
+          </Item>
+          <Item key="two">
+            <Edit />
+            <Text>Two</Text>
+          </Item>
+        </ActionGroup>
       );
 
       let actiongroup = tree.getByRole('toolbar');
@@ -1059,22 +999,20 @@ describe('ActionGroup', function () {
 
     it('should show the text when collapsed into a dropdown', function () {
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" buttonLabelBehavior="hide">
-            <Item key="one" textValue="One">
-              <Edit />
-              <Text>One</Text>
-            </Item>
-            <Item key="two" textValue="Two">
-              <Edit />
-              <Text>Two</Text>
-            </Item>
-            <Item key="three" textValue="Three">
-              <Edit />
-              <Text>Three</Text>
-            </Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" buttonLabelBehavior="hide">
+          <Item key="one" textValue="One">
+            <Edit />
+            <Text>One</Text>
+          </Item>
+          <Item key="two" textValue="Two">
+            <Edit />
+            <Text>Two</Text>
+          </Item>
+          <Item key="three" textValue="Three">
+            <Edit />
+            <Text>Three</Text>
+          </Item>
+        </ActionGroup>
       );
 
       let actiongroup = tree.getByRole('toolbar');
@@ -1100,18 +1038,16 @@ describe('ActionGroup', function () {
       });
 
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" buttonLabelBehavior="collapse">
-            <Item key="one">
-              <Edit />
-              <Text>One</Text>
-            </Item>
-            <Item key="two">
-              <Edit />
-              <Text>Two</Text>
-            </Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" buttonLabelBehavior="collapse">
+          <Item key="one">
+            <Edit />
+            <Text>One</Text>
+          </Item>
+          <Item key="two">
+            <Edit />
+            <Text>Two</Text>
+          </Item>
+        </ActionGroup>
       );
 
       let actiongroup = tree.getByRole('toolbar');
@@ -1131,18 +1067,16 @@ describe('ActionGroup', function () {
       });
 
       let tree = render(
-        <Provider theme={theme}>
-          <ActionGroup overflowMode="collapse" buttonLabelBehavior="collapse">
-            <Item key="one">
-              <Edit />
-              <Text>One</Text>
-            </Item>
-            <Item key="two">
-              <Edit />
-              <Text>Two</Text>
-            </Item>
-          </ActionGroup>
-        </Provider>
+        <ActionGroup overflowMode="collapse" buttonLabelBehavior="collapse">
+          <Item key="one">
+            <Edit />
+            <Text>One</Text>
+          </Item>
+          <Item key="two">
+            <Edit />
+            <Text>Two</Text>
+          </Item>
+        </ActionGroup>
       );
 
       let actiongroup = tree.getByRole('toolbar');

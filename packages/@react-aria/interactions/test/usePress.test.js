@@ -14,10 +14,8 @@ import {act, fireEvent, installMouseEvent, installPointerEvent, render, waitFor}
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render as ReactDOMRender} from 'react-dom';
-import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
 function Example(props) {
@@ -2916,7 +2914,7 @@ describe('usePress', function () {
       let {elementType: ElementType = 'div', ...otherProps} = props;
       let {pressProps} = usePress(otherProps);
       return (
-        <Provider theme={theme}>
+        <>
           <ElementType {...pressProps} tabIndex="0">
             <DialogTrigger>
               <ActionButton>open</ActionButton>
@@ -2925,7 +2923,7 @@ describe('usePress', function () {
               </Dialog>
             </DialogTrigger>
           </ElementType>
-        </Provider>
+        </>
       );
     }
 

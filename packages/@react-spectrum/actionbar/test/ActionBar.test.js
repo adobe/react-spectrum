@@ -16,9 +16,7 @@ import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-s
 import {announce} from '@react-aria/live-announcer';
 import {Example} from '../stories/Example';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 describe('ActionBar', () => {
@@ -35,7 +33,7 @@ describe('ActionBar', () => {
   });
 
   it('should open when there are selected items', () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    let tree = render(<Example />);
     act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
@@ -59,7 +57,7 @@ describe('ActionBar', () => {
   });
 
   it('should update the selected count when selecting more items', () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    let tree = render(<Example />);
     act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
@@ -74,7 +72,7 @@ describe('ActionBar', () => {
   });
 
   it('should work with select all', () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    let tree = render(<Example />);
     act(() => {jest.runAllTimers();});
 
     let selectAll = tree.getByLabelText('Select All');
@@ -84,7 +82,7 @@ describe('ActionBar', () => {
   });
 
   it('should close and restore focus when pressing the clear button', () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    let tree = render(<Example />);
     act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
@@ -107,7 +105,7 @@ describe('ActionBar', () => {
   });
 
   it('should close when pressing the escape key', () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    let tree = render(<Example />);
     act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
@@ -131,7 +129,7 @@ describe('ActionBar', () => {
   });
 
   it('should restore focus where it came from after being closed via escape if no elements are removed', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    let tree = render(<Example />);
     act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
@@ -170,7 +168,7 @@ describe('ActionBar', () => {
   });
 
   it('should restore focus to the the new first row if the row we wanted to restore to was removed', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    let tree = render(<Example />);
     act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
@@ -218,7 +216,7 @@ describe('ActionBar', () => {
   });
 
   it('should restore focus to the new first row if the row we wanted to restore to was removed via actiongroup menu', async () => {
-    let tree = render(<Provider theme={theme}><Example /></Provider>);
+    let tree = render(<Example />);
     act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');
@@ -283,7 +281,7 @@ describe('ActionBar', () => {
 
   it('should fire onAction when clicking on an action', () => {
     let onAction = jest.fn();
-    let tree = render(<Provider theme={theme}><Example onAction={onAction} /></Provider>);
+    let tree = render(<Example onAction={onAction} />);
     act(() => {jest.runAllTimers();});
 
     let table = tree.getByRole('grid');

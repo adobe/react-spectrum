@@ -11,11 +11,9 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
-import {defaultTheme} from '@adobe/react-spectrum';
 import {DialogContainer} from '@react-spectrum/dialog';
 import {FocusScope, useFocusManager} from '../';
 import {focusScopeTree} from '../src/FocusScope';
-import {Provider} from '@react-spectrum/provider';
 import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
@@ -1548,7 +1546,7 @@ describe('FocusScope', function () {
           setShowDialog(true);
         };
         return (
-          <Provider theme={defaultTheme}>
+          <>
             <label htmlFor="foo">Extra input to disambiguate focus</label>
             <input id="foo" />
             <FocusScope>
@@ -1568,7 +1566,7 @@ describe('FocusScope', function () {
                 </FocusScope>
               )}
             </DialogContainer>
-          </Provider>
+          </>
         );
       }
 

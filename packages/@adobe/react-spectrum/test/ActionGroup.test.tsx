@@ -11,25 +11,15 @@
  */
 
 import {ActionGroup, Item} from '../';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {render} from '@react-spectrum/test-utils';
-import scaleMedium from '@adobe/spectrum-css-temp/vars/spectrum-medium-unique.css';
-import themeLight from '@adobe/spectrum-css-temp/vars/spectrum-light-unique.css';
-
-let theme = {
-  light: themeLight,
-  medium: scaleMedium
-};
 
 it('should work', () => {
   render(
-    <Provider theme={theme}>
-      <ActionGroup>
-        <Item>Item A</Item>
-        <Item>Item B</Item>
-      </ActionGroup>
-    </Provider>
+    <ActionGroup>
+      <Item>Item A</Item>
+      <Item>Item B</Item>
+    </ActionGroup>
   );
 
   // TODO: Put some meaningful basic assertion here (maybe a snapshot test?) to validate thinks aren't totally broken.

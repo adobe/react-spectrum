@@ -16,9 +16,7 @@ import {DraggableCollectionExample} from '../stories/DraggableCollection';
 import {DraggableListBox} from '../stories/DraggableListBox';
 import {Droppable} from './examples';
 import {Item} from '@react-stately/collections';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 describe('useDraggableCollection', () => {
@@ -51,10 +49,10 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableCollectionExample onDragStart={onDragStart} onDragMove={onDragMove} onDragEnd={onDragEnd} />
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let grid = tree.getByRole('grid');
@@ -138,10 +136,10 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableCollectionExample onDragStart={onDragStart} onDragEnd={onDragEnd} />
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let grid = tree.getByRole('grid');
@@ -235,10 +233,10 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableCollectionExample onDragStart={onDragStart} onDragEnd={onDragEnd} />
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let grid = tree.getByRole('grid');
@@ -326,10 +324,10 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableCollectionExample onDragStart={onDragStart} onDragEnd={onDragEnd} />
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let grid = tree.getByRole('grid');
@@ -408,10 +406,10 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableCollectionExample onDragStart={onDragStart} onDragEnd={onDragEnd} />
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let grid = tree.getByRole('grid');
@@ -507,10 +505,10 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableCollectionExample onDragStart={onDragStart} onDragEnd={onDragEnd} />
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let grid = tree.getByRole('grid');
@@ -594,14 +592,14 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableListBox aria-label="Test" selectionMode="multiple" onDragStart={onDragStart} onDragEnd={onDragEnd}>
             <Item key="foo">Foo</Item>
             <Item key="bar">Bar</Item>
             <Item key="baz">Baz</Item>
           </DraggableListBox>
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let listbox = tree.getByRole('listbox');
@@ -685,14 +683,14 @@ describe('useDraggableCollection', () => {
       let onDrop = jest.fn();
       let onAction = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableListBox aria-label="Test" selectionMode="multiple" selectionBehavior="replace" onDragStart={onDragStart} onDragEnd={onDragEnd} onAction={onAction}>
             <Item key="foo">Foo</Item>
             <Item key="bar">Bar</Item>
             <Item key="baz">Baz</Item>
           </DraggableListBox>
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let listbox = tree.getByRole('listbox');
@@ -794,10 +792,10 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableCollectionExample onDragStart={onDragStart} onDragEnd={onDragEnd} />
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let grid = tree.getByRole('grid');
@@ -866,10 +864,10 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableCollectionExample onDragStart={onDragStart} onDragEnd={onDragEnd} />
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let grid = tree.getByRole('grid');
@@ -953,10 +951,10 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableCollectionExample onDragStart={onDragStart} onDragEnd={onDragEnd} />
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let grid = tree.getByRole('grid');
@@ -1031,14 +1029,14 @@ describe('useDraggableCollection', () => {
       let onDragEnd = jest.fn();
       let onDrop = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableListBox aria-label="Test" selectionMode="multiple" onDragStart={onDragStart} onDragEnd={onDragEnd}>
             <Item key="foo">Foo</Item>
             <Item key="bar">Bar</Item>
             <Item key="baz">Baz</Item>
           </DraggableListBox>
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let listbox = tree.getByRole('listbox');
@@ -1117,14 +1115,14 @@ describe('useDraggableCollection', () => {
       let onDrop = jest.fn();
       let onAction = jest.fn();
       let tree = render(
-        <Provider theme={theme}>
+        <>
           <DraggableListBox aria-label="Test" selectionMode="multiple" onDragStart={onDragStart} onDragEnd={onDragEnd} onAction={onAction}>
             <Item key="foo">Foo</Item>
             <Item key="bar">Bar</Item>
             <Item key="baz">Baz</Item>
           </DraggableListBox>
           <Droppable onDrop={onDrop} />
-        </Provider>
+        </>
       );
 
       let listbox = tree.getByRole('listbox');

@@ -31,12 +31,17 @@ if (!renderHook) {
 }
 
 interface RenderOptions extends BaseRenderOptions {
-  providerProps: ProviderProps
+  providerProps: Omit<ProviderProps, 'children'>
 }
 
-function customRender(ui: ReactElement, options: RenderOptions) {
-  return render(ui, {wrapper: (props) => <ProviderWrapper {...props} {...options?.providerProps} />, ...options});
+// TODO: perhaps export this as a non-overide of render?
+function providerWrapperRender(ui: ReactElement, options?: RenderOptions) {
+  let rendered = render(ui, {wrapper: (props) => <ProviderWrapper {...props} {...options?.providerProps} />, ...options});
+  return {
+    ...rendered,
+    rerender: (ui, options) => providerWrapperRender(ui, {container: rendered.container, ...options})
+  };
 }
-
+// TODO how to re-export with the new RenderOptions definition
 // override render method with
-export {customRender as render};
+export {providerWrapperRender as render};

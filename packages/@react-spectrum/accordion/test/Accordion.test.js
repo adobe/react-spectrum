@@ -12,9 +12,7 @@
 
 import {Accordion, Item} from '../src';
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 let items = [
@@ -25,15 +23,13 @@ let items = [
 
 function renderComponent(props) {
   return render(
-    <Provider theme={theme}>
-      <Accordion {...props} defaultExpandedKeys={['one']} items={items}>
-        {item => (
-          <Item key={item.key} title={item.title}>
-            {item.children}
-          </Item>
-        )}
-      </Accordion>
-    </Provider>
+    <Accordion {...props} defaultExpandedKeys={['one']} items={items}>
+      {item => (
+        <Item key={item.key} title={item.title}>
+          {item.children}
+        </Item>
+      )}
+    </Accordion>
   );
 }
 

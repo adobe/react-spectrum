@@ -12,9 +12,8 @@
 
 import {act, fireEvent, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
-import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
+import {Checkbox} from '@adobe/react-spectrum';
 import {Form} from '@react-spectrum/form';
-import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -240,12 +239,10 @@ describe('Button', function () {
     let eventUp;
     let btn = React.createRef();
     let {getByRole} = render(
-      <Provider theme={defaultTheme}>
-        <Form>
-          <Checkbox>An Input</Checkbox>
-          <Button variant="primary" ref={btn}>Click Me</Button>
-        </Form>
-      </Provider>
+      <Form>
+        <Checkbox>An Input</Checkbox>
+        <Button variant="primary" ref={btn}>Click Me</Button>
+      </Form>
     );
     // need to attach event listeners after instead of directly on Button because the ones directly on Button
     // will fire before the usePress ones
@@ -270,12 +267,10 @@ describe('Button', function () {
     let eventUp;
     let btn = React.createRef();
     let {getByRole} = render(
-      <Provider theme={defaultTheme}>
-        <Form>
-          <Checkbox>An Input</Checkbox>
-          <Button variant="primary" type="submit" ref={btn}>Click Me</Button>
-        </Form>
-      </Provider>
+      <Form>
+        <Checkbox>An Input</Checkbox>
+        <Button variant="primary" type="submit" ref={btn}>Click Me</Button>
+      </Form>
     );
     btn.current.UNSAFE_getDOMNode().addEventListener('keyup', e => eventUp = e);
 
@@ -290,12 +285,10 @@ describe('Button', function () {
     let eventDown;
     let btn = React.createRef();
     let {getByRole} = render(
-      <Provider theme={defaultTheme}>
-        <Form>
-          <Checkbox>An Input</Checkbox>
-          <Button variant="primary" type="submit" ref={btn}>Click Me</Button>
-        </Form>
-      </Provider>
+      <Form>
+        <Checkbox>An Input</Checkbox>
+        <Button variant="primary" type="submit" ref={btn}>Click Me</Button>
+      </Form>
     );
     btn.current.UNSAFE_getDOMNode().addEventListener('keydown', e => eventDown = e);
 

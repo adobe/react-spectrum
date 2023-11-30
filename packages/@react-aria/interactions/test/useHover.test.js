@@ -14,9 +14,7 @@ import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@r
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {theme} from '@react-spectrum/theme-default';
 import {useHover} from '../';
 
 function Example(props) {
@@ -516,7 +514,7 @@ describe('useHover', function () {
       let {elementType: ElementType = 'div', ...otherProps} = props;
       let {hoverProps} = useHover(otherProps);
       return (
-        <Provider theme={theme}>
+        <>
           <ElementType {...hoverProps} tabIndex="0">
             <DialogTrigger>
               <ActionButton>open</ActionButton>
@@ -525,7 +523,7 @@ describe('useHover', function () {
               </Dialog>
             </DialogTrigger>
           </ElementType>
-        </Provider>
+        </>
       );
     }
 

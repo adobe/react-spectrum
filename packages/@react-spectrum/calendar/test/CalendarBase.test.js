@@ -10,12 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, screen, triggerPress, within} from '@react-spectrum/test-utils';
 import {Calendar, RangeCalendar} from '../';
 import {CalendarDate, GregorianCalendar, today} from '@internationalized/date';
-import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
@@ -269,10 +267,8 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar}
     `('$Name should handle minimum dates in a calendar system', ({Calendar}) => {
       let {getByRole, getAllByRole} = render(
-        <Provider theme={theme} locale="en-US-u-ca-japanese">
-          <Calendar defaultFocusedValue={new CalendarDate(1868, 9, 12)} />
-        </Provider>
-      );
+        <Calendar defaultFocusedValue={new CalendarDate(1868, 9, 12)} />
+      , {providerProps: {locale: 'en-US-u-ca-japanese'}});
 
       let grid = getByRole('grid');
       let headers = within(grid).getAllByRole('columnheader', {hidden: true});
@@ -489,10 +485,8 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar}
     `('$Name should respond to provider props', ({Calendar}) => {
       let {getByRole, getAllByRole, getByLabelText, getAllByLabelText} = render(
-        <Provider theme={theme} isDisabled>
-          <Calendar />
-        </Provider>
-      );
+        <Calendar />
+      , {providerProps: {isDisabled: true}});
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-disabled', 'true');
@@ -726,19 +720,14 @@ describe('CalendarBase', () => {
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{}}
     `('$Name should change the week start day based on the locale', ({Calendar}) => {
       let {getAllByRole, rerender} = render(
-        <Provider theme={theme} locale="en-US">
-          <Calendar />
-        </Provider>
-      );
+        <Calendar />
+      , {providerProps: {locale: 'en-US'}});
 
       let headers = getAllByRole('columnheader', {hidden: true});
       expect(headers[0]).toHaveTextContent('S');
-
       rerender(
-        <Provider theme={theme} locale="de-DE">
-          <Calendar />
-        </Provider>
-      );
+        <Calendar />
+      , {providerProps: {locale: 'de-DE'}});
 
       headers = getAllByRole('columnheader', {hidden: true});
       expect(headers[0]).toHaveTextContent('M');
@@ -751,10 +740,8 @@ describe('CalendarBase', () => {
     `('$Name should mirror arrow key movement in an RTL locale', ({Calendar, props}) => {
       // LTR
       let {getByRole, getAllByRole, rerender} = render(
-        <Provider theme={theme} locale="en-US">
-          <Calendar {...props} autoFocus />
-        </Provider>
-      );
+        <Calendar {...props} autoFocus />
+      , {providerProps: {locale: 'en-US'}});
 
       let grid = getByRole('grid');
       let selected = getAllByRole('button').find(cell => cell.getAttribute('tabIndex') === '0');
@@ -768,11 +755,11 @@ describe('CalendarBase', () => {
 
       // RTL
       rerender(
-        <Provider theme={theme} locale="ar-EG">
-          <Calendar {...props} autoFocus />
-        </Provider>
-      );
+        <Calendar {...props} autoFocus />
+      , {providerProps: {locale: 'ar-EG'}});
 
+      // TODO: for some reason we need to get the grid again, otherwise the grid keydowns don't actually work (stale reference?)
+      grid = getByRole('grid');
       // make sure focused cell gets updated after rerender
       fireEvent.blur(grid);
       fireEvent.focus(grid);

@@ -10,17 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, screen} from '@testing-library/react';
+import {act, fireEvent, pointerMap, render, screen} from '@react-spectrum/test-utils';
 import {
   ActionButton,
   ActionGroup,
-  defaultTheme,
   Divider,
   Item,
-  Provider,
   Text
 } from '@adobe/react-spectrum';
-import {pointerMap} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Toolbar} from '../stories/Toolbar.stories';
 import userEvent from '@testing-library/user-event';
@@ -34,21 +31,19 @@ describe('Toolbar', () => {
 
   it('renders action buttons for items with keys and children', async () => {
     render(
-      <Provider theme={defaultTheme}>
-        <Toolbar>
-          <ActionGroup>
-            <Item key="alignleft">
-              <Text>Align left</Text>
-            </Item>
-            <Item key="aligncenter">
-              <Text>Align center</Text>
-            </Item>
-            <Item key="alignright">
-              <Text>Align right</Text>
-            </Item>
-          </ActionGroup>
-        </Toolbar>
-      </Provider>
+      <Toolbar>
+        <ActionGroup>
+          <Item key="alignleft">
+            <Text>Align left</Text>
+          </Item>
+          <Item key="aligncenter">
+            <Text>Align center</Text>
+          </Item>
+          <Item key="alignright">
+            <Text>Align right</Text>
+          </Item>
+        </ActionGroup>
+      </Toolbar>
     );
 
     expect(screen.getAllByRole('button')).toHaveLength(3);
@@ -56,27 +51,25 @@ describe('Toolbar', () => {
 
   it('renders dividers', async () => {
     const {rerender} = render(
-      <Provider theme={defaultTheme}>
-        <Toolbar>
-          <ActionGroup>
-            <Item key="alignleft">
-              <Text>Align left</Text>
-            </Item>
-          </ActionGroup>
-          <Divider />
-          <ActionGroup>
-            <Item key="aligncenter">
-              <Text>Align center</Text>
-            </Item>
-          </ActionGroup>
-          <Divider />
-          <ActionGroup>
-            <Item key="alignright">
-              <Text>Align right</Text>
-            </Item>
-          </ActionGroup>
-        </Toolbar>
-      </Provider>
+      <Toolbar>
+        <ActionGroup>
+          <Item key="alignleft">
+            <Text>Align left</Text>
+          </Item>
+        </ActionGroup>
+        <Divider />
+        <ActionGroup>
+          <Item key="aligncenter">
+            <Text>Align center</Text>
+          </Item>
+        </ActionGroup>
+        <Divider />
+        <ActionGroup>
+          <Item key="alignright">
+            <Text>Align right</Text>
+          </Item>
+        </ActionGroup>
+      </Toolbar>
     );
 
     expect(screen.getAllByRole('separator')).toHaveLength(2);
@@ -85,27 +78,25 @@ describe('Toolbar', () => {
     });
 
     rerender(
-      <Provider theme={defaultTheme}>
-        <Toolbar orientation="vertical">
-          <ActionGroup>
-            <Item key="alignleft">
-              <Text>Align left</Text>
-            </Item>
-          </ActionGroup>
-          <Divider />
-          <ActionGroup>
-            <Item key="aligncenter">
-              <Text>Align center</Text>
-            </Item>
-          </ActionGroup>
-          <Divider />
-          <ActionGroup>
-            <Item key="alignright">
-              <Text>Align right</Text>
-            </Item>
-          </ActionGroup>
-        </Toolbar>
-      </Provider>
+      <Toolbar orientation="vertical">
+        <ActionGroup>
+          <Item key="alignleft">
+            <Text>Align left</Text>
+          </Item>
+        </ActionGroup>
+        <Divider />
+        <ActionGroup>
+          <Item key="aligncenter">
+            <Text>Align center</Text>
+          </Item>
+        </ActionGroup>
+        <Divider />
+        <ActionGroup>
+          <Item key="alignright">
+            <Text>Align right</Text>
+          </Item>
+        </ActionGroup>
+      </Toolbar>
     );
 
     screen.getAllByRole('separator').forEach((separator) => {
@@ -115,7 +106,7 @@ describe('Toolbar', () => {
 
   it('sets aria-label', async () => {
     render(
-      <Provider theme={defaultTheme}>
+      <>
         <span id="toolbar-label">Toolbar aria-labelledby</span>
 
         <Toolbar aria-label="Toolbar aria-label">
@@ -132,7 +123,7 @@ describe('Toolbar', () => {
             </Item>
           </ActionGroup>
         </Toolbar>
-      </Provider>
+      </>
     );
 
     expect(screen.getByLabelText('Toolbar aria-label')).not.toHaveAttribute('aria-labelledby');
@@ -143,27 +134,25 @@ describe('Toolbar', () => {
     let onAction = jest.fn();
     let onSelectionChange = jest.fn();
     render(
-      <Provider theme={defaultTheme}>
-        <Toolbar aria-label="Actions">
-          <ActionGroup onAction={onAction}>
-            <Item key="alignleft" data-testid="alignLeft">
-              <Text>Alight Left</Text>
-            </Item>
-            <Item key="alignright">
-              <Text>Align Right</Text>
-            </Item>
-          </ActionGroup>
-          <Divider />
-          <ActionGroup onSelectionChange={onSelectionChange} selectionMode="single">
-            <Item key="list">
-              <Text>List</Text>
-            </Item>
-            <Item key="grid" data-testid="grid">
-              <Text>Grid</Text>
-            </Item>
-          </ActionGroup>
-        </Toolbar>
-      </Provider>
+      <Toolbar aria-label="Actions">
+        <ActionGroup onAction={onAction}>
+          <Item key="alignleft" data-testid="alignLeft">
+            <Text>Alight Left</Text>
+          </Item>
+          <Item key="alignright">
+            <Text>Align Right</Text>
+          </Item>
+        </ActionGroup>
+        <Divider />
+        <ActionGroup onSelectionChange={onSelectionChange} selectionMode="single">
+          <Item key="list">
+            <Text>List</Text>
+          </Item>
+          <Item key="grid" data-testid="grid">
+            <Text>Grid</Text>
+          </Item>
+        </ActionGroup>
+      </Toolbar>
     );
     const alignleftButton = screen.getByTestId('alignLeft');
     const gridButton = screen.getByTestId('grid');
@@ -186,7 +175,7 @@ describe('Toolbar', () => {
 
   it('supports keyboard navigation', async() => {
     render(
-      <Provider theme={defaultTheme}>
+      <>
         <ActionButton>Before</ActionButton>
         <Toolbar>
           <ActionGroup aria-label="Align text">
@@ -211,7 +200,7 @@ describe('Toolbar', () => {
           </ActionGroup>
         </Toolbar>
         <ActionButton>After</ActionButton>
-      </Provider>
+      </>
     );
 
     const before = screen.getByRole('button', {name: 'Before'});
@@ -295,7 +284,7 @@ describe('Toolbar', () => {
 
   it('supports keyboard navigation with orientation vertical', async () => {
     render(
-      <Provider theme={defaultTheme}>
+      <>
         <ActionButton>Before</ActionButton>
         <Toolbar orientation="vertical">
           <ActionGroup aria-label="Align text">
@@ -320,7 +309,7 @@ describe('Toolbar', () => {
           </ActionGroup>
         </Toolbar>
         <ActionButton>After</ActionButton>
-      </Provider>
+      </>
     );
 
     const before = screen.getByRole('button', {name: 'Before'});
@@ -403,7 +392,7 @@ describe('Toolbar', () => {
 
   it('supports RTL', async () => {
     render(
-      <Provider theme={defaultTheme} locale="he-IL">
+      <>
         <ActionButton>Before</ActionButton>
         <Toolbar>
           <ActionGroup aria-label="Align text">
@@ -428,8 +417,8 @@ describe('Toolbar', () => {
           </ActionGroup>
         </Toolbar>
         <ActionButton>After</ActionButton>
-      </Provider>
-    );
+      </>
+    , {providerProps: {locale: 'he-IL'}});
 
     await user.tab();
     await user.tab();

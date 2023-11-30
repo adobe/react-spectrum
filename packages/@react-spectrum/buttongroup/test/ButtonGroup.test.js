@@ -13,9 +13,7 @@
 import {act, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
-import {Provider} from '@react-spectrum/provider';
 import React, {useEffect, useRef} from 'react';
-import {theme} from '@react-spectrum/theme-default';
 
 let buttonGroupId = 'button-group';
 let onPressSpy1 = jest.fn();
@@ -24,19 +22,17 @@ let onPressSpy3 = jest.fn();
 
 function renderComponent(Component, props = {}) {
   return render(
-    <Provider theme={theme}>
-      <ButtonGroup data-testid={buttonGroupId} {...props}>
-        <Button onPress={onPressSpy1} variant="primary">
-          Button1
-        </Button>
-        <Button onPress={onPressSpy2} variant="primary">
-          Button2
-        </Button>
-        <Button onPress={onPressSpy3} variant="primary">
-          Button3
-        </Button>
-      </ButtonGroup>
-    </Provider>
+    <ButtonGroup data-testid={buttonGroupId} {...props}>
+      <Button onPress={onPressSpy1} variant="primary">
+        Button1
+      </Button>
+      <Button onPress={onPressSpy2} variant="primary">
+        Button2
+      </Button>
+      <Button onPress={onPressSpy3} variant="primary">
+        Button3
+      </Button>
+    </ButtonGroup>
   );
 }
 
@@ -165,18 +161,16 @@ function ButtonGroupWithRefs(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
-    <Provider theme={theme}>
-      <ButtonGroup ref={buttonGroup} data-testid={buttonGroupId} {...props}>
-        <Button ref={button1} onPress={onPressSpy1} variant="primary">
-          Button1
-        </Button>
-        <Button ref={button2} onPress={onPressSpy2} variant="primary">
-          Button2
-        </Button>
-        <Button ref={button3} onPress={onPressSpy3} variant="primary">
-          Button3
-        </Button>
-      </ButtonGroup>
-    </Provider>
+    <ButtonGroup ref={buttonGroup} data-testid={buttonGroupId} {...props}>
+      <Button ref={button1} onPress={onPressSpy1} variant="primary">
+        Button1
+      </Button>
+      <Button ref={button2} onPress={onPressSpy2} variant="primary">
+        Button2
+      </Button>
+      <Button ref={button3} onPress={onPressSpy3} variant="primary">
+        Button3
+      </Button>
+    </ButtonGroup>
   );
 }
