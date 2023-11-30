@@ -11,6 +11,8 @@
  */
 
 import CheckmarkMedium from '@spectrum-icons/ui/CheckmarkMedium';
+import ChevronLeft from '@spectrum-icons/workflow/ChevronLeft';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
 import {classNames, ClearSlots, SlotProvider} from '@react-spectrum/utils';
 import {DOMAttributes, Key, Node} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -23,8 +25,8 @@ import React, {useMemo, useRef} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {Text} from '@react-spectrum/text';
 import {TreeState} from '@react-stately/tree';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useMenuContext, useMenuDialogContext} from './context';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {useMenuContext, useSubmenuTriggerContext} from './context';
 import {useMenuItem} from '@react-aria/menu';
 
 interface MenuItemProps<T> {
@@ -42,33 +44,32 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     isVirtualized,
     onAction
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let menuDialogContext = useMenuDialogContext();
-  let {triggerRef} = menuDialogContext || {};
-  let isMenuDialogTrigger = !!menuDialogContext;
-  let isUnavailable = false;
-
-  if (isMenuDialogTrigger) {
-    isUnavailable = menuDialogContext.isUnavailable;
-  }
-
-  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
-
   let {
     closeOnSelect
   } = useMenuContext();
-
   let {
     rendered,
     key
   } = item;
 
-  let isSelected = state.selectionManager.isSelected(key);
-  let isDisabled = state.disabledKeys.has(key);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let {direction} = useLocale();
 
+  let submenuTriggerContext = useSubmenuTriggerContext();
+  let {triggerRef, ...submenuTriggerProps} = submenuTriggerContext || {};
+  let isSubmenuTrigger = !!submenuTriggerContext;
+  let isUnavailable;
+  let ElementType: React.ElementType = item.props.href ? 'a' : 'div';
+
+  if (isSubmenuTrigger) {
+    isUnavailable = submenuTriggerContext.isUnavailable;
+  }
+
+  let isDisabled = state.disabledKeys.has(key);
+  let isSelectable = !isSubmenuTrigger && state.selectionManager.selectionMode !== 'none';
+  let isSelected = isSelectable && state.selectionManager.isSelected(key);
   let itemref = useRef<any>(null);
   let ref = useObjectRef(useMemo(() => mergeRefs(itemref, triggerRef), [itemref, triggerRef]));
-
   let {
     menuItemProps,
     labelProps,
@@ -83,7 +84,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
       closeOnSelect,
       isVirtualized,
       onAction,
-      'aria-haspopup': isMenuDialogTrigger && isUnavailable ? 'dialog' : undefined
+      ...submenuTriggerProps
     },
     state,
     ref
@@ -110,8 +111,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
           {
             'is-disabled': isDisabled,
             'is-selected': isSelected,
-            'is-selectable': state.selectionManager.selectionMode !== 'none',
-            'is-open': state.expandedKeys.has(key)
+            'is-selectable': isSelectable,
+            'is-open': submenuTriggerProps.isOpen
           }
         )}>
         <Grid
@@ -128,7 +129,8 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
                 end: {UNSAFE_className: styles['spectrum-Menu-end'], ...endProps},
                 icon: {UNSAFE_className: styles['spectrum-Menu-icon'], size: 'S'},
                 description: {UNSAFE_className: styles['spectrum-Menu-description'], ...descriptionProps},
-                keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps}
+                keyboard: {UNSAFE_className: styles['spectrum-Menu-keyboard'], ...keyboardShortcutProps},
+                chevron: {UNSAFE_className: styles['spectrum-Menu-chevron'], size: 'S'}
               }}>
               {contents}
               {isSelected &&
@@ -143,6 +145,9 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
               }
               {
                 isUnavailable && <InfoOutline slot="end" size="XS" alignSelf="center" aria-label={stringFormatter.format('unavailable')} />
+              }
+              {
+                isUnavailable == null && isSubmenuTrigger && (direction === 'rtl' ? <ChevronLeft slot="chevron" /> : <ChevronRight slot="chevron" />)
               }
             </SlotProvider>
           </ClearSlots>
