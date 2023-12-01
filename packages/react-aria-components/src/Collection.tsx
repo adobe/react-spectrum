@@ -570,7 +570,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   removeNode(node: ElementNode<T>) {
     for (let child of node) {
-      child.parentNode = null;
       this.removeNode(child);
     }
 
