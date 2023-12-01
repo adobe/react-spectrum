@@ -66,7 +66,11 @@ const nativeVariantSelectors = new Map([
   ['hovered', ':hover'],
   ['focused', ':focus'],
   ['readonly', ':read-only'],
-  ['open', '[open]'],
+  ['open', '[open]']
+]);
+
+// Variants where both native and RAC attributes should apply. We don't override these.
+const nativeMergeSelectors = new Map([
   ['placeholder', ':placeholder-shown']
 ]);
 
@@ -75,6 +79,8 @@ let getSelector = (prefix, attributeName, attributeValue) => {
   let baseSelector = attributeValue ? `[data-${attributeName}="${attributeValue}"]` : `[data-${attributeName}]`;
   if (prefix === '' && nativeVariantSelectors.has(attributeName)) {
     return [`&:where([data-rac])${baseSelector}`, `&:where(:not([data-rac]))${nativeVariantSelectors.get(attributeName)}`];
+  } else if (nativeMergeSelectors.has(attributeName)) {
+    return [`&${baseSelector}`, `&${nativeMergeSelectors.get(attributeName)}`];
   } else {
     return `&${baseSelector}`;
   }
