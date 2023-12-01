@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import Alert from '@spectrum-icons/workflow/Alert';
+import {Avatar} from '@react-spectrum/avatar';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
@@ -281,6 +282,30 @@ export const ComplexItems: ComboBoxStory = {
         <Alert />
         <Text>Report</Text>
         <Text slot="description">Report an issue/violation.</Text>
+      </Item>
+    </ComboBox>
+  )
+};
+
+export const WithAvatars: ComboBoxStory = {
+  args: {label: 'Select a user'},
+  render: (args) => (
+    <ComboBox {...args}>
+      <Item textValue="User 1">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 1</Text>
+      </Item>
+      <Item textValue="User 2">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 2</Text>
+      </Item>
+      <Item textValue="User 3">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 3</Text>
+      </Item>
+      <Item textValue="User 4">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 4</Text>
       </Item>
     </ComboBox>
   )

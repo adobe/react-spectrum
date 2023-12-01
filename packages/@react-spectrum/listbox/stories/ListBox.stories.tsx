@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {ActionGroup, AlertDialog, Button, DialogContainer, Flex} from '@adobe/react-spectrum';
+import {ActionGroup, AlertDialog, Avatar, Button, DialogContainer, Flex, Text} from '@adobe/react-spectrum';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
@@ -25,7 +25,6 @@ import {Item, ListBox, Section} from '../';
 import {Label} from '@react-spectrum/label';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useRef, useState} from 'react';
-import {Text} from '@react-spectrum/text';
 import {TranslateListBox} from './../chromatic/ListBoxLanguages.chromatic';
 import {useAsyncList, useTreeData} from '@react-stately/data';
 
@@ -1018,4 +1017,28 @@ Links.story = {
       }
     }
   }
+};
+
+export const WithAvatars = {
+  render: () => (
+    <ListBox aria-label="Listbox with avatars" width="350px">
+      <Item textValue="Person 1">
+        <Text>Person 1</Text>
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+      </Item>
+      <Item textValue="Person 1">
+        <Text>Person 2</Text>
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+      </Item>
+      <Item textValue="Person 1">
+        <Text>Person 3</Text>
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+      </Item>
+    </ListBox>
+  ),
+  decorators: [(Story) => (
+    <StoryDecorator>
+      <Story />
+    </StoryDecorator>
+  )]
 };

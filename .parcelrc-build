@@ -1,0 +1,16 @@
+{
+  "extends": "@parcel/config-default",
+  "resolvers": ["@parcel/resolver-glob", "..."],
+  "transformers": {
+    "packages/**/intl/*.json": ["parcel-transformer-intl"],
+    "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
+    "*.svg": ["@parcel/transformer-svg-react"],
+    "*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": [
+      "@parcel/transformer-js",
+      "@parcel/transformer-react-refresh-wrap"
+    ]
+  },
+  "optimizers": {
+    "{main,module}.js": ["...", "parcel-optimizer-react-client"]
+  }
+}
