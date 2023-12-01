@@ -11,7 +11,7 @@
  */
 
 import {AriaMenuProps} from '@react-types/menu';
-import {DOMAttributes, Key, KeyboardDelegate} from '@react-types/shared';
+import {DOMAttributes, Key, KeyboardDelegate, KeyboardEvents} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
@@ -22,7 +22,7 @@ export interface MenuAria {
   menuProps: DOMAttributes
 }
 
-export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'> {
+export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, KeyboardEvents {
   /** Whether the menu uses virtual scrolling. */
   isVirtualized?: boolean,
 
@@ -49,6 +49,8 @@ export const menuData = new WeakMap<TreeState<unknown>, MenuData>();
 export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): MenuAria {
   let {
     shouldFocusWrap = true,
+    onKeyDown,
+    onKeyUp,
     ...otherProps
   } = props;
 
@@ -73,10 +75,8 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
   });
 
   return {
-    menuProps: mergeProps(domProps, {
+    menuProps: mergeProps(domProps, {onKeyDown, onKeyUp}, {
       role: 'menu',
-      // this forces AT to move their cursors into any open sub dialogs, the sub dialogs contain hidden close buttons in order to come back to this level of the menu
-      'aria-hidden': state.expandedKeys.size > 0 ? true : undefined,
       ...listProps,
       onKeyDown: (e) => {
         // don't clear the menu selected keys if the user is presses escape since escape closes the menu

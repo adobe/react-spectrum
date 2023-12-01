@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy} from '@react-types/shared';
+import {FocusStrategy, Key} from '@react-types/shared';
 import {MenuTriggerProps} from '@react-types/menu';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
@@ -23,16 +23,58 @@ export interface MenuTriggerState extends OverlayTriggerState {
   open(focusStrategy?: FocusStrategy | null): void,
 
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null): void
+  toggle(focusStrategy?: FocusStrategy | null): void,
+
+  /** Closes the menu and all submenus in the menu tree. */
+  close: () => void,
+
+  /** Opens a specific submenu tied to a specific menu item at a specific level. */
+  UNSTABLE_openSubmenu: (triggerKey: Key, level: number) => void,
+
+  /** Closes a specific submenu tied to a specific menu item at a specific level. */
+  UNSTABLE_closeSubmenu: (triggerKey: Key, level: number) => void,
+
+  /** An array of open submenu trigger keys within the menu tree.
+   * The index of key within array matches the submenu level in the tree.
+   */
+  UNSTABLE_expandedKeysStack: Key[]
 }
 
 /**
  * Manages state for a menu trigger. Tracks whether the menu is currently open,
- * and controls which item will receive focus when it opens.
+ * and controls which item will receive focus when it opens. Also tracks the open submenus within
+ * the menu tree via their trigger keys.
  */
 export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  {
   let overlayTriggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
+  let [expandedKeysStack, setExpandedKeysStack] = useState<Key[]>([]);
+
+  let closeAll = () => {
+    setExpandedKeysStack([]);
+    overlayTriggerState.close();
+  };
+
+  let openSubmenu = (triggerKey: Key, level: number) => {
+    setExpandedKeysStack(oldStack => {
+      if (level > oldStack.length) {
+        return oldStack;
+      }
+
+      return [...oldStack.slice(0, level), triggerKey];
+    });
+  };
+
+  let closeSubmenu = (triggerKey: Key, level: number) => {
+    setExpandedKeysStack(oldStack => {
+      let key = oldStack[level];
+      if (key === triggerKey) {
+        return oldStack.slice(0, level);
+      } else {
+        return oldStack;
+      }
+    });
+  };
 
   return {
     focusStrategy,
@@ -44,6 +86,12 @@ export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  
     toggle(focusStrategy: FocusStrategy = null) {
       setFocusStrategy(focusStrategy);
       overlayTriggerState.toggle();
-    }
+    },
+    close() {
+      closeAll();
+    },
+    UNSTABLE_expandedKeysStack: expandedKeysStack,
+    UNSTABLE_openSubmenu: openSubmenu,
+    UNSTABLE_closeSubmenu: closeSubmenu
   };
 }
