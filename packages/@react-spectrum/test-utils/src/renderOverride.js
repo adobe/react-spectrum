@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ProviderWrapper} from './ProviderWrapper';
-import React from 'react';
 import {render} from '@testing-library/react';
+import {StrictModeWrapper} from './StrictModeWrapper';
 
 let reactTestingLibrary = require('@testing-library/react');
 
@@ -29,12 +28,8 @@ if (!renderHook) {
   actHook = rhtl.act;
 }
 
-function customRender(ui, options, providerOptions) {
-  return render((
-    <ProviderWrapper {...providerOptions}>
-      {ui}
-    </ProviderWrapper>
-  ), options);
+function customRender(ui, options) {
+  return render(ui, {wrapper: StrictModeWrapper, ...options});
 }
 
 // override render method with
