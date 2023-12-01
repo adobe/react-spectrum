@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@adobe/spectrum-tokens": "^13.0.0-beta.3",
+    "@adobe/spectrum-tokens": "^13.0.0-beta.4",
     "@adobe/react-spectrum": "latest",
     "@babel/preset-react": "^7.23.3",
     "@react-spectrum/utils": "latest",
@@ -15,6 +15,7 @@
     "@storybook/addon-themes": "^7.5.3",
     "@storybook/blocks": "^7.5.3",
     "@storybook/client-api": "^7.5.3",
+    "@storybook/addon-designs": "^7.0.5",
     "@storybook/manager-api": "^7.5.3",
     "@storybook/preview-api": "^7.5.3",
     "@storybook/react": "^7.5.3",
@@ -25,6 +26,7 @@
     "autoprefixer": "^10.4.16",
     "css-loader": "^6.8.1",
     "lightningcss-loader": "^2.1.0",
+    "patch-package": "^8.0.0",
     "postcss": "^8.4.31",
     "postcss-loader": "^7.3.3",
     "prop-types": "^15.8.1",
@@ -51,6 +53,7 @@
     "start": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "storybook": "storybook dev -p 6006",
-    "build:tokens": "style-dictionary build --config style-dictionary.config.js"
+    "build:tokens": "style-dictionary build --config style-dictionary.config.js",
+    "postinstall": "patch-package"
   }
 }

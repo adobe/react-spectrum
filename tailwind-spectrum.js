@@ -683,10 +683,12 @@ module.exports = {
         },
         /** https://spectrum.adobe.com/page/object-styles/#Rounding */
         borderRadius: {
-            DEFAULT: 'var(--spectrum-corner-radius-200)',
-            75: 'var(--spectrum-corner-radius-75)',
-            100: 'var(--spectrum-corner-radius-100)',
-            200: 'var(--spectrum-corner-radius-200)',
+            /* These values aren't defined in tokens yet. Change over when those are updated. */
+            DEFAULT: '10px',
+            50: '4px',
+            75: '8px',
+            100: '10px',
+            200: '16px',
             full: '9999px'
         },
         textColor: {
