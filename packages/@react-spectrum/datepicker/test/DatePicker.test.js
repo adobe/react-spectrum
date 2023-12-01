@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, EthiopicCalendar, getLocalTimeZone, JapaneseCalendar, toCalendarDateTime, today} from '@internationalized/date';
 import {DatePicker} from '../';
@@ -225,7 +225,7 @@ describe('DatePicker', function () {
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      triggerPress(button);
+      await user.click(button);
       act(() => jest.runAllTimers());
 
       let dialog = getByRole('dialog');
@@ -256,7 +256,7 @@ describe('DatePicker', function () {
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should open popover and call picker onFocus', function () {
+    it('should open popover and call picker onFocus', async function () {
       let {getByRole} = render(<DatePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let button = getByRole('button');
 
@@ -264,7 +264,7 @@ describe('DatePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      triggerPress(button);
+      await user.click(button);
       act(() => jest.runAllTimers());
 
       let dialog = getByRole('dialog');
@@ -282,7 +282,7 @@ describe('DatePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      triggerPress(button);
+      await user.click(button);
       act(() => jest.runAllTimers());
 
       let dialog = getByRole('dialog');
@@ -337,7 +337,7 @@ describe('DatePicker', function () {
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('should trigger key event in popover and focus/blur/key events are not called', function () {
+    it('should trigger key event in popover and focus/blur/key events are not called', async function () {
       let {getByRole} = render(<DatePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
       let button = getByRole('button');
 
@@ -347,7 +347,7 @@ describe('DatePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      triggerPress(button);
+      await user.click(button);
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -366,7 +366,7 @@ describe('DatePicker', function () {
   });
 
   describe('calendar popover', function () {
-    it('should emit onChange when selecting a date in the calendar in controlled mode', function () {
+    it('should emit onChange when selecting a date in the calendar in controlled mode', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, queryByLabelText} = render(
         <Provider theme={theme}>
@@ -378,7 +378,7 @@ describe('DatePicker', function () {
       expect(getTextValue(combobox)).toBe('2/3/2019');
 
       let button = getByRole('button');
-      triggerPress(button);
+      await user.click(button);
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -389,15 +389,17 @@ describe('DatePicker', function () {
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
       expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
 
-      triggerPress(selected.nextSibling.children[0]);
+      await user.click(selected.nextSibling.children[0]);
 
-      expect(dialog).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(dialog).not.toBeInTheDocument();
+      });
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDate(2019, 2, 4));
       expect(getTextValue(combobox)).toBe('2/3/2019'); // controlled
     });
 
-    it('should emit onChange when selecting a date in the calendar in uncontrolled mode', function () {
+    it('should emit onChange when selecting a date in the calendar in uncontrolled mode', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole} = render(
         <Provider theme={theme}>
@@ -409,7 +411,7 @@ describe('DatePicker', function () {
       expect(getTextValue(combobox)).toBe('2/3/2019');
 
       let button = getByRole('button');
-      triggerPress(button);
+      await user.click(button);
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -418,15 +420,17 @@ describe('DatePicker', function () {
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
       expect(selected.children[0]).toHaveAttribute('aria-label', 'Sunday, February 3, 2019 selected');
 
-      triggerPress(selected.nextSibling.children[0]);
+      await user.click(selected.nextSibling.children[0]);
 
-      expect(dialog).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(dialog).not.toBeInTheDocument();
+      });
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith(new CalendarDate(2019, 2, 4));
       expect(getTextValue(combobox)).toBe('2/4/2019'); // uncontrolled
     });
 
-    it('should display a time field when a CalendarDateTime value is used', function () {
+    it('should display a time field when a CalendarDateTime value is used', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
@@ -438,7 +442,7 @@ describe('DatePicker', function () {
       expect(getTextValue(combobox)).toBe('2/3/2019, 8:45 AM');
 
       let button = getByRole('button');
-      triggerPress(button);
+      await user.click(button);
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -451,7 +455,7 @@ describe('DatePicker', function () {
       expect(getTextValue(timeField)).toBe('8:45 AM');
 
       // selecting a date should not close the popover
-      triggerPress(selected.nextSibling.children[0]);
+      await user.click(selected.nextSibling.children[0]);
 
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -474,7 +478,7 @@ describe('DatePicker', function () {
       expect(getTextValue(combobox)).toBe('2/4/2019, 9:45 AM');
     });
 
-    it('should not throw error when deleting values from time field when CalendarDateTime value is used', function () {
+    it('should not throw error when deleting values from time field when CalendarDateTime value is used', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
@@ -486,7 +490,7 @@ describe('DatePicker', function () {
       expect(getTextValue(combobox)).toBe('2/3/2019, 10:45 AM');
 
       let button = getByRole('button');
-      triggerPress(button);
+      await user.click(button);
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -499,7 +503,7 @@ describe('DatePicker', function () {
       expect(getTextValue(timeField)).toBe('10:45 AM');
 
       // selecting a date should not close the popover
-      triggerPress(selected.nextSibling.children[0]);
+      await user.click(selected.nextSibling.children[0]);
 
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -523,7 +527,7 @@ describe('DatePicker', function () {
       expect(getTextValue(combobox)).toBe('2/4/2019, 1:45 AM');
     });
 
-    it('should fire onChange until both date and time are selected', function () {
+    it('should fire onChange until both date and time are selected', async function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getAllByLabelText} = render(
         <Provider theme={theme}>
@@ -536,7 +540,7 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
-      triggerPress(button);
+      await user.click(button);
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -550,7 +554,7 @@ describe('DatePicker', function () {
 
       // selecting a date should not close the popover
       let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
-      triggerPress(todayCell.firstChild);
+      await user.click(todayCell.firstChild);
 
       expect(todayCell).toHaveAttribute('aria-selected', 'true');
 
@@ -615,7 +619,7 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
-      triggerPress(button);
+      await user.click(button);
       act(() => jest.runAllTimers());
 
       let dialog = getByRole('dialog');
@@ -623,7 +627,7 @@ describe('DatePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
-      triggerPress(todayCell.firstChild);
+      await user.click(todayCell.firstChild);
       expect(todayCell).toHaveAttribute('aria-selected', 'true');
       expect(onChange).not.toHaveBeenCalled();
 
@@ -650,7 +654,7 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
-      triggerPress(button);
+      await user.click(button);
       act(() => jest.runAllTimers());
 
       let dialog = getByRole('dialog');
@@ -763,7 +767,7 @@ describe('DatePicker', function () {
       let cells = getAllByRole('gridcell');
       let timeField = getAllByLabelText('Time')[0];
       let todayCell = cells.find(cell => cell.firstChild.getAttribute('aria-label')?.startsWith('Today'));
-      triggerPress(todayCell.firstChild);
+      await user.click(todayCell.firstChild);
 
       expect(todayCell).toHaveAttribute('aria-selected', 'true');
 
@@ -792,10 +796,10 @@ describe('DatePicker', function () {
       expectPlaceholder(combobox, formatter.format(value.toDate(getLocalTimeZone())));
 
       let clear = getAllByRole('button')[1];
-      triggerPress(clear);
+      await user.click(clear);
       expectPlaceholder(combobox, 'mm/dd/yyyy, ––:–– AM');
 
-      triggerPress(button);
+      await user.click(button);
       cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
       expect(selected).toBeUndefined();
@@ -996,16 +1000,16 @@ describe('DatePicker', function () {
   });
 
   describe('focus management', function () {
-    it('should focus the first segment on mouse down in the field', function () {
+    it('should focus the first segment on mouse down in the field', async function () {
       let {getAllByRole, getByTestId} = render(<DatePicker label="Date" />);
       let field = getByTestId('date-field');
       let segments = getAllByRole('spinbutton');
 
-      triggerPress(field);
+      await user.click(field);
       expect(segments[0]).toHaveFocus();
     });
 
-    it('should focus the first unfilled segment on mouse down in the field', function () {
+    it('should focus the first unfilled segment on mouse down in the field', async function () {
       let {getAllByRole, getByTestId} = render(<DatePicker label="Date" />);
       let field = getByTestId('date-field');
       let segments = getAllByRole('spinbutton');
@@ -1015,16 +1019,16 @@ describe('DatePicker', function () {
       fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
       expect(segments[0]).toHaveFocus();
 
-      triggerPress(field);
+      await user.click(field);
       expect(segments[1]).toHaveFocus();
     });
 
-    it('should focus the last segment on mouse down in the field with a value', function () {
+    it('should focus the last segment on mouse down in the field with a value', async function () {
       let {getAllByRole, getByTestId} = render(<DatePicker label="Date" value={new CalendarDate(2020, 2, 3)} />);
       let field = getByTestId('date-field');
       let segments = getAllByRole('spinbutton');
 
-      triggerPress(field);
+      await user.click(field);
       expect(segments[2]).toHaveFocus();
     });
 

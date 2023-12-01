@@ -14,15 +14,6 @@ import {act, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 // TODO: try to get rid of this in favor of user event
-// Triggers a "press" event on an element.
-// TODO: move to somewhere more common
-export function triggerPress(element, opts = {}) {
-  fireEvent.mouseDown(element, {detail: 1, ...opts});
-  fireEvent.mouseUp(element, {detail: 1, ...opts});
-  fireEvent.click(element, {detail: 1, ...opts});
-}
-
-// TODO: try to get rid of this in favor of user event
 // Triggers a "touch" event on an element.
 export function triggerTouch(element, opts = {}) {
   fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
