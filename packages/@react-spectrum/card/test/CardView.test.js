@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {composeStories} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';
@@ -307,14 +307,14 @@ describe('CardView', function () {
     });
 
     describe('keyboard nav', function () {
-      it('should move focus via Arrow Down', function () {
+      it('should move focus via Arrow Down', async function () {
         let tree = render(<DynamicCardView />);
         act(() => {
           jest.runAllTimers();
         });
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[1]);
+        await user.click(cards[1]);
         expect(document.activeElement).toBe(cards[1]);
         let cardStyles = getCardStyles(cards[1]);
         let expectedLeft = cardStyles.left;
@@ -331,14 +331,14 @@ describe('CardView', function () {
         expect(cardStyles.left).toEqual(expectedLeft);
       });
 
-      it('should move focus via Arrow Up', function () {
+      it('should move focus via Arrow Up', async function () {
         let tree = render(<DynamicCardView />);
         act(() => {
           jest.runAllTimers();
         });
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[5]);
+        await user.click(cards[5]);
         expect(document.activeElement).toBe(cards[5]);
         let cardStyles = getCardStyles(cards[5]);
         let expectedLeft = cardStyles.left;
@@ -359,7 +359,7 @@ describe('CardView', function () {
         Name                  | layout
         ${'Grid layout'}      | ${GridLayout}
         ${'Gallery layout'}   | ${GalleryLayout}
-      `('$Name CardView should move focus via Arrow Left', function ({Name, layout}) {
+      `('$Name CardView should move focus via Arrow Left', async function ({Name, layout}) {
         let tree = render(<DynamicCardView layout={layout} />);
         act(() => {
           jest.runAllTimers();
@@ -367,7 +367,7 @@ describe('CardView', function () {
 
         let cards = tree.getAllByRole('gridcell');
 
-        triggerPress(cards[1]);
+        await user.click(cards[1]);
         expect(document.activeElement).toBe(cards[1]);
         let cardStyles = getCardStyles(cards[1]);
         let expectedLeft = cardStyles.left;
@@ -392,7 +392,7 @@ describe('CardView', function () {
         Name                  | layout
         ${'Grid layout'}      | ${GridLayout}
         ${'Gallery layout'}   | ${GalleryLayout}
-      `('$Name CardView should move focus via Arrow Left (RTL)', function ({Name, layout}) {
+      `('$Name CardView should move focus via Arrow Left (RTL)', async function ({Name, layout}) {
         let tree = render(<DynamicCardView locale="ar-AE" layout={layout} />);
         act(() => {
           jest.runAllTimers();
@@ -402,7 +402,7 @@ describe('CardView', function () {
         let expectedTop;
         let cards = tree.getAllByRole('gridcell');
 
-        triggerPress(cards[0]);
+        await user.click(cards[0]);
         expect(document.activeElement).toBe(cards[0]);
         let cardStyles = getCardStyles(cards[0]);
         expectedRight = cardStyles.right;
@@ -427,7 +427,7 @@ describe('CardView', function () {
         Name                  | layout
         ${'Grid layout'}      | ${GridLayout}
         ${'Gallery layout'}   | ${GalleryLayout}
-      `('$Name CardView should move focus via Arrow Right', function ({Name, layout}) {
+      `('$Name CardView should move focus via Arrow Right', async function ({Name, layout}) {
         let tree = render(<DynamicCardView layout={layout} />);
         act(() => {
           jest.runAllTimers();
@@ -435,7 +435,7 @@ describe('CardView', function () {
 
         let cards = tree.getAllByRole('gridcell');
 
-        triggerPress(cards[0]);
+        await user.click(cards[0]);
         expect(document.activeElement).toBe(cards[0]);
         let cardStyles = getCardStyles(cards[0]);
         let expectedLeft = cardStyles.left;
@@ -460,7 +460,7 @@ describe('CardView', function () {
         Name                  | layout
         ${'Grid layout'}      | ${GridLayout}
         ${'Gallery layout'}   | ${GalleryLayout}
-      `('$Name CardView should move focus via Arrow Right (RTL)', function ({Name, layout}) {
+      `('$Name CardView should move focus via Arrow Right (RTL)', async function ({Name, layout}) {
         let tree = render(<DynamicCardView locale="ar-AE" layout={layout} />);
         act(() => {
           jest.runAllTimers();
@@ -470,7 +470,7 @@ describe('CardView', function () {
         let expectedTop;
         let cards = tree.getAllByRole('gridcell');
 
-        triggerPress(cards[1]);
+        await user.click(cards[1]);
         expect(document.activeElement).toBe(cards[1]);
         let cardStyles = getCardStyles(cards[1]);
         expectedRight = cardStyles.right;
@@ -491,14 +491,14 @@ describe('CardView', function () {
         expect(cardStyles.right).toEqual(expectedRight);
       });
 
-      it('should move focus via Page Up', function () {
+      it('should move focus via Page Up', async function () {
         let tree = render(<DynamicCardView />);
         act(() => {
           jest.runAllTimers();
         });
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[5]);
+        await user.click(cards[5]);
 
         fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
         fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
@@ -525,14 +525,14 @@ describe('CardView', function () {
         expect(cardStyles.left).toEqual(expectedLeft);
       });
 
-      it('should move focus via Page Down', function () {
+      it('should move focus via Page Down', async function () {
         let tree = render(<DynamicCardView />);
         act(() => {
           jest.runAllTimers();
         });
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[1]);
+        await user.click(cards[1]);
 
         expect(document.activeElement).toBe(cards[1]);
         let cardStyles = getCardStyles(document.activeElement);
@@ -594,14 +594,14 @@ describe('CardView', function () {
     });
 
     describe('keyboard nav', function () {
-      it('should move focus via Arrow Down', function () {
+      it('should move focus via Arrow Down', async function () {
         let tree = render(<DynamicCardView layout={GalleryLayout} />);
         act(() => {
           jest.runAllTimers();
         });
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[0]);
+        await user.click(cards[0]);
         expect(document.activeElement).toBe(cards[0]);
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
 
@@ -619,14 +619,14 @@ describe('CardView', function () {
         expect(within(document.activeElement).getByText('Title 4')).toBeTruthy();
       });
 
-      it('should move focus via Arrow Up', function () {
+      it('should move focus via Arrow Up', async function () {
         let tree = render(<DynamicCardView layout={GalleryLayout} />);
         act(() => {
           jest.runAllTimers();
         });
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[3]);
+        await user.click(cards[3]);
         expect(document.activeElement).toBe(cards[3]);
         expect(within(document.activeElement).getByText('Title 4')).toBeTruthy();
 
@@ -645,14 +645,14 @@ describe('CardView', function () {
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
       });
 
-      it('should move focus via Page Up', function () {
+      it('should move focus via Page Up', async function () {
         let tree = render(<DynamicCardView layout={GalleryLayout} />);
         act(() => {
           jest.runAllTimers();
         });
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[0]);
+        await user.click(cards[0]);
 
         fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
         fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
@@ -688,14 +688,14 @@ describe('CardView', function () {
         expect(document.activeElement).toEqual(pageUpElement);
       });
 
-      it('should move focus via Page Down', function () {
+      it('should move focus via Page Down', async function () {
         let tree = render(<DynamicCardView layout={GalleryLayout} />);
         act(() => {
           jest.runAllTimers();
         });
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[0]);
+        await user.click(cards[0]);
 
         fireEvent.keyDown(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
         fireEvent.keyUp(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
@@ -775,13 +775,13 @@ describe('CardView', function () {
     });
 
     describe('keyboard nav', function () {
-      it('should move focus via Arrow Down', function () {
+      it('should move focus via Arrow Down', async function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
         act(() => jest.runAllTimers()); // relayout raf
         act(() => jest.runAllTimers()); // update size
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[0]);
+        await user.click(cards[0]);
         expect(document.activeElement).toBe(cards[0]);
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
 
@@ -801,13 +801,13 @@ describe('CardView', function () {
         expect(within(document.activeElement).getByText('Title 3')).toBeTruthy();
       });
 
-      it('should move focus via Arrow Up', function () {
+      it('should move focus via Arrow Up', async function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
         act(() => jest.runAllTimers()); // relayout raf
         act(() => jest.runAllTimers()); // update size
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[2]);
+        await user.click(cards[2]);
         expect(document.activeElement).toBe(cards[2]);
         expect(within(document.activeElement).getByText('Title 3')).toBeTruthy();
 
@@ -828,7 +828,7 @@ describe('CardView', function () {
         expect(within(document.activeElement).getByText('Title 1')).toBeTruthy();
       });
 
-      it('should move focus via Arrow Left', function () {
+      it('should move focus via Arrow Left', async function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
         act(() => {
           jest.runAllTimers();
@@ -836,7 +836,7 @@ describe('CardView', function () {
 
         let cards = tree.getAllByRole('gridcell');
 
-        triggerPress(cards[1]);
+        await user.click(cards[1]);
         act(() => {
           jest.runAllTimers();
         });
@@ -858,14 +858,14 @@ describe('CardView', function () {
         expect(cardStyles.left).toEqual(expectedLeft);
       });
 
-      it('should move focus via Arrow Left (RTL)', function () {
+      it('should move focus via Arrow Left (RTL)', async function () {
         let tree = render(<DynamicCardView locale="ar-AE" layout={WaterfallLayout} />);
         act(() => {
           jest.runAllTimers();
         });
 
         let cards = tree.getAllByRole('gridcell');
-        triggerPress(cards[0]);
+        await user.click(cards[0]);
         act(() => {
           jest.runAllTimers();
         });
@@ -887,7 +887,7 @@ describe('CardView', function () {
         expect(cardStyles.right).toEqual(expectedRight);
       });
 
-      it('should move focus via Arrow Right', function () {
+      it('should move focus via Arrow Right', async function () {
         let tree = render(<DynamicCardView layout={WaterfallLayout} />);
         act(() => {
           jest.runAllTimers();
@@ -895,7 +895,7 @@ describe('CardView', function () {
 
         let cards = tree.getAllByRole('gridcell');
 
-        triggerPress(cards[0]);
+        await user.click(cards[0]);
         act(() => {
           jest.runAllTimers();
         });
@@ -917,7 +917,7 @@ describe('CardView', function () {
         expect(cardStyles.left).toEqual(expectedLeft);
       });
 
-      it('should move focus via Arrow Right (RTL)', function () {
+      it('should move focus via Arrow Right (RTL)', async function () {
         let tree = render(<DynamicCardView locale="ar-AE" layout={WaterfallLayout} />);
         act(() => {
           jest.runAllTimers();
@@ -925,7 +925,7 @@ describe('CardView', function () {
 
         let cards = tree.getAllByRole('gridcell');
 
-        triggerPress(cards[1]);
+        await user.click(cards[1]);
         act(() => {
           jest.runAllTimers();
         });
@@ -958,14 +958,14 @@ describe('CardView', function () {
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
       ${'Waterfall layout'} | ${WaterfallLayout}
-    `('$Name CardView should move focus via Home', function ({layout}) {
+    `('$Name CardView should move focus via Home', async function ({layout}) {
       let tree = render(<DynamicCardView layout={layout} />);
       act(() => {
         jest.runAllTimers();
       });
 
       let cards = tree.getAllByRole('gridcell');
-      triggerPress(cards[2]);
+      await user.click(cards[2]);
       expect(document.activeElement).toBe(cards[2]);
 
       fireEvent.keyDown(document.activeElement, {key: 'Home', code: 36, charCode: 36});
@@ -982,14 +982,14 @@ describe('CardView', function () {
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
       ${'Waterfall layout'} | ${WaterfallLayout}
-    `('$Name CardView should move focus via End', function ({layout}) {
+    `('$Name CardView should move focus via End', async function ({layout}) {
       let tree = render(<DynamicCardView layout={layout} />);
       act(() => {
         jest.runAllTimers();
       });
 
       let cards = tree.getAllByRole('gridcell');
-      triggerPress(cards[2]);
+      await user.click(cards[2]);
       expect(document.activeElement).toBe(cards[2]);
 
       fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
@@ -1014,7 +1014,7 @@ describe('CardView', function () {
       });
 
       let cards = tree.getAllByRole('gridcell');
-      triggerPress(cards[1]);
+      await user.click(cards[1]);
       expect(document.activeElement).toBe(cards[1]);
 
       await user.keyboard('Title 12');
@@ -1041,14 +1041,14 @@ describe('CardView', function () {
       expect(within(cards[1]).getByRole('checkbox').checked).toBeTruthy();
     });
 
-    it('CardView should support disabledKeys', function () {
+    it('CardView should support disabledKeys', async function () {
       let tree = render(<DynamicCardView disabledKeys={['Title 1']} />);
       act(() => {
         jest.runAllTimers();
       });
 
       let cards = tree.getAllByRole('gridcell');
-      triggerPress(cards[0]);
+      await user.click(cards[0]);
       expect(document.activeElement).not.toBe(cards[0]);
       expect(cards[0].parentNode).not.toHaveAttribute('aria-selected', 'true');
       expect(within(cards[0]).getByRole('checkbox')).toHaveAttribute('disabled');
@@ -1056,18 +1056,18 @@ describe('CardView', function () {
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
-    it('CardView should support multiple selection', function () {
+    it('CardView should support multiple selection', async function () {
       let tree = render(<DynamicCardView />);
       act(() => {
         jest.runAllTimers();
       });
 
       let cards = tree.getAllByRole('gridcell');
-      triggerPress(cards[0]);
+      await user.click(cards[0]);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Title 1']));
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
 
-      triggerPress(cards[2]);
+      await user.click(cards[2]);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Title 1', 'Title 3']));
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
 
@@ -1076,7 +1076,7 @@ describe('CardView', function () {
       expect(within(cards[0]).getByRole('checkbox').checked).toBeTruthy();
       expect(within(cards[2]).getByRole('checkbox').checked).toBeTruthy();
 
-      triggerPress(cards[0]);
+      await user.click(cards[0]);
       expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set(['Title 3']));
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
 
@@ -1086,20 +1086,20 @@ describe('CardView', function () {
       expect(within(cards[2]).getByRole('checkbox').checked).toBeTruthy();
     });
 
-    it('CardView should support single selection', function () {
+    it('CardView should support single selection', async function () {
       let tree = render(<DynamicCardView selectionMode="single" />);
       act(() => {
         jest.runAllTimers();
       });
 
       let cards = tree.getAllByRole('gridcell');
-      triggerPress(cards[0]);
+      await user.click(cards[0]);
       expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['Title 1']));
       expect(onSelectionChange).toHaveBeenCalledTimes(1);
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'true');
       expect(within(cards[0]).getByRole('checkbox').checked).toBeTruthy();
 
-      triggerPress(cards[2]);
+      await user.click(cards[2]);
       expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Title 3']));
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'false');
@@ -1107,7 +1107,7 @@ describe('CardView', function () {
       expect(within(cards[0]).getByRole('checkbox').checked).toBeFalsy();
       expect(within(cards[2]).getByRole('checkbox').checked).toBeTruthy();
 
-      triggerPress(cards[2]);
+      await user.click(cards[2]);
       expect(new Set(onSelectionChange.mock.calls[2][0])).toEqual(new Set([]));
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
       expect(cards[0].parentNode).toHaveAttribute('aria-selected', 'false');
@@ -1116,19 +1116,19 @@ describe('CardView', function () {
       expect(within(cards[2]).getByRole('checkbox').checked).toBeFalsy();
     });
 
-    it('CardView should support no selection', function () {
+    it('CardView should support no selection', async function () {
       let tree = render(<DynamicCardView selectionMode="none" />);
       act(() => {
         jest.runAllTimers();
       });
 
       let cards = tree.getAllByRole('gridcell');
-      triggerPress(cards[0]);
+      await user.click(cards[0]);
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
       expect(cards[0].parentNode).not.toHaveAttribute('aria-selected');
       expect(within(cards[0]).queryByRole('checkbox')).toBeNull();
 
-      triggerPress(cards[2]);
+      await user.click(cards[2]);
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
       expect(cards[2].parentNode).not.toHaveAttribute('aria-selected');
       expect(within(cards[2]).queryByRole('checkbox')).toBeNull();
@@ -1173,7 +1173,7 @@ describe('CardView', function () {
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
       ${'Waterfall layout'} | ${WaterfallLayout}
-    `('$Name CardView should render a loading spinner at the bottom when loading more', function ({layout}) {
+    `('$Name CardView should render a loading spinner at the bottom when loading more', async function ({layout}) {
       let tree = render(<DynamicCardView layout={layout} loadingState="loadingMore" />);
       act(() => {
         jest.runAllTimers();
@@ -1185,7 +1185,7 @@ describe('CardView', function () {
 
       let cards = tree.getAllByRole('gridcell');
       expect(cards).toBeTruthy();
-      triggerPress(cards[1]);
+      await user.click(cards[1]);
 
       // Scroll to the 'ideal' end, however, this won't be the true y position after everything has
       // been rendered and layout infos are all calculated. So scroll to the beginning again and then back one more time.
@@ -1219,7 +1219,7 @@ describe('CardView', function () {
       Name                  | layout
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
-    `('$Name CardView should call loadMore when scrolling to the bottom', function ({layout}) {
+    `('$Name CardView should call loadMore when scrolling to the bottom', async function ({layout}) {
       let onLoadMore = jest.fn();
       let tree = render(<DynamicCardView layout={layout} onLoadMore={onLoadMore} />);
 
@@ -1231,7 +1231,7 @@ describe('CardView', function () {
       expect(cards).toBeTruthy();
       // Virtualizer calls onLoadMore twice due to initial layout
       expect(onLoadMore).toHaveBeenCalledTimes(1);
-      triggerPress(cards[1]);
+      await user.click(cards[1]);
 
       fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
       fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
@@ -1298,7 +1298,7 @@ describe('CardView', function () {
     Name                  | layout
     ${'Grid layout'}      | ${GridLayout}
     ${'Gallery layout'}   | ${GalleryLayout}
-  `('$Name CardView should only scroll an item into view when in keyboard modality', function ({layout}) {
+  `('$Name CardView should only scroll an item into view when in keyboard modality', async function ({layout}) {
     let tree = render(<DynamicCardView layout={layout} />);
     act(() => {
       jest.runAllTimers();
@@ -1307,7 +1307,7 @@ describe('CardView', function () {
     expect(cards).toBeTruthy();
     let grid = tree.getByRole('grid');
     let initialScrollTop = grid.scrollTop;
-    triggerPress(cards[cards.length - 1]);
+    await user.click(cards[cards.length - 1]);
     act(() => {
       jest.runAllTimers();
     });

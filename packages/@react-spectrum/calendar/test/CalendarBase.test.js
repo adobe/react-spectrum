@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Calendar, RangeCalendar} from '../';
 import {CalendarDate, GregorianCalendar, today} from '@internationalized/date';
 import {Provider} from '@react-spectrum/provider';
@@ -168,7 +168,7 @@ describe('CalendarBase', () => {
       Name                   | Calendar         | props
       ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
-    `('$Name should change the month when previous or next buttons are clicked', ({Calendar, props}) => {
+    `('$Name should change the month when previous or next buttons are clicked', async ({Calendar, props}) => {
       let {getByRole, getByLabelText, getAllByLabelText, getAllByRole} = render(<Calendar {...props} />);
 
       let heading = getByRole('heading');
@@ -179,7 +179,7 @@ describe('CalendarBase', () => {
       expect(getAllByLabelText('selected', {exact: false}).length).toBeGreaterThan(0);
 
       let nextButton = getAllByLabelText('Next')[0];
-      triggerPress(nextButton);
+      await user.click(nextButton);
 
       expect(() => {
         getAllByLabelText('selected', {exact: false});
@@ -192,7 +192,7 @@ describe('CalendarBase', () => {
       expect(nextButton).toHaveFocus();
 
       let prevButton = getByLabelText('Previous');
-      triggerPress(prevButton);
+      await user.click(prevButton);
 
       expect(heading).toHaveTextContent('June 2019');
       gridCells = getAllByRole('gridcell').filter(cell => cell.getAttribute('aria-disabled') !== 'true');
@@ -205,7 +205,7 @@ describe('CalendarBase', () => {
       Name                   | Calendar         | props
       ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2019, 6, 5)}}
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
-    `('$Name should change the month when previous or next buttons are clicked and multiple months are visible', ({Calendar, props}) => {
+    `('$Name should change the month when previous or next buttons are clicked and multiple months are visible', async ({Calendar, props}) => {
       let {getAllByRole, getByLabelText, getAllByLabelText} = render(<Calendar {...props} visibleMonths={3} />);
 
       let grids = getAllByRole('grid');
@@ -215,7 +215,7 @@ describe('CalendarBase', () => {
       expect(grids[2]).toHaveAttribute('aria-label', 'July 2019');
 
       let nextButton = getAllByLabelText('Next')[0];
-      triggerPress(nextButton);
+      await user.click(nextButton);
 
       grids = getAllByRole('grid');
       expect(grids).toHaveLength(3);
@@ -224,7 +224,7 @@ describe('CalendarBase', () => {
       expect(grids[2]).toHaveAttribute('aria-label', 'October 2019');
 
       let prevButton = getByLabelText('Previous');
-      triggerPress(prevButton);
+      await user.click(prevButton);
 
       grids = getAllByRole('grid');
       expect(grids).toHaveLength(3);
@@ -356,7 +356,7 @@ describe('CalendarBase', () => {
       Name                   | Calendar         | props
       ${'v3 Calendar'}       | ${Calendar}      | ${{defaultValue: new CalendarDate(2021, 12, 15)}}
       ${'v3 RangeCalendar'}  | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2021, 12, 15), end: new CalendarDate(2021, 12, 15)}}}
-    `('$Name should set aria-disabled on cells for which isDateUnavailable returns true', ({Calendar, props}) => {
+    `('$Name should set aria-disabled on cells for which isDateUnavailable returns true', async ({Calendar, props}) => {
       const isDateUnavailable = (date) => {
         const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
         return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
@@ -379,11 +379,11 @@ describe('CalendarBase', () => {
       expect(gridCells.length).toBe(21);
 
       let cell = getByRole('button', {name: 'Wednesday, December 22, 2021'});
-      triggerPress(cell);
+      await user.click(cell);
       expect(cell.parentElement).not.toHaveAttribute('aria-selected');
 
       cell = getByRole('button', {name: 'Sunday, December 12, 2021'});
-      triggerPress(cell);
+      await user.click(cell);
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
     });
 
