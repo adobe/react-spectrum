@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
@@ -26,7 +26,6 @@ import userEvent from '@testing-library/user-event';
 
 describe('DialogTrigger', function () {
   let warnMock;
-  let windowSpy;
   let user;
 
   beforeAll(() => {
@@ -35,7 +34,7 @@ describe('DialogTrigger', function () {
   });
 
   beforeEach(() => {
-    windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    simulateDesktop();
     if (process.env.STRICT_MODE) {
       warnMock = jest.spyOn(global.console, 'warn').mockImplementation();
     }
@@ -179,7 +178,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a modal instead of a popover on mobile', function () {
-    windowSpy.mockImplementation(() => 700);
+    simulateMobile();
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
@@ -206,7 +205,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a tray instead of a popover on mobile if mobileType="tray"', function () {
-    windowSpy.mockImplementation(() => 700);
+    simulateMobile();
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover" mobileType="tray">
@@ -688,7 +687,7 @@ describe('DialogTrigger', function () {
   });
 
   it('mobile type modals should be closable by clicking outside the modal', async function () {
-    windowSpy.mockImplementation(() => 700);
+    simulateMobile();
     function Test({defaultOpen, onOpenChange}) {
       return (
         <Provider theme={theme}>

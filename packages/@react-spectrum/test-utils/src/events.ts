@@ -13,6 +13,7 @@
 import {act, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+// TODO: try to get rid of this in favor of user event
 // Triggers a "press" event on an element.
 // TODO: move to somewhere more common
 export function triggerPress(element, opts = {}) {
@@ -21,12 +22,14 @@ export function triggerPress(element, opts = {}) {
   fireEvent.click(element, {detail: 1, ...opts});
 }
 
+// TODO: try to get rid of this in favor of user event
 // Triggers a "touch" event on an element.
 export function triggerTouch(element, opts = {}) {
   fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
   fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
 }
 
+// TODO: expose from aria testing package, and re-export from this package?
 // Triggers a "longPress" event on an element.
 export const DEFAULT_LONG_PRESS_TIME = 500;
 
@@ -38,70 +41,8 @@ export function triggerLongPress(element, opts = {}) {
   fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
 }
 
-/**
- * Enables reading pageX/pageY from fireEvent.mouse*(..., {pageX: ..., pageY: ...}).
- */
-export function installMouseEvent() {
-  beforeAll(() => {
-    let oldMouseEvent = MouseEvent;
-    // @ts-ignore
-    global.MouseEvent = class FakeMouseEvent extends MouseEvent {
-      _init: {pageX: number, pageY: number};
-      constructor(name, init) {
-        super(name, init);
-        this._init = init;
-      }
-      get pageX() {
-        return this._init.pageX;
-      }
-      get pageY() {
-        return this._init.pageY;
-      }
-    };
-    // @ts-ignore
-    global.MouseEvent.oldMouseEvent = oldMouseEvent;
-  });
-  afterAll(() => {
-    // @ts-ignore
-    global.MouseEvent = global.MouseEvent.oldMouseEvent;
-  });
-}
 
-export function installPointerEvent() {
-  beforeAll(() => {
-    // @ts-ignore
-    global.PointerEvent = class FakePointerEvent extends MouseEvent {
-      _init: {pageX: number, pageY: number, pointerType: string, pointerId: number, width: number, height: number};
-      constructor(name, init) {
-        super(name, init);
-        this._init = init;
-      }
-      get pointerType() {
-        return this._init.pointerType ?? 'mouse';
-      }
-      get pointerId() {
-        return this._init.pointerId;
-      }
-      get pageX() {
-        return this._init.pageX;
-      }
-      get pageY() {
-        return this._init.pageY;
-      }
-      get width() {
-        return this._init.width;
-      }
-      get height() {
-        return this._init.height;
-      }
-    };
-  });
-  afterAll(() => {
-    // @ts-ignore
-    delete global.PointerEvent;
-  });
-}
-
+// TODO: expose from aria testing package, and re-export from this package?
 /**
  * Must **not** be called inside an `act` callback!
  *

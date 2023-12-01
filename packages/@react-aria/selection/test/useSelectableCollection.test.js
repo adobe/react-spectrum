@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {fireEvent, installPointerEvent, pointerMap, render, simulateDesktop, simulateMobile} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';
@@ -24,7 +24,7 @@ describe('useSelectableCollection', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 750);
+    simulateDesktop(750);
   });
 
   it('selects the first item it focuses if selectOnFocus', async () => {
@@ -89,7 +89,7 @@ describe('useSelectableCollection', () => {
   `('always uses toggle for $type', ({prepare, actions: [start, end]}) => {
     prepare();
     it('uses toggle mode when the interaction is touch', () => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+      simulateMobile(700);
       let {getAllByRole} = render(
         <List selectionMode="multiple" selectionBehavior="replace">
           <Item>Paco de Lucia</Item>

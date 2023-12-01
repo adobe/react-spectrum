@@ -19,6 +19,7 @@ import {
   DEFAULT_LONG_PRESS_TIME,
   installPointerEvent,
   pointerMap,
+  simulateDesktop,
   triggerLongPress,
   triggerPress,
   triggerTouch
@@ -76,7 +77,7 @@ describe('MenuTrigger', function () {
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    simulateDesktop();
     jest.useFakeTimers();
   });
 

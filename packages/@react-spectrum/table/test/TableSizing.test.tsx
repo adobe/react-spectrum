@@ -17,7 +17,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {ColumnSize} from '@react-types/table';
 import {ControllingResize} from '../stories/ControllingResize';
-import {fireEvent, installPointerEvent, pointerMap, triggerTouch} from '@react-spectrum/test-utils';
+import {fireEvent, installPointerEvent, pointerMap, simulateDesktop, triggerTouch} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
@@ -705,7 +705,7 @@ describe('TableViewSizing', function () {
       installPointerEvent();
 
       it('dragging the resizer works - desktop', () => {
-        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        simulateDesktop();
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
@@ -859,7 +859,7 @@ describe('TableViewSizing', function () {
 
       it('dragging the resizer works - desktop', () => {
         setInteractionModality('pointer');
-        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        simulateDesktop();
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
@@ -1030,7 +1030,7 @@ describe('TableViewSizing', function () {
 
     describe('keyboard', () => {
       it('arrow keys the resizer works - desktop', async () => {
-        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        simulateDesktop();
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
@@ -1218,7 +1218,7 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via Enter', async () => {
-        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        simulateDesktop();
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
@@ -1268,7 +1268,7 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via Tab', async () => {
-        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        simulateDesktop();
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
@@ -1318,7 +1318,7 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via shift Tab', async () => {
-        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        simulateDesktop();
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>

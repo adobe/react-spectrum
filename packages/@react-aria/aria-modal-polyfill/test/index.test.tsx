@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, simulateMobile, triggerPress, waitFor} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -215,7 +215,7 @@ describe('watchModals', () => {
       ]}
     ];
     // menu should be a tray
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+    simulateMobile();
     watchModals();
     let {getByLabelText, getByRole, queryByRole} = render(
       <>

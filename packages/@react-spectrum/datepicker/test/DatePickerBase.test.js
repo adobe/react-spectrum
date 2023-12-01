@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, render as render_, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, render as render_, simulateDesktop, triggerPress, within} from '@react-spectrum/test-utils';
 import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DatePicker, DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -41,7 +41,7 @@ function render(el) {
 
 describe('DatePickerBase', function () {
   beforeAll(() => {
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    simulateDesktop();
   });
 
   afterAll(() => {

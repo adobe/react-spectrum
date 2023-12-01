@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, screen, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, screen, simulateDesktop, simulateMobile, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
@@ -250,7 +250,7 @@ describe('ComboBox', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    simulateDesktop();
     jest.useFakeTimers();
   });
 
@@ -3728,7 +3728,7 @@ describe('ComboBox', function () {
 
   describe('mobile combobox', function () {
     beforeEach(() => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+      simulateMobile();
     });
 
     afterEach(() => {
@@ -4844,7 +4844,7 @@ describe('ComboBox', function () {
 
   describe('accessibility', function () {
     beforeAll(function () {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+      simulateDesktop();
     });
 
     afterAll(function () {
@@ -5311,7 +5311,7 @@ describe('ComboBox', function () {
   describe('forms', () => {
     describe('desktop', () => {
       beforeAll(function () {
-        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        simulateDesktop();
       });
 
       afterAll(function () {
@@ -5610,7 +5610,7 @@ describe('ComboBox', function () {
 
     describe('mobile', () => {
       beforeEach(() => {
-        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+        simulateMobile();
       });
 
       afterEach(() => {
@@ -5874,7 +5874,7 @@ describe('ComboBox', function () {
 
   describe('links', () => {
     beforeAll(function () {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+      simulateDesktop();
     });
 
     afterAll(function () {

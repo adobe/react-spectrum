@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, render, simulateDesktop, triggerPress} from '@react-spectrum/test-utils';
 import {Content, Footer, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '../';
 import {Link} from '@react-spectrum/link';
@@ -21,7 +21,7 @@ import {theme} from '@react-spectrum/theme-default';
 describe('ContextualHelp', function () {
   beforeAll(() => {
     jest.useFakeTimers();
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    simulateDesktop();
   });
   afterAll(() => {
     jest.clearAllMocks();

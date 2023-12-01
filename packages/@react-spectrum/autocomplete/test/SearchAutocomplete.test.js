@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, screen, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, screen, simulateDesktop, simulateMobile, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import Filter from '@spectrum-icons/workflow/Filter';
@@ -146,7 +146,7 @@ describe('SearchAutocomplete', function () {
     jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    simulateDesktop();
     jest.useFakeTimers();
   });
 
@@ -1533,7 +1533,7 @@ describe('SearchAutocomplete', function () {
 
   describe('mobile searchAutocomplete', function () {
     beforeEach(() => {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+      simulateMobile();
     });
 
     afterEach(() => {
@@ -2447,7 +2447,7 @@ describe('SearchAutocomplete', function () {
   describe('forms', () => {
     describe('desktop', () => {
       beforeAll(function () {
-        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+        simulateDesktop();
       });
 
       afterAll(function () {
@@ -2732,7 +2732,7 @@ describe('SearchAutocomplete', function () {
 
     describe('mobile', () => {
       beforeEach(() => {
-        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+        simulateMobile();
       });
 
       afterEach(() => {
@@ -2985,7 +2985,7 @@ describe('SearchAutocomplete', function () {
 
   describe('accessibility', function () {
     beforeAll(function () {
-      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+      simulateDesktop();
     });
 
     afterAll(function () {

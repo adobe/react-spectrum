@@ -16,7 +16,7 @@ import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
-import {pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
+import {pointerMap, render, simulateMobile, triggerPress} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
@@ -30,7 +30,7 @@ describe('Form', function () {
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+    simulateMobile();
   });
 
   afterAll(() => {
