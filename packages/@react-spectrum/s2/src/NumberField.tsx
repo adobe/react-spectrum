@@ -11,15 +11,14 @@ import {
 } from 'react-aria-components';
 
 
-
 export interface NumberFieldProps extends AriaNumberFieldProps {
-  label?: string;
-  description?: string;
-  errorMessage?: string | ((validation: ValidationResult) => string);
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 export function NumberField(
-  { label, description, errorMessage, ...props }: NumberFieldProps
+  {label, description, errorMessage, ...props}: NumberFieldProps
 ) {
   return (
     <AriaNumberField {...props}>

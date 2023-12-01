@@ -2,14 +2,14 @@ import {
   Switch as AriaSwitch,
   SwitchProps as AriaSwitchProps
 } from 'react-aria-components';
-
+import React from 'react';
 
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'> {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
-export function Switch({ children, ...props }: SwitchProps) {
+export function Switch({children, ...props}: SwitchProps) {
   return (
     <AriaSwitch {...props}>
       <div className="indicator" />

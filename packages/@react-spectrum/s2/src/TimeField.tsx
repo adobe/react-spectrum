@@ -11,16 +11,15 @@ import {
 } from 'react-aria-components';
 
 
-
 export interface TimeFieldProps<T extends TimeValue>
   extends AriaTimeFieldProps<T> {
-  label?: string;
-  description?: string;
-  errorMessage?: string | ((validation: ValidationResult) => string);
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 export function TimeField<T extends TimeValue>(
-  { label, description, errorMessage, ...props }: TimeFieldProps<T>
+  {label, description, errorMessage, ...props}: TimeFieldProps<T>
 ) {
   return (
     <AriaTimeField {...props}>

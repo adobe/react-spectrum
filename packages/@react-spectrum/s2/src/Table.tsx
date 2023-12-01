@@ -23,7 +23,7 @@ export function Table(props: TableProps) {
 export function Column<T extends object>(props: ColumnProps<T>) {
   return (
     <AriaColumn {...props}>
-      {({ allowsSorting, sortDirection }) => (
+      {({allowsSorting, sortDirection}) => (
         <>
           {props.children}
           {allowsSorting && (
@@ -38,9 +38,9 @@ export function Column<T extends object>(props: ColumnProps<T>) {
 }
 
 export function TableHeader<T extends object>(
-  { columns, children }: TableHeaderProps<T>
+  {columns, children}: TableHeaderProps<T>
 ) {
-  let { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
+  let {selectionBehavior, selectionMode, allowsDragging} = useTableOptions();
 
   return (
     <AriaTableHeader>
@@ -59,9 +59,9 @@ export function TableHeader<T extends object>(
 }
 
 export function Row<T extends object>(
-  { id, columns, children, ...otherProps }: RowProps<T>
+  {id, columns, children, ...otherProps}: RowProps<T>
 ) {
-  let { selectionBehavior, allowsDragging } = useTableOptions();
+  let {selectionBehavior, allowsDragging} = useTableOptions();
 
   return (
     <AriaRow id={id} {...otherProps}>

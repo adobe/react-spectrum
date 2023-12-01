@@ -10,14 +10,13 @@ import {
 } from 'react-aria-components';
 
 
-
 export interface CalendarProps<T extends DateValue>
   extends AriaCalendarProps<T> {
-  errorMessage?: string;
+  errorMessage?: string
 }
 
 export function Calendar<T extends DateValue>(
-  { errorMessage, ...props }: CalendarProps<T>
+  {errorMessage, ...props}: CalendarProps<T>
 ) {
   return (
     <AriaCalendar {...props}>

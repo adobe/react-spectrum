@@ -4,14 +4,14 @@ import {
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps
 } from 'react-aria-components';
-
+import React from 'react';
 
 
 export interface PopoverProps extends Omit<AriaPopoverProps, 'children'> {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
-export function Popover({ children, ...props }: PopoverProps) {
+export function Popover({children, ...props}: PopoverProps) {
   return (
     <AriaPopover {...props}>
       <OverlayArrow>

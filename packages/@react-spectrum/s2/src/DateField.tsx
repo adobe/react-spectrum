@@ -11,16 +11,15 @@ import {
 } from 'react-aria-components';
 
 
-
 export interface DateFieldProps<T extends DateValue>
   extends AriaDateFieldProps<T> {
-  label?: string;
-  description?: string;
-  errorMessage?: string | ((validation: ValidationResult) => string);
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 export function DateField<T extends DateValue>(
-  { label, description, errorMessage, ...props }: DateFieldProps<T>
+  {label, description, errorMessage, ...props}: DateFieldProps<T>
 ) {
   return (
     <AriaDateField {...props}>

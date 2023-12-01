@@ -8,24 +8,23 @@ import {
 } from 'react-aria-components';
 
 
-
 export interface SliderProps<T> extends AriaSliderProps<T> {
-  label?: string;
-  thumbLabels?: string[];
+  label?: string,
+  thumbLabels?: string[]
 }
 
 export function Slider<T extends number | number[]>(
-  { label, thumbLabels, ...props }: SliderProps<T>
+  {label, thumbLabels, ...props}: SliderProps<T>
 ) {
   return (
     <AriaSlider {...props}>
       <Label>{label}</Label>
       <SliderOutput>
-        {({ state }) =>
+        {({state}) =>
           state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
       </SliderOutput>
       <SliderTrack>
-        {({ state }) =>
+        {({state}) =>
           state.values.map((_, i) => (
             <SliderThumb key={i} index={i} aria-label={thumbLabels?.[i]} />
           ))}

@@ -11,5 +11,5 @@ const meta: Meta<typeof Checkbox> = {
 
 export default meta;
 
-export const Example = (args: any) => <Checkbox {...args}>Unsubscribe
-</Checkbox>;
+export const Example = (args: any) => (<Checkbox {...args}>Unsubscribe
+</Checkbox>);

@@ -10,15 +10,14 @@ import {
 } from 'react-aria-components';
 
 
-
 export interface SearchFieldProps extends AriaSearchFieldProps {
-  label?: string;
-  description?: string;
-  errorMessage?: string | ((validation: ValidationResult) => string);
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 export function SearchField(
-  { label, description, errorMessage, ...props }: SearchFieldProps
+  {label, description, errorMessage, ...props}: SearchFieldProps
 ) {
   return (
     <AriaSearchField {...props}>

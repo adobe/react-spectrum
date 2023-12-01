@@ -14,7 +14,7 @@ export default meta;
 
 export const Example = (args: any) => (
   <TooltipTrigger>
-    <Button>💾</Button>
+    <Button><span role="img" aria-label="">💾</span></Button>
     <Tooltip {...args}>Save</Tooltip>
   </TooltipTrigger>
 );

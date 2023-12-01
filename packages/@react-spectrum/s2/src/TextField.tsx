@@ -9,15 +9,14 @@ import {
 } from 'react-aria-components';
 
 
-
 export interface TextFieldProps extends AriaTextFieldProps {
-  label?: string;
-  description?: string;
-  errorMessage?: string | ((validation: ValidationResult) => string);
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 export function TextField(
-  { label, description, errorMessage, ...props }: TextFieldProps
+  {label, description, errorMessage, ...props}: TextFieldProps
 ) {
   return (
     <AriaTextField {...props}>

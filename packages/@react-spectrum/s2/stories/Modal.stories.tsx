@@ -25,7 +25,7 @@ export const Example = (args: any) => (
     <Button>Sign up…</Button>
     <Modal {...args}>
       <Dialog>
-        {({ close }) => (
+        {({close}) => (
           <form>
             <Heading slot="title">Sign up</Heading>
             <TextField autoFocus>

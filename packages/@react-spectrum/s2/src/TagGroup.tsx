@@ -11,14 +11,13 @@ import {
 } from 'react-aria-components';
 
 
-
 export interface TagGroupProps<T>
   extends
     Omit<AriaTagGroupProps, 'children'>,
     Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'> {
-  label?: string;
-  description?: string;
-  errorMessage?: string;
+  label?: string,
+  description?: string,
+  errorMessage?: string
 }
 
 export function TagGroup<T extends object>(
@@ -44,11 +43,11 @@ export function TagGroup<T extends object>(
   );
 }
 
-export function Tag({ children, ...props }: TagProps) {
+export function Tag({children, ...props}: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaTag textValue={textValue} {...props}>
-      {({ allowsRemoving }) => (
+      {({allowsRemoving}) => (
         <>
           {children}
           {allowsRemoving && <Button slot="remove">ⓧ</Button>}

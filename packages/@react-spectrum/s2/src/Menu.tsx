@@ -10,14 +10,13 @@ import {
 } from 'react-aria-components';
 
 
-
 export interface MenuButtonProps<T>
   extends MenuProps<T>, Omit<MenuTriggerProps, 'children'> {
-  label?: string;
+  label?: string
 }
 
 export function MenuButton<T extends object>(
-  { label, children, ...props }: MenuButtonProps<T>
+  {label, children, ...props}: MenuButtonProps<T>
 ) {
   return (
     <MenuTrigger {...props}>

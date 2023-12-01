@@ -12,19 +12,19 @@ import {
   Text,
   ValidationResult
 } from 'react-aria-components';
-
+import React from 'react';
 
 
 export interface ComboBoxProps<T extends object>
   extends Omit<AriaComboBoxProps<T>, 'children'> {
-  label?: string;
-  description?: string | null;
-  errorMessage?: string | ((validation: ValidationResult) => string);
-  children: React.ReactNode | ((item: T) => React.ReactNode);
+  label?: string,
+  description?: string | null,
+  errorMessage?: string | ((validation: ValidationResult) => string),
+  children: React.ReactNode | ((item: T) => React.ReactNode)
 }
 
 export function ComboBox<T extends object>(
-  { label, description, errorMessage, children, ...props }: ComboBoxProps<T>
+  {label, description, errorMessage, children, ...props}: ComboBoxProps<T>
 ) {
   return (
     <AriaComboBox {...props}>

@@ -25,7 +25,7 @@ export const Example = (args: any) => (
     <Button>Sign up…</Button>
     <Modal>
       <Dialog {...args}>
-        {({ close }) => (
+        {({close}) => (
           <form>
             <Heading slot="title">Sign up</Heading>
             <TextField autoFocus>
@@ -36,7 +36,7 @@ export const Example = (args: any) => (
               <Label>Last Name</Label>
               <Input />
             </TextField>
-            <Button onPress={close} style={{ marginTop: 8 }}>
+            <Button onPress={close} style={{marginTop: 8}}>
               Submit
             </Button>
           </form>

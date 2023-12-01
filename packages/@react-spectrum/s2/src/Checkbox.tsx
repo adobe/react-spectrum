@@ -1,11 +1,10 @@
 import {Checkbox as AriaCheckbox, CheckboxProps} from 'react-aria-components';
 
 
-
-export function Checkbox({ children, ...props }: CheckboxProps) {
+export function Checkbox({children, ...props}: CheckboxProps) {
   return (
     <AriaCheckbox {...props}>
-      {({ isIndeterminate }) => (
+      {({isIndeterminate}) => (
         <>
           <div className="checkbox">
             <svg viewBox="0 0 18 18" aria-hidden="true">

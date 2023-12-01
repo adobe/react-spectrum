@@ -19,16 +19,15 @@ import {
 } from 'react-aria-components';
 
 
-
 export interface DateRangePickerProps<T extends DateValue>
   extends AriaDateRangePickerProps<T> {
-  label?: string;
-  description?: string;
-  errorMessage?: string | ((validation: ValidationResult) => string);
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 export function DateRangePicker<T extends DateValue>(
-  { label, description, errorMessage, ...props }: DateRangePickerProps<T>
+  {label, description, errorMessage, ...props}: DateRangePickerProps<T>
 ) {
   return (
     <AriaDateRangePicker {...props}>

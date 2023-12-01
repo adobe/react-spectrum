@@ -6,14 +6,14 @@ import {
   Text,
   ValidationResult
 } from 'react-aria-components';
-
+import React from 'react';
 
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children'> {
-  children?: React.ReactNode;
-  label?: string;
-  description?: string;
-  errorMessage?: string | ((validation: ValidationResult) => string);
+  children?: React.ReactNode,
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 export function RadioGroup(

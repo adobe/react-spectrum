@@ -1,20 +1,21 @@
 import {
   CheckboxGroup as AriaCheckboxGroup,
   CheckboxGroupProps as AriaCheckboxGroupProps,
+  // eslint-disable-next-line
   CheckboxProps as AriaCheckboxProps,
   FieldError,
   Text,
   ValidationResult
 } from 'react-aria-components';
-
+import React from 'react';
 
 
 export interface CheckboxGroupProps
   extends Omit<AriaCheckboxGroupProps, 'children'> {
-  children?: React.ReactNode;
-  label?: string;
-  description?: string;
-  errorMessage?: string | ((validation: ValidationResult) => string);
+  children?: React.ReactNode,
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
 }
 
 export function CheckboxGroup(

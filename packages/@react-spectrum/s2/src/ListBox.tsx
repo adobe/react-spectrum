@@ -6,9 +6,8 @@ import {
 } from 'react-aria-components';
 
 
-
 export function ListBox<T extends object>(
-  { children, ...props }: ListBoxProps<T>
+  {children, ...props}: ListBoxProps<T>
 ) {
   return (
     <AriaListBox {...props}>

@@ -13,7 +13,7 @@ const meta: Meta<typeof Menu> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <MenuButton label="Edit">
+  <MenuButton label="Edit" {...args}>
     <MenuItem>Cut</MenuItem>
     <MenuItem>Copy</MenuItem>
     <MenuItem>Paste</MenuItem>

@@ -12,20 +12,20 @@ import {
   Text,
   ValidationResult
 } from 'react-aria-components';
-
+import React from 'react';
 
 
 export interface SelectProps<T extends object>
   extends Omit<AriaSelectProps<T>, 'children'> {
-  label?: string;
-  description?: string;
-  errorMessage?: string | ((validation: ValidationResult) => string);
-  items?: Iterable<T>;
-  children: React.ReactNode | ((item: T) => React.ReactNode);
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string),
+  items?: Iterable<T>,
+  children: React.ReactNode | ((item: T) => React.ReactNode)
 }
 
 export function Select<T extends object>(
-  { label, description, errorMessage, children, items, ...props }: SelectProps<
+  {label, description, errorMessage, children, items, ...props}: SelectProps<
     T
   >
 ) {

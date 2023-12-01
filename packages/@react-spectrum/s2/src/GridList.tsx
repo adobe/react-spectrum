@@ -10,7 +10,7 @@ import {Checkbox} from './Checkbox';
 
 
 export function GridList<T extends object>(
-  { children, ...props }: GridListProps<T>
+  {children, ...props}: GridListProps<T>
 ) {
   return (
     <AriaGridList {...props}>
@@ -19,11 +19,11 @@ export function GridList<T extends object>(
   );
 }
 
-export function GridListItem({ children, ...props }: GridListItemProps) {
+export function GridListItem({children, ...props}: GridListItemProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
     <AriaGridListItem textValue={textValue} {...props}>
-      {({ selectionMode, selectionBehavior, allowsDragging }) => (
+      {({selectionMode, selectionBehavior, allowsDragging}) => (
         <>
           {/* Add elements for drag and drop and selection. */}
           {allowsDragging && <Button slot="drag">≡</Button>}

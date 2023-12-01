@@ -11,5 +11,5 @@ const meta: Meta<typeof ToggleButton> = {
 
 export default meta;
 
-export const Example = (args: any) => <ToggleButton {...args}>Pin
-</ToggleButton>;
+export const Example = (args: any) => (<ToggleButton {...args}>Pin
+</ToggleButton>);
