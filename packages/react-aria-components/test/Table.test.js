@@ -878,6 +878,33 @@ describe('Table', () => {
     }
   });
 
+  it('should support overriding table style', () => {
+    let {getByRole} = render(
+      <Table aria-label="Table" style={{width: 200}}>
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow href="https://google.com">
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow href="https://adobe.com">
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+
+    let table = getByRole('grid');
+    expect(table).toHaveAttribute('style', expect.stringContaining('width: 200px'));
+  });
+
   describe('links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
       let trigger = async (item, key = 'Enter') => {

@@ -11,6 +11,7 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 import contextualHelpTriggerTypes from 'docs:@react-spectrum/menu/src/ContextualHelpTrigger.tsx';
+import submenuTriggerTypes from 'docs:@react-spectrum/menu/src/SubmenuTrigger.tsx';
 import docs from 'docs:@react-spectrum/menu';
 import {HeaderInfo, PropTable, PageDescription, VersionBadge} from '@react-spectrum/docs';
 import packageData from '@react-spectrum/menu/package.json';
@@ -366,6 +367,84 @@ import {Content} from '@react-spectrum/view';
 </MenuTrigger>
 ```
 
+## Submenus <VersionBadge version="alpha" style={{marginLeft: 4, verticalAlign: 'bottom'}} />
+
+Submenus can be created by wrapping an item and a menu in a `SubmenuTrigger`. The `SubmenuTrigger` accepts exactly two children: the `Item` which triggers opening of the submenu, and the `Menu` itself.
+Each submenu's Menu accepts its own set of menu props, allowing you to customize its user action and selection behavior.
+
+### Static
+
+```tsx example
+import {SubmenuTrigger} from '@react-spectrum/menu';
+
+<MenuTrigger>
+  <ActionButton>Actions</ActionButton>
+  <Menu onAction={(key) => alert(`Root menu ${key} action`)}>
+    <Item key="Copy">Copy</Item>
+    <Item key="Cut">Cut</Item>
+    <Item key="Paste">Paste</Item>
+      <SubmenuTrigger>
+        <Item key="Share">Share</Item>
+        <Menu onAction={(key) => alert(`Share menu ${key} action`)}>
+          <Item key="Copy Link">Copy Link</Item>
+          <SubmenuTrigger>
+            <Item key="Email">Email</Item>
+            <Menu onAction={(key) => alert(`Email menu ${key} action`)}>
+              <Item key="Attachment">Email as Attachment</Item>
+              <Item key="Link">Email as Link</Item>
+            </Menu>
+          </SubmenuTrigger>
+          <Item key="SMS">SMS</Item>
+        </Menu>
+      </SubmenuTrigger>
+    <Item key="Delete">Delete</Item>
+  </Menu>
+</MenuTrigger>
+```
+
+### Dynamic
+
+You can define a recursive function to render the nested menu items dynamically.
+
+```tsx example
+import {SubmenuTrigger} from '@react-spectrum/menu';
+
+let items = [
+  {name: 'Copy'},
+  {name: 'Cut'},
+  {name: 'Paste'},
+  {name: 'Share', children: [
+    {name: 'Copy Link'},
+    {name: 'Email', children: [
+      {name: 'Email as Attachment'},
+      {name: 'Email as Link'},
+    ]},
+    {name: 'SMS'},
+  ]},
+  {name: 'Delete'}
+];
+
+<MenuTrigger>
+  <ActionButton>Actions</ActionButton>
+  <Menu items={items}>
+    {function renderSubmenu(item) {
+      if (item.children) {
+        return (
+          <SubmenuTrigger>
+            <Item key={item.name}>{item.name}</Item>
+            <Menu items={item.children}>
+              {(item) => renderSubmenu(item)}
+            </Menu>
+          </SubmenuTrigger>
+        );
+      } else {
+        return <Item key={item.name}>{item.name}</Item>;
+      }
+    }}
+  </Menu>
+</MenuTrigger>
+```
+
 ## Props
 
 ### Menu props
@@ -378,6 +457,13 @@ import {Content} from '@react-spectrum/view';
     properties: Object.fromEntries(Object.entries(docs.exports.SpectrumMenuDialogTriggerProps.properties))
   }
 }} links={contextualHelpTriggerTypes.links} />
+
+### SubmenuTrigger Props
+<PropTable component={{
+  props: {
+    properties: Object.fromEntries(Object.entries(docs.exports.SpectrumSubmenuTriggerProps.properties))
+  }
+}} links={submenuTriggerTypes.links} />
 
 ## Visual Options
 

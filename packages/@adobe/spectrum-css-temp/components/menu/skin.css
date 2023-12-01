@@ -31,6 +31,10 @@ governing permissions and limitations under the License.
   background-color: var(--spectrum-selectlist-background-color);
 }
 
+.spectrum-Submenu-headingWrapper {
+  --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
+}
+
 .spectrum-Menu-item {
   background-color: var(--spectrum-selectlist-option-background-color);
   color: var(--spectrum-selectlist-option-text-color);
@@ -83,6 +87,19 @@ governing permissions and limitations under the License.
 .spectrum-Menu-description {
   color: var(--spectrum-global-color-gray-700);
 }
+
+.spectrum-Submenu-popover {
+  filter: unset;
+  -webkit-filter: unset;
+  transition: opacity var(--spectrum-global-animation-duration-100) ease-in-out,
+              visibility 0ms linear var(--spectrum-global-animation-duration-100);
+  transform: none;
+}
+
+.spectrum-Submenu-heading {
+  color: var(--spectrum-heading-subtitle3-text-color);
+}
+
 @media (forced-colors: active) {
   .spectrum-Menu-divider {
     background-color: CanvasText;
