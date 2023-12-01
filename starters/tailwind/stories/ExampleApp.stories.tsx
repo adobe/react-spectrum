@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Select, SelectItem } from "../src/Select";
-import { ColumnProps, Dialog, DialogTrigger, Heading, MenuTrigger, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, ToggleButton, TooltipTrigger } from "react-aria-components";
+import { ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, MenuTrigger, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, TooltipTrigger } from "react-aria-components";
 import { Cell, Column, Row, TableHeader } from "../src/Table";
 import { SearchField } from "../src/SearchField";
 import { Button } from "../src/Button";
@@ -15,6 +15,9 @@ import plants from '../plants.json';
 import { TagGroup, Tag } from "../src/TagGroup";
 import { Modal } from "../src/Modal";
 import { AlertDialog } from "../src/AlertDialog";
+import { TextField } from "../src/TextField";
+
+type Plant = typeof plants[0] & {isFavorite: boolean};
 
 // const meta: Meta<typeof ExampleApp> = {
 //   component: ExampleApp,
@@ -49,7 +52,6 @@ export function ExampleApp() {
   let [cycles, setCycles] = useState<Selection>(new Set());
   let [sunlight, setSunlight] = useState<Selection>(new Set());
   let [watering, setWatering] = useState<Selection>(new Set());
-  let [favorites, setFavorites] = useState<Set<number>>(new Set());
 
   let {contains} = useFilter({sensitivity: 'base'});
   let collator = useCollator();
@@ -57,16 +59,16 @@ export function ExampleApp() {
   let items = allItems
     .filter(item =>
       (contains(item.common_name, search) || contains(item.scientific_name.join(''), search))
-        && (!favorite || favorites.has(item.id))
+        && (!favorite || item.isFavorite)
         && (cycles === 'all' || cycles.size === 0 || cycles.has(item.cycle))
-        && (sunlight === 'all' || sunlight.size === 0 || sunlight.has((item.sunlight.find(s => s.startsWith('part')) || item.sunlight[0]).split('/')[0]))
+        && (sunlight === 'all' || sunlight.size === 0 || sunlight.has(getSunlight(item)))
         && (watering === 'all' || watering.size === 0 || watering.has(item.watering))
     )
     .sort((a, b) => collator.compare(a[sortDescriptor.column as any], b[sortDescriptor.column as any]) * dir);
 
   let [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(['favorite', 'common_name', 'sunlight', 'watering', 'actions']));
   let columns = useMemo(() => allColumns.filter(c => visibleColumns === 'all' || visibleColumns.has(c.id)), [visibleColumns]);
-  columns[0].isRowHeader = true;
+  columns[1].isRowHeader = true; // TODO
 
   let filters = 0;
   if (favorite) {
@@ -98,6 +100,19 @@ export function ExampleApp() {
     });
   };
 
+  let addItem = (item: Plant) => {
+    setAllItems(allItems => [...allItems, item]);
+  };
+
+  let editItem = (item: Plant) => {
+    setAllItems(allItems => {
+      let items = [...allItems];
+      let index = items.findIndex(i => i.id === item.id);
+      items[index] = item;
+      return items;
+    });
+  };
+
   let onScroll = (e) => {
     if (hideOnScroll) {
       if (e.target.scrollTop <= 0) {
@@ -109,8 +124,17 @@ export function ExampleApp() {
   };
 
   let [dialog, setDialog] = useState(null);
-  let onAction = action => {
-    setDialog(action);
+  let [actionItem, setActionItem] = useState(null);
+  let onAction = (item: typeof items[0], action: string) => {
+    switch (action) {
+      case 'favorite':
+        toggleFavorite(item.id, !item.isFavorite);
+        break;
+      default:
+        setDialog(action);
+        setActionItem(item);
+        break;
+    }
   };
 
   let onDialogClose = () => setDialog(null);
@@ -132,7 +156,7 @@ export function ExampleApp() {
               <Heading slot="title" className="text-lg font-semibold mb-2">Filters</Heading>
               {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute top-4 right-4 py-1 px-2 text-xs">Clear</Button>}
               <div className="flex flex-col gap-4">
-                <Checkbox>Favorite</Checkbox>
+                <Checkbox isSelected={favorite} onChange={setFavorite}>Favorite</Checkbox>
                 <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles}>
                   <Tag id="Perennial" color="green">{cycleIcons['Perennial']} Perennial</Tag>
                   <Tag id="Herbaceous Perennial" color="green">{cycleIcons['Herbaceous Perennial']} Herbaceous Perennial</Tag>
@@ -147,14 +171,16 @@ export function ExampleApp() {
                   <Tag id="Average" color="blue">{wateringIcons['Average']} Average</Tag>
                   <Tag id="Minimum" color="blue">{wateringIcons['Minimum']} Minimum</Tag>
                 </TagGroup>
-                <DateRangePicker label="Last watered date" />
+                {/* <DateRangePicker label="Last watered date" /> */}
               </div>
             </Dialog>
           </Popover>
         </DialogTrigger>
         <MenuTrigger>
           <TooltipTrigger>
-            <Button aria-label="Columns" variant="secondary" className="w-9 h-9 p-0"><SlidersIcon className="inline w-5 h-5" /></Button>
+            <Button aria-label="Columns" variant="secondary" className="w-9 h-9 p-0">
+              <SlidersIcon className="inline w-5 h-5" />
+            </Button>
             <Tooltip>Columns</Tooltip>
           </TooltipTrigger>
           <Menu selectionMode="multiple" selectedKeys={visibleColumns} onSelectionChange={setVisibleColumns}>
@@ -165,7 +191,14 @@ export function ExampleApp() {
           </Menu>
         </MenuTrigger>
         <div className="flex-1" />
-        <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 p-0"><PlusIcon className="inline w-5 h-5" /></Button>
+        <DialogTrigger>
+          <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 p-0">
+            <PlusIcon className="inline w-5 h-5" />
+          </Button>
+          <Modal>
+            <PlantDialog onSave={addItem} />
+          </Modal>
+        </DialogTrigger>
       </div>
       <ResizableTableContainer className="flex-1 w-full overflow-auto relative border rounded-lg" onScroll={onScroll}>
         <Table aria-label="My plants" selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
@@ -189,7 +222,7 @@ export function ExampleApp() {
                       return (
                         <Cell>
                           <div className="grid grid-cols-[40px_1fr] gap-x-2">
-                            <img src={item.default_image?.thumbnail} className="inline rounded row-span-2" />
+                            <img src={item.default_image?.thumbnail} className="inline rounded row-span-2 object-contain h-[40px]" />
                             <span className="truncate capitalize">{item.common_name}</span>
                             <span className="truncate text-xs text-gray-600">{item.scientific_name}</span>
                           </div>
@@ -198,7 +231,7 @@ export function ExampleApp() {
                     case 'cycle':
                       return <Cell><CycleLabel cycle={item.cycle} /></Cell>;
                     case 'sunlight':
-                      return <Cell><SunLabel sun={item.sunlight.find(s => s.startsWith('part')) || item.sunlight[0]} /></Cell>;
+                      return <Cell><SunLabel sun={getSunlight(item)} /></Cell>;
                     case 'watering':
                       return <Cell><WateringLabel watering={item.watering} /></Cell>;
                     case 'actions':
@@ -206,9 +239,9 @@ export function ExampleApp() {
                         <Cell>
                           <MenuTrigger>
                             <Button variant="icon"><MoreHorizontal className="w-5 h-5" /></Button>
-                            <Menu onAction={onAction}>
-                              <MenuItem><StarIcon className="w-4 h-4" /> Favorite</MenuItem>
-                              <MenuItem><PencilIcon className="w-4 h-4" /> Edit…</MenuItem>
+                            <Menu onAction={action => onAction(item, action)}>
+                              <MenuItem id="favorite"><StarIcon className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
+                              <MenuItem id="edit"><PencilIcon className="w-4 h-4" /> Edit…</MenuItem>
                               <MenuItem id="delete"><TrashIcon className="w-4 h-4" /> Delete…</MenuItem>
                             </Menu>
                           </MenuTrigger>
@@ -225,8 +258,11 @@ export function ExampleApp() {
       </ResizableTableContainer>
       <Modal isOpen={dialog === 'delete'} onOpenChange={onDialogClose}>
         <AlertDialog title="Delete Plant" variant="destructive" actionLabel="Delete">
-          Are you sure you want to delete this plant?
+          Are you sure you want to delete "{actionItem?.common_name}"?
         </AlertDialog>
+      </Modal>
+      <Modal isOpen={dialog === 'edit'} onOpenChange={onDialogClose}>
+        <PlantDialog item={actionItem} onSave={editItem} />
       </Modal>
     </div>
   );
@@ -266,8 +302,11 @@ const sunColors = {
 }
 
 function SunLabel({sun}: {sun: string}) {
-  sun = sun.split('/')[0];
   return <Label color={sunColors[sun]} icon={sunIcons[sun]}>{sun}</Label>
+}
+
+function getSunlight(item: Plant) {
+  return (item.sunlight.find(s => s.startsWith('part')) || item.sunlight[0]).split('/')[0];
 }
 
 const wateringIcons = {
@@ -284,4 +323,80 @@ const wateringColors = {
 
 function WateringLabel({watering}: {watering: string}) {
   return <Label color={wateringColors[watering]} icon={wateringIcons[watering]}>{watering}</Label>
+}
+
+function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant) => void}) {
+  let [droppedImage, setDroppedImage] = useState(item?.default_image?.thumbnail);
+  return (
+    <Dialog className="outline-none relative">
+      {({ close }) => (
+        <>
+          <Heading
+            slot="title"
+            className="text-2xl font-semibold leading-6 my-0 text-slate-700">
+            {item ? 'Edit Plant' : 'Add Plant'}
+          </Heading>
+          <Form
+            onSubmit={e => {
+              e.preventDefault();
+              close();
+              let data = Object.fromEntries(new FormData(e.currentTarget)) as any;
+              data.sunlight = [data.sunlight];
+              data.scientific_name = [data.scientific_name];
+              data.default_image = {thumbnail: data.image};
+              data.id = item?.id || Date.now();
+              data.isFavorite = item?.isFavorite || false;
+              onSave(data);
+            }}
+            className="mt-6 flex flex-col gap-3">
+            <div className="flex gap-4">
+              <DropZone
+                getDropOperation={types => types.has('image/jpeg') || types.has('image/png') ? 'copy' : 'cancel'}
+                onDrop={async e => {
+                  let item = e.items.filter(isFileDropItem).find(item => (item.type === 'image/jpeg' || item.type === 'image/png'));
+                  if (item) {
+                    setDroppedImage(URL.createObjectURL(await item.getFile()));
+                  }
+                }}
+                className="w-32 p-2 flex items-center justify-center border-2 border-gray-400 border-dashed rounded-xl text-gray-500 focus-visible:border-blue-600 focus-visible:border-solid drop-target:border-blue-600 drop-target:border-solid drop-target:bg-blue-100 drop-target:text-blue-600">
+                {droppedImage
+                  ? <img src={droppedImage} className="w-full h-full object-contain" />
+                  : <Text slot="label" className="italic text-sm text-center">
+                      Drop or paste image here
+                    </Text>
+                }
+                <input type="hidden" name="image" value={droppedImage} />
+              </DropZone>
+              <div className="flex flex-col gap-3 flex-1">
+                <TextField label="Common Name" name="common_name" isRequired defaultValue={item?.common_name} autoFocus />
+                <TextField label="Scientific Name" name="scientific_name" isRequired defaultValue={item?.scientific_name} />
+              </div>
+            </div>
+            <Select label="Cycle" name="cycle" isRequired defaultSelectedKey={item?.cycle}>
+              <SelectItem id="Perennial">{cycleIcons['Perennial']} Perennial</SelectItem>
+              <SelectItem id="Herbaceous Perennial">{cycleIcons['Herbaceous Perennial']} Herbaceous Perennial</SelectItem>
+            </Select>
+            <Select label="Sunlight" name="sunlight" isRequired defaultSelectedKey={item ? getSunlight(item) : null}>
+              <SelectItem id="full sun">{sunIcons['full sun']} Full Sun</SelectItem>
+              <SelectItem id="part sun">{sunIcons['part sun']} Part Sun</SelectItem>
+              <SelectItem id="part shade">{sunIcons['part shade']} Part Shade</SelectItem>
+            </Select>
+            <Select label="Watering" name="watering" isRequired defaultSelectedKey={item?.watering}>
+              <SelectItem id="Frequent">{wateringIcons['Frequent']} Frequent</SelectItem>
+              <SelectItem id="Average">{wateringIcons['Average']} Average</SelectItem>
+              <SelectItem id="Minimum">{wateringIcons['Minimum']} Minimum</SelectItem>
+            </Select>
+            <div className="mt-6 flex justify-end gap-2">
+              <Button variant="secondary" onPress={close}>
+                Cancel
+              </Button>
+              <Button variant="primary" type="submit">
+                {item ? 'Save' : 'Add'}
+              </Button>
+            </div>
+          </Form>
+        </>
+      )}
+    </Dialog>
+  );
 }
