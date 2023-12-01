@@ -647,12 +647,16 @@ export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> 
 
 interface CachedChildrenOptions<T> extends CollectionProps<T> {
   idScope?: Key,
-  addIdAndValue?: boolean
+  addIdAndValue?: boolean,
+  value?: any
 }
 
 export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>): ReactNode {
-  let {children, items, idScope, addIdAndValue} = props;
-  let cache = useMemo(() => new WeakMap(), []);
+  let {children, items, idScope, addIdAndValue, value} = props;
+
+  // Invalidate the cache whenever the parent value changes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  let cache = useMemo(() => new WeakMap(), [value]);
   return useMemo(() => {
     if (items && typeof children === 'function') {
       let res: ReactElement[] = [];

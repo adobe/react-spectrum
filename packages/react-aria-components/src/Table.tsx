@@ -608,17 +608,20 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
   children?: ReactNode | ((item: T) => ReactElement),
   /** A string representation of the row's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** The object value that this row represents. When using dynamic collections, this is set automatically. */
+  value?: any
 }
 
 function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): React.JSX.Element | null {
   let children = useCollectionChildren({
+    value: props.value,
     children: props.children,
     items: props.columns,
     idScope: props.id
   });
 
-  let ctx = useMemo(() => ({idScope: props.id}), [props.id]);
+  let ctx = useMemo(() => ({idScope: props.id, value: props.value}), [props.id, props.value]);
 
   return useSSRCollectionNode('item', props, ref, null, (
     <CollectionContext.Provider value={ctx}>
