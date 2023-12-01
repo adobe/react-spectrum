@@ -1,4 +1,4 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2023 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -7,472 +7,193 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {Layout} from '@react-spectrum/docs';
-export default Layout;
+import {BasePage} from '@react-spectrum/docs/src/BasePage';
+export default BasePage;
 
-import {Highlights, Hero} from '@react-spectrum/docs';
-import heroNarrow from 'url:../assets/ReactAria_Mobile_976x1025_1x.png';
-import heroNarrow2x from 'url:../assets/ReactAria_Mobile_976x1025_2x.png';
-import heroNarrowWebp from 'url:../assets/ReactAria_Mobile_976x1025_1x.webp';
-import heroNarrow2xWebp from 'url:../assets/ReactAria_Mobile_976x1025_2x.webp';
-import heroWide from 'url:../assets/ReactAria_976x445_1x.png';
-import heroWide2x from 'url:../assets/ReactAria_976x445_2x.png';
-import heroWideWebp from 'url:../assets/ReactAria_976x445_1x.webp';
-import heroWide2xWebp from 'url:../assets/ReactAria_976x445_2x.webp';
-import clsx from 'clsx';
-import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
-import styles from '@react-spectrum/docs/src/docs.css';
-import typographyStyles from '@adobe/spectrum-css-temp/components/typography/vars.css';
-
-import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
-import ComboBoxAnatomy from '../assets/component-illustrations/ComboBox.svg';
-import SelectAnatomy from '../assets/component-illustrations/Picker.svg';
-import Button from '../assets/component-illustrations/Button.svg';
-import ToggleButton from '../assets/component-illustrations/ToggleButton.svg';
-import Checkbox from '../assets/component-illustrations/Checkbox.svg';
-import CheckboxGroup from '../assets/component-illustrations/CheckboxGroup.svg';
-import RadioGroup from '../assets/component-illustrations/RadioGroup.svg';
-import Switch from '../assets/component-illustrations/Switch.svg';
-import TextField from '../assets/component-illustrations/TextField.svg';
-import NumberField from '../assets/component-illustrations/NumberField.svg';
-import SearchField from '../assets/component-illustrations/SearchField.svg';
-import Meter from '../assets/component-illustrations/Meter.svg';
-import ProgressBar from '../assets/component-illustrations/ProgressCircle.svg';
-import Tabs from '../assets/component-illustrations/Tabs.svg';
-import Link from '../assets/component-illustrations/Link.svg';
-import Breadcrumbs from '../assets/component-illustrations/Breadcrumbs.svg';
-import Slider from '../assets/component-illustrations/Slider.svg';
-import Dialog from '../assets/component-illustrations/Dialog.svg';
-import Tooltip from '../assets/component-illustrations/Tooltip.svg';
-import Popover from '../assets/component-illustrations/Popover.svg';
-import Menu from '../assets/component-illustrations/Menu.svg';
-import ListBox from '../assets/component-illustrations/ListBox.svg';
-import ListView from '../assets/component-illustrations/ListView.svg';
-import Table from '../assets/component-illustrations/Table.svg';
-import Calendar from '../assets/component-illustrations/Calendar.svg';
-import RangeCalendar from '../assets/component-illustrations/RangeCalendar.svg';
-import DateField from '../assets/component-illustrations/DateField.svg';
-import TimeField from '../assets/component-illustrations/TimeField.svg';
-import DatePicker from '../assets/component-illustrations/DatePicker.svg';
-import DateRangePicker from '../assets/component-illustrations/DateRangePicker.svg';
-import Press from '../assets/component-illustrations/usePress.svg';
-import LongPress from '../assets/component-illustrations/useLongPress.svg';
-import Hover from '../assets/component-illustrations/useHover.svg';
-import Move from '../assets/component-illustrations/useMove.svg';
-import Keyboard from '../assets/component-illustrations/useKeyboard.svg';
-import FocusRing from '../assets/component-illustrations/useFocusRing.svg';
-import FocusScope from '../assets/component-illustrations/FocusScope.svg';
-import FocusWithin from '../assets/component-illustrations/useFocusWithin.svg';
-import Focus from '../assets/component-illustrations/useFocus.svg';
-import TagGroup from '../assets/component-illustrations/TagGroup.svg';
-import DropZone from '../assets/component-illustrations/DropZone.svg';
-import FileTrigger from '../assets/component-illustrations/FileTrigger.svg'
-import Form from '../assets/component-illustrations/Form.svg'
+import './home.global.css';
 
 ---
-category: Libraries
-description: A library of React Hooks that provides accessible UI primitives for your design system.
+minimal: true
 ---
+
+<header className="text-center py-40 bg-gradient-to-r from-blue-300 to-slate-300">
 
 # React Aria
 
-A library of React Hooks that provides accessible UI primitives for your design system.
+New slogan
 
-<p className={clsx(typographyStyles['spectrum-Body2'], styles.homeLinks)}>
-  <a href="getting-started.html" className={clsx(linkStyle['spectrum-Link'], styles.link)}>Get started</a>
-  <span aria-hidden="true">•</span>
-  <a href="https://github.com/adobe/react-spectrum" className={clsx(linkStyle['spectrum-Link'], styles.link)}>GitHub</a>
-</p>
+<div className="inline-flex gap-4 mt-10">
+  <a href="getting-started.html" className="bg-purple-600 text-white text-xl px-8 py-4 rounded-lg">Get Started</a>
+  <a href="components.html" className="bg-purple-600 text-white text-xl px-8 py-4 rounded-lg">Explore components</a>
+</div>
 
-<Hero
-  narrow={heroNarrow}
-  narrow2x={heroNarrow2x}
-  narrowWebp={heroNarrowWebp}
-  narrow2xWebp={heroNarrow2xWebp}
-  wide={heroWide}
-  wide2x={heroWide2x}
-  wideWebp={heroWideWebp}
-  wide2xWebp={heroWide2xWebp}
-  alt="React Aria hero image" />
+<nav className="absolute right-0 top-0 p-4">
+  <a href="https://github.com/adobe/react-spectrum" target="_blank">GitHub</a>
+  <a href="https://npmjs.com/react-aria-components">NPM</a>
+</nav>
 
-<Highlights items={[
-  {
-    title: 'Accessible',
-    description: <>React Aria provides accessibility and behavior according to <a href="https://www.w3.org/WAI/ARIA/apg/" target="_blank">ARIA Authoring Practices</a>, including full screen reader and keyboard navigation support. All components have been tested across a wide variety of screen readers and devices to ensure the best experience possible for all users.</>
-  },
-  {
-    title: 'Adaptive',
-    description: 'React Aria ensures consistent behavior, no matter the UI. It supports mouse, touch, keyboard, and screen reader interactions that have been tested across a wide variety of browsers, devices, and platforms.',
-  },
-  {
-    title: 'International',
-    description: 'React Aria supports over 30 languages, including right-to-left-specific behavior, internationalized date and number formatting, and more.'
-  },
-  {
-    title: 'Fully customizable',
-    description: 'React Aria doesn’t implement any rendering or impose a DOM structure, styling methodology, or design-specific details. It provides behavior, accessibility, and interactions and lets you focus on your design.'
-  }
-]} />
+</header>
 
-## Components
+<main className="max-w-6xl mx-auto">
 
-### Buttons
+<section className="py-20 px-40 my-10 rounded-3xl" style={{background: 'conic-gradient(rgba(150, 180, 248, 0.4), rgba(69, 136, 244, 0.4), rgba(174, 120, 247, 0.4), rgba(255, 44, 206, 0.4), rgba(250, 167, 167, 0.4), rgba(247, 95, 97, 0.4), rgba(250, 198, 128, 0.4), rgba(253, 234, 4, 0.4), rgba(191, 255, 180, 0.4), rgba(169, 178, 247, 0.4), rgba(149, 93, 255, 0.4), rgba(150, 180, 248, 0.4))'}}>
 
-<section className={styles.cardGroup}>
+## A component for every occasion.
 
-<ExampleCard
-  url="Button.html"
-  title="Button"
-  description="A button allows a user to perform an action with a mouse, touch, or keyboard.">
-  <Button />
-</ExampleCard>
+React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.
 
-<ExampleCard
-  url="ToggleButton.html"
-  title="ToggleButton"
-  description="A toggle button allows a user to toggle between two states.">
-  <ToggleButton />
-</ExampleCard>
+<div className="relative pt-20">
+  <div className="flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out h-[450px] max-w-[600px] mx-auto overflow-hidden rounded-lg shadow-2xl text-black transition w-full translate-y-0 opacity-100">
+    <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-black/5 flex flex-row justify-center px-3 py-2 relative">
+      <div className="absolute flex flex-row left-4 top-3.5">
+        <div className="bg-red-500 h-3 mr-2 rounded-full w-3"></div>
+        <div className="bg-yellow-500 h-3 mr-2 rounded-full w-3"></div>
+        <div className="bg-green-500 h-3 rounded-full w-3"></div>
+      </div>
+      <div className="bg-gray-400/40 dark:bg-gray-700 lg:px-10 md:ml-0 md:px-4 ml-16 px-10 py-1 rounded-md text-slate-500 text-xs">https://your-app.com</div>
+    </div>
+    <div className="flex-1 overflow-auto bg-white" id="example-app" />
+  </div>
+  <svg viewBox="0 0 832 450" className="absolute top-0 left-0 z-20 pointer-events-none">
+    <defs>
+      <marker
+        id="arrow"
+        viewBox="0 0 6 6"
+        refX={3}
+        refY={3}
+        markerWidth={6}
+        markerHeight={6}
+        orient="auto-start-reverse"
+        className="fill-slate-500">
+        <circle r={3} cx={3} cy={3} />
+      </marker>
+    </defs>
+    <polyline
+      points="310,50 310,128 367,128 367,138"
+      marker-end="url(#arrow)"
+      className="stroke-slate-500 fill-none" />
+    <a href="Popover.html" className="pointer-events-auto"><text x={290} y={44} className="text-xs fill-blue-600 underline">Popover</text></a>
+    <polyline
+      points="522,50 522,128 411,128 411,138"
+      marker-end="url(#arrow)"
+      className="stroke-slate-500 fill-none" />
+    <a href="Tooltip.html" className="pointer-events-auto"><text x={504} y={44} className="text-xs fill-blue-600 underline">Tooltip</text></a>
+    <g transform="translate(0 80)">
+      <line
+        x1={88}
+        y1={75}
+        x2={132}
+        y2={75}
+        marker-end="url(#arrow)"
+        className="stroke-slate-500" />
+      <a href="SearchField.html" className="pointer-events-auto"><text x={28} y={78} className="text-xs fill-blue-600 underline">SearchField</text></a>
+      <line
+        x1={88}
+        y1={170}
+        x2={132}
+        y2={170}
+        marker-end="url(#arrow)"
+        className="stroke-slate-500" />
+      <a href="Table.html" className="pointer-events-auto"><text x={58} y={173} className="text-xs fill-blue-600 underline">Table</text></a>
 
-<ExampleCard
-  url="FileTrigger.html"
-  title="FileTrigger"
-  description="A file trigger allows a user to access the file system with a Button.">
-  <FileTrigger />
-</ExampleCard>
-
-</section>
-
-### Pickers
-
-<section className={styles.cardGroup}>
-
-<ExampleCard
-  url="ComboBox.html"
-  title="ComboBox"
-  description="A combobox combines a text input with a listbox, and allows a user to filter a list of options.">
-  <ComboBoxAnatomy />
-</ExampleCard>
-
-<ExampleCard
-  url="Select.html"
-  title="Select"
-  description="A select displays a collapsible list of options, and allows a user to select one of them.">
-  <SelectAnatomy />
-</ExampleCard>
-
-</section>
-
-### Collections
-
-<section className={styles.cardGroup}>
-
-<ExampleCard
-  url="Menu.html"
-  title="Menu"
-  description="A menu displays a list of actions or options that a user can choose.">
-  <Menu />
-</ExampleCard>
-
-<ExampleCard
-  url="ListBox.html"
-  title="ListBox"
-  description="A listbox displays a list of options, and allows a user to select one or more of them.">
-  <ListBox />
-</ExampleCard>
-
-<ExampleCard
-  url="GridList.html"
-  title="GridList"
-  description="A grid list displays a list of interactive items, with keyboard navigation, row selection, and actions.">
-  <ListView />
-</ExampleCard>
-
-<ExampleCard
-  url="Table.html"
-  title="Table"
-  description="A table displays data in rows and columns, with row selection and sorting.">
-  <Table />
-</ExampleCard>
-
-<ExampleCard
-  url="TagGroup.html"
-  title="TagGroup"
-  description="A tag group displays a list of items, with support for keyboard navigation, selection, and removal.">
-  <TagGroup />
-</ExampleCard>
+      <line
+        x1={700}
+        y1={75}
+        x2={744}
+        y2={75}
+        marker-start="url(#arrow)"
+        className="stroke-slate-500" />
+      <a href="Modal.html" className="pointer-events-auto"><text x={748} y={78} className="text-xs fill-blue-600 underline">Modal</text></a>
+    </g>
+    <g transform="translate(0 80)" id="hideOnScroll" className="transition duration-300">
+      <line
+        x1={88}
+        y1={290}
+        x2={142}
+        y2={290}
+        marker-end="url(#arrow)"
+        className="stroke-slate-500" />
+      <a href="Checkbox.html" className="pointer-events-auto"><text x={36} y={293} className="text-xs fill-blue-600 underline">Checkbox</text></a>
+      <line
+        x1={88}
+        y1={360}
+        x2={180}
+        y2={360}
+        marker-end="url(#arrow)"
+        className="stroke-slate-500" />
+      <a href="ToggleButton.html" className="pointer-events-auto"><text x={20} y={363} className="text-xs fill-blue-600 underline">ToggleButton</text></a>
+      <line
+        x1={690}
+        y1={176}
+        x2={744}
+        y2={176}
+        marker-start="url(#arrow)"
+        className="stroke-slate-500" />
+      <a href="Menu.html" className="pointer-events-auto"><text x={748} y={179} className="text-xs fill-blue-600 underline">Menu</text></a>
+    </g>
+  </svg>
+</div>
 
 </section>
 
-### Date and time
+```tsx import
+import {ExampleApp} from '../../../../../starters/tailwind/stories/ExampleApp.stories';
 
-<section className={styles.cardGroup}>
+ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp />);
+```
 
-<ExampleCard
-  url="DatePicker.html"
-  title="DatePicker"
-  description="A date picker combines a DateField and a Calendar popover.">
-  <DatePicker />
-</ExampleCard>
+<section className="my-10">
 
-<ExampleCard
-  url="DateRangePicker.html"
-  title="DateRangePicker"
-  description="A date range picker combines two DateFields and a RangeCalendar popover.">
-  <DateRangePicker />
-</ExampleCard>
+## Bring your own styles.
 
-<ExampleCard
-  url="DateField.html"
-  title="DateField"
-  description="A date field allows a user to enter and edit date values using a keyboard.">
-  <DateField />
-</ExampleCard>
-
-<ExampleCard
-  url="TimeField.html"
-  title="TimeField"
-  description="A time field allows a user to enter and edit time values using a keyboard.">
-  <TimeField />
-</ExampleCard>
-
-<ExampleCard
-  url="Calendar.html"
-  title="Calendar"
-  description="A calendar allows a user to select a single date from a date grid.">
-  <Calendar />
-</ExampleCard>
-
-<ExampleCard
-  url="RangeCalendar.html"
-  title="RangeCalendar"
-  description="A range calendar allows a user to select a contiguous range of dates.">
-  <RangeCalendar />
-</ExampleCard>
+React Aria Components do not include any styles by default, allowing you to build custom designs to fit your application or design system using any styling and animation solution. Each component is broken down into individual parts with built-in states, render props, and slots that make styling a breeze.
 
 </section>
 
-### Overlays
+<section className="my-10">
 
-<section className={styles.cardGroup}>
+## Advanced features for ambitious apps.
 
-<ExampleCard
-  url="Dialog.html"
-  title="Dialog"
-  description="A dialog is an overlay shown above other content in an application.">
-  <Dialog />
-</ExampleCard>
-
-<ExampleCard
-  url="Popover.html"
-  title="Popover"
-  description="A popover displays interactive content in context with a trigger element.">
-  <Popover />
-</ExampleCard>
-
-<ExampleCard
-  url="Tooltip.html"
-  title="Tooltip"
-  description="A tooltip displays a description of an element on hover or focus.">
-  <Tooltip />
-</ExampleCard>
+Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like drag and drop, keyboard multi-selection, built-in form validation (??), table column resizing, and a ton more.
 
 </section>
 
-### Forms
+<section className="my-10">
 
-<section className={styles.cardGroup}>
+## High quality interactions on all devices.
 
-<ExampleCard
-  url="Checkbox.html"
-  title="Checkbox"
-  description="A checkbox allows a user to select an individual option.">
-  <Checkbox />
-</ExampleCard>
-
-<ExampleCard
-  url="CheckboxGroup.html"
-  title="CheckboxGroup"
-  description="A checkbox group allows a user to select one or more items in a list of options.">
-  <CheckboxGroup />
-</ExampleCard>
-
-<ExampleCard
-  url="RadioGroup.html"
-  title="RadioGroup"
-  description="A radio group allows a user to select a single item from a list of options.">
-  <RadioGroup />
-</ExampleCard>
-
-<ExampleCard
-  url="Switch.html"
-  title="Switch"
-  description="A switch allows a user to turn a setting on or off.">
-  <Switch />
-</ExampleCard>
-
-<ExampleCard
-  url="TextField.html"
-  title="TextField"
-  description="A text field allows a user to enter a plain text value with a keyboard.">
-  <TextField />
-</ExampleCard>
-
-<ExampleCard
-  url="SearchField.html"
-  title="SearchField"
-  description="A search field allows a user to enter and clear a search query.">
-  <SearchField />
-</ExampleCard>
-
-<ExampleCard
-  url="NumberField.html"
-  title="NumberField"
-  description="A number field allows a user to enter, increment, or decrement a numeric value.">
-  <NumberField />
-</ExampleCard>
-
-<ExampleCard
-  url="Slider.html"
-  title="Slider"
-  description="A slider allows a user to select one or more values within a range.">
-  <Slider />
-</ExampleCard>
-
-<ExampleCard
-  url="Form.html"
-  title="Form"
-  description="A form allows users to submit data to a server, with support for validation.">
-  <Form />
-</ExampleCard>
+React Aria ensures a great experience for users no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.
 
 </section>
 
-### Navigation
+<section className="my-10">
 
-<section className={styles.cardGroup}>
+## Accessibility that's truly first-class.
 
-<ExampleCard
-  url="Tabs.html"
-  title="Tabs"
-  description="Tabs organize content into multiple sections, and allow a user to view one at a time.">
-  <Tabs />
-</ExampleCard>
-
-<ExampleCard
-  url="Link.html"
-  title="Link"
-  description="A link allows a user to navigate to another page.">
-  <Link />
-</ExampleCard>
-
-<ExampleCard
-  url="Breadcrumbs.html"
-  title="Breadcrumbs"
-  description="Breadcrumbs display a heirarchy of links to the current page or resource.">
-  <Breadcrumbs />
-</ExampleCard>
+React Aria was designed from the start with accessibility as a top priority. All components have been tested across a wide variety of devices and assistive technology to ensure the best experience possible for all users.
 
 </section>
 
-### Status
+<section className="my-10">
 
-<section className={styles.cardGroup}>
+## Ready for an international audience.
 
-<ExampleCard
-  url="ProgressBar.html"
-  title="ProgressBar"
-  description="A progress bar shows progress of an operation over time.">
-  <ProgressBar />
-</ExampleCard>
-
-<ExampleCard
-  url="Meter.html"
-  title="Meter"
-  description="A meter represents a quantity within a known range, or a fractional value.">
-  <Meter />
-</ExampleCard>
+React Aria is engineered for internationalization out of the box, including translations in over 30 languages, localized date and number formatting, support for 13 calendar systems, 3 numbering systems, right-to-left layout, and more.
 
 </section>
 
-### Drag and drop
+<section className="my-10">
 
-<section className={styles.cardGroup}>
+## Customizable to the max.
 
-<ExampleCard
-  url="DropZone.html"
-  title="DropZone"
-  description="A drop zone is an area into which one or multiple objects can be dragged and dropped.">
-  <DropZone />
-</ExampleCard>
+React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with built-in a DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the lower level Hook-based API. Mix and match as needed.
 
 </section>
 
-## Interactions
+<section className="my-10">
 
-<section className={styles.cardGroup}>
-
-<ExampleCard
-  url="usePress.html"
-  title="usePress"
-  description="Handles press interactions across mouse, touch, keyboard, and screen reader input.">
-  <Press />
-</ExampleCard>
-
-<ExampleCard
-  url="useLongPress.html"
-  title="useLongPress"
-  description="Handles long press interactions for mouse and touch devices.">
-  <LongPress />
-</ExampleCard>
-
-<ExampleCard
-  url="useHover.html"
-  title="useHover"
-  description="Handles mouse hover interactions, ignoring touch emulation.">
-  <Hover />
-</ExampleCard>
-
-<ExampleCard
-  url="useMove.html"
-  title="useMove"
-  description="Handles move interactions, including mouse and touch drag gestures, and arrow key equivalents.">
-  <Move />
-</ExampleCard>
-
-<ExampleCard
-  url="useKeyboard.html"
-  title="useKeyboard"
-  description="Handles keyboard interactions for a focusable element.">
-  <Keyboard />
-</ExampleCard>
-
-<ExampleCard
-  url="useFocus.html"
-  title="useFocus"
-  description="Handles focus interactions for an element, ignoring its descendants.">
-  <Focus />
-</ExampleCard>
-
-<ExampleCard
-  url="useFocusWithin.html"
-  title="useFocusWithin"
-  description="Handles focus interactions for an element and its descendants.">
-  <FocusWithin />
-</ExampleCard>
-
-<ExampleCard
-  url="useFocusRing.html"
-  title="useFocusRing"
-  description="A focus ring is an indication of the active element when interacting with a keyboard.">
-  <FocusRing />
-</ExampleCard>
-
-<ExampleCard
-  url="FocusScope.html"
-  title="FocusScope"
-  description="A focus scope contains, restores, and manages focus for its descendant elements.">
-  <FocusScope />
-</ExampleCard>
+## Ready to get started?
 
 </section>
+
+</main>

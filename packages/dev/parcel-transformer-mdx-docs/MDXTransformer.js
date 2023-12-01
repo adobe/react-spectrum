@@ -220,6 +220,7 @@ module.exports = new Transformer({
     let author = '';
     let image = '';
     let hidden = false;
+    let minimal = false;
     let order;
     let util = (await import('mdast-util-toc')).toc;
     const extractToc = (options) => {
@@ -294,6 +295,7 @@ module.exports = new Transformer({
           order = yamlData.order;
           hidden = yamlData.hidden;
           type = yamlData.type || '';
+          minimal = yamlData.minimal || false;
           if (yamlData.image) {
             image = asset.addDependency({
               specifier: yamlData.image,
@@ -458,18 +460,25 @@ module.exports = new Transformer({
     asset.meta.type = type;
     asset.isBundleSplittable = false;
 
-    // Generate the client bundle. We always need the client script,
-    // and the docs script when there's a TOC or an example on the page.
-    let clientBundle = 'import \'@react-spectrum/docs/src/client\';\n';
-    if (toc.length || exampleCode.length > 0) {
-      clientBundle += 'import \'@react-spectrum/docs/src/docs\';\n';
+    let clientBundle = '';
+    if (!minimal) {
+      // Generate the client bundle. We always need the client script,
+      // and the docs script when there's a TOC or an example on the page.
+      clientBundle = 'import \'@react-spectrum/docs/src/client\';\n';
+      if (toc.length || exampleCode.length > 0) {
+        clientBundle += 'import \'@react-spectrum/docs/src/docs\';\n';
+      }
     }
 
     // Add example code collected from the MDX.
     if (exampleCode.length > 0) {
+      if (minimal) {
+        clientBundle += 'const ExampleProvider = React.Fragment;\n';
+      } else {
+        clientBundle += "import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';\n";
+      }
       clientBundle += `import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {Example as ExampleProvider} from '@react-spectrum/docs/src/ThemeSwitcher';
 let RENDER_FNS = [];
 ${exampleCode.join('\n')}
 for (let render of RENDER_FNS) {
