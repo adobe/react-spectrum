@@ -122,14 +122,33 @@ A file trigger can accept multiple files by passsing the `allowsMultiple` proper
 
 ## Directory selection
 
-To enable selecting directories instead of files, use the `directory` property. 
+To enable selecting directories instead of files, use the `acceptDirectory` property. 
 
 This reflects the [webkitdirectory](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/webkitdirectory) HTML attribute and allows users to select directories and their contents.
 
 ```tsx example
-<FileTrigger directory>
-  <Button>Select a directory</Button>
-</FileTrigger>
+function Example () {
+  let [files, setFiles] = React.useState([]);
+
+  return (
+    <>
+      <FileTrigger
+        acceptDirectory
+        onSelect={async (e) => {
+          let items = Array.from(e);
+          let fileList = items.map(file => file.webkitRelativePath);
+          setFiles(fileList);
+        }} >
+        <Button>Upload</Button>
+      </FileTrigger>
+      {files && <ul>
+        {files.map((str, index) => (
+          <li key={index}>{str}</li>
+        ))}
+      </ul>}
+    </>
+  );
+}
 ```
 
 ## Media capture

@@ -1167,15 +1167,29 @@ export const FileTriggerButton = (props) => (
   </FileTrigger>
 );
 
-export const FileTriggerDirectories = (props) => (
-  <FileTrigger
-    directory
-    onSelect={action('onSelect')}
-    data-testid="filetrigger-example"
-    {...props} >
-    <Button>Upload</Button>
-  </FileTrigger>
-);
+export const FileTriggerDirectories = (props) => {
+  let [files, setFiles] = React.useState([]);
+
+  return (
+    <>
+      <FileTrigger
+        {...props}
+        acceptDirectory
+        onSelect={async (e) => {
+          let items = Array.from(e);
+          let fileList = items.map(file => file.webkitRelativePath);
+          setFiles(fileList);
+        }} >
+        <Button>Upload</Button>
+      </FileTrigger>
+      {files && <ul>
+        {files.map((str, index) => (
+          <li key={index}>{str}</li>
+        ))}
+      </ul>}
+    </>
+  );
+};
 
 export const FileTriggerLinkAllowsMultiple = (props) => (
   <FileTrigger
