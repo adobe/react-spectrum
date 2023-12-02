@@ -62,7 +62,7 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
   } = props;
 
   let {styleProps} = useStyleProps(props);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/actionbar');
 
   // Store the last count greater than zero in a ref so that we can retain it while rendering the fade-out animation.
   let [lastCount, setLastCount] = useState(selectedItemCount);

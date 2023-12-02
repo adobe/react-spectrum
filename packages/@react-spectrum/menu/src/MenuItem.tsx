@@ -52,7 +52,7 @@ export function MenuItem<T>(props: MenuItemProps<T>) {
     key
   } = item;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
   let {direction} = useLocale();
 
   let submenuTriggerContext = useSubmenuTriggerContext();
