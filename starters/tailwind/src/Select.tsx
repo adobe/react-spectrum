@@ -10,7 +10,7 @@ import {
 import { Description, FieldError, Label } from './Field';
 import { Popover } from './Popover';
 import { ChevronDown } from 'lucide-react';
-import { DropdownItem } from './ListBox';
+import { DropdownItem, ListBoxSection, ListBoxSectionProps } from './ListBox';
 
 export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children'> {
   label?: string;
@@ -33,7 +33,7 @@ export function Select<T extends object>(
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
       <Popover className="min-w-[--trigger-width]">
-        <ListBox items={items} className="outline-none p-1 max-h-[inherit] overflow-auto">
+        <ListBox items={items} className="outline-none p-1 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]">
           {children}
         </ListBox>
       </Popover>
@@ -43,4 +43,8 @@ export function Select<T extends object>(
 
 export function SelectItem(props: ListBoxItemProps) {
   return <DropdownItem {...props} />;
+}
+
+export function SelectSection<T extends object>(props: ListBoxSectionProps<T>) {
+  return <ListBoxSection {...props} />;
 }

@@ -7,10 +7,12 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License. */}
 
-import {BasePage} from '@react-spectrum/docs/src/BasePage';
+import {BasePage, useImageUrl} from '@react-spectrum/docs/src/BasePage';
 export default BasePage;
 
 import './home.global.css';
+import '@react-spectrum/docs/src/syntax-highlight.css';
+import {ArrowRight} from 'lucide-react';
 
 ---
 minimal: true
@@ -22,9 +24,9 @@ minimal: true
 
 New slogan
 
-<div className="inline-flex gap-4 mt-10">
-  <a href="getting-started.html" className="bg-purple-600 text-white text-xl px-8 py-4 rounded-lg">Get Started</a>
-  <a href="components.html" className="bg-purple-600 text-white text-xl px-8 py-4 rounded-lg">Explore components</a>
+<div className="inline-flex gap-4 my-10">
+  <a href="getting-started.html" className="bg-white/80 hover:bg-white/90 border border-black/10 bg-clip-padding text-lg font-bold text-gray-700 px-8 py-4 rounded-full">Get Started</a>
+  <a href="components.html" className="bg-white/80 hover:bg-white/90 border border-black/10 bg-clip-padding text-lg font-bold text-gray-700 px-8 py-4 rounded-full">Explore components</a>
 </div>
 
 <nav className="absolute right-0 top-0 p-4">
@@ -32,17 +34,18 @@ New slogan
   <a href="https://npmjs.com/react-aria-components">NPM</a>
 </nav>
 
+
 </header>
 
-<main className="max-w-6xl mx-auto">
+<main style={{background: 'linear-gradient(to bottom, transparent 0% 80%, white), conic-gradient(rgba(150, 180, 248, 0.4), rgba(69, 136, 244, 0.4), rgba(174, 120, 247, 0.4), rgba(255, 44, 206, 0.4), rgba(250, 167, 167, 0.4), rgba(247, 95, 97, 0.4), rgba(250, 198, 128, 0.4), rgba(253, 234, 4, 0.4), rgba(191, 255, 180, 0.4), rgba(169, 178, 247, 0.4), rgba(149, 93, 255, 0.4), rgba(150, 180, 248, 0.4))', backgroundSize: '100% 1000px', backgroundRepeat: 'no-repeat'}}>
 
-<section className="py-20 px-40 my-10 rounded-3xl" style={{background: 'conic-gradient(rgba(150, 180, 248, 0.4), rgba(69, 136, 244, 0.4), rgba(174, 120, 247, 0.4), rgba(255, 44, 206, 0.4), rgba(250, 167, 167, 0.4), rgba(247, 95, 97, 0.4), rgba(250, 198, 128, 0.4), rgba(253, 234, 4, 0.4), rgba(191, 255, 180, 0.4), rgba(169, 178, 247, 0.4), rgba(149, 93, 255, 0.4), rgba(150, 180, 248, 0.4))'}}>
+<section className="max-w-6xl mx-auto pt-20 px-40 pb-60 -mb-60 rounded-3xl">
 
-## A component for every occasion.
+<h2 className="text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">A component for every occasion.</h2>
 
 React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.
 
-<div className="relative pt-20">
+<div className="relative pt-20 mt-10">
   <div className="flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out h-[450px] max-w-[600px] mx-auto overflow-hidden rounded-lg shadow-2xl text-black transition w-full translate-y-0 opacity-100">
     <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-black/5 flex flex-row justify-center px-3 py-2 relative">
       <div className="absolute flex flex-row left-4 top-3.5">
@@ -136,53 +139,733 @@ React Aria includes tons of components, with built-in behavior, adaptive interac
 
 </section>
 
+{/* <div className="h-20" style={{background: linear-gradient(to left, rgba(250, 167, 167, 0.4), rgba(247, 95, 97, 0.4), rgba(250, 198, 128, 0.4), rgba(253, 234, 4, 0.4))}}></div> */}
+
 ```tsx import
 import {ExampleApp} from '../../../../../starters/tailwind/stories/ExampleApp.stories';
 
 ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp />);
 ```
 
-<section className="my-10">
+<section className="max-w-6xl mx-auto my-32 px-20">
 
-## Bring your own styles.
+<h2 className="pb-2 text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Bring your own styles.</h2>
 
-React Aria Components do not include any styles by default, allowing you to build custom designs to fit your application or design system using any styling and animation solution. Each component is broken down into individual parts with built-in states, render props, and slots that make styling a breeze.
+React Aria does not include any styles by default, allowing you to build custom designs to fit your application or design system using any styling and animation solution. Each component is broken down into individual parts with built-in states, render props, and slots that make styling a breeze.
+
+<a href="styling.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+
+<div hidden id="css">
+
+```tsx
+import {
+  Button
+} from 'react-aria-components';
+
+<Button>Hello world!</Button>
+```
+
+```css render=false
+.foo {
+  color: red;
+}
+```
+
+</div>
+
+<div hidden id="tailwind">
+
+```tsx
+import {Button} from 'react-aria-components';
+
+<Button className="bg-red-600">Hello world!</Button>
+```
+
+</div>
+
+<div hidden id="styled-components">
+
+```tsx
+import styled from 'styled-components';
+import {Button} from 'react-aria-components';
+
+const StyledButton = styled(Button)`
+  color: red;
+`;
+
+<StyledButton>Hello world!</StyledButton>
+```
+
+</div>
+
+```tsx snippet
+import {
+  Tabs,
+  TabList,
+  Tab,
+  TabPanel,
+  Collection
+} from "react-aria-components";
+import { motion, animate, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {Button} from 'react-aria-components';
+
+function Styles() {
+  return (
+    <AnimatedTabs
+      tabs={[
+        {
+          id: "css",
+          label: "Vanilla CSS",
+          content: <div className="grid grid-cols-3 gap-4">
+            <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('css').innerHTML}} />
+            <div className="flex items-center justify-center bg-gray-50 border rounded-xl p-5">
+              <Button>Hello world!</Button>
+            </div>
+          </div>
+        },
+        {
+          id: "tailwind",
+          label: "Tailwind",
+          content: <div className="grid grid-cols-2 gap-4">
+            <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind').innerHTML}} />
+            <div className="flex items-center justify-center bg-gray-50 border rounded-xl p-5">
+              <Button>Hello world!</Button>
+            </div>
+          </div>
+        },
+        {
+          id: "styled-components",
+          label: "Styled Components",
+          content: <div className="grid grid-cols-2 gap-4">
+            <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styled-components').innerHTML}} />
+            <div className="flex items-center justify-center bg-gray-50 border rounded-xl p-5">
+              <Button>Hello world!</Button>
+            </div>
+          </div>
+        },
+        { id: "vanilla-extract", label: "Vanilla Extract" }
+      ]} />
+  );
+}
+
+function AnimatedTabs({tabs}) {
+  let [selectedKey, setSelectedKey] = useState(tabs[0].id);
+
+  let tabListRef = useRef(null);
+  let tabPanelsRef = useRef(null);
+
+  // Track the scroll position of the tab panel container.
+  let { scrollXProgress } = useScroll({
+    container: tabPanelsRef
+  });
+
+  // Find all the tab elements so we can use their dimensions.
+  let [tabElements, setTabElements] = useState([]);
+  useEffect(() => {
+    if (tabElements.length === 0) {
+      let tabs = tabListRef.current.querySelectorAll("[role=tab]");
+      setTabElements(tabs);
+    }
+  }, [tabElements]);
+
+  // This function determines which tab should be selected
+  // based on the scroll position.
+  let getIndex = useCallback(
+    (x) => Math.max(0, Math.floor((tabElements.length - 1) * x)),
+    [tabElements]
+  );
+
+  // This function transforms the scroll position into the X position
+  // or width of the selected tab indicator.
+  let transform = (x, property) => {
+    if (!tabElements.length) return 0;
+
+    // Find the tab index for the scroll X position.
+    let index = getIndex(x);
+
+    // Get the difference between this tab and the next one.
+    let difference =
+      index < tabElements.length - 1
+        ? tabElements[index + 1][property] - tabElements[index][property]
+        : tabElements[index].offsetWidth;
+
+    // Get the percentage between tabs.
+    // This is the difference between the integer index and fractional one.
+    let percent = (tabElements.length - 1) * x - index;
+
+    // Linearly interpolate to calculate the position of the selection indicator.
+    let value = tabElements[index][property] + difference * percent;
+
+    // iOS scrolls weird when translateX is 0 for some reason. 🤷‍♂️
+    return value || 0.1;
+  };
+
+  let x = useTransform(scrollXProgress, (x) => transform(x, "offsetLeft"));
+  let width = useTransform(scrollXProgress, (x) => transform(x, "offsetWidth"));
+
+  // When the user scrolls, update the selected key
+  // so that the correct tab panel becomes interactive.
+  useMotionValueEvent(scrollXProgress, "change", (x) => {
+    if (animationRef.current || !tabElements.length) return;
+    setSelectedKey(tabs[getIndex(x)].id);
+  });
+
+  // When the user clicks on a tab perform an animation of
+  // the scroll position to the newly selected tab panel.
+  let animationRef = useRef(null);
+  let onSelectionChange = (selectedKey) => {
+    setSelectedKey(selectedKey);
+
+    // If the scroll position is already moving but we aren't animating
+    // then the key changed as a result of a user scrolling. Ignore.
+    if (scrollXProgress.getVelocity() && !animationRef.current) {
+      return;
+    }
+
+    let tabPanel = tabPanelsRef.current;
+    let index = tabs.findIndex((tab) => tab.id === selectedKey);
+    animationRef.current?.stop();
+    animationRef.current = animate(
+      tabPanel.scrollLeft,
+      tabPanel.scrollWidth * (index / tabs.length),
+      {
+        type: "spring",
+        bounce: 0.2,
+        duration: 0.6,
+        onUpdate: (v) => {
+          tabPanel.scrollLeft = v;
+        },
+        onPlay: () => {
+          // Disable scroll snap while the animation is going or weird things happen.
+          tabPanel.style.scrollSnapType = "none";
+        },
+        onComplete: () => {
+          tabPanel.style.scrollSnapType = "";
+          animationRef.current = null;
+        }
+      }
+    );
+  };
+
+  return (
+    <Tabs
+      className="w-fit"
+      selectedKey={selectedKey}
+      onSelectionChange={onSelectionChange}>
+      <div className="relative">
+        <TabList ref={tabListRef} className="flex -mx-1" items={tabs}>
+          {(tab) =>
+            <Tab className="cursor-default px-3 py-1.5 text-md transition outline-none touch-none">
+              {({ isSelected, isFocusVisible }) => <>
+                {tab.label}
+                {isFocusVisible && isSelected && (
+                  // Focus ring.
+                  <motion.span
+                    className="absolute inset-0 z-10 rounded-full ring-2 ring-black ring-offset-2"
+                    style={{ x, width }}
+                  />
+                )}
+              </>}
+            </Tab>
+          }
+        </TabList>
+        {/* Selection indicator. */}
+        <motion.span
+          className="absolute inset-0 z-10 bg-white rounded-full mix-blend-difference"
+          style={{ x, width }} />
+      </div>
+      <div
+        ref={tabPanelsRef}
+        className="my-4 overflow-auto snap-x snap-mandatory no-scrollbar flex"
+        style={{
+          maskImage: 'linear-gradient(to right, transparent, white 8px calc(100% - 8px), transparent)'
+        }}>
+        <Collection items={tabs}>
+          {(tab) => (
+            <TabPanel
+              shouldForceMount
+              className="flex-shrink-0 w-full px-2 box-border snap-start outline-none -outline-offset-2 rounded focus-visible:outline-black">
+              {tab.content}
+            </TabPanel>
+          )}
+        </Collection>
+      </div>
+    </Tabs>
+  );
+}
+```
 
 </section>
 
-<section className="my-10">
+{/* bg-gradient-to-r from-cyan-600 to-teal-600 */}
+<section className="max-w-7xl mx-auto my-10 py-20 px-40 rounded-3xl text-white bg-cover bg-no-repeat bg-center" style={{backgroundImage: `url(${useImageUrl(new URL('../assets/spectrum2-wallpapers/wallpaper_rational2_S2_desktop.webp', import.meta.url).toString())})`}}>
 
-## Advanced features for ambitious apps.
+<h2 className="text-transparent bg-clip-text bg-gradient-to-b from-white to-white/80">Advanced features for ambitious apps.</h2>
 
-Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like drag and drop, keyboard multi-selection, built-in form validation (??), table column resizing, and a ton more.
+<p className="text-white/90">Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like drag and drop, keyboard multi-selection, built-in form validation (??), table column resizing, and a ton more.</p>
+
+<div id="kanban" className="mt-20" />
+
+```tsx import
+const tickets = [
+  {
+    "title": "UI Button Alignment Issue",
+    "description": "Buttons in the Settings menu are misaligned on smaller screens.",
+    "id": "#101",
+    "assignee": "Gilberto Miguel",
+    "avatar": "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    "date": "2023-09-15",
+    "status": "Open"
+  },
+  {
+    "title": "Login Page Redesign",
+    "description": "Requesting a redesign of the login page to improve user experience.",
+    "id": "#102",
+    "assignee": "Maia Pettegree",
+    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    "date": "2023-09-16",
+    "status": "Open"
+  },
+  {
+    "title": "Database Connection Error",
+    "description": "Users are experiencing intermittent connection errors when accessing the database.",
+    "id": "#103",
+    "assignee": "Mike Johnson",
+    "avatar": "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    "date": "2023-09-17",
+    "status": "In Progress"
+  },
+  {
+    "title": "Feature: Dark Mode",
+    "description": "Implement a dark mode option for improved accessibility and user preference.",
+    "id": "#104",
+    "assignee": "Sarah Lee",
+    "avatar": "https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    "date": "2023-09-18",
+    "status": "Open"
+  },
+  {
+    "title": "Missing User Profile Pictures",
+    "description": "Some user profile pictures are not displaying properly in the user dashboard.",
+    "id": "#105",
+    "assignee": "David Chen",
+    "avatar": "https://images.unsplash.com/photo-1528763380143-65b3ac89a3ff?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    "date": "2023-09-19",
+    "status": "Open"
+  },
+  {
+    "title": "Performance Optimization",
+    "description": "Requesting performance optimization for the application to reduce load times.",
+    "id": "#106",
+    "assignee": "Sarah Lee",
+    "avatar": "https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    "date": "2023-09-20",
+    "status": "Closed"
+  },
+  {
+    "title": "Broken Link on Homepage",
+    "description": "The \"Learn More\" link on the homepage is leading to a 404 error.",
+    "id": "#107",
+    "assignee": "Alex Turner",
+    "avatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    "date": "2023-09-21",
+    "status": "Open"
+  },
+  {
+    "title": "Feature: Export to PDF",
+    "description": "Implement a feature to allow users to export their data to PDF format.",
+    "id": "#108",
+    "assignee": "Maia Pettegree",
+    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    "date": "2023-09-22",
+    "status": "Open"
+  },
+  {
+    "title": "Mobile Responsiveness Issue",
+    "description": "The application is not rendering properly on certain mobile devices.",
+    "id": "#109",
+    "assignee": "Kevin Williams",
+    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
+    "date": "2023-09-23",
+    "status": "Open"
+  },
+  {
+    "title": "Feature: Two-Factor Authentication",
+    "description": "Requesting the addition of two-factor authentication for improved security.",
+    "id": "#110",
+    "assignee": "Maia Pettegree",
+    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+    "date": "2023-09-24",
+    "status": "In Progress"
+  }
+];
+
+import {GridList, GridListItem, Text, Button, DropIndicator, isTextDropItem, useDragAndDrop} from 'react-aria-components';
+import {useListData} from 'react-stately';
+
+function KanbanBoard() {
+  let list = useListData({
+    initialItems: tickets
+  });
+
+  return (
+    <div className="flex justify-center gap-4 mt-8">
+      <Column status="Open" list={list} itemClassName="selected:bg-green-100 selected:border-green-500" />
+      <Column status="In Progress" list={list} itemClassName="selected:bg-blue-100 selected:border-blue-500" />
+      <Column status="Closed" list={list} itemClassName="selected:bg-red-100 selected:border-red-500" />
+    </div>
+  );
+}
+
+function Column({list, status, itemClassName}) {
+  let items = list.items.filter(t => t.status === status);
+
+  let { dragAndDropHooks } = useDragAndDrop({
+    // Provide drag data in a custom format as well as plain text.
+    getItems(keys) {
+      return [...keys].map((id) => ({
+        'issue-id': id,
+        'text/plain': list.getItem(id).title
+      }));
+    },
+
+    renderDropIndicator(target) {
+      /*return (
+        <DropIndicator
+          target={target}
+          className="-my-1 drop-target:outline outline-2 outline-blue-500" />
+      );*/
+
+      return (
+        <DropIndicator target={target} className="-my-[11px] -mx-[8px] invisible drop-target:visible">
+          <svg height={10} className="w-full">
+            <circle cx={5} cy={5} r={5-1} strokeWidth={2} className="stroke-blue-500 fill-none" />
+            <line x1={20} x2="100%" transform="translate(-10 0)" y1={5} y2={5} strokeWidth={2} className="stroke-blue-500" />
+            <circle cx="100%" cy={5} r={5-1} transform="translate(-5 0)" strokeWidth={2} className="stroke-blue-500 fill-none" />
+          </svg>
+        </DropIndicator>
+      )
+    },
+
+    // Accept drops with the custom format.
+    acceptedDragTypes: ['issue-id'],
+
+    // Ensure items are always moved rather than copied.
+    getDropOperation: () => 'move',
+
+    // Handle drops between items from other lists.
+    async onInsert(e) {
+      let ids = await Promise.all(
+        e.items.filter(isTextDropItem).map(item => item.getText('issue-id'))
+      );
+      for (let id of ids) {
+        list.update(id, {...list.getItem(id), status });
+      }
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, ids);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, ids);
+      }
+    },
+
+    // Handle drops on the collection when empty.
+    async onRootDrop(e) {
+      let ids = await Promise.all(
+        e.items.filter(isTextDropItem).map(item => item.getText('issue-id'))
+      );
+      for (let id of ids) {
+        list.update(id, {...list.getItem(id), status });
+      }
+    },
+
+    // Handle reordering items within the same list.
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    }
+  });
+
+  return (
+    <section className="flex flex-col gap-2">
+      <header>
+        <h3 className="font-semibold text-white my-0">{status}</h3>
+        <span className="text-sm text-white">{items.length} {items.length === 1 ? 'task' : 'tasks'}</span>
+      </header>
+      <GridList
+        items={items}
+        aria-label={status}
+        selectionMode="multiple"
+        dragAndDropHooks={dragAndDropHooks}
+        renderEmptyState={() => 'No tasks.'}
+        className="flex-1 w-70 max-h-[320px] p-4 overflow-y-auto overflow-x-hidden outline-none bg-white/70 backdrop-blur border border-black/10 bg-clip-padding text-gray-700 flex flex-col gap-3 rounded-xl shadow-xl drop-target:bg-blue-200 drop-target:ring-2 empty:items-center empty:justify-center ring-inset ring-blue-500">
+        {item => <Card item={item} className={itemClassName} />}
+      </GridList>
+    </section>
+  );
+}
+
+function Card({id, item, className}) {
+  return (
+    <GridListItem id={id} textValue={item.title} className={`group grid grid-cols-[1fr_auto] gap-1 [&>*]:contents p-2 rounded-lg border border-solid border-black/10 hover:border-black/20 bg-white/80 bg-clip-padding hover:shadow-md selected:shadow-md dragging:opacity-50 transition text-slate-700 cursor-default select-none outline-none outline-offset-2 focus-visible:outline-blue-500 ${className}`}>
+      <span className="font-bold truncate">{item.title}</span>
+      <span className="text-sm justify-self-end">{item.id}</span>
+      <Text slot="description" className="text-sm line-clamp-2 col-span-2 text-slate-500">{item.description}</Text>
+      <span className="flex items-center gap-1">
+        <img src={item.avatar} alt="" className="h-4 w-4 rounded-full" />
+        <span className="text-sm">{item.assignee}</span>
+      </span>
+      <Button slot="drag" className="bg-transparent border-none text-gray-500 text-base leading-none w-fit aspect-square p-0 justify-self-end outline-none focus-visible:ring-2 ring-blue-500 rounded-sm sr-only group-focus-visible:not-sr-only focus:not-sr-only">≡</Button>
+    </GridListItem>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('kanban')).render(<KanbanBoard />);
+```
 
 </section>
 
-<section className="my-10">
+<section className="max-w-6xl mx-auto my-20">
 
 ## High quality interactions on all devices.
 
 React Aria ensures a great experience for users no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.
 
+<div className="grid grid-cols-4 mt-10 gap-6">
+
+<div className="bg-white rounded-2xl p-6 transition card-shadow" id="touch-card">
+
+<h3 className="text-xl font-semibold mb-2">Touch optimized.</h3>
+
+<p className="text-gray-600">Micro-interactions like touch cancelation, gesture disambiguation, text selection, and scroll locking make your app feel native. Interactions like multi-selection adapt on touch-only devices.</p>
+
+</div>
+
+<div className="bg-white rounded-2xl p-6 transition card-shadow" id="mouse-card">
+
+<h3 className="text-xl font-semibold mb-2">Mouse enhanced.</h3>
+
+<p className="text-gray-600">Hover interactions only apply when using a mouse, avoiding sticky hover states on touch screens. Mouse features like double click, drag and drop, and cursor feedback make your app fit in on desktop platforms.</p>
+
+</div>
+
+<div className="bg-white rounded-2xl p-6 transition card-shadow" id="keyboard-card">
+
+<h3 className="text-xl font-semibold mb-2">Keyboard friendly.</h3>
+
+<p className="text-gray-600">Keyboard interactions are first-class, including arrow key navigation, typeahead, multiple selection modifiers,  landmark navigation, and much more.</p>
+
+</div>
+
+<div className="bg-white rounded-2xl p-6 transition card-shadow" id="focus-card">
+
+<h3 className="text-xl font-semibold mb-2">Focus managed.</h3>
+
+<p className="text-gray-600">Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</p>
+
+</div>
+
+<div id="interactions-root" className="rounded-lg p-6 col-start-3 row-start-1 col-span-2 row-span-2 flex items-center justify-center">
+
+</div>
+
+</div>
+
 </section>
 
-<section className="my-10">
+```tsx import
+import { MenuTrigger } from 'react-aria-components';
+import {Menu, MenuItem, MenuSeparator} from '../../../../../starters/tailwind/src/Menu';
+
+import { Button } from '../../../../../starters/tailwind/src/Button';
+import { MoreHorizontal } from 'lucide-react';
+
+let mouseCard = document.getElementById('mouse-card');
+
+function A11y() {
+  return (
+    <Select label="Ice cream">
+      <SelectItem>Chocolate</SelectItem>
+      <SelectItem>Mint</SelectItem>
+      <SelectItem>Strawberry</SelectItem>
+      <SelectItem>Vanilla</SelectItem>
+    </Select>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('interactions-root')).render(<A11y />);
+```
+
+<section className="max-w-6xl mx-auto my-20">
 
 ## Accessibility that's truly first-class.
 
 React Aria was designed from the start with accessibility as a top priority. All components have been tested across a wide variety of devices and assistive technology to ensure the best experience possible for all users.
 
+<div className="flex gap-4 mt-10">
+
+<div className="card-shadow rounded-lg p-6">
+
+<h3 className="text-xl font-semibold mb-2">ARIA Semantics.</h3>
+
+<p className="text-gray-600">Components implement semantics and keyboard behavior according to the W3C ARIA Authoring Practices Guide. React Aria builds on this foundation with real-world testing and device support.</p>
+
+</div>
+
+<div className="card-shadow rounded-lg p-6">
+
+<h3 className="text-xl font-semibold mb-2">Mobile ready.</h3>
+
+<p className="text-gray-600">All behaviors work without a keyboard to support mobile screen reader users. Additional features such as hidden dismiss buttons in dialogs ensure a great experience for mobile users.</p>
+
+</div>
+
+<div className="card-shadow rounded-lg p-6">
+
+<h3 className="text-xl font-semibold mb-2">Tested. Like, really.</h3>
+
+<p className="text-gray-600">All components are extensively tested using [many](accessibility.html#testing) different screen readers and devices. We normalize and work around many browser and assistive technology bugs to ensure all users have equal access.</p>
+
+</div>
+
+</div>
+
 </section>
 
-<section className="my-10">
+<section className="max-w-6xl mx-auto my-10">
 
 ## Ready for an international audience.
 
 React Aria is engineered for internationalization out of the box, including translations in over 30 languages, localized date and number formatting, support for 13 calendar systems, 3 numbering systems, right-to-left layout, and more.
 
+<div id="i18n-root" className="">
+
+</div>
+
+```tsx import
+import {Select, SelectItem, SelectSection} from '../../../../../starters/tailwind/src/Select';
+import {Calendar} from '../../../../../starters/tailwind/src/Calendar';
+import {NumberField} from '../../../../../starters/tailwind/src/NumberField';
+import {I18nProvider, useLocale, Section, Header} from 'react-aria-components';
+
+// https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
+const preferences = [
+  {locale: '', label: 'Default', ordering: 'gregory'},
+  {label: 'Arabic (Algeria)', locale: 'ar-DZ', territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE', ordering: 'gregory islamic islamic-civil islamic-tbla'},
+  {label: 'Arabic (United Arab Emirates)', locale: 'ar-AE', territories: 'AE BH KW QA', ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'},
+  {label: 'Arabic (Egypt)', locale: 'AR-EG', territories: 'EG', ordering: 'gregory coptic islamic islamic-civil islamic-tbla'},
+  {label: 'Arabic (Saudi Arabia)', locale: 'ar-SA', territories: 'SA', ordering: 'islamic-umalqura gregory islamic islamic-rgsa'},
+  {label: 'Farsi (Afghanistan)', locale: 'fa-AF', territories: 'AF IR', ordering: 'persian gregory islamic islamic-civil islamic-tbla'},
+  // {territories: 'CN CX HK MO SG', ordering: 'gregory chinese'},
+  {label: 'Amharic (Ethiopia)', locale: 'am-ET', territories: 'ET', ordering: 'gregory ethiopic ethioaa'},
+  {label: 'Hebrew (Israel)', locale: 'he-IL', territories: 'IL', ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'},
+  {label: 'Hindi (India)', locale: 'hi-IN', territories: 'IN', ordering: 'gregory indian'},
+  {label: 'Japanese (Japan)', locale: 'ja-JP', territories: 'JP', ordering: 'gregory japanese'},
+  // {territories: 'KR', ordering: 'gregory dangi'},
+  {label: 'Thai (Thailand)', locale: 'th-TH', territories: 'TH', ordering: 'buddhist gregory'},
+  {label: 'Chinese (Taiwan)', locale: 'zh-TW', territories: 'TW', ordering: 'gregory roc chinese'}
+];
+
+const calendars = [
+  {key: 'gregory', name: 'Gregorian'},
+  {key: 'japanese', name: 'Japanese'},
+  {key: 'buddhist', name: 'Buddhist'},
+  {key: 'roc', name: 'Taiwan'},
+  {key: 'persian', name: 'Persian'},
+  {key: 'indian', name: 'Indian'},
+  {key: 'islamic-umalqura', name: 'Islamic (Umm al-Qura)'},
+  {key: 'islamic-civil', name: 'Islamic Civil'},
+  {key: 'islamic-tbla', name: 'Islamic Tabular'},
+  {key: 'hebrew', name: 'Hebrew'},
+  {key: 'coptic', name: 'Coptic'},
+  {key: 'ethiopic', name: 'Ethiopic'},
+  {key: 'ethioaa', name: 'Ethiopic (Amete Alem)'}
+];
+
+function I18n() {
+  let [locale, setLocale] = React.useState('');
+  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
+  let {locale: defaultLocale} = useLocale();
+  let [numberingSystem, setNumberingSystem] = React.useState(() => new Intl.NumberFormat(defaultLocale).resolvedOptions().numberingSystem);
+
+  let pref = preferences.find(p => p.locale === locale);
+  let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
+  let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)), [preferredCalendars]);
+
+  let updateLocale = locale => {
+    setLocale(locale);
+    let pref = preferences.find(p => p.locale === locale);
+    setCalendar(pref.ordering.split(' ')[0]);
+    setNumberingSystem(new Intl.NumberFormat(locale || defaultLocale).resolvedOptions().numberingSystem)
+  };
+
+  let updateCalendar = calendar => {
+    setCalendar(calendar);
+    let selectedLocale = new Intl.Locale(locale || defaultLocale, {
+      calendar: calendar && calendar !== preferredCalendars[0].key ? calendar : undefined
+    });
+    setNumberingSystem(new Intl.NumberFormat(selectedLocale).resolvedOptions().numberingSystem);
+  };
+
+  let selectedLocale = new Intl.Locale(locale || defaultLocale, {
+    calendar: calendar && calendar !== preferredCalendars[0].key ? calendar : undefined,
+    numberingSystem
+  });
+
+  let [style, setStyle] = React.useState('decimal');
+  let [currency, setCurrency] = React.useState('USD');
+  let [unit, setUnit] = React.useState('inch');
+
+  return (
+    <div className="flex items-start gap-6 mt-10">
+      <div className="flex flex-col flex-wrap gap-4">
+        <Select label="Locale" items={preferences} selectedKey={locale} onSelectionChange={updateLocale}>
+          {item => <SelectItem id={item.locale}>{item.label}</SelectItem>}
+        </Select>
+        <Select label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
+          <SelectSection title="Preferred" items={preferredCalendars}>
+            {item => <SelectItem>{item.name}</SelectItem>}
+          </SelectSection>
+          <SelectSection title="Other" items={otherCalendars}>
+            {item => <SelectItem>{item.name}</SelectItem>}
+          </SelectSection>
+        </Select>
+        <Select label="Numbering System" selectedKey={numberingSystem} onSelectionChange={setNumberingSystem}>
+          <SelectItem id="latn">Latin</SelectItem>
+          <SelectItem id="arab">Arabic</SelectItem>
+          <SelectItem id="hanidec">Hanidec</SelectItem>
+        </Select>
+      </div>
+      <I18nProvider locale={selectedLocale.toString()}>
+        <LangWrapper>
+          <Calendar />
+          <NumberField label="Number" defaultValue={1234} minValue={0} formatOptions={{style, currency, unit}} />
+        </LangWrapper>
+      </I18nProvider>
+      <Select label="Style" selectedKey={style} onSelectionChange={setStyle}>
+        <SelectItem id="decimal">Decimal</SelectItem>
+        <SelectItem id="percent">Percent</SelectItem>
+        <SelectItem id="currency">Currency</SelectItem>
+        <SelectItem id="unit">Unit</SelectItem>
+      </Select>
+    </div>
+  );
+}
+
+function LangWrapper({children}) {
+  let {locale, direction} = useLocale();
+  return <div lang={locale} dir={direction} className="contents">{children}</div>;
+}
+
+ReactDOM.createRoot(document.getElementById('i18n-root')).render(<I18n />);
+```
+
 </section>
 
-<section className="my-10">
+<section className="max-w-6xl mx-auto my-10">
 
 ## Customizable to the max.
 

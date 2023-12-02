@@ -39,11 +39,55 @@ h1 {
   }
 }
 
-h2 {
+main > section > h2 {
   @apply text-5xl font-semibold mb-4;
 
   + p {
     @apply text-2xl max-w-5xl;
     text-wrap: balance;
   }
+}
+
+main > section > h3 {
+  @apply text-2xl font-semibold mb-2;
+
+  + p {
+    @apply text-lg;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+:root {
+  --hljs-color: theme(colors.gray.800);
+  --hljs-background: theme(colors.gray.50);
+  --hljs-keyword-color: theme(colors.fuchsia.700);
+  --hljs-section-color: theme(colors.red.600);
+  --hljs-string-color: theme(colors.green.600);
+  --hljs-literal-color: theme(colors.purple.700);
+  --hljs-attribute-color: theme(colors.indigo.700);
+  --hljs-class-color: theme(colors.cyan.600);
+  --hljs-function-color: theme(colors.blue.600);
+  --hljs-variable-color: theme(colors.purple.700);
+  --hljs-title-color: theme(colors.indigo.700);
+  --hljs-comment-color:  theme(colors.gray.700);
+  --mark-background: rgba(20,115,230,0.1);
+}
+
+pre .source {
+  @apply border rounded-xl p-5 text-sm min-h-[250px] whitespace-pre-wrap;
+}
+
+pre.medium, pre.small {
+  display: none;
+}
+
+.card-shadow {
+  box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 3px 6px rgb(0 0 0 / 4%), 0 4px 8px 0 rgba(0 0 0 / 8%);
 }

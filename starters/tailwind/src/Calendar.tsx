@@ -9,7 +9,8 @@ import {
   Text,
   CalendarGridHeader as AriaCalendarGridHeader,
   CalendarHeaderCell,
-  CalendarGridBody
+  CalendarGridBody,
+  useLocale
 } from 'react-aria-components';
 import { Button } from './Button';
 
@@ -36,11 +37,13 @@ export function Calendar<T extends DateValue>(
 }
 
 export function CalendarHeader() {
+  let {direction} = useLocale();
+
   return (
     <header className="flex items-center gap-1 pb-4 px-1 w-full">
-      <Button variant="icon" slot="previous"><ChevronLeft /></Button>
+      <Button variant="icon" slot="previous">{direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}</Button>
       <Heading className="flex-1 font-semibold text-xl text-center mx-2" />
-      <Button variant="icon" slot="next"><ChevronRight /></Button>
+      <Button variant="icon" slot="next">{direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}</Button>
     </header>
   );
 }

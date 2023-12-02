@@ -23,10 +23,10 @@ export function NumberField(
       <Label>{label}</Label>
       <FieldGroup>
         <Input className="px-2 flex-1 min-w-0 outline-none bg-transparent text-sm text-gray-800 disabled:text-gray-200" />
-        <div className="flex flex-col border-l-2 border-gray-300 group-disabled:border-gray-200">
-          <Button slot="increment" className="px-0.5 cursor-default rounded-tr text-gray-500 pressed:bg-gray-100 group-disabled:text-gray-200"><ChevronUp className="w-4 h-4" /></Button>
-          <div className="border-b-2 border-gray-300 group-disabled:border-gray-200" />
-          <Button slot="decrement" className="px-0.5 cursor-default rounded-br text-gray-500 pressed:bg-gray-100 group-disabled:text-gray-200"><ChevronDown className="w-4 h-4" /></Button>
+        <div className="flex flex-col border-s-2 border-gray-300 group-focus-within:border-gray-600 group-disabled:border-gray-200">
+          <Button slot="increment" className="px-0.5 cursor-default text-gray-500 pressed:bg-gray-100 group-disabled:text-gray-200"><ChevronUp className="w-4 h-4" /></Button>
+          <div className="border-b-2 border-gray-300 group-focus-within:border-gray-600 group-disabled:border-gray-200" />
+          <Button slot="decrement" className="px-0.5 cursor-default text-gray-500 pressed:bg-gray-100 group-disabled:text-gray-200"><ChevronDown className="w-4 h-4" /></Button>
         </div>
       </FieldGroup>
       {description && <Description>{description}</Description>}

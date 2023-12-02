@@ -7,7 +7,9 @@ function stripMarkdown(description) {
   return (description || '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
 }
 
-export function BasePage({children, currentPage, styles, scripts, pageSection, appendSectionToTitle, hero, className}) {
+export const ImageContext = React.createContext();
+
+export function BasePage({children, currentPage, styles, scripts, publicUrl, pageSection, appendSectionToTitle, hero, className}) {
   let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
@@ -67,7 +69,9 @@ export function BasePage({children, currentPage, styles, scripts, pageSection, a
           )}} />
       </head>
       <body>
-        {children}
+        <ImageContext.Provider value={publicUrl}>
+          {children}
+        </ImageContext.Provider>
         <script
           dangerouslySetInnerHTML={{__html: `
             window.addEventListener('load', () => {
@@ -80,4 +84,10 @@ export function BasePage({children, currentPage, styles, scripts, pageSection, a
       </body>
     </html>
   );
+}
+
+export function useImageUrl(src) {
+  let publicUrl = React.useContext(ImageContext);
+  let baseUrl = publicUrl.replace(/\/$/, '');
+  return baseUrl + '/' + path.basename(src);
 }
