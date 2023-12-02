@@ -6,14 +6,27 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./i18n": {
+      "types": "./i18n/index.d.ts",
+      "import": "./i18n/index.mjs",
+      "require": "./i18n/index.js"
+    },
+    "./i18n/*": {
+      "types": "./i18n/lang.d.ts",
+      "import": "./i18n/*.mjs",
+      "require": "./i18n/*.js"
+    }
   },
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "files": [
-    "dist"
+    "dist",
+    "i18n"
   ],
   "sideEffects": false,
   "scripts": {
@@ -24,6 +37,7 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
+    "@internationalized/string": "^3.1.1",
     "@react-aria/i18n": "^3.9.0",
     "@react-aria/ssr": "^3.9.0",
     "@react-aria/utils": "^3.22.0",
