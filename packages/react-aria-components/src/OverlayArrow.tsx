@@ -50,7 +50,9 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
   });
   // remove undefined values from renderProps.style object so that it can be
   // spread merged with the other style object
-  Object.keys(renderProps.style).forEach(key => renderProps.style[key] === undefined && delete renderProps.style[key]);
+  if (renderProps.style) {
+    Object.keys(renderProps.style).forEach(key => renderProps.style![key] === undefined && delete renderProps.style![key]);
+  }
 
   return (
     <div
