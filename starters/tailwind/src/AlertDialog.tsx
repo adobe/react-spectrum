@@ -1,13 +1,16 @@
 import { AlertCircleIcon, InfoIcon } from "lucide-react";
 import { Dialog, DialogProps, Heading } from "react-aria-components";
 import { Button } from "./Button";
+import { ReactNode } from "react";
+import { chain } from "react-aria";
 
 interface AlertDialogProps extends Omit<DialogProps, 'children'> {
   title: string,
-  children: string,
+  children: ReactNode,
   variant?: 'info' | 'destructive',
   actionLabel: string,
-  cancelLabel?: string
+  cancelLabel?: string,
+  onAction?: () => void
 }
 
 export function AlertDialog({
@@ -15,6 +18,7 @@ export function AlertDialog({
   variant,
   cancelLabel,
   actionLabel,
+  onAction,
   children,
   ...props
 }: AlertDialogProps) {
@@ -41,7 +45,7 @@ export function AlertDialog({
             </Button>
             <Button
               variant={variant === 'destructive' ? 'destructive' : 'primary'}
-              onPress={close}>
+              onPress={chain(onAction, close)}>
               {actionLabel}
             </Button>
           </div>

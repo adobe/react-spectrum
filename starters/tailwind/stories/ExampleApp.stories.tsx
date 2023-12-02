@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import ReactDOM from 'react-dom';
 import { Select, SelectItem } from "../src/Select";
-import { ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, MenuTrigger, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, TooltipTrigger } from "react-aria-components";
+import { ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, TooltipTrigger } from "react-aria-components";
 import { Cell, Column, Row, TableHeader } from "../src/Table";
 import { SearchField } from "../src/SearchField";
 import { Button } from "../src/Button";
@@ -16,6 +17,10 @@ import { TagGroup, Tag } from "../src/TagGroup";
 import { Modal } from "../src/Modal";
 import { AlertDialog } from "../src/AlertDialog";
 import { TextField } from "../src/TextField";
+import { useResizeObserver } from "@react-aria/utils";
+import { DatePicker } from "../src/DatePicker";
+import { ComboBox, ComboBoxItem } from "../src/ComboBox";
+import { getLocalTimeZone, today } from "@internationalized/date";
 
 type Plant = typeof plants[0] & {isFavorite: boolean};
 
@@ -67,8 +72,11 @@ export function ExampleApp() {
     .sort((a, b) => collator.compare(a[sortDescriptor.column as any], b[sortDescriptor.column as any]) * dir);
 
   let [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(['favorite', 'common_name', 'sunlight', 'watering', 'actions']));
-  let columns = useMemo(() => allColumns.filter(c => visibleColumns === 'all' || visibleColumns.has(c.id)), [visibleColumns]);
-  columns[1].isRowHeader = true; // TODO
+  let columns = useMemo(() => {
+    let res = allColumns.filter(c => visibleColumns === 'all' || visibleColumns.has(c.id));
+    res[1] = {...res[1], isRowHeader: true};
+    return res;
+  }, [visibleColumns]);
 
   let filters = 0;
   if (favorite) {
@@ -113,6 +121,19 @@ export function ExampleApp() {
     });
   };
 
+  let deleteItem = () => {
+    setAllItems(allItems => {
+      if (!actionItem) {
+        return allItems;
+      }
+
+      let items = [...allItems];
+      let index = items.findIndex(item => item.id === actionItem!.id);
+      items.splice(index, 1);
+      return items;
+    });
+  };
+
   let onScroll = (e) => {
     if (hideOnScroll) {
       if (e.target.scrollTop <= 0) {
@@ -124,7 +145,7 @@ export function ExampleApp() {
   };
 
   let [dialog, setDialog] = useState(null);
-  let [actionItem, setActionItem] = useState(null);
+  let [actionItem, setActionItem] = useState<Plant | null>(null);
   let onAction = (item: typeof items[0], action: string) => {
     switch (action) {
       case 'favorite':
@@ -171,7 +192,6 @@ export function ExampleApp() {
                   <Tag id="Average" color="blue">{wateringIcons['Average']} Average</Tag>
                   <Tag id="Minimum" color="blue">{wateringIcons['Minimum']} Minimum</Tag>
                 </TagGroup>
-                {/* <DateRangePicker label="Last watered date" /> */}
               </div>
             </Dialog>
           </Popover>
@@ -195,9 +215,9 @@ export function ExampleApp() {
           <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 p-0">
             <PlusIcon className="inline w-5 h-5" />
           </Button>
-          <Modal>
+          <PlantModal>
             <PlantDialog onSave={addItem} />
-          </Modal>
+          </PlantModal>
         </DialogTrigger>
       </div>
       <ResizableTableContainer className="flex-1 w-full overflow-auto relative border rounded-lg" onScroll={onScroll}>
@@ -205,7 +225,7 @@ export function ExampleApp() {
           <TableHeader columns={columns}>
             {column => <Column {...column} />}
           </TableHeader>
-          <TableBody items={items}>
+          <TableBody items={items} value={columns}>
             {item => (
               <Row columns={columns}>
                 {column => {
@@ -257,13 +277,13 @@ export function ExampleApp() {
         </Table>
       </ResizableTableContainer>
       <Modal isOpen={dialog === 'delete'} onOpenChange={onDialogClose}>
-        <AlertDialog title="Delete Plant" variant="destructive" actionLabel="Delete">
+        <AlertDialog title="Delete Plant" variant="destructive" actionLabel="Delete" onAction={deleteItem}>
           Are you sure you want to delete "{actionItem?.common_name}"?
         </AlertDialog>
       </Modal>
-      <Modal isOpen={dialog === 'edit'} onOpenChange={onDialogClose}>
+      <PlantModal isOpen={dialog === 'edit'} onOpenChange={onDialogClose}>
         <PlantDialog item={actionItem} onSave={editItem} />
-      </Modal>
+      </PlantModal>
     </div>
   );
 }
@@ -368,24 +388,27 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                 <input type="hidden" name="image" value={droppedImage} />
               </DropZone>
               <div className="flex flex-col gap-3 flex-1">
-                <TextField label="Common Name" name="common_name" isRequired defaultValue={item?.common_name} autoFocus />
+                <ComboBox label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus>
+                  {plant => <ComboBoxItem>{plant.common_name}</ComboBoxItem>}
+                </ComboBox>
                 <TextField label="Scientific Name" name="scientific_name" isRequired defaultValue={item?.scientific_name} />
               </div>
             </div>
             <Select label="Cycle" name="cycle" isRequired defaultSelectedKey={item?.cycle}>
-              <SelectItem id="Perennial">{cycleIcons['Perennial']} Perennial</SelectItem>
-              <SelectItem id="Herbaceous Perennial">{cycleIcons['Herbaceous Perennial']} Herbaceous Perennial</SelectItem>
+              <SelectItem id="Perennial" textValue="Perennial">{cycleIcons['Perennial']} Perennial</SelectItem>
+              <SelectItem id="Herbaceous Perennial" textValue="Herbaceous Perennial">{cycleIcons['Herbaceous Perennial']} Herbaceous Perennial</SelectItem>
             </Select>
             <Select label="Sunlight" name="sunlight" isRequired defaultSelectedKey={item ? getSunlight(item) : null}>
-              <SelectItem id="full sun">{sunIcons['full sun']} Full Sun</SelectItem>
-              <SelectItem id="part sun">{sunIcons['part sun']} Part Sun</SelectItem>
-              <SelectItem id="part shade">{sunIcons['part shade']} Part Shade</SelectItem>
+              <SelectItem id="full sun" textValue="Full Sun">{sunIcons['full sun']} Full Sun</SelectItem>
+              <SelectItem id="part sun" textValue="Part Sun">{sunIcons['part sun']} Part Sun</SelectItem>
+              <SelectItem id="part shade" textValue="Part Shade">{sunIcons['part shade']} Part Shade</SelectItem>
             </Select>
             <Select label="Watering" name="watering" isRequired defaultSelectedKey={item?.watering}>
-              <SelectItem id="Frequent">{wateringIcons['Frequent']} Frequent</SelectItem>
-              <SelectItem id="Average">{wateringIcons['Average']} Average</SelectItem>
-              <SelectItem id="Minimum">{wateringIcons['Minimum']} Minimum</SelectItem>
+              <SelectItem id="Frequent" textValue="Frequent">{wateringIcons['Frequent']} Frequent</SelectItem>
+              <SelectItem id="Average" textValue="Average">{wateringIcons['Average']} Average</SelectItem>
+              <SelectItem id="Minimum" textValue="Minimum">{wateringIcons['Minimum']} Minimum</SelectItem>
             </Select>
+            <DatePicker label="Date Planted" isRequired defaultValue={item ? today(getLocalTimeZone()) : null} />
             <div className="mt-6 flex justify-end gap-2">
               <Button variant="secondary" onPress={close}>
                 Cancel
@@ -398,5 +421,99 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
         </>
       )}
     </Dialog>
+  );
+}
+
+function PlantModal(props: ModalOverlayProps) {
+  let [isResized, setResized] = useState(false);
+  let observed = useRef<HTMLElement | null>(null);
+  let resizeObserver = useRef<ResizeObserver | null>(null);
+  let ref = useCallback((element: HTMLDivElement) => {
+    if (resizeObserver.current && observed.current) {
+      resizeObserver.current.unobserve(observed.current);
+      resizeObserver.current = null;
+      observed.current = null;
+    }
+
+    if (element) {
+      let height = element.clientHeight;
+      if (element.scrollHeight > element.clientHeight) {
+        setResized(true);
+        return;
+      }
+
+      let observer = new ResizeObserver(() => {
+        if (element.clientHeight !== height) {
+          setResized(true);
+        }
+      });
+
+      observer.observe(element);
+      resizeObserver.current = observer;
+      observed.current = element;
+    } else {
+      setResized(false);
+    }
+  }, []);
+
+  return (
+    <ModalOverlay
+      {...props}
+      className={({ isEntering, isExiting }) => `
+      fixed inset-0 isolate z-20 bg-black/[15%] flex min-h-full items-center justify-center p-4 text-center backdrop-blur-lg
+      ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
+      ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
+    `}>
+      {({isEntering, isExiting}) => <>
+        {!isResized &&
+          <div data-react-aria-top-layer="true" className={`fixed inset-0 z-30 flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)]
+            ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
+            ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}`}>
+            <svg viewBox="0 0 700 620" width={700} height={620}>
+              <Arrow textX={52} x1={88} x2={130} y={50} href="Dialog.html">Dialog</Arrow>
+              <Arrow textX={34} x1={88} x2={150} y={150} href="DropZone.html">DropZone</Arrow>
+              <Arrow textX={54} x1={88} x2={150} y={272} href="Select.html">Select</Arrow>
+              <Arrow textX={32} x1={88} x2={150} y={492} href="DatePicker.html">DatePicker</Arrow>
+              <Arrow textX={616} x1={550} x2={612} y={126} marker="markerStart" href="ComboBox.html">ComboBox</Arrow>
+              <Arrow textX={616} x1={550} x2={612} y={198} marker="markerStart" href="TextField.html">TextField</Arrow>
+              <polyline
+                points="560,90 590,90 590,585 560,585"
+                className="stroke-slate-800 fill-none" />
+              <line
+                x1={590}
+                y1={338}
+                x2={612}
+                y2={338}
+                className="stroke-slate-800" />
+              <a href="Form.html" className="pointer-events-auto outline-none rounded-sm focus:outline-blue-600 outline-offset-2"><text x={616} y={341} className="text-xs fill-slate-900 underline">Form</text></a>
+            </svg>
+          </div>
+        }
+        <RACModal
+          {...props}
+          ref={ref}
+          className={({ isEntering, isExiting }) => `
+          w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white p-6 text-left align-middle shadow-2xl ring-1 ring-black/10
+          ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
+          ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
+        `}
+        />
+      </>}
+    </ModalOverlay>
+  );
+}
+
+function Arrow({href, children, textX, x1, x2, y, marker = 'markerEnd'}) {
+  return (
+    <>
+      <line
+        x1={x1}
+        y1={y}
+        x2={x2}
+        y2={y}
+        {...{[marker]: 'url(#arrow)'}}
+        className="stroke-slate-800" />
+      <a href={href} target="_blank" className="pointer-events-auto outline-none rounded-sm focus:outline-blue-600 outline-offset-2"><text x={textX} y={y + 3} className="text-xs fill-slate-900 underline">{children}</text></a>
+    </>
   );
 }
