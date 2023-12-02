@@ -134,10 +134,12 @@ function Example () {
     <>
       <FileTrigger
         acceptDirectory
-        onSelect={async (e) => {
-          let items = Array.from(e);
-          let fileList = items.map(file => file.webkitRelativePath);
-          setFiles(fileList);
+        allowsMultiple
+        onSelect={(e) => {
+          if (e) {
+            let fileList = [...e].map(file => file.webkitRelativePath);
+            setFiles(fileList);
+          }
         }} >
         <Button>Upload</Button>
       </FileTrigger>
