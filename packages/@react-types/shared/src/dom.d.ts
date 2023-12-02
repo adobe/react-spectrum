@@ -164,9 +164,15 @@ export interface TextInputDOMProps extends DOMProps, InputDOMProps, TextInputDOM
   type?: 'text' | 'search' | 'url' | 'tel' | 'email' | 'password' | (string & {}),
 
   /**
-   * Hints at the type of data that might be entered by the user while editing the element or its contents. See [MDN](https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute).
+   * Hints at the type of data that might be entered by the user while editing the element or its contents. See [Spec](https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute).
    */
   inputMode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
+
+  /**
+   * A nonstandard attribute used by iOS Safari that controls how textual form elements should be automatically capitalized.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#autocapitalize).
+   */
+  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters'
 }
 
 // Make sure to update filterDOMProps.ts when updating this.

@@ -60,6 +60,12 @@ export default {
         type: 'radio',
         options: [null, 'valid', 'invalid']
       }
+    },
+    autoCapitalize: {
+      control: {
+        type: 'radio',
+        options: [undefined, 'off', 'none', 'on', 'sentences', 'words', 'characters']
+      }
     }
   }
 };

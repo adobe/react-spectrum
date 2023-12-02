@@ -79,12 +79,7 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
    * For example, [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
    * @default 'input'
    */
-  inputElementType?: T,
-  /**
-   * A nonstandard attribute used by iOS Safari that controls how textual form elements should be automatically capitalized.
-   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#autocapitalize).
-   */
-  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters'
+  inputElementType?: T
 }
 
 /**

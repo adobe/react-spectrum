@@ -51,6 +51,14 @@ describe('useSearchField hook', () => {
       expect(typeof inputProps.onKeyDown).toBe('function');
     });
 
+    it('with appropriate props if autoCapitalize is defined', () => {
+      let result = renderSearchHook({autoCapitalize: 'on'});
+      expect(result.inputProps.autoCapitalize).toBe('on');
+      
+      result = renderSearchHook({autoCapitalize: 'off'});
+      expect(result.inputProps.autoCapitalize).toBe('off');
+    });
+
     describe('with specific onKeyDown behavior', () => {
       let preventDefault = jest.fn();
       let stopPropagation = jest.fn();
