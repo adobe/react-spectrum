@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.16",
+    "@react-aria/parcel-resolver-optimize-locales": "^1.0.0",
     "framer-motion": "^10.12.16",
     "parcel": "^2.10.2",
     "postcss": "^8.4.21",
@@ -20,5 +21,6 @@
   },
   "devDependencies": {
     "process": "^0.11.10"
-  }
+  },
+  "locales": ["en"]
 }

@@ -58,7 +58,7 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
     xName,
     yName
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/color');
 
   let {addGlobalListener, removeGlobalListener} = useGlobalListeners();
 

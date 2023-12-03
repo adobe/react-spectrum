@@ -66,7 +66,7 @@ function TagGroup<T extends object>(props: SpectrumTagGroupProps<T>, ref: DOMRef
   let tagsRef = useRef<HTMLDivElement | null>(null);
   let {direction} = useLocale();
   let {scale} = useProvider();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/tag');
   let [isCollapsed, setIsCollapsed] = useState(maxRows != null);
   let state = useListState(props);
   let [tagState, setTagState] = useValueEffect({visibleTagCount: state.collection.size, showCollapseButton: false});

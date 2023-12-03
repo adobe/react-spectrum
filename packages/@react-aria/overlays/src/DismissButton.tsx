@@ -30,7 +30,7 @@ export interface DismissButtonProps extends AriaLabelingProps, DOMProps {
  */
 export function DismissButton(props: DismissButtonProps) {
   let {onDismiss, ...otherProps} = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/overlays');
 
   let labels = useLabels(otherProps, stringFormatter.format('dismiss'));
 
