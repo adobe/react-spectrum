@@ -81,7 +81,7 @@ main > section > h3 {
 }
 
 pre .source {
-  @apply border rounded-xl p-5 text-sm min-h-[250px] whitespace-pre-wrap;
+  @apply p-5 text-sm min-h-[250px] overflow-auto h-full;
 }
 
 pre.medium, pre.small {

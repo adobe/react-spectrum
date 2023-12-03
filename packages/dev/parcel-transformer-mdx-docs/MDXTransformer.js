@@ -644,6 +644,11 @@ function responsiveCode(node, force) {
     return [node];
   }
 
+  if (node.meta?.includes('format=false')) {
+    node.value = node.value.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, '$1');
+    return [node];
+  }
+
   let large = {
     ...node,
     meta: node.meta ? `${node.meta} large` : 'large',
