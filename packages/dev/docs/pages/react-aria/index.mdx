@@ -18,7 +18,7 @@ import {ArrowRight} from 'lucide-react';
 minimal: true
 ---
 
-<header className="text-center py-40 bg-gradient-to-r from-blue-300 to-slate-300">
+<header hidden className="text-center py-40 bg-gradient-to-r from-blue-300 to-slate-300">
 
 # React Aria
 
@@ -37,13 +37,34 @@ New slogan
 
 </header>
 
-<main style={{background: 'linear-gradient(to bottom, transparent 0% 80%, white), conic-gradient(rgba(150, 180, 248, 0.4), rgba(69, 136, 244, 0.4), rgba(174, 120, 247, 0.4), rgba(255, 44, 206, 0.4), rgba(250, 167, 167, 0.4), rgba(247, 95, 97, 0.4), rgba(250, 198, 128, 0.4), rgba(253, 234, 4, 0.4), rgba(191, 255, 180, 0.4), rgba(169, 178, 247, 0.4), rgba(149, 93, 255, 0.4), rgba(150, 180, 248, 0.4))', backgroundSize: '100% 1000px', backgroundRepeat: 'no-repeat'}}>
+<main style={{background: `linear-gradient(to bottom, transparent 0% 80%, white),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='white' fill-opacity='0.1' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E"), conic-gradient(at 50% 60%, rgba(150, 180, 248, 0.4), rgba(69, 136, 244, 0.4), rgba(174, 120, 247, 0.4), rgba(255, 44, 206, 0.4), rgba(250, 167, 167, 0.4), rgba(247, 95, 97, 0.4), rgba(250, 198, 128, 0.4), rgba(253, 234, 4, 0.4), rgba(191, 255, 180, 0.4), rgba(169, 178, 247, 0.4), rgba(149, 93, 255, 0.4), rgba(150, 180, 248, 0.4))`, backgroundSize: '100% 1200px, auto auto, 100% 1200px', backgroundRepeat: 'no-repeat, repeat, no-repeat'}}>
 
-<section className="max-w-6xl mx-auto pt-20 px-40 pb-60 -mb-60 rounded-3xl">
-  <h2 className="text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">A component for every occasion.</h2>
+<a href="." className="absolute top-4 left-4 inline-flex items-center text-lg gap-4 font-bold px-4 py-3 rounded-xl bg-white/30 ring-1 ring-black/5">
+  <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" className="w-9">
+    <polygon points="19,0 30,0 30,26" />
+    <polygon points="11.1,0 0,0 0,26" />
+    <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
+  </svg>
+  <h2>
+    React Aria
+  </h2>
+</a>
+
+<nav className="absolute right-4 top-4 p-4 inline-flex items-center gap-4 rounded-xl bg-white/30 ring-1 ring-black/5">
+  <a href="https://github.com/adobe/react-spectrum" target="_blank">GitHub</a>
+  <a href="https://npmjs.com/react-aria-components">NPM</a>
+</nav>
+
+<section className="max-w-6xl mx-auto pt-32 px-40 pb-60 -mb-60 rounded-3xl">
+  <h2 className="text-transparent bg-clip-text bg-gradient-to-b from-slate-700 to-slate-900">Build adaptive, accessible, and robust user experiences with React Aria.</h2>
   <p className="text-slate-800">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
-  <div className="relative pt-20 mt-10">
+  <div className="inline-flex gap-4 my-10">
+    <a href="getting-started.html" className="bg-gradient-to-r from-blue-500 to-indigo-500 border border-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-lg font-bold text-white px-8 py-3 rounded-full">Get Started</a>
+    <a href="components.html" className="bg-white/50 hover:bg-white/90 border border-black/10 bg-clip-padding text-lg font-bold text-gray-700 px-8 py-3 rounded-full">Explore components</a>
+  </div>
+
+  <div className="relative pt-20">
     <div className="flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out h-[450px] max-w-[600px] mx-auto overflow-hidden rounded-lg shadow-2xl text-black transition w-full translate-y-0 opacity-100">
       <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-black/5 flex flex-row justify-center px-3 py-2 relative">
         <div className="absolute flex flex-row left-4 top-3.5">
@@ -144,13 +165,13 @@ import {ExampleApp} from '../../../../../starters/tailwind/stories/ExampleApp.st
 ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp />);
 ```
 
-<section className="max-w-6xl mx-auto my-32 px-20">
+<section className="max-w-6xl mx-auto mt-64 mb-32 px-20">
 
-<h2 className="pb-2 text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Bring your own styles.</h2>
+<h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Bring your own</span> <span className="bg-clip-text bg-gradient-to-t from-fuchsia-600 to-pink-600">styles</span><span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">.</span></h2>
 
 React Aria does not include any styles by default, allowing you to build custom designs to fit your application or design system using any styling and animation solution. Each component is broken down into individual parts with built-in states, render props, and slots that make styling a breeze.
 
-<a href="styling.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+<a href="styling.html" className="inline-block mt-6 mb-12 text-xl text-fuchsia-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
 <div hidden id="css">
 
@@ -163,7 +184,7 @@ import {
 ```
 
 ```css render=false
-.foo {
+.react-aria-Button {
   color: red;
 }
 ```
@@ -220,33 +241,35 @@ import {KanbanBoard} from './home/KanbanExample';
 
 </section>
 
-<section className="max-w-6xl mx-auto my-20">
-  <h2 className="pb-2 text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">High quality interactions on all devices.</h2>
+<section className="max-w-6xl mx-auto my-32">
+  <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">High quality</span> <span className="bg-clip-text bg-gradient-to-t from-cyan-600 to-green-600">interactions</span> <span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">on all devices.</span></h2>
   <p className="text-slate-700">React Aria ensures a great experience for users no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
-  <a href="interactions.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+  <a href="interactions.html" className="inline-block mt-6 mb-12 text-xl text-cyan-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
   <div className="grid grid-cols-4 mt-10 gap-6">
     <div className="bg-white rounded-2xl p-6 transition card-shadow" id="touch-card">
-    <h3 className="text-xl font-semibold mb-2">Touch optimized.</h3>
-    <p className="text-gray-600">Micro-interactions like touch cancelation, gesture disambiguation, text selection, and scroll locking make your app feel native. Interactions like multi-selection adapt on touch-only devices.</p>
-  </div>
+      <h3 className="text-xl font-semibold mb-2">Touch optimized.</h3>
+      <p className="text-gray-600">Micro-interactions like touch cancelation, gesture disambiguation, text selection, and scroll locking make your app feel native. Interactions like multi-selection adapt on touch-only devices.</p>
+    </div>
 
-  <div className="bg-white rounded-2xl p-6 transition card-shadow" id="mouse-card">
-    <h3 className="text-xl font-semibold mb-2">Mouse enhanced.</h3>
-    <p className="text-gray-600">Hover interactions only apply when using a mouse, avoiding sticky hover states on touch screens. Mouse features like double click, drag and drop, and cursor feedback make your app fit in on desktop platforms.</p>
-  </div>
+    <div className="bg-white rounded-2xl p-6 transition card-shadow" id="mouse-card">
+      <h3 className="text-xl font-semibold mb-2">Mouse enhanced.</h3>
+      <p className="text-gray-600">Hover interactions only apply when using a mouse, avoiding sticky hover states on touch screens. Mouse features like double click, drag and drop, and cursor feedback make your app fit in on desktop platforms.</p>
+    </div>
 
-  <div className="bg-white rounded-2xl p-6 transition card-shadow" id="keyboard-card">
-    <h3 className="text-xl font-semibold mb-2">Keyboard friendly.</h3>
-    <p className="text-gray-600">Keyboard interactions are first-class, including arrow key navigation, typeahead, multiple selection modifiers,  landmark navigation, and much more.</p>
-  </div>
+    <div className="bg-white rounded-2xl p-6 transition card-shadow" id="keyboard-card">
+      <h3 className="text-xl font-semibold mb-2">Keyboard friendly.</h3>
+      <p className="text-gray-600">Keyboard interactions are first-class, including arrow key navigation, typeahead, multiple selection modifiers,  landmark navigation, and much more.</p>
+    </div>
 
-  <div className="bg-white rounded-2xl p-6 transition card-shadow" id="focus-card">
-    <h3 className="text-xl font-semibold mb-2">Focus managed.</h3>
-    <p className="text-gray-600">Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</p>
-  </div>
+    <div className="bg-white rounded-2xl p-6 transition card-shadow" id="focus-card">
+      <h3 className="text-xl font-semibold mb-2">Focus managed.</h3>
+      <p className="text-gray-600">Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</p>
+    </div>
 
-  <div id="interactions-root" className="rounded-lg p-6 col-start-3 row-start-1 col-span-2 row-span-2 flex items-center justify-center" />
+    <div className="rounded-lg p-6 col-start-3 row-start-1 col-span-2 row-span-2 flex items-center justify-center" style={{background: `url(${useImageUrl(new URL('../assets/iphone-frame.png', import.meta.url).toString())})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}}>
+      <div id="interactions-root" />
+    </div>
   </div>
 </section>
 
@@ -256,8 +279,8 @@ import {Interactions} from './home/Interactions';
 ReactDOM.createRoot(document.getElementById('interactions-root')).render(<Interactions />);
 ```
 
-<section className="max-w-6xl mx-auto my-20">
-  <h2 className="pb-2 text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Accessibility that's truly first-class.</h2>
+<section className="max-w-6xl mx-auto my-32">
+  <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-600">Accessibility</span> <span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">that's truly first-class.</span></h2>
   <p className="text-slate-700">React Aria was designed from the start with accessibility as a top priority. All components have been tested across a wide variety of devices and assistive technology to ensure the best experience possible for all users.</p>
   <a href="accessibility.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
@@ -279,10 +302,10 @@ ReactDOM.createRoot(document.getElementById('interactions-root')).render(<Intera
   </div>
 </section>
 
-<section className="max-w-6xl mx-auto my-10">
-  <h2 className="pb-2 text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Ready for an international audience.</h2>
-  <p className="text-slate-700">React Aria is engineered for internationalization out of the box, including translations in over 30 languages, localized date and number formatting, support for 13 calendar systems, 3 numbering systems, right-to-left layout, and more.</p>
-  <a href="internationalization.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+<section className="max-w-6xl mx-auto my-32">
+  <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Ready for an</span> <span className="bg-clip-text bg-gradient-to-b from-yellow-500 to-orange-600">international</span> <span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">audience.</span></h2>
+  <p className="text-slate-700">React Aria is engineered for internationalization out of the box, including translations in over 30 languages, localized date and number formatting and parsing, support for 13 calendar systems, 3 numbering systems, right-to-left layout, and more.</p>
+  <a href="internationalization.html" className="inline-block mt-6 mb-12 text-xl text-orange-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
 ```tsx snippet
 import {I18n} from './home/I18n';
@@ -293,9 +316,9 @@ import {I18n} from './home/I18n';
 </section>
 
 <section className="max-w-6xl mx-auto my-10">
-  <h2 className="pb-2 text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Customizable to the max.</h2>
+  <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-lime-600 to-green-600">Customizable</span> <span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">to the max.</span></h2>
   <p className="text-slate-700">React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with built-in a DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the lower level Hook-based API. Mix and match as needed.</p>
-  <a href="advanced.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+  <a href="advanced.html" className="inline-block mt-6 mb-12 text-xl text-green-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 </section>
 
 <section className="my-10">
