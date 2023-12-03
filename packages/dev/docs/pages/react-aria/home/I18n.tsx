@@ -6,20 +6,56 @@ import {I18nProvider, useLocale} from 'react-aria-components';
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
 const preferences = [
-  {locale: '', label: 'Default', ordering: 'gregory'},
-  {label: 'Arabic (Algeria)', locale: 'ar-DZ', territories: 'DJ DZ EH ER IQ JO KM LB LY MA MR OM PS SD SY TD TN YE', ordering: 'gregory islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (United Arab Emirates)', locale: 'ar-AE', territories: 'AE BH KW QA', ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (Egypt)', locale: 'AR-EG', territories: 'EG', ordering: 'gregory coptic islamic islamic-civil islamic-tbla'},
-  {label: 'Arabic (Saudi Arabia)', locale: 'ar-SA', territories: 'SA', ordering: 'islamic-umalqura gregory islamic islamic-rgsa'},
-  {label: 'Farsi (Afghanistan)', locale: 'fa-AF', territories: 'AF IR', ordering: 'persian gregory islamic islamic-civil islamic-tbla'},
+  // Tier 1
+  {value: 'fr-FR'},
+  {value: 'fr-CA'},
+  {value: 'de-DE'},
+  {value: 'en-GB'},
+  {value: 'en-US'},
+  {value: 'ja-JP', ordering: 'gregory japanese'},
+  // // Tier 2
+  {value: 'da-DK'},
+  {value: 'nl-NL'},
+  {value: 'fi-FI'},
+  {value: 'it-IT'},
+  {value: 'nb-NO'},
+  {value: 'es-ES'},
+  {value: 'sv-SE'},
+  {value: 'pt-BR'},
+  // // Tier 3
+  {value: 'zh-CN'},
+  {value: 'zh-TW', ordering: 'gregory roc chinese'},
+  {value: 'ko-KR'},
+  // // Tier 4
+  {value: 'bg-BG'},
+  {value: 'hr-HR'},
+  {value: 'cs-CZ'},
+  {value: 'et-EE'},
+  {value: 'hu-HU'},
+  {value: 'lv-LV'},
+  {value: 'lt-LT'},
+  {value: 'pl-PL'},
+  {value: 'ro-RO'},
+  {value: 'ru-RU'},
+  {value: 'sr-SP'},
+  {value: 'sk-SK'},
+  {value: 'sl-SI'},
+  {value: 'tr-TR'},
+  {value: 'uk-UA'},
+  // // Tier 5
+  {value: 'ar-AE', ordering: 'gregory islamic-umalqura islamic islamic-civil islamic-tbla'},
+  {value: 'ar-DZ', ordering: 'gregory islamic islamic-civil islamic-tbla'},
+  {value: 'AR-EG', ordering: 'gregory coptic islamic islamic-civil islamic-tbla'},
+  {value: 'ar-SA', ordering: 'islamic-umalqura gregory islamic islamic-rgsa'},
+  {value: 'el-GR'},
+  {value: 'he-IL', ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'},
+
+  {value: 'fa-AF', ordering: 'persian gregory islamic islamic-civil islamic-tbla'},
   // {territories: 'CN CX HK MO SG', ordering: 'gregory chinese'},
-  {label: 'Amharic (Ethiopia)', locale: 'am-ET', territories: 'ET', ordering: 'gregory ethiopic ethioaa'},
-  {label: 'Hebrew (Israel)', locale: 'he-IL', territories: 'IL', ordering: 'gregory hebrew islamic islamic-civil islamic-tbla'},
-  {label: 'Hindi (India)', locale: 'hi-IN', territories: 'IN', ordering: 'gregory indian'},
-  {label: 'Japanese (Japan)', locale: 'ja-JP', territories: 'JP', ordering: 'gregory japanese'},
+  {value: 'am-ET', ordering: 'gregory ethiopic ethioaa'},
+  {value: 'hi-IN', ordering: 'gregory indian'},
   // {territories: 'KR', ordering: 'gregory dangi'},
-  {label: 'Thai (Thailand)', locale: 'th-TH', territories: 'TH', ordering: 'buddhist gregory'},
-  {label: 'Chinese (Taiwan)', locale: 'zh-TW', territories: 'TW', ordering: 'gregory roc chinese'}
+  {value: 'th-TH', ordering: 'buddhist gregory'},
 ];
 
 const calendars = [
@@ -39,19 +75,31 @@ const calendars = [
 ];
 
 export function I18n() {
-  let [locale, setLocale] = React.useState('');
-  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
   let {locale: defaultLocale} = useLocale();
+  let [locale, setLocale] = React.useState(defaultLocale);
+  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
   let [numberingSystem, setNumberingSystem] = React.useState(() => new Intl.NumberFormat(defaultLocale).resolvedOptions().numberingSystem);
 
-  let pref = preferences.find(p => p.locale === locale);
-  let preferredCalendars = React.useMemo(() => pref ? pref.ordering.split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
+  let langDisplay = React.useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'language'}), [defaultLocale]);
+  let regionDisplay = React.useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'region'}), [defaultLocale]);
+  let locales = React.useMemo(() => {
+    return preferences.map(item => {
+      let locale = new Intl.Locale(item.value);
+      return {
+        ...item,
+        label: `${langDisplay.of(locale.language)} (${regionDisplay.of(locale.region)})`
+      };
+    }).sort((a, b) => a.label.localeCompare(b.label));
+  }, [langDisplay, regionDisplay]);
+
+  let pref = preferences.find(p => p.value === locale);
+  let preferredCalendars = React.useMemo(() => pref ? (pref.ordering || 'gregory').split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
   let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)), [preferredCalendars]);
 
   let updateLocale = locale => {
     setLocale(locale);
-    let pref = preferences.find(p => p.locale === locale);
-    setCalendar(pref.ordering.split(' ')[0]);
+    let pref = preferences.find(p => p.value === locale);
+    setCalendar((pref.ordering || 'gregory').split(' ')[0]);
     setNumberingSystem(new Intl.NumberFormat(locale || defaultLocale).resolvedOptions().numberingSystem)
   };
 
@@ -71,12 +119,15 @@ export function I18n() {
   let [style, setStyle] = React.useState('decimal');
   let [currency, setCurrency] = React.useState('USD');
   let [unit, setUnit] = React.useState('inch');
+  if (numberingSystem === 'arabext') {
+    numberingSystem = 'arab';
+  }
 
   return (
     <div className="flex items-start gap-6 mt-10">
       <div className="flex flex-col flex-wrap gap-4">
-        <Select label="Locale" items={preferences} selectedKey={locale} onSelectionChange={updateLocale}>
-          {item => <SelectItem id={item.locale}>{item.label}</SelectItem>}
+        <Select label="Locale" items={locales} selectedKey={locale} onSelectionChange={updateLocale}>
+          {item => <SelectItem id={item.value}>{item.label}</SelectItem>}
         </Select>
         <Select label="Calendar" selectedKey={calendar} onSelectionChange={updateCalendar}>
           <SelectSection title="Preferred" items={preferredCalendars}>
