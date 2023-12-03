@@ -3,7 +3,7 @@ module.exports = {
   darkMode: ['class', '[style*="color-scheme: dark"]'],
   content: {
     relative: true,
-    files: ['*.mdx', '../../../../../starters/tailwind/**/*.tsx']
+    files: ['*.mdx', 'home/*.tsx', '../../../../../starters/tailwind/**/*.tsx']
   },
   theme: {
     extend: {}
