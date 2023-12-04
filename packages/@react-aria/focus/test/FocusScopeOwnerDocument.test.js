@@ -93,7 +93,8 @@ describe('FocusScope', function () {
       expect(iframeDocument.activeElement).toBe(input1);
     });
 
-    it('uses document.activeElement instead of e.relatedTarget on blur to ensure that focus in an iframe is retained', async function () {
+    // This test setup is a bit contrived to just purely simulate the blur/focus events that would happen in a case like this
+    it('focus properly moves into child iframe on click', async function () {
       render(
         <IframeExample>
           <FocusScope contain>

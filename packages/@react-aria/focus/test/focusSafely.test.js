@@ -11,7 +11,7 @@
  */
 
 
-import {act, render, waitFor} from '@react-spectrum/test-utils';
+import {act, render} from '@react-spectrum/test-utils';
 import {focusSafely} from '../';
 import React from 'react';
 import * as ReactAriaUtils from '../../utils/index';
@@ -40,9 +40,7 @@ describe('focusSafely', () => {
       jest.runAllTimers();
     });
 
-    await waitFor(() => {
-      expect(focusWithoutScrollingSpy).toBeCalledTimes(0);
-    });
+    expect(focusWithoutScrollingSpy).toBeCalledTimes(0);
   });
 
   it("should focus on the element if it's connected", async function () {
@@ -60,8 +58,6 @@ describe('focusSafely', () => {
       jest.runAllTimers();
     });
 
-    await waitFor(() => {
-      expect(focusWithoutScrollingSpy).toBeCalledTimes(1);
-    });
+    expect(focusWithoutScrollingSpy).toBeCalledTimes(1);
   });
 });
