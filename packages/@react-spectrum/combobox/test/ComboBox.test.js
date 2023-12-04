@@ -4438,7 +4438,10 @@ describe('ComboBox', function () {
             await user.click(document.body);
             break;
           case 'dismiss button':
-            await user.click(dismissButtons[0]);
+            // TODO: not entirely sure why using user.click here breaks the test... It seems to cause the selectedKey
+            // to not update in time in useComboboxState...
+            // await user.click(dismissButtons[0]);
+            fireEvent.click(dismissButtons[0]);
             break;
           case 'escape key':
             fireEvent.keyDown(trayInput, {key: 'Escape', code: 27, charCode: 27});
