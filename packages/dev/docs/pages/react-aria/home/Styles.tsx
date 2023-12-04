@@ -24,13 +24,13 @@ export function Styles() {
         {
           id: "css",
           label: "Vanilla CSS",
-          content: <div className="relative grid grid-cols-1 gap-4">
-            <div className="flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-xl text-black transition w-full translate-y-0 opacity-100">
+          content: <div className="relative h-full grid grid-cols-1 gap-4">
+            <div className="w-full h-fit flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-lg text-black transition translate-y-0 opacity-100">
               <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-black/5 flex flex-row px-3 pt-2.5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
                 <div className="absolute flex flex-row left-4 top-3.5">
-                  <div className="bg-red-500 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-yellow-500 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-green-500 h-3 rounded-full w-3"></div>
+                  <div className="bg-gray-300 h-3 mr-2 rounded-full w-3"></div>
+                  <div className="bg-gray-300 h-3 mr-2 rounded-full w-3"></div>
+                  <div className="bg-gray-300 h-3 rounded-full w-3"></div>
                 </div>
                 <div className="grid grid-cols-2 w-full">
                   <div className="w-fit border border-gray-300 border-b-gray-50 bg-gray-50 -mb-px rounded-t-md px-3 py-1.5 text-xs text-gray-500 ml-20">ComboBox.tsx</div>
@@ -39,7 +39,7 @@ export function Styles() {
               </div>
               <div className="grid grid-cols-2 [&>:first-child]:border-r" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
             </div>
-            <div className="absolute -bottom-[50px] left-24 w-[400px] flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-xl text-black transition translate-y-0 opacity-100">
+            <div className="absolute bottom-10 left-20 w-[350px] flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-xl text-black transition translate-y-0 opacity-100">
               <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 flex flex-row justify-center px-3 py-2 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
                 <div className="absolute flex flex-row left-4 top-3.5">
                   <div className="bg-red-500 h-3 mr-2 rounded-full w-3"></div>
@@ -48,7 +48,7 @@ export function Styles() {
                 </div>
                 <div className="bg-gray-400/40 dark:bg-gray-700 px-10 py-1 rounded-md text-slate-500 text-xs">https://your-app.com</div>
               </div>
-              <div className="flex items-center justify-center bg-gray-50 col-span-2 p-5 text-sm">
+              <div className="flex items-center justify-center bg-gray-50 col-span-2 p-14 text-sm">
                 <ComboBox>
                   <Label>Favorite Animal</Label>
                   <div>
@@ -73,19 +73,19 @@ export function Styles() {
         {
           id: "tailwind",
           label: "Tailwind",
-          content: <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-xl text-black transition w-full translate-y-0 opacity-100">
+          content: <div className="grid grid-cols-[1fr_auto] gap-4">
+            <div className="z-10 flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-lg text-black transition w-full translate-y-0 opacity-100">
               <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-black/5 flex flex-row px-3 pt-2.5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
                 <div className="absolute flex flex-row left-4 top-3.5">
-                  <div className="bg-red-500 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-yellow-500 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-green-500 h-3 rounded-full w-3"></div>
+                  <div className="bg-gray-300 h-3 mr-2 rounded-full w-3"></div>
+                  <div className="bg-gray-300 h-3 mr-2 rounded-full w-3"></div>
+                  <div className="bg-gray-300 h-3 rounded-full w-3"></div>
                 </div>
                 <div className="border border-gray-300 border-b-gray-50 bg-gray-50 -mb-px rounded-t-md px-3 py-1.5 text-xs text-gray-500 ml-20">ComboBox.tsx</div>
               </div>
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
             </div>
-            <div className="flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-xl text-black transition w-full translate-y-0 opacity-100">
+            <div className="w-[350px] h-[320px] self-center flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-xl text-black transition translate-y-0 opacity-100">
               <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 flex flex-row justify-center px-3 py-2 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
                 <div className="absolute flex flex-row left-4 top-3.5">
                   <div className="bg-red-500 h-3 mr-2 rounded-full w-3"></div>
@@ -94,7 +94,7 @@ export function Styles() {
                 </div>
                 <div className="bg-gray-400/40 dark:bg-gray-700 px-10 py-1 rounded-md text-slate-500 text-xs">https://your-app.com</div>
               </div>
-              <div className="flex-1 flex justify-center p-24 bg-gradient-to-r from-sky-300 to-cyan-300">
+              <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-sky-300 to-cyan-300">
                 <ComboBox className="group flex flex-col gap-1 w-[200px]">
                   <Label className="text-black cursor-default text-sm">Assignee</Label>
                   <Group className="flex rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition shadow-md ring-1 ring-black/10 focus-visible:ring-2 focus-visible:ring-black">
@@ -245,11 +245,11 @@ function AnimatedTabs({tabs}) {
 
   return (
     <Tabs
-      className="w-fit"
+      className="w-fit -mx-2"
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}>
       <div className="relative">
-        <TabList ref={tabListRef} className="flex -mx-1" items={tabs}>
+        <TabList ref={tabListRef} className="flex" items={tabs}>
           {(tab) =>
             <Tab className="cursor-default px-3 py-1.5 text-md transition outline-none touch-none">
               {({ isSelected, isFocusVisible }) => <>
@@ -272,7 +272,7 @@ function AnimatedTabs({tabs}) {
       </div>
       <div
         ref={tabPanelsRef}
-        className="pt-4 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex"
+        className="pt-10 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex"
         style={{
           maskImage: 'linear-gradient(to right, transparent, white 8px calc(100% - 8px), transparent)'
         }}>
@@ -280,7 +280,7 @@ function AnimatedTabs({tabs}) {
           {(tab) => (
             <TabPanel
               shouldForceMount
-              className="flex-shrink-0 w-full px-2 box-border snap-start outline-none -outline-offset-2 rounded focus-visible:outline-black">
+              className="flex-shrink-0 w-full px-4 box-border snap-start outline-none -outline-offset-2 rounded focus-visible:outline-black">
               {tab.content}
             </TabPanel>
           )}
