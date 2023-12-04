@@ -380,7 +380,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                 }}
                 className="w-32 p-2 flex items-center justify-center border-2 border-gray-400 border-dashed rounded-xl text-gray-500 focus-visible:border-blue-600 focus-visible:border-solid drop-target:border-blue-600 drop-target:border-solid drop-target:bg-blue-100 drop-target:text-blue-600">
                 {droppedImage
-                  ? <img src={droppedImage} className="w-full h-full object-contain" />
+                  ? <img src={droppedImage} className="w-full h-full object-contain aspect-square" />
                   : <Text slot="label" className="italic text-sm text-center">
                       Drop or paste image here
                     </Text>

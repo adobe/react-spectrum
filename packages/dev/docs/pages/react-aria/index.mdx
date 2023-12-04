@@ -56,10 +56,10 @@ New slogan
 </nav>
 
 <section className="max-w-6xl mx-auto pt-32 px-20 xl:px-40 pb-60 -mb-60 rounded-3xl">
-  <h2 className="text-transparent bg-clip-text bg-gradient-to-b from-slate-700 to-slate-900">Build adaptive, accessible, and robust components with React Aria.</h2>
-  <p className="text-slate-800">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
+  <h2 className="text-transparent text-center [text-wrap:balance] bg-clip-text bg-gradient-to-b from-slate-700 to-slate-900">Build adaptive, accessible, and robust components with React Aria.</h2>
+  <p className="text-slate-800 text-center">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
-  <div className="inline-flex gap-4 my-10">
+  <div className="flex gap-4 my-10 justify-center">
     <a href="getting-started.html" className="bg-gradient-to-r from-blue-500 to-indigo-500 border border-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-lg font-bold text-white px-8 py-3 rounded-full">Get Started</a>
     <a href="components.html" className="bg-white/50 hover:bg-white/90 border border-black/10 bg-clip-padding text-lg font-bold text-gray-700 px-8 py-3 rounded-full">Explore components</a>
   </div>
@@ -173,7 +173,7 @@ React Aria does not include any styles by default, allowing you to build custom 
 
 <a href="styling.html" className="inline-block mt-6 mb-12 text-xl text-fuchsia-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
-<div hidden id="css">
+<div hidden id="styling">
 
 ```tsx format=false
 <ComboBox>
@@ -194,6 +194,10 @@ React Aria does not include any styles by default, allowing you to build custom 
   </Popover>
 </ComboBox>
 ```
+
+</div>
+
+<div hidden id="css">
 
 ```css render=false
 .react-aria-ComboBox {
@@ -268,9 +272,7 @@ React Aria does not include any styles by default, allowing you to build custom 
   <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
     <ListBox className="outline-none p-1" items={people}>
       {item => (
-        <ListBoxItem
-          textValue={item.name}
-          className="group flex items-center gap-2 cursor-default select-none py-1.5 px-2 outline-none rounded text-gray-900 text-sm focus:bg-sky-600 focus:text-white">
+        <ListBoxItem textValue={item.name} className="group flex items-center gap-2 cursor-default select-none py-1.5 px-2 outline-none rounded text-gray-900 text-sm focus:bg-sky-600 focus:text-white">
           {({ isSelected }) => <>
             <span className="flex-1 flex items-center gap-3 truncate font-normal group-selected:font-medium">
               <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
@@ -331,15 +333,32 @@ import {KanbanBoard} from './home/KanbanExample';
 
 </section>
 
-<section className="max-w-6xl mx-auto my-32">
+<section className="max-w-6xl mx-auto px-20 my-32">
   <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">High quality</span> <span className="bg-clip-text bg-gradient-to-t from-cyan-600 to-green-600">interactions</span> <span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">on all devices.</span></h2>
   <p className="text-slate-700">React Aria ensures a great experience for users no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
   <a href="interactions.html" className="inline-block mt-6 mb-12 text-xl text-cyan-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
-  <div className="grid grid-cols-4 mt-10 gap-6">
+  <div className="grid grid-cols-2 gap-6">
     <div className="bg-white rounded-2xl p-6 transition card-shadow" id="touch-card">
       <h3 className="text-xl font-semibold mb-2">Touch optimized.</h3>
       <p className="text-gray-600">Micro-interactions like touch cancelation, gesture disambiguation, text selection, and scroll locking make your app feel native. Interactions like multi-selection adapt on touch-only devices.</p>
+
+      <div className="flex justify-center pt-10 pb-6 scale-150">
+
+```tsx snippet
+import { Switch } from "react-aria-components";
+
+<Switch
+  defaultSelected
+  className="group inline-flex touch-none"
+  style={{ WebkitTapHighlightColor: "transparent" }}>
+  <span className="group-data-[selected]:bg-green-500 group-data-[focus-visible]:outline outline-2 outline-blue-600 mr-4 h-6 w-9 rounded-full border-2 border-transparent bg-slate-300 outline-offset-2 transition duration-200">
+    <span className="group-data-[selected]:ml-3 group-data-[selected]:group-data-[pressed]:ml-2 group-data-[pressed]:w-6 block h-5 w-5 origin-right rounded-full bg-white shadow transition-all duration-200" />
+  </span>
+</Switch>
+```
+
+      </div>
     </div>
 
     <div className="bg-white rounded-2xl p-6 transition card-shadow" id="mouse-card">
@@ -350,6 +369,7 @@ import {KanbanBoard} from './home/KanbanExample';
     <div className="bg-white rounded-2xl p-6 transition card-shadow" id="keyboard-card">
       <h3 className="text-xl font-semibold mb-2">Keyboard friendly.</h3>
       <p className="text-gray-600">Keyboard interactions are first-class, including arrow key navigation, typeahead, multiple selection modifiers,  landmark navigation, and much more.</p>
+      <svg className="w-[80%] mt-4" viewBox="0 0 191 81" fill="none" aria-hidden="true" id="keyboard"><style>{`#keyboard * { vector-effect: non-scaling-stroke; }`}</style><g transform="translate(-1747 -1604)"><rect data-name="Rectangle 57" width="190" height="80" rx="4" transform="translate(1747.5 1604.5)" fill="var(--anatomy-gray-200)" stroke="#aaa"></rect><rect data-name="Rectangle 58" width="17" height="11" rx="2" transform="translate(1749.5 1606.5)" fill="white" stroke="#aaa"></rect><g data-name="Repeat Grid 1"><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1768.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1781.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1794.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1807.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1820.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1833.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1846.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1859.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1872.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1885.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1898.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1911.5 1606.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1924.5 1606.5)" fill="white" stroke="#aaa"></rect></g><rect data-name="Rectangle 63" width="20.5" height="11" rx="2" transform="translate(1749.5 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 65" width="27" height="11" rx="2" transform="translate(1749.5 1658.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 68" width="13" height="11" rx="2" transform="translate(1769.5 1671.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 69" width="18" height="11" rx="2" transform="translate(1784.5 1671.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 70" width="76" height="11" rx="2" transform="translate(1804.5 1671.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 74" width="18" height="11" rx="2" transform="translate(1749.5 1671.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 75" width="13" height="11" rx="2" transform="translate(1902.5 1671.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 76" width="18" height="11" rx="2" transform="translate(1917.5 1671.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 77" width="18" height="11" rx="2" transform="translate(1882.5 1671.5)" fill="white" stroke="#aaa"></rect><g data-name="Repeat Grid 6"><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1749.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1762.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1775.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1788.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1801.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1814.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1827.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1840.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1853.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1866.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1879.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1892.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1905.5 1619.5)" fill="white" stroke="#aaa"></rect></g><rect data-name="Rectangle 78" width="17" height="11" rx="2" transform="translate(1918.5 1619.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 79" width="17" height="11" rx="2" transform="translate(1749.5 1632.5)" fill="white" stroke="#aaa"></rect><g data-name="Repeat Grid 7"><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1768.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1781.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1794.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1807.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1820.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1833.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1846.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1859.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1872.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1885.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1898.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1911.5 1632.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1924.5 1632.5)" fill="white" stroke="#aaa"></rect></g><g data-name="Repeat Grid 8"><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1772 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1785 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1798 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1811 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1824 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1837 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1850 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1863 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1876 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1889 1645.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1902 1645.5)" fill="white" stroke="#aaa"></rect></g><rect data-name="Rectangle 80" width="20.5" height="11" rx="2" transform="translate(1915 1645.5)" fill="white" stroke="#aaa"></rect><g data-name="Repeat Grid 9"><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1778.5 1658.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1791.5 1658.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1804.5 1658.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1817.5 1658.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1830.5 1658.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1843.5 1658.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1856.5 1658.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1869.5 1658.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1882.5 1658.5)" fill="white" stroke="#aaa"></rect><rect data-name="Rectangle 60" width="11" height="11" rx="2" transform="translate(1895.5 1658.5)" fill="white" stroke="#aaa"></rect></g><rect data-name="Rectangle 81" width="27" height="11" rx="2" transform="translate(1908.5 1658.5)" fill="white" stroke="#aaa"></rect></g></svg>
     </div>
 
     <div className="bg-white rounded-2xl p-6 transition card-shadow" id="focus-card">
@@ -357,7 +377,7 @@ import {KanbanBoard} from './home/KanbanExample';
       <p className="text-gray-600">Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</p>
     </div>
 
-    <div className="rounded-lg p-6 col-start-3 row-start-1 col-span-2 row-span-2 flex items-center justify-center" style={{background: `url(${useImageUrl(new URL('../assets/iphone-frame.png', import.meta.url).toString())})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}}>
+    <div className="hidden rounded-lg p-6 col-start-3 row-start-1 col-span-2 row-span-2 flex items-center justify-center" style={{background: `url(${useImageUrl(new URL('../assets/iphone-frame.png', import.meta.url).toString())})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}}>
       <div id="interactions-root" />
     </div>
   </div>
@@ -369,12 +389,12 @@ import {Interactions} from './home/Interactions';
 ReactDOM.createRoot(document.getElementById('interactions-root')).render(<Interactions />);
 ```
 
-<section className="max-w-6xl mx-auto my-32">
+<section className="max-w-6xl mx-auto my-32 px-20">
   <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-600">Accessibility</span> <span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">that's truly first-class.</span></h2>
   <p className="text-slate-700">React Aria was designed from the start with accessibility as a top priority. All components have been tested across a wide variety of devices and assistive technology to ensure the best experience possible for all users.</p>
   <a href="accessibility.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
-  <div className="flex gap-4 mt-10">
+  <div className="flex gap-4">
     <div className="card-shadow rounded-lg p-6">
       <h3 className="text-xl font-semibold mb-2">ARIA Semantics.</h3>
       <p className="text-gray-600">Components implement semantics and keyboard behavior according to the W3C ARIA Authoring Practices Guide. React Aria builds on this foundation with real-world testing and device support.</p>
@@ -392,7 +412,7 @@ ReactDOM.createRoot(document.getElementById('interactions-root')).render(<Intera
   </div>
 </section>
 
-<section className="max-w-6xl mx-auto my-32">
+<section className="max-w-6xl mx-auto my-32 px-20">
   <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Ready for an</span> <span className="bg-clip-text bg-gradient-to-b from-yellow-500 to-orange-600">international</span> <span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">audience.</span></h2>
   <p className="text-slate-700">React Aria is engineered for internationalization out of the box, including translations in over 30 languages, localized date and number formatting and parsing, support for 13 calendar systems, 3 numbering systems, right-to-left layout, and more.</p>
   <a href="internationalization.html" className="inline-block mt-6 mb-12 text-xl text-orange-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
@@ -405,13 +425,13 @@ import {I18n} from './home/I18n';
 
 </section>
 
-<section className="max-w-6xl mx-auto my-10">
+<section className="max-w-6xl mx-auto my-32 px-20">
   <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-lime-600 to-green-600">Customizable</span> <span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">to the max.</span></h2>
   <p className="text-slate-700">React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with built-in a DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the lower level Hook-based API. Mix and match as needed.</p>
   <a href="advanced.html" className="inline-block mt-6 mb-12 text-xl text-green-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 </section>
 
-<section className="my-10">
+<section className="max-w-6xl mx-auto my-32 px-20">
 
 ## Ready to get started?
 

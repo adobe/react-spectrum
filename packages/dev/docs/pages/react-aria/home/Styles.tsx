@@ -24,30 +24,27 @@ export function Styles() {
         {
           id: "css",
           label: "Vanilla CSS",
-          content: <div className="relative h-full grid grid-cols-1 gap-4">
-            <div className="w-full h-fit flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-lg text-black transition translate-y-0 opacity-100">
-              <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-black/5 flex flex-row px-3 pt-2.5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
-                <div className="absolute flex flex-row left-4 top-3.5">
-                  <div className="bg-gray-300 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-gray-300 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-gray-300 h-3 rounded-full w-3"></div>
-                </div>
+          content: <div className="relative flex flex-col gap-4">
+            <Window
+              className="h-fit"
+              isBackground
+              toolbar={
                 <div className="grid grid-cols-2 w-full">
-                  <div className="w-fit border border-gray-300 border-b-gray-50 bg-gray-50 -mb-px rounded-t-md px-3 py-1.5 text-xs text-gray-500 ml-20">ComboBox.tsx</div>
-                  <div className="w-fit border border-gray-300 border-b-gray-50 bg-gray-50 -mb-px rounded-t-md px-3 py-1.5 text-xs text-gray-500 -ml-px">ComboBox.css</div>
+                  <FileTab>ComboBox.tsx</FileTab>
+                  <FileTab className="hidden lg:block -ml-px">ComboBox.css</FileTab>
                 </div>
-              </div>
-              <div className="grid grid-cols-2 [&>:first-child]:border-r" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
-            </div>
-            <div className="absolute bottom-10 left-20 w-[350px] flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-xl text-black transition translate-y-0 opacity-100">
-              <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 flex flex-row justify-center px-3 py-2 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
-                <div className="absolute flex flex-row left-4 top-3.5">
-                  <div className="bg-red-500 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-yellow-500 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-green-500 h-3 rounded-full w-3"></div>
+              }>
+              <div className="flex flex-col lg:flex-row">
+                <div className="flex-1 grid" dangerouslySetInnerHTML={{__html: document.getElementById('styling')!.innerHTML}} />
+                <div className="flex flex-row px-3 pt-2.5 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-y border-gray-300">
+                  <FileTab>ComboBox.css</FileTab>
                 </div>
-                <div className="bg-gray-400/40 dark:bg-gray-700 px-10 py-1 rounded-md text-slate-500 text-xs">https://your-app.com</div>
+                <div className="flex-1 grid lg:border-l" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
               </div>
+            </Window>
+            <Window
+              className="lg:absolute top-[76%] left-16 w-[350px]"
+              toolbar={<AddressBar>https://your-app.com</AddressBar>}>
               <div className="flex items-center justify-center bg-gray-50 col-span-2 p-14 text-sm">
                 <ComboBox>
                   <Label>Favorite Animal</Label>
@@ -67,33 +64,17 @@ export function Styles() {
                   </Popover>
                 </ComboBox>
               </div>
-            </div>
+            </Window>
           </div>
         },
         {
           id: "tailwind",
           label: "Tailwind",
-          content: <div className="grid grid-cols-[1fr_auto] gap-4">
-            <div className="z-10 flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-lg text-black transition w-full translate-y-0 opacity-100">
-              <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-black/5 flex flex-row px-3 pt-2.5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
-                <div className="absolute flex flex-row left-4 top-3.5">
-                  <div className="bg-gray-300 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-gray-300 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-gray-300 h-3 rounded-full w-3"></div>
-                </div>
-                <div className="border border-gray-300 border-b-gray-50 bg-gray-50 -mb-px rounded-t-md px-3 py-1.5 text-xs text-gray-500 ml-20">ComboBox.tsx</div>
-              </div>
+          content: <div className="flex flex-col lg:flex-row gap-4">
+            <Window className="flex-1" isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
-            </div>
-            <div className="w-[350px] h-[320px] self-center flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg shadow-xl text-black transition translate-y-0 opacity-100">
-              <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 flex flex-row justify-center px-3 py-2 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
-                <div className="absolute flex flex-row left-4 top-3.5">
-                  <div className="bg-red-500 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-yellow-500 h-3 mr-2 rounded-full w-3"></div>
-                  <div className="bg-green-500 h-3 rounded-full w-3"></div>
-                </div>
-                <div className="bg-gray-400/40 dark:bg-gray-700 px-10 py-1 rounded-md text-slate-500 text-xs">https://your-app.com</div>
-              </div>
+            </Window>
+            <Window className="w-[350px] h-[320px] place-self-center" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
               <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-sky-300 to-cyan-300">
                 <ComboBox className="group flex flex-col gap-1 w-[200px]">
                   <Label className="text-black cursor-default text-sm">Assignee</Label>
@@ -126,22 +107,50 @@ export function Styles() {
                   </Popover>
                 </ComboBox>
               </div>
-            </div>
+            </Window>
           </div>
         },
         {
           id: "styled-components",
           label: "Styled Components",
           content: <div className="grid grid-cols-2 gap-4">
-            <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styled-components')!.innerHTML}} />
-            <div className="flex items-center justify-center bg-gray-50 border rounded-xl p-5">
-              <Button>Hello world!</Button>
-            </div>
+            <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
+              <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styled-components')!.innerHTML}} />
+            </Window>
+            <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
+              <div className="flex-1 flex items-center justify-center bg-gray-50 p-5">
+                <Button>Hello world!</Button>
+              </div>
+            </Window>
           </div>
         },
         { id: "vanilla-extract", label: "Vanilla Extract" }
       ]} />
   );
+}
+
+function Window({children, className = '', isBackground = false, toolbar}) {
+  return (
+    <div className={`${className} flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg ${isBackground ? 'shadow-lg' : 'shadow-xl'} text-black transition translate-y-0 opacity-100`}>
+      <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-gray-300 flex flex-row px-3 pt-2.5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
+        {toolbar}
+        <div className="absolute flex flex-row left-4 top-3.5">
+          <div className={`${isBackground ? 'bg-gray-300' : 'bg-red-500'} h-3 mr-2 rounded-full w-3`}></div>
+          <div className={`${isBackground ? 'bg-gray-300' : 'bg-yellow-500'} h-3 mr-2 rounded-full w-3`}></div>
+          <div className={`${isBackground ? 'bg-gray-300' : 'bg-green-500'} h-3 rounded-full w-3`}></div>
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function FileTab({children, className = ''}) {
+  return <div className={`${className} w-fit border border-gray-300 border-b-gray-50 bg-gray-50 -mb-px rounded-t-md px-3 py-1.5 text-xs text-gray-500 first:ml-20 only:ml-0`}>{children}</div>
+}
+
+function AddressBar({children}) {
+  return <div className="bg-gray-400/40 dark:bg-gray-700 px-10 py-1 mx-auto mb-2.5 rounded-md text-slate-500 text-xs">{children}</div>;
 }
 
 function AnimatedTabs({tabs}) {
@@ -245,7 +254,7 @@ function AnimatedTabs({tabs}) {
 
   return (
     <Tabs
-      className="w-fit -mx-2"
+      className="-mx-2"
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}>
       <div className="relative">
