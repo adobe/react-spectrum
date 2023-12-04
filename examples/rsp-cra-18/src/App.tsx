@@ -1,15 +1,18 @@
 import './App.css';
-import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView, Content, Heading, Form, ComboBox, Button} from '@adobe/react-spectrum';
+import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView, Content} from '@adobe/react-spectrum';
 import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
 import {enableTableNestedRows} from '@react-stately/flags';
-import ButtonExamples from './ButtonExamples';
-import CollectionExamples from './CollectionExamples';
-import DateTimeExamples from './DateTimeExamples';
-import FormExamples from './FormExamples';
-import NavigationExamples from './NavigationExamples';
-import OverlayExamples from './OverlayExamples';
+import ButtonExamples from './sections/ButtonExamples';
+import CollectionExamples from './sections/CollectionExamples';
+import DateTimeExamples from './sections/DateTimeExamples';
+import FormExamples from './sections/FormExamples';
+import NavigationExamples from './sections/NavigationExamples';
+import OverlayExamples from './sections/OverlayExamples';
+import ColorExamples from './sections/ColorExamples';
+import StatusExamples from './sections/StatusExamples';
+import ContentExamples from './sections/ContentExamples';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -58,10 +61,13 @@ function App() {
         </TableView>
         <ButtonExamples />
         <CollectionExamples />
+        <ColorExamples />
         <DateTimeExamples />
         <FormExamples />
         <NavigationExamples />
         <OverlayExamples />
+        <StatusExamples />
+        <ContentExamples />
       </div>
     </Provider>
   );
