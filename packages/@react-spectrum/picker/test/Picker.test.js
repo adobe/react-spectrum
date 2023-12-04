@@ -2493,6 +2493,8 @@ describe('Picker', function () {
       expect(items[1].tagName).toBe('A');
       expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
+      let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+      window.addEventListener('click', onClick);
       if (type === 'mouse') {
         await user.click(items[0]);
       } else {
@@ -2505,6 +2507,9 @@ describe('Picker', function () {
 
       expect(button).toHaveTextContent('Select an option…');
       expect(listbox).not.toBeInTheDocument();
+      expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+      expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+      window.removeEventListener('click', onClick);
     });
 
     it('works with RouterProvider', async () => {
@@ -2526,8 +2531,11 @@ describe('Picker', function () {
 
       let listbox = tree.getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
+      let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+      window.addEventListener('click', onClick);
       await user.click(items[0]);
       expect(navigate).toHaveBeenCalledWith('/one');
+      window.removeEventListener('click', onClick);
     });
   });
 });

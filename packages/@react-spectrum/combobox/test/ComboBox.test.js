@@ -5907,8 +5907,12 @@ describe('ComboBox', function () {
       expect(items[1].tagName).toBe('A');
       expect(items[1]).toHaveAttribute('href', 'https://adobe.com');
 
+      let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+      window.addEventListener('click', onClick);
       if (type === 'mouse') {
         await user.click(items[0]);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
       } else {
         fireEvent.keyDown(combobox, {key: 'Enter'});
         fireEvent.keyUp(combobox, {key: 'Enter'});
@@ -5919,6 +5923,7 @@ describe('ComboBox', function () {
 
       expect(combobox).toHaveValue('');
       expect(listbox).not.toBeInTheDocument();
+      window.removeEventListener('click', onClick);
     });
 
     it('supports RouterProvider', async () => {
@@ -5960,6 +5965,8 @@ describe('ComboBox', function () {
 
       listbox = tree.getByRole('listbox');
       items = within(listbox).getAllByRole('option');
+      let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+      window.addEventListener('click', onClick);
       await user.click(items[1]);
 
       act(() => {
@@ -5970,6 +5977,7 @@ describe('ComboBox', function () {
       expect(navigate).not.toHaveBeenCalled();
       expect(combobox).toHaveValue('');
       expect(listbox).not.toBeInTheDocument();
+      window.removeEventListener('click', onClick);
     });
   });
 });
