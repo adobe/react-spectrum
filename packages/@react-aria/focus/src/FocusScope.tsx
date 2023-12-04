@@ -687,7 +687,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
             // look up the tree starting with our scope to find a nodeToRestore still in the DOM
             let treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
-              if (treeNode.nodeToRestore && ownerDocument.body.contains(treeNode.nodeToRestore)) {
+              if (treeNode.nodeToRestore && treeNode.nodeToRestore.isConnected) {
                 focusElement(treeNode.nodeToRestore);
                 return;
               }

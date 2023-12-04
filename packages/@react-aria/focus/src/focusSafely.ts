@@ -29,7 +29,7 @@ export function focusSafely(element: FocusableElement) {
     let lastFocusedElement = ownerDocument.activeElement;
     runAfterTransition(() => {
       // If focus did not move and the element is still in the document, focus it.
-      if (ownerDocument.activeElement === lastFocusedElement && ownerDocument.contains(element)) {
+      if (ownerDocument.activeElement === lastFocusedElement && element.isConnected) {
         focusWithoutScrolling(element);
       }
     });

@@ -93,7 +93,7 @@ describe('FocusScope', function () {
       expect(iframeDocument.activeElement).toBe(input1);
     });
 
-    it('uses document.activeElement instead of e.relatedTarget on blur to determine if focus is still in scope', async function () {
+    it('uses document.activeElement instead of e.relatedTarget on blur to ensure that focus in an iframe is retained', async function () {
       render(
         <IframeExample>
           <FocusScope contain>
@@ -164,7 +164,7 @@ describe('FocusScope', function () {
 
       act(() => {jest.runAllTimers();});
 
-      expect(document.activeElement).toBe(document.body);
+      expect(document.activeElement).toBe(outside);
     });
 
     describe('focusable first in scope', function () {
