@@ -1184,8 +1184,8 @@ export const FileTriggerDirectories = (props) => {
         <Button>Upload</Button>
       </FileTrigger>
       {files && <ul>
-        {files.map((str, index) => (
-          <li key={index}>{str}</li>
+        {files.map((file, index) => (
+          <li key={index}>{file}</li>
         ))}
       </ul>}
     </>
