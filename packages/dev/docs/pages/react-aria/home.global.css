@@ -99,27 +99,57 @@ pre.medium, pre.small {
     transform: translate(10px, 95px);
   }
 
-  30%, 32% {
+  15%, 16% {
     opacity: 0.15;
     transform: translate(7px, 0);
   }
 
-  32%, 35% {
+  17.2%, 19% {
     opacity: 0.3;
     transform: translate(7px, 0);
   }
 
-  50% {
+  25%, 27% {
     opacity: 0.3;
     transform: translate(7px, 42px);
   }
 
-  70%, 72% {
+  35%, 36% {
     opacity: 0.3;
     transform: translate(7px, 7px);
   }
 
-  72% {
+  37.2% {
+    opacity: 0.15;
+    transform: translate(7px, 7px);
+  }
+
+  50%, 55% {
+    opacity: 0.15;
+    transform: translate(4px, 50px);
+  }
+
+  65%, 66% {
+    opacity: 0.15;
+    transform: translate(7px, 0);
+  }
+
+  67.2%, 69% {
+    opacity: 0.3;
+    transform: translate(7px, 0);
+  }
+
+  75%, 77% {
+    opacity: 0.3;
+    transform: translate(7px, 42px);
+  }
+
+  85%, 86% {
+    opacity: 0.3;
+    transform: translate(7px, 7px);
+  }
+
+  87.2% {
     opacity: 0.15;
     transform: translate(7px, 7px);
   }
@@ -132,19 +162,19 @@ pre.medium, pre.small {
 
 @keyframes switch-animation {
   0%, 16% {
-    @apply ml-4 w-8;
+    @apply ml-6 w-8;
   }
 
   18.5%, 22% {
-    @apply ml-3 w-9;
+    @apply ml-4 w-10;
   }
 
   25%, 30% {
-    @apply ml-4 w-8;
+    @apply ml-6 w-8;
   }
 
   33%, 36.5% {
-    @apply ml-3 w-9;
+    @apply ml-4 w-10;
   }
 
   38.5%, 66% {
@@ -152,7 +182,7 @@ pre.medium, pre.small {
   }
 
   68.5%, 72% {
-    @apply ml-0 w-9;
+    @apply ml-0 w-10;
   }
 
   75%, 80% {
@@ -160,11 +190,11 @@ pre.medium, pre.small {
   }
 
   83%, 86.5% {
-    @apply ml-0 w-9;
+    @apply ml-0 w-10;
   }
 
   88.5%, 100% {
-    @apply ml-4 w-8;
+    @apply ml-6 w-8;
   }
 }
 
