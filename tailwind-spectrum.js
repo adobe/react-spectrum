@@ -2,6 +2,7 @@ let plugin = require('tailwindcss/plugin');
 // let flattenColorPalette = require('tailwindcss/lib/util/flattenColorPalette.js').default;
 
 let colors = {
+  current: 'currentColor',
   white: 'white',
   black: 'black',
   transparent: 'transparent',
@@ -542,7 +543,8 @@ module.exports = {
     preflight: false
   },
   content: [
-    'src/**/*.tsx'
+    'src/**/*.tsx',
+    'stories/**/*.tsx',
   ],
   future: {
     respectDefaultRingColorOpacity: true
