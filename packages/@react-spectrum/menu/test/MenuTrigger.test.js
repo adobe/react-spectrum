@@ -80,12 +80,12 @@ describe('MenuTrigger', function () {
   });
 
   afterEach(() => {
-    jest.runAllTimers();
     onOpenChange.mockClear();
     onOpen.mockClear();
     onClose.mockClear();
     onSelect.mockClear();
     onSelectionChange.mockClear();
+    act(() => jest.runAllTimers());
   });
 
   afterAll(function () {
