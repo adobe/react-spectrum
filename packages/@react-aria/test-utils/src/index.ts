@@ -12,3 +12,5 @@
 
 // TODO update
 export * from './events';
+export * from './testSetup';
+export * from './userEventMaps';

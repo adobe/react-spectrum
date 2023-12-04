@@ -1,6 +1,5 @@
 import {pointerKey} from '@testing-library/user-event/system/pointer/shared';
 
-// TODO: delete the dev test-utils equivalent
 export let pointerMap: pointerKey[] = [
   {name: 'MouseLeft', pointerType: 'mouse', button: 'primary', height: 1, width: 1, pressure: 0.5},
   {name: 'MouseRight', pointerType: 'mouse', button: 'secondary'},

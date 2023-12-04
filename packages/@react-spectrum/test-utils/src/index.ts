@@ -12,10 +12,9 @@
 
 /// <reference types="css-module-types" />
 
-export * from './events';
+export * from '@react-aria/test-utils';
 export * from './testSetup';
 export * from './testSSR';
 export * from './renderOverride';
 export * from './StrictModeWrapper';
 export * from './mockImplementation';
-export * from './userEventMaps';
