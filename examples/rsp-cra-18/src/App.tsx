@@ -10,6 +10,7 @@ import CollectionExamples from './CollectionExamples';
 import DateTimeExamples from './DateTimeExamples';
 import FormExamples from './FormExamples';
 import NavigationExamples from './NavigationExamples';
+import OverlayExamples from './OverlayExamples';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -65,6 +66,7 @@ function App() {
         <DateTimeExamples />
         <FormExamples />
         <NavigationExamples />
+        <OverlayExamples />
       </div>
     </Provider>
   );
