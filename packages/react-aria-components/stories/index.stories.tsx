@@ -1177,7 +1177,7 @@ export const FileTriggerDirectories = (props) => {
         acceptDirectory
         onSelect={(e) => {
           if (e) {
-            let fileList = [...e].map(file => file.webkitRelativePath);
+            let fileList = [...e].map(file => file.webkitRelativePath !== '' ? file.webkitRelativePath : file.name);
             setFiles(fileList);
           }
         }} >
