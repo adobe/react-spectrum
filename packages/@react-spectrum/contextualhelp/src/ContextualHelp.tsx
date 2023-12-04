@@ -32,7 +32,7 @@ function ContextualHelp(props: SpectrumContextualHelpProps, ref: FocusableRef<HT
     ...otherProps
   } = props;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/contextualhelp');
 
   let icon = variant === 'info' ? <InfoOutline /> : <HelpOutline />;
 

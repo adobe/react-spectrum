@@ -1,6 +1,6 @@
 {
   "extends": "@parcel/config-default",
-  "resolvers": ["@parcel/resolver-glob", "..."],
+  "resolvers": ["@parcel/resolver-glob", "parcel-resolver-build", "..."],
   "transformers": {
     "packages/**/intl/*.json": ["parcel-transformer-intl"],
     "bundle-text:*.svg": ["@parcel/transformer-svg", "@parcel/transformer-inline-string"],
@@ -10,6 +10,7 @@
       "@parcel/transformer-react-refresh-wrap"
     ]
   },
+  "namers": ["parcel-namer-intl", "..."],
   "optimizers": {
     "{main,module}.js": ["...", "parcel-optimizer-react-client"]
   }

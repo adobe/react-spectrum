@@ -25,7 +25,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   enableTableNestedRows();
 
   return (
-    <Provider theme={lightTheme} colorScheme={theme} router={{navigate: router.push}}>
+    <Provider theme={lightTheme} colorScheme={theme} router={{navigate: router.push}} locale="en">
       <Grid
         areas={["header", "content"]}
         columns={["1fr"]}

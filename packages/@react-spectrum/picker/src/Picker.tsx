@@ -45,7 +45,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   props = useSlotProps(props, 'picker');
   props = useProviderProps(props);
   props = useFormProps(props);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/picker');
   let {
     autoComplete,
     isDisabled,

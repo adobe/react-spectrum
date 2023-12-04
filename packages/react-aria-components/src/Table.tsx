@@ -909,7 +909,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
   if (!layoutState) {
     throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
   }
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
 
   let {onResizeStart, onResize, onResizeEnd} = useContext(ResizableTableContainerContext)!;
   let {column, triggerRef} = useContext(ColumnResizerContext)!;

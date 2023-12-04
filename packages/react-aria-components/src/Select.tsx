@@ -231,7 +231,7 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
     });
   }
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
 
   let renderProps = useRenderProps({
     ...props,
