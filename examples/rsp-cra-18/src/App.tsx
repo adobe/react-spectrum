@@ -4,7 +4,6 @@ import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
 import {enableTableNestedRows} from '@react-stately/flags';
-import {InlineAlert} from '@react-spectrum/inlinealert'
 import ButtonExamples from './ButtonExamples';
 import CollectionExamples from './CollectionExamples';
 import DateTimeExamples from './DateTimeExamples';
@@ -57,10 +56,6 @@ function App() {
             }
           </TableBody>
         </TableView>
-        <InlineAlert>
-          <Heading>Payment Information</Heading>
-          <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
-        </InlineAlert>
         <ButtonExamples />
         <CollectionExamples />
         <DateTimeExamples />
