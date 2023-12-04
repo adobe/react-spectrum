@@ -8,6 +8,7 @@ import {InlineAlert} from '@react-spectrum/inlinealert'
 import ButtonExamples from './ButtonExamples';
 import CollectionExamples from './CollectionExamples';
 import DateTimeExamples from './DateTimeExamples';
+import FormExamples from './FormExamples';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -58,20 +59,10 @@ function App() {
           <Heading>Payment Information</Heading>
           <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
         </InlineAlert>
-        <Form width="250px">
-          <ComboBox label="Favorite Animal">
-            <Item key="red panda">Red Panda</Item>
-            <Item key="cat">Cat</Item>
-            <Item key="dog">Dog</Item>
-            <Item key="aardvark">Aardvark</Item>
-            <Item key="kangaroo">Kangaroo</Item>
-            <Item key="snake">Snake</Item>
-          </ComboBox>
-          <Button variant="cta">Click Me</Button>
-        </Form>
         <ButtonExamples />
         <CollectionExamples />
         <DateTimeExamples />
+        <FormExamples />
       </div>
     </Provider>
   );
