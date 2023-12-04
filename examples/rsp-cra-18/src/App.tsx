@@ -9,6 +9,7 @@ import ButtonExamples from './ButtonExamples';
 import CollectionExamples from './CollectionExamples';
 import DateTimeExamples from './DateTimeExamples';
 import FormExamples from './FormExamples';
+import NavigationExamples from './NavigationExamples';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -63,6 +64,7 @@ function App() {
         <CollectionExamples />
         <DateTimeExamples />
         <FormExamples />
+        <NavigationExamples />
       </div>
     </Provider>
   );
