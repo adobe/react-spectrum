@@ -339,23 +339,46 @@ import {KanbanBoard} from './home/KanbanExample';
   <a href="interactions.html" className="inline-block mt-6 mb-12 text-xl text-cyan-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
   <div className="grid grid-cols-2 gap-6">
-    <div className="bg-white rounded-2xl p-6 transition card-shadow" id="touch-card">
+    <div className="bg-white rounded-2xl p-6 transition card-shadow overflow-hidden" id="touch-card">
       <h3 className="text-xl font-semibold mb-2">Touch optimized.</h3>
       <p className="text-gray-600">Micro-interactions like touch cancelation, gesture disambiguation, text selection, and scroll locking make your app feel native. Interactions like multi-selection adapt on touch-only devices.</p>
 
-      <div className="flex justify-center pt-10 pb-6 scale-150">
+      <div className="flex justify-center pt-10 pb-6 will-change-transform">
 
 ```tsx snippet
 import { Switch } from "react-aria-components";
 
-<Switch
-  defaultSelected
-  className="group inline-flex touch-none"
-  style={{ WebkitTapHighlightColor: "transparent" }}>
-  <span className="group-data-[selected]:bg-green-500 group-data-[focus-visible]:outline outline-2 outline-blue-600 mr-4 h-6 w-9 rounded-full border-2 border-transparent bg-slate-300 outline-offset-2 transition duration-200">
-    <span className="group-data-[selected]:ml-3 group-data-[selected]:group-data-[pressed]:ml-2 group-data-[pressed]:w-6 block h-5 w-5 origin-right rounded-full bg-white shadow transition-all duration-200" />
-  </span>
-</Switch>
+function SwitchExample() {
+  let ref = React.useRef();
+  let [isAnimating, setAnimating] = React.useState(false);
+
+  React.useEffect(() => {
+    let element = ref.current;
+    let observer = new IntersectionObserver((entries) => {
+    console.log(entries)
+      if (entries[0].isIntersecting) {
+        setAnimating(true);
+      }
+    }, {threshold: 1});
+    observer.observe(element);
+    return () => observer.unobserve(element);
+  }, []);
+
+  return (
+    <>
+      <div className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 opacity-0" style={{animation: isAnimating ? 'touch-animation 6s ease-in-out 2' : null}} />
+      <Switch
+        ref={ref}
+        defaultSelected
+        className="group inline-flex touch-none"
+        style={{ WebkitTapHighlightColor: "transparent" }}>
+        <span className="group-selected:bg-green-500 group-focus-visible:outline outline-2 outline-blue-600 mr-4 h-10 w-14 rounded-full border-4 border-transparent bg-slate-300 outline-offset-2 transition duration-200" style={{animation: isAnimating ? 'switch-background-animation 12s ease-in-out' : null}}>
+          <span className="group-selected:ml-4 group-selected:group-pressed:ml-3 group-pressed:w-9 block h-8 w-8 origin-right rounded-full bg-white shadow transition-all duration-200" style={{animation: isAnimating ? 'switch-animation 12s ease-in-out' : null, contain: 'layout'}} />
+        </span>
+      </Switch>
+    </>
+  );
+}
 ```
 
       </div>
@@ -377,16 +400,16 @@ import { Switch } from "react-aria-components";
       <p className="text-gray-600">Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</p>
     </div>
 
-    <div className="hidden rounded-lg p-6 col-start-3 row-start-1 col-span-2 row-span-2 flex items-center justify-center" style={{background: `url(${useImageUrl(new URL('../assets/iphone-frame.png', import.meta.url).toString())})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}}>
+    {/*<div className="rounded-lg p-6 col-start-3 row-start-1 col-span-2 row-span-2 flex items-center justify-center" style={{background: `url(${useImageUrl(new URL('../assets/iphone-frame.png', import.meta.url).toString())})`, backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center'}}>
       <div id="interactions-root" />
-    </div>
+    </div>*/}
   </div>
 </section>
 
 ```tsx import
-import {Interactions} from './home/Interactions';
+// import {Interactions} from './home/Interactions';
 
-ReactDOM.createRoot(document.getElementById('interactions-root')).render(<Interactions />);
+// ReactDOM.createRoot(document.getElementById('interactions-root')).render(<Interactions />);
 ```
 
 <section className="max-w-6xl mx-auto my-32 px-20">

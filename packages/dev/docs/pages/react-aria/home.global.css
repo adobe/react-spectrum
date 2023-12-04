@@ -92,3 +92,92 @@ pre.medium, pre.small {
 .card-shadow {
   box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 3px 6px rgb(0 0 0 / 4%), 0 4px 8px 0 rgba(0 0 0 / 8%);
 }
+
+@keyframes touch-animation {
+  0% {
+    opacity: 0.15;
+    transform: translate(10px, 95px);
+  }
+
+  30%, 32% {
+    opacity: 0.15;
+    transform: translate(7px, 0);
+  }
+
+  32%, 35% {
+    opacity: 0.3;
+    transform: translate(7px, 0);
+  }
+
+  50% {
+    opacity: 0.3;
+    transform: translate(7px, 42px);
+  }
+
+  70%, 72% {
+    opacity: 0.3;
+    transform: translate(7px, 7px);
+  }
+
+  72% {
+    opacity: 0.15;
+    transform: translate(7px, 7px);
+  }
+
+  100% {
+    opacity: 0.15;
+    transform: translate(10px, 95px);
+  }
+}
+
+@keyframes switch-animation {
+  0%, 16% {
+    @apply ml-4 w-8;
+  }
+
+  18.5%, 22% {
+    @apply ml-3 w-9;
+  }
+
+  25%, 30% {
+    @apply ml-4 w-8;
+  }
+
+  33%, 36.5% {
+    @apply ml-3 w-9;
+  }
+
+  38.5%, 66% {
+    @apply ml-0 w-8;
+  }
+
+  68.5%, 72% {
+    @apply ml-0 w-9;
+  }
+
+  75%, 80% {
+    @apply ml-0 w-8;
+  }
+
+  83%, 86.5% {
+    @apply ml-0 w-9;
+  }
+
+  88.5%, 100% {
+    @apply ml-4 w-8;
+  }
+}
+
+@keyframes switch-background-animation {
+  0%, 36.5% {
+    @apply bg-green-500;
+  }
+
+  38.5%, 86.5% {
+    @apply bg-slate-300;
+  }
+
+  88.5%, 100% {
+    @apply bg-green-500;
+  }
+}
