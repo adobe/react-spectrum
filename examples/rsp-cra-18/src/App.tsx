@@ -6,6 +6,7 @@ import BodyContent from './BodyContent';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {InlineAlert} from '@react-spectrum/inlinealert'
 import ButtonExamples from './ButtonExamples';
+import CollectionExamples from './CollectionExamples';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -68,6 +69,7 @@ function App() {
           <Button variant="cta">Click Me</Button>
         </Form>
         <ButtonExamples />
+        <CollectionExamples />
       </div>
     </Provider>
   );

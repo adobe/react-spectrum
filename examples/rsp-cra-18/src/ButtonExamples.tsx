@@ -9,7 +9,7 @@ export default function ButtonExamples() {
         <div>
           <ActionButton>Edit</ActionButton>
           <Button variant="primary">Primary</Button>
-          <Button variant="secondary">Primary</Button>
+          <Button variant="secondary">Secondary</Button>
           <Button variant="negative" style="fill">Negative fill</Button>
           <Button variant="negative" style="outline">Negative outline</Button>
           <LogicButton variant="and">Logic Button</LogicButton>
