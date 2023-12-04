@@ -5,6 +5,7 @@ import {useState} from 'react'
 import BodyContent from './BodyContent';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {InlineAlert} from '@react-spectrum/inlinealert'
+import ButtonExamples from './ButtonExamples';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -66,6 +67,7 @@ function App() {
           </ComboBox>
           <Button variant="cta">Click Me</Button>
         </Form>
+        <ButtonExamples />
       </div>
     </Provider>
   );
