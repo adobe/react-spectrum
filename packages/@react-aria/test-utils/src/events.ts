@@ -11,11 +11,6 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-
-// TODO: delete the dev/test-utils equivalent
-// try to get rid of triggerPress and triggerTouch entirely from our code base so I can get rid of the
-// file in dev/test-utils
 
 // Triggers a "longPress" event on an element.
 export const DEFAULT_LONG_PRESS_TIME = 500;
@@ -90,24 +85,4 @@ export function installPointerEvent() {
     // @ts-ignore
     delete global.PointerEvent;
   });
-}
-
-/**
- * Must **not** be called inside an `act` callback!
- *
- * \@testing-library/user-event's `type` helper doesn't call `act` every keystroke.
- * But we want to run all event handles after every character.
- * @param el The input element to type into.
- * @param value The text.
- * @deprecated Use `user.keyboard` instead.
- */
-export function typeText(el: HTMLElement, value: string, opts?: any) {
-  let skipClick = document.activeElement === el;
-  for (let char of value) {
-    act(() => {
-      userEvent.type(el, char, {skipClick, ...opts});
-    });
-
-    skipClick = true;
-  }
 }

@@ -20,8 +20,7 @@ import {
   installPointerEvent,
   pointerMap,
   simulateDesktop,
-  triggerLongPress,
-  triggerTouch
+  triggerLongPress
 } from '@react-spectrum/test-utils';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Text} from '@react-spectrum/text';
@@ -81,6 +80,7 @@ describe('MenuTrigger', function () {
   });
 
   afterEach(() => {
+    jest.runAllTimers();
     onOpenChange.mockClear();
     onOpen.mockClear();
     onClose.mockClear();
@@ -828,90 +828,71 @@ describe('MenuTrigger', function () {
 
     it('should open the menu on longPress', async function () {
       const props = {onOpenChange, trigger: 'longPress'};
-      await verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
+      await verifyMenuToggle(MenuTrigger, props, {}, async (button, menu) => {
         expect(button).toHaveAttribute('aria-describedby');
         expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Long press or press Alt + ArrowDown to open menu');
 
         if (!menu) {
           triggerLongPress(button);
         } else {
-          triggerTouch(button);
+          await user.pointer({target: button, keys: '[TouchA]'});
         }
       });
     });
 
-    it('should not open menu on click', function () {
+    it('should not open menu on click', async function () {
       const props = {onOpenChange, trigger: 'longPress'};
       let tree = renderComponent(MenuTrigger, props, {});
       let button = tree.getByRole('button');
 
-      act(() => {
-        triggerTouch(button);
-        setTimeout(() => {
-          expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
-        }, 0, tree, button);
-        jest.runAllTimers();
-      });
+      await user.pointer({target: button, keys: '[TouchA]'});
+      expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
     });
 
-    it(`should not open menu on short press (default threshold set to ${DEFAULT_LONG_PRESS_TIME}ms)`, function () {
+    it(`should not open menu on short press (default threshold set to ${DEFAULT_LONG_PRESS_TIME}ms)`, async function () {
       const props = {onOpenChange, trigger: 'longPress'};
       let tree = renderComponent(MenuTrigger, props, {});
       let button = tree.getByRole('button');
 
-      act(() => {
-        triggerTouch(button);
-        setTimeout(() => {
-          expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
-        }, DEFAULT_LONG_PRESS_TIME / 2, tree, button);
-        jest.runAllTimers();
-      });
+      await user.pointer({target: button, keys: '[TouchA]'});
+      expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
     });
 
-    it('should not open the menu on Enter', function () {
+    it('should not open the menu on Enter', async function () {
       const props = {onOpenChange, trigger: 'longPress'};
       let tree = renderComponent(MenuTrigger, props, {});
       let button = tree.getByRole('button');
-      act(() => {
-        triggerTouch(button);
-        setTimeout(() => {
-          expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
-        }, 0, tree, button);
-        jest.runAllTimers();
-      });
+
+      await user.pointer({target: button, keys: '[TouchA]'});
+      expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
     });
 
-    it('should not open the menu on Space', function () {
+    it('should not open the menu on Space', async function () {
       const props = {onOpenChange, trigger: 'longPress'};
       let tree = renderComponent(MenuTrigger, props, {});
       let button = tree.getByRole('button');
-      act(() => {
-        triggerTouch(button);
-        setTimeout(() => {
-          expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
-        }, 0, tree, button);
-        jest.runAllTimers();
-      });
+      await user.pointer({target: button, keys: '[TouchA]'});
+      expect(getMenuOrThrow).toThrowError(ERROR_MENU_NOT_FOUND);
     });
 
     it('should open the menu on Alt+ArrowUp', async function () {
       const props = {onOpenChange, trigger: 'longPress'};
-      await verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
+      await verifyMenuToggle(MenuTrigger, props, {}, async (button, menu) => {
         if (!menu) {
           fireEvent.keyDown(button, {key: 'ArrowUp', altKey: true});
         } else {
-          triggerTouch(button);
+          await user.pointer({target: button, keys: '[TouchA]'});;
         }
       });
     });
 
     it('should open the menu on Alt+ArrowDown', async function () {
       const props = {onOpenChange, trigger: 'longPress'};
-      await verifyMenuToggle(MenuTrigger, props, {}, (button, menu) => {
+      await verifyMenuToggle(MenuTrigger, props, {}, async (button, menu) => {
         if (!menu) {
           fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
         } else {
-          triggerTouch(button);
+          await user.pointer({target: button, keys: '[TouchA]'});;
         }
       });
     });
@@ -929,7 +910,7 @@ describe('MenuTrigger', function () {
       return menu;
     }
 
-    it('should focus the selected item on menu open', function () {
+    it('should focus the selected item on menu open', async function () {
       let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {selectedKeys: ['Bar']});
       let button = tree.getByRole('button');
       act(() => {
@@ -937,8 +918,8 @@ describe('MenuTrigger', function () {
         jest.runAllTimers();
       });
       let menu = expectMenuItemToBeActive(tree, 1);
+      await user.pointer({target: button, keys: '[TouchA]'});
       act(() => {
-        triggerTouch(button);
         jest.runAllTimers();
       });
       expect(menu).not.toBeInTheDocument();
@@ -946,9 +927,8 @@ describe('MenuTrigger', function () {
       // Opening menu via Alt+ArrowUp still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowUp', altKey: true});
       menu = expectMenuItemToBeActive(tree, 1);
-
+      await user.pointer({target: button, keys: '[TouchA]'});
       act(() => {
-        triggerTouch(button);
         jest.runAllTimers();
       });
       expect(menu).not.toBeInTheDocument();
@@ -956,9 +936,8 @@ describe('MenuTrigger', function () {
       // Opening menu via Alt+ArrowDown still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
       menu = expectMenuItemToBeActive(tree, 1);
-
+      await user.pointer({target: button, keys: '[TouchA]'});
       act(() => {
-        triggerTouch(button);
         jest.runAllTimers();
       });
       expect(menu).not.toBeInTheDocument();

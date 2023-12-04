@@ -11,14 +11,6 @@
  */
 
 import {act, fireEvent} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-
-// TODO: try to get rid of this in favor of user event
-// Triggers a "touch" event on an element.
-export function triggerTouch(element, opts = {}) {
-  fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
-  fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
-}
 
 // TODO: expose from aria testing package, and re-export from this package?
 // Triggers a "longPress" event on an element.
@@ -30,26 +22,4 @@ export function triggerLongPress(element, opts = {}) {
     jest.advanceTimersByTime(DEFAULT_LONG_PRESS_TIME);
   });
   fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
-}
-
-
-// TODO: expose from aria testing package, and re-export from this package?
-/**
- * Must **not** be called inside an `act` callback!
- *
- * \@testing-library/user-event's `type` helper doesn't call `act` every keystroke.
- * But we want to run all event handles after every character.
- * @param el The input element to type into.
- * @param value The text.
- * @deprecated Use `user.keyboard` instead.
- */
-export function typeText(el: HTMLElement, value: string, opts?: any) {
-  let skipClick = document.activeElement === el;
-  for (let char of value) {
-    act(() => {
-      userEvent.type(el, char, {skipClick, ...opts});
-    });
-
-    skipClick = true;
-  }
 }
