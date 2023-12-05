@@ -49,7 +49,7 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
 
 
   let stepStateText = '';
-  const stringFormatter = useLocalizedStringFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/steplist');
   const numberFormatter = useNumberFormatter();
 
   if (isSelected) {

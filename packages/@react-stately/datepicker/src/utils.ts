@@ -43,7 +43,8 @@ export function getValidationResult(
 
   if (isInvalid) {
     let locale = getLocale();
-    let formatter = new LocalizedStringFormatter(locale, dictionary);
+    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/datepicker') || dictionary;
+    let formatter = new LocalizedStringFormatter(locale, strings);
     let dateFormatter = new DateFormatter(locale, getFormatOptions({}, options));
     let timeZone = dateFormatter.resolvedOptions().timeZone;
 
