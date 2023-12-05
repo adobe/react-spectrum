@@ -93,6 +93,10 @@ pre.medium, pre.small {
   box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 3px 6px rgb(0 0 0 / 4%), 0 4px 8px 0 rgba(0 0 0 / 8%);
 }
 
+.edge-mask {
+  mask-image: linear-gradient(to right, transparent, white 8px calc(100% - 8px), transparent);
+}
+
 @keyframes touch-animation {
   0% {
     opacity: 0.15;

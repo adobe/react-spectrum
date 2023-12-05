@@ -1,20 +1,20 @@
 import React from 'react';
 import {
-  Tabs,
-  TabList,
-  Tab,
-  TabPanel,
   Collection,
-  MenuTrigger,
+  Group,
   Menu,
-  MenuItemProps,
   MenuItem,
+  MenuItemProps,
+  MenuTrigger,
   Separator,
-  Group
-} from "react-aria-components";
-import { motion, animate, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
-import { useCallback, useEffect, useRef, useState } from "react";
-import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
+  Tab,
+  TabList,
+  TabPanel,
+  Tabs
+} from 'react-aria-components';
+import {animate, motion, useMotionValueEvent, useScroll, useTransform} from 'framer-motion';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {Button, ComboBox, Input, Label, ListBox, ListBoxItem, Popover} from 'react-aria-components';
 import {CheckIcon, ChevronDown, ChevronsUpDownIcon} from 'lucide-react';
 
 export function Styles() {
@@ -22,8 +22,8 @@ export function Styles() {
     <AnimatedTabs
       tabs={[
         {
-          id: "css",
-          label: "Vanilla CSS",
+          id: 'css',
+          label: 'Vanilla CSS',
           content: <div className="relative flex flex-col gap-4">
             <Window
               className="h-fit"
@@ -68,8 +68,8 @@ export function Styles() {
           </div>
         },
         {
-          id: "tailwind",
-          label: "Tailwind",
+          id: 'tailwind',
+          label: 'Tailwind',
           content: <div className="flex flex-col lg:flex-row gap-4">
             <Window className="flex-1" isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
@@ -90,7 +90,7 @@ export function Styles() {
                         <ListBoxItem
                           textValue={item.name}
                           className="group flex items-center gap-2 cursor-default select-none py-1.5 px-2 outline-none rounded text-gray-900 text-sm focus:bg-sky-600 focus:text-white">
-                          {({ isSelected }) => <>
+                          {({isSelected}) => (<>
                             <span className="flex-1 flex items-center gap-3 truncate font-normal group-selected:font-medium">
                               <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
                               <span className="truncate">{item.name}</span>
@@ -100,7 +100,7 @@ export function Styles() {
                                 <CheckIcon className="w-4 h-4" />
                               </span>
                             }
-                          </>}
+                          </>)}
                         </ListBoxItem>
                       )}
                     </ListBox>
@@ -111,8 +111,8 @@ export function Styles() {
           </div>
         },
         {
-          id: "styled-components",
-          label: "Styled Components",
+          id: 'styled-components',
+          label: 'Styled Components',
           content: <div className="grid grid-cols-2 gap-4">
             <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styled-components')!.innerHTML}} />
@@ -124,7 +124,7 @@ export function Styles() {
             </Window>
           </div>
         },
-        { id: "vanilla-extract", label: "Vanilla Extract" }
+        {id: 'vanilla-extract', label: 'Vanilla Extract'}
       ]} />
   );
 }
@@ -135,9 +135,9 @@ function Window({children, className = '', isBackground = false, toolbar}) {
       <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-gray-300 flex flex-row px-3 pt-2.5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
         {toolbar}
         <div className="absolute flex flex-row left-4 top-3.5">
-          <div className={`${isBackground ? 'bg-gray-300' : 'bg-red-500'} h-3 mr-2 rounded-full w-3`}></div>
-          <div className={`${isBackground ? 'bg-gray-300' : 'bg-yellow-500'} h-3 mr-2 rounded-full w-3`}></div>
-          <div className={`${isBackground ? 'bg-gray-300' : 'bg-green-500'} h-3 rounded-full w-3`}></div>
+          <div className={`${isBackground ? 'bg-gray-300' : 'bg-red-500'} border border-black/5 h-3 mr-2 rounded-full w-3`} />
+          <div className={`${isBackground ? 'bg-gray-300' : 'bg-yellow-500'} border border-black/5 h-3 mr-2 rounded-full w-3`} />
+          <div className={`${isBackground ? 'bg-gray-300' : 'bg-green-500'} border border-black/5 h-3 rounded-full w-3`} />
         </div>
       </div>
       {children}
@@ -146,7 +146,7 @@ function Window({children, className = '', isBackground = false, toolbar}) {
 }
 
 function FileTab({children, className = ''}) {
-  return <div className={`${className} w-fit border border-gray-300 border-b-gray-50 bg-gray-50 -mb-px rounded-t-md px-3 py-1.5 text-xs text-gray-500 first:ml-20 only:ml-0`}>{children}</div>
+  return <div className={`${className} w-fit border border-gray-300 border-b-gray-50 bg-gray-50 -mb-px rounded-t-md px-3 py-1.5 text-xs text-gray-500 first:ml-20 only:ml-0`}>{children}</div>;
 }
 
 function AddressBar({children}) {
@@ -160,7 +160,7 @@ function AnimatedTabs({tabs}) {
   let tabPanelsRef = useRef(null);
 
   // Track the scroll position of the tab panel container.
-  let { scrollXProgress } = useScroll({
+  let {scrollXProgress} = useScroll({
     container: tabPanelsRef
   });
 
@@ -168,7 +168,7 @@ function AnimatedTabs({tabs}) {
   let [tabElements, setTabElements] = useState([]);
   useEffect(() => {
     if (tabElements.length === 0) {
-      let tabs = tabListRef.current!.querySelectorAll("[role=tab]");
+      let tabs = tabListRef.current!.querySelectorAll('[role=tab]');
       setTabElements(tabs);
     }
   }, [tabElements]);
@@ -183,7 +183,7 @@ function AnimatedTabs({tabs}) {
   // This function transforms the scroll position into the X position
   // or width of the selected tab indicator.
   let transform = (x, property) => {
-    if (!tabElements.length) return 0;
+    if (!tabElements.length) {return 0;}
 
     // Find the tab index for the scroll X position.
     let index = getIndex(x);
@@ -205,13 +205,13 @@ function AnimatedTabs({tabs}) {
     return value || 0.1;
   };
 
-  let x = useTransform(scrollXProgress, (x) => transform(x, "offsetLeft"));
-  let width = useTransform(scrollXProgress, (x) => transform(x, "offsetWidth"));
+  let x = useTransform(scrollXProgress, (x) => transform(x, 'offsetLeft'));
+  let width = useTransform(scrollXProgress, (x) => transform(x, 'offsetWidth'));
 
   // When the user scrolls, update the selected key
   // so that the correct tab panel becomes interactive.
-  useMotionValueEvent(scrollXProgress, "change", (x) => {
-    if (animationRef.current || !tabElements.length) return;
+  useMotionValueEvent(scrollXProgress, 'change', (x) => {
+    if (animationRef.current || !tabElements.length) {return;}
     setSelectedKey(tabs[getIndex(x)].id);
   });
 
@@ -234,7 +234,7 @@ function AnimatedTabs({tabs}) {
       tabPanel.scrollLeft,
       tabPanel.scrollWidth * (index / tabs.length),
       {
-        type: "spring",
+        type: 'spring',
         bounce: 0.2,
         duration: 0.6,
         onUpdate: (v) => {
@@ -242,10 +242,10 @@ function AnimatedTabs({tabs}) {
         },
         onPlay: () => {
           // Disable scroll snap while the animation is going or weird things happen.
-          tabPanel.style.scrollSnapType = "none";
+          tabPanel.style.scrollSnapType = 'none';
         },
         onComplete: () => {
-          tabPanel.style.scrollSnapType = "";
+          tabPanel.style.scrollSnapType = '';
           animationRef.current = null;
         }
       }
@@ -260,31 +260,27 @@ function AnimatedTabs({tabs}) {
       <div className="relative">
         <TabList ref={tabListRef} className="flex" items={tabs}>
           {(tab) =>
-            <Tab className="cursor-default px-3 py-1.5 text-md transition outline-none touch-none">
-              {({ isSelected, isFocusVisible }) => <>
+            (<Tab className="cursor-default px-3 py-1.5 text-md transition outline-none touch-none">
+              {({isSelected, isFocusVisible}) => (<>
                 {tab.label}
                 {isFocusVisible && isSelected && (
                   // Focus ring.
                   <motion.span
                     className="absolute inset-0 z-10 rounded-full ring-2 ring-black ring-offset-2"
-                    style={{ x, width }}
-                  />
+                    style={{x, width}} />
                 )}
-              </>}
-            </Tab>
+              </>)}
+            </Tab>)
           }
         </TabList>
         {/* Selection indicator. */}
         <motion.span
           className="absolute inset-0 z-10 bg-white rounded-full mix-blend-difference"
-          style={{ x, width }} />
+          style={{x, width}} />
       </div>
       <div
         ref={tabPanelsRef}
-        className="pt-10 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex"
-        style={{
-          maskImage: 'linear-gradient(to right, transparent, white 8px calc(100% - 8px), transparent)'
-        }}>
+        className="pt-10 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex edge-mask">
         <Collection items={tabs}>
           {(tab) => (
             <TabPanel
@@ -303,50 +299,50 @@ const people = [
   {
     id: 1,
     avatar:
-      "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    name: "Gilberto Miguel",
-    username: "@gilberto_miguel"
+      'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    name: 'Gilberto Miguel',
+    username: '@gilberto_miguel'
   },
   {
     id: 2,
     avatar:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    name: "Maia Pettegree",
-    username: "@mpettegree"
+      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    name: 'Maia Pettegree',
+    username: '@mpettegree'
   },
   {
     id: 3,
     avatar:
-      "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    name: "Wade Redington",
-    username: "@redington"
+      'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    name: 'Wade Redington',
+    username: '@redington'
   },
   {
     id: 4,
     avatar:
-      "https://images.unsplash.com/photo-1528763380143-65b3ac89a3ff?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    name: "Kurtis Gurrado",
-    username: "@kurtis"
+      'https://images.unsplash.com/photo-1528763380143-65b3ac89a3ff?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    name: 'Kurtis Gurrado',
+    username: '@kurtis'
   },
   {
     id: 5,
     avatar:
-      "https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    name: "Sonja Balmann",
-    username: "@sbalmann"
+      'https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    name: 'Sonja Balmann',
+    username: '@sbalmann'
   },
   {
     id: 6,
     avatar:
-      "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    name: "Brent Mickelwright",
-    username: "@brent_m"
+      'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    name: 'Brent Mickelwright',
+    username: '@brent_m'
   },
   {
     id: 7,
     avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
-    name: "Charles Webb",
-    username: "@cwebb"
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80',
+    name: 'Charles Webb',
+    username: '@cwebb'
   }
 ];
