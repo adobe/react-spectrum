@@ -101,7 +101,7 @@ export function KanbanBoard() {
   });
 
   return (
-    <div className="flex justify-center gap-4">
+    <div className="grid grid-cols-[repeat(3,minmax(280px,1fr))] md:justify-center gap-4 -mx-8 px-8 py-8 overflow-auto relative snap-x snap-mandatory no-scrollbar">
       <Column status="Open" list={list} itemClassName="selected:bg-green-100 selected:border-green-500" />
       <Column status="In Progress" list={list} itemClassName="selected:bg-blue-100 selected:border-blue-500" />
       <Column status="Closed" list={list} itemClassName="selected:bg-red-100 selected:border-red-500" />
@@ -123,7 +123,7 @@ function Column({list, status, itemClassName}) {
 
     renderDropIndicator(target) {
       return (
-        <DropIndicator target={target} className="-my-[11px] -mx-[8px] invisible drop-target:visible">
+        <DropIndicator target={target} className="h-0 -my-1.5 -translate-y-[5px] -mx-2 invisible drop-target:visible">
           <svg height={10} className="w-full">
             <circle cx={5} cy={5} r={5-1} strokeWidth={2} className="stroke-blue-500 fill-none" />
             <line x1={20} x2="100%" transform="translate(-10 0)" y1={5} y2={5} strokeWidth={2} className="stroke-blue-500" />
@@ -175,7 +175,7 @@ function Column({list, status, itemClassName}) {
   });
 
   return (
-    <section className="flex flex-col gap-2">
+    <section className="flex flex-col gap-2 snap-center">
       <header>
         <h3 className="font-semibold text-white my-0">{status}</h3>
         <span className="text-sm text-white">{items.length} {items.length === 1 ? 'task' : 'tasks'}</span>
@@ -186,7 +186,7 @@ function Column({list, status, itemClassName}) {
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
         renderEmptyState={() => 'No tasks.'}
-        className="flex-1 w-70 max-h-[320px] p-4 overflow-y-auto overflow-x-hidden outline-none bg-white/70 backdrop-blur border border-black/10 bg-clip-padding text-gray-700 flex flex-col gap-3 rounded-xl shadow-xl drop-target:bg-blue-200 drop-target:ring-2 empty:items-center empty:justify-center ring-inset ring-blue-500">
+        className="h-[320px] p-2 md:p-4 overflow-y-auto overflow-x-hidden relative outline-none bg-white/70 backdrop-blur border border-black/10 bg-clip-padding text-gray-700 flex flex-col gap-3 rounded-xl shadow-xl drop-target:bg-blue-200 drop-target:ring-2 empty:items-center empty:justify-center ring-inset ring-blue-500">
         {item => <Card item={item} className={itemClassName} />}
       </GridList>
     </section>

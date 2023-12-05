@@ -124,7 +124,7 @@ export function I18n() {
   }
 
   return (
-    <div className="flex items-start gap-6 mt-10">
+    <div className="flex items-start flex-col md:flex-row gap-6 mt-10">
       <div className="flex flex-col flex-wrap gap-4">
         <Select label="Locale" items={locales} selectedKey={locale} onSelectionChange={updateLocale}>
           {item => <SelectItem id={item.value}>{item.label}</SelectItem>}

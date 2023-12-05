@@ -32,6 +32,20 @@ body {
   background: white;
 }
 
+@media (min-resolution: 200dpi) {
+  html {
+    font-size: 18px;
+  }
+
+  .text-sm {
+    font-size: 0.9rem;
+  }
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 h1 {
   @apply text-8xl font-bold mb-6;
 
@@ -41,10 +55,10 @@ h1 {
 }
 
 main > section > h2 {
-  @apply text-5xl font-semibold mb-4;
+  @apply text-4xl md:text-5xl font-semibold mb-4;
 
   + p {
-    @apply text-2xl max-w-5xl;
+    @apply text-lg md:text-2xl max-w-5xl;
     text-wrap: balance;
   }
 }

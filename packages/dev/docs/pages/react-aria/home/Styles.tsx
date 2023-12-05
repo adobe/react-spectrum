@@ -150,7 +150,7 @@ function FileTab({children, className = ''}) {
 }
 
 function AddressBar({children}) {
-  return <div className="bg-gray-400/40 dark:bg-gray-700 px-10 py-1 mx-auto mb-2.5 rounded-md text-slate-500 text-xs">{children}</div>;
+  return <div className="bg-gray-400/40 dark:bg-gray-700 px-5 md:px-10 py-1 mx-auto mb-2.5 rounded-md text-slate-500 text-xs">{children}</div>;
 }
 
 function AnimatedTabs({tabs}) {
@@ -254,13 +254,13 @@ function AnimatedTabs({tabs}) {
 
   return (
     <Tabs
-      className="-mx-2"
+      className="-mx-8 md:-mx-2"
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}>
-      <div className="relative">
-        <TabList ref={tabListRef} className="flex" items={tabs}>
+      <div className="relative overflow-auto no-scrollbar">
+        <TabList ref={tabListRef} className="flex px-2 md:px-0" items={tabs}>
           {(tab) =>
-            (<Tab className="cursor-default px-3 py-1.5 text-md transition outline-none touch-none">
+            (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-md transition outline-none touch-none">
               {({isSelected, isFocusVisible}) => (<>
                 {tab.label}
                 {isFocusVisible && isSelected && (
@@ -280,7 +280,7 @@ function AnimatedTabs({tabs}) {
       </div>
       <div
         ref={tabPanelsRef}
-        className="pt-10 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex edge-mask">
+        className="pt-10 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex md:edge-mask">
         <Collection items={tabs}>
           {(tab) => (
             <TabPanel

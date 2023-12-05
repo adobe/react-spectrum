@@ -5,7 +5,7 @@ export function Modal(props: ModalOverlayProps) {
     <ModalOverlay
       {...props}
       className={({ isEntering, isExiting }) => `
-      fixed inset-0 isolate z-20 bg-black/[15%] flex min-h-full items-center justify-center p-4 text-center backdrop-blur-lg
+      fixed top-0 left-0 w-full h-[--visual-viewport-height] isolate z-20 bg-black/[15%] flex items-center justify-center p-4 text-center backdrop-blur-lg
       ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
       ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
     `}>

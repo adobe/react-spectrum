@@ -460,13 +460,13 @@ function PlantModal(props: ModalOverlayProps) {
     <ModalOverlay
       {...props}
       className={({ isEntering, isExiting }) => `
-      fixed inset-0 isolate z-20 bg-black/[15%] flex min-h-full items-center justify-center p-4 text-center backdrop-blur-lg
+      fixed top-0 left-0 w-full h-[--visual-viewport-height] isolate z-20 bg-black/[15%] flex items-center justify-center p-4 text-center backdrop-blur-lg
       ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
       ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
     `}>
       {({isEntering, isExiting}) => <>
         {!isResized &&
-          <div data-react-aria-top-layer="true" className={`fixed inset-0 z-30 flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)]
+          <div data-react-aria-top-layer="true" className={`fixed top-0 left-0 w-full h-[--visual-viewport-height] z-30 flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)]
             ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
             ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}`}>
             <svg viewBox="0 0 700 620" width={700} height={620}>

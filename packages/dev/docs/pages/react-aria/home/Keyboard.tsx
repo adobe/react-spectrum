@@ -2,7 +2,7 @@ import React from 'react';
 
 export function Keyboard() {
   return (
-    <svg className="col-span-2" viewBox="0 0 191 81" fill="none" aria-hidden="true" id="keyboard">
+    <svg className="flex-1" viewBox="0 0 191 81" fill="none" aria-hidden="true" id="keyboard">
       <g>
         <style>
           {
