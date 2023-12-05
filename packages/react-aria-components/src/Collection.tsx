@@ -150,6 +150,10 @@ class BaseNode<T> {
     this.ownerDocument.markDirty(this);
   }
 
+  get isConnected() {
+    return this.parentNode?.isConnected || false;
+  }
+
   appendChild(child: ElementNode<T>) {
     this.ownerDocument.startTransaction();
     if (child.parentNode) {
@@ -515,6 +519,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     this.collectionMutated = true;
   }
 
+  get isConnected() {
+    return true;
+  }
+
   createElement(type: string) {
     return new ElementNode(type, this);
   }
@@ -590,7 +598,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   updateCollection() {
     for (let element of this.dirtyNodes) {
-      if (element instanceof ElementNode && element.parentNode) {
+      if (element instanceof ElementNode && element.isConnected) {
         element.updateNode();
       }
     }
@@ -600,7 +608,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     if (this.mutatedNodes.size) {
       let collection = this.getMutableCollection();
       for (let element of this.mutatedNodes) {
-        if (element.parentNode) {
+        if (element.isConnected) {
           collection.addNode(element.node);
         }
       }
