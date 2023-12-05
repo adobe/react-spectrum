@@ -622,20 +622,20 @@ describe('FocusScope', function () {
       ${false} | ${true}
       ${true}  | ${true}
     `('contain=$contain, isPortaled=$isPortaled should restore focus to previous nodeToRestore when the nodeToRestore for the unmounting scope in no longer in the DOM',
-    function ({contain, isPortaled}) {
+    async function ({contain, isPortaled}) {
       expect(focusScopeTree.size).toBe(1);
       let {getAllByText, getAllByRole} = render(<StorybookExample contain={contain} isPortaled={isPortaled} />);
       expect(focusScopeTree.size).toBe(1);
       act(() => {getAllByText('Open dialog')[0].focus();});
-      fireEvent.click(document.activeElement);
+      await user.click(document.activeElement);
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(getAllByRole('textbox')[2]);
       act(() => {getAllByText('Open dialog')[1].focus();});
-      fireEvent.click(document.activeElement);
+      await user.click(document.activeElement);
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(getAllByRole('textbox')[5]);
       act(() => {getAllByText('Open dialog')[2].focus();});
-      fireEvent.click(document.activeElement);
+      await user.click(document.activeElement);
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(getAllByRole('textbox')[8]);
       expect(focusScopeTree.size).toBe(4);
@@ -643,14 +643,14 @@ describe('FocusScope', function () {
         act(() => {
           getAllByText('close')[1].focus();
         });
-        fireEvent.click(document.activeElement);
+        await user.click(document.activeElement);
       } else {
         fireEvent.click(getAllByText('close')[1]);
       }
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(getAllByText('Open dialog')[1]);
       act(() => {getAllByText('close')[0].focus();});
-      fireEvent.click(document.activeElement);
+      await user.click(document.activeElement);
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(getAllByText('Open dialog')[0]);
       expect(focusScopeTree.size).toBe(1);
@@ -688,13 +688,13 @@ describe('FocusScope', function () {
         let item1 = getByTestId('item1');
         let item2 = getByTestId('item2');
         expect(document.activeElement).toBe(tabbable1);
-        fireEvent.click(tabbable1);
+        await user.click(tabbable1);
         expect(tabbable1).not.toBeInTheDocument();
         await waitFor(() => expect(document.activeElement).toBe(item1));
-        fireEvent.click(item1);
+        await user.click(item1);
         expect(item1).not.toBeInTheDocument();
         await waitFor(() => expect(document.activeElement).toBe(item2));
-        fireEvent.click(item2);
+        await user.click(item2);
         expect(item2).not.toBeInTheDocument();
         await waitFor(() => expect(document.activeElement).toBe(focusable));
       });
@@ -798,7 +798,7 @@ describe('FocusScope', function () {
   });
 
   describe('focus manager', function () {
-    it('should move focus forward', function () {
+    it('should move focus forward', async function () {
       function Test() {
         return (
           <FocusScope>
@@ -825,17 +825,17 @@ describe('FocusScope', function () {
 
       act(() => {item1.focus();});
 
-      fireEvent.click(item1);
+      await user.click(item1);
       expect(document.activeElement).toBe(item2);
 
-      fireEvent.click(item2);
+      await user.click(item2);
       expect(document.activeElement).toBe(item3);
 
-      fireEvent.click(item3);
+      await user.click(item3);
       expect(document.activeElement).toBe(item3);
     });
 
-    it('should move focus forward and wrap around', function () {
+    it('should move focus forward and wrap around', async function () {
       function Test() {
         return (
           <FocusScope>
@@ -862,17 +862,17 @@ describe('FocusScope', function () {
 
       act(() => {item1.focus();});
 
-      fireEvent.click(item1);
+      await user.click(item1);
       expect(document.activeElement).toBe(item2);
 
-      fireEvent.click(item2);
+      await user.click(item2);
       expect(document.activeElement).toBe(item3);
 
-      fireEvent.click(item3);
+      await user.click(item3);
       expect(document.activeElement).toBe(item1);
     });
 
-    it('should move focus forward but only to tabbable elements', function () {
+    it('should move focus forward but only to tabbable elements', async function () {
       function Test() {
         return (
           <FocusScope>
@@ -901,7 +901,7 @@ describe('FocusScope', function () {
 
       act(() => {item1.focus();});
 
-      fireEvent.click(item1);
+      await user.click(item1);
       expect(document.activeElement).toBe(item3);
     });
 
@@ -949,7 +949,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(item2);
     });
 
-    it('should move focus forward and allow users to skip certain elements', function () {
+    it('should move focus forward and allow users to skip certain elements', async function () {
       function Test() {
         return (
           <FocusScope>
@@ -978,14 +978,14 @@ describe('FocusScope', function () {
 
       act(() => {item1.focus();});
 
-      fireEvent.click(item1);
+      await user.click(item1);
       expect(document.activeElement).toBe(item3);
 
-      fireEvent.click(item3);
+      await user.click(item3);
       expect(document.activeElement).toBe(item1);
     });
 
-    it('should move focus backward', function () {
+    it('should move focus backward', async function () {
       function Test() {
         return (
           <FocusScope>
@@ -1012,17 +1012,17 @@ describe('FocusScope', function () {
 
       act(() => {item3.focus();});
 
-      fireEvent.click(item3);
+      await user.click(item3);
       expect(document.activeElement).toBe(item2);
 
-      fireEvent.click(item2);
+      await user.click(item2);
       expect(document.activeElement).toBe(item1);
 
-      fireEvent.click(item1);
+      await user.click(item1);
       expect(document.activeElement).toBe(item1);
     });
 
-    it('should move focus backward and wrap around', function () {
+    it('should move focus backward and wrap around', async function () {
       function Test() {
         return (
           <FocusScope>
@@ -1049,17 +1049,17 @@ describe('FocusScope', function () {
 
       act(() => {item3.focus();});
 
-      fireEvent.click(item3);
+      await user.click(item3);
       expect(document.activeElement).toBe(item2);
 
-      fireEvent.click(item2);
+      await user.click(item2);
       expect(document.activeElement).toBe(item1);
 
-      fireEvent.click(item1);
+      await user.click(item1);
       expect(document.activeElement).toBe(item3);
     });
 
-    it('should move focus backward but only to tabbable elements', function () {
+    it('should move focus backward but only to tabbable elements', async function () {
       function Test() {
         return (
           <FocusScope>
@@ -1088,7 +1088,7 @@ describe('FocusScope', function () {
 
       act(() => {item3.focus();});
 
-      fireEvent.click(item3);
+      await user.click(item3);
       expect(document.activeElement).toBe(item1);
     });
 
@@ -1138,7 +1138,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(item1);
     });
 
-    it('should move focus backward and allow users to skip certain elements', function () {
+    it('should move focus backward and allow users to skip certain elements', async function () {
       function Test() {
         return (
           <FocusScope>
@@ -1167,10 +1167,10 @@ describe('FocusScope', function () {
 
       act(() => {item1.focus();});
 
-      fireEvent.click(item1);
+      await user.click(item1);
       expect(document.activeElement).toBe(item3);
 
-      fireEvent.click(item3);
+      await user.click(item3);
       expect(document.activeElement).toBe(item1);
     });
   });
@@ -1581,16 +1581,14 @@ describe('FocusScope', function () {
       await user.tab();
       expect(document.activeElement.textContent).toBe('Open Menu');
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+await user.keyboard('[Enter]');
       act(() => {
         jest.runAllTimers();
       });
 
       expect(document.activeElement.textContent).toBe('Open Dialog');
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+await user.keyboard('[Enter]');
 
       // Needed for onBlur raf in useFocusContainment
       act(() => {
@@ -1603,8 +1601,7 @@ describe('FocusScope', function () {
 
       expect(document.activeElement.textContent).toBe('Close');
 
-      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+await user.keyboard('[Enter]');
       act(() => {
         jest.runAllTimers();
       });

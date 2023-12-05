@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, simulateMobile, waitFor} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, simulateMobile, waitFor} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -48,9 +48,7 @@ describe('watchModals', () => {
     expect(queryByRole('separator')).toBeNull();
 
     expect(document.activeElement).toBe(modal);
-
-    fireEvent.keyDown(modal, {key: 'Escape'});
-    fireEvent.keyUp(modal, {key: 'Escape'});
+    await user.keyboard('{Escape}');
 
     act(() => {
       jest.runAllTimers();
@@ -137,8 +135,8 @@ describe('watchModals', () => {
     expect(queryByRole('separator')).toBeNull();
 
     // start closing dialogs
-    fireEvent.keyDown(innerDialog, {key: 'Escape'});
-    fireEvent.keyUp(innerDialog, {key: 'Escape'});
+    await user.keyboard('{Escape}');
+
     act(() => {
       jest.runAllTimers();
     });
@@ -153,8 +151,7 @@ describe('watchModals', () => {
     expect(queryByRole('separator')).toBeNull();
 
     // close the outer dialog
-    fireEvent.keyDown(dialog, {key: 'Escape'});
-    fireEvent.keyUp(dialog, {key: 'Escape'});
+    await user.keyboard('{Escape}');
     act(() => {
       jest.runAllTimers();
     });
