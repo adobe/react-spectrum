@@ -881,7 +881,7 @@ describe('MenuTrigger', function () {
         if (!menu) {
           fireEvent.keyDown(button, {key: 'ArrowUp', altKey: true});
         } else {
-          await user.pointer({target: button, keys: '[TouchA]'});;
+          await user.pointer({target: button, keys: '[TouchA]'});
         }
       });
     });
@@ -892,7 +892,7 @@ describe('MenuTrigger', function () {
         if (!menu) {
           fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
         } else {
-          await user.pointer({target: button, keys: '[TouchA]'});;
+          await user.pointer({target: button, keys: '[TouchA]'});
         }
       });
     });

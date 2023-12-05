@@ -1581,14 +1581,14 @@ describe('FocusScope', function () {
       await user.tab();
       expect(document.activeElement.textContent).toBe('Open Menu');
 
-await user.keyboard('[Enter]');
+      await user.keyboard('[Enter]');
       act(() => {
         jest.runAllTimers();
       });
 
       expect(document.activeElement.textContent).toBe('Open Dialog');
 
-await user.keyboard('[Enter]');
+      await user.keyboard('[Enter]');
 
       // Needed for onBlur raf in useFocusContainment
       act(() => {
@@ -1601,7 +1601,7 @@ await user.keyboard('[Enter]');
 
       expect(document.activeElement.textContent).toBe('Close');
 
-await user.keyboard('[Enter]');
+      await user.keyboard('[Enter]');
       act(() => {
         jest.runAllTimers();
       });
