@@ -641,21 +641,22 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
   /** The contents of the collection. */
-  children?: ReactNode | ((item: T) => ReactNode)
+  children?: ReactNode | ((item: T) => ReactNode),
+  /** Values that should invalidate the item cache when using dynamic collections. */
+  dependencies?: any[]
 }
 
 interface CachedChildrenOptions<T> extends CollectionProps<T> {
   idScope?: Key,
   addIdAndValue?: boolean,
-  value?: any
+  dependencies?: any[]
 }
 
 export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>): ReactNode {
-  let {children, items, idScope, addIdAndValue, value} = props;
+  let {children, items, idScope, addIdAndValue, dependencies = []} = props;
 
   // Invalidate the cache whenever the parent value changes.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  let cache = useMemo(() => new WeakMap(), [value]);
+  let cache = useMemo(() => new WeakMap(), dependencies);
   return useMemo(() => {
     if (items && typeof children === 'function') {
       let res: ReactElement[] = [];
@@ -892,7 +893,9 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
   /** The object value that this section represents. When using dynamic collections, this is set automatically. */
   value?: T,
   /** Static child items or a function to render children. */
-  children?: ReactNode | ((item: T) => ReactElement)
+  children?: ReactNode | ((item: T) => ReactElement),
+  /** Values that should invalidate the column cache when using dynamic collections. */
+  dependencies?: any[]
 }
 
 function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): React.JSX.Element | null {
@@ -910,6 +913,7 @@ export const CollectionRendererContext = createContext<CollectionProps<any>['chi
 export function Collection<T extends object>(props: CollectionProps<T>): React.JSX.Element {
   let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
+  props.dependencies = (ctx?.dependencies || []).concat(props.dependencies);
   let renderer = typeof props.children === 'function' ? props.children : null;
   return (
     <CollectionRendererContext.Provider value={renderer}>
