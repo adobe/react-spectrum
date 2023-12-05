@@ -473,8 +473,60 @@ export const WithTooltip = () => (
 );
 
 WithTooltip.story = {
-  name: 'withTooltip'
+  name: 'with tooltip inside'
 };
+
+export const WithTooltipTrigger = () => (
+  <Flex direction="row" gap={10}>
+    <DialogTrigger>
+      <ActionButton>DialogTrigger only</ActionButton>
+      {close => <CustomDialog close={close} />}
+    </DialogTrigger>
+
+    <TooltipTrigger>
+      <ActionButton>TooltipTrigger only</ActionButton>
+      <Tooltip>This is a tooltip</Tooltip>
+    </TooltipTrigger>
+
+    <TooltipTrigger>
+      <ActionButton isDisabled>TooltipTrigger only</ActionButton>
+      <Tooltip>This is a tooltip</Tooltip>
+    </TooltipTrigger>
+
+    <DialogTrigger>
+      <TooltipTrigger>
+        <ActionButton>DialogTrigger + TooltipTrigger</ActionButton>
+        <Tooltip>This is a tooltip</Tooltip>
+      </TooltipTrigger>
+      {close => <CustomDialog close={close} />}
+    </DialogTrigger>
+
+    <DialogTrigger>
+      <TooltipTrigger>
+        <ActionButton isDisabled>DialogTrigger + TooltipTrigger</ActionButton>
+        <Tooltip>This is a tooltip</Tooltip>
+      </TooltipTrigger>
+      {close => <CustomDialog close={close} />}
+    </DialogTrigger>
+  </Flex>
+);
+
+WithTooltipTrigger.story = {
+  name: 'with tooltip wrapper'
+};
+
+function CustomDialog({close}) {
+  return (
+    <Dialog>
+      <Content>
+        Dialog content
+      </Content>
+      <ButtonGroup>
+        <Button variant="cta" onPress={close}>Close</Button>
+      </ButtonGroup>
+    </Dialog>
+  );
+}
 
 export const WithTranslations = () => <TranslateDialog />;
 
