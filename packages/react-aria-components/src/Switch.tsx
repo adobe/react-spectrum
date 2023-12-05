@@ -60,7 +60,7 @@ export interface SwitchRenderProps {
   state: ToggleState
 }
 
-export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLInputElement>>(null);
+export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
 function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);

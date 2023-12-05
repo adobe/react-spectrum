@@ -452,4 +452,17 @@ describe('RadioGroup', () => {
     expect(group).not.toHaveAttribute('aria-describedby');
     expect(group).not.toHaveAttribute('data-invalid');
   });
+
+  it('should support refs', () => {
+    let groupRef = React.createRef();
+    let radioRef = React.createRef();
+    let {getByRole} = render(
+      <RadioGroup ref={groupRef}>
+        <Label>Test</Label>
+        <Radio ref={radioRef} value="a">A</Radio>
+      </RadioGroup>
+    );
+    expect(groupRef.current).toBe(getByRole('radiogroup'));
+    expect(radioRef.current).toBe(getByRole('radio').closest('.react-aria-Radio'));
+  });
 });

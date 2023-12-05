@@ -107,6 +107,7 @@ function BreadcrumbItem({node, isCurrent, isDisabled, onAction}: BreadcrumbItemP
   return (
     <li
       {...filterDOMProps(node.props)}
+      ref={node.props.ref}
       style={node.props.style}
       className={node.props.className ?? 'react-aria-Breadcrumb'}>
       <LinkContext.Provider value={linkProps}>
