@@ -1,9 +1,9 @@
 import { View, Heading, Divider } from "@adobe/react-spectrum";
-import React from "react";
+import React, {JSX} from "react";
 
 interface SectionProps {
   title: string;
-  children: React.JSX.Element | React.JSX.Element[];
+  children: JSX.Element | JSX.Element[];
 }
 
 export default function Section(props: SectionProps) {

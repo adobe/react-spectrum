@@ -21,7 +21,7 @@ import intlMessages from '../intl/*.json';
 import {ListCollection, useListState} from '@react-stately/list';
 import {ListKeyboardDelegate} from '@react-aria/selection';
 import {Provider, useProvider, useProviderProps} from '@react-spectrum/provider';
-import React, {ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import React, {JSX, ReactElement, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Tag} from './Tag';
 import {useFormProps} from '@react-spectrum/form';
@@ -45,7 +45,7 @@ export interface SpectrumTagGroupProps<T> extends Omit<AriaTagGroupProps<T>, 'se
   /** Handler that is called when the action button is pressed. */
   onAction?: () => void,
   /** Sets what the TagGroup should render when there are no tags to display. */
-  renderEmptyState?: () => React.JSX.Element,
+  renderEmptyState?: () => JSX.Element,
   /** Limit the number of rows initially shown. This will render a button that allows the user to expand to show all tags. */
   maxRows?: number
 }
