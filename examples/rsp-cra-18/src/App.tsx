@@ -13,6 +13,7 @@ import OverlayExamples from './sections/OverlayExamples';
 import ColorExamples from './sections/ColorExamples';
 import StatusExamples from './sections/StatusExamples';
 import ContentExamples from './sections/ContentExamples';
+import PickerExamples from './sections/PickerExamples';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -68,6 +69,7 @@ function App() {
         <OverlayExamples />
         <StatusExamples />
         <ContentExamples />
+        <PickerExamples />
       </div>
     </Provider>
   );
