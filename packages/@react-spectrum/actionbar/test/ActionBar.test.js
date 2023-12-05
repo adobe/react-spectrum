@@ -121,8 +121,7 @@ describe('ActionBar', () => {
     let toolbar = tree.getByRole('toolbar');
     act(() => within(toolbar).getAllByRole('button')[0].focus());
 
-    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
-    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+    await user.keyboard('{Escape}');
     act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
 
@@ -140,8 +139,7 @@ describe('ActionBar', () => {
 
     await user.tab();
     expect(document.activeElement).toBe(rows[1]);
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
     expect(checkbox).toBeChecked();
     act(() => jest.runAllTimers());
 
@@ -157,8 +155,7 @@ describe('ActionBar', () => {
     fireEvent.keyUp(document.activeElement, {key: 'Tab'});
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Escape'});
-    fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+    await user.keyboard('{Escape}');
     // jsdom doesn't blur to body like a browser, so it was being placed on the first focusable element, conveniently our table row
     // emulate browser behavior and blur
     act(() => document.activeElement.blur());
@@ -179,8 +176,7 @@ describe('ActionBar', () => {
 
     await user.tab();
     expect(document.activeElement).toBe(rows[1]);
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
     expect(checkbox).toBeChecked();
     act(() => jest.runAllTimers());
 
@@ -196,16 +192,13 @@ describe('ActionBar', () => {
     fireEvent.keyUp(document.activeElement, {key: 'Tab'});
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowRight}');
 
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowRight}');
 
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[2]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
 
     act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());
@@ -227,8 +220,7 @@ describe('ActionBar', () => {
 
     await user.tab();
     expect(document.activeElement).toBe(rows[1]);
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
     expect(checkbox).toBeChecked();
     act(() => jest.runAllTimers());
 
@@ -250,24 +242,20 @@ describe('ActionBar', () => {
     fireEvent.keyUp(document.activeElement, {key: 'Tab'});
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[0]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowRight}');
 
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
+    await user.keyboard('{ArrowRight}');
 
     expect(within(toolbar).getAllByRole('button')).toHaveLength(3);
     expect(document.activeElement).toBe(within(toolbar).getAllByRole('button')[2]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
 
     let listItems = tree.getAllByRole('menuitem');
     expect(document.activeElement).toBe(listItems[0]);
     expect(document.activeElement.textContent).toBe('Delete');
 
-    fireEvent.keyDown(document.activeElement, {key: 'Enter'});
-    fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+    await user.keyboard('{Enter}');
 
     act(() => jest.runAllTimers());
     act(() => jest.runAllTimers());

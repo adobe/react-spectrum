@@ -320,8 +320,7 @@ describe('CardView', function () {
         let expectedLeft = cardStyles.left;
         let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 18}px`;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+        await user.keyboard('{ArrowDown}');
         act(() => {
           jest.runAllTimers();
         });
@@ -344,8 +343,7 @@ describe('CardView', function () {
         let expectedLeft = cardStyles.left;
         let expectedTop = `${parseInt(cardStyles.top, 10) - parseInt(cardStyles.height, 10) - 18}px`;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+        await user.keyboard('{ArrowUp}');
         act(() => {
           jest.runAllTimers();
         });
@@ -373,8 +371,7 @@ describe('CardView', function () {
         let expectedLeft = cardStyles.left;
         let expectedTop = cardStyles.top;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+        await user.keyboard('{ArrowLeft}');
         act(() => {
           jest.runAllTimers();
         });
@@ -408,8 +405,7 @@ describe('CardView', function () {
         expectedRight = cardStyles.right;
         expectedTop = cardStyles.top;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+        await user.keyboard('{ArrowLeft}');
         act(() => {
           jest.runAllTimers();
         });
@@ -441,8 +437,7 @@ describe('CardView', function () {
         let expectedLeft = cardStyles.left;
         let expectedTop = cardStyles.top;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+        await user.keyboard('{ArrowRight}');
         act(() => {
           jest.runAllTimers();
         });
@@ -476,8 +471,7 @@ describe('CardView', function () {
         expectedRight = cardStyles.right;
         expectedTop = cardStyles.top;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+        await user.keyboard('{ArrowRight}');
         act(() => {
           jest.runAllTimers();
         });
@@ -500,8 +494,7 @@ describe('CardView', function () {
         let cards = tree.getAllByRole('gridcell');
         await user.click(cards[5]);
 
-        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+        await user.keyboard('{End}');
         act(() => {
           jest.runAllTimers();
         });
@@ -514,8 +507,7 @@ describe('CardView', function () {
         let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 18));
         let expectedTop = `${parseInt(cardStyles.top, 10) - numCardsInPage * (parseInt(cardStyles.height, 10) + 18)}px`;
 
-        fireEvent.keyDown(document.activeElement, {key: 'PageUp', code: 33, charCode: 33});
-        fireEvent.keyUp(document.activeElement, {key: 'PageUp', code: 33, charCode: 33});
+        await user.keyboard('{PageUp}');
         act(() => {
           jest.runAllTimers();
         });
@@ -541,8 +533,7 @@ describe('CardView', function () {
         let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 18));
         let expectedTop = `${parseInt(cardStyles.top, 10) + numCardsInPage * (parseInt(cardStyles.height, 10) + 18)}px`;
 
-        fireEvent.keyDown(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
-        fireEvent.keyUp(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
+        await user.keyboard('{PageDown}');
         act(() => {
           jest.runAllTimers();
         });
@@ -608,8 +599,7 @@ describe('CardView', function () {
         let cardStyles = getCardStyles(cards[0]);
         let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 18}px`;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+        await user.keyboard('{ArrowDown}');
         act(() => {
           jest.runAllTimers();
         });
@@ -633,8 +623,7 @@ describe('CardView', function () {
         let cardStyles = getCardStyles(cards[3]);
         let expectedTop = cardStyles.top;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+        await user.keyboard('{ArrowUp}');
         act(() => {
           jest.runAllTimers();
         });
@@ -654,22 +643,19 @@ describe('CardView', function () {
         let cards = tree.getAllByRole('gridcell');
         await user.click(cards[0]);
 
-        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+        await user.keyboard('{End}');
         act(() => {
           jest.runAllTimers();
         });
 
-        fireEvent.keyDown(document.activeElement, {key: 'PageUp', code: 33, charCode: 33});
-        fireEvent.keyUp(document.activeElement, {key: 'PageUp', code: 33, charCode: 33});
+        await user.keyboard('{PageUp}');
         act(() => {
           jest.runAllTimers();
         });
 
         let pageUpElement = document.activeElement;
 
-        fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-        fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+        await user.keyboard('{End}');
         act(() => {
           jest.runAllTimers();
         });
@@ -678,8 +664,7 @@ describe('CardView', function () {
         let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 32));
 
         for (let i = 0; i < numCardsInPage; i++) {
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+          await user.keyboard('{ArrowUp}');
           act(() => {
             jest.runAllTimers();
           });
@@ -697,16 +682,14 @@ describe('CardView', function () {
         let cards = tree.getAllByRole('gridcell');
         await user.click(cards[0]);
 
-        fireEvent.keyDown(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
-        fireEvent.keyUp(document.activeElement, {key: 'PageDown', code: 34, charCode: 34});
+        await user.keyboard('{PageDown}');
         act(() => {
           jest.runAllTimers();
         });
 
         let pageDownElement = document.activeElement;
 
-        fireEvent.keyDown(document.activeElement, {key: 'Home', code: 36, charCode: 36});
-        fireEvent.keyUp(document.activeElement, {key: 'Home', code: 36, charCode: 36});
+        await user.keyboard('{Home}');
         act(() => {
           jest.runAllTimers();
         });
@@ -715,8 +698,7 @@ describe('CardView', function () {
         let numCardsInPage = Math.floor(mockHeight / (parseInt(cardStyles.height, 10) + 18));
 
         for (let i = 0; i < numCardsInPage; i++) {
-          fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
-          fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+          await user.keyboard('{ArrowDown}');
           act(() => {
             jest.runAllTimers();
           });
@@ -789,8 +771,7 @@ describe('CardView', function () {
         let expectedTop = `${parseInt(cardStyles.top, 10) + parseInt(cardStyles.height, 10) + 18}px`;
         let expectedLeft = cardStyles.left;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+        await user.keyboard('{ArrowDown}');
         act(() => {
           jest.runAllTimers();
         });
@@ -815,8 +796,7 @@ describe('CardView', function () {
         let expectedTop = cardStyles.top;
         let expectedLeft = cardStyles.left;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowUp', code: 38, charCode: 38});
+        await user.keyboard('{ArrowUp}');
         act(() => {
           jest.runAllTimers();
         });
@@ -845,8 +825,7 @@ describe('CardView', function () {
         let expectedLeft = cardStyles.left;
         let expectedTop = cardStyles.top;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+        await user.keyboard('{ArrowLeft}');
         act(() => {
           jest.runAllTimers();
         });
@@ -874,8 +853,7 @@ describe('CardView', function () {
         let expectedRight = cardStyles.right;
         let expectedTop = cardStyles.top;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft', code: 37, charCode: 37});
+        await user.keyboard('{ArrowLeft}');
         act(() => {
           jest.runAllTimers();
         });
@@ -904,8 +882,7 @@ describe('CardView', function () {
         let expectedLeft = cardStyles.left;
         let expectedTop = cardStyles.top;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+        await user.keyboard('{ArrowRight}');
         act(() => {
           jest.runAllTimers();
         });
@@ -934,8 +911,7 @@ describe('CardView', function () {
         let expectedRight = cardStyles.right;
         let expectedTop = cardStyles.top;
 
-        fireEvent.keyDown(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
-        fireEvent.keyUp(document.activeElement, {key: 'ArrowRight', code: 39, charCode: 39});
+        await user.keyboard('{ArrowRight}');
         act(() => {
           jest.runAllTimers();
         });
@@ -968,8 +944,7 @@ describe('CardView', function () {
       await user.click(cards[2]);
       expect(document.activeElement).toBe(cards[2]);
 
-      fireEvent.keyDown(document.activeElement, {key: 'Home', code: 36, charCode: 36});
-      fireEvent.keyUp(document.activeElement, {key: 'Home', code: 36, charCode: 36});
+      await user.keyboard('{Home}');
       act(() => {
         jest.runAllTimers();
       });
@@ -992,8 +967,7 @@ describe('CardView', function () {
       await user.click(cards[2]);
       expect(document.activeElement).toBe(cards[2]);
 
-      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      await user.keyboard('{End}');
       act(() => {
         jest.runAllTimers();
       });
@@ -1190,14 +1164,10 @@ describe('CardView', function () {
       // Scroll to the 'ideal' end, however, this won't be the true y position after everything has
       // been rendered and layout infos are all calculated. So scroll to the beginning again and then back one more time.
       // This time we'll end up at the true end and the progress bar will be visible.
-      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      await user.keyboard('{End}');
+      await user.keyboard('{Home}');
 
-      fireEvent.keyDown(document.activeElement, {key: 'Home', code: 35, charCode: 35});
-      fireEvent.keyUp(document.activeElement, {key: 'Home', code: 35, charCode: 35});
-
-      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      await user.keyboard('{End}');
 
       act(() => {
         grid.scrollTop += 100;
@@ -1233,8 +1203,7 @@ describe('CardView', function () {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
       await user.click(cards[1]);
 
-      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      await user.keyboard('{End}');
       act(() => {
         jest.runAllTimers();
       });
@@ -1250,7 +1219,7 @@ describe('CardView', function () {
       ${'Grid layout'}      | ${GridLayout}
       ${'Gallery layout'}   | ${GalleryLayout}
       ${'Waterfall layout'} | ${WaterfallLayout}
-    `('$Name CardView should not render a loading spinner when filtering', function ({layout}) {
+    `('$Name CardView should not render a loading spinner when filtering', async function ({layout}) {
       let tree = render(<DynamicCardView layout={layout} loadingState="filtering" />);
       act(() => {
         jest.runAllTimers();
@@ -1260,8 +1229,7 @@ describe('CardView', function () {
       expect(grid).toHaveAttribute('aria-rowcount', defaultItems.length.toString());
       expect(within(grid).getByText('Title 1')).toBeTruthy();
 
-      fireEvent.keyDown(document.activeElement, {key: 'End', code: 35, charCode: 35});
-      fireEvent.keyUp(document.activeElement, {key: 'End', code: 35, charCode: 35});
+      await user.keyboard('{End}');
       act(() => {
         jest.runAllTimers();
       });
@@ -1313,8 +1281,7 @@ describe('CardView', function () {
     });
     expect(grid.scrollTop).toBe(initialScrollTop);
 
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', code: 40, charCode: 40});
+    await user.keyboard('{ArrowDown}');
     act(() => {
       jest.runAllTimers();
     });

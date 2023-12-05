@@ -349,7 +349,7 @@ describe('ActionGroup', function () {
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
 
-    fireEvent.keyDown(button1, {key: 'a', ctrlKey: true});
+    await user.keyboard('{Control>}{a}{/Control}');
     expect(button1).toHaveAttribute('aria-checked', 'true');
     expect(button2).toHaveAttribute('aria-checked', 'false');
   });
@@ -591,8 +591,7 @@ describe('ActionGroup', function () {
     let dialog = tree.getByRole('dialog');
     expect(dialog).toBeVisible();
 
-    fireEvent.keyDown(dialog, {key: 'Escape'});
-    fireEvent.keyUp(dialog, {key: 'Escape'});
+    await user.keyboard('{Escape}');
     act(() => {
       jest.runAllTimers();
     });
@@ -600,7 +599,7 @@ describe('ActionGroup', function () {
     expect(tree.queryByRole('dialog')).toBeNull();
   });
 
-  it('supports TooltipTrigger as a wrapper around items', function () {
+  it('supports TooltipTrigger as a wrapper around items', async function () {
     let tree = render(
       <Provider theme={theme}>
         <ActionGroup>
@@ -615,8 +614,7 @@ describe('ActionGroup', function () {
     );
 
     let button = tree.getByRole('button');
-    fireEvent.keyDown(document.body, {key: 'Tab'});
-    fireEvent.keyUp(document.body, {key: 'Tab'});
+    await user.keyboard('{Tab}');
     act(() => button.focus());
 
     let tooltip = tree.getByRole('tooltip');

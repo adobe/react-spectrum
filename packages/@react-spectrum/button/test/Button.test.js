@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
 import {Form} from '@react-spectrum/form';
@@ -183,12 +183,10 @@ describe('Button', function () {
     await user.click(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
 
-    fireEvent.keyDown(button, {key: 'Enter', code: 13});
-    fireEvent.keyUp(button, {key: 'Enter', code: 13});
+    await user.keyboard('{Enter}');
     expect(onPressSpy).toHaveBeenCalledTimes(2);
 
-    fireEvent.keyDown(button, {key: ' ', code: 32});
-    fireEvent.keyUp(button, {key: ' ', code: 32});
+    await user.keyboard('[Space]');
     expect(onPressSpy).toHaveBeenCalledTimes(3);
   });
 
@@ -235,7 +233,7 @@ describe('Button', function () {
   });
 
 
-  it('prevents default for non-submit types', function () {
+  it('prevents default for non-submit types', async function () {
     let eventDown;
     let eventUp;
     let btn = React.createRef();
@@ -253,20 +251,19 @@ describe('Button', function () {
     btn.current.UNSAFE_getDOMNode().addEventListener('keyup', e => eventUp = e);
 
     let button = getByRole('button');
-    fireEvent.keyDown(button, {key: 'Enter'});
-    fireEvent.keyUp(button, {key: 'Enter'});
+    act(() => button.focus());
+    await user.keyboard('{Enter}');
     expect(eventDown.defaultPrevented).toBeTruthy();
     expect(eventUp.defaultPrevented).toBeTruthy();
 
-    fireEvent.keyDown(button, {key: ' '});
-    fireEvent.keyUp(button, {key: ' '});
+    await user.keyboard('[Space]');
     expect(eventDown.defaultPrevented).toBeTruthy();
     expect(eventUp.defaultPrevented).toBeTruthy();
   });
 
   // we only need to test that we allow the browser to do the default thing when space or enter is pressed on a submit button
   // space submits on key up and is actually a click
-  it('submit in form using space', function () {
+  it('submit in form using space', async function () {
     let eventUp;
     let btn = React.createRef();
     let {getByRole} = render(
@@ -280,13 +277,13 @@ describe('Button', function () {
     btn.current.UNSAFE_getDOMNode().addEventListener('keyup', e => eventUp = e);
 
     let button = getByRole('button');
-    fireEvent.keyDown(button, {key: ' '});
-    fireEvent.keyUp(button, {key: ' '});
+    act(() => button.focus());
+    await user.keyboard('{Space}');
     expect(eventUp.defaultPrevented).toBeFalsy();
   });
 
   // enter submits on keydown
-  it('submit in form using enter', function () {
+  it('submit in form using enter', async function () {
     let eventDown;
     let btn = React.createRef();
     let {getByRole} = render(
@@ -297,11 +294,14 @@ describe('Button', function () {
         </Form>
       </Provider>
     );
-    btn.current.UNSAFE_getDOMNode().addEventListener('keydown', e => eventDown = e);
-
+    btn.current.UNSAFE_getDOMNode().addEventListener('keydown', e => {
+      eventDown = {...e};
+      // Prevent default to avoid "Error: Not implemented: HTMLFormElement.prototype.requestSubmit"
+      e.preventDefault();
+    });
     let button = getByRole('button');
-    fireEvent.keyDown(button, {key: 'Enter'});
-    fireEvent.keyUp(button, {key: 'Enter'});
+    act(() => button.focus());
+    await user.keyboard('[Enter]');
     expect(eventDown.defaultPrevented).toBeFalsy();
   });
 
