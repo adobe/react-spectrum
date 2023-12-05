@@ -693,6 +693,18 @@ module.exports = {
       200: '16px',
       full: '9999px'
     },
+    // can we use this for the focus ring? too new? i don't know another way to support halo focus for actionbutton
+    outlineColor: {
+      DEFAULT: 'var(--spectrum-focus-indicator-color)',
+      white: 'white',
+      black: 'black'
+    },
+    outlineOffset: {
+      DEFAULT: '2px'
+    },
+    outlineWidth: {
+      DEFAULT: '2px'
+    },
     textColor: {
       ...colors,
       disabled: 'var(--spectrum-disabled-content-color)',
@@ -902,7 +914,7 @@ module.exports = {
     plugin(({addUtilities, matchUtilities, theme, addBase}) => {
             // colors.tint = tint;
       let tintValues = {};
-      for (let [prefix, property, themeProperty] of [['bg', 'backgroundColor'], ['border', 'borderColor'], ['outline', 'outlineColor'], ['text', 'color', 'textColor']]) {
+      for (let [prefix, property, themeProperty] of [['bg', 'backgroundColor'], ['border', 'borderColor'], ['text', 'color', 'textColor']]) {
         let colors = theme(themeProperty || property) ?? theme('colors');
         let tint = {};
         for (let key of [...Object.keys(colors.gray), ...Object.keys(colors.red)]) {

@@ -14,8 +14,26 @@ import {FocusRing, useButton} from 'react-aria';
 import React, {forwardRef} from 'react';
 import {pressScale, usePressScale} from './usePressScale';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
+import { extendTailwindMerge } from 'tailwind-merge';
 
-let baseIcon = tv({
+// const customTwMerge = extendTailwindMerge({
+//   cacheSize: 5000,
+//   classGroups: {
+//       // ↓ The `foo` key here is the class group ID
+//       //   ↓ Creates group of classes which have conflicting styles
+//       //     Classes here: foo, foo-2, bar-baz, bar-baz-1, bar-baz-2
+//       tint: ['tint', [(value) => true] }],
+//   },
+//   // ↓ Here you can define additional conflicts across different groups
+//   conflictingClassGroups: {
+//       // ↓ ID of class group which creates a conflict with …
+//       //     ↓ … classes from groups with these IDs
+//       foo: ['bar'],
+//   },
+// })
+
+// move to Icon, handle color variants there too
+export let baseIcon = tv({
   base: 'flex-shrink-0 fill-current aspect-square',
   variants: {
     size: {
@@ -29,7 +47,7 @@ let baseIcon = tv({
 });
 
 let baseButton = tv({
-  base: 'box-border flex items-center justify-center border-solid border-none font-[inherit] font-bold cursor-default transition outline-none focus-visible:ring disabled:text-disabled',
+  base: 'box-border flex items-center justify-center border-solid border-none font-[inherit] font-bold cursor-default transition outline-none focus-visible:outline focus-visible:outline-offset disabled:text-disabled',
   variants: {
     size: {
       // rounded-75 is wrong across all but medium, it's based on 2nd Major log scale, can we apply something like tint?
@@ -150,21 +168,19 @@ let baseButton = tv({
   ]
 });
 
-let buttonStyles = tv({
+export let buttonStyles = tv({
   extend: baseButton,
   base: 'text-gray-800 tint-gray/25 disabled:text-disabled'
-}, {
-  twMerge: false
-});
+}, {twMerge: false});
 
 // text colors are swapped from Button
-let staticColorButton = tv({
+export let staticColorButton = tv({
   extend: baseButton,
   base: 'disabled:text-tint-disabled',
   variants: {
     staticColor: {
-      black: 'ring-black tint-transparent-black/800 text-transparent-black/100',
-      white: 'ring-white tint-transparent-white/800 text-transparent-white-800 shadow-none' // how to use outline instead of drop shadow?
+      black: 'focus-visible:outline-black tint-transparent-black/800 text-transparent-black/100', // don't understand this syntax vs the other
+      white: 'focus-visible:outline-white tint-transparent-white/800 text-transparent-white-800'
     }
   },
 }, {twMerge: false});
