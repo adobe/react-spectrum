@@ -338,12 +338,12 @@ import {KanbanBoard} from './home/KanbanExample';
   <p className="text-slate-700">React Aria ensures a great experience for users no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
   <a href="interactions.html" className="inline-block mt-6 mb-12 text-xl text-cyan-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
-  <div className="grid grid-cols-2 gap-6">
-    <div className="bg-white rounded-2xl p-6 transition card-shadow overflow-hidden" id="touch-card">
+  <div className="grid grid-cols-2 grid-rows-2 gap-6">
+    <div className="flex flex-col bg-white rounded-2xl px-6 pt-6 transition card-shadow overflow-hidden" id="touch-card">
       <h3 className="text-xl font-semibold mb-2">Touch optimized.</h3>
       <p className="text-gray-600">Micro-interactions like dragging off to cancel a press, long press to select, drag and drop, text selection cancelation, scroll locking, and multi-touch gesture disambiguation make your app feel native.</p>
 
-      <div className="flex justify-center pt-10 pb-6 will-change-transform">
+      <div className="flex-1 flex items-center justify-center will-change-transform">
 
 ```tsx snippet
 import { Switch } from "react-aria-components";
@@ -409,9 +409,67 @@ import {ListBoxExample} from './home/ListBoxExample';
       </div>
     </div>
 
-    <div className="bg-white rounded-2xl p-6 transition card-shadow" id="focus-card">
+    <div className="bg-white rounded-2xl px-6 pt-6 transition card-shadow flex flex-col [&>:last-child]:flex-1" id="focus-card">
       <h3 className="text-xl font-semibold mb-2">Focus managed.</h3>
       <p className="text-gray-600">Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</p>
+
+```tsx snippet
+import {TextField} from '../../../../../starters/tailwind/src/TextField';
+import {FocusScope} from 'react-aria';
+import {flushSync} from 'react-dom';
+import {useInteractOutside} from '@react-aria/interactions';
+import {Popover} from '../../../../../starters/tailwind/src/Popover';
+import {Button} from '../../../../../starters/tailwind/src/Button';
+import {Dialog, DialogTrigger, Heading} from 'react-aria-components';
+import {CircleUser} from 'lucide-react';
+
+/*function FocusExample() {
+  let [contain, setContain] = React.useState(false);
+  let ref = React.useRef(null);
+  useInteractOutside({
+    ref,
+    onInteractOutside: contain ? (() => {
+      flushSync(() => {
+        setContain(false);
+      });
+      document.activeElement.blur();
+    }) : null
+  });
+  return (
+    <div
+      ref={ref}
+      className="flex flex-col gap-4 mt-8 max-w-xs mx-auto"
+      onFocus={() => setContain(true)}
+      onKeyDownCapture={e => {
+        if (contain && e.key === 'Escape') {
+          flushSync(() => {
+            setContain(false);
+          });
+          e.target.blur();
+        }
+      }}>
+      <FocusScope contain={contain}>
+        <TextField label="First Name" defaultValue="Devon" />
+        <TextField label="Last Name" defaultValue="Devon" />
+      </FocusScope>
+    </div>
+  );
+}*/
+
+<div className="flex items-center justify-center h-full">
+  <DialogTrigger>
+    <Button variant="secondary" className="w-9 h-9 p-0" aria-label="Account"><CircleUser className="inline w-5 h-5" /></Button>
+    <Popover showArrow className="w-[250px]">
+      <Dialog className="outline-none p-4 overflow-auto flex flex-col gap-2">
+        <Heading slot="title" className="text-lg font-semibold mb-2">Your Account</Heading>
+        <TextField label="First Name" defaultValue="Devon" autoFocus />
+        <TextField label="Last Name" defaultValue="Devon" />
+      </Dialog>
+    </Popover>
+  </DialogTrigger>
+</div>
+```
+
     </div>
   </div>
 </section>

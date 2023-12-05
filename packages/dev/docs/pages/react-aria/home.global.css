@@ -100,7 +100,7 @@ pre.medium, pre.small {
 @keyframes touch-animation {
   0% {
     opacity: 0.15;
-    transform: translate(10px, 95px);
+    transform: translate(10px, 135px);
   }
 
   15%, 16% {
@@ -160,7 +160,7 @@ pre.medium, pre.small {
 
   100% {
     opacity: 0.15;
-    transform: translate(10px, 95px);
+    transform: translate(10px, 135px);
   }
 }
 
