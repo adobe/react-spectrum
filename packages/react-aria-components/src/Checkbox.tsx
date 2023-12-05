@@ -9,13 +9,13 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, usePress, VisuallyHidden} from 'react-aria';
+import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useCheckbox, useCheckboxGroup, useCheckboxGroupItem, useFocusRing, useHover, VisuallyHidden} from 'react-aria';
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RACValidation, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext} from 'react';
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
@@ -162,7 +162,7 @@ export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLInp
 function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxContext);
   let groupState = useContext(CheckboxGroupStateContext);
-  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard, isInvalid} = groupState
+  let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
       ...props,
@@ -183,29 +183,10 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
-  // Handle press state for full label. Keyboard press state is returned by useCheckbox
-  // since it is handled on the <input> element itself.
-  let [isPressed, setPressed] = useState(false);
-  let {pressProps} = usePress({
-    isDisabled: isInteractionDisabled,
-    onPressStart(e) {
-      if (e.pointerType !== 'keyboard') {
-        setPressed(true);
-      }
-    },
-    onPressEnd(e) {
-      if (e.pointerType !== 'keyboard') {
-        setPressed(false);
-      }
-    }
-  });
-
   let {hoverProps, isHovered} = useHover({
     ...props,
     isDisabled: isInteractionDisabled
   });
-
-  let pressed = isInteractionDisabled ? false : (isPressed || isPressedKeyboard);
 
   let renderProps = useRenderProps({
     // TODO: should data attrs go on the label or on the <input>? useCheckbox passes them to the input...
@@ -214,7 +195,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
     values: {
       isSelected,
       isIndeterminate: props.isIndeterminate || false,
-      isPressed: pressed,
+      isPressed,
       isHovered,
       isFocused,
       isFocusVisible,
@@ -230,11 +211,11 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
 
   return (
     <label
-      {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-indeterminate={props.isIndeterminate || undefined}
-      data-pressed={pressed || undefined}
+      data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
