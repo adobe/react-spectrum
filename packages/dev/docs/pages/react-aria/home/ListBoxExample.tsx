@@ -1,6 +1,6 @@
-import {ListBoxItem as AriaListBoxItem, ListBoxItemProps as AriaListBoxItemProps, Key, Selection} from 'react-aria-components';
-import {ListBox} from '../../../../../../starters/tailwind/src/ListBox';
-import React, {useEffect, useState} from 'react';
+import {animate, useIntersectionObserver} from './utils';
+import {ListBox, ListBoxItem as AriaListBoxItem, ListBoxItemProps as AriaListBoxItemProps, Key, Selection} from 'react-aria-components';
+import React, {useEffect, useRef, useState} from 'react';
 
 const slate300 = 'rgb(203 213 225)';
 const keyframes = [
@@ -9,147 +9,111 @@ const keyframes = [
   {fill: 'white', offset: 1}
 ];
 
+let played = false;
 export function ListBoxExample() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
   let [focusedKey, setFocusedKey] = useState(null);
+  let ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    let listbox = document.getElementById('listbox');
+  useIntersectionObserver(ref, () => {
     let spaceKey = document.getElementById('space-key');
     let downKey = document.getElementById('down-key');
     let upKey = document.getElementById('up-key');
     let shiftKey = document.getElementById('shift-key');
-    let cancel;
-    let observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        cancel = animate([
-          // {
-          //   time: 12000,
-          //   perform() {}
-          // },
-          {
-            time: 800,
-            perform() {
-              setFocusedKey('chocolate');
-              setSelectedKeys(new Set());
-            }
-          },
-          {
-            time: 800,
-            perform() {
-              downKey.animate(keyframes, {duration: 600});
-              setFocusedKey('mint');
-            }
-          },
-          {
-            time: 800,
-            perform() {
-              spaceKey.animate(keyframes, {duration: 600});
-              setSelectedKeys(new Set(['mint']));
-            }
-          },
-          {
-            time: 800,
-            perform() {
-              shiftKey.animate([
-                {fill: 'white'},
-                {fill: slate300, offset: 1}
-              ], {duration: 300, fill: 'forwards'});
-            }
-          },
-          {
-            time: 800,
-            perform() {
-              downKey.animate(keyframes, {duration: 600});
-              setFocusedKey('strawberry');
-              setSelectedKeys(new Set(['mint', 'strawberry']));
-            }
-          },
-          {
-            time: 600,
-            perform() {
-              downKey.animate(keyframes, {duration: 600});
-              setFocusedKey('vanilla');
-              setSelectedKeys(new Set(['mint', 'strawberry', 'vanilla']));
-            }
-          },
-          {
-            time: 600,
-            perform() {
-              upKey.animate(keyframes, {duration: 600});
-              setFocusedKey('strawberry');
-              setSelectedKeys(new Set(['mint', 'strawberry']));
-            }
-          },
-          {
-            time: 1200,
-            perform() {
-              shiftKey.animate([
-                {fill: slate300},
-                {fill: 'white', offset: 1}
-              ], {duration: 300, fill: 'forwards'});
-            }
-          },
-          {
-            time: 800,
-            perform() {
-              setFocusedKey(null);
-              setSelectedKeys(new Set());
-            }
-          }
-        ]);
-      } else {
-        cancel?.();
-        setFocusedKey(null);
-        setSelectedKeys(new Set());
+    let cancel = animate([
+      // {
+      //   // Delay to let other cards start animating first.
+      //   time: !played && window.innerWidth >= 768 ? 14000 : 500,
+      //   perform() {}
+      // },
+      {
+        time: 800,
+        perform() {
+          setFocusedKey('chocolate');
+          setSelectedKeys(new Set());
+        }
+      },
+      {
+        time: 800,
+        perform() {
+          downKey.animate(keyframes, {duration: 600});
+          setFocusedKey('mint');
+        }
+      },
+      {
+        time: 800,
+        perform() {
+          spaceKey.animate(keyframes, {duration: 600});
+          setSelectedKeys(new Set(['mint']));
+        }
+      },
+      {
+        time: 800,
+        perform() {
+          shiftKey.animate([
+            {fill: 'white'},
+            {fill: slate300, offset: 1}
+          ], {duration: 300, fill: 'forwards'});
+        }
+      },
+      {
+        time: 800,
+        perform() {
+          downKey.animate(keyframes, {duration: 600});
+          setFocusedKey('strawberry');
+          setSelectedKeys(new Set(['mint', 'strawberry']));
+        }
+      },
+      {
+        time: 600,
+        perform() {
+          downKey.animate(keyframes, {duration: 600});
+          setFocusedKey('vanilla');
+          setSelectedKeys(new Set(['mint', 'strawberry', 'vanilla']));
+        }
+      },
+      {
+        time: 600,
+        perform() {
+          upKey.animate(keyframes, {duration: 600});
+          setFocusedKey('strawberry');
+          setSelectedKeys(new Set(['mint', 'strawberry']));
+        }
+      },
+      {
+        time: 1200,
+        perform() {
+          shiftKey.animate([
+            {fill: slate300},
+            {fill: 'white', offset: 1}
+          ], {duration: 300, fill: 'forwards'});
+        }
+      },
+      {
+        time: 800,
+        perform() {
+          setFocusedKey(null);
+          setSelectedKeys(new Set());
+        }
       }
-    }, {threshold: 1});
-    observer.observe(listbox);
-    return () => observer.unobserve(listbox);
-  }, []);
+    ]);
+
+    return () => {
+      cancel();
+      setFocusedKey(null);
+      setSelectedKeys(new Set());
+      shiftKey.style.fill = 'white';
+    };
+  });
 
   return (
-    <ListBox id="listbox" aria-label="Ice cream flavor" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+    <ListBox ref={ref} className="outline-none p-1 border border-gray-300 rounded-lg" aria-label="Ice cream flavor" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
       <ListBoxItem id="chocolate" focusedKey={focusedKey}>Chocolate</ListBoxItem>
       <ListBoxItem id="mint" focusedKey={focusedKey}>Mint</ListBoxItem>
       <ListBoxItem id="strawberry" focusedKey={focusedKey}>Strawberry</ListBoxItem>
       <ListBoxItem id="vanilla" focusedKey={focusedKey}>Vanilla</ListBoxItem>
     </ListBox>
   );
-}
-
-function animate(steps: any[]) {
-  let cancelCurrentStep;
-  async function run() {
-    for (let step of steps) {
-      step.perform();
-      let {promise, cancel} = sleep(step.time);
-      cancelCurrentStep = cancel;
-      await promise;
-    }
-  }
-
-  run();
-
-  return () => {
-    if (cancelCurrentStep) {
-      cancelCurrentStep();
-    }
-  };
-}
-
-function sleep(ms: number) {
-  let timeout;
-  let promise = new Promise(resolve => {
-    timeout = setTimeout(resolve, ms);
-  });
-
-  return {
-    promise,
-    cancel() {
-      clearTimeout(timeout);
-    }
-  };
 }
 
 interface ListBoxItemProps extends AriaListBoxItemProps {

@@ -369,15 +369,15 @@ function SwitchExample() {
 
   return (
     <>
-      <div className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 opacity-0" style={{animation: isAnimating ? 'touch-animation 12s ease-in-out' : null}} />
+      <div className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 opacity-0" style={{animation: isAnimating ? 'touch-animation 12s ease-in-out 500ms' : null}} />
       <Switch
         ref={ref}
         isSelected={isSelected}
         onChange={setSelected}
         className="group inline-flex touch-none"
         style={{ WebkitTapHighlightColor: "transparent" }}>
-        <span className="group-selected:bg-green-500 group-focus-visible:outline outline-2 outline-blue-600 mr-4 h-10 w-16 rounded-full border-4 border-transparent bg-slate-300 outline-offset-2 transition duration-200" style={{animation: isAnimating ? 'switch-background-animation 12s ease-in-out' : null}}>
-          <span className="group-selected:ml-6 group-selected:group-pressed:ml-4 group-pressed:w-10 block h-8 w-8 origin-right rounded-full bg-white shadow transition-all duration-200" style={{animation: isAnimating ? 'switch-animation 12s ease-in-out' : null, contain: 'layout'}} />
+        <span className="group-selected:bg-green-500 group-focus-visible:outline outline-2 outline-blue-600 mr-4 h-10 w-16 rounded-full border-4 border-transparent bg-slate-300 outline-offset-2 transition duration-200" style={{animation: isAnimating ? 'switch-background-animation 12s ease-in-out 500ms' : null}}>
+          <span className="group-selected:ml-6 group-selected:group-pressed:ml-4 group-pressed:w-10 block h-8 w-8 origin-right rounded-full bg-white shadow transition-all duration-200" style={{animation: isAnimating ? 'switch-animation 12s ease-in-out 500ms' : null, contain: 'layout'}} />
         </span>
       </Switch>
     </>
@@ -388,9 +388,19 @@ function SwitchExample() {
       </div>
     </div>
 
-    <div className="bg-white rounded-2xl p-6 transition card-shadow snap-center" id="mouse-card">
+    <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center overflow-hidden" id="mouse-card">
       <h3 className="text-xl font-semibold mb-2">Mouse enhanced.</h3>
-      <p className="text-gray-600">Hover interactions only apply when using a mouse – no sticky hover states on touch devices. Mouse features like double click, scroll wheel, and cursor feedback enhance your app on desktop.</p>
+      <p className="text-gray-600">Hover interactions only apply when using a mouse – no sticky touch hover states. Mouse features like double click, scroll wheel, tooltips, and cursor feedback enhance your app on desktop.</p>
+
+      <div className="flex-1 flex mt-8 items-center justify-center will-change-transform">
+
+  ```tsx snippet
+  import {MouseAnimation} from './home/MouseAnimation';
+
+  <MouseAnimation />
+  ```
+
+      </div>
     </div>
 
     <div className="bg-white rounded-2xl p-6 transition card-shadow snap-center" id="keyboard-card">
@@ -463,7 +473,7 @@ import {CircleUser} from 'lucide-react';
       <Dialog className="outline-none p-4 overflow-auto flex flex-col gap-2">
         <Heading slot="title" className="text-lg font-semibold mb-2">Your Account</Heading>
         <TextField label="First Name" defaultValue="Devon" autoFocus={navigator.maxTouchPoints === 0} />
-        <TextField label="Last Name" defaultValue="Devon" />
+        <TextField label="Last Name" defaultValue="Govett" />
       </Dialog>
     </Popover>
   </DialogTrigger>
