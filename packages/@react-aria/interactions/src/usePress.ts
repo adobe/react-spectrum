@@ -271,7 +271,7 @@ export function usePress(props: PressHookProps): PressResult {
 
             // Focus may move before the key up event, so register the event on the document
             // instead of the same element where the key down event occurred.
-            addGlobalListener(getOwnerDocument(e.currentTarget), 'keyup', onKeyUp, false);
+            addGlobalListener(getOwnerDocument(e.currentTarget), 'keyup', onKeyUp, true);
           }
 
           if (shouldStopPropagation) {
@@ -338,12 +338,8 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         let target = e.target as Element;
-        let shouldStopPropagation = triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
+        triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
-
-        if (shouldStopPropagation) {
-          e.stopPropagation();
-        }
 
         // If a link was triggered with a key other than Enter, open the URL ourselves.
         // This means the link has a role override, and the default browser behavior

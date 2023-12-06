@@ -1350,7 +1350,7 @@ export const ButtonExample = () => {
 
 export const ToggleButtonExample = () => {
   return (
-    <ToggleButton className={classNames(styles, 'toggleButtonExample')} data-testid="toggle-button-example">Toggle</ToggleButton>
+    <ToggleButton className={classNames(styles, 'toggleButtonExample')} data-testid="toggle-button-example" onKeyUp={action('keyup')} onPress={action('press')}>Toggle</ToggleButton>
   );
 };
 

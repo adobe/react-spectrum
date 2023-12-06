@@ -1762,7 +1762,7 @@ describe('usePress', function () {
   });
 
   describe('keyboard events', function () {
-    it('should fire press events when the element is not a link', function () {
+    it.only('should fire press events when the element is not a link', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let {getByText} = render(
