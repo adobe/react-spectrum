@@ -26,7 +26,7 @@ import {ListState, useListState} from '@react-stately/list';
 import listStyles from './styles.css';
 import {ListViewItem} from './ListViewItem';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {JSX, ReactElement, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import RootDropIndicator from './RootDropIndicator';
 import {DragPreview as SpectrumDragPreview} from './DragPreview';
 import {useCollator, useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -49,7 +49,7 @@ export interface SpectrumListViewProps<T> extends AriaGridListProps<T>, StylePro
    */
   overflowMode?: 'truncate' | 'wrap',
   /** Sets what the ListView should render when there is no content to display. */
-  renderEmptyState?: () => React.JSX.Element,
+  renderEmptyState?: () => JSX.Element,
   /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionStyle` prop and the interaction modality.
