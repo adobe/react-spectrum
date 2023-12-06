@@ -336,7 +336,7 @@ The following example includes a custom Column component with a sort indicator. 
 ```tsx example export=true render=false
 import type {ColumnProps} from 'react-aria-components';
 
-function MyColumn<T extends object>(props: ColumnProps<T>) {
+function MyColumn(props: ColumnProps) {
   return (
     <Column {...props}>
       {({allowsSorting, sortDirection}) => <>
@@ -1017,7 +1017,7 @@ This example shows how to create a reusable component that wraps `<Column>` to i
 ```tsx example export=true render=false
 import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-components';
 
-interface ResizableTableColumnProps<T> extends Omit<ColumnProps<T>, 'children'> {
+interface ResizableTableColumnProps<T> extends Omit<ColumnProps, 'children'> {
   children: React.ReactNode
 }
 
