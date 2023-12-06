@@ -11,26 +11,8 @@ import {Text} from './Text';
 import {SpectrumActionButtonProps} from '@adobe/react-spectrum';
 import {tv} from 'tailwind-variants';
 import {FocusRing, useButton} from 'react-aria';
-import React, {forwardRef} from 'react';
-import {pressScale, usePressScale} from './usePressScale';
+import React, {CSSProperties, forwardRef, useLayoutEffect, useState} from 'react';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
-import { extendTailwindMerge } from 'tailwind-merge';
-
-// const customTwMerge = extendTailwindMerge({
-//   cacheSize: 5000,
-//   classGroups: {
-//       // ↓ The `foo` key here is the class group ID
-//       //   ↓ Creates group of classes which have conflicting styles
-//       //     Classes here: foo, foo-2, bar-baz, bar-baz-1, bar-baz-2
-//       tint: ['tint', [(value) => true] }],
-//   },
-//   // ↓ Here you can define additional conflicts across different groups
-//   conflictingClassGroups: {
-//       // ↓ ID of class group which creates a conflict with …
-//       //     ↓ … classes from groups with these IDs
-//       foo: ['bar'],
-//   },
-// })
 
 // move to Icon, handle color variants there too
 export let baseIcon = tv({
@@ -47,7 +29,8 @@ export let baseIcon = tv({
 });
 
 let baseButton = tv({
-  base: 'box-border flex items-center justify-center border-solid border-none font-[inherit] font-bold cursor-default transition outline-none focus-visible:outline focus-visible:outline-offset disabled:text-disabled',
+  base: ['box-border flex items-center justify-center border-solid border-none font-[inherit] font-bold cursor-default transition outline-none focus-visible:outline focus-visible:outline-offset disabled:text-disabled',
+    'transform duration pressed:perspective pressed:translate-z-[-2px]'],
   variants: {
     size: {
       // rounded-75 is wrong across all but medium, it's based on 2nd Major log scale, can we apply something like tint?
@@ -199,27 +182,34 @@ let ActionButton = forwardRef((props: SpectrumActionButtonProps & {size?: 'XS' |
         ...otherProps
     } = props;
   let domRef = useFocusableRef(ref);
-  let {buttonProps, isPressed} = useButton(props, domRef);
   let {styleProps} = useStyleProps(otherProps as any);
   let hasLabel = useHasChild('[data-label]', domRef);
   let hasIcon = useHasChild('[data-icon]', domRef);
+  let [width, setWidth] = useState(0);
+  let [height, setHeight] = useState(0);
 
-  usePressScale(domRef, isPressed);
+  // how to make sure this stays up to date without calculating
+  // while it's already scaled
+  useLayoutEffect(() => {
+    let {width = 0, height = 0} = domRef.current?.getBoundingClientRect() ?? {};
+    setWidth(width);
+    setHeight(height);
+  }, [domRef]);
 
     // let styles = hasIcon && !hasLabel ? iconOnlyButton : buttonStyles;
   let styles = staticColor ? staticColorButton : buttonStyles;
 
+  console.log(props, styleProps)
   return (
     <FocusRing>
       <RACButton
         {...styleProps}
         {...props}
-        {...buttonProps}
         ref={domRef as any}
         data-static-color={staticColor || undefined}
         data-has-icon={hasIcon || undefined}
         data-icon-only={(hasIcon && !hasLabel) || undefined}
-        style={pressScale(domRef, styleProps.style as any)}
+        style={{'--width': `${width}px`, '--height': `${height}px`} as CSSProperties}
         className={
           styles({
             staticColor,

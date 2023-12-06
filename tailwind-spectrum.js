@@ -1055,6 +1055,16 @@ module.exports = {
         }
       }, {type: 'color', values: tintValues, modifiers: 'any'});
 
+      // we can write this better
+      matchUtilities({
+          'translate-z': (value) => ({
+            '--tw-translate-z': value,
+            transform: `perspective(max(var(--height), var(--width) / 3)) translate3d(0, 0, var(--tw-translate-z))`,
+          }),
+        },
+        { values: theme('translate'), supportsNegativeValues: true }
+      );
+
       addUtilities({
         '.center-baseline': {
           display: 'flex',

@@ -13,26 +13,6 @@
 import {CSSProperties, RefObject} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 
-export function usePressScale(ref: RefObject<HTMLElement>, isPressed: boolean) {
-  useLayoutEffect(() => {
-    if (!ref.current) {
-      return;
-    }
-
-    if (isPressed) {
-      let height = ref.current.offsetHeight;
-      let width = ref.current.offsetWidth;
-      let scale = 2;
-      if (width > 100) {
-        scale = 1;
-      }
-      ref.current.style.setProperty('--scale', `${(height - scale) / height}`);
-    } else {
-      ref.current.style.setProperty('--scale', '');
-    }
-  }, [ref, isPressed]);
-}
-
 export function pressScale(ref: RefObject<HTMLElement>, style: CSSProperties) {
   return ({isPressed}: {isPressed: boolean}) => {
     if (isPressed) {
