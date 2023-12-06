@@ -310,7 +310,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
               isHidden: hideButtonText
             },
             icon: {
-              UNSAFE_className: hideButtonText ? classNames(styles, 'spectrum-ActionGroup-item-icon') : null
+              UNSAFE_className: hideButtonText ? classNames(styles, 'spectrum-ActionGroup-itemIcon') : null
             }
           }}>
           <ActionButton

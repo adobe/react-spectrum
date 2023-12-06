@@ -54,7 +54,7 @@ governing permissions and limitations under the License.
       padding-inline-end: var(--spectrum-actionbutton-icon-padding-x);
     }
 
-    .spectrum-ActionGroup-item-icon {
+    .spectrum-ActionGroup-itemIcon {
       padding-inline-end: 0;
     }
   }
