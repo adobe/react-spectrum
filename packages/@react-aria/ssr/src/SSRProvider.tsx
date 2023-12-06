@@ -13,7 +13,7 @@
 // We must avoid a circular dependency with @react-aria/utils, and this useLayoutEffect is
 // guarded by a check that it only runs on the client side.
 // eslint-disable-next-line rulesdir/useLayoutEffectRule
-import React, {ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import React, {JSX, ReactNode, useContext, useLayoutEffect, useMemo, useRef, useState} from 'react';
 
 // To support SSR, the auto incrementing id counter is stored in a context. This allows
 // it to be reset on every request to ensure the client and server are consistent.
@@ -45,7 +45,7 @@ export interface SSRProviderProps {
 }
 
 // This is only used in React < 18.
-function LegacySSRProvider(props: SSRProviderProps): React.JSX.Element {
+function LegacySSRProvider(props: SSRProviderProps): JSX.Element {
   let cur = useContext(SSRContext);
   let counter = useCounter(cur === defaultContext);
   let [isSSR, setIsSSR] = useState(true);
@@ -82,7 +82,7 @@ let warnedAboutSSRProvider = false;
  * When using SSR with React Aria in React 16 or 17, applications must be wrapped in an SSRProvider.
  * This ensures that auto generated ids are consistent between the client and server.
  */
-export function SSRProvider(props: SSRProviderProps): React.JSX.Element {
+export function SSRProvider(props: SSRProviderProps): JSX.Element {
   if (typeof React['useId'] === 'function') {
     if (process.env.NODE_ENV !== 'test' && !warnedAboutSSRProvider) {
       console.warn('In React 18, SSRProvider is not necessary and is a noop. You can remove it from your app.');
