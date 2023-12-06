@@ -1,10 +1,10 @@
-import React, { Key } from 'react';
-import {Select, SelectItem, SelectSection} from '../../../../../../starters/tailwind/src/Select';
 import {Calendar} from '../../../../../../starters/tailwind/src/Calendar';
-import {NumberField} from '../../../../../../starters/tailwind/src/NumberField';
 import {DateField} from '../../../../../../starters/tailwind/src/DateField';
-import {I18nProvider, useLocale} from 'react-aria-components';
-import { getLocalTimeZone, now } from '@internationalized/date';
+import {getLocalTimeZone, now} from '@internationalized/date';
+import {I18nProvider, Key, useLocale} from 'react-aria-components';
+import {NumberField} from '../../../../../../starters/tailwind/src/NumberField';
+import React from 'react';
+import {Select, SelectItem, SelectSection} from '../../../../../../starters/tailwind/src/Select';
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
 const preferences = [
@@ -79,8 +79,8 @@ const calendars = [
 export function I18n() {
   let {locale: defaultLocale} = useLocale();
   let [locale, setLocale] = React.useState(defaultLocale);
-  let [calendar, setCalendar] = React.useState<Key>(calendars[0].key);
-  let [numberingSystem, setNumberingSystem] = React.useState(() => new Intl.NumberFormat(defaultLocale).resolvedOptions().numberingSystem);
+  let [calendar, setCalendar] = React.useState(calendars[0].key);
+  let [numberingSystem, setNumberingSystem] = React.useState<any>(() => new Intl.NumberFormat(defaultLocale).resolvedOptions().numberingSystem);
 
   let langDisplay = React.useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'language'}), [defaultLocale]);
   let regionDisplay = React.useMemo(() => new Intl.DisplayNames(defaultLocale, {type: 'region'}), [defaultLocale]);
@@ -110,7 +110,7 @@ export function I18n() {
     let selectedLocale = new Intl.Locale(locale || defaultLocale, {
       calendar: calendar && calendar !== preferredCalendars[0].key ? calendar : undefined
     });
-    setNumberingSystem(new Intl.NumberFormat(selectedLocale).resolvedOptions().numberingSystem);
+    setNumberingSystem(new Intl.NumberFormat(selectedLocale.toString()).resolvedOptions().numberingSystem);
   };
 
   let selectedLocale = new Intl.Locale(locale || defaultLocale, {
@@ -118,7 +118,7 @@ export function I18n() {
     numberingSystem
   });
 
-  let [style, setStyle] = React.useState('decimal');
+  let [style, setStyle] = React.useState<Key>('decimal');
   let [currency, setCurrency] = React.useState('USD');
   let [unit, setUnit] = React.useState('inch');
   if (numberingSystem === 'arabext') {
@@ -128,8 +128,8 @@ export function I18n() {
   let [date, setDate] = React.useState(() => now(getLocalTimeZone()));
 
   return (
-    <div className="flex items-center flex-col md:flex-row gap-20 mt-10 card-shadow rounded-xl overflow-hidden">
-      <div className="flex flex-col flex-wrap gap-4 p-10 md:border-r">
+    <div className="grid items-center justify-items-center py-10 px-0 md:p-10 lg:p-0 gap-10 lg:gap-0 lg:grid-cols-[auto_1fr_1fr] mt-10 card-shadow rounded-xl overflow-hidden">
+      <div className="grid md:grid-cols-2 lg:grid-cols-1 flex-col gap-4 lg:p-10 lg:mr-10 lg:border-r">
         <Select label="Locale" items={locales} selectedKey={locale} onSelectionChange={updateLocale}>
           {item => <SelectItem id={item.value}>{item.label}</SelectItem>}
         </Select>
