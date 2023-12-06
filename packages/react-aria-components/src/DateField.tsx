@@ -18,7 +18,7 @@ import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Group, GroupContext} from './Group';
 import {Input, InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, JSX, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface DateFieldRenderProps {
@@ -201,7 +201,7 @@ export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRen
   children: (segment: IDateSegment) => ReactElement
 }
 
-function DateInput(props: DateInputProps, ref: ForwardedRef<HTMLDivElement>): React.JSX.Element {
+function DateInput(props: DateInputProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element {
   // If state is provided by DateField/TimeField, just render.
   // Otherwise (e.g. in DatePicker), we need to call hooks and create state ourselves.
   let dateFieldState = useContext(DateFieldStateContext);
