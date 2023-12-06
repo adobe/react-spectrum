@@ -5,6 +5,7 @@
   "homepage": ".",
   "dependencies": {
     "@adobe/react-spectrum": "latest",
+    "@react-aria/dnd": "^3.5.0",
     "@react-spectrum/inlinealert": "^3.0.0-rc.0",
     "@react-spectrum/color": "^3.0.0-beta.28",
     "@react-spectrum/dropzone": "^3.0.0-beta.0",
