@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { Key } from 'react';
 import {Select, SelectItem, SelectSection} from '../../../../../../starters/tailwind/src/Select';
 import {Calendar} from '../../../../../../starters/tailwind/src/Calendar';
 import {NumberField} from '../../../../../../starters/tailwind/src/NumberField';
+import {DateField} from '../../../../../../starters/tailwind/src/DateField';
 import {I18nProvider, useLocale} from 'react-aria-components';
+import { getLocalTimeZone, now } from '@internationalized/date';
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
 const preferences = [
@@ -123,9 +125,11 @@ export function I18n() {
     numberingSystem = 'arab';
   }
 
+  let [date, setDate] = React.useState(() => now(getLocalTimeZone()));
+
   return (
-    <div className="flex items-start flex-col md:flex-row gap-6 mt-10">
-      <div className="flex flex-col flex-wrap gap-4">
+    <div className="flex items-center flex-col md:flex-row gap-20 mt-10 card-shadow rounded-xl overflow-hidden">
+      <div className="flex flex-col flex-wrap gap-4 p-10 md:border-r">
         <Select label="Locale" items={locales} selectedKey={locale} onSelectionChange={updateLocale}>
           {item => <SelectItem id={item.value}>{item.label}</SelectItem>}
         </Select>
@@ -142,19 +146,22 @@ export function I18n() {
           <SelectItem id="arab">Arabic</SelectItem>
           <SelectItem id="hanidec">Hanidec</SelectItem>
         </Select>
+        <Select label="Number Format" selectedKey={style} onSelectionChange={setStyle}>
+          <SelectItem id="decimal">Decimal</SelectItem>
+          <SelectItem id="percent">Percent</SelectItem>
+          <SelectItem id="currency">Currency</SelectItem>
+          <SelectItem id="unit">Unit</SelectItem>
+        </Select>
       </div>
       <I18nProvider locale={selectedLocale.toString()}>
         <LangWrapper>
-          <Calendar />
-          <NumberField label="Number" defaultValue={1234} minValue={0} formatOptions={{style, currency, unit}} />
+          <Calendar value={date} onChange={setDate} />
+          <div className="flex flex-col gap-10">
+            <NumberField label="Number" defaultValue={1234} minValue={0} formatOptions={{style, currency, unit}} />
+            <DateField label="Date and Time" value={date} onChange={setDate} />
+          </div>
         </LangWrapper>
       </I18nProvider>
-      <Select label="Style" selectedKey={style} onSelectionChange={setStyle}>
-        <SelectItem id="decimal">Decimal</SelectItem>
-        <SelectItem id="percent">Percent</SelectItem>
-        <SelectItem id="currency">Currency</SelectItem>
-        <SelectItem id="unit">Unit</SelectItem>
-      </Select>
     </div>
   );
 }
