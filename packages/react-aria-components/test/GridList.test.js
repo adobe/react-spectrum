@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Button, Checkbox, GridList, GridListContext, GridListItem, useDragAndDrop} from '../';
+import {Button, Checkbox, DropIndicator, GridList, GridListContext, GridListItem, useDragAndDrop} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -247,7 +247,7 @@ describe('GridList', () => {
 
     it('should render drop indicators', () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableGridList onReorder={onReorder} />);
+      let {getAllByRole} = render(<DraggableGridList onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
       let button = getAllByRole('button')[0];
       fireEvent.keyDown(button, {key: 'Enter'});
       fireEvent.keyUp(button, {key: 'Enter'});
@@ -257,6 +257,7 @@ describe('GridList', () => {
       expect(rows).toHaveLength(5);
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
+      expect(rows[0]).toHaveTextContent('Test');
       expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Cat');
       expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[2]).not.toHaveAttribute('data-drop-target');

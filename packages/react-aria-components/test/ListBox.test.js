@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Header, ListBox, ListBoxContext, ListBoxItem, Section, Text, useDragAndDrop} from '../';
+import {DropIndicator, Header, ListBox, ListBoxContext, ListBoxItem, Section, Text, useDragAndDrop} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -478,7 +478,7 @@ describe('ListBox', () => {
 
     it('should render drop indicators', () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} />);
+      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
       let option = getAllByRole('option')[0];
       fireEvent.keyDown(option, {key: 'Enter'});
       fireEvent.keyUp(option, {key: 'Enter'});
@@ -489,6 +489,7 @@ describe('ListBox', () => {
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
       expect(rows[0]).toHaveAttribute('aria-label', 'Insert before Cat');
+      expect(rows[0]).toHaveTextContent('Test');
       expect(rows[1]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[1]).not.toHaveAttribute('data-drop-target');
       expect(rows[1]).toHaveAttribute('aria-label', 'Insert between Cat and Dog');

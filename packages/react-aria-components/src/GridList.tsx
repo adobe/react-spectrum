@@ -426,6 +426,7 @@ function GridListDropIndicator(props: GridListDropIndicatorProps, ref: Forwarded
       data-drop-target={isDropTarget || undefined}>
       <div role="gridcell">
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
+        {renderProps.children}
       </div>
     </div>
   );
