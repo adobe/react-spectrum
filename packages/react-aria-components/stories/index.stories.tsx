@@ -874,7 +874,7 @@ export const TableDynamicExample = () => {
 
   let rows = [
     {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-    {id: 2, name: 'Program Files", date: "4/7/2021', type: 'File folder'},
+    {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
     {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
     {id: 4, name: 'log.txt', date: '1/18/20167', type: 'Text Document'}
   ];
