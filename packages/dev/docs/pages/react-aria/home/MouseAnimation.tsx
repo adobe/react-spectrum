@@ -8,6 +8,7 @@ import { CogIcon, PencilIcon, ShareIcon } from 'lucide-react';
 export function MouseAnimation() {
   let ref = useRef<HTMLDivElement>(null);
   let [tooltip, setTooltip] = useState(null);
+  let [hovered, setHovered] = useState(null);
   let [isPressed, setPressed] = useState(null);
   let isAnimating = useRef(false);
   let mouseRef = useRef<SVGSVGElement>(null);
@@ -19,7 +20,7 @@ export function MouseAnimation() {
       //   perform() {}
       // },
       {
-        time: 2500,
+        time: 700,
         perform() {
           isAnimating.current = true;
           mouseRef.current.animate({
@@ -31,13 +32,19 @@ export function MouseAnimation() {
         }
       },
       {
+        time: 1700,
+        perform() {
+          setHovered('edit');
+        }
+      },
+      {
         time: 800,
         perform() {
           setTooltip('edit');
         }
       },
       {
-        time: 800,
+        time: 700,
         perform() {
           mouseRef.current.animate({
             transform: [
@@ -50,12 +57,14 @@ export function MouseAnimation() {
       {
         time: 600,
         perform() {
+          setHovered('share');
           setTooltip('share');
         }
       },
       {
         time: 1500,
         perform() {
+          setHovered('settings');
           setTooltip('settings');
         }
       },
@@ -64,6 +73,7 @@ export function MouseAnimation() {
         perform() {
           setPressed(true);
           setTooltip(null);
+          setHovered(null);
         }
       },
       {
@@ -94,6 +104,7 @@ export function MouseAnimation() {
     return () => {
       cancel();
       setTooltip(null);
+      setHovered(null);
       setPressed(false);
       mouseRef.current.style.transform = 'translate(-50px, 120px)';
       isAnimating.current = false;
@@ -124,20 +135,20 @@ export function MouseAnimation() {
         </g>
       </svg>
       <TooltipTrigger isOpen={tooltip === 'edit'} onOpenChange={(o) => onOpenChange('edit', o)}>
-        <Button aria-label="Edit" variant="secondary" className="w-9 h-9 p-0 relative">
+        <Button aria-label="Edit" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'edit' ? 'bg-gray-200' : ''}`}>
           <PencilIcon className="inline w-5 h-5" />
         </Button>
         <Tooltip>Edit</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger isOpen={tooltip === 'share'} onOpenChange={(o) => onOpenChange('share', o)}>
-        <Button aria-label="Share" variant="secondary" className="w-9 h-9 p-0 relative">
+        <Button aria-label="Share" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'share' ? 'bg-gray-200' : ''}`}>
           <ShareIcon className="inline w-5 h-5" />
         </Button>
         <Tooltip>Share</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger isOpen={tooltip === 'settings'} onOpenChange={(o) => onOpenChange('settings', o)}>
         <ButtonContext.Provider value={{isPressed}}>
-          <Button aria-label="Settings" variant="secondary" className="w-9 h-9 p-0 relative">
+          <Button aria-label="Settings" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'settings' ? 'bg-gray-200' : ''}`}>
             <CogIcon className="inline w-5 h-5" />
           </Button>
         </ButtonContext.Provider>
