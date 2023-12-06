@@ -310,7 +310,7 @@ describe('SearchAutocomplete', function () {
 
   describe('opening', function () {
     describe('menuTrigger = focus', function () {
-      it('opens menu when searchAutocomplete is focused', function () {
+      it('opens menu when searchAutocomplete is focused', async function () {
         let {getByRole} = renderSearchAutocomplete({menuTrigger: 'focus'});
 
         let searchAutocomplete = getByRole('combobox');
@@ -324,7 +324,7 @@ describe('SearchAutocomplete', function () {
         let listbox = getByRole('listbox');
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
-        testSearchAutocompleteOpen(searchAutocomplete, listbox);
+        await testSearchAutocompleteOpen(searchAutocomplete, listbox);
       });
     });
 
@@ -345,7 +345,7 @@ describe('SearchAutocomplete', function () {
         let listbox = getByRole('listbox');
         expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
-        testSearchAutocompleteOpen(searchAutocomplete, listbox, 0);
+        await testSearchAutocompleteOpen(searchAutocomplete, listbox, 0);
       });
 
       it('opens the menu on up arrow press', async function () {
@@ -364,7 +364,7 @@ describe('SearchAutocomplete', function () {
         let listbox = getByRole('listbox');
         expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
-        testSearchAutocompleteOpen(searchAutocomplete, listbox, 2);
+        await testSearchAutocompleteOpen(searchAutocomplete, listbox, 2);
       });
 
       it('opens the menu on user typing', async function () {

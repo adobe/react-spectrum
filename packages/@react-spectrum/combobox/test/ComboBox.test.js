@@ -435,7 +435,7 @@ describe('ComboBox', function () {
 
   describe('opening', function () {
     describe('menuTrigger = focus', function () {
-      it('opens menu when combobox is focused', function () {
+      it('opens menu when combobox is focused', async function () {
         let {getByRole} = renderComboBox({menuTrigger: 'focus'});
 
         let button = getByRole('button');
@@ -450,7 +450,7 @@ describe('ComboBox', function () {
         let listbox = getByRole('listbox');
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
-        testComboBoxOpen(combobox, button, listbox);
+        await testComboBoxOpen(combobox, button, listbox);
       });
 
       it('opens menu when combobox is focused by clicking button', async function () {
@@ -466,7 +466,7 @@ describe('ComboBox', function () {
         let listbox = getByRole('listbox');
         expect(onOpenChange).toBeCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'focus');
-        testComboBoxOpen(combobox, button, listbox);
+        await testComboBoxOpen(combobox, button, listbox);
       });
     });
 
@@ -511,7 +511,7 @@ describe('ComboBox', function () {
         expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
 
         let listbox = getByRole('listbox');
-        testComboBoxOpen(combobox, button, listbox);
+        await testComboBoxOpen(combobox, button, listbox);
       });
 
       it('opens for touch', () => {
@@ -593,7 +593,7 @@ describe('ComboBox', function () {
         expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
 
         let listbox = getByRole('listbox');
-        testComboBoxOpen(combobox, button, listbox);
+        await testComboBoxOpen(combobox, button, listbox);
       });
     });
 
@@ -615,7 +615,7 @@ describe('ComboBox', function () {
         let listbox = getByRole('listbox');
         expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
-        testComboBoxOpen(combobox, button, listbox, 0);
+        await testComboBoxOpen(combobox, button, listbox, 0);
       });
 
       it('opens the menu on up arrow press', async function () {
@@ -635,7 +635,7 @@ describe('ComboBox', function () {
         let listbox = getByRole('listbox');
         expect(onOpenChange).toHaveBeenCalledTimes(1);
         expect(onOpenChange).toHaveBeenCalledWith(true, 'manual');
-        testComboBoxOpen(combobox, button, listbox, 2);
+        await testComboBoxOpen(combobox, button, listbox, 2);
       });
 
       it('opens the menu on user typing', async function () {
