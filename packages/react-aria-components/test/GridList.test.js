@@ -238,6 +238,14 @@ describe('GridList', () => {
     expect(within(gridList).getAllByRole('row').map((r) => r.textContent)).toEqual(['Cat', 'Dog']);
   });
 
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderGridList({onScroll});
+    let grid = getByRole('grid');
+    fireEvent.scroll(grid);
+    expect(onScroll).toHaveBeenCalled();
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableGridList />);

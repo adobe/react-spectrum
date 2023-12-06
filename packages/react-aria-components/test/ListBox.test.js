@@ -469,6 +469,14 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(options[1]);
   });
 
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderListbox({onScroll});
+    let listbox = getByRole('listbox');
+    fireEvent.scroll(listbox);
+    expect(onScroll).toHaveBeenCalled();
+  });
+
   describe('drag and drop', () => {
     it('should support draggable items', () => {
       let {getAllByRole} = render(<DraggableListBox />);
