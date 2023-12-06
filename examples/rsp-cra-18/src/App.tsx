@@ -14,6 +14,7 @@ import ColorExamples from './sections/ColorExamples';
 import StatusExamples from './sections/StatusExamples';
 import ContentExamples from './sections/ContentExamples';
 import PickerExamples from './sections/PickerExamples';
+import DragAndDropExamples from './sections/DragAndDropExamples';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -70,6 +71,7 @@ function App() {
         <StatusExamples />
         <ContentExamples />
         <PickerExamples />
+        <DragAndDropExamples />
       </div>
     </Provider>
   );
