@@ -18,7 +18,7 @@ export function SearchField(
   { label, description, errorMessage, ...props }: SearchFieldProps
 ) {
   return (
-    <AriaSearchField {...props} className="group flex flex-col gap-1">
+    <AriaSearchField {...props} className={`group flex flex-col gap-1 min-w-[40px] ${props.className}`}>
       {label && <Label>{label}</Label>}
       <FieldGroup>
         <SearchIcon className="w-4 h-4 ml-2 text-gray-500" />

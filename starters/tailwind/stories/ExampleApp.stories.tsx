@@ -162,11 +162,11 @@ export function ExampleApp() {
 
   return (
     <div className="h-full flex flex-col gap-4 p-4">
-      <div className="flex gap-2 items-end">
-        <SearchField aria-label="Filter" value={search} onChange={setSearch} />
+      <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[auto_auto_auto_1fr_auto] gap-2 items-end">
+        <SearchField aria-label="Filter" value={search} onChange={setSearch} className="col-span-3 sm:col-span-1" />
         <DialogTrigger>
           <TooltipTrigger>
-            <Button aria-label="Filters" variant="secondary" className="w-9 h-9 p-0 relative">
+            <Button aria-label="Filters" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 relative">
               <FilterIcon className="inline w-5 h-5" />
               {filters > 0 && <div className="absolute -top-2 -right-2 rounded-full h-4 aspect-square text-white text-xs bg-blue-600">{filters}</div>}
             </Button>
@@ -198,7 +198,7 @@ export function ExampleApp() {
         </DialogTrigger>
         <MenuTrigger>
           <TooltipTrigger>
-            <Button aria-label="Columns" variant="secondary" className="w-9 h-9 p-0">
+            <Button aria-label="Columns" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 hidden sm:block">
               <SlidersIcon className="inline w-5 h-5" />
             </Button>
             <Tooltip>Columns</Tooltip>
@@ -210,9 +210,8 @@ export function ExampleApp() {
             <MenuItem id="watering">Watering</MenuItem>
           </Menu>
         </MenuTrigger>
-        <div className="flex-1" />
         <DialogTrigger>
-          <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 p-0">
+          <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 col-start-5">
             <PlusIcon className="inline w-5 h-5" />
           </Button>
           <PlantModal>

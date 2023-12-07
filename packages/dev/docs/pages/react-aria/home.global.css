@@ -54,28 +54,12 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-h1 {
-  @apply text-8xl font-bold mb-6;
-
-  + p {
-    @apply text-4xl;
-  }
-}
-
 main > section > h2 {
   @apply text-4xl md:text-5xl font-semibold mb-4;
 
   + p {
     @apply text-lg md:text-2xl max-w-5xl;
     text-wrap: balance;
-  }
-}
-
-main > section > h3 {
-  @apply text-2xl font-semibold mb-2;
-
-  + p {
-    @apply text-lg;
   }
 }
 

@@ -19,146 +19,43 @@ import {Keyboard} from './home/Keyboard';
 minimal: true
 ---
 
-<header hidden className="text-center py-40 bg-gradient-to-r from-blue-300 to-slate-300">
-
-# React Aria
-
-New slogan
-
-<div className="inline-flex gap-4 my-10">
-  <a href="getting-started.html" className="bg-white/80 hover:bg-white/90 border border-black/10 bg-clip-padding text-lg font-bold text-gray-700 px-8 py-4 rounded-full">Get Started</a>
-  <a href="components.html" className="bg-white/80 hover:bg-white/90 border border-black/10 bg-clip-padding text-lg font-bold text-gray-700 px-8 py-4 rounded-full">Explore components</a>
-</div>
-
-<nav className="absolute right-0 top-0 p-4">
-  <a href="https://github.com/adobe/react-spectrum" target="_blank">GitHub</a>
-  <a href="https://npmjs.com/react-aria-components">NPM</a>
-</nav>
-
-
-</header>
-
-<main style={{background: `linear-gradient(to bottom, transparent 0% 80%, white), conic-gradient(at 50% 60%, rgba(150, 180, 248, 0.4), rgba(69, 136, 244, 0.4), rgba(174, 120, 247, 0.4), rgba(255, 44, 206, 0.4), rgba(250, 167, 167, 0.4), rgba(247, 95, 97, 0.4), rgba(250, 198, 128, 0.4), rgba(253, 234, 4, 0.4), rgba(191, 255, 180, 0.4), rgba(169, 178, 247, 0.4), rgba(149, 93, 255, 0.4), rgba(150, 180, 248, 0.4))`, backgroundSize: '100% 1200px', backgroundRepeat: 'no-repeat'}}>
-
-<a href="." className="absolute top-4 left-4 inline-flex items-center text-lg gap-4 font-bold px-4 py-3 rounded-xl bg-white/30 ring-1 ring-black/5">
-  <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" className="w-9">
-    <polygon points="19,0 30,0 30,26" />
-    <polygon points="11.1,0 0,0 0,26" />
-    <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
-  </svg>
-  <h2>
-    React Aria
-  </h2>
-</a>
-
-<nav className="absolute right-4 top-4 p-4 inline-flex items-center gap-4 rounded-xl bg-white/30 ring-1 ring-black/5">
-  <a href="https://github.com/adobe/react-spectrum" target="_blank">GitHub</a>
-  <a href="https://npmjs.com/react-aria-components">NPM</a>
-</nav>
-
-<section className="max-w-6xl mx-auto pt-32 px-8 md:px-20 xl:px-40 pb-60 -mb-60 rounded-3xl">
-  <h2 className="text-transparent text-center [text-wrap:balance] bg-clip-text bg-gradient-to-b from-slate-700 to-slate-900">Build adaptive, accessible, and robust components with React Aria.</h2>
-  <p className="text-slate-800 text-center">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
-
-  <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
-    <a href="getting-started.html" className="bg-gradient-to-r from-blue-500 to-indigo-500 border border-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-lg font-bold text-white px-8 py-3 rounded-full">Get Started</a>
-    <a href="components.html" className="bg-white/50 hover:bg-white/90 border border-black/10 bg-clip-padding text-lg font-bold text-gray-700 px-8 py-3 rounded-full">Explore components</a>
-  </div>
-
-  <div className="relative pt-20">
-    <div className="flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out h-[450px] max-w-[600px] mx-auto overflow-hidden rounded-lg shadow-2xl text-black transition w-full translate-y-0 opacity-100">
-      <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-black/5 flex flex-row justify-center px-3 py-2 relative">
-        <div className="absolute flex flex-row left-4 top-3.5">
-          <div className="bg-red-500 h-3 mr-2 rounded-full w-3"></div>
-          <div className="bg-yellow-500 h-3 mr-2 rounded-full w-3"></div>
-          <div className="bg-green-500 h-3 rounded-full w-3"></div>
-        </div>
-        <div className="bg-gray-400/40 dark:bg-gray-700 px-10 py-1 rounded-md text-slate-500 text-xs">https://your-app.com</div>
-      </div>
-      <div className="flex-1 overflow-auto bg-white" id="example-app" />
-    </div>
-    <svg viewBox="0 0 832 450" width={832} className="absolute top-0 left-[50%] -translate-x-[50%] z-20 pointer-events-none [filter:drop-shadow(0_0_3px_white)] hidden md:block">
-      <defs>
-        <marker
-          id="arrow"
-          viewBox="0 0 6 6"
-          refX={3}
-          refY={3}
-          markerWidth={6}
-          markerHeight={6}
-          orient="auto-start-reverse"
-          className="fill-slate-500">
-          <circle r={3} cx={3} cy={3} />
-        </marker>
-      </defs>
-      <polyline
-        points="310,50 310,128 383,128 383,138"
-        marker-end="url(#arrow)"
-        className="stroke-slate-500 fill-none" />
-      <a href="Popover.html" className="pointer-events-auto"><text x={290} y={44} className="text-xs fill-blue-600 underline">Popover</text></a>
-      <polyline
-        points="522,50 522,128 427,128 427,138"
-        marker-end="url(#arrow)"
-        className="stroke-slate-500 fill-none" />
-      <a href="Tooltip.html" className="pointer-events-auto"><text x={504} y={44} className="text-xs fill-blue-600 underline">Tooltip</text></a>
-      <g transform="translate(0 80)">
-        <line
-          x1={88}
-          y1={75}
-          x2={132}
-          y2={75}
-          marker-end="url(#arrow)"
-          className="stroke-slate-500" />
-        <a href="SearchField.html" className="pointer-events-auto"><text x={28} y={78} className="text-xs fill-blue-600 underline">SearchField</text></a>
-        <line
-          x1={88}
-          y1={170}
-          x2={132}
-          y2={170}
-          marker-end="url(#arrow)"
-          className="stroke-slate-500" />
-        <a href="Table.html" className="pointer-events-auto"><text x={58} y={173} className="text-xs fill-blue-600 underline">Table</text></a>
-
-        <line
-          x1={700}
-          y1={75}
-          x2={744}
-          y2={75}
-          marker-start="url(#arrow)"
-          className="stroke-slate-500" />
-        <a href="Modal.html" className="pointer-events-auto"><text x={748} y={78} className="text-xs fill-blue-600 underline">Modal</text></a>
-      </g>
-      <g transform="translate(0 80)" id="hideOnScroll" className="transition duration-300">
-        <line
-          x1={88}
-          y1={290}
-          x2={142}
-          y2={290}
-          marker-end="url(#arrow)"
-          className="stroke-slate-500" />
-        <a href="Checkbox.html" className="pointer-events-auto"><text x={36} y={293} className="text-xs fill-blue-600 underline">Checkbox</text></a>
-        <line
-          x1={88}
-          y1={360}
-          x2={180}
-          y2={360}
-          marker-end="url(#arrow)"
-          className="stroke-slate-500" />
-        <a href="ToggleButton.html" className="pointer-events-auto"><text x={20} y={363} className="text-xs fill-blue-600 underline">ToggleButton</text></a>
-        <line
-          x1={690}
-          y1={176}
-          x2={744}
-          y2={176}
-          marker-start="url(#arrow)"
-          className="stroke-slate-500" />
-        <a href="Menu.html" className="pointer-events-auto"><text x={748} y={179} className="text-xs fill-blue-600 underline">Menu</text></a>
-      </g>
+<header style={{background: `linear-gradient(to bottom, transparent 0% 80%, white), conic-gradient(at 50% 60%, rgba(150, 180, 248, 0.4), rgba(69, 136, 244, 0.4), rgba(174, 120, 247, 0.4), rgba(255, 44, 206, 0.4), rgba(250, 167, 167, 0.4), rgba(247, 95, 97, 0.4), rgba(250, 198, 128, 0.4), rgba(253, 234, 4, 0.4), rgba(191, 255, 180, 0.4), rgba(169, 178, 247, 0.4), rgba(149, 93, 255, 0.4), rgba(150, 180, 248, 0.4))`, backgroundRepeat: 'no-repeat'}}>
+  <a href="." className="absolute top-4 left-4 inline-flex items-center md:text-lg gap-4 font-bold px-4 py-3 rounded-xl bg-white/30 ring-1 ring-black/5">
+    <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" className="w-6 md:w-9">
+      <polygon points="19,0 30,0 30,26" />
+      <polygon points="11.1,0 0,0 0,26" />
+      <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
     </svg>
-  </div>
-</section>
+    <h2>
+      React Aria
+    </h2>
+  </a>
 
-{/* <div className="h-20" style={{background: linear-gradient(to left, rgba(250, 167, 167, 0.4), rgba(247, 95, 97, 0.4), rgba(250, 198, 128, 0.4), rgba(253, 234, 4, 0.4))}}></div> */}
+  <nav className="absolute right-4 top-4 p-4 inline-flex items-center gap-4 text-sm md:text-base rounded-xl bg-white/30 ring-1 ring-black/5">
+    <a href="https://github.com/adobe/react-spectrum" target="_blank">GitHub</a>
+    <a href="https://npmjs.com/react-aria-components">NPM</a>
+  </nav>
+
+  <section className="max-w-6xl mx-auto pt-32 px-8 md:px-20 xl:px-40 pb-60 -mb-60 rounded-3xl">
+    <h1 className="text-3xl md:text-5xl font-semibold mb-4 text-transparent text-center [text-wrap:balance] bg-clip-text bg-gradient-to-b from-slate-700 to-slate-900">Build adaptive, accessible, and robust components with React Aria.</h1>
+    <p className="text-slate-800 text-center text-base md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
+
+    <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
+      <a href="getting-started.html" className="bg-gradient-to-r from-blue-500 to-indigo-500 border border-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full">Get Started</a>
+      <a href="components.html" className="bg-white/50 hover:bg-white/90 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-gray-700 px-8 py-3 rounded-full">Explore components</a>
+    </div>
+
+    <div className="relative pt-20">
+      <div className="flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out h-[450px] max-w-[600px] mx-auto overflow-hidden rounded-lg shadow-2xl text-black transition w-full translate-y-0 opacity-100">
+        <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-black/5 flex flex-row justify-center px-3 py-2 relative">
+          <div className="absolute flex flex-row left-4 top-3.5">
+            <div className="bg-red-500 h-3 mr-2 rounded-full w-3"></div>
+            <div className="bg-yellow-500 h-3 mr-2 rounded-full w-3"></div>
+            <div className="bg-green-500 h-3 rounded-full w-3"></div>
+          </div>
+          <div className="bg-gray-400/40 dark:bg-gray-700 px-10 py-1 rounded-md text-slate-500 text-xs">https://your-app.com</div>
+        </div>
+        <div className="flex-1 overflow-auto bg-white" id="example-app" />
 
 ```tsx import
 import {ExampleApp} from '../../../../../starters/tailwind/stories/ExampleApp.stories';
@@ -166,6 +63,90 @@ import {ExampleApp} from '../../../../../starters/tailwind/stories/ExampleApp.st
 ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp />);
 ```
 
+      </div>
+      <svg viewBox="0 0 832 450" width={832} className="absolute top-0 left-[50%] -translate-x-[50%] z-20 pointer-events-none [filter:drop-shadow(0_0_3px_white)] hidden md:block">
+        <defs>
+          <marker
+            id="arrow"
+            viewBox="0 0 6 6"
+            refX={3}
+            refY={3}
+            markerWidth={6}
+            markerHeight={6}
+            orient="auto-start-reverse"
+            className="fill-slate-500">
+            <circle r={3} cx={3} cy={3} />
+          </marker>
+        </defs>
+        <polyline
+          points="310,50 310,128 383,128 383,138"
+          marker-end="url(#arrow)"
+          className="stroke-slate-500 fill-none" />
+        <a href="Popover.html" className="pointer-events-auto"><text x={290} y={44} className="text-xs fill-blue-600 underline">Popover</text></a>
+        <polyline
+          points="522,50 522,128 427,128 427,138"
+          marker-end="url(#arrow)"
+          className="stroke-slate-500 fill-none" />
+        <a href="Tooltip.html" className="pointer-events-auto"><text x={504} y={44} className="text-xs fill-blue-600 underline">Tooltip</text></a>
+        <g transform="translate(0 80)">
+          <line
+            x1={88}
+            y1={75}
+            x2={132}
+            y2={75}
+            marker-end="url(#arrow)"
+            className="stroke-slate-500" />
+          <a href="SearchField.html" className="pointer-events-auto"><text x={28} y={78} className="text-xs fill-blue-600 underline">SearchField</text></a>
+          <line
+            x1={88}
+            y1={170}
+            x2={132}
+            y2={170}
+            marker-end="url(#arrow)"
+            className="stroke-slate-500" />
+          <a href="Table.html" className="pointer-events-auto"><text x={58} y={173} className="text-xs fill-blue-600 underline">Table</text></a>
+
+          <line
+            x1={700}
+            y1={75}
+            x2={744}
+            y2={75}
+            marker-start="url(#arrow)"
+            className="stroke-slate-500" />
+          <a href="Modal.html" className="pointer-events-auto"><text x={748} y={78} className="text-xs fill-blue-600 underline">Modal</text></a>
+        </g>
+        <g transform="translate(0 80)" id="hideOnScroll" className="transition duration-300">
+          <line
+            x1={88}
+            y1={290}
+            x2={142}
+            y2={290}
+            marker-end="url(#arrow)"
+            className="stroke-slate-500" />
+          <a href="Checkbox.html" className="pointer-events-auto"><text x={36} y={293} className="text-xs fill-blue-600 underline">Checkbox</text></a>
+          <line
+            x1={88}
+            y1={360}
+            x2={180}
+            y2={360}
+            marker-end="url(#arrow)"
+            className="stroke-slate-500" />
+          <a href="ToggleButton.html" className="pointer-events-auto"><text x={20} y={363} className="text-xs fill-blue-600 underline">ToggleButton</text></a>
+          <line
+            x1={690}
+            y1={176}
+            x2={744}
+            y2={176}
+            marker-start="url(#arrow)"
+            className="stroke-slate-500" />
+          <a href="Menu.html" className="pointer-events-auto"><text x={748} y={179} className="text-xs fill-blue-600 underline">Menu</text></a>
+        </g>
+      </svg>
+    </div>
+  </section>
+</header>
+
+<main>
 <section className="max-w-6xl mx-auto mt-32 lg:mt-64 mb-20 lg:mb-32 px-8 md:px-20">
 
 <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Bring your own</span> <span className="bg-clip-text bg-gradient-to-t from-fuchsia-600 to-pink-600">styles</span><span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">.</span></h2>
