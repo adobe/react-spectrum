@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
+import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -716,6 +716,14 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo (focused)');
   });
 
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderTable({tableProps: {onScroll}});
+    let grid = getByRole('grid');
+    fireEvent.scroll(grid);
+    expect(onScroll).toHaveBeenCalled();
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableTable />);
@@ -725,7 +733,7 @@ describe('Table', () => {
 
     it('should render drop indicators', () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableTable onReorder={onReorder} />);
+      let {getAllByRole} = render(<DraggableTable onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
       let button = getAllByRole('button')[0];
       fireEvent.keyDown(button, {key: 'Enter'});
       fireEvent.keyUp(button, {key: 'Enter'});
@@ -735,6 +743,7 @@ describe('Table', () => {
       expect(rows).toHaveLength(5);
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
+      expect(rows[0]).toHaveTextContent('Test');
       expect(within(rows[0]).getByRole('button')).toHaveAttribute('aria-label', 'Insert before Games');
       expect(rows[2]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[2]).not.toHaveAttribute('data-drop-target');
@@ -908,6 +917,33 @@ describe('Table', () => {
         </ResizableTableContainer>
       );
     }
+  });
+
+  it('should support overriding table style', () => {
+    let {getByRole} = render(
+      <Table aria-label="Table" style={{width: 200}}>
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow href="https://google.com">
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow href="https://adobe.com">
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+
+    let table = getByRole('grid');
+    expect(table).toHaveAttribute('style', expect.stringContaining('width: 200px'));
   });
 
   describe('links', function () {

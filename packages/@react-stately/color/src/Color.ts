@@ -17,7 +17,7 @@ import intlMessages from '../intl/*.json';
 import {LocalizedStringDictionary} from '@internationalized/string';
 import {NumberFormatter} from '@internationalized/number';
 
-const strings = new LocalizedStringDictionary(intlMessages);
+let dictionary = new LocalizedStringDictionary(intlMessages);
 
 /** Parses a color from a string value. Throws an error if the string could not be parsed. */
 export function parseColor(value: string): IColor {
@@ -67,6 +67,7 @@ abstract class Color implements IColor {
   }
 
   getChannelName(channel: ColorChannel, locale: string) {
+    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/color') || dictionary;
     return strings.getStringForLocale(channel, locale);
   }
 

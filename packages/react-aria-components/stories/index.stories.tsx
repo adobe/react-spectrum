@@ -586,7 +586,8 @@ export const PopoverExample = () => (
         background: 'Canvas',
         color: 'CanvasText',
         border: '1px solid gray',
-        padding: 30
+        padding: 30,
+        zIndex: 5
       }}>
       <Dialog>
         {({close}) => (

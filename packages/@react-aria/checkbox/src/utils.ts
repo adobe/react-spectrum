@@ -13,9 +13,9 @@
 import {CheckboxGroupState} from '@react-stately/checkbox';
 
 interface CheckboxGroupData {
-  name: string,
-  descriptionId: string,
-  errorMessageId: string,
+  name?: string,
+  descriptionId?: string,
+  errorMessageId?: string,
   validationBehavior: 'aria' | 'native'
 }
 

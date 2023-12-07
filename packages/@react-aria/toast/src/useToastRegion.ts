@@ -26,7 +26,7 @@ export interface ToastRegionAria {
  * Toasts display brief, temporary notifications of actions, errors, or other events in an application.
  */
 export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState<T>, ref: RefObject<HTMLElement>): ToastRegionAria {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
   let {landmarkProps} = useLandmark({
     role: 'region',
     'aria-label': props['aria-label'] || stringFormatter.format('notifications')

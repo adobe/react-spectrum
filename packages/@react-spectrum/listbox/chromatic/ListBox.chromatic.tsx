@@ -13,6 +13,7 @@
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {Avatar} from '@react-spectrum/avatar';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
@@ -136,6 +137,17 @@ const TemplateComplex = (args: SpectrumListBoxProps<object>) => (
   </ListBox>
 );
 
+const TemplateAvatars = (args: SpectrumListBoxProps<object>) => (
+  <ListBox {...args} flexGrow={1} items={flatOptions}>
+    {(item) => (
+      <Item key={item.name}>
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+        <Text>{item.name}</Text>
+      </Item>
+    )}
+  </ListBox>
+);
+
 export const Default = {
   render: Template,
   name: 'flat list with selection',
@@ -158,4 +170,9 @@ export const ComplexItems = {
   render: TemplateComplex,
   name: 'complex items',
   args: {selectedKeys: ['Puppy', 'Cut'], disabledKeys: ['Paste'], selectionMode: 'multiple'}
+};
+
+export const WithAvatar = {
+  render: TemplateAvatars,
+  name: 'with avatar'
 };
