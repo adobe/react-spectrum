@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, usePress, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
+import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusRing, useHover, useRadio, useRadioGroup, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
@@ -166,7 +166,7 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, RadioContext);
   let state = React.useContext(RadioGroupStateContext)!;
   let inputRef = useRef<HTMLInputElement>(null);
-  let {inputProps, isSelected, isDisabled, isPressed: isPressedKeyboard} = useRadio({
+  let {labelProps, inputProps, isSelected, isDisabled, isPressed} = useRadio({
     ...removeDataAttributes<RadioProps>(props),
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
@@ -174,36 +174,17 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let interactionDisabled = isDisabled || state.isReadOnly;
 
-  // Handle press state for full label. Keyboard press state is returned by useRadio
-  // since it is handled on the <input> element itself.
-  let [isPressed, setPressed] = useState(false);
-  let {pressProps} = usePress({
-    isDisabled: interactionDisabled,
-    onPressStart(e) {
-      if (e.pointerType !== 'keyboard') {
-        setPressed(true);
-      }
-    },
-    onPressEnd(e) {
-      if (e.pointerType !== 'keyboard') {
-        setPressed(false);
-      }
-    }
-  });
-
   let {hoverProps, isHovered} = useHover({
     ...props,
     isDisabled: interactionDisabled
   });
-
-  let pressed = interactionDisabled ? false : (isPressed || isPressedKeyboard);
 
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Radio',
     values: {
       isSelected,
-      isPressed: pressed,
+      isPressed,
       isHovered,
       isFocused,
       isFocusVisible,
@@ -219,10 +200,10 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
 
   return (
     <label
-      {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       ref={ref}
       data-selected={isSelected || undefined}
-      data-pressed={pressed || undefined}
+      data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}

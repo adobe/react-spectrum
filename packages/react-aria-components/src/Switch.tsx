@@ -10,10 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
+import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwitch, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {}
@@ -66,7 +66,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
   let inputRef = useRef<HTMLInputElement>(null);
   let state = useToggleState(props);
-  let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch({
+  let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed} = useSwitch({
     ...removeDataAttributes(props),
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
@@ -74,36 +74,17 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = props.isDisabled || props.isReadOnly;
 
-  // Handle press state for full label. Keyboard press state is returned by useSwitch
-  // since it is handled on the <input> element itself.
-  let [isPressed, setPressed] = useState(false);
-  let {pressProps} = usePress({
-    isDisabled: isInteractionDisabled,
-    onPressStart(e) {
-      if (e.pointerType !== 'keyboard') {
-        setPressed(true);
-      }
-    },
-    onPressEnd(e) {
-      if (e.pointerType !== 'keyboard') {
-        setPressed(false);
-      }
-    }
-  });
-
   let {hoverProps, isHovered} = useHover({
     ...props,
     isDisabled: isInteractionDisabled
   });
-
-  let pressed = isInteractionDisabled ? false : (isPressed || isPressedKeyboard);
 
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Switch',
     values: {
       isSelected,
-      isPressed: pressed,
+      isPressed,
       isHovered,
       isFocused,
       isFocusVisible,
@@ -118,11 +99,11 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
 
   return (
     <label
-      {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
+      {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
-      data-pressed={pressed || undefined}
+      data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
