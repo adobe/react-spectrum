@@ -527,12 +527,8 @@ export interface ColumnRenderProps {
   startResize(): void
 }
 
-export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> {
+export interface ColumnProps extends RenderProps<ColumnRenderProps> {
   id?: Key,
-  /** Rendered contents of the column if `children` contains child columns. */
-  title?: ReactNode,
-  /** A list of child columns used when dynamically rendering nested child columns. */
-  childColumns?: Iterable<T>,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
   /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
@@ -549,21 +545,9 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
   maxWidth?: ColumnStaticSize | null
 }
 
-function Column<T extends object>(props: ColumnProps<T>, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
-  let render = useContext(CollectionRendererContext);
-  let childColumns: ReactNode | ((item: T) => ReactNode);
-  if (typeof render === 'function') {
-    childColumns = render;
-  } else if (typeof props.children !== 'function') {
-    childColumns = props.children;
-  }
+function Column(props: ColumnProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
 
-  let children = useCollectionChildren({
-    children: (props.title || props.childColumns) ? childColumns : null,
-    items: props.childColumns
-  });
-
-  return useSSRCollectionNode('column', props, ref, props.title ?? props.children, children);
+  return useSSRCollectionNode('column', props, ref, props.children);
 }
 
 /**
@@ -820,7 +804,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     }
   }
 
-  let props: ColumnProps<unknown> = column.props;
+  let props: ColumnProps = column.props;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
