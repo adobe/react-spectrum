@@ -100,7 +100,6 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
   return (
     <label
       {...mergeProps(DOMProps, labelProps, hoverProps, renderProps)}
-      {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
       ref={ref}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
