@@ -12,7 +12,7 @@ import {filterDOMProps, useLayoutEffect, useObjectRef, useResizeObserver} from '
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
@@ -325,7 +325,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   let dropState: DroppableCollectionState | undefined = undefined;
   let droppableCollection: DroppableCollectionResult | undefined = undefined;
   let isRootDropTarget = false;
-  let dragPreview: React.JSX.Element | null = null;
+  let dragPreview: JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {
@@ -549,7 +549,7 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
   maxWidth?: ColumnStaticSize | null
 }
 
-function Column<T extends object>(props: ColumnProps<T>, ref: ForwardedRef<HTMLTableCellElement>): React.JSX.Element | null {
+function Column<T extends object>(props: ColumnProps<T>, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
   let render = useContext(CollectionRendererContext);
   let childColumns: ReactNode | ((item: T) => ReactNode);
   if (typeof render === 'function') {
@@ -590,7 +590,7 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
 
-function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>): React.JSX.Element | null {
+function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>): JSX.Element | null {
   let children = useCollectionChildren(props);
   return useSSRCollectionNode('tablebody', props, ref, null, children);
 }
@@ -613,7 +613,7 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   textValue?: string
 }
 
-function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): React.JSX.Element | null {
+function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): JSX.Element | null {
   let children = useCollectionChildren({
     children: props.children,
     items: props.columns,
@@ -664,7 +664,7 @@ export interface CellProps extends RenderProps<CellRenderProps> {
   textValue?: string
 }
 
-function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): React.JSX.Element | null {
+function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
   return useSSRCollectionNode('cell', props, ref, props.children);
 }
 
@@ -1224,6 +1224,7 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
         colSpan={state.collection.columnCount}
         style={{padding: 0}}>
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
+        {renderProps.children}
       </td>
     </tr>
   );
