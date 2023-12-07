@@ -1021,11 +1021,11 @@ describe('ComboBox', function () {
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
-    it('should close menu on scroll', function () {
+    it('should close menu on scroll', async function () {
       let {getByRole} = renderComboBox();
 
       let button = getByRole('button');
-      triggerPress(button);
+      await user.click(button);
       act(() => {
         jest.runAllTimers();
       });
