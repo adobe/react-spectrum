@@ -12,7 +12,7 @@
 
 import {ItemElement, ItemProps} from '@react-types/shared';
 import {PartialNode} from './types';
-import React, {ReactElement} from 'react';
+import React, {JSX, ReactElement} from 'react';
 
 function Item<T>(props: ItemProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;

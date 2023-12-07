@@ -148,27 +148,31 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     toggleMenu(focusStrategy);
   };
 
+  let updateLastCollection = useCallback(() => {
+    setLastCollection(showAllItems ? originalCollection : filteredCollection);
+  }, [showAllItems, originalCollection, filteredCollection]);
+
   // If menu is going to close, save the current collection so we can freeze the displayed collection when the
   // user clicks outside the popover to close the menu. Prevents the menu contents from updating as the menu closes.
   let toggleMenu = useCallback((focusStrategy) => {
     if (triggerState.isOpen) {
-      setLastCollection(filteredCollection);
+      updateLastCollection();
     }
 
     triggerState.toggle(focusStrategy);
-  }, [triggerState, filteredCollection]);
+  }, [triggerState, updateLastCollection]);
 
   let closeMenu = useCallback(() => {
     if (triggerState.isOpen) {
-      setLastCollection(filteredCollection);
+      updateLastCollection();
       triggerState.close();
     }
-  }, [triggerState, filteredCollection]);
+  }, [triggerState, updateLastCollection]);
 
-  let lastValue = useRef(inputValue);
+  let [lastValue, setLastValue] = useState(inputValue);
   let resetInputValue = () => {
     let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-    lastValue.current = itemText;
+    setLastValue(itemText);
     setInputValue(itemText);
   };
 
@@ -183,7 +187,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       isFocused &&
       (filteredCollection.size > 0 || allowsEmptyCollection) &&
       !triggerState.isOpen &&
-      inputValue !== lastValue.current &&
+      inputValue !== lastValue &&
       menuTrigger !== 'manual'
     ) {
       open(null, 'input');
@@ -209,7 +213,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
 
     // Clear focused key when input value changes and display filtered collection again.
-    if (inputValue !== lastValue.current) {
+    if (inputValue !== lastValue) {
       selectionManager.setFocusedKey(null);
       setShowAllItems(false);
 
@@ -228,8 +232,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       (props.inputValue === undefined || props.selectedKey === undefined)
     ) {
       resetInputValue();
-    } else {
-      lastValue.current = inputValue;
+    } else if (lastValue !== inputValue) {
+      setLastValue(inputValue);
     }
 
     // Update the inputValue if the selected item's text changes from its last tracked value.
@@ -239,7 +243,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     let selectedItemText = collection.getItem(selectedKey)?.textValue ?? '';
     if (!isFocused && selectedKey != null && props.inputValue === undefined && selectedKey === lastSelectedKey.current) {
       if (lastSelectedKeyText.current !== selectedItemText) {
-        lastValue.current = selectedItemText;
+        setLastValue(selectedItemText);
         setInputValue(selectedItemText);
       }
     }
@@ -275,7 +279,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
       // Stop menu from reopening from useEffect
       let itemText = collection.getItem(selectedKey)?.textValue ?? '';
-      lastValue.current = itemText;
+      setLastValue(itemText);
       closeMenu();
     } else {
       // If only a single aspect of combobox is controlled, reset input value and close menu for the user

@@ -12,7 +12,7 @@ governing permissions and limitations under the License. */}
 ## Overview
 
 A [`Menu`](https://react-spectrum.corp.adobe.com/components/Menu) is a widget that offers a list of choices to the user, such as a set of actions or functions.
-The various elements inside a menu are given as `<MenuItem/>`, or `<MenuHeading/>` in case of Menu Heading. Menus can also have nested menus using a `SubMenu`.
+The various elements inside a menu are given as `<MenuItem/>`, or `<MenuHeading/>` in case of Menu Heading. Menus can also have nested menus using a `Submenu`.
 A `<MenuDivider/>` can be used to separate between groups of similar menu items.
 
 A menu is usually opened, or made visible, by activating a [`Dropdown`](https://react-spectrum.corp.adobe.com/components/Dropdown), or  [`DropdownButton`](https://react-spectrum.corp.adobe.com/components/DropdownButton), choosing an item in a menu that opens a sub menu, or by invoking a command, such as <kbd>Shift + F10</kbd> in Windows, that opens a context specific menu. When a user activates a choice in a menu, the menu usually closes unless the choice opened a submenu.
@@ -157,7 +157,7 @@ When a `MenuItem` has role `menuitemcheckbox` or `menuitemradio`, `aria-checked`
 - `selectedItemSelector` equal to `.spectrum-Menu-item:not(.is-disabled).is-selected`.
 - `typeToSelect` defaults to `true`
 - In `Menu`, `autoFocus` defaults to `true`, so that the `Menu` will receive focus when it mounts within an `Overlay`.
-- When rendered in a `Portal` using an `Overlay`, `Menu` and `SubMenu` both trap focus, pressing `Tab` or `Shift + Tab` does not advance to the next or previous tabbable element, because the next focusable element before or after the element that opened the `Menu` is difficult to determine without crawling the DOM.
+- When rendered in a `Portal` using an `Overlay`, `Menu` and `Submenu` both trap focus, pressing `Tab` or `Shift + Tab` does not advance to the next or previous tabbable element, because the next focusable element before or after the element that opened the `Menu` is difficult to determine without crawling the DOM.
 
 ### Dependencies
 - `Popover`

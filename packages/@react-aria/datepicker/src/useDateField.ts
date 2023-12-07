@@ -89,7 +89,7 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
     onFocusWithinChange: props.onFocusChange
   });
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
   let message = state.maxGranularity === 'hour' ? 'selectedTimeDescription' : 'selectedDateDescription';
   let field = state.maxGranularity === 'hour' ? 'time' : 'date';
   let description = state.value ? stringFormatter.format(message, {[field]: state.formatValue({month: 'long'})}) : '';
@@ -139,7 +139,12 @@ export function useDateField<T extends DateValue>(props: AriaDateFieldOptions<T>
   }, [focusManager]);
 
   useFormReset(props.inputRef, state.value, state.setValue);
-  useFormValidation(props, state, props.inputRef);
+  useFormValidation({
+    ...props,
+    focus() {
+      focusManager.focusFirst();
+    }
+  }, state, props.inputRef);
 
   let inputProps: InputHTMLAttributes<HTMLInputElement> = {
     type: 'hidden',

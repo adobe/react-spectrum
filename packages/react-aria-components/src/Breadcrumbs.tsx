@@ -14,8 +14,9 @@ import {Collection, Node} from 'react-stately';
 import {CollectionProps, useCollection, useSSRCollectionNode} from './Collection';
 import {ContextValue, forwardRefType, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
+import {Key} from '@react-types/shared';
 import {LinkContext} from './Link';
-import React, {createContext, ForwardedRef, forwardRef, Key, ReactNode, RefObject} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
@@ -106,6 +107,7 @@ function BreadcrumbItem({node, isCurrent, isDisabled, onAction}: BreadcrumbItemP
   return (
     <li
       {...filterDOMProps(node.props)}
+      ref={node.props.ref}
       style={node.props.style}
       className={node.props.className ?? 'react-aria-Breadcrumb'}>
       <LinkContext.Provider value={linkProps}>

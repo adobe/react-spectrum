@@ -64,14 +64,9 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
 ```
 
 ```css
-.react-aria-ListBox {
-  --highlight-background: slateblue;
-  --highlight-foreground: white;
-  --border-color: var(--spectrum-global-color-gray-400);
-  --background-color: var(--page-background);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
+@import "@react-aria/example-theme";
 
+.react-aria-ListBox {
   display: flex;
   flex-direction: column;
   max-height: inherit;
@@ -79,84 +74,45 @@ import {ListBox, ListBoxItem} from 'react-aria-components';
   padding: 2px;
   border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: var(--background-color);
+  background: var(--overlay-background);
+  forced-color-adjust: none;
   outline: none;
   width: 250px;
   max-height: 300px;
   min-height: 100px;
   box-sizing: border-box;
 
-  &[data-empty] {
-    align-items: center;
-    justify-content: center;
-    font-style: italic;
-  }
-
   &[data-focus-visible] {
-    border-color: var(--highlight-background);
-    box-shadow: 0 0 0 1px var(--highlight-background);
-  }
-
-  .react-aria-Section:not(:first-child) {
-    margin-top: 12px;
-  }
-
-  .react-aria-Header {
-    font-size: 1.143rem;
-    font-weight: bold;
-    padding: 0 0.714rem;
-  }
-
-  .react-aria-ListBoxItem {
-    margin: 2px;
-    padding: 0.286rem 0.571rem;
-    border-radius: 6px;
-    outline: none;
-    cursor: default;
-    color: var(--text-color);
-    font-size: 1.072rem;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-
-    &[data-focus-visible] {
-      box-shadow: inset 0 0 0 2px var(--highlight-background);
-    }
-
-    &[data-selected] {
-      background: var(--highlight-background);
-      color: var(--highlight-foreground);
-
-      &[data-focus-visible] {
-        box-shadow: inset 0 0 0 2px var(--highlight-background), inset 0 0 0 4px var(--highlight-foreground);
-      }
-    }
-
-    &[data-disabled] {
-      color: var(--text-color-disabled);
-    }
-
-    [slot=label] {
-      font-weight: bold;
-    }
-
-    [slot=description] {
-      font-size: small;
-    }
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
   }
 }
 
-@media (forced-colors: active) {
-  .react-aria-ListBox {
-    forced-color-adjust: none;
+.react-aria-ListBoxItem {
+  margin: 2px;
+  padding: 0.286rem 0.571rem;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font-size: 1.072rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 
-    --highlight-background: Highlight;
-    --highlight-foreground: HighlightText;
-    --border-color: ButtonBorder;
-    --background-color: ButtonFace;
-    --separator-color: ButtonBorder;
-    --text-color: ButtonText;
-    --text-color-disabled: GrayText;
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -2px;
+  }
+
+  &[data-selected] {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+
+    &[data-focus-visible] {
+      outline-color: var(--highlight-foreground);
+      outline-offset: -4px;
+    }
   }
 }
 ```
@@ -272,9 +228,9 @@ function MyItem(props: ListBoxItemProps) {
   max-height: inherit;
   overflow: auto;
   padding: 2px;
-  border: 1px solid var(--spectrum-global-color-gray-400);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
-  background: var(--page-background);
+  background: var(--overlay-background);
   outline: none;
   max-width: 250px;
   max-height: 300px;
@@ -289,33 +245,24 @@ function MyItem(props: ListBoxItemProps) {
   border-radius: 6px;
   outline: none;
   cursor: default;
-  color: var(--spectrum-global-color-gray-800);
+  color: var(--text-color);
   font-size: 1.072rem;
 
   &.selected {
     background: var(--highlight);
-    color: white;
+    color: var(--highlight-foreground);
   }
 
   &.focused {
-    box-shadow: 0 0 0 2px var(--page-background), 0 0 0 4px var(--highlight);
+    outline: 2px solid var(--highlight);
+    outline-offset: 2px;
   }
 }
 
 @media (forced-colors: active) {
-  .my-listbox {
-    forced-color-adjust: none;
-    border-color: ButtonBorder;
-    background: Canvas;
-  }
-
   .my-item {
-    color: ButtonText;
+    forced-color-adjust: none;
     --highlight: Highlight;
-
-    &.selected {
-      color: HighlightText;
-    }
   }
 }
 ```
@@ -481,6 +428,25 @@ import {Section, Header} from 'react-aria-components';
 </ListBox>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox {
+  .react-aria-Section:not(:first-child) {
+    margin-top: 12px;
+  }
+
+  .react-aria-Header {
+    font-size: 1.143rem;
+    font-weight: bold;
+    padding: 0 0.714rem;
+  }
+}
+```
+
+</details>
+
 ### Dynamic items
 
 The above example shows sections with static items. Sections can also be populated from a heirarchical data structure.
@@ -556,6 +522,23 @@ import {Text} from 'react-aria-components';
 </ListBox>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxItem {
+  [slot=label] {
+    font-weight: bold;
+  }
+
+  [slot=description] {
+    font-size: small;
+  }
+}
+```
+
+</details>
+
 ## Layouts
 
 By default, ListBox expects items to be arranged in a vertical stack, and implements keyboard navigation and drag and drop accordingly. The `layout` and `orientation` props can be used to change this behavior, allowing you to build horizontal and vertical stacks and grids.
@@ -621,10 +604,6 @@ let albums = [
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-ListBox {
-  --selectedFilled: slateblue;
-  --selectedOutline: white;
-}
 .react-aria-ListBox[data-orientation=horizontal],
 .react-aria-ListBox[data-layout=grid] {
   flex-direction: row;
@@ -667,9 +646,9 @@ let albums = [
         position: absolute;
         top: 8px;
         right: 8px;
-        background: var(--selectedFilled);
-        border: 2px solid var(--selectedOutline);
-        color: var(--selectedOutline);
+        background: var(--highlight-background);
+        border: 2px solid var(--highlight-foreground);
+        color: var(--highlight-foreground);
         width: 22px;
         height: 22px;
         border-radius: 22px;
@@ -681,18 +660,7 @@ let albums = [
         justify-content: center;
         box-shadow: 0 0 8px rgb(0 0 0 / .5);
       }
-
-      &[data-focus-visible] {
-        box-shadow: inset 0 0 0 2px var(--highlight-background);
-      }
     }
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-ListBox {
-    --selectedFilled: Highlight;
-    --selectedOutline: ButtonText;
   }
 }
 ```
@@ -861,6 +829,19 @@ to the `items` prop. See [Collections](../react-stately/Collections.html) for mo
 </ListBox>
 ```
 
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBoxItem {
+  &[data-disabled] {
+    color: var(--text-color-disabled);
+  }
+}
+```
+
+</details>
+
 ## Empty state
 
 Use the `renderEmptyState` prop to customize what the `ListBox` will display if there are no items.
@@ -875,6 +856,22 @@ Use the `renderEmptyState` prop to customize what the `ListBox` will display if 
   {[]}
 </ListBox>
 ```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ListBox {
+  &[data-empty] {
+    align-items: center;
+    justify-content: center;
+    font-style: italic;
+  }
+}
+```
+
+</details>
 
 ## Drag and drop
 
@@ -1017,13 +1014,13 @@ function Example() {
   align-items: center;
   justify-content: space-between;
   gap: 4px;
-  background: slateblue;
-  color: white;
+  background: var(--highlight-background);
+  color: var(--highlight-foreground);
   border-radius: 4px;
 
   .badge {
-    background: white;
-    color: slateblue;
+    background: var(--highlight-foreground);
+    color: var(--highlight-background);
     padding: 0 8px;
     border-radius: 4px;
   }
@@ -1130,9 +1127,9 @@ function Example() {
 
 ```css
 .react-aria-ListBox[data-drop-target] {
-  border-color: var(--highlight-background);
-  box-shadow: 0 0 0 1px var(--highlight-background);
-  background: rgb(from slateblue r g b / 15%);
+  outline: 2px solid var(--highlight-background);
+  outline-offset: -1px;
+  background: var(--highlight-overlay)
 }
 ```
 
@@ -1171,8 +1168,8 @@ function Example() {
 
 ```css
 .react-aria-ListBoxItem[data-drop-target] {
-  box-shadow: inset 0 0 0 2px var(--highlight-background);
-  background: rgb(from slateblue r g b / 15%);
+  outline: 2px solid var(--highlight-background);
+  background: var(--highlight-overlay)
 }
 ```
 

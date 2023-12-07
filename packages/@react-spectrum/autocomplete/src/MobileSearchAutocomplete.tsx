@@ -87,7 +87,10 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
   let inputRef = useRef<HTMLInputElement>(null);
-  useFormValidation(props, state, inputRef);
+  useFormValidation({
+    ...props,
+    focus: () => buttonRef.current?.focus()
+  }, state, inputRef);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
   let errorMessage = props.errorMessage ?? validationErrors.join(' ');
@@ -201,7 +204,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
     style,
     className
 } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
   let valueId = useId();
   let invalidId = useId();
   let validationIcon = validationState === 'invalid'
@@ -392,7 +395,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   let listBoxRef = useRef<HTMLDivElement>(null);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let layout = useListBoxLayout(state, isLoading);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
 
   let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete<T>(
     {

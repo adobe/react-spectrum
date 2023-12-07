@@ -296,6 +296,12 @@ module.exports = new Transformer({
             }
           }
 
+          if (left.name === undefined) {
+            return Object.assign(node, {
+              type: 'identifier',
+              name: path.node.left.name + '.' + path.node.right.name
+            });
+          }
           return Object.assign(node, {
             type: 'identifier',
             name: left.name + '.' + path.node.right.name

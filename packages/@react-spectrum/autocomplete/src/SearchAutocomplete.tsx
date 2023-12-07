@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaButtonProps} from '@react-types/button';
-import {classNames, useFocusableRef, useIsMobileDevice, useResizeObserver, useUnwrapDOMRef} from '@react-spectrum/utils';
+import {classNames, dimensionValue, useFocusableRef, useIsMobileDevice, useResizeObserver, useUnwrapDOMRef} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
 import {DOMRefValue, FocusableRef} from '@react-types/shared';
 import {Field} from '@react-spectrum/label';
@@ -70,14 +70,16 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
+    align = 'end',
     isQuiet,
+    menuWidth: customMenuWidth,
     loadingState,
     onLoadMore,
     onSubmit = () => {},
     validate
   } = props;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
   let isAsync = loadingState != null;
   let popoverRef = useRef<DOMRefValue<HTMLDivElement>>(null);
   let unwrappedPopoverRef = useUnwrapDOMRef(popoverRef);
@@ -130,8 +132,9 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
 
   useLayoutEffect(onResize, [scale, onResize]);
 
+  let width = isQuiet ? undefined : menuWidth;
   let style = {
-    width: isQuiet ? undefined : menuWidth,
+    width: customMenuWidth ? dimensionValue(customMenuWidth) : width,
     minWidth: isQuiet ? `calc(${menuWidth}px + calc(2 * var(--spectrum-dropdown-quiet-offset)))` : menuWidth
   };
 
@@ -161,7 +164,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
         UNSAFE_className={classNames(styles, 'spectrum-InputGroup-popover', {'spectrum-InputGroup-popover--quiet': isQuiet})}
         ref={popoverRef}
         triggerRef={inputRef}
-        placement={`${direction} end`}
+        placement={`${direction} ${align}`}
         hideArrow
         isNonModal
         shouldFlip={shouldFlip}>
@@ -223,7 +226,7 @@ function _SearchAutocompleteInput<T>(props: SearchAutocompleteInputProps<T>, ref
     clearButtonProps
   } = props;
   let {hoverProps, isHovered} = useHover({});
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
   let domProps = filterDOMProps(props);
   let timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   let [showLoading, setShowLoading] = useState(false);

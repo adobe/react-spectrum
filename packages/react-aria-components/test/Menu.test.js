@@ -262,9 +262,18 @@ describe('Menu', () => {
 
     let popover = menu.closest('.react-aria-Popover');
     expect(popover).toBeInTheDocument();
+    expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
 
     await user.click(getAllByRole('menuitem')[1]);
     expect(onAction).toHaveBeenLastCalledWith('rename');
+  });
+
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderMenu({onScroll});
+    let menu = getByRole('menu');
+    fireEvent.scroll(menu);
+    expect(onScroll).toHaveBeenCalled();
   });
 
   describe('supports links', function () {

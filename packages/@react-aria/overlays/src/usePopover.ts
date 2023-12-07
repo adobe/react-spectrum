@@ -46,7 +46,14 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    *
    * @default false
    */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean,
+  /**
+   * When user interacts with the argument element outside of the popover ref,
+   * return true if onClose should be called. This gives you a chance to filter
+   * out interaction with elements that should not dismiss the popover.
+   * By default, onClose will always be called on interaction outside the popover ref.
+   */
+  shouldCloseOnInteractOutside?: (element: Element) => boolean
 }
 
 export interface PopoverAria {
@@ -70,6 +77,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     popoverRef,
     isNonModal,
     isKeyboardDismissDisabled,
+    shouldCloseOnInteractOutside,
     ...otherProps
   } = props;
 
@@ -79,7 +87,8 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
       onClose: state.close,
       shouldCloseOnBlur: true,
       isDismissable: !isNonModal,
-      isKeyboardDismissDisabled
+      isKeyboardDismissDisabled,
+      shouldCloseOnInteractOutside
     },
     popoverRef
   );
@@ -89,11 +98,11 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     targetRef: triggerRef,
     overlayRef: popoverRef,
     isOpen: state.isOpen,
-    onClose: null
+    onClose: isNonModal ? state.close : null
   });
 
   usePreventScroll({
-    isDisabled: isNonModal
+    isDisabled: isNonModal || !state.isOpen
   });
 
   useLayoutEffect(() => {

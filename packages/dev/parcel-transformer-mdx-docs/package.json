@@ -4,12 +4,12 @@
   "private": true,
   "main": "MDXTransformer.js",
   "engines": {
-    "parcel": "^2.10.0"
+    "parcel": "^2.10.2"
   },
   "dependencies": {
     "@mdx-js/mdx": "next",
     "@mdx-js/react": "next",
-    "@parcel/plugin": "^2.10.0",
+    "@parcel/plugin": "^2.10.2",
     "dprint-node": "^1.0.7",
     "js-yaml": "^3.13.1",
     "mdast-util-toc": "^6.1.0",

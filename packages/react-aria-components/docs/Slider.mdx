@@ -61,19 +61,15 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
 ```
 
 ```css
-.react-aria-Slider {
-  --label-color: var(--spectrum-alias-text-color);
-  --track-color: gray;
-  --thumb-color: slateblue;
-  --thumb-color-dragging: lch(from slateblue calc(l - 10%) c h);
-  --focus-ring-color: slateblue;
+@import "@react-aria/example-theme";
 
+.react-aria-Slider {
   display: grid;
   grid-template-areas: "label output"
                        "track track";
   grid-template-columns: 1fr auto;
   max-width: 300px;
-  color: var(--label-color);
+  color: var(--text-color);
 
   .react-aria-Label {
     grid-area: label;
@@ -92,7 +88,7 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
       content: '';
       display: block;
       position: absolute;
-      background: var(--track-color);
+      background: var(--border-color);
     }
   }
 
@@ -100,15 +96,16 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
     width: 1.429rem;
     height: 1.429rem;
     border-radius: 50%;
-    background: var(--thumb-color);
-    border: 2px solid var(--spectrum-alias-background-color-default);
+    background: var(--highlight-background);
+    border: 2px solid var(--background-color);
+    forced-color-adjust: none;
 
     &[data-dragging] {
-      background: var(--thumb-color-dragging);
+      background: var(--highlight-background-pressed);
     }
 
     &[data-focus-visible] {
-      box-shadow: 0 0 0 2px var(--focus-ring-color);
+      outline: 2px solid var(--focus-ring-color);
     }
   }
 
@@ -131,19 +128,6 @@ import {Slider, Label, SliderOutput, SliderTrack, SliderThumb} from 'react-aria-
     .react-aria-SliderThumb {
       top: 50%;
     }
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-Slider {
-    forced-color-adjust: none;
-
-    --label-color: ButtonText;
-    --track-color: ButtonBorder;
-    --thumb-color: ButtonBorder;
-    --thumb-color-dragging: Highlight;
-    --focus-ring-color: Highlight;
-    --spectrum-alias-background-color-default: Canvas;
   }
 }
 ```
@@ -426,21 +410,12 @@ A slider can be disabled using the `isDisabled` prop.
 ```css
 .react-aria-Slider {
   &[data-disabled] {
-    .react-aria-SliderTrack {
-      opacity: 0.4;
+    .react-aria-SliderTrack:before {
+      background: var(--border-color-disabled);
     }
-  }
-}
 
-@media (forced-colors: active) {
-  .react-aria-Slider {
-    &[data-disabled] {
-      --track-color: GrayText;
-      --thumb-color: GrayText;
-      --label-color: GrayText;
-      & .react-aria-SliderTrack {
-        opacity: 1;
-      }
+    .react-aria-SliderThumb {
+      background: var(--border-color-disabled);
     }
   }
 }

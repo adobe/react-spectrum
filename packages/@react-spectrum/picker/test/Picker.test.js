@@ -2253,6 +2253,7 @@ describe('Picker', function () {
 
           expect(picker).toHaveAttribute('aria-describedby');
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+          expect(document.activeElement).toBe(picker);
 
           await user.click(picker);
           act(() => jest.runAllTimers());
@@ -2286,6 +2287,7 @@ describe('Picker', function () {
 
           expect(picker).toHaveAttribute('aria-describedby');
           expect(document.getElementById(picker.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+          expect(document.activeElement).toBe(picker);
 
           await user.click(picker);
           act(() => jest.runAllTimers());

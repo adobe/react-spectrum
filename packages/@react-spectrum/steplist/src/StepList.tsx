@@ -10,27 +10,44 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaStepListProps, useStepList} from '@react-aria/steplist';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, Orientation, StyleProps} from '@react-types/shared';
 import React, {ReactElement} from 'react';
-import {SpectrumStepListProps} from '@react-types/steplist';
 import {StepListContext} from './StepListContext';
 import {StepListItem} from './StepListItem';
 import styles from '@adobe/spectrum-css-temp/components/steplist/vars.css';
 import {useProviderProps} from '@react-spectrum/provider';
-import {useStepList} from '@react-aria/steplist';
 import {useStepListState} from '@react-stately/steplist';
+
+export interface SpectrumStepListProps<T> extends AriaStepListProps<T>, StyleProps {
+  /**
+   * Whether the step list should be displayed with a emphasized style.
+   * @default false
+   */
+  isEmphasized?: boolean,
+  /**
+   * The orientation of the step list.
+   * @default 'horizontal'
+   */
+  orientation?: Orientation,
+  /**
+   * The size of the step list.
+   * @default 'M'
+   */
+  size?: 'S' | 'M' | 'L' | 'XL'
+}
 
 function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef<HTMLOListElement>) {
   const {size = 'M', orientation = 'horizontal'} = props;
   props = useProviderProps(props);
+  const {isDisabled, isEmphasized} = props;
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
 
   let state = useStepListState(props);
   let {listProps} = useStepList(props, state, domRef);
 
-  const {isDisabled, isEmphasized, isReadOnly} = props;
 
   return (
     <ol
@@ -38,11 +55,12 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
       {...styleProps}
       ref={domRef}
       className={classNames(styles, 'spectrum-Steplist', styleProps.className, {
-        'spectrum-Steplist--interactive': !isReadOnly && !isDisabled,
         'spectrum-Steplist--small': size === 'S',
         'spectrum-Steplist--medium': size === 'M',
         'spectrum-Steplist--large': size === 'L',
         'spectrum-Steplist--xlarge': size === 'XL',
+        'spectrum-Steplist--emphasized': isEmphasized,
+        'spectrum-Steplist--horizontal': orientation === 'horizontal',
         'spectrum-Steplist--vertical': orientation === 'vertical'
       })}>
       <StepListContext.Provider value={state}>
@@ -50,8 +68,6 @@ function StepList<T extends object>(props: SpectrumStepListProps<T>, ref: DOMRef
           <StepListItem
             key={item.key}
             isDisabled={isDisabled}
-            isEmphasized={isEmphasized}
-            isReadOnly={isReadOnly}
             item={item} />
           )
         )}

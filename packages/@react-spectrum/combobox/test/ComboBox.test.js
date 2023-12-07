@@ -1041,6 +1041,25 @@ describe('ComboBox', function () {
       expect(onSelectionChange).not.toHaveBeenCalled();
     });
 
+    it('should close menu on scroll', function () {
+      let {getByRole} = renderComboBox();
+
+      let button = getByRole('button');
+      triggerPress(button);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      let listbox = getByRole('listbox');
+      expect(listbox).toBeInTheDocument();
+      fireEvent.scroll(document.body);
+      act(() => {
+        jest.runAllTimers();
+      });
+
+      expect(listbox).not.toBeInTheDocument();
+    });
+
     describe.each`
       Name                                   | Component
       ${'uncontrolled items (defaultItems)'} | ${ControlledKeyComboBox}
@@ -5383,10 +5402,10 @@ describe('ComboBox', function () {
 
             act(() => {getByTestId('form').checkValidity();});
 
+            expect(document.activeElement).toBe(input);
             expect(input).toHaveAttribute('aria-describedby');
             expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
 
-            await user.tab();
             await user.keyboard('[ArrowRight]Tw');
 
             act(() => {
@@ -5421,6 +5440,7 @@ describe('ComboBox', function () {
 
             act(() => {getByTestId('form').checkValidity();});
 
+            expect(document.activeElement).toBe(input);
             expect(input).toHaveAttribute('aria-describedby');
             expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
 

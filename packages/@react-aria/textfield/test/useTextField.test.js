@@ -72,6 +72,14 @@ describe('useTextField hook', () => {
       expect(props['aria-invalid']).toBeUndefined();
     });
 
+    it('with appropriate props if autoCapitalize is defined', () => {
+      let props = renderTextFieldHook({autoCapitalize: 'on', 'aria-label': 'mandatory label'});
+      expect(props.autoCapitalize).toBe('on');
+
+      props = renderTextFieldHook({autoCapitalize: 'off', 'aria-label': 'mandatory label'});
+      expect(props.autoCapitalize).toBe('off');
+    });
+
     it('with an onChange that calls user specified onChange with appropriate values', () => {
       let onChange = jest.fn();
       let props = renderTextFieldHook({onChange, 'aria-label': 'mandatory label'});

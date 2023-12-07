@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {Context, createContext, CSSProperties, ForwardedRef, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, RefObject, UIEvent, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from 'react-aria';
 
@@ -72,6 +72,10 @@ export interface StyleProps {
 export interface DOMProps extends StyleProps {
   /** The children of the component. */
   children?: ReactNode
+}
+
+export interface ScrollableProps<T extends Element> {
+  onScroll?: (e: UIEvent<T>) => void
 }
 
 export interface StyleRenderProps<T> {
@@ -175,6 +179,19 @@ export function useContextProps<T, U extends SlotProps, E extends Element>(props
   let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));
   let mergedProps = mergeProps(contextProps, props) as unknown as T;
 
+  // mergeProps does not merge `style`. Adding this there might be a breaking change.
+  if (
+    'style' in contextProps &&
+    contextProps.style &&
+    typeof contextProps.style === 'object' &&
+    'style' in props &&
+    props.style &&
+    typeof props.style === 'object'
+  ) {
+    // @ts-ignore
+    mergedProps.style = {...contextProps.style, ...props.style};
+  }
+
   // A parent component might need the props from a child, so call slot callback if needed.
   useEffect(() => {
     if (callback) {
@@ -257,7 +274,7 @@ function useAnimation(ref: RefObject<HTMLElement>, isActive: boolean, onEnd: () 
     if (isActive && ref.current) {
       // Make sure there's actually an animation, and it wasn't there before we triggered the update.
       let computedStyle = window.getComputedStyle(ref.current);
-      if (computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
+      if (computedStyle.animationName && computedStyle.animationName !== 'none' && computedStyle.animation !== prevAnimation.current) {
         let onAnimationEnd = (e: AnimationEvent) => {
           if (e.target === ref.current) {
             element.removeEventListener('animationend', onAnimationEnd);

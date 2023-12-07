@@ -2283,8 +2283,8 @@ describe('NumberField', function () {
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.activeElement).toBe(input);
 
-        await user.tab();
         await user.keyboard('4');
 
         expect(input).toHaveAttribute('aria-describedby');
@@ -2312,6 +2312,7 @@ describe('NumberField', function () {
 
         act(() => {getByTestId('form').checkValidity();});
 
+        expect(document.activeElement).toBe(input);
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
 
@@ -2338,8 +2339,9 @@ describe('NumberField', function () {
 
         expect(input).toHaveAttribute('aria-describedby');
         expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(document.activeElement).toBe(input);
 
-        await user.tab();
+        await user.clear(input);
         await user.keyboard('3');
 
         expect(input).toHaveAttribute('aria-describedby');
@@ -2428,9 +2430,9 @@ describe('NumberField', function () {
 
         act(() => {getByTestId('form').checkValidity();});
 
+        expect(document.activeElement).toBe(input);
         expect(input).toHaveAttribute('aria-describedby');
 
-        await user.tab();
         await user.keyboard('4');
 
         expect(input).toHaveAttribute('aria-describedby');

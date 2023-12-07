@@ -1,10 +1,10 @@
-import {AriaLabelingProps, LinkDOMProps} from '@react-types/shared';
+import {AriaLabelingProps, HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import {BaseCollection, CollectionContext, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
 import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import {ContextValue, defaultSlot, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, defaultSlot, DOMProps, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
@@ -12,7 +12,7 @@ import {filterDOMProps, useLayoutEffect, useObjectRef, useResizeObserver} from '
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, Key, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
@@ -190,7 +190,7 @@ interface ResizableTableContainerContextValue {
 
 const ResizableTableContainerContext = createContext<ResizableTableContainerContextValue | null>(null);
 
-export interface ResizableTableContainerProps extends DOMProps {
+export interface ResizableTableContainerProps extends DOMProps, ScrollableProps<HTMLDivElement> {
   /**
    * Handler that is called when a user starts a column resize.
    */
@@ -235,7 +235,8 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
       {...filterDOMProps(props as any)}
       ref={objectRef}
       className={props.className || 'react-aria-ResizableTableContainer'}
-      style={props.style}>
+      style={props.style}
+      onScroll={props.onScroll}>
       <ResizableTableContainerContext.Provider value={ctx}>
         {props.children}
       </ResizableTableContainerContext.Provider>
@@ -272,7 +273,7 @@ export interface TableRenderProps {
   state: TableState<unknown>
 }
 
-export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps {
+export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps, ScrollableProps<HTMLTableElement> {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children?: ReactNode,
   /**
@@ -416,6 +417,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
             style={style}
             ref={ref}
             slot={props.slot || undefined}
+            onScroll={props.onScroll}
             data-allows-dragging={isListDraggable || undefined}
             data-drop-target={isRootDropTarget || undefined}
             data-focused={isFocused || undefined}
@@ -899,7 +901,7 @@ export interface ColumnResizerRenderProps {
   resizableDirection: 'right' | 'left' | 'both'
 }
 
-export interface ColumnResizerProps extends RenderProps<ColumnResizerRenderProps> {
+export interface ColumnResizerProps extends HoverEvents, RenderProps<ColumnResizerRenderProps> {
   /** A custom accessibility label for the resizer. */
   'aria-label'?: string
 }
@@ -909,7 +911,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
   if (!layoutState) {
     throw new Error('Wrap your <Table> in a <ResizableTableContainer> to enable column resizing');
   }
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
 
   let {onResizeStart, onResize, onResizeEnd} = useContext(ResizableTableContainerContext)!;
   let {column, triggerRef} = useContext(ColumnResizerContext)!;
@@ -927,7 +929,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
     inputRef
   );
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover(props);
 
   let isEResizable = layoutState.getColumnMinWidth(column.key) >= layoutState.getColumnWidth(column.key);
   let isWResizable = layoutState.getColumnMaxWidth(column.key) <= layoutState.getColumnWidth(column.key);
@@ -976,7 +978,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       ref={objectRef}
       role="presentation"
       {...renderProps}
-      {...mergeProps(resizerProps, {onPointerDown})}
+      {...mergeProps(resizerProps, {onPointerDown}, hoverProps)}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
@@ -985,7 +987,7 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
       {renderProps.children}
       <input
         ref={inputRef}
-        {...mergeProps(inputProps, focusProps, hoverProps)} />
+        {...mergeProps(inputProps, focusProps)} />
       {isResizing && isMouseDown && ReactDOM.createPortal(<div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />, document.body)}
     </div>
   );
@@ -1222,6 +1224,7 @@ function TableDropIndicator(props: TableDropIndicatorProps, ref: ForwardedRef<HT
         colSpan={state.collection.columnCount}
         style={{padding: 0}}>
         <div {...visuallyHiddenProps} role="button" {...dropIndicatorProps} ref={buttonRef} />
+        {renderProps.children}
       </td>
     </tr>
   );

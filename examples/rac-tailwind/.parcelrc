@@ -1,7 +1,7 @@
 {
   "extends": "@parcel/config-default",
-  "resolvers": ["@parcel/resolver-glob", "..."],
+  "resolvers": ["@react-aria/parcel-resolver-optimize-locales", "@parcel/resolver-glob", "..."],
   "transformers": {
-    "../../packages/*/*/intl/*.json": ["parcel-transformer-intl"]
+    "**/intl/*.json": ["parcel-transformer-intl"]
   }
 }

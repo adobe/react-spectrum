@@ -14,7 +14,7 @@ import {ButtonContext} from './Button';
 import {CalendarContext, RangeCalendarContext} from './Calendar';
 import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DateFieldContext} from './DateField';
-import {DatePickerState, DateRangePickerState, useDatePickerState, useDateRangePickerState} from 'react-stately';
+import {DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
@@ -42,7 +42,7 @@ export interface DatePickerRenderProps {
   isDisabled: boolean,
   /**
    * Whether the date picker is invalid.
-   * @selector [data-disabled]
+   * @selector [data-invalid]
    */
   isInvalid: boolean,
   /**
@@ -62,8 +62,8 @@ export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 
   state: DateRangePickerState
 }
 
-export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DatePickerRenderProps>, SlotProps {}
-export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps {}
+export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, Pick<DatePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DatePickerRenderProps>, SlotProps {}
+export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps {}
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
 export const DateRangePickerContext = createContext<ContextValue<DateRangePickerProps<any>, HTMLDivElement>>(null);
@@ -122,7 +122,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {triggerRef: groupRef, placement: 'bottom start'}],
+        [PopoverContext, {trigger: 'DatePicker', triggerRef: groupRef, placement: 'bottom start'}],
         [DialogContext, dialogProps],
         [TextContext, {
           slots: {
@@ -205,7 +205,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {triggerRef: groupRef, placement: 'bottom start'}],
+        [PopoverContext, {trigger: 'DateRangePicker', triggerRef: groupRef, placement: 'bottom start'}],
         [DialogContext, dialogProps],
         [DateFieldContext, {
           slots: {

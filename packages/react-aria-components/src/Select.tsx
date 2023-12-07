@@ -148,6 +148,7 @@ function Select<T extends object>(props: SelectProps<T>, ref: ForwardedRef<HTMLD
           [ButtonContext, {...triggerProps, ref: buttonRef, isPressed: state.isOpen}],
           [OverlayTriggerStateContext, state],
           [PopoverContext, {
+            trigger: 'Select',
             triggerRef: buttonRef,
             placement: 'bottom start',
             style: {'--trigger-width': buttonWidth} as React.CSSProperties
@@ -216,7 +217,7 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
     : null;
   let rendered = selectedItem?.rendered;
   if (typeof rendered === 'function') {
-    // If the selected item has a function as a child, we need to call it to render to JSX.
+    // If the selected item has a function as a child, we need to call it to render to React.JSX.
     let fn = rendered as (s: ItemRenderProps) => ReactNode;
     rendered = fn({
       isHovered: false,
@@ -230,7 +231,7 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
     });
   }
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
 
   let renderProps = useRenderProps({
     ...props,

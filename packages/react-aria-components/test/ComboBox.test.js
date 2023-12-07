@@ -12,7 +12,7 @@
 
 import {act} from '@testing-library/react';
 import {Button, ComboBox, ComboBoxContext, FieldError, Header, Input, Label, ListBox, ListBoxItem, Popover, Section, Text} from '../';
-import {pointerMap, render, within} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -61,6 +61,7 @@ describe('ComboBox', () => {
     let listbox = getByRole('listbox');
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
     expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();
+    expect(listbox.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'ComboBox');
 
     let options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(3);
@@ -240,11 +241,11 @@ describe('ComboBox', () => {
 
     act(() => {getByTestId('form').checkValidity();});
 
+    expect(document.activeElement).toBe(input);
     expect(input).toHaveAttribute('aria-describedby');
     expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
     expect(combobox).toHaveAttribute('data-invalid');
 
-    await user.tab();
     await user.keyboard('C');
 
     let listbox = getByRole('listbox');
@@ -257,5 +258,16 @@ describe('ComboBox', () => {
     await user.tab();
     expect(input).not.toHaveAttribute('aria-describedby');
     expect(combobox).not.toHaveAttribute('data-invalid');
+  });
+
+  it('should close on scroll', async () => {
+    let {getByRole} = render(<TestComboBox />);
+
+    let button = getByRole('button');
+    await userEvent.click(button);
+    let listbox = getByRole('listbox');
+    expect(listbox).toBeInTheDocument();
+    fireEvent.scroll(document.body);
+    expect(listbox).not.toBeInTheDocument();
   });
 });

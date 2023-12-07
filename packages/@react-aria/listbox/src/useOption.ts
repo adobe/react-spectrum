@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key} from '@react-types/shared';
 import {filterDOMProps, isMac, isWebKit, mergeProps, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
-import {Key, RefObject} from 'react';
 import {ListState} from '@react-stately/list';
+import {RefObject} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
 
 export interface OptionAria extends SelectableItemStates {

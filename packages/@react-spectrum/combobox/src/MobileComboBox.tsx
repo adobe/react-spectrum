@@ -78,7 +78,10 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'listbox'}, state, buttonRef);
 
   let inputRef = useRef<HTMLInputElement>(null);
-  useFormValidation(props, state, inputRef);
+  useFormValidation({
+    ...props,
+    focus: () => buttonRef.current.focus()
+  }, state, inputRef);
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let validationState = props.validationState || (isInvalid ? 'invalid' : null);
   let errorMessage = props.errorMessage ?? validationErrors.join(' ');
@@ -173,7 +176,7 @@ const ComboBoxButton = React.forwardRef(function ComboBoxButton(props: ComboBoxB
     style,
     className
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
   let valueId = useId();
   let invalidId = useId();
   let validationIcon = validationState === 'invalid'
@@ -332,7 +335,7 @@ function ComboBoxTray(props: ComboBoxTrayProps) {
   let listBoxRef = useRef<HTMLDivElement>();
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let layout = useListBoxLayout(state, isLoading);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/combobox');
 
   let {inputProps, listBoxProps, labelProps} = useComboBox(
     {

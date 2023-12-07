@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, mergeProps, TimeValue, useDateField, useDateSegment, useFocusRing, useHover, useLocale, useTimeField} from 'react-aria';
+import {AriaDateFieldProps, AriaTimeFieldProps, DateValue, HoverEvents, mergeProps, TimeValue, useDateField, useDateSegment, useFocusRing, useHover, useLocale, useTimeField} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {createCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegmentType, DateSegment as IDateSegment, TimeFieldState, useDateFieldState, useTimeFieldState} from 'react-stately';
@@ -18,7 +18,7 @@ import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Group, GroupContext} from './Group';
 import {Input, InputContext} from './Input';
 import {LabelContext} from './Label';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, JSX, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface DateFieldRenderProps {
@@ -300,7 +300,7 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
   type: DateSegmentType
 }
 
-export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps> {
+export interface DateSegmentProps extends RenderProps<DateSegmentRenderProps>, HoverEvents {
   segment: IDateSegment
 }
 
@@ -311,7 +311,7 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
   let domRef = useObjectRef(ref);
   let {segmentProps} = useDateSegment(segment, state, domRef);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({isDisabled: state.isDisabled || segment.type === 'literal'});
+  let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: state.isDisabled || segment.type === 'literal'});
   let renderProps = useRenderProps({
     ...otherProps,
     values: {

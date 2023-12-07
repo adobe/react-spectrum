@@ -45,7 +45,6 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
     autoFocus,
     isQuiet,
     isDisabled,
-    isReadOnly,
     placeholderValue,
     maxVisibleMonths = 1,
     pageBehavior
@@ -60,7 +59,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/datepicker');
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true,
@@ -156,8 +155,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
             {...mergeProps(buttonProps, focusPropsButton)}
             UNSAFE_className={classNames(styles, 'spectrum-FieldButton')}
             isQuiet={isQuiet}
-            validationState={validationState}
-            isDisabled={isDisabled || isReadOnly}>
+            validationState={validationState}>
             <CalendarIcon />
           </FieldButton>
           <Dialog UNSAFE_className={classNames(datepickerStyles, 'react-spectrum-Datepicker-dialog')} {...dialogProps}>

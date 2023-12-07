@@ -68,6 +68,7 @@ describe('Select', () => {
     let listbox = getByRole('listbox');
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
     expect(listbox.closest('.react-aria-Popover')).toBeInTheDocument();
+    expect(listbox.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'Select');
 
     let options = within(listbox).getAllByRole('option');
     expect(options).toHaveLength(3);
@@ -232,6 +233,7 @@ describe('Select', () => {
     expect(button).toHaveAttribute('aria-describedby');
     expect(document.getElementById(button.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
     expect(select).toHaveAttribute('data-invalid');
+    expect(document.activeElement).toBe(button);
 
     await user.click(button);
 
