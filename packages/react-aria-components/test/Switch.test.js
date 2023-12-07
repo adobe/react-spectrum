@@ -175,4 +175,10 @@ describe('Switch', () => {
     expect(outerEl).toHaveLength(1);
     expect(outerEl[0]).toHaveClass('react-aria-Switch');
   });
+
+  it('should support refs', () => {
+    let ref = React.createRef();
+    let {getByRole} = render(<Switch ref={ref}>Test</Switch>);
+    expect(ref.current).toBe(getByRole('switch').closest('.react-aria-Switch'));
+  });
 });

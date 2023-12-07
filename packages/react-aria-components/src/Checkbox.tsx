@@ -15,7 +15,7 @@ import {ContextValue, forwardRefType, Provider, RACValidation, RenderProps, Slot
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
@@ -157,10 +157,11 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
   );
 }
 
-export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLInputElement>>(null);
+export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLLabelElement>>(null);
 
-function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
+function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxContext);
+  let inputRef = useRef<HTMLInputElement>(null);
   let groupState = useContext(CheckboxGroupStateContext);
   let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -172,14 +173,14 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       value: props.value,
       // ReactNode type doesn't allow function children.
       children: typeof props.children === 'function' ? true : props.children
-    }, groupState, ref)
+    }, groupState, inputRef)
     // eslint-disable-next-line react-hooks/rules-of-hooks
     : useCheckbox({
       ...props,
       children: typeof props.children === 'function' ? true : props.children,
       validationBehavior: props.validationBehavior ?? 'native'
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    }, useToggleState(props), ref);
+    }, useToggleState(props), inputRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = isDisabled || isReadOnly;
 
@@ -231,6 +232,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <label
       {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
+      ref={ref}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-indeterminate={props.isIndeterminate || undefined}
@@ -243,7 +245,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLInputElement>) {
       data-invalid={isInvalid || undefined}
       data-required={props.isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...inputProps} {...focusProps} ref={ref} />
+        <input {...inputProps} {...focusProps} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </label>
