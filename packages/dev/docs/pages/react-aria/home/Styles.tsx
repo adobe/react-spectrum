@@ -1,21 +1,21 @@
-import React from 'react';
+import {animate, motion, useMotionValueEvent, useScroll, useTransform} from 'framer-motion';
 import {
+  Button,
   Collection,
+  ComboBox,
   Group,
-  Menu,
-  MenuItem,
-  MenuItemProps,
-  MenuTrigger,
-  Separator,
+  Input,
+  Label,
+  ListBox,
+  ListBoxItem,
+  Popover,
   Tab,
   TabList,
   TabPanel,
   Tabs
 } from 'react-aria-components';
-import {animate, motion, useMotionValueEvent, useScroll, useTransform} from 'framer-motion';
-import {useCallback, useEffect, useRef, useState} from 'react';
-import {Button, ComboBox, Input, Label, ListBox, ListBoxItem, Popover} from 'react-aria-components';
 import {CheckIcon, ChevronDown, ChevronsUpDownIcon} from 'lucide-react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 export function Styles() {
   return (
@@ -124,7 +124,7 @@ export function Styles() {
             </Window>
           </div>
         },
-        {id: 'vanilla-extract', label: 'Vanilla Extract'}
+        {id: 'vanilla-extract', label: 'Vanilla Extract', content: ''}
       ]} />
   );
 }
@@ -153,7 +153,13 @@ function AddressBar({children}) {
   return <div className="bg-gray-400/40 dark:bg-gray-700 px-5 md:px-10 py-1 mx-auto mb-2.5 rounded-md text-slate-500 text-xs">{children}</div>;
 }
 
-function AnimatedTabs({tabs}) {
+interface TabOptions {
+  id: string,
+  label: string,
+  content: React.ReactNode
+}
+
+function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
   let [selectedKey, setSelectedKey] = useState(tabs[0].id);
 
   let tabListRef = useRef(null);
@@ -258,7 +264,7 @@ function AnimatedTabs({tabs}) {
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}>
       <div className="relative">
-        <TabList ref={tabListRef} className="flex px-2 md:px-0" items={tabs}>
+        <TabList ref={tabListRef} className="flex px-2 md:px-0 overflow-hidden" items={tabs}>
           {(tab) =>
             (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-md transition outline-none touch-none">
               {({isSelected, isFocusVisible}) => (<>

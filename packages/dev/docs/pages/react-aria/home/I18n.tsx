@@ -1,7 +1,7 @@
 import {Calendar} from '../../../../../../starters/tailwind/src/Calendar';
 import {DateField} from '../../../../../../starters/tailwind/src/DateField';
 import {getLocalTimeZone, now} from '@internationalized/date';
-import {I18nProvider, Key, useLocale} from 'react-aria-components';
+import {I18nProvider, useLocale} from 'react-aria-components';
 import {NumberField} from '../../../../../../starters/tailwind/src/NumberField';
 import React from 'react';
 import {Select, SelectItem, SelectSection} from '../../../../../../starters/tailwind/src/Select';
@@ -12,8 +12,8 @@ const preferences = [
   {value: 'fr-FR'},
   {value: 'fr-CA'},
   {value: 'de-DE'},
-  {value: 'en-GB'},
   {value: 'en-US'},
+  {value: 'en-GB'},
   {value: 'ja-JP', ordering: 'gregory japanese'},
   // // Tier 2
   {value: 'da-DK'},
@@ -57,7 +57,7 @@ const preferences = [
   {value: 'am-ET', ordering: 'gregory ethiopic ethioaa'},
   {value: 'hi-IN', ordering: 'gregory indian'},
   // {territories: 'KR', ordering: 'gregory dangi'},
-  {value: 'th-TH', ordering: 'buddhist gregory'},
+  {value: 'th-TH', ordering: 'buddhist gregory'}
 ];
 
 const calendars = [
@@ -76,9 +76,24 @@ const calendars = [
   {key: 'ethioaa', name: 'Ethiopic (Amete Alem)'}
 ];
 
+function matchLocale(defaultLocale: string) {
+  let parsed: Intl.Locale;
+  try {
+    parsed = new Intl.Locale(defaultLocale);
+  } catch (err) {
+    return 'en-US';
+  }
+
+  let locales = preferences.map(p => new Intl.Locale(p.value));
+
+  // Try with both language and region first, and if that fails, try again with just language
+  let p = locales.find(locale => locale.language === parsed.language && locale.region === parsed.region) || locales.find(locale => locale.language === parsed.language);
+  return p?.toString() || 'en-US';
+}
+
 export function I18n() {
   let {locale: defaultLocale} = useLocale();
-  let [locale, setLocale] = React.useState(defaultLocale);
+  let [locale, setLocale] = React.useState(() => matchLocale(defaultLocale));
   let [calendar, setCalendar] = React.useState(calendars[0].key);
   let [numberingSystem, setNumberingSystem] = React.useState<any>(() => new Intl.NumberFormat(defaultLocale).resolvedOptions().numberingSystem);
 
@@ -102,7 +117,7 @@ export function I18n() {
     setLocale(locale);
     let pref = preferences.find(p => p.value === locale);
     setCalendar((pref.ordering || 'gregory').split(' ')[0]);
-    setNumberingSystem(new Intl.NumberFormat(locale || defaultLocale).resolvedOptions().numberingSystem)
+    setNumberingSystem(new Intl.NumberFormat(locale || defaultLocale).resolvedOptions().numberingSystem);
   };
 
   let updateCalendar = calendar => {
@@ -118,9 +133,7 @@ export function I18n() {
     numberingSystem
   });
 
-  let [style, setStyle] = React.useState<Key>('decimal');
-  let [currency, setCurrency] = React.useState('USD');
-  let [unit, setUnit] = React.useState('inch');
+  let [style, setStyle] = React.useState<any>('decimal');
   if (numberingSystem === 'arabext') {
     numberingSystem = 'arab';
   }
@@ -157,7 +170,7 @@ export function I18n() {
         <LangWrapper>
           <Calendar value={date} onChange={setDate} />
           <div className="flex flex-col gap-10">
-            <NumberField label="Number" defaultValue={1234} minValue={0} formatOptions={{style, currency, unit}} />
+            <NumberField label="Number" defaultValue={1234} minValue={0} formatOptions={{style, currency: 'USD', unit: 'inch'}} />
             <DateField label="Date and Time" value={date} onChange={setDate} />
           </div>
         </LangWrapper>

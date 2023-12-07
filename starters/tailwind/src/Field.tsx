@@ -2,7 +2,7 @@ import { Label as RACLabel, LabelProps, FieldError as RACFieldError, Text, TextP
 import {twMerge} from 'tailwind-merge';
 
 export function Label(props: LabelProps) {
-  return <RACLabel {...props} className={`text-sm text-gray-500 font-medium cursor-default ${props.className || ''}`} />;
+  return <RACLabel {...props} className={`text-sm text-gray-500 font-medium cursor-default w-fit ${props.className || ''}`} />;
 }
 
 export function Description(props: TextProps) {

@@ -1,9 +1,9 @@
 import {animate, useIntersectionObserver} from './utils';
 import {Button} from '../../../../../../starters/tailwind/src/Button';
 import {ButtonContext, TooltipTrigger} from 'react-aria-components';
+import {CogIcon, PencilIcon, ShareIcon} from 'lucide-react';
 import React, {useRef, useState} from 'react';
 import {Tooltip} from '../../../../../../starters/tailwind/src/Tooltip';
-import { CogIcon, PencilIcon, ShareIcon } from 'lucide-react';
 
 export function MouseAnimation() {
   let ref = useRef<HTMLDivElement>(null);
@@ -73,7 +73,6 @@ export function MouseAnimation() {
         perform() {
           setPressed(true);
           setTooltip(null);
-          setHovered(null);
         }
       },
       {
@@ -83,7 +82,7 @@ export function MouseAnimation() {
         }
       },
       {
-        time: 1500,
+        time: 400,
         perform() {
           mouseRef.current.animate({
             transform: [
@@ -91,6 +90,12 @@ export function MouseAnimation() {
               'translate(170px, 120px)'
             ]
           }, {duration: 1500, fill: 'forwards', easing: 'ease-in-out'});
+        }
+      },
+      {
+        time: 1100,
+        perform() {
+          setHovered(null);
         }
       },
       {
@@ -128,10 +133,10 @@ export function MouseAnimation() {
         className="absolute z-10"
         style={{filter: 'drop-shadow(0 1px 1px #aaa)', transform: 'translate(-50px, 120px)'}}>
         <g transform="matrix(1, 0, 0, 1, -150, -63.406998)">
-          <path d="M150 79.422V63.407l11.591 11.619h-6.781l-.411.124Z" fill="#fff" fillRule="evenodd"></path>
-          <path d="m159.084 80.1-3.6 1.535-4.684-11.093 3.686-1.553Z" fill="#fff" fillRule="evenodd"></path>
-          <path d="m157.751 79.416-1.844.774-3.1-7.374 1.841-.775Z" fillRule="evenodd"></path>
-          <path d="M151 65.814V77l2.969-2.866.431-.134h4.768Z" fillRule="evenodd"></path>
+          <path d="M150 79.422V63.407l11.591 11.619h-6.781l-.411.124Z" fill="#fff" fillRule="evenodd" />
+          <path d="m159.084 80.1-3.6 1.535-4.684-11.093 3.686-1.553Z" fill="#fff" fillRule="evenodd" />
+          <path d="m157.751 79.416-1.844.774-3.1-7.374 1.841-.775Z" fillRule="evenodd" />
+          <path d="M151 65.814V77l2.969-2.866.431-.134h4.768Z" fillRule="evenodd" />
         </g>
       </svg>
       <TooltipTrigger isOpen={tooltip === 'edit'} onOpenChange={(o) => onOpenChange('edit', o)}>

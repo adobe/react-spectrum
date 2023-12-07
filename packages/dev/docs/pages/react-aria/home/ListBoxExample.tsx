@@ -1,6 +1,6 @@
 import {animate, useIntersectionObserver} from './utils';
-import {ListBox, ListBoxItem as AriaListBoxItem, ListBoxItemProps as AriaListBoxItemProps, Key, Selection} from 'react-aria-components';
-import React, {useEffect, useRef, useState} from 'react';
+import {ListBoxItem as AriaListBoxItem, ListBoxItemProps as AriaListBoxItemProps, Key, ListBox, Selection} from 'react-aria-components';
+import React, {useRef, useState} from 'react';
 
 const slate300 = 'rgb(203 213 225)';
 const keyframes = [
@@ -9,7 +9,7 @@ const keyframes = [
   {fill: 'white', offset: 1}
 ];
 
-let played = false;
+// let played = false;
 export function ListBoxExample() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
   let [focusedKey, setFocusedKey] = useState(null);

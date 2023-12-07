@@ -229,3 +229,15 @@ pre.medium, pre.small {
     @apply bg-green-500;
   }
 }
+
+
+.iphone-frame {
+  background-image: url(../assets/iphone-frame.webp);
+  background-size: contain;
+}
+
+.iphone-mask {
+  mask-image: url(../assets/iphone-mask.webp), linear-gradient(#fff 0 0);
+  mask-size: contain;
+  mask-composite: exclude;
+}

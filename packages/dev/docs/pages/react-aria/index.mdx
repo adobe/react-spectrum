@@ -489,18 +489,30 @@ import {CircleUser} from 'lucide-react';
   <p className="text-slate-700">React Aria was designed from the start with accessibility as a top priority. All components have been tested across a wide variety of devices and assistive technology to ensure the best experience possible for all users.</p>
   <a href="accessibility.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
-  <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] md:grid-cols-3 -mx-8 md:mx-0 px-8 md:px-0 py-4 md:py-0 overflow-auto md:overflow-visible snap-x snap-mandatory no-scrollbar">
-    <div className="card-shadow rounded-lg p-6 snap-center">
+  <div className="grid gap-6 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-start">
+    <div className="w-full max-w-xs md:w-auto md:max-w-none md:row-span-3 md:h-full aspect-[1/2] iphone-frame md:order-4">
+      <div className="w-full h-full bg-white p-[8%] pb-[11%] iphone-mask [&>*]:h-full">
+
+```tsx snippet
+import {A11y} from './home/A11y';
+
+<A11y />
+```
+
+      </div>
+    </div>
+
+    <div className="card-shadow rounded-lg p-6 md:w-80">
       <h3 className="text-xl font-semibold mb-2">ARIA Semantics.</h3>
       <p className="text-gray-600">Components implement semantics and keyboard behavior according to the W3C ARIA Authoring Practices Guide. React Aria builds on this foundation with real-world testing and device support.</p>
     </div>
 
-    <div className="card-shadow rounded-lg p-6 snap-center">
+    <div className="card-shadow rounded-lg p-6 md:w-80">
       <h3 className="text-xl font-semibold mb-2">Mobile ready.</h3>
       <p className="text-gray-600">All behaviors work without a keyboard to support mobile screen reader users. Additional features such as hidden dismiss buttons in dialogs ensure a great experience for mobile users.</p>
     </div>
 
-    <div className="card-shadow rounded-lg p-6 snap-center">
+    <div className="card-shadow rounded-lg p-6 md:w-80">
       <h3 className="text-xl font-semibold mb-2">Tested. Like, really.</h3>
       <p className="text-gray-600">All components are extensively tested using [many](accessibility.html#testing) different screen readers and devices. We normalize and work around many browser and assistive technology bugs to ensure all users have equal access.</p>
     </div>
