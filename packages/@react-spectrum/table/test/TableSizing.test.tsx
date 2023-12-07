@@ -17,7 +17,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {ColumnSize} from '@react-types/table';
 import {ControllingResize} from '../stories/ControllingResize';
-import {fireEvent, installPointerEvent, pointerMap, simulateDesktop} from '@react-spectrum/test-utils';
+import {fireEvent, installPointerEvent, pointerMap, simulateDesktop} from '@react-spectrum/test-utils-internal';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';

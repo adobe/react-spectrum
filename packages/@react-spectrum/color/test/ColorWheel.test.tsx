@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {ColorWheel} from '../';
 import {ControlledHSL} from '../stories/ColorWheel.stories';
 import {parseColor} from '@react-stately/color';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Card, CardView, GalleryLayout, GridLayout, WaterfallLayout} from '../';
 import {composeStories} from '@storybook/testing-react';
 import {Content} from '@react-spectrum/view';

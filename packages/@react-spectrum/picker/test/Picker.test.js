@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, simulateDesktop, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, simulateDesktop, within} from '@react-spectrum/test-utils-internal';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';

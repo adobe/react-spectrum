@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {DialogContainer} from '@react-spectrum/dialog';
 import {FocusScope, useFocusManager} from '../';

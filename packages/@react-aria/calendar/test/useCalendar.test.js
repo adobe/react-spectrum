@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {CalendarDate} from '@internationalized/date';
 import {Example} from '../stories/Example';
 import React from 'react';

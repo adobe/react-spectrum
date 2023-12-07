@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, simulateDesktop, simulateMobile, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';

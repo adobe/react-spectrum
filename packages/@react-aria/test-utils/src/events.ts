@@ -15,7 +15,7 @@ import {act, fireEvent} from '@testing-library/react';
 // Triggers a "longPress" event on an element.
 export const DEFAULT_LONG_PRESS_TIME = 500;
 
-export function triggerLongPress(element, opts = {}) {
+export function triggerLongPress(element: HTMLElement, opts = {}): void {
   fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
   act(() => {
     jest.advanceTimersByTime(DEFAULT_LONG_PRESS_TIME);

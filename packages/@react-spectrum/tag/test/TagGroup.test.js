@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockImplementation, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockImplementation, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';

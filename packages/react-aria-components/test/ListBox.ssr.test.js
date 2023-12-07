@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, screen, within} from '@react-spectrum/test-utils';
-import {testSSR} from '@react-spectrum/test-utils-test';
+import {fireEvent, screen, testSSR, within} from '@react-spectrum/test-utils-internal';
 
 describe('ListBox SSR', function () {
   it('should render without errors', async function () {

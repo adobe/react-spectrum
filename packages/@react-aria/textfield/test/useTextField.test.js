@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook, renderHook} from '@react-spectrum/test-utils';
+import {actHook, renderHook} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useTextField} from '../';
 

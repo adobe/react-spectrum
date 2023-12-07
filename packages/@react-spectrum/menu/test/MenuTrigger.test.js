@@ -21,7 +21,7 @@ import {
   pointerMap,
   simulateDesktop,
   triggerLongPress
-} from '@react-spectrum/test-utils';
+} from '@react-spectrum/test-utils-internal';
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Text} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';

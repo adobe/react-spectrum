@@ -18,7 +18,7 @@ import {
   pointerMap,
   render as renderComponent,
   within
-} from '@react-spectrum/test-utils';
+} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {composeStories} from '@storybook/testing-react';
 import {enableTableNestedRows} from '@react-stately/flags';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Grid} from '../stories/example';
 import {Item} from '@react-stately/collections';
 import React from 'react';

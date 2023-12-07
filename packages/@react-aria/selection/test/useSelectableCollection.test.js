@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, installPointerEvent, pointerMap, render, simulateDesktop, simulateMobile} from '@react-spectrum/test-utils';
+import {fireEvent, installPointerEvent, pointerMap, render, simulateDesktop, simulateMobile} from '@react-spectrum/test-utils-internal';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';

@@ -9,7 +9,8 @@ governing permissions and limitations under the License. */}
 
 import {Layout} from '@react-spectrum/docs';
 export default Layout;
-import docs from 'docs:@react-spectrum/test-utils';
+import testUtilDocs from 'docs:@react-spectrum/test-utils';
+import {TypeLink} from '@react-spectrum/docs';
 
 ---
 category: Concepts
@@ -246,17 +247,14 @@ await waitFor(() => {
 Components like ComboBox and Picker render a different experience on mobile versus desktop. If you need to test mobile vs desktop for you app or want to make sure the React Spectrum
 components are rendered only against a specific experience, you'll need to mock the window screen width accordingly. We currently use a
 [screen width of 700px](https://github.com/adobe/react-spectrum/blob/5e487532e3ca4714513fb6ab64f7a78d9d1ca281/packages/%40react-spectrum/utils/src/useIsMobileDevice.ts#L15-L23) as the breakpoint
-between mobile and desktop, so you should mock the `width` getter of `window.screen` to a value greater or less than this value accordingly. You may use the following utilities from
-the '@react-spectrum/test-utils` package to handle this width mocking for you in Jest:
-
-todo typelink and functionapi for the util when I get the docs import actaully working
+between mobile and desktop, so you should mock the `width` getter of `window.screen` to a value greater or less than this value accordingly. You may use <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateMobile} /> and
+<TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateDesktop} /> from the '@react-spectrum/test-utils` package to handle this width mocking for you in Jest:
 
 The example below shows how you would set this up in Jest.
 
 ```tsx
 import {simulateDesktop, simulateMobile} from '@react-spectrum/test-utils';
 
-// TODO: adds omething for other test frameworks?
 beforeAll(() => {
   simulateMobile();
 });
@@ -295,9 +293,7 @@ test virtualizer behavior. If you run into a test error where your collection co
 
 Components like ListView and TableView support long press to perform specific interactions like drag and drop or entering selection mode on mobile devices. Unfortunately, the approach of using the userEvent library to simulate a press event and running timers to hit the
 long press internal timer threshold isn't sufficient due to `useLongPress`'s usage of `PointerEvent` and our own detection of `virtual` vs `mouse`/`touch` pointer types. Call our `installPointerEvent` utility and `fireEvent` to properly simulate these long press events in your tests.
-If you don't need to control the specific timings around the long press interaction, use our `triggerLongPress` utility as shown below.
-
-TODO add typelink/function api for triggerLongPress
+If you are using Jest with fake timers and don't need to control the specific timings around the long press interaction, use our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.triggerLongPress} /> utility as shown below.
 
 ```tsx
 import {installPointerEvent, triggerLongPress} from '@react-spectrum/test-utils';

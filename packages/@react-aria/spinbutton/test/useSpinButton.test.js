@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

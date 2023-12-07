@@ -14,7 +14,7 @@
  * Mocks screen width to simulate mobile experience, useful for testing Tray rendering.
  * @param width Optional width to apply. Automatically clamped to the maximum value allowed for mobile rendering.
  */
-export function simulateMobile(width: number = 700) {
+export function simulateMobile(width: number = 700): void {
   jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => Math.min(Math.max(width, 0), 700));
 }
 
@@ -22,6 +22,6 @@ export function simulateMobile(width: number = 700) {
  * Mocks screen width to simulate standard desktop experience.
  * @param width Optional width to apply. Automatically clamped to the minimum value allowed for desktop rendering.
  */
-export function simulateDesktop(width: number = 701) {
+export function simulateDesktop(width: number = 701): void {
   jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => Math.max(width, 701));
 }

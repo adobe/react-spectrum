@@ -12,7 +12,7 @@
 
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {announce} from '@react-aria/live-announcer';
 import {Example} from '../stories/Example';
 import {getFocusableTreeWalker} from '@react-aria/focus';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, screen, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, screen, within} from '@react-spectrum/test-utils-internal';
 import {ActionGroup} from '../';
 import {Button} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';

@@ -13,3 +13,7 @@
 /// <reference types="css-module-types" />
 
 export * from './testSSR';
+export * from './renderOverride';
+export * from './StrictModeWrapper';
+export * from './mockImplementation';
+export * from '@react-spectrum/test-utils';

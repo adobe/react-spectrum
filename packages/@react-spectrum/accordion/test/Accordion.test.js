@@ -11,7 +11,7 @@
  */
 
 import {Accordion, Item} from '../src';
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';

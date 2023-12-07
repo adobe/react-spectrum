@@ -11,7 +11,7 @@
  */
 
 import {Item} from '@react-stately/collections';
-import {pointerMap, render, within} from '@react-spectrum/test-utils';
+import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useButton} from '@react-aria/button';
 import {useListState} from '@react-stately/list';

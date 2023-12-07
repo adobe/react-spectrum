@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, pointerMap, render as render_, simulateDesktop, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, pointerMap, render as render_, simulateDesktop, within} from '@react-spectrum/test-utils-internal';
 import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DatePicker, DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';

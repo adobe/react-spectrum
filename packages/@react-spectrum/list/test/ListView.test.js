@@ -12,7 +12,7 @@
 
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
 import {FocusExample} from '../stories/ListViewActions.stories';

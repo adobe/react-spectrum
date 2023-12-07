@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {DataTransfer, DataTransferItem, DragEvent} from './mocks';
 import {DraggableCollectionExample} from '../stories/DraggableCollection';
 import {DraggableListBox} from '../stories/DraggableListBox';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, getAllByRole as getAllByRoleInContainer, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, getAllByRole as getAllByRoleInContainer, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
 import {DateRangePicker} from '../';
