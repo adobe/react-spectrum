@@ -40,7 +40,7 @@ import {
   useDraggableCollectionState,
   useDroppableCollectionState
 } from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject, useContext, useMemo} from 'react';
 import {RenderProps} from './utils';
 
 interface DraggableCollectionStateOpts extends Omit<DraggableCollectionStateOptions, 'getItems'> {}
@@ -50,7 +50,7 @@ interface DragHooks {
   useDraggableCollection?: (props: DraggableCollectionOptions, state: DraggableCollectionState, ref: RefObject<HTMLElement>) => void,
   useDraggableItem?: (props: DraggableItemProps, state: DraggableCollectionState) => DraggableItemResult,
   DragPreview?: typeof DragPreview,
-  renderDragPreview?: (items: DragItem[]) => React.JSX.Element
+  renderDragPreview?: (items: DragItem[]) => JSX.Element
 }
 
 interface DropHooks {
@@ -58,7 +58,7 @@ interface DropHooks {
   useDroppableCollection?: (props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DroppableCollectionResult,
   useDroppableItem?: (options: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DroppableItemResult,
   useDropIndicator?: (props: AriaDropIndicatorProps, state: DroppableCollectionState, ref: RefObject<HTMLElement>) => DropIndicatorAria,
-  renderDropIndicator?: (target: DropTarget) => React.JSX.Element,
+  renderDropIndicator?: (target: DropTarget) => JSX.Element,
   dropTargetDelegate?: DropTargetDelegate,
   ListDropTargetDelegate: typeof ListDropTargetDelegate
 }
@@ -80,13 +80,13 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    * A function that renders a drag preview, which is shown under the user's cursor while dragging.
    * By default, a copy of the dragged element is rendered.
    */
-  renderDragPreview?: (items: DragItem[]) => React.JSX.Element,
+  renderDragPreview?: (items: DragItem[]) => JSX.Element,
   /**
    * A function that renders a drop indicator element between two items in a collection.
    * This should render a `<DropIndicator>` element. If this function is not provided, a
    * default DropIndicator is provided.
    */
-  renderDropIndicator?: (target: DropTarget) => React.JSX.Element,
+  renderDropIndicator?: (target: DropTarget) => JSX.Element,
   /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
   dropTargetDelegate?: DropTargetDelegate
 }
@@ -160,7 +160,7 @@ interface DropIndicatorContextValue {
   render: (props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>) => ReactNode
 }
 
-function DropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): React.JSX.Element {
+function DropIndicator(props: DropIndicatorProps, ref: ForwardedRef<HTMLElement>): JSX.Element {
   let {render} = useContext(DropIndicatorContext)!;
   return <>{render(props, ref)}</>;
 }
