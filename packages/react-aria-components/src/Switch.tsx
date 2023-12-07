@@ -13,7 +13,7 @@
 import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, usePress, useSwitch, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useRef, useState} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {}
@@ -60,16 +60,17 @@ export interface SwitchRenderProps {
   state: ToggleState
 }
 
-export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLInputElement>>(null);
+export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
-function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
+function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
+  let inputRef = useRef<HTMLInputElement>(null);
   let state = useToggleState(props);
   let {inputProps, isSelected, isDisabled, isReadOnly, isPressed: isPressedKeyboard} = useSwitch({
     ...removeDataAttributes(props),
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
-  }, state, ref);
+  }, state, inputRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let isInteractionDisabled = props.isDisabled || props.isReadOnly;
 
@@ -118,6 +119,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <label
       {...mergeProps(DOMProps, pressProps, hoverProps, renderProps)}
+      ref={ref}
       slot={props.slot || undefined}
       data-selected={isSelected || undefined}
       data-pressed={pressed || undefined}
@@ -127,7 +129,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLInputElement>) {
       data-disabled={isDisabled || undefined}
       data-readonly={isReadOnly || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...inputProps} {...focusProps} ref={ref} />
+        <input {...inputProps} {...focusProps} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </label>
