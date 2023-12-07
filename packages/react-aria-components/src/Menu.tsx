@@ -14,7 +14,7 @@
 import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {BaseCollection, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {ContextValue, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {Header} from './Header';
 import {Key, LinkDOMProps} from '@react-types/shared';
@@ -73,7 +73,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   );
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {}
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps, ScrollableProps<HTMLDivElement> {}
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
@@ -124,6 +124,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
       {...menuProps}
       ref={ref}
       slot={props.slot || undefined}
+      onScroll={props.onScroll}
       style={props.style}
       className={props.className ?? 'react-aria-Menu'}>
       <Provider

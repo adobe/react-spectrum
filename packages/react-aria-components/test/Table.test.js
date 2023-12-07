@@ -684,6 +684,14 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo (focused)');
   });
 
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderTable({tableProps: {onScroll}});
+    let grid = getByRole('grid');
+    fireEvent.scroll(grid);
+    expect(onScroll).toHaveBeenCalled();
+  });
+
   describe('drag and drop', () => {
     it('should support drag button slot', () => {
       let {getAllByRole} = render(<DraggableTable />);
