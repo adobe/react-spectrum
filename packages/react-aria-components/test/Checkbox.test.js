@@ -190,4 +190,10 @@ describe('Checkbox', () => {
     await user.click(checkbox);
     expect(checkbox).toHaveTextContent('Selected');
   });
+
+  it('should support refs', () => {
+    let ref = React.createRef();
+    let {getByRole} = render(<Checkbox ref={ref}>Test</Checkbox>);
+    expect(ref.current).toBe(getByRole('checkbox').closest('.react-aria-Checkbox'));
+  });
 });

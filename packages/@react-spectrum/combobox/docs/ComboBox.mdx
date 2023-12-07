@@ -23,6 +23,7 @@ import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
 import {Text} from '@react-spectrum/text';
 import {useFilter} from '@react-aria/i18n';
+import {Avatar} from "@react-spectrum/avatar";
 ```
 
 ---
@@ -501,8 +502,9 @@ function Example() {
 ```
 
 ## Complex items
-Items within ComboBox also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below.
+Items within ComboBox also allow for additional content used to better communicate options. Icons, avatars, and descriptions can be added to the `children` of `Item` as shown in the example below.
 If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [accessibility](Avatar.html#accessibility) section for more information on how to label these elements.
 
 ```tsx example
 <ComboBox label="Select action">
@@ -525,6 +527,29 @@ If a description is added, the prop `slot="description"` must be used to disting
     <Alert />
     <Text>Report</Text>
     <Text slot="description">Report an issue/violation.</Text>
+  </Item>
+</ComboBox>
+```
+
+### With avatars
+
+```tsx example
+<ComboBox label="Select a user">
+  <Item textValue="User 1">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 1</Text>
+  </Item>
+  <Item textValue="User 2">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 2</Text>
+  </Item>
+  <Item textValue="User 3">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 3</Text>
+  </Item>
+  <Item textValue="User 4">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 4</Text>
   </Item>
 </ComboBox>
 ```

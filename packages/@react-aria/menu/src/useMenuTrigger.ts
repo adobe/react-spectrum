@@ -95,7 +95,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
     }
   };
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/menu');
   let {longPressProps} = useLongPress({
     isDisabled: isDisabled || trigger !== 'longPress',
     accessibilityDescription: stringFormatter.format('longPressMessage'),

@@ -13,6 +13,7 @@
   "type": "module",
   "dependencies": {
     "@adobe/react-spectrum": "^3.26.0",
+    "@react-aria/optimize-locales-plugin": "^1.0.0",
     "@react-spectrum/color": "^3.0.0-beta.16",
     "@react-spectrum/inlinealert": "^3.0.0-rc.0",
     "@react-spectrum/toast": "^3.0.0-alpha.0",

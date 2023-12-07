@@ -152,6 +152,30 @@ describe('Popover', () => {
     expect(popover).not.toBeInTheDocument();
   });
 
+  it('supports overriding styles', async () => {
+    let {getByRole, getByTestId} = render(
+      <DialogTrigger>
+        <Button />
+        <Popover style={{zIndex: 5}}>
+          <OverlayArrow style={{top: 5}} data-testid="arrow">
+            <svg width={12} height={12}>
+              <path d="M0 0,L6 6,L12 0" />
+            </svg>
+          </OverlayArrow>
+          <Dialog>Popover</Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let popover = getByRole('dialog').closest('.react-aria-Popover');
+    expect(popover).toHaveAttribute('style', expect.stringContaining('z-index: 5'));
+    let arrow = getByTestId('arrow');
+    expect(arrow).toHaveAttribute('style', expect.stringContaining('top: 5px'));
+  });
+
   describe('portalContainer', () => {
     function InfoPopover(props) {
       return (

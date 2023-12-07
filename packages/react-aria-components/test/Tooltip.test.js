@@ -115,6 +115,24 @@ describe('Tooltip', () => {
     rerender(<TestTooltip />);
     expect(tooltip).not.toBeInTheDocument();
   });
+
+  it('supports overriding styles', async () => {
+    let {getByRole} = render(<TestTooltip style={{zIndex: 5}} />);
+
+    let button = getByRole('button');
+
+    fireEvent.mouseMove(document.body);
+    await user.hover(button);
+    act(() => jest.runAllTimers());
+
+    let tooltip = getByRole('tooltip');
+    expect(tooltip).toHaveAttribute('style', expect.stringContaining('z-index: 5'));
+
+    await user.unhover(button);
+    act(() => jest.runAllTimers());
+  });
+
+
   describe('portalContainer', () => {
     function InfoTooltip(props) {
       return (

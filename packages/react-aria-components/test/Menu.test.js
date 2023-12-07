@@ -268,6 +268,14 @@ describe('Menu', () => {
     expect(onAction).toHaveBeenLastCalledWith('rename');
   });
 
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderMenu({onScroll});
+    let menu = getByRole('menu');
+    fireEvent.scroll(menu);
+    expect(onScroll).toHaveBeenCalled();
+  });
+
   describe('supports links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
       it.each(['none', 'single', 'multiple'])('with selectionMode = %s', async function (selectionMode) {

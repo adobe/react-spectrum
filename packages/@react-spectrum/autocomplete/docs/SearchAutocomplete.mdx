@@ -17,6 +17,14 @@ import packageData from '@react-spectrum/autocomplete/package.json';
 ```jsx import
 import {SearchAutocomplete, Section, Item} from '@react-spectrum/autocomplete';
 import {useFilter} from '@react-aria/i18n';
+import Email from '@spectrum-icons/workflow/Email';
+import Document from '@spectrum-icons/workflow/Document';
+import WebPages from '@spectrum-icons/workflow/WebPages';
+import SocialNetwork from '@spectrum-icons/workflow/SocialNetwork';
+import ShoppingCart from '@spectrum-icons/workflow/ShoppingCart';
+import Folder from '@spectrum-icons/workflow/Folder';
+import {Text} from '@react-spectrum/text';
+import {Avatar} from "@react-spectrum/avatar";
 ```
 
 ---
@@ -213,6 +221,73 @@ function Example() {
     </SearchAutocomplete>
   );
 }
+```
+
+## Complex items
+Items within SearchAutocomplete also allow for additional content used to better communicate options. Icons, avatars, and descriptions can be added to the `children` of `Item` as shown in the example below.
+If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [accessibility](Avatar.html#accessibility) section for more information on how to label these elements.
+
+```tsx example
+<SearchAutocomplete label="Search apps">
+  <Section title="Productivity">
+    <Item textValue="Mail">
+      <Email size="S" />
+      <Text>Mail</Text>
+      <Text slot="description">Send and recieve emails</Text>
+    </Item>
+    <Item textValue="File Explorer">
+      <Folder size="S" />
+      <Text>File Explorer</Text>
+      <Text slot="description">Navigate directories and open files</Text>
+    </Item>
+    <Item textValue="Document Editor">
+      <Document size="S" />
+      <Text>Document Editor</Text>
+      <Text slot="description">Edit documents</Text>
+    </Item>
+  </Section>
+  <Section title="Internet">
+    <Item textValue="Web Browser">
+      <WebPages size="S" />
+      <Text>Web Browser</Text>
+      <Text slot="description">Browse the internet</Text>
+    </Item>
+    <Item textValue="Social Media">
+      <SocialNetwork size="S" />
+      <Text>Social Media</Text>
+      <Text slot="description">Connect with friends</Text>
+    </Item>
+    <Item textValue="Shopping">
+      <ShoppingCart size="S" />
+      <Text>Shopping</Text>
+      <Text slot="description">Shop online</Text>
+    </Item>
+  </Section>
+</SearchAutocomplete>
+```
+
+### With avatars
+
+```tsx example
+<SearchAutocomplete label="Search users">
+  <Item textValue="User 1">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 1</Text>
+  </Item>
+  <Item textValue="User 2">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 2</Text>
+  </Item>
+  <Item textValue="User 3">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 3</Text>
+  </Item>
+  <Item textValue="User 4">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 4</Text>
+  </Item>
+</SearchAutocomplete>
 ```
 
 ## Asynchronous loading
