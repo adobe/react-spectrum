@@ -1,7 +1,7 @@
 import {animate, useIntersectionObserver} from './utils';
 import {Button} from '../../../../../../starters/tailwind/src/Button';
 import {ChevronDown, WifiIcon} from 'lucide-react';
-import {createPortal} from 'react-dom';
+import {createPortal, flushSync} from 'react-dom';
 import {Key, useDateFormatter} from 'react-aria';
 import {Label} from '../../../../../../starters/tailwind/src/Field';
 import {ListBox, Select, SelectValue} from 'react-aria-components';
@@ -9,9 +9,12 @@ import {Popover} from '../../../../../../starters/tailwind/src/Popover';
 import React, {useEffect, useRef, useState} from 'react';
 import {SelectItem} from '../../../../../../starters/tailwind/src/Select';
 
-interface Rect {
+interface Point {
   top: number,
-  left: number,
+  left: number
+}
+
+interface Rect extends Point {
   width: number,
   height: number
 }
@@ -48,6 +51,7 @@ export function A11y() {
   let ref = useRef<HTMLDivElement>(null);
   let fingerRef = useRef<HTMLDivElement>(null);
   let [cursorRect, setCursorRect] = useState<Rect | null>(null);
+  let [fingerPos, setFingerPos] = useState<Point | null>(null);
   let [isOpen, setOpen] = useState(false);
   let [caption, setCaption] = useState('');
   let [selectedKey, setSelectedKey] = useState<Key>('read');
@@ -67,6 +71,14 @@ export function A11y() {
         fingerRef.current.animate(doubleTapKeyframes, {duration: 500});
       }
     };
+
+    let rect = getRect(ref.current);
+    flushSync(() => {
+      setFingerPos({
+        top: rect.top + rect.height - 170,
+        left: rect.left + rect.width / 2 - 20
+      });
+    });
 
     let cancel = animate([
       swipeRight,
@@ -169,7 +181,7 @@ export function A11y() {
         </svg>
       </div>
       <div className="flex-1 flex justify-center pt-28 md:pt-40 pb-40 relative" ref={ref}>
-        <div ref={fingerRef} className="z-10 pointer-events-none absolute bottom-28 w-10 h-10 rounded-full border border-black/80 bg-black/80 opacity-0" />
+        {fingerPos && createPortal(<div ref={fingerRef} className="pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 opacity-0" style={{...fingerPos, zIndex: 100000000}} />, document.body)}
         {cursorRect && createPortal((
           <div
             className="rounded-md border-2 border-black absolute"

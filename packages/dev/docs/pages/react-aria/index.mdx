@@ -310,7 +310,7 @@ import {KanbanBoard} from './home/KanbanExample';
   <a href="interactions.html" className="inline-block mt-6 mb-12 text-xl text-cyan-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
   <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] md:grid-cols-2 md:grid-rows-2 -mx-8 md:mx-0 px-8 md:px-0 py-4 md:py-0 overflow-auto md:overflow-visible snap-x snap-mandatory no-scrollbar">
-    <div className="flex flex-col bg-white rounded-2xl px-6 pt-6 transition card-shadow overflow-hidden snap-center" id="touch-card">
+    <div className="flex flex-col bg-white rounded-2xl px-6 pt-6 transition card-shadow overflow-hidden snap-center snap-always" id="touch-card">
       <h3 className="text-xl font-semibold mb-2">Touch optimized.</h3>
       <p className="text-gray-600">Micro-interactions like dragging off to cancel a press, long press to select, drag and drop, text selection cancelation, scroll locking, and multi-touch gesture disambiguation make your app feel native.</p>
 
@@ -359,7 +359,7 @@ function SwitchExample() {
       </div>
     </div>
 
-    <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center overflow-hidden" id="mouse-card">
+    <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always overflow-hidden" id="mouse-card">
       <h3 className="text-xl font-semibold mb-2">Mouse enhanced.</h3>
       <p className="text-gray-600">Hover interactions only apply when using a mouse – no sticky touch hover states. Mouse features like double click, scroll wheel, tooltips, and cursor feedback enhance your app on desktop.</p>
 
@@ -374,7 +374,7 @@ function SwitchExample() {
       </div>
     </div>
 
-    <div className="bg-white rounded-2xl p-6 transition card-shadow snap-center" id="keyboard-card">
+    <div className="bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always" id="keyboard-card">
       <h3 className="text-xl font-semibold mb-2">Keyboard friendly.</h3>
       <p className="text-gray-600">Keyboard interactions are first-class, including arrow key navigation, typeahead, multiple selection modifiers,  landmark navigation, and much more.</p>
 
@@ -390,7 +390,7 @@ import {ListBoxExample} from './home/ListBoxExample';
       </div>
     </div>
 
-    <div className="bg-white rounded-2xl px-6 pt-6 transition card-shadow snap-center flex flex-col [&>:last-child]:flex-1" id="focus-card">
+    <div className="bg-white rounded-2xl px-6 pt-6 transition card-shadow snap-center snap-always flex flex-col [&>:last-child]:flex-1" id="focus-card">
       <h3 className="text-xl font-semibold mb-2">Focus managed.</h3>
       <p className="text-gray-600">Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</p>
 
