@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {screen, testSSR} from '@react-spectrum/test-utils';
+import {screen} from '@react-spectrum/test-utils';
+import {testSSR} from '@react-spectrum/test-utils-test';
 
 describe('ComboBox SSR', function () {
   it('should render text of default selected key', async function () {

@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-// TODO update
 export * from './events';
 export * from './testSetup';
 export * from './userEventMaps';
