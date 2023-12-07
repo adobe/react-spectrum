@@ -157,7 +157,7 @@ userEvent.tab();
 userEvent.click(document.activeElement);
 ```
 
-## Test setup
+## Test setup and common gotchas
 
 ### Providers
 
@@ -174,26 +174,36 @@ TypeError: Cannot read properties of null (reading 'scale')
 ```
 
 If you are using React Testing Library, you can overwrite the provided `render` function so that it automatically includes a Provider by default.
+Note the below example allows you to rerender the component with new Provider props but you'll need to requery any element you are asserting against
+to get its updated state (e.g. `button = getByRole('button)`).
 
-// TODO: replace this with our util if we go that direction. Also test this
 ```tsx
+import {RenderOptions as BaseRenderOptions, render} from '@testing-library/react';
 import {Provider, defaultTheme} from '@adobe/react-spectrum';
 import React, {ReactElement} from 'react';
-import {render} from '@testing-library/react';
 
 // export everything from React Testing Library
 export * from '@testing-library/react';
 
 function ProviderWrapper(props) {
+  let {children, ...providerProps} = props;
   return (
-		<Provider theme={defaultTheme}>
+		<Provider theme={defaultTheme} scale="medium" {...providerProps}>
       {props.children}
 		</Provider>
   );
 }
 
-export function customRender(ui, options) {
-	return render(ui, {wrapper: ProviderWrapper, ...options});
+interface RenderOptions extends BaseRenderOptions {
+  providerProps: Omit<ProviderProps, 'children'>
+}
+
+function customRender(ui: ReactElement, options?: RenderOptions) {
+  let rendered = render(ui, {wrapper: (props) => <ProviderWrapper {...props} {...options?.providerProps} />, ...options});
+  return {
+    ...rendered,
+    rerender: (ui, options) => providerWrapperRender(ui, {container: rendered.container, ...options})
+  };
 }
 
 // override render method
@@ -204,8 +214,9 @@ export {customRender as render};
 
 If you are using fake timers in your test suite, be aware that you may need to advance your timers whenever an animation or load is taking place.
 Historically, this most commonly happened when a modals, popovers, or trays is opened or closed as a result of a simulated user action (e.g. opening a Picker's dropdown via click).
-In Jest, this can be handled by calling `act(() => jest.runAllTimers());` but you may require more precise control depending on the other time sensitive behavior you
-are testing. Please see [Jest's timer docs](https://jestjs.io/docs/timer-mocks) or the equivalent docs of your test frameworks for more information on how to do so.
+Additionally, we have `requestAnimationFrame` calls in various areas that you will need to also handle by advancing your timers in the tests. This happens most prominently
+in our virtualized components due to the internals of our Virtualizer. In Jest, this can be handled by calling `act(() => jest.runAllTimers());` but you may require more precise control
+depending on the other time sensitive behavior you are testing. Please see [Jest's timer docs](https://jestjs.io/docs/timer-mocks) or the equivalent docs of your test frameworks for more information on how to do so.
 It is also a good idea to run all timers to completion after each test case to avoid any left over transitions or timeouts that a component may have setup during its lifecycle.
 
 ```tsx
@@ -216,7 +227,7 @@ afterEach(() => {
 
 Consider adding a `act(() => jest.runAllTimers());` after your simulated user interaction if you run into a test failure that looks like the following:
 
-```tsx
+```
 TestingLibraryElementError: Unable to find an accessible element with the role "listbox"
 ```
 
@@ -234,17 +245,26 @@ await waitFor(() => {
 Components like ComboBox and Picker render a different experience on mobile versus desktop. If you need to test mobile vs desktop for you app or want to make sure the React Spectrum
 components are rendered only against a specific experience, you'll need to mock the window screen width accordingly. We currently use a
 [screen width of 700px](https://github.com/adobe/react-spectrum/blob/5e487532e3ca4714513fb6ab64f7a78d9d1ca281/packages/%40react-spectrum/utils/src/useIsMobileDevice.ts#L15-L23) as the breakpoint
-between mobile and desktop, so you should mock the `width` getter of `window.screen` to a value greater or less than this value accordingly. This example shows how you set this up in Jest.
+between mobile and desktop, so you should mock the `width` getter of `window.screen` to a value greater or less than this value accordingly. You may use the following utilities from
+the '@react-spectrum/test-utils` package to handle this width mocking for you:
 
-// TODO replace with helper function if we are going with that
+todo typelink and functionapi for the util when I get the docs import actaully working
+
+The example below shows how you would set this up in Jest.
+
 ```tsx
+import {simulateDesktop, simulateMobile} from '@react-spectrum/test-utils';
+
 beforeAll(() => {
-  // Simulate mobile
-  jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 650);
+  simulateMobile();
+});
+
+afterAll(() => {
+  jest.restoreAllMocks();
 });
 ```
 
-// TODO: this section assumes that we will turn off virtualization for in test environments, update if aren't going ship with that
+TODO: this section assumes that we will turn off virtualization for in test environments, update if aren't going ship with that
 ### Virtualized components
 
 Many of our collection components are virtualized out of the box and thus rely on DOM node measurement to know how large a item should be and how many items can be rendered at once. By default, virtualization for these
@@ -260,40 +280,53 @@ beforeAll(function () {
   jest.spyOn(window.HTMLElement.prototype, 'scrollHeight', 'get').mockImplementation(() => 40);
   jest.spyOn(window.HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(() => 40);
 });
+
+afterAll(() => {
+  jest.restoreAllMocks();
+});
 ```
 
 Please note that this is greatly simplified and still won't accurately reflect the behavior of the virtualizer in browser so we highly recommended that you avoid doing the above or use a browser based automated testing framework to
 test virtualizer behavior. If you run into a test error where your collection component doesn't render any items/rows within it, try adding the above mocks.
 
-// TODO perhaps also note that various component doc pages will have testing sub sections if we deem them applicable
-
-## Gotchas
-
-// TODO: revise this if we do/don't decide to offer installPointerEvents and/or triggerLongPress from our utils.
-// Also double check with our current version of user event library
 ### Simulating user long press
 
 Components like ListView and TableView support long press to perform specific interactions like drag and drop or entering selection mode on mobile devices. Unfortunately, the approach of using the userEvent library to simulate a press event and running timers to hit the
-long press internal timer threshold isn't sufficient due to `useLongPress`'s usage of `PointerEvent`. Call our `installPointerEvent` utility to properly simulate these long press events in your tests. If you don't need to control the specific timings around the long press interaction,
-use our `triggerLongPress` utility as shown below.
+long press internal timer threshold isn't sufficient due to `useLongPress`'s usage of `PointerEvent` and our own detection of `virtual` vs `mouse`/`touch` pointer types. Call our `installPointerEvent` utility and `fireEvent` to properly simulate these long press events in your tests.
+If you don't need to control the specific timings around the long press interaction, use our `triggerLongPress` utility as shown below.
+
+TODO add typelink/function api for triggerLongPress
 
 ```tsx
-// top level in your test file
+import {installPointerEvent, triggerLongPress} from '@react-spectrum/test-utils';
 installPointerEvent();
 
-let button = getByRole('button);
+// In test case
+let button = getByRole('button');
 
-// TODO: test with userevent
 // With fireEvent and specific timing control
-await user.pointer({target: el, keys: '[TouchA>]'});
+fireEvent.pointerDown(el, {pointerType: 'touch'});
 act(() => jest.advanceTimersByTime(800));
-await user.pointer({target: el, keys: '[/TouchA]'});
+fireEvent.up(el, {pointerType: 'touch'});
 
 // With triggerLongPress
 triggerLongPress(button);
-...
+```
 
-### Snapshot tests
+## Snapshot tests
 
 If you are use React 16 or 17, you may run into an issue where the ids generated by the React Spectrum components are changing on every snapshot. To remedy this, simply wrap your component in a [SSRProvider](../react-aria/SSRProvider.html).
 Note that you can use the SSRProvider even if your component doesn't support server side rendering, it will simply stabilize the ids generated.
+
+```tsx
+import {SSRProvider, Provider, lightTheme} from '@adobe/react-spectrum';
+
+<SSRProvider>
+  <Provider theme={lightTheme}>
+    <YourApp />
+  </Provider>
+</SSRProvider>
+```
+
+
+TODO document installMouseEvents and movement? Doublecheck if we can even get it to fire with user event
