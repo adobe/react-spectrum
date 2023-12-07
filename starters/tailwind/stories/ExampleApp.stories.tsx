@@ -21,6 +21,8 @@ import { useResizeObserver } from "@react-aria/utils";
 import { DatePicker } from "../src/DatePicker";
 import { ComboBox, ComboBoxItem } from "../src/ComboBox";
 import { getLocalTimeZone, today } from "@internationalized/date";
+import {useMediaQuery} from '@react-spectrum/utils';
+import { GridList, GridListItem } from "../src/GridList";
 
 type Plant = typeof plants[0] & {isFavorite: boolean};
 
@@ -160,9 +162,11 @@ export function ExampleApp() {
 
   let onDialogClose = () => setDialog(null);
 
+  let isSmall = useMediaQuery('(max-width: 640px)');
+
   return (
     <div className="h-full flex flex-col gap-4 p-4">
-      <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[auto_auto_auto_1fr_auto] gap-2 items-end">
+      <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1.1fr_auto_auto_1fr_auto] gap-2 items-end">
         <SearchField aria-label="Filter" value={search} onChange={setSearch} className="col-span-3 sm:col-span-1" />
         <DialogTrigger>
           <TooltipTrigger>
@@ -219,7 +223,28 @@ export function ExampleApp() {
           </PlantModal>
         </DialogTrigger>
       </div>
-      <ResizableTableContainer className="flex-1 w-full overflow-auto relative border rounded-lg" onScroll={onScroll}>
+      {isSmall &&
+        <GridList aria-label="My plants" selectionMode="multiple" items={items} className="flex-1 w-full">
+          {item => (
+            <GridListItem textValue={item.common_name}>
+              <div className="grid grid-cols-[40px_1fr_auto] gap-x-2 w-full">
+                <img src={item.default_image?.thumbnail} className="inline rounded row-span-3 object-contain h-[40px]" />
+                <span className="truncate capitalize">{item.common_name}</span>
+                <span className="truncate text-xs text-gray-600 col-start-2 row-start-2">{item.scientific_name}</span>
+                <MenuTrigger>
+                  <Button variant="icon" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
+                  <Menu placement="bottom end" onAction={action => onAction(item, action)}>
+                    <MenuItem id="favorite"><StarIcon className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
+                    <MenuItem id="edit"><PencilIcon className="w-4 h-4" /> Edit…</MenuItem>
+                    <MenuItem id="delete"><TrashIcon className="w-4 h-4" /> Delete…</MenuItem>
+                  </Menu>
+                </MenuTrigger>
+              </div>
+            </GridListItem>
+          )}
+        </GridList>
+      }
+      {!isSmall && <ResizableTableContainer className="flex-1 w-full overflow-auto relative border rounded-lg" onScroll={onScroll}>
         <Table aria-label="My plants" selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
           <TableHeader columns={columns}>
             {column => <Column {...column} />}
@@ -239,7 +264,7 @@ export function ExampleApp() {
                       );
                     case 'common_name':
                       return (
-                        <Cell>
+                        <Cell textValue={item.common_name}>
                           <div className="grid grid-cols-[40px_1fr] gap-x-2">
                             <img src={item.default_image?.thumbnail} className="inline rounded row-span-2 object-contain h-[40px]" />
                             <span className="truncate capitalize">{item.common_name}</span>
@@ -274,7 +299,7 @@ export function ExampleApp() {
             )}
           </TableBody>
         </Table>
-      </ResizableTableContainer>
+      </ResizableTableContainer>}
       <Modal isOpen={dialog === 'delete'} onOpenChange={onDialogClose}>
         <AlertDialog title="Delete Plant" variant="destructive" actionLabel="Delete" onAction={deleteItem}>
           Are you sure you want to delete "{actionItem?.common_name}"?
@@ -377,7 +402,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                     setDroppedImage(URL.createObjectURL(await item.getFile()));
                   }
                 }}
-                className="w-32 p-2 flex items-center justify-center border-2 border-gray-400 border-dashed rounded-xl text-gray-500 focus-visible:border-blue-600 focus-visible:border-solid drop-target:border-blue-600 drop-target:border-solid drop-target:bg-blue-100 drop-target:text-blue-600">
+                className="w-24 sm:w-32 p-2 flex items-center justify-center flex-shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 focus-visible:border-blue-600 focus-visible:border-solid drop-target:border-blue-600 drop-target:border-solid drop-target:bg-blue-100 drop-target:text-blue-600">
                 {droppedImage
                   ? <img src={droppedImage} className="w-full h-full object-contain aspect-square" />
                   : <Text slot="label" className="italic text-sm text-center">
@@ -386,7 +411,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                 }
                 <input type="hidden" name="image" value={droppedImage} />
               </DropZone>
-              <div className="flex flex-col gap-3 flex-1">
+              <div className="flex flex-col gap-3 flex-1 min-w-0">
                 <ComboBox label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus>
                   {plant => <ComboBoxItem>{plant.common_name}</ComboBoxItem>}
                 </ComboBox>
@@ -465,7 +490,7 @@ function PlantModal(props: ModalOverlayProps) {
     `}>
       {({isEntering, isExiting}) => <>
         {!isResized &&
-          <div data-react-aria-top-layer="true" className={`fixed top-0 left-0 w-full h-[--visual-viewport-height] z-30 flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)]
+          <div data-react-aria-top-layer="true" className={`fixed top-0 left-0 w-full h-[--visual-viewport-height] z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)]
             ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
             ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}`}>
             <svg viewBox="0 0 700 620" width={700} height={620}>

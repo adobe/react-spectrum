@@ -14,6 +14,7 @@ import './home.global.css';
 import '@react-spectrum/docs/src/syntax-highlight.css';
 import {ArrowRight} from 'lucide-react';
 import {Keyboard} from './home/Keyboard';
+import {AddressBar, FileTab, Window} from './home/components';
 
 ---
 minimal: true
@@ -36,8 +37,8 @@ minimal: true
     <a href="https://npmjs.com/react-aria-components">NPM</a>
   </nav>
 
-  <section className="max-w-6xl mx-auto pt-32 px-8 md:px-20 xl:px-40 pb-60 -mb-60 rounded-3xl">
-    <h1 className="text-3xl md:text-5xl font-semibold mb-4 text-transparent text-center [text-wrap:balance] bg-clip-text bg-gradient-to-b from-slate-700 to-slate-900">Build adaptive, accessible, and robust components with React Aria.</h1>
+  <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 xl:px-40 pb-48 sm:pb-60 -mb-6 rounded-3xl">
+    <h1 className="text-2xl sm:text-3xl md:text-5xl font-semibold mb-4 text-transparent text-center [text-wrap:balance] bg-clip-text bg-gradient-to-b from-slate-700 to-slate-900">Build adaptive, accessible, and robust components with React Aria.</h1>
     <p className="text-slate-800 text-center text-base md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
     <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
@@ -45,16 +46,8 @@ minimal: true
       <a href="components.html" className="bg-white/50 hover:bg-white/90 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-gray-700 px-8 py-3 rounded-full">Explore components</a>
     </div>
 
-    <div className="relative pt-20">
-      <div className="flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out h-[450px] max-w-[600px] mx-auto overflow-hidden rounded-lg shadow-2xl text-black transition w-full translate-y-0 opacity-100">
-        <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-black/5 flex flex-row justify-center px-3 py-2 relative">
-          <div className="absolute flex flex-row left-4 top-3.5">
-            <div className="bg-red-500 h-3 mr-2 rounded-full w-3"></div>
-            <div className="bg-yellow-500 h-3 mr-2 rounded-full w-3"></div>
-            <div className="bg-green-500 h-3 rounded-full w-3"></div>
-          </div>
-          <div className="bg-gray-400/40 dark:bg-gray-700 px-10 py-1 rounded-md text-slate-500 text-xs">https://your-app.com</div>
-        </div>
+    <div className="relative pt-10 md:pt-20">
+      <Window toolbar={<AddressBar>https://your-app.com</AddressBar>} className="h-[450px] max-w-[600px] mx-auto">
         <div className="flex-1 overflow-auto bg-white" id="example-app" />
 
 ```tsx import
@@ -63,7 +56,7 @@ import {ExampleApp} from '../../../../../starters/tailwind/stories/ExampleApp.st
 ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp />);
 ```
 
-      </div>
+      </Window>
       <svg viewBox="0 0 832 450" width={832} className="absolute top-0 left-[50%] -translate-x-[50%] z-20 pointer-events-none [filter:drop-shadow(0_0_3px_white)] hidden md:block">
         <defs>
           <marker
@@ -79,12 +72,12 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
           </marker>
         </defs>
         <polyline
-          points="310,50 310,128 383,128 383,138"
+          points="310,50 310,132 383,132 383,142"
           marker-end="url(#arrow)"
           className="stroke-slate-500 fill-none" />
         <a href="Popover.html" className="pointer-events-auto"><text x={290} y={44} className="text-xs fill-blue-600 underline">Popover</text></a>
         <polyline
-          points="522,50 522,128 427,128 427,138"
+          points="522,50 522,132 427,132 427,142"
           marker-end="url(#arrow)"
           className="stroke-slate-500 fill-none" />
         <a href="Tooltip.html" className="pointer-events-auto"><text x={504} y={44} className="text-xs fill-blue-600 underline">Tooltip</text></a>
@@ -147,7 +140,7 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
 </header>
 
 <main>
-<section className="max-w-6xl mx-auto mt-32 lg:mt-64 mb-20 lg:mb-32 px-8 md:px-20">
+<section className="max-w-6xl mx-auto mb-20 lg:mb-32 px-8 md:px-20">
 
 <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Bring your own</span> <span className="bg-clip-text bg-gradient-to-t from-fuchsia-600 to-pink-600">styles</span><span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">.</span></h2>
 
@@ -467,7 +460,7 @@ import {CircleUser} from 'lucide-react';
   <p className="text-slate-700">React Aria was designed from the start with accessibility as a top priority. All components have been tested across a wide variety of devices and assistive technology to ensure the best experience possible for all users.</p>
   <a href="accessibility.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
-  <div className="grid gap-y-6 gap-x-12 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-start">
+  <div className="grid gap-y-6 gap-x-24 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-start">
     <div className="w-full max-w-xs md:w-auto md:max-w-none md:row-span-3 md:h-full aspect-[1/2] iphone-frame md:order-4">
       <div className="w-full h-full bg-white p-[8%] pb-[11%] iphone-mask [&>*]:h-full">
 

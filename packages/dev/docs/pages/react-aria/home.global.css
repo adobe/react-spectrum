@@ -88,7 +88,7 @@ main > section > h2 {
 }
 
 pre .source {
-  @apply p-5 text-sm min-h-[250px] overflow-auto h-full;
+  @apply p-5 text-xs sm:text-sm min-h-[250px] overflow-auto h-full;
   font-family: source-code-pro, 'Source Code Pro', Monaco, monospace;
 }
 
