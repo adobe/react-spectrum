@@ -104,13 +104,15 @@ async function build() {
   // does it in a different format
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
+  // Delete test-utils from copied packages since we don't expose anything from there
+  fs.removeSync(path.join(dir, 'packages', 'dev', 'test-utils'));
 
   // Only copy babel patch over
   let patches = fs.readdirSync(path.join(srcDir, 'patches'));
   let babelPatch = patches.find(name => name.startsWith('@babel'));
   fs.copySync(path.join(srcDir, 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
 
-  let excludeList = ['@react-spectrum/story-utils', '@react-spectrum/test-utils-internal'];
+  let excludeList = ['@react-spectrum/story-utils'];
   // Copy packages over to temp dir
   console.log('copying over');
   for (let p of packages) {
