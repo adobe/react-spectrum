@@ -12,7 +12,7 @@
 
 import {FocusableProvider} from '@react-aria/focus';
 import {Overlay} from '@react-spectrum/overlays';
-import React, {ReactElement, useRef, useState} from 'react';
+import React, {JSX, ReactElement, useRef, useState} from 'react';
 import {SpectrumTooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipContext} from './context';
 import {useLayoutEffect} from '@react-aria/utils';
@@ -123,5 +123,5 @@ TooltipTrigger.getCollectionNode = function* (props: SpectrumTooltipTriggerProps
  * relative to the trigger.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _TooltipTrigger = TooltipTrigger as (props: SpectrumTooltipTriggerProps) => React.JSX.Element;
+let _TooltipTrigger = TooltipTrigger as (props: SpectrumTooltipTriggerProps) => JSX.Element;
 export {_TooltipTrigger as TooltipTrigger};

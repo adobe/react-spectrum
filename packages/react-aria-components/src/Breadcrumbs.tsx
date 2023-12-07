@@ -16,7 +16,7 @@ import {ContextValue, forwardRefType, SlotProps, StyleProps, useContextProps} fr
 import {filterDOMProps} from '@react-aria/utils';
 import {Key} from '@react-types/shared';
 import {LinkContext} from './Link';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject} from 'react';
 
 export interface BreadcrumbsProps<T> extends Omit<CollectionProps<T>, 'disabledKeys'>, AriaBreadcrumbsProps, StyleProps, SlotProps {
   /** Whether the breadcrumbs are disabled. */
@@ -79,7 +79,7 @@ export interface BreadcrumbProps extends StyleProps {
   children: ReactNode
 }
 
-function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>): React.JSX.Element | null {
+function Breadcrumb(props: BreadcrumbProps, ref: ForwardedRef<HTMLLIElement>): JSX.Element | null {
   return useSSRCollectionNode('item', props, ref, props.children);
 }
 
