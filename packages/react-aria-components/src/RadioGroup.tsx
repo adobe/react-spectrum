@@ -165,9 +165,8 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
 function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, RadioContext);
   let state = React.useContext(RadioGroupStateContext)!;
-  let domRef = useObjectRef(ref);
-  let {labelProps, inputProps, isSelected, isDisabled, isPressed} = useRadio({
   let inputRef = useRef<HTMLInputElement>(null);
+  let {labelProps, inputProps, isSelected, isDisabled, isPressed} = useRadio({
     ...removeDataAttributes<RadioProps>(props),
     // ReactNode type doesn't allow function children.
     children: typeof props.children === 'function' ? true : props.children
