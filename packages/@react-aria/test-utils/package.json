@@ -28,6 +28,7 @@
   "peerDependencies": {
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
+    "jest": "^28.0.0",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
   "publishConfig": {

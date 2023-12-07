@@ -292,8 +292,10 @@ test virtualizer behavior. If you run into a test error where your collection co
 ### Simulating user long press
 
 Components like ListView and TableView support long press to perform specific interactions like drag and drop or entering selection mode on mobile devices. Unfortunately, the approach of using the userEvent library to simulate a press event and running timers to hit the
-long press internal timer threshold isn't sufficient due to `useLongPress`'s usage of `PointerEvent` and our own detection of `virtual` vs `mouse`/`touch` pointer types. Call our `installPointerEvent` utility and `fireEvent` from `@testing-library/react` to properly simulate these long press events in your tests.
-If you are using Jest with fake timers and don't need to control the specific timings around the long press interaction, feel free to use our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.triggerLongPress} /> utility as shown below.
+long press internal timer threshold isn't sufficient due to `useLongPress`'s usage of `PointerEvent` and our own detection of `virtual` vs `mouse`/`touch` pointer types. Mock [PointerEvent](https://github.com/adobe/react-spectrum/blob/16ff0efac57eebeb1cd601ab376ce7c58a4e4efd/packages/dev/test-utils/src/events.ts#L70-L103)
+globally and use `fireEvent` from `@testing-library/react` to properly simulate these long press events in your tests.
+If you are using Jest, you can call our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.installPointerEvent} /> utility to automatically set up and tear down this mock in your test.
+Additionally, you are using fake timers and don't need to control the specific timings around the long press interaction, feel free to use our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.triggerLongPress} /> utility as shown below.
 
 ```tsx
 import {fireEvent} from '@testing-library/react';
@@ -315,7 +317,8 @@ triggerLongPress(button);
 ### Simulating move event
 
 Components like ColorArea, ColorSlider, ColorWheel, and Slider each feature a draggable handle that a user can interact with to change the component's value. Similar to long press, the interactions offered by userEvent library aren't sufficient to trigger
-the underlying event handlers governing these drag/move operations. Call our `installMouseEvent` utility and `fireEvent` from `@testing-library/react` to simulate these drag/move events in your tests. Additionally, the track dimensions
+the underlying event handlers governing these drag/move operations. [Mock MouseEvent globally](https://github.com/adobe/react-spectrum/blob/16ff0efac57eebeb1cd601ab376ce7c58a4e4efd/packages/dev/test-utils/src/events.ts#L44-L68) and `fireEvent` from `@testing-library/react` to simulate these drag/move events in your tests.
+If you are using Jest, you can call our <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.installMouseEvent} /> utility to automatically set up and tear down this mock in your test. Additionally, the track dimensions
 for the draggable handle should be mocked so that the move operation calculations can be properly computed.
 
 ```tsx
