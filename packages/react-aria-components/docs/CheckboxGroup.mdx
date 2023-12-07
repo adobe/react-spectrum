@@ -72,17 +72,19 @@ import {CheckboxGroup, Checkbox, Label} from 'react-aria-components';
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-@import "@react-aria/example-theme";
 @import './Checkbox.mdx' layer(checkbox);
 @import './Form.mdx' layer(form);
 @import './Button.mdx' layer(button);
 ```
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-CheckboxGroup {
   display: flex;
   flex-direction: column;
   gap: 0.571rem;
+  color: var(--text-color);
 }
 ```
 
@@ -294,9 +296,11 @@ import {Form, FieldError, Button} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-FieldError {
-  font-size: 12px;
-  color: var(--invalid-color);
+.react-aria-CheckboxGroup {
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
 }
 ```
 

@@ -120,6 +120,18 @@ A file trigger can accept multiple files by passsing the `allowsMultiple` proper
 </FileTrigger>
 ```
 
+## Directory selection
+
+To enable selecting directories instead of files, use the `directory` property. 
+
+This reflects the [webkitdirectory](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/webkitdirectory) HTML attribute and allows users to select directories and their contents.
+
+```tsx example
+<FileTrigger directory>
+  <Button>Select a directory</Button>
+</FileTrigger>
+```
+
 ## Media capture
 
 To specify the media capture mechanism to capture media on the spot, pass `user` for the user-facing camera or `environment` for the outward-facing camera via the `defaultCamera` prop.

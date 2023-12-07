@@ -379,7 +379,12 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       // If there are any selected keys, make the first one the new focus target
       let selectedKeys = manager.selectedKeys;
       if (selectedKeys.size) {
-        focusedKey = selectedKeys.values().next().value;
+        for (let key of selectedKeys) {
+          if (manager.canSelectItem(key)) {
+            focusedKey = key;
+            break;
+          }
+        }
       }
 
       manager.setFocused(true);

@@ -263,6 +263,15 @@ function PendingButtonContainerComponent(props) {
 }
 
 function Pending(props) {
+  let [tooltipPending, setTooltipPending] = useState(false);
+
+  let handlePress = (e) => {
+    action('press')(e);
+    setTooltipPending(true);
+    setTimeout(() => {
+      setTooltipPending(false);
+    }, timerValue);
+  };
 
   return (
     <div>
@@ -291,33 +300,46 @@ function Pending(props) {
         </PendingButtonContainerComponent>
       </Flex>
 
-      <View flexBasis={'100%'} paddingTop={16}>Controlled:</View>
+      <Flex wrap="wrap" alignItems={'center'}>
+        <Text>Aria-label "Button label" on button</Text>
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent
+            {...props}
+            aria-label="Button label">
+            <Bell />
+          </PendingButtonComponent>
+        </PendingButtonContainerComponent>
 
-      <Flex wrap="wrap">
+        <Text>Aria-label "icon label" on icon</Text>
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent {...props}>
+            <Bell aria-label="icon label" />
+          </PendingButtonComponent>
+        </PendingButtonContainerComponent>
+
+        <Text>No aria-labels--bad implementation</Text>
+        <PendingButtonContainerComponent {...props}>
+          <PendingButtonComponent {...props}>
+            <Bell />
+          </PendingButtonComponent>
+        </PendingButtonContainerComponent>
+
+        <Text>Tooltip and aria-label "Notifications" on button</Text>
         <PendingButtonContainerComponent {...props}>
           <TooltipTrigger offset={2}>
-            <Button {...props} aria-label="Notifications" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
+            <Button {...props} isPending={tooltipPending} onPress={handlePress} aria-label="Notifications">
               <Bell />
             </Button>
-            <Tooltip>Notifications</Tooltip>
+            <Tooltip>Click here to view</Tooltip>
           </TooltipTrigger>
         </PendingButtonContainerComponent>
 
-        <PendingButtonContainerComponent {...props}>
-          <Button {...props} aria-label="No tooltip" onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
-            <Bell />
-          </Button>
-        </PendingButtonContainerComponent>
+      </Flex>
 
-        <PendingButtonContainerComponent {...props}>
-          <Button {...props} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
-            <Bell />
-          </Button>
-        </PendingButtonContainerComponent>
-
+      <Flex wrap="wrap" alignItems={'center'}>
         <PendingButtonContainerComponent {...props}>
           <Button {...props} isPending={props.isPending} onPress={() => {window.alert('use storybook control to change this button isPending prop');}}>
-            <Text>Controlled pending</Text>
+            <Text>Controlled</Text>
           </Button>
         </PendingButtonContainerComponent>
       </Flex>

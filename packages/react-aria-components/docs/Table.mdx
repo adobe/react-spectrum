@@ -51,32 +51,32 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 
 <Table aria-label="Files" selectionMode="multiple">
   <TableHeader>
-    <Column><MyCheckbox /></Column>
+    <Column><MyCheckbox slot="selection" /></Column>
     <Column isRowHeader>Name</Column>
     <Column>Type</Column>
     <Column>Date Modified</Column>
   </TableHeader>
   <TableBody>
     <Row>
-      <Cell><MyCheckbox /></Cell>
+      <Cell><MyCheckbox slot="selection" /></Cell>
       <Cell>Games</Cell>
       <Cell>File folder</Cell>
       <Cell>6/7/2020</Cell>
     </Row>
     <Row>
-      <Cell><MyCheckbox /></Cell>
+      <Cell><MyCheckbox slot="selection" /></Cell>
       <Cell>Program Files</Cell>
       <Cell>File folder</Cell>
       <Cell>4/7/2021</Cell>
     </Row>
     <Row>
-      <Cell><MyCheckbox /></Cell>
+      <Cell><MyCheckbox slot="selection" /></Cell>
       <Cell>bootmgr</Cell>
       <Cell>System file</Cell>
       <Cell>11/20/2010</Cell>
     </Row>
     <Row>
-      <Cell><MyCheckbox /></Cell>
+      <Cell><MyCheckbox slot="selection" /></Cell>
       <Cell>log.txt</Cell>
       <Cell>Text Document</Cell>
       <Cell>1/18/2016</Cell>
@@ -88,8 +88,6 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
 <details>
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 ```css hidden
-/* We only import styles up to one page away, we don't follow those pages dependencies, so
- * import everything and in the correct order of dependency so that layers don't overwrite each other. */
 @import './Button.mdx' layer(button);
 @import './ToggleButton.mdx' layer(togglebutton);
 @import './Checkbox.mdx' layer(checkbox);
@@ -119,6 +117,8 @@ import {Table, TableHeader, TableBody, Column, Row, Cell} from 'react-aria-compo
   }
 
   .react-aria-TableHeader {
+    color: var(--text-color);
+
     &:after {
       content: '';
       display: table-row;
@@ -355,7 +355,7 @@ function MyColumn<T extends object>(props: ColumnProps<T>) {
 The TableHeader and Row components can also be wrapped to automatically include [checkboxes](Checkbox.html) for selection, and a drag handle when [drag and drop](#drag-and-drop) is enabled, allowing consumers to avoid repeating them in each row. In this example, the select all checkbox is displayed when [multiple selection](#multiple-selection) is enabled and the [selection behavior](#selection-behavior) is "toggle". These options can be retrieved from the table using the <TypeLink links={docs.links} type={docs.exports.useTableOptions} /> hook. We also use the <TypeLink links={docs.links} type={docs.exports.Collection} /> component to generate children from either static or [dynamic collections](#dynamic-collections) the same way as the default TableHeader and Row components.
 
 ```tsx example export=true render=false
-import type {TableHeaderProps, RowProps} from 'react-aria-components';
+import type {TableHeaderProps, RowProps, CheckboxProps} from 'react-aria-components';
 import {Checkbox, Collection, useTableOptions} from 'react-aria-components';
 
 function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T>) {
@@ -365,7 +365,7 @@ function MyTableHeader<T extends object>({columns, children}: TableHeaderProps<T
     <TableHeader>
       {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && <Column />}
-      {selectionBehavior === 'toggle' && <Column>{selectionMode === 'multiple' && <MyCheckbox />}</Column>}
+      {selectionBehavior === 'toggle' && <Column>{selectionMode === 'multiple' && <MyCheckbox slot="selection" />}</Column>}
       <Collection items={columns}>
         {children}
       </Collection>
@@ -379,7 +379,7 @@ function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProp
   return (
     <Row id={id} {...otherProps}>
       {allowsDragging && <Cell><Button slot="drag">≡</Button></Cell>}
-      {selectionBehavior === 'toggle' && <Cell><MyCheckbox /></Cell>}
+      {selectionBehavior === 'toggle' && <Cell><MyCheckbox slot="selection" /></Cell>}
       <Collection items={columns}>
         {children}
       </Collection>
@@ -387,10 +387,10 @@ function MyRow<T extends object>({id, columns, children, ...otherProps}: RowProp
   );
 }
 
-function MyCheckbox() {
+function MyCheckbox({children, ...props}: CheckboxProps) {
   return (
-    <Checkbox slot="selection">
-      {({isIndeterminate}) => (
+    <Checkbox {...props}>
+      {({isIndeterminate}) => <>
         <div className="checkbox">
           <svg viewBox="0 0 18 18" aria-hidden="true">
             {isIndeterminate
@@ -399,7 +399,8 @@ function MyCheckbox() {
             }
           </svg>
         </div>
-      )}
+        {children}
+      </>}
     </Checkbox>
   );
 }
@@ -644,7 +645,6 @@ Table rows may also be links to another page or website. This can be achieved by
 ```
 
 ```css hidden
-/* why hide this? */
 .react-aria-Row[data-href] {
   cursor: pointer;
 }
@@ -1286,7 +1286,7 @@ function Example() {
     >
       <TableHeader>
         <Column></Column>
-        <Column><MyCheckbox /></Column>
+        <Column><MyCheckbox slot="selection" /></Column>
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
         <Column>Date Modified</Column>
@@ -1297,7 +1297,7 @@ function Example() {
             {/*- begin highlight -*/}
             <Cell><Button slot="drag">≡</Button></Cell>
             {/*- end highlight -*/}
-            <Cell><MyCheckbox /></Cell>
+            <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.name}</Cell>
             <Cell>{item.type}</Cell>
             <Cell>{item.date}</Cell>
@@ -1393,7 +1393,7 @@ function Example() {
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column></Column>
-        <Column><MyCheckbox /></Column>
+        <Column><MyCheckbox slot="selection" /></Column>
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
         <Column>Date Modified</Column>
@@ -1402,7 +1402,7 @@ function Example() {
         {item => (
           <Row>
             <Cell><Button slot="drag">≡</Button></Cell>
-            <Cell><MyCheckbox /></Cell>
+            <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.name}</Cell>
             <Cell>{item.type}</Cell>
             <Cell>{item.date}</Cell>
@@ -2226,7 +2226,7 @@ function DndTable(props: DndTableProps) {
       dragAndDropHooks={dragAndDropHooks}>
       <TableHeader>
         <Column />
-        <Column><MyCheckbox /></Column>
+        <Column><MyCheckbox slot="selection" /></Column>
         <Column>ID</Column>
         <Column isRowHeader>Name</Column>
         <Column>Type</Column>
@@ -2235,7 +2235,7 @@ function DndTable(props: DndTableProps) {
         {item => (
           <Row>
             <Cell><Button slot="drag">≡</Button></Cell>
-            <Cell><MyCheckbox /></Cell>
+            <Cell><MyCheckbox slot="selection" /></Cell>
             <Cell>{item.id}</Cell>
             <Cell>{item.name}</Cell>
             <Cell>{item.type}</Cell>

@@ -38,6 +38,7 @@ module.exports = async function processCSS(cssCode, asset, options) {
         if (path.extname(specifier) === '') {
           // Assume this is a package.
           specifier += '/src/index.css';
+          return require.resolve(specifier);
         }
 
         let baseDir = process.env.DOCS_ENV === 'production' ? 'docs' : 'packages';
