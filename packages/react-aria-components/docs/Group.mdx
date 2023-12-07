@@ -57,30 +57,25 @@ import {TextField, Label, Group, Input, Button} from 'react-aria-components';
 ```
 
 ```css
-.react-aria-Group {
-  --field-border: var(--spectrum-alias-border-color);
-  --field-border-hovered: var(--spectrum-alias-border-color-hover);
-  --field-background: var(--spectrum-global-color-gray-50);
-  --text-color: var(--spectrum-alias-text-color);
-  --text-color-disabled: var(--spectrum-alias-text-color-disabled);
-  --focus-ring-color: slateblue;
-  --invalid-color: var(--spectrum-global-color-red-600);
+@import "@react-aria/example-theme";
 
+.react-aria-Group {
   display: flex;
   align-items: center;
   width: fit-content;
   border-radius: 6px;
-  border: 1px solid var(--field-border);
+  border: 1px solid var(--border-color);
   background: var(--field-background);
   overflow: hidden;
+  transition: all 200ms;
 
   &[data-hovered] {
-    border-color: var(--field-border-hovered);
+    border-color: var(--border-color-hover);
   }
 
   &[data-focus-within] {
-    border-color: var(--focus-ring-color);
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
   }
 
   .react-aria-Input {
@@ -93,7 +88,8 @@ import {TextField, Label, Group, Input, Button} from 'react-aria-components';
     background: transparent;
 
     &::placeholder {
-      color: var(--spectrum-gray-600);
+      color: var(--text-color-placeholder);
+      opacity: 1;
     }
   }
 
@@ -103,18 +99,11 @@ import {TextField, Label, Group, Input, Button} from 'react-aria-components';
     border-radius: 0 6px 6px 0;
     align-self: stretch;
     font-size: 1.5rem;
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-TextField {
-    --field-border: ButtonBorder;
-    --field-border-disabled: GrayText;
-    --field-background: Field;
-    --text-color: FieldText;
-    --text-color-disabled: GrayText;
-    --focus-ring-color: Highlight;
-    --invalid-color: LinkText;
+    &[data-focus-visible] {
+      border-color: var(--focus-ring-color);
+      outline-width: 1px;
+      outline-offset: 0;
+    }
   }
 }
 ```

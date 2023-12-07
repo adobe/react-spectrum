@@ -586,7 +586,8 @@ export const PopoverExample = () => (
         background: 'Canvas',
         color: 'CanvasText',
         border: '1px solid gray',
-        padding: 30
+        padding: 30,
+        zIndex: 5
       }}>
       <Dialog>
         {({close}) => (
@@ -1159,6 +1160,16 @@ export const DropzoneWithRenderProps = (props) => (
 
 export const FileTriggerButton = (props) => (
   <FileTrigger
+    onSelect={action('onSelect')}
+    data-testid="filetrigger-example"
+    {...props} >
+    <Button>Upload</Button>
+  </FileTrigger>
+);
+
+export const FileTriggerDirectories = (props) => (
+  <FileTrigger
+    directory
     onSelect={action('onSelect')}
     data-testid="filetrigger-example"
     {...props} >

@@ -25,7 +25,7 @@ function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
   let Element = `h${level}` as ElementType;
 
   return (
-    <Element {...domProps} className={className ?? 'react-aria-Heading'}>
+    <Element {...domProps} ref={ref} className={className ?? 'react-aria-Heading'}>
       {children}
     </Element>
   );

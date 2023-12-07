@@ -35,17 +35,21 @@ export interface FileTriggerProps {
   /**
    * The children of the component.
    */
-  children?: ReactNode
+  children?: ReactNode,
+  /**
+   * Enables the selection of directories instead of individual files.
+   */
+  directory?: boolean
 }
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
-  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, ...rest} = props;
+  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, directory, ...rest} = props;
   let inputRef = useObjectRef(ref);
   let domProps = filterDOMProps(rest);
 
   return (
     <>
-      <PressResponder 
+      <PressResponder
         onPress={() => {
           if (inputRef.current.value) {
             inputRef.current.value = '';
@@ -62,7 +66,9 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
         accept={acceptedFileTypes?.toString()}
         onChange={(e) => onSelect?.(e.target.files)}
         capture={defaultCamera}
-        multiple={allowsMultiple} />
+        multiple={allowsMultiple}
+        // @ts-expect-error
+        webkitdirectory={directory ? '' : undefined} />
     </>
   );
 }

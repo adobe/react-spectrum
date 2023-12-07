@@ -76,7 +76,7 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T> | Tre
   }
 
   let {column, direction: sortDirection} = state.sortDescriptor || {};
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
     return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, {columnName}) : undefined;

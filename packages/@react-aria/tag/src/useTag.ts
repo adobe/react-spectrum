@@ -48,7 +48,7 @@ export interface AriaTagProps<T> {
  */
 export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): TagAria {
   let {item} = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tag');
   let buttonId = useId();
 
   let {onRemove} = hookData.get(state) || {};

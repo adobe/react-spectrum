@@ -57,3 +57,17 @@ export const WithHTMLTextAreaElement = {
     value: 'Test value'
   }
 };
+
+export const WithAutoCapitalization = {
+  render: TextInputFieldTemplate,
+  args: {
+    label: 'Test label',
+    autoCapitalize: undefined
+  },
+  argTypes: {
+    autoCapitalize: {
+      options: [undefined, 'off', 'none', 'on', 'sentences', 'words', 'characters']
+    }
+  }
+};
+

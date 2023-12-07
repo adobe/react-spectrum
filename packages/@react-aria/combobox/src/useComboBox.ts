@@ -75,7 +75,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     isDisabled
   } = props;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/combobox');
   let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
     {
       type: 'listbox',

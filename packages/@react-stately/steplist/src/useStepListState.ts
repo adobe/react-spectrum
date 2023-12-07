@@ -10,11 +10,23 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaStepListProps} from '@react-types/steplist';
-import {Collection, Key, Node} from '@react-types/shared';
+import {Collection, CollectionBase, Key, Node, SingleSelection} from '@react-types/shared';
 import {SingleSelectListState, useSingleSelectListState} from '@react-stately/list';
 import {useCallback, useEffect, useMemo} from 'react';
 import {useControlledState} from '@react-stately/utils';
+
+export interface StepListProps<T> extends CollectionBase<T>, SingleSelection {
+  /** The key of the last completed step (controlled). */
+  lastCompletedStep?: Key,
+  /** The key of the initially last completed step (uncontrolled). */
+  defaultLastCompletedStep?: Key,
+  /** Callback for when the last completed step changes. */
+  onLastCompletedStepChange?: (key: Key) => void,
+  /** Whether the step list is disabled. Steps will not be focusable or interactive. */
+  isDisabled?: boolean,
+  /** Whether the step list is read only. Steps will be focusable but non-interactive. */
+  isReadOnly?: boolean
+}
 
 export interface StepListState<T> extends SingleSelectListState<T> {
   readonly lastCompletedStep?: Key,
@@ -23,7 +35,7 @@ export interface StepListState<T> extends SingleSelectListState<T> {
   isSelectable(key: Key): boolean
 }
 
-export function useStepListState<T extends object>(props: AriaStepListProps<T>): StepListState<T> {
+export function useStepListState<T extends object>(props: StepListProps<T>): StepListState<T> {
   let state = useSingleSelectListState<T>(props);
 
   let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key>(props.lastCompletedStep, props.defaultLastCompletedStep, props.onLastCompletedStepChange);
