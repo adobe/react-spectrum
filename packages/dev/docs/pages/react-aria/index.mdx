@@ -201,6 +201,7 @@ React Aria does not include any styles by default, allowing you to build custom 
 <div hidden id="css">
 
 ```css render=false
+/* Consistent default classes for each component */
 .react-aria-ComboBox {
   /* ... */
 
@@ -209,20 +210,17 @@ React Aria does not include any styles by default, allowing you to build custom 
   }
 }
 
-.react-aria-ListBox {
-  border: 1px solid gray;
+.react-aria-ListBoxItem {
+  color: black;
 
-  .react-aria-ListBoxItem {
-    color: black;
+  /* Style interactive states with data attributes */
+  &[data-focused] {
+    color: white;
+    background: slateblue;
+  }
 
-    &[data-focused] {
-      color: white;
-      background: slateblue;
-    }
-
-    &[data-selected] {
-      font-weight: bold;
-    }
+  &[data-selected] {
+    font-weight: bold;
   }
 }
 ```
@@ -262,27 +260,26 @@ React Aria does not include any styles by default, allowing you to build custom 
 <div hidden id="tailwind">
 
 ```tsx format=false
-<ComboBox className="group flex flex-col gap-1 w-[200px]">
-  <Label className="text-black cursor-default text-sm">Assignee</Label>
-  <Group className="flex rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition shadow-md ring-1 ring-black/10 focus-visible:ring-2 focus-visible:ring-black">
-    <Input className="flex-1 w-full border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-none text-sm" />
-    <Button className="px-2.5 flex items-center transition border-0 border-solid border-l border-l-sky-200 bg-transparent rounded-r-lg pressed:bg-sky-100 cursor-default">
-      <ChevronsUpDownIcon className="w-4 h-4 text-gray-700" />
+<ComboBox className="group flex ...">
+  <Label>Assignee</Label>
+  {/* Tailwind plugin for all UI states. */}
+  <Group className="... focus-visible:ring-black">
+    <Input className="flex-1 ..." />
+    <Button className="... pressed:bg-sky-100">
+      <ChevronsUpDownIcon />
     </Button>
   </Group>
-  <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
-    <ListBox className="outline-none p-1" items={people}>
+  {/* Built-in entry and exit animation states. */}
+  <Popover className="w-[--trigger-width] ... entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
+    <ListBox items={people}>
       {item => (
-        <ListBoxItem textValue={item.name} className="group flex items-center gap-2 cursor-default select-none py-1.5 px-2 outline-none rounded text-gray-900 text-sm focus:bg-sky-600 focus:text-white">
+        <ListBoxItem textValue={item.name} className="group text-gray-900 ... focus:bg-sky-600 focus:text-white">
+          {/* Use render props to customize children based on state. */}
           {({ isSelected }) => <>
-            <span className="flex-1 flex items-center gap-3 truncate font-normal group-selected:font-medium">
-              <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
-              <span className="truncate">{item.name}</span>
-            </span>
+            <img alt="" src={item.avatar} />
+            <span className="... font-normal group-selected:font-semibold">{item.name}</span></span>
             {isSelected &&
-              <span className="w-4 flex items-center text-sky-600 group-focus:text-white">
-                <CheckIcon className="w-4 h-4" />
-              </span>
+              <CheckIcon className="... text-sky-600 group-focus:text-white" />
             }
           </>}
         </ListBoxItem>
@@ -489,7 +486,7 @@ import {CircleUser} from 'lucide-react';
   <p className="text-slate-700">React Aria was designed from the start with accessibility as a top priority. All components have been tested across a wide variety of devices and assistive technology to ensure the best experience possible for all users.</p>
   <a href="accessibility.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
-  <div className="grid gap-6 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-start">
+  <div className="grid gap-y-6 gap-x-12 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-start">
     <div className="w-full max-w-xs md:w-auto md:max-w-none md:row-span-3 md:h-full aspect-[1/2] iphone-frame md:order-4">
       <div className="w-full h-full bg-white p-[8%] pb-[11%] iphone-mask [&>*]:h-full">
 

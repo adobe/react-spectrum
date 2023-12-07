@@ -24,26 +24,26 @@ export function Styles() {
         {
           id: 'css',
           label: 'Vanilla CSS',
-          content: <div className="relative flex flex-col gap-4">
+          content: <div className="flex flex-col gap-4">
             <Window
               className="h-fit"
               isBackground
               toolbar={
                 <div className="grid grid-cols-2 w-full">
                   <FileTab>ComboBox.tsx</FileTab>
-                  <FileTab className="hidden lg:block -ml-px">ComboBox.css</FileTab>
+                  <FileTab className="hidden lg:block">ComboBox.css</FileTab>
                 </div>
               }>
-              <div className="flex flex-col lg:flex-row">
-                <div className="flex-1 grid" dangerouslySetInnerHTML={{__html: document.getElementById('styling')!.innerHTML}} />
+              <div className="grid grid-cols-1 lg:grid-cols-2">
+                <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styling')!.innerHTML}} />
                 <div className="flex flex-row px-3 pt-2.5 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-y border-gray-300">
                   <FileTab>ComboBox.css</FileTab>
                 </div>
-                <div className="flex-1 grid lg:border-l" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
+                <div className="contents [&>*]:border-l" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
               </div>
             </Window>
             <Window
-              className="lg:absolute top-[76%] left-16 w-[350px]"
+              className="lg:absolute bottom-10 left-16 w-[350px]"
               toolbar={<AddressBar>https://your-app.com</AddressBar>}>
               <div className="flex items-center justify-center bg-gray-50 col-span-2 p-14 text-sm">
                 <ComboBox>
@@ -91,7 +91,7 @@ export function Styles() {
                           textValue={item.name}
                           className="group flex items-center gap-2 cursor-default select-none py-1.5 px-2 outline-none rounded text-gray-900 text-sm focus:bg-sky-600 focus:text-white">
                           {({isSelected}) => (<>
-                            <span className="flex-1 flex items-center gap-3 truncate font-normal group-selected:font-medium">
+                            <span className="flex-1 flex items-center gap-3 truncate font-normal group-selected:font-semibold">
                               <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
                               <span className="truncate">{item.name}</span>
                             </span>
@@ -286,7 +286,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       </div>
       <div
         ref={tabPanelsRef}
-        className="pt-10 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex md:edge-mask">
+        className="relative pt-10 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex md:edge-mask">
         <Collection items={tabs}>
           {(tab) => (
             <TabPanel
