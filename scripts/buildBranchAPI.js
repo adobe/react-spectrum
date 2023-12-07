@@ -110,7 +110,7 @@ async function build() {
   let babelPatch = patches.find(name => name.startsWith('@babel'));
   fs.copySync(path.join(srcDir, 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
 
-  let excludeList = ['@react-spectrum/story-utils'];
+  let excludeList = ['@react-spectrum/story-utils', '@react-spectrum/test-utils-internal'];
   // Copy packages over to temp dir
   console.log('copying over');
   for (let p of packages) {
