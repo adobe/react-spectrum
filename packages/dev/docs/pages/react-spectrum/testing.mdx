@@ -248,7 +248,7 @@ Components like ComboBox and Picker render a different experience on mobile vers
 components are rendered only against a specific experience, you'll need to mock the window screen width accordingly. We currently use a
 [screen width of 700px](https://github.com/adobe/react-spectrum/blob/5e487532e3ca4714513fb6ab64f7a78d9d1ca281/packages/%40react-spectrum/utils/src/useIsMobileDevice.ts#L15-L23) as the breakpoint
 between mobile and desktop, so you should mock the `width` getter of `window.screen` to a value greater or less than this value accordingly. You may use <TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateMobile} /> and
-<TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateDesktop} /> from the '@react-spectrum/test-utils` package to handle this width mocking for you in Jest:
+<TypeLink links={testUtilDocs.links} type={testUtilDocs.exports.simulateDesktop} /> from the `@react-spectrum/test-utils` package to handle this width mocking for you in Jest:
 
 The example below shows how you would set this up in Jest.
 
