@@ -2,8 +2,8 @@ import React from 'react';
 
 export function Window({children, className = '', isBackground = false, toolbar}) {
   return (
-    <div className={`${className} flex flex-col border border-black/10 bg-clip-content border-solid dark:bg-gray-900 dark:border-gray-700 dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg ${isBackground ? 'shadow-lg' : 'shadow-xl'} text-black transition translate-y-0 opacity-100`}>
-      <div className="bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-b border-gray-300 flex flex-row px-3 pt-2.5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)]">
+    <div className={`${className} flex flex-col border border-black/10 bg-clip-content border-solid dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg ${isBackground ? 'shadow-lg' : 'shadow-xl'} text-black transition translate-y-0 opacity-100`}>
+      <div className="bg-gray-200/80 dark:bg-gray-500/80 backdrop-blur-md border-b border-gray-300 dark:border-gray-500 flex flex-row px-3 pt-2.5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)] dark:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)]">
         {toolbar}
         <div className="absolute flex flex-row left-4 top-3.5">
           <div className={`${isBackground ? 'bg-gray-300' : 'bg-red-500'} border border-black/5 h-3 mr-2 rounded-full w-3`} />
@@ -21,5 +21,21 @@ export function FileTab({children, className = ''}) {
 }
 
 export function AddressBar({children}) {
-  return <div className="bg-gray-400/40 dark:bg-gray-700 px-5 md:px-10 py-1 mx-auto mb-2.5 rounded-md text-slate-500 text-xs">{children}</div>;
+  return <div className="bg-gray-400/40 dark:bg-gray-700/40 px-5 md:px-10 py-1 mx-auto mb-2.5 rounded-md text-slate-500 dark:text-slate-300 text-xs">{children}</div>;
+}
+
+export function GradientText({children}) {
+  return <span className="text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900 dark:from-slate-100 dark:to-slate-400">{children}</span>;
+}
+
+export function Card({className, ...otherProps}) {
+  return <div className={`flex flex-col bg-white dark:bg-slate-800 rounded-2xl p-6 overflow-hidden card-shadow snap-center snap-always ${className}`} {...otherProps} />
+}
+
+export function CardTitle({children}) {
+  return <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-gray-100">{children}</h3>;
+}
+
+export function CardDescription({children}) {
+  return <p className="text-gray-600 dark:text-gray-400 [text-wrap:balance]">{children}</p>;
 }

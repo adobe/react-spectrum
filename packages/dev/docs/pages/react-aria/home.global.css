@@ -37,7 +37,8 @@
 
 body {
   font-family: "adobe-clean", sans-serif;
-  background: white;
+  background: var(--page-bg);
+  @apply [--page-bg:white] dark:[--page-bg:theme(colors.gray.900)];
 }
 
 @media (min-resolution: 200dpi) {
@@ -58,7 +59,7 @@ main > section > h2 {
   @apply text-4xl md:text-5xl font-semibold mb-4;
 
   + p {
-    @apply text-lg md:text-2xl max-w-5xl;
+    @apply text-lg md:text-2xl max-w-5xl text-slate-700 dark:text-slate-400;
     text-wrap: balance;
   }
 }
