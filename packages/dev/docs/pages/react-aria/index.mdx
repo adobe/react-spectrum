@@ -509,10 +509,10 @@ import {I18n} from './home/I18n';
   <p className="text-slate-700">React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with built-in a DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the lower level Hook-based API. Mix and match as needed.</p>
   <a href="advanced.html" className="inline-block mt-6 mb-12 text-xl text-green-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
- <div className="grid gap-4 grid-cols-[repeat(4,100%)] items-center max-w-3xl -mx-8 sm:mx-0 px-8 sm:px-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask">
+ <div className="grid gap-4 grid-cols-[repeat(4,100%)] max-w-3xl -mx-8 sm:mx-0 px-8 sm:px-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask">
   <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always overflow-hidden">
     <h3 className="text-xl font-semibold mb-2">Reuse styles.</h3>
-    <p className="text-gray-600">Start high-level with components that are shared between patterns.</p>
+    <p className="text-gray-600">React Aria's API is designed around composition, allowing you to share common components between patterns. For example, you can reuse the same Label, Popover, and ListBox components within a Select, ComboBox, and more.</p>
 
     <div className="relative flex-1 -mx-8 -mb-8 mt-8">
 
@@ -561,33 +561,34 @@ import {I18n} from './home/I18n';
 
   <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always overflow-hidden">
     <h3 className="text-xl font-semibold mb-2">Build custom patterns.</h3>
-    <p className="text-gray-600">Use exported contexts to build larger patterns with composition.</p>
+    <p className="text-gray-600">Use the exported contexts for each component to build your own custom patterns with compositional APIs just like React Aria's built-in components.</p>
 
     <div className="flex-1 -mx-8 -mb-8 mt-8">
 
 ```tsx format=false
-import {ToggleButtonContext, GridListContext} from 'react-aria-components';
+// A Stepper component with customizable buttons.
+function Stepper({children}) {
+  let [value, setValue] = useState(0);
 
-function Selectable({children}) {
-  let [isSelected, onChange] = useState(false);
-  let selectionMode = isSelected ? 'multiple' : 'none';
   return (
-    <Provider
-      values={[
-        [ToggleButtonContext, {isSelected, onChange}],
-        [GridListContext, {selectionMode}]
-      ]}>
-      {children}
-    </Provider>
+    <ButtonContext.Provider value={{
+      slots: {
+        decrement: {onPress: () => setValue(value - 1)}
+        increment: {onPress: () => setValue(value + 1)},
+      }
+    }}>
+      <TextContext.Provider value={{children: value}}>
+        {children}
+      </TextContext.Provider>
+    </ButtonContext.Provider>
   );
 }
 
-<Selectable>
-  <ToggleButton>Select</ToggleButton>
-  <GridList>
-    {/* ... */}
-  </GridList>
-</Selectable>
+<Stepper>
+  <Button slot="decrement">-</Button>
+  <Text />
+  <Button slot="increment">+</Button>
+</Stepper>
 ```
 
     </div>
@@ -597,10 +598,13 @@ function Selectable({children}) {
     <h3 className="text-xl font-semibold mb-2">Consume contexts.</h3>
     <p className="text-gray-600">Replace or extend any component with new features using contexts.</p>
 
+    <div className="flex-1 -mx-8 -mb-8 mt-8">
+
 ```tsx
 
 ```
 
+    </div>
   </div>
 
   <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always overflow-hidden">
