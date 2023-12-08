@@ -1,4 +1,5 @@
 import {Calendar} from '../src/Calendar';
+import React from 'react';
 
 import type {Meta} from '@storybook/react';
 

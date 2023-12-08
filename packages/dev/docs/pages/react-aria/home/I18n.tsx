@@ -104,32 +104,32 @@ export function I18n() {
       let locale = new Intl.Locale(item.value);
       return {
         ...item,
-        label: `${langDisplay.of(locale.language)} (${regionDisplay.of(locale.region)})`
+        label: `${langDisplay.of(locale.language)} (${regionDisplay.of(locale.region!)})`
       };
     }).sort((a, b) => a.label.localeCompare(b.label));
   }, [langDisplay, regionDisplay]);
 
   let pref = preferences.find(p => p.value === locale);
   let preferredCalendars = React.useMemo(() => pref ? (pref.ordering || 'gregory').split(' ').map(p => calendars.find(c => c.key === p)).filter(Boolean) : [calendars[0]], [pref]);
-  let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p.key === c.key)), [preferredCalendars]);
+  let otherCalendars = React.useMemo(() => calendars.filter(c => !preferredCalendars.some(p => p?.key === c.key)), [preferredCalendars]);
 
   let updateLocale = locale => {
     setLocale(locale);
     let pref = preferences.find(p => p.value === locale);
-    setCalendar((pref.ordering || 'gregory').split(' ')[0]);
+    setCalendar((pref?.ordering || 'gregory').split(' ')[0]);
     setNumberingSystem(new Intl.NumberFormat(locale || defaultLocale).resolvedOptions().numberingSystem);
   };
 
   let updateCalendar = calendar => {
     setCalendar(calendar);
     let selectedLocale = new Intl.Locale(locale || defaultLocale, {
-      calendar: calendar && calendar !== preferredCalendars[0].key ? calendar : undefined
+      calendar: calendar && calendar !== preferredCalendars[0]!.key ? calendar : undefined
     });
     setNumberingSystem(new Intl.NumberFormat(selectedLocale.toString()).resolvedOptions().numberingSystem);
   };
 
   let selectedLocale = new Intl.Locale(locale || defaultLocale, {
-    calendar: calendar && calendar !== preferredCalendars[0].key ? calendar : undefined,
+    calendar: calendar && calendar !== preferredCalendars[0]!.key ? calendar : undefined,
     numberingSystem
   });
 

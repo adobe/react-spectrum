@@ -1,97 +1,97 @@
-import {GridList, GridListItem, Text, Button, DropIndicator, isTextDropItem, useDragAndDrop} from 'react-aria-components';
-import {useListData} from 'react-stately';
+import {Button, DropIndicator, GridList, GridListItem, isTextDropItem, Text, useDragAndDrop} from 'react-aria-components';
+import {ListData, useListData} from 'react-stately';
 import React from 'react';
 
 const tickets = [
   {
-    "title": "UI Button Alignment Issue",
-    "description": "Buttons in the Settings menu are misaligned on smaller screens.",
-    "id": "#101",
-    "assignee": "Gilberto Miguel",
-    "avatar": "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    "date": "2023-09-15",
-    "status": "Open"
+    'title': 'UI Button Alignment Issue',
+    'description': 'Buttons in the Settings menu are misaligned on smaller screens.',
+    'id': '#101',
+    'assignee': 'Gilberto Miguel',
+    'avatar': 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    'date': '2023-09-15',
+    'status': 'Open'
   },
   {
-    "title": "Login Page Redesign",
-    "description": "Requesting a redesign of the login page to improve user experience.",
-    "id": "#102",
-    "assignee": "Maia Pettegree",
-    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    "date": "2023-09-16",
-    "status": "Open"
+    'title': 'Login Page Redesign',
+    'description': 'Requesting a redesign of the login page to improve user experience.',
+    'id': '#102',
+    'assignee': 'Maia Pettegree',
+    'avatar': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    'date': '2023-09-16',
+    'status': 'Open'
   },
   {
-    "title": "Database Connection Error",
-    "description": "Users are experiencing intermittent connection errors when accessing the database.",
-    "id": "#103",
-    "assignee": "Mike Johnson",
-    "avatar": "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    "date": "2023-09-17",
-    "status": "In Progress"
+    'title': 'Database Connection Error',
+    'description': 'Users are experiencing intermittent connection errors when accessing the database.',
+    'id': '#103',
+    'assignee': 'Mike Johnson',
+    'avatar': 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    'date': '2023-09-17',
+    'status': 'In Progress'
   },
   {
-    "title": "Feature: Dark Mode",
-    "description": "Implement a dark mode option for improved accessibility and user preference.",
-    "id": "#104",
-    "assignee": "Sarah Lee",
-    "avatar": "https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    "date": "2023-09-18",
-    "status": "Open"
+    'title': 'Feature: Dark Mode',
+    'description': 'Implement a dark mode option for improved accessibility and user preference.',
+    'id': '#104',
+    'assignee': 'Sarah Lee',
+    'avatar': 'https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    'date': '2023-09-18',
+    'status': 'Open'
   },
   {
-    "title": "Missing User Profile Pictures",
-    "description": "Some user profile pictures are not displaying properly in the user dashboard.",
-    "id": "#105",
-    "assignee": "David Chen",
-    "avatar": "https://images.unsplash.com/photo-1528763380143-65b3ac89a3ff?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    "date": "2023-09-19",
-    "status": "Open"
+    'title': 'Missing User Profile Pictures',
+    'description': 'Some user profile pictures are not displaying properly in the user dashboard.',
+    'id': '#105',
+    'assignee': 'David Chen',
+    'avatar': 'https://images.unsplash.com/photo-1528763380143-65b3ac89a3ff?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    'date': '2023-09-19',
+    'status': 'Open'
   },
   {
-    "title": "Performance Optimization",
-    "description": "Requesting performance optimization for the application to reduce load times.",
-    "id": "#106",
-    "assignee": "Sarah Lee",
-    "avatar": "https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    "date": "2023-09-20",
-    "status": "Closed"
+    'title': 'Performance Optimization',
+    'description': 'Requesting performance optimization for the application to reduce load times.',
+    'id': '#106',
+    'assignee': 'Sarah Lee',
+    'avatar': 'https://images.unsplash.com/photo-1569913486515-b74bf7751574?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    'date': '2023-09-20',
+    'status': 'Closed'
   },
   {
-    "title": "Broken Link on Homepage",
-    "description": "The \"Learn More\" link on the homepage is leading to a 404 error.",
-    "id": "#107",
-    "assignee": "Alex Turner",
-    "avatar": "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    "date": "2023-09-21",
-    "status": "Open"
+    'title': 'Broken Link on Homepage',
+    'description': 'The "Learn More" link on the homepage is leading to a 404 error.',
+    'id': '#107',
+    'assignee': 'Alex Turner',
+    'avatar': 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    'date': '2023-09-21',
+    'status': 'Open'
   },
   {
-    "title": "Feature: Export to PDF",
-    "description": "Implement a feature to allow users to export their data to PDF format.",
-    "id": "#108",
-    "assignee": "Maia Pettegree",
-    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    "date": "2023-09-22",
-    "status": "Open"
+    'title': 'Feature: Export to PDF',
+    'description': 'Implement a feature to allow users to export their data to PDF format.',
+    'id': '#108',
+    'assignee': 'Maia Pettegree',
+    'avatar': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    'date': '2023-09-22',
+    'status': 'Open'
   },
   {
-    "title": "Mobile Responsiveness Issue",
-    "description": "The application is not rendering properly on certain mobile devices.",
-    "id": "#109",
-    "assignee": "Kevin Williams",
-    "avatar": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80",
-    "date": "2023-09-23",
-    "status": "Open"
+    'title': 'Mobile Responsiveness Issue',
+    'description': 'The application is not rendering properly on certain mobile devices.',
+    'id': '#109',
+    'assignee': 'Kevin Williams',
+    'avatar': 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80',
+    'date': '2023-09-23',
+    'status': 'Open'
   },
   {
-    "title": "Feature: Two-Factor Authentication",
-    "description": "Requesting the addition of two-factor authentication for improved security.",
-    "id": "#110",
-    "assignee": "Maia Pettegree",
-    "avatar": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    "date": "2023-09-24",
-    "status": "In Progress"
+    'title': 'Feature: Two-Factor Authentication',
+    'description': 'Requesting the addition of two-factor authentication for improved security.',
+    'id': '#110',
+    'assignee': 'Maia Pettegree',
+    'avatar': 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+    'date': '2023-09-24',
+    'status': 'In Progress'
   }
 ];
 
@@ -109,14 +109,20 @@ export function KanbanBoard() {
   );
 }
 
-function Column({list, status, itemClassName}) {
+interface ColumnProps {
+  list: ListData<typeof tickets[0]>,
+  status: string,
+  itemClassName?: string
+}
+
+function Column({list, status, itemClassName}: ColumnProps) {
   let items = list.items.filter(t => t.status === status);
 
-  let { dragAndDropHooks } = useDragAndDrop({
+  let {dragAndDropHooks} = useDragAndDrop({
     // Provide drag data in a custom format as well as plain text.
     getItems(keys) {
       return [...keys].map((id) => ({
-        'issue-id': id,
+        'issue-id': String(id),
         'text/plain': list.getItem(id).title
       }));
     },
@@ -125,12 +131,12 @@ function Column({list, status, itemClassName}) {
       return (
         <DropIndicator target={target} className="h-0 -my-1.5 -translate-y-[5px] -mx-2 invisible drop-target:visible">
           <svg height={10} className="w-full">
-            <circle cx={5} cy={5} r={5-1} strokeWidth={2} className="stroke-blue-500 fill-none" />
+            <circle cx={5} cy={5} r={5 - 1} strokeWidth={2} className="stroke-blue-500 fill-none" />
             <line x1={20} x2="100%" transform="translate(-10 0)" y1={5} y2={5} strokeWidth={2} className="stroke-blue-500" />
-            <circle cx="100%" cy={5} r={5-1} transform="translate(-5 0)" strokeWidth={2} className="stroke-blue-500 fill-none" />
+            <circle cx="100%" cy={5} r={5 - 1} transform="translate(-5 0)" strokeWidth={2} className="stroke-blue-500 fill-none" />
           </svg>
         </DropIndicator>
-      )
+      );
     },
 
     // Accept drops with the custom format.
@@ -145,7 +151,7 @@ function Column({list, status, itemClassName}) {
         e.items.filter(isTextDropItem).map(item => item.getText('issue-id'))
       );
       for (let id of ids) {
-        list.update(id, {...list.getItem(id), status });
+        list.update(id, {...list.getItem(id), status});
       }
       if (e.target.dropPosition === 'before') {
         list.moveBefore(e.target.key, ids);
@@ -160,7 +166,7 @@ function Column({list, status, itemClassName}) {
         e.items.filter(isTextDropItem).map(item => item.getText('issue-id'))
       );
       for (let id of ids) {
-        list.update(id, {...list.getItem(id), status });
+        list.update(id, {...list.getItem(id), status});
       }
     },
 
@@ -193,7 +199,13 @@ function Column({list, status, itemClassName}) {
   );
 }
 
-function Card({id, item, className}) {
+interface CardProps {
+  id?: string,
+  item: typeof tickets[0],
+  className?: string
+}
+
+function Card({id, item, className}: CardProps) {
   return (
     <GridListItem id={id} textValue={item.title} className={`group grid grid-cols-[1fr_auto] gap-1 [&>*]:contents p-2 rounded-lg border border-solid border-black/10 hover:border-black/20 bg-white/80 bg-clip-padding hover:shadow-md selected:shadow-md dragging:opacity-50 transition text-slate-700 cursor-default select-none outline-none outline-offset-2 focus-visible:outline-blue-500 ${className}`}>
       <span className="font-bold truncate">{item.title}</span>

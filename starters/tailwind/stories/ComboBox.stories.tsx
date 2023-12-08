@@ -1,5 +1,6 @@
 import { Form } from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from '../src/ComboBox';
+import React from 'react';
 
 import type {Meta} from '@storybook/react';
 import { Button } from '../src/Button';

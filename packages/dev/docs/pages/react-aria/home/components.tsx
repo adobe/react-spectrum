@@ -29,7 +29,7 @@ export function GradientText({children}) {
 }
 
 export function Card({className, ...otherProps}) {
-  return <div className={`flex flex-col bg-white dark:bg-slate-800 rounded-2xl p-6 overflow-hidden card-shadow snap-center snap-always ${className}`} {...otherProps} />
+  return <div className={`flex flex-col bg-white dark:bg-slate-800 rounded-2xl p-6 overflow-hidden card-shadow snap-center snap-always ${className}`} {...otherProps} />;
 }
 
 export function CardTitle({children}) {

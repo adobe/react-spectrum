@@ -8,6 +8,7 @@ import {
   CalendarGridBody
 } from 'react-aria-components';
 import { CalendarGridHeader, CalendarHeader } from './Calendar';
+import React from 'react';
 import {tv} from 'tailwind-variants';
 
 export interface RangeCalendarProps<T extends DateValue>

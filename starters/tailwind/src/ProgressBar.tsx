@@ -3,6 +3,7 @@ import {
   ProgressBarProps as AriaProgressBarProps
 } from 'react-aria-components';
 import { Label } from './Field';
+import React from 'react';
 
 export interface ProgressBarProps extends AriaProgressBarProps {
   label?: string;

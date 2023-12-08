@@ -1,4 +1,5 @@
-import {Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
+import {composeRenderProps, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
+import React from 'react';
 import {tv} from 'tailwind-variants';
 
 export interface ButtonProps extends RACButtonProps {
@@ -24,9 +25,6 @@ export function Button(props: ButtonProps) {
   return (
     <RACButton
       {...props}
-      className={renderProps => button({
-        variant: props.variant,
-        className: typeof props.className === 'function' ? props.className(renderProps) : props.className
-      })} />
+      className={composeRenderProps(props.className, className => button({variant: props.variant, className}))} />
   );
 }

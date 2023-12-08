@@ -1,8 +1,8 @@
 import { Form } from 'react-aria-components';
 import {DatePicker} from '../src/DatePicker';
-
 import type {Meta} from '@storybook/react';
 import { Button } from '../src/Button';
+import React from 'react';
 
 const meta: Meta<typeof DatePicker> = {
   component: DatePicker,

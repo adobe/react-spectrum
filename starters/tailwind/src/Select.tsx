@@ -11,6 +11,7 @@ import { Description, FieldError, Label } from './Field';
 import { Popover } from './Popover';
 import { ChevronDown } from 'lucide-react';
 import { DropdownItem, ListBoxSection, ListBoxSectionProps } from './ListBox';
+import React from 'react';
 
 export interface SelectProps<T extends object> extends Omit<AriaSelectProps<T>, 'children'> {
   label?: string;

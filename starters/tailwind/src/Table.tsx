@@ -13,10 +13,13 @@ import {
   ResizableTableContainer,
   useTableOptions,
   ColumnResizer,
-  Group
+  Group,
+  composeRenderProps,
+  CellProps
 } from 'react-aria-components';
 import {Checkbox} from './Checkbox';
 import {ArrowUp} from 'lucide-react';
+import React from 'react';
 
 export function Table(props: TableProps) {
   return (
@@ -29,14 +32,14 @@ export function Table(props: TableProps) {
 export function Column<T extends object>(props: ColumnProps<T>) {
   return (
     <AriaColumn {...props} className="[&:hover]:z-20 [&:focus-within]:z-20 text-start text-sm font-semibold text-gray-700 cursor-default outline-none focus-visible:outline-blue-600 -outline-offset-2">
-      {({ allowsSorting, sortDirection }) => (
+      {composeRenderProps(props.children, (children, { allowsSorting, sortDirection }) => (
         <div className="flex items-center">
           <Group
             role="presentation"
             tabIndex={-1}
             className="px-2 h-5 flex-1 flex gap-1 items-center overflow-hidden outline-none rounded focus-visible:outline-blue-600"
           >
-            <span className="truncate">{props.children}</span>
+            <span className="truncate">{children}</span>
             {allowsSorting && (
               <span
                 className={`w-4 h-4 flex items-center justify-center transition ${
@@ -49,7 +52,7 @@ export function Column<T extends object>(props: ColumnProps<T>) {
           </Group>
           {!props.width && <ColumnResizer className="w-px px-[8px] translate-x-[8px] box-content py-1 h-5 bg-clip-content bg-gray-400 cursor-col-resize rounded resizing:bg-blue-600 resizing:w-[2px] resizing:pl-[7px] focus-visible:outline outline-2 outline-blue-600 -outline-offset-2" />}
         </div>
-      )}
+      ))}
     </AriaColumn>
   );
 }

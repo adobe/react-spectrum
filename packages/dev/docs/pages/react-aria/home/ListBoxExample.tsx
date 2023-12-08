@@ -1,6 +1,6 @@
 import {animate, useIntersectionObserver} from './utils';
 import {ListBoxItem as AriaListBoxItem, ListBoxItemProps as AriaListBoxItemProps, Key, ListBox, Selection} from 'react-aria-components';
-import React, {useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 
 const slate300 = 'rgb(203 213 225)';
 const keyframes = [
@@ -12,14 +12,14 @@ const keyframes = [
 // let played = false;
 export function ListBoxExample() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
-  let [focusedKey, setFocusedKey] = useState(null);
+  let [focusedKey, setFocusedKey] = useState<Key | null>(null);
   let ref = useRef<HTMLDivElement>(null);
 
-  useIntersectionObserver(ref, () => {
-    let spaceKey = document.getElementById('space-key');
-    let downKey = document.getElementById('down-key');
-    let upKey = document.getElementById('up-key');
-    let shiftKey = document.getElementById('shift-key');
+  useIntersectionObserver(ref, useCallback(() => () => {
+    let spaceKey = document.getElementById('space-key')!;
+    let downKey = document.getElementById('down-key')!;
+    let upKey = document.getElementById('up-key')!;
+    let shiftKey = document.getElementById('shift-key')!;
     let cancel = animate([
       // {
       //   // Delay to let other cards start animating first.
@@ -104,7 +104,7 @@ export function ListBoxExample() {
       setSelectedKeys(new Set());
       shiftKey.style.fill = 'white';
     };
-  });
+  }, []));
 
   return (
     <ListBox ref={ref} className="outline-none p-1 border border-gray-300 rounded-lg" aria-label="Ice cream flavor" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
@@ -117,7 +117,7 @@ export function ListBoxExample() {
 }
 
 interface ListBoxItemProps extends AriaListBoxItemProps {
-  focusedKey: Key
+  focusedKey: Key | null
 }
 
 function ListBoxItem(props: ListBoxItemProps) {

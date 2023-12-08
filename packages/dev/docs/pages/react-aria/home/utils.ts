@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from "react";
+import {RefObject, useEffect} from 'react';
 
 export function animate(steps: any[]) {
   let cancelCurrentStep;
@@ -56,7 +56,7 @@ export function useIntersectionObserver(ref: RefObject<HTMLElement>, onIntersect
       if (typeof cancel === 'function') {
         cancel();
       }
-      observer.unobserve(element!)
+      observer.unobserve(element!);
     };
-  }, [ref]);
+  }, [ref, onIntersect]);
 }

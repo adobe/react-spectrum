@@ -8,6 +8,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 import { FieldGroup, FieldError, Description, Label } from './Field';
+import React from 'react';
 
 export interface NumberFieldProps extends AriaNumberFieldProps {
   label?: string;

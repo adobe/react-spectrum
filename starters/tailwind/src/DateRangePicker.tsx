@@ -11,6 +11,7 @@ import { RangeCalendar } from './RangeCalendar';
 import { CalendarIcon } from 'lucide-react';
 import { FieldGroup, Label, FieldError, Description } from './Field';
 import { Popover } from './Popover';
+import React from 'react';
 
 export interface DateRangePickerProps<T extends DateValue>
   extends AriaDateRangePickerProps<T> {

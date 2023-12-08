@@ -3,6 +3,7 @@ import {AlertDialog} from '../src/AlertDialog';
 import {DialogTrigger} from 'react-aria-components';
 import { Button } from '../src/Button';
 import { Modal } from '../src/Modal';
+import React from 'react';
 
 const meta: Meta<typeof AlertDialog> = {
   component: AlertDialog,

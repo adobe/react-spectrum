@@ -1,4 +1,5 @@
 import {Modal as RACModal, ModalOverlay, ModalOverlayProps} from 'react-aria-components';
+import React from 'react';
 
 export function Modal(props: ModalOverlayProps) {
   return (

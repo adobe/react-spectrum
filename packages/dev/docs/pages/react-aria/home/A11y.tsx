@@ -6,7 +6,7 @@ import {Key, useDateFormatter} from 'react-aria';
 import {Label} from '../../../../../../starters/tailwind/src/Field';
 import {ListBox, Select, SelectValue} from 'react-aria-components';
 import {Popover} from '../../../../../../starters/tailwind/src/Popover';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SelectItem} from '../../../../../../starters/tailwind/src/Select';
 
 interface Point {
@@ -55,20 +55,20 @@ export function A11y() {
   let [isOpen, setOpen] = useState(false);
   let [caption, setCaption] = useState('');
   let [selectedKey, setSelectedKey] = useState<Key>('read');
-  useIntersectionObserver(ref, () => {
+  useIntersectionObserver(ref, useCallback(() => {
     let button: HTMLButtonElement | null = null;
     let listbox: HTMLElement | null = null;
     const swipeRight = {
       time: 500,
       perform() {
-        fingerRef.current.animate(swipeRightKeyframes, {duration: 500});
+        fingerRef.current!.animate(swipeRightKeyframes, {duration: 500});
       }
     };
 
     const doubleTap = {
       time: 800,
       perform() {
-        fingerRef.current.animate(doubleTapKeyframes, {duration: 500});
+        fingerRef.current!.animate(doubleTapKeyframes, {duration: 500});
       }
     };
 
@@ -85,7 +85,7 @@ export function A11y() {
       {
         time: 1000,
         perform() {
-          let label = ref.current.querySelector('span');
+          let label = ref.current!.querySelector('span');
           setCursorRect(getRect(label, 5));
           setCaption('Permissions');
         }
@@ -94,7 +94,7 @@ export function A11y() {
       {
         time: 2000,
         perform() {
-          button = ref.current.querySelector('button');
+          button = ref.current!.querySelector('button');
           setCursorRect(getRect(button));
           setCaption('Read Only Permissions, Pop up button, List box popup, Double tap to activate the picker');
         }
@@ -109,8 +109,8 @@ export function A11y() {
       {
         time: 1500,
         perform() {
-          listbox = document.getElementById(button!.getAttribute('aria-controls'));
-          let option = listbox.querySelector('[role=option]');
+          listbox = document.getElementById(button!.getAttribute('aria-controls')!);
+          let option = listbox!.querySelector('[role=option]');
           setCursorRect(getRect(option));
           setCaption('Permissions, Read Only, List start');
         }
@@ -119,7 +119,7 @@ export function A11y() {
       {
         time: 1000,
         perform() {
-          let option = listbox.querySelectorAll('[role=option]')[1];
+          let option = listbox!.querySelectorAll('[role=option]')[1];
           setCursorRect(getRect(option));
           setCaption('Edit');
         }
@@ -128,7 +128,7 @@ export function A11y() {
       {
         time: 1500,
         perform() {
-          let option = listbox.querySelectorAll('[role=option]')[2];
+          let option = listbox!.querySelectorAll('[role=option]')[2];
           setCursorRect(getRect(option));
           setCaption('Admin, List end');
         }
@@ -137,7 +137,7 @@ export function A11y() {
       {
         time: 1500,
         perform() {
-          let option = listbox.parentElement.querySelector('button');
+          let option = listbox!.parentElement!.querySelector('button');
           setCursorRect(getRect(option));
           setCaption('Dismiss, button');
         }
@@ -166,7 +166,7 @@ export function A11y() {
       setCursorRect(null);
       setCaption('');
     };
-  });
+  }, []));
 
   return (
     <div className="flex flex-col h-full relative">
@@ -193,7 +193,7 @@ export function A11y() {
               minHeight: 10
             }} />
         ), document.body)}
-        <Select className="group flex flex-col gap-1" selectedKey={selectedKey} onSelectionChange={cursorRect ? null : setSelectedKey} isOpen={isOpen} onOpenChange={cursorRect ? null : setOpen}>
+        <Select className="group flex flex-col gap-1" selectedKey={selectedKey} onSelectionChange={cursorRect ? undefined : setSelectedKey} isOpen={isOpen} onOpenChange={cursorRect ? undefined : setOpen}>
           <Label>Permissions</Label>
           <Button className="flex items-center text-start gap-4 w-full cursor-default border border-gray-300 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)] rounded-lg pl-3 pr-2 py-2 min-w-[150px] transition bg-gray-50 hover:bg-gray-100 pressed:bg-gray-200 group-invalid:border-red-600 disabled:text-gray-200 outline-none focus-visible:outline-blue-600 outline-offset-2">
             <SelectValue className="flex-1 text-sm text-gray-800 placeholder-shown:italic" />

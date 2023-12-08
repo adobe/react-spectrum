@@ -8,6 +8,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 import { Label, Description, FieldError } from './Field';
+import React from 'react';
 
 export interface DateFieldProps<T extends DateValue> extends AriaDateFieldProps<T> {
   label?: string;

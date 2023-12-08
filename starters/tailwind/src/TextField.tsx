@@ -6,6 +6,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 import { Label, FieldError, Description } from './Field';
+import React from 'react';
 
 export interface TextFieldProps extends AriaTextFieldProps {
   label?: string;

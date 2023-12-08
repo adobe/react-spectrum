@@ -6,6 +6,7 @@ import {
 } from 'react-aria-components';
 import { Label, Description, FieldError } from './Field';
 import { DateInput } from './DateField';
+import React from 'react';
 
 export interface TimeFieldProps<T extends TimeValue>
   extends AriaTimeFieldProps<T> {

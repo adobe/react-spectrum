@@ -13,6 +13,7 @@ import {
   useLocale
 } from 'react-aria-components';
 import { Button } from './Button';
+import React from 'react';
 
 export interface CalendarProps<T extends DateValue>
   extends AriaCalendarProps<T> {

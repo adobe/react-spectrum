@@ -11,6 +11,7 @@ import { Button } from './Button';
 import { Popover } from './Popover';
 import { ChevronDown } from 'lucide-react';
 import { DropdownItem } from './ListBox';
+import React from 'react';
 
 export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children'> {
   label?: string;

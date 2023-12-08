@@ -1,14 +1,12 @@
-import { useCallback, useMemo, useRef, useState } from "react";
-import ReactDOM from 'react-dom';
+import { ReactElement, ReactNode, UIEvent, useCallback, useMemo, useRef, useState } from "react";
 import { Select, SelectItem } from "../src/Select";
-import { ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, TooltipTrigger } from "react-aria-components";
+import { ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, TooltipTrigger } from "react-aria-components";
 import { Cell, Column, Row, TableHeader } from "../src/Table";
 import { SearchField } from "../src/SearchField";
 import { Button } from "../src/Button";
 import { CloudSun, Dessert, Droplet, Droplets, FilterIcon, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon } from "lucide-react";
 import { Menu, MenuItem } from "../src/Menu";
 import { Popover } from "../src/Popover";
-import { DateRangePicker } from "../src/DateRangePicker";
 import { Tooltip } from "../src/Tooltip";
 import {useFilter, useCollator} from 'react-aria';
 import { Checkbox } from "../src/Checkbox";
@@ -17,12 +15,12 @@ import { TagGroup, Tag } from "../src/TagGroup";
 import { Modal } from "../src/Modal";
 import { AlertDialog } from "../src/AlertDialog";
 import { TextField } from "../src/TextField";
-import { useResizeObserver } from "@react-aria/utils";
 import { DatePicker } from "../src/DatePicker";
 import { ComboBox, ComboBoxItem } from "../src/ComboBox";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import {useMediaQuery} from '@react-spectrum/utils';
 import { GridList, GridListItem } from "../src/GridList";
+import React from 'react';
 
 type Plant = typeof plants[0] & {isFavorite: boolean};
 
@@ -37,12 +35,12 @@ type Plant = typeof plants[0] & {isFavorite: boolean};
 // export default meta;
 
 const allColumns: ColumnProps[] = [
-  {id: 'favorite', 'aria-label': 'Favorite', width: 40, minWidth: 40},
+  {id: 'favorite', width: 40, minWidth: 40},
   {id: 'common_name', children: 'Name', minWidth: 150, allowsSorting: true},
   {id: 'cycle', children: 'Cycle', defaultWidth: 120, allowsSorting: true},
   {id: 'sunlight', children: 'Sunlight', defaultWidth: 120, allowsSorting: true},
   {id: 'watering', children: 'Watering', defaultWidth: 120, allowsSorting: true},
-  {id: 'actions', 'aria-label': 'Actions', width: 44, minWidth: 44}
+  {id: 'actions', width: 44, minWidth: 44}
 ];
 
 let hideOnScroll = document.getElementById('hideOnScroll');
@@ -71,11 +69,11 @@ export function ExampleApp() {
         && (sunlight === 'all' || sunlight.size === 0 || sunlight.has(getSunlight(item)))
         && (watering === 'all' || watering.size === 0 || watering.has(item.watering))
     )
-    .sort((a, b) => collator.compare(a[sortDescriptor.column as any], b[sortDescriptor.column as any]) * dir);
+    .sort((a: any, b: any) => collator.compare(a[sortDescriptor.column!], b[sortDescriptor.column!]) * dir);
 
   let [visibleColumns, setVisibleColumns] = useState<Selection>(new Set(['favorite', 'common_name', 'sunlight', 'watering', 'actions']));
   let columns = useMemo(() => {
-    let res = allColumns.filter(c => visibleColumns === 'all' || visibleColumns.has(c.id));
+    let res = allColumns.filter(c => visibleColumns === 'all' || visibleColumns.has(c.id!));
     res[1] = {...res[1], isRowHeader: true};
     return res;
   }, [visibleColumns]);
@@ -136,9 +134,9 @@ export function ExampleApp() {
     });
   };
 
-  let onScroll = (e) => {
+  let onScroll = (e: UIEvent<HTMLDivElement>) => {
     if (hideOnScroll) {
-      if (e.target.scrollTop <= 0) {
+      if (e.currentTarget.scrollTop <= 0) {
         hideOnScroll.style.opacity = '1';
       } else {
         hideOnScroll.style.opacity = '0';
@@ -146,9 +144,9 @@ export function ExampleApp() {
     }
   };
 
-  let [dialog, setDialog] = useState(null);
+  let [dialog, setDialog] = useState<Key | null>(null);
   let [actionItem, setActionItem] = useState<Plant | null>(null);
-  let onAction = (item: typeof items[0], action: string) => {
+  let onAction = (item: typeof items[0], action: Key) => {
     switch (action) {
       case 'favorite':
         toggleFavorite(item.id, !item.isFavorite);
@@ -249,7 +247,7 @@ export function ExampleApp() {
           <TableHeader columns={columns}>
             {column => <Column {...column} />}
           </TableHeader>
-          <TableBody items={items} value={columns}>
+          <TableBody items={items} dependencies={[columns]}>
             {item => (
               <Row columns={columns}>
                 {column => {
@@ -323,7 +321,7 @@ function Label({color, icon, children}: {color: keyof typeof labelStyles, icon: 
   return <span className={`${labelStyles[color]} text-xs rounded-full border px-2 flex items-center max-w-fit gap-1`}>{icon} <span className="truncate capitalize">{children}</span></span>;
 }
 
-const cycleIcons = {
+const cycleIcons: Record<string, ReactElement> = {
   'Perennial': <RefreshCw className="w-4 h-4 flex-shrink-0" />,
   'Herbaceous Perennial': <RefreshCw className="w-4 h-4 flex-shrink-0" />,
   // 'Annual':
@@ -333,13 +331,13 @@ function CycleLabel({cycle}: {cycle: string}) {
   return <Label color="green" icon={cycleIcons[cycle]}>{cycle}</Label>
 }
 
-const sunIcons = {
+const sunIcons: Record<string, ReactElement> = {
   'full sun': <Sun className="w-4 h-4 flex-shrink-0" />,
   'part sun': <SunDim className="w-4 h-4 flex-shrink-0" />,
   'part shade': <CloudSun className="w-4 h-4 flex-shrink-0" />
 };
 
-const sunColors = {
+const sunColors: Record<string, keyof typeof labelStyles> = {
   'full sun': 'yellow',
   'part sun': 'yellow',
   'part shade': 'gray'
@@ -353,13 +351,13 @@ function getSunlight(item: Plant) {
   return (item.sunlight.find(s => s.startsWith('part')) || item.sunlight[0]).split('/')[0];
 }
 
-const wateringIcons = {
+const wateringIcons: Record<string, ReactElement> = {
   'Frequent': <Droplets className="w-4 h-4 flex-shrink-0" />,
   'Average': <Droplet className="w-4 h-4 flex-shrink-0" />,
   'Minimum': <Dessert className="w-4 h-4 flex-shrink-0" />,
 };
 
-const wateringColors = {
+const wateringColors: Record<string, keyof typeof labelStyles> = {
   'Frequent': 'blue',
   'Average': 'blue',
   'Minimum': 'gray'
@@ -415,14 +413,14 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                 <ComboBox label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus>
                   {plant => <ComboBoxItem>{plant.common_name}</ComboBoxItem>}
                 </ComboBox>
-                <TextField label="Scientific Name" name="scientific_name" isRequired defaultValue={item?.scientific_name} />
+                <TextField label="Scientific Name" name="scientific_name" isRequired defaultValue={item?.scientific_name?.join('')} />
               </div>
             </div>
             <Select label="Cycle" name="cycle" isRequired defaultSelectedKey={item?.cycle}>
               <SelectItem id="Perennial" textValue="Perennial">{cycleIcons['Perennial']} Perennial</SelectItem>
               <SelectItem id="Herbaceous Perennial" textValue="Herbaceous Perennial">{cycleIcons['Herbaceous Perennial']} Herbaceous Perennial</SelectItem>
             </Select>
-            <Select label="Sunlight" name="sunlight" isRequired defaultSelectedKey={item ? getSunlight(item) : null}>
+            <Select label="Sunlight" name="sunlight" isRequired defaultSelectedKey={item ? getSunlight(item) : undefined}>
               <SelectItem id="full sun" textValue="Full Sun">{sunIcons['full sun']} Full Sun</SelectItem>
               <SelectItem id="part sun" textValue="Part Sun">{sunIcons['part sun']} Part Sun</SelectItem>
               <SelectItem id="part shade" textValue="Part Shade">{sunIcons['part shade']} Part Shade</SelectItem>
@@ -527,7 +525,17 @@ function PlantModal(props: ModalOverlayProps) {
   );
 }
 
-function Arrow({href, children, textX, x1, x2, y, marker = 'markerEnd'}) {
+interface ArrowProps {
+  href: string,
+  children: ReactNode,
+  textX: number,
+  x1: number,
+  x2: number,
+  y: number,
+  marker?: 'markerStart' | 'markerEnd'
+}
+
+function Arrow({href, children, textX, x1, x2, y, marker = 'markerEnd'}: ArrowProps) {
   return (
     <>
       <line

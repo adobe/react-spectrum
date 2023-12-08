@@ -10,6 +10,7 @@ import {
 } from 'react-aria-components';
 import { Description, Label } from './Field';
 import { XIcon } from 'lucide-react';
+import React from 'react';
 
 const colors = {
   gray: 'bg-gray-100 text-gray-600 border-gray-200 hover:border-gray-300',

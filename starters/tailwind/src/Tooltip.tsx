@@ -3,6 +3,7 @@ import {
   Tooltip as AriaTooltip,
   TooltipProps as AriaTooltipProps
 } from 'react-aria-components';
+import React from 'react';
 import {tv} from 'tailwind-variants';
 
 export interface TooltipProps extends Omit<AriaTooltipProps, 'children'> {

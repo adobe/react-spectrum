@@ -1,8 +1,8 @@
 import {CheckboxGroup as RACCheckboxGroup, Checkbox as RACCheckbox, CheckboxGroupProps as RACCheckboxGroupProps, CheckboxProps, ValidationResult} from 'react-aria-components';
 import {Check, Minus} from 'lucide-react';
-import {ReactNode} from 'react';
-import {tv} from 'tailwind-variants';
 import {Label, FieldError, Description} from './Field';
+import React, {ReactNode} from 'react';
+import {tv} from 'tailwind-variants';
 
 export interface CheckboxGroupProps extends Omit<RACCheckboxGroupProps, 'children'> {
   label?: string,

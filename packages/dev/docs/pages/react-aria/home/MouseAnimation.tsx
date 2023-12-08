@@ -1,18 +1,18 @@
 import {animate, useIntersectionObserver} from './utils';
 import {Button} from '../../../../../../starters/tailwind/src/Button';
-import {ButtonContext, TooltipTrigger} from 'react-aria-components';
+import {ButtonContext, Key, TooltipTrigger} from 'react-aria-components';
 import {CogIcon, PencilIcon, ShareIcon} from 'lucide-react';
-import React, {useRef, useState} from 'react';
+import React, {useCallback, useRef, useState} from 'react';
 import {Tooltip} from '../../../../../../starters/tailwind/src/Tooltip';
 
 export function MouseAnimation() {
   let ref = useRef<HTMLDivElement>(null);
-  let [tooltip, setTooltip] = useState(null);
-  let [hovered, setHovered] = useState(null);
-  let [isPressed, setPressed] = useState(null);
+  let [tooltip, setTooltip] = useState<Key | null>(null);
+  let [hovered, setHovered] = useState<Key | null>(null);
+  let [isPressed, setPressed] = useState(false);
   let isAnimating = useRef(false);
   let mouseRef = useRef<SVGSVGElement>(null);
-  useIntersectionObserver(ref, () => {
+  useIntersectionObserver(ref, useCallback(() => () => {
     let cancel = animate([
       // {
       //   // Delay to let other cards start animating first.
@@ -23,7 +23,7 @@ export function MouseAnimation() {
         time: 700,
         perform() {
           isAnimating.current = true;
-          mouseRef.current.animate({
+          mouseRef.current!.animate({
             transform: [
               'translate(-50px, 120px)',
               'translate(10px, 10px)'
@@ -46,7 +46,7 @@ export function MouseAnimation() {
       {
         time: 700,
         perform() {
-          mouseRef.current.animate({
+          mouseRef.current!.animate({
             transform: [
               'translate(10px, 10px)',
               'translate(110px, 14px)'
@@ -84,7 +84,7 @@ export function MouseAnimation() {
       {
         time: 400,
         perform() {
-          mouseRef.current.animate({
+          mouseRef.current!.animate({
             transform: [
               'translate(110px, 14px)',
               'translate(170px, 120px)'
@@ -111,10 +111,10 @@ export function MouseAnimation() {
       setTooltip(null);
       setHovered(null);
       setPressed(false);
-      mouseRef.current.style.transform = 'translate(-50px, 120px)';
+      mouseRef.current!.style.transform = 'translate(-50px, 120px)';
       isAnimating.current = false;
     };
-  });
+  }, []));
 
   let onOpenChange = (tooltip: string, isOpen: boolean) => {
     if (!isAnimating.current) {

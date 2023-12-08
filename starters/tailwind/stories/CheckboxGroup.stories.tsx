@@ -1,6 +1,7 @@
 import { Form } from 'react-aria-components';
 import { CheckboxGroup, Checkbox } from '../src/Checkbox';
 import { Button } from '../src/Button';
+import React from 'react';
 
 // More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

@@ -1,11 +1,12 @@
 import {AddressBar, FileTab, Window} from './components';
-import {animate, motion, useMotionValueEvent, useScroll, useTransform} from 'framer-motion';
+import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useScroll, useTransform} from 'framer-motion';
 import {
   Button,
   Collection,
   ComboBox,
   Group,
   Input,
+  Key,
   Label,
   ListBox,
   ListBoxItem,
@@ -137,10 +138,10 @@ interface TabOptions {
 }
 
 function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
-  let [selectedKey, setSelectedKey] = useState(tabs[0].id);
+  let [selectedKey, setSelectedKey] = useState<Key>(tabs[0].id);
 
-  let tabListRef = useRef(null);
-  let tabPanelsRef = useRef(null);
+  let tabListRef = useRef<HTMLDivElement>(null);
+  let tabPanelsRef = useRef<HTMLDivElement>(null);
 
   // Track the scroll position of the tab panel container.
   let {scrollXProgress} = useScroll({
@@ -148,11 +149,11 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
   });
 
   // Find all the tab elements so we can use their dimensions.
-  let [tabElements, setTabElements] = useState([]);
+  let [tabElements, setTabElements] = useState<HTMLElement[]>([]);
   useEffect(() => {
     if (tabElements.length === 0) {
-      let tabs = tabListRef.current!.querySelectorAll('[role=tab]');
-      setTabElements(tabs);
+      let tabs = tabListRef.current!.querySelectorAll<HTMLElement>('[role=tab]');
+      setTabElements(Array.from(tabs));
     }
   }, [tabElements]);
 
@@ -200,8 +201,8 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
 
   // When the user clicks on a tab perform an animation of
   // the scroll position to the newly selected tab panel.
-  let animationRef = useRef(null);
-  let onSelectionChange = (selectedKey) => {
+  let animationRef = useRef<AnimationPlaybackControls | null>(null);
+  let onSelectionChange = (selectedKey: Key) => {
     setSelectedKey(selectedKey);
 
     // If the scroll position is already moving but we aren't animating
@@ -210,7 +211,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       return;
     }
 
-    let tabPanel = tabPanelsRef.current;
+    let tabPanel = tabPanelsRef.current!;
     let index = tabs.findIndex((tab) => tab.id === selectedKey);
     animationRef.current?.stop();
     animationRef.current = animate(
@@ -238,12 +239,12 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
   // Scroll selected tab into view.
   let tabListScrollRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    let tab = tabListRef.current!.querySelector(`[data-key="${selectedKey}"]`);
+    let tab = tabListRef.current!.querySelector(`[data-key="${selectedKey}"]`) as HTMLDivElement;
     if (tab) {
       let scroll = tabListScrollRef.current;
       // Would use scrollIntoView but it's broken in Chrome: https://github.com/facebook/react/issues/23396
-      if (tab.offsetLeft < scroll.scrollLeft || (tab.offsetLeft + tab.offsetWidth) > (scroll.offsetWidth + scroll.scrollLeft)) {
-        tabListScrollRef.current.scroll({
+      if (scroll && (tab.offsetLeft < scroll.scrollLeft || (tab.offsetLeft + tab.offsetWidth) > (scroll.offsetWidth + scroll.scrollLeft))) {
+        scroll.scroll({
           left: tab.offsetLeft,
           behavior: 'smooth'
         });

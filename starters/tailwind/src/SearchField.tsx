@@ -7,6 +7,7 @@ import {
 import { Button } from './Button';
 import { SearchIcon, XIcon } from 'lucide-react';
 import { FieldGroup, FieldError, Description, Label } from './Field';
+import React from 'react';
 
 export interface SearchFieldProps extends AriaSearchFieldProps {
   label?: string;

@@ -5,6 +5,7 @@ import {
 } from 'react-aria-components';
 import { Label } from './Field';
 import { AlertTriangle } from 'lucide-react';
+import React from 'react';
 
 export interface MeterProps extends AriaMeterProps {
   label?: string;
