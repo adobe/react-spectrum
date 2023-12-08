@@ -5,8 +5,8 @@ import {Dialog, DialogContainer, useDialogContainer} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Heading, Text} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import React from 'react';
 import {Key} from '@react-types/shared';
+import React from 'react';
 
 export function DialogContainerExample(props) {
   let [isOpen, setOpen] = React.useState(false);
