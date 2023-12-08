@@ -33,6 +33,7 @@
       {
         "name": "typescript-strict-plugin",
         "paths": [
+          "./packages/@internationalized",
           "./packages/@react-aria/a",
           "./packages/@react-aria/b",
           "./packages/@react-aria/checkbox",
