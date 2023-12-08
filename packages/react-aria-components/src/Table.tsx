@@ -463,13 +463,16 @@ export interface TableHeaderProps<T> extends StyleProps {
   /** A list of table columns. */
   columns?: T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
-  children?: ReactNode | ((item: T) => ReactElement)
+  children?: ReactNode | ((item: T) => ReactElement),
+  /** Values that should invalidate the column cache when using dynamic collections. */
+  dependencies?: any[]
 }
 
 function TableHeader<T extends object>(props: TableHeaderProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) {
   let children = useCollectionChildren({
     children: props.children,
-    items: props.columns
+    items: props.columns,
+    dependencies: props.dependencies
   });
 
   let renderer = typeof props.children === 'function' ? props.children : null;
@@ -527,12 +530,8 @@ export interface ColumnRenderProps {
   startResize(): void
 }
 
-export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> {
+export interface ColumnProps extends RenderProps<ColumnRenderProps> {
   id?: Key,
-  /** Rendered contents of the column if `children` contains child columns. */
-  title?: ReactNode,
-  /** A list of child columns used when dynamically rendering nested child columns. */
-  childColumns?: Iterable<T>,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
   /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
@@ -549,21 +548,8 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
   maxWidth?: ColumnStaticSize | null
 }
 
-function Column<T extends object>(props: ColumnProps<T>, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
-  let render = useContext(CollectionRendererContext);
-  let childColumns: ReactNode | ((item: T) => ReactNode);
-  if (typeof render === 'function') {
-    childColumns = render;
-  } else if (typeof props.children !== 'function') {
-    childColumns = props.children;
-  }
-
-  let children = useCollectionChildren({
-    children: (props.title || props.childColumns) ? childColumns : null,
-    items: props.childColumns
-  });
-
-  return useSSRCollectionNode('column', props, ref, props.title ?? props.children, children);
+function Column(props: ColumnProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
+  return useSSRCollectionNode('column', props, ref, props.children);
 }
 
 /**
@@ -609,18 +595,24 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   columns?: Iterable<T>,
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
   children?: ReactNode | ((item: T) => ReactElement),
+  /** The object value that this row represents. When using dynamic collections, this is set automatically. */
+  value?: T,
+  /** Values that should invalidate the cell cache when using dynamic collections. */
+  dependencies?: any[],
   /** A string representation of the row's contents, used for features like typeahead. */
   textValue?: string
 }
 
 function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): JSX.Element | null {
+  let dependencies = [props.value].concat(props.dependencies);
   let children = useCollectionChildren({
+    dependencies,
     children: props.children,
     items: props.columns,
     idScope: props.id
   });
 
-  let ctx = useMemo(() => ({idScope: props.id}), [props.id]);
+  let ctx = useMemo(() => ({idScope: props.id, dependencies}), [props.id, ...dependencies]);
 
   return useSSRCollectionNode('item', props, ref, null, (
     <CollectionContext.Provider value={ctx}>
@@ -806,7 +798,6 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     ref
   );
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
 
   let layoutState = useContext(TableColumnResizeStateContext);
   let isResizing = false;
@@ -820,7 +811,8 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     }
   }
 
-  let props: ColumnProps<unknown> = column.props;
+  let props: ColumnProps = column.props;
+  let {hoverProps, isHovered} = useHover({isDisabled: !props.allowsSorting});
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -861,6 +853,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       style={style}
       colSpan={column.colspan}
       ref={ref}
+      data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
