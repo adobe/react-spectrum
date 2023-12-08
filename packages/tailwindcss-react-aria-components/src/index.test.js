@@ -138,11 +138,11 @@ test('variants', async () => {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.placeholder-shown\:bg-red:where([data-rac])[data-placeholder] {
+.placeholder-shown\:bg-red[data-placeholder] {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
-.placeholder-shown\:bg-red:where(:not([data-rac])):placeholder-shown {
+.placeholder-shown\:bg-red:placeholder-shown {
     --tw-bg-opacity: 1;
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }
