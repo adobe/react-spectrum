@@ -235,21 +235,37 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
     );
   };
 
+  // Scroll selected tab into view.
+  let tabListScrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    let tab = tabListRef.current!.querySelector(`[data-key="${selectedKey}"]`);
+    if (tab) {
+      let scroll = tabListScrollRef.current;
+      // Would use scrollIntoView but it's broken in Chrome: https://github.com/facebook/react/issues/23396
+      if (tab.offsetLeft < scroll.scrollLeft || (tab.offsetLeft + tab.offsetWidth) > (scroll.offsetWidth + scroll.scrollLeft)) {
+        tabListScrollRef.current.scroll({
+          left: tab.offsetLeft,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [selectedKey]);
+
   return (
     <Tabs
       className="-mx-8 md:-mx-2"
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}>
-      <div className="relative">
-        <TabList ref={tabListRef} className="flex px-2 md:px-0 overflow-hidden" items={tabs}>
+      <div className="relative overflow-x-auto no-scrollbar p-2 -m-2" ref={tabListScrollRef}>
+        <TabList ref={tabListRef} className="flex px-2 y-2 md:px-0" items={tabs}>
           {(tab) =>
-            (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-md transition outline-none touch-none">
+            (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base transition outline-none">
               {({isSelected, isFocusVisible}) => (<>
                 {tab.label}
                 {isFocusVisible && isSelected && (
                   // Focus ring.
                   <motion.span
-                    className="absolute inset-0 z-10 rounded-full ring-2 ring-black ring-offset-2"
+                    className="absolute inset-y-2 inset-x-0 z-10 rounded-full ring-2 ring-black ring-offset-2"
                     style={{x, width}} />
                 )}
               </>)}
@@ -258,17 +274,17 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
         </TabList>
         {/* Selection indicator. */}
         <motion.span
-          className="absolute inset-0 z-10 bg-white rounded-full mix-blend-difference"
+          className="absolute inset-y-2 inset-x-0 z-10 bg-white rounded-full mix-blend-difference"
           style={{x, width}} />
       </div>
       <div
         ref={tabPanelsRef}
-        className="relative pt-10 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex md:edge-mask">
+        className="relative pt-10 pb-10 overflow-auto snap-x snap-mandatory no-scrollbar flex edge-mask">
         <Collection items={tabs}>
           {(tab) => (
             <TabPanel
               shouldForceMount
-              className="flex-shrink-0 w-full px-4 box-border snap-start outline-none -outline-offset-2 rounded focus-visible:outline-black">
+              className="flex-shrink-0 w-full px-4 box-border snap-start snap-always outline-none -outline-offset-2 rounded focus-visible:outline-black">
               {tab.content}
             </TabPanel>
           )}
