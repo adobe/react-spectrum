@@ -225,7 +225,7 @@ HTML tables are meant for static content, rather than tables with rich interacti
 `Table` helps achieve accessible and interactive table components that can be styled as needed.
 
 * **Row selection** – Single or multiple selection, with optional checkboxes, disabled rows, and both `toggle` and `replace` selection behaviors.
-* **Columns** – Support for column sorting, [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) columns, and nested column groups. Columns may optionally allow user resizing via mouse, touch, and keyboard interactions.
+* **Columns** – Support for column sorting and [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) columns. Columns may optionally allow user resizing via mouse, touch, and keyboard interactions.
 * **Interactive children** – Table cells may include interactive elements such as buttons, menus, etc.
 * **Actions** – Rows and cells support optional actions such as navigation via click, tap, double click, or <Keyboard>Enter</Keyboard> key.
 * **Async loading** – Support for loading and sorting items asynchronously.
@@ -239,7 +239,7 @@ HTML tables are meant for static content, rather than tables with rich interacti
 
 <Anatomy role="img" aria-label="Anatomy diagram of a table, consisting of multiple rows and columns. The table header includes a select all checkbox, file name and size columns, and a column resizer. Each row in the table body contains a drag button, a selection checkbox, and file name and size cells." />
 
-A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content. Columns may be nested to create column groups.
+A table consists of a container element, with columns and rows of cells containing data inside. The cells within a table may contain focusable elements or plain text content.
 
 If the table supports row selection, each row can optionally include a selection checkbox. Additionally, a "select all" checkbox may be displayed in a column header if the table supports multiple row selection. A drag button may also be included within a cell if the row is draggable.
 
@@ -336,7 +336,7 @@ The following example includes a custom Column component with a sort indicator. 
 ```tsx example export=true render=false
 import type {ColumnProps} from 'react-aria-components';
 
-function MyColumn<T extends object>(props: ColumnProps<T>) {
+function MyColumn(props: ColumnProps) {
   return (
     <Column {...props}>
       {({allowsSorting, sortDirection}) => <>
@@ -760,125 +760,6 @@ function AsyncSortTable() {
 
 </details>
 
-## Nested columns
-
-Columns can be nested to create column groups. This will result in more than one header row to be created, with the `colspan`
-attribute of each column header cell set to the appropriate value so that the columns line up. Data for the leaf columns
-appears in each row of the table body.
-
-### Static
-
-This example also shows the use of the `isRowHeader` prop for `Column`, which controls which columns are included in the
-accessibility name for each row. By default, only the first column is included, but in some cases more than one column may
-be used to represent the row. In this example, the first and last name columns are combined to form the ARIA label for the row.
-Only leaf columns may be marked as row headers.
-
-```tsx example
-<Table aria-label="Example table with nested columns">
-  <TableHeader>
-    <Column title="Name">
-      <Column isRowHeader>First Name</Column>
-      <Column isRowHeader>Last Name</Column>
-    </Column>
-    <Column title="Information">
-      <Column>Age</Column>
-      <Column>Birthday</Column>
-    </Column>
-  </TableHeader>
-  <TableBody>
-    <Row>
-      <Cell>Sam</Cell>
-      <Cell>Smith</Cell>
-      <Cell>36</Cell>
-      <Cell>May 3</Cell>
-    </Row>
-    <Row>
-      <Cell>Julia</Cell>
-      <Cell>Jones</Cell>
-      <Cell>24</Cell>
-      <Cell>February 10</Cell>
-    </Row>
-    <Row>
-      <Cell>Peter</Cell>
-      <Cell>Parker</Cell>
-      <Cell>28</Cell>
-      <Cell>September 7</Cell>
-    </Row>
-    <Row>
-      <Cell>Bruce</Cell>
-      <Cell>Wayne</Cell>
-      <Cell>32</Cell>
-      <Cell>December 18</Cell>
-    </Row>
-  </TableBody>
-</Table>
-```
-
-<details>
-  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
-
-```css
-.react-aria-Column {
-  &[colspan] {
-    text-align: center;
-  }
-}
-```
-
-</details>
-
-### Dynamic
-
-Nested columns can also be defined dynamically using the function syntax and the `childColumns` prop.
-The following example is the same as the example above, but defined dynamically.
-
-```tsx example
-interface ColumnDefinition {
-  name: string,
-  key: string,
-  children?: ColumnDefinition[],
-  isRowHeader?: boolean
-}
-
-let columns: ColumnDefinition[] = [
-  {name: 'Name', key: 'name', children: [
-    {name: 'First Name', key: 'first', isRowHeader: true},
-    {name: 'Last Name', key: 'last', isRowHeader: true}
-  ]},
-  {name: 'Information', key: 'info', children: [
-    {name: 'Age', key: 'age'},
-    {name: 'Birthday', key: 'birthday'}
-  ]}
-];
-
-let rows = [
-  {id: 1, first: 'Sam', last: 'Smith', age: 36, birthday: 'May 3'},
-  {id: 2, first: 'Julia', last: 'Jones', age: 24, birthday: 'February 10'},
-  {id: 3, first: 'Peter', last: 'Parker', age: 28, birthday: 'September 7'},
-  {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
-];
-
-<Table aria-label="Example table with dynamic nested columns">
-  <TableHeader columns={columns}>
-    {column => (
-      <Column isRowHeader={column.isRowHeader} childColumns={column.children}>
-        {column.name}
-      </Column>
-    )}
-  </TableHeader>
-  <TableBody items={rows}>
-    {item => (
-      <Row>
-        <Cell>{item.first}</Cell>
-        <Cell>{item.last}</Cell>
-        <Cell>{item.age}</Cell>
-        <Cell>{item.birthday}</Cell>
-      </Row>
-    )}
-  </TableBody>
-</Table>
-```
-
 ## Empty state
 
 Use the `renderEmptyState` prop to customize what the `TableBody` will display if there are no items.
@@ -1136,7 +1017,7 @@ This example shows how to create a reusable component that wraps `<Column>` to i
 ```tsx example export=true render=false
 import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-components';
 
-interface ResizableTableColumnProps<T> extends Omit<ColumnProps<T>, 'children'> {
+interface ResizableTableColumnProps<T> extends Omit<ColumnProps, 'children'> {
   children: React.ReactNode
 }
 

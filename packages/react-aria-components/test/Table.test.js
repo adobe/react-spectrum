@@ -307,6 +307,38 @@ describe('Table', () => {
     expect(getAllByRole('row')).toHaveLength(5);
   });
 
+  it('should support column hover when sorting is allowed', async () => {
+    let {getAllByRole} = renderTable({
+      columnProps: {allowsSorting: true, className: ({isHovered}) => isHovered ? 'hover' : ''}
+    });
+    let column = getAllByRole('columnheader')[0];
+
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+
+    await user.hover(column);
+    expect(column).toHaveAttribute('data-hovered', 'true');
+    expect(column).toHaveClass('hover');
+
+    await user.unhover(column);
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+  });
+
+  it('should not show column hover state when column is not sortable', async () => {
+    let {getAllByRole} = renderTable({
+      columnProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
+    });
+    let column = getAllByRole('columnheader')[0];
+
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+
+    await user.hover(column);
+    expect(column).not.toHaveAttribute('data-hovered');
+    expect(column).not.toHaveClass('hover');
+  });
+
   it('should support hover', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},
@@ -471,72 +503,6 @@ describe('Table', () => {
     expect(columns[2]).not.toHaveTextContent('▲');
   });
 
-  it('should support nested column headers', async () => {
-    let columns = [
-      {name: 'Name', key: 'name', children: [
-        {name: 'First Name', key: 'first', isRowHeader: true},
-        {name: 'Last Name', key: 'last', isRowHeader: true}
-      ]},
-      {name: 'Information', key: 'info', children: [
-        {name: 'Age', key: 'age'},
-        {name: 'Birthday', key: 'birthday'}
-      ]}
-    ];
-
-    let leafColumns = [{key: 'first'}, {key: 'last'}, {key: 'age'}, {key: 'birthday'}];
-
-    let items = [
-      {id: 1, first: 'Sam', last: 'Smith', age: 36, birthday: 'May 3'},
-      {id: 2, first: 'Julia', last: 'Jones', age: 24, birthday: 'February 10'},
-      {id: 3, first: 'Peter', last: 'Parker', age: 28, birthday: 'September 7'},
-      {id: 4, first: 'Bruce', last: 'Wayne', age: 32, birthday: 'December 18'}
-    ];
-
-    let {getAllByRole} = render(
-      <DynamicTable
-        tableHeaderProps={{columns}}
-        tableBodyProps={{items}}
-        rowProps={{columns: leafColumns}} />
-    );
-
-    let header = getAllByRole('rowgroup')[0];
-    let rows = within(header).getAllByRole('row');
-    expect(rows).toHaveLength(2);
-
-    let cells = within(rows[0]).getAllByRole('columnheader');
-    expect(cells).toHaveLength(2);
-    expect(cells[0]).toHaveAttribute('aria-colspan', '2');
-    expect(cells[1]).toHaveAttribute('aria-colspan', '2');
-
-    await user.tab();
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
-
-    cells = within(rows[1]).getAllByRole('columnheader');
-    expect(document.activeElement).toBe(cells[0]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    expect(document.activeElement).toBe(cells[1]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    expect(document.activeElement).toBe(cells[2]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    expect(document.activeElement).toBe(cells[3]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
-    cells = within(rows[0]).getAllByRole('columnheader');
-    expect(document.activeElement).toBe(cells[1]);
-
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowLeft'});
-    expect(document.activeElement).toBe(cells[0]);
-  });
-
   it('should support empty state', () => {
     let {getAllByRole, getByRole} = render(
       <Table aria-label="Search results">
@@ -682,6 +648,36 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo');
     act(() => cells[0].focus());
     expect(cells[0]).toHaveTextContent('Foo (focused)');
+  });
+
+  it('should support updating columns', () => {
+    let tree = render(<DynamicTable tableHeaderProps={{columns}} tableBodyProps={{dependencies: [columns]}} rowProps={{columns}} />);
+    let headers = tree.getAllByRole('columnheader');
+    expect(headers).toHaveLength(3);
+
+    let newColumns = [columns[0], columns[2]];
+    tree.rerender(<DynamicTable tableHeaderProps={{columns: newColumns}} tableBodyProps={{dependencies: [newColumns]}} rowProps={{columns: newColumns}} />);
+
+    headers = tree.getAllByRole('columnheader');
+    expect(headers).toHaveLength(2);
+  });
+
+  it('should support updating and reordering a row at the same time', () => {
+    let tree = render(<DynamicTable tableBodyProps={{items: rows}} />);
+    let rowHeaders = tree.getAllByRole('rowheader');
+    expect(rowHeaders.map(r => r.textContent)).toEqual(['Games', 'Program Files', 'bootmgr', 'log.txt']);
+
+    tree.rerender(<DynamicTable tableBodyProps={{items: [rows[1], {...rows[0], name: 'XYZ'}, ...rows.slice(2)]}} />);
+    rowHeaders = tree.getAllByRole('rowheader');
+    expect(rowHeaders.map(r => r.textContent)).toEqual(['Program Files', 'XYZ', 'bootmgr', 'log.txt']);
+  });
+
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderTable({tableProps: {onScroll}});
+    let grid = getByRole('grid');
+    fireEvent.scroll(grid);
+    expect(onScroll).toHaveBeenCalled();
   });
 
   describe('drag and drop', () => {

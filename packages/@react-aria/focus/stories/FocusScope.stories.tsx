@@ -12,7 +12,7 @@
 
 import {FocusScope} from '../';
 import {Meta} from '@storybook/react';
-import React, {ReactNode, useEffect, useState} from 'react';
+import React, {JSX, ReactNode, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 const dialogsRoot = 'dialogsRoot';
@@ -135,7 +135,7 @@ function FocusableFirstInScopeExample() {
       </>
     );
   }
-  const contents: React.JSX.Element[] = [];
+  const contents: JSX.Element[] = [];
   for (let i = 0; i < 3; i++) {
     contents.push(DialogContent(i));
   }
