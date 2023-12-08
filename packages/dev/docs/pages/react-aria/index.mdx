@@ -312,7 +312,7 @@ import {KanbanBoard} from './home/KanbanExample';
   <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] md:grid-cols-2 md:grid-rows-2 -mx-8 md:mx-0 px-8 md:px-0 py-4 md:py-0 overflow-auto md:overflow-visible snap-x snap-mandatory no-scrollbar">
     <div className="flex flex-col bg-white rounded-2xl px-6 pt-6 transition card-shadow overflow-hidden snap-center snap-always" id="touch-card">
       <h3 className="text-xl font-semibold mb-2">Touch optimized.</h3>
-      <p className="text-gray-600">Micro-interactions like dragging off to cancel a press, long press to select, drag and drop, text selection cancelation, scroll locking, and multi-touch gesture disambiguation make your app feel native.</p>
+      <p className="text-gray-600 [text-wrap:balance]">Micro-interactions like dragging off to cancel a press, long press to select, drag and drop, text selection cancelation, scroll locking, and multi-touch gesture disambiguation make your app feel native.</p>
 
       <div className="flex-1 flex items-center justify-center will-change-transform">
 
@@ -342,6 +342,7 @@ function SwitchExample() {
     <>
       <div className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 opacity-0" style={{animation: isAnimating ? 'touch-animation 12s ease-in-out 500ms' : null}} />
       <Switch
+        aria-label="Example switch"
         ref={ref}
         isSelected={isSelected}
         onChange={setSelected}
@@ -361,7 +362,7 @@ function SwitchExample() {
 
     <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always overflow-hidden" id="mouse-card">
       <h3 className="text-xl font-semibold mb-2">Mouse enhanced.</h3>
-      <p className="text-gray-600">Hover interactions only apply when using a mouse – no sticky touch hover states. Mouse features like double click, scroll wheel, tooltips, and cursor feedback enhance your app on desktop.</p>
+      <p className="text-gray-600 [text-wrap:balance]">Hover interactions only apply when using a mouse – no sticky touch hover states. Mouse features like double click, scroll wheel, tooltips, and cursor feedback enhance your app on desktop.</p>
 
       <div className="flex-1 flex mt-8 items-center justify-center will-change-transform">
 
@@ -376,7 +377,7 @@ function SwitchExample() {
 
     <div className="bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always" id="keyboard-card">
       <h3 className="text-xl font-semibold mb-2">Keyboard friendly.</h3>
-      <p className="text-gray-600">Keyboard interactions are first-class, including arrow key navigation, typeahead, multiple selection modifiers,  landmark navigation, and much more.</p>
+      <p className="text-gray-600 [text-wrap:balance]">Keyboard interactions are first-class, including arrow key navigation, typeahead, multiple selection modifiers,  landmark navigation, and much more.</p>
 
       <div className="mt-8 flex gap-4 items-end">
         <Keyboard />
@@ -392,7 +393,7 @@ import {ListBoxExample} from './home/ListBoxExample';
 
     <div className="bg-white rounded-2xl px-6 pt-6 transition card-shadow snap-center snap-always flex flex-col [&>:last-child]:flex-1" id="focus-card">
       <h3 className="text-xl font-semibold mb-2">Focus managed.</h3>
-      <p className="text-gray-600">Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</p>
+      <p className="text-gray-600 [text-wrap:balance]">Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</p>
 
 ```tsx snippet
 import {TextField} from '../../../../../starters/tailwind/src/TextField';
@@ -475,17 +476,17 @@ import {A11y} from './home/A11y';
 
     <div className="card-shadow rounded-lg p-6 md:w-80">
       <h3 className="text-xl font-semibold mb-2">ARIA Semantics.</h3>
-      <p className="text-gray-600">Components implement semantics and keyboard behavior according to the W3C ARIA Authoring Practices Guide. React Aria builds on this foundation with real-world testing and device support.</p>
+      <p className="text-gray-600 [text-wrap:balance]">Components implement semantics and keyboard behavior according to the W3C ARIA Authoring Practices Guide. React Aria builds on this foundation with real-world testing and device support.</p>
     </div>
 
     <div className="card-shadow rounded-lg p-6 md:w-80">
       <h3 className="text-xl font-semibold mb-2">Mobile ready.</h3>
-      <p className="text-gray-600">All behaviors work without a keyboard to support mobile screen reader users. Additional features such as hidden dismiss buttons in dialogs ensure a great experience for mobile users.</p>
+      <p className="text-gray-600 [text-wrap:balance]">All behaviors work without a keyboard to support mobile screen reader users. Additional features such as hidden dismiss buttons in dialogs ensure a great experience for mobile users.</p>
     </div>
 
     <div className="card-shadow rounded-lg p-6 md:w-80">
       <h3 className="text-xl font-semibold mb-2">Tested. Like, really.</h3>
-      <p className="text-gray-600">All components are extensively tested using [many](accessibility.html#testing) different screen readers and devices. We normalize and work around many browser and assistive technology bugs to ensure all users have equal access.</p>
+      <p className="text-gray-600 [text-wrap:balance]">All components are extensively tested using [many](accessibility.html#testing) different screen readers and devices. We normalize and work around many browser and assistive technology bugs to ensure all users have equal access.</p>
     </div>
   </div>
 </section>
@@ -507,12 +508,158 @@ import {I18n} from './home/I18n';
   <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-lime-600 to-green-600">Customizable</span> <span className="bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">to the max.</span></h2>
   <p className="text-slate-700">React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with built-in a DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the lower level Hook-based API. Mix and match as needed.</p>
   <a href="advanced.html" className="inline-block mt-6 mb-12 text-xl text-green-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+
+ <div className="grid gap-4 grid-cols-[repeat(4,100%)] items-center max-w-3xl -mx-8 sm:mx-0 px-8 sm:px-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask">
+  <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always overflow-hidden">
+    <h3 className="text-xl font-semibold mb-2">Reuse styles.</h3>
+    <p className="text-gray-600">Start high-level with components that are shared between patterns.</p>
+
+    <div className="relative flex-1 -mx-8 -mb-8 mt-8">
+
+<div className="highlight-tags [--delay:2.5s] h-full [&>*]:h-full">
+
+```tsx format=false
+<Select>
+  <Label>Permissions</Label>
+  <Button>
+    <SelectValue />
+    <span>▼</span>
+  </Button>
+  <Popover>
+    <ListBox>
+      <ListBoxItem>Read Only</ListBoxItem>
+      <ListBoxItem>Edit</ListBoxItem>
+      <ListBoxItem>Admin</ListBoxItem>
+    </ListBox>
+  </Popover>
+</Select>
+```
+
+</div>
+      <div className="absolute top-0 left-0 highlight-tags cross-fade">
+
+```tsx format=false
+<ComboBox>
+  <Label>Permissions</Label>
+  <Group>
+    <Input />
+    <Button>▼</Button>
+  </Group>
+  <Popover>
+    <ListBox>
+      <ListBoxItem>Read Only</ListBoxItem>
+      <ListBoxItem>Edit</ListBoxItem>
+      <ListBoxItem>Admin</ListBoxItem>
+    </ListBox>
+  </Popover>
+</ComboBox>
+```
+
+      </div>
+    </div>
+  </div>
+
+  <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always overflow-hidden">
+    <h3 className="text-xl font-semibold mb-2">Build custom patterns.</h3>
+    <p className="text-gray-600">Use exported contexts to build larger patterns with composition.</p>
+
+    <div className="flex-1 -mx-8 -mb-8 mt-8">
+
+```tsx format=false
+import {ToggleButtonContext, GridListContext} from 'react-aria-components';
+
+function Selectable({children}) {
+  let [isSelected, onChange] = useState(false);
+  let selectionMode = isSelected ? 'multiple' : 'none';
+  return (
+    <Provider
+      values={[
+        [ToggleButtonContext, {isSelected, onChange}],
+        [GridListContext, {selectionMode}]
+      ]}>
+      {children}
+    </Provider>
+  );
+}
+
+<Selectable>
+  <ToggleButton>Select</ToggleButton>
+  <GridList>
+    {/* ... */}
+  </GridList>
+</Selectable>
+```
+
+    </div>
+  </div>
+
+  <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always overflow-hidden">
+    <h3 className="text-xl font-semibold mb-2">Consume contexts.</h3>
+    <p className="text-gray-600">Replace or extend any component with new features using contexts.</p>
+
+```tsx
+
+```
+
+  </div>
+
+  <div className="flex flex-col bg-white rounded-2xl p-6 transition card-shadow snap-center snap-always overflow-hidden">
+    <h3 className="text-xl font-semibold mb-2">Go deep with hooks.</h3>
+    <p className="text-gray-600">Get complete control over rendering and behavior with hooks.</p>
+
+    <div className="flex-1 -mx-8 -mb-8 mt-8">
+
+```tsx
+import {useCalendarGrid} from 'react-aria';
+
+function WeekCalendarGrid(props: CalendarGridProps) {
+  let state = useContext(CalendarStateContext)!;
+  let {gridProps} = useCalendarGrid(props, state);
+
+  return (
+    <table {...gridProps}>
+      <tbody>
+        <tr>
+          {state.getDatesInWeek(0).map((date, i) => (
+            <CalendarCell key={i} date={date} />
+          ))}
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
+<Calendar visibleDuration={{weeks: 1}}>
+  <Button slot="previous">◀</Button>
+  <WeekCalendarGrid />
+  <Button slot="next">▶</Button>
+</Calendar>
+```
+
+  </div>
+  </div>
+  </div>
 </section>
 
 <section className="max-w-6xl mx-auto px-8 md:px-20 my-20 md:my-32">
+  <h2 className="pb-8 text-transparent bg-clip-text bg-gradient-to-b from-slate-600 to-slate-900">Ready to get started?</h2>
 
-## Ready to get started?
+  <div className="grid md:grid-cols-3 gap-6">
+    <a href="getting-started.html" className="card-shadow rounded-lg p-6">
+      <h3 className="text-xl font-semibold mb-2">Install and Setup →</h3>
+      <p className="text-gray-600 max-w-[220px] [text-wrap:balance]">Learn how to install and setup React Aria in your project, and build and style a component.</p>
+    </a>
 
+     <a href="components.html" className="card-shadow rounded-lg p-6">
+      <h3 className="text-xl font-semibold mb-2">View Components →</h3>
+      <p className="text-gray-600 max-w-[220px] [text-wrap:balance]">See an overview of all of the components and hooks offered by React Aria.</p>
+    </a>
+
+    <a href="examples/index.html" className="card-shadow rounded-lg p-6">
+      <h3 className="text-xl font-semibold mb-2">Explore Examples →</h3>
+      <p className="text-gray-600 max-w-[220px] [text-wrap:balance]">Check out some fully styled examples showing what is possible with React Aria.</p>
+    </a>
+  </div>
 </section>
 
 </main>

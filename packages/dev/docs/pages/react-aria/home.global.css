@@ -234,3 +234,44 @@ pre.medium, pre.small {
   mask-size: contain;
   mask-composite: exclude;
 }
+
+@keyframes cross-fade {
+  0%, 40% {
+    opacity: 0;
+  }
+
+  50%, 90% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes highlight {
+  0%, 42% {
+    background: transparent;
+  }
+
+  50% {
+    @apply bg-red-600/[15%];
+  }
+
+  58%, 100% {
+    background: transparent;
+  }
+}
+
+.cross-fade {
+  animation: cross-fade 5s infinite;
+}
+
+.highlight-tags {
+  .tag:nth-child(1 of .tag),
+  .tag:nth-child(n+4 of .tag):nth-child(-n+8 of .tag),
+  .tag:nth-last-child(1 of .tag) {
+    @apply rounded;
+    animation: highlight 5s infinite var(--delay, 0s);
+  }
+}
