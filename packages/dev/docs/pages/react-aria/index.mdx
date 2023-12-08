@@ -14,7 +14,7 @@ import './home.global.css';
 import '@react-spectrum/docs/src/syntax-highlight.css';
 import {ArrowRight} from 'lucide-react';
 import {Keyboard} from './home/Keyboard';
-import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription} from './home/components';
+import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow} from './home/components';
 
 ---
 minimal: true
@@ -37,16 +37,16 @@ minimal: true
     <a href="https://npmjs.com/react-aria-components">NPM</a>
   </nav>
 
-  <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 xl:px-40 pb-48 sm:pb-60 -mb-6 rounded-3xl">
-    <h1 className="text-2xl sm:text-3xl md:text-5xl font-semibold mb-4 text-center [text-wrap:balance]"><GradientText>Build adaptive, accessible, and robust components with React Aria.</GradientText></h1>
+  <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60 -mb-6 rounded-3xl">
+    <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-semibold mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_white)]"><GradientText>Build adaptive, accessible, and robust components with React Aria.</GradientText></h1>
     <p className="text-slate-800 dark:text-slate-300 text-center text-base md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
     <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
       <a href="getting-started.html" className="bg-gradient-to-r from-blue-500 to-indigo-500 border border-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full">Get Started</a>
-      <a href="components.html" className="bg-white/50 hover:bg-white/90 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-gray-700 px-8 py-3 rounded-full">Explore components</a>
+      <a href="components.html" className="bg-white/50 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125">Explore components</a>
     </div>
 
-    <div className="relative pt-10 md:pt-20">
+    <div className="relative pt-10 md:pt-20 md:mt-20">
       <Window toolbar={<AddressBar>https://your-app.com</AddressBar>} className="h-[450px] max-w-[600px] mx-auto">
         <div className="flex-1 overflow-auto bg-white" id="example-app" />
 
@@ -71,68 +71,17 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
             <circle r={3} cx={3} cy={3} />
           </marker>
         </defs>
-        <polyline
-          points="310,50 310,132 383,132 383,142"
-          marker-end="url(#arrow)"
-          className="stroke-slate-500 fill-none" />
-        <a href="Popover.html" className="pointer-events-auto"><text x={290} y={44} className="text-xs fill-blue-600 underline">Popover</text></a>
-        <polyline
-          points="522,50 522,132 427,132 427,142"
-          marker-end="url(#arrow)"
-          className="stroke-slate-500 fill-none" />
-        <a href="Tooltip.html" className="pointer-events-auto"><text x={504} y={44} className="text-xs fill-blue-600 underline">Tooltip</text></a>
+        <Arrow href="Popover.html" points="310,50 310,132 383,132 383,142" textX={290} y={41}>Popover</Arrow>
+        <Arrow href="Tooltip.html" points="522,50 522,132 427,132 427,142" textX={504} y={41}>Tooltip</Arrow>
         <g transform="translate(0 80)">
-          <line
-            x1={88}
-            y1={75}
-            x2={132}
-            y2={75}
-            marker-end="url(#arrow)"
-            className="stroke-slate-500" />
-          <a href="SearchField.html" className="pointer-events-auto"><text x={28} y={78} className="text-xs fill-blue-600 underline">SearchField</text></a>
-          <line
-            x1={88}
-            y1={170}
-            x2={132}
-            y2={170}
-            marker-end="url(#arrow)"
-            className="stroke-slate-500" />
-          <a href="Table.html" className="pointer-events-auto"><text x={58} y={173} className="text-xs fill-blue-600 underline">Table</text></a>
-
-          <line
-            x1={700}
-            y1={75}
-            x2={744}
-            y2={75}
-            marker-start="url(#arrow)"
-            className="stroke-slate-500" />
-          <a href="Modal.html" className="pointer-events-auto"><text x={748} y={78} className="text-xs fill-blue-600 underline">Modal</text></a>
+          <Arrow href="SearchField.html" textX={28} x1={88} x2={132} y={80}>SearchField</Arrow>
+          <Arrow href="Table.html" textX={58} x1={88} x2={132} y={170}>Table</Arrow>
+          <Arrow href="Modal.html" textX={748} x1={700} x2={742} y={80} marker="markerStart">Modal</Arrow>
         </g>
         <g transform="translate(0 80)" id="hideOnScroll" className="transition duration-300">
-          <line
-            x1={88}
-            y1={290}
-            x2={142}
-            y2={290}
-            marker-end="url(#arrow)"
-            className="stroke-slate-500" />
-          <a href="Checkbox.html" className="pointer-events-auto"><text x={36} y={293} className="text-xs fill-blue-600 underline">Checkbox</text></a>
-          <line
-            x1={88}
-            y1={360}
-            x2={180}
-            y2={360}
-            marker-end="url(#arrow)"
-            className="stroke-slate-500" />
-          <a href="ToggleButton.html" className="pointer-events-auto"><text x={20} y={363} className="text-xs fill-blue-600 underline">ToggleButton</text></a>
-          <line
-            x1={690}
-            y1={176}
-            x2={744}
-            y2={176}
-            marker-start="url(#arrow)"
-            className="stroke-slate-500" />
-          <a href="Menu.html" className="pointer-events-auto"><text x={748} y={179} className="text-xs fill-blue-600 underline">Menu</text></a>
+          <Arrow href="Checkbox.html" textX={36} x1={88} x2={142} y={294}>Checkbox</Arrow>
+          <Arrow href="ToggleButton.html" textX={20} x1={88} x2={180} y={362}>ToggleButton</Arrow>
+          <Arrow href="Menu.html" textX={748} x1={690} x2={744} y={180} marker="markerStart">Menu</Arrow>
         </g>
       </svg>
     </div>

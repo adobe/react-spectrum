@@ -21,10 +21,10 @@ interface Rect extends Point {
 
 const swipeRightKeyframes: PropertyIndexedKeyframes = {
   transform: [
-    'translate(80px, 0)',
-    'translate(80px, 0)',
     'translate(-80px, 0)',
-    'translate(-80px, 0)'
+    'translate(-80px, 0)',
+    'translate(80px, 0)',
+    'translate(80px, 0)'
   ],
   opacity: [
     0,

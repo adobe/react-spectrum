@@ -25,7 +25,7 @@ export function MouseAnimation() {
           isAnimating.current = true;
           mouseRef.current!.animate({
             transform: [
-              'translate(-50px, 120px)',
+              'translate(-50px, 150px)',
               'translate(10px, 10px)'
             ]
           }, {duration: 1000, fill: 'forwards', easing: 'ease-in-out'});
@@ -87,7 +87,7 @@ export function MouseAnimation() {
           mouseRef.current!.animate({
             transform: [
               'translate(110px, 14px)',
-              'translate(170px, 120px)'
+              'translate(170px, 150px)'
             ]
           }, {duration: 1500, fill: 'forwards', easing: 'ease-in-out'});
         }
@@ -111,7 +111,7 @@ export function MouseAnimation() {
       setTooltip(null);
       setHovered(null);
       setPressed(false);
-      mouseRef.current!.style.transform = 'translate(-50px, 120px)';
+      mouseRef.current!.style.transform = 'translate(-50px, 150px)';
       isAnimating.current = false;
     };
   }, []));
@@ -131,7 +131,7 @@ export function MouseAnimation() {
         height={19}
         aria-hidden="true"
         className="absolute z-10"
-        style={{filter: 'drop-shadow(0 1px 1px #aaa)', transform: 'translate(-50px, 120px)'}}>
+        style={{filter: 'drop-shadow(0 1px 1px #aaa)', transform: 'translate(-50px, 130px)'}}>
         <g transform="matrix(1, 0, 0, 1, -150, -63.406998)">
           <path d="M150 79.422V63.407l11.591 11.619h-6.781l-.411.124Z" fill="#fff" fillRule="evenodd" />
           <path d="m159.084 80.1-3.6 1.535-4.684-11.093 3.686-1.553Z" fill="#fff" fillRule="evenodd" />

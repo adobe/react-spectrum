@@ -1,4 +1,4 @@
-import { ReactElement, ReactNode, UIEvent, useCallback, useMemo, useRef, useState } from "react";
+import { ReactElement, ReactNode, UIEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Select, SelectItem } from "../src/Select";
 import { ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, TooltipTrigger } from "react-aria-components";
 import { Cell, Column, Row, TableHeader } from "../src/Table";
@@ -134,15 +134,22 @@ export function ExampleApp() {
     });
   };
 
+  let [isScrolled, setScrolled] = useState(false);
   let onScroll = (e: UIEvent<HTMLDivElement>) => {
     if (hideOnScroll) {
-      if (e.currentTarget.scrollTop <= 0) {
-        hideOnScroll.style.opacity = '1';
-      } else {
-        hideOnScroll.style.opacity = '0';
+      let newIsScrolled = e.currentTarget.scrollTop > 0;
+      if (newIsScrolled !== isScrolled) {
+        setScrolled(newIsScrolled);
       }
     }
   };
+
+  let hasAtLeast4Items = items.length >= 4;
+  useEffect(() => {
+    if (hideOnScroll) {
+      hideOnScroll.style.opacity = isScrolled || !hasAtLeast4Items ? '0' : '1';
+    }
+  }, [isScrolled, hasAtLeast4Items]);
 
   let [dialog, setDialog] = useState<Key | null>(null);
   let [actionItem, setActionItem] = useState<Plant | null>(null);
@@ -226,11 +233,11 @@ export function ExampleApp() {
           {item => (
             <GridListItem textValue={item.common_name}>
               <div className="grid grid-cols-[40px_1fr_auto] gap-x-2 w-full">
-                <img src={item.default_image?.thumbnail} className="inline rounded row-span-3 object-contain h-[40px]" />
+                <img alt="" src={item.default_image?.thumbnail} className="inline rounded row-span-3 object-contain h-[40px]" />
                 <span className="truncate capitalize">{item.common_name}</span>
                 <span className="truncate text-xs text-gray-600 col-start-2 row-start-2">{item.scientific_name}</span>
                 <MenuTrigger>
-                  <Button variant="icon" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
+                  <Button aria-label="Actions" variant="icon" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
                   <Menu placement="bottom end" onAction={action => onAction(item, action)}>
                     <MenuItem id="favorite"><StarIcon className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
                     <MenuItem id="edit"><PencilIcon className="w-4 h-4" /> Edit…</MenuItem>
@@ -280,7 +287,7 @@ export function ExampleApp() {
                       return (
                         <Cell>
                           <MenuTrigger>
-                            <Button variant="icon"><MoreHorizontal className="w-5 h-5" /></Button>
+                            <Button aria-label="Actions" variant="icon"><MoreHorizontal className="w-5 h-5" /></Button>
                             <Menu onAction={action => onAction(item, action)}>
                               <MenuItem id="favorite"><StarIcon className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
                               <MenuItem id="edit"><PencilIcon className="w-4 h-4" /> Edit…</MenuItem>

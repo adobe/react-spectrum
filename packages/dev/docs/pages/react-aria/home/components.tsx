@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactNode} from 'react';
 
 export function Window({children, className = '', isBackground = false, toolbar}) {
   return (
@@ -38,4 +38,27 @@ export function CardTitle({children}) {
 
 export function CardDescription({children}) {
   return <p className="text-gray-600 dark:text-gray-400 [text-wrap:balance]">{children}</p>;
+}
+
+interface ArrowProps {
+  href: string,
+  children: ReactNode,
+  textX: number,
+  x1?: number,
+  x2?: number,
+  points?: string,
+  y: number,
+  marker?: 'markerStart' | 'markerEnd'
+}
+
+export function Arrow({href, children, textX, x1, x2, points, y, marker = 'markerEnd'}: ArrowProps) {
+  return (
+    <>
+      {points
+        ? <polyline points={points} {...{[marker]: 'url(#arrow)'}} className="stroke-slate-800 fill-none" />
+        : <line x1={x1} y1={y} x2={x2} y2={y} {...{[marker]: 'url(#arrow)'}} className="stroke-slate-800" />
+      }
+      <a href={href} target="_blank" className="pointer-events-auto outline-none rounded-sm focus:outline-blue-600 outline-offset-2"><text x={textX} y={y + 3} className="text-xs fill-slate-900 underline">{children}</text></a>
+    </>
+  );
 }
