@@ -133,15 +133,31 @@ export function I18n() {
     numberingSystem
   });
 
-  let [style, setStyle] = React.useState<any>('decimal');
+  let [numberFormat, setNumberFormat] = React.useState<any>('decimal');
   if (numberingSystem === 'arabext') {
     numberingSystem = 'arab';
   }
 
   let [date, setDate] = React.useState(() => now(getLocalTimeZone()));
+  let [number, setNumber] = React.useState(1234);
+  let updateNumberFormat = format => {
+    setNumberFormat(format);
+    switch (format) {
+      case 'decimal':
+      case 'currency':
+        setNumber(1234);
+        break;
+      case 'percent':
+        setNumber(.875);
+        break;
+      case 'unit':
+        setNumber(14.5);
+        break;
+    }
+  };
 
   return (
-    <div className="grid items-center justify-items-center py-10 px-0 md:p-10 lg:p-0 gap-10 lg:gap-0 lg:grid-cols-[auto_1fr_1fr] mt-10 card-shadow rounded-xl overflow-hidden">
+    <div className="grid items-center justify-items-center max-w-4xl py-10 px-0 md:p-10 lg:p-0 gap-10 lg:gap-0 lg:grid-cols-[auto_1fr_1fr] mt-10 card-shadow rounded-xl overflow-hidden">
       <div className="grid md:grid-cols-2 lg:grid-cols-1 flex-col gap-4 lg:p-10 lg:mr-10 lg:border-r">
         <Select label="Locale" items={locales} selectedKey={locale} onSelectionChange={updateLocale}>
           {item => <SelectItem id={item.value}>{item.label}</SelectItem>}
@@ -159,7 +175,7 @@ export function I18n() {
           <SelectItem id="arab">Arabic</SelectItem>
           <SelectItem id="hanidec">Hanidec</SelectItem>
         </Select>
-        <Select label="Number Format" selectedKey={style} onSelectionChange={setStyle}>
+        <Select label="Number Format" selectedKey={numberFormat} onSelectionChange={updateNumberFormat}>
           <SelectItem id="decimal">Decimal</SelectItem>
           <SelectItem id="percent">Percent</SelectItem>
           <SelectItem id="currency">Currency</SelectItem>
@@ -170,7 +186,7 @@ export function I18n() {
         <LangWrapper>
           <Calendar value={date} onChange={setDate} />
           <div className="flex flex-col gap-10">
-            <NumberField label="Number" defaultValue={1234} minValue={0} formatOptions={{style, currency: 'USD', unit: 'inch'}} />
+            <NumberField label="Number" value={number} onChange={setNumber} minValue={0} formatOptions={{style: numberFormat, currency: 'USD', unit: 'inch', maximumFractionDigits: 2}} />
             <DateField label="Date and Time" value={date} onChange={setDate} />
           </div>
         </LangWrapper>
