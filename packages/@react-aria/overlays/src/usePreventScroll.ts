@@ -109,7 +109,7 @@ function preventScrollMobileSafari() {
   let restoreScrollableStyles;
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
-    scrollable = getScrollParent(e.target as Element);
+    scrollable = getScrollParent(e.target as Element, true);
     if (scrollable === document.documentElement && scrollable === document.body) {
       return;
     }
@@ -136,24 +136,7 @@ function preventScrollMobileSafari() {
     // the element will prevent vertical page scrolling. We can't add that automatically
     // because it must be set before the touchstart event.
     if (scrollable.scrollHeight === scrollable.clientHeight && scrollable.scrollWidth === scrollable.clientWidth) {
-
-      // Find the next scroll parent that is scrollable and actually has stuff to scroll
-      let scrollParent = getScrollParent(scrollable);
-      while (
-        scrollParent !== document.body &&
-        scrollParent !== document.documentElement &&
-        scrollParent.scrollHeight === scrollParent.clientHeight &&
-        scrollParent.scrollWidth === scrollParent.clientWidth
-      ) {
-
-        scrollParent = getScrollParent(scrollParent);
-      }
-
-      // Only stop touch scrolling if the next scrollable region that has content overflow is the body. We don't want to block scrolling a nested scroll region
-      // in a menu/dialog.
-      if (scrollParent === document.documentElement || scrollParent === document.body) {
-        e.preventDefault();
-      }
+      e.preventDefault();
     }
   };
 
