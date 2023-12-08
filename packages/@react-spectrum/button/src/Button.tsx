@@ -22,7 +22,7 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps, useId} from '@react-aria/utils';
+import {isAppleDevice, isFirefox, mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ElementType, ReactElement, useEffect, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
@@ -78,10 +78,9 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   let [isProgressVisible, setIsProgressVisible] = useState(false);
   let backupButtonId = useId();
   let buttonId = buttonProps.id || backupButtonId;
-  let spinnerId = useId();
-  let textId = useId();
   let iconId = useId();
-  let auxLabelId = useId();
+  let textId = useId();
+  let spinnerId = useId();
 
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
@@ -108,6 +107,13 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     staticColor = 'white';
   }
 
+  const isPendingAriaLiveLabel = `${hasAriaLabel ? buttonProps['aria-label'] : ''} ${stringFormatter.format('pending')}`.trim();
+  const isPendingAriaLiveLabelledby = hasAriaLabel ? (buttonProps['aria-labelledby']?.replace(buttonId, spinnerId) ?? spinnerId) : `${hasIcon ? iconId : ''} ${hasLabel ? textId : ''} ${spinnerId}`.trim();
+
+  let ariaLive: 'off' | 'polite' | 'assertive' = 'polite';
+  if (isAppleDevice() && (!hasAriaLabel || isFirefox())) {
+    ariaLive = 'off';
+  }
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <Element
@@ -119,9 +125,8 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
         data-style={style}
         data-static-color={staticColor || undefined}
         aria-disabled={isPending ? 'true' : undefined}
-        aria-label={isPending ? undefined : buttonProps['aria-label']}
-        aria-labelledby={isPending ? undefined : buttonProps['aria-labelledby']}
-        aria-live={isPending && isFocused ? 'polite' : undefined}
+        aria-label={isPending ? isPendingAriaLiveLabel : buttonProps['aria-label']}
+        aria-labelledby={isPending ? isPendingAriaLiveLabelledby : buttonProps['aria-labelledby']}
         className={
           classNames(
             styles,
@@ -153,23 +158,26 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
             : children}
           {isPending && <ProgressCircle
             aria-hidden="true"
+            aria-label={isPendingAriaLiveLabel}
             isIndeterminate
             size="S"
             UNSAFE_className={classNames(styles, 'spectrum-Button-circleLoader')}
             UNSAFE_style={{visibility: isProgressVisible ? 'visible' : 'hidden'}}
             staticColor={staticColor} />
           }
-          {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
-           Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
-           https://a11ysupport.io/tests/tech__html__button-name-change#assertion-aria-aria-label_attribute-convey_name_change-html-button_element-vo_macos-safari
-           The aria-live does cause extra announcements in other browsers. */}
-          {isPending && hasAriaLabel &&
-            <div aria-hidden="true" id={auxLabelId} aria-label={buttonProps['aria-label']} aria-labelledby={buttonProps['aria-labelledby']?.replace(buttonId, auxLabelId)} />
-          }
-          {isPending && <div
-            id={spinnerId}
-            aria-label={stringFormatter.format('pending')}
-            aria-labelledby={`${hasAriaLabel ? '' : iconId} ${hasAriaLabel ? auxLabelId : textId} ${spinnerId}`} />
+          {isPending &&
+            <>
+              <div aria-live={isFocused ? ariaLive : 'off'}>
+                {isProgressVisible &&
+                  <div role="img" aria-labelledby={isPendingAriaLiveLabelledby} />
+                }
+              </div>
+              {/* Adding the element here with the same labels as the button itself causes aria-live to pick up the change in Safari.
+              Safari with VO unfortunately doesn't announce changes to *all* of its labels specifically for button
+              https://a11ysupport.io/tests/tech__html__button-name-change#assertion-aria-aria-label_attribute-convey_name_change-html-button_element-vo_macos-safari
+              The aria-live may cause extra announcements in other browsers. */}
+              <div id={spinnerId} role="img" aria-label={isPendingAriaLiveLabel} />
+            </>
           }
         </SlotProvider>
       </Element>

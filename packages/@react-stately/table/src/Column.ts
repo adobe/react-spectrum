@@ -14,7 +14,7 @@ import {CollectionBuilderContext} from './useTableState';
 import {ColumnProps} from '@react-types/table';
 import {GridNode} from '@react-types/grid';
 import {PartialNode} from '@react-stately/collections';
-import React, {ReactElement} from 'react';
+import React, {JSX, ReactElement} from 'react';
 
 function Column<T>(props: ColumnProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
@@ -79,5 +79,5 @@ Column.getCollectionNode = function* getCollectionNode<T>(props: ColumnProps<T>,
  * children, or dynamically generated using a function based on the `childColumns` prop.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _Column = Column as <T>(props: ColumnProps<T>) => React.JSX.Element;
+let _Column = Column as <T>(props: ColumnProps<T>) => JSX.Element;
 export {_Column as Column};
