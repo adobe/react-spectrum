@@ -27,7 +27,7 @@ export function useDialogContainer(): DialogContainerValue {
   return {
     type: context.type,
     dismiss() {
-      context.onClose();
+      context?.onClose();
     }
   };
 }
