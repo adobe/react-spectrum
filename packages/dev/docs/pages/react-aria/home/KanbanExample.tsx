@@ -102,9 +102,9 @@ export function KanbanBoard() {
 
   return (
     <div className="grid grid-cols-[repeat(3,minmax(280px,1fr))] md:justify-center gap-4 -mx-8 px-8 py-8 overflow-auto relative snap-x snap-mandatory no-scrollbar">
-      <Column status="Open" list={list} itemClassName="selected:bg-green-100 selected:border-green-500" />
-      <Column status="In Progress" list={list} itemClassName="selected:bg-blue-100 selected:border-blue-500" />
-      <Column status="Closed" list={list} itemClassName="selected:bg-red-100 selected:border-red-500" />
+      <Column status="Open" list={list} itemClassName="selected:bg-green-100 selected:border-green-500 dark:selected:bg-green-900 dark:selected:border-green-700" />
+      <Column status="In Progress" list={list} itemClassName="selected:bg-blue-100 selected:border-blue-500 dark:selected:bg-blue-900 dark:selected:border-blue-700" />
+      <Column status="Closed" list={list} itemClassName="selected:bg-red-100 selected:border-red-500 dark:selected:bg-red-900 dark:selected:border-red-700" />
     </div>
   );
 }
@@ -192,7 +192,7 @@ function Column({list, status, itemClassName}: ColumnProps) {
         selectionMode="multiple"
         dragAndDropHooks={dragAndDropHooks}
         renderEmptyState={() => 'No tasks.'}
-        className="h-[320px] p-2 md:p-4 overflow-y-auto overflow-x-hidden relative outline-none bg-white/70 backdrop-blur border border-black/10 bg-clip-padding text-gray-700 flex flex-col gap-3 rounded-xl shadow-xl drop-target:bg-blue-200 drop-target:ring-2 empty:items-center empty:justify-center ring-inset ring-blue-500">
+        className="h-[320px] p-2 md:p-4 overflow-y-auto overflow-x-hidden relative outline-none bg-white/70 dark:bg-zinc-900/60 backdrop-blur border border-black/10 dark:border-white/10 bg-clip-padding text-gray-700 flex flex-col gap-3 rounded-xl shadow-xl drop-target:bg-blue-200 drop-target:ring-2 empty:items-center empty:justify-center ring-inset ring-blue-500">
         {item => <Card item={item} className={itemClassName} />}
       </GridList>
     </section>
@@ -207,15 +207,15 @@ interface CardProps {
 
 function Card({id, item, className}: CardProps) {
   return (
-    <GridListItem id={id} textValue={item.title} className={`group grid grid-cols-[1fr_auto] gap-1 [&>*]:contents p-2 rounded-lg border border-solid border-black/10 hover:border-black/20 bg-white/80 bg-clip-padding hover:shadow-md selected:shadow-md dragging:opacity-50 transition text-slate-700 cursor-default select-none outline-none outline-offset-2 focus-visible:outline-blue-500 ${className}`}>
+    <GridListItem id={id} textValue={item.title} className={`group grid grid-cols-[1fr_auto] gap-1 [&>*]:contents p-2 rounded-lg border border-solid border-black/10 hover:border-black/20 dark:border-white/10 dark:hover:border-white/20 bg-white/80 dark:bg-zinc-900/70 bg-clip-padding hover:shadow-md selected:shadow-md dragging:opacity-50 transition text-slate-700 dark:text-slate-200 cursor-default select-none outline-none outline-offset-2 focus-visible:outline-blue-500 ${className}`}>
       <span className="font-bold truncate">{item.title}</span>
       <span className="text-sm justify-self-end">{item.id}</span>
-      <Text slot="description" className="text-sm line-clamp-2 col-span-2 text-slate-500">{item.description}</Text>
+      <Text slot="description" className="text-sm line-clamp-2 col-span-2 text-slate-500 dark:text-zinc-300">{item.description}</Text>
       <span className="flex items-center gap-1">
         <img src={item.avatar} alt="" className="h-4 w-4 rounded-full" />
         <span className="text-sm">{item.assignee}</span>
       </span>
-      <Button slot="drag" className="bg-transparent border-none text-gray-500 text-base leading-none w-fit aspect-square p-0 justify-self-end outline-none focus-visible:ring-2 ring-blue-500 rounded-sm sr-only group-focus-visible:not-sr-only focus:not-sr-only">≡</Button>
+      <Button slot="drag" className="bg-transparent border-none text-gray-500 dark:text-zinc-300 text-base leading-none w-fit aspect-square p-0 justify-self-end outline-none focus-visible:ring-2 ring-blue-500 rounded-sm sr-only group-focus-visible:not-sr-only focus:not-sr-only">≡</Button>
     </GridListItem>
   );
 }

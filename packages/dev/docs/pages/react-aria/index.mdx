@@ -14,31 +14,29 @@ import './home.global.css';
 import '@react-spectrum/docs/src/syntax-highlight.css';
 import {ArrowRight} from 'lucide-react';
 import {Keyboard} from './home/Keyboard';
-import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow} from './home/components';
+import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow, Finger} from './home/components';
 
 ---
 minimal: true
 ---
 
-<header className="[--l:91%] [--c:0.11] dark:[--l:43%] dark:[--c:0.14]" style={{background: `linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)), radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)), conic-gradient(from 30deg at 50% 60%, oklch(var(--l) var(--c) 220), oklch(calc(var(--l) - 5%) var(--c) 260), oklch(var(--l) var(--c) 300), oklch(var(--l) var(--c) 340), oklch(var(--l) var(--c) 0), oklch(var(--l) var(--c) 50), oklch(var(--l) var(--c) 70), oklch(var(--l) var(--c) 100), oklch(var(--l) var(--c) 140), oklch(var(--l) var(--c) 180), oklch(var(--l) var(--c) 220))`, backgroundRepeat: 'no-repeat'}}>
-  <a href="." className="absolute top-4 left-4 inline-flex items-center md:text-lg gap-4 font-bold px-4 py-3 rounded-xl bg-white/30 dark:bg-white/40 ring-1 ring-black/5">
+<header className="[--l:91%] [--c:0.11] dark:[--l:32%] dark:[--c:0.11]" style={{background: `linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)), radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)), conic-gradient(from 30deg at 50% 60%, oklch(var(--l) var(--c) 220), oklch(calc(var(--l) - 5%) var(--c) 260), oklch(var(--l) var(--c) 300), oklch(var(--l) var(--c) 340), oklch(var(--l) var(--c) 0), oklch(var(--l) var(--c) 50), oklch(var(--l) var(--c) 70), oklch(var(--l) var(--c) 100), oklch(var(--l) var(--c) 140), oklch(var(--l) var(--c) 180), oklch(var(--l) var(--c) 220))`, backgroundRepeat: 'no-repeat'}}>
+  <a href="." className="absolute top-4 left-4 inline-flex items-center md:text-lg gap-4 font-bold px-4 py-3 rounded-xl bg-white/20 backdrop-saturate-200 backdrop-brightness-125 dark:text-white/70 ring-1 ring-black/5">
     <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" className="w-6 md:w-9">
       <polygon points="19,0 30,0 30,26" />
       <polygon points="11.1,0 0,0 0,26" />
       <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
     </svg>
-    <h2>
-      React Aria
-    </h2>
+    <h2>React Aria</h2>
   </a>
 
-  <nav className="absolute right-4 top-4 p-4 inline-flex items-center gap-4 text-sm md:text-base rounded-xl bg-white/30 ring-1 ring-black/5">
+  <nav className="absolute right-4 top-4 p-4 inline-flex items-center gap-4 text-sm md:text-base rounded-xl bg-white/20 backdrop-saturate-200 backdrop-brightness-125 dark:text-white/70 ring-1 ring-black/5">
     <a href="https://github.com/adobe/react-spectrum" target="_blank">GitHub</a>
     <a href="https://npmjs.com/react-aria-components">NPM</a>
   </nav>
 
   <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60 -mb-6 rounded-3xl">
-    <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-semibold mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_white)]"><GradientText>Build adaptive, accessible, and robust components with React Aria.</GradientText></h1>
+    <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-semibold mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_var(--page-bg))] dark:filter-none"><GradientText>Build adaptive, accessible, and robust components with React Aria.</GradientText></h1>
     <p className="text-slate-800 dark:text-slate-300 text-center text-base md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
     <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
@@ -48,7 +46,7 @@ minimal: true
 
     <div className="relative pt-10 md:pt-20 md:mt-20">
       <Window toolbar={<AddressBar>https://your-app.com</AddressBar>} className="h-[450px] max-w-[600px] mx-auto">
-        <div className="flex-1 overflow-auto bg-white" id="example-app" />
+        <div className="flex-1 overflow-auto bg-white dark:bg-zinc-900/60 backdrop-blur-2xl" id="example-app" />
 
 ```tsx import
 import {ExampleApp} from '../../../../../starters/tailwind/stories/ExampleApp.stories';
@@ -57,7 +55,7 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
 ```
 
       </Window>
-      <svg viewBox="0 0 832 450" width={832} className="absolute top-0 left-[50%] -translate-x-[50%] z-20 pointer-events-none [filter:drop-shadow(0_0_3px_white)] hidden md:block">
+      <svg viewBox="0 0 832 450" width={832} className="absolute top-0 left-[50%] -translate-x-[50%] z-20 pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none hidden md:block">
         <defs>
           <marker
             id="arrow"
@@ -67,7 +65,7 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
             markerWidth={6}
             markerHeight={6}
             orient="auto-start-reverse"
-            className="fill-slate-500">
+            className="fill-slate-500 dark:fill-white">
             <circle r={3} cx={3} cy={3} />
           </marker>
         </defs>
@@ -267,6 +265,7 @@ import {KanbanBoard} from './home/KanbanExample';
 
 ```tsx snippet
 import { Switch } from "react-aria-components";
+import { Finger } from './home/components';
 
 function SwitchExample() {
   let ref = React.useRef();
@@ -289,7 +288,7 @@ function SwitchExample() {
 
   return (
     <>
-      <div className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 opacity-0" style={{animation: isAnimating ? 'touch-animation 12s ease-in-out 500ms' : null}} />
+      <Finger style={{animation: isAnimating ? 'touch-animation 12s ease-in-out 500ms' : null}} />
       <Switch
         aria-label="Example switch"
         ref={ref}
@@ -297,7 +296,7 @@ function SwitchExample() {
         onChange={setSelected}
         className="group inline-flex touch-none"
         style={{ WebkitTapHighlightColor: "transparent" }}>
-        <span className="group-selected:bg-green-500 group-focus-visible:outline outline-2 outline-blue-600 mr-4 h-10 w-16 rounded-full border-4 border-transparent bg-slate-300 outline-offset-2 transition duration-200" style={{animation: isAnimating ? 'switch-background-animation 12s ease-in-out 500ms' : null}}>
+        <span className="[--bg:theme(colors.slate.300)] dark:[--bg:theme(colors.zinc.600)] bg-[--bg] [--bg-selected:theme(colors.green.500)] group-selected:bg-[--bg-selected] group-focus-visible:outline outline-2 outline-blue-600 mr-4 h-10 w-16 rounded-full border-4 border-transparent outline-offset-2 transition duration-200" style={{animation: isAnimating ? 'switch-background-animation 12s ease-in-out 500ms' : null}}>
           <span className="group-selected:ml-6 group-selected:group-pressed:ml-4 group-pressed:w-10 block h-8 w-8 origin-right rounded-full bg-white shadow transition-all duration-200" style={{animation: isAnimating ? 'switch-animation 12s ease-in-out 500ms' : null, contain: 'layout'}} />
         </span>
       </Switch>
@@ -419,7 +418,7 @@ import {Pagination} from './home/Pagination';
 
   <div className="grid gap-y-6 gap-x-24 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-start">
     <div className="w-full max-w-xs md:w-auto md:max-w-none md:row-span-3 md:h-full aspect-[1/2] iphone-frame md:order-4">
-      <div className="w-full h-full bg-white p-[8%] pb-[11%] iphone-mask [&>*]:h-full">
+      <div className="w-full h-full bg-white dark:bg-zinc-900 p-[8%] pb-[11%] iphone-mask [&>*]:h-full">
 
 ```tsx snippet
 import {A11y} from './home/A11y';
@@ -612,17 +611,17 @@ import {Pagination} from './home/Pagination';
   <h2 className="pb-8"><GradientText>Ready to get started?</GradientText></h2>
 
   <div className="grid md:grid-cols-3 gap-6">
-    <a href="getting-started.html" className="card-shadow bg-white dark:bg-slate-800 rounded-lg p-6">
+    <a href="getting-started.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-lg p-6">
       <CardTitle>Install and Setup →</CardTitle>
       <CardDescription>Learn how to install and setup React Aria in your project, and build and style a component.</CardDescription>
     </a>
 
-     <a href="components.html" className="card-shadow bg-white dark:bg-slate-800 rounded-lg p-6">
+     <a href="components.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-lg p-6">
       <CardTitle>View Components →</CardTitle>
       <CardDescription>See an overview of all of the components and hooks offered by React Aria.</CardDescription>
     </a>
 
-    <a href="examples/index.html" className="card-shadow bg-white dark:bg-slate-800 rounded-lg p-6">
+    <a href="examples/index.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-lg p-6">
       <CardTitle>Explore Examples →</CardTitle>
       <CardDescription>Check out some fully styled examples showing what is possible with React Aria.</CardDescription>
     </a>

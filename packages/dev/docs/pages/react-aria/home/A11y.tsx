@@ -2,6 +2,7 @@ import {animate, useIntersectionObserver} from './utils';
 import {Button} from '../../../../../../starters/tailwind/src/Button';
 import {ChevronDown, WifiIcon} from 'lucide-react';
 import {createPortal, flushSync} from 'react-dom';
+import {Finger} from './components';
 import {Key, useDateFormatter} from 'react-aria';
 import {Label} from '../../../../../../starters/tailwind/src/Field';
 import {ListBox, Select, SelectValue} from 'react-aria-components';
@@ -170,18 +171,18 @@ export function A11y() {
 
   return (
     <div className="flex flex-col h-full relative">
-      <div className="flex items-center gap-1 px-6 py-3 text-xs font-medium text-black border-b bg-gray-100">
+      <div className="flex items-center gap-1 px-6 py-3 text-xs font-medium text-black dark:text-white border-b dark:border-zinc-500 bg-gray-100 dark:bg-zinc-600">
         <Clock />
         <span className="flex-1" />
         <WifiIcon className="w-3 h-3" />
-        <svg viewBox="0 0 28 24" className="h-5 stroke-gray-600" fill="none" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+        <svg viewBox="0 0 28 24" className="h-5 stroke-gray-600 dark:stroke-zinc-400" fill="none" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
           <rect width="20" height="10" x="2" y="7" rx="3" ry="3" />
-          <rect width="13" height="7" x="3.5" y="8.5" rx="2" ry="2" fill="black" stroke="none" />
+          <rect width="13" height="7" x="3.5" y="8.5" rx="2" ry="2" fill="currentColor" stroke="none" />
           <line x1="25" x2="25" y1="11" y2="13" strokeWidth="2" />
         </svg>
       </div>
       <div className="flex-1 flex justify-center pt-28 md:pt-40 pb-40 relative" ref={ref}>
-        {fingerPos && createPortal(<div ref={fingerRef} className="pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 opacity-0" style={{...fingerPos, zIndex: 100000000}} />, document.body)}
+        {fingerPos && createPortal(<Finger ref={fingerRef} style={{...fingerPos, zIndex: 100000000}} />, document.body)}
         {cursorRect && createPortal((
           <div
             className="rounded-md border-2 border-black absolute"

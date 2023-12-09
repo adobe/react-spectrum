@@ -38,7 +38,7 @@
 body {
   font-family: "adobe-clean", sans-serif;
   background: var(--page-bg);
-  @apply [--page-bg:white] dark:[--page-bg:theme(colors.gray.900)];
+  @apply [--page-bg:white] dark:[--page-bg:theme(colors.zinc.900)];
 }
 
 @media (min-resolution: 200dpi) {
@@ -88,6 +88,24 @@ main > section > h2 {
   --mark-background: rgba(20,115,230,0.1);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --hljs-color: theme(colors.gray.300);
+    --hljs-background: theme(colors.zinc.800);
+    --hljs-keyword-color: theme(colors.fuchsia.300);
+    --hljs-section-color: theme(colors.red.400);
+    --hljs-string-color: theme(colors.green.400);
+    --hljs-literal-color: theme(colors.purple.400);
+    --hljs-attribute-color: theme(colors.indigo.400);
+    --hljs-class-color: theme(colors.cyan.400);
+    --hljs-function-color: theme(colors.blue.400);
+    --hljs-variable-color: theme(colors.purple.400);
+    --hljs-title-color: theme(colors.indigo.400);
+    --hljs-comment-color:  theme(colors.gray.400);
+    --mark-background: rgba(20,115,230,0.1);
+  }
+}
+
 pre .source {
   @apply p-5 text-xs sm:text-sm min-h-[250px] overflow-auto h-full;
   font-family: source-code-pro, 'Source Code Pro', Monaco, monospace;
@@ -99,6 +117,7 @@ pre.medium, pre.small {
 
 .card-shadow {
   box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 3px 6px rgb(0 0 0 / 4%), 0 4px 8px 0 rgba(0 0 0 / 8%);
+  @apply dark:border dark:border-zinc-400/10;
 }
 
 .edge-mask {
@@ -212,18 +231,17 @@ pre.medium, pre.small {
 
 @keyframes switch-background-animation {
   0%, 36.5% {
-    @apply bg-green-500;
+    background: var(--bg-selected);
   }
 
   38.5%, 86.5% {
-    @apply bg-slate-300;
+    background: var(--bg);
   }
 
   88.5%, 100% {
-    @apply bg-green-500;
+    background: var(--bg-selected);
   }
 }
-
 
 .iphone-frame {
   background-image: url(../assets/iphone-frame.webp);

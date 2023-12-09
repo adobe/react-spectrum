@@ -41,13 +41,13 @@ export function Styles() {
                 <div className="flex flex-row px-3 pt-2.5 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-y border-gray-300">
                   <FileTab>ComboBox.css</FileTab>
                 </div>
-                <div className="contents [&>*]:border-l" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
+                <div className="contents [&>*]:border-l dark:[&>*]:border-l-zinc-600" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
               </div>
             </Window>
             <Window
               className="lg:absolute bottom-10 left-16 w-[350px]"
               toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex items-center justify-center bg-gray-50 col-span-2 p-14 text-sm">
+              <div className="flex items-center justify-center bg-gray-50 dark:bg-zinc-900 col-span-2 p-14 text-sm">
                 <ComboBox>
                   <Label>Favorite Animal</Label>
                   <div>

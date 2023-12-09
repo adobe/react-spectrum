@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ['class', '[style*="color-scheme: dark"]'],
+  // darkMode: ['class', '[style*="color-scheme: dark"]'],
   content: {
     relative: true,
     files: ['*.mdx', 'home/*.tsx', '../../../../../starters/tailwind/**/*.tsx']
