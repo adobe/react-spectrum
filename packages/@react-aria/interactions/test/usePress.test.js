@@ -1762,7 +1762,7 @@ describe('usePress', function () {
   });
 
   describe('keyboard events', function () {
-    it.only('should fire press events when the element is not a link', function () {
+    it('should fire press events when the element is not a link', function () {
       let events = [];
       let addEvent = (e) => events.push(e);
       let {getByText} = render(
@@ -1777,7 +1777,6 @@ describe('usePress', function () {
       let el = getByText('test');
       fireEvent.keyDown(el, {key: ' '});
       fireEvent.keyUp(el, {key: ' '});
-
       expect(events).toEqual([
         {
           type: 'pressstart',
