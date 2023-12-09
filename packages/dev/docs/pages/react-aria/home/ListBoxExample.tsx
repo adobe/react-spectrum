@@ -15,7 +15,7 @@ export function ListBoxExample() {
   let [focusedKey, setFocusedKey] = useState<Key | null>(null);
   let ref = useRef<HTMLDivElement>(null);
 
-  useIntersectionObserver(ref, useCallback(() => () => {
+  useIntersectionObserver(ref, useCallback(() => {
     let spaceKey = document.getElementById('space-key')!;
     let downKey = document.getElementById('down-key')!;
     let upKey = document.getElementById('up-key')!;

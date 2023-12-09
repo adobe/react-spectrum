@@ -257,7 +257,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       className="-mx-8 md:-mx-2"
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}>
-      <div className="relative overflow-x-auto no-scrollbar p-2 -m-2" ref={tabListScrollRef}>
+      <div className="relative overflow-x-auto no-scrollbar p-2 sm:-m-2" ref={tabListScrollRef}>
         <TabList ref={tabListRef} className="flex px-2 y-2 md:px-0" items={tabs}>
           {(tab) =>
             (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base text-black dark:text-white transition outline-none">

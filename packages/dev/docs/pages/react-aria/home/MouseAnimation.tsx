@@ -12,7 +12,7 @@ export function MouseAnimation() {
   let [isPressed, setPressed] = useState(false);
   let isAnimating = useRef(false);
   let mouseRef = useRef<SVGSVGElement>(null);
-  useIntersectionObserver(ref, useCallback(() => () => {
+  useIntersectionObserver(ref, useCallback(() => {
     let cancel = animate([
       // {
       //   // Delay to let other cards start animating first.

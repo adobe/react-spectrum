@@ -258,8 +258,8 @@ import {KanbanBoard} from './home/KanbanExample';
   <p>React Aria ensures a great experience for users no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
   <a href="interactions.html" className="inline-block mt-6 mb-12 text-xl text-cyan-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
-  <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] md:grid-cols-2 md:grid-rows-2 -mx-8 md:mx-0 px-8 md:px-0 py-4 md:py-0 overflow-auto md:overflow-visible snap-x snap-mandatory no-scrollbar">
-    <Card id="touch-card">
+  <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] md:grid-cols-2 md:grid-rows-2 -mx-8 md:mx-0 px-8 md:px-0 py-4 md:py-0 overflow-auto md:overflow-visible snap-x snap-mandatory no-scrollbar" id="interactions-carousel">
+    <Card>
       <CardTitle>Touch optimized.</CardTitle>
       <CardDescription>Micro-interactions like dragging off to cancel a press, long press to select, drag and drop, text selection cancelation, scroll locking, and multi-touch gesture disambiguation make your app feel native.</CardDescription>
 
@@ -309,7 +309,7 @@ function SwitchExample() {
       </div>
     </Card>
 
-    <Card id="mouse-card">
+    <Card>
       <CardTitle>Mouse enhanced.</CardTitle>
       <CardDescription>Hover interactions only apply when using a mouse – no sticky touch hover states. Mouse features like double click, scroll wheel, tooltips, and cursor feedback enhance your app on desktop.</CardDescription>
 
@@ -324,7 +324,7 @@ function SwitchExample() {
       </div>
     </Card>
 
-    <Card id="keyboard-card">
+    <Card>
       <CardTitle>Keyboard friendly.</CardTitle>
       <CardDescription>Keyboard interactions are first-class, including arrow key navigation, typeahead, multiple selection modifiers,  landmark navigation, and much more.</CardDescription>
 
@@ -340,7 +340,7 @@ import {ListBoxExample} from './home/ListBoxExample';
       </div>
     </Card>
 
-    <Card className="[&>:last-child]:flex-1" id="focus-card">
+    <Card className="[&>:last-child]:flex-1">
       <CardTitle>Focus managed.</CardTitle>
       <CardDescription>Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</CardDescription>
 
@@ -403,6 +403,13 @@ import {CircleUser} from 'lucide-react';
 
     </Card>
   </div>
+
+```tsx snippet
+import {Pagination} from './home/Pagination';
+
+<Pagination carousel={document.getElementById('interactions-carousel')} className="md:hidden" />
+```
+
 </section>
 
 <section className="max-w-6xl mx-auto px-8 md:px-20 my-20 md:my-32">
@@ -458,7 +465,7 @@ import {I18n} from './home/I18n';
   <p>React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with built-in a DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the lower level Hook-based API. Mix and match as needed.</p>
   <a href="advanced.html" className="inline-block mt-6 mb-12 text-xl text-green-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
 
- <div className="grid gap-4 grid-cols-[repeat(4,100%)] max-w-3xl -mx-8 sm:mx-0 px-8 sm:px-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask">
+ <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] max-w-3xl -mx-8 px-8 sm:px-12 sm:-mx-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask" id="customizable-carousel">
   <Card>
     <CardTitle>Reuse styles.</CardTitle>
     <CardDescription>React Aria's API is designed around composition, allowing you to share common components between patterns. For example, you can reuse the same Label, Popover, and ListBox components within a Select, ComboBox, and more.</CardDescription>
@@ -592,6 +599,13 @@ function WeekCalendarGrid(props: CalendarGridProps) {
       </div>
     </Card>
   </div>
+
+```tsx snippet
+import {Pagination} from './home/Pagination';
+
+<Pagination carousel={document.getElementById('customizable-carousel')} className="max-w-3xl sm:-mx-12" />
+```
+
 </section>
 
 <section className="max-w-6xl mx-auto px-8 md:px-20 my-20 md:my-32">
