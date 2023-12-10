@@ -627,7 +627,7 @@ import {Pagination} from './home/Pagination';
 <section className="max-w-6xl mx-auto px-8 md:px-20 my-20 md:my-32">
   <h2 className="pb-8"><GradientText>Ready to get started?</GradientText></h2>
 
-  <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
+  <div className="grid md:grid-cols-3 gap-6">
     <a href="getting-started.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover">
       <CardTitle>Install and Setup →</CardTitle>
       <CardDescription>Learn how to install and setup React Aria in your project, and build and style a component.</CardDescription>
@@ -646,6 +646,17 @@ import {Pagination} from './home/Pagination';
 </section>
 
 </main>
+
+<footer className="max-w-6xl mx-auto text-[11px] px-8 md:px-20 py-4">
+  <hr className="border-gray-300 dark:border-zinc-700 mb-2" />
+  <ul className="flex flex-wrap gap-1 lg:justify-end text-zinc-500 dark:text-zinc-400">
+    <li>Copyright © {new Date().getFullYear()} Adobe. All rights reserved.</li>
+    <li><a href="//www.adobe.com/privacy.html" target="_blank" className="underline">Privacy</a><span className="ml-1">/</span></li>
+    <li><a href="//www.adobe.com/legal/terms.html" target="_blank" className="underline">Terms of Use</a><span className="ml-1">/</span></li>
+    <li><a href="//www.adobe.com/privacy/cookies.html" target="_blank" className="underline">Cookies</a><span className="ml-1">/</span></li>
+    <li><a href="//www.adobe.com/privacy/ca-rights.html" target="_blank" className="underline">Do not sell my personal information</a></li>
+  </ul>
+</footer>
 
 ```tsx import
 let ignoreSimulatedMouseEvents = false;
