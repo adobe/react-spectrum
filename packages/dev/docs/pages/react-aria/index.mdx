@@ -12,9 +12,8 @@ export default BasePage;
 
 import './home.global.css';
 import '@react-spectrum/docs/src/syntax-highlight.css';
-import {ArrowRight} from 'lucide-react';
 import {Keyboard} from './home/Keyboard';
-import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow, Finger} from './home/components';
+import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow, Finger, LearnMoreLink} from './home/components';
 
 ---
 minimal: true
@@ -32,16 +31,16 @@ minimal: true
     </a>
 
     <div className="px-4 py-3 inline-flex items-center gap-4 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 text-zinc-900/80 dark:text-white/70 font-semibold ring-1 ring-black/5">
-      <a href="../blog/index.html" className="hidden md:inline">Blog</a>
-      <a href="../releases/index.html" className="hidden md:inline">Releases</a>
-      <a href="../react-spectrum/index.html" className="hidden md:inline">React Spectrum</a>
-      <a href="../internationalized/index.html" className="hidden md:inline">Internationalized</a>
-      <a href="https://github.com/adobe/react-spectrum" target="_blank" title="GitHub">
+      <a href="../blog/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90">Blog</a>
+      <a href="../releases/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90">Releases</a>
+      <a href="../react-spectrum/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90">React Spectrum</a>
+      <a href="../internationalized/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90">Internationalized</a>
+      <a href="https://github.com/adobe/react-spectrum" target="_blank" title="GitHub" className="transition hover:text-zinc-900 dark:hover:text-white/90">
         <svg aria-hidden="true" viewBox="0 0 16 16" height="22" fill="currentColor">
           <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
       </svg>
       </a>
-      <a href="https://npmjs.com/react-aria-components" target="_blank" title="NPM">
+      <a href="https://npmjs.com/react-aria-components" target="_blank" title="NPM" className="transition hover:text-zinc-900 dark:hover:text-white/90">
         <svg viewBox="0 0 27.23 27.23" aria-hidden="true" height="22" fill="currentColor">
           <rect width="27.23" height="27.23" rx="2" mask="url(#npm-mask)" />
           <mask id="npm-mask">
@@ -58,8 +57,8 @@ minimal: true
     <p className="text-slate-800 dark:text-slate-300 text-center text-base md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
     <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
-      <a href="getting-started.html" className="bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full">Get Started</a>
-      <a href="components.html" className="bg-white/50 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125">Explore components</a>
+      <a href="getting-started.html" className="bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition hover:border-blue-800 shadow-none hover:shadow-md">Get Started</a>
+      <a href="components.html" className="bg-white/50 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60">Explore components</a>
     </div>
 
     <div className="relative pt-10 md:pt-20 md:mt-20">
@@ -111,7 +110,7 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
 
 React Aria does not include any styles by default, allowing you to build custom designs to fit your application or design system using any styling and animation solution. Each component is broken down into individual parts with built-in states, render props, and slots that make styling a breeze.
 
-<a href="styling.html" className="inline-block mt-6 mb-12 text-xl text-fuchsia-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+<LearnMoreLink href="styling.html" className="text-fuchsia-600 dark:text-fuchsia-500 hover:bg-fuchsia-400/[15%]" />
 
 <div hidden id="styling">
 
@@ -259,7 +258,7 @@ import {Styles} from './home/Styles';
 
 <p className="text-white/90">Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like accessible drag and drop, keyboard multi-selection, built-in form validation (??), table column resizing, and a ton more.</p>
 
-<a href="dnd.html" className="inline-block mt-6 mb-12 text-xl text-white">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+<LearnMoreLink href="dnd.html" className="text-white hover:bg-white/[15%]" />
 
 ```tsx snippet
 import {KanbanBoard} from './home/KanbanExample';
@@ -272,7 +271,7 @@ import {KanbanBoard} from './home/KanbanExample';
 <section className="max-w-6xl mx-auto px-8 md:px-20 my-20 md:my-32">
   <h2 className="pb-2 text-transparent"><GradientText>High quality</GradientText> <span className="bg-clip-text bg-gradient-to-t from-cyan-600 to-green-600">interactions</span> <GradientText>on all devices.</GradientText></h2>
   <p>React Aria ensures a great experience for users no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
-  <a href="interactions.html" className="inline-block mt-6 mb-12 text-xl text-cyan-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+  <LearnMoreLink href="interactions.html" className="text-cyan-700 dark:text-cyan-600 hover:bg-cyan-400/[15%]" />
 
   <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] md:grid-cols-2 md:grid-rows-2 -mx-8 md:mx-0 px-8 md:px-0 py-4 md:py-0 overflow-auto md:overflow-visible snap-x snap-mandatory no-scrollbar" id="interactions-carousel">
     <Card>
@@ -432,7 +431,7 @@ import {Pagination} from './home/Pagination';
 <section className="max-w-6xl mx-auto px-8 md:px-20 my-20 md:my-32">
   <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-600">Accessibility</span> <GradientText>that's truly first-class.</GradientText></h2>
   <p>React Aria was designed from the start with accessibility as a top priority. All components have been tested across a wide variety of devices and assistive technology to ensure the best experience possible for all users.</p>
-  <a href="accessibility.html" className="inline-block mt-6 mb-12 text-xl text-blue-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+  <LearnMoreLink href="accessibility.html" className="text-blue-600 dark:text-blue-500 hover:bg-blue-400/[15%]" />
 
   <div className="grid gap-y-6 gap-x-24 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-start">
     <div className="w-full max-w-xs md:w-auto md:max-w-none md:row-span-3 md:h-full aspect-[1/2] iphone-frame md:order-4">
@@ -467,7 +466,7 @@ import {A11y} from './home/A11y';
 <section className="max-w-6xl mx-auto px-8 md:px-20 my-20 md:my-32">
   <h2 className="pb-2 text-transparent"><GradientText>Ready for an</GradientText> <span className="bg-clip-text bg-gradient-to-b from-yellow-500 to-orange-600">international</span> <GradientText>audience.</GradientText></h2>
   <p>React Aria is engineered for internationalization out of the box, including translations in over 30 languages, localized date and number formatting and parsing, support for 13 calendar systems, 3 numbering systems, right-to-left layout, and more.</p>
-  <a href="internationalization.html" className="inline-block mt-6 mb-12 text-xl text-orange-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+  <LearnMoreLink href="internationalization.html" className="text-orange-700 dark:text-orange-600 hover:bg-orange-400/[15%]" />
 
 ```tsx snippet
 import {I18n} from './home/I18n';
@@ -480,7 +479,7 @@ import {I18n} from './home/I18n';
 <section className="max-w-6xl mx-auto px-8 md:px-20 my-20 md:my-32">
   <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-lime-600 to-green-600">Customizable</span> <GradientText>to the max.</GradientText></h2>
   <p>React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with built-in a DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the lower level Hook-based API. Mix and match as needed.</p>
-  <a href="advanced.html" className="inline-block mt-6 mb-12 text-xl text-green-600">Learn more <ArrowRight className="inline w-5 h-5 align-middle -mt-1" /></a>
+  <LearnMoreLink href="advanced.html" className="text-green-700 dark:text-green-600 hover:bg-green-400/[15%]" />
 
  <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] max-w-3xl -mx-8 px-8 sm:px-12 sm:-mx-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask" id="customizable-carousel">
   <Card>
@@ -629,17 +628,17 @@ import {Pagination} from './home/Pagination';
   <h2 className="pb-8"><GradientText>Ready to get started?</GradientText></h2>
 
   <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
-    <a href="getting-started.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-lg p-6">
+    <a href="getting-started.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover">
       <CardTitle>Install and Setup →</CardTitle>
       <CardDescription>Learn how to install and setup React Aria in your project, and build and style a component.</CardDescription>
     </a>
 
-     <a href="components.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-lg p-6">
+     <a href="components.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover">
       <CardTitle>View Components →</CardTitle>
       <CardDescription>See an overview of all of the components and hooks offered by React Aria.</CardDescription>
     </a>
 
-    <a href="examples/index.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-lg p-6">
+    <a href="examples/index.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover">
       <CardTitle>Explore Examples →</CardTitle>
       <CardDescription>Check out some fully styled examples showing what is possible with React Aria.</CardDescription>
     </a>
@@ -647,3 +646,27 @@ import {Pagination} from './home/Pagination';
 </section>
 
 </main>
+
+```tsx import
+let ignoreSimulatedMouseEvents = false;
+document.addEventListener('touchstart', () => {
+  ignoreSimulatedMouseEvents = true;
+}, true);
+
+document.addEventListener('mouseenter', e => {
+  if (ignoreSimulatedMouseEvents) {
+    ignoreSimulatedMouseEvents = false;
+    return;
+  }
+
+  if (e.target instanceof Element) {
+    e.target.classList.add('is-hovered');
+  }
+}, true);
+
+document.addEventListener('mouseleave', e => {
+  if (e.target instanceof Element) {
+    e.target.classList.remove('is-hovered');
+  }
+}, true);
+```

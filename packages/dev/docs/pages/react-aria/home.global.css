@@ -120,6 +120,10 @@ pre.medium, pre.small {
   @apply dark:border dark:border-zinc-400/10;
 }
 
+.card-shadow-hover:hover {
+  box-shadow: 0 0 2px rgb(0 0 0 / 18%), 0 3px 12px rgb(0 0 0 / 8%), 0 4px 20px 0 rgba(0 0 0 / 12%);
+}
+
 .edge-mask {
   mask-image: linear-gradient(to right, transparent, white 8px calc(100% - 8px), transparent);
 }

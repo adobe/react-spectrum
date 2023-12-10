@@ -1,4 +1,5 @@
 import React, {ReactNode} from 'react';
+import {ArrowRight} from 'lucide-react';
 
 export function Window({children, className = '', isBackground = false, toolbar}) {
   return (
@@ -67,3 +68,7 @@ export function Arrow({href, children, textX, x1, x2, points, y, marker = 'marke
 export const Finger = React.forwardRef((props, ref) => {
   return <div ref={ref} className="z-10 pointer-events-none absolute w-10 h-10 rounded-full opacity-0 border border-black/80 bg-black/80 dark:border-white/80 dark:bg-white/80 dark:mix-blend-difference" {...props} />;
 });
+
+export function LearnMoreLink({href, className}) {
+  return <a href={href} className={`group inline-block mt-6 mb-12 text-xl rounded-full px-4 -mx-4 py-1 transition ${className}`}>Learn more<ArrowRight className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
+}
