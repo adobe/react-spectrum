@@ -1,14 +1,14 @@
 import {animate, useIntersectionObserver} from './utils';
-import {Button} from '../../../../../../starters/tailwind/src/Button';
+import {Button} from 'tailwind-starter/Button';
 import {ChevronDown, WifiIcon} from 'lucide-react';
 import {createPortal, flushSync} from 'react-dom';
 import {Finger} from './components';
 import {Key, useDateFormatter} from 'react-aria';
-import {Label} from '../../../../../../starters/tailwind/src/Field';
+import {Label} from 'tailwind-starter/Field';
 import {ListBox, Select, SelectValue} from 'react-aria-components';
-import {Popover} from '../../../../../../starters/tailwind/src/Popover';
+import {Popover} from 'tailwind-starter/Popover';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {SelectItem} from '../../../../../../starters/tailwind/src/Select';
+import {SelectItem} from 'tailwind-starter/Select';
 
 interface Point {
   top: number,

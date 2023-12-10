@@ -1,4 +1,4 @@
-import {Button} from '../../../../../../starters/tailwind/src/Button';
+import {Button} from 'tailwind-starter/Button';
 import {ChevronLeft, ChevronRight} from 'lucide-react';
 import React, {useEffect, useState} from 'react';
 

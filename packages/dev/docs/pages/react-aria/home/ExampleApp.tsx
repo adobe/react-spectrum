@@ -1,25 +1,26 @@
 import { ReactElement, ReactNode, UIEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Select, SelectItem } from "../src/Select";
+import { Select, SelectItem } from "tailwind-starter/Select";
 import { ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, TooltipTrigger } from "react-aria-components";
-import { Cell, Column, Row, TableHeader } from "../src/Table";
-import { SearchField } from "../src/SearchField";
-import { Button } from "../src/Button";
+import { Cell, Column, Row, TableHeader } from "tailwind-starter/Table";
+import { SearchField } from "tailwind-starter/SearchField";
+import { Button } from "tailwind-starter/Button";
 import { CloudSun, Dessert, Droplet, Droplets, FilterIcon, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon } from "lucide-react";
-import { Menu, MenuItem } from "../src/Menu";
-import { Popover } from "../src/Popover";
-import { Tooltip } from "../src/Tooltip";
+import { Menu, MenuItem } from "tailwind-starter/Menu";
+import { Popover } from "tailwind-starter/Popover";
+import { Tooltip } from "tailwind-starter/Tooltip";
 import {useFilter, useCollator} from 'react-aria';
-import { Checkbox } from "../src/Checkbox";
-import plants from '../plants.json';
-import { TagGroup, Tag } from "../src/TagGroup";
-import { Modal } from "../src/Modal";
-import { AlertDialog } from "../src/AlertDialog";
-import { TextField } from "../src/TextField";
-import { DatePicker } from "../src/DatePicker";
-import { ComboBox, ComboBoxItem } from "../src/ComboBox";
+import { Checkbox } from "tailwind-starter/Checkbox";
+import plants from './plants.json';
+import { TagGroup, Tag } from "tailwind-starter/TagGroup";
+import { Modal } from "tailwind-starter/Modal";
+import { AlertDialog } from "tailwind-starter/AlertDialog";
+import { TextField } from "tailwind-starter/TextField";
+import { DatePicker } from "tailwind-starter/DatePicker";
+import { ComboBox, ComboBoxItem } from "tailwind-starter/ComboBox";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import {useMediaQuery} from '@react-spectrum/utils';
-import { GridList, GridListItem } from "../src/GridList";
+import { GridList, GridListItem } from "tailwind-starter/GridList";
+import {Arrow} from './components';
 import React from 'react';
 
 type Plant = typeof plants[0] & {isFavorite: boolean};
@@ -505,16 +506,7 @@ function PlantModal(props: ModalOverlayProps) {
               <Arrow textX={32} x1={88} x2={150} y={492} href="DatePicker.html">DatePicker</Arrow>
               <Arrow textX={616} x1={550} x2={612} y={126} marker="markerStart" href="ComboBox.html">ComboBox</Arrow>
               <Arrow textX={616} x1={550} x2={612} y={198} marker="markerStart" href="TextField.html">TextField</Arrow>
-              <polyline
-                points="560,90 590,90 590,585 560,585"
-                className="stroke-slate-800 fill-none" />
-              <line
-                x1={590}
-                y1={338}
-                x2={612}
-                y2={338}
-                className="stroke-slate-800" />
-              <a href="Form.html" className="pointer-events-auto outline-none rounded-sm focus:outline-blue-600 outline-offset-2"><text x={616} y={341} className="text-xs fill-slate-900 underline">Form</text></a>
+              <Arrow points="560,90 590,90 590,338 612,338 590,338 590,585 560,585" textX={616} y={338} marker="none" href="Form.html">Form</Arrow>
             </svg>
           </div>
         }
@@ -529,30 +521,5 @@ function PlantModal(props: ModalOverlayProps) {
         />
       </>}
     </ModalOverlay>
-  );
-}
-
-interface ArrowProps {
-  href: string,
-  children: ReactNode,
-  textX: number,
-  x1: number,
-  x2: number,
-  y: number,
-  marker?: 'markerStart' | 'markerEnd'
-}
-
-function Arrow({href, children, textX, x1, x2, y, marker = 'markerEnd'}: ArrowProps) {
-  return (
-    <>
-      <line
-        x1={x1}
-        y1={y}
-        x2={x2}
-        y2={y}
-        {...{[marker]: 'url(#arrow)'}}
-        className="stroke-slate-800" />
-      <a href={href} target="_blank" className="pointer-events-auto outline-none rounded-sm focus:outline-blue-600 outline-offset-2"><text x={textX} y={y + 3} className="text-xs fill-slate-900 underline">{children}</text></a>
-    </>
   );
 }

@@ -52,11 +52,12 @@ interface ArrowProps {
 }
 
 export function Arrow({href, children, textX, x1, x2, points, y, marker = 'markerEnd'}: ArrowProps) {
+  let markerProps = marker === 'none' ? {} : {...{[marker]: 'url(#arrow)'}};
   return (
     <>
       {points
-        ? <polyline points={points} {...{[marker]: 'url(#arrow)'}} className="stroke-slate-800 dark:stroke-white fill-none" />
-        : <line x1={x1} y1={y} x2={x2} y2={y} {...{[marker]: 'url(#arrow)'}} className="stroke-slate-800 dark:stroke-white" />
+        ? <polyline points={points} {...markerProps} className="stroke-slate-800 dark:stroke-white fill-none" />
+        : <line x1={x1} y1={y} x2={x2} y2={y} {...markerProps} className="stroke-slate-800 dark:stroke-white" />
       }
       <a href={href} target="_blank" className="pointer-events-auto outline-none rounded-sm focus:outline-blue-600 outline-offset-2"><text x={textX} y={y + 3} className="text-xs fill-slate-900 dark:fill-white underline">{children}</text></a>
     </>

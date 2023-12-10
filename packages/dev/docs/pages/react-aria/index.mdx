@@ -21,18 +21,36 @@ minimal: true
 ---
 
 <header className="[--l:91%] [--c:0.11] dark:[--l:34%] dark:[--c:0.06]" style={{background: `linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)), radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)),  conic-gradient(from 30deg at 50% 60%, oklch(var(--l) var(--c) 220), oklch(min(var(--l), 86%) var(--c) 260), oklch(var(--l) var(--c) 300), oklch(var(--l) var(--c) 340), oklch(var(--l) var(--c) 0), oklch(var(--l) var(--c) 40), oklch(var(--l) var(--c) 60), oklch(var(--l) var(--c) 100), oklch(var(--l) var(--c) 140), oklch(var(--l) var(--c) 180), oklch(var(--l) var(--c) 220))`, backgroundRepeat: 'no-repeat'}}>
-  <a href="." className="absolute top-4 left-4 inline-flex items-center md:text-lg gap-4 font-bold px-4 py-3 rounded-xl bg-white/20 backdrop-saturate-200 backdrop-brightness-125 dark:text-white/70 ring-1 ring-black/5">
-    <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" className="w-6 md:w-9">
-      <polygon points="19,0 30,0 30,26" />
-      <polygon points="11.1,0 0,0 0,26" />
-      <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
-    </svg>
-    <h2>React Aria</h2>
-  </a>
+  <nav className="absolute top-4 left-4 right-4 flex justify-between gap-4">
+    <a href="." className="inline-flex items-center text-lg gap-4 font-bold px-4 py-2.5 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 dark:text-white/80 ring-1 ring-black/5">
+      <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" height="22">
+        <polygon points="19,0 30,0 30,26" />
+        <polygon points="11.1,0 0,0 0,26" />
+        <polygon points="15,9.6 22.1,26 17.5,26 15.4,20.8 10.2,20.8" />
+      </svg>
+      <h2>React Aria</h2>
+    </a>
 
-  <nav className="absolute right-4 top-4 p-4 inline-flex items-center gap-4 text-sm md:text-base rounded-xl bg-white/20 backdrop-saturate-200 backdrop-brightness-125 dark:text-white/70 ring-1 ring-black/5">
-    <a href="https://github.com/adobe/react-spectrum" target="_blank">GitHub</a>
-    <a href="https://npmjs.com/react-aria-components">NPM</a>
+    <div className="px-4 py-3 inline-flex items-center gap-4 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 text-zinc-900/80 dark:text-white/70 font-semibold ring-1 ring-black/5">
+      <a href="../blog/index.html" className="hidden md:inline">Blog</a>
+      <a href="../releases/index.html" className="hidden md:inline">Releases</a>
+      <a href="../react-spectrum/index.html" className="hidden md:inline">React Spectrum</a>
+      <a href="../internationalized/index.html" className="hidden md:inline">Internationalized</a>
+      <a href="https://github.com/adobe/react-spectrum" target="_blank" title="GitHub">
+        <svg aria-hidden="true" viewBox="0 0 16 16" height="22" fill="currentColor">
+          <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
+      </svg>
+      </a>
+      <a href="https://npmjs.com/react-aria-components" target="_blank" title="NPM">
+        <svg viewBox="0 0 27.23 27.23" aria-hidden="true" height="22" fill="currentColor">
+          <rect width="27.23" height="27.23" rx="2" mask="url(#npm-mask)" />
+          <mask id="npm-mask">
+            <rect width="27.23" height="27.23" rx="2" fill="white" />
+            <polygon fill="black" points="5.8 21.75 13.66 21.75 13.67 9.98 17.59 9.98 17.58 21.76 21.51 21.76 21.52 6.06 5.82 6.04 5.8 21.75" />
+          </mask>
+        </svg>
+      </a>
+    </div>
   </nav>
 
   <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60 -mb-6 rounded-3xl">
@@ -40,7 +58,7 @@ minimal: true
     <p className="text-slate-800 dark:text-slate-300 text-center text-base md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
     <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
-      <a href="getting-started.html" className="bg-gradient-to-r from-blue-500 to-indigo-500 border border-blue-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full">Get Started</a>
+      <a href="getting-started.html" className="bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full">Get Started</a>
       <a href="components.html" className="bg-white/50 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125">Explore components</a>
     </div>
 
@@ -49,7 +67,7 @@ minimal: true
         <div className="flex-1 overflow-auto bg-white dark:bg-zinc-800/90 backdrop-blur-2xl backdrop-saturate-200" id="example-app" />
 
 ```tsx import
-import {ExampleApp} from '../../../../../starters/tailwind/stories/ExampleApp.stories';
+import {ExampleApp} from './home/ExampleApp';
 
 ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp />);
 ```
@@ -344,12 +362,12 @@ import {ListBoxExample} from './home/ListBoxExample';
       <CardDescription>Focus is automatically contained within overlays, restored on close, and moved when list items are deleted. Focus rings appear only when using the keyboard to help users navigate.</CardDescription>
 
 ```tsx snippet
-import {TextField} from '../../../../../starters/tailwind/src/TextField';
+import {TextField} from 'tailwind-starter/TextField';
 import {FocusScope} from 'react-aria';
 import {flushSync} from 'react-dom';
 import {useInteractOutside} from '@react-aria/interactions';
-import {Popover} from '../../../../../starters/tailwind/src/Popover';
-import {Button} from '../../../../../starters/tailwind/src/Button';
+import {Popover} from 'tailwind-starter/Popover';
+import {Button} from 'tailwind-starter/Button';
 import {Dialog, DialogTrigger, Heading} from 'react-aria-components';
 import {CircleUser} from 'lucide-react';
 
@@ -610,7 +628,7 @@ import {Pagination} from './home/Pagination';
 <section className="max-w-6xl mx-auto px-8 md:px-20 my-20 md:my-32">
   <h2 className="pb-8"><GradientText>Ready to get started?</GradientText></h2>
 
-  <div className="grid md:grid-cols-3 gap-6">
+  <div className="grid md:grid-cols-3 gap-6 max-w-4xl">
     <a href="getting-started.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-lg p-6">
       <CardTitle>Install and Setup →</CardTitle>
       <CardDescription>Learn how to install and setup React Aria in your project, and build and style a component.</CardDescription>

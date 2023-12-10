@@ -1,9 +1,9 @@
 import {animate, useIntersectionObserver} from './utils';
-import {Button} from '../../../../../../starters/tailwind/src/Button';
+import {Button} from 'tailwind-starter/Button';
 import {ButtonContext, Key, TooltipTrigger} from 'react-aria-components';
 import {CogIcon, PencilIcon, ShareIcon} from 'lucide-react';
 import React, {useCallback, useRef, useState} from 'react';
-import {Tooltip} from '../../../../../../starters/tailwind/src/Tooltip';
+import {Tooltip} from 'tailwind-starter/Tooltip';
 
 export function MouseAnimation() {
   let ref = useRef<HTMLDivElement>(null);

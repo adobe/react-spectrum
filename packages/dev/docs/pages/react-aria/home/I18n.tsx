@@ -1,10 +1,10 @@
-import {Calendar} from '../../../../../../starters/tailwind/src/Calendar';
-import {DateField} from '../../../../../../starters/tailwind/src/DateField';
+import {Calendar} from 'tailwind-starter/Calendar';
+import {DateField} from 'tailwind-starter/DateField';
 import {getLocalTimeZone, now} from '@internationalized/date';
 import {I18nProvider, useLocale} from 'react-aria-components';
-import {NumberField} from '../../../../../../starters/tailwind/src/NumberField';
+import {NumberField} from 'tailwind-starter/NumberField';
 import React from 'react';
-import {Select, SelectItem, SelectSection} from '../../../../../../starters/tailwind/src/Select';
+import {Select, SelectItem, SelectSection} from 'tailwind-starter/Select';
 
 // https://github.com/unicode-org/cldr/blob/22af90ae3bb04263f651323ce3d9a71747a75ffb/common/supplemental/supplementalData.xml#L4649-L4664
 const preferences = [
