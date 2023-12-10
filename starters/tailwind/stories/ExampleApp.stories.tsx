@@ -262,7 +262,7 @@ export function ExampleApp() {
                     case 'favorite':
                       return (
                         <Cell>
-                          <ToggleButton aria-label="Favorite" isSelected={item.isFavorite} onChange={v => toggleFavorite(item.id, v)} className="group cursor-default align-middle rounded outline-none focus-visible:outline-blue-600 text-gray-500 dark:text-zinc-500 pressed:text-gray-600 dark:pressed:text-zinc-400 selected:text-gray-700 selected:pressed:text-gray-800 dark:selected:text-slate-300 dark:selected:pressed:text-slate-200">
+                          <ToggleButton aria-label="Favorite" isSelected={item.isFavorite} onChange={v => toggleFavorite(item.id, v)} className="group cursor-default align-middle rounded outline-none focus-visible:outline-blue-600 text-gray-500 dark:text-zinc-400 pressed:text-gray-600 dark:pressed:text-zinc-300 selected:text-gray-700 selected:pressed:text-gray-800 dark:selected:text-slate-300 dark:selected:pressed:text-slate-200">
                             <StarIcon className="w-5 h-5 fill-white dark:fill-zinc-900 group-selected:fill-current" />
                           </ToggleButton>
                         </Cell>

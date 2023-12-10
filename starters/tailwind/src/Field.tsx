@@ -14,7 +14,7 @@ export function FieldError(props: FieldErrorProps) {
   return <RACFieldError {...props} className={`text-sm text-red-600 ${props.className || ''}`} />
 }
 
-export const fieldBorder = 'border-gray-300 dark:border-zinc-600 invalid:border-red-600 disabled:border-gray-200 dark:disabled:border-zinc-700 focus-within:border-gray-600 dark:focus-within:border-zinc-300';
+export const fieldBorder = 'border-gray-300 dark:border-zinc-600 group-invalid:border-red-600 invalid:border-red-600 disabled:border-gray-200 dark:disabled:border-zinc-700 focus-within:border-gray-600 dark:focus-within:border-zinc-300';
 export const groupFieldBorder = 'border-gray-300 dark:border-zinc-600 group-invalid:border-red-600 group-disabled:border-gray-200 dark:group-disabled:border-zinc-700 group-focus-within:border-gray-600 dark:group-focus-within:border-zinc-300';
 
 export function FieldGroup(props: GroupProps) {

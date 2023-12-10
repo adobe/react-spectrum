@@ -26,7 +26,7 @@ const styles = tv({
   base: 'w-5 h-5 flex-shrink-0 rounded flex items-center justify-center border-2 transition group-focus-visible:outline outline-2 outline-blue-600 outline-offset-2',
   variants: {
     isSelected: {
-      false: 'bg-white border-gray-400 group-pressed:border-gray-500 dark:bg-zinc-900 dark:border-zinc-500 dark:group-pressed:border-zinc-400',
+      false: 'bg-white border-gray-400 group-pressed:border-gray-500 dark:bg-zinc-900 dark:border-zinc-400 dark:group-pressed:border-zinc-300',
       true: 'bg-gray-700 border-gray-700 group-pressed:border-gray-800 group-pressed:bg-gray-800 dark:bg-slate-300 dark:border-slate-300 dark:group-pressed:border-slate-200 dark:group-pressed:bg-slate-200'
     },
     isInvalid: {
