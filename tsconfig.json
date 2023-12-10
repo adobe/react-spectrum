@@ -77,6 +77,7 @@
           "./packages/@react-spectrum/searchwithin",
           "./packages/@react-spectrum/radio",
           "./packages/@react-spectrum/statuslight",
+          "./packages/@react-spectrum/steplist",
           "./packages/@react-spectrum/switch",
           "./packages/@react-spectrum/tag",
           "./packages/@react-spectrum/text",
