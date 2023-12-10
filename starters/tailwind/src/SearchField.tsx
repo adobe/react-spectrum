@@ -1,12 +1,11 @@
 import {
-  Input,
   SearchField as AriaSearchField,
   SearchFieldProps as AriaSearchFieldProps,
   ValidationResult
 } from 'react-aria-components';
 import { Button } from './Button';
 import { SearchIcon, XIcon } from 'lucide-react';
-import { FieldGroup, FieldError, Description, Label } from './Field';
+import { FieldGroup, FieldError, Description, Label, Input } from './Field';
 import React from 'react';
 
 export interface SearchFieldProps extends AriaSearchFieldProps {
@@ -22,8 +21,8 @@ export function SearchField(
     <AriaSearchField {...props} className={`group flex flex-col gap-1 min-w-[40px] ${props.className}`}>
       {label && <Label>{label}</Label>}
       <FieldGroup>
-        <SearchIcon className="w-4 h-4 ml-2 text-gray-500" />
-        <Input className="[&::-webkit-search-cancel-button]:hidden bg-transparent flex-1 min-w-0 px-2 py-1.5 outline-none text-sm text-gray-800 placeholder-shown:text-gray-800 disabled:text-gray-200 disabled:[-webkit-text-fill-color:theme(colors.gray.200)]" />
+        <SearchIcon className="w-4 h-4 ml-2 text-gray-500 dark:text-zinc-400" />
+        <Input className="[&::-webkit-search-cancel-button]:hidden disabled:[-webkit-text-fill-color:theme(colors.gray.200)]" />
         <Button variant="icon" className="mr-1 w-6 group-empty:invisible"><XIcon className="w-4 h-4" /></Button>
       </FieldGroup>
       {description && <Description>{description}</Description>}

@@ -20,7 +20,7 @@ import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescript
 minimal: true
 ---
 
-<header className="[--l:91%] [--c:0.11] dark:[--l:32%] dark:[--c:0.11]" style={{background: `linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)), radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)), conic-gradient(from 30deg at 50% 60%, oklch(var(--l) var(--c) 220), oklch(calc(var(--l) - 5%) var(--c) 260), oklch(var(--l) var(--c) 300), oklch(var(--l) var(--c) 340), oklch(var(--l) var(--c) 0), oklch(var(--l) var(--c) 50), oklch(var(--l) var(--c) 70), oklch(var(--l) var(--c) 100), oklch(var(--l) var(--c) 140), oklch(var(--l) var(--c) 180), oklch(var(--l) var(--c) 220))`, backgroundRepeat: 'no-repeat'}}>
+<header className="[--l:91%] [--c:0.11] dark:[--l:34%] dark:[--c:0.06]" style={{background: `linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)), radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)),  conic-gradient(from 30deg at 50% 60%, oklch(var(--l) var(--c) 220), oklch(min(var(--l), 86%) var(--c) 260), oklch(var(--l) var(--c) 300), oklch(var(--l) var(--c) 340), oklch(var(--l) var(--c) 0), oklch(var(--l) var(--c) 40), oklch(var(--l) var(--c) 60), oklch(var(--l) var(--c) 100), oklch(var(--l) var(--c) 140), oklch(var(--l) var(--c) 180), oklch(var(--l) var(--c) 220))`, backgroundRepeat: 'no-repeat'}}>
   <a href="." className="absolute top-4 left-4 inline-flex items-center md:text-lg gap-4 font-bold px-4 py-3 rounded-xl bg-white/20 backdrop-saturate-200 backdrop-brightness-125 dark:text-white/70 ring-1 ring-black/5">
     <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" className="w-6 md:w-9">
       <polygon points="19,0 30,0 30,26" />
@@ -46,7 +46,7 @@ minimal: true
 
     <div className="relative pt-10 md:pt-20 md:mt-20">
       <Window toolbar={<AddressBar>https://your-app.com</AddressBar>} className="h-[450px] max-w-[600px] mx-auto">
-        <div className="flex-1 overflow-auto bg-white dark:bg-zinc-900/60 backdrop-blur-2xl" id="example-app" />
+        <div className="flex-1 overflow-auto bg-white dark:bg-zinc-800/90 backdrop-blur-2xl backdrop-saturate-200" id="example-app" />
 
 ```tsx import
 import {ExampleApp} from '../../../../../starters/tailwind/stories/ExampleApp.stories';

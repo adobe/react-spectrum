@@ -2,19 +2,17 @@ import React from 'react';
 
 export function Keyboard() {
   return (
-    <svg className="flex-1" viewBox="0 0 191 81" fill="none" aria-hidden="true" id="keyboard">
+    <svg className="flex-1 stroke-slate-400 dark:stroke-slate-600 [--press-fill:theme(colors.slate.300)] dark:[--press-fill:theme(colors.slate.700)]" viewBox="0 0 191 81" fill="none" aria-hidden="true" id="keyboard">
       <g>
         <style>
           {
             `#keyboard rect {
-              fill: white;
               stroke-width: 0.85;
-              stroke: rgb(148 163 184);
               vector-effect: non-scaling-stroke;
             }`
           }
         </style>
-        <rect width="190" height="80" rx="4" x="0.5" y="0.5" style={{fill: 'rgb(241 245 249)'}} />
+        <rect width="190" height="80" rx="4" x="0.5" y="0.5" className="fill-white dark:fill-zinc-900" />
         <g>
           <rect width="17" height="11" rx="2" x="2.5" y="2.5" />
           <rect width="11" height="11" rx="2" x="21.5" y="2.5" />

@@ -28,13 +28,13 @@ export function AlertDialog({
         <>
           <Heading
             slot="title"
-            className="text-xl font-semibold leading-6 my-0 text-slate-700">
+            className="text-xl font-semibold leading-6 my-0">
             {title}
           </Heading>
           <div className={`w-6 h-6 absolute right-0 top-0 stroke-2 ${variant === 'destructive' ? 'text-red-500' : 'text-blue-500'}`}>
             {variant === 'destructive' ? <AlertCircleIcon /> : <InfoIcon />}
           </div>
-          <p className="mt-3 text-slate-500">
+          <p className="mt-3 text-slate-500 dark:text-zinc-400">
             {children}
           </p>
           <div className="mt-6 flex justify-end gap-2">

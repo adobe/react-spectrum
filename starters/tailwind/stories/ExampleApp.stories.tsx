@@ -235,7 +235,7 @@ export function ExampleApp() {
               <div className="grid grid-cols-[40px_1fr_auto] gap-x-2 w-full">
                 <img alt="" src={item.default_image?.thumbnail} className="inline rounded row-span-3 object-contain h-[40px]" />
                 <span className="truncate capitalize">{item.common_name}</span>
-                <span className="truncate text-xs text-gray-600 col-start-2 row-start-2">{item.scientific_name}</span>
+                <span className="truncate text-xs text-gray-600 dark:text-zinc-400 col-start-2 row-start-2">{item.scientific_name}</span>
                 <MenuTrigger>
                   <Button aria-label="Actions" variant="icon" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
                   <Menu placement="bottom end" onAction={action => onAction(item, action)}>
@@ -249,7 +249,7 @@ export function ExampleApp() {
           )}
         </GridList>
       }
-      {!isSmall && <ResizableTableContainer className="flex-1 w-full overflow-auto relative border rounded-lg" onScroll={onScroll}>
+      {!isSmall && <ResizableTableContainer className="flex-1 w-full overflow-auto relative border dark:border-zinc-700 rounded-lg" onScroll={onScroll}>
         <Table aria-label="My plants" selectionMode="multiple" sortDescriptor={sortDescriptor} onSortChange={setSortDescriptor}>
           <TableHeader columns={columns}>
             {column => <Column {...column} />}
@@ -262,8 +262,8 @@ export function ExampleApp() {
                     case 'favorite':
                       return (
                         <Cell>
-                          <ToggleButton aria-label="Favorite" isSelected={item.isFavorite} onChange={v => toggleFavorite(item.id, v)} className="group cursor-default align-middle rounded outline-none focus-visible:outline-blue-600">
-                            <StarIcon className="w-5 h-5 text-gray-500 group-pressed:text-gray-600 fill-white group-selected:text-gray-700 group-selected:group-pressed:text-gray-800 group-selected:fill-current" />
+                          <ToggleButton aria-label="Favorite" isSelected={item.isFavorite} onChange={v => toggleFavorite(item.id, v)} className="group cursor-default align-middle rounded outline-none focus-visible:outline-blue-600 text-gray-500 dark:text-zinc-500 pressed:text-gray-600 dark:pressed:text-zinc-400 selected:text-gray-700 selected:pressed:text-gray-800 dark:selected:text-slate-300 dark:selected:pressed:text-slate-200">
+                            <StarIcon className="w-5 h-5 fill-white dark:fill-zinc-900 group-selected:fill-current" />
                           </ToggleButton>
                         </Cell>
                       );
@@ -273,7 +273,7 @@ export function ExampleApp() {
                           <div className="grid grid-cols-[40px_1fr] gap-x-2">
                             <img src={item.default_image?.thumbnail} className="inline rounded row-span-2 object-contain h-[40px]" />
                             <span className="truncate capitalize">{item.common_name}</span>
-                            <span className="truncate text-xs text-gray-600">{item.scientific_name}</span>
+                            <span className="truncate text-xs text-gray-600 dark:text-zinc-400">{item.scientific_name}</span>
                           </div>
                         </Cell>
                       );
@@ -318,10 +318,10 @@ export function ExampleApp() {
 }
 
 const labelStyles = {
-  gray: 'bg-gray-100 text-gray-600 border-gray-200',
-  green: 'bg-green-100 text-green-700 border-green-200',
-  yellow: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  blue: 'bg-blue-100 text-blue-700 border-blue-200'
+  gray: 'bg-gray-100 text-gray-600 border-gray-200 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600',
+  green: 'bg-green-100 text-green-700 border-green-200 dark:bg-green-300/20 dark:text-green-400 dark:border-green-300/10',
+  yellow: 'bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-300/20 dark:text-yellow-400 dark:border-yellow-300/10',
+  blue: 'bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-400/20 dark:text-blue-300 dark:border-blue-400/10'
 };
 
 function Label({color, icon, children}: {color: keyof typeof labelStyles, icon: React.ReactNode, children: React.ReactNode}) {
@@ -382,7 +382,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
         <>
           <Heading
             slot="title"
-            className="text-2xl font-semibold leading-6 my-0 text-slate-700">
+            className="text-2xl font-semibold leading-6 my-0 text-slate-700 dark:text-zinc-300">
             {item ? 'Edit Plant' : 'Add Plant'}
           </Heading>
           <Form
@@ -495,7 +495,7 @@ function PlantModal(props: ModalOverlayProps) {
     `}>
       {({isEntering, isExiting}) => <>
         {!isResized &&
-          <div data-react-aria-top-layer="true" className={`fixed top-0 left-0 w-full h-[--visual-viewport-height] z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)]
+          <div data-react-aria-top-layer="true" className={`fixed top-0 left-0 w-full h-[--visual-viewport-height] z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none
             ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
             ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}`}>
             <svg viewBox="0 0 700 620" width={700} height={620}>
@@ -522,7 +522,7 @@ function PlantModal(props: ModalOverlayProps) {
           {...props}
           ref={ref}
           className={({ isEntering, isExiting }) => `
-          w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white p-6 text-left align-middle shadow-2xl ring-1 ring-black/10
+          w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/90 backdrop-blur-2xl backdrop-saturate-200 p-6 text-left align-middle shadow-2xl ring-1 ring-black/10 dark:ring-white/10
           ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
           ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
         `}

@@ -23,15 +23,15 @@ import React from 'react';
 
 export function Table(props: TableProps) {
   return (
-    <ResizableTableContainer className="max-h-[280px] w-[550px] overflow-auto relative border rounded-lg">
+    <ResizableTableContainer className="max-h-[280px] w-[550px] overflow-auto relative border dark:border-zinc-600 rounded-lg">
       <AriaTable {...props} className="border-separate border-spacing-0" />
     </ResizableTableContainer>
   );
 }
 
-export function Column<T extends object>(props: ColumnProps<T>) {
+export function Column(props: ColumnProps) {
   return (
-    <AriaColumn {...props} className="[&:hover]:z-20 [&:focus-within]:z-20 text-start text-sm font-semibold text-gray-700 cursor-default outline-none focus-visible:outline-blue-600 -outline-offset-2">
+    <AriaColumn {...props} className="[&:hover]:z-20 [&:focus-within]:z-20 text-start text-sm font-semibold text-gray-700 dark:text-zinc-300 cursor-default outline-none focus-visible:outline-blue-600 -outline-offset-2">
       {composeRenderProps(props.children, (children, { allowsSorting, sortDirection }) => (
         <div className="flex items-center">
           <Group
@@ -46,11 +46,11 @@ export function Column<T extends object>(props: ColumnProps<T>) {
                   sortDirection === 'descending' ? 'rotate-180' : ''
                 }`}
               >
-                {sortDirection && <ArrowUp className="w-4 h-4 text-gray-500" />}
+                {sortDirection && <ArrowUp className="w-4 h-4 text-gray-500 dark:text-zinc-400" />}
               </span>
             )}
           </Group>
-          {!props.width && <ColumnResizer className="w-px px-[8px] translate-x-[8px] box-content py-1 h-5 bg-clip-content bg-gray-400 cursor-col-resize rounded resizing:bg-blue-600 resizing:w-[2px] resizing:pl-[7px] focus-visible:outline outline-2 outline-blue-600 -outline-offset-2" />}
+          {!props.width && <ColumnResizer className="w-px px-[8px] translate-x-[8px] box-content py-1 h-5 bg-clip-content bg-gray-400 dark:bg-zinc-500 cursor-col-resize rounded resizing:bg-blue-600 resizing:w-[2px] resizing:pl-[7px] focus-visible:outline outline-2 outline-blue-600 -outline-offset-2" />}
         </div>
       ))}
     </AriaColumn>
@@ -63,7 +63,7 @@ export function TableHeader<T extends object>(
   let { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
 
   return (
-    <AriaTableHeader className="sticky top-0 z-10 bg-gray-100/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-gray-100 rounded-t-lg border-b">
+    <AriaTableHeader className="sticky top-0 z-10 bg-gray-100/60 dark:bg-zinc-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-gray-100 dark:supports-[-moz-appearance:none]:bg-zinc-700 rounded-t-lg border-b dark:border-b-zinc-700">
       {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && <Column />}
       {selectionBehavior === 'toggle' && (
@@ -84,7 +84,7 @@ export function Row<T extends object>(
   let { selectionBehavior, allowsDragging } = useTableOptions();
 
   return (
-    <AriaRow id={id} {...otherProps} className="group/row relative cursor-default select-none text-gray-900 disabled:text-gray-300 text-sm hover:bg-gray-100 selected:bg-blue-100 selected:hover:bg-blue-200 outline-none focus-visible:outline-blue-600 -outline-offset-2">
+    <AriaRow id={id} {...otherProps} className="group/row relative cursor-default select-none text-gray-900 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 text-sm hover:bg-gray-100 dark:hover:bg-zinc-700/60 selected:bg-blue-100 selected:hover:bg-blue-200 dark:selected:bg-blue-700/30 dark:selected:hover:bg-blue-700/40 outline-none focus-visible:outline-blue-600 -outline-offset-2">
       {allowsDragging && (
         <Cell>
           <Button slot="drag">≡</Button>
@@ -104,6 +104,6 @@ export function Row<T extends object>(
 
 export function Cell(props: CellProps) {
   return (
-    <AriaCell {...props} className="border-b group-last/row:border-b-0 group-selected/row:border-blue-200 [:has(+[data-selected])_&]:border-blue-200 p-2 truncate outline-none focus-visible:outline-blue-600 -outline-offset-2" />
+    <AriaCell {...props} className="border-b dark:border-b-zinc-700 group-last/row:border-b-0 [--selected-border:theme(colors.blue.200)] dark:[--selected-border:theme(colors.blue.900)] group-selected/row:border-[--selected-border] [:has(+[data-selected])_&]:border-[--selected-border] p-2 truncate outline-none focus-visible:outline-blue-600 -outline-offset-2" />
   )
 }

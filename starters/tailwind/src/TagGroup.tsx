@@ -13,10 +13,10 @@ import { XIcon } from 'lucide-react';
 import React from 'react';
 
 const colors = {
-  gray: 'bg-gray-100 text-gray-600 border-gray-200 hover:border-gray-300',
-  green: 'bg-green-100 text-green-700 border-green-200 hover:border-green-300',
-  yellow: 'bg-yellow-100 text-yellow-700 border-yellow-200 hover:border-yellow-300',
-  blue: 'bg-blue-100 text-blue-700 border-blue-200 hover:border-blue-300'
+  gray: 'bg-gray-100 text-gray-600 border-gray-200 hover:border-gray-300 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600 dark:hover:border-zinc-500',
+  green: 'bg-green-100 text-green-700 border-green-200 hover:border-green-300 dark:bg-green-300/20 dark:text-green-400 dark:border-green-300/10 dark:hover:border-green-300/20',
+  yellow: 'bg-yellow-100 text-yellow-700 border-yellow-200 hover:border-yellow-300 dark:bg-yellow-300/20 dark:text-yellow-400 dark:border-yellow-300/10 dark:hover:border-yellow-300/20',
+  blue: 'bg-blue-100 text-blue-700 border-blue-200 hover:border-blue-300 dark:bg-blue-400/20 dark:text-blue-300 dark:border-blue-400/10 dark:hover:border-blue-400/20'
 };
 
 export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'> {
@@ -55,7 +55,7 @@ export function TagGroup<T extends object>(
 export function Tag({ children, color = 'gray', ...props }: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
-    <AriaTag textValue={textValue} {...props} className={`${colors[color]} transition cursor-default selected:bg-gray-700 selected:text-white selected:border-gray-800 text-xs rounded-full border px-3 py-0.5 flex items-center max-w-fit gap-1 outline-none focus-visible:outline-blue-600 disabled:bg-gray-100 disabled:text-gray-300`}>
+    <AriaTag textValue={textValue} {...props} className={`${colors[color]} transition cursor-default selected:bg-blue-600 selected:text-white selected:border-blue-600 dark:selected:hover:border-blue-600 text-xs rounded-full border px-3 py-0.5 flex items-center max-w-fit gap-1 outline-none focus-visible:outline-blue-600 disabled:bg-gray-100 disabled:text-gray-300`}>
       {({ allowsRemoving }) => (
         <>
           {children}

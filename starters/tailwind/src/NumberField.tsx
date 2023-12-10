@@ -1,13 +1,12 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import {
   Button,
-  Group,
-  Input,
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
-  ValidationResult
+  ValidationResult,
+  ButtonProps
 } from 'react-aria-components';
-import { FieldGroup, FieldError, Description, Label } from './Field';
+import { FieldGroup, FieldError, Description, Label, Input, groupFieldBorder } from './Field';
 import React from 'react';
 
 export interface NumberFieldProps extends AriaNumberFieldProps {
@@ -23,15 +22,19 @@ export function NumberField(
     <AriaNumberField {...props} className="group flex flex-col gap-1">
       <Label>{label}</Label>
       <FieldGroup>
-        <Input className="px-2 flex-1 min-w-0 outline-none bg-transparent text-sm text-gray-800 disabled:text-gray-200" />
-        <div className="flex flex-col border-s-2 border-gray-300 group-focus-within:border-gray-600 group-disabled:border-gray-200">
-          <Button slot="increment" className="px-0.5 cursor-default text-gray-500 pressed:bg-gray-100 group-disabled:text-gray-200"><ChevronUp className="w-4 h-4" /></Button>
-          <div className="border-b-2 border-gray-300 group-focus-within:border-gray-600 group-disabled:border-gray-200" />
-          <Button slot="decrement" className="px-0.5 cursor-default text-gray-500 pressed:bg-gray-100 group-disabled:text-gray-200"><ChevronDown className="w-4 h-4" /></Button>
+        <Input />
+        <div className={`flex flex-col border-s-2 ${groupFieldBorder}`}>
+          <StepperButton slot="increment"><ChevronUp className="w-4 h-4" /></StepperButton>
+          <div className={`border-b-2 ${groupFieldBorder}`} />
+          <StepperButton slot="decrement"><ChevronDown className="w-4 h-4" /></StepperButton>
         </div>
       </FieldGroup>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
     </AriaNumberField>
   );
+}
+
+function StepperButton(props: ButtonProps) {
+  return <Button {...props} className="px-0.5 cursor-default text-gray-500 pressed:bg-gray-100 group-disabled:text-gray-200 dark:text-zinc-400 dark:pressed:bg-zinc-800 dark:group-disabled:text-zinc-600" />
 }

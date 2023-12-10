@@ -29,7 +29,7 @@ export function Calendar<T extends DateValue>(
       <CalendarGrid>
         <CalendarGridHeader />
         <CalendarGridBody>
-          {(date) => <CalendarCell date={date} className="w-9 h-9 text-sm outline-none cursor-default rounded-full flex items-center justify-center outside-month:text-gray-300 hover:bg-gray-100 pressed:bg-gray-200 selected:bg-blue-600 selected:text-white focus-visible:outline-2 focus-visible:outline-blue-600 outline-offset-2" />}
+          {(date) => <CalendarCell date={date} className="w-9 h-9 text-sm outline-none cursor-default rounded-full flex items-center justify-center text-zinc-900 dark:text-zinc-200 disabled:text-gray-300 dark:disabled:text-zinc-600 hover:bg-gray-100 dark:hover:bg-zinc-700 pressed:bg-gray-200 dark:pressed:bg-zinc-600 selected:bg-blue-600 dark:selected:bg-blue-600 selected:text-white focus-visible:outline-2 focus-visible:outline-blue-600 outline-offset-2" />}
         </CalendarGridBody>
       </CalendarGrid>
       {errorMessage && <Text slot="errorMessage" className="text-sm text-red-600">{errorMessage}</Text>}
@@ -43,7 +43,7 @@ export function CalendarHeader() {
   return (
     <header className="flex items-center gap-1 pb-4 px-1 w-full">
       <Button variant="icon" slot="previous">{direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}</Button>
-      <Heading className="flex-1 font-semibold text-xl text-center mx-2" />
+      <Heading className="flex-1 font-semibold text-xl text-center mx-2 text-zinc-900 dark:text-zinc-200" />
       <Button variant="icon" slot="next">{direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}</Button>
     </header>
   );

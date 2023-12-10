@@ -13,7 +13,7 @@ export interface PopoverProps extends Omit<AriaPopoverProps, 'children'> {
 }
 
 const styles = tv({
-  base: 'bg-white shadow-2xl rounded-xl ring-1 ring-black/10',
+  base: 'bg-white dark:bg-zinc-900/70 backdrop-blur-2xl backdrop-saturate-200 shadow-2xl rounded-xl ring-1 ring-black/10 dark:ring-white/20 text-slate-700 dark:text-zinc-300',
   variants: {
     isEntering: {
       true: 'animate-in fade-in placement-bottom:slide-in-from-top-1 placement-top:slide-in-from-bottom-1 placement-left:slide-in-from-right-1 placement-right:slide-in-from-left-1 ease-out duration-200'
