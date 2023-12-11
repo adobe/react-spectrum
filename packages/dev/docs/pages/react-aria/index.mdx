@@ -481,14 +481,14 @@ import {I18n} from './home/I18n';
   <p>React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with built-in a DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the lower level Hook-based API. Mix and match as needed.</p>
   <LearnMoreLink href="advanced.html" className="text-green-700 dark:text-green-600 hover:bg-green-400/[15%]" />
 
- <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] max-w-3xl -mx-8 px-8 sm:px-12 sm:-mx-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask" id="customizable-carousel">
-  <Card>
+ <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] sm:grid-cols-2 sm:auto-rows-[1rem] -mx-8 px-8 sm:px-12 sm:-mx-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask" id="customizable-carousel">
+  <Card className="row-end-[span_14]">
     <CardTitle>Reuse styles.</CardTitle>
     <CardDescription>React Aria's API is designed around composition, allowing you to share common components between patterns. For example, you can reuse the same Label, Popover, and ListBox components within a Select, ComboBox, and more.</CardDescription>
 
-    <div className="relative flex-1 -mx-8 -mb-8 mt-8">
+    <div className="relative flex-1 -mx-6 -mb-6 mt-8">
 
-<div className="highlight-tags [--delay:2.5s] h-full [&>*]:h-full">
+<div className="highlight-tags [--delay:2.5s] h-full [&>*]:h-full [&_.source]:px-6">
 
 ```tsx format=false
 <Select>
@@ -508,7 +508,7 @@ import {I18n} from './home/I18n';
 ```
 
 </div>
-      <div className="absolute top-0 left-0 highlight-tags cross-fade">
+      <div className="absolute top-0 left-0 highlight-tags cross-fade [&_.source]:px-6">
 
 ```tsx format=false
 <ComboBox>
@@ -531,11 +531,11 @@ import {I18n} from './home/I18n';
     </div>
   </Card>
 
-  <Card>
+  <Card className="row-end-[span_18]">
     <CardTitle>Build custom patterns.</CardTitle>
     <CardDescription>Use the exported contexts for each component to build your own custom patterns with compositional APIs just like React Aria's built-in components.</CardDescription>
 
-    <div className="flex-1 -mx-8 -mb-8 mt-8">
+    <div className="flex-1 -mx-6 -mb-6 mt-8 [&_.source]:pl-6 [&_.source]:text-[13px]">
 
 ```tsx format=false
 // A Stepper component with customizable buttons.
@@ -566,24 +566,35 @@ function Stepper({children}) {
     </div>
   </Card>
 
-  <Card>
+  <Card className="row-end-[span_21]">
     <CardTitle>Consume contexts.</CardTitle>
     <CardDescription>Replace or extend any component with new features using contexts.</CardDescription>
 
-    <div className="flex-1 -mx-8 -mb-8 mt-8">
+    <div className="flex-1 -mx-6 -mb-6 mt-8 [&_.source]:px-6 [&_.source]:text-[13px]">
 
 ```tsx
+const MyCustomLabel = React.forwardRef((props, ref) => {
+  // Merge the local props and ref with the ones provided via context.
+  [props, ref] = useContextProps(props, ref, LabelContext);
 
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+
+<TextField>
+  <MyCustomLabel>Name</MyCustomLabel>
+  <Input />
+</TextField>
 ```
 
     </div>
   </Card>
 
-  <Card>
+  <Card className="row-end-[span_17]">
     <CardTitle>Go deep with hooks.</CardTitle>
     <CardDescription>Get complete control over rendering and behavior with hooks.</CardDescription>
 
-    <div className="flex-1 -mx-8 -mb-8 mt-8">
+    <div className="flex-1 -mx-6 -mb-6 mt-8 [&_.source]:px-6 [&_.source]:text-[13px]">
 
 ```tsx
 import {useCalendarGrid} from 'react-aria';
