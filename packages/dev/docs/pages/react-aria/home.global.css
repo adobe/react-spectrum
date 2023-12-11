@@ -117,7 +117,7 @@ pre.medium, pre.small {
 
 .card-shadow {
   box-shadow: 0 0 2px rgb(0 0 0 / 12%), 0 3px 6px rgb(0 0 0 / 4%), 0 4px 8px 0 rgba(0 0 0 / 8%);
-  @apply dark:border dark:border-zinc-400/10;
+  @apply dark:border dark:border-zinc-200/10 dark:bg-clip-padding;
 }
 
 .card-shadow-hover:hover {
@@ -296,5 +296,39 @@ pre.medium, pre.small {
   .tag:nth-last-child(1 of .tag) {
     @apply rounded [--highlight:theme(colors.red.600/15%)] dark:[--highlight:theme(colors.red.600/20%)];
     animation: highlight 5s infinite var(--delay, 0s);
+  }
+}
+
+.green-gradient-background {
+  background: radial-gradient(ellipse 26% 23% at 26% 56%, oklch(96% 0.03 200), transparent),
+    radial-gradient(ellipse 30% 30% at 73% 50%, oklch(98% 0.03 157), transparent),
+    radial-gradient(ellipse 40% 25% at 50% 76%, oklch(98% 0.03 218), transparent);
+}
+
+.blue-gradient-background {
+  background: radial-gradient(circle farthest-side at 23% 54%, oklch(96% 0.06 250), transparent 30%),
+    radial-gradient(circle farthest-side at 60% 45%, oklch(96% 0.06 250), transparent 50%),
+    radial-gradient(circle farthest-side at 50% 72%, oklch(94% 0.06 280), transparent 40%);
+}
+
+.orange-gradient-background {
+  background: radial-gradient(ellipse 50% 35% at 50% 68%, oklch(96% 0.06 75), transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+  .green-gradient-background {
+    background: radial-gradient(ellipse 26% 23% at 26% 56%, oklch(22% 0.03 200), transparent),
+      radial-gradient(ellipse 30% 30% at 73% 50%, oklch(22% 0.05 157), transparent),
+      radial-gradient(ellipse 40% 25% at 50% 76%, oklch(22% 0.04 218), transparent);
+  }
+
+  .blue-gradient-background {
+    background: radial-gradient(circle farthest-side at 23% 54%, oklch(22% 0.05 250), transparent 30%),
+      radial-gradient(circle farthest-side at 60% 45%, oklch(22% 0.05 260), transparent 50%),
+      radial-gradient(circle farthest-side at 50% 72%, oklch(22% 0.05 280), transparent 40%);
+  }
+
+  .orange-gradient-background {
+    background: radial-gradient(ellipse 50% 35% at 50% 68%, oklch(23% 0.04 71), transparent);
   }
 }
