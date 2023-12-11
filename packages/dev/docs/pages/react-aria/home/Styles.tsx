@@ -38,10 +38,10 @@ export function Styles() {
               }>
               <div className="grid grid-cols-1 lg:grid-cols-2">
                 <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styling')!.innerHTML}} />
-                <div className="flex flex-row px-3 pt-2.5 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-gray-800 border-y border-gray-300">
+                <div className="flex flex-row px-3 pt-2.5 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-800 border-y border-gray-300 dark:border-zinc-700">
                   <FileTab>ComboBox.css</FileTab>
                 </div>
-                <div className="contents [&>*]:border-l dark:[&>*]:border-l-zinc-600" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
+                <div className="contents lg:[&>*]:border-l dark:[&>*]:border-l-zinc-600" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
               </div>
             </Window>
             <Window

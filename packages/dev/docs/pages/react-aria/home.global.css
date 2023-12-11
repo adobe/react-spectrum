@@ -38,7 +38,7 @@
 body {
   font-family: "adobe-clean", sans-serif;
   background: var(--page-bg);
-  @apply [--page-bg:white] dark:[--page-bg:theme(colors.zinc.900)];
+  @apply [--page-bg:theme(colors.zinc.50)] dark:[--page-bg:theme(colors.zinc.900)];
 }
 
 @media (min-resolution: 200dpi) {
@@ -121,7 +121,7 @@ pre.medium, pre.small {
 }
 
 .card-shadow-hover:hover {
-  box-shadow: 0 0 2px rgb(0 0 0 / 18%), 0 3px 12px rgb(0 0 0 / 8%), 0 4px 20px 0 rgba(0 0 0 / 12%);
+  box-shadow: 0 0 2px rgb(0 0 0 / 18%), 0 3px 8px rgb(0 0 0 / 6%), 0 4px 16px 0 rgba(0 0 0 / 10%);
 }
 
 .edge-mask {
@@ -278,7 +278,7 @@ pre.medium, pre.small {
   }
 
   50% {
-    @apply bg-red-600/[15%];
+    background: var(--highlight);
   }
 
   58%, 100% {
@@ -294,7 +294,7 @@ pre.medium, pre.small {
   .tag:nth-child(1 of .tag),
   .tag:nth-child(n+4 of .tag):nth-child(-n+8 of .tag),
   .tag:nth-last-child(1 of .tag) {
-    @apply rounded;
+    @apply rounded [--highlight:theme(colors.red.600/15%)] dark:[--highlight:theme(colors.red.600/20%)];
     animation: highlight 5s infinite var(--delay, 0s);
   }
 }
