@@ -164,7 +164,7 @@ module.exports = new Transformer({
     );
 
     let appendCSS = () => async (tree) => {
-      let css = await processCSS(cssCode, asset, options);
+      let css = await processCSS(cssCode, asset, options, minimal);
 
       tree.children.push(
         {
