@@ -17,9 +17,11 @@ import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescript
 
 ---
 minimal: true
+title: React Aria
+description: Build adaptive, accessible, and robust components with React Aria.
 ---
 
-<header className="[--l:91%] [--c:0.11] dark:[--l:34%] dark:[--c:0.06]" style={{background: `linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)), radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)),  conic-gradient(from 30deg at 50% 60%, oklch(var(--l) var(--c) 220), oklch(min(var(--l), 86%) var(--c) 260), oklch(var(--l) var(--c) 300), oklch(var(--l) var(--c) 340), oklch(var(--l) var(--c) 0), oklch(var(--l) var(--c) 40), oklch(var(--l) var(--c) 60), oklch(var(--l) var(--c) 100), oklch(var(--l) var(--c) 140), oklch(var(--l) var(--c) 180), oklch(var(--l) var(--c) 220))`, backgroundRepeat: 'no-repeat'}}>
+<header className="header-background">
   <nav className="absolute top-4 left-4 right-4 flex justify-between gap-4">
     <a href="." className="inline-flex items-center text-lg gap-4 font-bold px-4 py-2.5 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 dark:text-white/80 ring-1 ring-black/5">
       <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" height="22">
@@ -57,7 +59,7 @@ minimal: true
     <p className="text-slate-800 dark:text-slate-300 text-center text-base md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
     <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
-      <a href="getting-started.html" className="bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition shadow-none hover:shadow-md">Get Started</a>
+      <a href="getting-started.html" className="bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition">Get Started</a>
       <a href="components.html" className="bg-white/50 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60">Explore components</a>
     </div>
 
@@ -481,16 +483,16 @@ import {I18n} from './home/I18n';
   <p>React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with built-in a DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the lower level Hook-based API. Mix and match as needed.</p>
   <LearnMoreLink href="advanced.html" className="text-green-700 dark:text-green-600 hover:bg-green-400/[15%]" />
 
- <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] sm:grid-cols-2 sm:auto-rows-[1rem] -mx-8 px-8 sm:px-12 sm:-mx-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask" id="customizable-carousel">
-  <Card className="row-end-[span_14]">
+ <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] lg:grid-cols-2 lg:auto-rows-[1rem] -mx-8 px-8 lg:px-12 lg:-mx-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask" id="customizable-carousel">
+  <Card className="lg:row-end-[span_13]">
     <CardTitle>Reuse styles.</CardTitle>
-    <CardDescription>React Aria's API is designed around composition, allowing you to share common components between patterns. For example, you can reuse the same Label, Popover, and ListBox components within a Select, ComboBox, and more.</CardDescription>
+    <CardDescription>React Aria's API is designed around composition, allowing you to share common components between patterns. For example, you can reuse your styled Label, Popover, and ListBox components within a Select, ComboBox, and more.</CardDescription>
 
-    <div className="relative flex-1 -mx-6 -mb-6 mt-8">
+    <div className="relative flex-1 -mx-6 -mb-6 mt-6 [&_.source]:px-6 [&_.source]:text-[15px] [&_.source]:leading-snug lg:[&_.source]:text-sm">
 
-<div className="highlight-tags [--delay:2.5s] h-full [&>*]:h-full [&_.source]:px-6">
+<div className="highlight-tags [--delay:2.5s] h-full [&>*]:h-full">
 
-```tsx format=false
+```tsx
 <Select>
   <Label>Permissions</Label>
   <Button>
@@ -508,9 +510,9 @@ import {I18n} from './home/I18n';
 ```
 
 </div>
-      <div className="absolute top-0 left-0 highlight-tags cross-fade [&_.source]:px-6">
+      <div className="absolute top-0 left-0 highlight-tags cross-fade">
 
-```tsx format=false
+```tsx
 <ComboBox>
   <Label>Permissions</Label>
   <Group>
@@ -531,11 +533,11 @@ import {I18n} from './home/I18n';
     </div>
   </Card>
 
-  <Card className="row-end-[span_18]">
+  <Card className="lg:row-end-[span_17]">
     <CardTitle>Build custom patterns.</CardTitle>
     <CardDescription>Use the exported contexts for each component to build your own custom patterns with compositional APIs just like React Aria's built-in components.</CardDescription>
 
-    <div className="flex-1 -mx-6 -mb-6 mt-8 [&_.source]:pl-6 [&_.source]:text-[13px]">
+    <div className="flex-1 -mx-6 -mb-6 mt-6 [&>*]:h-full [&_.source]:pl-6 lg:[&_.source]:text-[13px]">
 
 ```tsx format=false
 // A Stepper component with customizable buttons.
@@ -566,42 +568,75 @@ function Stepper({children}) {
     </div>
   </Card>
 
-  <Card className="row-end-[span_21]">
-    <CardTitle>Consume contexts.</CardTitle>
-    <CardDescription>Replace or extend any component with new features using contexts.</CardDescription>
+  <Card className="lg:row-end-[span_22]">
+    <CardTitle>Customize component parts.</CardTitle>
+    <CardDescription>React Aria's contexts let you extend components with new features, or even replace individual parts with totally custom implementations.</CardDescription>
 
-    <div className="flex-1 -mx-6 -mb-6 mt-8 [&_.source]:px-6 [&_.source]:text-[13px]">
+    <div className="flex-1 -mx-6 -mb-6 mt-6 max-h-[30rem] lg:max-h-none [--code-padding:theme(spacing.6)] [&_.source]:px-6 lg:[&_.source]:text-[13px] code-mask overflow-hidden">
 
-```tsx
-const MyCustomLabel = React.forwardRef((props, ref) => {
-  // Merge the local props and ref with the ones provided via context.
-  [props, ref] = useContextProps(props, ref, LabelContext);
+```tsx format=false
+// Add a clear button to a DatePicker.
+function DatePickerClearButton() {
+  /*- begin highlight -*/
+  let state = useContext(DatePickerStateContext);
+  /*- end highlight -*/
 
-  // ... your existing Label component
-  return <label {...props} ref={ref} />;
-});
+  return (
+    <Button
+      slot={null}
+      aria-label="Clear"
+      onPress={() => state.setValue(null)}>
+      ✕
+    </Button>
+  );
+}
 
-<TextField>
-  <MyCustomLabel>Name</MyCustomLabel>
-  <Input />
-</TextField>
+<DatePicker>
+  <Label>Date</Label>
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    {/*- begin highlight -*/}
+    <DatePickerClearButton />
+    {/*- end highlight -*/}
+    <Button>▼</Button>
+  </Group>
+  <Popover>
+    <Dialog>
+      <Calendar>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </Calendar>
+    </Dialog>
+  </Popover>
+</DatePicker>
 ```
 
     </div>
   </Card>
 
-  <Card className="row-end-[span_17]">
-    <CardTitle>Go deep with hooks.</CardTitle>
-    <CardDescription>Get complete control over rendering and behavior with hooks.</CardDescription>
+  <Card className="lg:row-end-[span_18]">
+    <CardTitle>Get complete control with hooks.</CardTitle>
+    <CardDescription>React Aria's low-level Hook-based API lets you intercept events, override behavior, customize DOM elements, and much more. Mix and match components and hooks as needed.</CardDescription>
 
-    <div className="flex-1 -mx-6 -mb-6 mt-8 [&_.source]:px-6 [&_.source]:text-[13px]">
+    <div className="flex-1 -mx-6 -mb-6 mt-6 [&>*]:h-full [--code-padding:theme(spacing.6)] [&_.source]:px-6 lg:[&_.source]:text-[13px]">
 
-```tsx
+```tsx format=false
 import {useCalendarGrid} from 'react-aria';
 
+// Custom calendar that displays one week at a time.
 function WeekCalendarGrid(props) {
   let state = useContext(CalendarStateContext);
+  /*- begin highlight -*/
   let {gridProps} = useCalendarGrid(props, state);
+  /*- end highlight -*/
 
   return (
     <table {...gridProps}>
@@ -618,7 +653,9 @@ function WeekCalendarGrid(props) {
 
 <Calendar visibleDuration={{weeks: 1}}>
   <Button slot="previous">◀</Button>
+  {/*- begin highlight -*/}
   <WeekCalendarGrid />
+  {/*- end highlight -*/}
   <Button slot="next">▶</Button>
 </Calendar>
 ```
@@ -630,7 +667,7 @@ function WeekCalendarGrid(props) {
 ```tsx snippet
 import {Pagination} from './home/Pagination';
 
-<Pagination carousel={document.getElementById('customizable-carousel')} className="max-w-3xl sm:-mx-12" />
+<Pagination carousel={document.getElementById('customizable-carousel')} className="max-w-3xl lg:hidden" />
 ```
 
 </section>

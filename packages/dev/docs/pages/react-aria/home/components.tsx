@@ -22,7 +22,7 @@ export function FileTab({children, className = ''}) {
 }
 
 export function AddressBar({children}) {
-  return <div className="bg-gray-400/40 dark:bg-zinc-500/40 px-5 md:px-10 py-1 mx-auto mb-2.5 rounded-md text-slate-500 dark:text-slate-300 text-xs">{children}</div>;
+  return <div className="bg-gray-400/40 dark:bg-zinc-500/40 px-5 md:px-10 py-1 mx-auto mb-2.5 rounded-md text-slate-600 dark:text-slate-300 text-xs">{children}</div>;
 }
 
 export function GradientText({children}) {
@@ -38,7 +38,7 @@ export function CardTitle({children}) {
 }
 
 export function CardDescription({children}) {
-  return <p className="text-gray-600 dark:text-gray-400 [text-wrap:balance]">{children}</p>;
+  return <p className="text-gray-600 dark:text-gray-400 text-base [text-wrap:pretty]">{children}</p>;
 }
 
 interface ArrowProps {

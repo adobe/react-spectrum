@@ -55,6 +55,26 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+.header-background {
+  @apply [--l:91%] [--c:0.11] dark:[--l:34%] dark:[--c:0.06];
+  background: linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
+    radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)),
+    conic-gradient(from 30deg at 50% 60%,
+      oklch(var(--l) var(--c) 220),
+      oklch(min(var(--l), 86%) var(--c) 260),
+      oklch(var(--l) var(--c) 300),
+      oklch(var(--l) var(--c) 340),
+      oklch(var(--l) var(--c) 0),
+      oklch(var(--l) var(--c) 40),
+      oklch(var(--l) var(--c) 60),
+      oklch(var(--l) var(--c) 100),
+      oklch(var(--l) var(--c) 140),
+      oklch(var(--l) var(--c) 180),
+      oklch(var(--l) var(--c) 220)
+    );
+  background-repeat: no-repeat;
+}
+
 main > section > h2 {
   @apply text-4xl md:text-5xl font-semibold mb-4;
 
@@ -74,10 +94,10 @@ main > section > h2 {
 
 :root {
   --hljs-color: theme(colors.gray.800);
-  --hljs-background: theme(colors.gray.50);
+  --hljs-background: transparent;
   --hljs-keyword-color: theme(colors.fuchsia.700);
-  --hljs-section-color: theme(colors.red.600);
-  --hljs-string-color: theme(colors.green.600);
+  --hljs-section-color: lch(from theme(colors.red.600) calc(l - 2%) c h);
+  --hljs-string-color: theme(colors.green.700);
   --hljs-literal-color: theme(colors.purple.700);
   --hljs-attribute-color: theme(colors.indigo.700);
   --hljs-class-color: theme(colors.cyan.600);
@@ -85,13 +105,13 @@ main > section > h2 {
   --hljs-variable-color: theme(colors.purple.700);
   --hljs-title-color: theme(colors.indigo.700);
   --hljs-comment-color:  theme(colors.gray.700);
-  --mark-background: rgba(20,115,230,0.1);
+  --mark-background: theme(colors.blue.400/10%);
+  --mark-border: theme(colors.blue.500);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --hljs-color: theme(colors.gray.300);
-    --hljs-background: theme(colors.zinc.800);
     --hljs-keyword-color: theme(colors.fuchsia.300);
     --hljs-section-color: theme(colors.red.400);
     --hljs-string-color: theme(colors.green.400);
@@ -102,17 +122,29 @@ main > section > h2 {
     --hljs-variable-color: theme(colors.purple.400);
     --hljs-title-color: theme(colors.indigo.400);
     --hljs-comment-color:  theme(colors.gray.400);
-    --mark-background: rgba(20,115,230,0.1);
+    --mark-border: theme(colors.blue.400);
   }
 }
 
+pre {
+  @apply overflow-auto bg-gray-50 dark:bg-zinc-800;
+}
+
 pre .source {
-  @apply p-5 text-xs sm:text-sm min-h-[250px] overflow-auto h-full;
+  @apply p-5 text-xs sm:text-sm min-h-[250px] h-full min-w-fit;
   font-family: source-code-pro, 'Source Code Pro', Monaco, monospace;
 }
 
-pre.medium, pre.small {
-  display: none;
+pre.large {
+  @apply hidden lg:block;
+}
+
+pre.medium {
+  @apply hidden sm:block lg:hidden;
+}
+
+pre.small {
+  @apply sm:hidden
 }
 
 .card-shadow {
@@ -297,6 +329,10 @@ pre.medium, pre.small {
     @apply rounded [--highlight:theme(colors.red.600/15%)] dark:[--highlight:theme(colors.red.600/20%)];
     animation: highlight 5s infinite var(--delay, 0s);
   }
+}
+
+.code-mask {
+  mask: linear-gradient(to bottom, white 0% 70%, transparent);
 }
 
 .green-gradient-background {
