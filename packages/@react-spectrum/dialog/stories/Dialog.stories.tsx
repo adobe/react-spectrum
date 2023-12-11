@@ -435,7 +435,8 @@ function renderWithDividerInContent({width = 'auto', ...props}) {
 
 function renderHorizontalScrolling({width = 'auto', ...props}) {
   return (
-    <div style={{display: 'flex', width, margin: '100px 0'}}>
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', width}}>
+      {fiveParagraphs()}
       <DialogTrigger defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
@@ -443,7 +444,7 @@ function renderHorizontalScrolling({width = 'auto', ...props}) {
             <Heading>The Heading</Heading>
             <Header>The Header</Header>
             <Divider />
-            <Content UNSAFE_style={{overflow: 'auto'}}>
+            <Content UNSAFE_style={{overflow: 'auto', touchAction: 'pan-x'}}>
               <TextField label="Top textfield" minWidth="100vw" />
               <p>scroll this content horizontally</p>
             </Content>
@@ -454,6 +455,7 @@ function renderHorizontalScrolling({width = 'auto', ...props}) {
           </Dialog>
         )}
       </DialogTrigger>
+      {fiveParagraphs()}
     </div>
   );
 }

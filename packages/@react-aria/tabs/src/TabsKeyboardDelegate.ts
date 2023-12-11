@@ -47,7 +47,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
 
   getFirstKey() {
     let key = this.collection.getFirstKey();
-    if (this.disabledKeys.has(key)) {
+    if (key && this.disabledKeys.has(key)) {
       key = this.getNextKey(key);
     }
     return key;
@@ -55,7 +55,7 @@ export class TabsKeyboardDelegate<T> implements KeyboardDelegate {
 
   getLastKey() {
     let key = this.collection.getLastKey();
-    if (this.disabledKeys.has(key)) {
+    if (key && this.disabledKeys.has(key)) {
       key = this.getPreviousKey(key);
     }
     return key;

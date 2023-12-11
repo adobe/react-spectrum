@@ -92,16 +92,24 @@ for (let pkg of packagePaths) {
     }
   }
 
-  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons')) {
+  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme')) {
     softAssert(json.main, `${pkg} did not have "main"`);
     softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
     softAssert(json.module, `${pkg} did not have "module"`);
     softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
-    softAssert(json.exports.require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports.require}"`);
-    softAssert(json.exports.import.endsWith('.mjs'), `${pkg}#exports#import should be a .mjs file but got "${json.exports.import}"`);
+    if (json.exports['.']) {
+      for (let key in json.exports) {
+        softAssert(json.exports[key].require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports[key].require}"`);
+        softAssert(json.exports[key].import.endsWith('.mjs'), `${pkg}#exports#import should be a .mjs file but got "${json.exports[key].import}"`);
+      }
+    } else {
+      softAssert(json.exports.require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports.require}"`);
+      softAssert(json.exports.import.endsWith('.mjs'), `${pkg}#exports#import should be a .mjs file but got "${json.exports.import}"`);
+    }
     softAssert(json.source, `${pkg} did not have "source"`);
     softAssert.equal(json.source, 'src/index.ts', `${pkg} did not match "src/index.ts"`);
-    softAssert.deepEqual(json.files, ['dist', 'src'], `${pkg} did not match "files"`);
+    softAssert(json.files.includes('dist'), `${pkg} files does not include dist`);
+    softAssert(json.files.includes('src'), `${pkg} files does not include src`);
     if (pkg.includes('@react-spectrum') || pkg.includes('@react-aria/visually-hidden')) {
       softAssert.deepEqual(json.sideEffects, ['*.css'], `${pkg} is missing sideEffects: [ '*.css' ]`);
     } else {
@@ -140,7 +148,7 @@ for (let pkg of packagePaths) {
     softAssert(fs.existsSync(path.join(pkg, '..', 'src', 'index.ts')), `${pkg} is missing a src/index.ts`);
   }
 
-  if (!pkg.includes('@spectrum-icons')) {
+  if (!pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme')) {
     softAssert(json.types, `${pkg} did not have "types"`);
     softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
   }

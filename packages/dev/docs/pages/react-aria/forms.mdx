@@ -14,14 +14,15 @@ import {Layout} from '@react-spectrum/docs';
 export default Layout;
 
 ```css hidden
+@import '@react-aria/example-theme';
 @import 'react-aria-components/docs/TextField.mdx';
 @import 'react-aria-components/docs/Button.mdx';
 ```
 
 ---
-category: Concepts
+category: Guides
 keywords: [forms, validation, frameworks, aria, next.js, remix, react server actions]
-order: 6
+order: 1
 ---
 
 # Forms
@@ -486,14 +487,14 @@ function App() {
             value={value}
             onChange={onChange}
             onBlur={onBlur}
-            ref={ref}
             isRequired
             // Let React Hook Form handle validation instead of the browser.
             validationBehavior="aria"
             isInvalid={invalid}
           >
             <Label>Name</Label>
-            <Input />
+            // Assign React Hook Form ref to Input so it can focus the Input after validation.
+            <Input ref={ref}/>
             <FieldError>{error?.message}</FieldError>
           </TextField>
         )}

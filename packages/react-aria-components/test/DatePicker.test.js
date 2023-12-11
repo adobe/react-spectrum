@@ -81,6 +81,7 @@ describe('DatePicker', () => {
     expect(dialog).toHaveAttribute('aria-labelledby');
     expect(dialog.getAttribute('aria-labelledby')).toContain(label.id);
     expect(dialog.closest('.react-aria-Popover')).toBeInTheDocument();
+    expect(dialog.closest('.react-aria-Popover')).toHaveAttribute('data-trigger', 'DatePicker');
 
     expect(getByRole('grid')).toHaveClass('react-aria-CalendarGrid');
   });
@@ -254,5 +255,20 @@ describe('DatePicker', () => {
 
     await user.click(selected.nextSibling.children[0]);
     expect(dialog).toBeInTheDocument();
+  });
+
+  it('should disable button and date input when DatePicker is disabled', () => {
+    let {getByRole} = render(<TestDatePicker isDisabled />);
+
+    let button = getByRole('button');
+    expect(button).toBeDisabled();
+
+    let group = getByRole('group');
+    expect(group).toHaveAttribute('aria-disabled', 'true');
+
+    let spinbuttons = within(group).getAllByRole('spinbutton');
+    for (let spinbutton of spinbuttons) {
+      expect(spinbutton).toHaveAttribute('aria-disabled', 'true');
+    }
   });
 });

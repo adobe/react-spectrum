@@ -33,8 +33,12 @@
       {
         "name": "typescript-strict-plugin",
         "paths": [
+          "./packages/@internationalized",
           "./packages/@react-aria/a",
           "./packages/@react-aria/b",
+          "./packages/@react-aria/checkbox",
+          "./packages/@react-aria/l",
+          "./packages/@react-aria/meter",
           "./packages/@react-aria/color",
           "./packages/@react-aria/e",
           "./packages/@react-aria/f",
@@ -44,6 +48,12 @@
           "./packages/@react-aria/k",
           "./packages/@react-aria/l",
           "./packages/@react-aria/progress",
+          "./packages/@react-aria/radio",
+          "./packages/@react-aria/searchfield",
+          "./packages/@react-aria/separator",
+          "./packages/@react-aria/sidenav",
+          "./packages/@react-aria/tabs",
+          "./packages/@react-aria/toggle",
           "./packages/@react-aria/q",
           "./packages/@react-aria/searchfield",
           "./packages/@react-aria/w",
@@ -68,6 +78,7 @@
           "./packages/@react-spectrum/searchwithin",
           "./packages/@react-spectrum/radio",
           "./packages/@react-spectrum/statuslight",
+          "./packages/@react-spectrum/steplist",
           "./packages/@react-spectrum/switch",
           "./packages/@react-spectrum/tag",
           "./packages/@react-spectrum/text",
@@ -83,12 +94,13 @@
           "./packages/@react-types/divider",
           "./packages/@react-types/illustratedmessage",
           "./packages/@react-types/image",
-          "./packages/@react-types/link",
+          "./packages/@react-types/l",
           "./packages/@react-types/meter",
           "./packages/@react-types/progress",
           "./packages/@react-types/searchfield",
           "./packages/@react-types/shared",
           "./packages/@react-types/statuslight",
+          "./packages/@react-types/tabs",
           "./packages/@react-types/text",
           "./packages/@react-types/tooltip",
           "./packages/@react-types/view",
@@ -102,6 +114,7 @@
     "packages"
   ],
   "exclude": [
-    "**/node_modules"
+    "**/node_modules",
+    "packages/dev/optimize-locales-plugin"
   ]
 }

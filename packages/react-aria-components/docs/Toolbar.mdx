@@ -73,8 +73,9 @@ import {Toolbar, Button, ToggleButton, Separator, Checkbox, Group} from 'react-a
 ```
 
 ```css
+@import "@react-aria/example-theme";
+
 .react-aria-Toolbar {
-  --separator-color: var(--spectrum-global-color-gray-500);
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
@@ -92,10 +93,9 @@ import {Toolbar, Button, ToggleButton, Separator, Checkbox, Group} from 'react-a
   }
 }
 
-
 .react-aria-Separator {
   align-self: stretch;
-  background-color: var(--separator-color);
+  background-color: var(--border-color);
 
   &[aria-orientation=vertical] {
     width: 1px;

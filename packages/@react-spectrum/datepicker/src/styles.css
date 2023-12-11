@@ -122,7 +122,7 @@
 }
 
 .react-spectrum-DatePicker-cell.is-placeholder {
-  color: var(--react-spectrum-datepicker-placeholder-color);
+  color: var(--spectrum-gray-600);
 
   .react-spectrum-DatePicker-placeholder {
     visibility: visible;

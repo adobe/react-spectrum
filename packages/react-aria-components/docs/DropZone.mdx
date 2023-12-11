@@ -64,17 +64,13 @@ function Example() {
 ```
 
 ```css
-.react-aria-DropZone {
-  --border-color: var(--spectrum-alias-border-color);
-  --border-color-pressed: var(--spectrum-alias-border-color-focus);
-  --background-color: var(--spectrum-global-color-gray-50);
-  --background-color-pressed: var(--spectrum-global-color-gray-100);
-  --text-color: var(--spectrum-alias-text-color);
-  --focus-ring-color: var(--spectrum-alias-border-color-focus);
+@import "@react-aria/example-theme";
 
+.react-aria-DropZone {
   color: var(--text-color);
-  background: var(--background-color);
+  background: var(--overlay-background);
   border: 1px solid var(--border-color);
+  forced-color-adjust: none;
   border-radius: 4px;
   appearance: none;
   vertical-align: middle;
@@ -86,27 +82,14 @@ function Example() {
   width: 25%;
   display: inline-block;
 
+  &[data-focus-visible],
   &[data-drop-target] {
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
-    background: var(--background-color-pressed);
-    border-color: var(--border-color-pressed);
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: -1px;
   }
 
-  &[data-focus-visible] {
-    border-color: var(--focus-ring-color);
-    box-shadow: 0 0 0 1px var(--focus-ring-color);
-  }
-}
-
-@media (forced-colors: active) {
-  .react-aria-DropZone {
-    forced-color-adjust: none;
-    --border-color: ButtonBorder;
-    --border-color-drop-target: ButtonBorder;
-    --background-color: ButtonFace;
-    --background-color-pressed: ButtonFace;
-    --text-color: ButtonText;
-    --focus-ring-color: Highlight;
+  &[data-drop-target] {
+    background: var(--highlight-overlay);
   }
 }
 ```

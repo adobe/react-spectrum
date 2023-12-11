@@ -394,10 +394,11 @@ function Nav({currentPageName, pages}) {
 
   let sections = [];
   if (currentPageName.startsWith('react-aria') && ENABLE_PAGE_TYPES) {
-    let {Introduction, Concepts, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
+    let {Introduction, Concepts, Guides, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
     let interactions = {...pagesByType.interaction, Interactions, Focus};
     let utilities = {Internationalization, 'Server Side Rendering': ssr, Utilities};
-    sections.push({pages: {Introduction, Concepts}});
+    hooks = {...hooks, ...pagesByType.hook};
+    sections.push({pages: {Introduction, Concepts, Guides}});
     sections.push({
       title: 'Components',
       pages: pagesByType.component,
