@@ -650,6 +650,28 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo (focused)');
   });
 
+  it('should support updating columns', () => {
+    let tree = render(<DynamicTable tableHeaderProps={{columns}} tableBodyProps={{dependencies: [columns]}} rowProps={{columns}} />);
+    let headers = tree.getAllByRole('columnheader');
+    expect(headers).toHaveLength(3);
+
+    let newColumns = [columns[0], columns[2]];
+    tree.rerender(<DynamicTable tableHeaderProps={{columns: newColumns}} tableBodyProps={{dependencies: [newColumns]}} rowProps={{columns: newColumns}} />);
+
+    headers = tree.getAllByRole('columnheader');
+    expect(headers).toHaveLength(2);
+  });
+
+  it('should support updating and reordering a row at the same time', () => {
+    let tree = render(<DynamicTable tableBodyProps={{items: rows}} />);
+    let rowHeaders = tree.getAllByRole('rowheader');
+    expect(rowHeaders.map(r => r.textContent)).toEqual(['Games', 'Program Files', 'bootmgr', 'log.txt']);
+
+    tree.rerender(<DynamicTable tableBodyProps={{items: [rows[1], {...rows[0], name: 'XYZ'}, ...rows.slice(2)]}} />);
+    rowHeaders = tree.getAllByRole('rowheader');
+    expect(rowHeaders.map(r => r.textContent)).toEqual(['Program Files', 'XYZ', 'bootmgr', 'log.txt']);
+  });
+
   it('should support onScroll', () => {
     let onScroll = jest.fn();
     let {getByRole} = renderTable({tableProps: {onScroll}});

@@ -453,6 +453,31 @@ describe('RadioGroup', () => {
     expect(group).not.toHaveAttribute('data-invalid');
   });
 
+  it('should support focus events', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+
+    let {getAllByRole} = renderGroup({onBlur, onFocus, onFocusChange});
+    let radio = getAllByRole('radio')[0];
+
+    await user.tab();
+    expect(document.activeElement).toBe(radio);
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+
+    await user.keyboard('[ArrowRight]');
+    expect(onBlur).toHaveBeenCalledTimes(0);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+
+    await user.tab();
+    expect(onBlur).toHaveBeenCalledTimes(1);
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);
+  });
+
   it('should support refs', () => {
     let groupRef = React.createRef();
     let radioRef = React.createRef();
