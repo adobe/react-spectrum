@@ -1,5 +1,5 @@
-import React, {ReactNode} from 'react';
 import {ArrowRight} from 'lucide-react';
+import React, {HTMLAttributes, ReactNode, RefObject} from 'react';
 
 export function Window({children, className = '', isBackground = false, toolbar}) {
   return (
@@ -49,7 +49,7 @@ interface ArrowProps {
   x2?: number,
   points?: string,
   y: number,
-  marker?: 'markerStart' | 'markerEnd'
+  marker?: 'markerStart' | 'markerEnd' | 'none'
 }
 
 export function Arrow({href, children, textX, x1, x2, points, y, marker = 'markerEnd'}: ArrowProps) {
@@ -65,7 +65,7 @@ export function Arrow({href, children, textX, x1, x2, points, y, marker = 'marke
   );
 }
 
-export const Finger = React.forwardRef((props, ref) => {
+export const Finger = React.forwardRef((props: HTMLAttributes<HTMLDivElement>, ref: RefObject<HTMLDivElement>) => {
   return <div ref={ref} className="z-10 pointer-events-none absolute w-10 h-10 rounded-full opacity-0 border border-black/80 bg-black/80 dark:border-white/80 dark:bg-white/80 dark:mix-blend-difference" {...props} />;
 });
 

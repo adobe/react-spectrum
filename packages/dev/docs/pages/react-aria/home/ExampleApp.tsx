@@ -1,39 +1,28 @@
-import { ReactElement, ReactNode, UIEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Select, SelectItem } from "tailwind-starter/Select";
-import { ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, TooltipTrigger } from "react-aria-components";
-import { Cell, Column, Row, TableHeader } from "tailwind-starter/Table";
-import { SearchField } from "tailwind-starter/SearchField";
-import { Button } from "tailwind-starter/Button";
-import { CloudSun, Dessert, Droplet, Droplets, FilterIcon, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon } from "lucide-react";
-import { Menu, MenuItem } from "tailwind-starter/Menu";
-import { Popover } from "tailwind-starter/Popover";
-import { Tooltip } from "tailwind-starter/Tooltip";
-import {useFilter, useCollator} from 'react-aria';
-import { Checkbox } from "tailwind-starter/Checkbox";
-import plants from './plants.json';
-import { TagGroup, Tag } from "tailwind-starter/TagGroup";
-import { Modal } from "tailwind-starter/Modal";
-import { AlertDialog } from "tailwind-starter/AlertDialog";
-import { TextField } from "tailwind-starter/TextField";
-import { DatePicker } from "tailwind-starter/DatePicker";
-import { ComboBox, ComboBoxItem } from "tailwind-starter/ComboBox";
-import { getLocalTimeZone, today } from "@internationalized/date";
-import {useMediaQuery} from '@react-spectrum/utils';
-import { GridList, GridListItem } from "tailwind-starter/GridList";
+import {AlertDialog} from 'tailwind-starter/AlertDialog';
 import {Arrow} from './components';
-import React from 'react';
+import {Button} from 'tailwind-starter/Button';
+import {Cell, Column, Row, TableHeader} from 'tailwind-starter/Table';
+import {Checkbox} from 'tailwind-starter/Checkbox';
+import {CloudSun, Dessert, Droplet, Droplets, FilterIcon, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon} from 'lucide-react';
+import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, TooltipTrigger} from 'react-aria-components';
+import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
+import {DatePicker} from 'tailwind-starter/DatePicker';
+import {getLocalTimeZone, today} from '@internationalized/date';
+import {GridList, GridListItem} from 'tailwind-starter/GridList';
+import {Menu, MenuItem} from 'tailwind-starter/Menu';
+import {Modal} from 'tailwind-starter/Modal';
+import plants from './plants.json';
+import {Popover} from 'tailwind-starter/Popover';
+import React, {ReactElement, UIEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {SearchField} from 'tailwind-starter/SearchField';
+import {Select, SelectItem} from 'tailwind-starter/Select';
+import {Tag, TagGroup} from 'tailwind-starter/TagGroup';
+import {TextField} from 'tailwind-starter/TextField';
+import {Tooltip} from 'tailwind-starter/Tooltip';
+import {useCollator, useFilter} from 'react-aria';
+import {useMediaQuery} from '@react-spectrum/utils';
 
 type Plant = typeof plants[0] & {isFavorite: boolean};
-
-// const meta: Meta<typeof ExampleApp> = {
-//   component: ExampleApp,
-//   parameters: {
-//     layout: 'centered'
-//   },
-//   tags: ['autodocs'],
-// };
-
-// export default meta;
 
 const allColumns: ColumnProps[] = [
   {id: 'favorite', width: 40, minWidth: 40},
@@ -272,7 +261,7 @@ export function ExampleApp() {
                       return (
                         <Cell textValue={item.common_name}>
                           <div className="grid grid-cols-[40px_1fr] gap-x-2">
-                            <img src={item.default_image?.thumbnail} className="inline rounded row-span-2 object-contain h-[40px]" />
+                            <img alt="" src={item.default_image?.thumbnail} className="inline rounded row-span-2 object-contain h-[40px]" />
                             <span className="truncate capitalize">{item.common_name}</span>
                             <span className="truncate text-xs text-gray-600 dark:text-zinc-400">{item.scientific_name}</span>
                           </div>
@@ -331,12 +320,12 @@ function Label({color, icon, children}: {color: keyof typeof labelStyles, icon: 
 
 const cycleIcons: Record<string, ReactElement> = {
   'Perennial': <RefreshCw className="w-4 h-4 flex-shrink-0" />,
-  'Herbaceous Perennial': <RefreshCw className="w-4 h-4 flex-shrink-0" />,
+  'Herbaceous Perennial': <RefreshCw className="w-4 h-4 flex-shrink-0" />
   // 'Annual':
 };
 
 function CycleLabel({cycle}: {cycle: string}) {
-  return <Label color="green" icon={cycleIcons[cycle]}>{cycle}</Label>
+  return <Label color="green" icon={cycleIcons[cycle]}>{cycle}</Label>;
 }
 
 const sunIcons: Record<string, ReactElement> = {
@@ -349,10 +338,10 @@ const sunColors: Record<string, keyof typeof labelStyles> = {
   'full sun': 'yellow',
   'part sun': 'yellow',
   'part shade': 'gray'
-}
+};
 
 function SunLabel({sun}: {sun: string}) {
-  return <Label color={sunColors[sun]} icon={sunIcons[sun]}>{sun}</Label>
+  return <Label color={sunColors[sun]} icon={sunIcons[sun]}>{sun}</Label>;
 }
 
 function getSunlight(item: Plant) {
@@ -362,24 +351,24 @@ function getSunlight(item: Plant) {
 const wateringIcons: Record<string, ReactElement> = {
   'Frequent': <Droplets className="w-4 h-4 flex-shrink-0" />,
   'Average': <Droplet className="w-4 h-4 flex-shrink-0" />,
-  'Minimum': <Dessert className="w-4 h-4 flex-shrink-0" />,
+  'Minimum': <Dessert className="w-4 h-4 flex-shrink-0" />
 };
 
 const wateringColors: Record<string, keyof typeof labelStyles> = {
   'Frequent': 'blue',
   'Average': 'blue',
   'Minimum': 'gray'
-}
+};
 
 function WateringLabel({watering}: {watering: string}) {
-  return <Label color={wateringColors[watering]} icon={wateringIcons[watering]}>{watering}</Label>
+  return <Label color={wateringColors[watering]} icon={wateringIcons[watering]}>{watering}</Label>;
 }
 
 function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant) => void}) {
   let [droppedImage, setDroppedImage] = useState(item?.default_image?.thumbnail);
   return (
     <Dialog className="outline-none relative">
-      {({ close }) => (
+      {({close}) => (
         <>
           <Heading
             slot="title"
@@ -410,10 +399,8 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                 }}
                 className="w-24 sm:w-32 p-2 flex items-center justify-center flex-shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 focus-visible:border-blue-600 focus-visible:border-solid drop-target:border-blue-600 drop-target:border-solid drop-target:bg-blue-100 drop-target:text-blue-600">
                 {droppedImage
-                  ? <img src={droppedImage} className="w-full h-full object-contain aspect-square" />
-                  : <Text slot="label" className="italic text-sm text-center">
-                      Drop or paste image here
-                    </Text>
+                  ? <img alt="" src={droppedImage} className="w-full h-full object-contain aspect-square" />
+                  : <Text slot="label" className="italic text-sm text-center">Drop or paste image here</Text>
                 }
                 <input type="hidden" name="image" value={droppedImage} />
               </DropZone>
@@ -489,16 +476,19 @@ function PlantModal(props: ModalOverlayProps) {
   return (
     <ModalOverlay
       {...props}
-      className={({ isEntering, isExiting }) => `
+      className={({isEntering, isExiting}) => `
       fixed top-0 left-0 w-full h-[--visual-viewport-height] isolate z-20 bg-black/[15%] flex items-center justify-center p-4 text-center backdrop-blur-lg
       ${isEntering ? 'animate-in fade-in duration-200 ease-out' : ''}
       ${isExiting ? 'animate-out fade-out duration-200 ease-in' : ''}
     `}>
-      {({isEntering, isExiting}) => <>
+      {({isEntering, isExiting}) => (<>
         {!isResized &&
-          <div data-react-aria-top-layer="true" className={`fixed top-0 left-0 w-full h-[--visual-viewport-height] z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none
-            ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
-            ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}`}>
+          <div
+            data-react-aria-top-layer="true"
+            className={`fixed top-0 left-0 w-full h-[--visual-viewport-height] z-30 hidden sm:flex items-center justify-center pointer-events-none [filter:drop-shadow(0_0_3px_white)] dark:filter-none
+              ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
+              ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
+            `}>
             <svg viewBox="0 0 700 620" width={700} height={620}>
               <Arrow textX={52} x1={88} x2={130} y={50} href="Dialog.html">Dialog</Arrow>
               <Arrow textX={34} x1={88} x2={150} y={150} href="DropZone.html">DropZone</Arrow>
@@ -513,13 +503,12 @@ function PlantModal(props: ModalOverlayProps) {
         <RACModal
           {...props}
           ref={ref}
-          className={({ isEntering, isExiting }) => `
+          className={({isEntering, isExiting}) => `
           w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/90 backdrop-blur-2xl backdrop-saturate-200 p-6 text-left align-middle shadow-2xl ring-1 ring-black/10 dark:ring-white/10
           ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
           ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
-        `}
-        />
-      </>}
+        `} />
+      </>)}
     </ModalOverlay>
   );
 }

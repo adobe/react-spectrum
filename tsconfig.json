@@ -122,7 +122,10 @@
           "./packages/react-aria-components"
         ]
       }
-    ]
+    ],
+    "paths": {
+      "tailwind-starter/*": ["./starters/tailwind/src/*"]
+    }
   },
   "include": [
     "packages"

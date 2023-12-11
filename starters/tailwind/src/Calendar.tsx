@@ -15,8 +15,7 @@ import {
 import { Button } from './Button';
 import React from 'react';
 
-export interface CalendarProps<T extends DateValue>
-  extends AriaCalendarProps<T> {
+export interface CalendarProps<T extends DateValue> extends AriaCalendarProps<T> {
   errorMessage?: string;
 }
 
