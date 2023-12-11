@@ -15,9 +15,9 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
+import {chain, focusWithoutScrolling, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, isVirtualPointerEvent, mergeProps, openLink, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {disableTextSelection, restoreTextSelection} from './textSelection';
 import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents} from '@react-types/shared';
-import {focusWithoutScrolling, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, isVirtualPointerEvent, mergeProps, openLink, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {PressResponderContext} from './context';
 import {RefObject, useContext, useEffect, useMemo, useRef, useState} from 'react';
 
@@ -271,7 +271,16 @@ export function usePress(props: PressHookProps): PressResult {
 
             // Focus may move before the key up event, so register the event on the document
             // instead of the same element where the key down event occurred.
-            addGlobalListener(getOwnerDocument(e.currentTarget), 'keyup', onKeyUp, true);
+
+            let originalTarget = e.currentTarget;
+            let pressUp = (e) => {
+              if (isValidKeyboardEvent(e, originalTarget) && !e.repeat && originalTarget.contains(e.target as Element) && state.target) {
+                triggerPressUp(createEvent(state.target, e), 'keyboard');
+              }
+            };
+
+            addGlobalListener(getOwnerDocument(e.currentTarget), 'keyup', chain(pressUp, onKeyUp), true);
+            // addGlobalListener(getOwnerDocument(e.currentTarget), 'keyup', () => console.log('shouldnt reach'), false);
           }
 
           if (shouldStopPropagation) {
@@ -290,11 +299,6 @@ export function usePress(props: PressHookProps): PressResult {
           }
         } else if (e.key === 'Meta') {
           state.metaKeyEvents = new Map();
-        }
-      },
-      onKeyUp(e) {
-        if (isValidKeyboardEvent(e.nativeEvent, e.currentTarget) && !e.repeat && e.currentTarget.contains(e.target as Element) && state.target) {
-          triggerPressUp(createEvent(state.target, e), 'keyboard');
         }
       },
       onClick(e) {
@@ -338,7 +342,11 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         let target = e.target as Element;
-        triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
+
+        let shouldStopPropagation = triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
+        if (shouldStopPropagation) {
+          state.target?.dispatchEvent(new KeyboardEvent('keyup', {...e, bubbles: false}));
+        }
         removeAllGlobalListeners();
 
         // If a link was triggered with a key other than Enter, open the URL ourselves.
