@@ -37,9 +37,9 @@ export function StepListItem<T>(props: SpectrumStepListItemProps<T>) {
   } = props;
   let {key} = item;
 
-  let ref = useRef();
+  let ref = useRef(null);
   let {direction} = useLocale();
-  let state = useContext(StepListContext);
+  let state = useContext(StepListContext)!;
   const isSelected = state.selectedKey === key;
   const isCompleted = state.isCompleted(key);
   const isItemDisabled = isDisabled || state.disabledKeys.has(key);
