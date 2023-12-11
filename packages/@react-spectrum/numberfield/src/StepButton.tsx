@@ -18,7 +18,7 @@ import {classNames, useFocusableRef} from '@react-spectrum/utils';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {ReactElement, RefObject} from 'react';
+import React, {ReactElement} from 'react';
 import Remove from '@spectrum-icons/workflow/Remove';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {useButton} from '@react-aria/button';
@@ -80,5 +80,5 @@ function StepButton(props: StepButtonProps, ref: FocusableRef<HTMLDivElement>) {
 /**
  * Buttons for NumberField.
  */
-let _StepButton = React.forwardRef(StepButton) as (props: StepButtonProps & {ref?: RefObject<HTMLDivElement>}) => ReactElement;
+let _StepButton = React.forwardRef(StepButton) as (props: StepButtonProps & {ref?: FocusableRef<HTMLDivElement>}) => ReactElement;
 export {_StepButton as StepButton};
