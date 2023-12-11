@@ -15,6 +15,7 @@ import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, Co
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, isTextDropItem, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import {MyListBoxItem} from './utils';
 import React, {useRef, useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
 import styles from '../example/index.css';
@@ -797,17 +798,6 @@ function MyColumn(props) {
         </div>
       )}
     </Column>
-  );
-}
-
-function MyListBoxItem(props) {
-  return (
-    <ListBoxItem
-      {...props}
-      className={({isFocused, isSelected}) => classNames(styles, 'item', {
-        focused: isFocused,
-        selected: isSelected
-      })} />
   );
 }
 

@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, ComboBox, Input, Label, ListBox, ListBoxItem, Popover} from 'react-aria-components';
-import {classNames} from '@react-spectrum/utils';
+import {Button, ComboBox, Input, Label, ListBox, Popover} from 'react-aria-components';
+import {MyListBoxItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
 
@@ -140,13 +140,3 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
   </ComboBox>
 );
 
-function MyListBoxItem(props) {
-  return (
-    <ListBoxItem
-      {...props}
-      className={({isFocused, isSelected}) => classNames(styles, 'item', {
-        focused: isFocused,
-        selected: isSelected
-      })} />
-  );
-}
