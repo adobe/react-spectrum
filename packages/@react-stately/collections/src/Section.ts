@@ -11,7 +11,7 @@
  */
 
 import {PartialNode} from './types';
-import React, {ReactElement} from 'react';
+import React, {JSX, ReactElement} from 'react';
 import {SectionProps} from '@react-types/shared';
 
 function Section<T>(props: SectionProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -55,5 +55,5 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
 };
 
 // We don't want getCollectionNode to show up in the type definition
-let _Section = Section as <T>(props: SectionProps<T>) => React.JSX.Element;
+let _Section = Section as <T>(props: SectionProps<T>) => JSX.Element;
 export {_Section as Section};

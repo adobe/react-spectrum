@@ -59,7 +59,7 @@ function DatePicker<T extends DateValue>(props: SpectrumDatePickerProps<T>, ref:
   let {isOpen, setOpen} = state;
   let {direction} = useLocale();
   let domRef = useFocusManagerRef(ref);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/datepicker');
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({
     within: true,

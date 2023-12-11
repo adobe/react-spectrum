@@ -1,0 +1,11 @@
+{
+  "name": "@react-aria/parcel-resolver-optimize-locales",
+  "version": "1.0.0",
+  "main": "LocalesResolver.js",
+  "engines": {
+    "parcel": "^2.10.2"
+  },
+  "dependencies": {
+    "@parcel/plugin": "^2.10.2"
+  }
+}

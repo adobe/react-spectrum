@@ -665,7 +665,7 @@ function formatCode(node, code, printWidth = 80, force = false) {
     return code.replace(/^\(?<WRAPPER>((?:.|\n)*)<\/WRAPPER>\)?;?\s*$/m, '$1');
   }
 
-  if (node.lang === 'css') {
+  if (node.lang === 'css' || node.lang === 'json') {
     return node.value;
   }
 
