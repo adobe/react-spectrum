@@ -184,7 +184,7 @@ export function I18n() {
       </div>
       <I18nProvider locale={selectedLocale.toString()}>
         <LangWrapper>
-          <Calendar value={date} onChange={setDate} />
+          <Calendar value={date} focusedValue={date} onChange={setDate} />
           <div className="flex flex-col gap-10">
             <NumberField label="Number" value={number} onChange={setNumber} minValue={0} formatOptions={{style: numberFormat, currency: 'USD', unit: 'inch', maximumFractionDigits: 2}} />
             <DateField label="Date and Time" value={date} onChange={setDate} />
