@@ -65,7 +65,7 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
     content: {UNSAFE_className: styles['spectrum-InLineAlert-content']}
   };
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/inlinealert');
   let Icon = null;
   let iconAlt: string;
   if (variant in ICONS) {

@@ -15,6 +15,7 @@ import {
   AriaValidationProps,
   DOMProps,
   FocusableProps,
+  FocusEvents,
   HelpTextProps,
   InputBase,
   InputDOMProps,
@@ -28,7 +29,7 @@ import {
 } from '@react-types/shared';
 import {ReactElement, ReactNode} from 'react';
 
-export interface RadioGroupProps extends ValueBase<string>, InputBase, InputDOMProps, Validation<string | null>, LabelableProps, HelpTextProps {
+export interface RadioGroupProps extends ValueBase<string>, InputBase, InputDOMProps, Validation<string | null>, LabelableProps, HelpTextProps, FocusEvents {
   /**
    * The axis the Radio Button(s) should align with.
    * @default 'vertical'

@@ -45,7 +45,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   props = useSlotProps(props, 'picker');
   props = useProviderProps(props);
   props = useFormProps(props);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/picker');
   let {
     autoComplete,
     isDisabled,
@@ -192,6 +192,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
           <SlotProvider
             slots={{
               icon: {UNSAFE_className: classNames(styles, 'spectrum-Icon'), size: 'S'},
+              avatar: {UNSAFE_className: classNames(styles, 'spectrum-Dropdown-avatar'), size: 'avatar-size-100'},
               text: {
                 ...valueProps,
                 UNSAFE_className: classNames(

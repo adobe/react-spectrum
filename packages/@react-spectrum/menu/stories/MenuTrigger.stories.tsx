@@ -103,7 +103,8 @@ let itemsWithFalsyId = [
 ];
 
 export default {
-  title: 'MenuTrigger'
+  title: 'MenuTrigger',
+  excludeStories: ['render']
 };
 
 export const DefaultMenuStatic = () =>
@@ -676,7 +677,7 @@ let customMenuItem = (item) => {
   );
 };
 
-function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
+export function render(menu, {isDisabled, ...props}: any = {}, menuProps = {}) {
   let menuRender = React.cloneElement(menu, menuProps);
   return (
     <div style={{display: 'flex', width: 'auto', margin: '250px 0'}}>
@@ -745,7 +746,7 @@ export let MenuItemUnavailable = {
       </ContextualHelpTrigger>
       <Item key="3">Three</Item>
       <ContextualHelpTrigger isUnavailable>
-        <Item key="bar">
+        <Item key="bar" textValue="Four">
           <Text>Four</Text>
           <Text slot={'description'}>Shut the door</Text>
         </Item>
@@ -813,7 +814,7 @@ function MenuWithUnavailableSometimes(props) {
             </ContextualHelpTrigger>
             <Item key="3">Three</Item>
             <ContextualHelpTrigger isUnavailable>
-              <Item key="bar">
+              <Item key="bar" textValue="Four">
                 <Text>Four</Text>
                 <Text slot={'description'}>Shut the door</Text>
               </Item>
@@ -827,6 +828,7 @@ function MenuWithUnavailableSometimes(props) {
           </Menu>
         </MenuTrigger>
       </div>
+      <input />
     </>
   );
 }
