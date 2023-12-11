@@ -256,11 +256,11 @@ export function parseDuration(value: string): Required<DateTimeDuration> {
     seconds: parseDurationGroup(match.groups?.seconds, isNegative, 0, 59)
   };
 
-  if (((duration.hours % 1) !== 0) && (duration.minutes || duration.seconds)) {
+  if (duration.hours !== undefined && ((duration.hours % 1) !== 0) && (duration.minutes || duration.seconds)) {
     throw new Error(`Invalid ISO 8601 Duration string: ${value} - only the smallest unit can be fractional`);
   }
 
-  if (((duration.minutes % 1) !== 0) && duration.seconds) {
+  if (duration.minutes !== undefined && ((duration.minutes % 1) !== 0) && duration.seconds) {
     throw new Error(`Invalid ISO 8601 Duration string: ${value} - only the smallest unit can be fractional`);
   }
 

@@ -148,22 +148,26 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     toggleMenu(focusStrategy);
   };
 
+  let updateLastCollection = useCallback(() => {
+    setLastCollection(showAllItems ? originalCollection : filteredCollection);
+  }, [showAllItems, originalCollection, filteredCollection]);
+
   // If menu is going to close, save the current collection so we can freeze the displayed collection when the
   // user clicks outside the popover to close the menu. Prevents the menu contents from updating as the menu closes.
   let toggleMenu = useCallback((focusStrategy) => {
     if (triggerState.isOpen) {
-      setLastCollection(filteredCollection);
+      updateLastCollection();
     }
 
     triggerState.toggle(focusStrategy);
-  }, [triggerState, filteredCollection]);
+  }, [triggerState, updateLastCollection]);
 
   let closeMenu = useCallback(() => {
     if (triggerState.isOpen) {
-      setLastCollection(filteredCollection);
+      updateLastCollection();
       triggerState.close();
     }
-  }, [triggerState, filteredCollection]);
+  }, [triggerState, updateLastCollection]);
 
   let [lastValue, setLastValue] = useState(inputValue);
   let resetInputValue = () => {

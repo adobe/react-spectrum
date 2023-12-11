@@ -4,7 +4,7 @@ import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import {ContextValue, defaultSlot, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, defaultSlot, DOMProps, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
@@ -12,7 +12,7 @@ import {filterDOMProps, useLayoutEffect, useObjectRef, useResizeObserver} from '
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T> {
@@ -190,7 +190,7 @@ interface ResizableTableContainerContextValue {
 
 const ResizableTableContainerContext = createContext<ResizableTableContainerContextValue | null>(null);
 
-export interface ResizableTableContainerProps extends DOMProps {
+export interface ResizableTableContainerProps extends DOMProps, ScrollableProps<HTMLDivElement> {
   /**
    * Handler that is called when a user starts a column resize.
    */
@@ -235,7 +235,8 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
       {...filterDOMProps(props as any)}
       ref={objectRef}
       className={props.className || 'react-aria-ResizableTableContainer'}
-      style={props.style}>
+      style={props.style}
+      onScroll={props.onScroll}>
       <ResizableTableContainerContext.Provider value={ctx}>
         {props.children}
       </ResizableTableContainerContext.Provider>
@@ -272,7 +273,7 @@ export interface TableRenderProps {
   state: TableState<unknown>
 }
 
-export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps {
+export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, StyleRenderProps<TableRenderProps>, SlotProps, AriaLabelingProps, ScrollableProps<HTMLTableElement> {
   /** The elements that make up the table. Includes the TableHeader, TableBody, Columns, and Rows. */
   children?: ReactNode,
   /**
@@ -324,7 +325,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   let dropState: DroppableCollectionState | undefined = undefined;
   let droppableCollection: DroppableCollectionResult | undefined = undefined;
   let isRootDropTarget = false;
-  let dragPreview: React.JSX.Element | null = null;
+  let dragPreview: JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
   if (isListDraggable && dragAndDropHooks) {
@@ -416,6 +417,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
             style={style}
             ref={ref}
             slot={props.slot || undefined}
+            onScroll={props.onScroll}
             data-allows-dragging={isListDraggable || undefined}
             data-drop-target={isRootDropTarget || undefined}
             data-focused={isFocused || undefined}
@@ -461,13 +463,16 @@ export interface TableHeaderProps<T> extends StyleProps {
   /** A list of table columns. */
   columns?: T[],
   /** A list of `Column(s)` or a function. If the latter, a list of columns must be provided using the `columns` prop. */
-  children?: ReactNode | ((item: T) => ReactElement)
+  children?: ReactNode | ((item: T) => ReactElement),
+  /** Values that should invalidate the column cache when using dynamic collections. */
+  dependencies?: any[]
 }
 
 function TableHeader<T extends object>(props: TableHeaderProps<T>, ref: ForwardedRef<HTMLTableSectionElement>) {
   let children = useCollectionChildren({
     children: props.children,
-    items: props.columns
+    items: props.columns,
+    dependencies: props.dependencies
   });
 
   let renderer = typeof props.children === 'function' ? props.children : null;
@@ -525,12 +530,8 @@ export interface ColumnRenderProps {
   startResize(): void
 }
 
-export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> {
+export interface ColumnProps extends RenderProps<ColumnRenderProps> {
   id?: Key,
-  /** Rendered contents of the column if `children` contains child columns. */
-  title?: ReactNode,
-  /** A list of child columns used when dynamically rendering nested child columns. */
-  childColumns?: Iterable<T>,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
   /** Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation. */
@@ -547,21 +548,8 @@ export interface ColumnProps<T = object> extends RenderProps<ColumnRenderProps> 
   maxWidth?: ColumnStaticSize | null
 }
 
-function Column<T extends object>(props: ColumnProps<T>, ref: ForwardedRef<HTMLTableCellElement>): React.JSX.Element | null {
-  let render = useContext(CollectionRendererContext);
-  let childColumns: ReactNode | ((item: T) => ReactNode);
-  if (typeof render === 'function') {
-    childColumns = render;
-  } else if (typeof props.children !== 'function') {
-    childColumns = props.children;
-  }
-
-  let children = useCollectionChildren({
-    children: (props.title || props.childColumns) ? childColumns : null,
-    items: props.childColumns
-  });
-
-  return useSSRCollectionNode('column', props, ref, props.title ?? props.children, children);
+function Column(props: ColumnProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
+  return useSSRCollectionNode('column', props, ref, props.children);
 }
 
 /**
@@ -588,7 +576,7 @@ export interface TableBodyProps<T> extends CollectionProps<T>, StyleRenderProps<
   renderEmptyState?: (props: TableBodyRenderProps) => ReactNode
 }
 
-function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>): React.JSX.Element | null {
+function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef<HTMLTableSectionElement>): JSX.Element | null {
   let children = useCollectionChildren(props);
   return useSSRCollectionNode('tablebody', props, ref, null, children);
 }
@@ -607,18 +595,24 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   columns?: Iterable<T>,
   /** The cells within the row. Supports static items or a function for dynamic rendering. */
   children?: ReactNode | ((item: T) => ReactElement),
+  /** The object value that this row represents. When using dynamic collections, this is set automatically. */
+  value?: T,
+  /** Values that should invalidate the cell cache when using dynamic collections. */
+  dependencies?: any[],
   /** A string representation of the row's contents, used for features like typeahead. */
   textValue?: string
 }
 
-function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): React.JSX.Element | null {
+function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): JSX.Element | null {
+  let dependencies = [props.value].concat(props.dependencies);
   let children = useCollectionChildren({
+    dependencies,
     children: props.children,
     items: props.columns,
     idScope: props.id
   });
 
-  let ctx = useMemo(() => ({idScope: props.id}), [props.id]);
+  let ctx = useMemo(() => ({idScope: props.id, dependencies}), [props.id, ...dependencies]);
 
   return useSSRCollectionNode('item', props, ref, null, (
     <CollectionContext.Provider value={ctx}>
@@ -662,7 +656,7 @@ export interface CellProps extends RenderProps<CellRenderProps> {
   textValue?: string
 }
 
-function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): React.JSX.Element | null {
+function Cell(props: CellProps, ref: ForwardedRef<HTMLTableCellElement>): JSX.Element | null {
   return useSSRCollectionNode('cell', props, ref, props.children);
 }
 
@@ -804,7 +798,6 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     ref
   );
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
 
   let layoutState = useContext(TableColumnResizeStateContext);
   let isResizing = false;
@@ -818,7 +811,8 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     }
   }
 
-  let props: ColumnProps<unknown> = column.props;
+  let props: ColumnProps = column.props;
+  let {hoverProps, isHovered} = useHover({isDisabled: !props.allowsSorting});
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -859,6 +853,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       style={style}
       colSpan={column.colspan}
       ref={ref}
+      data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
