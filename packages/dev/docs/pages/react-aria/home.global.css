@@ -300,26 +300,44 @@ pre.medium, pre.small {
 }
 
 .green-gradient-background {
-  background: radial-gradient(ellipse 26% 23% at 26% 56%, oklch(96% 0.03 200), transparent),
-    radial-gradient(ellipse 30% 30% at 73% 50%, oklch(98% 0.03 157), transparent),
-    radial-gradient(ellipse 40% 25% at 50% 76%, oklch(98% 0.03 218), transparent);
+  --a: oklch(96% 0.03 200);
+  --b: oklch(98% 0.03 157);
+  --c: oklch(98% 0.03 218);
+  background: radial-gradient(ellipse 26% 23% at 26% 56%, var(--a), transparent),
+    radial-gradient(ellipse 30% 30% at 73% 50%, var(--b), transparent),
+    radial-gradient(ellipse 40% 25% at 50% 76%, var(--c), transparent);
+}
+
+@media (width < 768px) {
+  .green-gradient-background {
+    background: radial-gradient(circle 250px at 26% 65%, var(--a), transparent),
+      radial-gradient(circle 250px at 73% 64%, var(--b), transparent),
+      radial-gradient(circle 250px at 50% 70%, var(--c), transparent);
+  }
 }
 
 .blue-gradient-background {
-  background: radial-gradient(circle farthest-side at 23% 54%, oklch(96% 0.06 250), transparent 30%),
-    radial-gradient(circle farthest-side at 60% 45%, oklch(96% 0.06 250), transparent 50%),
+  background: radial-gradient(circle farthest-side at 23% 54%, oklch(96% 0.04 250), transparent 30%),
+    radial-gradient(circle farthest-side at 60% 45%, oklch(96% 0.05 250), transparent 50%),
     radial-gradient(circle farthest-side at 50% 72%, oklch(94% 0.06 280), transparent 40%);
 }
 
 .orange-gradient-background {
-  background: radial-gradient(ellipse 50% 35% at 50% 68%, oklch(96% 0.06 75), transparent);
+  --bg: oklch(97% 0.05 75);
+  background: radial-gradient(ellipse 50% 35% at 50% 67%, var(--bg), transparent);
+}
+
+@media (width < 1080px) {
+  .orange-gradient-background {
+    background: radial-gradient(ellipse 60% 40% at 50% 63%, var(--bg), transparent);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   .green-gradient-background {
-    background: radial-gradient(ellipse 26% 23% at 26% 56%, oklch(22% 0.03 200), transparent),
-      radial-gradient(ellipse 30% 30% at 73% 50%, oklch(22% 0.05 157), transparent),
-      radial-gradient(ellipse 40% 25% at 50% 76%, oklch(22% 0.04 218), transparent);
+    --a: oklch(22% 0.03 200);
+    --b: oklch(22% 0.05 157);
+    --c: oklch(22% 0.04 218);
   }
 
   .blue-gradient-background {
@@ -329,6 +347,6 @@ pre.medium, pre.small {
   }
 
   .orange-gradient-background {
-    background: radial-gradient(ellipse 50% 35% at 50% 68%, oklch(23% 0.04 71), transparent);
+    --bg: oklch(23% 0.04 71);
   }
 }
