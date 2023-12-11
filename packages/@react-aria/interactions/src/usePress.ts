@@ -280,7 +280,6 @@ export function usePress(props: PressHookProps): PressResult {
             };
 
             addGlobalListener(getOwnerDocument(e.currentTarget), 'keyup', chain(pressUp, onKeyUp), true);
-            // addGlobalListener(getOwnerDocument(e.currentTarget), 'keyup', () => console.log('shouldnt reach'), false);
           }
 
           if (shouldStopPropagation) {
