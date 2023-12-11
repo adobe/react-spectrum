@@ -99,6 +99,7 @@
           "./packages/@react-types/image",
           "./packages/@react-types/l",
           "./packages/@react-types/meter",
+          "./packages/@react-types/numberfield",
           "./packages/@react-types/progress",
           "./packages/@react-types/searchfield",
           "./packages/@react-types/shared",
