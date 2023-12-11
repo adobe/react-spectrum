@@ -147,7 +147,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       {...tooltipProps}
       ref={props.tooltipRef}
       {...renderProps}
-      style={{...renderProps.style, ...overlayProps.style}}
+      style={{...overlayProps.style, ...renderProps.style}}
       data-placement={placement}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>

@@ -53,7 +53,7 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   // in order to get around that and cause a rerender here, we use context
   // but we don't actually need any value, they are available on the layout object
   useVirtualizerContext();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let {direction} = useLocale();
 
   let [isPointerDown, setIsPointerDown] = useState(false);

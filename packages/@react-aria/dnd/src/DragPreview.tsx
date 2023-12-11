@@ -12,15 +12,15 @@
 
 import {DragItem, DragPreviewRenderer} from '@react-types/shared';
 import {flushSync} from 'react-dom';
-import React, {RefObject, useImperativeHandle, useRef, useState} from 'react';
+import React, {JSX, RefObject, useImperativeHandle, useRef, useState} from 'react';
 
 export interface DragPreviewProps {
-  children: (items: DragItem[]) => React.JSX.Element
+  children: (items: DragItem[]) => JSX.Element
 }
 
 function DragPreview(props: DragPreviewProps, ref: RefObject<DragPreviewRenderer>) {
   let render = props.children;
-  let [children, setChildren] = useState<React.JSX.Element>(null);
+  let [children, setChildren] = useState<JSX.Element>(null);
   let domRef = useRef(null);
 
   useImperativeHandle(ref, () => (items: DragItem[], callback: (node: HTMLElement) => void) => {

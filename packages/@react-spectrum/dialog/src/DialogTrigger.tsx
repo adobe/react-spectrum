@@ -14,7 +14,7 @@ import {DialogContext} from './context';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactElement, useEffect, useRef} from 'react';
+import React, {Fragment, JSX, ReactElement, useEffect, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
 import {useIsMobileDevice} from '@react-spectrum/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
@@ -140,7 +140,7 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
  */
 
 // We don't want getCollectionNode to show up in the type definition
-let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => React.JSX.Element;
+let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX.Element;
 export {_DialogTrigger as DialogTrigger};
 
 function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props}) {

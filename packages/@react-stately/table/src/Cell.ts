@@ -11,8 +11,8 @@
  */
 
 import {CellProps} from '@react-types/table';
+import {JSX, ReactElement} from 'react';
 import {PartialNode} from '@react-stately/collections';
-import React, {ReactElement} from 'react';
 
 function Cell(props: CellProps): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
   return null;
@@ -36,5 +36,5 @@ Cell.getCollectionNode = function* getCollectionNode<T>(props: CellProps): Gener
  * A Cell represents the value of a single Column within a Table Row.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _Cell = Cell as (props: CellProps) => React.JSX.Element;
+let _Cell = Cell as (props: CellProps) => JSX.Element;
 export {_Cell as Cell};

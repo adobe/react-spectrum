@@ -70,7 +70,7 @@ export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBas
    * @default true
    */
   shouldFlip?: boolean,
-  /** Width of the menu. By default, matches width of the trigger. */
+  /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
   menuWidth?: DimensionValue,
   onLoadMore?: () => void,
   /** An icon to display at the start of the input. */

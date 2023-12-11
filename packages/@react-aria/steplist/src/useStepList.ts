@@ -36,7 +36,7 @@ export function useStepList<T>(props: AriaStepListProps<T>, state: StepListState
     ref
   });
 
-  const strings = useLocalizedStringFormatter(intlMessages);
+  const strings = useLocalizedStringFormatter(intlMessages, '@react-aria/steplist');
   const stepListProps: HTMLAttributes<HTMLElement> = {
     ...mergeProps(listProps, filterDOMProps(props, {labelable: true})),
     'aria-label': ariaLabel || strings.format('steplist')
