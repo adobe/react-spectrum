@@ -84,6 +84,7 @@
           "./packages/@react-spectrum/text",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
+          "./packages/@react-stately/checkbox",
           "./packages/@react-stately/searchfield",
           "./packages/@react-stately/radio",
           "./packages/@react-stately/utils",
