@@ -66,8 +66,8 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
   };
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages);
-  let Icon: React.ElementType | null = null;
-  let iconAlt: string | undefined;
+  let Icon = null;
+  let iconAlt: string;
   if (variant in ICONS) {
     Icon = ICONS[variant];
     iconAlt = stringFormatter.format(variant);
