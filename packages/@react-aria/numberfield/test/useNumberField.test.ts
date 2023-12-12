@@ -27,7 +27,7 @@ describe('useNumberField hook', () => {
       expect(inputProps.disabled).toBeFalsy();
       expect(inputProps.readOnly).toBeFalsy();
       expect(inputProps['aria-invalid']).toBeUndefined();
-      expect(inputProps['aria-required']).toBeNull();
+      expect(inputProps['aria-required']).toBeUndefined();
       expect(inputProps['aria-valuenow']).toBeNull();
       expect(inputProps['aria-valuetext']).toBeNull();
       expect(inputProps['aria-valuemin']).toBeNull();
