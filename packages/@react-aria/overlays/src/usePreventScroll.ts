@@ -109,7 +109,7 @@ function preventScrollMobileSafari() {
   let restoreScrollableStyles;
   let onTouchStart = (e: TouchEvent) => {
     // Store the nearest scrollable parent element from the element that the user touched.
-    scrollable = getScrollParent(e.target as Element);
+    scrollable = getScrollParent(e.target as Element, true);
     if (scrollable === document.documentElement && scrollable === document.body) {
       return;
     }
