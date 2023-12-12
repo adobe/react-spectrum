@@ -13,10 +13,10 @@
 import {NumberFormatter} from './NumberFormatter';
 
 interface Symbols {
-  minusSign: string,
-  plusSign: string,
-  decimal: string,
-  group: string,
+  minusSign?: string,
+  plusSign?: string,
+  decimal?: string,
+  group?: string,
   literals: RegExp,
   numeral: RegExp,
   index: (v: string) => string
@@ -120,11 +120,17 @@ class NumberParserImpl {
     // to parse the number, we need to remove anything that isn't actually part of the number, for example we want '-10.40' not '-10.40 USD'
     let fullySanitizedValue = this.sanitize(value);
 
-    // Remove group characters, and replace decimal points and numerals with ASCII values.
-    fullySanitizedValue = replaceAll(fullySanitizedValue, this.symbols.group, '')
-      .replace(this.symbols.decimal, '.')
-      .replace(this.symbols.minusSign, '-')
-      .replace(this.symbols.numeral, this.symbols.index);
+    if (this.symbols.group) {
+      // Remove group characters, and replace decimal points and numerals with ASCII values.
+      fullySanitizedValue = replaceAll(fullySanitizedValue, this.symbols.group, '');
+    }
+    if (this.symbols.decimal) {
+      fullySanitizedValue = fullySanitizedValue.replace(this.symbols.decimal!, '.');
+    }
+    if (this.symbols.minusSign) {
+      fullySanitizedValue = fullySanitizedValue.replace(this.symbols.minusSign!, '-');
+    }
+    fullySanitizedValue = fullySanitizedValue.replace(this.symbols.numeral, this.symbols.index);
 
     if (this.options.style === 'percent') {
       // javascript is bad at dividing by 100 and maintaining the same significant figures, so perform it on the string before parsing
@@ -179,14 +185,20 @@ class NumberParserImpl {
 
     // Replace the ASCII minus sign with the minus sign used in the current locale
     // so that both are allowed in case the user's keyboard doesn't have the locale's minus sign.
-    value = value.replace('-', this.symbols.minusSign);
+    if (this.symbols.minusSign) {
+      value = value.replace('-', this.symbols.minusSign);
+    }
 
     // In arab numeral system, their decimal character is 1643, but most keyboards don't type that
     // instead they use the , (44) character or apparently the (1548) character.
     if (this.options.numberingSystem === 'arab') {
-      value = value.replace(',', this.symbols.decimal);
-      value = value.replace(String.fromCharCode(1548), this.symbols.decimal);
-      value = replaceAll(value, '.', this.symbols.group);
+      if (this.symbols.decimal) {
+        value = value.replace(',', this.symbols.decimal);
+        value = value.replace(String.fromCharCode(1548), this.symbols.decimal);
+      }
+      if (this.symbols.group) {
+        value = replaceAll(value, '.', this.symbols.group);
+      }
     }
 
     // fr-FR group character is char code 8239, but that's not a key on the french keyboard,
@@ -202,26 +214,30 @@ class NumberParserImpl {
     value = this.sanitize(value);
 
     // Remove minus or plus sign, which must be at the start of the string.
-    if (value.startsWith(this.symbols.minusSign) && minValue < 0) {
+    if (this.symbols.minusSign && value.startsWith(this.symbols.minusSign) && minValue < 0) {
       value = value.slice(this.symbols.minusSign.length);
     } else if (this.symbols.plusSign && value.startsWith(this.symbols.plusSign) && maxValue > 0) {
       value = value.slice(this.symbols.plusSign.length);
     }
 
     // Numbers cannot start with a group separator
-    if (value.startsWith(this.symbols.group)) {
+    if (this.symbols.group && value.startsWith(this.symbols.group)) {
       return false;
     }
 
     // Numbers that can't have any decimal values fail if a decimal character is typed
-    if (value.indexOf(this.symbols.decimal) > -1 && this.options.maximumFractionDigits === 0) {
+    if (this.symbols.decimal && value.indexOf(this.symbols.decimal) > -1 && this.options.maximumFractionDigits === 0) {
       return false;
     }
 
     // Remove numerals, groups, and decimals
-    value = replaceAll(value, this.symbols.group, '')
-      .replace(this.symbols.numeral, '')
-      .replace(this.symbols.decimal, '');
+    if (this.symbols.group) {
+      value = replaceAll(value, this.symbols.group, '');
+    }
+    value = value.replace(this.symbols.numeral, '');
+    if (this.symbols.decimal) {
+      value = value.replace(this.symbols.decimal, '');
+    }
 
     // The number is valid if there are no remaining characters
     return value.length === 0;

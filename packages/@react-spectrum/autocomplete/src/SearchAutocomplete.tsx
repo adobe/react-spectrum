@@ -70,7 +70,7 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
-    align = 'end',
+    align = 'start',
     isQuiet,
     menuWidth: customMenuWidth,
     loadingState,
