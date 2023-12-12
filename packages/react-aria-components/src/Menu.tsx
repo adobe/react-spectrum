@@ -232,6 +232,7 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
     defaultClassName: 'react-aria-MenuItem',
     values: {
       ...states,
+      // TODO change like listbox, should only be hover if hovered
       isHovered: states.isFocused,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,

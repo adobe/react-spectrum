@@ -12,7 +12,7 @@
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {CollectionDocumentContext, CollectionPortal, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
-import {ContextValue, forwardRefType, HiddenContext, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, forwardRefType, HiddenContext, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
@@ -330,7 +330,13 @@ function SectionHeader({item, headingProps, headingRef}) {
   );
 }
 
-export interface ListBoxItemRenderProps extends ItemRenderProps {}
+export interface ListBoxItemRenderProps extends ItemRenderProps {
+  /**
+   * Whether the item is interactive, i.e. if it has an action or is selectable. Dependent on `disabledKeys` and `disabledBehavior`.
+   * @selector [data-interactive]
+   */
+  isInteractive: boolean
+}
 
 export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, LinkDOMProps {
   /** The unique id of the item. */
@@ -360,7 +366,6 @@ interface OptionProps<T> {
 function Option<T>({item}: OptionProps<T>) {
   let ref = useObjectRef<any>(item.props.ref);
   let state = useContext(ListStateContext)!;
-  let {shouldFocusOnHover} = useSlottedContext(ListBoxContext)! as AriaListBoxOptions<T>;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key},
@@ -369,13 +374,8 @@ function Option<T>({item}: OptionProps<T>) {
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: shouldFocusOnHover || (!states.allowsSelection && !states.hasAction)
+    isDisabled: state.disabledKeys.has(item.key)
   });
-
-  if (shouldFocusOnHover) {
-    hoverProps = {};
-    isHovered = states.isFocused;
-  }
 
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {
@@ -389,6 +389,7 @@ function Option<T>({item}: OptionProps<T>) {
     }, dropState, ref);
   }
 
+  let isInteractive = states.allowsSelection || states.hasAction;
   let props: ListBoxItemProps<T> = item.props;
   let isDragging = dragState && dragState.isDragging(item.key);
   let renderProps = useRenderProps({
@@ -399,6 +400,7 @@ function Option<T>({item}: OptionProps<T>) {
     values: {
       ...states,
       isHovered,
+      isInteractive,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
       allowsDragging: !!dragState,
@@ -430,6 +432,7 @@ function Option<T>({item}: OptionProps<T>) {
         data-selected={states.isSelected || undefined}
         data-disabled={states.isDisabled || undefined}
         data-hovered={isHovered || undefined}
+        data-interactive={isInteractive || undefined}
         data-focused={states.isFocused || undefined}
         data-focus-visible={states.isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}

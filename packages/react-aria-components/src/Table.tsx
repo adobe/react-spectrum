@@ -590,9 +590,9 @@ export {_TableBody as TableBody};
 export interface RowRenderProps extends ItemRenderProps {
   /**
    * Whether the item is interactive, i.e. if it has an action or is selectable. Dependent on `disabledKeys` and `disabledBehavior`.
-   * @selector [data-hovered-interactive]
+   * @selector [data-interactive]
    */
-  isInteractive: boolean // TODO: naming? Do we need this (technically it is different from isDisabled since non-interactive table is deemed NOT isDisabled)? Should it be specific to hover?
+  isInteractive: boolean
 }
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps {
@@ -653,7 +653,12 @@ export interface CellRenderProps {
    * Whether the cell is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean
+  isHovered: boolean,
+  /**
+   * Whether the cell's parent row is interactive, i.e. if it has an action or is selectable. Dependent on `disabledKeys` and `disabledBehavior`.
+   * @selector [data-interactive]
+   */
+  isInteractive: boolean
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
@@ -852,6 +857,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     style = {...style, width: layoutState.getColumnWidth(column.key)};
   }
 
+  // TODO: Column doesn't have isInteractive nor data-interactive since data-allows-sorting exists and conveys the same info. Open to opinions
   return (
     <th
       {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps, hoverProps)}
@@ -860,7 +866,6 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
       colSpan={column.colspan}
       ref={ref}
       data-hovered={isHovered || undefined}
-      data-hovered-interactive={(isHovered && column.props.allowsSorting) || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-resizing={isResizing || undefined}
@@ -996,6 +1001,12 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
 const _ColumnResizer = forwardRef(ColumnResizer);
 export {_ColumnResizer as ColumnResizer};
 
+interface TableCellContextValue {
+  isInteractive: boolean
+}
+
+const TableCellContext = createContext<TableCellContextValue>({isInteractive: false});
+
 function TableRow<T>({item}: {item: GridNode<T>}) {
   let ref = useObjectRef<HTMLTableRowElement>(item.props.ref);
   let state = useContext(TableStateContext)!;
@@ -1011,7 +1022,6 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
-    // TODO using this because states.isDisabled has some additional behavior tied to state.disabledBehavior which is tied to selection/actions
     isDisabled: state.disabledKeys.has(item.key)
   });
   let isInteractive = states.allowsSelection || states.hasAction;
@@ -1098,13 +1108,14 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         // TODO: should data-hovered reflect the previous behavior of only being applied to interactive elements
         // so as to not break people's current implementations? Feels kinda weird though naming wise though...
         data-hovered={isHovered || undefined}
-        data-hovered-interactive={(isHovered && isInteractive) || undefined}
+        data-interactive={isInteractive || undefined}
         data-focused={states.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
         data-dragging={isDragging || undefined}
         data-drop-target={dropIndicator?.isDropTarget || undefined}
         data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
+
         <Provider
           values={[
             [CheckboxContext, {
@@ -1125,7 +1136,9 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
               }
             }]
           ]}>
-          {cells}
+          <TableCellContext.Provider value={{isInteractive}}>
+            {cells}
+          </TableCellContext.Provider>
         </Provider>
       </tr>
       {dragAndDropHooks?.useDropIndicator && state.collection.getKeyAfter(item.key) == null &&
@@ -1137,6 +1150,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
 function TableCell<T>({cell}: {cell: GridNode<T>}) {
   let ref = useObjectRef<HTMLTableCellElement>(cell.props.ref);
+  let {isInteractive} = useContext(TableCellContext);
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
   let isDisabled = cell.parentKey ? state.disabledKeys.has(cell.parentKey) : false;
@@ -1168,11 +1182,8 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
       {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
-      // TODO: should the cell also have data-hovered? Mentioned in docs but not actually shown here, feels like a bug
       data-hovered={isHovered || undefined}
-      // TODO: isDisabled isn't the same as isInteractive, a non-interactive table would still apply these since the cells are disabled
-      // What we need is for the row to tell the cell if it is interactive...
-      data-hovered-interactive={(isHovered && !isDisabled) || undefined}
+      data-interactive={isInteractive || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}>

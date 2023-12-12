@@ -283,28 +283,33 @@ describe('ListBox', () => {
     let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let option = getAllByRole('option')[0];
 
+    expect(option).toHaveAttribute('data-interactive');
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
 
     await user.hover(option);
+    expect(option).toHaveAttribute('data-interactive');
     expect(option).toHaveAttribute('data-hovered', 'true');
     expect(option).toHaveClass('hover');
 
     await user.unhover(option);
+    expect(option).toHaveAttribute('data-interactive');
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
   });
 
-  it('should not show hover state when item is not interactive', async () => {
+  it('should show hover state when item is not interactive', async () => {
     let {getAllByRole} = renderListbox({}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let option = getAllByRole('option')[0];
 
+    expect(option).not.toHaveAttribute('data-interactive');
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
 
     await user.hover(option);
-    expect(option).not.toHaveAttribute('data-hovered');
-    expect(option).not.toHaveClass('hover');
+    expect(option).not.toHaveAttribute('data-interactive');
+    expect(option).toHaveAttribute('data-hovered');
+    expect(option).toHaveClass('hover');
   });
 
   it('should support focus ring', async () => {

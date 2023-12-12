@@ -212,6 +212,46 @@ export const ListBoxComplex = () => (
   </ListBox>
 );
 
+export const ListBoxStyles = {
+  render: (args) => (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+      <ListBox disabledKeys={[1]} className="styles-example" {...args} aria-label="example with hover styles for all rows">
+        <ListBoxItem id={1}>Foo</ListBoxItem>
+        <ListBoxItem id={2}>Bar</ListBoxItem>
+        <ListBoxItem id={3}>Baz</ListBoxItem>
+      </ListBox>
+      <ListBox disabledKeys={[1]} className="styles-example-interactiveOnly" {...args} aria-label="example with hover styles for interactive rows">
+        <ListBoxItem id={1}>Foo</ListBoxItem>
+        <ListBoxItem id={2}>Bar</ListBoxItem>
+        <ListBoxItem id={3}>Baz</ListBoxItem>
+      </ListBox>
+    </div>
+  ),
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle'
+  },
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'radio',
+        options: ['none', 'single', 'multiple']
+      }
+    },
+    selectionBehavior: {
+      control: {
+        type: 'radio',
+        options: ['toggle', 'replace']
+      }
+    }
+  },
+  parameters: {
+    description: {
+      data: 'First ListBox should allow for hover styles regardless of selection mode, second ListBox should only have hover styles if the row is selectable. Both have the first row as disabled'
+    }
+  }
+};
+
 export const TagGroupExample = (props) => (
   <TagGroup {...props}>
     <Label>Categories</Label>
@@ -919,11 +959,11 @@ export const DynamicTableExampleStory = {
 export const TableHoverStyles = {
   render: () => (
     <div style={{display: 'flex', flexDirection: 'column'}}>
-      <TableDynamicExample className="onlyInteractive" />
-      <TableDynamicExample selectionMode="multiple" className="onlyInteractive" />
-      <TableDynamicExample selectionMode="multiple" allowsSorting className="onlyInteractive" />
-      <TableDynamicExample className="allHover" />
-      <TableDynamicExample selectionMode="multiple" className="allHover" />
+      <TableDynamicExample disabledKeys={[1]} className="onlyInteractive" />
+      <TableDynamicExample disabledKeys={[1]} selectionMode="multiple" className="onlyInteractive" />
+      <TableDynamicExample disabledKeys={[1]} selectionMode="multiple" allowsSorting className="onlyInteractive" />
+      <TableDynamicExample disabledKeys={[1]} />
+      <TableDynamicExample disabledKeys={[1]} selectionMode="multiple" />
     </div>
   ),
   parameters: {
@@ -931,7 +971,7 @@ export const TableHoverStyles = {
       data: `First table should behave like the original hover behavior (aka no hover styles since it isnt interactive).
       Second table should have hover styles on rows/cells because selection is enabled, but columns dont have hovered styles because sort isnt available.
       Third table should have all hover styles because selection and sort is enabled.
-      Fourth table and fifth table should have hover styles applied because it is using dat-hovered.
+      Fourth table and fifth table should have all hover styles applied because it is using data-hovered which is applied so long as the hovered element isnt disabled.
       `
     }
   }
@@ -1424,7 +1464,7 @@ export const SearchFieldExample = () => {
   return (
     <SearchField className={classNames(styles, 'searchFieldExample')} data-testid="search-field-example">
       <Label>Search</Label>
-      <Input />
+      <Input autoCapitalize="string" />
       <Button>✕</Button>
     </SearchField>
   );

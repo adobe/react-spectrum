@@ -201,6 +201,34 @@
   }
 }
 
+:global(.styles-example-interactiveOnly),
+:global(.styles-example) {
+  background-color: lightgrey;
+  width: 300px;
+
+  [aria-selected=true] {
+    background-color: lightblue;
+  }
+
+  :global(.react-aria-ListBoxItem) {
+    &[data-hovered] {
+      background-color: lightsalmon;
+    }
+  }
+
+  &:global(.styles-example-interactiveOnly) {
+    :global(.react-aria-ListBoxItem) {
+      &[data-hovered] {
+        background-color: unset;
+        &[data-interactive]  {
+          background-color: lightsalmon;
+        }
+      }
+    }
+  }
+}
+
+
 :global(.react-aria-DropIndicator)[data-drop-target] {
   outline: 1px solid slateblue;
 }
@@ -210,43 +238,49 @@
   border-collapse: collapse;
 }
 
-:global(.onlyInteractive) {
-  :global(.react-aria-Cell) {
-    &[data-hovered-interactive] {
-      background-color: lightblue;
-    }
-  }
-
-  :global(.react-aria-Row) {
-    &[data-hovered-interactive] {
-      background-color: lightsalmon;
-    }
-  }
-
-  :global(.react-aria-Column) {
-    &[data-hovered-interactive] {
-      background-color: lightseagreen;
-    }
+:global(.react-aria-Cell) {
+  &[data-hovered] {
+    background-color: lightblue;
   }
 }
 
+:global(.react-aria-Row) {
+  &[data-hovered] {
+    background-color: lightsalmon;
+  }
+}
 
-:global(.allHover) {
+:global(.react-aria-Column) {
+  &[data-hovered] {
+    background-color: lightseagreen;
+  }
+}
+
+:global(.onlyInteractive) {
   :global(.react-aria-Cell) {
     &[data-hovered] {
-      background-color: lightblue;
+      background-color: unset;
+      &[data-interactive]  {
+        background-color: lightblue;
+      }
     }
   }
 
   :global(.react-aria-Row) {
     &[data-hovered] {
-      background-color: lightsalmon;
+      background-color: unset;
+      &[data-interactive]  {
+        background-color: lightsalmon;
+      }
     }
   }
 
   :global(.react-aria-Column) {
     &[data-hovered] {
-      background-color: lightseagreen;
+      background-color: unset;
+      &[data-allows-sorting]  {
+        background-color: lightseagreen;
+      }
     }
   }
 }
