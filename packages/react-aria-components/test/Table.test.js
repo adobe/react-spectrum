@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
@@ -158,6 +158,7 @@ let DynamicTable = ({tableProps, tableHeaderProps, tableBodyProps, rowProps}) =>
 let renderTable = (props) => render(<TestTable {...props} />);
 
 describe('Table', () => {
+  installPointerEvent();
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -325,7 +326,7 @@ describe('Table', () => {
     expect(column).not.toHaveClass('hover');
   });
 
-  it('should not show column hover state when column is not sortable', async () => {
+  it('should show column hover state when column is not sortable', async () => {
     let {getAllByRole} = renderTable({
       columnProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
     });
@@ -335,19 +336,30 @@ describe('Table', () => {
     expect(column).not.toHaveClass('hover');
 
     await user.hover(column);
-    expect(column).not.toHaveAttribute('data-hovered');
-    expect(column).not.toHaveClass('hover');
+    expect(column).toHaveAttribute('data-hovered');
+    expect(column).toHaveClass('hover');
   });
 
   it('should support hover', async () => {
+
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},
-      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
+      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''},
+      cellProps: {className: ({isHovered}) => isHovered ? 'cellhover' : ''}
     });
     let row = getAllByRole('row')[1];
 
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+
+    let rowheader = within(row).getByRole('rowheader');
+    let cells = within(row).getAllByRole('gridcell');
+    expect(rowheader).not.toHaveAttribute('data-hovered');
+    expect(rowheader).not.toHaveClass('cellhover');
+    for (let cell of cells) {
+      expect(cell).not.toHaveAttribute('data-hovered');
+      expect(cell).not.toHaveClass('cellhover');
+    }
 
     await user.hover(row);
     expect(row).toHaveAttribute('data-hovered', 'true');
@@ -356,20 +368,82 @@ describe('Table', () => {
     await user.unhover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+
+    await user.hover(rowheader);
+    expect(rowheader).toHaveAttribute('data-hovered', 'true');
+    expect(rowheader).toHaveClass('cellhover');
+    for (let cell of cells) {
+      expect(cell).not.toHaveAttribute('data-hovered');
+      expect(cell).not.toHaveClass('cellhover');
+    }
+
+    await user.unhover(rowheader);
+    expect(rowheader).not.toHaveAttribute('data-hovered');
+    expect(rowheader).not.toHaveClass('cellhover');
+    for (let cell of cells) {
+      expect(cell).not.toHaveAttribute('data-hovered');
+      expect(cell).not.toHaveClass('cellhover');
+    }
   });
 
-  it('should not show hover state when item is not interactive', async () => {
+  it('should show hover state even when item is not interactive', async () => {
     let {getAllByRole} = renderTable({
-      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
+      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''},
+      cellProps: {className: ({isHovered}) => isHovered ? 'cellhover' : ''}
     });
     let row = getAllByRole('row')[1];
 
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
 
+    let rowheader = within(row).getByRole('rowheader');
+    let cells = within(row).getAllByRole('gridcell');
+    expect(rowheader).not.toHaveAttribute('data-hovered');
+    expect(rowheader).not.toHaveClass('cellhover');
+    for (let cell of cells) {
+      expect(cell).not.toHaveAttribute('data-hovered');
+      expect(cell).not.toHaveClass('cellhover');
+    }
+
+    await user.hover(row);
+    expect(row).toHaveAttribute('data-hovered', 'true');
+    expect(row).toHaveClass('hover');
+
+    await user.unhover(row);
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+
+    await user.hover(rowheader);
+    expect(rowheader).toHaveAttribute('data-hovered', 'true');
+    expect(rowheader).toHaveClass('cellhover');
+    for (let cell of cells) {
+      expect(cell).not.toHaveAttribute('data-hovered');
+      expect(cell).not.toHaveClass('cellhover');
+    }
+  });
+
+  it('should not show hover state when an item is disabled', async () => {
+    let {getAllByRole} = renderTable({
+      tableProps: {disabledKeys: ['1']},
+      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''},
+      cellProps: {className: ({isHovered}) => isHovered ? 'cellhover' : ''}
+    });
+    let row = getAllByRole('row')[1];
+
+    expect(row).not.toHaveAttribute('data-hovered');
+    expect(row).not.toHaveClass('hover');
+
+    let rowheader = within(row).getByRole('rowheader');
+    expect(rowheader).not.toHaveAttribute('data-hovered');
+    expect(rowheader).not.toHaveClass('cellhover');
+
     await user.hover(row);
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
+
+    await user.hover(rowheader);
+    expect(rowheader).not.toHaveAttribute('data-hovered', 'true');
+    expect(rowheader).not.toHaveClass('cellhover');
   });
 
   it('should support focus ring', async () => {
@@ -419,11 +493,11 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    fireEvent.pointerDown(row);
     expect(row).toHaveAttribute('data-pressed', 'true');
     expect(row).toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    fireEvent.pointerUp(row);
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
   });
@@ -458,11 +532,11 @@ describe('Table', () => {
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
-    fireEvent.mouseDown(row);
+    fireEvent.pointerDown(row);
     expect(row).toHaveAttribute('data-pressed', 'true');
     expect(row).toHaveClass('pressed');
 
-    fireEvent.mouseUp(row);
+    fireEvent.pointerUp(row);
     expect(row).not.toHaveAttribute('data-pressed');
     expect(row).not.toHaveClass('pressed');
 
@@ -821,6 +895,23 @@ describe('Table', () => {
       {name: 'Weight', uid: 'weight'},
       {name: 'Level', uid: 'level', width: '5fr'}
     ];
+
+    it('should support hover for column resizer', async () => {
+      let columns = [
+        {name: 'Name', id: 'name', allowsResizing: true},
+        {name: 'Type', id: 'type', allowsResizing: true},
+        {name: 'Level', id: 'level', allowsResizing: true}
+      ];
+      let {getAllByRole} = render(<ResizableTable columns={columns} />);
+
+      let resizer = getAllByRole('slider')[1];
+
+      await user.hover(resizer.parentElement);
+      expect(resizer.parentElement).toHaveAttribute('data-hovered', 'true');
+
+      await user.unhover(resizer.parentElement);
+      expect(resizer.parentElement).not.toHaveAttribute('data-hovered');
+    });
 
     resizingTests(render, (tree, ...args) => tree.rerender(...args), ResizableTable, ControlledResizableTable, resizeCol, resizeTable);
 

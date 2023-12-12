@@ -812,7 +812,7 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
   }
 
   let props: ColumnProps = column.props;
-  let {hoverProps, isHovered} = useHover({isDisabled: !props.allowsSorting});
+  let {hoverProps, isHovered} = useHover({});
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -1001,9 +1001,11 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
     state,
     ref
   );
+
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction
+    // TODO using this because states.isDisabled has some additional behavior tied to state.disabledBehavior which is tied to selection/actions
+    isDisabled: state.disabledKeys.has(item.key)
   });
 
   let {checkboxProps} = useTableSelectionCheckbox(
@@ -1125,7 +1127,7 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
   let ref = useObjectRef<HTMLTableCellElement>(cell.props.ref);
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
-
+  let isDisabled = cell.parentKey ? state.disabledKeys.has(cell.parentKey) : false;
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
@@ -1134,7 +1136,7 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
     shouldSelectOnPressUp: !!dragState
   }, state, ref);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let {hoverProps, isHovered} = useHover({});
+  let {hoverProps, isHovered} = useHover({isDisabled});
 
   let props: CellProps = cell.props;
   let renderProps = useRenderProps({
@@ -1154,6 +1156,8 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
       {...mergeProps(filterDOMProps(props as any), gridCellProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
+      // TODO: should the cell also have data-hovered? Mentioned in docs but not actually shown here, feels like a bug
+      data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}>

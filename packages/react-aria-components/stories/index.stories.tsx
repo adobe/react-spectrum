@@ -791,7 +791,7 @@ export const ReorderableTableExample = () => (
   </>
 );
 
-export const TableExample = () => {
+const TableExample = () => {
   let list = useListData({
     initialItems: [
       {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
@@ -803,7 +803,7 @@ export const TableExample = () => {
 
   return (
     <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
-      <Table aria-label="Example table">
+      <Table aria-label="Example table" disabledKeys={[1]}>
         <TableHeader>
           <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
           <MyColumn>Type</MyColumn>
@@ -863,6 +863,15 @@ export const TableExample = () => {
       </Table>
     </ResizableTableContainer>
   );
+};
+
+export const TableExampleStory = {
+  render: () => <TableExample />,
+  parameters: {
+    description: {
+      data: 'Note that row 1 is disabled'
+    }
+  }
 };
 
 export const TableDynamicExample = () => {

@@ -210,10 +210,26 @@
   border-collapse: collapse;
 }
 
+:global(.react-aria-Row) {
+  &[data-hovered] {
+    background-color: lightsalmon;
+  }
+}
+
+
 :global(.react-aria-Cell) {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  &[data-hovered] {
+    background-color: lightblue;
+  }
+}
+
+:global(.react-aria-Column) {
+  &[data-hovered] {
+    background-color: lightseagreen;
+  }
 }
 
 :global(.react-aria-ColumnResizer) {
@@ -238,6 +254,10 @@
 
   &[data-resizable-direction=right] {
     cursor: w-resize;
+  }
+
+  &[data-hovered] {
+    background-color: lightcyan;
   }
 }
 
