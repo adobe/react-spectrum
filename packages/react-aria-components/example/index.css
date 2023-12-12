@@ -43,6 +43,13 @@ html {
   }
 }
 
+.item.hovered {
+  &[data-hovered] {
+    background: lightsalmon;
+    color: white;
+  }
+}
+
 .item.focused {
   background: gray;
   color: white;

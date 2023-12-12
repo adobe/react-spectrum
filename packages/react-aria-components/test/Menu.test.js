@@ -276,6 +276,23 @@ describe('Menu', () => {
     expect(onScroll).toHaveBeenCalled();
   });
 
+  it('should not equate hover and focus on the menu item', async () => {
+    let {getAllByRole} = renderMenu({selectionMode: 'multiple'});
+    let menuitem = getAllByRole('menuitemcheckbox')[0];
+
+    expect(menuitem).not.toHaveAttribute('data-hovered');
+    expect(menuitem).not.toHaveAttribute('data-focused');
+
+    // Hovering a menu item focuses it as well
+    await user.hover(menuitem);
+    expect(menuitem).toHaveAttribute('data-hovered');
+    expect(menuitem).toHaveAttribute('data-focused');
+
+    await user.unhover(menuitem);
+    expect(menuitem).not.toHaveAttribute('data-hovered');
+    expect(menuitem).toHaveAttribute('data-focused');
+  });
+
   describe('supports links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
       it.each(['none', 'single', 'multiple'])('with selectionMode = %s', async function (selectionMode) {

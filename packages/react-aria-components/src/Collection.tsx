@@ -808,6 +808,11 @@ export interface ItemRenderProps {
    */
   isHovered: boolean,
   /**
+   * Whether the item is interactive, i.e. if it has an action or is selectable. Dependent on `disabledKeys` and `disabledBehavior`.
+   * @selector [data-interactive]
+   */
+  isInteractive: boolean,
+  /**
    * Whether the item is currently in a pressed state.
    * @selector [data-pressed]
    */

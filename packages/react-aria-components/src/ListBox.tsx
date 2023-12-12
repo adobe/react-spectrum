@@ -330,13 +330,7 @@ function SectionHeader({item, headingProps, headingRef}) {
   );
 }
 
-export interface ListBoxItemRenderProps extends ItemRenderProps {
-  /**
-   * Whether the item is interactive, i.e. if it has an action or is selectable. Dependent on `disabledKeys` and `disabledBehavior`.
-   * @selector [data-interactive]
-   */
-  isInteractive: boolean
-}
+export interface ListBoxItemRenderProps extends ItemRenderProps {}
 
 export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, LinkDOMProps {
   /** The unique id of the item. */

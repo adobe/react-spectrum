@@ -587,13 +587,7 @@ function TableBody<T extends object>(props: TableBodyProps<T>, ref: ForwardedRef
 const _TableBody = /*#__PURE__*/ (forwardRef as forwardRefType)(TableBody);
 export {_TableBody as TableBody};
 
-export interface RowRenderProps extends ItemRenderProps {
-  /**
-   * Whether the item is interactive, i.e. if it has an action or is selectable. Dependent on `disabledKeys` and `disabledBehavior`.
-   * @selector [data-interactive]
-   */
-  isInteractive: boolean
-}
+export interface RowRenderProps extends ItemRenderProps {}
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps {
   id?: Key,

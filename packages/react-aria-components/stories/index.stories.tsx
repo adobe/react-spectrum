@@ -335,10 +335,10 @@ export const MenuExample = () => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
-      <Menu className={styles.menu} onAction={action('onAction')}>
+      <Menu disabledKeys={[1]} className={styles.menu} onAction={action('onAction')}>
         <Section className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem id={1}>Foo</MyMenuItem>
           <MyMenuItem>Bar</MyMenuItem>
           <MyMenuItem>Baz</MyMenuItem>
           <MyMenuItem href="https://google.com">Google</MyMenuItem>
@@ -354,6 +354,14 @@ export const MenuExample = () => (
     </Popover>
   </MenuTrigger>
 );
+
+MenuExample.story = {
+  parameters: {
+    description: {
+      data: 'Note that row 1 is disabled and that hover styles have higher specificy than focus styles for testing purposes'
+    }
+  }
+};
 
 export const MenuComplex = () => (
   <MenuTrigger>
@@ -1064,9 +1072,10 @@ function MyMenuItem(props) {
   return (
     <MenuItem
       {...props}
-      className={({isFocused, isSelected}) => classNames(styles, 'item', {
+      className={({isFocused, isSelected, isHovered}) => classNames(styles, 'item', {
         focused: isFocused,
-        selected: isSelected
+        selected: isSelected,
+        hovered: isHovered
       })} />
   );
 }

@@ -220,6 +220,7 @@ function SelectValue<T extends object>(props: SelectValueProps<T>, ref: Forwarde
     // If the selected item has a function as a child, we need to call it to render to React.JSX.
     let fn = rendered as (s: ItemRenderProps) => ReactNode;
     rendered = fn({
+      isInteractive: false,
       isHovered: false,
       isPressed: false,
       isSelected: false,

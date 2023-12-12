@@ -21,7 +21,7 @@ import {Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -191,7 +191,7 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
   );
 }
 
-export interface MenuItemRenderProps extends ItemRenderProps {}
+export interface MenuItemRenderProps extends Omit<ItemRenderProps, 'isInteractive'> {}
 
 export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps {
   /** The unique id of the item. */
@@ -225,6 +225,11 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 
   let props: MenuItemProps<T> = item.props;
   let {isFocusVisible, focusProps} = useFocusRing();
+  // TODO: useMenuItem already has a useHover call, but doesn't return the hovered state. I could have the hook return
+  // it but other hooks don't do that. Adding another useHover here for now
+  let {hoverProps, isHovered} = useHover({
+    isDisabled: state.disabledKeys.has(item.key)
+  });
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -232,8 +237,7 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
     defaultClassName: 'react-aria-MenuItem',
     values: {
       ...states,
-      // TODO change like listbox, should only be hover if hovered
-      isHovered: states.isFocused,
+      isHovered,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior
@@ -244,11 +248,11 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 
   return (
     <ElementType
-      {...mergeProps(menuItemProps, focusProps)}
+      {...mergeProps(menuItemProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-disabled={states.isDisabled || undefined}
-      data-hovered={states.isFocused || undefined}
+      data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
