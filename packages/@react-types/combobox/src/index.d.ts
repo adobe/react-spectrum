@@ -97,7 +97,7 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
    * @default true
    */
   shouldFlip?: boolean,
-  /** Width of the menu. By default, matches width of the trigger. */
+  /** Width of the menu. By default, matches width of the combobox. Note that the minimum width of the dropdown is always equal to the combobox's width. */
   menuWidth?: DimensionValue,
   /**
    * Whether the text or key of the selected item is submitted as part of an HTML form.

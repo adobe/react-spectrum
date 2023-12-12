@@ -204,7 +204,7 @@ const SearchAutocompleteButton = React.forwardRef(function SearchAutocompleteBut
     style,
     className
 } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
   let valueId = useId();
   let invalidId = useId();
   let validationIcon = validationState === 'invalid'
@@ -395,7 +395,7 @@ function SearchAutocompleteTray<T>(props: SearchAutocompleteTrayProps<T>) {
   let listBoxRef = useRef<HTMLDivElement>(null);
   let isLoading = loadingState === 'loading' || loadingState === 'loadingMore';
   let layout = useListBoxLayout(state, isLoading);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
 
   let {inputProps, listBoxProps, labelProps, clearButtonProps} = useSearchAutocomplete<T>(
     {

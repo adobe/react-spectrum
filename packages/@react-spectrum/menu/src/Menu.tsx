@@ -10,40 +10,67 @@
  * governing permissions and limitations under the License.
  */
 
+import {ActionButton} from '@react-spectrum/button';
+import ArrowDownSmall from '@spectrum-icons/ui/ArrowDownSmall';
 import {classNames, useDOMRef, useIsMobileDevice, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef} from '@react-types/shared';
 import {FocusScope} from '@react-aria/focus';
-import {MenuContext, MenuStateContext} from './context';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
+import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps, useSyncRef} from '@react-aria/utils';
-import React, {ReactElement, useContext, useRef} from 'react';
+import {mergeProps, useSlotId, useSyncRef} from '@react-aria/utils';
+import React, {ReactElement, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
 
 function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDivElement>) {
+  let isSubmenu = true;
   let contextProps = useContext(MenuContext);
+  let parentMenuContext = useMenuStateContext();
+  let {rootMenuTriggerState, state: parentMenuTreeState} = parentMenuContext || {rootMenuTriggerState: contextProps.state};
+  if (!parentMenuContext) {
+    isSubmenu = false;
+  }
   let completeProps = {
     ...mergeProps(contextProps, props)
   };
-
   let domRef = useDOMRef(ref);
-  let scopedRef = useRef(null);
+  let popoverContainerRef = useRef(null);
+  let trayContainerRef = useRef(null);
   let state = useTreeState(completeProps);
+  let submenuRef = useRef<HTMLDivElement>(null);
   let {menuProps} = useMenu(completeProps, state, domRef);
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
-  let isMobile = useIsMobileDevice();
+  let [leftOffset, setLeftOffset] = useState({left: 0});
+  useEffect(() => {
+    if (popoverContainerRef.current) {
+      let {left} = popoverContainerRef.current.getBoundingClientRect();
+      setLeftOffset({left: -1 * left});
+    }
+  }, []);
 
+  let menuLevel = contextProps.submenuLevel ?? -1;
+  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel + 1]) != null;
+  // TODO: add slide transition
   return (
-    <MenuStateContext.Provider value={{state, container: scopedRef, menu: domRef}}>
-      <FocusScope contain={state.expandedKeys.size > 0}>
-        <div className={classNames(styles, !isMobile ? 'spectrum-Menu-wrapper' : '')}>
+    <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
+      <div style={{height: hasOpenSubmenu ? '100%' : undefined}} ref={trayContainerRef} />
+      <FocusScope>
+        <TrayHeaderWrapper
+          onBackButtonPress={contextProps.onBackButtonPress}
+          hasOpenSubmenu={hasOpenSubmenu}
+          isSubmenu={isSubmenu}
+          parentMenuTreeState={parentMenuTreeState}
+          rootMenuTriggerState={rootMenuTriggerState}>
           <div
             {...menuProps}
-            {...styleProps}
+            style={mergeProps(styleProps.style, menuProps.style)}
             ref={domRef}
             className={
               classNames(
@@ -78,10 +105,58 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
               return menuItem;
             })}
           </div>
-        </div>
-        <div ref={scopedRef} />
+        </TrayHeaderWrapper>
+        {rootMenuTriggerState?.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} /> }
       </FocusScope>
     </MenuStateContext.Provider>
+  );
+}
+
+export function TrayHeaderWrapper(props) {
+  let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
+  let backButtonLabel = stringFormatter.format('backButton', {
+    prevMenuButton: backButtonText
+  });
+  let headingId = useSlotId();
+  let isMobile = useIsMobileDevice();
+  let {direction} = useLocale();
+
+  return (
+    <>
+      <div
+        role={headingId ? 'dialog' : undefined}
+        aria-labelledby={headingId}
+        aria-hidden={isMobile && hasOpenSubmenu}
+        data-testid="menu-wrapper"
+        className={
+          classNames(
+            styles,
+            'spectrum-Menu-wrapper',
+            {
+              'spectrum-Menu-wrapper--isMobile': isMobile,
+              'is-expanded': hasOpenSubmenu
+            }
+          )
+        }>
+        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper')} onKeyDown={wrapperKeyDown}>
+          {isMobile && isSubmenu && !hasOpenSubmenu && (
+            <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
+              <ActionButton
+                aria-label={backButtonLabel}
+                isQuiet
+                onPress={onBackButtonPress}>
+                {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
+                {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
+              </ActionButton>
+              <h1 id={headingId} className={classNames(styles, 'spectrum-Submenu-heading')}>{backButtonText}</h1>
+            </div>
+          )}
+          {children}
+        </div>
+      </div>
+    </>
   );
 }
 
