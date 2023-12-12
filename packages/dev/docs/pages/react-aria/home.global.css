@@ -306,15 +306,15 @@ pre.small {
 
 @keyframes highlight {
   0%, 42% {
-    background: transparent;
+    opacity: 0;
   }
 
   50% {
-    background: var(--highlight);
+    opacity: 1;
   }
 
   58%, 100% {
-    background: transparent;
+    opacity: 0;
   }
 }
 
@@ -326,8 +326,15 @@ pre.small {
   .tag:nth-child(1 of .tag),
   .tag:nth-child(n+4 of .tag):nth-child(-n+8 of .tag),
   .tag:nth-last-child(1 of .tag) {
-    @apply rounded [--highlight:theme(colors.red.600/15%)] dark:[--highlight:theme(colors.red.600/20%)];
-    animation: highlight 5s infinite var(--delay, 0s);
+    position: relative;
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      @apply rounded bg-red-600/[15%] dark:bg-red-600/20;
+      animation: highlight 5s infinite var(--delay, 0s);
+    }
   }
 }
 
