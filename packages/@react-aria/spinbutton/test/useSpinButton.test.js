@@ -110,7 +110,7 @@ describe('useSpinButton', function () {
     expect(onIncrementToMax).toHaveBeenCalledTimes(1);
   });
 
-  it.only('should announce on value change while focused', function () {
+  it('should announce on value change while focused', function () {
     let res = render(<Example value={2} />);
     let el = res.getByTestId('test');
     act(() => {el.focus();});

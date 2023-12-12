@@ -52,7 +52,7 @@ export function useStepListState<T extends object>(props: StepListProps<T>): Ste
       lastCompletedStep !== null &&
       indexMap.has(step) &&
       indexMap.has(lastCompletedStep) &&
-      indexMap.get(step!)! <= indexMap.get(lastCompletedStep!)!);
+      indexMap.get(step)! <= indexMap.get(lastCompletedStep)!);
   }, [indexMap, lastCompletedStep]);
 
   const findDefaultSelectedKey = useCallback((collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) => {
