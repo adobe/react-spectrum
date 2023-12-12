@@ -183,8 +183,8 @@ function Column({list, status, itemClassName}: ColumnProps) {
   return (
     <section className="flex flex-col gap-2 snap-center">
       <header>
-        <h3 className="font-semibold text-white my-0">{status}</h3>
-        <span className="text-sm text-white">{items.length} {items.length === 1 ? 'task' : 'tasks'}</span>
+        <h3 className="font-semibold text-zinc-800 dark:text-zinc-200 my-0">{status}</h3>
+        <span className="text-sm text-zinc-700 dark:text-zinc-400">{items.length} {items.length === 1 ? 'task' : 'tasks'}</span>
       </header>
       <GridList
         items={items}

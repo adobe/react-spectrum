@@ -38,6 +38,7 @@
 body {
   font-family: "adobe-clean", sans-serif;
   background: var(--page-bg);
+  color-scheme: dark light;
   @apply [--page-bg:theme(colors.zinc.50)] dark:[--page-bg:theme(colors.zinc.900)];
 }
 
@@ -56,7 +57,7 @@ body {
 }
 
 .header-background {
-  @apply [--l:91%] [--c:0.11] dark:[--l:34%] dark:[--c:0.06];
+  @apply [--l:91%] [--c:0.11] dark:[--l:30%] dark:[--c:0.14];
   background: linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
     radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)),
     conic-gradient(from 30deg at 50% 60%,
@@ -80,7 +81,7 @@ main > section > h2 {
 
   + p {
     @apply text-lg md:text-2xl max-w-5xl text-slate-700 dark:text-slate-400;
-    text-wrap: balance;
+    text-wrap: pretty;
   }
 }
 
@@ -342,54 +343,93 @@ pre.small {
   mask: linear-gradient(to bottom, white 0% 70%, transparent);
 }
 
-.green-gradient-background {
-  --a: oklch(96% 0.03 200);
-  --b: oklch(98% 0.03 157);
-  --c: oklch(98% 0.03 218);
-  background: radial-gradient(ellipse 26% 23% at 26% 56%, var(--a), transparent),
-    radial-gradient(ellipse 30% 30% at 73% 50%, var(--b), transparent),
-    radial-gradient(ellipse 40% 25% at 50% 76%, var(--c), transparent);
+.cyan-gradient-background {
+  --a: oklch(90% 0.05 200);
+  --a-shape: ellipse 30% 23% at 30% 56%;
+  --b: oklch(94% 0.09 175);
+  --b-shape: ellipse 30% 30% at 71% 42%;
+  --c: oklch(96% 0.06 218);
+  --c-shape: ellipse 40% 25% at 50% 72%;
+  background: radial-gradient(var(--a-shape), var(--a), transparent),
+    radial-gradient(var(--b-shape), var(--b), transparent),
+    radial-gradient(var(--c-shape), var(--c), transparent);
 }
 
 @media (width < 768px) {
-  .green-gradient-background {
-    background: radial-gradient(circle 250px at 26% 65%, var(--a), transparent),
-      radial-gradient(circle 250px at 73% 64%, var(--b), transparent),
-      radial-gradient(circle 250px at 50% 70%, var(--c), transparent);
-  }
-}
-
-.blue-gradient-background {
-  background: radial-gradient(circle farthest-side at 23% 54%, oklch(96% 0.04 250), transparent 30%),
-    radial-gradient(circle farthest-side at 60% 45%, oklch(96% 0.05 250), transparent 50%),
-    radial-gradient(circle farthest-side at 50% 72%, oklch(94% 0.06 280), transparent 40%);
-}
-
-.orange-gradient-background {
-  --bg: oklch(97% 0.05 75);
-  background: radial-gradient(ellipse 50% 35% at 50% 67%, var(--bg), transparent);
-}
-
-@media (width < 1080px) {
-  .orange-gradient-background {
-    background: radial-gradient(ellipse 60% 40% at 50% 63%, var(--bg), transparent);
+  .cyan-gradient-background {
+    --a-shape: circle 250px at 26% 65%;
+    --b-shape: circle 250px at 73% 64%;
+    --c-shape: circle 250px at 50% 70%;
   }
 }
 
 @media (prefers-color-scheme: dark) {
-  .green-gradient-background {
-    --a: oklch(22% 0.03 200);
-    --b: oklch(22% 0.05 157);
-    --c: oklch(22% 0.04 218);
+  .cyan-gradient-background {
+    --a: oklch(25% 0.1 200);
+    --b: oklch(27% 0.1 175);
+    --c: oklch(26% 0.08 218);
   }
+}
 
+.blue-gradient-background {
+  --a: oklch(94% 0.08 250);
+  --b: oklch(94% 0.12 275);
+  --c: oklch(91% 0.15 290);
+  background: radial-gradient(circle farthest-side at 28% 54%, var(--a), transparent 36%),
+    radial-gradient(circle farthest-side at 65% 45%, var(--b), transparent 50%),
+    radial-gradient(circle farthest-side at 60% 65%, var(--c), transparent 50%);
+}
+
+@media (prefers-color-scheme: dark) {
   .blue-gradient-background {
-    background: radial-gradient(circle farthest-side at 23% 54%, oklch(22% 0.05 250), transparent 30%),
-      radial-gradient(circle farthest-side at 60% 45%, oklch(22% 0.05 260), transparent 50%),
-      radial-gradient(circle farthest-side at 50% 72%, oklch(22% 0.05 280), transparent 40%);
+    --a: oklch(25% 0.08 250);
+    --b: oklch(25% 0.07 275);
+    --c: oklch(28% 0.1 280);
   }
+}
 
+.orange-gradient-background {
+  --color: oklch(96% 0.1 75);
+  --shape: ellipse 50% 35% at 50% 58%;
+  background: radial-gradient(var(--shape), var(--color), transparent);
+}
+
+@media (width < 1080px) {
   .orange-gradient-background {
-    --bg: oklch(23% 0.04 71);
+    --shape: ellipse 60% 40% at 50% 63%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .orange-gradient-background {
+    --color: oklch(27% 0.09 71);
+  }
+}
+
+.red-gradient-background {
+  --a: oklch(96% 0.1 340);
+  --a-shape: ellipse 30% 30% at 29% 54%;
+  --b: oklch(96% 0.11 6);
+  --b-shape: ellipse 35% 30% at 66% 50%;
+  --c: oklch(96% 0.15 20);
+  --c-shape: ellipse 40% 25% at 50% 70%;
+  background: radial-gradient(var(--a-shape), var(--a), transparent),
+    radial-gradient(var(--b-shape), var(--b), transparent),
+    radial-gradient(var(--c-shape), var(--c), transparent);
+}
+
+@media (width < 1080px) {
+  .red-gradient-background {
+    --a-shape: circle 300px at 20% 63%;
+    --b-shape: circle 300px at 50% 63%;
+    --c-shape: circle 300px at 80% 63%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .red-gradient-background {
+    --a: oklch(27% 0.11 340);
+    --b: oklch(26% 0.11 6);
+    --c: oklch(26% 0.1 20);
   }
 }
