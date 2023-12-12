@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Collection, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop, useTableOptions} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, isTextDropItem, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -791,7 +791,7 @@ export const ReorderableTableExample = () => (
   </>
 );
 
-const TableExample = () => {
+const TableExample = (props) => {
   let list = useListData({
     initialItems: [
       {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
@@ -803,7 +803,7 @@ const TableExample = () => {
 
   return (
     <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
-      <Table aria-label="Example table" disabledKeys={[1]}>
+      <Table aria-label="Example table" disabledKeys={[1]} {...props}>
         <TableHeader>
           <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
           <MyColumn>Type</MyColumn>
@@ -874,7 +874,7 @@ export const TableExampleStory = {
   }
 };
 
-export const TableDynamicExample = () => {
+const TableDynamicExample = (props) => {
   let columns = [
     {name: 'Name', key: 'name', isRowHeader: true},
     {name: 'Type', key: 'type'},
@@ -889,24 +889,103 @@ export const TableDynamicExample = () => {
   ];
 
   return (
-    <Table aria-label="Files">
-      <TableHeader columns={columns}>
+    <Table aria-label="Files" {...props}>
+      <MyTableHeader columns={columns}>
         {(column) => (
-          <Column isRowHeader={column.isRowHeader}>{column.name}</Column>
+          <Column isRowHeader={column.isRowHeader} allowsSorting={props?.allowsSorting}>{column.name}</Column>
         )}
-      </TableHeader>
+      </MyTableHeader>
       <TableBody items={rows}>
         {(item) => (
-          <Row columns={columns}>
+          <MyRow id={item.id} columns={columns}>
             {(column) => {
               return <Cell>{item[column.key]}</Cell>;
             }}
-          </Row>
+          </MyRow>
         )}
       </TableBody>
     </Table>
   );
 };
+
+export const DynamicTableExampleStory = {
+  render: () => (
+    <>
+      <TableDynamicExample />
+    </>
+  )
+};
+
+export const TableHoverStyles = {
+  render: () => (
+    <div style={{display: 'flex', flexDirection: 'column'}}>
+      <TableDynamicExample className="onlyInteractive" />
+      <TableDynamicExample selectionMode="multiple" className="onlyInteractive" />
+      <TableDynamicExample selectionMode="multiple" allowsSorting className="onlyInteractive" />
+      <TableDynamicExample className="allHover" />
+      <TableDynamicExample selectionMode="multiple" className="allHover" />
+    </div>
+  ),
+  parameters: {
+    description: {
+      data: `First table should behave like the original hover behavior (aka no hover styles since it isnt interactive).
+      Second table should have hover styles on rows/cells because selection is enabled, but columns dont have hovered styles because sort isnt available.
+      Third table should have all hover styles because selection and sort is enabled.
+      Fourth table and fifth table should have hover styles applied because it is using dat-hovered.
+      `
+    }
+  }
+};
+
+function MyCheckbox(props) {
+  return (
+    <Checkbox {...props}>
+      {({isIndeterminate}) => (
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            {isIndeterminate
+              ? <rect x={1} y={7.5} width={15} height={3} />
+              : <polyline points="1 9 7 14 15 4" />}
+          </svg>
+        </div>
+      )}
+    </Checkbox>
+  );
+}
+
+function MyTableHeader({columns, children}) {
+  let {selectionBehavior, selectionMode} = useTableOptions();
+
+  return (
+    <TableHeader>
+      {selectionBehavior === 'toggle' && (
+        <Column>
+          {selectionMode === 'multiple' && <MyCheckbox slot="selection" />}
+        </Column>
+      )}
+      <Collection items={columns}>
+        {children}
+      </Collection>
+    </TableHeader>
+  );
+}
+
+function MyRow({id, columns, children, ...otherProps}) {
+  let {selectionBehavior} = useTableOptions();
+
+  return (
+    <Row id={id} {...otherProps}>
+      {selectionBehavior === 'toggle' && (
+        <Cell>
+          <MyCheckbox slot="selection" />
+        </Cell>
+      )}
+      <Collection items={columns}>
+        {children}
+      </Collection>
+    </Row>
+  );
+}
 
 function MyColumn(props) {
   return (
@@ -929,6 +1008,8 @@ function MyColumn(props) {
     </Column>
   );
 }
+
+
 
 function MyListBoxItem(props) {
   return (

@@ -210,26 +210,51 @@
   border-collapse: collapse;
 }
 
-:global(.react-aria-Row) {
-  &[data-hovered] {
-    background-color: lightsalmon;
+:global(.onlyInteractive) {
+  :global(.react-aria-Cell) {
+    &[data-hovered-interactive] {
+      background-color: lightblue;
+    }
+  }
+
+  :global(.react-aria-Row) {
+    &[data-hovered-interactive] {
+      background-color: lightsalmon;
+    }
+  }
+
+  :global(.react-aria-Column) {
+    &[data-hovered-interactive] {
+      background-color: lightseagreen;
+    }
   }
 }
 
+
+:global(.allHover) {
+  :global(.react-aria-Cell) {
+    &[data-hovered] {
+      background-color: lightblue;
+    }
+  }
+
+  :global(.react-aria-Row) {
+    &[data-hovered] {
+      background-color: lightsalmon;
+    }
+  }
+
+  :global(.react-aria-Column) {
+    &[data-hovered] {
+      background-color: lightseagreen;
+    }
+  }
+}
 
 :global(.react-aria-Cell) {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  &[data-hovered] {
-    background-color: lightblue;
-  }
-}
-
-:global(.react-aria-Column) {
-  &[data-hovered] {
-    background-color: lightseagreen;
-  }
 }
 
 :global(.react-aria-ColumnResizer) {
