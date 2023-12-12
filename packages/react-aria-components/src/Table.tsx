@@ -1164,6 +1164,7 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
     id: undefined,
     defaultClassName: 'react-aria-Cell',
     values: {
+      isInteractive,
       isFocused,
       isFocusVisible,
       isPressed,

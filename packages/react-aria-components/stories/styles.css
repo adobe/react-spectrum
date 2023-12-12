@@ -456,3 +456,31 @@
     }
   }
 }
+
+:global(.styles-example-interactiveOnly-gridList),
+:global(.styles-example-gridList) {
+  background-color: lightgrey;
+  width: 300px;
+
+  [aria-selected=true] {
+    background-color: lightblue;
+  }
+
+  :global(.react-aria-GridListItem) {
+    display: flex;
+    &[data-hovered] {
+      background-color: lightsalmon;
+    }
+  }
+
+  &:global(.styles-example-interactiveOnly-gridList) {
+    :global(.react-aria-GridListItem) {
+      &[data-hovered] {
+        background-color: unset;
+        &[data-interactive]  {
+          background-color: lightsalmon;
+        }
+      }
+    }
+  }
+}

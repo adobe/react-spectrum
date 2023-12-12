@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Collection, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop, useTableOptions} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Collection, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, GridList, GridListItem, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop, useTableOptions} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, isTextDropItem, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -1568,5 +1568,71 @@ ToolbarExample.argTypes = {
   orientation: {
     control: 'radio',
     options: ['horizontal', 'vertical']
+  }
+};
+
+function MyGridList({children, ...props}) {
+  return (
+    <GridList {...props}>
+      {children}
+    </GridList>
+  );
+}
+
+function MyItem({children, ...props}) {
+  let textValue = typeof children === 'string' ? children : undefined;
+  return (
+    <GridListItem textValue={textValue} {...props}>
+      {({selectionBehavior}) => (
+        <>
+          {selectionBehavior === 'toggle' && (
+            <MyCheckbox slot="selection" />
+          )}
+          {children}
+        </>
+      )}
+    </GridListItem>
+  );
+}
+
+export const GridListStyles = {
+  render: (args) => (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+      <MyGridList disabledKeys={[1]} className="styles-example-gridList" {...args} aria-label="example with hover styles for interactive rows">
+        <MyItem id={1}>Chocolate</MyItem>
+        <MyItem>Mint</MyItem>
+        <MyItem>Strawberry</MyItem>
+        <MyItem>Vanilla</MyItem>
+      </MyGridList>
+      <MyGridList disabledKeys={[1]} className="styles-example-interactiveOnly-gridList" {...args} aria-label="example with hover styles for interactive rows">
+        <MyItem id={1}>Chocolate</MyItem>
+        <MyItem>Mint</MyItem>
+        <MyItem>Strawberry</MyItem>
+        <MyItem>Vanilla</MyItem>
+      </MyGridList>
+    </div>
+  ),
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle'
+  },
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'radio',
+        options: ['none', 'single', 'multiple']
+      }
+    },
+    selectionBehavior: {
+      control: {
+        type: 'radio',
+        options: ['toggle', 'replace']
+      }
+    }
+  },
+  parameters: {
+    description: {
+      data: 'First GridList should allow for hover styles regardless of selection mode, second GridList should only have hover styles if the row is selectable. Both have the first row as disabled'
+    }
   }
 };

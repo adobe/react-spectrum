@@ -257,8 +257,9 @@ function GridListRow({item}) {
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction
+    isDisabled: state.disabledKeys.has(item.key)
   });
+  let isInteractive = states.allowsSelection || states.hasAction;
 
   let {isFocusVisible, focusProps} = useFocusRing();
   let {checkboxProps} = useGridListSelectionCheckbox(
@@ -290,6 +291,7 @@ function GridListRow({item}) {
     values: {
       ...states,
       isHovered,
+      isInteractive,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
@@ -333,6 +335,7 @@ function GridListRow({item}) {
         data-selected={states.isSelected || undefined}
         data-disabled={states.isDisabled || undefined}
         data-hovered={isHovered || undefined}
+        data-interactive={isInteractive || undefined}
         data-focused={states.isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
         data-pressed={states.isPressed || undefined}
