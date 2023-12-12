@@ -1009,8 +1009,6 @@ function MyColumn(props) {
   );
 }
 
-
-
 function MyListBoxItem(props) {
   return (
     <ListBoxItem
