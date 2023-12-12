@@ -201,8 +201,8 @@
   }
 }
 
-:global(.styles-example-interactiveOnly),
-:global(.styles-example) {
+:global(.styles-example-interactiveOnly-listbox),
+:global(.styles-example-listbox) {
   background-color: lightgrey;
   width: 300px;
 
@@ -434,5 +434,25 @@
 
   &[data-disabled] {
     opacity: 0.4;
+  }
+}
+
+:global(.styles-example-interactiveOnly-tagGroup),
+:global(.styles-example-tagGroup) {
+  :global(.react-aria-Tag) {
+    &[data-hovered] {
+      background-color: lightsalmon;
+    }
+  }
+
+  &:global(.styles-example-interactiveOnly-tagGroup) {
+    :global(.react-aria-Tag) {
+      &[data-hovered] {
+        background-color: unset;
+        &[data-interactive]  {
+          background-color: lightsalmon;
+        }
+      }
+    }
   }
 }

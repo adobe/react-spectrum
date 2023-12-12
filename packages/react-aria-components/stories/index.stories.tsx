@@ -215,12 +215,12 @@ export const ListBoxComplex = () => (
 export const ListBoxStyles = {
   render: (args) => (
     <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-      <ListBox disabledKeys={[1]} className="styles-example" {...args} aria-label="example with hover styles for all rows">
+      <ListBox disabledKeys={[1]} className="styles-example-listbox" {...args} aria-label="example with hover styles for all rows">
         <ListBoxItem id={1}>Foo</ListBoxItem>
         <ListBoxItem id={2}>Bar</ListBoxItem>
         <ListBoxItem id={3}>Baz</ListBoxItem>
       </ListBox>
-      <ListBox disabledKeys={[1]} className="styles-example-interactiveOnly" {...args} aria-label="example with hover styles for interactive rows">
+      <ListBox disabledKeys={[1]} className="styles-example-interactiveOnly-listbox" {...args} aria-label="example with hover styles for interactive rows">
         <ListBoxItem id={1}>Foo</ListBoxItem>
         <ListBoxItem id={2}>Bar</ListBoxItem>
         <ListBoxItem id={3}>Baz</ListBoxItem>
@@ -253,15 +253,27 @@ export const ListBoxStyles = {
 };
 
 export const TagGroupExample = (props) => (
-  <TagGroup {...props}>
-    <Label>Categories</Label>
-    <TagList style={{display: 'flex', gap: 4}}>
-      <MyTag href="https://nytimes.com">News</MyTag>
-      <MyTag>Travel</MyTag>
-      <MyTag>Gaming</MyTag>
-      <MyTag>Shopping</MyTag>
-    </TagList>
-  </TagGroup>
+  <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+    <TagGroup disabledKeys={[3]} {...props} className="styles-example-tagGroup">
+      <Label>Example with hover styles for all tags</Label>
+      <TagList style={{display: 'flex', gap: 4}}>
+        <MyTag href="https://nytimes.com">News</MyTag>
+        <MyTag>Travel</MyTag>
+        <MyTag id={3}>Gaming</MyTag>
+        <MyTag>Shopping</MyTag>
+      </TagList>
+    </TagGroup>
+    <TagGroup disabledKeys={[3]} {...props} className="styles-example-interactiveOnly-tagGroup">
+      <Label>Example with hover styles for interactive tags</Label>
+      <TagList style={{display: 'flex', gap: 4}}>
+        <MyTag href="https://nytimes.com">News</MyTag>
+        <MyTag>Travel</MyTag>
+        <MyTag id={3}>Gaming</MyTag>
+        <MyTag>Shopping</MyTag>
+      </TagList>
+    </TagGroup>
+  </div>
+
 );
 
 TagGroupExample.args = {
@@ -280,6 +292,11 @@ TagGroupExample.argTypes = {
     control: {
       type: 'inline-radio',
       options: ['toggle', 'replace']
+    }
+  },
+  parameters: {
+    description: {
+      data: 'First tagroup has hover style applied both seletable and non-selectable tags. Second taggroup only has hover styles for selectable tags. Also note that the third tag is disabled.'
     }
   }
 };

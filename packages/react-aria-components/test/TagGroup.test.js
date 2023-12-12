@@ -117,28 +117,33 @@ describe('TagGroup', () => {
     let {getAllByRole} = renderTagGroup({selectionMode: 'multiple'}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let row = getAllByRole('row')[0];
 
+    expect(row).toHaveAttribute('data-interactive');
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
 
     await user.hover(row);
+    expect(row).toHaveAttribute('data-interactive');
     expect(row).toHaveAttribute('data-hovered', 'true');
     expect(row).toHaveClass('hover');
 
     await user.unhover(row);
+    expect(row).toHaveAttribute('data-interactive');
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
   });
 
-  it('should not show hover state when item is not interactive', async () => {
+  it('should show hover state when item is not interactive', async () => {
     let {getAllByRole} = renderTagGroup({}, {}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
     let row = getAllByRole('row')[0];
 
+    expect(row).not.toHaveAttribute('data-interactive');
     expect(row).not.toHaveAttribute('data-hovered');
     expect(row).not.toHaveClass('hover');
 
     await user.hover(row);
-    expect(row).not.toHaveAttribute('data-hovered');
-    expect(row).not.toHaveClass('hover');
+    expect(row).not.toHaveAttribute('data-interactive');
+    expect(row).toHaveAttribute('data-hovered');
+    expect(row).toHaveClass('hover');
   });
 
   it('should support focus ring', async () => {

@@ -213,8 +213,10 @@ function TagItem({item}) {
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection
+    isDisabled: state.disabledKeys.has(item.key)
   });
+  // TODO: Do we consider a tag with a link or with remove enabled as "interactive"?
+  let isInteractive = states.allowsSelection;
 
   let props: TagProps = item.props;
   let renderProps = useRenderProps({
@@ -225,6 +227,7 @@ function TagItem({item}) {
     values: {
       ...states,
       isFocusVisible,
+      isInteractive,
       isHovered,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior
@@ -245,6 +248,7 @@ function TagItem({item}) {
       data-selected={states.isSelected || undefined}
       data-disabled={states.isDisabled || undefined}
       data-hovered={isHovered || undefined}
+      data-interactive={isInteractive || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
