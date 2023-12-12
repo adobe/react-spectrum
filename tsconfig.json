@@ -90,6 +90,7 @@
           "./packages/@react-spectrum/well",
           "./packages/@react-stately/checkbox",
           "./packages/@react-stately/searchfield",
+          "./packages/@react-stately/steplist",
           "./packages/@react-stately/radio",
           "./packages/@react-stately/utils",
           "./packages/@react-types/a",
