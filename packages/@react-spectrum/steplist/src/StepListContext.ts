@@ -13,4 +13,4 @@
 import React from 'react';
 import {StepListState} from '@react-stately/steplist';
 
-export const StepListContext = React.createContext<StepListState<unknown>>(null);
+export const StepListContext = React.createContext<StepListState<unknown> | null>(null);
