@@ -67,12 +67,18 @@ describe('useSearchField hook', () => {
         onSubmit.mockClear();
       });
 
-      it('preventDefault is called for Enter and Escape', () => {
+      it('preventDefault is called for Enter and not Escape', () => {
         let {inputProps} = renderSearchHook({});
         inputProps.onKeyDown(event('Enter'));
         expect(preventDefault).toHaveBeenCalledTimes(1);
         inputProps.onKeyDown(event('Escape'));
-        expect(preventDefault).toHaveBeenCalledTimes(2);
+        expect(preventDefault).toHaveBeenCalledTimes(1);
+      });
+
+      it('stopPropagation is not called for Escape', () => {
+        let {inputProps} = renderSearchHook({});
+        inputProps.onKeyDown(event('Escape'));
+        expect(stopPropagation).toHaveBeenCalledTimes(0);
       });
 
       it('onSubmit is called if Enter is pressed', () => {
