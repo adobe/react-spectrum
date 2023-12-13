@@ -26,7 +26,14 @@ function setupGlobalEvents() {
     return;
   }
 
-  let onTransitionStart = (e: TransitionEvent) => {
+  function isTransitionEvent(event: Event): event is TransitionEvent {
+    return 'propertyName' in event
+  }
+
+  let onTransitionStart = (e: Event) => {
+    if (!isTransitionEvent(e) || !e.target) {
+      return;
+    }
     // Add the transitioning property to the list for this element.
     let transitions = transitionsByElement.get(e.target);
     if (!transitions) {
@@ -42,7 +49,10 @@ function setupGlobalEvents() {
     transitions.add(e.propertyName);
   };
 
-  let onTransitionEnd = (e: TransitionEvent) => {
+  let onTransitionEnd = (e: Event) => {
+    if (!isTransitionEvent(e) || !e.target) {
+      return;
+    }
     // Remove property from list of transitioning properties.
     let properties = transitionsByElement.get(e.target);
     if (!properties) {
