@@ -96,7 +96,7 @@ export function useSearchField(
     ...props,
     value: state.value,
     onChange: state.setValue,
-    onKeyDown: chain(onKeyDown, props.onKeyDown),
+    onKeyDown: !isReadOnly && chain(onKeyDown, props.onKeyDown),
     type
   }, inputRef);
 
