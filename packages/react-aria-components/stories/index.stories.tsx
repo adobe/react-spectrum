@@ -88,7 +88,7 @@ export const ComboBoxRenderPropsDefaultItems = () => (
         </div>
         <Popover placement="bottom end">
           <ListBox className={styles.menu}>
-            {(item: ComboBoxItem) => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
+            {(item: ComboBoxItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
           </ListBox>
         </Popover>
       </>
@@ -110,7 +110,7 @@ export const ComboBoxRenderPropsItems = {
           </div>
           <Popover placement="bottom end">
             <ListBox className={styles.menu}>
-              {(item: ComboBoxItem) => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
+              {(item: ComboBoxItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
             </ListBox>
           </Popover>
         </>
@@ -137,7 +137,7 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
         </div>
         <Popover placement="bottom end">
           <ListBox className={styles.menu} items={items}>
-            {item => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
+            {item => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
           </ListBox>
         </Popover>
       </>
@@ -866,9 +866,9 @@ export const TableExample = () => {
 
 export const TableDynamicExample = () => {
   let columns = [
-    {name: 'Name', key: 'name', isRowHeader: true},
-    {name: 'Type', key: 'type'},
-    {name: 'Date Modified', key: 'date'}
+    {name: 'Name', id: 'name', isRowHeader: true},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let rows = [
@@ -889,7 +889,7 @@ export const TableDynamicExample = () => {
         {(item) => (
           <Row columns={columns}>
             {(column) => {
-              return <Cell>{item[column.key]}</Cell>;
+              return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
         )}

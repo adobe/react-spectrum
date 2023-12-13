@@ -661,7 +661,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
         if (!rendered) {
           rendered = children(item);
           // @ts-ignore
-          let key = rendered.props.id ?? item.id;
+          let key = rendered.props.id ?? item.key ?? item.id;
           // eslint-disable-next-line max-depth
           if (key == null) {
             throw new Error('Could not determine key for item');
