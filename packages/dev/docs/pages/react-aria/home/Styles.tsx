@@ -36,7 +36,7 @@ export function Styles() {
                   <FileTab className="hidden lg:block">ComboBox.css</FileTab>
                 </div>
               }>
-              <div className="grid grid-cols-1 lg:grid-cols-2">
+              <div className="grid grid-cols-1 lg:grid-cols-2 bg-gray-50 dark:bg-zinc-800">
                 <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styling')!.innerHTML}} />
                 <div className="flex flex-row px-3 pt-2.5 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-800 border-y border-gray-300 dark:border-zinc-700">
                   <FileTab>ComboBox.css</FileTab>
@@ -73,7 +73,7 @@ export function Styles() {
           id: 'tailwind',
           label: 'Tailwind',
           content: <div className="flex flex-col lg:flex-row gap-4">
-            <Window className="flex-1" isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
+            <Window className="flex-1 bg-gray-50 dark:bg-zinc-800" isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
             </Window>
             <Window className="w-[350px] h-[320px] place-self-center" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
@@ -116,7 +116,7 @@ export function Styles() {
           id: 'styled-components',
           label: 'Styled Components',
           content: <div className="grid grid-cols-2 gap-4">
-            <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
+            <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}className="bg-gray-50 dark:bg-zinc-800">
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styled-components')!.innerHTML}} />
             </Window>
             <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>

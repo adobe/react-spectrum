@@ -128,7 +128,7 @@ main > section > h2 {
 }
 
 pre {
-  @apply overflow-auto bg-gray-50 dark:bg-zinc-800;
+  @apply overflow-auto;
 }
 
 pre .source {
@@ -294,15 +294,15 @@ pre.small {
 
 @keyframes cross-fade {
   0%, 40% {
-    opacity: 0;
+    opacity: var(--fade-from, 0);
   }
 
   50%, 90% {
-    opacity: 1;
+    opacity: var(--fade-to, 1);
   }
 
   100% {
-    opacity: 0;
+    opacity: var(--fade-from, 0);
   }
 }
 
@@ -322,6 +322,7 @@ pre.small {
 
 .cross-fade {
   animation: cross-fade 5s infinite;
+  mix-blend-mode: plus-lighter;
 }
 
 .highlight-tags {
@@ -419,11 +420,11 @@ pre.small {
     radial-gradient(var(--c-shape), var(--c), transparent);
 }
 
-@media (width < 1080px) {
+@media (width < 768px) {
   .red-gradient-background {
-    --a-shape: circle 300px at 20% 63%;
-    --b-shape: circle 300px at 50% 63%;
-    --c-shape: circle 300px at 80% 63%;
+    --a-shape: circle 300px at 20% 72%;
+    --b-shape: circle 300px at 50% 72%;
+    --c-shape: circle 300px at 80% 72%;
   }
 }
 
@@ -432,5 +433,33 @@ pre.small {
     --a: oklch(27% 0.11 340);
     --b: oklch(26% 0.11 6);
     --c: oklch(26% 0.1 20);
+  }
+}
+
+.green-gradient-background {
+  --a: oklch(96% 0.1 120);
+  --a-shape: ellipse 30% 30% at 29% 54%;
+  --b: oklch(91% 0.12 140);
+  --b-shape: ellipse 35% 30% at 66% 41%;
+  --c: oklch(94% 0.06 150);
+  --c-shape: ellipse 40% 25% at 50% 74%;
+  background: radial-gradient(var(--a-shape), var(--a), transparent),
+    radial-gradient(var(--b-shape), var(--b), transparent),
+    radial-gradient(var(--c-shape), var(--c), transparent);
+}
+
+@media (width < 768px) {
+  .green-gradient-background {
+    --a-shape: circle 400px at 20% 63%;
+    --b-shape: circle 400px at 50% 63%;
+    --c-shape: circle 400px at 80% 63%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .green-gradient-background {
+    --a: oklch(28% 0.1 130);
+    --b: oklch(28% 0.12 145);
+    --c: oklch(26% 0.06 150);
   }
 }
