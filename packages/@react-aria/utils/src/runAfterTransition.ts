@@ -27,7 +27,7 @@ function setupGlobalEvents() {
   }
 
   function isTransitionEvent(event: Event): event is TransitionEvent {
-    return 'propertyName' in event
+    return 'propertyName' in event;
   }
 
   let onTransitionStart = (e: Event) => {
@@ -44,7 +44,7 @@ function setupGlobalEvents() {
       // event. This enables us to handle when the node is deleted from the document while it is transitioning.
       // In that case, the cancel event would have nowhere to bubble to so we need to handle it directly.
       e.target.addEventListener('transitioncancel', onTransitionEnd, {
-        once: true,
+        once: true
       });
     }
 
