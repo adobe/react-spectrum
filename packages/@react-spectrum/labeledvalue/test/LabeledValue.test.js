@@ -10,7 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, CalendarDateTime, Time, ZonedDateTime} from '@internationalized/date';
+import {
+  CalendarDate,
+  CalendarDateTime,
+  Time,
+  ZonedDateTime
+} from '@internationalized/date';
 import {LabeledValue} from '../src';
 import React from 'react';
 import {render, within} from '@react-spectrum/test-utils';
@@ -18,22 +23,67 @@ import {render, within} from '@react-spectrum/test-utils';
 describe('LabeledValue', function () {
   it('renders a label', function () {
     let {getByText} = render(
-      <LabeledValue
-        data-testid="test-id"
-        label="Field label"
-        value="test" />
+      <LabeledValue data-testid="test-id" label="Field label" value="test" />
     );
 
     let labelText = getByText('Field label');
     expect(labelText).toBeTruthy();
   });
 
-  it('renders correctly with string value', function () {
+  it('renders correctly with null value', function () {
+    let {getByTestId} = render(
+      <LabeledValue data-testid="test-id" label="Field label" value={null} />
+    );
+
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).toMatchInlineSnapshot(`
+      <div
+        class="spectrum-Field spectrum-Field--positionTop spectrum-LabeledValue"
+        data-testid="test-id"
+      >
+        <span
+          class="spectrum-FieldLabel"
+        >
+          Field label
+        </span>
+        <span
+          class="spectrum-Field-field"
+        />
+      </div>
+    `);
+  });
+
+  it('renders correctly with undefined value', function () {
     let {getByTestId} = render(
       <LabeledValue
         data-testid="test-id"
         label="Field label"
-        value="test" />
+        value={undefined} />
+    );
+
+    let staticField = getByTestId('test-id');
+    expect(staticField).toBeInTheDocument();
+    expect(staticField).toMatchInlineSnapshot(`
+      <div
+        class="spectrum-Field spectrum-Field--positionTop spectrum-LabeledValue"
+        data-testid="test-id"
+      >
+        <span
+          class="spectrum-FieldLabel"
+        >
+          Field label
+        </span>
+        <span
+          class="spectrum-Field-field"
+        />
+      </div>
+    `);
+  });
+
+  it('renders correctly with string value', function () {
+    let {getByTestId} = render(
+      <LabeledValue data-testid="test-id" label="Field label" value="test" />
     );
 
     let staticField = getByTestId('test-id');
@@ -81,7 +131,6 @@ describe('LabeledValue', function () {
     expect(staticField).toHaveTextContent('June 5, 2019');
   });
 
-
   it('renders correctly with CalendarDateTime value', function () {
     let {getByTestId} = render(
       <LabeledValue
@@ -107,7 +156,6 @@ describe('LabeledValue', function () {
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
     expect(staticField).toHaveTextContent('Feb 3, 2020, 12:23:24 PM');
-
   });
 
   it('renders correctly with ZonedDateTime value', function () {
@@ -121,7 +169,6 @@ describe('LabeledValue', function () {
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
     expect(staticField).toHaveTextContent('February 3, 2020 at 12:00 AM PST');
-
   });
 
   it('renders correctly with ZonedDateTime value with user provided format options', function () {
@@ -192,7 +239,9 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('July 5, 2019 at 12:00 AM – July 10, 2019 at 12:00 AM');
+    expect(staticField).toHaveTextContent(
+      'July 5, 2019 at 12:00 AM – July 10, 2019 at 12:00 AM'
+    );
   });
 
   it('renders correctly with RangeValue<Time>', function () {
@@ -214,12 +263,23 @@ describe('LabeledValue', function () {
       <LabeledValue
         data-testid="test-id"
         label="Field label"
-        value={{start: new ZonedDateTime(2020, 2, 3, 'America/Los_Angeles', -28800000), end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)}} />
+        value={{
+          start: new ZonedDateTime(
+            2020,
+            2,
+            3,
+            'America/Los_Angeles',
+            -28800000
+          ),
+          end: new ZonedDateTime(2020, 3, 3, 'America/Los_Angeles', -28800000)
+        }} />
     );
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('February 3, 2020 at 12:00 AM PST – March 3, 2020 at 12:00 AM PST');
+    expect(staticField).toHaveTextContent(
+      'February 3, 2020 at 12:00 AM PST – March 3, 2020 at 12:00 AM PST'
+    );
   });
 
   it('renders correctly with RangeValue<CalendarDateTime>', function () {
@@ -227,12 +287,17 @@ describe('LabeledValue', function () {
       <LabeledValue
         data-testid="test-id"
         label="Field label"
-        value={{start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120), end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)}} />
+        value={{
+          start: new CalendarDateTime(2020, 2, 3, 12, 23, 24, 120),
+          end: new CalendarDateTime(2020, 3, 3, 12, 23, 24, 120)
+        }} />
     );
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
-    expect(staticField).toHaveTextContent('February 3, 2020 at 12:23 PM – March 3, 2020 at 12:23 PM');
+    expect(staticField).toHaveTextContent(
+      'February 3, 2020 at 12:23 PM – March 3, 2020 at 12:23 PM'
+    );
   });
 
   it('renders correctly with RangeValue<CalendarDate>', function () {
@@ -240,7 +305,10 @@ describe('LabeledValue', function () {
       <LabeledValue
         data-testid="test-id"
         label="Field label"
-        value={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 7, 5)}} />
+        value={{
+          start: new CalendarDate(2019, 6, 5),
+          end: new CalendarDate(2019, 7, 5)
+        }} />
     );
 
     let staticField = getByTestId('test-id');
@@ -250,16 +318,12 @@ describe('LabeledValue', function () {
 
   it('renders correctly with number value', function () {
     let {getByTestId} = render(
-      <LabeledValue
-        data-testid="test-id"
-        label="Field label"
-        value={10} />
+      <LabeledValue data-testid="test-id" label="Field label" value={10} />
     );
 
     let staticField = getByTestId('test-id');
     expect(staticField).toBeInTheDocument();
     expect(staticField).toHaveTextContent('10');
-
   });
 
   it('renders correctly with RangeValue<NumberValue>', function () {
@@ -278,10 +342,7 @@ describe('LabeledValue', function () {
   it('attaches a user provided ref to the outer div', function () {
     let ref = React.createRef();
     let {getByTestId} = render(
-      <LabeledValue
-        data-testid="test-id"
-        ref={ref}
-        value="test" />
+      <LabeledValue data-testid="test-id" ref={ref} value="test" />
     );
 
     let staticField = getByTestId('test-id');
@@ -300,7 +361,9 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(ref.current.UNSAFE_getDOMNode()).toBe(staticField);
-    expect(within(ref.current.UNSAFE_getDOMNode()).getByText('Field label')).toBeInTheDocument();
+    expect(
+      within(ref.current.UNSAFE_getDOMNode()).getByText('Field label')
+    ).toBeInTheDocument();
   });
 
   it('labelPosition: side supports a ref', function () {
@@ -316,6 +379,8 @@ describe('LabeledValue', function () {
 
     let staticField = getByTestId('test-id');
     expect(ref.current.UNSAFE_getDOMNode()).toBe(staticField);
-    expect(within(ref.current.UNSAFE_getDOMNode()).getByText('Field label')).toBeInTheDocument();
+    expect(
+      within(ref.current.UNSAFE_getDOMNode()).getByText('Field label')
+    ).toBeInTheDocument();
   });
 });
