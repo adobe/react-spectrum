@@ -173,11 +173,12 @@ TagGroupExample.argTypes = {
       type: 'inline-radio',
       options: ['toggle', 'replace']
     }
-  },
-  parameters: {
-    description: {
-      data: 'First tagroup has hover style applied both seletable and non-selectable tags. Second taggroup only has hover styles for selectable tags. Also note that the third tag is disabled.'
-    }
+  }
+};
+
+TagGroupExample.parameters = {
+  description: {
+    data: 'First tagroup has hover style applied both seletable and non-selectable tags. Second taggroup only has hover styles for selectable tags. Also note that the third tag is disabled.'
   }
 };
 
@@ -1428,7 +1429,7 @@ export const SwitchHoverStylesExample = {
       </Switch>
       <Switch className={`${classNames(styles, 'switchExample')} styles-example-interactiveOnly-switch`} data-testid="switch-example" {...args}>
         <div className={classNames(styles, 'switchExample-indicator')} />
-        Hover styles applied only when selectable
+        Hover styles applied only when pressable
       </Switch>
     </div>
   ),

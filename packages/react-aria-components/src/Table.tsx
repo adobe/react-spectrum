@@ -1109,7 +1109,6 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
         data-dragging={isDragging || undefined}
         data-drop-target={dropIndicator?.isDropTarget || undefined}
         data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
-
         <Provider
           values={[
             [CheckboxContext, {

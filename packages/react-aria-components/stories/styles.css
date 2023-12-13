@@ -216,7 +216,7 @@
     }
   }
 
-  &:global(.styles-example-interactiveOnly) {
+  &:global(.styles-example-interactiveOnly-listbox) {
     :global(.react-aria-ListBoxItem) {
       &[data-hovered] {
         background-color: unset;
