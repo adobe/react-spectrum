@@ -1,7 +1,7 @@
 import {Calendar} from 'tailwind-starter/Calendar';
 import {DateField} from 'tailwind-starter/DateField';
+import {DateValue, I18nProvider, useLocale} from 'react-aria-components';
 import {getLocalTimeZone, now} from '@internationalized/date';
-import {I18nProvider, useLocale} from 'react-aria-components';
 import {NumberField} from 'tailwind-starter/NumberField';
 import React from 'react';
 import {Select, SelectItem, SelectSection} from 'tailwind-starter/Select';
@@ -139,6 +139,7 @@ export function I18n() {
   }
 
   let [date, setDate] = React.useState(() => now(getLocalTimeZone()));
+  let [focusedDate, setFocusedDate] = React.useState<DateValue>(date);
   let [number, setNumber] = React.useState(1234);
   let updateNumberFormat = format => {
     setNumberFormat(format);
@@ -184,10 +185,16 @@ export function I18n() {
       </div>
       <I18nProvider locale={selectedLocale.toString()}>
         <LangWrapper>
-          <Calendar value={date} focusedValue={date} onChange={setDate} />
+          <Calendar value={date} onChange={setDate} focusedValue={focusedDate} onFocusChange={setFocusedDate} />
           <div className="flex flex-col gap-10">
             <NumberField label="Number" value={number} onChange={setNumber} minValue={0} formatOptions={{style: numberFormat, currency: 'USD', unit: 'inch', maximumFractionDigits: 2}} />
-            <DateField label="Date and Time" value={date} onChange={setDate} />
+            <DateField
+              label="Date and Time"
+              value={date}
+              onChange={date => {
+                setDate(date);
+                setFocusedDate(date);
+              }} />
           </div>
         </LangWrapper>
       </I18nProvider>
