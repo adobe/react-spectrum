@@ -16,9 +16,9 @@ import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spect
 import {classNames} from '@react-spectrum/utils';
 import {Content} from '@react-spectrum/view';
 import {Draggable} from '@react-aria/dnd/stories/dnd.stories';
+import {DropEvent, FileDropItem, TextDropItem, useDrag} from 'react-aria';
 import {DropZone} from '../';
 import File from '@spectrum-icons/illustrations/File';
-import {DropEvent, FileDropItem, TextDropItem, useDrag} from 'react-aria';
 import {FileTrigger, Text} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
@@ -30,10 +30,10 @@ import styles from './styles.css';
 import Upload from '@spectrum-icons/illustrations/Upload';
 
 interface FileFilledSource {
-  src?: string;
-  id?: number;
-  type: string;
-  name: string;
+  src?: string,
+  id?: number,
+  type: string,
+  name: string
 }
 
 type StoryArgs = SpectrumDropZoneProps;
