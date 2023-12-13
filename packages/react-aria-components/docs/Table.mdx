@@ -471,7 +471,7 @@ function FileTable(props: TableProps) {
       <TableBody items={rows}>
         {item => (
           <MyRow columns={columns}>
-            {column => <Cell>{item[column.key]}</Cell>}
+            {column => <Cell>{item[column.id]}</Cell>}
           </MyRow>
         )}
       </TableBody>
