@@ -23,6 +23,7 @@ const attributes = {
     ['read-only', 'readonly'],
     'outside-month',
     'outside-visible-range',
+    'interactive',
 
     // Content
     'empty',
