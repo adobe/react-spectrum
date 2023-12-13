@@ -133,3 +133,17 @@ export let WithContextualHelp: LabeledValueStory = {
   },
   name: 'contextual help'
 };
+
+export let NullValue: LabeledValueStory = {
+  args: {
+    label: 'Test',
+    value: null
+  }
+};
+
+export let UndefinedValue: LabeledValueStory = {
+  args: {
+    label: 'Test',
+    value: undefined
+  }
+};
