@@ -182,6 +182,7 @@ export const WithinAPopover = (args) => (
       <Content>
         <SearchField
           label="Search"
+          {...args}
           onChange={action('change')}
           onSubmit={action('submit')} />
       </Content>
