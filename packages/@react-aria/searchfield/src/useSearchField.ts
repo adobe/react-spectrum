@@ -57,7 +57,7 @@ export function useSearchField(
   let onKeyDown = (e) => {
     const key = e.key;
 
-    if (key === 'Enter' || key === 'Escape') {
+    if (key === 'Enter') {
       e.preventDefault();
     }
 
@@ -74,6 +74,7 @@ export function useSearchField(
       if (onClear) {
         onClear();
       }
+      e.continuePropagation();
     }
   };
 
