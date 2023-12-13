@@ -57,7 +57,7 @@ body {
 }
 
 .header-background {
-  @apply [--l:91%] [--c:0.11] dark:[--l:30%] dark:[--c:0.14];
+  @apply [--l:91%] [--c:0.11] dark:[--l:32%] dark:[--c:0.13];
   background: linear-gradient(to bottom, transparent 0% 80%, var(--page-bg)),
     radial-gradient(circle at 50% 60%, transparent 0% 50%, var(--page-bg)),
     conic-gradient(from 30deg at 50% 60%,
@@ -68,8 +68,8 @@ body {
       oklch(var(--l) var(--c) 0),
       oklch(var(--l) var(--c) 40),
       oklch(var(--l) var(--c) 60),
-      oklch(var(--l) var(--c) 100),
-      oklch(var(--l) var(--c) 140),
+      oklch(max(var(--l), 44%) var(--c) 100),
+      oklch(max(var(--l), 38%) var(--c) 140),
       oklch(var(--l) var(--c) 180),
       oklch(var(--l) var(--c) 220)
     );

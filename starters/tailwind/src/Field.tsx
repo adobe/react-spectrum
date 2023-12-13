@@ -19,7 +19,7 @@ export function FieldError(props: FieldErrorProps) {
 export const fieldBorderStyles = tv({
   variants: {
     isFocusWithin: {
-      false: 'border-gray-300 dark:border-zinc-600 forced-colors:!border-[ButtonBorder]',
+      false: 'border-gray-300 dark:border-zinc-500 forced-colors:!border-[ButtonBorder]',
       true: 'border-gray-600 dark:border-zinc-300 forced-colors:!border-[Highlight]',
     },
     isInvalid: {

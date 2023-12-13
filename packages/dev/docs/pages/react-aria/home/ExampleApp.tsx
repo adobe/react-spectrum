@@ -391,7 +391,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                     setDroppedImage(URL.createObjectURL(await item.getFile()));
                   }
                 }}
-                className="w-24 sm:w-32 p-2 flex items-center justify-center flex-shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 focus-visible:border-blue-600 forced-colors:focus-visible:border-[Highlight] focus-visible:border-solid drop-target:border-blue-600 forced-colors:drop-target:border-[Highlight] drop-target:border-solid drop-target:bg-blue-100 drop-target:text-blue-600">
+                className="w-24 sm:w-32 p-2 flex items-center justify-center flex-shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 dark:text-gray-300 focus-visible:border-blue-600 forced-colors:focus-visible:border-[Highlight] focus-visible:border-solid drop-target:border-blue-600 forced-colors:drop-target:border-[Highlight] drop-target:border-solid drop-target:bg-blue-100 drop-target:text-blue-600">
                 {droppedImage
                   ? <img alt="" src={droppedImage} className="w-full h-full object-contain aspect-square" />
                   : <Text slot="label" className="italic text-sm text-center">Drop or paste image here</Text>
@@ -499,7 +499,7 @@ function PlantModal(props: ModalOverlayProps) {
           {...props}
           ref={ref}
           className={({isEntering, isExiting}) => `
-          w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/90 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:!bg-[Canvas] p-6 text-left align-middle shadow-2xl bg-clip-padding border border-black/10 dark:border-white/10
+          w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/70 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:!bg-[Canvas] p-6 text-left align-middle shadow-2xl bg-clip-padding border border-black/10 dark:border-white/10
           ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
           ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
         `} />
