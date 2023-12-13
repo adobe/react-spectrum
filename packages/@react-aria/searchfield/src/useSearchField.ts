@@ -70,11 +70,13 @@ export function useSearchField(
     }
 
     if (key === 'Escape') {
+      if (state.value === '') {
+        e.continuePropagation();
+      }
       state.setValue('');
       if (onClear) {
         onClear();
       }
-      e.continuePropagation();
     }
   };
 
@@ -96,7 +98,7 @@ export function useSearchField(
     ...props,
     value: state.value,
     onChange: state.setValue,
-    onKeyDown: !isReadOnly && chain(onKeyDown, props.onKeyDown),
+    onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
     type
   }, inputRef);
 
