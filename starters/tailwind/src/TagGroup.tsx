@@ -11,6 +11,8 @@ import {
 import { Description, Label } from './Field';
 import { XIcon } from 'lucide-react';
 import React from 'react';
+import {tv} from 'tailwind-variants';
+import {focusRing} from './utils';
 
 const colors = {
   gray: 'bg-gray-100 text-gray-600 border-gray-200 hover:border-gray-300 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600 dark:hover:border-zinc-500',
@@ -19,6 +21,32 @@ const colors = {
   blue: 'bg-blue-100 text-blue-700 border-blue-200 hover:border-blue-300 dark:bg-blue-400/20 dark:text-blue-300 dark:border-blue-400/10 dark:hover:border-blue-400/20'
 };
 
+type Color = keyof typeof colors;
+
+const styles = tv({
+  extend: focusRing,
+  base: 'transition cursor-default text-xs rounded-full border px-3 py-0.5 flex items-center max-w-fit gap-1',
+  variants: {
+    color: {
+      gray: '',
+      green: '',
+      yellow: '',
+      blue: ''
+    },
+    isSelected: {
+      true: 'bg-blue-600 text-white border-transparent forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-color-adjust-none'
+    },
+    isDisabled: {
+      true: 'bg-gray-100 text-gray-300 forced-colors:text-[GrayText]'
+    }
+  },
+  compoundVariants: (Object.keys(colors) as Color[]).map((color) => ({
+    isSelected: false,
+    color,
+    class: colors[color]
+  }))
+});
+
 export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'> {
   label?: string;
   description?: string;
@@ -26,7 +54,7 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children'>, P
 }
 
 export interface TagProps extends AriaTagProps {
-  color?: keyof typeof colors
+  color?: Color
 }
 
 export function TagGroup<T extends object>(
@@ -55,7 +83,7 @@ export function TagGroup<T extends object>(
 export function Tag({ children, color = 'gray', ...props }: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   return (
-    <AriaTag textValue={textValue} {...props} className={`${colors[color]} transition cursor-default selected:bg-blue-600 selected:text-white selected:border-blue-600 dark:selected:hover:border-blue-600 text-xs rounded-full border px-3 py-0.5 flex items-center max-w-fit gap-1 outline-none focus-visible:outline-blue-600 disabled:bg-gray-100 disabled:text-gray-300`}>
+    <AriaTag textValue={textValue} {...props} className={renderProps => styles({...renderProps, color})}>
       {({ allowsRemoving }) => (
         <>
           {children}

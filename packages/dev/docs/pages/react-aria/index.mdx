@@ -283,45 +283,8 @@ import {KanbanBoard} from './home/KanbanExample';
       <div className="flex-1 flex items-center justify-center -mb-6 will-change-transform">
 
 ```tsx snippet
-import { Switch } from "react-aria-components";
-import { Finger } from './home/components';
-
-function SwitchExample() {
-  let ref = React.useRef();
-  let [isAnimating, setAnimating] = React.useState(false);
-  let [isSelected, setSelected] = React.useState(true);
-
-  React.useEffect(() => {
-    let element = ref.current;
-    let observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setAnimating(true);
-      } else {
-        setAnimating(false);
-        setSelected(true);
-      }
-    }, {threshold: 1});
-    observer.observe(element);
-    return () => observer.unobserve(element);
-  }, []);
-
-  return (
-    <>
-      <Finger style={{animation: isAnimating ? 'touch-animation 12s ease-in-out 500ms' : null}} />
-      <Switch
-        aria-label="Example switch"
-        ref={ref}
-        isSelected={isSelected}
-        onChange={setSelected}
-        className="group inline-flex touch-none"
-        style={{ WebkitTapHighlightColor: "transparent" }}>
-        <span className="[--bg:theme(colors.slate.300)] dark:[--bg:theme(colors.zinc.600)] bg-[--bg] [--bg-selected:theme(colors.green.500)] group-selected:bg-[--bg-selected] group-focus-visible:outline outline-2 outline-blue-600 mr-4 h-10 w-16 rounded-full border-4 border-transparent outline-offset-2 transition duration-200" style={{animation: isAnimating ? 'switch-background-animation 12s ease-in-out 500ms' : null}}>
-          <span className="group-selected:ml-6 group-selected:group-pressed:ml-4 group-pressed:w-10 block h-8 w-8 origin-right rounded-full bg-white shadow transition-all duration-200" style={{animation: isAnimating ? 'switch-animation 12s ease-in-out 500ms' : null, contain: 'layout'}} />
-        </span>
-      </Switch>
-    </>
-  );
-}
+import {SwitchAnimation} from './home/SwitchAnimation';
+<SwitchAnimation />
 ```
 
       </div>
@@ -335,7 +298,6 @@ function SwitchExample() {
 
   ```tsx snippet
   import {MouseAnimation} from './home/MouseAnimation';
-
   <MouseAnimation />
   ```
 
@@ -351,7 +313,6 @@ function SwitchExample() {
 
 ```tsx snippet
 import {ListBoxExample} from './home/ListBoxExample';
-
 <ListBoxExample />
 ```
 
@@ -364,52 +325,16 @@ import {ListBoxExample} from './home/ListBoxExample';
 
 ```tsx snippet
 import {TextField} from 'tailwind-starter/TextField';
-import {FocusScope} from 'react-aria';
-import {flushSync} from 'react-dom';
-import {useInteractOutside} from '@react-aria/interactions';
 import {Popover} from 'tailwind-starter/Popover';
 import {Button} from 'tailwind-starter/Button';
 import {Dialog, DialogTrigger, Heading} from 'react-aria-components';
 import {CircleUser} from 'lucide-react';
 
-/*function FocusExample() {
-  let [contain, setContain] = React.useState(false);
-  let ref = React.useRef(null);
-  useInteractOutside({
-    ref,
-    onInteractOutside: contain ? (() => {
-      flushSync(() => {
-        setContain(false);
-      });
-      document.activeElement.blur();
-    }) : null
-  });
-  return (
-    <div
-      ref={ref}
-      className="flex flex-col gap-4 mt-8 max-w-xs mx-auto"
-      onFocus={() => setContain(true)}
-      onKeyDownCapture={e => {
-        if (contain && e.key === 'Escape') {
-          flushSync(() => {
-            setContain(false);
-          });
-          e.target.blur();
-        }
-      }}>
-      <FocusScope contain={contain}>
-        <TextField label="First Name" defaultValue="Devon" />
-        <TextField label="Last Name" defaultValue="Devon" />
-      </FocusScope>
-    </div>
-  );
-}*/
-
 <div className="flex items-center justify-center h-full">
   <DialogTrigger>
     <Button variant="secondary" className="w-9 h-9 p-0" aria-label="Account"><CircleUser className="inline w-5 h-5" /></Button>
     <Popover showArrow className="w-[250px]">
-      <Dialog className="outline-none p-4 overflow-auto flex flex-col gap-2">
+      <Dialog className="outline-0 p-4 overflow-auto flex flex-col gap-2">
         <Heading slot="title" className="text-lg font-semibold mb-2">Your Account</Heading>
         <TextField label="First Name" defaultValue="Devon" autoFocus={navigator.maxTouchPoints === 0} />
         <TextField label="Last Name" defaultValue="Govett" />
@@ -672,7 +597,7 @@ import {Pagination} from './home/Pagination';
 
 </section>
 
-<section className="max-w-6xl mx-auto px-8 md:px-20 py-20">
+<section className="max-w-6xl mx-auto px-8 md:px-20 pb-20">
   <h2 className="pb-8"><GradientText>Ready to get started?</GradientText></h2>
 
   <div className="grid md:grid-cols-3 gap-6">

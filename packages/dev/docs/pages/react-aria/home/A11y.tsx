@@ -28,10 +28,10 @@ const swipeRightKeyframes: PropertyIndexedKeyframes = {
     'translate(80px, 0)'
   ],
   opacity: [
-    0,
-    0.3,
-    0.3,
-    0
+    '0',
+    'var(--pressed-opacity)',
+    'var(--pressed-opacity)',
+    '0'
   ],
   offset: [0, 0.2, 0.8, 1],
   easing: 'ease-in-out'
@@ -39,11 +39,11 @@ const swipeRightKeyframes: PropertyIndexedKeyframes = {
 
 const doubleTapKeyframes: PropertyIndexedKeyframes = {
   opacity: [
-    0,
-    0.3,
-    0.15,
-    0.3,
-    0
+    '0',
+    'var(--pressed-opacity)',
+    'var(--hover-opacity)',
+    'var(--pressed-opacity)',
+    '0'
   ],
   easing: 'ease-in-out'
 };
@@ -185,7 +185,7 @@ export function A11y() {
         {fingerPos && createPortal(<Finger ref={fingerRef} style={{...fingerPos, zIndex: 100000000}} />, document.body)}
         {cursorRect && createPortal((
           <div
-            className="rounded-md border-2 border-black absolute"
+            className="rounded-md border-2 border-black absolute forced-color-adjust-none"
             style={{
               ...cursorRect,
               zIndex: 100000000,
@@ -209,7 +209,7 @@ export function A11y() {
           </Popover>
         </Select>
       </div>
-      {caption && <div className="absolute bottom-4 md:bottom-8 left-8 right-8 bg-gray-700 text-white text-center text-xs px-2 py-1.5 rounded-lg">{caption}</div>}
+      {caption && <div className="absolute bottom-4 md:bottom-8 left-8 right-8 bg-gray-700 text-white border border-transparent text-center text-xs px-2 py-1.5 rounded-lg">{caption}</div>}
     </div>
   );
 }

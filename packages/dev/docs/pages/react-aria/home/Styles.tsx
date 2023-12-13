@@ -80,25 +80,25 @@ export function Styles() {
               <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-sky-300 to-cyan-300">
                 <ComboBox className="group flex flex-col gap-1 w-[200px]">
                   <Label className="text-black cursor-default text-sm">Assignee</Label>
-                  <Group className="flex rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition shadow-md ring-1 ring-black/10 focus-visible:ring-2 focus-visible:ring-black">
-                    <Input className="flex-1 w-full border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-none text-sm" />
+                  <Group className="flex rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition shadow-md border border-black/10 bg-clip-padding focus-visible:outline-2 outline outline-0 -outline-offset-2 outline-black forced-colors:outline-[Highlight]">
+                    <Input className="flex-1 w-full border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-0 text-sm" />
                     <Button className="px-2.5 flex items-center transition border-0 border-solid border-l border-l-sky-200 bg-transparent rounded-r-lg pressed:bg-sky-100 cursor-default">
-                      <ChevronsUpDownIcon className="w-4 h-4 text-gray-700" />
+                      <ChevronsUpDownIcon className="w-4 h-4 text-gray-700 forced-colors:text-[ButtonText]" />
                     </Button>
                   </Group>
-                  <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg ring-1 ring-black/5 entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
-                    <ListBox className="outline-none p-1" items={people}>
+                  <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg border border-black/5 bg-clip-padding entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
+                    <ListBox className="outline-0 p-1" items={people}>
                       {item => (
                         <ListBoxItem
                           textValue={item.name}
-                          className="group flex items-center gap-2 cursor-default select-none py-1.5 px-2 outline-none rounded text-gray-900 text-sm focus:bg-sky-600 focus:text-white">
+                          className="group flex items-center gap-2 cursor-default select-none py-1.5 px-2 outline-0 rounded text-gray-900 text-sm focus:bg-sky-600 focus:text-white forced-colors:text-[ButtonText] forced-colors:focus:bg-[Highlight] forced-colors:focus:text-[HighlightText] forced-color-adjust-none">
                           {({isSelected}) => (<>
                             <span className="flex-1 flex items-center gap-3 truncate font-normal group-selected:font-semibold">
                               <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
                               <span className="truncate">{item.name}</span>
                             </span>
                             {isSelected &&
-                              <span className="w-4 flex items-center text-sky-600 group-focus:text-white">
+                              <span className="w-4 flex items-center text-sky-600 forced-colors:text-[Highlight] group-focus:text-inherit">
                                 <CheckIcon className="w-4 h-4" />
                               </span>
                             }
@@ -260,13 +260,13 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       <div className="relative overflow-x-auto no-scrollbar p-2 sm:-m-2" ref={tabListScrollRef}>
         <TabList ref={tabListRef} className="flex px-2 y-2 md:px-0" items={tabs}>
           {(tab) =>
-            (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base text-black dark:text-white transition outline-none">
+            (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base text-black dark:text-white transition outline-0 forced-colors:selected:!text-[HighlightText] forced-color-adjust-none">
               {({isSelected, isFocusVisible}) => (<>
                 {tab.label}
                 {isFocusVisible && isSelected && (
                   // Focus ring.
                   <motion.span
-                    className="absolute inset-y-2 inset-x-0 z-10 rounded-full ring-2 ring-black ring-offset-2"
+                    className="absolute inset-y-2 inset-x-0 z-10 rounded-full outline outline-2 outline-black dark:outline-white forced-colors:!outline-[Highlight] outline-offset-2"
                     style={{x, width}} />
                 )}
               </>)}
@@ -275,7 +275,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
         </TabList>
         {/* Selection indicator. */}
         <motion.span
-          className="absolute inset-y-2 inset-x-0 z-10 bg-white rounded-full mix-blend-difference"
+          className="absolute inset-y-2 inset-x-0 z-10 bg-white rounded-full mix-blend-difference forced-colors:bg-[Highlight] forced-colors:mix-blend-normal forced-colors:-z-10"
           style={{x, width}} />
       </div>
       <div
@@ -285,7 +285,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
           {(tab) => (
             <TabPanel
               shouldForceMount
-              className="flex-shrink-0 w-full px-4 box-border snap-start snap-always outline-none -outline-offset-2 rounded focus-visible:outline-black">
+              className="flex-shrink-0 w-full px-4 box-border snap-start snap-always outline-0 -outline-offset-2 rounded focus-visible:outline-black">
               {tab.content}
             </TabPanel>
           )}

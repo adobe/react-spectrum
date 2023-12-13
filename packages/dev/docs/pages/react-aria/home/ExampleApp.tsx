@@ -4,9 +4,10 @@ import {Button} from 'tailwind-starter/Button';
 import {Cell, Column, Row, TableHeader} from 'tailwind-starter/Table';
 import {Checkbox} from 'tailwind-starter/Checkbox';
 import {CloudSun, Dessert, Droplet, Droplets, FilterIcon, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon} from 'lucide-react';
-import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, TooltipTrigger} from 'react-aria-components';
+import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, Table, TableBody, Text, ToggleButton, ToggleButtonProps, TooltipTrigger} from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 import {DatePicker} from 'tailwind-starter/DatePicker';
+import {focusRing} from 'tailwind-starter/utils';
 import {getLocalTimeZone, today} from '@internationalized/date';
 import {GridList, GridListItem} from 'tailwind-starter/GridList';
 import {Menu, MenuItem} from 'tailwind-starter/Menu';
@@ -19,6 +20,7 @@ import {Select, SelectItem} from 'tailwind-starter/Select';
 import {Tag, TagGroup} from 'tailwind-starter/TagGroup';
 import {TextField} from 'tailwind-starter/TextField';
 import {Tooltip} from 'tailwind-starter/Tooltip';
+import {tv} from 'tailwind-variants';
 import {useCollator, useFilter} from 'react-aria';
 import {useMediaQuery} from '@react-spectrum/utils';
 
@@ -55,7 +57,7 @@ export function ExampleApp() {
     .filter(item =>
       (contains(item.common_name, search) || contains(item.scientific_name.join(''), search))
         && (!favorite || item.isFavorite)
-        && (cycles === 'all' || cycles.size === 0 || cycles.has(item.cycle))
+        && (cycles === 'all' || cycles.size === 0 || cycles.has(item.cycle.replace('Herbaceous ', '')))
         && (sunlight === 'all' || sunlight.size === 0 || sunlight.has(getSunlight(item)))
         && (watering === 'all' || watering.size === 0 || watering.has(item.watering))
     )
@@ -172,24 +174,24 @@ export function ExampleApp() {
             <Tooltip>Filters</Tooltip>
           </TooltipTrigger>
           <Popover showArrow>
-            <Dialog className="outline-none p-4 max-h-[inherit] overflow-auto w-[350px]">
+            <Dialog className="outline-0 p-4 max-h-[inherit] overflow-auto w-[350px]">
               <Heading slot="title" className="text-lg font-semibold mb-2">Filters</Heading>
               {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute top-4 right-4 py-1 px-2 text-xs">Clear</Button>}
               <div className="flex flex-col gap-4">
                 <Checkbox isSelected={favorite} onChange={setFavorite}>Favorite</Checkbox>
                 <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles}>
-                  <Tag id="Perennial" color="green">{cycleIcons['Perennial']} Perennial</Tag>
-                  <Tag id="Herbaceous Perennial" color="green">{cycleIcons['Herbaceous Perennial']} Herbaceous Perennial</Tag>
+                  <Tag id="Annual" color="green" textValue="Annual"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Annual</Tag>
+                  <Tag id="Perennial" color="green" textValue="Perennial"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Perennial</Tag>
                 </TagGroup>
                 <TagGroup label="Sunlight" selectionMode="multiple" selectedKeys={sunlight} onSelectionChange={setSunlight}>
-                  <Tag id="full sun" color="yellow">{sunIcons['full sun']} Full Sun</Tag>
-                  <Tag id="part sun" color="yellow">{sunIcons['part sun']} Part Sun</Tag>
-                  <Tag id="part shade" color="yellow">{sunIcons['part shade']} Part Shade</Tag>
+                  <Tag id="full sun" color="yellow" textValue="Full Sun">{sunIcons['full sun']} Full Sun</Tag>
+                  <Tag id="part sun" color="yellow" textValue="Part Sun">{sunIcons['part sun']} Part Sun</Tag>
+                  <Tag id="part shade" color="yellow" textValue="Part Shade">{sunIcons['part shade']} Part Shade</Tag>
                 </TagGroup>
                 <TagGroup label="Watering" selectionMode="multiple" selectedKeys={watering} onSelectionChange={setWatering}>
-                  <Tag id="Frequent" color="blue">{wateringIcons['Frequent']} Frequent</Tag>
-                  <Tag id="Average" color="blue">{wateringIcons['Average']} Average</Tag>
-                  <Tag id="Minimum" color="blue">{wateringIcons['Minimum']} Minimum</Tag>
+                  <Tag id="Frequent" color="blue" textValue="Frequent">{wateringIcons['Frequent']} Frequent</Tag>
+                  <Tag id="Average" color="blue" textValue="Average">{wateringIcons['Average']} Average</Tag>
+                  <Tag id="Minimum" color="blue" textValue="Minimum">{wateringIcons['Minimum']} Minimum</Tag>
                 </TagGroup>
               </div>
             </Dialog>
@@ -252,9 +254,7 @@ export function ExampleApp() {
                     case 'favorite':
                       return (
                         <Cell>
-                          <ToggleButton aria-label="Favorite" isSelected={item.isFavorite} onChange={v => toggleFavorite(item.id, v)} className="group cursor-default align-middle rounded outline-none focus-visible:outline-blue-600 text-gray-500 dark:text-zinc-400 pressed:text-gray-600 dark:pressed:text-zinc-300 selected:text-gray-700 selected:pressed:text-gray-800 dark:selected:text-slate-300 dark:selected:pressed:text-slate-200">
-                            <StarIcon className="w-5 h-5 fill-white dark:fill-zinc-900 group-selected:fill-current" />
-                          </ToggleButton>
+                          <FavoriteButton isSelected={item.isFavorite} onChange={v => toggleFavorite(item.id, v)} />
                         </Cell>
                       );
                     case 'common_name':
@@ -318,14 +318,8 @@ function Label({color, icon, children}: {color: keyof typeof labelStyles, icon: 
   return <span className={`${labelStyles[color]} text-xs rounded-full border px-2 flex items-center max-w-fit gap-1`}>{icon} <span className="truncate capitalize">{children}</span></span>;
 }
 
-const cycleIcons: Record<string, ReactElement> = {
-  'Perennial': <RefreshCw className="w-4 h-4 flex-shrink-0" />,
-  'Herbaceous Perennial': <RefreshCw className="w-4 h-4 flex-shrink-0" />
-  // 'Annual':
-};
-
 function CycleLabel({cycle}: {cycle: string}) {
-  return <Label color="green" icon={cycleIcons[cycle]}>{cycle}</Label>;
+  return <Label color="green" icon={<RefreshCw className="w-4 h-4 flex-shrink-0" />}>{cycle}</Label>;
 }
 
 const sunIcons: Record<string, ReactElement> = {
@@ -367,7 +361,7 @@ function WateringLabel({watering}: {watering: string}) {
 function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant) => void}) {
   let [droppedImage, setDroppedImage] = useState(item?.default_image?.thumbnail);
   return (
-    <Dialog className="outline-none relative">
+    <Dialog className="outline-0 relative">
       {({close}) => (
         <>
           <Heading
@@ -397,7 +391,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                     setDroppedImage(URL.createObjectURL(await item.getFile()));
                   }
                 }}
-                className="w-24 sm:w-32 p-2 flex items-center justify-center flex-shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 focus-visible:border-blue-600 focus-visible:border-solid drop-target:border-blue-600 drop-target:border-solid drop-target:bg-blue-100 drop-target:text-blue-600">
+                className="w-24 sm:w-32 p-2 flex items-center justify-center flex-shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 focus-visible:border-blue-600 forced-colors:focus-visible:border-[Highlight] focus-visible:border-solid drop-target:border-blue-600 forced-colors:drop-target:border-[Highlight] drop-target:border-solid drop-target:bg-blue-100 drop-target:text-blue-600">
                 {droppedImage
                   ? <img alt="" src={droppedImage} className="w-full h-full object-contain aspect-square" />
                   : <Text slot="label" className="italic text-sm text-center">Drop or paste image here</Text>
@@ -412,8 +406,9 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
               </div>
             </div>
             <Select label="Cycle" name="cycle" isRequired defaultSelectedKey={item?.cycle}>
-              <SelectItem id="Perennial" textValue="Perennial">{cycleIcons['Perennial']} Perennial</SelectItem>
-              <SelectItem id="Herbaceous Perennial" textValue="Herbaceous Perennial">{cycleIcons['Herbaceous Perennial']} Herbaceous Perennial</SelectItem>
+              <SelectItem id="Perennial" textValue="Perennial"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Perennial</SelectItem>
+              <SelectItem id="Herbaceous Perennial" textValue="Herbaceous Perennial"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Herbaceous Perennial</SelectItem>
+              <SelectItem id="Annual" textValue="Annual"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Annual</SelectItem>
             </Select>
             <Select label="Sunlight" name="sunlight" isRequired defaultSelectedKey={item ? getSunlight(item) : undefined}>
               <SelectItem id="full sun" textValue="Full Sun">{sunIcons['full sun']} Full Sun</SelectItem>
@@ -504,11 +499,30 @@ function PlantModal(props: ModalOverlayProps) {
           {...props}
           ref={ref}
           className={({isEntering, isExiting}) => `
-          w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/90 backdrop-blur-2xl backdrop-saturate-200 p-6 text-left align-middle shadow-2xl ring-1 ring-black/10 dark:ring-white/10
+          w-full max-w-md max-h-full overflow-auto rounded-2xl bg-white dark:bg-zinc-800/90 dark:backdrop-blur-2xl dark:backdrop-saturate-200 forced-colors:!bg-[Canvas] p-6 text-left align-middle shadow-2xl bg-clip-padding border border-black/10 dark:border-white/10
           ${isEntering ? 'animate-in zoom-in-105 ease-out duration-200' : ''}
           ${isExiting ? 'animate-out zoom-out-95 ease-in duration-200' : ''}
         `} />
       </>)}
     </ModalOverlay>
+  );
+}
+
+const favoriteButtonStyles = tv({
+  extend: focusRing,
+  base: 'group cursor-default align-middle rounded',
+  variants: {
+    isSelected: {
+      false: 'text-gray-500 dark:text-zinc-400 pressed:text-gray-600 dark:pressed:text-zinc-300',
+      true: 'text-gray-700 dark:text-slate-300 pressed:text-gray-800 dark:pressed:text-slate-200'
+    }
+  }
+});
+
+function FavoriteButton(props: ToggleButtonProps) {
+  return (
+    <ToggleButton aria-label="Favorite" {...props} className={favoriteButtonStyles}>
+      <StarIcon className="w-5 h-5 fill-white dark:fill-zinc-900 group-selected:fill-current" />
+    </ToggleButton>
   );
 }

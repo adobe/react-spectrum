@@ -21,7 +21,7 @@ export function SearchField(
     <AriaSearchField {...props} className={`group flex flex-col gap-1 min-w-[40px] ${props.className}`}>
       {label && <Label>{label}</Label>}
       <FieldGroup>
-        <SearchIcon className="w-4 h-4 ml-2 text-gray-500 dark:text-zinc-400" />
+        <SearchIcon className="w-4 h-4 ml-2 text-gray-500 dark:text-zinc-400 forced-colors:!text-[ButtonText]" />
         <Input className="[&::-webkit-search-cancel-button]:hidden disabled:[-webkit-text-fill-color:theme(colors.gray.200)]" />
         <Button variant="icon" className="mr-1 w-6 group-empty:invisible"><XIcon className="w-4 h-4" /></Button>
       </FieldGroup>

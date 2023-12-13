@@ -33,7 +33,7 @@ export function DatePicker<T extends DateValue>(
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
       <Popover>
-        <Dialog className="px-4 py-5 max-h-[inherit] overflow-auto outline-none">
+        <Dialog className="px-4 py-5 max-h-[inherit] overflow-auto outline-0">
           <Calendar />
         </Dialog>
       </Popover>

@@ -7,7 +7,7 @@ import {
   DateValue,
   ValidationResult
 } from 'react-aria-components';
-import { Label, Description, FieldError, fieldBorder } from './Field';
+import { Label, Description, FieldError, fieldGroupStyles } from './Field';
 import React from 'react';
 
 export interface DateFieldProps<T extends DateValue> extends AriaDateFieldProps<T> {
@@ -31,8 +31,8 @@ export function DateField<T extends DateValue>(
 
 export function DateInput(props: Omit<DateInputProps, 'children'>) {
   return (
-    <AriaDateInput className={`group min-w-[150px] px-2 py-1.5 text-sm bg-white dark:bg-zinc-900 border-2 border-gray-300 ${fieldBorder} rounded-lg focus-visible:outline outline-2 outline-blue-600 outline-offset-2`} {...props}>
-      {(segment) => <DateSegment segment={segment} className="inline p-0.5 type-literal:px-0 rounded outline-none caret-transparent text-gray-800 group-disabled:text-gray-200 dark:text-zinc-200 dark:group-disabled:text-zinc-600 focus:bg-blue-600 focus:text-white dark:focus:text-white placeholder-shown:text-gray-600 dark:placeholder-shown:text-zinc-400 placeholder-shown:italic" />}
+    <AriaDateInput className={renderProps => fieldGroupStyles({...renderProps, class: 'block min-w-[150px] px-2 py-1.5 text-sm'})} {...props}>
+      {(segment) => <DateSegment segment={segment} className="inline p-0.5 type-literal:px-0 rounded outline-0 forced-color-adjust-none caret-transparent text-gray-800 group-disabled:text-gray-200 dark:text-zinc-200 dark:group-disabled:text-zinc-600 focus:bg-blue-600 focus:text-white dark:focus:text-white placeholder-shown:text-gray-600 dark:placeholder-shown:text-zinc-400 placeholder-shown:italic forced-colors:focus:bg-[Highlight] forced-colors:focus:!text-[HighlightText] forced-colors:!text-[ButtonText] forced-colors:group-disabled:!text-[GrayText]" />}
     </AriaDateInput>
   );
 }

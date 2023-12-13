@@ -23,7 +23,7 @@ export function AlertDialog({
   ...props
 }: AlertDialogProps) {
   return (
-    <Dialog role="alertdialog" {...props} className="outline-none relative">
+    <Dialog role="alertdialog" {...props} className="outline-0 relative">
       {({ close }) => (
         <>
           <Heading

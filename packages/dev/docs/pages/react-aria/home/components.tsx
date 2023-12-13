@@ -6,7 +6,7 @@ export function Window({children, className = '', isBackground = false, toolbar}
     <div className={`${className} flex flex-col border border-black/10 dark:border-white/20 bg-clip-content border-solid dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg ${isBackground ? 'shadow-lg' : 'shadow-xl'} text-black transition translate-y-0 opacity-100`}>
       <div className="bg-gray-200/80 dark:bg-zinc-700/80 backdrop-blur-md border-b border-gray-300 dark:border-white/10 flex flex-row px-3 pt-2.5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)] dark:shadow-none">
         {toolbar}
-        <div className="absolute flex flex-row left-4 top-3.5">
+        <div className="absolute flex flex-row left-4 top-3.5 forced-color-adjust-none">
           <div className={`${isBackground ? 'bg-gray-300 dark:bg-zinc-500' : 'bg-red-500'} border border-black/5 h-3 mr-2 rounded-full w-3`} />
           <div className={`${isBackground ? 'bg-gray-300 dark:bg-zinc-500' : 'bg-yellow-500'} border border-black/5 h-3 mr-2 rounded-full w-3`} />
           <div className={`${isBackground ? 'bg-gray-300 dark:bg-zinc-500' : 'bg-green-500'} border border-black/5 h-3 rounded-full w-3`} />
@@ -66,7 +66,7 @@ export function Arrow({href, children, textX, x1, x2, points, y, marker = 'marke
 }
 
 export const Finger = React.forwardRef((props: HTMLAttributes<HTMLDivElement>, ref: RefObject<HTMLDivElement>) => {
-  return <div ref={ref} className="z-10 pointer-events-none absolute w-10 h-10 rounded-full opacity-0 border border-black/80 bg-black/80 dark:border-white/80 dark:bg-white/80 dark:mix-blend-difference" {...props} />;
+  return <div ref={ref} className="z-10 pointer-events-none absolute w-10 h-10 rounded-full border border-black/80 bg-black/80 dark:border-white/80 dark:bg-white/80 dark:mix-blend-difference opacity-0 [--hover-opacity:0.15] [--pressed-opacity:0.3] forced-colors:[--hover-opacity:0.5] forced-colors:[--pressed-opacity:1] forced-colors:!bg-[Highlight] forced-colors:!mix-blend-normal" {...props} />;
 });
 
 export function LearnMoreLink({href, className}) {

@@ -1,5 +1,6 @@
 import {animate, useIntersectionObserver} from './utils';
 import {ListBoxItem as AriaListBoxItem, ListBoxItemProps as AriaListBoxItemProps, Key, ListBox, Selection} from 'react-aria-components';
+import {itemStyles} from 'tailwind-starter/ListBox';
 import React, {useCallback, useRef, useState} from 'react';
 
 const keyframes = [
@@ -106,7 +107,7 @@ export function ListBoxExample() {
   }, []));
 
   return (
-    <ListBox ref={ref} className="outline-none p-1 border border-gray-300 dark:border-zinc-600 rounded-lg" aria-label="Ice cream flavor" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+    <ListBox ref={ref} className="outline-0 p-1 border border-gray-300 dark:border-zinc-600 rounded-lg" aria-label="Ice cream flavor" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
       <ListBoxItem id="chocolate" focusedKey={focusedKey}>Chocolate</ListBoxItem>
       <ListBoxItem id="mint" focusedKey={focusedKey}>Mint</ListBoxItem>
       <ListBoxItem id="strawberry" focusedKey={focusedKey}>Strawberry</ListBoxItem>
@@ -122,10 +123,10 @@ interface ListBoxItemProps extends AriaListBoxItemProps {
 function ListBoxItem(props: ListBoxItemProps) {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
-    <AriaListBoxItem {...props} textValue={textValue} className={({isFocusVisible}) => `group relative flex items-center gap-8 cursor-default select-none py-1.5 px-2.5 rounded-md will-change-transform text-slate-700 dark:text-zinc-300 disabled:text-slate-300 dark:disabled:text-zinc-600 text-sm hover:bg-slate-200 dark:hover:bg-zinc-700 selected:bg-blue-600 dark:selected:bg-blue-600 selected:text-white selected:[&:has(+[data-selected])]:rounded-b-none [&[data-selected]+[data-selected]]:rounded-t-none outline-none ${isFocusVisible || props.id === props.focusedKey ? 'outline-blue-600 selected:outline-white' : ''} -outline-offset-2 selected:-outline-offset-4`}>
+    <AriaListBoxItem {...props} textValue={textValue} className={({isFocusVisible, ...renderProps}) => itemStyles({isFocusVisible: isFocusVisible || props.id === props.focusedKey, ...renderProps})}>
       {renderProps => (<>
         {typeof props.children === 'function' ? props.children(renderProps) : props.children}
-        <div className="absolute left-2.5 right-2.5 bottom-0 h-px bg-white/20 hidden  [.group[data-selected]:has(+[data-selected])_&]:block" />
+        <div className="absolute left-2.5 right-2.5 bottom-0 h-px bg-white/20 forced-colors:bg-[HighlightText] hidden [.group[data-selected]:has(+[data-selected])_&]:block" />
       </>)}
     </AriaListBoxItem>
   );
