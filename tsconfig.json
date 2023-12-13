@@ -33,6 +33,7 @@
       {
         "name": "typescript-strict-plugin",
         "paths": [
+          "./packages/@internationalized",
           "./packages/@react-aria/a",
           "./packages/@react-aria/b",
           "./packages/@react-aria/checkbox",
@@ -77,11 +78,13 @@
           "./packages/@react-spectrum/searchwithin",
           "./packages/@react-spectrum/radio",
           "./packages/@react-spectrum/statuslight",
+          "./packages/@react-spectrum/steplist",
           "./packages/@react-spectrum/switch",
           "./packages/@react-spectrum/tag",
           "./packages/@react-spectrum/text",
           "./packages/@react-spectrum/view",
           "./packages/@react-spectrum/well",
+          "./packages/@react-stately/checkbox",
           "./packages/@react-stately/searchfield",
           "./packages/@react-stately/radio",
           "./packages/@react-stately/utils",

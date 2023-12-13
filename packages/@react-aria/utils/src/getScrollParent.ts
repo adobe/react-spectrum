@@ -10,19 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-export function getScrollParent(node: Element): Element {
-  if (isScrollable(node)) {
+export function getScrollParent(node: Element, checkForOverflow?: boolean): Element {
+  if (isScrollable(node, checkForOverflow)) {
     node = node.parentElement;
   }
 
-  while (node && !isScrollable(node)) {
+  while (node && !isScrollable(node, checkForOverflow)) {
     node = node.parentElement;
   }
 
   return node || document.scrollingElement || document.documentElement;
 }
 
-export function isScrollable(node: Element): boolean {
+export function isScrollable(node: Element, checkForOverflow?: boolean): boolean {
   let style = window.getComputedStyle(node);
-  return /(auto|scroll)/.test(style.overflow + style.overflowX + style.overflowY);
+  let isScrollable = /(auto|scroll)/.test(style.overflow + style.overflowX + style.overflowY);
+
+  if (isScrollable && checkForOverflow) {
+    isScrollable = node.scrollHeight !== node.clientHeight || node.scrollWidth !== node.clientWidth;
+  }
+
+  return isScrollable;
 }
