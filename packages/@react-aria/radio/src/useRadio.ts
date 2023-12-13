@@ -12,7 +12,7 @@
 
 import {AriaRadioProps} from '@react-types/radio';
 import {filterDOMProps, mergeProps, useFormReset} from '@react-aria/utils';
-import {InputHTMLAttributes, RefObject} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useFocusable} from '@react-aria/focus';
@@ -20,6 +20,8 @@ import {useFormValidation} from '@react-aria/form';
 import {usePress} from '@react-aria/interactions';
 
 export interface RadioAria {
+  /** Props for the label wrapper element. */
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
   inputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Whether the radio is disabled. */
@@ -64,6 +66,14 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     isDisabled
   });
 
+  // iOS does not toggle radios if you drag off and back onto the label, so handle it ourselves.
+  let {pressProps: labelProps, isPressed: isLabelPressed} = usePress({
+    isDisabled,
+    onPress() {
+      state.setSelectedValue(value);
+    }
+  });
+
   let {focusableProps} = useFocusable(mergeProps(props, {
     onFocus: () => state.setLastFocusedValue(value)
   }), ref);
@@ -86,6 +96,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
   useFormValidation({validationBehavior}, state, ref);
 
   return {
+    labelProps: mergeProps(labelProps, {onClick: e => e.preventDefault()}),
     inputProps: mergeProps(domProps, {
       ...interactions,
       type: 'radio',
@@ -104,6 +115,6 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
     }),
     isDisabled,
     isSelected: checked,
-    isPressed
+    isPressed: isPressed || isLabelPressed
   };
 }

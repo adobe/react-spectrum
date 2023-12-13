@@ -104,11 +104,11 @@ import {I18nProvider} from 'react-aria-components';
 ```
 
 **Note:** if you are using server side rendering, you should always specify a locale rather than relying on browser defaults
-to ensure that the server and client match. See the [SSR docs](ssr.html#locale-selection) for more information.
+to ensure that the server and client match. See the [SSR docs](ssr.html#internationalization) for more information.
 
 ## Supported locales
 
-React Aria currently supports over 30 locales. They are listed below.
+React Aria currently includes translations for over 30 locales. They are listed below.
 
 <div style={{columnWidth: 200}}>
 
@@ -149,3 +149,120 @@ React Aria currently supports over 30 locales. They are listed below.
 * Ukrainian (Ukraine)
 
 </div>
+
+## Optimizing bundle size
+
+By default, React Aria includes translations for all of the languages listed above. This is inclusive to the most users out of the box, but comes at the cost of bundle size. If your application does not support all of these locales, you can use our build plugins to include only the languages that you do support in your JavaScript bundle.
+
+**Note**: If you are using server side rendering, you can also optimize this even further by sending only the strings for the current user's language. See the [SSR docs](ssr.html) for more details.
+
+### webpack
+
+First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `webpack.config.js` and change the `locales` setting accordingly:
+
+```ts
+// webpack.config.js
+const optimizeLocales = require('@react-aria/optimize-locales-plugin');
+
+module.exports = {
+  // ...
+  plugins: [
+    optimizeLocales.webpack({
+      locales: ['en-US', 'fr-FR']
+    })
+  ]
+};
+```
+
+### Next.js
+
+First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `next.config.js` and change the `locales` setting accordingly:
+
+```ts
+// next.config.js
+const optimizeLocales = require('@react-aria/optimize-locales-plugin');
+
+module.exports = {
+  webpack(config) {
+    config.plugins.push(
+      optimizeLocales.webpack({
+        locales: ['en-US', 'fr-FR']
+      })
+    );
+    return config;
+  }
+};
+```
+
+### Vite
+
+First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `vite.config.js` and change the `locales` setting accordingly:
+
+```ts
+// vite.config.js
+import optimizeLocales from '@react-aria/optimize-locales-plugin';
+
+export default {
+  plugins: [
+    {
+      ...optimizeLocales.vite({
+        locales: ['en-US', 'fr-FR']
+      }),
+      enforce: 'pre'
+    }
+  ]
+};
+```
+
+### Rollup
+
+First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your `rollup.config.js` and change the `locales` setting accordingly:
+
+```ts
+// rollup.config.js
+import optimizeLocales from '@react-aria/optimize-locales-plugin';
+
+export default {
+  plugins: [
+    optimizeLocales.rollup({
+      locales: ['en-US', 'fr-FR']
+    })
+  ]
+};
+```
+
+### Esbuild
+
+First, install `@react-aria/optimize-locales-plugin` with your package manager. Then, add the following to your esbuild script and change the `locales` setting accordingly:
+
+```ts
+import {build} from 'esbuild';
+import optimizeLocales from '@react-aria/optimize-locales-plugin';
+
+build({
+  plugins: [
+    optimizeLocales.esbuild({
+      locales: ['en-US', 'fr-FR']
+    })
+  ]
+});
+```
+
+### Parcel
+
+First, install `@react-aria/parcel-resolver-optimize-locales` with your package manager. Then, add the following to your `.parcelrc`:
+
+```json
+{
+  "extends": "@parcel/config-default",
+  "resolvers": ["@react-aria/parcel-resolver-optimize-locales", "..."]
+}
+```
+
+Then, in your project root `package.json`, add a `"locales"` field containing the languages you want to support:
+
+```json
+{
+  "locales": ["en-US", "fr-FR"]
+}
+```
