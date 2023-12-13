@@ -182,12 +182,8 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     }, useToggleState(props), inputRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let isInteractionDisabled = isDisabled || isReadOnly;
 
-  let {hoverProps, isHovered} = useHover({
-    ...props,
-    isDisabled: isInteractionDisabled
-  });
+  let {hoverProps, isHovered} = useHover(props);
 
   let renderProps = useRenderProps({
     // TODO: should data attrs go on the label or on the <input>? useCheckbox passes them to the input...

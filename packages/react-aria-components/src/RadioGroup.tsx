@@ -172,12 +172,8 @@ function Radio(props: RadioProps, ref: ForwardedRef<HTMLLabelElement>) {
     children: typeof props.children === 'function' ? true : props.children
   }, state, inputRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let interactionDisabled = isDisabled || state.isReadOnly;
 
-  let {hoverProps, isHovered} = useHover({
-    ...props,
-    isDisabled: interactionDisabled
-  });
+  let {hoverProps, isHovered} = useHover({...props, isDisabled});
 
   let renderProps = useRenderProps({
     ...props,

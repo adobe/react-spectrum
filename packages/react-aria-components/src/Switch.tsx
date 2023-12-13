@@ -72,12 +72,8 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
     children: typeof props.children === 'function' ? true : props.children
   }, state, inputRef);
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
-  let isInteractionDisabled = props.isDisabled || props.isReadOnly;
 
-  let {hoverProps, isHovered} = useHover({
-    ...props,
-    isDisabled: isInteractionDisabled
-  });
+  let {hoverProps, isHovered} = useHover(props);
 
   let renderProps = useRenderProps({
     ...props,

@@ -1437,6 +1437,39 @@ export const RadioGroupExample = () => {
   );
 };
 
+// TODO add story for radio group
+
+export const RadioGroupStyles = {
+  render: (args) => (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+      <RadioGroup className={`${styles.radiogroup} styles-example-radiogroup`} {...args}>
+        <Label>Hover styles applied even when readonly</Label>
+        <Radio className={`${styles.radio} styles-example-radio`} value="dogs">Dog</Radio>
+        <Radio className={`${styles.radio} styles-example-radio`} value="disabled" isDisabled>This is disabled always</Radio>
+        <Radio className={`${styles.radio} styles-example-radio`} value="dragon">Dragon</Radio>
+      </RadioGroup>
+      <RadioGroup className={`${styles.radiogroup} styles-example-interactiveOnly-radiogroup`} {...args}>
+        <Label>Hover styles applied only when interactive</Label>
+        <Radio className={`${styles.radio} styles-example-radio`} value="dogs" data-testid="radio-dog">Dog</Radio>
+        <Radio className={`${styles.radio} styles-example-radio`} value="disabled" isDisabled>This is disabled always</Radio>
+        <Radio className={`${styles.radio} styles-example-radio`} value="dragon">Dragon</Radio>
+      </RadioGroup>
+    </div>
+  ),
+  args: {
+    isReadOnly: false,
+    isDisabled: false
+  },
+  argTypes: {
+    isReadOnly: {
+      control: 'boolean'
+    },
+    isDisabled: {
+      control: 'boolean'
+    }
+  }
+};
+
 export const RadioGroupInDialogExample = () => {
   return (
     <DialogTrigger>
@@ -1515,6 +1548,33 @@ export const SwitchExample = () => {
       Switch me
     </Switch>
   );
+};
+
+export const SwitchHoverStylesExample = {
+  render: (args) => (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+      <Switch className={`${classNames(styles, 'switchExample')} styles-example-switch`} data-testid="switch-example" {...args}>
+        <div className={classNames(styles, 'switchExample-indicator')} />
+        Hover styles applied even when readonly
+      </Switch>
+      <Switch className={`${classNames(styles, 'switchExample')} styles-example-interactiveOnly-switch`} data-testid="switch-example" {...args}>
+        <div className={classNames(styles, 'switchExample-indicator')} />
+        Hover styles applied only when selectable
+      </Switch>
+    </div>
+  ),
+  args: {
+    isReadOnly: false,
+    isDisabled: false
+  },
+  argTypes: {
+    isReadOnly: {
+      control: 'boolean'
+    },
+    isDisabled: {
+      control: 'boolean'
+    }
+  }
 };
 
 export const TextfieldExample = () => {
@@ -1633,6 +1693,41 @@ export const GridListStyles = {
   parameters: {
     description: {
       data: 'First GridList should allow for hover styles regardless of selection mode, second GridList should only have hover styles if the row is selectable. Both have the first row as disabled'
+    }
+  }
+};
+
+export const CheckboxStyles = {
+  render: (args) => (
+    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+      <Checkbox className="styles-example-checkbox" {...args} >
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            <polyline points="1 9 7 14 15 4" />
+          </svg>
+        </div>
+        Hover styles applied even when readonly
+      </Checkbox>
+      <Checkbox className="styles-example-interactiveOnly-checkbox" {...args}>
+        <div className="checkbox">
+          <svg viewBox="0 0 18 18" aria-hidden="true">
+            <polyline points="1 9 7 14 15 4" />
+          </svg>
+        </div>
+        Hover styles applied only when selectable
+      </Checkbox>
+    </div>
+  ),
+  args: {
+    isReadOnly: false,
+    isDisabled: false
+  },
+  argTypes: {
+    isReadOnly: {
+      control: 'boolean'
+    },
+    isDisabled: {
+      control: 'boolean'
     }
   }
 };
