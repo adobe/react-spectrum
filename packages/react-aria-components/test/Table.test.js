@@ -156,6 +156,15 @@ let DynamicTable = ({tableProps, tableHeaderProps, tableBodyProps, rowProps}) =>
 );
 
 let renderTable = (props) => render(<TestTable {...props} />);
+let createClassName = (props) => {
+  let className = '';
+  for (let [key, value] of Object.entries(props)) {
+    if (value === true) {
+      className = className.concat(key, ' ');
+    }
+  }
+  return className;
+};
 
 describe('Table', () => {
   installPointerEvent();
@@ -310,165 +319,195 @@ describe('Table', () => {
 
   it('should support column hover when sorting is allowed', async () => {
     let {getAllByRole} = renderTable({
-      columnProps: {allowsSorting: true, className: ({isHovered}) => isHovered ? 'hover' : ''}
+      columnProps: {allowsSorting: true, className: createClassName}
     });
     let column = getAllByRole('columnheader')[0];
 
     expect(column).toHaveAttribute('data-allows-sorting');
     expect(column).not.toHaveAttribute('data-hovered');
-    expect(column).not.toHaveClass('hover');
+    expect(column).not.toHaveClass('isHovered');
+    expect(column).toHaveClass('allowsSorting');
 
     await user.hover(column);
     expect(column).toHaveAttribute('data-allows-sorting');
     expect(column).toHaveAttribute('data-hovered', 'true');
-    expect(column).toHaveClass('hover');
+    expect(column).toHaveClass('isHovered');
+    expect(column).toHaveClass('allowsSorting');
 
     await user.unhover(column);
     expect(column).toHaveAttribute('data-allows-sorting');
     expect(column).not.toHaveAttribute('data-hovered');
-    expect(column).not.toHaveClass('hover');
+    expect(column).not.toHaveClass('isHovered');
+    expect(column).toHaveClass('allowsSorting');
   });
 
   it('should show column hover state when column is not sortable', async () => {
     let {getAllByRole} = renderTable({
-      columnProps: {className: ({isHovered}) => isHovered ? 'hover' : ''}
+      columnProps: {className: createClassName}
     });
     let column = getAllByRole('columnheader')[0];
 
     expect(column).not.toHaveAttribute('data-allows-sorting');
     expect(column).not.toHaveAttribute('data-hovered');
-    expect(column).not.toHaveClass('hover');
+    expect(column).not.toHaveClass('isHovered');
+    expect(column).not.toHaveClass('allowsSorting');
 
     await user.hover(column);
     expect(column).not.toHaveAttribute('data-allows-sorting');
     expect(column).toHaveAttribute('data-hovered');
-    expect(column).toHaveClass('hover');
+    expect(column).toHaveClass('isHovered');
+    expect(column).not.toHaveClass('allowsSorting');
   });
 
   it('should support hover', async () => {
-
     let {getAllByRole} = renderTable({
       tableProps: {selectionMode: 'multiple'},
-      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''},
-      cellProps: {className: ({isHovered}) => isHovered ? 'cellhover' : ''}
+      rowProps: {className: createClassName},
+      cellProps: {className: createClassName}
     });
     let row = getAllByRole('row')[1];
 
     expect(row).toHaveAttribute('data-interactive');
     expect(row).not.toHaveAttribute('data-hovered');
-    expect(row).not.toHaveClass('hover');
+    expect(row).not.toHaveClass('isHovered');
+    expect(row).toHaveClass('isInteractive');
 
     let rowheader = within(row).getByRole('rowheader');
     let cells = within(row).getAllByRole('gridcell');
     expect(rowheader).toHaveAttribute('data-interactive');
     expect(rowheader).not.toHaveAttribute('data-hovered');
-    expect(rowheader).not.toHaveClass('cellhover');
+    expect(rowheader).not.toHaveClass('isHovered');
+    expect(rowheader).toHaveClass('isInteractive');
     for (let cell of cells) {
       expect(cell).toHaveAttribute('data-interactive');
       expect(cell).not.toHaveAttribute('data-hovered');
-      expect(cell).not.toHaveClass('cellhover');
+      expect(cell).not.toHaveClass('isHovered');
+      if (within(cell).queryByRole('checkbox') == null) {
+        expect(cell).toHaveClass('isInteractive');
+      }
     }
 
     await user.hover(row);
     expect(row).toHaveAttribute('data-interactive');
     expect(row).toHaveAttribute('data-hovered', 'true');
-    expect(row).toHaveClass('hover');
+    expect(row).toHaveClass('isHovered');
+    expect(row).toHaveClass('isInteractive');
 
     await user.unhover(row);
     expect(row).toHaveAttribute('data-interactive');
     expect(row).not.toHaveAttribute('data-hovered');
-    expect(row).not.toHaveClass('hover');
+    expect(row).not.toHaveClass('isHovered');
+    expect(row).toHaveClass('isInteractive');
 
     await user.hover(rowheader);
     expect(rowheader).toHaveAttribute('data-interactive');
     expect(rowheader).toHaveAttribute('data-hovered', 'true');
-    expect(rowheader).toHaveClass('cellhover');
+    expect(rowheader).toHaveClass('isHovered');
+    expect(rowheader).toHaveClass('isInteractive');
     for (let cell of cells) {
       expect(rowheader).toHaveAttribute('data-interactive');
       expect(cell).not.toHaveAttribute('data-hovered');
-      expect(cell).not.toHaveClass('cellhover');
+      expect(cell).not.toHaveClass('isHovered');
+      if (within(cell).queryByRole('checkbox') == null) {
+        expect(cell).toHaveClass('isInteractive');
+      }
     }
 
     await user.unhover(rowheader);
     expect(rowheader).toHaveAttribute('data-interactive');
     expect(rowheader).not.toHaveAttribute('data-hovered');
-    expect(rowheader).not.toHaveClass('cellhover');
+    expect(rowheader).not.toHaveClass('isHovered');
+    expect(rowheader).toHaveClass('isInteractive');
     for (let cell of cells) {
       expect(cell).toHaveAttribute('data-interactive');
       expect(cell).not.toHaveAttribute('data-hovered');
-      expect(cell).not.toHaveClass('cellhover');
+      expect(cell).not.toHaveClass('isHovered');
+      if (within(cell).queryByRole('checkbox') == null) {
+        expect(cell).toHaveClass('isInteractive');
+      }
     }
   });
 
   it('should show hover state even when item is not interactive', async () => {
     let {getAllByRole} = renderTable({
-      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''},
-      cellProps: {className: ({isHovered}) => isHovered ? 'cellhover' : ''}
+      rowProps: {className: createClassName},
+      cellProps: {className: createClassName}
     });
     let row = getAllByRole('row')[1];
 
     expect(row).not.toHaveAttribute('data-interactive');
     expect(row).not.toHaveAttribute('data-hovered');
-    expect(row).not.toHaveClass('hover');
+    expect(row).not.toHaveClass('isHovered');
+    expect(row).not.toHaveClass('isInteractive');
 
     let rowheader = within(row).getByRole('rowheader');
     let cells = within(row).getAllByRole('gridcell');
     expect(rowheader).not.toHaveAttribute('data-interactive');
     expect(rowheader).not.toHaveAttribute('data-hovered');
-    expect(rowheader).not.toHaveClass('cellhover');
+    expect(rowheader).not.toHaveClass('isHovered');
+    expect(rowheader).not.toHaveClass('isInteractive');
     for (let cell of cells) {
       expect(cell).not.toHaveAttribute('data-interactive');
       expect(cell).not.toHaveAttribute('data-hovered');
-      expect(cell).not.toHaveClass('cellhover');
+      expect(cell).not.toHaveClass('isHovered');
+      expect(cell).not.toHaveClass('isInteractive');
     }
 
     await user.hover(row);
     expect(row).not.toHaveAttribute('data-interactive');
     expect(row).toHaveAttribute('data-hovered', 'true');
-    expect(row).toHaveClass('hover');
+    expect(row).toHaveClass('isHovered');
+    expect(row).not.toHaveClass('isInteractive');
 
     await user.unhover(row);
     expect(row).not.toHaveAttribute('data-interactive');
     expect(row).not.toHaveAttribute('data-hovered');
-    expect(row).not.toHaveClass('hover');
+    expect(row).not.toHaveClass('isHovered');
+    expect(row).not.toHaveClass('isInteractive');
 
     await user.hover(rowheader);
     expect(rowheader).not.toHaveAttribute('data-interactive');
     expect(rowheader).toHaveAttribute('data-hovered', 'true');
-    expect(rowheader).toHaveClass('cellhover');
+    expect(rowheader).toHaveClass('isHovered');
+    expect(rowheader).not.toHaveClass('isInteractive');
     for (let cell of cells) {
       expect(cell).not.toHaveAttribute('data-interactive');
       expect(cell).not.toHaveAttribute('data-hovered');
-      expect(cell).not.toHaveClass('cellhover');
+      expect(cell).not.toHaveClass('isHovered');
+      expect(cell).not.toHaveClass('isInteractive');
     }
   });
 
   it('should not show hover state when an item is disabled', async () => {
     let {getAllByRole} = renderTable({
       tableProps: {disabledKeys: ['1'], selectionMode: 'multiple'},
-      rowProps: {className: ({isHovered}) => isHovered ? 'hover' : ''},
-      cellProps: {className: ({isHovered}) => isHovered ? 'cellhover' : ''}
+      rowProps: {className: createClassName},
+      cellProps: {className: createClassName}
     });
     let row = getAllByRole('row')[1];
 
     expect(row).not.toHaveAttribute('data-interactive');
     expect(row).not.toHaveAttribute('data-hovered');
-    expect(row).not.toHaveClass('hover');
+    expect(row).not.toHaveClass('isHovered');
+    expect(row).not.toHaveClass('isInteractive');
 
     let rowheader = within(row).getByRole('rowheader');
     expect(row).not.toHaveAttribute('data-interactive');
     expect(rowheader).not.toHaveAttribute('data-hovered');
-    expect(rowheader).not.toHaveClass('cellhover');
+    expect(rowheader).not.toHaveClass('isHovered');
+    expect(rowheader).not.toHaveClass('isInteractive');
 
     await user.hover(row);
     expect(row).not.toHaveAttribute('data-interactive');
     expect(row).not.toHaveAttribute('data-hovered');
-    expect(row).not.toHaveClass('hover');
+    expect(row).not.toHaveClass('isHovered');
+    expect(row).not.toHaveClass('isInteractive');
 
     await user.hover(rowheader);
     expect(row).not.toHaveAttribute('data-interactive');
     expect(rowheader).not.toHaveAttribute('data-hovered', 'true');
-    expect(rowheader).not.toHaveClass('cellhover');
+    expect(rowheader).not.toHaveClass('isHovered');
+    expect(rowheader).not.toHaveClass('isInteractive');
   });
 
   it('should support focus ring', async () => {
