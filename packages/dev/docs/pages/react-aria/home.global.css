@@ -307,7 +307,7 @@ pre.small {
 }
 
 @keyframes highlight {
-  0%, 42% {
+  0%, 30% {
     opacity: 0;
   }
 
@@ -315,7 +315,7 @@ pre.small {
     opacity: 1;
   }
 
-  58%, 100% {
+  70%, 100% {
     opacity: 0;
   }
 }
@@ -333,7 +333,9 @@ pre.small {
     &::after {
       content: '';
       position: absolute;
-      inset: 0;
+      left: 0;
+      right: 0;
+      height: 0.99lh;
       opacity: 0;
       @apply rounded bg-red-600/[15%] dark:bg-red-600/20;
       animation: highlight 5s infinite var(--delay, 0s);
