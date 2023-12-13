@@ -1,3 +1,5 @@
+import localesPlugin from '@react-aria/optimize-locales-plugin';
+
 export default {
   transpilePackages: [
     '@adobe/react-spectrum',
@@ -61,4 +63,10 @@ export default {
     process.env.VERDACCIO && process.env.CIRCLE_SHA1
       ? `/reactspectrum/${process.env.CIRCLE_SHA1}/verdaccio/next`
       : "",
+  webpack(config, {isServer}) {
+    if (!isServer) {
+      config.plugins.push(localesPlugin.webpack({locales: []}));
+    }
+    return config;
+  }
 };

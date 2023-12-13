@@ -64,11 +64,14 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   // there is no selection. This allows tabbing into the group from either
   // direction to go to the first or last radio.
   let {focusWithinProps} = useFocusWithin({
-    onBlurWithin() {
+    onBlurWithin(e) {
+      props.onBlur?.(e);
       if (!state.selectedValue) {
         state.setLastFocusedValue(null);
       }
-    }
+    },
+    onFocusWithin: props.onFocus,
+    onFocusWithinChange: props.onFocusChange
   });
 
   let onKeyDown = (e) => {

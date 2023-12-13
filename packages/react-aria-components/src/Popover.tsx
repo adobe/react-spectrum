@@ -142,7 +142,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
     }
   });
 
-  let style = {...renderProps.style, ...popoverProps.style};
+  let style = {...popoverProps.style, ...renderProps.style};
 
   return (
     <Overlay isExiting={isExiting} portalContainer={UNSTABLE_portalContainer}>

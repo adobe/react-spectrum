@@ -66,7 +66,7 @@ export interface CheckboxGroupState extends FormValidationState {
  */
 export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxGroupState {
   let [selectedValues, setValue] = useControlledState(props.value, props.defaultValue || [], props.onChange);
-  let isRequired = props.isRequired && selectedValues.length === 0;
+  let isRequired = !!props.isRequired && selectedValues.length === 0;
 
   let invalidValues = useRef(new Map<string, ValidationResult>());
   let validation = useFormValidationState({

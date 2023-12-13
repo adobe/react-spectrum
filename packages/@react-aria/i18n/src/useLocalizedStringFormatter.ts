@@ -26,12 +26,19 @@ function getCachedDictionary<K extends string, T extends LocalizedString>(string
 }
 
 /**
+ * Returns a cached LocalizedStringDictionary for the given strings.
+ */
+export function useLocalizedStringDictionary<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>, packageName?: string): LocalizedStringDictionary<K, T> {
+  return (packageName && LocalizedStringDictionary.getGlobalDictionaryForPackage(packageName)) || getCachedDictionary(strings);
+}
+
+/**
  * Provides localized string formatting for the current locale. Supports interpolating variables,
  * selecting the correct pluralization, and formatting numbers. Automatically updates when the locale changes.
  * @param strings - A mapping of languages to localized strings by key.
  */
-export function useLocalizedStringFormatter<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>): LocalizedStringFormatter<K, T> {
+export function useLocalizedStringFormatter<K extends string = string, T extends LocalizedString = string>(strings: LocalizedStrings<K, T>, packageName?: string): LocalizedStringFormatter<K, T> {
   let {locale} = useLocale();
-  let dictionary = useMemo(() => getCachedDictionary(strings), [strings]);
+  let dictionary = useLocalizedStringDictionary(strings, packageName);
   return useMemo(() => new LocalizedStringFormatter(locale, dictionary), [locale, dictionary]);
 }
