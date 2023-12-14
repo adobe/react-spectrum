@@ -11,6 +11,10 @@ import {
   ListBox,
   ListBoxItem,
   Popover,
+  Slider,
+  SliderOutput,
+  SliderThumb,
+  SliderTrack,
   Tab,
   TabList,
   TabPanel,
@@ -38,7 +42,7 @@ export function Styles() {
               }>
               <div className="grid grid-cols-1 lg:grid-cols-2 bg-gray-50 dark:bg-zinc-800">
                 <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styling')!.innerHTML}} />
-                <div className="flex flex-row px-3 pt-2.5 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-800 border-y border-gray-300 dark:border-zinc-700">
+                <div className="flex flex-row px-3 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-900/80 border-y border-gray-300 dark:border-zinc-700">
                   <FileTab>ComboBox.css</FileTab>
                 </div>
                 <div className="contents lg:[&>*]:border-l dark:[&>*]:border-l-zinc-600" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
@@ -76,12 +80,12 @@ export function Styles() {
             <Window className="flex-1 bg-gray-50 dark:bg-zinc-800" isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
             </Window>
-            <Window className="w-[350px] h-[320px] place-self-center" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex items-center justify-center bg-gradient-to-r from-sky-300 to-cyan-300">
+            <Window className="w-[350px]" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
+              <div className="flex-1 flex py-20 justify-center bg-gradient-to-r from-sky-300 to-cyan-300">
                 <ComboBox className="group flex flex-col gap-1 w-[200px]">
                   <Label className="text-black cursor-default text-sm">Assignee</Label>
                   <Group className="flex rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition shadow-md border border-black/10 bg-clip-padding focus-visible:outline-2 outline outline-0 -outline-offset-2 outline-black forced-colors:outline-[Highlight]">
-                    <Input className="flex-1 w-full border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline-0 text-sm" />
+                    <Input className="flex-1 w-full border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline outline-0 text-sm" />
                     <Button className="px-2.5 flex items-center transition border-0 border-solid border-l border-l-sky-200 bg-transparent rounded-r-lg pressed:bg-sky-100 cursor-default">
                       <ChevronsUpDownIcon className="w-4 h-4 text-gray-700 forced-colors:text-[ButtonText]" />
                     </Button>
@@ -115,13 +119,19 @@ export function Styles() {
         {
           id: 'styled-components',
           label: 'Styled Components',
-          content: <div className="grid grid-cols-2 gap-4">
-            <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}className="bg-gray-50 dark:bg-zinc-800">
+          content: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800">
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styled-components')!.innerHTML}} />
             </Window>
             <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex items-center justify-center bg-gray-50 p-5">
-                <Button>Hello world!</Button>
+              <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20">
+                <Slider defaultValue={30} className="sc-slider">
+                  <Label>Opacity</Label>
+                  <SliderOutput />
+                  <SliderTrack className="sc-track">
+                    <SliderThumb className="sc-thumb" />
+                  </SliderTrack>
+                </Slider>
               </div>
             </Window>
           </div>
@@ -260,7 +270,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       <div className="relative overflow-x-auto no-scrollbar p-2 sm:-m-2" ref={tabListScrollRef}>
         <TabList ref={tabListRef} className="flex px-2 y-2 md:px-0" items={tabs}>
           {(tab) =>
-            (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base text-black dark:text-white transition outline-0 forced-colors:selected:!text-[HighlightText] forced-color-adjust-none">
+            (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base text-black dark:text-white transition outline outline-0 forced-colors:selected:!text-[HighlightText] forced-color-adjust-none">
               {({isSelected, isFocusVisible}) => (<>
                 {tab.label}
                 {isFocusVisible && isSelected && (
@@ -285,7 +295,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
           {(tab) => (
             <TabPanel
               shouldForceMount
-              className="flex-shrink-0 w-full px-4 box-border snap-start snap-always outline-0 -outline-offset-2 rounded focus-visible:outline-black">
+              className="flex-shrink-0 w-full px-4 box-border snap-start snap-always outline outline-0 -outline-offset-2 rounded focus-visible:outline-black">
               {tab.content}
             </TabPanel>
           )}

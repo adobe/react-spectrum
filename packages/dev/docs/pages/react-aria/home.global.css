@@ -465,3 +465,36 @@ pre.small {
     --c: oklch(26% 0.06 150);
   }
 }
+
+.sc-slider {
+  display: grid;
+  grid-template-areas: "label output"
+                       "track track";
+  grid-template-columns: 1fr auto;
+  width: 250px;
+}
+
+.sc-track {
+  grid-area: track;
+  background: var(--border-color);
+  padding: 3px 0;
+  margin: 14px 0;
+  border-radius: 3px;
+}
+
+.sc-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--page-bg);
+  border: 2px solid var(--text-color);
+
+  &[data-dragging] {
+    background: var(--text-color);
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+}

@@ -235,14 +235,34 @@ React Aria does not include any styles by default, allowing you to build custom 
 <div hidden id="styled-components">
 
 ```tsx
-import styled from 'styled-components';
-import {Button} from 'react-aria-components';
-
-const StyledButton = styled(Button)`
-  color: red;
+const StyledSlider = styled(Slider)`
+  display: grid;
+  /* ... */
 `;
 
-<StyledButton>Hello world!</StyledButton>
+const StyledSliderTrack = styled(SliderTrack)`
+  background: var(--gray-300);
+`;
+
+const StyledSliderThumb = styled(SliderThumb)`
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--gray-50);
+  border: 2px solid var(--gray-600);
+
+  &[data-dragging] {
+    background: var(--gray-600);
+  }
+`;
+
+<StyledSlider defaultValue={30}>
+  <Label>Opacity</Label>
+  <SliderOutput />
+  <StyledSliderTrack>
+    <StyledSliderThumb />
+  </StyledSliderTrack>
+</StyledSlider>
 ```
 
 </div>

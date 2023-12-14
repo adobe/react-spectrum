@@ -4,7 +4,7 @@ import React, {HTMLAttributes, ReactNode, RefObject} from 'react';
 export function Window({children, className = '', isBackground = false, toolbar}) {
   return (
     <div className={`${className} flex flex-col border border-black/10 dark:border-white/20 bg-clip-content border-solid dark:text-white delay-100 duration-700 ease-out overflow-hidden rounded-lg ${isBackground ? 'shadow-lg' : 'shadow-xl'} text-black transition translate-y-0 opacity-100`}>
-      <div className="bg-gray-200/80 dark:bg-zinc-700/80 backdrop-blur-md border-b border-gray-300 dark:border-white/10 flex flex-row px-3 pt-2.5 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)] dark:shadow-none">
+      <div className="bg-gray-200/80 dark:bg-zinc-700/80 backdrop-blur-md border-b border-gray-300 dark:border-white/10 flex flex-row px-3 relative shadow-[inset_0_1px_0_0_rgba(255,255,255,0.3)] dark:shadow-none">
         {toolbar}
         <div className="absolute flex flex-row left-4 top-3.5 forced-color-adjust-none">
           <div className={`${isBackground ? 'bg-gray-300 dark:bg-zinc-500' : 'bg-red-500'} border border-black/5 h-3 mr-2 rounded-full w-3`} />
@@ -18,11 +18,11 @@ export function Window({children, className = '', isBackground = false, toolbar}
 }
 
 export function FileTab({children, className = ''}) {
-  return <div className={`${className} w-fit border border-gray-300 border-b-gray-50 bg-gray-50 dark:bg-zinc-600 dark:border-white/10 dark:border-b-zinc-600 -mb-px rounded-t-md px-3 py-1.5 text-xs text-gray-500 dark:text-gray-300 first:ml-20 only:ml-0`}>{children}</div>;
+  return <div className={`${className} w-fit mt-3 border border-b-0 border-gray-300 bg-gray-50 dark:bg-zinc-600 dark:border-white/10 -mb-px rounded-t-md px-3 py-2 text-xs text-gray-500 dark:text-gray-300 first:ml-20 only:ml-0`}>{children}</div>;
 }
 
 export function AddressBar({children}) {
-  return <div className="bg-gray-400/40 dark:bg-zinc-500/40 px-5 md:px-10 py-1 mx-auto mb-2.5 rounded-md text-slate-600 dark:text-slate-300 text-xs">{children}</div>;
+  return <div className="bg-gray-400/40 dark:bg-zinc-500/40 px-5 md:px-10 py-1 mx-auto my-2.5 rounded-md text-slate-600 dark:text-slate-300 text-xs">{children}</div>;
 }
 
 export function GradientText({children}) {
