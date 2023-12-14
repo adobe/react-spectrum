@@ -12,7 +12,7 @@
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {CollectionDocumentContext, CollectionPortal, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
-import {ContextValue, forwardRefType, HiddenContext, Provider, RenderProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, forwardRefType, HiddenContext, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
@@ -54,7 +54,7 @@ export interface ListBoxRenderProps {
   state: ListState<unknown>
 }
 
-export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps {
+export interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'children' | 'label'>, CollectionProps<T>, StyleRenderProps<ListBoxRenderProps>, SlotProps, ScrollableProps<HTMLDivElement> {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the ListBox. */
@@ -249,6 +249,7 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
         {...renderProps}
         ref={listBoxRef}
         slot={props.slot || undefined}
+        onScroll={props.onScroll}
         data-drop-target={isRootDropTarget || undefined}
         data-empty={state.collection.size === 0 || undefined}
         data-focused={isFocused || undefined}

@@ -167,7 +167,7 @@ governing permissions and limitations under the License.
 
     .spectrum-Button-label,
     .spectrum-Icon {
-      visibility: hidden;
+      opacity: 0;
     }
   }
 }

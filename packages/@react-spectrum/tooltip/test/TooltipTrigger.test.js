@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -282,7 +282,7 @@ describe('TooltipTrigger', function () {
       expect(onOpenChange).toHaveBeenCalledWith(true);
       let tooltip = getByRole('tooltip');
       expect(tooltip).toBeVisible();
-      triggerPress(button);
+      await user.click(button);
       expect(onOpenChange).toHaveBeenCalledWith(false);
       act(() => {
         jest.advanceTimersByTime(CLOSE_TIME);
