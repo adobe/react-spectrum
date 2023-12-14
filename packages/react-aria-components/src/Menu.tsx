@@ -225,10 +225,8 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 
   let props: MenuItemProps<T> = item.props;
   let {isFocusVisible, focusProps} = useFocusRing();
-  // TODO: useMenuItem already has a useHover call, but doesn't return the hovered state. I could have the hook return
-  // it but other hooks don't do that. Adding another useHover here for now
   let {hoverProps, isHovered} = useHover({
-    isDisabled: state.disabledKeys.has(item.key)
+    isDisabled: states.isDisabled
   });
   let renderProps = useRenderProps({
     ...props,

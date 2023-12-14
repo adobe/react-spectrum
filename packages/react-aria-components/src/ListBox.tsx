@@ -368,7 +368,7 @@ function Option<T>({item}: OptionProps<T>) {
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: state.disabledKeys.has(item.key)
+    isDisabled: states.isDisabled
   });
 
   let draggableItem: DraggableItemResult | null = null;

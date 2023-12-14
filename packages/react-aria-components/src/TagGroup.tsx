@@ -213,7 +213,7 @@ function TagItem({item}) {
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: state.disabledKeys.has(item.key)
+    isDisabled: states.isDisabled
   });
   // TODO: Do we consider a tag with a link or with remove enabled as "interactive"?
   let isInteractive = states.allowsSelection;

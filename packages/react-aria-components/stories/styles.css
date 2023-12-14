@@ -257,20 +257,19 @@
 }
 
 :global(.onlyInteractive) {
-  :global(.react-aria-Cell) {
-    &[data-hovered] {
-      background-color: unset;
-      &[data-interactive]  {
-        background-color: lightblue;
-      }
-    }
-  }
-
   :global(.react-aria-Row) {
     &[data-hovered] {
       background-color: unset;
       &[data-interactive]  {
         background-color: lightsalmon;
+      }
+
+      &:not([data-interactive]) {
+        :global(.react-aria-Cell) {
+          &[data-hovered] {
+            background-color: unset;
+          }
+        }
       }
     }
   }

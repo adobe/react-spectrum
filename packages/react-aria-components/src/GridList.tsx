@@ -257,7 +257,7 @@ function GridListRow({item}) {
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: state.disabledKeys.has(item.key)
+    isDisabled: states.isDisabled
   });
   let isInteractive = states.allowsSelection || states.hasAction;
 

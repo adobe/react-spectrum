@@ -749,7 +749,7 @@ const TableExample = (props) => {
 
   return (
     <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
-      <Table aria-label="Example table" disabledKeys={[1]} {...props}>
+      <Table aria-label="Example table" disabledKeys={[1]} onRowAction={() => console.log('gaweg')} {...props}>
         <TableHeader>
           <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
           <MyColumn>Type</MyColumn>
@@ -812,10 +812,21 @@ const TableExample = (props) => {
 };
 
 export const TableExampleStory = {
-  render: () => <TableExample />,
+  render: (args) => <TableExample {...args} />,
   parameters: {
     description: {
-      data: 'Note that row 1 is disabled'
+      data: 'Note that row 1 is disabled and thus hoverablity will depend on disabledBehavior'
+    }
+  },
+  args: {
+    disabledBehavior: 'selection'
+  },
+  argTypes: {
+    disabledBehavior: {
+      control: {
+        type: 'radio',
+        options: ['selection', 'all']
+      }
     }
   }
 };
@@ -863,22 +874,40 @@ export const DynamicTableExampleStory = {
 };
 
 export const TableHoverStyles = {
-  render: () => (
+  render: (args) => (
     <div style={{display: 'flex', flexDirection: 'column'}}>
-      <TableDynamicExample disabledKeys={[1]} className="onlyInteractive" />
-      <TableDynamicExample disabledKeys={[1]} selectionMode="multiple" className="onlyInteractive" />
-      <TableDynamicExample disabledKeys={[1]} selectionMode="multiple" allowsSorting className="onlyInteractive" />
-      <TableDynamicExample disabledKeys={[1]} />
-      <TableDynamicExample disabledKeys={[1]} selectionMode="multiple" />
+      <TableDynamicExample disabledKeys={[1]} className="onlyInteractive" {...args} />
+      <TableDynamicExample disabledKeys={[1]} selectionMode="multiple" className="onlyInteractive" {...args} />
+      <TableDynamicExample disabledKeys={[1]} selectionMode="multiple" allowsSorting className="onlyInteractive" {...args} />
+      <TableDynamicExample disabledKeys={[1]} {...args} />
+      <TableDynamicExample disabledKeys={[1]} selectionMode="multiple" {...args} />
     </div>
   ),
   parameters: {
     description: {
-      data: `First table should behave like the original hover behavior (aka no hover styles since it isnt interactive).
+      data: `Note that the first row is disabled for each Table. First table should behave like the original hover behavior (aka no hover styles since it isnt interactive).
       Second table should have hover styles on rows/cells because selection is enabled, but columns dont have hovered styles because sort isnt available.
       Third table should have all hover styles because selection and sort is enabled.
-      Fourth table and fifth table should have all hover styles applied because it is using data-hovered which is applied so long as the hovered element isnt disabled.
+      Fourth table and fifth table should have all hover styles applied because it is using data-hovered which is applied so long as the hovered element isnt disabled and disabledBehavior is "selection".
       `
+    }
+  },
+  args: {
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection'
+  },
+  argTypes: {
+    selectionBehavior: {
+      control: {
+        type: 'radio',
+        options: ['toggle', 'replace']
+      }
+    },
+    disabledBehavior: {
+      control: {
+        type: 'radio',
+        options: ['selection', 'all']
+      }
     }
   }
 };
@@ -1544,7 +1573,8 @@ export const GridListStyles = {
   ),
   args: {
     selectionMode: 'none',
-    selectionBehavior: 'toggle'
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection'
   },
   argTypes: {
     selectionMode: {
@@ -1557,6 +1587,12 @@ export const GridListStyles = {
       control: {
         type: 'radio',
         options: ['toggle', 'replace']
+      }
+    },
+    disabledBehavior: {
+      control: {
+        type: 'radio',
+        options: ['selection', 'all']
       }
     }
   },

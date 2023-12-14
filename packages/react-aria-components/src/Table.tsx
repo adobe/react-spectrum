@@ -851,7 +851,6 @@ function TableColumnHeader<T>({column}: {column: GridNode<T>}) {
     style = {...style, width: layoutState.getColumnWidth(column.key)};
   }
 
-  // TODO: Column doesn't have isInteractive nor data-interactive since data-allows-sorting exists and conveys the same info. Open to opinions
   return (
     <th
       {...mergeProps(filterDOMProps(props as any), columnHeaderProps, focusProps, hoverProps)}
@@ -996,10 +995,11 @@ const _ColumnResizer = forwardRef(ColumnResizer);
 export {_ColumnResizer as ColumnResizer};
 
 interface TableCellContextValue {
-  isInteractive: boolean
+  isInteractive: boolean,
+  isDisabled: boolean
 }
 
-const TableCellContext = createContext<TableCellContextValue>({isInteractive: false});
+const TableCellContext = createContext<TableCellContextValue>({isInteractive: false, isDisabled: false});
 
 function TableRow<T>({item}: {item: GridNode<T>}) {
   let ref = useObjectRef<HTMLTableRowElement>(item.props.ref);
@@ -1016,7 +1016,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
   let {isFocused, isFocusVisible, focusProps} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
-    isDisabled: state.disabledKeys.has(item.key)
+    isDisabled: states.isDisabled
   });
   let isInteractive = states.allowsSelection || states.hasAction;
 
@@ -1129,7 +1129,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
               }
             }]
           ]}>
-          <TableCellContext.Provider value={{isInteractive}}>
+          <TableCellContext.Provider value={{isInteractive, isDisabled: states.isDisabled}}>
             {cells}
           </TableCellContext.Provider>
         </Provider>
@@ -1143,10 +1143,9 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
 
 function TableCell<T>({cell}: {cell: GridNode<T>}) {
   let ref = useObjectRef<HTMLTableCellElement>(cell.props.ref);
-  let {isInteractive} = useContext(TableCellContext);
+  let {isInteractive, isDisabled} = useContext(TableCellContext);
   let state = useContext(TableStateContext)!;
   let {dragState} = useContext(DragAndDropContext);
-  let isDisabled = cell.parentKey ? state.disabledKeys.has(cell.parentKey) : false;
   // @ts-ignore
   cell.column = state.collection.columns[cell.index];
 
@@ -1177,7 +1176,6 @@ function TableCell<T>({cell}: {cell: GridNode<T>}) {
       {...renderProps}
       ref={ref}
       data-hovered={isHovered || undefined}
-      data-interactive={isInteractive || undefined}
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}>
