@@ -72,10 +72,11 @@ export function useSearchField(
     if (key === 'Escape') {
       if (state.value === '') {
         e.continuePropagation();
-      }
-      state.setValue('');
-      if (onClear) {
-        onClear();
+      } else {
+        state.setValue('');
+        if (onClear) {
+          onClear();
+        }
       }
     }
   };
