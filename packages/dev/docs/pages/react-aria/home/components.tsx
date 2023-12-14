@@ -72,3 +72,8 @@ export const Finger = React.forwardRef((props: HTMLAttributes<HTMLDivElement>, r
 export function LearnMoreLink({href, className}) {
   return <a href={href} className={`group inline-block mt-6 mb-12 text-xl rounded-full px-4 -mx-4 py-1 transition ${className}`}>Learn more<ArrowRight className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
 }
+
+export function Scrollable({children, className = ''}) {
+  // eslint-disable-next-line
+  return <div tabIndex={0} className={`overflow-x-auto overflow-y-hidden outline outline-0 outline-blue-600 -outline-offset-2 focus-visible:outline-2 ${className}`}>{children}</div>;
+}

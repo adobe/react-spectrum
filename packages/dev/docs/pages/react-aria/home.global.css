@@ -127,10 +127,6 @@ main > section > h2 {
   }
 }
 
-pre {
-  @apply overflow-auto;
-}
-
 pre .source {
   @apply p-5 text-xs sm:text-sm min-h-[250px] h-full min-w-fit;
   font-family: source-code-pro, 'Source Code Pro', Monaco, monospace;

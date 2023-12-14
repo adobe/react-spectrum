@@ -1,4 +1,4 @@
-import {AddressBar, FileTab, Window} from './components';
+import {AddressBar, FileTab, Scrollable, Window} from './components';
 import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform} from 'framer-motion';
 import {
   Button,
@@ -32,11 +32,15 @@ export function Styles() {
                 </div>
               }>
               <div className="grid grid-cols-1 lg:grid-cols-2 bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
-                <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styling')!.innerHTML}} />
+                <Scrollable className="rounded-bl-lg">
+                  <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styling')!.innerHTML}} />
+                </Scrollable>
                 <div className="flex flex-row px-3 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-700/80 border-y border-gray-300 dark:border-zinc-700">
                   <FileTab>DatePicker.css</FileTab>
                 </div>
-                <div className="contents lg:[&>*]:border-l dark:[&>*]:border-l-zinc-600" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
+                <Scrollable className="rounded-br-lg lg:border-l dark:border-l-zinc-600">
+                  <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
+                </Scrollable>
               </div>
             </Window>
             <Window
@@ -53,10 +57,12 @@ export function Styles() {
           label: 'Tailwind',
           content: <div className="flex flex-col lg:flex-row gap-4">
             <Window className="flex-1 bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200" isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
-              <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
+              <Scrollable className="rounded-b-lg">
+                <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
+              </Scrollable>
             </Window>
             <Window className="w-[350px]" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex w-full px-12 py-20 justify-center bg-gray-50 dark:bg-zinc-900">
+              <div className="flex-1 flex flex-col w-full px-16 py-24 bg-gray-50 dark:bg-zinc-900">
                 <ComboBox label="Assignee" items={people} defaultSelectedKey={1}>
                   {item => (
                     <ComboBoxItem textValue={item.name}>
@@ -73,8 +79,10 @@ export function Styles() {
           id: 'styled-components',
           label: 'Styled Components',
           content: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800/80 backdrop-saturate-200">
-              <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styled-components')!.innerHTML}} />
+            <Window isBackground toolbar={<FileTab>Slider.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800/80 backdrop-saturate-200">
+              <Scrollable className="rounded-b-lg">
+                <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styled-components')!.innerHTML}} />
+              </Scrollable>
             </Window>
             <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
               <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20">
@@ -87,8 +95,10 @@ export function Styles() {
           id: 'panda',
           label: 'Panda',
           content: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
-              <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('panda')!.innerHTML}} />
+            <Window isBackground toolbar={<FileTab>Button.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
+              <Scrollable className="rounded-b-lg">
+                <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('panda')!.innerHTML}} />
+              </Scrollable>
             </Window>
             <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
               <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20">

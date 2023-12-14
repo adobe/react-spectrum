@@ -12,7 +12,7 @@ import {tv} from 'tailwind-variants';
 
 const thumbStyles = tv({
   extend: focusRing,
-  base: 'w-6 h-6 mt-3 rounded-full bg-gray-50 dark:bg-zinc-900 border-2 border-gray-700 dark:border-gray-300',
+  base: 'w-6 h-6 mt-6 rounded-full bg-gray-50 dark:bg-zinc-900 border-2 border-gray-700 dark:border-gray-300',
   variants: {
     isDragging: {
       true: 'bg-gray-700 dark:bg-gray-300 forced-colors:!bg-[ButtonBorder]'

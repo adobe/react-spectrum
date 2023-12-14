@@ -13,7 +13,7 @@ export default BasePage;
 import './home.global.css';
 import '@react-spectrum/docs/src/syntax-highlight.css';
 import {Keyboard} from './home/Keyboard';
-import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow, Finger, LearnMoreLink} from './home/components';
+import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow, Finger, LearnMoreLink, Scrollable} from './home/components';
 
 ---
 minimal: true
@@ -443,7 +443,7 @@ import {I18n} from './home/I18n';
     <CardTitle>Reuse styles.</CardTitle>
     <CardDescription>React Aria's API is designed around composition, allowing you to share common components between patterns. For example, you can reuse your styled Label, Popover, and ListBox components within a Select, ComboBox, and more.</CardDescription>
 
-    <div className="relative flex-1 -mx-6 -mb-6 mt-6 [&_.source]:px-6 [&_.source]:text-[15px] [&_.source]:leading-snug lg:[&_.source]:text-sm isolate">
+    <Scrollable className="relative flex-1 -mx-6 -mb-6 mt-6 [&_.source]:px-6 [&_.source]:text-[15px] [&_.source]:leading-snug lg:[&_.source]:text-sm isolate rounded-b-2xl">
 
 <div className="highlight-tags [--delay:2.5s] h-full [&>*]:h-full cross-fade [--fade-from:1] [--fade-to:0]">
 
@@ -485,14 +485,14 @@ import {I18n} from './home/I18n';
 ```
 
       </div>
-    </div>
+    </Scrollable>
   </Card>
 
   <Card className="lg:row-end-[span_17]">
     <CardTitle>Build custom patterns.</CardTitle>
     <CardDescription>Use the exported contexts for each component to build your own custom patterns with compositional APIs just like React Aria's built-in components.</CardDescription>
 
-    <div className="flex-1 -mx-6 -mb-6 mt-6 [&>*]:h-full [&_.source]:pl-6 lg:[&_.source]:text-[13px]">
+    <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 [&>*]:h-full [&_.source]:pl-6 lg:[&_.source]:text-[13px] rounded-b-2xl">
 
 ```tsx format=false
 // A Stepper component with customizable buttons.
@@ -520,14 +520,14 @@ function Stepper({children}) {
 </Stepper>
 ```
 
-    </div>
+    </Scrollable>
   </Card>
 
   <Card className="lg:row-end-[span_22]">
     <CardTitle>Customize component parts.</CardTitle>
     <CardDescription>React Aria's contexts let you extend components with new features, or even replace individual parts with totally custom implementations.</CardDescription>
 
-    <div className="flex-1 -mx-6 -mb-6 mt-6 max-h-[30rem] lg:max-h-none [--code-padding:theme(spacing.6)] [&_.source]:px-6 lg:[&_.source]:text-[13px] code-mask overflow-hidden">
+    <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 max-h-[30rem] lg:max-h-none [--code-padding:theme(spacing.6)] [&_.source]:px-6 lg:[&_.source]:text-[13px] code-mask rounded-b-2xl">
 
 ```tsx format=false
 // Add a clear button to a DatePicker.
@@ -574,14 +574,14 @@ function DatePickerClearButton() {
 </DatePicker>
 ```
 
-    </div>
+    </Scrollable>
   </Card>
 
   <Card className="lg:row-end-[span_18]">
     <CardTitle>Get complete control with hooks.</CardTitle>
     <CardDescription>React Aria's low-level Hook-based API lets you intercept events, override behavior, customize DOM elements, and much more. Mix and match components and hooks as needed.</CardDescription>
 
-    <div className="flex-1 -mx-6 -mb-6 mt-6 [&>*]:h-full [--code-padding:theme(spacing.6)] [&_.source]:px-6 lg:[&_.source]:text-[13px]">
+    <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 [&>*]:h-full [--code-padding:theme(spacing.6)] [&_.source]:px-6 lg:[&_.source]:text-[13px] rounded-b-2xl">
 
 ```tsx format=false
 import {useCalendarGrid} from 'react-aria';
@@ -615,7 +615,7 @@ function WeekCalendarGrid(props) {
 </Calendar>
 ```
 
-      </div>
+      </Scrollable>
     </Card>
   </div>
 
