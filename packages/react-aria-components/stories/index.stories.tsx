@@ -134,21 +134,23 @@ export const ListBoxStyles = {
 
 export const TagGroupExample = (props) => (
   <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-    <TagGroup disabledKeys={[3]} {...props} className="styles-example-tagGroup">
+    <TagGroup disabledKeys={[3, 4]} {...props} className="styles-example-tagGroup">
       <Label>Example with hover styles for all tags</Label>
       <TagList style={{display: 'flex', gap: 4}}>
         <MyTag href="https://nytimes.com">News</MyTag>
         <MyTag>Travel</MyTag>
         <MyTag id={3}>Gaming</MyTag>
+        <MyTag href="https://google.com" id={4}>Disabled but has link</MyTag>
         <MyTag>Shopping</MyTag>
       </TagList>
     </TagGroup>
-    <TagGroup disabledKeys={[3]} {...props} className="styles-example-interactiveOnly-tagGroup">
+    <TagGroup disabledKeys={[3, 4]} {...props} className="styles-example-interactiveOnly-tagGroup">
       <Label>Example with hover styles for interactive tags</Label>
       <TagList style={{display: 'flex', gap: 4}}>
         <MyTag href="https://nytimes.com">News</MyTag>
         <MyTag>Travel</MyTag>
         <MyTag id={3}>Gaming</MyTag>
+        <MyTag href="https://google.com" id={4}>Disabled but has link</MyTag>
         <MyTag>Shopping</MyTag>
       </TagList>
     </TagGroup>

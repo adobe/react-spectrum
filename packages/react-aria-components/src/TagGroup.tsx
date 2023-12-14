@@ -212,13 +212,13 @@ function TagItem({item}) {
   let {focusProps, isFocusVisible} = useFocusRing({within: true});
   let {rowProps, gridCellProps, removeButtonProps, ...states} = useTag({item}, state, ref);
 
-  let {hoverProps, isHovered} = useHover({
-    isDisabled: states.isDisabled
-  });
-  // TODO: Do we consider a tag with a link or with remove enabled as "interactive"?
-  let isInteractive = states.allowsSelection;
-
   let props: TagProps = item.props;
+  let {hoverProps, isHovered} = useHover({
+    // TODO: tags with links shouldn't be disabled?
+    isDisabled: state.disabledKeys.has(item.key) && props.href == null
+  });
+
+  let isInteractive = states.allowsSelection || states.allowsRemoving || props.href != null;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
