@@ -129,9 +129,9 @@ React Aria does not include any styles by default, allowing you to build custom 
   <Popover>
     <Dialog>
       <Calendar>
-        <Button slot="previous">◀</Button>
+        <Button slot="previous"><LeftIcon /></Button>
         <Heading />
-        <Button slot="next">▶</Button>
+        <Button slot="next"><RightIcon /></Button>
         <CalendarGrid>
           {date => <CalendarCell date={date} />}
         </CalendarGrid>
@@ -178,9 +178,9 @@ React Aria does not include any styles by default, allowing you to build custom 
 <ComboBox className="group flex ...">
   <Label>Assignee</Label>
   {/* Tailwind plugin for all UI states. */}
-  <Group className="... focus-visible:ring-black">
+  <Group className="... focus-visible:outline-blue-600">
     <Input className="flex-1 ..." />
-    <Button className="... pressed:bg-sky-100">
+    <Button className="... pressed:bg-gray-100">
       <ChevronsUpDownIcon />
     </Button>
   </Group>
@@ -188,13 +188,13 @@ React Aria does not include any styles by default, allowing you to build custom 
   <Popover className="w-[--trigger-width] ... entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
     <ListBox items={people}>
       {item => (
-        <ListBoxItem textValue={item.name} className="group text-gray-900 ... focus:bg-sky-600 focus:text-white">
+        <ListBoxItem textValue={item.name} className="group text-gray-900 ... focus:bg-blue-600 focus:text-white">
           {/* Use render props to customize children based on state. */}
           {({ isSelected }) => <>
             <img alt="" src={item.avatar} />
             <span className="... font-normal group-selected:font-semibold">{item.name}</span></span>
             {isSelected &&
-              <CheckIcon className="... text-sky-600 group-focus:text-white" />
+              <CheckIcon />
             }
           </>}
         </ListBoxItem>

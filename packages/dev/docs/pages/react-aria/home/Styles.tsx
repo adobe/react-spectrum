@@ -3,26 +3,16 @@ import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useRedu
 import {
   Button,
   Collection,
-  ComboBox,
-  Group,
-  Input,
   Key,
-  Label,
-  ListBox,
-  ListBoxItem,
-  Popover,
-  Slider,
-  SliderOutput,
-  SliderThumb,
-  SliderTrack,
   Tab,
   TabList,
   TabPanel,
   Tabs
 } from 'react-aria-components';
-import {CheckIcon, ChevronDown, ChevronsUpDownIcon} from 'lucide-react';
+import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 import {DatePicker} from 'tailwind-starter/DatePicker';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Slider} from 'tailwind-starter/Slider';
 
 export function Styles() {
   return (
@@ -66,36 +56,14 @@ export function Styles() {
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
             </Window>
             <Window className="w-[350px]" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex py-20 justify-center bg-gradient-to-b from-cyan-300 to-sky-300 dark:from-cyan-700 dark:to-sky-600">
-                <ComboBox className="group flex flex-col gap-1 w-[200px]">
-                  <Label className="text-black dark:text-white cursor-default text-sm">Assignee</Label>
-                  <Group className="flex rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition shadow-md border border-black/10 bg-clip-padding focus-visible:outline-2 outline outline-0 -outline-offset-2 outline-black forced-colors:outline-[Highlight]">
-                    <Input className="flex-1 w-full border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline outline-0 text-sm" />
-                    <Button className="px-2.5 flex items-center transition border-0 border-solid border-l border-l-sky-200 bg-transparent rounded-r-lg pressed:bg-sky-100 cursor-default">
-                      <ChevronsUpDownIcon className="w-4 h-4 text-gray-700 forced-colors:text-[ButtonText]" />
-                    </Button>
-                  </Group>
-                  <Popover className="max-h-60 w-[--trigger-width] overflow-auto rounded-md bg-white text-base shadow-lg border border-black/5 bg-clip-padding entering:animate-in entering:fade-in exiting:animate-out exiting:fade-out">
-                    <ListBox className="outline-0 p-1" items={people}>
-                      {item => (
-                        <ListBoxItem
-                          textValue={item.name}
-                          className="group flex items-center gap-2 cursor-default select-none py-1.5 px-2 outline-0 rounded text-gray-900 text-sm focus:bg-sky-600 focus:text-white forced-colors:text-[ButtonText] forced-colors:focus:bg-[Highlight] forced-colors:focus:text-[HighlightText] forced-color-adjust-none">
-                          {({isSelected}) => (<>
-                            <span className="flex-1 flex items-center gap-3 truncate font-normal group-selected:font-semibold">
-                              <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
-                              <span className="truncate">{item.name}</span>
-                            </span>
-                            {isSelected &&
-                              <span className="w-4 flex items-center text-sky-600 forced-colors:text-[Highlight] group-focus:text-inherit">
-                                <CheckIcon className="w-4 h-4" />
-                              </span>
-                            }
-                          </>)}
-                        </ListBoxItem>
-                      )}
-                    </ListBox>
-                  </Popover>
+              <div className="flex-1 flex w-full px-12 py-20 justify-center bg-gray-50 dark:bg-zinc-900">
+                <ComboBox label="Assignee" items={people} defaultSelectedKey={1}>
+                  {item => (
+                    <ComboBoxItem textValue={item.name}>
+                      <img alt="" src={item.avatar} className="w-6 h-6 rounded-full" />
+                      <span className="truncate">{item.name}</span>
+                    </ComboBoxItem>
+                  )}
                 </ComboBox>
               </div>
             </Window>
@@ -110,13 +78,7 @@ export function Styles() {
             </Window>
             <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
               <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20">
-                <Slider defaultValue={30} className="sc-slider">
-                  <Label>Opacity</Label>
-                  <SliderOutput />
-                  <SliderTrack className="sc-track">
-                    <SliderThumb className="sc-thumb" />
-                  </SliderTrack>
-                </Slider>
+                <Slider label="Opacity" defaultValue={30} />
               </div>
             </Window>
           </div>
