@@ -1,4 +1,4 @@
-import plugin from 'tailwindcss/plugin';
+const plugin = require('tailwindcss/plugin');
 
 // Order of these is important because it determines which states win in a conflict.
 // We mostly follow Tailwind's defaults, adding our additional states following the categories they define.
