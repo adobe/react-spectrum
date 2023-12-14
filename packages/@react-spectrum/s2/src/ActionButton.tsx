@@ -10,7 +10,7 @@ import {Button as RACButton, Provider, TextContext} from 'react-aria-components'
 import {Text} from './Text';
 import {SpectrumActionButtonProps} from '@adobe/react-spectrum';
 import {tv} from 'tailwind-variants';
-import {FocusRing, useButton} from 'react-aria';
+import {FocusRing, mergeProps, useButton} from 'react-aria';
 import React, {CSSProperties, forwardRef, useLayoutEffect, useState} from 'react';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 
@@ -29,7 +29,8 @@ export let baseIcon = tv({
 });
 
 let baseButton = tv({
-  base: ['box-border flex items-center justify-center border-solid border-none font-[inherit] font-bold cursor-default transition outline-none focus-visible:outline focus-visible:outline-offset disabled:text-disabled',
+  // need to use outline-0 instead of none because none will show up always in hcm, but need to use outline-none so mouse outline doesn't show up
+  base: ['box-border flex items-center justify-center border-solid border-none font-[inherit] font-bold cursor-default transition outline-none outline-0 focus-visible:outline focus-visible:outline-offset disabled:text-disabled',
     'transform duration pressed:perspective pressed:translate-z-[-2px]'],
   variants: {
     size: {
@@ -42,7 +43,7 @@ let baseButton = tv({
       XL: 'h-c-300 text-300 gap-ttv-100 rounded-[10px]'
     },
     isQuiet: {
-      false: 'bg-tint-100 bg-hover-tint-200',
+      false: 'bg-tint-100 bg-hover-tint-200', // don't need to use tint here
       true: 'bg-transparent bg-hover-gray-200' // how to use tint here?
     }
   },
@@ -170,7 +171,8 @@ export let staticColorButton = tv({
 
 // do forward ref up here so that we get storybook types, at least until someone can figure out why we don't in our
 // normal codebase
-let ActionButton = forwardRef((props: SpectrumActionButtonProps & {size?: 'XS' | 'S' | 'M' | 'L' | 'XL'}, ref: FocusableRef<HTMLElement>) => {
+// remove onKeyUp from the types so that Storybook auto actions doesn't break press
+let ActionButton = forwardRef((props: Omit<SpectrumActionButtonProps & {size?: 'XS' | 'S' | 'M' | 'L' | 'XL'}, 'onKeyUp'>, ref: FocusableRef<HTMLElement>) => {
   props = useSlotProps(props, 'button');
   let {
         children,
@@ -190,6 +192,12 @@ let ActionButton = forwardRef((props: SpectrumActionButtonProps & {size?: 'XS' |
 
   // how to make sure this stays up to date without calculating
   // while it's already scaled
+  // only do during onPress, but that has to wait until we fix the onKeyUp bug OR disable that particular
+  let onPress = () => {
+    let {width = 0, height = 0} = domRef.current?.getBoundingClientRect() ?? {};
+    setWidth(width);
+    setHeight(height);
+  };
   useLayoutEffect(() => {
     let {width = 0, height = 0} = domRef.current?.getBoundingClientRect() ?? {};
     setWidth(width);
@@ -199,12 +207,11 @@ let ActionButton = forwardRef((props: SpectrumActionButtonProps & {size?: 'XS' |
     // let styles = hasIcon && !hasLabel ? iconOnlyButton : buttonStyles;
   let styles = staticColor ? staticColorButton : buttonStyles;
 
-  console.log(props, styleProps)
   return (
     <FocusRing>
       <RACButton
         {...styleProps}
-        {...props}
+        {...(mergeProps(props, {onPress}))}
         ref={domRef as any}
         data-static-color={staticColor || undefined}
         data-has-icon={hasIcon || undefined}
