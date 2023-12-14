@@ -92,42 +92,6 @@ export const ListBoxComplex = () => (
   </ListBox>
 );
 
-export const TagGroupExample = (props) => (
-  <TagGroup {...props}>
-    <Label>Categories</Label>
-    <TagList style={{display: 'flex', gap: 4}}>
-      <MyTag href="https://nytimes.com">News</MyTag>
-      <MyTag>Travel</MyTag>
-      <MyTag>Gaming</MyTag>
-      <MyTag>Shopping</MyTag>
-    </TagList>
-  </TagGroup>
-);
-
-TagGroupExample.args = {
-  selectionMode: 'none',
-  selectionBehavior: 'toggle'
-};
-
-TagGroupExample.argTypes = {
-  selectionMode: {
-    control: {
-      type: 'inline-radio',
-      options: ['none', 'single', 'multiple']
-    }
-  },
-  selectionBehavior: {
-    control: {
-      type: 'inline-radio',
-      options: ['toggle', 'replace']
-    }
-  }
-};
-
-function MyTag(props) {
-  return <Tag {...props} style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />;
-}
-
 export const SelectExample = () => (
   <Select data-testid="select-example" id="select-example-id">
     <Label style={{display: 'block'}}>Test</Label>
