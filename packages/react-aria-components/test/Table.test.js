@@ -124,9 +124,9 @@ let DraggableTable = (props) => {
 };
 
 let columns = [
-  {name: 'Name', key: 'name', isRowHeader: true},
-  {name: 'Type', key: 'type'},
-  {name: 'Date Modified', key: 'date'}
+  {name: 'Name', id: 'name', isRowHeader: true},
+  {name: 'Type', id: 'type'},
+  {name: 'Date Modified', id: 'date'}
 ];
 
 let rows = [
@@ -148,7 +148,7 @@ let DynamicTable = ({tableProps, tableHeaderProps, tableBodyProps, rowProps}) =>
     <TableBody items={rows} {...tableBodyProps}>
       {item => (
         <MyRow columns={columns} {...rowProps}>
-          {column => <Cell>{item[column.key]}</Cell>}
+          {column => <Cell>{item[column.id]}</Cell>}
         </MyRow>
       )}
     </TableBody>
@@ -594,7 +594,7 @@ describe('Table', () => {
                 renderRow(column);
                 return (
                   <Cell>
-                    {item[column.key]}
+                    {item[column.id]}
                   </Cell>
                 );
               }}
@@ -839,7 +839,7 @@ describe('Table', () => {
             <TableBody items={rows}>
               {item => (
                 <MyRow columns={columns}>
-                  {column => <Cell>{item[column.key]}</Cell>}
+                  {column => <Cell>{item[column.id]}</Cell>}
                 </MyRow>
               )}
             </TableBody>
@@ -865,7 +865,7 @@ describe('Table', () => {
             <TableBody items={rows}>
               {item => (
                 <MyRow columns={columns}>
-                  {column => <Cell>{item[column.key]}</Cell>}
+                  {column => <Cell>{item[column.id]}</Cell>}
                 </MyRow>
               )}
             </TableBody>
