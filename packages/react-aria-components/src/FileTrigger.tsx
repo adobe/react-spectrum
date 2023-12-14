@@ -39,11 +39,11 @@ export interface FileTriggerProps {
   /**
    * Enables the selection of directories instead of individual files.
    */
-  directory?: boolean
+  acceptDirectory?: boolean
 }
 
 function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement>) {
-  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, directory, ...rest} = props;
+  let {onSelect, acceptedFileTypes, allowsMultiple, defaultCamera, children, acceptDirectory, ...rest} = props;
   let inputRef = useObjectRef(ref);
   let domProps = filterDOMProps(rest);
 
@@ -68,7 +68,7 @@ function FileTrigger(props: FileTriggerProps, ref: ForwardedRef<HTMLInputElement
         capture={defaultCamera}
         multiple={allowsMultiple}
         // @ts-expect-error
-        webkitdirectory={directory ? '' : undefined} />
+        webkitdirectory={acceptDirectory ? '' : undefined} />
     </>
   );
 }
