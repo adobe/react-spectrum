@@ -5,13 +5,14 @@ const postcss = require('postcss');
 let html = String.raw;
 let css = String.raw;
 
-function run({options, content}) {
+function run({options, content, future = {}}) {
   let {currentTestName} = expect.getState();
   let config = {
     plugins: [require('./index.js')(options)],
     corePlugins: {preflight: false},
     theme: {colors: {red: 'red'}},
-    content: [{raw: content}]
+    content: [{raw: content}],
+    future
   };
 
   return postcss(tailwind(config)).process(
@@ -503,5 +504,22 @@ test('variants with prefix', async () => {
     background-color: rgb(255 0 0 / var(--tw-bg-opacity))
 }`
     );
+  });
+});
+
+test('hoverOnlyWhenSupported', () => {
+  let content = html`<div data-rac className="hover:bg-red"></div>`;
+  return run({content, future: {hoverOnlyWhenSupported: true}}).then((result) => {
+    expect(result.css).toContain(css`
+.hover\:bg-red:where([data-rac])[data-hovered] {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 0 0 / var(--tw-bg-opacity))
+}
+@media (hover: hover) and (pointer: fine) {
+    .hover\:bg-red:where(:not([data-rac])):hover {
+        --tw-bg-opacity: 1;
+        background-color: rgb(255 0 0 / var(--tw-bg-opacity))
+    }
+}`);
   });
 });
