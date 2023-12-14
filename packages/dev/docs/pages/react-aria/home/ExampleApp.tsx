@@ -21,18 +21,18 @@ import {Tag, TagGroup} from 'tailwind-starter/TagGroup';
 import {TextField} from 'tailwind-starter/TextField';
 import {Tooltip} from 'tailwind-starter/Tooltip';
 import {tv} from 'tailwind-variants';
-import {useCollator, useFilter} from 'react-aria';
+import {useCollator, useFilter, VisuallyHidden} from 'react-aria';
 import {useMediaQuery} from '@react-spectrum/utils';
 
 type Plant = typeof plants[0] & {isFavorite: boolean};
 
 const allColumns: ColumnProps[] = [
-  {id: 'favorite', width: 40, minWidth: 40},
+  {id: 'favorite', children: <VisuallyHidden>Favorite</VisuallyHidden>, width: 40, minWidth: 40},
   {id: 'common_name', children: 'Name', minWidth: 150, allowsSorting: true},
   {id: 'cycle', children: 'Cycle', defaultWidth: 120, allowsSorting: true},
   {id: 'sunlight', children: 'Sunlight', defaultWidth: 120, allowsSorting: true},
   {id: 'watering', children: 'Watering', defaultWidth: 120, allowsSorting: true},
-  {id: 'actions', width: 44, minWidth: 44}
+  {id: 'actions', children: <VisuallyHidden>Actions</VisuallyHidden>, width: 44, minWidth: 44}
 ];
 
 let hideOnScroll = document.getElementById('hideOnScroll');
