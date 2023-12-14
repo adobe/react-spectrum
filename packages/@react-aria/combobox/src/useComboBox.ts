@@ -122,7 +122,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
         if (state.isOpen && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
           if (e.key === 'Enter') {
-            let item = listBoxRef.current.querySelector(`[data-key="${state.selectionManager.focusedKey}"]`);
+            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
             if (item instanceof HTMLAnchorElement) {
               router.open(item, e);
             }
