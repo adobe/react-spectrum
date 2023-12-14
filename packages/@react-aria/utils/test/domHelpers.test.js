@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2023 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {createRef} from 'react';
 import {getOwnerDocument, getOwnerWindow} from '../';
 
 describe('getOwnerDocument', () => {
@@ -21,6 +22,40 @@ describe('getOwnerDocument', () => {
     const div = document.createElement('div');
     window.document.body.appendChild(div);
     expect(getOwnerDocument(div)).toBe(document);
+  });
+
+  it('returns the document if object passed in does not have an ownerdocument', () => {
+    const div = document.createElement('div');
+    expect(getOwnerDocument(div)).toBe(document);
+  });
+
+  it('returns the document if nothing is passed in', () => {
+    expect(getOwnerDocument()).toBe(document);
+    expect(getOwnerDocument(null)).toBe(document);
+    expect(getOwnerDocument(undefined)).toBe(document);
+  });
+
+  it('returns the documentOwner that is not document', () => {
+    const div = {};
+    const divOwner = document.createElement('div');
+    div.ownerDocument = divOwner;
+    expect(getOwnerDocument(div)).toBe(divOwner);
+  });
+
+  it('returns the document if ref exists, but is not associated with an element', () => {
+    const ref = createRef();
+
+    expect(getOwnerDocument(ref.current)).toBe(document);
+  });
+
+  it('returns the ref\'s documentOwner that is not document', () => {
+    const ref = createRef();
+    const div = {};
+    const divOwner = document.createElement('div');
+    div.ownerDocument = divOwner;
+    ref.current = div;
+
+    expect(getOwnerDocument(ref.current)).toBe(divOwner);
   });
 
   it("returns the iframe's document if the element is in an iframe", () => {
