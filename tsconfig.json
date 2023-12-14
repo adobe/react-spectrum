@@ -56,6 +56,7 @@
           "./packages/@react-aria/toggle",
           "./packages/@react-aria/q",
           "./packages/@react-aria/searchfield",
+          "./packages/@react-aria/u",
           "./packages/@react-aria/w",
           "./packages/@react-aria/x",
           "./packages/@react-aria/y",
