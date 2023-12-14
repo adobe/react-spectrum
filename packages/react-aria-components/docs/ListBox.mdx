@@ -165,14 +165,14 @@ import {ListBox, ListBoxItem, Section, Header, Text} from 'react-aria-components
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="../react-stately/collections.html"
+  url="collections.html"
   title="Collections"
   description="Defining collections of items, async loading, and updating items over time.">
   <Collections />
 </ExampleCard>
 
 <ExampleCard
-  url="../react-stately/selection.html"
+  url="selection.html"
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
@@ -271,7 +271,7 @@ function MyItem(props: ListBoxItemProps) {
 
 ## Content
 
-`ListBox` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+`ListBox` follows the [Collection Components API](collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
@@ -305,7 +305,7 @@ function Example() {
 
 ListBox supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
-See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+See the [Selection](selection.html) guide for more details.
 
 ```tsx example
 import type {Selection} from 'react-aria-components';
@@ -810,7 +810,7 @@ function AsyncLoadingExample() {
 
 `ListBox` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `id` prop passed to the `ListBoxItem` component, or automatically derived from the values passed
-to the `items` prop. See [Collections](../react-stately/collections.html) for more details.
+to the `items` prop. See the [Collections](collections.html) guide for more details.
 
 ```tsx example
 <ListBox

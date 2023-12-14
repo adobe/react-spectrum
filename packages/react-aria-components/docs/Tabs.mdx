@@ -179,14 +179,14 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="../react-stately/collections.html"
+  url="collections.html"
   title="Collections"
   description="Defining collections of items, async loading, and updating items over time.">
   <Collections />
 </ExampleCard>
 
 <ExampleCard
-  url="../react-stately/selection.html"
+  url="selection.html"
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
@@ -204,7 +204,7 @@ import {Tabs, TabList, Tab, TabPanel} from 'react-aria-components';
 
 A default selected tab can be provided using the `defaultSelectedKey` prop, which should correspond to the `id` prop provided to each item.
 When `Tabs` is used with dynamic items as described below, the key of each item is derived from the data.
-See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+See the [Selection](selection.html) guide for more details.
 
 ```tsx example
 <Tabs defaultSelectedKey="keyboard">
@@ -299,7 +299,7 @@ This example uses the same `Tabs` component from above. Try navigating from the 
 
 The above examples have shown tabs with static items. The `items` prop can be used when creating tabs from a dynamic collection, for example when the user can add and remove tabs, or the tabs come from an external data source. The function passed as the children of the `TabList` component is called for each item in the list, and returns an `<Tab>`. A function passed as the children of the <TypeLink links={docs.links} type={docs.exports.Collection} /> component returns a corresponding `<TabPanel>` for each tab.
 
-Each item accepts an `id` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and an `id` prop is not required. See [Collection Components](../react-stately/collections.html) for more details.
+Each item accepts an `id` prop, which is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property, as shown in the example below, then this is used automatically and an `id` prop is not required. See [Collection Components](collections.html) for more details.
 
 ```tsx example
 import {Collection, Button} from 'react-aria-components';
@@ -440,7 +440,7 @@ All tabs can be disabled using the `isDisabled` prop.
 
 Individual tabs can be disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `id` prop passed to the `Tab` component, or automatically derived from the values passed
-to the `items` prop. See [Collections](../react-stately/collections.html) for more details.
+to the `items` prop. See the [Collections](collections.html) guide for more details.
 
 ```tsx example
 <Tabs disabledKeys={['gamepad']}>

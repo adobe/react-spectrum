@@ -228,14 +228,14 @@ identify it to assistive technology.
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="../react-stately/collections.html"
+  url="collections.html"
   title="Collections"
   description="Defining collections of items, async loading, and updating items over time.">
   <Collections />
 </ExampleCard>
 
 <ExampleCard
-  url="../react-stately/selection.html"
+  url="selection.html"
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
@@ -391,7 +391,7 @@ function MyItem(props: ListBoxItemProps) {
 
 ## Content
 
-ComboBox follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+ComboBox follows the [Collection Components API](collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
@@ -523,8 +523,7 @@ ComboBox supports the `name` prop for integration with HTML forms. By default, t
 ```
 
 ## Selection
-Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `key` of an item. See [Events](#events) for more details on selection events.
-Additionally, see the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` of an item. See [Events](#events) for more details on selection events.
 
 ```tsx example
 function Example() {
@@ -706,7 +705,7 @@ import {Text} from 'react-aria-components';
 ## Events
 
 ComboBox supports selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange`
-prop. ComboBox will pass the selected `key` to the `onSelectionChange` handler.
+prop. ComboBox will pass the selected `id` to the `onSelectionChange` handler.
 Additionally, ComboBox accepts an `onInputChange` prop which is triggered whenever the value is edited by the user, whether through typing or option
 selection.
 
