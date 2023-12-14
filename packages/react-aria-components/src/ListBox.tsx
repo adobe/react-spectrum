@@ -360,7 +360,6 @@ interface OptionProps<T> {
 function Option<T>({item}: OptionProps<T>) {
   let ref = useObjectRef<any>(item.props.ref);
   let state = useContext(ListStateContext)!;
-  let {shouldFocusOnHover} = useSlottedContext(ListBoxContext)! as AriaListBoxOptions<T>;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key},
@@ -369,13 +368,8 @@ function Option<T>({item}: OptionProps<T>) {
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: shouldFocusOnHover || (!states.allowsSelection && !states.hasAction)
+    isDisabled: !states.allowsSelection && !states.hasAction
   });
-
-  if (shouldFocusOnHover) {
-    hoverProps = {};
-    isHovered = states.isFocused;
-  }
 
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {
