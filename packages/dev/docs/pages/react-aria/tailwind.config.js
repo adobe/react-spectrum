@@ -2,13 +2,15 @@ const plugin = require('tailwindcss/plugin');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  // darkMode: ['class', '[style*="color-scheme: dark"]'],
   content: {
     relative: true,
     files: ['*.mdx', 'home/*.tsx', '../../../../../starters/tailwind/**/*.{ts,tsx}']
   },
   theme: {
     extend: {}
+  },
+  future: {
+    hoverOnlyWhenSupported: true
   },
   plugins: [
     require('tailwindcss-react-aria-components'),

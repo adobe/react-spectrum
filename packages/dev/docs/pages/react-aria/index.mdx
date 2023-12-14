@@ -660,27 +660,3 @@ import {Pagination} from './home/Pagination';
     <li><a href="//www.adobe.com/privacy/ca-rights.html" target="_blank" className="underline">Do not sell my personal information</a></li>
   </ul>
 </footer>
-
-```tsx import
-let ignoreSimulatedMouseEvents = false;
-document.addEventListener('touchstart', () => {
-  ignoreSimulatedMouseEvents = true;
-}, true);
-
-document.addEventListener('mouseenter', e => {
-  if (ignoreSimulatedMouseEvents) {
-    ignoreSimulatedMouseEvents = false;
-    return;
-  }
-
-  if (e.target instanceof Element) {
-    e.target.classList.add('is-hovered');
-  }
-}, true);
-
-document.addEventListener('mouseleave', e => {
-  if (e.target instanceof Element) {
-    e.target.classList.remove('is-hovered');
-  }
-}, true);
-```
