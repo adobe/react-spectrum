@@ -88,11 +88,24 @@ describe('useSearchField hook', () => {
         expect(onSubmit).toHaveBeenCalledWith(state.value);
       });
 
-      it('pressing the Escape key sets the state value to "" and calls onClear if provided', () => {
+      it('pressing the Escape key sets the state value to "", if state.value is not empty, and calls onClear if provided and will not call onClear if escape pressed again', () => {
         let {inputProps} = renderSearchHook({onClear});
+        expect(inputProps.type).toBe('search');
+        expect(inputProps.value).toBe(state.value); // this is a false positive because of fake state
+
+        // manually updating fake state
+        state.value = 'search';
+
         inputProps.onKeyDown(event('Escape'));
         expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(state.setValue).toHaveBeenCalledWith('');
+        expect(onClear).toHaveBeenCalledTimes(1);
+
+        // manually updating fake state
+        state.value = '';
+
+        inputProps.onKeyDown(event('Escape'));
+        expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(onClear).toHaveBeenCalledTimes(1);
       });
 
