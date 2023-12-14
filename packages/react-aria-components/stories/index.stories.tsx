@@ -37,7 +37,8 @@ export const ListBoxExample = (args) => (
 ListBoxExample.story = {
   args: {
     selectionMode: 'none',
-    selectionBehavior: 'toggle'
+    selectionBehavior: 'toggle',
+    shouldFocusOnHover: false
   },
   argTypes: {
     selectionMode: {
@@ -51,6 +52,11 @@ ListBoxExample.story = {
         type: 'radio',
         options: ['toggle', 'replace']
       }
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Hover styles should have higher specificity than focus style for testing purposes. Hover style should not be applied on keyboard focus even if shouldFocusOnHover is true'
     }
   }
 };
