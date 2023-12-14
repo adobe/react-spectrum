@@ -11,7 +11,7 @@ import {SpectrumButtonProps, Text} from '@adobe/react-spectrum';
 import {tv} from 'tailwind-variants';
 import {FocusRing, useButton} from 'react-aria';
 import React, {forwardRef, useEffect, useState} from 'react';
-import {pressScale, usePressScale} from './usePressScale';
+import {pressScale} from './usePressScale';
 
 let baseButton = tv({
   base: 'flex items-center justify-center rounded-full font-[inherit] font-bold cursor-default transition outline-none focus-visible:ring disabled:text-disabled',
@@ -77,19 +77,7 @@ let buttonStyles = tv({
       class: 'border-base-tint-300 bg-hover-tint-300'
     }
   ]
-}, {
-    // twMergeConfig: {
-    //   theme: {
-    //     borderWidth: ['100', '200']
-    //   },
-    //   classGroups: {
-    //     tint: [{'tint': [() => true]}],
-    //     'default-tint': [{'default-tint': [() => true]}],
-    //     'font-size': [{text: []}]
-    //   }
-    // }
-  twMerge: false
-});
+}, {twMerge: false});
 
 let staticColorButton = tv({
   extend: baseButton,

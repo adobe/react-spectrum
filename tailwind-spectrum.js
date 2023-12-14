@@ -948,7 +948,6 @@ module.exports = {
                 hover: colors[color][keys[i + 1]] || colors[color][index],
                 focus: colors[color][keys[i + 1]] || colors[color][index],
                 down: colors[color][keys[i + 1]] || colors[color][index]
-                                // down: colors[color][keys[i + 2]] || colors[color][keys[i + 1]] || colors[color][index]
               };
 
               hoverColorValues[`${color}-${index}`] = {
