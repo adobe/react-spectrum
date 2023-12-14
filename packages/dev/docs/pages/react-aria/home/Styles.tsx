@@ -1,5 +1,5 @@
 import {AddressBar, FileTab, Window} from './components';
-import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useScroll, useTransform} from 'framer-motion';
+import {animate, AnimationPlaybackControls, motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform} from 'framer-motion';
 import {
   Button,
   Collection,
@@ -21,6 +21,7 @@ import {
   Tabs
 } from 'react-aria-components';
 import {CheckIcon, ChevronDown, ChevronsUpDownIcon} from 'lucide-react';
+import {DatePicker} from 'tailwind-starter/DatePicker';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 export function Styles() {
@@ -36,39 +37,23 @@ export function Styles() {
               isBackground
               toolbar={
                 <div className="grid grid-cols-2 w-full">
-                  <FileTab>ComboBox.tsx</FileTab>
-                  <FileTab className="hidden lg:block">ComboBox.css</FileTab>
+                  <FileTab>DatePicker.tsx</FileTab>
+                  <FileTab className="hidden lg:block">DatePicker.css</FileTab>
                 </div>
               }>
-              <div className="grid grid-cols-1 lg:grid-cols-2 bg-gray-50 dark:bg-zinc-800">
+              <div className="grid grid-cols-1 lg:grid-cols-2 bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
                 <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styling')!.innerHTML}} />
-                <div className="flex flex-row px-3 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-900/80 border-y border-gray-300 dark:border-zinc-700">
-                  <FileTab>ComboBox.css</FileTab>
+                <div className="flex flex-row px-3 lg:hidden bg-gray-200/80 backdrop-blur-md dark:bg-zinc-700/80 border-y border-gray-300 dark:border-zinc-700">
+                  <FileTab>DatePicker.css</FileTab>
                 </div>
                 <div className="contents lg:[&>*]:border-l dark:[&>*]:border-l-zinc-600" dangerouslySetInnerHTML={{__html: document.getElementById('css')!.innerHTML}} />
               </div>
             </Window>
             <Window
-              className="lg:absolute bottom-10 left-16 w-[350px]"
+              className="lg:absolute bottom-10 left-[16.5%] w-[350px]"
               toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex items-center justify-center bg-gray-50 dark:bg-zinc-900 col-span-2 p-14 text-sm">
-                <ComboBox>
-                  <Label>Favorite Animal</Label>
-                  <div>
-                    <Input />
-                    <Button><ChevronDown /></Button>
-                  </div>
-                  <Popover>
-                    <ListBox>
-                      <ListBoxItem>Aardvark</ListBoxItem>
-                      <ListBoxItem>Cat</ListBoxItem>
-                      <ListBoxItem>Dog</ListBoxItem>
-                      <ListBoxItem>Kangaroo</ListBoxItem>
-                      <ListBoxItem>Panda</ListBoxItem>
-                      <ListBoxItem>Snake</ListBoxItem>
-                    </ListBox>
-                  </Popover>
-                </ComboBox>
+              <div className="flex items-center justify-center bg-gray-50 dark:bg-zinc-900 col-span-2 pt-12 pb-14 text-sm">
+                <DatePicker label="Date Planted" />
               </div>
             </Window>
           </div>
@@ -77,13 +62,13 @@ export function Styles() {
           id: 'tailwind',
           label: 'Tailwind',
           content: <div className="flex flex-col lg:flex-row gap-4">
-            <Window className="flex-1 bg-gray-50 dark:bg-zinc-800" isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
+            <Window className="flex-1 bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200" isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>}>
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
             </Window>
             <Window className="w-[350px]" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
-              <div className="flex-1 flex py-20 justify-center bg-gradient-to-r from-sky-300 to-cyan-300">
+              <div className="flex-1 flex py-20 justify-center bg-gradient-to-b from-cyan-300 to-sky-300 dark:from-cyan-700 dark:to-sky-600">
                 <ComboBox className="group flex flex-col gap-1 w-[200px]">
-                  <Label className="text-black cursor-default text-sm">Assignee</Label>
+                  <Label className="text-black dark:text-white cursor-default text-sm">Assignee</Label>
                   <Group className="flex rounded-lg bg-white bg-opacity-90 focus-within:bg-opacity-100 transition shadow-md border border-black/10 bg-clip-padding focus-visible:outline-2 outline outline-0 -outline-offset-2 outline-black forced-colors:outline-[Highlight]">
                     <Input className="flex-1 w-full border-none py-2 px-3 leading-5 text-gray-900 bg-transparent outline outline-0 text-sm" />
                     <Button className="px-2.5 flex items-center transition border-0 border-solid border-l border-l-sky-200 bg-transparent rounded-r-lg pressed:bg-sky-100 cursor-default">
@@ -120,7 +105,7 @@ export function Styles() {
           id: 'styled-components',
           label: 'Styled Components',
           content: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800">
+            <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800/80 backdrop-saturate-200">
               <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('styled-components')!.innerHTML}} />
             </Window>
             <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
@@ -136,7 +121,22 @@ export function Styles() {
             </Window>
           </div>
         },
-        {id: 'vanilla-extract', label: 'Vanilla Extract', content: ''}
+        {
+          id: 'panda',
+          label: 'Panda',
+          content: <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Window isBackground toolbar={<FileTab>ComboBox.tsx</FileTab>} className="bg-gray-50 dark:bg-zinc-800/80 dark:backdrop-saturate-200">
+              <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('panda')!.innerHTML}} />
+            </Window>
+            <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
+              <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20">
+                <Button className="bg-blue-600 text-white pressed:bg-blue-700 border border-white/10 rounded-lg px-4 py-2 cursor-default outline outline-0 focus-visible:outline-2 outline-blue-600 outline-offset-2">
+                  Initiate launch sequence…
+                </Button>
+              </div>
+            </Window>
+          </div>
+        }
       ]} />
   );
 }
@@ -212,6 +212,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
   // When the user clicks on a tab perform an animation of
   // the scroll position to the newly selected tab panel.
   let animationRef = useRef<AnimationPlaybackControls | null>(null);
+  let shouldReduceMotion = useReducedMotion();
   let onSelectionChange = (selectedKey: Key) => {
     setSelectedKey(selectedKey);
 
@@ -223,10 +224,16 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
 
     let tabPanel = tabPanelsRef.current!;
     let index = tabs.findIndex((tab) => tab.id === selectedKey);
+    let scrollLeft = tabPanel.scrollWidth * (index / tabs.length);
+    if (shouldReduceMotion) {
+      tabPanel.scrollLeft = scrollLeft;
+      return;
+    }
+
     animationRef.current?.stop();
     animationRef.current = animate(
       tabPanel.scrollLeft,
-      tabPanel.scrollWidth * (index / tabs.length),
+      scrollLeft,
       {
         type: 'spring',
         bounce: 0.2,
@@ -267,7 +274,7 @@ function AnimatedTabs({tabs}: {tabs: TabOptions[]}) {
       className="-mx-8 md:-mx-2"
       selectedKey={selectedKey}
       onSelectionChange={onSelectionChange}>
-      <div className="relative overflow-x-auto no-scrollbar p-2 sm:-m-2" ref={tabListScrollRef}>
+      <div className="relative overflow-x-auto no-scrollbar dark:isolate p-2 sm:-m-2" ref={tabListScrollRef}>
         <TabList ref={tabListRef} className="flex px-2 y-2 md:px-0" items={tabs}>
           {(tab) =>
             (<Tab className="flex-shrink-0 cursor-default px-3 py-1.5 text-sm sm:text-base text-black dark:text-white transition outline outline-0 forced-colors:selected:!text-[HighlightText] forced-color-adjust-none">

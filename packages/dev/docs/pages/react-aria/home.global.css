@@ -1,3 +1,4 @@
+@import "npm:@react-aria/example-theme";
 @config "./tailwind.config.js";
 @tailwind base;
 @tailwind components;
@@ -36,7 +37,7 @@
 }
 
 body {
-  font-family: "adobe-clean", sans-serif;
+  font-family: "adobe-clean", system-ui, sans-serif;
   background: var(--page-bg);
   color-scheme: dark light;
   @apply [--page-bg:theme(colors.zinc.50)] dark:[--page-bg:theme(colors.zinc.900)];
@@ -411,7 +412,7 @@ pre.small {
 }
 
 .red-gradient-background {
-  --a: oklch(96% 0.1 340);
+  --a: oklch(96% 0.1 350);
   --a-shape: ellipse 30% 30% at 29% 54%;
   --b: oklch(96% 0.11 6);
   --b-shape: ellipse 35% 30% at 66% 50%;
@@ -432,11 +433,40 @@ pre.small {
 
 @media (prefers-color-scheme: dark) {
   .red-gradient-background {
-    --a: oklch(27% 0.11 340);
+    --a: oklch(27% 0.11 350);
     --b: oklch(26% 0.11 6);
     --c: oklch(26% 0.1 20);
   }
 }
+
+.pink-gradient-background {
+  --a: oklch(92% 0.11 300);
+  --a-shape: ellipse 30% 30% at 29% 57%;
+  --b: oklch(96% 0.11 320);
+  --b-shape: ellipse 35% 30% at 66% 47%;
+  --c: oklch(96% 0.14 340);
+  --c-shape: ellipse 40% 25% at 50% 70%;
+  background: radial-gradient(var(--a-shape), var(--a), transparent),
+    radial-gradient(var(--b-shape), var(--b), transparent),
+    radial-gradient(var(--c-shape), var(--c), transparent);
+}
+
+@media (width < 768px) {
+  .pink-gradient-background {
+    --a-shape: circle 400px at 50% 40%;
+    --b-shape: circle 400px at 50% 60%;
+    --c-shape: circle 400px at 50% 80%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .pink-gradient-background {
+    --a: oklch(30% 0.11 300);
+    --b: oklch(30% 0.11 320);
+    --c: oklch(27% 0.1 340);
+  }
+}
+
 
 .green-gradient-background {
   --a: oklch(96% 0.1 120);

@@ -55,9 +55,9 @@ description: Build adaptive, accessible, and robust components with React Aria.
     </div>
   </nav>
 
-  <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60 -mb-6 rounded-3xl">
-    <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-semibold mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_var(--page-bg))] dark:filter-none"><GradientText>Build adaptive, accessible, and robust components with React Aria.</GradientText></h1>
-    <p className="text-slate-800 dark:text-slate-300 text-center text-base md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
+  <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60 rounded-3xl">
+    <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_var(--page-bg))] dark:filter-none"><GradientText>Build adaptive, accessible, and robust components with React Aria.</GradientText></h1>
+    <p className="text-slate-800 dark:text-slate-300 text-center text-lg md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
     <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
       <a href="getting-started.html" className="bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition">Get Started</a>
@@ -107,7 +107,7 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
 </header>
 
 <main className="max-w-6xl mx-auto">
-<section className="pb-20 lg:pb-28 px-8 md:px-20">
+<section className="px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 pink-gradient-background">
 
 <h2 className="pb-2 text-transparent"><GradientText>Bring your own</GradientText> <span className="bg-clip-text bg-gradient-to-t from-fuchsia-600 to-pink-600">styles</span><GradientText>.</GradientText></h2>
 
@@ -118,23 +118,27 @@ React Aria does not include any styles by default, allowing you to build custom 
 <div hidden id="styling">
 
 ```tsx format=false
-<ComboBox>
-  <Label>Favorite Animal</Label>
-  <div>
-    <Input />
-    <Button><ChevronDown /></Button>
-  </div>
+<DatePicker>
+  <Label>Date Planted</Label>
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button><CalendarIcon /></Button>
+  </Group>
   <Popover>
-    <ListBox>
-      <ListBoxItem>Aardvark</ListBoxItem>
-      <ListBoxItem>Cat</ListBoxItem>
-      <ListBoxItem>Dog</ListBoxItem>
-      <ListBoxItem>Kangaroo</ListBoxItem>
-      <ListBoxItem>Panda</ListBoxItem>
-      <ListBoxItem>Snake</ListBoxItem>
-    </ListBox>
+    <Dialog>
+      <Calendar>
+        <Button slot="previous">◀</Button>
+        <Heading />
+        <Button slot="next">▶</Button>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </Calendar>
+    </Dialog>
   </Popover>
-</ComboBox>
+</DatePicker>
 ```
 
 </div>
@@ -143,55 +147,25 @@ React Aria does not include any styles by default, allowing you to build custom 
 
 ```css render=false
 /* Consistent default classes for each component */
-.react-aria-ComboBox {
+.react-aria-DatePicker {
   /* ... */
 
-  .react-aria-Button {
-    background: slateblue;
+  .react-aria-Group {
+    border: 2px solid var(--gray-300);
   }
 }
 
-.react-aria-ListBoxItem {
-  color: black;
+.react-aria-CalendarCell {
+  color: var(--gray-900);
 
   /* Style interactive states with data attributes */
-  &[data-focused] {
-    color: white;
-    background: slateblue;
+  &[data-pressed] {
+    background: var(--gray-100);
   }
 
   &[data-selected] {
-    font-weight: bold;
-  }
-}
-```
-
-```css hidden
-@import "@react-aria/example-theme";
-@import 'react-aria-components/docs/ListBox.mdx';
-@import 'react-aria-components/docs/Popover.mdx';
-@import 'react-aria-components/docs/Button.mdx';
-@import 'react-aria-components/docs/ComboBox.mdx';
-
-.react-aria-ComboBox {
-  .react-aria-Input {
-    font-size: 1rem;
-  }
-
-  .react-aria-Button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    svg {
-      height: 16px;
-    }
-  }
-}
-
-.react-aria-Popover[data-trigger=ComboBox] {
-  .react-aria-ListBoxItem {
-    font-size: 1rem;
+    color: var(--gray-50);
+    background: var(--blue-600);
   }
 }
 ```
@@ -263,6 +237,41 @@ const StyledSliderThumb = styled(SliderThumb)`
     <StyledSliderThumb />
   </StyledSliderTrack>
 </StyledSlider>
+```
+
+</div>
+
+<div hidden id="panda">
+
+```tsx
+import {Button} from 'react-aria-components';
+import {styled} from '../styled-system/jsx';
+
+const StyledButton = styled(Button, {
+  base: {
+    /* ... */
+  },
+  variants: {
+    variant: {
+      primary: {
+        background: 'blue.600',
+        '&[data-pressed]': {
+          background: 'blue.700',
+        }
+      },
+      secondary: {
+        background: 'gray.300',
+        '&[data-pressed]': {
+          background: 'gray.400',
+        }
+      }
+    }
+  }
+});
+
+<StyledButton variant="primary">
+  Initiate launch sequence…
+</StyledButton>
 ```
 
 </div>

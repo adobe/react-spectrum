@@ -174,7 +174,7 @@ export function ExampleApp() {
             <Tooltip>Filters</Tooltip>
           </TooltipTrigger>
           <Popover showArrow>
-            <Dialog className="outline-0 p-4 max-h-[inherit] overflow-auto w-[350px]">
+            <Dialog className="outline outline-0 p-4 max-h-[inherit] overflow-auto w-[350px]">
               <Heading slot="title" className="text-lg font-semibold mb-2">Filters</Heading>
               {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute top-4 right-4 py-1 px-2 text-xs">Clear</Button>}
               <div className="flex flex-col gap-4">
