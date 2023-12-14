@@ -288,8 +288,6 @@ export interface TableProps extends Omit<SharedTableProps<any>, 'children'>, Sty
   disabledBehavior?: DisabledBehavior,
   /** Handler that is called when a user performs an action on the row. */
   onRowAction?: (key: Key) => void,
-  /** Handler that is called when a user performs an action on the cell. */
-  onCellAction?: (key: Key) => void,
   /** The drag and drop hooks returned by `useDragAndDrop` used to enable drag and drop behavior for the Table. */
   dragAndDropHooks?: DragAndDropHooks
 }

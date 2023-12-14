@@ -324,7 +324,6 @@ export const Example = () => (
     args.set('onAction', t.nullLiteral());
   } else if (name === 'Table') {
     args.set('onRowAction', t.nullLiteral());
-    args.set('onCellAction', t.nullLiteral());
   }
 
   traverse.default(ast, {
