@@ -394,7 +394,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                     setDroppedImage(URL.createObjectURL(await item.getFile()));
                   }
                 }}
-                className="w-24 sm:w-32 p-2 flex items-center justify-center flex-shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 dark:text-gray-300 focus-visible:border-blue-600 forced-colors:focus-visible:border-[Highlight] focus-visible:border-solid drop-target:border-blue-600 forced-colors:drop-target:border-[Highlight] drop-target:border-solid drop-target:bg-blue-100 drop-target:text-blue-600">
+                className="w-24 sm:w-32 p-2 flex items-center justify-center flex-shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 dark:text-gray-300 focus-visible:border-blue-600 forced-colors:focus-visible:border-[Highlight] focus-visible:border-solid drop-target:border-blue-600 forced-colors:drop-target:border-[Highlight] drop-target:border-solid drop-target:bg-blue-200 dark:drop-target:bg-blue-800/60 drop-target:text-blue-600 dark:drop-target:text-blue-300">
                 {droppedImage
                   ? <img alt="" src={droppedImage} className="w-full h-full object-contain aspect-square" />
                   : <Text slot="label" className="italic text-sm text-center">Drop or paste image here</Text>
