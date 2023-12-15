@@ -70,7 +70,7 @@ export const Finger = React.forwardRef((props: HTMLAttributes<HTMLDivElement>, r
 });
 
 export function LearnMoreLink({href, className}) {
-  return <a href={href} className={`group inline-block mt-6 mb-12 text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring ${className}`}>Learn more<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
+  return <a href={href} className={`group inline-block mt-6 mb-12 text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring active:scale-95 ${className}`}>Learn more<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
 }
 
 export function Scrollable({children, className = ''}) {
