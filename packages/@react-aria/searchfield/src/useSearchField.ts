@@ -57,7 +57,7 @@ export function useSearchField(
   let onKeyDown = (e) => {
     const key = e.key;
 
-    if (key === 'Enter' || key === 'Escape') {
+    if (key === 'Enter') {
       e.preventDefault();
     }
 
@@ -70,9 +70,13 @@ export function useSearchField(
     }
 
     if (key === 'Escape') {
-      state.setValue('');
-      if (onClear) {
-        onClear();
+      if (state.value === '') {
+        e.continuePropagation();
+      } else {
+        state.setValue('');
+        if (onClear) {
+          onClear();
+        }
       }
     }
   };
@@ -95,7 +99,7 @@ export function useSearchField(
     ...props,
     value: state.value,
     onChange: state.setValue,
-    onKeyDown: chain(onKeyDown, props.onKeyDown),
+    onKeyDown: !isReadOnly ? chain(onKeyDown, props.onKeyDown) : props.onKeyDown,
     type
   }, inputRef);
 
