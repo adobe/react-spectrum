@@ -87,7 +87,7 @@ export function Tag({ children, color = 'gray', ...props }: TagProps) {
       {({ allowsRemoving }) => (
         <>
           {children}
-          {allowsRemoving && <Button slot="remove"><XIcon className="w-3 h-3" /></Button>}
+          {allowsRemoving && <Button slot="remove"><XIcon aria-hidden className="w-3 h-3" /></Button>}
         </>
       )}
     </AriaTag>

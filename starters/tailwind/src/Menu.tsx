@@ -25,11 +25,11 @@ export function Menu<T extends object>(props: MenuProps<T>) {
 
 export function MenuItem(props: MenuItemProps) {
   return (
-    <AriaMenuItem {...props} className="group flex items-center gap-2 cursor-default select-none py-2 pl-3 pr-1 rounded-lg outline-0 text-gray-900 dark:text-zinc-100 disabled:text-gray-300 dark:disabled:text-zinc-600 text-sm focus:bg-blue-600 focus:text-white forced-color-adjust-none forced-colors:focus:bg-[Highlight] forced-colors:focus:text-[HighlightText]">
+    <AriaMenuItem {...props} className="group flex items-center gap-2 cursor-default select-none py-2 pl-3 pr-1 rounded-lg outline outline-0 text-gray-900 dark:text-zinc-100 disabled:text-gray-300 dark:disabled:text-zinc-600 text-sm focus:bg-blue-600 focus:text-white forced-color-adjust-none forced-colors:focus:bg-[Highlight] forced-colors:focus:text-[HighlightText]">
       {composeRenderProps(props.children, (children, {selectionMode, isSelected}) => <>
         {selectionMode !== 'none' && (
           <span className="w-4 flex items-center">
-            {isSelected && <Check className="w-4 h-4" />}
+            {isSelected && <Check aria-hidden className="w-4 h-4" />}
           </span>
         )}
         <span className="flex-1 flex items-center gap-2 truncate font-normal group-selected:font-semibold">

@@ -141,20 +141,20 @@ export function MouseAnimation() {
       </svg>
       <TooltipTrigger isOpen={tooltip === 'edit'} onOpenChange={(o) => onOpenChange('edit', o)}>
         <Button aria-label="Edit" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'edit' ? 'bg-gray-200' : ''}`}>
-          <PencilIcon className="inline w-5 h-5" />
+          <PencilIcon aria-hidden className="inline w-5 h-5" />
         </Button>
         <Tooltip>Edit</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger isOpen={tooltip === 'share'} onOpenChange={(o) => onOpenChange('share', o)}>
         <Button aria-label="Share" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'share' ? 'bg-gray-200' : ''}`}>
-          <ShareIcon className="inline w-5 h-5" />
+          <ShareIcon aria-hidden className="inline w-5 h-5" />
         </Button>
         <Tooltip>Share</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger isOpen={tooltip === 'settings'} onOpenChange={(o) => onOpenChange('settings', o)}>
         <ButtonContext.Provider value={{isPressed}}>
           <Button aria-label="Settings" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'settings' ? 'bg-gray-200' : ''}`}>
-            <CogIcon className="inline w-5 h-5" />
+            <CogIcon aria-hidden className="inline w-5 h-5" />
           </Button>
         </ButtonContext.Provider>
         <Tooltip>Settings</Tooltip>

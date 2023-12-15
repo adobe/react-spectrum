@@ -164,11 +164,11 @@ export function ExampleApp() {
   return (
     <div className="h-full flex flex-col gap-4 p-4">
       <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1.1fr_auto_auto_1fr_auto] gap-2 items-end">
-        <SearchField aria-label="Filter" value={search} onChange={setSearch} className="col-span-3 sm:col-span-1" />
+        <SearchField aria-label="Search" value={search} onChange={setSearch} className="col-span-3 sm:col-span-1" />
         <DialogTrigger>
           <TooltipTrigger>
             <Button aria-label="Filters" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 relative">
-              <FilterIcon className="inline w-5 h-5" />
+              <FilterIcon aria-hidden className="inline w-5 h-5" />
               {filters > 0 && <div className="absolute -top-2 -right-2 rounded-full h-4 aspect-square text-white text-xs bg-blue-600">{filters}</div>}
             </Button>
             <Tooltip>Filters</Tooltip>
@@ -200,7 +200,7 @@ export function ExampleApp() {
         <MenuTrigger>
           <TooltipTrigger>
             <Button aria-label="Columns" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 hidden sm:block">
-              <SlidersIcon className="inline w-5 h-5" />
+              <SlidersIcon aria-hidden className="inline w-5 h-5" />
             </Button>
             <Tooltip>Columns</Tooltip>
           </TooltipTrigger>
@@ -213,7 +213,7 @@ export function ExampleApp() {
         </MenuTrigger>
         <DialogTrigger>
           <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 col-start-5">
-            <PlusIcon className="inline w-5 h-5" />
+            <PlusIcon aria-hidden className="inline w-5 h-5" />
           </Button>
           <PlantModal>
             <PlantDialog onSave={addItem} />
@@ -231,9 +231,9 @@ export function ExampleApp() {
                 <MenuTrigger>
                   <Button aria-label="Actions" variant="icon" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
                   <Menu placement="bottom end" onAction={action => onAction(item, action)}>
-                    <MenuItem id="favorite"><StarIcon className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
-                    <MenuItem id="edit"><PencilIcon className="w-4 h-4" /> Edit…</MenuItem>
-                    <MenuItem id="delete"><TrashIcon className="w-4 h-4" /> Delete…</MenuItem>
+                    <MenuItem id="favorite"><StarIcon aria-hidden className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
+                    <MenuItem id="edit"><PencilIcon aria-hidden className="w-4 h-4" /> Edit…</MenuItem>
+                    <MenuItem id="delete"><TrashIcon aria-hidden className="w-4 h-4" /> Delete…</MenuItem>
                   </Menu>
                 </MenuTrigger>
               </div>
@@ -277,11 +277,13 @@ export function ExampleApp() {
                       return (
                         <Cell>
                           <MenuTrigger>
-                            <Button aria-label="Actions" variant="icon"><MoreHorizontal className="w-5 h-5" /></Button>
+                            <Button aria-label="Actions" variant="icon">
+                              <MoreHorizontal aria-hidden className="w-5 h-5" />
+                            </Button>
                             <Menu onAction={action => onAction(item, action)}>
-                              <MenuItem id="favorite"><StarIcon className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
-                              <MenuItem id="edit"><PencilIcon className="w-4 h-4" /> Edit…</MenuItem>
-                              <MenuItem id="delete"><TrashIcon className="w-4 h-4" /> Delete…</MenuItem>
+                              <MenuItem id="favorite"><StarIcon aria-hidden className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
+                              <MenuItem id="edit"><PencilIcon aria-hidden className="w-4 h-4" /> Edit…</MenuItem>
+                              <MenuItem id="delete"><TrashIcon aria-hidden className="w-4 h-4" /> Delete…</MenuItem>
                             </Menu>
                           </MenuTrigger>
                         </Cell>
@@ -318,14 +320,15 @@ function Label({color, icon, children}: {color: keyof typeof labelStyles, icon: 
   return <span className={`${labelStyles[color]} text-xs rounded-full border px-2 flex items-center max-w-fit gap-1`}>{icon} <span className="truncate capitalize">{children}</span></span>;
 }
 
+const cycleIcon = <RefreshCw aria-hidden="true" className="w-4 h-4 flex-shrink-0" />;
 function CycleLabel({cycle}: {cycle: string}) {
-  return <Label color="green" icon={<RefreshCw className="w-4 h-4 flex-shrink-0" />}>{cycle}</Label>;
+  return <Label color="green" icon={cycleIcon}>{cycle}</Label>;
 }
 
 const sunIcons: Record<string, ReactElement> = {
-  'full sun': <Sun className="w-4 h-4 flex-shrink-0" />,
-  'part sun': <SunDim className="w-4 h-4 flex-shrink-0" />,
-  'part shade': <CloudSun className="w-4 h-4 flex-shrink-0" />
+  'full sun': <Sun aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
+  'part sun': <SunDim aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
+  'part shade': <CloudSun aria-hidden="true" className="w-4 h-4 flex-shrink-0" />
 };
 
 const sunColors: Record<string, keyof typeof labelStyles> = {
@@ -343,9 +346,9 @@ function getSunlight(item: Plant) {
 }
 
 const wateringIcons: Record<string, ReactElement> = {
-  'Frequent': <Droplets className="w-4 h-4 flex-shrink-0" />,
-  'Average': <Droplet className="w-4 h-4 flex-shrink-0" />,
-  'Minimum': <Dessert className="w-4 h-4 flex-shrink-0" />
+  'Frequent': <Droplets aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
+  'Average': <Droplet aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
+  'Minimum': <Dessert aria-hidden="true" className="w-4 h-4 flex-shrink-0" />
 };
 
 const wateringColors: Record<string, keyof typeof labelStyles> = {
@@ -406,9 +409,9 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
               </div>
             </div>
             <Select label="Cycle" name="cycle" isRequired defaultSelectedKey={item?.cycle}>
-              <SelectItem id="Perennial" textValue="Perennial"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Perennial</SelectItem>
-              <SelectItem id="Herbaceous Perennial" textValue="Herbaceous Perennial"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Herbaceous Perennial</SelectItem>
-              <SelectItem id="Annual" textValue="Annual"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Annual</SelectItem>
+              <SelectItem id="Perennial" textValue="Perennial">{cycleIcon} Perennial</SelectItem>
+              <SelectItem id="Herbaceous Perennial" textValue="Herbaceous Perennial">{cycleIcon} Herbaceous Perennial</SelectItem>
+              <SelectItem id="Annual" textValue="Annual">{cycleIcon} Annual</SelectItem>
             </Select>
             <Select label="Sunlight" name="sunlight" isRequired defaultSelectedKey={item ? getSunlight(item) : undefined}>
               <SelectItem id="full sun" textValue="Full Sun">{sunIcons['full sun']} Full Sun</SelectItem>

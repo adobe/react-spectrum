@@ -44,7 +44,7 @@ export function Styles() {
               </div>
             </Window>
             <Window
-              className="lg:absolute bottom-10 left-[16.5%] w-[350px]"
+              className="lg:absolute bottom-10 left-[16.5%] max-w-[350px] sm:w-[350px]"
               toolbar={<AddressBar>https://your-app.com</AddressBar>}>
               <div className="flex items-center justify-center bg-gray-50 dark:bg-zinc-900 col-span-2 pt-12 pb-14 text-sm">
                 <DatePicker label="Date Planted" />
@@ -61,7 +61,7 @@ export function Styles() {
                 <div className="contents" dangerouslySetInnerHTML={{__html: document.getElementById('tailwind')!.innerHTML}} />
               </Scrollable>
             </Window>
-            <Window className="w-[350px]" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
+            <Window className=" max-w-[350px] sm:w-[350px]" toolbar={<AddressBar>https://your-app.com</AddressBar>}>
               <div className="flex-1 flex flex-col w-full px-16 py-24 bg-gray-50 dark:bg-zinc-900">
                 <ComboBox label="Assignee" items={people} defaultSelectedKey={1}>
                   {item => (

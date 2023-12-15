@@ -58,7 +58,7 @@ export function Column(props: ColumnProps) {
                   sortDirection === 'descending' ? 'rotate-180' : ''
                 }`}
               >
-                {sortDirection && <ArrowUp className="w-4 h-4 text-gray-500 dark:text-zinc-400 forced-colors:!text-[ButtonText]" />}
+                {sortDirection && <ArrowUp aria-hidden className="w-4 h-4 text-gray-500 dark:text-zinc-400 forced-colors:!text-[ButtonText]" />}
               </span>
             )}
           </Group>

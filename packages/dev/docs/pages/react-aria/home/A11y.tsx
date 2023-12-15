@@ -201,7 +201,8 @@ export function A11y() {
             <ChevronDown className="w-4 h-4 text-gray-600 dark:text-zinc-400" />
           </Button>
           <Popover isNonModal={!!cursorRect} className="min-w-[--trigger-width]">
-            <ListBox className="outline-none p-1 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]">
+            {/* @ts-ignore - prevent DOM focus from moving into listbox during animation */}
+            <ListBox shouldUseVirtualFocus={!!cursorRect} className="outline-none p-1 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]">
               <SelectItem id="read">Read Only</SelectItem>
               <SelectItem id="edit">Edit</SelectItem>
               <SelectItem id="admin">Admin</SelectItem>

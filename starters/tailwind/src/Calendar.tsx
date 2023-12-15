@@ -57,9 +57,13 @@ export function CalendarHeader() {
 
   return (
     <header className="flex items-center gap-1 pb-4 px-1 w-full">
-      <Button variant="icon" slot="previous">{direction === 'rtl' ? <ChevronRight /> : <ChevronLeft />}</Button>
+      <Button variant="icon" slot="previous">
+        {direction === 'rtl' ? <ChevronRight aria-hidden /> : <ChevronLeft aria-hidden />}
+      </Button>
       <Heading className="flex-1 font-semibold text-xl text-center mx-2 text-zinc-900 dark:text-zinc-200" />
-      <Button variant="icon" slot="next">{direction === 'rtl' ? <ChevronLeft /> : <ChevronRight />}</Button>
+      <Button variant="icon" slot="next">
+        {direction === 'rtl' ? <ChevronLeft aria-hidden /> : <ChevronRight aria-hidden />}
+      </Button>
     </header>
   );
 }

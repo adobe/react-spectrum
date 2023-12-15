@@ -42,7 +42,7 @@ export function Select<T extends object>(
       {label && <Label>{label}</Label>}
       <Button className={styles}>
         <SelectValue className="flex-1 text-sm placeholder-shown:italic" />
-        <ChevronDown className="w-4 h-4 text-gray-600 dark:text-zinc-400 forced-colors:!text-[ButtonText]" />
+        <ChevronDown aria-hidden className="w-4 h-4 text-gray-600 dark:text-zinc-400 forced-colors:!text-[ButtonText]" />
       </Button>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>

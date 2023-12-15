@@ -22,7 +22,7 @@ export function FileTab({children, className = ''}) {
 }
 
 export function AddressBar({children}) {
-  return <div className="bg-gray-400/40 dark:bg-zinc-500/40 px-5 md:px-10 py-1 mx-auto my-2.5 rounded-md text-slate-600 dark:text-slate-300 text-xs">{children}</div>;
+  return <div className="bg-gray-400/40 dark:bg-zinc-500/40 px-5 md:px-10 py-1 ml-20 sm:mx-auto my-2.5 rounded-md text-slate-600 dark:text-slate-300 text-xs">{children}</div>;
 }
 
 export function GradientText({children}) {
@@ -70,10 +70,10 @@ export const Finger = React.forwardRef((props: HTMLAttributes<HTMLDivElement>, r
 });
 
 export function LearnMoreLink({href, className}) {
-  return <a href={href} className={`group inline-block mt-6 mb-12 text-xl rounded-full px-4 -mx-4 py-1 transition ${className}`}>Learn more<ArrowRight className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
+  return <a href={href} className={`group inline-block mt-6 mb-12 text-xl rounded-full px-4 -mx-4 py-1 transition focus-ring ${className}`}>Learn more<ArrowRight aria-hidden className="inline w-5 h-5 align-middle ml-1 will-change-transform group-hover:translate-x-0.5 transition -mt-1" /></a>;
 }
 
 export function Scrollable({children, className = ''}) {
   // eslint-disable-next-line
-  return <div tabIndex={0} className={`overflow-x-auto overflow-y-hidden outline outline-0 outline-blue-600 -outline-offset-2 focus-visible:outline-2 ${className}`}>{children}</div>;
+  return <div tabIndex={0} className={`overflow-x-auto overflow-y-hidden focus-ring -outline-offset-2 ${className}`}>{children}</div>;
 }

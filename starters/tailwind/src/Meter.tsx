@@ -19,7 +19,7 @@ export function Meter({ label, ...props }: MeterProps) {
           <div className="flex justify-between gap-2">
             <Label>{label}</Label>
             <span className={`text-sm ${percentage >= 80 ? 'text-red-600' : 'text-gray-600'}`}>
-              {percentage >= 80 && <AlertTriangle className="inline-block w-4 h-4 align-text-bottom" />}
+              {percentage >= 80 && <AlertTriangle aria-label="Alert" className="inline-block w-4 h-4 align-text-bottom" />}
               {' ' + valueText}
             </span>
           </div>

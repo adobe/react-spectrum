@@ -49,9 +49,9 @@ export function Checkbox(props: CheckboxProps) {
         <>
           <div className={styles({isSelected: isSelected || isIndeterminate, ...renderProps})}>
             {isIndeterminate
-              ? <Minus className={iconStyles} />
+              ? <Minus aria-hidden className={iconStyles} />
               : isSelected
-                ? <Check className={iconStyles} />
+                ? <Check aria-hidden className={iconStyles} />
                 : null
             }
           </div>

@@ -215,7 +215,7 @@ function Card({id, item, className}: CardProps) {
         <img src={item.avatar} alt="" className="h-4 w-4 rounded-full" />
         <span className="text-sm">{item.assignee}</span>
       </span>
-      <Button slot="drag" className="bg-transparent border-none text-gray-500 dark:text-zinc-300 text-base leading-none w-fit aspect-square p-0 justify-self-end outline outline-0 focus-visible:outline-2 outline-blue-500 forced-colors:outline-[Highlight] rounded-sm sr-only group-focus-visible:not-sr-only focus:not-sr-only">≡</Button>
+      <Button slot="drag" className="bg-transparent border-none text-gray-500 dark:text-zinc-300 text-base leading-none w-fit aspect-square p-0 justify-self-end outline outline-0 focus-visible:outline-2 outline-blue-500 forced-colors:outline-[Highlight] rounded-sm sr-only group-focus-visible:not-sr-only focus:not-sr-only forced-colors:group-selected:text-[HighlightText] forced-colors:group-selected:outline-[HighlightText]">≡</Button>
     </GridListItem>
   );
 }

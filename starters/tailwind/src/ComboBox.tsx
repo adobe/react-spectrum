@@ -27,7 +27,9 @@ export function ComboBox<T extends object>(
       <Label>{label}</Label>
       <FieldGroup>
         <Input />
-        <Button variant="icon" className="w-6 mr-1 rounded outline-offset-0 "><ChevronDown className="w-4 h-4" /></Button>
+        <Button variant="icon" className="w-6 mr-1 rounded outline-offset-0 ">
+          <ChevronDown aria-hidden className="w-4 h-4" />
+        </Button>
       </FieldGroup>
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>

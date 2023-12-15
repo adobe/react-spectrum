@@ -24,7 +24,7 @@ description: Build adaptive, accessible, and robust components with React Aria.
 
 <header className="header-background">
   <nav className="absolute top-4 left-4 right-4 flex justify-between gap-4">
-    <a href="." className="inline-flex items-center text-lg gap-4 font-bold px-4 py-2.5 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 dark:text-white/80 ring-1 ring-black/5">
+    <a href="." className="inline-flex items-center text-lg gap-4 font-bold px-4 py-2.5 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 dark:text-white/80 ring-1 ring-black/5 focus-ring">
       <svg viewBox="0 0 30 26" fill="#E1251B" aria-label="Adobe" height="22">
         <polygon points="19,0 30,0 30,26" />
         <polygon points="11.1,0 0,0 0,26" />
@@ -34,16 +34,16 @@ description: Build adaptive, accessible, and robust components with React Aria.
     </a>
 
     <div className="px-4 py-3 inline-flex items-center gap-4 rounded-xl bg-white/70 dark:bg-white/20 dark:backdrop-saturate-200 dark:backdrop-brightness-125 text-zinc-900/80 dark:text-white/70 font-semibold ring-1 ring-black/5">
-      <a href="../blog/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90">Blog</a>
-      <a href="../releases/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90">Releases</a>
-      <a href="../react-spectrum/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90">React Spectrum</a>
-      <a href="../internationalized/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90">Internationalized</a>
-      <a href="https://github.com/adobe/react-spectrum" target="_blank" title="GitHub" className="transition hover:text-zinc-900 dark:hover:text-white/90">
+      <a href="../blog/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring">Blog</a>
+      <a href="../releases/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring">Releases</a>
+      <a href="../react-spectrum/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring">React Spectrum</a>
+      <a href="../internationalized/index.html" className="hidden md:inline transition hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring">Internationalized</a>
+      <a href="https://github.com/adobe/react-spectrum" target="_blank" title="GitHub" className="transition hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring">
         <svg aria-hidden="true" viewBox="0 0 16 16" height="22" fill="currentColor">
           <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" />
       </svg>
       </a>
-      <a href="https://npmjs.com/react-aria-components" target="_blank" title="NPM" className="transition hover:text-zinc-900 dark:hover:text-white/90">
+      <a href="https://npmjs.com/react-aria-components" target="_blank" title="NPM" className="transition hover:text-zinc-900 dark:hover:text-white/90 rounded-md focus-ring">
         <svg viewBox="0 0 27.23 27.23" aria-hidden="true" height="22" fill="currentColor">
           <rect width="27.23" height="27.23" rx="2" mask="url(#npm-mask)" />
           <mask id="npm-mask">
@@ -60,8 +60,8 @@ description: Build adaptive, accessible, and robust components with React Aria.
     <p className="text-slate-800 dark:text-slate-300 text-center text-lg md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
     <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
-      <a href="getting-started.html" className="bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition">Get Started</a>
-      <a href="components.html" className="bg-white/50 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60">Explore components</a>
+      <a href="getting-started.html" className="bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition focus-ring outline-offset-2">Get Started</a>
+      <a href="components.html" className="bg-white/50 border border-black/10 bg-clip-padding text-base md:text-lg font-bold text-slate-800 px-8 py-3 rounded-full backdrop-saturate-150 backdrop-brightness-125 transition hover:bg-white/60 focus-ring outline-offset-2">Explore components</a>
     </div>
 
     <div className="relative pt-10 md:pt-20 md:mt-20">
@@ -208,7 +208,7 @@ React Aria does not include any styles by default, allowing you to build custom 
 
 <div hidden id="styled-components">
 
-```tsx
+```tsx format=false
 const StyledSlider = styled(Slider)`
   display: grid;
   /* ... */
@@ -243,7 +243,7 @@ const StyledSliderThumb = styled(SliderThumb)`
 
 <div hidden id="panda">
 
-```tsx
+```tsx format=false
 import {Button} from 'react-aria-components';
 import {styled} from '../styled-system/jsx';
 
@@ -362,7 +362,7 @@ import {CircleUser} from 'lucide-react';
 
 <div className="flex items-center justify-center h-full">
   <DialogTrigger>
-    <Button variant="secondary" className="w-9 h-9 p-0" aria-label="Account"><CircleUser className="inline w-5 h-5" /></Button>
+    <Button variant="secondary" className="w-9 h-9 p-0" aria-label="Account"><CircleUser aria-hidden className="inline w-5 h-5" /></Button>
     <Popover showArrow className="w-[250px]">
       <Dialog className="outline-0 p-4 overflow-auto flex flex-col gap-2">
         <Heading slot="title" className="text-lg font-semibold mb-2">Your Account</Heading>

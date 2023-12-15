@@ -3,6 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .focus-ring {
+    @apply outline outline-0 outline-blue-600 focus-visible:outline-2;
+  }
+}
+
 @font-face {
   font-family: "adobe-clean";
   src: url("https://use.typekit.net/af/cb695f/000000000000000000017701/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"),url("https://use.typekit.net/af/cb695f/000000000000000000017701/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"),url("https://use.typekit.net/af/cb695f/000000000000000000017701/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
@@ -152,6 +158,10 @@ pre.small {
 
 .card-shadow-hover:hover {
   box-shadow: 0 0 2px rgb(0 0 0 / 18%), 0 3px 8px rgb(0 0 0 / 6%), 0 4px 16px 0 rgba(0 0 0 / 10%);
+}
+
+.card-shadow-hover:focus-visible {
+  @apply focus-ring;
 }
 
 .edge-mask {
