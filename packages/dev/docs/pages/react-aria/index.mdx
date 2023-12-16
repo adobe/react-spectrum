@@ -14,6 +14,7 @@ import './home.global.css';
 import '@react-spectrum/docs/src/syntax-highlight.css';
 import {Keyboard} from './home/Keyboard';
 import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow, Finger, LearnMoreLink, Scrollable} from './home/components';
+import {ArrowRight} from 'lucide-react';
 
 ---
 minimal: true
@@ -56,8 +57,8 @@ description: Build adaptive, accessible, and robust components with React Aria.
   </nav>
 
   <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60 rounded-3xl">
-    <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_var(--page-bg))] dark:filter-none"><GradientText>Build adaptive, accessible, and robust components with React Aria.</GradientText></h1>
-    <p className="text-slate-800 dark:text-slate-300 text-center text-lg md:text-2xl max-w-5xl">React Aria includes tons of components, with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
+    <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_var(--page-bg))] dark:filter-none"><GradientText>Craft world-class accessible components with custom styles.</GradientText></h1>
+    <p className="text-slate-800 dark:text-slate-300 text-center text-lg md:text-2xl max-w-3xl mx-auto [text-wrap:balance]">Over 40 components with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
     <div className="flex flex-col md:flex-row items-center gap-4 my-10 justify-center">
       <a href="getting-started.html" className="bg-gradient-to-r from-blue-600 to-indigo-600 border border-blue-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] text-base md:text-lg font-bold text-white px-8 py-3 rounded-full transition focus-ring outline-offset-2 active:scale-95">Get Started</a>
@@ -288,7 +289,7 @@ import {Styles} from './home/Styles';
 
 <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-pink-600 to-rose-600">Advanced features</span> <GradientText>for ambitious apps.</GradientText></h2>
 
-<p>Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like accessible drag and drop, keyboard multi-selection, built-in form validation (??), table column resizing, and a ton more.</p>
+<p>Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like accessible drag and drop, keyboard multi-selection, built-in form validation, table column resizing, and a ton more.</p>
 
 <LearnMoreLink href="dnd.html" className="text-rose-700 dark:text-rose-500 hover:bg-rose-400/[15%]" />
 
@@ -302,13 +303,13 @@ import {KanbanBoard} from './home/KanbanExample';
 
 <section className="px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 cyan-gradient-background">
   <h2 className="pb-2 text-transparent"><GradientText>High quality</GradientText> <span className="bg-clip-text bg-gradient-to-t from-cyan-600 to-green-600">interactions</span> <GradientText>on all devices.</GradientText></h2>
-  <p>React Aria ensures a great experience for users no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
+  <p>React Aria ensures a great experience for users, no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
   <LearnMoreLink href="interactions.html" className="text-cyan-700 dark:text-cyan-600 hover:bg-cyan-400/[15%]" />
 
   <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] md:grid-cols-2 md:grid-rows-2 -mx-8 md:mx-0 px-8 md:px-0 py-4 md:py-0 overflow-auto md:overflow-visible snap-x snap-mandatory no-scrollbar" id="interactions-carousel">
     <Card>
       <CardTitle>Touch optimized.</CardTitle>
-      <CardDescription>Micro-interactions like dragging off to cancel a press, long press to select, drag and drop, text selection cancelation, scroll locking, and multi-touch gesture disambiguation make your app feel native.</CardDescription>
+      <CardDescription>Micro-interactions like dragging off to cancel a press, long press to select, drag and drop, text selection cancellation, scroll locking, and multi-touch gesture disambiguation make your app feel native.</CardDescription>
 
       <div className="flex-1 flex items-center justify-center -mb-6 will-change-transform">
 
@@ -387,7 +388,7 @@ import {Pagination} from './home/Pagination';
 
 <section className="px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 blue-gradient-background">
   <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-600">Accessibility</span> <GradientText>that's truly first-class.</GradientText></h2>
-  <p>React Aria was designed from the start with accessibility as a top priority. All components have been tested across a wide variety of devices and assistive technology to ensure the best experience possible for all users.</p>
+  <p>React Aria was designed with accessibility as a top priority. All components are built to work across a wide variety of devices and assistive technologies to ensure the best experience possible for all users.</p>
   <LearnMoreLink href="accessibility.html" className="text-blue-600 dark:text-blue-500 hover:bg-blue-400/[15%]" />
 
   <div className="grid gap-y-6 gap-x-20 md:grid-cols-[min-content_auto] md:grid-flow-col place-items-center">
@@ -435,13 +436,13 @@ import {I18n} from './home/I18n';
 
 <section className="px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 green-gradient-background">
   <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-lime-600 to-green-600">Customizable</span> <GradientText>to the max.</GradientText></h2>
-  <p>React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with built-in a DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the lower level Hook-based API. Mix and match as needed.</p>
+  <p>React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with a built-in DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the low-level Hook-based API. Mix and match as needed.</p>
   <LearnMoreLink href="advanced.html" className="text-green-700 dark:text-green-600 hover:bg-green-400/[15%]" />
 
  <div className="grid gap-4 md:gap-6 grid-cols-[repeat(4,100%)] lg:grid-cols-2 lg:auto-rows-[1rem] -mx-8 px-8 lg:px-12 lg:-mx-12 py-4 overflow-auto snap-x snap-mandatory no-scrollbar edge-mask" id="customizable-carousel">
   <Card className="lg:row-end-[span_13]">
     <CardTitle>Reuse styles.</CardTitle>
-    <CardDescription>React Aria's API is designed around composition, allowing you to share common components between patterns. For example, you can reuse your styled Label, Popover, and ListBox components within a Select, ComboBox, and more.</CardDescription>
+    <CardDescription>React Aria's API is designed around composition, enabling you to share common components between patterns, or even use them standalone. No need to duplicate styling code.</CardDescription>
 
     <Scrollable className="relative flex-1 -mx-6 -mb-6 mt-6 [&_.source]:px-6 [&_.source]:text-[15px] [&_.source]:leading-snug lg:[&_.source]:text-sm isolate rounded-b-2xl">
 
@@ -579,7 +580,7 @@ function DatePickerClearButton() {
 
   <Card className="lg:row-end-[span_18]">
     <CardTitle>Get complete control with hooks.</CardTitle>
-    <CardDescription>React Aria's low-level Hook-based API lets you intercept events, override behavior, customize DOM elements, and much more. Mix and match components and hooks as needed.</CardDescription>
+    <CardDescription>Drop down to the low-level Hook-based API to intercept events, override behavior, customize DOM elements, and much more. Mix and match components and hooks as needed.</CardDescription>
 
     <Scrollable className="flex-1 -mx-6 -mb-6 mt-6 [&>*]:h-full [--code-padding:theme(spacing.6)] [&_.source]:px-6 lg:[&_.source]:text-[13px] rounded-b-2xl">
 
@@ -632,17 +633,17 @@ import {Pagination} from './home/Pagination';
 
   <div className="grid md:grid-cols-3 gap-6">
     <a href="getting-started.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
-      <CardTitle>Install and Setup →</CardTitle>
+      <CardTitle>Install and Setup <ArrowRight aria-hidden className="inline w-5 h-5 mb-1" /></CardTitle>
       <CardDescription>Learn how to install and setup React Aria in your project, and build and style a component.</CardDescription>
     </a>
 
      <a href="components.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
-      <CardTitle>View Components →</CardTitle>
+      <CardTitle>View Components <ArrowRight aria-hidden className="inline w-5 h-5 mb-1" /></CardTitle>
       <CardDescription>See an overview of all of the components and hooks offered by React Aria.</CardDescription>
     </a>
 
     <a href="examples/index.html" className="card-shadow bg-white dark:bg-zinc-800 rounded-xl p-6 transition duration-300 card-shadow-hover hover:scale-[101%]">
-      <CardTitle>Explore Examples →</CardTitle>
+      <CardTitle>Explore Examples <ArrowRight aria-hidden className="inline w-5 h-5 mb-1" /></CardTitle>
       <CardDescription>Check out some fully styled examples showing what is possible with React Aria.</CardDescription>
     </a>
   </div>
