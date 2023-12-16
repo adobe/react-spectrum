@@ -13,16 +13,15 @@ export function MouseAnimation() {
   let isAnimating = useRef(false);
   let mouseRef = useRef<SVGSVGElement>(null);
   useIntersectionObserver(ref, useCallback(() => {
+    isAnimating.current = true;
     let cancel = animate([
-      // {
-      //   // Delay to let other cards start animating first.
-      //   time: window.innerWidth >= 768 ? 6000 : 500,
-      //   perform() {}
-      // },
+      {
+        time: 500,
+        perform() {}
+      },
       {
         time: 700,
         perform() {
-          isAnimating.current = true;
           mouseRef.current!.animate({
             transform: [
               'translate(-50px, 150px)',
@@ -111,7 +110,7 @@ export function MouseAnimation() {
       setTooltip(null);
       setHovered(null);
       setPressed(false);
-      mouseRef.current!.style.transform = 'translate(-50px, 150px)';
+      mouseRef.current!.getAnimations().forEach(a => a.cancel());
       isAnimating.current = false;
     };
   }, []));
@@ -140,20 +139,20 @@ export function MouseAnimation() {
         </g>
       </svg>
       <TooltipTrigger isOpen={tooltip === 'edit'} onOpenChange={(o) => onOpenChange('edit', o)}>
-        <Button aria-label="Edit" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'edit' ? 'bg-gray-200' : ''}`}>
+        <Button aria-label="Edit" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'edit' ? 'bg-gray-200 dark:bg-zinc-500' : ''}`}>
           <PencilIcon aria-hidden className="inline w-5 h-5" />
         </Button>
         <Tooltip>Edit</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger isOpen={tooltip === 'share'} onOpenChange={(o) => onOpenChange('share', o)}>
-        <Button aria-label="Share" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'share' ? 'bg-gray-200' : ''}`}>
+        <Button aria-label="Share" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'share' ? 'bg-gray-200 dark:bg-zinc-500' : ''}`}>
           <ShareIcon aria-hidden className="inline w-5 h-5" />
         </Button>
         <Tooltip>Share</Tooltip>
       </TooltipTrigger>
       <TooltipTrigger isOpen={tooltip === 'settings'} onOpenChange={(o) => onOpenChange('settings', o)}>
         <ButtonContext.Provider value={{isPressed}}>
-          <Button aria-label="Settings" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'settings' ? 'bg-gray-200' : ''}`}>
+          <Button aria-label="Settings" variant="secondary" className={`w-9 h-9 p-0 relative ${hovered === 'settings' ? 'bg-gray-200 dark:bg-zinc-500' : ''}`}>
             <CogIcon aria-hidden className="inline w-5 h-5" />
           </Button>
         </ButtonContext.Provider>

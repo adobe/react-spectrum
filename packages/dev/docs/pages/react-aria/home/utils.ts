@@ -1,19 +1,37 @@
 import {RefObject, useEffect} from 'react';
 
+async function *createAnimationQueue() {
+  while (true) {
+    let {isCanceled, run} = yield;
+    if (!isCanceled) {
+      await run();
+    }
+  }
+}
+
+export let animationQueue = createAnimationQueue();
+animationQueue.next(); // advance to first yield
+
 export function animate(steps: any[]) {
   let cancelCurrentStep;
   async function run() {
     for (let step of steps) {
-      step.perform();
-      let {promise, cancel} = sleep(step.time);
-      cancelCurrentStep = cancel;
-      await promise;
+      try {
+        await step.perform();
+        let {promise, cancel} = sleep(step.time);
+        cancelCurrentStep = cancel;
+        await promise;
+      } catch (err) {
+        break;
+      }
     }
   }
 
-  run();
+  let job = {isCanceled: false, run};
+  animationQueue.next(job);
 
   return () => {
+    job.isCanceled = true;
     if (cancelCurrentStep) {
       cancelCurrentStep();
     }
@@ -22,14 +40,17 @@ export function animate(steps: any[]) {
 
 function sleep(ms: number) {
   let timeout;
-  let promise = new Promise(resolve => {
+  let cancel;
+  let promise = new Promise((resolve, reject) => {
     timeout = setTimeout(resolve, ms);
+    cancel = reject;
   });
 
   return {
     promise,
     cancel() {
       clearTimeout(timeout);
+      cancel();
     }
   };
 }

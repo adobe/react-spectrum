@@ -9,7 +9,6 @@ const keyframes = [
   {fill: 'transparent', offset: 1}
 ];
 
-// let played = false;
 export function ListBoxExample() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
   let [focusedKey, setFocusedKey] = useState<Key | null>(null);
@@ -21,11 +20,10 @@ export function ListBoxExample() {
     let upKey = document.getElementById('up-key')!;
     let shiftKey = document.getElementById('shift-key')!;
     let cancel = animate([
-      // {
-      //   // Delay to let other cards start animating first.
-      //   time: !played && window.innerWidth >= 768 ? 14000 : 500,
-      //   perform() {}
-      // },
+      {
+        time: 500,
+        perform() {}
+      },
       {
         time: 800,
         perform() {
@@ -102,7 +100,10 @@ export function ListBoxExample() {
       cancel();
       setFocusedKey(null);
       setSelectedKeys(new Set());
-      shiftKey.style.fill = 'transparent';
+      spaceKey.getAnimations().forEach(a => a.cancel());
+      downKey.getAnimations().forEach(a => a.cancel());
+      upKey.getAnimations().forEach(a => a.cancel());
+      shiftKey.getAnimations().forEach(a => a.cancel());
     };
   }, []));
 
