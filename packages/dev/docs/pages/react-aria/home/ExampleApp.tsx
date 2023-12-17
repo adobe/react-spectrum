@@ -364,7 +364,7 @@ function WateringLabel({watering}: {watering: string}) {
 function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant) => void}) {
   let [droppedImage, setDroppedImage] = useState(item?.default_image?.thumbnail);
   return (
-    <Dialog className="outline-0 relative">
+    <Dialog className="outline outline-0 relative">
       {({close}) => (
         <>
           <Heading
@@ -402,7 +402,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                 <input type="hidden" name="image" value={droppedImage} />
               </DropZone>
               <div className="flex flex-col gap-3 flex-1 min-w-0">
-                <ComboBox label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus>
+                <ComboBox label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
                   {plant => <ComboBoxItem>{plant.common_name}</ComboBoxItem>}
                 </ComboBox>
                 <TextField label="Scientific Name" name="scientific_name" isRequired defaultValue={item?.scientific_name?.join('')} />

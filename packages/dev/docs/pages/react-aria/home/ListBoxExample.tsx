@@ -12,6 +12,7 @@ const keyframes = [
 export function ListBoxExample() {
   let [selectedKeys, setSelectedKeys] = useState<Selection>(new Set());
   let [focusedKey, setFocusedKey] = useState<Key | null>(null);
+  let isAnimating = useRef(false);
   let ref = useRef<HTMLDivElement>(null);
 
   useIntersectionObserver(ref, useCallback(() => {
@@ -19,6 +20,7 @@ export function ListBoxExample() {
     let downKey = document.getElementById('down-key')!;
     let upKey = document.getElementById('up-key')!;
     let shiftKey = document.getElementById('shift-key')!;
+    isAnimating.current = true;
     let cancel = animate([
       {
         time: 500,
@@ -88,10 +90,11 @@ export function ListBoxExample() {
         }
       },
       {
-        time: 800,
+        time: 0,
         perform() {
           setFocusedKey(null);
           setSelectedKeys(new Set());
+          isAnimating.current = false;
         }
       }
     ]);
@@ -104,11 +107,24 @@ export function ListBoxExample() {
       downKey.getAnimations().forEach(a => a.cancel());
       upKey.getAnimations().forEach(a => a.cancel());
       shiftKey.getAnimations().forEach(a => a.cancel());
+      isAnimating.current = false;
     };
   }, []));
 
+  let onSelectionChange = keys => {
+    if (!isAnimating.current) {
+      setSelectedKeys(keys);
+    }
+  };
+
   return (
-    <ListBox ref={ref} className="outline-0 p-1 border border-gray-300 dark:border-zinc-600 rounded-lg" aria-label="Ice cream flavor" selectionMode="multiple" selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+    <ListBox
+      ref={ref}
+      className="outline-0 p-1 border border-gray-300 dark:border-zinc-600 rounded-lg"
+      aria-label="Ice cream flavor"
+      selectionMode="multiple"
+      selectedKeys={selectedKeys}
+      onSelectionChange={onSelectionChange}>
       <ListBoxItem id="chocolate" focusedKey={focusedKey}>Chocolate</ListBoxItem>
       <ListBoxItem id="mint" focusedKey={focusedKey}>Mint</ListBoxItem>
       <ListBoxItem id="strawberry" focusedKey={focusedKey}>Strawberry</ListBoxItem>
