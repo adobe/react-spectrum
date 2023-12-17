@@ -1,5 +1,3 @@
-const { mergeConfig } = require ('vite');
-
 const excludedProps = new Set([
   'id',
   'slot',

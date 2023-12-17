@@ -13,14 +13,14 @@ export default BasePage;
 import './home.global.css';
 import '@react-spectrum/docs/src/syntax-highlight.css';
 import {Keyboard} from './home/Keyboard';
-import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow, Finger, LearnMoreLink, Scrollable} from './home/components';
+import {AddressBar, FileTab, Window, GradientText, Card, CardTitle, CardDescription, Arrow, Finger, LearnMoreLink, Scrollable, Section} from './home/components';
 import {ArrowRight} from 'lucide-react';
 
 ---
 minimal: true
 category: Libraries
 title: React Aria
-description: Build adaptive, accessible, and robust components with React Aria.
+description: Craft world-class accessible components with custom styles.
 ---
 
 <header className="header-background">
@@ -56,7 +56,7 @@ description: Build adaptive, accessible, and robust components with React Aria.
     </div>
   </nav>
 
-  <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60 rounded-3xl">
+  <section className="max-w-6xl mx-auto pt-32 px-4 sm:px-8 md:px-20 pb-48 sm:pb-60">
     <h1 className="text-3xl md:text-5xl lg:text-6xl font-semibold mb-4 text-center [text-wrap:balance] [filter:drop-shadow(0_0_0.25em_var(--page-bg))] dark:filter-none"><GradientText>Craft world-class accessible components with custom styles.</GradientText></h1>
     <p className="text-slate-800 dark:text-slate-300 text-center text-lg md:text-2xl max-w-3xl mx-auto [text-wrap:balance]">Over 40 components with built-in behavior, adaptive interactions, first-class accessibility, and internationalization out of the box, ready for your styles.</p>
 
@@ -108,15 +108,13 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
 </header>
 
 <main className="max-w-6xl mx-auto">
-<section className="px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 pink-gradient-background">
 
-<h2 className="pb-2 text-transparent"><GradientText>Bring your own</GradientText> <span className="bg-clip-text bg-gradient-to-t from-fuchsia-600 to-pink-600">styles</span><GradientText>.</GradientText></h2>
+<Section className="pink-gradient-background">
+  <h2><GradientText>Bring your own</GradientText> <span className="bg-clip-text bg-gradient-to-t from-fuchsia-600 to-pink-600">styles</span><GradientText>.</GradientText></h2>
+  <p>React Aria does not include any styles by default, allowing you to build custom designs to fit your application or design system using any styling and animation solution. Each component is broken down into individual parts with built-in states, render props, and slots that make styling a breeze.</p>
+  <LearnMoreLink href="styling.html" className="text-fuchsia-600 dark:text-fuchsia-500 hover:bg-fuchsia-400/[15%]" />
 
-React Aria does not include any styles by default, allowing you to build custom designs to fit your application or design system using any styling and animation solution. Each component is broken down into individual parts with built-in states, render props, and slots that make styling a breeze.
-
-<LearnMoreLink href="styling.html" className="text-fuchsia-600 dark:text-fuchsia-500 hover:bg-fuchsia-400/[15%]" />
-
-<div hidden id="styling">
+  <div hidden id="styling">
 
 ```tsx format=false
 <DatePicker>
@@ -142,9 +140,8 @@ React Aria does not include any styles by default, allowing you to build custom 
 </DatePicker>
 ```
 
-</div>
-
-<div hidden id="css">
+  </div>
+  <div hidden id="css">
 
 ```css render=false
 /* Consistent default classes for each component */
@@ -171,9 +168,8 @@ React Aria does not include any styles by default, allowing you to build custom 
 }
 ```
 
-</div>
-
-<div hidden id="tailwind">
+  </div>
+  <div hidden id="tailwind">
 
 ```tsx format=false
 <ComboBox className="group flex ...">
@@ -205,9 +201,8 @@ React Aria does not include any styles by default, allowing you to build custom 
 </ComboBox>
 ```
 
-</div>
-
-<div hidden id="styled-components">
+  </div>
+  <div hidden id="styled-components">
 
 ```tsx format=false
 const StyledSlider = styled(Slider)`
@@ -240,9 +235,8 @@ const StyledSliderThumb = styled(SliderThumb)`
 </StyledSlider>
 ```
 
-</div>
-
-<div hidden id="panda">
+  </div>
+  <div hidden id="panda">
 
 ```tsx format=false
 import {Button} from 'react-aria-components';
@@ -275,23 +269,19 @@ const StyledButton = styled(Button, {
 </StyledButton>
 ```
 
-</div>
+  </div>
 
 ```tsx snippet
 import {Styles} from './home/Styles';
-
 <Styles />
 ```
 
-</section>
+</Section>
 
-<section className="px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 red-gradient-background">
-
-<h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-pink-600 to-rose-600">Advanced features</span> <GradientText>for ambitious apps.</GradientText></h2>
-
-<p>Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like accessible drag and drop, keyboard multi-selection, built-in form validation, table column resizing, and a ton more.</p>
-
-<LearnMoreLink href="dnd.html" className="text-rose-700 dark:text-rose-500 hover:bg-rose-400/[15%]" />
+<Section className="red-gradient-background">
+  <h2><span className="bg-clip-text bg-gradient-to-b from-pink-600 to-rose-600">Advanced features</span> <GradientText>for ambitious apps.</GradientText></h2>
+  <p>Make your web app feel native with rich interactions that adapt to the device, platform, and user. React Aria supports advanced features like accessible drag and drop, keyboard multi-selection, built-in form validation, table column resizing, and a ton more.</p>
+  <LearnMoreLink href="dnd.html" className="text-rose-700 dark:text-rose-500 hover:bg-rose-400/[15%]" />
 
 ```tsx snippet
 import {KanbanBoard} from './home/KanbanExample';
@@ -299,10 +289,10 @@ import {KanbanBoard} from './home/KanbanExample';
 <KanbanBoard />
 ```
 
-</section>
+</Section>
 
-<section className="px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 cyan-gradient-background">
-  <h2 className="pb-2 text-transparent"><GradientText>High quality</GradientText> <span className="bg-clip-text bg-gradient-to-t from-cyan-600 to-green-600">interactions</span> <GradientText>on all devices.</GradientText></h2>
+<Section className="cyan-gradient-background">
+  <h2><GradientText>High quality</GradientText> <span className="bg-clip-text bg-gradient-to-t from-cyan-600 to-green-600">interactions</span> <GradientText>on all devices.</GradientText></h2>
   <p>React Aria ensures a great experience for users, no matter their device. All components are optimized for mouse, touch, keyboard, and screen reader interactions, with a meticulous attention to detail that makes your app feel responsive and natural on every platform.</p>
   <LearnMoreLink href="interactions.html" className="text-cyan-700 dark:text-cyan-600 hover:bg-cyan-400/[15%]" />
 
@@ -384,10 +374,10 @@ import {Pagination} from './home/Pagination';
 <Pagination carousel={document.getElementById('interactions-carousel')} className="md:hidden" />
 ```
 
-</section>
+</Section>
 
-<section className="px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 blue-gradient-background">
-  <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-600">Accessibility</span> <GradientText>that's truly first-class.</GradientText></h2>
+<Section className="blue-gradient-background">
+  <h2><span className="bg-clip-text bg-gradient-to-b from-sky-500 to-indigo-600">Accessibility</span> <GradientText>that's truly first-class.</GradientText></h2>
   <p>React Aria was designed with accessibility as a top priority. All components are built to work across a wide variety of devices and assistive technologies to ensure the best experience possible for all users.</p>
   <LearnMoreLink href="accessibility.html" className="text-blue-600 dark:text-blue-500 hover:bg-blue-400/[15%]" />
 
@@ -419,10 +409,10 @@ import {A11y} from './home/A11y';
       <CardDescription>All components are extensively tested across <a href="accessibility.html#testing" target="_blank">screen readers and devices</a>. React Aria normalizes and works around many <a href="https://github.com/adobe/react-spectrum/wiki/Tracker-for-External-Browser-Bugs,-Library-Bugs,-and-Features" target="_blank">browser and assistive technology bugs</a> to ensure all users have equal access.</CardDescription>
     </Card>
   </div>
-</section>
+</Section>
 
-<section className="px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 orange-gradient-background">
-  <h2 className="pb-2 text-transparent"><GradientText>Ready for an</GradientText> <span className="bg-clip-text bg-gradient-to-b from-yellow-500 to-orange-600">international</span> <GradientText>audience.</GradientText></h2>
+<Section className="orange-gradient-background">
+  <h2><GradientText>Ready for an</GradientText> <span className="bg-clip-text bg-gradient-to-b from-yellow-500 to-orange-600">international</span> <GradientText>audience.</GradientText></h2>
   <p>React Aria is engineered for internationalization out of the box, including translations in over 30 languages, localized date and number formatting and parsing, support for 13 calendar systems, 3 numbering systems, right-to-left layout, and more.</p>
   <LearnMoreLink href="internationalization.html" className="text-orange-700 dark:text-orange-600 hover:bg-orange-400/[15%]" />
 
@@ -432,10 +422,10 @@ import {I18n} from './home/I18n';
 <I18n />
 ```
 
-</section>
+</Section>
 
-<section className="px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 green-gradient-background">
-  <h2 className="pb-2 text-transparent"><span className="bg-clip-text bg-gradient-to-b from-lime-600 to-green-600">Customizable</span> <GradientText>to the max.</GradientText></h2>
+<Section className="green-gradient-background">
+  <h2><span className="bg-clip-text bg-gradient-to-b from-lime-600 to-green-600">Customizable</span> <GradientText>to the max.</GradientText></h2>
   <p>React Aria offers a flexible and scalable API that lets you dive as deep into the details as you like. Start with high-level components with a built-in DOM structure and simple styling API, compose custom patterns with contexts, and for the ultimate control, drop down to the low-level Hook-based API. Mix and match as needed.</p>
   <LearnMoreLink href="advanced.html" className="text-green-700 dark:text-green-600 hover:bg-green-400/[15%]" />
 
@@ -626,7 +616,7 @@ import {Pagination} from './home/Pagination';
 <Pagination carousel={document.getElementById('customizable-carousel')} className="max-w-3xl lg:hidden" />
 ```
 
-</section>
+</Section>
 
 <section className="max-w-6xl mx-auto px-8 md:px-20 pb-20">
   <h2 className="pb-8"><GradientText>Ready to get started?</GradientText></h2>

@@ -83,7 +83,7 @@ body {
 }
 
 main > section > h2 {
-  @apply text-4xl md:text-5xl font-semibold mb-4;
+  @apply text-4xl md:text-5xl font-semibold mb-4 pb-2 text-transparent;
 
   + p {
     @apply text-lg md:text-2xl max-w-5xl text-slate-700 dark:text-slate-400;

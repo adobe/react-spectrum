@@ -20,7 +20,9 @@ export function SwitchAnimation() {
           .find(anim => anim instanceof CSSAnimation && anim.animationName === 'touch-animation');
         try {
           await animation?.finished;
-        } catch (err) {}
+        } catch (err) {
+          // ignore abort errors.
+        }
         setAnimating(false);
       }
     };

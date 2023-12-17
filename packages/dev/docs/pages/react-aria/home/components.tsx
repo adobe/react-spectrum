@@ -77,3 +77,7 @@ export function Scrollable({children, className = ''}) {
   // eslint-disable-next-line
   return <div tabIndex={0} className={`overflow-x-auto overflow-y-hidden focus-ring -outline-offset-2 ${className}`}>{children}</div>;
 }
+
+export function Section({children, className = ''}) {
+  return <section className={`px-8 md:px-20 xl:px-36 xl:-mx-16 pb-20 md:pb-56 ${className}`}>{children}</section>;
+}
