@@ -19,7 +19,7 @@ import {Key, LinkDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {ListState, Node, useListState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useEffect, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, useContext, useEffect, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface TagGroupProps extends Omit<AriaTagGroupProps<unknown>, 'children' | 'items' | 'label' | 'description' | 'errorMessage' | 'keyboardDelegate'>, DOMProps, SlotProps {}
@@ -196,7 +196,7 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps {
   textValue?: string
 }
 
-function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): React.JSX.Element | null {
+function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
   return useSSRCollectionNode('item', props, ref, props.children);
 }
 

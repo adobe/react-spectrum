@@ -74,6 +74,9 @@ export class NumberFormatter implements Intl.NumberFormat {
 
     if (this.options.style === 'unit' && !supportsUnit) {
       let {unit, unitDisplay = 'short', locale} = this.resolvedOptions();
+      if (!unit) {
+        return res;
+      }
       let values = UNITS[unit]?.[unitDisplay];
       res += values[locale] || values.default;
     }
@@ -159,7 +162,7 @@ function getCachedNumberFormatter(locale: string, options: NumberFormatOptions =
 
   let cacheKey = locale + (options ? Object.entries(options).sort((a, b) => a[0] < b[0] ? -1 : 1).join() : '');
   if (formatterCache.has(cacheKey)) {
-    return formatterCache.get(cacheKey);
+    return formatterCache.get(cacheKey)!;
   }
 
   let numberFormatter = new Intl.NumberFormat(locale, options);

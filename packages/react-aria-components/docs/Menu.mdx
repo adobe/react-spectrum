@@ -151,14 +151,14 @@ import {MenuTrigger, Button, Popover, Menu, MenuItem, Separator, Section, Header
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="../react-stately/collections.html"
+  url="collections.html"
   title="Collections"
   description="Defining collections of items, async loading, and updating items over time.">
   <Collections />
 </ExampleCard>
 
 <ExampleCard
-  url="../react-stately/selection.html"
+  url="selection.html"
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
@@ -262,7 +262,7 @@ function MyItem(props: MenuItemProps) {
 
 ## Content
 
-`Menu` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+`Menu` follows the [Collection Components API](collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
@@ -294,7 +294,6 @@ function Example() {
 
 Menu supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
 Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
-See the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for more details.
 
 ### Single
 
@@ -322,31 +321,29 @@ function Example() {
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.react-aria-Menu {
-  .react-aria-MenuItem {
-    &[data-selection-mode] {
-      padding-left: 24px;
+.react-aria-MenuItem {
+  &[data-selection-mode] {
+    padding-left: 24px;
 
-      &::before {
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
+    &::before {
+      position: absolute;
+      left: 4px;
+      font-weight: 600;
+    }
 
-      &[data-selection-mode=multiple][data-selected]::before {
-        content: '✓';
-        content: '✓' / '';
-        alt: ' ';
-        position: absolute;
-        left: 4px;
-        font-weight: 600;
-      }
+    &[data-selection-mode=multiple][data-selected]::before {
+      content: '✓';
+      content: '✓' / '';
+      alt: ' ';
+      position: absolute;
+      left: 4px;
+      font-weight: 600;
+    }
 
-      &[data-selection-mode=single][data-selected]::before {
-        content: '●';
-        content: '●' / '';
-        transform: scale(0.7)
-      }
+    &[data-selection-mode=single][data-selected]::before {
+      content: '●';
+      content: '●' / '';
+      transform: scale(0.7)
     }
   }
 }
@@ -605,7 +602,7 @@ By default, MenuTrigger opens by pressing the trigger element or activating it v
 
 `Menu` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `id` prop passed to the `MenuItem` component, or automatically derived from the values passed
-to the `items` prop. See [Collections](../react-stately/Collections.html) for more details.
+to the `items` prop. See the [Collections](collections.html) guide for more details.
 
 Disabled items are not focusable or keyboard navigable, and do not trigger `onAction` or `onSelectionChange`.
 
@@ -800,11 +797,11 @@ The [Popover](Popover.html) component can be targeted with the `.react-aria-Popo
 
 <StateTable properties={docs.exports.PopoverRenderProps.properties} />
 
-Within a MenuTrigger, the popover will have the `data-trigger="MenuTrigger"` attribute, which can be used to define menu-specific styles.
+Within a MenuTrigger, the popover will have the `data-trigger="MenuTrigger"` attribute, which can be used to define menu-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the menu button.
 
 ```css render=false
 .react-aria-Popover[data-trigger=MenuTrigger] {
-  /* ... */
+  width: var(--trigger-width);
 }
 ```
 

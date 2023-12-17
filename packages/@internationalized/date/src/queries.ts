@@ -115,7 +115,7 @@ export function getHoursInDay(a: CalendarDate, timeZone: string): number {
   return (tomorrowMs - ms) / 3600000;
 }
 
-let localTimeZone = null;
+let localTimeZone: string | null = null;
 
 /** Returns the time zone identifier for the current user. */
 export function getLocalTimeZone(): string {
@@ -124,7 +124,7 @@ export function getLocalTimeZone(): string {
     localTimeZone = new Intl.DateTimeFormat().resolvedOptions().timeZone;
   }
 
-  return localTimeZone;
+  return localTimeZone!;
 }
 
 /** Returns the first date of the month for the given date. */
@@ -200,7 +200,7 @@ export function endOfWeek(date: DateValue, locale: string): DateValue {
 
 const cachedRegions = new Map<string, string>();
 
-function getRegion(locale: string) {
+function getRegion(locale: string): string | undefined {
   // If the Intl.Locale API is available, use it to get the region for the locale.
   // @ts-ignore
   if (Intl.Locale) {
@@ -209,7 +209,9 @@ function getRegion(locale: string) {
     if (!region) {
       // @ts-ignore
       region = new Intl.Locale(locale).maximize().region;
-      cachedRegions.set(locale, region);
+      if (region) {
+        cachedRegions.set(locale, region);
+      }
     }
     return region;
   }
@@ -219,14 +221,14 @@ function getRegion(locale: string) {
   // then this is a unicode extension, so ignore it.
   // Otherwise, it should be the region.
   let part = locale.split('-')[1];
-  return part === 'u' ? null : part;
+  return part === 'u' ? undefined : part;
 }
 
-function getWeekStart(locale: string) {
+function getWeekStart(locale: string): number {
   // TODO: use Intl.Locale for this once browsers support the weekInfo property
   // https://github.com/tc39/proposal-intl-locale-info
   let region = getRegion(locale);
-  return weekStartData[region] || 0;
+  return region ? weekStartData[region] || 0 : 0;
 }
 
 /** Returns the number of weeks in the given month and locale. */
@@ -287,7 +289,7 @@ export function isWeekend(date: DateValue, locale: string): boolean {
   let region = getRegion(locale);
   // Use Intl.Locale for this once weekInfo is supported.
   // https://github.com/tc39/proposal-intl-locale-info
-  let [start, end] = WEEKEND_DATA[region] || [6, 0];
+  let [start, end] = WEEKEND_DATA[region!] || [6, 0];
   return dayOfWeek === start || dayOfWeek === end;
 }
 

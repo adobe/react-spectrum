@@ -15,9 +15,9 @@ import {CalendarDate, createCalendar, DateDuration, endOfMonth, getWeeksInMonth,
 import {CalendarState, RangeCalendarState, useCalendarState, useRangeCalendarState} from 'react-stately';
 import {ContextValue, DOMProps, forwardRefType, Provider, RenderProps, SlotProps, StyleProps, useContextProps, useRenderProps} from './utils';
 import {DOMAttributes, FocusableElement, HoverEvents} from '@react-types/shared';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface CalendarRenderProps {
@@ -464,16 +464,16 @@ export interface CalendarCellProps extends RenderProps<CalendarCellRenderProps>,
   date: CalendarDate
 }
 
-function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLDivElement>) {
+function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRef<HTMLTableCellElement>) {
   let calendarState = useContext(CalendarStateContext);
   let rangeCalendarState = useContext(RangeCalendarStateContext);
   let state = calendarState ?? rangeCalendarState!;
   let {startDate: currentMonth} = useContext(InternalCalendarGridContext) ?? {startDate: state.visibleRange.start};
-  let objectRef = useObjectRef(ref);
+  let buttonRef = useRef<HTMLDivElement>(null);
   let {cellProps, buttonProps, ...states} = useCalendarCell(
     {date},
     state,
-    objectRef
+    buttonRef
   );
 
   let {hoverProps, isHovered} = useHover({...otherProps, isDisabled: states.isDisabled});
@@ -517,8 +517,8 @@ function CalendarCell({date, ...otherProps}: CalendarCellProps, ref: ForwardedRe
   };
 
   return (
-    <td {...cellProps}>
-      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={objectRef} />
+    <td {...cellProps} ref={ref}>
+      <div {...mergeProps(filterDOMProps(otherProps as any), buttonProps, focusProps, hoverProps, dataAttrs, renderProps)} ref={buttonRef} />
     </td>
   );
 }

@@ -11,8 +11,10 @@
  */
 
 import {action} from '@storybook/addon-actions';
+import {ActionButton} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
+import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Flex} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
 import React from 'react';
@@ -170,6 +172,26 @@ export const CustomWidthAndNarrowContainer = (args) => (
 
 CustomWidthAndNarrowContainer.story = {
   name: 'custom width and narrow container'
+};
+
+export const WithinAPopover = (args) => (
+  <DialogTrigger type="popover">
+    <ActionButton>Trigger</ActionButton>
+    <Dialog>
+      <Heading>The Heading</Heading>
+      <Content>
+        <SearchField
+          label="Search"
+          {...args}
+          onChange={action('change')}
+          onSubmit={action('submit')} />
+      </Content>
+    </Dialog>
+  </DialogTrigger>
+);
+
+WithinAPopover.story = {
+  name: 'within a popover'
 };
 
 function renderSearchLandmark(child) {

@@ -87,4 +87,20 @@ describe('Breadcrumbs', () => {
 
     expect(getAllByRole('listitem').map((it) => it.textContent)).toEqual(['Item 1', 'Item 2', 'Item 3']);
   });
+
+  it('should support refs', () => {
+    let breadcrumbsRef = React.createRef();
+    let breadcrumbRef = React.createRef();
+    let {getByRole} = render(
+      <Breadcrumbs ref={breadcrumbsRef}>
+        <Breadcrumb ref={breadcrumbRef}><Link>Test</Link></Breadcrumb>
+      </Breadcrumbs>
+    );
+
+    let breadcrumbs = getByRole('list');
+    expect(breadcrumbsRef.current).toBe(breadcrumbs);
+
+    let item = getByRole('listitem');
+    expect(breadcrumbRef.current).toBe(item);
+  });
 });

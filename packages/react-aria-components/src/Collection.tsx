@@ -14,7 +14,7 @@ import {createPortal} from 'react-dom';
 import {forwardRefType, StyleProps} from './utils';
 import {Collection as ICollection, Node, SelectionBehavior, SelectionMode, SectionProps as SharedSectionProps} from 'react-stately';
 import {mergeProps, useIsSSR} from 'react-aria';
-import React, {cloneElement, createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
+import React, {cloneElement, createContext, ForwardedRef, forwardRef, JSX, ReactElement, ReactNode, useCallback, useContext, useMemo, useRef} from 'react';
 import {useSyncExternalStore as useSyncExternalStoreShim} from 'use-sync-external-store/shim/index.js';
 
 // This Collection implementation is perhaps a little unusual. It works by rendering the React tree into a
@@ -148,6 +148,10 @@ class BaseNode<T> {
   set parentNode(parentNode) {
     this._parentNode = parentNode;
     this.ownerDocument.markDirty(this);
+  }
+
+  get isConnected() {
+    return this.parentNode?.isConnected || false;
   }
 
   appendChild(child: ElementNode<T>) {
@@ -515,6 +519,10 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     this.collectionMutated = true;
   }
 
+  get isConnected() {
+    return true;
+  }
+
   createElement(type: string) {
     return new ElementNode(type, this);
   }
@@ -570,7 +578,6 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   removeNode(node: ElementNode<T>) {
     for (let child of node) {
-      child.parentNode = null;
       this.removeNode(child);
     }
 
@@ -591,7 +598,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
   updateCollection() {
     for (let element of this.dirtyNodes) {
-      if (element instanceof ElementNode && element.parentNode) {
+      if (element instanceof ElementNode && element.isConnected) {
         element.updateNode();
       }
     }
@@ -601,7 +608,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     if (this.mutatedNodes.size) {
       let collection = this.getMutableCollection();
       for (let element of this.mutatedNodes) {
-        if (element.parentNode) {
+        if (element.isConnected) {
           collection.addNode(element.node);
         }
       }
@@ -642,17 +649,22 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
 export interface CollectionProps<T> extends Omit<CollectionBase<T>, 'children'> {
   /** The contents of the collection. */
-  children?: ReactNode | ((item: T) => ReactNode)
+  children?: ReactNode | ((item: T) => ReactNode),
+  /** Values that should invalidate the item cache when using dynamic collections. */
+  dependencies?: any[]
 }
 
 interface CachedChildrenOptions<T> extends CollectionProps<T> {
   idScope?: Key,
-  addIdAndValue?: boolean
+  addIdAndValue?: boolean,
+  dependencies?: any[]
 }
 
 export function useCachedChildren<T extends object>(props: CachedChildrenOptions<T>): ReactNode {
-  let {children, items, idScope, addIdAndValue} = props;
-  let cache = useMemo(() => new WeakMap(), []);
+  let {children, items, idScope, addIdAndValue, dependencies = []} = props;
+
+  // Invalidate the cache whenever the parent value changes.
+  let cache = useMemo(() => new WeakMap(), dependencies);
   return useMemo(() => {
     if (items && typeof children === 'function') {
       let res: ReactElement[] = [];
@@ -660,23 +672,21 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
         let rendered = cache.get(item);
         if (!rendered) {
           rendered = children(item);
-          if (rendered.key == null) {
-            // @ts-ignore
-            let key = rendered.props.id ?? item.key ?? item.id;
-            // eslint-disable-next-line max-depth
-            if (key == null) {
-              throw new Error('Could not determine key for item');
-            }
-            // eslint-disable-next-line max-depth
-            if (idScope) {
-              key = idScope + ':' + key;
-            }
-            // TODO: only works if wrapped Item passes through id...
-            rendered = cloneElement(
-              rendered,
-              addIdAndValue ? {key, id: key, value: item} : {key}
-            );
+          // @ts-ignore
+          let key = rendered.props.id ?? item.key ?? item.id;
+          // eslint-disable-next-line max-depth
+          if (key == null) {
+            throw new Error('Could not determine key for item');
           }
+          // eslint-disable-next-line max-depth
+          if (idScope) {
+            key = idScope + ':' + key;
+          }
+          // Note: only works if wrapped Item passes through id...
+          rendered = cloneElement(
+            rendered,
+            addIdAndValue ? {key, id: key, value: item} : {key}
+          );
           cache.set(item, rendered);
         }
         res.push(rendered);
@@ -889,10 +899,12 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
   /** The object value that this section represents. When using dynamic collections, this is set automatically. */
   value?: T,
   /** Static child items or a function to render children. */
-  children?: ReactNode | ((item: T) => ReactElement)
+  children?: ReactNode | ((item: T) => ReactElement),
+  /** Values that should invalidate the column cache when using dynamic collections. */
+  dependencies?: any[]
 }
 
-function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): React.JSX.Element | null {
+function Section<T extends object>(props: SectionProps<T>, ref: ForwardedRef<HTMLElement>): JSX.Element | null {
   let children = useCollectionChildren(props);
   return useSSRCollectionNode('section', props, ref, null, children);
 }
@@ -904,9 +916,10 @@ export const CollectionContext = createContext<CachedChildrenOptions<unknown> | 
 export const CollectionRendererContext = createContext<CollectionProps<any>['children']>(null);
 
 /** A Collection renders a list of items, automatically managing caching and keys. */
-export function Collection<T extends object>(props: CollectionProps<T>): React.JSX.Element {
+export function Collection<T extends object>(props: CollectionProps<T>): JSX.Element {
   let ctx = useContext(CollectionContext)!;
   props = mergeProps(ctx, props);
+  props.dependencies = (ctx?.dependencies || []).concat(props.dependencies);
   let renderer = typeof props.children === 'function' ? props.children : null;
   return (
     <CollectionRendererContext.Provider value={renderer}>

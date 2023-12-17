@@ -11,7 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Header, ListBox, ListBoxContext, ListBoxItem, Section, Text, useDragAndDrop} from '../';
+import {DropIndicator, Header, ListBox, ListBoxContext, ListBoxItem, Section, Text, useDragAndDrop} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -308,7 +308,7 @@ describe('ListBox', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let {getAllByRole} = renderListbox({selectionMode: 'multiple', shouldFocusOnHover: true}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-focus-visible');
@@ -318,6 +318,7 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(option);
     expect(option).toHaveAttribute('data-focus-visible', 'true');
     expect(option).toHaveClass('focus');
+    expect(option).not.toHaveAttribute('data-hovered');
 
     fireEvent.keyDown(option, {key: 'ArrowDown'});
     fireEvent.keyUp(option, {key: 'ArrowDown'});
@@ -469,6 +470,14 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(options[1]);
   });
 
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderListbox({onScroll});
+    let listbox = getByRole('listbox');
+    fireEvent.scroll(listbox);
+    expect(onScroll).toHaveBeenCalled();
+  });
+
   describe('drag and drop', () => {
     it('should support draggable items', () => {
       let {getAllByRole} = render(<DraggableListBox />);
@@ -478,7 +487,7 @@ describe('ListBox', () => {
 
     it('should render drop indicators', () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} />);
+      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
       let option = getAllByRole('option')[0];
       fireEvent.keyDown(option, {key: 'Enter'});
       fireEvent.keyUp(option, {key: 'Enter'});
@@ -489,6 +498,7 @@ describe('ListBox', () => {
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
       expect(rows[0]).toHaveAttribute('aria-label', 'Insert before Cat');
+      expect(rows[0]).toHaveTextContent('Test');
       expect(rows[1]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[1]).not.toHaveAttribute('data-drop-target');
       expect(rows[1]).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
