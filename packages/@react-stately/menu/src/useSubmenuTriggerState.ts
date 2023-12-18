@@ -11,7 +11,7 @@
  */
 
 import {FocusStrategy, Key} from '@react-types/shared';
-import type {MenuTriggerState} from './useMenuTriggerState';
+import {MenuTriggerWithSubmenuState} from './useMenuTriggerState';
 import type {OverlayTriggerState} from '@react-stately/overlays';
 import {useCallback, useMemo, useState} from 'react';
 
@@ -43,7 +43,7 @@ export interface SubmenuTriggerState extends OverlayTriggerState {
  * Manages state for a submenu trigger. Tracks whether the submenu is currently open, the level of the submenu, and
  * controls which item will receive focus when it opens.
  */
-export function UNSTABLE_useSubmenuTriggerState(props: SubmenuTriggerProps, state: MenuTriggerState): SubmenuTriggerState  {
+export function UNSTABLE_useSubmenuTriggerState(props: SubmenuTriggerProps, state: MenuTriggerWithSubmenuState): SubmenuTriggerState  {
   let {triggerKey} = props;
   let {UNSTABLE_expandedKeysStack, UNSTABLE_openSubmenu, UNSTABLE_closeSubmenu, close: closeAll} = state;
   let [submenuLevel] = useState(UNSTABLE_expandedKeysStack?.length);

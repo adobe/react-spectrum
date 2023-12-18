@@ -14,6 +14,7 @@ import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents} from 
 import {MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
+import {MenuTriggerWithSubmenuState} from '@react-stately/menu/src/useMenuTriggerState';
 
 export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'autoFocus' | 'onKeyDown'>, Pick<KeyboardEvents, 'onKeyDown'> {
   onClose?: () => void,
@@ -21,7 +22,7 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   shouldFocusWrap?: boolean,
   autoFocus?: boolean | FocusStrategy,
   ref?: MutableRefObject<HTMLDivElement>,
-  state?: MenuTriggerState,
+  state?: MenuTriggerWithSubmenuState,
   onBackButtonPress?: () => void,
   submenuLevel?: number
 }
@@ -53,7 +54,7 @@ export interface MenuStateContextValue<T> {
   trayContainerRef?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLDivElement>,
   submenu?: RefObject<HTMLDivElement>,
-  rootMenuTriggerState?: MenuTriggerState
+  rootMenuTriggerState?: MenuTriggerWithSubmenuState
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);
