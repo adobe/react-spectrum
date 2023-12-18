@@ -11,7 +11,7 @@
  */
 
 import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents} from '@react-types/shared';
-import {MenuTriggerWithSubmenuState} from '@react-stately/menu';
+import {MenuTriggerState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
 
@@ -21,7 +21,7 @@ export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'aut
   shouldFocusWrap?: boolean,
   autoFocus?: boolean | FocusStrategy,
   ref?: MutableRefObject<HTMLDivElement>,
-  state?: MenuTriggerWithSubmenuState,
+  state?: MenuTriggerState,
   onBackButtonPress?: () => void,
   submenuLevel?: number
 }
@@ -53,7 +53,7 @@ export interface MenuStateContextValue<T> {
   trayContainerRef?: RefObject<HTMLElement>,
   menu?: RefObject<HTMLDivElement>,
   submenu?: RefObject<HTMLDivElement>,
-  rootMenuTriggerState?: MenuTriggerWithSubmenuState
+  rootMenuTriggerState?: MenuTriggerState
 }
 
 export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);
