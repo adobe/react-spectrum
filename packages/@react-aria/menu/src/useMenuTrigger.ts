@@ -14,9 +14,9 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaMenuOptions} from './useMenu';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {MenuTriggerState} from '@react-stately/menu';
 import {MenuTriggerType} from '@react-types/menu';
 import {RefObject} from 'react';
-import {RootMenuTriggerState} from '@react-stately/menu';
 import {useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useLongPress} from '@react-aria/interactions';
@@ -45,7 +45,7 @@ export interface MenuTriggerAria<T> {
  * @param state - State for the menu trigger.
  * @param ref - Ref to the HTML element trigger for the menu.
  */
-export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: RootMenuTriggerState, ref: RefObject<Element>): MenuTriggerAria<T> {
+export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTriggerState, ref: RefObject<Element>): MenuTriggerAria<T> {
   let {
     type = 'menu' as AriaMenuTriggerProps['type'],
     isDisabled,
