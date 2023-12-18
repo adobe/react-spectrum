@@ -15,7 +15,7 @@ import {MenuTriggerProps} from '@react-types/menu';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {useState} from 'react';
 
-export interface MenuTriggerState extends OverlayTriggerState {
+export interface RootMenuTriggerState extends OverlayTriggerState {
   /** Controls which item will be auto focused when the menu opens. */
   readonly focusStrategy: FocusStrategy,
 
@@ -23,11 +23,10 @@ export interface MenuTriggerState extends OverlayTriggerState {
   open(focusStrategy?: FocusStrategy | null): void,
 
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null): void,
+  toggle(focusStrategy?: FocusStrategy | null): void
+}
 
-  /** Closes the menu and all submenus in the menu tree. */
-  close: () => void,
-
+export interface MenuTriggerState extends RootMenuTriggerState {
   /** Opens a specific submenu tied to a specific menu item at a specific level. */
   UNSTABLE_openSubmenu: (triggerKey: Key, level: number) => void,
 
@@ -37,7 +36,10 @@ export interface MenuTriggerState extends OverlayTriggerState {
   /** An array of open submenu trigger keys within the menu tree.
    * The index of key within array matches the submenu level in the tree.
    */
-  UNSTABLE_expandedKeysStack: Key[]
+  UNSTABLE_expandedKeysStack: Key[],
+
+  /** Closes the menu and all submenus in the menu tree. */
+  close: () => void
 }
 
 /**

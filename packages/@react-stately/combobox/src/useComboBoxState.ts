@@ -115,7 +115,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   };
 
   let triggerState = useOverlayTriggerState({...props, onOpenChange, isOpen: undefined, defaultOpen: undefined});
-  let open = (focusStrategy?: FocusStrategy, trigger?: MenuTriggerAction) => {
+  let open = (focusStrategy: FocusStrategy = null, trigger?: MenuTriggerAction) => {
     let displayAllItems = (trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus'));
     // Prevent open operations from triggering if there is nothing to display
     // Also prevent open operations from triggering if items are uncontrolled but defaultItems is empty, even if displayAllItems is true.
@@ -132,7 +132,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
   };
 
-  let toggle = (focusStrategy?: FocusStrategy, trigger?: MenuTriggerAction) => {
+  let toggle = (focusStrategy: FocusStrategy = null, trigger?: MenuTriggerAction) => {
     let displayAllItems = (trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus'));
     // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
     if (!(allowsEmptyCollection || filteredCollection.size > 0 || (displayAllItems && originalCollection.size > 0) || props.items) && !triggerState.isOpen) {
@@ -158,7 +158,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
   // If menu is going to close, save the current collection so we can freeze the displayed collection when the
   // user clicks outside the popover to close the menu. Prevents the menu contents from updating as the menu closes.
-  let toggleMenu = useCallback((focusStrategy) => {
+  let toggleMenu = useCallback((focusStrategy: FocusStrategy = null) => {
     if (triggerState.isOpen) {
       updateLastCollection();
     }

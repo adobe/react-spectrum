@@ -30,7 +30,7 @@ export interface SelectState<T> extends SingleSelectListState<T>, OverlayTrigger
   readonly focusStrategy: FocusStrategy,
 
   /** Opens the menu. */
-  open(): void,
+  open(focusStrategy?: FocusStrategy | null): void,
 
   /** Toggles the menu. */
   toggle(focusStrategy?: FocusStrategy | null): void
@@ -68,13 +68,14 @@ export function useSelectState<T extends object>(props: SelectStateOptions<T>): 
     ...listState,
     ...triggerState,
     focusStrategy,
-    open() {
+    open(focusStrategy: FocusStrategy = null) {
       // Don't open if the collection is empty.
       if (listState.collection.size !== 0) {
+        setFocusStrategy(focusStrategy);
         triggerState.open();
       }
     },
-    toggle(focusStrategy) {
+    toggle(focusStrategy: FocusStrategy = null) {
       if (listState.collection.size !== 0) {
         setFocusStrategy(focusStrategy);
         triggerState.toggle();
