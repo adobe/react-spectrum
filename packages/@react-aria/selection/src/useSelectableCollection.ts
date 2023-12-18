@@ -140,7 +140,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
             manager.setFocusedKey(key, childFocus);
           });
 
-          let item = scrollRef.current.querySelector(`[data-key="${key}"]`);
+          let item = scrollRef.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
           router.open(item, e);
 
           return;
@@ -342,7 +342,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
 
     if (!isVirtualized && manager.focusedKey != null) {
       // Refocus and scroll the focused item into view if it exists within the scrollable region.
-      let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
+      let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
       if (element) {
         // This prevents a flash of focus on the first/last element in the collection, or the collection itself.
         if (!element.contains(document.activeElement)) {
@@ -395,7 +395,6 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         focusSafely(ref.current);
       }
     }
-    autoFocusRef.current = false;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -405,8 +404,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   useEffect(() => {
     let modality = getInteractionModality();
     if (manager.isFocused && manager.focusedKey != null && scrollRef?.current) {
-      let element = scrollRef.current.querySelector(`[data-key="${manager.focusedKey}"]`) as HTMLElement;
-      if (element && modality === 'keyboard') {
+      let element = scrollRef.current.querySelector(`[data-key="${CSS.escape(manager.focusedKey.toString())}"]`) as HTMLElement;
+      if (element && (modality === 'keyboard' || autoFocusRef.current)) {
         if (!isVirtualized) {
           scrollIntoView(scrollRef.current, element);
         }
@@ -420,6 +419,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
     }
 
     lastFocusedKey.current = manager.focusedKey;
+    autoFocusRef.current = false;
   }, [isVirtualized, scrollRef, manager.focusedKey, manager.isFocused, ref]);
 
   let handlers = {
