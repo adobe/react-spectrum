@@ -11,10 +11,9 @@
  */
 
 import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents} from '@react-types/shared';
-import {MenuTriggerState} from '@react-stately/menu';
+import {MenuTriggerWithSubmenuState} from '@react-stately/menu';
 import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
 import {TreeState} from '@react-stately/tree';
-import {MenuTriggerWithSubmenuState} from '@react-stately/menu/src/useMenuTriggerState';
 
 export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'autoFocus' | 'onKeyDown'>, Pick<KeyboardEvents, 'onKeyDown'> {
   onClose?: () => void,
