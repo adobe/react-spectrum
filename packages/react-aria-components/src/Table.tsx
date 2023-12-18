@@ -529,6 +529,7 @@ export interface ColumnRenderProps {
 }
 
 export interface ColumnProps extends RenderProps<ColumnRenderProps> {
+  /** The unique id of the column. */
   id?: Key,
   /** Whether the column allows sorting. */
   allowsSorting?: boolean,
@@ -588,6 +589,7 @@ export {_TableBody as TableBody};
 export interface RowRenderProps extends ItemRenderProps {}
 
 export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMProps {
+  /** The unique id of the row. */
   id?: Key,
   /** A list of columns used when dynamically rendering cells. */
   columns?: Iterable<T>,
@@ -649,6 +651,7 @@ export interface CellRenderProps {
 }
 
 export interface CellProps extends RenderProps<CellRenderProps> {
+  /** The unique id of the cell. */
   id?: Key,
   /** A string representation of the cell's contents, used for features like typeahead. */
   textValue?: string
