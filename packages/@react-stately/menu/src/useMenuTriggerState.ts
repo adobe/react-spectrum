@@ -23,11 +23,10 @@ export interface MenuTriggerState extends OverlayTriggerState {
   open(focusStrategy?: FocusStrategy | null): void,
 
   /** Toggles the menu. */
-  toggle(focusStrategy?: FocusStrategy | null): void,
+  toggle(focusStrategy?: FocusStrategy | null): void
+}
 
-  /** Closes the menu and all submenus in the menu tree. */
-  close: () => void,
-
+export interface RootMenuTriggerState extends MenuTriggerState {
   /** Opens a specific submenu tied to a specific menu item at a specific level. */
   UNSTABLE_openSubmenu: (triggerKey: Key, level: number) => void,
 
@@ -37,7 +36,10 @@ export interface MenuTriggerState extends OverlayTriggerState {
   /** An array of open submenu trigger keys within the menu tree.
    * The index of key within array matches the submenu level in the tree.
    */
-  UNSTABLE_expandedKeysStack: Key[]
+  UNSTABLE_expandedKeysStack: Key[],
+
+  /** Closes the menu and all submenus in the menu tree. */
+  close: () => void
 }
 
 /**
@@ -45,7 +47,7 @@ export interface MenuTriggerState extends OverlayTriggerState {
  * and controls which item will receive focus when it opens. Also tracks the open submenus within
  * the menu tree via their trigger keys.
  */
-export function useMenuTriggerState(props: MenuTriggerProps): MenuTriggerState  {
+export function useMenuTriggerState(props: MenuTriggerProps): RootMenuTriggerState  {
   let overlayTriggerState = useOverlayTriggerState(props);
   let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
   let [expandedKeysStack, setExpandedKeysStack] = useState<Key[]>([]);
