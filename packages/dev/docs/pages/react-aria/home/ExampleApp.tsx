@@ -129,7 +129,7 @@ export function ExampleApp() {
   let [isScrolled, setScrolled] = useState(false);
   let onScroll = (e: UIEvent<HTMLDivElement>) => {
     if (hideOnScroll) {
-      let newIsScrolled = e.currentTarget.scrollTop > 0;
+      let newIsScrolled = e.currentTarget.scrollTop > 0 || e.currentTarget.scrollLeft > 0;
       if (newIsScrolled !== isScrolled) {
         setScrolled(newIsScrolled);
       }
