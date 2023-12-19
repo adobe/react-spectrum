@@ -38,7 +38,7 @@ export function CardTitle({children}) {
 }
 
 export function CardDescription({children}) {
-  return <p className="text-gray-600 dark:text-gray-400 text-base [text-wrap:pretty] [&_a]:text-blue-600 dark:[&_a]:text-blue-400 [&_a:hover]:underline">{children}</p>;
+  return <p className="text-gray-600 dark:text-gray-400 text-base [text-wrap:pretty] [&_a]:text-blue-600 dark:[&_a]:text-blue-400 [&_a]:underline">{children}</p>;
 }
 
 interface ArrowProps {
