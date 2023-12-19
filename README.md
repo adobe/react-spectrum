@@ -10,7 +10,7 @@ A React implementation of Spectrum, Adobe’s design system. Spectrum provides a
 
 ### React Aria
 
-A library of React Hooks that provides accessible UI primitives for your design system.
+A library of unstyled React components and hooks that helps you build accessible, high quality UI components for your application or design system.
 
 [Learn more about React Aria](https://react-spectrum.adobe.com/react-aria/index.html)
 
