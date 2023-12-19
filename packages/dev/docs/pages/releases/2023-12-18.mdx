@@ -27,6 +27,7 @@ In a big year, there are a few accomplishments we wanted to highlight.
  - React Spectrum new components, DropZone, InlineAlert, TagGroup, ActionBar, Avatar, Table Column Resizing
  - Built-in support for form validation
  - Native links support for collections
+ - Intl string optimization
  - React StrictMode support
  - Docs Search
  - Tailwind plugin for RAC
@@ -45,7 +46,7 @@ In this release, we made a few last API updates to React Aria Components as they
  - Hover state has been added to Column Headers in Tables when sorting is allowed.
  - All refs given to a component now go to their outer most element. If you need a ref to the input, you can attach it directly.
  - Styles for Popover, Tooltip, and OverlayArrow are now merged in a different order to allow overriding our default styles.
- -
+ - Added a dependency array to help manage the item cache with columns in Tables.
 
 We've also added a new package and starter project to help people get started with RAC. The starter project can be found here /* INSERT LINK HERE */. And we have a new package with a starter theme as based on our docs examples `@react-aria/example-theme`.
 
@@ -124,7 +125,7 @@ Fixes to pre-released components are listed below. Please feel free to try them 
 
 **React Spectrum Submenus (Alpha)**
 
-* React Spectrum Submenu support - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/4976)
+* React Spectrum Submenu support - [@LFDanLu](https://github.com/LFDanLu), [@reidbarber](https://github.com/reidbarber)  - [PR](https://github.com/adobe/react-spectrum/pull/4976)
 
 **React Spectrum Steplist (Alpha)**
 
