@@ -12,7 +12,7 @@ import {getLocalTimeZone, today} from '@internationalized/date';
 import {GridList, GridListItem} from 'tailwind-starter/GridList';
 import {Menu, MenuItem} from 'tailwind-starter/Menu';
 import {Modal} from 'tailwind-starter/Modal';
-import plants from './plants.json';
+import plants from './plants';
 import {Popover} from 'tailwind-starter/Popover';
 import React, {ReactElement, UIEvent, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {SearchField} from 'tailwind-starter/SearchField';
@@ -57,7 +57,7 @@ export function ExampleApp() {
     .filter(item =>
       (contains(item.common_name, search) || contains(item.scientific_name.join(''), search))
         && (!favorite || item.isFavorite)
-        && (cycles === 'all' || cycles.size === 0 || cycles.has(item.cycle.replace('Herbaceous ', '')))
+        && (cycles === 'all' || cycles.size === 0 || cycles.has(item.cycle))
         && (sunlight === 'all' || sunlight.size === 0 || sunlight.has(getSunlight(item)))
         && (watering === 'all' || watering.size === 0 || watering.has(item.watering))
     )
@@ -410,7 +410,6 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
             </div>
             <Select label="Cycle" name="cycle" isRequired defaultSelectedKey={item?.cycle}>
               <SelectItem id="Perennial" textValue="Perennial">{cycleIcon} Perennial</SelectItem>
-              <SelectItem id="Herbaceous Perennial" textValue="Herbaceous Perennial">{cycleIcon} Herbaceous Perennial</SelectItem>
               <SelectItem id="Annual" textValue="Annual">{cycleIcon} Annual</SelectItem>
             </Select>
             <Select label="Sunlight" name="sunlight" isRequired defaultSelectedKey={item ? getSunlight(item) : undefined}>
