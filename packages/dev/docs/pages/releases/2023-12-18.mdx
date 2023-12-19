@@ -23,14 +23,14 @@ Welcome to the last release of the year! In this release, we’re promoting Reac
 As always, huge thanks to everyone in our community for their feedback and contributions to make this release and this year possible!
 
 In a big year, there are a few accomplishments we wanted to highlight.
- - ESM support
- - React StrictMode support
  - React Aria Components
- - React Spectrum new components, DropZone, InlineAlert, TagGroup, ActionBar, Avatar, Table Col Resizing
- - Docs Search
+ - React Spectrum new components, DropZone, InlineAlert, TagGroup, ActionBar, Avatar, Table Column Resizing
  - Built-in support for form validation
  - Native links support for collections
+ - React StrictMode support
+ - Docs Search
  - Tailwind plugin for RAC
+ - ESM support
 
 As a parting holiday gift, check out our new landing page for [React Aria Components](../react-aria/index.html), replete with interactive examples! Happy coding and see you in the new year! ☃️
 
@@ -39,8 +39,15 @@ As a parting holiday gift, check out our new landing page for [React Aria Compon
 
 In this release, we made a few last API updates to React Aria Components as they move along to GA.
 
-Temporarily removed nested column support in Tables due to instability.
+ - Temporarily removed nested column support in Tables due to instability.
+ - Our Collections have come a long ways since we started RAC, please see the new page, [React Aria Collections](../react-aria/collections) for more information.
+ - Hover and Focus are now distinct states in ListBox.
+ - Hover state has been added to Column Headers in Tables when sorting is allowed.
+ - All refs given to a component now go to their outer most element. If you need a ref to the input, you can attach it directly.
+ - Styles for Popover, Tooltip, and OverlayArrow are now merged in a different order to allow overriding our default styles.
+ -
 
+We've also added a new package and starter project to help people get started with RAC. The starter project can be found here /* INSERT LINK HERE */. And we have a new package with a starter theme as based on our docs examples `@react-aria/example-theme`.
 
 
 ## Enhancements
