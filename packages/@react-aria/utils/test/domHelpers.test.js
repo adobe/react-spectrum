@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {createRef} from 'react';
+
 import {getOwnerDocument, getOwnerWindow} from '../';
-import React from 'react';
+import React, {createRef} from 'react';
 import {render} from '@react-spectrum/test-utils';
 
 describe('getOwnerDocument', () => {
@@ -65,8 +65,8 @@ describe('getOwnerDocument', () => {
     iframe.contentWindow.document.body.appendChild(iframeDiv);
 
     render(<div ref={ref} />, {
-      container: iframeDiv,
-    })
+      container: iframeDiv
+    });
 
     expect(getOwnerDocument(ref.current)).not.toBe(document);
     expect(getOwnerDocument(ref.current)).toBe(iframe.contentWindow.document);
