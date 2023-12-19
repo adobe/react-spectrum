@@ -27,6 +27,7 @@ import {LinkProvider} from './types';
 import linkStyle from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {MDXProvider} from '@mdx-js/react';
 import pageStyles from '@adobe/spectrum-css-temp/components/page/vars.css';
+import path from 'path';
 import React from 'react';
 import ruleStyles from '@adobe/spectrum-css-temp/components/rule/vars.css';
 import sideNavStyles from '@adobe/spectrum-css-temp/components/sidenav/vars.css';
@@ -123,7 +124,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
   let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
-  let heroUrl = `https://${TLD}${currentPage.image || hero}`;
+  let heroUrl = `https://${TLD}${currentPage.image || (publicUrl + path.basename(hero))}`;
   let githubLink = pathToPage;
   if (githubLink.startsWith('/tmp/')) {
     githubLink = githubLink.slice(5);

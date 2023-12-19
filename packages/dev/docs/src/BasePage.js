@@ -1,3 +1,4 @@
+import path from 'path';
 import React from 'react';
 
 const TLD = process.env.DOCS_ENV === 'production'
@@ -15,7 +16,7 @@ export function BasePage({children, currentPage, styles, scripts, publicUrl, pag
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
   let title = currentPage.title + (appendSectionToTitle ? ` – ${pageSection}` : '');
-  let heroUrl = `https://${TLD}${currentPage.image || (hero || '')}`;
+  let heroUrl = `https://${TLD}${currentPage.image || (hero ? publicUrl + path.basename(hero) : '')}`;
   let githubLink = pathToPage;
   if (githubLink.startsWith('/tmp/')) {
     githubLink = githubLink.slice(5);
