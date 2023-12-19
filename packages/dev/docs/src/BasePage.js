@@ -1,7 +1,8 @@
-import path from 'path';
 import React from 'react';
 
-const TLD = 'react-spectrum.adobe.com';
+const TLD = process.env.DOCS_ENV === 'production'
+  ? 'react-spectrum.adobe.com'
+  : 'reactspectrum.blob.core.windows.net';
 
 function stripMarkdown(description) {
   return (description || '').replace(/\[(.*?)\]\(.*?\)/g, '$1');
@@ -14,7 +15,7 @@ export function BasePage({children, currentPage, styles, scripts, publicUrl, pag
   let keywords = [...new Set(currentPage.keywords.concat([currentPage.category, currentPage.title, pageSection]).filter(k => !!k))];
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
   let title = currentPage.title + (appendSectionToTitle ? ` – ${pageSection}` : '');
-  let heroUrl = `https://${TLD}/${currentPage.image || (hero ? path.basename(hero) : '')}`;
+  let heroUrl = `https://${TLD}${currentPage.image || (hero || '')}`;
   let githubLink = pathToPage;
   if (githubLink.startsWith('/tmp/')) {
     githubLink = githubLink.slice(5);
@@ -84,10 +85,4 @@ export function BasePage({children, currentPage, styles, scripts, publicUrl, pag
       </body>
     </html>
   );
-}
-
-export function useImageUrl(src) {
-  let publicUrl = React.useContext(ImageContext);
-  let baseUrl = publicUrl.replace(/\/$/, '');
-  return baseUrl + '/' + path.basename(src);
 }
