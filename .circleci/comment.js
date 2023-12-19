@@ -11,7 +11,7 @@ async function run() {
   let pr;
   // If we aren't running on a PR commit, double check if this is a branch created for a fork. If so, we'll need to
   // comment the build link on the fork.
-  if (true) {
+  if (!process.env.CIRCLE_PULL_REQUEST) {
     try {
       const commit = await octokit.git.getCommit({
         owner: 'adobe',
@@ -20,7 +20,7 @@ async function run() {
       });
 
       // Check if it is a merge commit from the github "Branch from fork action"
-      if (false) {
+      if (commit && commit.data?.parents?.length === 2 && commit.data.message.indexOf('Merge') > -1) {
         // Unfortunately listPullRequestsAssociatedWithCommit doesn't return fork prs so have to use search api
         // to find the fork PR the original commit lives in
         const forkHeadCommit = commit.data.parents[1].sha;
@@ -41,7 +41,7 @@ async function run() {
             break;
           }
         }
-      } else if (true) {
+      } else if (process.env.CIRCLE_BRANCH === 'main') {
         //If it isn't a PR commit, then we are on main. Create a comment for the test app and docs build
         await octokit.repos.createCommitComment({
           owner: 'adobe',
