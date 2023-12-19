@@ -12,6 +12,8 @@
 
 import {createRef} from 'react';
 import {getOwnerDocument, getOwnerWindow} from '../';
+import React from 'react';
+import {render} from '@react-spectrum/test-utils';
 
 describe('getOwnerDocument', () => {
   test.each([null, undefined])('returns the document if the argument is %p', (value) => {
@@ -35,27 +37,10 @@ describe('getOwnerDocument', () => {
     expect(getOwnerDocument(undefined)).toBe(document);
   });
 
-  it('returns the documentOwner that is not document', () => {
-    const div = {};
-    const divOwner = document.createElement('div');
-    div.ownerDocument = divOwner;
-    expect(getOwnerDocument(div)).toBe(divOwner);
-  });
-
   it('returns the document if ref exists, but is not associated with an element', () => {
     const ref = createRef();
 
     expect(getOwnerDocument(ref.current)).toBe(document);
-  });
-
-  it('returns the ref\'s documentOwner that is not document', () => {
-    const ref = createRef();
-    const div = {};
-    const divOwner = document.createElement('div');
-    div.ownerDocument = divOwner;
-    ref.current = div;
-
-    expect(getOwnerDocument(ref.current)).toBe(divOwner);
   });
 
   it("returns the iframe's document if the element is in an iframe", () => {
@@ -64,12 +49,30 @@ describe('getOwnerDocument', () => {
     window.document.body.appendChild(iframe);
     iframe.contentWindow.document.body.appendChild(iframeDiv);
 
+    expect(getOwnerDocument(iframeDiv)).not.toBe(document);
     expect(getOwnerDocument(iframeDiv)).toBe(iframe.contentWindow.document);
     expect(getOwnerDocument(iframeDiv)).toBe(iframe.contentDocument);
 
     // Teardown
     iframe.remove();
   });
+
+  it("returns the iframe's document if the ref is in an iframe", () => {
+    const ref = createRef();
+    const iframe = document.createElement('iframe');
+    const iframeDiv = document.createElement('div');
+    window.document.body.appendChild(iframe);
+    iframe.contentWindow.document.body.appendChild(iframeDiv);
+
+    render(<div ref={ref} />, {
+      container: iframeDiv,
+    })
+
+    expect(getOwnerDocument(ref.current)).not.toBe(document);
+    expect(getOwnerDocument(ref.current)).toBe(iframe.contentWindow.document);
+    expect(getOwnerDocument(ref.current)).toBe(iframe.contentWindow.document);
+  });
+
 });
 
 describe('getOwnerWindow', () => {
