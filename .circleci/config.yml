@@ -598,7 +598,7 @@ workflows:
           requires:
             - install
       - docs-verdaccio:
-          filters:
+          # filters:
             # branches:
             #   only: main
           requires:
