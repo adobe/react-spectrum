@@ -141,6 +141,18 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
   }, [className, style, children, defaultClassName, defaultChildren, values]);
 }
 
+/**
+ * A helper function that accepts a user-provided render prop value (either a static value or a function),
+ * and combines it with another value to create a final result.
+ */
+export function composeRenderProps<T, U, V extends T>(
+  // https://stackoverflow.com/questions/60898079/typescript-type-t-or-function-t-usage
+  value: T extends any ? (T | ((renderProps: U) => V)) : never,
+  wrap: (prevValue: T, renderProps: U) => V
+): (renderProps: U) => V {
+  return (renderProps) => wrap(typeof value === 'function' ? value(renderProps) : value, renderProps);
+}
+
 export type WithRef<T, E> = T & {ref?: ForwardedRef<E>};
 export interface SlotProps {
   /**
