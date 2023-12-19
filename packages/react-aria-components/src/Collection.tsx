@@ -900,7 +900,7 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
   value?: T,
   /** Static child items or a function to render children. */
   children?: ReactNode | ((item: T) => ReactElement),
-  /** Values that should invalidate the column cache when using dynamic collections. */
+  /** Values that should invalidate the item cache when using dynamic collections. */
   dependencies?: any[]
 }
 

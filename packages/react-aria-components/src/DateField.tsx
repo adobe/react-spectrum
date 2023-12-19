@@ -82,7 +82,7 @@ function DateField<T extends DateValue>(props: DateFieldProps<T>, ref: Forwarded
     <Provider
       values={[
         [DateFieldStateContext, state],
-        [GroupContext, {...fieldProps, ref: fieldRef}],
+        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid}],
         [InputContext, {...inputProps, ref: inputRef}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [TextContext, {
@@ -146,7 +146,7 @@ function TimeField<T extends TimeValue>(props: TimeFieldProps<T>, ref: Forwarded
     <Provider
       values={[
         [TimeFieldStateContext, state],
-        [GroupContext, {...fieldProps, ref: fieldRef}],
+        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid}],
         [InputContext, {...inputProps, ref: inputRef}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [TextContext, {
@@ -228,7 +228,7 @@ const DateInputStandalone = forwardRef((props: DateInputProps, ref: ForwardedRef
       values={[
         [DateFieldStateContext, state],
         [InputContext, {...inputProps, ref: inputRef}],
-        [GroupContext, {...fieldProps, ref: fieldRef}]
+        [GroupContext, {...fieldProps, ref: fieldRef, isInvalid: state.isInvalid}]
       ]}>
       <DateInputInner {...props} />
     </Provider>

@@ -282,7 +282,7 @@ function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) 
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
     heading,
-    'aria-label': section['aria-label'] ?? undefined
+    'aria-label': section.props['aria-label'] ?? undefined
   });
 
   let children = useCachedChildren({

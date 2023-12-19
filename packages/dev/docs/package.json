@@ -34,5 +34,8 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-lowlight": "^2.0.0"
+  },
+  "alias": {
+    "tailwind-starter": "../../../starters/tailwind/src"
   }
 }
