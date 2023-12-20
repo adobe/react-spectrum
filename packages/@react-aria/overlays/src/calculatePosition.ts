@@ -113,6 +113,9 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     totalHeight = documentElement.clientHeight;
     width = visualViewport?.width ?? totalWidth;
     height = visualViewport?.height ?? totalHeight;
+    // TODO If using body as container, we should keep track of the visual viewport's offset top/left as the container rect due to zoom
+    top = visualViewport.offsetTop;
+    left = visualViewport.offsetLeft;
 
     scroll.top = documentElement.scrollTop || containerNode.scrollTop;
     scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
@@ -152,9 +155,13 @@ function getDelta(
   padding: number
 ) {
   let containerScroll = containerDimensions.scroll[axis];
-  let boundaryHeight = boundaryDimensions[AXIS_SIZE[axis]];
-  let startEdgeOffset = offset - padding - containerScroll;
-  let endEdgeOffset = offset + padding - containerScroll + size;
+  // The height/width of the boundary. Matches the axis along which we are adjusting the overlay position
+  let boundarySize = boundaryDimensions[AXIS_SIZE[axis]];
+  // Calculate the edges of the boundary (accomodating for the boundary padding) and the edges of the overlay.
+  let boundaryStartEdge = boundaryDimensions.scroll[AXIS[axis]] + padding;
+  let boundaryEndEdge = boundarySize + boundaryDimensions.scroll[AXIS[axis]] - padding;
+  let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
+  let endEdgeOffset = offset - containerScroll + size + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
 
   if (startEdgeOffset < 0) {
     return -startEdgeOffset;
