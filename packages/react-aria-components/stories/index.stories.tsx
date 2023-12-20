@@ -72,8 +72,7 @@ export const ListBoxSections = () => (
       <MyListBoxItem>Baz</MyListBoxItem>
     </Section>
     <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-    <Section className={styles.group}>
-      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+    <Section className={styles.group} aria-label="Section 2">
       <MyListBoxItem>Foo</MyListBoxItem>
       <MyListBoxItem>Bar</MyListBoxItem>
       <MyListBoxItem>Baz</MyListBoxItem>

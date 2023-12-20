@@ -23,8 +23,6 @@ export interface ProgressBarAria {
   labelProps: DOMAttributes
 }
 
-const allowedAttributes = new Set(['aria-hidden']);
-
 /**
  * Provides the accessibility implementation for a progress bar component.
  * Progress bars show either determinate or indeterminate progress of an operation
@@ -42,7 +40,7 @@ export function useProgressBar(props: AriaProgressBarProps): ProgressBarAria {
     }
   } = props;
 
-  let domProps = filterDOMProps(props, {labelable: true, propNames: allowedAttributes});
+  let domProps = filterDOMProps(props, {labelable: true});
   let {labelProps, fieldProps} = useLabel({
     ...props,
     // Progress bar is not an HTML input element so it
