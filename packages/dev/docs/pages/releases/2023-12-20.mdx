@@ -18,11 +18,12 @@ date: 2023-12-20
 
 # December 20, 2023 Release
 
-Welcome to the last release of the year! In this release, we’re promoting React Aria Components from RC to GA 🎉, promoting React Spectrum's DropZone to RC, adding an option to optimize our included translation files, shipping a storybook based on all our React Aria Components with a starter theme, and fixing plenty of bugs.
+Welcome to the last release of the year! After a year of work, we are happy to announce the GA release of React Aria Components 🎉 This component library, built on top of our React Aria hooks, provides a simpler way to craft world-class accessible components with custom styles. See our new React Aria [landing page](https://react-spectrum.adobe.com/react-aria/index.html) for all of the details, including interactive examples. To help get you started even faster, we now also have a downloadable Storybook [starter kit](../react-aria/getting-started#starter-kit) including an example CSS theme.
 
+Also in this release we are promoting React Spectrum's DropZone to RC, adding the ability to optimize translation files, and fixing plenty of bugs.
 As always, huge thanks to everyone in our community for their feedback and contributions to make this release and this year possible!
 
-As a parting holiday gift, check out our new landing page for [React Aria Components](../react-aria/index.html), replete with interactive examples! Happy coding and see you in the new year! ☃️
+Happy coding and see you in the new year! ☃️
 
 
 ### React Aria Components API updates
@@ -36,8 +37,6 @@ In this release, we made a few last API updates to React Aria Components as they
  - All refs given to a component now go to their outer most element. If you need a ref to the input, you can attach it directly.
  - Styles for `Popover`, `Tooltip`, and `OverlayArrow` are now merged in a different order to allow overriding our default styles.
  - Added a dependency array to help manage the item cache with columns in `Tables`.
-
-We've also added a new package and starter project to help people get started with RAC. The starter project can be found [on our getting started page](../react-aria/getting-started#starter-kit). And we have a new package with a starter theme as based on our docs examples `@react-aria/example-theme`.
 
 
 ## Enhancements
@@ -95,6 +94,7 @@ We've also added a new package and starter project to help people get started wi
 * Top margin of a button in a form - [@yihuiliao](https://github.com/yihuiliao) - [PR](https://github.com/adobe/react-spectrum/pull/5461)
 * TableView resize observer loop limit - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5432)
 * TableView virtualizer crash - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5380)
+* Aria label on ListBox Sections in RAC - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5603)
 
 
 ## Docs
