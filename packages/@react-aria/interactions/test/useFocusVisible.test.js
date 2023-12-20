@@ -106,6 +106,45 @@ describe('useFocusVisible', function () {
       iframe.remove();
     });
 
+    it('sets up focus listener in a different window', async function () {
+      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      await waitFor(() => {
+        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+      });
+      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+
+      // Focus in iframe before setupFocus should not do anything
+      fireEvent.focus(iframe.contentWindow.document.body);
+      expect(el.textContent).toBe('example');
+
+      // Setup focus in iframe
+      setupFocus(iframeRoot);
+      expect(el.textContent).toBe('example');
+
+      // Focus in iframe after setupFocus
+      fireEvent.focus(iframe.contentWindow.document.body);
+      expect(el.textContent).toBe('example-focusVisible');
+    });
+
+    it('removes event listeners on beforeunload', async function () {
+      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      setupFocus(iframeRoot);
+
+      await waitFor(() => {
+        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+      });
+      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+      expect(el.textContent).toBe('example-focusVisible');
+
+      fireEvent.mouseDown(el);
+      expect(el.textContent).toBe('example');
+
+      // Focus events after beforeunload no longer work
+      fireEvent(iframe.contentWindow, new Event('beforeunload'));
+      fireEvent.focus(iframe.contentWindow.document.body);
+      expect(el.textContent).toBe('example');
+    });
+
     it('returns positive isFocusVisible result after toggling browser tabs after keyboard navigation', async function () {
       ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
       setupFocus(iframeRoot);

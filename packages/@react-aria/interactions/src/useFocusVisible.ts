@@ -153,6 +153,27 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
     documentObject.addEventListener('mouseup', handlePointerEvent, true);
   }
 
+  // Add unmount handler
+  windowObject.addEventListener('beforeunload', (e) => {
+    e.preventDefault();
+
+    documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
+    documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
+    documentObject.removeEventListener('click', handleClickEvent, true);
+    windowObject.removeEventListener('focus', handleFocusEvent, true);
+    windowObject.removeEventListener('blur', handleWindowBlur, false);
+
+    if (typeof PointerEvent !== 'undefined') {
+      documentObject.removeEventListener('pointerdown', handlePointerEvent, true);
+      documentObject.removeEventListener('pointermove', handlePointerEvent, true);
+      documentObject.removeEventListener('pointerup', handlePointerEvent, true);
+    } else {
+      documentObject.removeEventListener('mousedown', handlePointerEvent, true);
+      documentObject.removeEventListener('mousemove', handlePointerEvent, true);
+      documentObject.removeEventListener('mouseup', handlePointerEvent, true);
+    }
+  });
+
   hasSetupGlobalListeners.set(windowObject, true);
 }
 
