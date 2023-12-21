@@ -144,7 +144,7 @@ let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX
 export {_DialogTrigger as DialogTrigger};
 
 function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props}) {
-  let triggerRef = useRef<HTMLElement>();
+  let triggerRef = useRef<HTMLElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
 
   let triggerPropsWithRef = {
@@ -179,7 +179,7 @@ interface SpectrumDialogTriggerBase {
   isDismissable?: boolean,
   dialogProps?: SpectrumDialogProps | {},
   triggerProps?: any,
-  overlay: ReactElement,
+  overlay?: ReactElement,
   trigger: ReactElement
 }
 
