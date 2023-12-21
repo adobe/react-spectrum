@@ -140,8 +140,7 @@ describe('ListBox', () => {
           <ListBoxItem id="tomato">Tomato</ListBoxItem>
           <ListBoxItem id="onion">Onion</ListBoxItem>
         </Section>
-        <Section data-test-prop="test-section-2">
-          <Header>Protein</Header>
+        <Section data-test-prop="test-section-2" aria-label="Protein">
           <ListBoxItem id="ham">Ham</ListBoxItem>
           <ListBoxItem id="tuna">Tuna</ListBoxItem>
           <ListBoxItem id="tofu">Tofu</ListBoxItem>
@@ -157,6 +156,7 @@ describe('ListBox', () => {
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
+    expect(groups[1].getAttribute('aria-label')).toEqual('Protein');
 
     expect(groups[0]).toHaveAttribute('data-test-prop', 'test-section-1');
     expect(groups[1]).toHaveAttribute('data-test-prop', 'test-section-2');
