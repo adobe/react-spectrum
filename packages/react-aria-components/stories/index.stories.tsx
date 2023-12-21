@@ -254,50 +254,6 @@ export const TimeFieldExample = () => (
   </TimeField>
 );
 
-export const CalendarExample = () => (
-  <Calendar style={{width: 220}}>
-    <div style={{display: 'flex', alignItems: 'center'}}>
-      <Button slot="previous">&lt;</Button>
-      <Heading style={{flex: 1, textAlign: 'center'}} />
-      <Button slot="next">&gt;</Button>
-    </div>
-    <CalendarGrid style={{width: '100%'}}>
-      {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-    </CalendarGrid>
-  </Calendar>
-);
-
-export const CalendarMultiMonth = () => (
-  <Calendar style={{width: 500}} visibleDuration={{months: 2}}>
-    <div style={{display: 'flex', alignItems: 'center'}}>
-      <Button slot="previous">&lt;</Button>
-      <Heading style={{flex: 1, textAlign: 'center'}} />
-      <Button slot="next">&gt;</Button>
-    </div>
-    <div style={{display: 'flex', gap: 20}}>
-      <CalendarGrid style={{flex: 1}}>
-        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-      </CalendarGrid>
-      <CalendarGrid style={{flex: 1}} offset={{months: 1}}>
-        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-      </CalendarGrid>
-    </div>
-  </Calendar>
-);
-
-export const RangeCalendarExample = () => (
-  <RangeCalendar style={{width: 220}}>
-    <div style={{display: 'flex', alignItems: 'center'}}>
-      <Button slot="previous">&lt;</Button>
-      <Heading style={{flex: 1, textAlign: 'center'}} />
-      <Button slot="next">&gt;</Button>
-    </div>
-    <CalendarGrid style={{width: '100%'}}>
-      {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-    </CalendarGrid>
-  </RangeCalendar>
-);
-
 export const DatePickerExample = () => (
   <DatePicker data-testid="date-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
