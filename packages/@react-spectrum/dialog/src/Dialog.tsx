@@ -60,7 +60,7 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
   size = type === 'popover' ? (size || 'S') : (size || 'L');
 
   let domRef = useDOMRef(ref);
-  let gridRef = useRef();
+  let gridRef = useRef(null);
   let sizeVariant = sizeMap[type] || sizeMap[size];
   let {dialogProps, titleProps} = useDialog(mergeProps(contextProps, props), domRef);
 

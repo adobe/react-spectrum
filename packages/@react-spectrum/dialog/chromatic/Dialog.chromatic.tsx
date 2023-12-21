@@ -14,7 +14,7 @@ import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content, Footer, Header} from '@react-spectrum/view';
-import {Dialog, DialogTrigger} from '../';
+import {Dialog, DialogTrigger, SpectrumDialogProps} from '../';
 import {Divider} from '@react-spectrum/divider';
 import {Flex} from '@react-spectrum/layout';
 import {Form} from '@react-spectrum/form';
@@ -255,14 +255,19 @@ MobileTypeTrayPopover.story = {
     chromaticProvider: {colorSchemes: ['light'], locales: ['ar-AE'], scales: ['large'], disableAnimations: true}
   }
 };
-
-function render({width = 'auto', isDismissable = undefined, ...props}) {
+type RenderProps = Omit<SpectrumDialogProps & {isDismissable?: boolean, width?: string}, 'children'>;
+function render(props: RenderProps) {
+  let {
+    width = 'auto',
+    isDismissable,
+    ...otherProps
+  } = props;
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger isDismissable={isDismissable} defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
-          <Dialog {...props}>
+          <Dialog {...otherProps}>
             <Heading>The Heading</Heading>
             <Header>The Header</Header>
             <Divider />
@@ -302,13 +307,18 @@ export function renderTriggerProps({width = 'auto', isDismissable = undefined, .
   );
 }
 
-function renderHero({width = 'auto', isDismissable = undefined, ...props}) {
+function renderHero(props: RenderProps) {
+  let {
+    width = 'auto',
+    isDismissable,
+    ...otherProps
+  } = props;
   return (
     <div style={{display: 'flex', width, margin: '100px 0'}}>
       <DialogTrigger isDismissable={isDismissable} defaultOpen>
         <ActionButton>Trigger</ActionButton>
         {(close) => (
-          <Dialog {...props}>
+          <Dialog {...otherProps}>
             <Image slot="hero" alt="" src="https://i.imgur.com/Z7AzH2c.png" objectFit="cover" />
             <Heading>The Heading</Heading>
             <Header>The Header</Header>
