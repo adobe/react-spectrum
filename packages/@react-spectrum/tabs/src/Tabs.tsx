@@ -80,7 +80,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
 
   useEffect(() => {
     if (tablistRef.current) {
-      let selectedTab: HTMLElement = tablistRef.current.querySelector(`[data-key="${tabListState?.selectedKey}"]`);
+      let selectedTab: HTMLElement = tablistRef.current.querySelector(`[data-key="${CSS.escape(tabListState?.selectedKey?.toString())}"]`);
 
       if (selectedTab != null) {
         setSelectedTab(selectedTab);

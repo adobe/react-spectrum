@@ -38,13 +38,13 @@ describe('VisuallyHidden', function () {
     await user.tab();
 
     expect(document.activeElement).toBe(buttons[0]);
-    let hiddenStyle = buttons[1].parentElement.getAttribute('style');
-    expect(hiddenStyle.length).toBeGreaterThan(0);
+    let hiddenStyle = buttons[1].parentElement!.getAttribute('style');
+    expect(hiddenStyle!.length).toBeGreaterThan(0);
 
     await user.tab();
 
     expect(document.activeElement).toBe(buttons[1]);
-    expect(buttons[1].parentElement.getAttribute('style')).toEqual(hiddenStyle);
+    expect(buttons[1].parentElement!.getAttribute('style')).toEqual(hiddenStyle);
   });
   it('unhides element if focused and isFocusable', async function () {
     let {getAllByRole} = render(
@@ -63,13 +63,13 @@ describe('VisuallyHidden', function () {
     await user.tab();
 
     expect(document.activeElement).toBe(buttons[0]);
-    let hiddenStyle = buttons[1].parentElement.getAttribute('style');
-    expect(hiddenStyle.length).toBeGreaterThan(0);
+    let hiddenStyle = buttons[1].parentElement!.getAttribute('style');
+    expect(hiddenStyle!.length).toBeGreaterThan(0);
 
     await user.tab();
 
     expect(document.activeElement).toBe(buttons[1]);
-    expect(buttons[1].parentElement.getAttribute('style')).not.toEqual(hiddenStyle);
-    expect(buttons[1].parentElement.getAttribute('style')).toHaveLength(0);
+    expect(buttons[1].parentElement!.getAttribute('style')).not.toEqual(hiddenStyle);
+    expect(buttons[1].parentElement!.getAttribute('style')).toHaveLength(0);
   });
 });

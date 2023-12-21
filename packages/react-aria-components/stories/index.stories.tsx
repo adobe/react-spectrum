@@ -11,10 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, isTextDropItem, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
+import {MyListBoxItem} from './utils';
 import React, {useRef, useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
 import styles from '../example/index.css';
@@ -23,127 +24,6 @@ import {useListData} from 'react-stately';
 export default {
   title: 'React Aria Components'
 };
-
-export const ComboBoxExample = () => (
-  <ComboBox data-testid="combo-box-example">
-    <Label style={{display: 'block'}}>Test</Label>
-    <div style={{display: 'flex'}}>
-      <Input />
-      <Button>
-        <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
-      </Button>
-    </div>
-    <Popover placement="bottom end">
-      <ListBox
-        data-testid="combo-box-list-box"
-        className={styles.menu}>
-        <MyListBoxItem>Foo</MyListBoxItem>
-        <MyListBoxItem>Bar</MyListBoxItem>
-        <MyListBoxItem>Baz</MyListBoxItem>
-        <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-      </ListBox>
-    </Popover>
-  </ComboBox>
-);
-
-interface ComboBoxItem {
-  id: string,
-  name: string
-}
-
-let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
-export const ComboBoxRenderPropsStatic = () => (
-  <ComboBox data-testid="combo-box-render-props-static">
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu}>
-            <MyListBoxItem>Foo</MyListBoxItem>
-            <MyListBoxItem>Bar</MyListBoxItem>
-            <MyListBoxItem>Baz</MyListBoxItem>
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
-
-export const ComboBoxRenderPropsDefaultItems = () => (
-  <ComboBox defaultItems={items}>
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu}>
-            {(item: ComboBoxItem) => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
-
-export const ComboBoxRenderPropsItems = {
-  render: () => (
-    <ComboBox items={items}>
-      {({isOpen}) => (
-        <>
-          <Label style={{display: 'block'}}>Test</Label>
-          <div style={{display: 'flex'}}>
-            <Input />
-            <Button>
-              <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-            </Button>
-          </div>
-          <Popover placement="bottom end">
-            <ListBox className={styles.menu}>
-              {(item: ComboBoxItem) => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
-            </ListBox>
-          </Popover>
-        </>
-      )}
-    </ComboBox>
-  ),
-  parameters: {
-    description: {
-      data: 'Note this won\'t filter the items in the listbox because it is fully controlled'
-    }
-  }
-};
-
-export const ComboBoxRenderPropsListBoxDynamic = () => (
-  <ComboBox>
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu} items={items}>
-            {item => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
 
 export const ListBoxExample = (args) => (
   <ListBox className={styles.menu} {...args} aria-label="test listbox">
@@ -157,7 +37,8 @@ export const ListBoxExample = (args) => (
 ListBoxExample.story = {
   args: {
     selectionMode: 'none',
-    selectionBehavior: 'toggle'
+    selectionBehavior: 'toggle',
+    shouldFocusOnHover: false
   },
   argTypes: {
     selectionMode: {
@@ -171,6 +52,11 @@ ListBoxExample.story = {
         type: 'radio',
         options: ['toggle', 'replace']
       }
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Hover styles should have higher specificity than focus style for testing purposes. Hover style should not be applied on keyboard focus even if shouldFocusOnHover is true'
     }
   }
 };
@@ -186,8 +72,7 @@ export const ListBoxSections = () => (
       <MyListBoxItem>Baz</MyListBoxItem>
     </Section>
     <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-    <Section className={styles.group}>
-      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+    <Section className={styles.group} aria-label="Section 2">
       <MyListBoxItem>Foo</MyListBoxItem>
       <MyListBoxItem>Bar</MyListBoxItem>
       <MyListBoxItem>Baz</MyListBoxItem>
@@ -867,9 +752,9 @@ export const TableExample = () => {
 
 export const TableDynamicExample = () => {
   let columns = [
-    {name: 'Name', key: 'name', isRowHeader: true},
-    {name: 'Type', key: 'type'},
-    {name: 'Date Modified', key: 'date'}
+    {name: 'Name', id: 'name', isRowHeader: true},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let rows = [
@@ -890,7 +775,7 @@ export const TableDynamicExample = () => {
         {(item) => (
           <Row columns={columns}>
             {(column) => {
-              return <Cell>{item[column.key]}</Cell>;
+              return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
         )}
@@ -918,17 +803,6 @@ function MyColumn(props) {
         </div>
       )}
     </Column>
-  );
-}
-
-function MyListBoxItem(props) {
-  return (
-    <ListBoxItem
-      {...props}
-      className={({isFocused, isSelected}) => classNames(styles, 'item', {
-        focused: isFocused,
-        selected: isSelected
-      })} />
   );
 }
 
@@ -1167,15 +1041,30 @@ export const FileTriggerButton = (props) => (
   </FileTrigger>
 );
 
-export const FileTriggerDirectories = (props) => (
-  <FileTrigger
-    directory
-    onSelect={action('onSelect')}
-    data-testid="filetrigger-example"
-    {...props} >
-    <Button>Upload</Button>
-  </FileTrigger>
-);
+export const FileTriggerDirectories = (props) => {
+  let [files, setFiles] = React.useState<string[]>([]);
+
+  return (
+    <>
+      <FileTrigger
+        {...props}
+        acceptDirectory
+        onSelect={(e) => {
+          if (e) {
+            let fileList = [...e].map(file => file.webkitRelativePath !== '' ? file.webkitRelativePath : file.name);
+            setFiles(fileList);
+          }
+        }} >
+        <Button>Upload</Button>
+      </FileTrigger>
+      {files && <ul>
+        {files.map((file, index) => (
+          <li key={index}>{file}</li>
+        ))}
+      </ul>}
+    </>
+  );
+};
 
 export const FileTriggerLinkAllowsMultiple = (props) => (
   <FileTrigger
