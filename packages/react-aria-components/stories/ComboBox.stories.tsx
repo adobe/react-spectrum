@@ -83,7 +83,7 @@ export const ComboBoxRenderPropsDefaultItems = () => (
         </div>
         <Popover placement="bottom end">
           <ListBox className={styles.menu}>
-            {(item: ComboBoxItem) => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
+            {(item: ComboBoxItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
           </ListBox>
         </Popover>
       </>
@@ -105,7 +105,7 @@ export const ComboBoxRenderPropsItems = {
           </div>
           <Popover placement="bottom end">
             <ListBox className={styles.menu}>
-              {(item: ComboBoxItem) => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
+              {(item: ComboBoxItem) => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
             </ListBox>
           </Popover>
         </>
@@ -132,11 +132,10 @@ export const ComboBoxRenderPropsListBoxDynamic = () => (
         </div>
         <Popover placement="bottom end">
           <ListBox className={styles.menu} items={items}>
-            {item => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
+            {item => <MyListBoxItem id={item.id}>{item.name}</MyListBoxItem>}
           </ListBox>
         </Popover>
       </>
     )}
   </ComboBox>
 );
-

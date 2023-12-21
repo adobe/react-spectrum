@@ -672,23 +672,21 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
         let rendered = cache.get(item);
         if (!rendered) {
           rendered = children(item);
-          if (rendered.key == null) {
-            // @ts-ignore
-            let key = rendered.props.id ?? item.key ?? item.id;
-            // eslint-disable-next-line max-depth
-            if (key == null) {
-              throw new Error('Could not determine key for item');
-            }
-            // eslint-disable-next-line max-depth
-            if (idScope) {
-              key = idScope + ':' + key;
-            }
-            // TODO: only works if wrapped Item passes through id...
-            rendered = cloneElement(
-              rendered,
-              addIdAndValue ? {key, id: key, value: item} : {key}
-            );
+          // @ts-ignore
+          let key = rendered.props.id ?? item.key ?? item.id;
+          // eslint-disable-next-line max-depth
+          if (key == null) {
+            throw new Error('Could not determine key for item');
           }
+          // eslint-disable-next-line max-depth
+          if (idScope) {
+            key = idScope + ':' + key;
+          }
+          // Note: only works if wrapped Item passes through id...
+          rendered = cloneElement(
+            rendered,
+            addIdAndValue ? {key, id: key, value: item} : {key}
+          );
           cache.set(item, rendered);
         }
         res.push(rendered);
@@ -902,7 +900,7 @@ export interface SectionProps<T> extends Omit<SharedSectionProps<T>, 'children' 
   value?: T,
   /** Static child items or a function to render children. */
   children?: ReactNode | ((item: T) => ReactElement),
-  /** Values that should invalidate the column cache when using dynamic collections. */
+  /** Values that should invalidate the item cache when using dynamic collections. */
   dependencies?: any[]
 }
 

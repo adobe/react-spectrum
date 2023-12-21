@@ -14,7 +14,7 @@ const lightningcss = require('lightningcss');
 const fs = require('fs');
 const path = require('path');
 
-module.exports = async function processCSS(cssCode, asset, options) {
+module.exports = async function processCSS(cssCode, asset, options, minimal = false) {
   let visit = (await import('unist-util-visit')).visit;
   let unified = (await import('unified')).unified;
   let remarkParse = (await import('remark-parse')).default;
@@ -72,7 +72,7 @@ module.exports = async function processCSS(cssCode, asset, options) {
         return result;
       }
     },
-    visitor: {
+    visitor: minimal ? null : {
       Rule: {
         media(m) {
           // Convert dark mode media query to use docs color scheme.

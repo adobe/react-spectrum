@@ -37,7 +37,8 @@ export const ListBoxExample = (args) => (
 ListBoxExample.story = {
   args: {
     selectionMode: 'none',
-    selectionBehavior: 'toggle'
+    selectionBehavior: 'toggle',
+    shouldFocusOnHover: false
   },
   argTypes: {
     selectionMode: {
@@ -51,6 +52,11 @@ ListBoxExample.story = {
         type: 'radio',
         options: ['toggle', 'replace']
       }
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Hover styles should have higher specificity than focus style for testing purposes. Hover style should not be applied on keyboard focus even if shouldFocusOnHover is true'
     }
   }
 };
@@ -66,8 +72,7 @@ export const ListBoxSections = () => (
       <MyListBoxItem>Baz</MyListBoxItem>
     </Section>
     <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-    <Section className={styles.group}>
-      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+    <Section className={styles.group} aria-label="Section 2">
       <MyListBoxItem>Foo</MyListBoxItem>
       <MyListBoxItem>Bar</MyListBoxItem>
       <MyListBoxItem>Baz</MyListBoxItem>
@@ -747,9 +752,9 @@ export const TableExample = () => {
 
 export const TableDynamicExample = () => {
   let columns = [
-    {name: 'Name', key: 'name', isRowHeader: true},
-    {name: 'Type', key: 'type'},
-    {name: 'Date Modified', key: 'date'}
+    {name: 'Name', id: 'name', isRowHeader: true},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let rows = [
@@ -770,7 +775,7 @@ export const TableDynamicExample = () => {
         {(item) => (
           <Row columns={columns}>
             {(column) => {
-              return <Cell>{item[column.key]}</Cell>;
+              return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
         )}
