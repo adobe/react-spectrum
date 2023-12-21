@@ -70,7 +70,7 @@ describe('getOwnerDocument', () => {
 
     expect(getOwnerDocument(ref.current)).not.toBe(document);
     expect(getOwnerDocument(ref.current)).toBe(iframe.contentWindow.document);
-    expect(getOwnerDocument(ref.current)).toBe(iframe.contentWindow.document);
+    expect(getOwnerDocument(ref.current)).toBe(iframe.contentDocument);
   });
 
 });
