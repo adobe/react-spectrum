@@ -114,8 +114,8 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     width = visualViewport?.width ?? totalWidth;
     height = visualViewport?.height ?? totalHeight;
     // TODO If using body as container, we should keep track of the visual viewport's offset top/left as the container rect due to zoom
-    top = visualViewport.offsetTop;
-    left = visualViewport.offsetLeft;
+    top = visualViewport?.offsetTop ?? top;
+    left = visualViewport?.offsetLeft ?? left;
 
     scroll.top = documentElement.scrollTop || containerNode.scrollTop;
     scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
