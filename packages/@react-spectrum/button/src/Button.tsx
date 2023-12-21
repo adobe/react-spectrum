@@ -156,15 +156,18 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
           {typeof children === 'string'
             ? <Text>{children}</Text>
             : children}
-          {isPending && <ProgressCircle
-            aria-hidden="true"
-            aria-label={isPendingAriaLiveLabel}
-            isIndeterminate
-            size="S"
-            UNSAFE_className={classNames(styles, 'spectrum-Button-circleLoader')}
-            UNSAFE_style={{visibility: isProgressVisible ? 'visible' : 'hidden'}}
-            staticColor={staticColor} />
-          }
+          {isPending && (
+            <div
+              aria-hidden="true"
+              style={{visibility: isProgressVisible ? 'visible' : 'hidden'}}
+              className={classNames(styles, 'spectrum-Button-circleLoader')}>
+              <ProgressCircle
+                aria-label={isPendingAriaLiveLabel}
+                isIndeterminate
+                size="S"
+                staticColor={staticColor} />
+            </div>
+          )}
           {isPending &&
             <>
               <div aria-live={isFocused ? ariaLive : 'off'}>

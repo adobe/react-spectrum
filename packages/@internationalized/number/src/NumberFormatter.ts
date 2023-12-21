@@ -145,8 +145,11 @@ export class NumberFormatter implements Intl.NumberFormat {
 
 function getCachedNumberFormatter(locale: string, options: NumberFormatOptions = {}): Intl.NumberFormat {
   let {numberingSystem} = options;
-  if (numberingSystem && locale.indexOf('-u-nu-') === -1) {
-    locale = `${locale}-u-nu-${numberingSystem}`;
+  if (numberingSystem && locale.includes('-nu-')) {
+    if (!locale.includes('-u-')) {
+      locale += '-u-';
+    }
+    locale += `-nu-${numberingSystem}`;
   }
 
   if (options.style === 'unit' && !supportsUnit) {

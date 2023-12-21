@@ -1,0 +1,170 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import dataDocs from 'docs:@react-stately/data';
+import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
+import {Keyboard} from '@react-spectrum/text';
+
+---
+category: Guides
+keywords: [collection, multiple selection, single selection, state]
+order: 1.7
+---
+
+# Selection
+
+Many [collection components](collections.html) support selecting items by clicking or tapping them, or by using the keyboard.
+This page discusses how to handle selection events, how to control selection programmatically, and the
+data structures used to represent a selection.
+
+## Multiple selection
+
+Selection is handled by the `onSelectionChange` event, which is supported on most collection components. Controlled
+behavior is supported by the `selectedKeys` prop, and uncontrolled behavior is supported by the `defaultSelectedKeys`
+prop. These props are passed to the top-level collection component, and accept a set of unique item ids.
+This allows marking items as selected by their id even before they are loaded, which can be useful when you know
+what items should be selected on initial render, before data loading has completed.
+
+Selection is represented by a [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)
+object. You can also pass any iterable collection (e.g. an array) to the `selectedKeys` and `defaultSelectedKeys` props,
+but the `onSelectionChange` event will always pass back a Set.
+
+Selection is supported on both [static](collections.html#static-collections) and [dynamic](collections.html#dynamic-collections)
+collections. The following example shows how to implement controlled selection
+behavior on a static collection, but could be applied to a dynamic collection the same way.
+
+```tsx
+let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+<ListBox selectedKeys={selectedKeys} onSelectionChange={setSelectedKeys}>
+  <ListBoxItem id="one">One</ListBoxItem>
+  <ListBoxItem id="two">Two</ListBoxItem>
+  <ListBoxItem id="three">Three</ListBoxItem>
+</ListBox>
+```
+
+When the user selects an item, its `id` is added to the `selectedKeys` set via the `onSelectionChange` event.
+
+## Single selection
+
+So far, we've discussed multiple selection. However, you may wish to limit selection to a single item instead.
+In some components, like a select or combo box, only single selection is supported. In this case, the singular
+`selectedKey` and `defaultSelectedKey` props are available instead of their plural variants. These accept a
+single id instead of a `Set` as their value, and `onSelectionChange` is also called with a single id.
+
+```tsx
+let [selectedKey, setSelectedKey] = useState(null);
+
+<MyComboBox
+  /*- begin highlight -*/
+  selectedKey={selectedKey}
+  /*- end highlight -*/
+  onSelectionChange={setSelectedKey}>
+  <ListBoxItem id="one">One</ListBoxItem>
+  <ListBoxItem id="two">Two</ListBoxItem>
+  <ListBoxItem id="three">Three</ListBoxItem>
+</MyComboBox>
+```
+
+In components which support multiple selection, you can limit the selection to a single item using the
+`selectionMode` prop. This continues to accept `selectedKeys` and `defaultSelectedKeys` as a `Set`, but it will
+only contain a single id at a time.
+
+```tsx
+let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+<ListBox
+  /*- begin highlight -*/
+  selectionMode="single"
+  /*- end highlight -*/
+  selectedKeys={selectedKeys}
+  onSelectionChange={setSelectedKeys}>
+  <ListBoxItem id="one">One</ListBoxItem>
+  <ListBoxItem id="two">Two</ListBoxItem>
+  <ListBoxItem id="three">Three</ListBoxItem>
+</ListBox>
+```
+
+## Dynamic data
+
+When data in a collection changes, the selection state may need to be updated accordingly. For example, if a selected item is
+deleted, it should be removed from the set of selected keys. You can do this yourself, or use the <TypeLink links={dataDocs.links} type={dataDocs.exports.useListData} />
+and <TypeLink links={dataDocs.links} type={dataDocs.exports.useTreeData} /> hooks to handle this automatically.
+
+```tsx
+import {useListData} from 'react-stately';
+
+let list = useListData({
+  initialItems: [
+    {name: 'Aardvark'},
+    {name: 'Kangaroo'},
+    {name: 'Snake'}
+  ],
+  initialSelectedKeys: ['Kangaroo'],
+  getKey: item => item.name
+});
+
+function removeItem() {
+  /*- begin highlight -*/
+  // Removing the list item will also remove it from the selection state.
+  list.remove('Kangaroo');
+  /*- end highlight -*/
+}
+
+<ListBox
+  items={list.items}
+  selectedKeys={list.selectedKeys}
+  onSelectionChange={list.setSelectedKeys}>
+  {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+</ListBox>
+```
+
+For more information, see [useListData](../react-stately/useListData.html) and [useTreeData](../react-stately/useTreeData.html).
+
+## Select All
+
+Some components support a checkbox to select all items in the collection, or a keyboard shortcut like <Keyboard>⌘ Cmd</Keyboard> + <Keyboard>A</Keyboard>.
+This represents a selection of all items in the collection, regardless of whether or not all items have been loaded from the network.
+For example, when using a component with infinite scrolling support, the user will be unaware that all items are not yet loaded because
+it loads more transparently to them as they scroll down. For this reason, it makes sense for select all to represent all items, not just
+the loaded ones.
+
+When a select all event occurs, `onSelectionChange` is called with the string `"all"` rather than a set of selected keys. `selectedKeys`
+and `defaultSelectedKeys` can also be set to `"all"` to programmatically select all items. This represents all items in the collection,
+whether currently loaded or not. The application must adjust its handling of bulk actions in this case to apply to the entire collection
+rather than only the keys available to it locally.
+
+```tsx
+let [selectedKeys, setSelectedKeys] = useState(new Set());
+
+function performBulkAction() {
+  /*- begin highlight -*/
+  if (selectedKeys === 'all') {
+  /*- end highlight -*/
+    // perform action on all items
+  } else {
+    // perform action on selected items in selectedKeys
+  }
+}
+
+<ListBox
+  items={items}
+  selectedKeys={selectedKeys}
+  onSelectionChange={setSelectedKeys}>
+  {item => <ListBoxItem>{item.name}</ListBoxItem>}
+</ListBox>
+```
+
+## Hooks
+
+If you're using React Aria and React Stately hooks rather than components, the collection and selection APIs are slightly different.
+See the [React Stately selection](../react-stately/selection.html) documentation for more details.

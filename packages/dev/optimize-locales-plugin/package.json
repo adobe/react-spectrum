@@ -5,5 +5,8 @@
   "types": "LocalesPlugin.d.ts",
   "dependencies": {
     "unplugin": "^1.4.0"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

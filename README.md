@@ -10,7 +10,7 @@ A React implementation of Spectrum, Adobe’s design system. Spectrum provides a
 
 ### React Aria
 
-A library of React Hooks that provides accessible UI primitives for your design system.
+A library of unstyled React components and hooks that helps you build accessible, high quality UI components for your application or design system.
 
 [Learn more about React Aria](https://react-spectrum.adobe.com/react-aria/index.html)
 
@@ -38,7 +38,7 @@ A collection of framework-agnostic internationalization libraries for the web.
 React Spectrum includes several libraries, which you can choose depending on your usecase.
 
 * [React Spectrum](https://react-spectrum.adobe.com/react-spectrum/getting-started.html) is an implementation of Adobe's design system. If you’re integrating with Adobe software or would like a complete component library to use in your project, look no further!
-* [React Aria](https://react-spectrum.adobe.com/react-aria/getting-started.html) is a collection of React Hooks that provides accessible UI primitives for use in your own design system. If you're building a component library for the web from scratch with your own styling, start here.
+* [React Aria](https://react-spectrum.adobe.com/react-aria/getting-started.html) is a collection of unstyled React components and hooks that helps you build accessible, high quality UI components for your own application or design system. If you're building a component library for the web from scratch with your own styling, start here.
 * [React Stately](https://react-spectrum.adobe.com/react-stately/getting-started.html) is a library of state management hooks for use in your component library. If you're using React Aria, you'll likely also use React Stately, but it can also be used independently (e.g. on other platforms like React Native).
 
 [Read more about our architecture](https://react-spectrum.adobe.com/architecture.html).

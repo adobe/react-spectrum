@@ -7,9 +7,10 @@ export const MyListBoxItem = (props: ListBoxItemProps) => {
   return (
     <ListBoxItem
       {...props}
-      className={({isFocused, isSelected}) => classNames(styles, 'item', {
+      className={({isFocused, isSelected, isHovered}) => classNames(styles, 'item', {
         focused: isFocused,
-        selected: isSelected
+        selected: isSelected,
+        hovered: isHovered
       })} />
   );
 };

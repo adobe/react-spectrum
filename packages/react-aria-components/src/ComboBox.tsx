@@ -16,6 +16,7 @@ import {CollectionDocumentContext, useCollectionDocument} from './Collection';
 import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
@@ -203,6 +204,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
             errorMessage: errorMessageProps
           }
         }],
+        [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
         [FieldErrorContext, validation]
       ]}>
       <div

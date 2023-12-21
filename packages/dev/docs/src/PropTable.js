@@ -117,6 +117,10 @@ function groupProps(props) {
       }
 
       if (props[propName]) {
+        if (propName === 'id' && props[propName].value.type !== 'string') {
+          continue;
+        }
+
         groupProps[propName] = props[propName];
         delete props[propName];
       }
