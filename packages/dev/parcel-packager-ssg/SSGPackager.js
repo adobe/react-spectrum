@@ -212,5 +212,5 @@ function getImageURL(image, bundleGraph, bundle) {
     return '';
   }
 
-  return resolved.name;
+  return urlJoin(resolved.target.publicUrl, resolved.name);
 }

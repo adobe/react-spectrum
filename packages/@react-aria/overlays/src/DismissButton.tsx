@@ -45,7 +45,8 @@ export function DismissButton(props: DismissButtonProps) {
       <button
         {...labels}
         tabIndex={-1}
-        onClick={onClick} />
+        onClick={onClick}
+        style={{width: 1, height: 1}} />
     </VisuallyHidden>
   );
 }

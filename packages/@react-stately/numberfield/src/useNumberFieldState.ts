@@ -90,6 +90,26 @@ export function useNumberFieldState(
     isReadOnly
   } = props;
 
+  if (value === null) {
+    value = NaN;
+  }
+
+  if (!isNaN(value)) {
+    if (!isNaN(step)) {
+      value = snapValueToStep(value, minValue, maxValue, step);
+    } else {
+      value = clamp(value, minValue, maxValue);
+    }
+  }
+
+  if (!isNaN(defaultValue)) {
+    if (!isNaN(step)) {
+      defaultValue = snapValueToStep(defaultValue, minValue, maxValue, step);
+    } else {
+      defaultValue = clamp(defaultValue, minValue, maxValue);
+    }
+  }
+
   let [numberValue, setNumberValue] = useControlledState<number>(value, isNaN(defaultValue) ? NaN : defaultValue, onChange);
   let [inputValue, setInputValue] = useState(() => isNaN(numberValue) ? '' : new NumberFormatter(locale, formatOptions).format(numberValue));
 
