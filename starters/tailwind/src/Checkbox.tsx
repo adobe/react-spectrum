@@ -28,14 +28,14 @@ const styles = tv({
   base: 'w-5 h-5 flex-shrink-0 rounded flex items-center justify-center border-2 transition',
   variants: {
     isSelected: {
-      false: 'bg-white border-gray-400 group-pressed:border-gray-500 dark:bg-zinc-900 dark:border-zinc-400 dark:group-pressed:border-zinc-300',
-      true: 'bg-gray-700 border-gray-700 group-pressed:border-gray-800 group-pressed:bg-gray-800 dark:bg-slate-300 dark:border-slate-300 dark:group-pressed:border-slate-200 dark:group-pressed:bg-slate-200 forced-colors:!bg-[Highlight] forced-colors:!border-[Highlight]'
+      false: 'bg-white dark:bg-zinc-900 border-[--color] [--color:theme(colors.gray.400)] dark:[--color:colors.zinc-400)] group-pressed:[--color:theme(colors.gray.500)] dark:group-pressed:[--color:theme(colors.zinc.300)]',
+      true: 'bg-[--color] border-[--color] [--color:theme(colors.gray.700)] group-pressed:[--color:theme(colors.gray.800)] dark:[--color:theme(colors.slate.300)] dark:group-pressed:[--color:theme(colors.slate.200)] forced-colors:![--color:Highlight]'
     },
     isInvalid: {
-      true: 'border-red-700 group-pressed:border-red-800 group-selected:bg-red-700'
+      true: '[--color:theme(colors.red.700)] dark:[--color:theme(colors.red.600)] forced-colors:![--color:Mark] group-pressed:[--color:theme(colors.red.800)] dark:group-pressed:[--color:theme(colors.red.700)]'
     },
     isDisabled: {
-      true: 'border-gray-200 forced-colors:border-[GrayText]'
+      true: '[--color:theme(colors.gray.200)] dark:[--color:theme(colors.zinc.700)] forced-colors:![--color:GrayText]'
     }
   }
 });

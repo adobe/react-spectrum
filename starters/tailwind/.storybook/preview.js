@@ -1,3 +1,4 @@
+import { themes } from "@storybook/theming";
 import '../src/index.css';
 
 /** @type { import('@storybook/react').Preview } */
@@ -9,6 +10,9 @@ const preview = {
         color: /(background|color)$/i,
       },
     },
+    docs: {
+      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? themes.dark : themes.light
+    }
   },
 };
 
