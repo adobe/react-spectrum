@@ -230,13 +230,33 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
     onResizeEnd: props.onResizeEnd
   }), [width, props.onResizeStart, props.onResize, props.onResizeEnd]);
 
+  // Ensure that the row containing focus is not obscured by a thead with position: sticky.
+  const onFocusCapture = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLElement;
+    const {scrollTop, scrollLeft} = e.currentTarget;
+    const row = target.tagName === 'TR' || target.getAttribute('role') === 'row' ? target : target.closest('tr, [role="row"]') as HTMLElement;
+    const thead = target.closest('table, [role="grid"], [role="table"]')?.querySelector('thead, [role="rowgroup"]') as HTMLElement;
+    const top = row.offsetTop - thead?.offsetHeight;
+    if (
+      scrollTop > top &&
+      getComputedStyle(thead).position === 'sticky'
+    ) {
+      e.currentTarget.scrollTo({
+        top,
+        left: scrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  }, []);
+
   return (
     <div
       {...filterDOMProps(props as any)}
       ref={objectRef}
       className={props.className || 'react-aria-ResizableTableContainer'}
       style={props.style}
-      onScroll={props.onScroll}>
+      onScroll={props.onScroll}
+      onFocusCapture={onFocusCapture}>
       <ResizableTableContainerContext.Provider value={ctx}>
         {props.children}
       </ResizableTableContainerContext.Provider>
