@@ -227,14 +227,14 @@ prop must be passed instead to identify it to assistive technology.
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="../react-stately/collections.html"
+  url="collections.html"
   title="Collections"
   description="Defining collections of items, async loading, and updating items over time.">
   <Collections />
 </ExampleCard>
 
 <ExampleCard
-  url="../react-stately/selection.html"
+  url="selection.html"
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
@@ -384,7 +384,7 @@ function MyItem(props: ListBoxItemProps) {
 
 ## Content
 
-`Select` follows the [Collection Components API](../react-stately/collections.html), accepting both static and dynamic collections.
+`Select` follows the [Collection Components API](collections.html), accepting both static and dynamic collections.
 The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
 as shown below, can be used when the options come from an external data source such as an API call, or update over time.
 
@@ -418,7 +418,7 @@ function Example() {
 
 Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` prop of an item.
 When `Select` is used with a dynamic collection as described above, the id of each item is derived from the data.
-See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+See the [Selection](selection.html) guide for more details.
 
 ```tsx example
 import type {Key} from 'react-aria-components';
@@ -697,7 +697,7 @@ A Select can be fully disabled using the `isDisabled` prop.
 
 `Select` supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `id` prop passed to the `ListBoxItem` component, or automatically derived from the values passed
-to the `items` prop. See [Collections](../react-stately/collections.html) for more details.
+to the `items` prop. See the [Collections](collections.html) guide for more details.
 
 Disabled items are not focusable, selectable, or keyboard navigable. The `isDisabled` property returned by
 `useOption` can be used to style the item appropriately.
