@@ -583,7 +583,7 @@ function renderPopover(props, withMargin = true) {
   let {width = 'auto', buttonHeight, buttonWidth, ...otherProps} = props;
 
   return (
-    <div style={{display: 'flex', width, margin: withMargin && '100px 0'}}>
+    <div style={{display: 'flex', width, margin: withMargin ? '100px 0' : undefined}}>
       <DialogTrigger {...otherProps} onOpenChange={action('open change')}>
         <ActionButton height={buttonHeight} width={buttonWidth}>Trigger</ActionButton>
         <Dialog>
@@ -599,7 +599,7 @@ function renderPopover(props, withMargin = true) {
 
 let TriggerWithRef = (props) => {
   let {buttonHeight, buttonWidth, ...otherProps} = props;
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   return (
     <div style={{display: 'flex'}}>
       <DialogTrigger {...otherProps} targetRef={ref} onOpenChange={action('open change')}>
