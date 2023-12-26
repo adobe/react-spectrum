@@ -94,8 +94,8 @@ export function useNumberFieldState(
     value = NaN;
   }
 
-  if (!isNaN(value)) {
-    if (!isNaN(step)) {
+  if (value !== undefined && !isNaN(value)) {
+    if (step !== undefined && !isNaN(step)) {
       value = snapValueToStep(value, minValue, maxValue, step);
     } else {
       value = clamp(value, minValue, maxValue);
@@ -103,7 +103,7 @@ export function useNumberFieldState(
   }
 
   if (!isNaN(defaultValue)) {
-    if (!isNaN(step)) {
+    if (step !== undefined && !isNaN(step)) {
       defaultValue = snapValueToStep(defaultValue, minValue, maxValue, step);
     } else {
       defaultValue = clamp(defaultValue, minValue, maxValue);
