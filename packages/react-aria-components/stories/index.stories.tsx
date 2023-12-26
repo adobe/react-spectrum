@@ -11,13 +11,12 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Table, TableBody, TableHeader, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, isTextDropItem, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import {MyListBoxItem} from './utils';
-import React, {useRef, useState} from 'react';
-import {RouterProvider} from '@react-aria/utils';
+import React, {useRef} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
@@ -466,68 +465,6 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
-export const TabsExample = () => {
-  let [url, setUrl] = useState('/FoR');
-
-  return (
-    <RouterProvider navigate={setUrl}>
-      <Tabs selectedKey={url}>
-        <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
-          <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
-          <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>
-          <CustomTab id="/Emp" href="/Emp">Empire</CustomTab>
-        </TabList>
-        <TabPanel id="/FoR">
-          Arma virumque cano, Troiae qui primus ab oris.
-        </TabPanel>
-        <TabPanel id="/MaR">
-          Senatus Populusque Romanus.
-        </TabPanel>
-        <TabPanel id="/Emp">
-          Alea jacta est.
-        </TabPanel>
-      </Tabs>
-    </RouterProvider>
-  );
-};
-
-// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
-export const TabsRenderProps = () => {
-  const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
-      <Button onPress={() => setTabOrientation((current) => current === 'vertical' ? 'horizontal' : 'vertical')}>
-        Change Orientation
-      </Button>
-      <Tabs orientation={tabOrientation}>
-        {({orientation}) => (
-          <div>
-            <div style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'row' : 'column', gap: 8}}>
-              <TabList
-                aria-label="History of Ancient Rome"
-                style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'column' : 'row', gap: 8}}>
-                <CustomTab id="FoR">Founding of Rome</CustomTab>
-                <CustomTab id="MaR">Monarchy and Republic</CustomTab>
-                <CustomTab id="Emp">Empire</CustomTab>
-              </TabList>
-              <TabPanel id="FoR">
-                Arma virumque cano, Troiae qui primus ab oris.
-              </TabPanel>
-              <TabPanel id="MaR">
-                Senatus Populusque Romanus.
-              </TabPanel>
-              <TabPanel id="Emp">
-                Alea jacta est.
-              </TabPanel>
-            </div>
-          </div>
-        )}
-      </Tabs>
-    </div>
-  );
-};
-
 const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
   let list = useListData({initialItems});
 
@@ -761,16 +698,6 @@ function CustomThumb({index, children}) {
       })}>
       {children}
     </SliderThumb>
-  );
-}
-
-function CustomTab(props) {
-  return (
-    <Tab
-      {...props}
-      style={({isSelected}) => ({
-        borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
-      })} />
   );
 }
 
