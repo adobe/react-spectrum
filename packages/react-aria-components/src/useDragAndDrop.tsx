@@ -88,7 +88,9 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    */
   renderDropIndicator?: (target: DropTarget) => JSX.Element,
   /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
-  dropTargetDelegate?: DropTargetDelegate
+  dropTargetDelegate?: DropTargetDelegate,
+  /** Whether the drag and drop events should be disabled. */
+  isDisabled?: boolean
 }
 
 /**
@@ -105,19 +107,26 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       getItems,
       renderDragPreview,
       renderDropIndicator,
-      dropTargetDelegate
-     } = options;
+      dropTargetDelegate,
+      isDisabled
+    } = options;
+
+    if (isDisabled) {
+      options.acceptedDragTypes = [];
+    }
 
     let isDraggable = !!getItems;
     let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
 
-    let hooks = {} as DragHooks & DropHooks;
+    let hooks = {} as DragAndDropHooks;
     if (isDraggable) {
       hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOpts) {
         return useDraggableCollectionState({...props, ...options} as DraggableCollectionStateOptions);
       };
       hooks.useDraggableCollection = useDraggableCollection;
-      hooks.useDraggableItem = useDraggableItem;
+      hooks.useDraggableItem = function useDraggableItemOverride(props: DraggableItemProps, state: DraggableCollectionState) {
+        return useDraggableItem({...props, ...options}, state);
+      };
       hooks.DragPreview = DragPreview;
       hooks.renderDragPreview = renderDragPreview;
     }
@@ -126,7 +135,9 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(props: DroppableCollectionStateOptions) {
         return useDroppableCollectionState({...props, ...options});
       },
-      hooks.useDroppableItem = useDroppableItem;
+      hooks.useDroppableItem = function useDroppableItemOverride(props: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) {
+        return useDroppableItem({...props, ...options}, state, ref);
+      };
       hooks.useDroppableCollection = function useDroppableCollectionOverride(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) {
         return useDroppableCollection({...props, ...options}, state, ref);
       };

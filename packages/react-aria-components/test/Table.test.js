@@ -781,6 +781,15 @@ describe('Table', () => {
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);
     });
+
+    it('should support disabled drag and drop', async () => {
+      let {queryAllByRole} = render(
+        <DraggableTable isDisabled />
+      );
+    
+      let buttons = await queryAllByRole('button');
+      expect(buttons.length).toBe(0);
+    });
   });
 
   describe('column resizing', () => {

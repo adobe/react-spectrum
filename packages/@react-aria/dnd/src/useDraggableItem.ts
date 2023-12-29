@@ -35,7 +35,9 @@ export interface DraggableItemProps {
    * start dragging with a keyboard, and long press is disabled until selection mode is entered.
    * This should be passed from the associated collection item hook (e.g. useOption, useGridListItem, etc.).
    */
-  hasAction?: boolean
+  hasAction?: boolean,
+  /** Whether the drag events should be disabled. */
+  isDisabled?: boolean
 }
 
 export interface DraggableItemResult {
@@ -65,7 +67,7 @@ const MESSAGES = {
  */
 export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
-  let isDisabled = state.selectionManager.isDisabled(props.key);
+  let isDisabled = props.isDisabled || state.selectionManager.isDisabled(props.key);
   let {dragProps, dragButtonProps} = useDrag({
     getItems() {
       return state.getItems(props.key);
