@@ -94,8 +94,8 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
   let item = state.collection.getItem(props.key);
   let numKeysForDrag = state.getKeysForDrag(props.key).size;
   let isSelected = numKeysForDrag > 1 && state.selectionManager.isSelected(props.key);
-  let dragButtonLabel: string | undefined = undefined;
-  let description: string | undefined = undefined;
+  let dragButtonLabel: string | undefined;
+  let description: string | undefined;
 
   // Override description to include selected item count.
   let modality = useDragModality();
