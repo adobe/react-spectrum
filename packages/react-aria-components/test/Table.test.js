@@ -786,9 +786,20 @@ describe('Table', () => {
       let {queryAllByRole} = render(
         <DraggableTable isDisabled />
       );
-    
+
       let buttons = await queryAllByRole('button');
-      expect(buttons.length).toBe(0);
+      buttons.forEach(button => {
+        expect(button).not.toHaveAttribute('aria-label', expect.stringContaining('Drag'));
+      });
+
+      let table = screen.getByRole('grid');
+      expect(table).not.toHaveAttribute('data-allows-dragging', 'true');
+      expect(table).not.toHaveAttribute('draggable', 'true');
+
+      let rows = screen.getAllByRole('row');
+      rows.forEach(row => {
+        expect(row).not.toHaveAttribute('draggable', 'true');
+      });
     });
   });
 

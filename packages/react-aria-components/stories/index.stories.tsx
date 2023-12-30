@@ -618,7 +618,7 @@ function DndTable(props: DndTableProps) {
       }
     }
   });
-  
+
   return (
     <Table
       aria-label={props['aria-label']}

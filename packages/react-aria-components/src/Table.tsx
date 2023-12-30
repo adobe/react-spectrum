@@ -306,8 +306,8 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
 
   let {dragAndDropHooks} = props;
   let selectionManager = state.selectionManager;
-  let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
-  let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
+  let isListDraggable = dragAndDropHooks?.isDisabled !== true && !!dragAndDropHooks?.useDraggableCollectionState;
+  let isListDroppable = dragAndDropHooks?.isDisabled !== true && !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
   useEffect(() => {
@@ -1167,7 +1167,12 @@ function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
-  let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
+
+  if (!dragAndDropHooks?.useDropIndicator) {
+    return null;
+  }
+
+  let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks.useDropIndicator(
     props,
     dropState!,
     buttonRef
