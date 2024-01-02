@@ -16,7 +16,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx ."
   },
   "devDependencies": {
-    "@adobe/spectrum-tokens": "^13.0.0-beta.4",
+    "@adobe/spectrum-tokens": "^13.0.0-beta.6",
     "@adobe/react-spectrum": "latest",
     "@babel/eslint-parser": "^7.19.1",
     "@babel/preset-react": "^7.23.3",
