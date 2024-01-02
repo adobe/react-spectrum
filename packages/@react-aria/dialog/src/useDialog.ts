@@ -31,7 +31,7 @@ export interface DialogAria {
  */
 export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElement>): DialogAria {
   let {role = 'dialog'} = props;
-  let titleId = useSlotId();
+  let titleId: string | undefined = useSlotId();
   titleId = props['aria-label'] ? undefined : titleId;
 
   let isRefocusing = useRef(false);
@@ -47,8 +47,10 @@ export function useDialog(props: AriaDialogProps, ref: RefObject<FocusableElemen
       let timeout = setTimeout(() => {
         if (document.activeElement === ref.current) {
           isRefocusing.current = true;
-          ref.current.blur();
-          focusSafely(ref.current);
+          if (ref.current) {
+            ref.current.blur();
+            focusSafely(ref.current);
+          }
           isRefocusing.current = false;
         }
       }, 500);

@@ -11,91 +11,18 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import {MyListBoxItem, MyMenuItem} from './utils';
-import React, {useRef, useState} from 'react';
-import {RouterProvider} from '@react-aria/utils';
+import React, {useRef} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components'
 };
-
-export const ListBoxExample = (args) => (
-  <ListBox className={styles.menu} {...args} aria-label="test listbox">
-    <MyListBoxItem>Foo</MyListBoxItem>
-    <MyListBoxItem>Bar</MyListBoxItem>
-    <MyListBoxItem>Baz</MyListBoxItem>
-    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-  </ListBox>
-);
-
-ListBoxExample.story = {
-  args: {
-    selectionMode: 'none',
-    selectionBehavior: 'toggle',
-    shouldFocusOnHover: false
-  },
-  argTypes: {
-    selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
-    },
-    selectionBehavior: {
-      control: {
-        type: 'radio',
-        options: ['toggle', 'replace']
-      }
-    }
-  },
-  parameters: {
-    description: {
-      data: 'Hover styles should have higher specificity than focus style for testing purposes. Hover style should not be applied on keyboard focus even if shouldFocusOnHover is true'
-    }
-  }
-};
-
-// Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
-// also has a aXe landmark error, not sure what it means
-export const ListBoxSections = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
-    <Section className={styles.group}>
-      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-      <MyListBoxItem>Foo</MyListBoxItem>
-      <MyListBoxItem>Bar</MyListBoxItem>
-      <MyListBoxItem>Baz</MyListBoxItem>
-    </Section>
-    <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-    <Section className={styles.group} aria-label="Section 2">
-      <MyListBoxItem>Foo</MyListBoxItem>
-      <MyListBoxItem>Bar</MyListBoxItem>
-      <MyListBoxItem>Baz</MyListBoxItem>
-    </Section>
-  </ListBox>
-);
-
-export const ListBoxComplex = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
-    <MyListBoxItem>
-      <Text slot="label">Item 1</Text>
-      <Text slot="description">Description</Text>
-    </MyListBoxItem>
-    <MyListBoxItem>
-      <Text slot="label">Item 2</Text>
-      <Text slot="description">Description</Text>
-    </MyListBoxItem>
-    <MyListBoxItem>
-      <Text slot="label">Item 3</Text>
-      <Text slot="description">Description</Text>
-    </MyListBoxItem>
-  </ListBox>
-);
 
 export const TagGroupExample = (props) => (
   <TagGroup {...props}>
@@ -538,68 +465,6 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
-export const TabsExample = () => {
-  let [url, setUrl] = useState('/FoR');
-
-  return (
-    <RouterProvider navigate={setUrl}>
-      <Tabs selectedKey={url}>
-        <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
-          <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
-          <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>
-          <CustomTab id="/Emp" href="/Emp">Empire</CustomTab>
-        </TabList>
-        <TabPanel id="/FoR">
-          Arma virumque cano, Troiae qui primus ab oris.
-        </TabPanel>
-        <TabPanel id="/MaR">
-          Senatus Populusque Romanus.
-        </TabPanel>
-        <TabPanel id="/Emp">
-          Alea jacta est.
-        </TabPanel>
-      </Tabs>
-    </RouterProvider>
-  );
-};
-
-// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
-export const TabsRenderProps = () => {
-  const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
-      <Button onPress={() => setTabOrientation((current) => current === 'vertical' ? 'horizontal' : 'vertical')}>
-        Change Orientation
-      </Button>
-      <Tabs orientation={tabOrientation}>
-        {({orientation}) => (
-          <div>
-            <div style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'row' : 'column', gap: 8}}>
-              <TabList
-                aria-label="History of Ancient Rome"
-                style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'column' : 'row', gap: 8}}>
-                <CustomTab id="FoR">Founding of Rome</CustomTab>
-                <CustomTab id="MaR">Monarchy and Republic</CustomTab>
-                <CustomTab id="Emp">Empire</CustomTab>
-              </TabList>
-              <TabPanel id="FoR">
-                Arma virumque cano, Troiae qui primus ab oris.
-              </TabPanel>
-              <TabPanel id="MaR">
-                Senatus Populusque Romanus.
-              </TabPanel>
-              <TabPanel id="Emp">
-                Alea jacta est.
-              </TabPanel>
-            </div>
-          </div>
-        )}
-      </Tabs>
-    </div>
-  );
-};
-
 function CustomThumb({index, children}) {
   return (
     <SliderThumb
@@ -616,16 +481,6 @@ function CustomThumb({index, children}) {
       })}>
       {children}
     </SliderThumb>
-  );
-}
-
-function CustomTab(props) {
-  return (
-    <Tab
-      {...props}
-      style={({isSelected}) => ({
-        borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
-      })} />
   );
 }
 
