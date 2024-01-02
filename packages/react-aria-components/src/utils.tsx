@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {Context, createContext, CSSProperties, ForwardedRef, ReactNode, RefCallback, RefObject, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, RefObject, UIEvent, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from 'react-aria';
 
@@ -53,13 +53,13 @@ interface ProviderProps<A, B, C, D, E, F, G, H, I, J, K> {
   children: ReactNode
 }
 
-export function Provider<A, B, C, D, E, F, G, H, I, J, K>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J, K>): React.JSX.Element {
+export function Provider<A, B, C, D, E, F, G, H, I, J, K>({values, children}: ProviderProps<A, B, C, D, E, F, G, H, I, J, K>): JSX.Element {
   for (let [Context, value] of values) {
     // @ts-ignore
     children = <Context.Provider value={value}>{children}</Context.Provider>;
   }
 
-  return children as React.JSX.Element;
+  return children as JSX.Element;
 }
 
 export interface StyleProps {
@@ -72,6 +72,11 @@ export interface StyleProps {
 export interface DOMProps extends StyleProps {
   /** The children of the component. */
   children?: ReactNode
+}
+
+export interface ScrollableProps<T extends Element> {
+  /** Handler that is called when a user scrolls. See [MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element/scroll_event). */
+  onScroll?: (e: UIEvent<T>) => void
 }
 
 export interface StyleRenderProps<T> {
@@ -134,6 +139,18 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
       'data-rac': ''
     };
   }, [className, style, children, defaultClassName, defaultChildren, values]);
+}
+
+/**
+ * A helper function that accepts a user-provided render prop value (either a static value or a function),
+ * and combines it with another value to create a final result.
+ */
+export function composeRenderProps<T, U, V extends T>(
+  // https://stackoverflow.com/questions/60898079/typescript-type-t-or-function-t-usage
+  value: T extends any ? (T | ((renderProps: U) => V)) : never,
+  wrap: (prevValue: T, renderProps: U) => V
+): (renderProps: U) => V {
+  return (renderProps) => wrap(typeof value === 'function' ? value(renderProps) : value, renderProps);
 }
 
 export type WithRef<T, E> = T & {ref?: ForwardedRef<E>};

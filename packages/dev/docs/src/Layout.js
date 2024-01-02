@@ -16,7 +16,7 @@ import clsx from 'clsx';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
-import heroImageAria from 'url:../pages/assets/ReactAria_976x445_2x.png';
+import heroImageAria from 'url:../pages/assets/ReactAriaOpenGraph.webp';
 import heroImageHome from 'url:../pages/assets/ReactSpectrumHome_976x445_2x.png';
 import heroImageInternationalized from 'url:../pages/assets/internationalized@2x.png?as=webp&width=1952';
 import heroImageSpectrum from 'url:../pages/assets/ReactSpectrum_976x445_2x.png';
@@ -39,7 +39,9 @@ import {VersionBadge} from './VersionBadge';
 
 const ENABLE_PAGE_TYPES = true;
 const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
-const TLD = 'react-spectrum.adobe.com';
+const TLD = process.env.DOCS_ENV === 'production'
+  ? 'react-spectrum.adobe.com'
+  : 'reactspectrum.blob.core.windows.net';
 const HERO = {
   'react-spectrum': heroImageSpectrum,
   'react-aria': heroImageAria,
@@ -122,7 +124,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
   let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
-  let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
+  let heroUrl = `https://${TLD}${currentPage.image || (publicUrl + path.basename(hero))}`;
   let githubLink = pathToPage;
   if (githubLink.startsWith('/tmp/')) {
     githubLink = githubLink.slice(5);

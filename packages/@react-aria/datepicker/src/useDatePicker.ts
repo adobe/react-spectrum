@@ -55,7 +55,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
   let buttonId = useId();
   let dialogId = useId();
   let fieldId = useId();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
 
   let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({

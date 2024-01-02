@@ -41,7 +41,7 @@ function Label(props: SpectrumLabelProps, ref: DOMRef<HTMLLabelElement>) {
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/label');
   let necessityLabel = isRequired ? stringFormatter.format('(required)') : stringFormatter.format('(optional)');
   let icon = (
     <Asterisk

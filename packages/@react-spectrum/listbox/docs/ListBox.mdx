@@ -21,6 +21,7 @@ import Book from '@spectrum-icons/workflow/Book';
 import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Text} from '@react-spectrum/text';
+import {Avatar} from "@react-spectrum/avatar";
 ```
 
 ---
@@ -267,7 +268,9 @@ function DynamicExample() {
 ```
 
 ## Complex Items
-Items within ListBox also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+Items within ListBox also allow for additional content used to better communicate options. Icons, avatars, and descriptions can be added to the `children` of `Item` as shown in the example below.
+If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [accessibility](Avatar.html#accessibility) section for more information on how to label these elements.
 
 ```tsx example
 <ListBox width="size-2400" aria-label="Options" selectionMode="single">
@@ -290,6 +293,32 @@ Items within ListBox also allow for additional content used to better communicat
   </Section>
 </ListBox>
 ```
+
+### With avatars
+
+```tsx example
+<ListBox width="size-2400" aria-label="Options" selectionMode="single">
+  <Section title="Users">
+    <Item textValue="User 1">
+      <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+      <Text>User 1</Text>
+    </Item>
+    <Item textValue="User 2">
+      <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+      <Text>User 2</Text>
+    </Item>
+    <Item textValue="User 3">
+      <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+      <Text>User 3</Text>
+    </Item>
+    <Item textValue="User 4">
+      <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+      <Text>User 4</Text>
+    </Item>
+  </Section>
+</ListBox>
+```
+
 ## Asynchronous loading
 
 ListBox supports loading data asynchronously, and will display a progress circle when the `isLoading` prop is set.

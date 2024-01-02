@@ -76,12 +76,7 @@ const GROUPS = {
 };
 
 export function PropTable({component, links, style}) {
-  let ungrouped, groups;
-  if (!component.props) {
-    [ungrouped, groups] = groupProps(component.parameters[0].value.properties);
-  } else {
-    [ungrouped, groups] = groupProps(component.props.properties);
-  }
+  let [ungrouped, groups] = groupProps(component.props.properties);
 
   return (
     <div style={style}>
@@ -122,6 +117,10 @@ function groupProps(props) {
       }
 
       if (props[propName]) {
+        if (propName === 'id' && props[propName].value.type !== 'string') {
+          continue;
+        }
+
         groupProps[propName] = props[propName];
         delete props[propName];
       }

@@ -473,8 +473,60 @@ export const WithTooltip = () => (
 );
 
 WithTooltip.story = {
-  name: 'withTooltip'
+  name: 'with tooltip inside'
 };
+
+export const WithTooltipTrigger = () => (
+  <Flex direction="row" gap={10}>
+    <DialogTrigger>
+      <ActionButton>DialogTrigger only</ActionButton>
+      {close => <CustomDialog close={close} />}
+    </DialogTrigger>
+
+    <TooltipTrigger>
+      <ActionButton>TooltipTrigger only</ActionButton>
+      <Tooltip>This is a tooltip</Tooltip>
+    </TooltipTrigger>
+
+    <TooltipTrigger>
+      <ActionButton isDisabled>TooltipTrigger only</ActionButton>
+      <Tooltip>This is a tooltip</Tooltip>
+    </TooltipTrigger>
+
+    <DialogTrigger>
+      <TooltipTrigger>
+        <ActionButton>DialogTrigger + TooltipTrigger</ActionButton>
+        <Tooltip>This is a tooltip</Tooltip>
+      </TooltipTrigger>
+      {close => <CustomDialog close={close} />}
+    </DialogTrigger>
+
+    <DialogTrigger>
+      <TooltipTrigger>
+        <ActionButton isDisabled>DialogTrigger + TooltipTrigger</ActionButton>
+        <Tooltip>This is a tooltip</Tooltip>
+      </TooltipTrigger>
+      {close => <CustomDialog close={close} />}
+    </DialogTrigger>
+  </Flex>
+);
+
+WithTooltipTrigger.story = {
+  name: 'with tooltip wrapper'
+};
+
+function CustomDialog({close}) {
+  return (
+    <Dialog>
+      <Content>
+        Dialog content
+      </Content>
+      <ButtonGroup>
+        <Button variant="cta" onPress={close}>Close</Button>
+      </ButtonGroup>
+    </Dialog>
+  );
+}
 
 export const WithTranslations = () => <TranslateDialog />;
 
@@ -531,7 +583,7 @@ function renderPopover(props, withMargin = true) {
   let {width = 'auto', buttonHeight, buttonWidth, ...otherProps} = props;
 
   return (
-    <div style={{display: 'flex', width, margin: withMargin && '100px 0'}}>
+    <div style={{display: 'flex', width, margin: withMargin ? '100px 0' : undefined}}>
       <DialogTrigger {...otherProps} onOpenChange={action('open change')}>
         <ActionButton height={buttonHeight} width={buttonWidth}>Trigger</ActionButton>
         <Dialog>
@@ -547,7 +599,7 @@ function renderPopover(props, withMargin = true) {
 
 let TriggerWithRef = (props) => {
   let {buttonHeight, buttonWidth, ...otherProps} = props;
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   return (
     <div style={{display: 'flex'}}>
       <DialogTrigger {...otherProps} targetRef={ref} onOpenChange={action('open change')}>

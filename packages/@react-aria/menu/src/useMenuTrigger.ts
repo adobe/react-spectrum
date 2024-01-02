@@ -43,6 +43,7 @@ export interface MenuTriggerAria<T> {
  * Provides the behavior and accessibility implementation for a menu trigger.
  * @param props - Props for the menu trigger.
  * @param state - State for the menu trigger.
+ * @param ref - Ref to the HTML element trigger for the menu.
  */
 export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTriggerState, ref: RefObject<Element>): MenuTriggerAria<T> {
   let {
@@ -95,7 +96,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
     }
   };
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/menu');
   let {longPressProps} = useLongPress({
     isDisabled: isDisabled || trigger !== 'longPress',
     accessibilityDescription: stringFormatter.format('longPressMessage'),
