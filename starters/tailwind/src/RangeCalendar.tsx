@@ -10,6 +10,7 @@ import {
 import { CalendarGridHeader, CalendarHeader } from './Calendar';
 import React from 'react';
 import {tv} from 'tailwind-variants';
+import {focusRing} from './utils';
 
 export interface RangeCalendarProps<T extends DateValue>
   extends AriaRangeCalendarProps<T> {
@@ -17,14 +18,16 @@ export interface RangeCalendarProps<T extends DateValue>
 }
 
 const cell = tv({
-  base: 'w-full h-full flex items-center justify-center rounded-full group-focus-visible:outline outline-2 outline-blue-600 outline-offset-2',
+  extend: focusRing,
+  base: 'w-full h-full flex items-center justify-center rounded-full forced-color-adjust-none text-zinc-900 dark:text-zinc-200',
   variants: {
-    isSelected: {
-      false: 'group-hover:bg-gray-100 group-pressed:bg-gray-200',
-      true: 'group-hover:bg-blue-200 group-pressed:bg-blue-300'
+    selectionState: {
+      'none': 'group-hover:bg-gray-100 dark:group-hover:bg-zinc-700 group-pressed:bg-gray-200 dark:group-pressed:bg-zinc-600',
+      'middle': 'group-hover:bg-blue-200 dark:group-hover:bg-blue-900 group-pressed:bg-blue-300 dark:group-pressed:bg-blue-800',
+      'cap': 'bg-blue-600 forced-colors:bg-[Highlight] text-white forced-colors:text-[HighlightText]'
     },
-    isSelectionCap: {
-      true: 'bg-blue-600 group-hover:bg-blue-600 group-pressed:bg-blue-600 text-white'
+    isDisabled: {
+      true: 'text-gray-300 dark:text-zinc-600 forced-colors:!text-[GrayText]'
     }
   }
 });
@@ -38,13 +41,14 @@ export function RangeCalendar<T extends DateValue>(
       <CalendarGrid className="[&_td]:px-0">
         <CalendarGridHeader />
         <CalendarGridBody>
-          {(date) => <CalendarCell date={date} className="group w-9 h-9 text-sm outline-none cursor-default outside-month:text-gray-300 selected:bg-blue-100 [td:first-child_&]:rounded-s-full selection-start:rounded-s-full [td:last-child_&]:rounded-e-full selection-end:rounded-e-full">
-            {({formattedDate, isSelected, isSelectionStart, isSelectionEnd}) =>
+          {(date) => <CalendarCell date={date} className="group w-9 h-9 text-sm outline-none cursor-default outside-month:text-gray-300 selected:bg-blue-100 dark:selected:bg-blue-700/30 [td:first-child_&]:rounded-s-full selection-start:rounded-s-full [td:last-child_&]:rounded-e-full selection-end:rounded-e-full">
+            {({formattedDate, isSelected, isSelectionStart, isSelectionEnd, isFocusVisible, isDisabled}) =>
               <span
                 className={cell({
-                  isSelected: isSelected || false,
-                  isSelectionCap: isSelectionStart || isSelectionEnd})
-                }>
+                  selectionState: (isSelectionStart || isSelectionEnd) ? 'cap' : isSelected ? 'middle' : 'none',
+                  isDisabled,
+                  isFocusVisible
+                })}>
                 {formattedDate}
               </span>
             }

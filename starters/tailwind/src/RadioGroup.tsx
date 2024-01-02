@@ -2,6 +2,7 @@ import {Label, FieldError, Description} from './Field';
 import {RadioGroup as RACRadioGroup, Radio as RACRadio, RadioGroupProps as RACRadioGroupProps, RadioProps, ValidationResult} from 'react-aria-components';
 import React, {ReactNode} from 'react';
 import {tv} from 'tailwind-variants';
+import {focusRing} from './utils';
 
 export interface RadioGroupProps extends Omit<RACRadioGroupProps, 'children'> {
   label?: string,
@@ -22,7 +23,8 @@ export function RadioGroup(props: RadioGroupProps) {
 }
 
 const styles = tv({
-  base: 'w-5 h-5 rounded-full border-2 bg-white transition-all group-focus-visible:outline outline-2 outline-blue-600 outline-offset-2',
+  extend: focusRing,
+  base: 'w-5 h-5 rounded-full border-2 bg-white transition-all',
   variants: {
     isSelected: {
       false: 'border-gray-400 group-pressed:border-gray-500',
@@ -40,8 +42,8 @@ const styles = tv({
 export function Radio(props: RadioProps) {
   return (
     <RACRadio {...props} className="flex gap-2 items-center group text-gray-800 disabled:text-gray-300 text-sm transition">
-      {({isSelected, isInvalid, isDisabled}) => <>
-        <div className={styles({isSelected, isInvalid, isDisabled})} />
+      {renderProps => <>
+        <div className={styles(renderProps)} />
         {props.children}
       </>}
     </RACRadio>

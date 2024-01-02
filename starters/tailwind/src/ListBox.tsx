@@ -50,10 +50,23 @@ export function ListBoxItem(props: ListBoxItemProps) {
   );
 }
 
+export const dropdownItemStyles = tv({
+  base: 'group flex items-center gap-4 cursor-default select-none py-2 pl-3 pr-1 rounded-lg outline outline-0 text-sm forced-color-adjust-none',
+  variants: {
+    isDisabled: {
+      false: 'text-gray-900 dark:text-zinc-100',
+      true: 'text-gray-300 dark:text-zinc-600 forced-colors:!text-[GrayText]'
+    },
+    isFocused: {
+      true: 'bg-blue-600 text-white forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]'
+    }
+  }
+});
+
 export function DropdownItem(props: ListBoxItemProps) {
   let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
-    <AriaListBoxItem {...props} textValue={textValue} className="group flex items-center gap-4 cursor-default select-none py-2 pl-3 pr-1 rounded-lg outline outline-0 text-gray-900 dark:text-zinc-100 disabled:text-gray-300 dark:disabled:text-zinc-600 forced-colors:disabled:!text-[GrayText] text-sm focus:bg-blue-600 focus:text-white forced-color-adjust-none forced-colors:focus:bg-[Highlight] forced-colors:focus:text-[HighlightText]">
+    <AriaListBoxItem {...props} textValue={textValue} className={dropdownItemStyles}>
       {composeRenderProps(props.children, (children, {isSelected}) => <>
         <span className="flex-1 flex items-center gap-2 truncate font-normal group-selected:font-semibold">
           {children}

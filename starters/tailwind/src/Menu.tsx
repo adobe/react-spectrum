@@ -10,6 +10,7 @@ import {
 import { Popover, PopoverProps } from './Popover';
 import { Check } from 'lucide-react';
 import React from 'react';
+import { dropdownItemStyles } from './ListBox';
 
 interface MenuProps<T> extends AriaMenuProps<T> {
   placement?: PopoverProps['placement']
@@ -25,7 +26,7 @@ export function Menu<T extends object>(props: MenuProps<T>) {
 
 export function MenuItem(props: MenuItemProps) {
   return (
-    <AriaMenuItem {...props} className="group flex items-center gap-2 cursor-default select-none py-2 pl-3 pr-1 rounded-lg outline outline-0 text-gray-900 dark:text-zinc-100 disabled:text-gray-300 dark:disabled:text-zinc-600 text-sm focus:bg-blue-600 focus:text-white forced-color-adjust-none forced-colors:focus:bg-[Highlight] forced-colors:focus:text-[HighlightText]">
+    <AriaMenuItem {...props} className={dropdownItemStyles}>
       {composeRenderProps(props.children, (children, {selectionMode, isSelected}) => <>
         {selectionMode !== 'none' && (
           <span className="w-4 flex items-center">
