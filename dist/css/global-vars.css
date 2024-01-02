@@ -14,7 +14,6 @@
   --spectrum-neutral-background-color-selected-key-focus: var(--spectrum-gray-900);
   --spectrum-neutral-subdued-content-color-selected: var(--spectrum-neutral-subdued-content-color-down);
   --spectrum-accent-content-color-selected: var(--spectrum-accent-content-color-down);
-  --spectrum-notice-background-color-default: var(--spectrum-notice-color-800);
   --spectrum-disabled-background-color: var(--spectrum-gray-100);
   --spectrum-disabled-static-white-background-color: var(--spectrum-transparent-white-100);
   --spectrum-disabled-static-black-background-color: var(--spectrum-transparent-black-100);
