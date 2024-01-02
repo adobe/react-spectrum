@@ -389,38 +389,6 @@ export const TooltipExample = () => (
   </TooltipTrigger>
 );
 
-export const PopoverExample = () => (
-  <DialogTrigger>
-    <Button>Open popover</Button>
-    <Popover
-      placement="bottom start"
-      style={{
-        background: 'Canvas',
-        color: 'CanvasText',
-        border: '1px solid gray',
-        padding: 30,
-        zIndex: 5
-      }}>
-      <Dialog>
-        {({close}) => (
-          <form style={{display: 'flex', flexDirection: 'column'}}>
-            <Heading slot="title">Sign up</Heading>
-            <label>
-              First Name: <input placeholder="John" />
-            </label>
-            <label>
-              Last Name: <input placeholder="Smith" />
-            </label>
-            <Button onPress={close} style={{marginTop: 10}}>
-              Submit
-            </Button>
-          </form>
-        )}
-      </Dialog>
-    </Popover>
-  </DialogTrigger>
-);
-
 export const ModalExample = () => (
   <DialogTrigger>
     <Button>Open modal</Button>
