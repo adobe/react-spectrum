@@ -74,7 +74,7 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     menuTrigger = 'input',
     shouldFlip = true,
     direction = 'bottom',
-    align = 'end',
+    align = 'start',
     isQuiet,
     loadingState,
     onLoadMore,

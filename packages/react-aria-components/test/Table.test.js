@@ -124,9 +124,9 @@ let DraggableTable = (props) => {
 };
 
 let columns = [
-  {name: 'Name', key: 'name', isRowHeader: true},
-  {name: 'Type', key: 'type'},
-  {name: 'Date Modified', key: 'date'}
+  {name: 'Name', id: 'name', isRowHeader: true},
+  {name: 'Type', id: 'type'},
+  {name: 'Date Modified', id: 'date'}
 ];
 
 let rows = [
@@ -148,7 +148,7 @@ let DynamicTable = ({tableProps, tableHeaderProps, tableBodyProps, rowProps}) =>
     <TableBody items={rows} {...tableBodyProps}>
       {item => (
         <MyRow columns={columns} {...rowProps}>
-          {column => <Cell>{item[column.key]}</Cell>}
+          {column => <Cell>{item[column.id]}</Cell>}
         </MyRow>
       )}
     </TableBody>
@@ -594,7 +594,7 @@ describe('Table', () => {
                 renderRow(column);
                 return (
                   <Cell>
-                    {item[column.key]}
+                    {item[column.id]}
                   </Cell>
                 );
               }}
@@ -648,6 +648,28 @@ describe('Table', () => {
     expect(cells[0]).toHaveTextContent('Foo');
     act(() => cells[0].focus());
     expect(cells[0]).toHaveTextContent('Foo (focused)');
+  });
+
+  it('should support updating columns', () => {
+    let tree = render(<DynamicTable tableHeaderProps={{columns}} tableBodyProps={{dependencies: [columns]}} rowProps={{columns}} />);
+    let headers = tree.getAllByRole('columnheader');
+    expect(headers).toHaveLength(3);
+
+    let newColumns = [columns[0], columns[2]];
+    tree.rerender(<DynamicTable tableHeaderProps={{columns: newColumns}} tableBodyProps={{dependencies: [newColumns]}} rowProps={{columns: newColumns}} />);
+
+    headers = tree.getAllByRole('columnheader');
+    expect(headers).toHaveLength(2);
+  });
+
+  it('should support updating and reordering a row at the same time', () => {
+    let tree = render(<DynamicTable tableBodyProps={{items: rows}} />);
+    let rowHeaders = tree.getAllByRole('rowheader');
+    expect(rowHeaders.map(r => r.textContent)).toEqual(['Games', 'Program Files', 'bootmgr', 'log.txt']);
+
+    tree.rerender(<DynamicTable tableBodyProps={{items: [rows[1], {...rows[0], name: 'XYZ'}, ...rows.slice(2)]}} />);
+    rowHeaders = tree.getAllByRole('rowheader');
+    expect(rowHeaders.map(r => r.textContent)).toEqual(['Program Files', 'XYZ', 'bootmgr', 'log.txt']);
   });
 
   it('should support onScroll', () => {
@@ -817,7 +839,7 @@ describe('Table', () => {
             <TableBody items={rows}>
               {item => (
                 <MyRow columns={columns}>
-                  {column => <Cell>{item[column.key]}</Cell>}
+                  {column => <Cell>{item[column.id]}</Cell>}
                 </MyRow>
               )}
             </TableBody>
@@ -843,7 +865,7 @@ describe('Table', () => {
             <TableBody items={rows}>
               {item => (
                 <MyRow columns={columns}>
-                  {column => <Cell>{item[column.key]}</Cell>}
+                  {column => <Cell>{item[column.id]}</Cell>}
                 </MyRow>
               )}
             </TableBody>

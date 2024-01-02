@@ -11,206 +11,18 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Checkbox, Column, ColumnResizer, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuItem, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Table, TableBody, TableHeader, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, isTextDropItem, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
-import React, {useRef, useState} from 'react';
-import {RouterProvider} from '@react-aria/utils';
+import {MyListBoxItem} from './utils';
+import React, {useRef} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components'
 };
-
-export const ComboBoxExample = () => (
-  <ComboBox data-testid="combo-box-example">
-    <Label style={{display: 'block'}}>Test</Label>
-    <div style={{display: 'flex'}}>
-      <Input />
-      <Button>
-        <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
-      </Button>
-    </div>
-    <Popover placement="bottom end">
-      <ListBox
-        data-testid="combo-box-list-box"
-        className={styles.menu}>
-        <MyListBoxItem>Foo</MyListBoxItem>
-        <MyListBoxItem>Bar</MyListBoxItem>
-        <MyListBoxItem>Baz</MyListBoxItem>
-        <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-      </ListBox>
-    </Popover>
-  </ComboBox>
-);
-
-interface ComboBoxItem {
-  id: string,
-  name: string
-}
-
-let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
-export const ComboBoxRenderPropsStatic = () => (
-  <ComboBox data-testid="combo-box-render-props-static">
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu}>
-            <MyListBoxItem>Foo</MyListBoxItem>
-            <MyListBoxItem>Bar</MyListBoxItem>
-            <MyListBoxItem>Baz</MyListBoxItem>
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
-
-export const ComboBoxRenderPropsDefaultItems = () => (
-  <ComboBox defaultItems={items}>
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu}>
-            {(item: ComboBoxItem) => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
-
-export const ComboBoxRenderPropsItems = {
-  render: () => (
-    <ComboBox items={items}>
-      {({isOpen}) => (
-        <>
-          <Label style={{display: 'block'}}>Test</Label>
-          <div style={{display: 'flex'}}>
-            <Input />
-            <Button>
-              <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-            </Button>
-          </div>
-          <Popover placement="bottom end">
-            <ListBox className={styles.menu}>
-              {(item: ComboBoxItem) => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
-            </ListBox>
-          </Popover>
-        </>
-      )}
-    </ComboBox>
-  ),
-  parameters: {
-    description: {
-      data: 'Note this won\'t filter the items in the listbox because it is fully controlled'
-    }
-  }
-};
-
-export const ComboBoxRenderPropsListBoxDynamic = () => (
-  <ComboBox>
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu} items={items}>
-            {item => <MyListBoxItem key={item.id}>{item.name}</MyListBoxItem>}
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
-
-export const ListBoxExample = (args) => (
-  <ListBox className={styles.menu} {...args} aria-label="test listbox">
-    <MyListBoxItem>Foo</MyListBoxItem>
-    <MyListBoxItem>Bar</MyListBoxItem>
-    <MyListBoxItem>Baz</MyListBoxItem>
-    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-  </ListBox>
-);
-
-ListBoxExample.story = {
-  args: {
-    selectionMode: 'none',
-    selectionBehavior: 'toggle'
-  },
-  argTypes: {
-    selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
-    },
-    selectionBehavior: {
-      control: {
-        type: 'radio',
-        options: ['toggle', 'replace']
-      }
-    }
-  }
-};
-
-// Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
-// also has a aXe landmark error, not sure what it means
-export const ListBoxSections = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
-    <Section className={styles.group}>
-      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-      <MyListBoxItem>Foo</MyListBoxItem>
-      <MyListBoxItem>Bar</MyListBoxItem>
-      <MyListBoxItem>Baz</MyListBoxItem>
-    </Section>
-    <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-    <Section className={styles.group}>
-      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-      <MyListBoxItem>Foo</MyListBoxItem>
-      <MyListBoxItem>Bar</MyListBoxItem>
-      <MyListBoxItem>Baz</MyListBoxItem>
-    </Section>
-  </ListBox>
-);
-
-export const ListBoxComplex = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
-    <MyListBoxItem>
-      <Text slot="label">Item 1</Text>
-      <Text slot="description">Description</Text>
-    </MyListBoxItem>
-    <MyListBoxItem>
-      <Text slot="label">Item 2</Text>
-      <Text slot="description">Description</Text>
-    </MyListBoxItem>
-    <MyListBoxItem>
-      <Text slot="label">Item 3</Text>
-      <Text slot="description">Description</Text>
-    </MyListBoxItem>
-  </ListBox>
-);
 
 export const TagGroupExample = (props) => (
   <TagGroup {...props}>
@@ -653,68 +465,6 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
-export const TabsExample = () => {
-  let [url, setUrl] = useState('/FoR');
-
-  return (
-    <RouterProvider navigate={setUrl}>
-      <Tabs selectedKey={url}>
-        <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
-          <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
-          <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>
-          <CustomTab id="/Emp" href="/Emp">Empire</CustomTab>
-        </TabList>
-        <TabPanel id="/FoR">
-          Arma virumque cano, Troiae qui primus ab oris.
-        </TabPanel>
-        <TabPanel id="/MaR">
-          Senatus Populusque Romanus.
-        </TabPanel>
-        <TabPanel id="/Emp">
-          Alea jacta est.
-        </TabPanel>
-      </Tabs>
-    </RouterProvider>
-  );
-};
-
-// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
-export const TabsRenderProps = () => {
-  const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
-      <Button onPress={() => setTabOrientation((current) => current === 'vertical' ? 'horizontal' : 'vertical')}>
-        Change Orientation
-      </Button>
-      <Tabs orientation={tabOrientation}>
-        {({orientation}) => (
-          <div>
-            <div style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'row' : 'column', gap: 8}}>
-              <TabList
-                aria-label="History of Ancient Rome"
-                style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'column' : 'row', gap: 8}}>
-                <CustomTab id="FoR">Founding of Rome</CustomTab>
-                <CustomTab id="MaR">Monarchy and Republic</CustomTab>
-                <CustomTab id="Emp">Empire</CustomTab>
-              </TabList>
-              <TabPanel id="FoR">
-                Arma virumque cano, Troiae qui primus ab oris.
-              </TabPanel>
-              <TabPanel id="MaR">
-                Senatus Populusque Romanus.
-              </TabPanel>
-              <TabPanel id="Emp">
-                Alea jacta est.
-              </TabPanel>
-            </div>
-          </div>
-        )}
-      </Tabs>
-    </div>
-  );
-};
-
 const ReorderableTable = ({initialItems}: {initialItems: {id: string, name: string}[]}) => {
   let list = useListData({initialItems});
 
@@ -867,9 +617,9 @@ export const TableExample = () => {
 
 export const TableDynamicExample = () => {
   let columns = [
-    {name: 'Name', key: 'name', isRowHeader: true},
-    {name: 'Type', key: 'type'},
-    {name: 'Date Modified', key: 'date'}
+    {name: 'Name', id: 'name', isRowHeader: true},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let rows = [
@@ -890,7 +640,7 @@ export const TableDynamicExample = () => {
         {(item) => (
           <Row columns={columns}>
             {(column) => {
-              return <Cell>{item[column.key]}</Cell>;
+              return <Cell>{item[column.id]}</Cell>;
             }}
           </Row>
         )}
@@ -921,17 +671,6 @@ function MyColumn(props) {
   );
 }
 
-function MyListBoxItem(props) {
-  return (
-    <ListBoxItem
-      {...props}
-      className={({isFocused, isSelected}) => classNames(styles, 'item', {
-        focused: isFocused,
-        selected: isSelected
-      })} />
-  );
-}
-
 function MyMenuItem(props) {
   return (
     <MenuItem
@@ -959,16 +698,6 @@ function CustomThumb({index, children}) {
       })}>
       {children}
     </SliderThumb>
-  );
-}
-
-function CustomTab(props) {
-  return (
-    <Tab
-      {...props}
-      style={({isSelected}) => ({
-        borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
-      })} />
   );
 }
 
@@ -1167,15 +896,30 @@ export const FileTriggerButton = (props) => (
   </FileTrigger>
 );
 
-export const FileTriggerDirectories = (props) => (
-  <FileTrigger
-    directory
-    onSelect={action('onSelect')}
-    data-testid="filetrigger-example"
-    {...props} >
-    <Button>Upload</Button>
-  </FileTrigger>
-);
+export const FileTriggerDirectories = (props) => {
+  let [files, setFiles] = React.useState<string[]>([]);
+
+  return (
+    <>
+      <FileTrigger
+        {...props}
+        acceptDirectory
+        onSelect={(e) => {
+          if (e) {
+            let fileList = [...e].map(file => file.webkitRelativePath !== '' ? file.webkitRelativePath : file.name);
+            setFiles(fileList);
+          }
+        }} >
+        <Button>Upload</Button>
+      </FileTrigger>
+      {files && <ul>
+        {files.map((file, index) => (
+          <li key={index}>{file}</li>
+        ))}
+      </ul>}
+    </>
+  );
+};
 
 export const FileTriggerLinkAllowsMultiple = (props) => (
   <FileTrigger

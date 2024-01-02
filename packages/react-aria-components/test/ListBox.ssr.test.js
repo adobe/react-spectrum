@@ -23,10 +23,10 @@ describe('ListBox SSR', function () {
           <>
             <button onClick={() => setShow(true)}>Show</button>
             <ListBox aria-label="Listbox">
-              <ListBoxItem key="1">Left</ListBoxItem>
-              <ListBoxItem key="2">Middle</ListBoxItem>
-              {show && <ListBoxItem key="4">Extra</ListBoxItem>}
-              <ListBoxItem key="3">Right</ListBoxItem>
+              <ListBoxItem id="1">Left</ListBoxItem>
+              <ListBoxItem id="2">Middle</ListBoxItem>
+              {show && <ListBoxItem id="4">Extra</ListBoxItem>}
+              <ListBoxItem id="3">Right</ListBoxItem>
             </ListBox>
           </>
         );

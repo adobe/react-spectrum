@@ -23,10 +23,10 @@ describe('GridList SSR', function () {
           <>
             <button onClick={() => setShow(true)}>Show</button>
             <GridList aria-label="GridList">
-              <GridListItem key="1">Left</GridListItem>
-              <GridListItem key="2">Middle</GridListItem>
-              {show && <GridListItem key="4">Extra</GridListItem>}
-              <GridListItem key="3">Right</GridListItem>
+              <GridListItem id="1">Left</GridListItem>
+              <GridListItem id="2">Middle</GridListItem>
+              {show && <GridListItem id="4">Extra</GridListItem>}
+              <GridListItem id="3">Right</GridListItem>
             </GridList>
           </>
         );

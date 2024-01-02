@@ -61,13 +61,13 @@ describe('StepList', function () {
     const stepOne = stepListItems[0];
     expect(stepOne).toHaveAttribute('aria-current', 'step');
     expect(stepOne).toHaveAttribute('tabIndex', '0');
-    expect(stepOne.firstElementChild.textContent).not.toContain('Completed');
+    expect(stepOne.firstElementChild!.textContent).not.toContain('Completed');
     expect(onSelectionChange).toHaveBeenCalled();
     expect(onSelectionChange).toHaveBeenCalledWith('step-one');
 
     for (let i = 1; i < stepListItems.length; i++) {
       expect(stepListItems[i]).toHaveAttribute('aria-disabled', 'true');
-      expect(stepListItems[i].firstElementChild.textContent).toContain('Not');
+      expect(stepListItems[i].firstElementChild!.textContent).toContain('Not');
       expect(stepListItems[i]).not.toHaveAttribute('tabindex');
     }
 
@@ -80,7 +80,7 @@ describe('StepList', function () {
     const container = renderComponent({ref});
     const stepList = container.getByLabelText('steplist-test');
 
-    expect(ref.current.UNSAFE_getDOMNode()).toBe(stepList);
+    expect(ref.current?.UNSAFE_getDOMNode()).toBe(stepList);
   });
 
   it('allows user to click completed steps and immediate next step only', async function () {
@@ -91,7 +91,7 @@ describe('StepList', function () {
     // select previously completed step
     const stepOne = stepListItems[0];
     expect(stepOne).not.toHaveAttribute('aria-current');
-    expect(stepOne.firstElementChild.textContent).toContain('Completed');
+    expect(stepOne.firstElementChild!.textContent).toContain('Completed');
     await user.click(stepOne);
     expect(stepOne).toHaveAttribute('aria-current', 'step');
     expect(onSelectionChange).toHaveBeenCalledTimes(1);
@@ -100,7 +100,7 @@ describe('StepList', function () {
     // select immediate next step (step after last completed step)
     const stepThree = stepListItems[2];
     expect(stepThree).not.toHaveAttribute('aria-current');
-    expect(stepOne.firstElementChild.textContent).toContain('Current');
+    expect(stepOne.firstElementChild!.textContent).toContain('Current');
     await user.click(stepThree);
     expect(stepThree).toHaveAttribute('aria-current');
     expect(onSelectionChange).toHaveBeenCalledTimes(2);

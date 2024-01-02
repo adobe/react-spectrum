@@ -216,7 +216,7 @@ describe('useDroppableCollection', () => {
       }
       let tree = render(<>
         <Draggable />
-        <DroppableGridExample style={{overflow: 'scroll'}} items={items} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
+        <DroppableGridExample style={{overflowY: 'scroll'}} items={items} onDropEnter={onDropEnter} onDropExit={onDragExit} onDrop={onDrop} />
       </>);
 
       let draggable = tree.getByText('Drag me');

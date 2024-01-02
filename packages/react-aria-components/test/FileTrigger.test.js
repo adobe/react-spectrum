@@ -91,7 +91,7 @@ describe('FileTrigger', () => {
 
   it('should allow directory uploads when directory is true', () => {
     render(
-      <FileTrigger directory>
+      <FileTrigger acceptDirectory>
         <Button>Upload Directory</Button>
       </FileTrigger>
     );

@@ -296,6 +296,21 @@ describe('NumberField', function () {
   });
 
   it.each`
+  Name                            | props                                        | expected
+  ${'defaultValue minValue'}      | ${{defaultValue: 20, minValue: 50}}          | ${'50'}
+  ${'defaultValue maxValue'}      | ${{defaultValue: 20, maxValue: 10}}          | ${'10'}
+  ${'defaultValue minValue step'} | ${{defaultValue: 20, minValue: 50, step: 3}} | ${'50'}
+  ${'defaultValue maxValue step'} | ${{defaultValue: 20, maxValue: 10, step: 3}} | ${'9'}
+  ${'value minValue'}             | ${{value: 20, minValue: 50}}                 | ${'50'}
+  ${'value maxValue'}             | ${{value: 20, maxValue: 10}}                 | ${'10'}
+  ${'value minValue step'}        | ${{value: 20, minValue: 50, step: 3}}        | ${'50'}
+  ${'value maxValue step'}        | ${{value: 20, maxValue: 10, step: 3}}        | ${'9'}
+  `('clamps value & defaultValue to the allowed range $Name', function ({props, expected}) {
+    let {textField} = renderNumberField(props);
+    expect(textField).toHaveAttribute('value', expected);
+  });
+
+  it.each`
     Name
     ${'NumberField'}
   `('$Name will not allow typing of a number less than the min', async () => {
@@ -1151,7 +1166,7 @@ describe('NumberField', function () {
   `('goes to valid step min on `home`', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, step: 10, minValue: -521});
 
-    expect(textField).toHaveAttribute('value', '10');
+    expect(textField).toHaveAttribute('value', '9');
     act(() => {textField.focus();});
     fireEvent.keyDown(textField, {key: 'Home'});
     fireEvent.keyUp(textField, {key: 'Home'});

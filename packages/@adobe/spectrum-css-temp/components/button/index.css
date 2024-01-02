@@ -161,13 +161,15 @@ governing permissions and limitations under the License.
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+    display: flex;
+    align-items: center;
   }
 
   &.spectrum-Button--pending {
 
     .spectrum-Button-label,
     .spectrum-Icon {
-      visibility: hidden;
+      opacity: 0;
     }
   }
 }

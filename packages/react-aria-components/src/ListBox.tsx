@@ -12,7 +12,7 @@
 
 import {AriaListBoxOptions, AriaListBoxProps, DraggableItemResult, DragPreviewRenderer, DroppableCollectionResult, DroppableItemResult, FocusScope, ListKeyboardDelegate, mergeProps, useCollator, useFocusRing, useHover, useListBox, useListBoxSection, useLocale, useOption} from 'react-aria';
 import {CollectionDocumentContext, CollectionPortal, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
-import {ContextValue, forwardRefType, HiddenContext, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
+import {ContextValue, forwardRefType, HiddenContext, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
@@ -282,7 +282,7 @@ function ListBoxSection<T>({section, className, style}: ListBoxSectionProps<T>) 
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useListBoxSection({
     heading,
-    'aria-label': section['aria-label'] ?? undefined
+    'aria-label': section.props['aria-label'] ?? undefined
   });
 
   let children = useCachedChildren({
@@ -360,7 +360,6 @@ interface OptionProps<T> {
 function Option<T>({item}: OptionProps<T>) {
   let ref = useObjectRef<any>(item.props.ref);
   let state = useContext(ListStateContext)!;
-  let {shouldFocusOnHover} = useSlottedContext(ListBoxContext)! as AriaListBoxOptions<T>;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
     {key: item.key},
@@ -369,13 +368,8 @@ function Option<T>({item}: OptionProps<T>) {
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: shouldFocusOnHover || (!states.allowsSelection && !states.hasAction)
+    isDisabled: !states.allowsSelection && !states.hasAction
   });
-
-  if (shouldFocusOnHover) {
-    hoverProps = {};
-    isHovered = states.isFocused;
-  }
 
   let draggableItem: DraggableItemResult | null = null;
   if (dragState && dragAndDropHooks) {

@@ -25,10 +25,10 @@ describe('TagGroup SSR', function () {
             <TagGroup aria-label="TagGroup">
               <Label>Test</Label>
               <TagList>
-                <Tag key="1">Left</Tag>
-                <Tag key="2">Middle</Tag>
-                {show && <Tag key="4">Extra</Tag>}
-                <Tag key="3">Right</Tag>
+                <Tag id="1">Left</Tag>
+                <Tag id="2">Middle</Tag>
+                {show && <Tag id="4">Extra</Tag>}
+                <Tag id="3">Right</Tag>
               </TagList>
             </TagGroup>
           </>

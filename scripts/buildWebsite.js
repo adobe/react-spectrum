@@ -54,7 +54,9 @@ async function build() {
           name === 'framer-motion' ||
           name === 'tailwindcss-animate' ||
           name === 'tailwindcss' ||
-          name === 'autoprefixer'
+          name === 'autoprefixer' ||
+          name === 'lucide-react' ||
+          name === 'tailwind-variants'
         )
     ),
     dependencies: {
@@ -122,6 +124,7 @@ async function build() {
   fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
   fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
   fs.copySync(path.join(__dirname, '..', '.browserslistrc'), path.join(dir, '.browserslistrc'));
+  fs.copySync(path.join(__dirname, '..', 'starters'), path.join(dir, 'starters'));
 
   // Delete mdx files from dev/docs that shouldn't go out yet.
   let devPkg = JSON.parse(fs.readFileSync(path.join(dir, 'packages/dev/docs/package.json'), 'utf8'));
