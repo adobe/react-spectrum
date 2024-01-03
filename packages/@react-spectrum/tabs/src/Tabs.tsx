@@ -12,13 +12,12 @@
 
 import {AriaTabPanelProps, SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-types/tabs';
 import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {DOMProps, DOMRef, Node, Orientation, StyleProps} from '@react-types/shared';
+import {DOMProps, DOMRef, Key, Node, Orientation, StyleProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId, useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {FocusRing} from '@react-aria/focus';
 import {Item, Picker} from '@react-spectrum/picker';
 import {ListCollection} from '@react-stately/list';
 import React, {
-  Key,
   MutableRefObject,
   ReactElement,
   ReactNode,
@@ -81,7 +80,7 @@ function Tabs<T extends object>(props: SpectrumTabsProps<T>, ref: DOMRef<HTMLDiv
 
   useEffect(() => {
     if (tablistRef.current) {
-      let selectedTab: HTMLElement = tablistRef.current.querySelector(`[data-key="${tabListState?.selectedKey}"]`);
+      let selectedTab: HTMLElement = tablistRef.current.querySelector(`[data-key="${CSS.escape(tabListState?.selectedKey?.toString())}"]`);
 
       if (selectedTab != null) {
         setSelectedTab(selectedTab);

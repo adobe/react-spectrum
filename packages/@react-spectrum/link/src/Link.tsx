@@ -13,7 +13,7 @@
 import {classNames, getWrappedElement, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps, mergeRefs} from '@react-aria/utils';
-import React, {useRef} from 'react';
+import React, {JSX, useRef} from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 import styles from '@adobe/spectrum-css-temp/components/link/vars.css';
 import {useHover} from '@react-aria/interactions';
@@ -37,7 +37,7 @@ export function Link(props: SpectrumLinkProps) {
   let {styleProps} = useStyleProps(props);
   let {hoverProps, isHovered} = useHover({});
 
-  let ref = useRef();
+  let ref = useRef(null);
   let {linkProps} = useLink({
     ...props,
     elementType: !href && typeof children === 'string' ? 'span' : 'a'

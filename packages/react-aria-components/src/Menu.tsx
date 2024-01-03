@@ -12,16 +12,17 @@
 
 
 import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
-import {BaseCollection, CollectionProps, ItemProps, useCachedChildren, useCollection} from './Collection';
+import {BaseCollection, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {ContextValue, forwardRefType, Provider, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
-import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {Header} from './Header';
+import {Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
 
@@ -40,13 +41,30 @@ export function MenuTrigger(props: MenuTriggerProps) {
     ...props,
     type: 'menu'
   }, state, ref);
+  // Allows menu width to match button
+  let [buttonWidth, setButtonWidth] = useState<string | null>(null);
+  let onResize = useCallback(() => {
+    if (ref.current) {
+      setButtonWidth(ref.current.offsetWidth + 'px');
+    }
+  }, [ref]);
+
+  useResizeObserver({
+    ref: ref,
+    onResize: onResize
+  });
 
   return (
     <Provider
       values={[
         [MenuContext, menuProps],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {triggerRef: ref, placement: 'bottom start'}]
+        [PopoverContext, {
+          trigger: 'MenuTrigger',
+          triggerRef: ref,
+          placement: 'bottom start',
+          style: {'--trigger-width': buttonWidth} as React.CSSProperties
+        }]
       ]}>
       <PressResponder {...menuTriggerProps} ref={ref} isPressed={state.isOpen}>
         {props.children}
@@ -55,7 +73,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   );
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps {}
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children'>, CollectionProps<T>, StyleProps, SlotProps, ScrollableProps<HTMLDivElement> {}
 
 function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, MenuContext);
@@ -93,7 +111,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
         case 'separator':
           return <Separator {...item.props} />;
         case 'item':
-          return <MenuItem item={item} />;
+          return <MenuItemInner item={item} />;
         default:
           throw new Error('Unsupported node type in Menu: ' + item.type);
       }
@@ -106,6 +124,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
       {...menuProps}
       ref={ref}
       slot={props.slot || undefined}
+      onScroll={props.onScroll}
       style={props.style}
       className={props.className ?? 'react-aria-Menu'}>
       <Provider
@@ -153,7 +172,7 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
           );
         }
         case 'item':
-          return <MenuItem item={item} />;
+          return <MenuItemInner item={item} />;
         default:
           throw new Error('Unsupported element type in Section: ' + item.type);
       }
@@ -172,22 +191,45 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
   );
 }
 
-interface MenuItemProps<T> {
+export interface MenuItemRenderProps extends ItemRenderProps {}
+
+export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps {
+  /** The unique id of the item. */
+  id?: Key,
+  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  value?: T,
+  /** A string representation of the item's contents, used for features like typeahead. */
+  textValue?: string,
+  /** An accessibility label for this item. */
+  'aria-label'?: string
+}
+
+function MenuItem<T extends object>(props: MenuItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+  return useSSRCollectionNode('item', props, ref, props.children);
+}
+
+/**
+ * A MenuItem represents an individual action in a Menu.
+ */
+const _MenuItem = /*#__PURE__*/ (forwardRef as forwardRefType)(MenuItem);
+export {_MenuItem as MenuItem};
+
+interface MenuItemInnerProps<T> {
   item: Node<T>
 }
 
-function MenuItem<T>({item}: MenuItemProps<T>) {
+function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
 
-  let props: ItemProps<T> = item.props;
+  let props: MenuItemProps<T> = item.props;
   let {isFocusVisible, focusProps} = useFocusRing();
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
     children: item.rendered,
-    defaultClassName: 'react-aria-Item',
+    defaultClassName: 'react-aria-MenuItem',
     values: {
       ...states,
       isHovered: states.isFocused,

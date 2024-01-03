@@ -20,7 +20,7 @@ import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
 export type Modality = 'keyboard' | 'pointer' | 'virtual';
-type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent;
+type HandlerEvent = PointerEvent | MouseEvent | KeyboardEvent | FocusEvent | null;
 type Handler = (modality: Modality, e: HandlerEvent) => void;
 export type FocusVisibleHandler = (isFocusVisible: boolean) => void;
 export interface FocusVisibleProps {
@@ -35,7 +35,7 @@ export interface FocusVisibleResult {
   isFocusVisible: boolean
 }
 
-let currentModality = null;
+let currentModality: null | Modality = null;
 let changeHandlers = new Set<Handler>();
 let hasSetupGlobalListeners = false;
 let hasEventBeforeFocus = false;
@@ -126,7 +126,7 @@ function setupGlobalFocusEvents() {
   let focus = HTMLElement.prototype.focus;
   HTMLElement.prototype.focus = function () {
     hasEventBeforeFocus = true;
-    focus.apply(this, arguments);
+    focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
   };
 
   document.addEventListener('keydown', handleKeyboardEvent, true);
@@ -166,7 +166,7 @@ export function isFocusVisible(): boolean {
   return currentModality !== 'pointer';
 }
 
-export function getInteractionModality(): Modality {
+export function getInteractionModality(): Modality | null {
   return currentModality;
 }
 
@@ -178,7 +178,7 @@ export function setInteractionModality(modality: Modality) {
 /**
  * Keeps state of the current modality.
  */
-export function useInteractionModality(): Modality {
+export function useInteractionModality(): Modality | null {
   setupGlobalFocusEvents();
 
   let [modality, setModality] = useState(currentModality);
@@ -196,11 +196,27 @@ export function useInteractionModality(): Modality {
   return useIsSSR() ? null : modality;
 }
 
+const nonTextInputTypes = new Set([
+  'checkbox',
+  'radio',
+  'range',
+  'color',
+  'file',
+  'image',
+  'button',
+  'submit',
+  'reset'
+]);
+
 /**
  * If this is attached to text input component, return if the event is a focus event (Tab/Escape keys pressed) so that
  * focus visible style can be properly set.
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
+  isTextInput = isTextInput || 
+    (e?.target instanceof HTMLInputElement && !nonTextInputTypes.has(e?.target?.type)) ||
+    e?.target instanceof HTMLTextAreaElement ||
+    (e?.target instanceof HTMLElement && e?.target.isContentEditable);
   return !(isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
 }
 
@@ -225,7 +241,7 @@ export function useFocusVisibleListener(fn: FocusVisibleHandler, deps: ReadonlyA
 
   useEffect(() => {
     let handler = (modality: Modality, e: HandlerEvent) => {
-      if (!isKeyboardFocusEvent(opts?.isTextInput, modality, e)) {
+      if (!isKeyboardFocusEvent(!!(opts?.isTextInput), modality, e)) {
         return;
       }
       fn(isFocusVisible());

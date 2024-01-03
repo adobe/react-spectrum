@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, DOMProps, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, DOMProps, Key, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
-import {Key, ReactElement, ReactNode} from 'react';
+import {JSX, ReactElement, ReactNode} from 'react';
 
 /** Widths that result in a constant pixel value for the same Table width. */
 export type ColumnStaticSize = number | `${number}` | `${number}%`; // match regex: /^(\d+)(?=%$)/

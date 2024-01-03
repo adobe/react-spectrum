@@ -10,10 +10,64 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, DOMProps, SpectrumLabelableProps, StyleProps, ValidationState} from '@react-types/shared';
-import {FormEventHandler, ReactElement} from 'react';
+import {AriaLabelingProps, DOMProps, SpectrumLabelableProps, StyleProps, ValidationErrors, ValidationState} from '@react-types/shared';
+import {FormEvent, FormHTMLAttributes, ReactElement} from 'react';
 
-export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp' | 'label'> {
+export interface FormProps extends AriaLabelingProps {
+  /**
+   * Validation errors for the form, typically returned by a server.
+   * This should be set to an object mapping from input names to errors.
+   */
+  validationErrors?: ValidationErrors,
+  /**
+   * Where to send the form-data when the form is submitted.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#action).
+   */
+  action?: string | FormHTMLAttributes<HTMLFormElement>['action'],
+  /**
+   * The enctype attribute specifies how the form-data should be encoded when submitting it to the server.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#enctype).
+   */
+  encType?: 'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain',
+  /**
+   * The HTTP method to submit the form with.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#method).
+   */
+  method?: 'get' | 'post' | 'dialog',
+  /**
+   * The target attribute specifies a name or a keyword that indicates where to display the response that is received after submitting the form.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#target).
+   */
+  target?: '_blank' | '_self' | '_parent' | '_top',
+  /**
+   * Triggered when a user submits the form.
+   */
+  onSubmit?: (event: FormEvent<HTMLFormElement>) => void,
+  /**
+   * Triggered when a user resets the form.
+   */
+  onReset?:  (event: FormEvent<HTMLFormElement>) => void,
+  /**
+   * Triggered for each invalid field when a user submits the form.
+   */
+  onInvalid?:  (event: FormEvent<HTMLFormElement>) => void,
+  /**
+   * Indicates whether input elements can by default have their values automatically completed by the browser.
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form#autocomplete).
+   */
+  autoComplete?: 'off' | 'on',
+  /**
+   * Controls whether inputted text is automatically capitalized and, if so, in what manner. 
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
+   */
+  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters',
+  /**
+   * An ARIA role override to apply to the form element.
+   */
+  role?: 'search' | 'presentation'
+}
+
+export interface SpectrumFormProps extends FormProps, DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp' | 'label'> {
   /** The contents of the Form. */
   children: ReactElement<SpectrumLabelableProps> | ReactElement<SpectrumLabelableProps>[],
   /** Whether the Form elements are displayed with their quiet style. */
@@ -32,23 +86,10 @@ export interface SpectrumFormProps extends DOMProps, AriaLabelingProps, StylePro
    */
   validationState?: ValidationState,
   /**
-   * Where to send the form-data when the form is submitted.
+   * Whether to use native HTML form validation to prevent form submission
+   * when a field value is missing or invalid, or mark fields as required
+   * or invalid via ARIA.
+   * @default 'aria'
    */
-  action?: string,
-  /**
-   * The enctype attribute specifies how the form-data should be encoded when submitting it to the server.
-   */
-  encType?: 'application/x-www-form-urlencoded' | 'multipart/form-data' | 'text/plain',
-  /**
-   * The form-data can be sent as URL variables (with method="get") or as HTTP post transaction (with method="post").
-   */
-  method?: 'get' | 'post',
-  /**
-   * The target attribute specifies a name or a keyword that indicates where to display the response that is received after submitting the form.
-   */
-  target?: '_blank' | '_self' | '_parent' | '_top',
-  /**
-   * Fired on form submission.
-   */
-  onSubmit?: FormEventHandler
+  validationBehavior?: 'aria' | 'native'
 }

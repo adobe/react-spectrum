@@ -13,7 +13,7 @@
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
-import {TabsExample} from '../stories/index.stories';
+import {TabsExample} from '../stories/Tabs.stories';
 import userEvent from '@testing-library/user-event';
 
 let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
@@ -312,5 +312,25 @@ describe('Tabs', () => {
 
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});
     expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
+  });
+
+  it('should render tab with aria-label', () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList>
+          <Tab id="a" aria-label="Tab A">A</Tab>
+          <Tab id="b" aria-label="Tab B">B</Tab>
+          <Tab id="c" aria-label="Tab C">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+
+    let tabs = getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('aria-label', 'Tab A');
+    expect(tabs[1]).toHaveAttribute('aria-label', 'Tab B');
+    expect(tabs[2]).toHaveAttribute('aria-label', 'Tab C');
   });
 });

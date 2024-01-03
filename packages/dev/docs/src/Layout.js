@@ -16,7 +16,7 @@ import clsx from 'clsx';
 import {Divider} from '@react-spectrum/divider';
 import docStyles from './docs.css';
 import {getAnchorProps} from './utils';
-import heroImageAria from 'url:../pages/assets/ReactAria_976x445_2x.png';
+import heroImageAria from 'url:../pages/assets/ReactAriaOpenGraph.webp';
 import heroImageHome from 'url:../pages/assets/ReactSpectrumHome_976x445_2x.png';
 import heroImageInternationalized from 'url:../pages/assets/internationalized@2x.png?as=webp&width=1952';
 import heroImageSpectrum from 'url:../pages/assets/ReactSpectrum_976x445_2x.png';
@@ -39,7 +39,9 @@ import {VersionBadge} from './VersionBadge';
 
 const ENABLE_PAGE_TYPES = true;
 const INDEX_RE = /^(?:[^/]+\/)?index\.html$/;
-const TLD = 'react-spectrum.adobe.com';
+const TLD = process.env.DOCS_ENV === 'production'
+  ? 'react-spectrum.adobe.com'
+  : 'reactspectrum.blob.core.windows.net';
 const HERO = {
   'react-spectrum': heroImageSpectrum,
   'react-aria': heroImageAria,
@@ -122,7 +124,7 @@ function Page({children, currentPage, publicUrl, styles, scripts, pathToPage}) {
   let description = stripMarkdown(currentPage.description) || `Documentation for ${currentPage.title} in the ${pageSection} package.`;
   let title = currentPage.title + (!INDEX_RE.test(currentPage.name) || isBlog ? ` – ${pageSection}` : '');
   let hero = (parts.length > 1 ? HERO[parts[0]] : '') || heroImageHome;
-  let heroUrl = `https://${TLD}/${currentPage.image || path.basename(hero)}`;
+  let heroUrl = `https://${TLD}${currentPage.image || (publicUrl + path.basename(hero))}`;
   let githubLink = pathToPage;
   if (githubLink.startsWith('/tmp/')) {
     githubLink = githubLink.slice(5);
@@ -364,6 +366,9 @@ function Nav({currentPageName, pages}) {
   } else if (currentPageName.startsWith('internationalized/') && currentPageName !== 'internationalized/index.html') {
     sectionIndex = '../index.html';
     back = '../../index.html';
+  } else if (currentPageName === 'react-aria/examples/index.html') {
+    sectionIndex = '../index.html';
+    back = '../../index.html';
   }
 
   function SideNavItem({name, url, title, preRelease}) {
@@ -391,10 +396,11 @@ function Nav({currentPageName, pages}) {
 
   let sections = [];
   if (currentPageName.startsWith('react-aria') && ENABLE_PAGE_TYPES) {
-    let {Introduction, Concepts, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
+    let {Introduction, Concepts, Guides, Interactions, Focus, Internationalization, 'Server Side Rendering': ssr, Utilities, ...hooks} = pagesByType.other;
     let interactions = {...pagesByType.interaction, Interactions, Focus};
     let utilities = {Internationalization, 'Server Side Rendering': ssr, Utilities};
-    sections.push({pages: {Introduction, Concepts}});
+    hooks = {...hooks, ...pagesByType.hook};
+    sections.push({pages: {Introduction, Concepts, Guides}});
     sections.push({
       title: 'Components',
       pages: pagesByType.component,
@@ -514,7 +520,7 @@ export function BaseLayout({scripts, styles, pages, currentPage, publicUrl, chil
       <div style={{isolation: 'isolate'}}>
         <header className={docStyles.pageHeader} />
         <Nav currentPageName={currentPage.name} pages={pages} />
-        <main>
+        <main className={toc.length === 0 ? docStyles.noToc : null}>
           <MDXProvider components={mdxComponents}>
             <ImageContext.Provider value={publicUrl}>
               <LinkProvider>
@@ -598,5 +604,38 @@ export function Time({date}) {
       className={typographyStyles['spectrum-Body4']}>
       {localDate.toLocaleString('en-US', {year: 'numeric', month: 'long', day: 'numeric'})}
     </time>
+  );
+}
+
+export function ExampleLayout({scripts, styles, pages, currentPage, publicUrl, children, toc}) {
+  let pathToPage = currentPage.filePath.substring(currentPage.filePath.indexOf('packages/'), currentPage.filePath.length);
+  return (
+    <Page scripts={scripts} styles={styles} publicUrl={publicUrl} currentPage={currentPage} pathToPage={pathToPage}>
+      <div style={{isolation: 'isolate'}}>
+        <div className={docStyles.exampleHeader} />
+        <main className={docStyles.examplePage}>
+          <MDXProvider components={mdxComponents}>
+            <ImageContext.Provider value={publicUrl}>
+              <LinkProvider>
+                <PageContext.Provider value={{pages, currentPage}}>
+                  <SlotProvider slots={{keyboard: {UNSAFE_className: docStyles['keyboard']}}}>
+                    <article className={clsx(typographyStyles['spectrum-Typography'], docStyles.article, {[docStyles.inCategory]: !INDEX_RE.test(currentPage.name)})}>
+                      <div style={{display: 'flex', alignItems: 'center'}}>
+                        <a href="../" className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)}>React Aria</a>
+                        <ChevronRight size="XS" />
+                        <a href="./" className={clsx(linkStyle['spectrum-Link'], linkStyle['spectrum-Link--secondary'], docStyles.link)}>Examples</a>
+                      </div>
+                      {children}
+                    </article>
+                  </SlotProvider>
+                </PageContext.Provider>
+              </LinkProvider>
+            </ImageContext.Provider>
+          </MDXProvider>
+          {!pathToPage.includes('index.mdx') && <div id="edit-page" className={docStyles.editPageContainer} />}
+          <Footer />
+        </main>
+      </div>
+    </Page>
   );
 }

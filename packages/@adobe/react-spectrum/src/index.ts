@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+'use client';
+
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
@@ -111,4 +113,4 @@ export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale, LocalizedStrings} from '@react-aria/i18n';
 export type {SSRProviderProps} from '@react-aria/ssr';
 export type {DirectoryDropItem, DragAndDropHooks, DragAndDropOptions, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-spectrum/dnd';
-export type {Selection} from '@react-types/shared';
+export type {Key, Selection} from '@react-types/shared';

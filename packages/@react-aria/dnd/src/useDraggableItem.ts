@@ -13,9 +13,10 @@
 import {AriaButtonProps} from '@react-types/button';
 import {clearGlobalDnDState, isInternalDropOperation, setDraggingKeys, useDragModality} from './utils';
 import {DraggableCollectionState} from '@react-stately/dnd';
-import {HTMLAttributes, Key} from 'react';
+import {HTMLAttributes} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {Key} from '@react-types/shared';
 import {useDescription} from '@react-aria/utils';
 import {useDrag} from './useDrag';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -63,7 +64,7 @@ const MESSAGES = {
  * Handles drag interactions for an item within a draggable collection.
  */
 export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let isDisabled = state.selectionManager.isDisabled(props.key);
   let {dragProps, dragButtonProps} = useDrag({
     getItems() {

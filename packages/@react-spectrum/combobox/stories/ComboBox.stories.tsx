@@ -14,6 +14,7 @@ import {action} from '@storybook/addon-actions';
 import {ActionButton, Button} from '@react-spectrum/button';
 import Add from '@spectrum-icons/workflow/Add';
 import Alert from '@spectrum-icons/workflow/Alert';
+import {Avatar} from '@react-spectrum/avatar';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
@@ -26,6 +27,7 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import Draw from '@spectrum-icons/workflow/Draw';
 import {Flex} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
+import {Key} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import React, {useRef, useState} from 'react';
 import {useAsyncList, useListData, useTreeData} from '@react-stately/data';
@@ -182,14 +184,27 @@ export default {
       options: ['focus', 'manual']
     },
     direction: {
-      control: 'select',
+      control: 'radio',
       options: ['top', 'bottom']
+    },
+    align: {
+      control: 'radio',
+      options: ['start', 'end']
     },
     allowsCustomValue: {
       control: 'boolean'
     },
     width: {
-      control: 'text'
+      control: {
+        type: 'radio',
+        options: [null, '100px', '480px', 'size-4600']
+      }
+    },
+    menuWidth: {
+      control: {
+        type: 'radio',
+        options: [null, '100px', '480px', 'size-4600']
+      }
     }
   }
 } as ComponentMeta<typeof ComboBox>;
@@ -267,6 +282,30 @@ export const ComplexItems: ComboBoxStory = {
         <Alert />
         <Text>Report</Text>
         <Text slot="description">Report an issue/violation.</Text>
+      </Item>
+    </ComboBox>
+  )
+};
+
+export const WithAvatars: ComboBoxStory = {
+  args: {label: 'Select a user'},
+  render: (args) => (
+    <ComboBox {...args}>
+      <Item textValue="User 1">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 1</Text>
+      </Item>
+      <Item textValue="User 2">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 2</Text>
+      </Item>
+      <Item textValue="User 3">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 3</Text>
+      </Item>
+      <Item textValue="User 4">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User 4</Text>
       </Item>
     </ComboBox>
   )
@@ -576,7 +615,7 @@ function AsyncLoadingExampleControlledKey(props) {
     list.setFilterText(value);
   };
 
-  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  let selectedKey = (list.selectedKeys as Set<Key>).values().next().value;
   return (
     <ComboBox
       label="Star Wars Character Lookup"
@@ -612,7 +651,7 @@ function AsyncLoadingExampleControlledKeyWithReset(props) {
       let json = await res.json();
 
       let selectedText;
-      let selectedKey = (selectedKeys as Set<React.Key>).values().next().value;
+      let selectedKey = (selectedKeys as Set<Key>).values().next().value;
 
       // If selectedKey exists and combobox is performing intial load, update the input value with the selected key text
       if (!isFocused.current && selectedKey) {
@@ -644,7 +683,7 @@ function AsyncLoadingExampleControlledKeyWithReset(props) {
     list.setFilterText(value);
   };
 
-  let selectedKey = (list.selectedKeys as Set<React.Key>).values().next().value;
+  let selectedKey = (list.selectedKeys as Set<Key>).values().next().value;
   return (
     <ComboBox
       label="Star Wars Character Lookup"
@@ -696,7 +735,7 @@ function AllControlledComboBox(props) {
     initialItems: withSection
   });
 
-  let onSelectionChange = (key: React.Key) => {
+  let onSelectionChange = (key: Key) => {
     setFieldState(prevState => ({
       inputValue: list.getItem(key)?.value.name ?? (props.allowsCustomValue ? prevState.inputValue : ''),
       selectedKey: key

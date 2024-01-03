@@ -20,7 +20,7 @@ import {useEffectEvent, useGlobalListeners} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
-export interface SpinButtonProps extends InputBase, Validation, ValueBase<number>, RangeInputBase<number> {
+export interface SpinButtonProps extends InputBase, Validation<number>, ValueBase<number>, RangeInputBase<number> {
   textValue?: string,
   onIncrement?: () => void,
   onIncrementPage?: () => void,
@@ -55,7 +55,7 @@ export function useSpinButton(
     onDecrementToMin,
     onIncrementToMax
   } = props;
-  const stringFormatter = useLocalizedStringFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/spinbutton');
 
   const clearAsync = () => clearTimeout(_async.current);
 

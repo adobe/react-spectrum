@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, KeyboardDelegate, Node} from '@react-types/shared';
+import {Direction, Key, KeyboardDelegate, Node} from '@react-types/shared';
 import {getChildNodes, getFirstItem, getLastItem, getNthItem} from '@react-stately/collections';
 import {GridCollection} from '@react-types/grid';
-import {Key, RefObject} from 'react';
 import {Layout, Rect} from '@react-stately/virtualizer';
+import {RefObject} from 'react';
 
 export interface GridKeyboardDelegateOptions<T, C> {
   collection: C,
@@ -270,7 +270,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   }
 
   private getItem(key: Key): HTMLElement {
-    return this.ref.current.querySelector(`[data-key="${key}"]`);
+    return this.ref.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
   }
 
   private getItemRect(key: Key): Rect {

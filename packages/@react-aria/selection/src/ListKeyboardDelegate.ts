@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Direction, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
+import {Collection, Direction, Key, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
 import {isScrollable} from '@react-aria/utils';
-import {Key, RefObject} from 'react';
+import {RefObject} from 'react';
 
 interface ListKeyboardDelegateOptions<T> {
   collection: Collection<Node<T>>,
@@ -195,7 +195,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   private getItem(key: Key): HTMLElement {
-    return this.ref.current.querySelector(`[data-key="${key}"]`);
+    return this.ref.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
   }
 
   getKeyPageAbove(key: Key) {

@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {ChangeEvent, Key, RefObject, useCallback, useEffect, useRef} from 'react';
+import {ChangeEvent, RefObject, useCallback, useEffect, useRef} from 'react';
 import {ColumnSize} from '@react-types/table';
-import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {getColumnHeaderId} from './utils';
 import {GridNode} from '@react-types/grid';
@@ -62,7 +62,7 @@ export interface AriaTableColumnResizeProps<T> {
  */
 export function useTableColumnResize<T>(props: AriaTableColumnResizeProps<T>, state: TableColumnResizeState<T>, ref: RefObject<HTMLInputElement>): TableColumnResizeAria {
   let {column: item, triggerRef, isDisabled, onResizeStart, onResize, onResizeEnd, 'aria-label': ariaLabel} = props;
-  const stringFormatter = useLocalizedStringFormatter(intlMessages);
+  const stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let id = useId();
   let isResizing = state.resizingColumn === item.key;
   let isResizingRef = useRef(isResizing);

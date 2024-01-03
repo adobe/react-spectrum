@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+import {FormValidationState, useFormValidationState} from '@react-stately/form';
 import {RadioGroupProps} from '@react-types/radio';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
-export interface RadioGroupState {
+export interface RadioGroupState extends FormValidationState {
   /**
    * The name for the group, used for native form submission.
    * @deprecated
@@ -45,13 +46,13 @@ export interface RadioGroupState {
   readonly selectedValue: string | null,
 
   /** Sets the selected value. */
-  setSelectedValue(value: string): void,
+  setSelectedValue(value: string | null): void,
 
   /** The value of the last focused radio. */
   readonly lastFocusedValue: string | null,
 
   /** Sets the last focused value. */
-  setLastFocusedValue(value: string): void
+  setLastFocusedValue(value: string | null): void
 }
 
 let instance = Math.round(Math.random() * 10000000000);
@@ -64,25 +65,34 @@ let i = 0;
 export function useRadioGroupState(props: RadioGroupProps): RadioGroupState  {
   // Preserved here for backward compatibility. React Aria now generates the name instead of stately.
   let name = useMemo(() => props.name || `radio-group-${instance}-${++i}`, [props.name]);
-  let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue, props.onChange);
-  let [lastFocusedValue, setLastFocusedValue] = useState(null);
+  let [selectedValue, setSelected] = useControlledState(props.value, props.defaultValue ?? null, props.onChange);
+  let [lastFocusedValue, setLastFocusedValue] = useState<string | null>(null);
+
+  let validation = useFormValidationState({
+    ...props,
+    value: selectedValue
+  });
 
   let setSelectedValue = (value) => {
     if (!props.isReadOnly && !props.isDisabled) {
       setSelected(value);
+      validation.commitValidation();
     }
   };
 
+  let isInvalid = validation.displayValidation.isInvalid;
+
   return {
+    ...validation,
     name,
-    selectedValue,
+    selectedValue: selectedValue,
     setSelectedValue,
     lastFocusedValue,
     setLastFocusedValue,
     isDisabled: props.isDisabled || false,
     isReadOnly: props.isReadOnly || false,
     isRequired: props.isRequired || false,
-    validationState: props.validationState || null,
-    isInvalid: props.isInvalid || props.validationState === 'invalid'
+    validationState: props.validationState || (isInvalid ? 'invalid' : null),
+    isInvalid
   };
 }

@@ -11,15 +11,15 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Header, Item, ListBox, ListBoxContext, Section, Text, useDragAndDrop} from '../';
+import {DropIndicator, Header, ListBox, ListBoxContext, ListBoxItem, Section, Text, useDragAndDrop} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestListBox = ({listBoxProps, itemProps}) => (
   <ListBox aria-label="Test" {...listBoxProps}>
-    <Item {...itemProps} id="cat">Cat</Item>
-    <Item {...itemProps} id="dog">Dog</Item>
-    <Item {...itemProps} id="kangaroo">Kangaroo</Item>
+    <ListBoxItem {...itemProps} id="cat">Cat</ListBoxItem>
+    <ListBoxItem {...itemProps} id="dog">Dog</ListBoxItem>
+    <ListBoxItem {...itemProps} id="kangaroo">Kangaroo</ListBoxItem>
   </ListBox>
 );
 
@@ -31,9 +31,9 @@ let DraggableListBox = (props) => {
 
   return (
     <ListBox aria-label="Test" dragAndDropHooks={dragAndDropHooks} {...props}>
-      <Item id="cat">Cat</Item>
-      <Item id="dog">Dog</Item>
-      <Item id="kangaroo">Kangaroo</Item>
+      <ListBoxItem id="cat">Cat</ListBoxItem>
+      <ListBoxItem id="dog">Dog</ListBoxItem>
+      <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
     </ListBox>
   );
 };
@@ -62,7 +62,7 @@ describe('ListBox', () => {
     expect(listbox).toHaveAttribute('class', 'react-aria-ListBox');
 
     for (let option of getAllByRole('option')) {
-      expect(option).toHaveAttribute('class', 'react-aria-Item');
+      expect(option).toHaveAttribute('class', 'react-aria-ListBoxItem');
     }
   });
 
@@ -105,7 +105,7 @@ describe('ListBox', () => {
     render(
       <ListBox aria-label="Test" ref={listBoxRef}>
         <Section ref={sectionRef}>
-          <Item ref={itemRef}>Cat</Item>
+          <ListBoxItem ref={itemRef}>Cat</ListBoxItem>
         </Section>
       </ListBox>
     );
@@ -117,10 +117,10 @@ describe('ListBox', () => {
   it('should support slots', () => {
     let {getByRole} = render(
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
-        <Item textValue="Read">
+        <ListBoxItem textValue="Read">
           <Text slot="label">Read</Text>
           <Text slot="description">Read only</Text>
-        </Item>
+        </ListBoxItem>
       </ListBox>
     );
 
@@ -136,15 +136,14 @@ describe('ListBox', () => {
       <ListBox aria-label="Sandwich contents" selectionMode="multiple">
         <Section data-test-prop="test-section-1">
           <Header>Veggies</Header>
-          <Item id="lettuce">Lettuce</Item>
-          <Item id="tomato">Tomato</Item>
-          <Item id="onion">Onion</Item>
+          <ListBoxItem id="lettuce">Lettuce</ListBoxItem>
+          <ListBoxItem id="tomato">Tomato</ListBoxItem>
+          <ListBoxItem id="onion">Onion</ListBoxItem>
         </Section>
-        <Section data-test-prop="test-section-2">
-          <Header>Protein</Header>
-          <Item id="ham">Ham</Item>
-          <Item id="tuna">Tuna</Item>
-          <Item id="tofu">Tofu</Item>
+        <Section data-test-prop="test-section-2" aria-label="Protein">
+          <ListBoxItem id="ham">Ham</ListBoxItem>
+          <ListBoxItem id="tuna">Tuna</ListBoxItem>
+          <ListBoxItem id="tofu">Tofu</ListBoxItem>
         </Section>
       </ListBox>
     );
@@ -157,6 +156,7 @@ describe('ListBox', () => {
 
     expect(groups[0]).toHaveAttribute('aria-labelledby');
     expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Veggies');
+    expect(groups[1].getAttribute('aria-label')).toEqual('Protein');
 
     expect(groups[0]).toHaveAttribute('data-test-prop', 'test-section-1');
     expect(groups[1]).toHaveAttribute('data-test-prop', 'test-section-2');
@@ -170,7 +170,7 @@ describe('ListBox', () => {
 
     let {getAllByRole, rerender} = render(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -183,7 +183,7 @@ describe('ListBox', () => {
     ];
     rerender(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -197,7 +197,7 @@ describe('ListBox', () => {
     ];
     rerender(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -211,7 +211,7 @@ describe('ListBox', () => {
     ];
     rerender(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -225,7 +225,7 @@ describe('ListBox', () => {
     ];
     rerender(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -238,7 +238,7 @@ describe('ListBox', () => {
     ];
     rerender(
       <ListBox aria-label="Animals" items={options}>
-        {(item) => <Item>{item.name}</Item>}
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
       </ListBox>
     );
 
@@ -255,8 +255,8 @@ describe('ListBox', () => {
       setItemText = _setItemText;
       return (
         <>
-          <Item id={1}>{itemText}</Item>
-          {showTwo && <Item id={2}>Two</Item>}
+          <ListBoxItem id={1}>{itemText}</ListBoxItem>
+          {showTwo && <ListBoxItem id={2}>Two</ListBoxItem>}
         </>
       );
     }
@@ -308,7 +308,7 @@ describe('ListBox', () => {
   });
 
   it('should support focus ring', async () => {
-    let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
+    let {getAllByRole} = renderListbox({selectionMode: 'multiple', shouldFocusOnHover: true}, {className: ({isFocusVisible}) => isFocusVisible ? 'focus' : ''});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-focus-visible');
@@ -318,6 +318,7 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(option);
     expect(option).toHaveAttribute('data-focus-visible', 'true');
     expect(option).toHaveClass('focus');
+    expect(option).not.toHaveAttribute('data-hovered');
 
     fireEvent.keyDown(option, {key: 'ArrowDown'});
     fireEvent.keyUp(option, {key: 'ArrowDown'});
@@ -469,6 +470,14 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(options[1]);
   });
 
+  it('should support onScroll', () => {
+    let onScroll = jest.fn();
+    let {getByRole} = renderListbox({onScroll});
+    let listbox = getByRole('listbox');
+    fireEvent.scroll(listbox);
+    expect(onScroll).toHaveBeenCalled();
+  });
+
   describe('drag and drop', () => {
     it('should support draggable items', () => {
       let {getAllByRole} = render(<DraggableListBox />);
@@ -478,7 +487,7 @@ describe('ListBox', () => {
 
     it('should render drop indicators', () => {
       let onReorder = jest.fn();
-      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} />);
+      let {getAllByRole} = render(<DraggableListBox onReorder={onReorder} renderDropIndicator={(target) => <DropIndicator target={target}>Test</DropIndicator>} />);
       let option = getAllByRole('option')[0];
       fireEvent.keyDown(option, {key: 'Enter'});
       fireEvent.keyUp(option, {key: 'Enter'});
@@ -489,6 +498,7 @@ describe('ListBox', () => {
       expect(rows[0]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[0]).toHaveAttribute('data-drop-target', 'true');
       expect(rows[0]).toHaveAttribute('aria-label', 'Insert before Cat');
+      expect(rows[0]).toHaveTextContent('Test');
       expect(rows[1]).toHaveAttribute('class', 'react-aria-DropIndicator');
       expect(rows[1]).not.toHaveAttribute('data-drop-target');
       expect(rows[1]).toHaveAttribute('aria-label', 'Insert between Cat and Dog');
@@ -657,8 +667,8 @@ describe('ListBox', () => {
       it('should support links with selectionMode="none"', async function () {
         let {getAllByRole} = render(
           <ListBox aria-label="listbox">
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <ListBoxItem href="https://google.com">One</ListBoxItem>
+            <ListBoxItem href="https://adobe.com">Two</ListBoxItem>
           </ListBox>
         );
 
@@ -679,8 +689,8 @@ describe('ListBox', () => {
       it.each(['single', 'multiple'])('should support links with selectionMode="%s"', async function (selectionMode) {
         let {getAllByRole} = render(
           <ListBox aria-label="listbox" selectionMode={selectionMode}>
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <ListBoxItem href="https://google.com">One</ListBoxItem>
+            <ListBoxItem href="https://adobe.com">Two</ListBoxItem>
           </ListBox>
         );
 
@@ -710,8 +720,8 @@ describe('ListBox', () => {
       it.each(['single', 'multiple'])('should support links with selectionMode="%s" selectionBehavior="replace"', async function (selectionMode) {
         let {getAllByRole} = render(
           <ListBox aria-label="listbox" selectionMode={selectionMode} selectionBehavior="replace">
-            <Item href="https://google.com">One</Item>
-            <Item href="https://adobe.com">Two</Item>
+            <ListBoxItem href="https://google.com">One</ListBoxItem>
+            <ListBoxItem href="https://adobe.com">Two</ListBoxItem>
           </ListBox>
         );
 

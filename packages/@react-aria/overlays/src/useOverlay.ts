@@ -12,7 +12,7 @@
 
 import {DOMAttributes} from '@react-types/shared';
 import {isElementInChildOfActiveScope} from '@react-aria/focus';
-import {RefObject, SyntheticEvent, useEffect} from 'react';
+import {RefObject, useEffect} from 'react';
 import {useFocusWithin, useInteractOutside} from '@react-aria/interactions';
 
 export interface AriaOverlayProps {
@@ -84,14 +84,14 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     };
   }, [isOpen, ref]);
 
-  // Only hide the overlay when it is the topmost visible overlay in the stack.
+  // Only hide the overlay when it is the topmost visible overlay in the stack
   let onHide = () => {
     if (visibleOverlays[visibleOverlays.length - 1] === ref && onClose) {
       onClose();
     }
   };
 
-  let onInteractOutsideStart = (e: SyntheticEvent<Element>) => {
+  let onInteractOutsideStart = (e: PointerEvent) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
@@ -100,7 +100,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
     }
   };
 
-  let onInteractOutside = (e: SyntheticEvent<Element>) => {
+  let onInteractOutside = (e: PointerEvent) => {
     if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
@@ -120,7 +120,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   };
 
   // Handle clicking outside the overlay to close it
-  useInteractOutside({ref, onInteractOutside: isDismissable ? onInteractOutside : null, onInteractOutsideStart});
+  useInteractOutside({ref, onInteractOutside: isDismissable && isOpen ? onInteractOutside : null, onInteractOutsideStart});
 
   let {focusWithinProps} = useFocusWithin({
     isDisabled: !shouldCloseOnBlur,

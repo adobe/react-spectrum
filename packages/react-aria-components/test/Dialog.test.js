@@ -10,7 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Dialog, DialogTrigger, Heading, Modal, ModalOverlay, OverlayArrow, Popover} from '../';
+import {
+  Button,
+  Dialog,
+  DialogTrigger,
+  Heading,
+  Modal,
+  ModalOverlay,
+  OverlayArrow,
+  Popover
+} from '../';
 import {pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -29,7 +38,7 @@ describe('Dialog', () => {
           <Dialog role="alertdialog" data-test="dialog">
             {({close}) => (
               <>
-                <Heading>Alert</Heading>
+                <Heading slot="title">Alert</Heading>
                 <Button onPress={close}>Close</Button>
               </>
             )}
@@ -64,7 +73,7 @@ describe('Dialog', () => {
             <Dialog role="alertdialog" data-test="dialog">
               {({close}) => (
                 <>
-                  <Heading>Alert</Heading>
+                  <Heading slot="title">Alert</Heading>
                   <Button onPress={close}>Close</Button>
                 </>
               )}
@@ -99,7 +108,7 @@ describe('Dialog', () => {
           <Dialog role="alertdialog" data-test="dialog">
             {({close}) => (
               <>
-                <Heading>Alert</Heading>
+                <Heading slot="title">Alert</Heading>
                 <Button onPress={close}>Close</Button>
               </>
             )}
@@ -128,7 +137,7 @@ describe('Dialog', () => {
             <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
           </OverlayArrow>
           <Dialog data-test="dialog">
-            <Heading>Help</Heading>
+            <Heading slot="title">Help</Heading>
             <p>For help accessing your account, please contact support.</p>
           </Dialog>
         </Popover>
@@ -160,6 +169,26 @@ describe('Dialog', () => {
     expect(dialog).not.toBeInTheDocument();
   });
 
+  it('should get default aria label from trigger', async () => {
+    let {getByRole} = render(
+      <DialogTrigger>
+        <Button>Settings</Button>
+        <Popover>
+          <Dialog>Test</Dialog>
+        </Popover>
+      </DialogTrigger>
+    );
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let dialog = getByRole('dialog');
+    expect(dialog).toHaveAttribute('aria-labelledby', button.id);
+
+    await user.click(document.body);
+    expect(dialog).not.toBeInTheDocument();
+  });
+
   it('should support render props', async () => {
     let {getByRole} = render(
       <DialogTrigger>
@@ -168,7 +197,7 @@ describe('Dialog', () => {
           <Dialog>
             {({close}) => (
               <>
-                <Heading>Help</Heading>
+                <Heading slot="title">Help</Heading>
                 <p>For help accessing your account, please contact support.</p>
                 <Button onPress={() => close()}>Dismiss</Button>
               </>
@@ -196,7 +225,7 @@ describe('Dialog', () => {
     let onOpenChange = jest.fn();
     let {getByRole} = render(
       <Modal isDismissable isOpen onOpenChange={onOpenChange}>
-        <Dialog>A modal</Dialog>
+        <Dialog aria-label="Modal">A modal</Dialog>
       </Modal>
     );
 
@@ -214,7 +243,7 @@ describe('Dialog', () => {
       <DialogTrigger>
         <Button />
         <Modal isDismissable isOpen onOpenChange={onOpenChange}>
-          <Dialog>A modal</Dialog>
+          <Dialog aria-label="Modal">A modal</Dialog>
         </Modal>
       </DialogTrigger>
     </>);
@@ -225,5 +254,75 @@ describe('Dialog', () => {
     await user.click(document.body);
     expect(onOpenChange).toHaveBeenCalledTimes(1);
     expect(onOpenChange).toHaveBeenCalledWith(false);
+  });
+
+  it('supports isEntering and isExiting props', async () => {
+    function TestModal(props) {
+      return (
+        <DialogTrigger>
+          <Button />
+          <Modal {...props}>
+            <Dialog aria-label="Modal">A modal</Dialog>
+          </Modal>
+        </DialogTrigger>
+      );
+    }
+
+    let {getByRole, rerender} = render(<TestModal isEntering />);
+
+    let button = getByRole('button');
+    await user.click(button);
+
+    let modal = getByRole('dialog').closest('.react-aria-ModalOverlay');
+    expect(modal).toHaveAttribute('data-entering');
+
+    rerender(<TestModal />);
+    expect(modal).not.toHaveAttribute('data-entering');
+
+    rerender(<TestModal isExiting />);
+    await user.click(button);
+
+    expect(modal).toBeInTheDocument();
+    expect(modal).toHaveAttribute('data-exiting');
+
+    rerender(<TestModal />);
+    expect(modal).not.toBeInTheDocument();
+  });
+
+  describe('portalContainer', () => {
+    function InfoDialog(props) {
+      return (
+        <DialogTrigger>
+          <Button>Delete…</Button>
+          <Modal UNSTABLE_portalContainer={props.container} data-test="modal">
+            <Dialog role="alertdialog" data-test="dialog">
+              {({close}) => (
+                <>
+                  <Heading slot="title">Alert</Heading>
+                  <Button onPress={close}>Close</Button>
+                </>
+              )}
+            </Dialog>
+          </Modal>
+        </DialogTrigger>
+      );
+    }
+    function App() {
+      let [container, setContainer] = React.useState();
+      return (
+        <>
+          <InfoDialog container={container} />
+          <div ref={setContainer} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the tooltip in the portal container', async () => {
+      let {getByRole, getByTestId} = render(<App />);
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('alertdialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      await user.click(document.body);
+    });
   });
 });

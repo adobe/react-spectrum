@@ -18,6 +18,7 @@ import {ButtonGroup} from '@react-spectrum/buttongroup';
 import Calendar from '@spectrum-icons/workflow/Calendar';
 import Dashboard from '@spectrum-icons/workflow/Dashboard';
 import {Item, TabList, TabPanels, Tabs} from '..';
+import {Key} from '@react-types/shared';
 import {Picker} from '@react-spectrum/picker';
 import React, {ReactNode, useState} from 'react';
 import {RouterProvider} from '@react-aria/utils';
@@ -857,7 +858,7 @@ let DynamicTabsWithDecoration = (props = {}) => {
 };
 
 let ControlledSelection = () => {
-  let [selectedKey, setSelectedKey] = useState<React.Key>('Tab 1');
+  let [selectedKey, setSelectedKey] = useState<Key>('Tab 1');
 
   return (
     <div style={{width: '80%'}}>

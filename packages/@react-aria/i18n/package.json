@@ -1,17 +1,25 @@
 {
   "name": "@react-aria/i18n",
-  "version": "3.8.3",
+  "version": "3.10.0",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
   "module": "dist/module.js",
   "exports": {
-    "types": "./dist/types.d.ts",
-    "import": "./dist/import.mjs",
-    "require": "./dist/main.js"
+    ".": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./server": {
+      "import": "./server/index.mjs",
+      "require": "./server/index.js"
+    }
   },
   "real-main": "dist/real-main.js",
   "real-module": "dist/real-module.js",
+  "server-module": "server/index.mjs",
+  "server-main": "server/index.js",
   "types": "dist/types.d.ts",
   "source": "src/index.ts",
   "targets": {
@@ -23,6 +31,18 @@
       "includeNodeModules": false
     },
     "real-main": {
+      "outputFormat": "commonjs",
+      "isLibrary": true,
+      "includeNodeModules": false
+    },
+    "server-module": {
+      "source": "src/server.tsx",
+      "outputFormat": "esmodule",
+      "isLibrary": true,
+      "includeNodeModules": false
+    },
+    "server-main": {
+      "source": "src/server.tsx",
       "outputFormat": "commonjs",
       "isLibrary": true,
       "includeNodeModules": false
@@ -38,7 +58,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "server"
   ],
   "sideEffects": false,
   "repository": {
@@ -46,13 +67,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.5.0",
+    "@internationalized/date": "^3.5.1",
     "@internationalized/message": "^3.1.1",
-    "@internationalized/number": "^3.3.0",
-    "@internationalized/string": "^3.1.1",
-    "@react-aria/ssr": "^3.8.0",
-    "@react-aria/utils": "^3.21.0",
-    "@react-types/shared": "^3.21.0",
+    "@internationalized/number": "^3.5.0",
+    "@internationalized/string": "^3.2.0",
+    "@react-aria/ssr": "^3.9.1",
+    "@react-aria/utils": "^3.23.0",
+    "@react-types/shared": "^3.22.0",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

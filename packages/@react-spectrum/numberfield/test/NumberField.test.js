@@ -15,6 +15,7 @@ import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-s
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
+import {Form} from '@react-spectrum/form';
 import messages from '../../../@react-aria/numberfield/intl/*';
 import {NumberField} from '../';
 import {Provider} from '@react-spectrum/provider';
@@ -292,6 +293,21 @@ describe('NumberField', function () {
     await user.keyboard('3');
     await user.tab();
     expect(onChangeSpy.mock.invocationCallOrder[0]).toBeLessThan(onBlurSpy.mock.invocationCallOrder[0]);
+  });
+
+  it.each`
+  Name                            | props                                        | expected
+  ${'defaultValue minValue'}      | ${{defaultValue: 20, minValue: 50}}          | ${'50'}
+  ${'defaultValue maxValue'}      | ${{defaultValue: 20, maxValue: 10}}          | ${'10'}
+  ${'defaultValue minValue step'} | ${{defaultValue: 20, minValue: 50, step: 3}} | ${'50'}
+  ${'defaultValue maxValue step'} | ${{defaultValue: 20, maxValue: 10, step: 3}} | ${'9'}
+  ${'value minValue'}             | ${{value: 20, minValue: 50}}                 | ${'50'}
+  ${'value maxValue'}             | ${{value: 20, maxValue: 10}}                 | ${'10'}
+  ${'value minValue step'}        | ${{value: 20, minValue: 50, step: 3}}        | ${'50'}
+  ${'value maxValue step'}        | ${{value: 20, maxValue: 10, step: 3}}        | ${'9'}
+  `('clamps value & defaultValue to the allowed range $Name', function ({props, expected}) {
+    let {textField} = renderNumberField(props);
+    expect(textField).toHaveAttribute('value', expected);
   });
 
   it.each`
@@ -1150,7 +1166,7 @@ describe('NumberField', function () {
   `('goes to valid step min on `home`', () => {
     let {textField} = renderNumberField({onChange: onChangeSpy, defaultValue: 10, step: 10, minValue: -521});
 
-    expect(textField).toHaveAttribute('value', '10');
+    expect(textField).toHaveAttribute('value', '9');
     act(() => {textField.focus();});
     fireEvent.keyDown(textField, {key: 'Home'});
     fireEvent.keyUp(textField, {key: 'Home'});
@@ -2259,5 +2275,232 @@ describe('NumberField', function () {
     act(() => input.blur());
     await user.click(button);
     expect(input).toHaveValue('10');
+  });
+
+  describe('validation', () => {
+    describe('validationBehavior=native', () => {
+      it('supports isRequired', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+        expect(document.activeElement).toBe(input);
+
+        await user.keyboard('4');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
+
+      it('commits validation changes when pressing increment/decrement buttons', async () => {
+        let {getByTestId, getAllByRole} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(document.activeElement).toBe(input);
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Constraints not satisfied');
+
+        await user.click(getAllByRole('button')[0]);
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it('supports validate function', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" defaultValue={2} step={2} validationBehavior="native" validate={v => v !== 4 ? 'Invalid value' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(document.activeElement).toBe(input);
+
+        await user.clear(input);
+        await user.keyboard('3');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it('supports server validation', async () => {
+        function Test() {
+          let [serverErrors, setServerErrors] = React.useState({});
+          let onSubmit = e => {
+            e.preventDefault();
+            setServerErrors({
+              value: 'Invalid value.'
+            });
+          };
+
+          return (
+            <Provider theme={theme}>
+              <Form onSubmit={onSubmit} validationErrors={serverErrors}>
+                <NumberField data-testid="input" label="Value" name="value" validationBehavior="native" />
+                <Button type="submit" data-testid="submit">Submit</Button>
+              </Form>
+            </Provider>
+          );
+        }
+
+        let {getByTestId} = render(<Test />);
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        await user.click(getByTestId('submit'));
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value.');
+        expect(input.validity.valid).toBe(false);
+
+        await user.tab({shift: true});
+        await user.keyboard('4');
+        await user.tab();
+
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+      });
+
+      it('supports customizing native error messages', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" errorMessage={e => e.validationDetails.valueMissing ? 'Please enter a value' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        act(() => {getByTestId('form').checkValidity();});
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Please enter a value');
+      });
+
+      it('only commits on blur if the value changed', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" isRequired validationBehavior="native" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('required');
+        expect(input).not.toHaveAttribute('aria-required');
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(false);
+
+        await user.tab();
+        await user.tab({shift: true});
+        expect(input).not.toHaveAttribute('aria-describedby');
+
+        act(() => {getByTestId('form').checkValidity();});
+
+        expect(document.activeElement).toBe(input);
+        expect(input).toHaveAttribute('aria-describedby');
+
+        await user.keyboard('4');
+
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+      });
+    });
+
+    describe('validationBehavior=aria', () => {
+      it('supports validate function', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form data-testid="form">
+              <NumberField data-testid="input" label="Value" defaultValue={2} validate={v => v === 2 ? 'Invalid value' : null} />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+        expect(input.validity.valid).toBe(true);
+
+        await user.tab();
+        await user.keyboard('4');
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+
+      it('supports server validation', async () => {
+        let {getByTestId} = render(
+          <Provider theme={theme}>
+            <Form validationErrors={{value: 'Invalid value'}}>
+              <NumberField data-testid="input" label="Value" name="value" />
+            </Form>
+          </Provider>
+        );
+
+        let input = getByTestId('input');
+        expect(input).toHaveAttribute('aria-describedby');
+        expect(input).toHaveAttribute('aria-invalid', 'true');
+        expect(document.getElementById(input.getAttribute('aria-describedby'))).toHaveTextContent('Invalid value');
+
+        await user.tab();
+        await user.keyboard('4');
+        await user.tab();
+        expect(input).not.toHaveAttribute('aria-describedby');
+        expect(input).not.toHaveAttribute('aria-invalid');
+      });
+    });
   });
 });

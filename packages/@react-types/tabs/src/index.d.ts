@@ -11,15 +11,15 @@
  */
 
 import {
-  AriaLabelingProps,
-  CollectionBase,
+  AriaLabelingProps, CollectionBase,
   CollectionChildren,
   DOMProps,
+  Key,
   Orientation,
   SingleSelection,
   StyleProps
 } from '@react-types/shared';
-import {Key, ReactNode} from 'react';
+import {ReactNode} from 'react';
 
 export interface AriaTabProps extends AriaLabelingProps {
   /** The key of the tab. */

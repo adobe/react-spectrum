@@ -1,35 +1,45 @@
-import plugin from 'tailwindcss/plugin';
+const plugin = require('tailwindcss/plugin');
 
+// Order of these is important because it determines which states win in a conflict.
+// We mostly follow Tailwind's defaults, adding our additional states following the categories they define.
+// https://github.com/tailwindlabs/tailwindcss/blob/304c2bad6cb5fcb62754a4580b1c8f4c16b946ea/src/corePlugins.js#L83
 const attributes = {
   boolean: [
+    // Conditions
+    'allows-removing',
+    'allows-sorting',
+    'allows-dragging',
+
+    // States
+    'open',
+    'entering',
+    'exiting',
+    'indeterminate',
+    ['placeholder-shown', 'placeholder'],
+    'current',
+    'required',
+    'unavailable',
+    'invalid',
+    ['read-only', 'readonly'],
+    'outside-month',
+    'outside-visible-range',
+
+    // Content
+    'empty',
+
+    // Interactive states
+    'focus-within',
     ['hover', 'hovered'],
     ['focus', 'focused'],
     'focus-visible',
-    'focus-within',
     'pressed',
-    'disabled',
-    'drop-target',
-    'dragging',
-    'empty',
-    'allows-dragging',
-    'allows-removing',
-    'allows-sorting',
-    ['placeholder-shown', 'placeholder'],
     'selected',
-    'indeterminate',
-    ['read-only', 'readonly'],
-    'required',
-    'entering',
-    'exiting',
-    'open',
-    'unavailable',
-    'outside-month',
-    'outside-visible-range',
     'selection-start',
     'selection-end',
-    'current',
-    'invalid',
-    'resizing'
+    'dragging',
+    'drop-target',
+    'resizing',
+    'disabled'
   ],
   enum: {
     placement: ['left', 'right', 'top', 'bottom'],
@@ -56,15 +66,27 @@ const nativeVariantSelectors = new Map([
   ['hovered', ':hover'],
   ['focused', ':focus'],
   ['readonly', ':read-only'],
-  ['open', '[open]'],
+  ['open', '[open]']
+]);
+
+// Variants where both native and RAC attributes should apply. We don't override these.
+const nativeMergeSelectors = new Map([
   ['placeholder', ':placeholder-shown']
 ]);
 
 // If no prefix is specified, we want to avoid overriding native variants on non-RAC components, so we only target elements with the data-rac attribute for those variants.
-let getSelector = (prefix, attributeName, attributeValue) => {
+let getSelector = (prefix, attributeName, attributeValue, hoverOnlyWhenSupported) => {
   let baseSelector = attributeValue ? `[data-${attributeName}="${attributeValue}"]` : `[data-${attributeName}]`;
-  if (prefix === '' && nativeVariantSelectors.has(attributeName)) {
-    return [`&:where([data-rac])${baseSelector}`, `&:where(:not([data-rac]))${nativeVariantSelectors.get(attributeName)}`];
+  let nativeSelector = nativeVariantSelectors.get(attributeName);
+  if (prefix === '' && nativeSelector) {
+    let wrappedNativeSelector = `&:where(:not([data-rac]))${nativeSelector}`;
+    let nativeSelectorGenerator = wrappedNativeSelector;
+    if (nativeSelector === ':hover' && hoverOnlyWhenSupported) {
+      nativeSelectorGenerator = wrap => `@media (hover: hover) and (pointer: fine) { ${wrap(wrappedNativeSelector)} }`;
+    }
+    return [`&:where([data-rac])${baseSelector}`, nativeSelectorGenerator];
+  } else if (prefix === '' && nativeMergeSelectors.has(attributeName)) {
+    return [`&${baseSelector}`, `&${nativeMergeSelectors.get(attributeName)}`];
   } else {
     return `&${baseSelector}`;
   }
@@ -78,27 +100,56 @@ let mapSelector = (selector, fn) => {
   }
 };
 
-module.exports = plugin.withOptions((options) => (({addVariant}) => {
+let wrapSelector = (selector, wrap) => {
+  if (typeof selector === 'function') {
+    return selector(wrap);
+  } else {
+    return wrap(selector);
+  }
+};
+
+let addVariants = (variantName, selectors, addVariant, matchVariant) => {
+  addVariant(variantName, mapSelector(selectors, selector => wrapSelector(selector, s => s)));
+  matchVariant(
+    'group',
+    (_, {modifier}) =>
+      modifier
+        ? mapSelector(selectors, selector => wrapSelector(selector, s => `:merge(.group\\/${modifier})${s.slice(1)} &`))
+        : mapSelector(selectors, selector => wrapSelector(selector, s => `:merge(.group)${s.slice(1)} &`)),
+    {values: {[variantName]: variantName}}
+  );
+  matchVariant(
+    'peer',
+    (_, {modifier}) =>
+      modifier
+        ? mapSelector(selectors, selector => wrapSelector(selector, s => `:merge(.peer\\/${modifier})${s.slice(1)} ~ &`))
+        : mapSelector(selectors, selector => wrapSelector(selector, s => `:merge(.peer)${s.slice(1)} ~ &`)),
+    {values: {[variantName]: variantName}}
+  );
+};
+
+module.exports = plugin.withOptions((options) => (({addVariant, matchVariant, config}) => {
   let prefix = options?.prefix ? `${options.prefix}-` : '';
+  let future = config().future;
+  let hoverOnlyWhenSupported = future === 'all' || future?.hoverOnlyWhenSupported;
+
+  // Enum attributes go first because currently they are all non-interactive states.
+  Object.keys(attributes.enum).forEach((attributeName) => {
+    attributes.enum[attributeName].forEach(
+      (attributeValue) => {
+        let name = shortNames[attributeName] || attributeName;
+        let variantName = `${prefix}${name}-${attributeValue}`;
+        let selectors = getSelector(prefix, attributeName, attributeValue, hoverOnlyWhenSupported);
+        addVariants(variantName, selectors, addVariant, matchVariant);
+      }
+    );
+  });
+
   attributes.boolean.forEach((attribute) => {
     let variantName = Array.isArray(attribute) ? attribute[0] : attribute;
     variantName = `${prefix}${variantName}`;
     let attributeName = Array.isArray(attribute) ? attribute[1] : attribute;
-    let selectors = getSelector(prefix, attributeName);
-    addVariant(variantName, selectors);
-    addVariant(`group-${variantName}`, mapSelector(selectors, selector => `:merge(.group)${selector.slice(1)} &`));
-    addVariant(`peer-${variantName}`, mapSelector(selectors, selector => `:merge(.peer)${selector.slice(1)} ~ &`));
-  });
-  Object.keys(attributes.enum).forEach((attributeName) => {
-    attributes.enum[attributeName].forEach(
-        (attributeValue) => {
-          let name = shortNames[attributeName] || attributeName;
-          let variantName = `${prefix}${name}-${attributeValue}`;
-          let selectors = getSelector(prefix, attributeName, attributeValue);
-          addVariant(variantName, selectors);
-          addVariant(`group-${variantName}`, mapSelector(selectors, selector => `:merge(.group)${selector.slice(1)} &`));
-          addVariant(`peer-${variantName}`, mapSelector(selectors, selector => `:merge(.peer)${selector.slice(1)} ~ &`));
-        }
-      );
+    let selectors = getSelector(prefix, attributeName, null, hoverOnlyWhenSupported);
+    addVariants(variantName, selectors, addVariant, matchVariant);
   });
 }));

@@ -11,6 +11,7 @@
  */
 export {useId, mergeIds, useSlotId} from './useId';
 export {chain} from './chain';
+export {getOwnerDocument, getOwnerWindow} from './domHelpers';
 export {mergeProps} from './mergeProps';
 export {mergeRefs} from './mergeRefs';
 export {filterDOMProps} from './filterDOMProps';
@@ -29,7 +30,7 @@ export {useSyncRef} from './useSyncRef';
 export {getScrollParent, isScrollable} from './getScrollParent';
 export {useViewportSize} from './useViewportSize';
 export {useDescription} from './useDescription';
-export {isMac, isIPhone, isIPad, isIOS, isAppleDevice, isWebKit, isChrome, isAndroid} from './platform';
+export {isMac, isIPhone, isIPad, isIOS, isAppleDevice, isWebKit, isChrome, isAndroid, isFirefox} from './platform';
 export {useEvent} from './useEvent';
 export {useValueEffect} from './useValueEffect';
 export {scrollIntoView, scrollIntoViewport} from './scrollIntoView';

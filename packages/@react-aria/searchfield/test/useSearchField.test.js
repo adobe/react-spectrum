@@ -33,7 +33,8 @@ describe('useSearchField hook', () => {
   beforeEach(() => {
     state.value = '';
     state.setValue = setValue;
-    ref.current = {focus};
+    ref.current = document.createElement('input');
+    focus = jest.spyOn(ref.current, 'focus');
   });
 
   afterEach(() => {
@@ -66,12 +67,18 @@ describe('useSearchField hook', () => {
         onSubmit.mockClear();
       });
 
-      it('preventDefault is called for Enter and Escape', () => {
+      it('preventDefault is called for Enter and not Escape', () => {
         let {inputProps} = renderSearchHook({});
         inputProps.onKeyDown(event('Enter'));
         expect(preventDefault).toHaveBeenCalledTimes(1);
         inputProps.onKeyDown(event('Escape'));
-        expect(preventDefault).toHaveBeenCalledTimes(2);
+        expect(preventDefault).toHaveBeenCalledTimes(1);
+      });
+
+      it('stopPropagation is not called for Escape', () => {
+        let {inputProps} = renderSearchHook({});
+        inputProps.onKeyDown(event('Escape'));
+        expect(stopPropagation).toHaveBeenCalledTimes(0);
       });
 
       it('onSubmit is called if Enter is pressed', () => {
@@ -81,11 +88,24 @@ describe('useSearchField hook', () => {
         expect(onSubmit).toHaveBeenCalledWith(state.value);
       });
 
-      it('pressing the Escape key sets the state value to "" and calls onClear if provided', () => {
+      it('pressing the Escape key sets the state value to "", if state.value is not empty, and calls onClear if provided and will not call onClear if escape pressed again', () => {
         let {inputProps} = renderSearchHook({onClear});
+        expect(inputProps.type).toBe('search');
+        expect(inputProps.value).toBe(state.value); // this is a false positive because of fake state
+
+        // manually updating fake state
+        state.value = 'search';
+
         inputProps.onKeyDown(event('Escape'));
         expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(state.setValue).toHaveBeenCalledWith('');
+        expect(onClear).toHaveBeenCalledTimes(1);
+
+        // manually updating fake state
+        state.value = '';
+
+        inputProps.onKeyDown(event('Escape'));
+        expect(state.setValue).toHaveBeenCalledTimes(1);
         expect(onClear).toHaveBeenCalledTimes(1);
       });
 

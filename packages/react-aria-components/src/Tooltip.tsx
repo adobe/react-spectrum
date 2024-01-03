@@ -28,7 +28,20 @@ export interface TooltipProps extends PositionProps, OverlayTriggerProps, AriaLa
    *
    * When used within a TooltipTrigger this is set automatically. It is only required when used standalone.
    */
-  triggerRef?: RefObject<Element>
+  triggerRef?: RefObject<Element>,
+  /**
+   * Whether the tooltip is currently performing an entry animation.
+   */
+  isEntering?: boolean,
+  /**
+   * Whether the tooltip is currently performing an exit animation.
+   */
+  isExiting?: boolean,
+  /**
+   * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: Element
 }
 
 export interface TooltipRenderProps {
@@ -79,18 +92,18 @@ export function TooltipTrigger(props: TooltipTriggerComponentProps) {
   );
 }
 
-function Tooltip(props: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
+function Tooltip({UNSTABLE_portalContainer, ...props}: TooltipProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, TooltipContext);
   let contextState = useContext(TooltipTriggerStateContext);
   let localState = useTooltipTriggerState(props);
   let state = props.isOpen != null || props.defaultOpen != null || !contextState ? localState : contextState;
-  let isExiting = useExitAnimation(ref, state.isOpen);
+  let isExiting = useExitAnimation(ref, state.isOpen) || props.isExiting || false;
   if (!state.isOpen && !isExiting) {
     return null;
   }
 
   return (
-    <OverlayContainer>
+    <OverlayContainer portalContainer={UNSTABLE_portalContainer}>
       <TooltipInner {...props} tooltipRef={ref} isExiting={isExiting} />
     </OverlayContainer>
   );
@@ -114,7 +127,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     isOpen: state.isOpen
   });
 
-  let isEntering = useEnterAnimation(props.tooltipRef, !!placement);
+  let isEntering = useEnterAnimation(props.tooltipRef, !!placement) || props.isEntering || false;
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-Tooltip',
@@ -134,7 +147,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       {...tooltipProps}
       ref={props.tooltipRef}
       {...renderProps}
-      style={{...renderProps.style, ...overlayProps.style}}
+      style={{...overlayProps.style, ...renderProps.style}}
       data-placement={placement}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>

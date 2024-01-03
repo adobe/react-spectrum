@@ -11,206 +11,18 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Cell, Column, ColumnResizer, ComboBox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Item, Keyboard, Label, Link, ListBox, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, ResizableTableContainer, Row, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tab, Table, TableBody, TableHeader, TabList, TabPanel, Tabs, TabsProps, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
-import React, {useRef, useState} from 'react';
-import {RouterProvider} from '@react-aria/utils';
+import {MyListBoxItem, MyMenuItem} from './utils';
+import React, {useRef} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
 
 export default {
   title: 'React Aria Components'
 };
-
-export const ComboBoxExample = () => (
-  <ComboBox data-testid="combo-box-example">
-    <Label style={{display: 'block'}}>Test</Label>
-    <div style={{display: 'flex'}}>
-      <Input />
-      <Button>
-        <span aria-hidden="true" style={{padding: '0 2px'}}>▼</span>
-      </Button>
-    </div>
-    <Popover placement="bottom end">
-      <ListBox
-        data-testid="combo-box-list-box"
-        className={styles.menu}>
-        <MyItem>Foo</MyItem>
-        <MyItem>Bar</MyItem>
-        <MyItem>Baz</MyItem>
-        <MyItem href="http://google.com">Google</MyItem>
-      </ListBox>
-    </Popover>
-  </ComboBox>
-);
-
-interface ComboBoxItem {
-  id: string,
-  name: string
-}
-
-let items: ComboBoxItem[] = [{id: '1', name: 'Foo'}, {id: '2', name: 'Bar'}, {id: '3', name: 'Baz'}];
-export const ComboBoxRenderPropsStatic = () => (
-  <ComboBox data-testid="combo-box-render-props-static">
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu}>
-            <MyItem>Foo</MyItem>
-            <MyItem>Bar</MyItem>
-            <MyItem>Baz</MyItem>
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
-
-export const ComboBoxRenderPropsDefaultItems = () => (
-  <ComboBox defaultItems={items}>
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu}>
-            {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
-
-export const ComboBoxRenderPropsItems = {
-  render: () => (
-    <ComboBox items={items}>
-      {({isOpen}) => (
-        <>
-          <Label style={{display: 'block'}}>Test</Label>
-          <div style={{display: 'flex'}}>
-            <Input />
-            <Button>
-              <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-            </Button>
-          </div>
-          <Popover placement="bottom end">
-            <ListBox className={styles.menu}>
-              {(item: ComboBoxItem) => <MyItem key={item.id}>{item.name}</MyItem>}
-            </ListBox>
-          </Popover>
-        </>
-      )}
-    </ComboBox>
-  ),
-  parameters: {
-    description: {
-      data: 'Note this won\'t filter the items in the listbox because it is fully controlled'
-    }
-  }
-};
-
-export const ComboBoxRenderPropsListBoxDynamic = () => (
-  <ComboBox>
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <div style={{display: 'flex'}}>
-          <Input />
-          <Button>
-            <span aria-hidden="true" style={{padding: '0 2px'}}>{isOpen ? '▲' : '▼'}</span>
-          </Button>
-        </div>
-        <Popover placement="bottom end">
-          <ListBox className={styles.menu} items={items}>
-            {item => <MyItem key={item.id}>{item.name}</MyItem>}
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </ComboBox>
-);
-
-export const ListBoxExample = (args) => (
-  <ListBox className={styles.menu} {...args} aria-label="test listbox">
-    <MyItem>Foo</MyItem>
-    <MyItem>Bar</MyItem>
-    <MyItem>Baz</MyItem>
-    <MyItem href="http://google.com">Google</MyItem>
-  </ListBox>
-);
-
-ListBoxExample.story = {
-  args: {
-    selectionMode: 'none',
-    selectionBehavior: 'toggle'
-  },
-  argTypes: {
-    selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
-    },
-    selectionBehavior: {
-      control: {
-        type: 'radio',
-        options: ['toggle', 'replace']
-      }
-    }
-  }
-};
-
-// Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
-// also has a aXe landmark error, not sure what it means
-export const ListBoxSections = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
-    <Section className={styles.group}>
-      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-      <MyItem>Foo</MyItem>
-      <MyItem>Bar</MyItem>
-      <MyItem>Baz</MyItem>
-    </Section>
-    <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-    <Section className={styles.group}>
-      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-      <MyItem>Foo</MyItem>
-      <MyItem>Bar</MyItem>
-      <MyItem>Baz</MyItem>
-    </Section>
-  </ListBox>
-);
-
-export const ListBoxComplex = () => (
-  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
-    <MyItem>
-      <Text slot="label">Item 1</Text>
-      <Text slot="description">Description</Text>
-    </MyItem>
-    <MyItem>
-      <Text slot="label">Item 2</Text>
-      <Text slot="description">Description</Text>
-    </MyItem>
-    <MyItem>
-      <Text slot="label">Item 3</Text>
-      <Text slot="description">Description</Text>
-    </MyItem>
-  </ListBox>
-);
 
 export const TagGroupExample = (props) => (
   <TagGroup {...props}>
@@ -260,10 +72,10 @@ export const SelectExample = () => (
         <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
       </OverlayArrow>
       <ListBox className={styles.menu}>
-        <MyItem>Foo</MyItem>
-        <MyItem>Bar</MyItem>
-        <MyItem>Baz</MyItem>
-        <MyItem href="http://google.com">Google</MyItem>
+        <MyListBoxItem>Foo</MyListBoxItem>
+        <MyListBoxItem>Bar</MyListBoxItem>
+        <MyListBoxItem>Baz</MyListBoxItem>
+        <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
       </ListBox>
     </Popover>
   </Select>
@@ -280,10 +92,10 @@ export const SelectRenderProps = () => (
         </Button>
         <Popover>
           <ListBox className={styles.menu}>
-            <MyItem>Foo</MyItem>
-            <MyItem>Bar</MyItem>
-            <MyItem>Baz</MyItem>
-            <MyItem href="http://google.com">Google</MyItem>
+            <MyListBoxItem>Foo</MyListBoxItem>
+            <MyListBoxItem>Bar</MyListBoxItem>
+            <MyListBoxItem>Baz</MyListBoxItem>
+            <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
           </ListBox>
         </Popover>
       </>
@@ -298,17 +110,17 @@ export const MenuExample = () => (
       <Menu className={styles.menu} onAction={action('onAction')}>
         <Section className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-          <MyItem>Foo</MyItem>
-          <MyItem>Bar</MyItem>
-          <MyItem>Baz</MyItem>
-          <MyItem href="https://google.com">Google</MyItem>
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
+          <MyMenuItem href="https://google.com">Google</MyMenuItem>
         </Section>
         <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
         <Section className={styles.group}>
           <Header style={{fontSize: '1.2em'}}>Section 2</Header>
-          <MyItem>Foo</MyItem>
-          <MyItem>Bar</MyItem>
-          <MyItem>Baz</MyItem>
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
         </Section>
       </Menu>
     </Popover>
@@ -320,21 +132,21 @@ export const MenuComplex = () => (
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu}>
-        <MyItem>
+        <MyMenuItem>
           <Text slot="label">Copy</Text>
           <Text slot="description">Description</Text>
           <Keyboard>⌘C</Keyboard>
-        </MyItem>
-        <MyItem>
+        </MyMenuItem>
+        <MyMenuItem>
           <Text slot="label">Cut</Text>
           <Text slot="description">Description</Text>
           <Keyboard>⌘X</Keyboard>
-        </MyItem>
-        <MyItem>
+        </MyMenuItem>
+        <MyMenuItem>
           <Text slot="label">Paste</Text>
           <Text slot="description">Description</Text>
           <Keyboard>⌘V</Keyboard>
-        </MyItem>
+        </MyMenuItem>
       </Menu>
     </Popover>
   </MenuTrigger>
@@ -577,36 +389,6 @@ export const TooltipExample = () => (
   </TooltipTrigger>
 );
 
-export const PopoverExample = () => (
-  <DialogTrigger>
-    <Button>Open popover</Button>
-    <Popover
-      placement="bottom start"
-      style={{
-        background: 'Canvas',
-        color: 'CanvasText',
-        border: '1px solid gray',
-        padding: 30
-      }}>
-      <Dialog>
-        {({close}) => (
-          <form style={{display: 'flex', flexDirection: 'column'}}>
-            <label>
-              First Name: <input placeholder="John" />
-            </label>
-            <label>
-              Last Name: <input placeholder="Smith" />
-            </label>
-            <Button onPress={close} style={{marginTop: 10}}>
-              Submit
-            </Button>
-          </form>
-        )}
-      </Dialog>
-    </Popover>
-  </DialogTrigger>
-);
-
 export const ModalExample = () => (
   <DialogTrigger>
     <Button>Open modal</Button>
@@ -633,7 +415,7 @@ export const ModalExample = () => (
         <Dialog>
           {({close}) => (
             <form style={{display: 'flex', flexDirection: 'column'}}>
-              <Heading style={{marginTop: 0}}>Sign up</Heading>
+              <Heading slot="title" style={{marginTop: 0}}>Sign up</Heading>
               <label>
                 First Name: <input placeholder="John" />
               </label>
@@ -651,173 +433,6 @@ export const ModalExample = () => (
   </DialogTrigger>
 );
 
-export const TabsExample = () => {
-  let [url, setUrl] = useState('/FoR');
-
-  return (
-    <RouterProvider navigate={setUrl}>
-      <Tabs selectedKey={url}>
-        <TabList aria-label="History of Ancient Rome" style={{display: 'flex', gap: 8}}>
-          <CustomTab id="/FoR" href="/FoR">Founding of Rome</CustomTab>
-          <CustomTab id="/MaR" href="/MaR">Monarchy and Republic</CustomTab>
-          <CustomTab id="/Emp" href="/Emp">Empire</CustomTab>
-        </TabList>
-        <TabPanel id="/FoR">
-          Arma virumque cano, Troiae qui primus ab oris.
-        </TabPanel>
-        <TabPanel id="/MaR">
-          Senatus Populusque Romanus.
-        </TabPanel>
-        <TabPanel id="/Emp">
-          Alea jacta est.
-        </TabPanel>
-      </Tabs>
-    </RouterProvider>
-  );
-};
-
-// Has error with invalid aria-controls, bug documented here: https://github.com/adobe/react-spectrum/issues/4781#issuecomment-1641057070
-export const TabsRenderProps = () => {
-  const [tabOrientation, setTabOrientation] = useState<TabsProps['orientation']>('vertical');
-
-  return (
-    <div style={{display: 'flex', flexDirection: 'row', gap: 8}}>
-      <Button onPress={() => setTabOrientation((current) => current === 'vertical' ? 'horizontal' : 'vertical')}>
-        Change Orientation
-      </Button>
-      <Tabs orientation={tabOrientation}>
-        {({orientation}) => (
-          <div>
-            <div style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'row' : 'column', gap: 8}}>
-              <TabList
-                aria-label="History of Ancient Rome"
-                style={{display: 'flex', flexDirection: orientation === 'vertical' ? 'column' : 'row', gap: 8}}>
-                <CustomTab id="FoR">Founding of Rome</CustomTab>
-                <CustomTab id="MaR">Monarchy and Republic</CustomTab>
-                <CustomTab id="Emp">Empire</CustomTab>
-              </TabList>
-              <TabPanel id="FoR">
-                Arma virumque cano, Troiae qui primus ab oris.
-              </TabPanel>
-              <TabPanel id="MaR">
-                Senatus Populusque Romanus.
-              </TabPanel>
-              <TabPanel id="Emp">
-                Alea jacta est.
-              </TabPanel>
-            </div>
-          </div>
-        )}
-      </Tabs>
-    </div>
-  );
-};
-
-export const TableExample = () => {
-  let list = useListData({
-    initialItems: [
-      {id: 1, name: 'Games', date: '6/7/2020', type: 'File folder'},
-      {id: 2, name: 'Program Files', date: '4/7/2021', type: 'File folder'},
-      {id: 3, name: 'bootmgr', date: '11/20/2010', type: 'System file'},
-      {id: 4, name: 'log.txt', date: '1/18/2016', type: 'Text Document'}
-    ]
-  });
-
-  return (
-    <ResizableTableContainer style={{width: 300, overflow: 'auto'}}>
-      <Table aria-label="Example table">
-        <TableHeader>
-          <MyColumn isRowHeader defaultWidth="50%">Name</MyColumn>
-          <MyColumn>Type</MyColumn>
-          <MyColumn>Date Modified</MyColumn>
-          <MyColumn>Actions</MyColumn>
-        </TableHeader>
-        <TableBody items={list.items}>
-          {item => (
-            <Row>
-              <Cell>{item.name}</Cell>
-              <Cell>{item.type}</Cell>
-              <Cell>{item.date}</Cell>
-              <Cell>
-                <DialogTrigger>
-                  <Button>Delete</Button>
-                  <ModalOverlay
-                    style={{
-                      position: 'fixed',
-                      zIndex: 100,
-                      top: 0,
-                      left: 0,
-                      bottom: 0,
-                      right: 0,
-                      background: 'rgba(0, 0, 0, 0.5)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                    <Modal
-                      style={{
-                        background: 'Canvas',
-                        color: 'CanvasText',
-                        border: '1px solid gray',
-                        padding: 30
-                      }}>
-                      <Dialog>
-                        {({close}) => (<>
-                          <Heading>Delete item</Heading>
-                          <p>Are you sure?</p>
-                          <Button onPress={close}>Cancel</Button>
-                          <Button
-                            onPress={() => {
-                              close();
-                              list.remove(item.id);
-                            }}>
-                            Delete
-                          </Button>
-                        </>)}
-                      </Dialog>
-                    </Modal>
-                  </ModalOverlay>
-                </DialogTrigger>
-              </Cell>
-            </Row>
-          )}
-        </TableBody>
-      </Table>
-    </ResizableTableContainer>
-  );
-};
-
-function MyColumn(props) {
-  return (
-    <Column {...props}>
-      {({startResize}) => (
-        <div style={{display: 'flex'}}>
-          <MenuTrigger>
-            <Button style={{flex: 1, textAlign: 'left'}}>{props.children}</Button>
-            <Popover>
-              <Menu className={styles.menu} onAction={() => startResize()}>
-                <MyItem id="resize">Resize</MyItem>
-              </Menu>
-            </Popover>
-          </MenuTrigger>
-          <ColumnResizer />
-        </div>
-      )}
-    </Column>
-  );
-}
-
-function MyItem(props) {
-  return (
-    <Item
-      {...props}
-      className={({isFocused, isSelected}) => classNames(styles, 'item', {
-        focused: isFocused,
-        selected: isSelected
-      })} />
-  );
-}
-
 function CustomThumb({index, children}) {
   return (
     <SliderThumb
@@ -834,16 +449,6 @@ function CustomThumb({index, children}) {
       })}>
       {children}
     </SliderThumb>
-  );
-}
-
-function CustomTab(props) {
-  return (
-    <Tab
-      {...props}
-      style={({isSelected}) => ({
-        borderBottom: '2px solid ' + (isSelected ? 'slateblue' : 'transparent')
-      })} />
   );
 }
 
@@ -1042,6 +647,31 @@ export const FileTriggerButton = (props) => (
   </FileTrigger>
 );
 
+export const FileTriggerDirectories = (props) => {
+  let [files, setFiles] = React.useState<string[]>([]);
+
+  return (
+    <>
+      <FileTrigger
+        {...props}
+        acceptDirectory
+        onSelect={(e) => {
+          if (e) {
+            let fileList = [...e].map(file => file.webkitRelativePath !== '' ? file.webkitRelativePath : file.name);
+            setFiles(fileList);
+          }
+        }} >
+        <Button>Upload</Button>
+      </FileTrigger>
+      {files && <ul>
+        {files.map((file, index) => (
+          <li key={index}>{file}</li>
+        ))}
+      </ul>}
+    </>
+  );
+};
+
 export const FileTriggerLinkAllowsMultiple = (props) => (
   <FileTrigger
     {...props}
@@ -1108,11 +738,11 @@ export const ListBoxDnd = (props: ListBoxProps<typeof albums[0]>) => {
       selectionMode="multiple"
       dragAndDropHooks={dragAndDropHooks}>
       {item => (
-        <Item>
+        <ListBoxItem>
           <img src={item.image} alt="" />
           <Text slot="label">{item.title}</Text>
           <Text slot="description">{item.artist}</Text>
-        </Item>
+        </ListBoxItem>
       )}
     </ListBox>
   );
@@ -1243,4 +873,41 @@ export const LinkExample = () => {
       The missing link
     </Link>
   );
+};
+
+export const ToolbarExample = (props) => {
+  return (
+    <div>
+      <label htmlFor="before">Input Before Toolbar</label>
+      <input id="before" type="text" />
+      <Toolbar {...props}>
+        <div role="group" aria-label="Text style">
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><strong>B</strong></ToggleButton>
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><div style={{textDecoration: 'underline'}}>U</div></ToggleButton>
+          <ToggleButton className={classNames(styles, 'toggleButtonExample')}><i>I</i></ToggleButton>
+        </div>
+        <Checkbox>
+          <div className="checkbox">
+            <svg viewBox="0 0 18 18" aria-hidden="true">
+              <polyline points="1 9 7 14 15 4" />
+            </svg>
+          </div>
+          Night Mode
+        </Checkbox>
+        <Link href="https://google.com">Help</Link>
+      </Toolbar>
+      <label htmlFor="after">Input After Toolbar</label>
+      <input id="after" type="text" />
+    </div>
+  );
+};
+
+ToolbarExample.args = {
+  orientation: 'horizontal'
+};
+ToolbarExample.argTypes = {
+  orientation: {
+    control: 'radio',
+    options: ['horizontal', 'vertical']
+  }
 };
