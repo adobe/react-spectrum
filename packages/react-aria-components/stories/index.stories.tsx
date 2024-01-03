@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, SubmenuTrigger, Switch, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -147,6 +147,29 @@ export const MenuComplex = () => (
           <Text slot="description">Description</Text>
           <Keyboard>⌘V</Keyboard>
         </MyMenuItem>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+export const SubmenuExample = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MyMenuItem>Foo</MyMenuItem>
+        <SubmenuTrigger>
+          <MyMenuItem>Bar</MyMenuItem>
+          <Popover>
+            <Menu className={styles.menu} onAction={action('onAction')}>
+              <MyMenuItem>Submenu Foo</MyMenuItem>
+              <MyMenuItem>Submenu Bar</MyMenuItem>
+              <MyMenuItem>Submenu Baz</MyMenuItem>
+            </Menu>
+          </Popover>
+        </SubmenuTrigger>
+        <MyMenuItem>Baz</MyMenuItem>
+        <MyMenuItem href="https://google.com">Google</MyMenuItem>
       </Menu>
     </Popover>
   </MenuTrigger>
