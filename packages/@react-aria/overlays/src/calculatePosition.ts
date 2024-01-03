@@ -61,6 +61,8 @@ interface PositionOpts {
   arrowBoundaryOffset?: number
 }
 
+type HeightGrowthDirection = 'top' | 'bottom';
+
 export interface PositionResult {
   position?: Position,
   arrowOffsetLeft?: number,
@@ -136,6 +138,7 @@ function getScroll(node: Element): Offset {
   };
 }
 
+// Determines the amount of space required when moving the overlay to ensure it remains in the boundary
 function getDelta(
   axis: Axis,
   offset: number,
@@ -151,6 +154,12 @@ function getDelta(
   containerDimensions: Dimensions,
   padding: number
 ) {
+  // No need to adjust the vertical positioning of a overlay if the axis we are shifting against is vertical.
+  // We should instead rely on changing the max height of the overlay so that the overlay doesn't exceed its boundary
+  if (axis === 'top' || axis === 'bottom') {
+    return 0;
+  }
+
   let containerScroll = containerDimensions.scroll[axis];
   let boundaryHeight = boundaryDimensions[AXIS_SIZE[axis]];
   let startEdgeOffset = offset - padding - containerScroll;
@@ -223,6 +232,7 @@ function computePosition(
     the overlay top should match the button top
   } */
   // add the crossOffset from props
+  // TODO: may need to flip the crossOffset value if flip is true
   position[crossAxis] += crossOffset;
 
   // overlay top overlapping arrow with button bottom
@@ -232,7 +242,7 @@ function computePosition(
   position[crossAxis] = clamp(position[crossAxis], minPosition, maxPosition);
 
   // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
-  if (placement === axis) {
+  if ((placement === axis && axis === 'top')) {
     // If the container is positioned (non-static), then we use the container's actual
     // height, as `bottom` will be relative to this height.  But if the container is static,
     // then it can only be the `document.body`, and `bottom` will be relative to _its_
@@ -252,9 +262,18 @@ function getMaxHeight(
   containerOffsetWithBoundary: Offset,
   childOffset: Offset,
   margins: Position,
-  padding: number
+  padding: number,
+  heightGrowthDirection: HeightGrowthDirection
 ) {
-  return position.top != null
+
+  console.log('in max height (pos, bounddim, containerOff, childOff, marg, pad)', position, boundaryDimensions, containerOffsetWithBoundary, childOffset, margins, padding)
+  console.log('if using bottom', childOffset.top + containerOffsetWithBoundary.top - (boundaryDimensions.top + boundaryDimensions.scroll.top) - (margins.top + margins.bottom + padding))
+  console.log('if using top', boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top - (containerOffsetWithBoundary.top + position.top) - (margins.top + margins.bottom + padding))
+  console.log('heightGrowthDirection', heightGrowthDirection)
+  debugger
+  // TODO: it isn't really accurate for the submenu flip situation right now since we use the top of the trigger to the top of the boundary in the second case below
+  // but for submenus it should be the bottom of the overlay to the top of the boundary. Perhaps pass in the overlay height as well
+  return heightGrowthDirection === 'bottom'
     // We want the distance between the top of the overlay to the bottom of the boundary
     ? Math.max(0,
       (boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the bottom of the boundary
@@ -275,9 +294,17 @@ function getAvailableSpace(
   childOffset: Offset,
   margins: Position,
   padding: number,
-  placementInfo: ParsedPlacement
+  placementInfo: ParsedPlacement,
+  mainAxis: 'default' | 'cross' = 'default'
 ) {
+
   let {placement, axis, size} = placementInfo;
+  if (mainAxis === 'cross') {
+    placement = placementInfo.crossPlacement;
+    axis = placementInfo.crossAxis;
+    size = placementInfo.crossSize;
+  }
+
   if (placement === axis) {
     return Math.max(0, childOffset[axis] - boundaryDimensions[axis] - boundaryDimensions.scroll[axis] + containerOffsetWithBoundary[axis] - margins[axis] - margins[FLIPPED_DIRECTION[axis]] - padding);
   }
@@ -316,37 +343,91 @@ export function calculatePositionInternal(
     placementInfo
   );
 
-  // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
-  if (flip && scrollSize[size] > space) {
-    let flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}` as Placement);
-    let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
-    let flippedSpace = getAvailableSpace(
-      boundaryDimensions,
-      containerOffsetWithBoundary,
-      childOffset,
-      margins,
-      padding + offset,
-      flippedPlacementInfo
-    );
+  // TODO: need fliped_direction here because crossPlacement doesn't reflect the actual alignment of the submenu (it is top which means the submenus top is aligned with the button top, functionally being a "bottom" placement)
+  let crossPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[crossPlacement]} ${placement}` as Placement);
+  let crossSpace = getAvailableSpace(
+    boundaryDimensions,
+    containerOffsetWithBoundary,
+    childOffset,
+    margins,
+    padding + offset,
+    crossPlacementInfo
+  );
 
-    // If the available space for the flipped position is greater than the original available space, flip.
-    if (flippedSpace > space) {
-      placementInfo = flippedPlacementInfo;
-      position = flippedPosition;
-      normalizedOffset = offset;
+  if (flip) {
+    // Check if we need to flip in the main axis direction
+    if (scrollSize[size] > space) {
+      let flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}` as Placement);
+      let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
+      let flippedSpace = getAvailableSpace(
+        boundaryDimensions,
+        containerOffsetWithBoundary,
+        childOffset,
+        margins,
+        padding + offset,
+        flippedPlacementInfo
+      );
+
+      // If the available space for the flipped position is greater than the original available space, flip.
+      if (flippedSpace > space) {
+        placementInfo = flippedPlacementInfo;
+        position = flippedPosition;
+        normalizedOffset = offset;
+      }
     }
+
+    // Check if we need to flip in the cross axis
+    if (scrollSize[crossSize] > crossSpace) {
+      let flippedPlacementInfo = parsePlacement(`${placementInfo['placement']} ${FLIPPED_DIRECTION[crossPlacement]}` as Placement);
+      let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
+      let flippedSpace = getAvailableSpace(
+        boundaryDimensions,
+        containerOffsetWithBoundary,
+        childOffset,
+        margins,
+        padding + offset,
+        flippedPlacementInfo,
+        'cross'
+      );
+      console.log('room in flipped', flippedSpace, space);
+
+      // If the available space for the flipped position is greater than the original available space, flip.
+      if (flippedSpace > space) {
+        placementInfo = flippedPlacementInfo;
+        position = flippedPosition;
+        normalizedOffset = offset;
+      }
+    }
+
   }
 
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding);
   position[crossAxis] += delta;
 
+  // Determine the direction the height of the overlay can grow so that we can choose the how to calculate the max height
+  let heightGrowthDirection: HeightGrowthDirection;
+  if (placementInfo.axis === 'top') {
+    if (placementInfo.placement === 'top') {
+      heightGrowthDirection = 'top';
+    } else if (placementInfo.placement === 'bottom') {
+      heightGrowthDirection = 'bottom';
+    }
+  } else if (placementInfo.crossAxis === 'top') {
+    if (placementInfo.crossPlacement === 'top') {
+      heightGrowthDirection = 'bottom';
+    } else if (placementInfo.crossPlacement === 'bottom') {
+      heightGrowthDirection = 'top';
+    }
+  }
+  console.log('placementinfo', placementInfo)
   let maxHeight = getMaxHeight(
     position,
     boundaryDimensions,
     containerOffsetWithBoundary,
     childOffset,
     margins,
-    padding
+    padding,
+    heightGrowthDirection
   );
 
   if (userSetMaxHeight && userSetMaxHeight < maxHeight) {
