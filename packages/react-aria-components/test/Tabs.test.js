@@ -13,7 +13,7 @@
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
-import {TabsExample} from '../stories/index.stories';
+import {TabsExample} from '../stories/Tabs.stories';
 import userEvent from '@testing-library/user-event';
 
 let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
