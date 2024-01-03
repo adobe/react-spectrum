@@ -13,7 +13,7 @@
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
-import {useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 
 export interface SliderState {
   /**
@@ -176,8 +176,14 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
     return Math.max(calcPageSize, step);
   }, [step, maxValue, minValue]);
 
-  let value = useMemo(() => convertValue(props.value), [props.value]);
-  let defaultValue = useMemo(() => convertValue(props.defaultValue) ?? [minValue], [props.defaultValue, minValue]);
+  let restrictValues = useCallback((values: number[]) => values?.map((val, idx) => {
+    let min = idx === 0 ? minValue : val[idx - 1];
+    let max = idx === values.length - 1 ? maxValue : val[idx + 1];
+    return snapValueToStep(val, min, max, step);
+  }), [minValue, maxValue, step]);
+
+  let value = useMemo(() => restrictValues(convertValue(props.value)), [props.value]);
+  let defaultValue = useMemo(() => restrictValues(convertValue(props.defaultValue) ?? [minValue]), [props.defaultValue, minValue]);
   let onChange = createOnChange(props.value, props.defaultValue, props.onChange);
   let onChangeEnd = createOnChange(props.value, props.defaultValue, props.onChangeEnd);
 

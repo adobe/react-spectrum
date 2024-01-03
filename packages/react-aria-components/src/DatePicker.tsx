@@ -62,7 +62,7 @@ export interface DateRangePickerRenderProps extends Omit<DatePickerRenderProps, 
   state: DateRangePickerState
 }
 
-export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState'>, Pick<DatePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DatePickerRenderProps>, SlotProps {}
+export interface DatePickerProps<T extends DateValue> extends Omit<AriaDatePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DatePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DatePickerRenderProps>, SlotProps {}
 export interface DateRangePickerProps<T extends DateValue> extends Omit<AriaDateRangePickerProps<T>, 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, Pick<DateRangePickerStateOptions<T>, 'shouldCloseOnSelect'>, RACValidation, RenderProps<DateRangePickerRenderProps>, SlotProps {}
 
 export const DatePickerContext = createContext<ContextValue<DatePickerProps<any>, HTMLDivElement>>(null);
@@ -116,7 +116,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     <Provider
       values={[
         [DatePickerStateContext, state],
-        [GroupContext, {...groupProps, ref: groupRef}],
+        [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
         [DateFieldContext, fieldProps],
         [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
@@ -200,7 +200,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     <Provider
       values={[
         [DateRangePickerStateContext, state],
-        [GroupContext, {...groupProps, ref: groupRef}],
+        [GroupContext, {...groupProps, ref: groupRef, isInvalid: state.isInvalid}],
         [ButtonContext, {...buttonProps, isPressed: state.isOpen}],
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
