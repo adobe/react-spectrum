@@ -259,33 +259,13 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
     };
   }, [objectRef, isSticky, scrollPaddingTop]);
 
-  // Fallback event handler for browsers that don't support scroll-padding-top.
-  const onFocusCapture = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
-    const target = e.target as HTMLElement;
-    const row = target.tagName === 'TR' || target.getAttribute('role') === 'row' ? target : target.closest('tr, [role="row"]') as HTMLElement;
-    const thead = objectRef.current.querySelector('thead, [role="rowgroup"]') as HTMLElement;
-    if (!row || !thead) {
-      return;
-    }
-    const {scrollTop, scrollLeft} = e.currentTarget;
-    const top = row.offsetTop - thead.offsetHeight;
-    if (scrollTop > top) {
-      e.currentTarget.scrollTo({
-        top,
-        left: scrollLeft,
-        behavior: 'smooth'
-      });
-    }
-  }, [objectRef]);
-
   return (
     <div
       {...filterDOMProps(props as any)}
       ref={objectRef}
       className={props.className || 'react-aria-ResizableTableContainer'}
       style={{...props.style, scrollPaddingTop}}
-      onScroll={props.onScroll}
-      onFocusCapture={isSticky && !scrollPaddingTop ? onFocusCapture : undefined}>
+      onScroll={props.onScroll}>
       <ResizableTableContainerContext.Provider value={ctx}>
         {props.children}
       </ResizableTableContainerContext.Provider>
