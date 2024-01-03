@@ -2,12 +2,12 @@ import {Tag, TagGroup} from '../src/TagGroup';
 
 import type {Meta} from '@storybook/react';
 
-const meta: Meta<typeof TagGroup> = {
+const meta: Meta<typeof Example> = {
   component: TagGroup,
   parameters: {
     layout: 'centered'
   },
-  tags: ['autodocs']
+  tags: ['autodocs'],
 };
 
 export default meta;

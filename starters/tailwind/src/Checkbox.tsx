@@ -40,11 +40,11 @@ const styles = tv({
   }
 });
 
-const iconStyles = 'w-4 h-4 text-white group-disabled:text-gray-400 dark:text-slate-900 dark:group-disabled:text-slate-600 forced-colors:!text-[HighlightText] forced-colors:group-disabled:!text-[GrayText]';
+const iconStyles = 'w-4 h-4 text-white group-disabled:text-gray-400 dark:text-slate-900 dark:group-disabled:text-slate-600 forced-colors:text-[HighlightText] forced-colors:group-disabled:text-[GrayText]';
 
 export function Checkbox(props: CheckboxProps) {
   return (
-    <RACCheckbox {...props} className="flex gap-2 items-center group text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:!text-[GrayText] text-sm transition">
+    <RACCheckbox {...props} className="flex gap-2 items-center group text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition">
       {({isSelected, isIndeterminate, ...renderProps}) => (
         <>
           <div className={styles({isSelected: isSelected || isIndeterminate, ...renderProps})}>

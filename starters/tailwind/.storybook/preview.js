@@ -6,9 +6,7 @@ const preview = {
   parameters: {
     actions: { argTypesRegex: "^on[A-Z].*" },
     controls: {
-      matchers: {
-        color: /(background|color)$/i,
-      },
+      matchers: {},
     },
     docs: {
       theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? themes.dark : themes.light

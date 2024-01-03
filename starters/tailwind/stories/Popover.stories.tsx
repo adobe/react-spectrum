@@ -22,7 +22,7 @@ export const Example = (args: any) => (
   <DialogTrigger>
     <Button variant="icon" aria-label="Help"><HelpCircle className="w-4 h-4" /></Button>
     <Popover {...args} className="max-w-[250px]">
-      <Dialog className="outline-none p-4 overflow-auto">
+      <Dialog className="outline outline-0 p-4 overflow-auto">
         <Heading slot="title" className="text-lg font-semibold mb-2">Help</Heading>
         <p className="text-sm">For help accessing your account, please contact support.</p>
       </Dialog>

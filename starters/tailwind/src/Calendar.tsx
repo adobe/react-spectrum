@@ -26,7 +26,7 @@ const cellStyles = tv({
       true: 'bg-blue-600 text-white forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]'
     },
     isDisabled: {
-      true: 'text-gray-300 dark:text-zinc-600 forced-colors:!text-[GrayText]'
+      true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
     }
   }
 });
