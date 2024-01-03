@@ -89,9 +89,7 @@ function handleFocusEvent(e: FocusEvent) {
   // Firefox fires two extra focus events when the user first clicks into an iframe:
   // first on the window, then on the document. We ignore these events so they don't
   // cause keyboard focus rings to appear.
-  const windowObject = getOwnerWindow(e.target as HTMLElement);
-  const documentObject = getOwnerDocument(e.target as HTMLElement);
-  if (e.target === windowObject || e.target === documentObject) {
+  if (e.target === window || e.target === document) {
     return;
   }
 
@@ -154,9 +152,7 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   }
 
   // Add unmount handler
-  windowObject.addEventListener('beforeunload', (e) => {
-    e.preventDefault();
-
+  windowObject.addEventListener('beforeunload', () => {
     documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
     documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
     documentObject.removeEventListener('click', handleClickEvent, true);
@@ -172,7 +168,11 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
       documentObject.removeEventListener('mousemove', handlePointerEvent, true);
       documentObject.removeEventListener('mouseup', handlePointerEvent, true);
     }
-  });
+
+    if (hasSetupGlobalListeners.has(windowObject)) {
+      hasSetupGlobalListeners.delete(windowObject);
+    }
+  }, {once: true});
 
   hasSetupGlobalListeners.set(windowObject, true);
 }
@@ -189,6 +189,7 @@ export const setupFocus = (element?: HTMLElement | null) => {
 };
 
 // Server-side rendering does not have the document object defined
+// eslint-disable-next-line no-restricted-globals
 if (typeof document !== 'undefined') {
   setupFocus();
 }
@@ -269,7 +270,7 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
     setFocusVisible(isFocusVisible);
   }, [isTextInput], {isTextInput});
 
-  return {isFocusVisible: isFocusVisibleState};
+  return {isFocusVisible: isFocusVisibleState, hasSetupGlobalListeners} as FocusVisibleResult;
 }
 
 /**

@@ -103,6 +103,7 @@ describe('useFocusVisible', function () {
     });
 
     afterEach(() => {
+      fireEvent(iframe.contentWindow, new Event('beforeunload'));
       iframe.remove();
     });
 
@@ -143,6 +144,28 @@ describe('useFocusVisible', function () {
       fireEvent(iframe.contentWindow, new Event('beforeunload'));
       fireEvent.focus(iframe.contentWindow.document.body);
       expect(el.textContent).toBe('example');
+    });
+
+    it('removes the window object from the hasSetupGlobalListeners object on beforeunload', async function () {
+      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      const {result: beforeSetupFocus} = renderHook(() => useFocusVisible());
+      expect(beforeSetupFocus.current.hasSetupGlobalListeners.size).toBe(1);
+      expect(beforeSetupFocus.current.hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(beforeSetupFocus.current.hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
+
+      // After setup focus
+      setupFocus(iframeRoot);
+      const {result: afterSetupFocus} = renderHook(() => useFocusVisible());
+      expect(afterSetupFocus.current.hasSetupGlobalListeners.size).toBe(2);
+      expect(afterSetupFocus.current.hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(afterSetupFocus.current.hasSetupGlobalListeners.get(iframe.contentWindow)).toBeTruthy();
+
+      // After unmount
+      fireEvent(iframe.contentWindow, new Event('beforeunload'));
+      const {result: afterUnmount} = renderHook(() => useFocusVisible());
+      expect(afterUnmount.current.hasSetupGlobalListeners.size).toBe(1);
+      expect(afterUnmount.current.hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(afterUnmount.current.hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
     });
 
     it('returns positive isFocusVisible result after toggling browser tabs after keyboard navigation', async function () {
