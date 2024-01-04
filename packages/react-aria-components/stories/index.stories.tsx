@@ -11,9 +11,8 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Label, Link, ListBox, ListBoxItem, ListBoxProps, Modal, ModalOverlay, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Text, TextField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Checkbox, Dialog, DialogTrigger, DropZone, FileTrigger, Header, Heading, Input, Label, Link, ListBox, ListBoxItem, ListBoxProps, Modal, ModalOverlay, OverlayArrow, Radio, RadioGroup, SearchField, Section, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Text, TextField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import {MyListBoxItem} from './utils';
 import React, {useRef} from 'react';
@@ -89,122 +88,6 @@ export const ListBoxComplex = () => (
       <Text slot="description">Description</Text>
     </MyListBoxItem>
   </ListBox>
-);
-
-export const CalendarExample = () => (
-  <Calendar style={{width: 220}}>
-    <div style={{display: 'flex', alignItems: 'center'}}>
-      <Button slot="previous">&lt;</Button>
-      <Heading style={{flex: 1, textAlign: 'center'}} />
-      <Button slot="next">&gt;</Button>
-    </div>
-    <CalendarGrid style={{width: '100%'}}>
-      {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-    </CalendarGrid>
-  </Calendar>
-);
-
-export const CalendarMultiMonth = () => (
-  <Calendar style={{width: 500}} visibleDuration={{months: 2}}>
-    <div style={{display: 'flex', alignItems: 'center'}}>
-      <Button slot="previous">&lt;</Button>
-      <Heading style={{flex: 1, textAlign: 'center'}} />
-      <Button slot="next">&gt;</Button>
-    </div>
-    <div style={{display: 'flex', gap: 20}}>
-      <CalendarGrid style={{flex: 1}}>
-        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-      </CalendarGrid>
-      <CalendarGrid style={{flex: 1}} offset={{months: 1}}>
-        {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-      </CalendarGrid>
-    </div>
-  </Calendar>
-);
-
-export const RangeCalendarExample = () => (
-  <RangeCalendar style={{width: 220}}>
-    <div style={{display: 'flex', alignItems: 'center'}}>
-      <Button slot="previous">&lt;</Button>
-      <Heading style={{flex: 1, textAlign: 'center'}} />
-      <Button slot="next">&gt;</Button>
-    </div>
-    <CalendarGrid style={{width: '100%'}}>
-      {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-    </CalendarGrid>
-  </RangeCalendar>
-);
-
-export const DatePickerExample = () => (
-  <DatePicker data-testid="date-picker-example">
-    <Label style={{display: 'block'}}>Date</Label>
-    <Group style={{display: 'inline-flex'}}>
-      <DateInput className={styles.field}>
-        {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
-      </DateInput>
-      <Button>🗓</Button>
-    </Group>
-    <Popover
-      placement="bottom start"
-      style={{
-        background: 'Canvas',
-        color: 'CanvasText',
-        border: '1px solid gray',
-        padding: 20
-      }}>
-      <Dialog>
-        <Calendar style={{width: 220}}>
-          <div style={{display: 'flex', alignItems: 'center'}}>
-            <Button slot="previous">&lt;</Button>
-            <Heading style={{flex: 1, textAlign: 'center'}} />
-            <Button slot="next">&gt;</Button>
-          </div>
-          <CalendarGrid style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-          </CalendarGrid>
-        </Calendar>
-      </Dialog>
-    </Popover>
-  </DatePicker>
-);
-
-export const DateRangePickerExample = () => (
-  <DateRangePicker data-testid="date-range-picker-example">
-    <Label style={{display: 'block'}}>Date</Label>
-    <Group style={{display: 'inline-flex'}}>
-      <div className={styles.field}>
-        <DateInput data-testid="date-range-picker-date-input" slot="start" style={{display: 'inline-flex'}}>
-          {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
-        </DateInput>
-        <span aria-hidden="true" style={{padding: '0 4px'}}>–</span>
-        <DateInput slot="end" style={{display: 'inline-flex'}}>
-          {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
-        </DateInput>
-      </div>
-      <Button>🗓</Button>
-    </Group>
-    <Popover
-      placement="bottom start"
-      style={{
-        background: 'Canvas',
-        color: 'CanvasText',
-        border: '1px solid gray',
-        padding: 20
-      }}>
-      <Dialog>
-        <RangeCalendar style={{width: 220}}>
-          <div style={{display: 'flex', alignItems: 'center'}}>
-            <Button slot="previous">&lt;</Button>
-            <Heading style={{flex: 1, textAlign: 'center'}} />
-            <Button slot="next">&gt;</Button>
-          </div>
-          <CalendarGrid style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
-          </CalendarGrid>
-        </RangeCalendar>
-      </Dialog>
-    </Popover>
-  </DateRangePicker>
 );
 
 export const SliderExample = () => (
