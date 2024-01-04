@@ -419,7 +419,7 @@ function DatePickerExample() {
 function ContactListExample() {
   return (
     <div className="bg-gradient-to-r from-blue-500 to-sky-500 p-8 rounded-lg flex justify-center">
-      <ListBox aria-label="Contacts" selectionMode="multiple" selectionBehavior="replace" className="w-72 max-h-[290px] overflow-auto scroll-pt-6 scroll-pb-2 outline-none bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow scroll-pt-6">
+      <ListBox aria-label="Contacts" selectionMode="multiple" selectionBehavior="replace" className="w-72 max-h-[290px] overflow-auto outline-none bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow scroll-pb-2 scroll-pt-7">
         <ContactSection title="Favorites">
           <Contact id="wade" name="Tony Baldwin" handle="@tony" avatar="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
           <Contact id="arelene" name="Julienne Langstrath" handle="@jlangstrath" avatar="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
