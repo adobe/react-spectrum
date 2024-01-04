@@ -11,11 +11,11 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
-import {MyListBoxItem, MyMenuItem} from './utils';
+import {MyListBoxItem} from './utils';
 import React, {useRef} from 'react';
 import styles from '../example/index.css';
 import {useListData} from 'react-stately';
@@ -89,55 +89,6 @@ export const ListBoxComplex = () => (
       <Text slot="description">Description</Text>
     </MyListBoxItem>
   </ListBox>
-);
-
-export const MenuExample = () => (
-  <MenuTrigger>
-    <Button aria-label="Menu">☰</Button>
-    <Popover>
-      <Menu className={styles.menu} onAction={action('onAction')}>
-        <Section className={styles.group}>
-          <Header style={{fontSize: '1.2em'}}>Section 1</Header>
-          <MyMenuItem>Foo</MyMenuItem>
-          <MyMenuItem>Bar</MyMenuItem>
-          <MyMenuItem>Baz</MyMenuItem>
-          <MyMenuItem href="https://google.com">Google</MyMenuItem>
-        </Section>
-        <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
-        <Section className={styles.group}>
-          <Header style={{fontSize: '1.2em'}}>Section 2</Header>
-          <MyMenuItem>Foo</MyMenuItem>
-          <MyMenuItem>Bar</MyMenuItem>
-          <MyMenuItem>Baz</MyMenuItem>
-        </Section>
-      </Menu>
-    </Popover>
-  </MenuTrigger>
-);
-
-export const MenuComplex = () => (
-  <MenuTrigger>
-    <Button aria-label="Menu">☰</Button>
-    <Popover>
-      <Menu className={styles.menu}>
-        <MyMenuItem>
-          <Text slot="label">Copy</Text>
-          <Text slot="description">Description</Text>
-          <Keyboard>⌘C</Keyboard>
-        </MyMenuItem>
-        <MyMenuItem>
-          <Text slot="label">Cut</Text>
-          <Text slot="description">Description</Text>
-          <Keyboard>⌘X</Keyboard>
-        </MyMenuItem>
-        <MyMenuItem>
-          <Text slot="label">Paste</Text>
-          <Text slot="description">Description</Text>
-          <Keyboard>⌘V</Keyboard>
-        </MyMenuItem>
-      </Menu>
-    </Popover>
-  </MenuTrigger>
 );
 
 export const NumberFieldExample = () => (
