@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Tag, TagGroup, TagList, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Keyboard, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Select, SelectValue, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -89,49 +89,6 @@ export const ListBoxComplex = () => (
       <Text slot="description">Description</Text>
     </MyListBoxItem>
   </ListBox>
-);
-
-export const SelectExample = () => (
-  <Select data-testid="select-example" id="select-example-id">
-    <Label style={{display: 'block'}}>Test</Label>
-    <Button>
-      <SelectValue />
-      <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
-    </Button>
-    <Popover>
-      <OverlayArrow>
-        <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
-      </OverlayArrow>
-      <ListBox className={styles.menu}>
-        <MyListBoxItem>Foo</MyListBoxItem>
-        <MyListBoxItem>Bar</MyListBoxItem>
-        <MyListBoxItem>Baz</MyListBoxItem>
-        <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-      </ListBox>
-    </Popover>
-  </Select>
-);
-
-export const SelectRenderProps = () => (
-  <Select data-testid="select-render-props">
-    {({isOpen}) => (
-      <>
-        <Label style={{display: 'block'}}>Test</Label>
-        <Button>
-          <SelectValue />
-          <span aria-hidden="true" style={{paddingLeft: 5}}>{isOpen ? '▲' : '▼'}</span>
-        </Button>
-        <Popover>
-          <ListBox className={styles.menu}>
-            <MyListBoxItem>Foo</MyListBoxItem>
-            <MyListBoxItem>Bar</MyListBoxItem>
-            <MyListBoxItem>Baz</MyListBoxItem>
-            <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
-          </ListBox>
-        </Popover>
-      </>
-    )}
-  </Select>
 );
 
 export const MenuExample = () => (
