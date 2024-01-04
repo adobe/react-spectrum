@@ -24,41 +24,72 @@ export default {
   title: 'React Aria Components'
 };
 
-export const TagGroupExample = (props) => (
-  <TagGroup {...props}>
-    <Label>Categories</Label>
-    <TagList style={{display: 'flex', gap: 4}}>
-      <MyTag href="https://nytimes.com">News</MyTag>
-      <MyTag>Travel</MyTag>
-      <MyTag>Gaming</MyTag>
-      <MyTag>Shopping</MyTag>
-    </TagList>
-  </TagGroup>
+export const ListBoxExample = (args) => (
+  <ListBox className={styles.menu} {...args} aria-label="test listbox">
+    <MyListBoxItem>Foo</MyListBoxItem>
+    <MyListBoxItem>Bar</MyListBoxItem>
+    <MyListBoxItem>Baz</MyListBoxItem>
+    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+  </ListBox>
 );
 
-TagGroupExample.args = {
-  selectionMode: 'none',
-  selectionBehavior: 'toggle'
-};
-
-TagGroupExample.argTypes = {
-  selectionMode: {
-    control: {
-      type: 'inline-radio',
-      options: ['none', 'single', 'multiple']
-    }
+ListBoxExample.story = {
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle'
   },
-  selectionBehavior: {
-    control: {
-      type: 'inline-radio',
-      options: ['toggle', 'replace']
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'radio',
+        options: ['none', 'single', 'multiple']
+      }
+    },
+    selectionBehavior: {
+      control: {
+        type: 'radio',
+        options: ['toggle', 'replace']
+      }
     }
   }
 };
 
-function MyTag(props) {
-  return <Tag {...props} style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />;
-}
+// Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
+// also has a aXe landmark error, not sure what it means
+export const ListBoxSections = () => (
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="test listbox with section">
+    <Section className={styles.group}>
+      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+      <MyListBoxItem>Foo</MyListBoxItem>
+      <MyListBoxItem>Bar</MyListBoxItem>
+      <MyListBoxItem>Baz</MyListBoxItem>
+    </Section>
+    <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+    <Section className={styles.group}>
+      <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+      <MyListBoxItem>Foo</MyListBoxItem>
+      <MyListBoxItem>Bar</MyListBoxItem>
+      <MyListBoxItem>Baz</MyListBoxItem>
+    </Section>
+  </ListBox>
+);
+
+export const ListBoxComplex = () => (
+  <ListBox className={styles.menu} selectionMode="multiple" selectionBehavior="replace" aria-label="listbox complex">
+    <MyListBoxItem>
+      <Text slot="label">Item 1</Text>
+      <Text slot="description">Description</Text>
+    </MyListBoxItem>
+    <MyListBoxItem>
+      <Text slot="label">Item 2</Text>
+      <Text slot="description">Description</Text>
+    </MyListBoxItem>
+    <MyListBoxItem>
+      <Text slot="label">Item 3</Text>
+      <Text slot="description">Description</Text>
+    </MyListBoxItem>
+  </ListBox>
+);
 
 export const SelectExample = () => (
   <Select data-testid="select-example" id="select-example-id">
