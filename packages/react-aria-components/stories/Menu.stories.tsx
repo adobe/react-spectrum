@@ -19,6 +19,7 @@ import styles from '../example/index.css';
 export default {
   title: 'React Aria Components'
 };
+
 export const MenuExample = () => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
