@@ -156,6 +156,7 @@ function getDelta(
 ) {
   // No need to adjust the vertical positioning of a overlay if the axis we are shifting against is vertical.
   // We should instead rely on changing the max height of the overlay so that the overlay doesn't exceed its boundary
+  // TODO: is this an accurate assumption?
   if (axis === 'top' || axis === 'bottom') {
     return 0;
   }
@@ -231,8 +232,11 @@ function computePosition(
   }/* else {
     the overlay top should match the button top
   } */
-  // add the crossOffset from props
-  // TODO: may need to flip the crossOffset value if flip is true
+
+  // TODO: crossAxis behaves differently from offset. A positive offset value will always shift the overlay in the "direction" it has
+  // (aka a overlay positioned "top" will be shifted upwards when a positive offset is applied and a overlay positioned "bottom" will be shifted downwards with the same offset)
+  // However, a positive crossAxis value always shifts the overlay up/to the right regardless of the cross axis direction... This means that the cross axis we apply to the submenu
+  // is incorrect if the submenu needs to flip upwards since it will shift it upwards instead of downwards... Changing this behavior is a breaking change though...
   position[crossAxis] += crossOffset;
 
   // overlay top overlapping arrow with button bottom
@@ -242,7 +246,7 @@ function computePosition(
   position[crossAxis] = clamp(position[crossAxis], minPosition, maxPosition);
 
   // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
-  if ((placement === axis && axis === 'top')) {
+  if ((placement === axis)) {
     // If the container is positioned (non-static), then we use the container's actual
     // height, as `bottom` will be relative to this height.  But if the container is static,
     // then it can only be the `document.body`, and `bottom` will be relative to _its_
@@ -257,34 +261,25 @@ function computePosition(
 }
 
 function getMaxHeight(
-  position: Position,
+  overlayInfo: Offset,
   boundaryDimensions: Dimensions,
-  containerOffsetWithBoundary: Offset,
-  childOffset: Offset,
   margins: Position,
   padding: number,
   heightGrowthDirection: HeightGrowthDirection
 ) {
 
-  console.log('in max height (pos, bounddim, containerOff, childOff, marg, pad)', position, boundaryDimensions, containerOffsetWithBoundary, childOffset, margins, padding)
-  console.log('if using bottom', childOffset.top + containerOffsetWithBoundary.top - (boundaryDimensions.top + boundaryDimensions.scroll.top) - (margins.top + margins.bottom + padding))
-  console.log('if using top', boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top - (containerOffsetWithBoundary.top + position.top) - (margins.top + margins.bottom + padding))
-  console.log('heightGrowthDirection', heightGrowthDirection)
-  debugger
-  // TODO: it isn't really accurate for the submenu flip situation right now since we use the top of the trigger to the top of the boundary in the second case below
-  // but for submenus it should be the bottom of the overlay to the top of the boundary. Perhaps pass in the overlay height as well
   return heightGrowthDirection === 'bottom'
     // We want the distance between the top of the overlay to the bottom of the boundary
     ? Math.max(0,
       (boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the bottom of the boundary
-      - (containerOffsetWithBoundary.top + position.top) // this is the top of the overlay
-      - (margins.top + margins.bottom + padding) // save additional space for margin and padding
+      - overlayInfo.top // this is the top of the overlay
+      - (margins.bottom + padding) // save additional space for margin and padding, don't need to account for margins.top since overlayInfo's top accounts for that already
     )
-    // We want the distance between the top of the trigger to the top of the boundary
+    // We want the distance between the bottom of the overlay to the top of the boundary
     : Math.max(0,
-      (childOffset.top + containerOffsetWithBoundary.top) // this is the top of the trigger
+      (overlayInfo.top + overlayInfo.height) // this is the bottom of the overlay
       - (boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the top of the boundary
-      - (margins.top + margins.bottom + padding) // save additional space for margin and padding
+      - (margins.bottom + padding) // save additional space for margin and padding, don't need to account for margins.top since overlayInfo's top accounts for that already
     );
 }
 
@@ -343,7 +338,7 @@ export function calculatePositionInternal(
     placementInfo
   );
 
-  // TODO: need fliped_direction here because crossPlacement doesn't reflect the actual alignment of the submenu (it is top which means the submenus top is aligned with the button top, functionally being a "bottom" placement)
+  // Need fliped_direction here because crossPlacement doesn't reflect the actual alignment of the submenu (it is top which means the submenus top is aligned with the button top, functionally being a "bottom" placement)
   let crossPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[crossPlacement]} ${placement}` as Placement);
   let crossSpace = getAvailableSpace(
     boundaryDimensions,
@@ -389,7 +384,6 @@ export function calculatePositionInternal(
         flippedPlacementInfo,
         'cross'
       );
-      console.log('room in flipped', flippedSpace, space);
 
       // If the available space for the flipped position is greater than the original available space, flip.
       if (flippedSpace > space) {
@@ -419,12 +413,9 @@ export function calculatePositionInternal(
       heightGrowthDirection = 'top';
     }
   }
-  console.log('placementinfo', placementInfo)
   let maxHeight = getMaxHeight(
-    position,
+    overlaySize,
     boundaryDimensions,
-    containerOffsetWithBoundary,
-    childOffset,
     margins,
     padding,
     heightGrowthDirection
