@@ -230,41 +230,12 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
     onResizeEnd: props.onResizeEnd
   }), [width, props.onResizeStart, props.onResize, props.onResizeEnd]);
 
-  // Ensure that the row containing focus is not obscured by a thead with position: sticky.
-  const [isSticky, setIsSticky] = useState<boolean | undefined>(undefined);
-  const [scrollPaddingTop, setScrollPaddingTop] = useState<string | undefined>(undefined);
-  const requestRef = useRef<number | undefined>(undefined);
-  useEffect(() => {
-    if (isSticky === undefined) {
-      // Wait a frame to getComputedStyle from sticky thead.
-      requestRef.current = requestAnimationFrame(() => {
-        // When the thead is sticky, we need to set scroll-padding-top on the container to ensure that a focused row is not obscured but the sticky thead.
-        const thead = objectRef.current?.querySelector('thead, [role="rowgroup"]') as HTMLElement;
-        if (thead && scrollPaddingTop === undefined) {
-          const isTheadSticky = getComputedStyle(thead).position === 'sticky';
-          setIsSticky(isTheadSticky);
-          if (isTheadSticky) {
-            const theadOffsetHeight = thead.offsetHeight;
-            if (CSS.supports('scroll-padding-top', `${theadOffsetHeight}px`)) {
-              setScrollPaddingTop(`${theadOffsetHeight}px`);
-            }
-          }
-        }
-      });
-    }
-    return () => {
-      if (requestRef.current !== undefined) {
-        cancelAnimationFrame(requestRef.current);
-      }
-    };
-  }, [objectRef, isSticky, scrollPaddingTop]);
-
   return (
     <div
       {...filterDOMProps(props as any)}
       ref={objectRef}
       className={props.className || 'react-aria-ResizableTableContainer'}
-      style={{...props.style, scrollPaddingTop}}
+      style={props.style}
       onScroll={props.onScroll}>
       <ResizableTableContainerContext.Provider value={ctx}>
         {props.children}
