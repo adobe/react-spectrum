@@ -13,7 +13,7 @@
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
-import {useCallback, useMemo, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 export interface SliderState {
   /**
@@ -198,6 +198,14 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
 
   const valuesRef = useRef<number[]>(values);
   const isDraggingsRef = useRef<boolean[]>(isDraggings);
+
+  useEffect(() => {
+    // There are some cases where `valuesRef.current` becomes out of sync with `values`.
+    // So we update `valuesRef.current` here to make sure it's up to date.
+    // https://github.com/adobe/react-spectrum/issues/5644
+    valuesRef.current = values;
+  }, [values]);
+
   let setValues = (values: number[]) => {
     valuesRef.current = values;
     setValuesState(values);
