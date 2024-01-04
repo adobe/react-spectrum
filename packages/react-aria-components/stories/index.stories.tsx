@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateField, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Label, Link, ListBox, ListBoxItem, ListBoxProps, Menu, MenuTrigger, Modal, ModalOverlay, NumberField, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Text, TextField, TimeField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarGrid, Checkbox, DateInput, DatePicker, DateRangePicker, DateSegment, Dialog, DialogTrigger, DropZone, FileTrigger, Group, Header, Heading, Input, Label, Link, ListBox, ListBoxItem, ListBoxProps, Modal, ModalOverlay, OverlayArrow, Popover, Radio, RadioGroup, RangeCalendar, SearchField, Section, Separator, Slider, SliderOutput, SliderThumb, SliderTrack, Switch, Text, TextField, ToggleButton, Toolbar, Tooltip, TooltipTrigger, useDragAndDrop} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import clsx from 'clsx';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
@@ -89,35 +89,6 @@ export const ListBoxComplex = () => (
       <Text slot="description">Description</Text>
     </MyListBoxItem>
   </ListBox>
-);
-
-export const NumberFieldExample = () => (
-  <NumberField data-testid="number-field-example" formatOptions={{style: 'currency', currency: 'USD'}}>
-    <Label>Test</Label>
-    <Group style={{display: 'flex'}}>
-      <Button slot="decrement">-</Button>
-      <Input />
-      <Button slot="increment">+</Button>
-    </Group>
-  </NumberField>
-);
-
-export const DateFieldExample = () => (
-  <DateField data-testid="date-field-example">
-    <Label style={{display: 'block'}}>Date</Label>
-    <DateInput className={styles.field} data-testid2="date-input">
-      {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
-    </DateInput>
-  </DateField>
-);
-
-export const TimeFieldExample = () => (
-  <TimeField data-testid="time-field-example">
-    <Label style={{display: 'block'}}>Time</Label>
-    <DateInput className={styles.field}>
-      {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
-    </DateInput>
-  </TimeField>
 );
 
 export const CalendarExample = () => (
