@@ -161,12 +161,14 @@ function getDelta(
 
   let containerScroll = containerDimensions.scroll[axis];
   let boundaryHeight = boundaryDimensions[AXIS_SIZE[axis]];
+  // TODO: use the commented out offset cals instead for the fixed edge behavior
   // let startEdgeOffset = offset - padding - containerScroll;
   // let endEdgeOffset = offset + padding - containerScroll + size;
 
   let startEdgeOffset = offset - padding - containerScroll + containerOffsetWithBoundary[axis];
   let endEdgeOffset = offset + padding - containerScroll + size + containerScroll + containerOffsetWithBoundary[axis];
 
+  // TODO: use the commented out returns instead for the fixed edge behavior
   // TODO: Double check if we really want this logic... This makes submenu flip properly and has its top/bottom edge always anchored with respect to the item
   // but this is counter to the typical behavior we've had for overlays: https://reactspectrum.blob.core.windows.net/reactspectrum/0c31321afc4521ac946dcc8fed012b02ab9516f9/storybook/index.html?path=/story/dialogtrigger--type-popover&args=placement:right+top;shouldFlip:true&providerSwitcher-express=false&scrolling=true
   // try the above link with "right top" placement and notice that the top edge of the popover doesn't line up with the button if there isn't enough room to render the whole dialog
@@ -287,9 +289,10 @@ function getMaxHeight(
   // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top with respect to the boundary. Reverse calculate this with the same method
   // used in computePosition.
   let overlayTop = position.top != null ? containerOffsetWithBoundary.top + position.top : containerOffsetWithBoundary.top + (containerHeight - position.bottom - overlayHeight);
-  return heightGrowthDirection !== 'top'
+
+  let maxHeight = heightGrowthDirection !== 'top' ?
     // We want the distance between the top of the overlay to the bottom of the boundary
-    ? Math.max(0,
+    Math.max(0,
       (boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the bottom of the boundary
       - overlayTop // this is the top of the overlay
       - (margins.top + margins.bottom + padding) // save additional space for margin and padding
@@ -300,6 +303,8 @@ function getMaxHeight(
       - (boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the top of the boundary
       - (margins.top + margins.bottom + padding) // save additional space for margin and padding
     );
+
+  return Math.min(boundaryDimensions.height, maxHeight);
 }
 
 function getAvailableSpace(
@@ -413,6 +418,7 @@ export function calculatePositionInternal(
     }
   }
 
+  // TODO: the below "fixed" behavior isn't actually a thing before for left/right positioned overlays...
   // Determine the direction the height of the overlay can grow so that we can choose how to calculate the max height
   // A height growth direction of "top" or "bottom" indicates that the overlay can grow in said direction
   // and that the opposite side is "fixed" and should not be adjusted when calculating getDelta
@@ -434,6 +440,7 @@ export function calculatePositionInternal(
     }
   }
 
+  // TODO: use the commented out delta instead for the fixed edge behavior
   // let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, heightGrowthDirection);
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, heightGrowthDirection, containerOffsetWithBoundary);
   position[crossAxis] += delta;
@@ -448,7 +455,6 @@ export function calculatePositionInternal(
     overlaySize.height,
     heightGrowthDirection
   );
-  console.log('max', maxHeight)
 
   if (userSetMaxHeight && userSetMaxHeight < maxHeight) {
     maxHeight = userSetMaxHeight;
@@ -457,6 +463,7 @@ export function calculatePositionInternal(
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
   position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
+  // TODO: use the commented out delta instead for the fixed edge behavior
   // delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, heightGrowthDirection);
   delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, heightGrowthDirection, containerOffsetWithBoundary);
   position[crossAxis] += delta;
