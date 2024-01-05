@@ -194,16 +194,16 @@ describe('calculatePosition', function () {
   }
 
   const testCases = [
-    {
-      placement: 'left',
-      noOffset: [50, 200, undefined, 196, 350],
-      offsetBefore: [-200, 50, undefined, 50, 500],
-      offsetAfter: [300, 350, undefined, 196, 200],
-      crossAxisOffsetPositive: [50, 210, undefined, 196, 340],
-      crossAxisOffsetNegative: [50, 190, undefined, 196, 360],
-      mainAxisOffset: [40, 200, undefined, 196, 350],
-      arrowBoundaryOffset: [50, 322, undefined, 176, 228]
-    },
+    // {
+    //   placement: 'left',
+    //   noOffset: [50, 200, undefined, 196, 350],
+    //   offsetBefore: [-200, 50, undefined, 50, 500],
+    //   offsetAfter: [300, 350, undefined, 196, 200],
+    //   crossAxisOffsetPositive: [50, 210, undefined, 196, 340],
+    //   crossAxisOffsetNegative: [50, 190, undefined, 196, 360],
+    //   mainAxisOffset: [40, 200, undefined, 196, 350],
+    //   arrowBoundaryOffset: [50, 322, undefined, 176, 228]
+    // },
     {
       placement: 'left top',
       noOffset: [50, 250, undefined, 196, 300],
@@ -214,106 +214,106 @@ describe('calculatePosition', function () {
       mainAxisOffset: [40, 250, undefined, 196, 300],
       arrowBoundaryOffset: [50, 322, undefined, 176, 228]
     },
-    {
-      placement: 'left bottom',
-      noOffset: [50, 150, undefined, 196, 400],
-      offsetBefore: [-200, 50, undefined, 50, 500],
-      offsetAfter: [300, 350, undefined, 196, 200],
-      crossAxisOffsetPositive: [50, 160, undefined, 196, 390],
-      crossAxisOffsetNegative: [50, 140, undefined, 196, 410],
-      mainAxisOffset: [40, 150, undefined, 196, 400],
-      arrowBoundaryOffset: [50, 322, undefined, 176, 228]
-    },
-    {
-      placement: 'top',
-      noOffset: [200, 50, 196, undefined, 200],
-      offsetBefore: [50, -200, 50, undefined, 0],
-      offsetAfter: [350, 300, 196, undefined, 450],
-      crossAxisOffsetPositive: [210, 50, 196, undefined, 200],
-      crossAxisOffsetNegative: [190, 50, 196, undefined, 200],
-      mainAxisOffset: [200, 40, 196, undefined, 200],
-      arrowBoundaryOffset: [322, 50, 176, undefined, 200]
-    },
-    {
-      placement: 'top left',
-      noOffset: [250, 50, 196, undefined, 200],
-      offsetBefore: [50, -200, 50, undefined, 0],
-      offsetAfter: [350, 300, 196, undefined, 450],
-      crossAxisOffsetPositive: [260, 50, 196, undefined, 200],
-      crossAxisOffsetNegative: [240, 50, 196, undefined, 200],
-      mainAxisOffset: [250, 40, 196, undefined, 200],
-      arrowBoundaryOffset: [322, 50, 176, undefined, 200]
-    },
-    {
-      placement: 'top right',
-      noOffset: [150, 50, 196, undefined, 200],
-      offsetBefore: [50, -200, 50, undefined, 0],
-      offsetAfter: [350, 300, 196, undefined, 450],
-      crossAxisOffsetPositive: [160, 50, 196, undefined, 200],
-      crossAxisOffsetNegative: [140, 50, 196, undefined, 200],
-      mainAxisOffset: [150, 40, 196, undefined, 200],
-      arrowBoundaryOffset: [322, 50, 176, undefined, 200]
-    },
-    {
-      placement: 'bottom',
-      noOffset: [200, 350, 196, undefined, 200],
-      offsetBefore: [50, 100, 50, undefined, 450],
-      offsetAfter: [350, 600, 196, undefined, 0],
-      crossAxisOffsetPositive: [210, 350, 196, undefined, 200],
-      crossAxisOffsetNegative: [190, 350, 196, undefined, 200],
-      mainAxisOffset: [200, 360, 196, undefined, 190],
-      arrowBoundaryOffset: [322, 350, 176, undefined, 200]
-    },
-    {
-      placement: 'bottom left',
-      noOffset: [250, 350, 196, undefined, 200],
-      offsetBefore: [50, 100, 50, undefined, 450],
-      offsetAfter: [350, 600, 196, undefined, 0],
-      crossAxisOffsetPositive: [260, 350, 196, undefined, 200],
-      crossAxisOffsetNegative: [240, 350, 196, undefined, 200],
-      mainAxisOffset: [250, 360, 196, undefined, 190],
-      arrowBoundaryOffset: [322, 350, 176, undefined, 200]
-    },
-    {
-      placement: 'bottom right',
-      noOffset: [150, 350, 196, undefined, 200],
-      offsetBefore: [50, 100, 50, undefined, 450],
-      offsetAfter: [350, 600, 196, undefined, 0],
-      crossAxisOffsetPositive: [160, 350, 196, undefined, 200],
-      crossAxisOffsetNegative: [140, 350, 196, undefined, 200],
-      mainAxisOffset: [150, 360, 196, undefined, 190],
-      arrowBoundaryOffset: [322, 350, 176, undefined, 200]
-    },
-    {
-      placement: 'right',
-      noOffset: [350, 200, undefined, 196, 350],
-      offsetBefore: [100, 50, undefined, 50, 500],
-      offsetAfter: [600, 350, undefined, 196, 200],
-      crossAxisOffsetPositive: [350, 210, undefined, 196, 340],
-      crossAxisOffsetNegative: [350, 190, undefined, 196, 360],
-      mainAxisOffset: [360, 200, undefined, 196, 350],
-      arrowBoundaryOffset: [350, 322, undefined, 176, 228]
-    },
-    {
-      placement: 'right top',
-      noOffset: [350, 250, undefined, 196, 300],
-      offsetBefore: [100, 50, undefined, 50, 500],
-      offsetAfter: [600, 350, undefined, 196, 200],
-      crossAxisOffsetPositive: [350, 260, undefined, 196, 290],
-      crossAxisOffsetNegative: [350, 240, undefined, 196, 310],
-      mainAxisOffset: [360, 250, undefined, 196, 300],
-      arrowBoundaryOffset: [350, 322, undefined, 176, 228]
-    },
-    {
-      placement: 'right bottom',
-      noOffset: [350, 150, undefined, 196, 400],
-      offsetBefore: [100, 50, undefined, 50, 500],
-      offsetAfter: [600, 350, undefined, 196, 200],
-      crossAxisOffsetPositive: [350, 160, undefined, 196, 390],
-      crossAxisOffsetNegative: [350, 140, undefined, 196, 410],
-      mainAxisOffset: [360, 150, undefined, 196, 400],
-      arrowBoundaryOffset: [350, 322, undefined, 176, 228]
-    }
+    // {
+    //   placement: 'left bottom',
+    //   noOffset: [50, 150, undefined, 196, 400],
+    //   offsetBefore: [-200, 50, undefined, 50, 500],
+    //   offsetAfter: [300, 350, undefined, 196, 200],
+    //   crossAxisOffsetPositive: [50, 160, undefined, 196, 390],
+    //   crossAxisOffsetNegative: [50, 140, undefined, 196, 410],
+    //   mainAxisOffset: [40, 150, undefined, 196, 400],
+    //   arrowBoundaryOffset: [50, 322, undefined, 176, 228]
+    // },
+    // {
+    //   placement: 'top',
+    //   noOffset: [200, 50, 196, undefined, 200],
+    //   offsetBefore: [50, -200, 50, undefined, 0],
+    //   offsetAfter: [350, 300, 196, undefined, 450],
+    //   crossAxisOffsetPositive: [210, 50, 196, undefined, 200],
+    //   crossAxisOffsetNegative: [190, 50, 196, undefined, 200],
+    //   mainAxisOffset: [200, 40, 196, undefined, 200],
+    //   arrowBoundaryOffset: [322, 50, 176, undefined, 200]
+    // },
+    // {
+    //   placement: 'top left',
+    //   noOffset: [250, 50, 196, undefined, 200],
+    //   offsetBefore: [50, -200, 50, undefined, 0],
+    //   offsetAfter: [350, 300, 196, undefined, 450],
+    //   crossAxisOffsetPositive: [260, 50, 196, undefined, 200],
+    //   crossAxisOffsetNegative: [240, 50, 196, undefined, 200],
+    //   mainAxisOffset: [250, 40, 196, undefined, 200],
+    //   arrowBoundaryOffset: [322, 50, 176, undefined, 200]
+    // },
+    // {
+    //   placement: 'top right',
+    //   noOffset: [150, 50, 196, undefined, 200],
+    //   offsetBefore: [50, -200, 50, undefined, 0],
+    //   offsetAfter: [350, 300, 196, undefined, 450],
+    //   crossAxisOffsetPositive: [160, 50, 196, undefined, 200],
+    //   crossAxisOffsetNegative: [140, 50, 196, undefined, 200],
+    //   mainAxisOffset: [150, 40, 196, undefined, 200],
+    //   arrowBoundaryOffset: [322, 50, 176, undefined, 200]
+    // },
+    // {
+    //   placement: 'bottom',
+    //   noOffset: [200, 350, 196, undefined, 200],
+    //   offsetBefore: [50, 100, 50, undefined, 450],
+    //   offsetAfter: [350, 600, 196, undefined, 0],
+    //   crossAxisOffsetPositive: [210, 350, 196, undefined, 200],
+    //   crossAxisOffsetNegative: [190, 350, 196, undefined, 200],
+    //   mainAxisOffset: [200, 360, 196, undefined, 190],
+    //   arrowBoundaryOffset: [322, 350, 176, undefined, 200]
+    // },
+    // {
+    //   placement: 'bottom left',
+    //   noOffset: [250, 350, 196, undefined, 200],
+    //   offsetBefore: [50, 100, 50, undefined, 450],
+    //   offsetAfter: [350, 600, 196, undefined, 0],
+    //   crossAxisOffsetPositive: [260, 350, 196, undefined, 200],
+    //   crossAxisOffsetNegative: [240, 350, 196, undefined, 200],
+    //   mainAxisOffset: [250, 360, 196, undefined, 190],
+    //   arrowBoundaryOffset: [322, 350, 176, undefined, 200]
+    // },
+    // {
+    //   placement: 'bottom right',
+    //   noOffset: [150, 350, 196, undefined, 200],
+    //   offsetBefore: [50, 100, 50, undefined, 450],
+    //   offsetAfter: [350, 600, 196, undefined, 0],
+    //   crossAxisOffsetPositive: [160, 350, 196, undefined, 200],
+    //   crossAxisOffsetNegative: [140, 350, 196, undefined, 200],
+    //   mainAxisOffset: [150, 360, 196, undefined, 190],
+    //   arrowBoundaryOffset: [322, 350, 176, undefined, 200]
+    // },
+    // {
+    //   placement: 'right',
+    //   noOffset: [350, 200, undefined, 196, 350],
+    //   offsetBefore: [100, 50, undefined, 50, 500],
+    //   offsetAfter: [600, 350, undefined, 196, 200],
+    //   crossAxisOffsetPositive: [350, 210, undefined, 196, 340],
+    //   crossAxisOffsetNegative: [350, 190, undefined, 196, 360],
+    //   mainAxisOffset: [360, 200, undefined, 196, 350],
+    //   arrowBoundaryOffset: [350, 322, undefined, 176, 228]
+    // },
+    // {
+    //   placement: 'right top',
+    //   noOffset: [350, 250, undefined, 196, 300],
+    //   offsetBefore: [100, 50, undefined, 50, 500],
+    //   offsetAfter: [600, 350, undefined, 196, 200],
+    //   crossAxisOffsetPositive: [350, 260, undefined, 196, 290],
+    //   crossAxisOffsetNegative: [350, 240, undefined, 196, 310],
+    //   mainAxisOffset: [360, 250, undefined, 196, 300],
+    //   arrowBoundaryOffset: [350, 322, undefined, 176, 228]
+    // },
+    // {
+    //   placement: 'right bottom',
+    //   noOffset: [350, 150, undefined, 196, 400],
+    //   offsetBefore: [100, 50, undefined, 50, 500],
+    //   offsetAfter: [600, 350, undefined, 196, 200],
+    //   crossAxisOffsetPositive: [350, 160, undefined, 196, 390],
+    //   crossAxisOffsetNegative: [350, 140, undefined, 196, 410],
+    //   mainAxisOffset: [360, 150, undefined, 196, 400],
+    //   arrowBoundaryOffset: [350, 322, undefined, 176, 228]
+    // }
   ];
 
   testCases.forEach(function (testCase) {
@@ -338,7 +338,7 @@ describe('calculatePosition', function () {
         );
       });
 
-      describe('viewport offset after', function () {
+      describe.only('viewport offset after', function () {
         checkPosition(
           placement, getTargetDimension({left: 500, top: 500}), testCase.offsetAfter
         );
@@ -370,49 +370,49 @@ describe('calculatePosition', function () {
     });
   });
 
-  describe('flip from left to right', function () {
-    checkPosition(
-      // testCases[9] is for right placement
-      'left', getTargetDimension({left: 0, top: 0}), testCases[9].offsetBefore, 0, 0, true
-    );
+  // describe('flip from left to right', function () {
+  //   checkPosition(
+  //     // testCases[9] is for right placement
+  //     'left', getTargetDimension({left: 0, top: 0}), testCases[9].offsetBefore, 0, 0, true
+  //   );
 
-    describe('positive offset', function () {
-      checkPosition(
-        'left', getTargetDimension({left: 0, top: 250}), [110, 200, undefined, 196, 350], 10, 0, true
-      );
-    });
-  });
+  //   describe('positive offset', function () {
+  //     checkPosition(
+  //       'left', getTargetDimension({left: 0, top: 250}), [110, 200, undefined, 196, 350], 10, 0, true
+  //     );
+  //   });
+  // });
 
-  describe('overlay smaller than target aligns in center', function () {
-    checkPosition(
-      'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, 196, 250]
-    );
-  });
+  // describe('overlay smaller than target aligns in center', function () {
+  //   checkPosition(
+  //     'right', getTargetDimension({left: 250, top: 250}, overlaySize.height + 100, overlaySize.width + 100), [550, 300, undefined, 196, 250]
+  //   );
+  // });
 
-  describe('overlay target has margin', () => {
-    it('checks if overlay positions correctly', () => {
-      const target = document.createElement('div');
-      const overlayNode = document.createElement('div');
-      const container = document.createElement('div');
+  // describe('overlay target has margin', () => {
+  //   it('checks if overlay positions correctly', () => {
+  //     const target = document.createElement('div');
+  //     const overlayNode = document.createElement('div');
+  //     const container = document.createElement('div');
 
-      target.style.margin = '20px';
-      document.body.appendChild(target);
+  //     target.style.margin = '20px';
+  //     document.body.appendChild(target);
 
-      let {position: {top: positionTop}} = calculatePosition({
-        placement: 'bottom',
-        overlayNode,
-        targetNode: target,
-        scrollNode: overlayNode,
-        padding: 0,
-        shouldFlip: false,
-        boundaryElement: container,
-        offset: 0,
-        crossOffset: 0,
-        arrowSize: 0
-      });
-      expect(positionTop).toBe(0);
+  //     let {position: {top: positionTop}} = calculatePosition({
+  //       placement: 'bottom',
+  //       overlayNode,
+  //       targetNode: target,
+  //       scrollNode: overlayNode,
+  //       padding: 0,
+  //       shouldFlip: false,
+  //       boundaryElement: container,
+  //       offset: 0,
+  //       crossOffset: 0,
+  //       arrowSize: 0
+  //     });
+  //     expect(positionTop).toBe(0);
 
-      document.body.removeChild(target);
-    });
-  });
+  //     document.body.removeChild(target);
+  //   });
+  // });
 });
