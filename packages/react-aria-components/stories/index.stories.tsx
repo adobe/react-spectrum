@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, Dialog, DialogTrigger, FileTrigger, Input, Label, Link, Modal, ModalOverlay, Radio, RadioGroup, SearchField, Switch, TextField, ToggleButton, Toolbar} from 'react-aria-components';
+import {Button, Checkbox, Dialog, DialogTrigger, Input, Label, Link, Modal, ModalOverlay, Radio, RadioGroup, SearchField, Switch, TextField, ToggleButton, Toolbar} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -20,48 +19,6 @@ export default {
   title: 'React Aria Components'
 };
 
-export const FileTriggerButton = (props) => (
-  <FileTrigger
-    onSelect={action('onSelect')}
-    data-testid="filetrigger-example"
-    {...props} >
-    <Button>Upload</Button>
-  </FileTrigger>
-);
-
-export const FileTriggerDirectories = (props) => {
-  let [files, setFiles] = React.useState<string[]>([]);
-
-  return (
-    <>
-      <FileTrigger
-        {...props}
-        acceptDirectory
-        onSelect={(e) => {
-          if (e) {
-            let fileList = [...e].map(file => file.webkitRelativePath !== '' ? file.webkitRelativePath : file.name);
-            setFiles(fileList);
-          }
-        }} >
-        <Button>Upload</Button>
-      </FileTrigger>
-      {files && <ul>
-        {files.map((file, index) => (
-          <li key={index}>{file}</li>
-        ))}
-      </ul>}
-    </>
-  );
-};
-
-export const FileTriggerLinkAllowsMultiple = (props) => (
-  <FileTrigger
-    {...props}
-    onSelect={action('onSelect')}
-    allowsMultiple >
-    <Link>Select a file</Link>
-  </FileTrigger>
-);
 export const RadioGroupExample = () => {
   return (
     <RadioGroup
