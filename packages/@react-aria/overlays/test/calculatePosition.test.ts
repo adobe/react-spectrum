@@ -234,7 +234,7 @@ describe('calculatePosition', function () {
       offsetAfter: [350, 300, 196, undefined, 450],
       crossAxisOffsetPositive: [210, 50, 196, undefined, 200],
       crossAxisOffsetNegative: [190, 50, 196, undefined, 200],
-      mainAxisOffset: [200, 40, 196, undefined, 200],
+      mainAxisOffset: [200, 40, 196, undefined, 190],
       arrowBoundaryOffset: [322, 50, 176, undefined, 200]
     },
     {
@@ -244,7 +244,7 @@ describe('calculatePosition', function () {
       offsetAfter: [350, 300, 196, undefined, 450],
       crossAxisOffsetPositive: [260, 50, 196, undefined, 200],
       crossAxisOffsetNegative: [240, 50, 196, undefined, 200],
-      mainAxisOffset: [250, 40, 196, undefined, 200],
+      mainAxisOffset: [250, 40, 196, undefined, 190],
       arrowBoundaryOffset: [322, 50, 176, undefined, 200]
     },
     {
@@ -254,7 +254,7 @@ describe('calculatePosition', function () {
       offsetAfter: [350, 300, 196, undefined, 450],
       crossAxisOffsetPositive: [160, 50, 196, undefined, 200],
       crossAxisOffsetNegative: [140, 50, 196, undefined, 200],
-      mainAxisOffset: [150, 40, 196, undefined, 200],
+      mainAxisOffset: [150, 40, 196, undefined, 190],
       arrowBoundaryOffset: [322, 50, 176, undefined, 200]
     },
     {
@@ -309,13 +309,13 @@ describe('calculatePosition', function () {
     },
     {
       placement: 'right bottom',
-      noOffset: [350, 150, undefined, 196, 400],
-      offsetBefore: [100, 50, undefined, 50, 500],
-      offsetAfter: [600, 350, undefined, 196, 200],
-      crossAxisOffsetPositive: [350, 160, undefined, 196, 390],
-      crossAxisOffsetNegative: [350, 140, undefined, 196, 410],
-      mainAxisOffset: [360, 150, undefined, 196, 400],
-      arrowBoundaryOffset: [350, 322, undefined, 176, 228]
+      noOffset: [350, 150, undefined, 196, 300],
+      offsetBefore: [100, 50, undefined, 50, 200],
+      offsetAfter: [600, 350, undefined, 196, 500],
+      crossAxisOffsetPositive: [350, 160, undefined, 196, 310],
+      crossAxisOffsetNegative: [350, 140, undefined, 196, 290],
+      mainAxisOffset: [360, 150, undefined, 196, 300],
+      arrowBoundaryOffset: [350, 322, undefined, 176, 472]
     }
   ];
 
