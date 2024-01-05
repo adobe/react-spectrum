@@ -158,7 +158,7 @@ function getDelta(
   let containerScroll = containerDimensions.scroll[axis];
   let boundaryHeight = boundaryDimensions[AXIS_SIZE[axis]];
   let startEdgeOffset = offset - padding - containerScroll + containerOffsetWithBoundary[axis];
-  let endEdgeOffset = offset + padding - containerScroll + size + containerScroll + containerOffsetWithBoundary[axis];
+  let endEdgeOffset = offset + padding - containerScroll + size + containerOffsetWithBoundary[axis];
 
   if (startEdgeOffset < 0) {
     return -startEdgeOffset;
@@ -295,9 +295,7 @@ function getAvailableSpace(
   padding: number,
   placementInfo: ParsedPlacement
 ) {
-
   let {placement, axis, size} = placementInfo;
-
   if (placement === axis) {
     return Math.max(0, childOffset[axis] - boundaryDimensions[axis] - boundaryDimensions.scroll[axis] + containerOffsetWithBoundary[axis] - margins[axis] - margins[FLIPPED_DIRECTION[axis]] - padding);
   }
@@ -358,7 +356,6 @@ export function calculatePositionInternal(
   }
 
   // Determine the direction the height of the overlay can grow so that we can choose how to calculate the max height
-  // TODO: perhaps this should just default to "bottom", maybe don't need the "both" definition?
   let heightGrowthDirection: HeightGrowthDirection = 'bottom';
   if (placementInfo.axis === 'top') {
     if (placementInfo.placement === 'top') {
