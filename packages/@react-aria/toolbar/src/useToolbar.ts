@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, Orientation} from '@react-types/shared';
 import {createFocusManager} from '@react-aria/focus';
-import {HTMLAttributes, KeyboardEventHandler, RefObject, useRef, useState} from 'react';
+import {HTMLAttributes, KeyboardEventHandler, RefObject, useEffect, useRef, useState} from 'react';
 import {useLayoutEffect} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 
@@ -109,12 +109,23 @@ export function useToolbar(props: AriaToolbarProps, ref: RefObject<HTMLDivElemen
   // Restore focus to the last focused child when focus returns into the toolbar.
   // If the element was removed, do nothing, either the first item in the first group,
   // or the last item in the last group will be focused, depending on direction.
+  let timeout = useRef<number | null>(null);
   const onFocus = (e) => {
     if (lastFocused.current && !e.currentTarget.contains(e.relatedTarget) && ref.current?.contains(e.target)) {
-      lastFocused.current?.focus();
-      lastFocused.current = null;
+      timeout.current = setTimeout(() => {
+        lastFocused.current?.focus();
+        lastFocused.current = null;
+        timeout.current = null;
+      }, 0);
     }
   };
+  useEffect(() => {
+    return () => {
+      if (timeout.current) {
+        clearTimeout(timeout.current);
+      }
+    };
+  }, []);
 
   return {
     toolbarProps: {
