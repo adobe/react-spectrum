@@ -12,6 +12,7 @@
 
 import {Checkbox, Link, ToggleButton, Toolbar, ToolbarProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {Orientation} from 'react-stately';
 import React from 'react';
 import styles from '../example/index.css';
 
@@ -47,7 +48,7 @@ export const ToolbarExample = (props: ToolbarProps) => {
 };
 
 ToolbarExample.args = {
-  orientation: 'horizontal'
+  orientation: 'horizontal' as Orientation
 };
 ToolbarExample.argTypes = {
   orientation: {
