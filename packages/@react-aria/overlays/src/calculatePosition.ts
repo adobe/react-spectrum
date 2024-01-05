@@ -265,6 +265,10 @@ function getMaxHeight(
   overlayHeight: number,
   heightGrowthDirection: HeightGrowthDirection
 ) {
+  // TODO: mention the change to the logic in this code, in paticular with how it affectted the tests in calculatePosition
+  // In particular the "left bottom" test case with no viewport offset was calculating a max height of 400 previously because the
+  // overlay's "height growth" was judged to be the downwards direction even though the placement was "left bottom" aligns the bottom of the overlay with the
+  // bottom of the trigger and thus the overlay grows upwards
   const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary.height : boundaryDimensions[TOTAL_SIZE.height]);
   // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top with respect to the boundary. Reverse calculate this with the same method
   // used in computePosition.
