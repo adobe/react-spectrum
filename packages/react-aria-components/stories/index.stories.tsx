@@ -10,23 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, Input, Label, Link, SearchField, Switch, TextField, ToggleButton, Toolbar} from 'react-aria-components';
+import {Button, Checkbox, Input, Label, Link, Switch, TextField, ToggleButton, Toolbar} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
   title: 'React Aria Components'
-};
-
-export const SearchFieldExample = () => {
-  return (
-    <SearchField className={classNames(styles, 'searchFieldExample')} data-testid="search-field-example">
-      <Label>Search</Label>
-      <Input />
-      <Button>✕</Button>
-    </SearchField>
-  );
 };
 
 export const ButtonExample = () => {
