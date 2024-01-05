@@ -61,7 +61,7 @@ interface PositionOpts {
   arrowBoundaryOffset?: number
 }
 
-type HeightGrowthDirection = 'top' | 'bottom' | 'both';
+type HeightGrowthDirection = 'top' | 'bottom';
 
 export interface PositionResult {
   position?: Position,
@@ -155,10 +155,8 @@ function getDelta(
   padding: number,
   containerOffsetWithBoundary: Offset
 ) {
-
   let containerScroll = containerDimensions.scroll[axis];
   let boundaryHeight = boundaryDimensions[AXIS_SIZE[axis]];
-
   let startEdgeOffset = offset - padding - containerScroll + containerOffsetWithBoundary[axis];
   let endEdgeOffset = offset + padding - containerScroll + size + containerScroll + containerOffsetWithBoundary[axis];
 
@@ -242,7 +240,7 @@ function computePosition(
   position[crossAxis] = clamp(position[crossAxis], minPosition, maxPosition);
 
   // Floor these so the position isn't placed on a partial pixel, only whole pixels. Shouldn't matter if it was floored or ceiled, so chose one.
-  if ((placement === axis)) {
+  if (placement === axis) {
     // If the container is positioned (non-static), then we use the container's actual
     // height, as `bottom` will be relative to this height.  But if the container is static,
     // then it can only be the `document.body`, and `bottom` will be relative to _its_
@@ -295,16 +293,10 @@ function getAvailableSpace(
   childOffset: Offset,
   margins: Position,
   padding: number,
-  placementInfo: ParsedPlacement,
-  mainAxis: 'default' | 'cross' = 'default'
+  placementInfo: ParsedPlacement
 ) {
 
   let {placement, axis, size} = placementInfo;
-  if (mainAxis === 'cross') {
-    placement = placementInfo.crossPlacement;
-    axis = placementInfo.crossAxis;
-    size = placementInfo.crossSize;
-  }
 
   if (placement === axis) {
     return Math.max(0, childOffset[axis] - boundaryDimensions[axis] - boundaryDimensions.scroll[axis] + containerOffsetWithBoundary[axis] - margins[axis] - margins[FLIPPED_DIRECTION[axis]] - padding);
@@ -344,32 +336,30 @@ export function calculatePositionInternal(
     placementInfo
   );
 
-  if (flip) {
-    // Check if we need to flip in the main axis direction
-    if (scrollSize[size] > space) {
-      let flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}` as Placement);
-      let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
-      let flippedSpace = getAvailableSpace(
-        boundaryDimensions,
-        containerOffsetWithBoundary,
-        childOffset,
-        margins,
-        padding + offset,
-        flippedPlacementInfo
-      );
+  // Check if the scroll size of the overlay is greater than the available space to determine if we need to flip
+  if (flip && scrollSize[size] > space) {
+    let flippedPlacementInfo = parsePlacement(`${FLIPPED_DIRECTION[placement]} ${crossPlacement}` as Placement);
+    let flippedPosition = computePosition(childOffset, boundaryDimensions, overlaySize, flippedPlacementInfo, offset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
+    let flippedSpace = getAvailableSpace(
+      boundaryDimensions,
+      containerOffsetWithBoundary,
+      childOffset,
+      margins,
+      padding + offset,
+      flippedPlacementInfo
+    );
 
-      // If the available space for the flipped position is greater than the original available space, flip.
-      if (flippedSpace > space) {
-        placementInfo = flippedPlacementInfo;
-        position = flippedPosition;
-        normalizedOffset = offset;
-      }
+    // If the available space for the flipped position is greater than the original available space, flip.
+    if (flippedSpace > space) {
+      placementInfo = flippedPlacementInfo;
+      position = flippedPosition;
+      normalizedOffset = offset;
     }
   }
 
   // Determine the direction the height of the overlay can grow so that we can choose how to calculate the max height
   // TODO: perhaps this should just default to "bottom", maybe don't need the "both" definition?
-  let heightGrowthDirection: HeightGrowthDirection = 'both';
+  let heightGrowthDirection: HeightGrowthDirection = 'bottom';
   if (placementInfo.axis === 'top') {
     if (placementInfo.placement === 'top') {
       heightGrowthDirection = 'top';
