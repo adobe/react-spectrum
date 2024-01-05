@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Checkbox, Link, ToggleButton, Toolbar} from 'react-aria-components';
+import {Checkbox, Link, ToggleButton, Toolbar, ToolbarProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -19,7 +19,7 @@ export default {
   title: 'React Aria Components'
 };
 
-export const ToolbarExample = (props) => {
+export const ToolbarExample = (props: ToolbarProps) => {
   return (
     <div>
       <label htmlFor="before">Input Before Toolbar</label>
