@@ -232,6 +232,7 @@ function computePosition(
   }/* else {
     the overlay top should match the button top
   } */
+  // console.log('positon of button', childOffset)
 
   // TODO: crossAxis behaves differently from offset. A positive offset value will always shift the overlay in the "direction" it has
   // (aka a overlay positioned "top" will be shifted upwards when a positive offset is applied and a overlay positioned "bottom" will be shifted downwards with the same offset)
@@ -256,30 +257,39 @@ function computePosition(
   } else {
     position[axis] = Math.floor(childOffset[axis] + childOffset[size] + offset);
   }
-
+  // console.log('final position in calculate position', position)
   return position;
 }
 
 function getMaxHeight(
-  overlayInfo: Offset,
+  position: Position,
   boundaryDimensions: Dimensions,
+  containerOffsetWithBoundary: Offset,
+  isContainerPositioned: boolean,
   margins: Position,
   padding: number,
+  overlayHeight: number,
   heightGrowthDirection: HeightGrowthDirection
 ) {
-
+  console.log('iscontianer positioned', isContainerPositioned)
+  const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary.height : boundaryDimensions[TOTAL_SIZE.height]);
+  // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top with respect to the boundary. Reverse calculate this with the same method
+  // used in compute position.
+  let overlayTop = position.top != null ? containerOffsetWithBoundary.top + position.top : containerOffsetWithBoundary.top + (containerHeight - position.bottom - overlayHeight);
+  console.log('positon.top', position.top, boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top, containerOffsetWithBoundary.top + position.top, margins.top + margins.bottom + padding)
+  console.log('overlay top', overlayTop, heightGrowthDirection)
   return heightGrowthDirection === 'bottom'
     // We want the distance between the top of the overlay to the bottom of the boundary
     ? Math.max(0,
       (boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the bottom of the boundary
-      - overlayInfo.top // this is the top of the overlay
-      - (margins.bottom + padding) // save additional space for margin and padding, don't need to account for margins.top since overlayInfo's top accounts for that already
+      - overlayTop // this is the top of the overlay
+      - (margins.top + margins.bottom + padding) // save additional space for margin and padding
     )
     // We want the distance between the bottom of the overlay to the top of the boundary
     : Math.max(0,
-      (overlayInfo.top + overlayInfo.height) // this is the bottom of the overlay
+      (overlayTop + overlayHeight) // this is the bottom of the overlay
       - (boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the top of the boundary
-      - (margins.bottom + padding) // save additional space for margin and padding, don't need to account for margins.top since overlayInfo's top accounts for that already
+      - (margins.top + margins.bottom + padding) // save additional space for margin and padding
     );
 }
 
@@ -398,8 +408,9 @@ export function calculatePositionInternal(
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding);
   position[crossAxis] += delta;
 
-  // Determine the direction the height of the overlay can grow so that we can choose the how to calculate the max height
-  let heightGrowthDirection: HeightGrowthDirection;
+  // Determine the direction the height of the overlay can grow so that we can choose how to calculate the max height
+  let heightGrowthDirection: HeightGrowthDirection = 'bottom';
+  console.log('placementinfo', placementInfo)
   if (placementInfo.axis === 'top') {
     if (placementInfo.placement === 'top') {
       heightGrowthDirection = 'top';
@@ -413,11 +424,16 @@ export function calculatePositionInternal(
       heightGrowthDirection = 'top';
     }
   }
+  // console.log('posti, containerOffse', position, containerOffsetWithBoundary, childOffset)
+
   let maxHeight = getMaxHeight(
-    overlaySize,
+    position,
     boundaryDimensions,
+    containerOffsetWithBoundary,
+    isContainerPositioned,
     margins,
     padding,
+    overlaySize.height,
     heightGrowthDirection
   );
 
