@@ -19,14 +19,6 @@ export default {
   title: 'React Aria Components'
 };
 
-export const LinkExample = () => {
-  return (
-    <Link data-testid="link-example"href="https://www.imdb.com/title/tt6348138/" target="_blank">
-      The missing link
-    </Link>
-  );
-};
-
 export const ToolbarExample = (props) => {
   return (
     <div>
