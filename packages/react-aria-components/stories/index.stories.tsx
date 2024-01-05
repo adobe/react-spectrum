@@ -10,75 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Checkbox, Dialog, DialogTrigger, Input, Label, Link, Modal, ModalOverlay, Radio, RadioGroup, SearchField, Switch, TextField, ToggleButton, Toolbar} from 'react-aria-components';
+import {Button, Checkbox, Input, Label, Link, SearchField, Switch, TextField, ToggleButton, Toolbar} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
   title: 'React Aria Components'
-};
-
-export const RadioGroupExample = () => {
-  return (
-    <RadioGroup
-      data-testid="radio-group-example"
-      className={styles.radiogroup}>
-      <Label>Favorite pet</Label>
-      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
-      <Radio className={styles.radio} value="cats">Cat</Radio>
-      <Radio className={styles.radio} value="dragon">Dragon</Radio>
-    </RadioGroup>
-  );
-};
-
-export const RadioGroupInDialogExample = () => {
-  return (
-    <DialogTrigger>
-      <Button>Open dialog</Button>
-      <ModalOverlay
-        style={{
-          position: 'fixed',
-          zIndex: 100,
-          top: 0,
-          left: 0,
-          bottom: 0,
-          right: 0,
-          background: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-        <Modal
-          style={{
-            background: 'Canvas',
-            color: 'CanvasText',
-            border: '1px solid gray',
-            padding: 30
-          }}>
-          <Dialog
-            style={{
-              outline: '2px solid transparent',
-              outlineOffset: '2px',
-              position: 'relative'
-            }}>
-            {({close}) => (
-              <>
-                <div>
-                  <RadioGroupExample />
-                </div>
-                <div>
-                  <Button onPress={close} style={{marginTop: 10}}>
-                    Close
-                  </Button>
-                </div>
-              </>
-            )}
-          </Dialog>
-        </Modal>
-      </ModalOverlay>
-    </DialogTrigger>
-  );
 };
 
 export const SearchFieldExample = () => {
