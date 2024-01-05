@@ -37,7 +37,7 @@ export interface FocusVisibleResult {
 
 let currentModality: null | Modality = null;
 let changeHandlers = new Set<Handler>();
-let hasSetupGlobalListeners = new Map<Window, boolean>(); // We use a map here to support setting event listeners across multiple document objects.
+export let hasSetupGlobalListeners = new Map<Window, boolean>(); // We use a map here to support setting event listeners across multiple document objects.
 let hasEventBeforeFocus = false;
 let hasBlurredWindowRecently = false;
 
@@ -270,7 +270,7 @@ export function useFocusVisible(props: FocusVisibleProps = {}): FocusVisibleResu
     setFocusVisible(isFocusVisible);
   }, [isTextInput], {isTextInput});
 
-  return {isFocusVisible: isFocusVisibleState, hasSetupGlobalListeners} as FocusVisibleResult;
+  return {isFocusVisible: isFocusVisibleState};
 }
 
 /**

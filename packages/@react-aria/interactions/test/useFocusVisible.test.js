@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {act, fireEvent, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils';
+import {hasSetupGlobalListeners} from '../src/useFocusVisible';
 import React from 'react';
 import {render as ReactDOMRender} from 'react-dom';
 import {setupFocus, useFocusVisible, useFocusVisibleListener} from '../';
@@ -148,24 +149,21 @@ describe('useFocusVisible', function () {
 
     it('removes the window object from the hasSetupGlobalListeners object on beforeunload', async function () {
       ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
-      const {result: beforeSetupFocus} = renderHook(() => useFocusVisible());
-      expect(beforeSetupFocus.current.hasSetupGlobalListeners.size).toBe(1);
-      expect(beforeSetupFocus.current.hasSetupGlobalListeners.get(window)).toBeTruthy();
-      expect(beforeSetupFocus.current.hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
+      expect(hasSetupGlobalListeners.size).toBe(1);
+      expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
 
       // After setup focus
       setupFocus(iframeRoot);
-      const {result: afterSetupFocus} = renderHook(() => useFocusVisible());
-      expect(afterSetupFocus.current.hasSetupGlobalListeners.size).toBe(2);
-      expect(afterSetupFocus.current.hasSetupGlobalListeners.get(window)).toBeTruthy();
-      expect(afterSetupFocus.current.hasSetupGlobalListeners.get(iframe.contentWindow)).toBeTruthy();
+      expect(hasSetupGlobalListeners.size).toBe(2);
+      expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeTruthy();
 
       // After unmount
       fireEvent(iframe.contentWindow, new Event('beforeunload'));
-      const {result: afterUnmount} = renderHook(() => useFocusVisible());
-      expect(afterUnmount.current.hasSetupGlobalListeners.size).toBe(1);
-      expect(afterUnmount.current.hasSetupGlobalListeners.get(window)).toBeTruthy();
-      expect(afterUnmount.current.hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
+      expect(hasSetupGlobalListeners.size).toBe(1);
+      expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
     });
 
     it('returns positive isFocusVisible result after toggling browser tabs after keyboard navigation', async function () {
