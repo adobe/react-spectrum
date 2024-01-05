@@ -61,7 +61,7 @@ interface PositionOpts {
   arrowBoundaryOffset?: number
 }
 
-type HeightGrowthDirection = 'top' | 'bottom';
+type HeightGrowthDirection = 'top' | 'bottom' | 'both';
 
 export interface PositionResult {
   position?: Position,
@@ -152,23 +152,22 @@ function getDelta(
   // is portaled somewhere other than the body and has an ancestor with
   // position: relative/absolute, it will be different.
   containerDimensions: Dimensions,
-  padding: number
+  padding: number,
+  // The direction the popover's max height can freely grow. If "both", then neither the top nor bottom edge of the popover
+  // is "fixed" with respected to the trigger element.
+  heightGrowthDirection: HeightGrowthDirection
 ) {
-  // No need to adjust the vertical positioning of a overlay if the axis we are shifting against is vertical.
-  // We should instead rely on changing the max height of the overlay so that the overlay doesn't exceed its boundary
-  // TODO: is this an accurate assumption?
-  if (axis === 'top' || axis === 'bottom') {
-    return 0;
-  }
 
   let containerScroll = containerDimensions.scroll[axis];
   let boundaryHeight = boundaryDimensions[AXIS_SIZE[axis]];
   let startEdgeOffset = offset - padding - containerScroll;
   let endEdgeOffset = offset + padding - containerScroll + size;
 
-  if (startEdgeOffset < 0) {
+  // We shouldn't need to adjust the vertical positioning of a overlay if the axis we are shifting against is vertical and if the top/bottom edge if "fixed".
+  // We should instead rely on changing the max height of the overlay so that the overlay doesn't exceed the boundary element
+  if (startEdgeOffset < 0 && !(axis === 'top' && heightGrowthDirection === 'top')) {
     return -startEdgeOffset;
-  } else if (endEdgeOffset > boundaryHeight) {
+  } else if (endEdgeOffset > boundaryHeight && !(axis === 'top' && heightGrowthDirection === 'bottom')) {
     return Math.max(boundaryHeight - endEdgeOffset, -startEdgeOffset);
   } else {
     return 0;
@@ -232,7 +231,6 @@ function computePosition(
   }/* else {
     the overlay top should match the button top
   } */
-  // console.log('positon of button', childOffset)
 
   // TODO: crossAxis behaves differently from offset. A positive offset value will always shift the overlay in the "direction" it has
   // (aka a overlay positioned "top" will be shifted upwards when a positive offset is applied and a overlay positioned "bottom" will be shifted downwards with the same offset)
@@ -257,7 +255,6 @@ function computePosition(
   } else {
     position[axis] = Math.floor(childOffset[axis] + childOffset[size] + offset);
   }
-  // console.log('final position in calculate position', position)
   return position;
 }
 
@@ -271,14 +268,11 @@ function getMaxHeight(
   overlayHeight: number,
   heightGrowthDirection: HeightGrowthDirection
 ) {
-  console.log('iscontianer positioned', isContainerPositioned)
   const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary.height : boundaryDimensions[TOTAL_SIZE.height]);
   // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top with respect to the boundary. Reverse calculate this with the same method
-  // used in compute position.
+  // used in computePosition.
   let overlayTop = position.top != null ? containerOffsetWithBoundary.top + position.top : containerOffsetWithBoundary.top + (containerHeight - position.bottom - overlayHeight);
-  console.log('positon.top', position.top, boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top, containerOffsetWithBoundary.top + position.top, margins.top + margins.bottom + padding)
-  console.log('overlay top', overlayTop, heightGrowthDirection)
-  return heightGrowthDirection === 'bottom'
+  return heightGrowthDirection !== 'top'
     // We want the distance between the top of the overlay to the bottom of the boundary
     ? Math.max(0,
       (boundaryDimensions.height + boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the bottom of the boundary
@@ -402,15 +396,15 @@ export function calculatePositionInternal(
         normalizedOffset = offset;
       }
     }
-
   }
 
-  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding);
-  position[crossAxis] += delta;
-
   // Determine the direction the height of the overlay can grow so that we can choose how to calculate the max height
-  let heightGrowthDirection: HeightGrowthDirection = 'bottom';
-  console.log('placementinfo', placementInfo)
+  // A height growth direction of "top" or "bottom" indicates that the overlay can grow in said direction
+  // and that the opposite side is "fixed" and should not be adjusted when calculating getDelta
+  // Examples of this would be a popover with "left top" placement aka the top of the popover is aligned with the top of the trigger
+  // Similarly, a "top"/"bottom" placed popover has its bottom/top edge fixed at a position relative to the trigger element regardless of the
+  // avaiable room or the size of the popover
+  let heightGrowthDirection: HeightGrowthDirection = 'both';
   if (placementInfo.axis === 'top') {
     if (placementInfo.placement === 'top') {
       heightGrowthDirection = 'top';
@@ -424,7 +418,9 @@ export function calculatePositionInternal(
       heightGrowthDirection = 'top';
     }
   }
-  // console.log('posti, containerOffse', position, containerOffsetWithBoundary, childOffset)
+
+  let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, heightGrowthDirection);
+  position[crossAxis] += delta;
 
   let maxHeight = getMaxHeight(
     position,
@@ -444,7 +440,7 @@ export function calculatePositionInternal(
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
   position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
-  delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding);
+  delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, heightGrowthDirection);
   position[crossAxis] += delta;
 
   let arrowPosition: Position = {};
