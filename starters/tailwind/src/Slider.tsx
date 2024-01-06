@@ -47,7 +47,7 @@ export function Slider<T extends number | number[]>(
 ) {
   return (
     <AriaSlider {...props} className="orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64">
-      <Label>Opacity</Label>
+      <Label>{label}</Label>
       <SliderOutput className="text-sm text-gray-500 dark:text-zinc-400 font-medium orientation-vertical:hidden">
         {({ state }) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}
       </SliderOutput>
