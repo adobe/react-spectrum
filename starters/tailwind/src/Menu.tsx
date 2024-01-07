@@ -10,7 +10,7 @@ import {
 import { Popover, PopoverProps } from './Popover';
 import { Check } from 'lucide-react';
 import React from 'react';
-import { dropdownItemStyles } from './ListBox';
+import { DropdownSection, DropdownSectionProps, dropdownItemStyles } from './ListBox';
 
 interface MenuProps<T> extends AriaMenuProps<T> {
   placement?: PopoverProps['placement']
@@ -19,7 +19,7 @@ interface MenuProps<T> extends AriaMenuProps<T> {
 export function Menu<T extends object>(props: MenuProps<T>) {
   return (
     <Popover placement={props.placement} className="min-w-[150px]">
-      <AriaMenu {...props} className="p-1 outline outline-0 max-h-[inherit] overflow-auto" />
+      <AriaMenu {...props} className="p-1 outline outline-0 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]" />
     </Popover>
   );
 }
@@ -43,4 +43,8 @@ export function MenuItem(props: MenuItemProps) {
 
 export function MenuSeparator(props: SeparatorProps) {
   return <Separator {...props} className="border-b border-gray-300 dark:border-zinc-700 mx-3 my-1" />
+}
+
+export function MenuSection<T extends object>(props: DropdownSectionProps<T>) {
+  return <DropdownSection {...props} />;
 }

@@ -1,5 +1,5 @@
 import { Form } from 'react-aria-components';
-import {ComboBox, ComboBoxItem} from '../src/ComboBox';
+import {ComboBox, ComboBoxItem, ComboBoxSection} from '../src/ComboBox';
 import React from 'react';
 
 import type {Meta} from '@storybook/react';
@@ -30,6 +30,35 @@ export const Example = (args: any) => (
 export const DisabledItems = (args: any) => <Example {...args} />;
 DisabledItems.args = {
   disabledKeys: ['mint']
+};
+
+export const Sections = (args: any) => (
+  <ComboBox {...args}>
+    <ComboBoxSection title="Fruit">
+      <ComboBoxItem id="Apple">Apple</ComboBoxItem>
+      <ComboBoxItem id="Banana">Banana</ComboBoxItem>
+      <ComboBoxItem id="Orange">Orange</ComboBoxItem>
+      <ComboBoxItem id="Honeydew">Honeydew</ComboBoxItem>
+      <ComboBoxItem id="Grapes">Grapes</ComboBoxItem>
+      <ComboBoxItem id="Watermelon">Watermelon</ComboBoxItem>
+      <ComboBoxItem id="Cantaloupe">Cantaloupe</ComboBoxItem>
+      <ComboBoxItem id="Pear">Pear</ComboBoxItem>
+    </ComboBoxSection>
+    <ComboBoxSection title="Vegetable">
+      <ComboBoxItem id="Cabbage">Cabbage</ComboBoxItem>
+      <ComboBoxItem id="Broccoli">Broccoli</ComboBoxItem>
+      <ComboBoxItem id="Carrots">Carrots</ComboBoxItem>
+      <ComboBoxItem id="Lettuce">Lettuce</ComboBoxItem>
+      <ComboBoxItem id="Spinach">Spinach</ComboBoxItem>
+      <ComboBoxItem id="Bok Choy">Bok Choy</ComboBoxItem>
+      <ComboBoxItem id="Cauliflower">Cauliflower</ComboBoxItem>
+      <ComboBoxItem id="Potatoes">Potatoes</ComboBoxItem>
+    </ComboBoxSection>
+    </ComboBox>
+);
+
+Sections.args = {
+  label: 'Preferred fruit or vegetable'
 };
 
 export const Validation = (args) => (

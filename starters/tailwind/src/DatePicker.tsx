@@ -2,7 +2,6 @@ import {
   DatePicker as AriaDatePicker,
   DatePickerProps as AriaDatePickerProps,
   DateValue,
-  Dialog,
   ValidationResult
 } from 'react-aria-components';
 import { DateInput } from './DateField';
@@ -11,6 +10,7 @@ import { Calendar } from './Calendar';
 import { CalendarIcon } from 'lucide-react';
 import { FieldGroup, Label, FieldError, Description } from './Field';
 import { Popover } from './Popover';
+import { Dialog } from './Dialog';
 import React from 'react';
 
 export interface DatePickerProps<T extends DateValue>
@@ -35,7 +35,7 @@ export function DatePicker<T extends DateValue>(
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
       <Popover>
-        <Dialog className="px-4 py-5 max-h-[inherit] overflow-auto outline-0">
+        <Dialog>
           <Calendar />
         </Dialog>
       </Popover>

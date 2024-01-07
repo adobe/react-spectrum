@@ -10,7 +10,7 @@ import {
 import { Description, FieldError, Label } from './Field';
 import { Popover } from './Popover';
 import { ChevronDown } from 'lucide-react';
-import { DropdownItem, ListBoxSection, ListBoxSectionProps } from './ListBox';
+import { DropdownItem, DropdownSection, DropdownSectionProps } from './ListBox';
 import React from 'react';
 import {tv} from 'tailwind-variants';
 import {focusRing} from './utils';
@@ -59,6 +59,6 @@ export function SelectItem(props: ListBoxItemProps) {
   return <DropdownItem {...props} />;
 }
 
-export function SelectSection<T extends object>(props: ListBoxSectionProps<T>) {
-  return <ListBoxSection {...props} />;
+export function SelectSection<T extends object>(props: DropdownSectionProps<T>) {
+  return <DropdownSection {...props} />;
 }

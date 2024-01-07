@@ -9,7 +9,7 @@ import { Description, FieldError, FieldGroup, Label, Input } from './Field';
 import { Button } from './Button';
 import { Popover } from './Popover';
 import { ChevronDown } from 'lucide-react';
-import { DropdownItem } from './ListBox';
+import { DropdownItem, DropdownSection, DropdownSectionProps } from './ListBox';
 import React from 'react';
 
 export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children'> {
@@ -34,7 +34,7 @@ export function ComboBox<T extends object>(
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
       <Popover className="w-[--trigger-width]">
-        <ListBox items={items} className="outline-0 p-1 max-h-[inherit] overflow-auto">
+        <ListBox items={items} className="outline-0 p-1 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]">
           {children}
         </ListBox>
       </Popover>
@@ -44,4 +44,8 @@ export function ComboBox<T extends object>(
 
 export function ComboBoxItem(props: ListBoxItemProps) {
   return <DropdownItem {...props} />;
+}
+
+export function ComboBoxSection<T extends object>(props: DropdownSectionProps<T>) {
+  return <DropdownSection {...props} />;
 }
