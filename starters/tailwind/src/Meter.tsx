@@ -1,10 +1,11 @@
+import { AlertTriangle } from 'lucide-react';
+import React from 'react';
 import {
   Meter as AriaMeter,
   MeterProps as AriaMeterProps
 } from 'react-aria-components';
 import { Label } from './Field';
-import { AlertTriangle } from 'lucide-react';
-import React from 'react';
+import { composeTailwindRenderProps } from './utils';
 
 export interface MeterProps extends AriaMeterProps {
   label?: string;
@@ -12,7 +13,7 @@ export interface MeterProps extends AriaMeterProps {
 
 export function Meter({ label, ...props }: MeterProps) {
   return (
-    <AriaMeter {...props} className="flex flex-col gap-1">
+    <AriaMeter {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1')}>
       {({ percentage, valueText }) => (
         <>
           <div className="flex justify-between gap-2">

@@ -1,20 +1,20 @@
+import React from 'react';
 import {
-  Button,
   GridList as AriaGridList,
   GridListItem as AriaGridListItem,
+  Button,
   GridListItemProps,
   GridListProps
 } from 'react-aria-components';
-import {Checkbox} from './Checkbox';
-import React from 'react';
-import { focusRing } from './utils';
 import { tv } from 'tailwind-variants';
+import { Checkbox } from './Checkbox';
+import { composeTailwindRenderProps, focusRing } from './utils';
 
 export function GridList<T extends object>(
   { children, ...props }: GridListProps<T>
 ) {
   return (
-    <AriaGridList {...props} className={`overflow-auto relative border dark:border-zinc-600 rounded-lg ${props.className}`}>
+    <AriaGridList {...props} className={composeTailwindRenderProps(props.className, 'overflow-auto relative border dark:border-zinc-600 rounded-lg')}>
       {children}
     </AriaGridList>
   );

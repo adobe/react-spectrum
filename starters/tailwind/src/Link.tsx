@@ -1,6 +1,6 @@
-import {Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
 import React from 'react';
-import {tv} from 'tailwind-variants';
+import { Link as RACLink, LinkProps as RACLinkProps, composeRenderProps } from 'react-aria-components';
+import { tv } from 'tailwind-variants';
 
 interface LinkProps extends RACLinkProps {
   variant?: 'primary' | 'secondary'
@@ -20,5 +20,5 @@ const styles = tv({
 });
 
 export function Link(props: LinkProps) {
-  return <RACLink {...props} className={styles({variant: props.variant})} />;
+  return <RACLink {...props} className={composeRenderProps(props.className, (className, renderProps) =>  styles({...renderProps, className, variant: props.variant}))} />;
 }

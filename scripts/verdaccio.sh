@@ -127,10 +127,14 @@ then
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-spectrum-tailwind
 
-  # Build starter storybook
+  # Build starter storybooks
   cd ../../starters/docs
   yarn build-storybook
   mv storybook-static ../../$verdaccio_path/starter-storybook
+
+  cd ../tailwind
+  yarn build-storybook
+  mv storybook-static ../../$verdaccio_path/tailwind-starter
 
   cd ../..
 

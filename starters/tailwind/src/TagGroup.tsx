@@ -1,18 +1,20 @@
+import { XIcon } from 'lucide-react';
+import React, { createContext, useContext } from 'react';
 import {
-  Button,
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
   TagGroupProps as AriaTagGroupProps,
+  TagProps as AriaTagProps,
+  Button,
   TagList,
   TagListProps,
-  TagProps as AriaTagProps,
-  Text
+  Text,
+  composeRenderProps
 } from 'react-aria-components';
+import { twMerge } from 'tailwind-merge';
+import { tv } from 'tailwind-variants';
 import { Description, Label } from './Field';
-import { XIcon } from 'lucide-react';
-import React, { createContext, useContext } from 'react';
-import {tv} from 'tailwind-variants';
-import {focusRing} from './utils';
+import { focusRing } from './utils';
 
 const colors = {
   gray: 'bg-gray-100 text-gray-600 border-gray-200 hover:border-gray-300 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600 dark:hover:border-zinc-500',
@@ -74,7 +76,7 @@ export function TagGroup<T extends object>(
   }: TagGroupProps<T>
 ) {
   return (
-    <AriaTagGroup {...props} className="flex flex-col gap-1">
+    <AriaTagGroup {...props} className={twMerge('flex flex-col gap-1', props.className)}>
       <Label>{label}</Label>
       <ColorContext.Provider value={props.color || 'gray'}>
         <TagList items={items} renderEmptyState={renderEmptyState} className="flex flex-wrap gap-1">
@@ -99,7 +101,10 @@ export function Tag({ children, color, ...props }: TagProps) {
     <AriaTag
       textValue={textValue}
       {...props}
-      className={renderProps => tagStyles({...renderProps, color: color || groupColor})}>
+      className={composeRenderProps(
+        props.className,
+        (className, renderProps) => tagStyles({...renderProps, className, color: color || groupColor})
+      )}>
       {({ allowsRemoving }) => (
         <>
           {children}

@@ -1,9 +1,10 @@
+import React from 'react';
 import {
   ProgressBar as AriaProgressBar,
   ProgressBarProps as AriaProgressBarProps
 } from 'react-aria-components';
 import { Label } from './Field';
-import React from 'react';
+import { composeTailwindRenderProps } from './utils';
 
 export interface ProgressBarProps extends AriaProgressBarProps {
   label?: string;
@@ -11,7 +12,7 @@ export interface ProgressBarProps extends AriaProgressBarProps {
 
 export function ProgressBar({ label, ...props }: ProgressBarProps) {
   return (
-    <AriaProgressBar {...props} className="flex flex-col gap-1">
+    <AriaProgressBar {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-1')}>
       {({ percentage, valueText, isIndeterminate }) => (
         <>
           <div className="flex justify-between gap-2">

@@ -1,19 +1,19 @@
+import { ChevronDown } from 'lucide-react';
+import React from 'react';
 import {
+  Select as AriaSelect,
+  SelectProps as AriaSelectProps,
   Button,
   ListBox,
   ListBoxItemProps,
-  Select as AriaSelect,
-  SelectProps as AriaSelectProps,
   SelectValue,
   ValidationResult
 } from 'react-aria-components';
+import { tv } from 'tailwind-variants';
 import { Description, FieldError, Label } from './Field';
-import { Popover } from './Popover';
-import { ChevronDown } from 'lucide-react';
 import { DropdownItem, DropdownSection, DropdownSectionProps } from './ListBox';
-import React from 'react';
-import {tv} from 'tailwind-variants';
-import {focusRing} from './utils';
+import { Popover } from './Popover';
+import { composeTailwindRenderProps, focusRing } from './utils';
 
 const styles = tv({
   extend: focusRing,
@@ -38,7 +38,7 @@ export function Select<T extends object>(
   { label, description, errorMessage, children, items, ...props }: SelectProps<T>
 ) {
   return (
-    <AriaSelect {...props} className="group flex flex-col gap-1">
+    <AriaSelect {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1')}>
       {label && <Label>{label}</Label>}
       <Button className={styles}>
         <SelectValue className="flex-1 text-sm placeholder-shown:italic" />

@@ -1,21 +1,21 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React from 'react';
 import {
   Calendar as AriaCalendar,
+  CalendarGridHeader as AriaCalendarGridHeader,
+  CalendarProps as AriaCalendarProps,
   CalendarCell,
   CalendarGrid,
-  CalendarProps as AriaCalendarProps,
+  CalendarGridBody,
+  CalendarHeaderCell,
   DateValue,
   Heading,
   Text,
-  CalendarGridHeader as AriaCalendarGridHeader,
-  CalendarHeaderCell,
-  CalendarGridBody,
   useLocale
 } from 'react-aria-components';
+import { tv } from 'tailwind-variants';
 import { Button } from './Button';
-import {focusRing} from './utils';
-import React from 'react';
-import {tv} from 'tailwind-variants';
+import { focusRing } from './utils';
 
 const cellStyles = tv({
   extend: focusRing,

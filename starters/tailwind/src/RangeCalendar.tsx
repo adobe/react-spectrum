@@ -1,16 +1,16 @@
+import React from 'react';
 import {
-  CalendarCell,
-  CalendarGrid,
-  DateValue,
   RangeCalendar as AriaRangeCalendar,
   RangeCalendarProps as AriaRangeCalendarProps,
-  Text,
-  CalendarGridBody
+  CalendarCell,
+  CalendarGrid,
+  CalendarGridBody,
+  DateValue,
+  Text
 } from 'react-aria-components';
+import { tv } from 'tailwind-variants';
 import { CalendarGridHeader, CalendarHeader } from './Calendar';
-import React from 'react';
-import {tv} from 'tailwind-variants';
-import {focusRing} from './utils';
+import { focusRing } from './utils';
 
 export interface RangeCalendarProps<T extends DateValue>
   extends AriaRangeCalendarProps<T> {

@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react';
+import React from 'react';
 import {
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
@@ -10,15 +11,14 @@ import {
   SectionProps,
   composeRenderProps
 } from 'react-aria-components';
-import React from 'react';
-import {focusRing} from './utils';
-import {tv} from 'tailwind-variants';
+import { tv } from 'tailwind-variants';
+import { composeTailwindRenderProps, focusRing } from './utils';
 
 export function ListBox<T extends object>(
   { children, ...props }: ListBoxProps<T>
 ) {
   return (
-    <AriaListBox {...props} className="outline-0 p-1 border border-gray-300 dark:border-zinc-600 rounded-lg">
+    <AriaListBox {...props} className={composeTailwindRenderProps(props.className, 'outline-0 p-1 border border-gray-300 dark:border-zinc-600 rounded-lg')}>
       {children}
     </AriaListBox>
   );

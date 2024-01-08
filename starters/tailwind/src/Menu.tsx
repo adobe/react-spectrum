@@ -1,16 +1,16 @@
+import { Check } from 'lucide-react';
+import React from 'react';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
-  MenuItemProps,
   MenuProps as AriaMenuProps,
+  MenuItemProps,
   Separator,
   SeparatorProps,
   composeRenderProps
 } from 'react-aria-components';
-import { Popover, PopoverProps } from './Popover';
-import { Check } from 'lucide-react';
-import React from 'react';
 import { DropdownSection, DropdownSectionProps, dropdownItemStyles } from './ListBox';
+import { Popover, PopoverProps } from './Popover';
 
 interface MenuProps<T> extends AriaMenuProps<T> {
   placement?: PopoverProps['placement']

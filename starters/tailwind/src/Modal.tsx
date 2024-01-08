@@ -1,6 +1,6 @@
-import {Modal as RACModal, ModalOverlay, ModalOverlayProps} from 'react-aria-components';
 import React from 'react';
-import {tv} from 'tailwind-variants';
+import { ModalOverlay, ModalOverlayProps, Modal as RACModal } from 'react-aria-components';
+import { tv } from 'tailwind-variants';
 
 const overlayStyles = tv({
   base: 'fixed top-0 left-0 w-full h-[--visual-viewport-height] isolate z-20 bg-black/[15%] flex items-center justify-center p-4 text-center backdrop-blur-lg',

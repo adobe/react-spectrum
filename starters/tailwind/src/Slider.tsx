@@ -1,14 +1,14 @@
-import {focusRing} from './utils';
-import {Label} from './Field';
+import React from 'react';
 import {
   Slider as AriaSlider,
-  SliderOutput,
   SliderProps as AriaSliderProps,
+  SliderOutput,
   SliderThumb,
   SliderTrack
 } from 'react-aria-components';
-import React from 'react';
-import {tv} from 'tailwind-variants';
+import { tv } from 'tailwind-variants';
+import { Label } from './Field';
+import { composeTailwindRenderProps, focusRing } from './utils';
 
 const trackStyles = tv({
   base: 'rounded-full',
@@ -46,7 +46,7 @@ export function Slider<T extends number | number[]>(
   { label, thumbLabels, ...props }: SliderProps<T>
 ) {
   return (
-    <AriaSlider {...props} className="orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64">
+    <AriaSlider {...props} className={composeTailwindRenderProps(props.className, 'orientation-horizontal:grid orientation-vertical:flex grid-cols-[1fr_auto] flex-col items-center gap-2 orientation-horizontal:w-64')}>
       <Label>{label}</Label>
       <SliderOutput className="text-sm text-gray-500 dark:text-zinc-400 font-medium orientation-vertical:hidden">
         {({ state }) => state.values.map((_, i) => state.getThumbValueLabel(i)).join(' – ')}

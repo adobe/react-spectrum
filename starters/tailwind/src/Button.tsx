@@ -1,7 +1,7 @@
-import {composeRenderProps, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import React from 'react';
-import {tv} from 'tailwind-variants';
-import {focusRing} from './utils';
+import { composeRenderProps, Button as RACButton, ButtonProps as RACButtonProps } from 'react-aria-components';
+import { tv } from 'tailwind-variants';
+import { focusRing } from './utils';
 
 export interface ButtonProps extends RACButtonProps {
   variant?: 'primary' | 'secondary' | 'destructive' | 'icon'

@@ -1,9 +1,9 @@
-import {CheckboxGroup as RACCheckboxGroup, Checkbox as RACCheckbox, CheckboxGroupProps as RACCheckboxGroupProps, CheckboxProps, ValidationResult} from 'react-aria-components';
-import {Check, Minus} from 'lucide-react';
-import {Label, FieldError, Description} from './Field';
-import {focusRing} from './utils';
-import React, {ReactNode} from 'react';
-import {tv} from 'tailwind-variants';
+import { Check, Minus } from 'lucide-react';
+import React, { ReactNode } from 'react';
+import { CheckboxProps, Checkbox as RACCheckbox, CheckboxGroup as RACCheckboxGroup, CheckboxGroupProps as RACCheckboxGroupProps, ValidationResult, composeRenderProps } from 'react-aria-components';
+import { tv } from 'tailwind-variants';
+import { Description, FieldError, Label } from './Field';
+import { composeTailwindRenderProps, focusRing } from './utils';
 
 export interface CheckboxGroupProps extends Omit<RACCheckboxGroupProps, 'children'> {
   label?: string,
@@ -14,7 +14,7 @@ export interface CheckboxGroupProps extends Omit<RACCheckboxGroupProps, 'childre
 
 export function CheckboxGroup(props: CheckboxGroupProps) {
   return (
-    <RACCheckboxGroup {...props} className="flex flex-col gap-2">
+    <RACCheckboxGroup {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-2')}>
       <Label>{props.label}</Label>
       {props.children}
       {props.description && <Description>{props.description}</Description>}
@@ -23,7 +23,17 @@ export function CheckboxGroup(props: CheckboxGroupProps) {
   );
 }
 
-const styles = tv({
+const checkboxStyles = tv({
+  base: 'flex gap-2 items-center group text-sm transition',
+  variants: {
+    isDisabled: {
+      false: 'text-gray-800 dark:text-zinc-200',
+      true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
+    }
+  }
+});
+
+const boxStyles = tv({
   extend: focusRing,
   base: 'w-5 h-5 flex-shrink-0 rounded flex items-center justify-center border-2 transition',
   variants: {
@@ -44,10 +54,10 @@ const iconStyles = 'w-4 h-4 text-white group-disabled:text-gray-400 dark:text-sl
 
 export function Checkbox(props: CheckboxProps) {
   return (
-    <RACCheckbox {...props} className="flex gap-2 items-center group text-gray-800 disabled:text-gray-300 dark:text-zinc-200 dark:disabled:text-zinc-600 forced-colors:disabled:text-[GrayText] text-sm transition">
+    <RACCheckbox {...props} className={composeRenderProps(props.className, (className, renderProps) => checkboxStyles({...renderProps, className}))}>
       {({isSelected, isIndeterminate, ...renderProps}) => (
         <>
-          <div className={styles({isSelected: isSelected || isIndeterminate, ...renderProps})}>
+          <div className={boxStyles({isSelected: isSelected || isIndeterminate, ...renderProps})}>
             {isIndeterminate
               ? <Minus aria-hidden className={iconStyles} />
               : isSelected

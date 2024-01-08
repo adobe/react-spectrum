@@ -1,16 +1,16 @@
-import {
-  composeRenderProps,
-  Tabs as RACTabs,
-  TabList as RACTabList,
-  Tab as RACTab,
-  TabPanel as RACTabPanel,
-  TabsProps,
-  TabListProps,
-  TabProps,
-  TabPanelProps
-} from 'react-aria-components';
 import React from 'react';
-import {tv} from 'tailwind-variants';
+import {
+  Tab as RACTab,
+  TabList as RACTabList,
+  TabPanel as RACTabPanel,
+  Tabs as RACTabs,
+  TabListProps,
+  TabPanelProps,
+  TabProps,
+  TabsProps,
+  composeRenderProps
+} from 'react-aria-components';
+import { tv } from 'tailwind-variants';
 import { focusRing } from './utils';
 
 const tabsStyles = tv({

@@ -1,13 +1,13 @@
+import { BoldIcon, ItalicIcon, UnderlineIcon } from 'lucide-react';
+import React from 'react';
 import { Group } from 'react-aria-components';
-import { ToggleButton } from '../src/ToggleButton';
-import {Toolbar} from '../src/Toolbar';
 import { Button } from '../src/Button';
 import { Checkbox } from '../src/Checkbox';
-import { BoldIcon, ItalicIcon, UnderlineIcon } from 'lucide-react';
 import { Separator } from '../src/Separator';
-import React from 'react';
+import { ToggleButton } from '../src/ToggleButton';
+import { Toolbar } from '../src/Toolbar';
 
-import type {Meta} from '@storybook/react';
+import type { Meta } from '@storybook/react';
 
 const meta: Meta<typeof Toolbar> = {
   component: Toolbar,
