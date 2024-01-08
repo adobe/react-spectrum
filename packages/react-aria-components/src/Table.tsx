@@ -416,7 +416,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
             ref={ref}
             slot={props.slot || undefined}
             onScroll={props.onScroll}
-            data-allows-dragging={(isListDraggable && !dragAndDropHooks.isDisabled) || undefined}
+            data-allows-dragging={(isListDraggable && !dragAndDropHooks?.isDisabled) || undefined}
             data-drop-target={isRootDropTarget || undefined}
             data-focused={isFocused || undefined}
             data-focus-visible={isFocusVisible || undefined}>
