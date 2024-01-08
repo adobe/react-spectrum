@@ -240,7 +240,7 @@ interface DndTableProps {
   isDisabled?: boolean
 }
 
-function DndTable(props: DndTableProps) {
+const DndTable = (props: DndTableProps) => {
   let list = useListData({
     initialItems: props.initialItems
   });
@@ -333,7 +333,7 @@ function DndTable(props: DndTableProps) {
       </TableBody>
     </Table>
   );
-}
+};
 
 type DndTableExampleProps = {
   isDisabledFirstTable?: boolean,
@@ -374,7 +374,7 @@ DndTableExample.args = {
   isDisabledSecondTable: false
 };
 
-function MyCheckbox({children, ...props}: CheckboxProps) {
+const MyCheckbox = ({children, ...props}: CheckboxProps) => {
   return (
     <Checkbox {...props}>
       {({isIndeterminate}) => (
@@ -391,4 +391,4 @@ function MyCheckbox({children, ...props}: CheckboxProps) {
       )}
     </Checkbox>
   );
-}
+};
