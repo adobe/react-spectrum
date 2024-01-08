@@ -19,9 +19,7 @@ import {useVirtualDrop} from './useVirtualDrop';
 
 export interface DroppableItemOptions {
   /** The drop target represented by the item. */
-  target: DropTarget,
-  /** Whether the drop events should be disabled. */
-  isDisabled?: boolean
+  target: DropTarget
 }
 
 export interface DroppableItemResult {
@@ -76,7 +74,7 @@ export function useDroppableItem(options: DroppableItemOptions, state: Droppable
   }, [isDropTarget, dragSession, ref]);
 
   return {
-    dropProps: options.isDisabled ? {} : {
+    dropProps: {
       ...dropProps,
       'aria-hidden': !dragSession || isValidDropTarget ? undefined : 'true'
     },

@@ -147,7 +147,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       hooks.useDroppableCollection = function useDroppableCollectionOverride(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) {
         return useDroppableCollection({...props, ...options}, state, ref);
       };
-      hooks.useDropIndicator = isDisabled ? undefined : useDropIndicator;
+      hooks.useDropIndicator = useDropIndicator;
       hooks.renderDropIndicator = renderDropIndicator;
       hooks.dropTargetDelegate = dropTargetDelegate;
       hooks.ListDropTargetDelegate = ListDropTargetDelegate;

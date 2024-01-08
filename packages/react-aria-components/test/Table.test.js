@@ -783,20 +783,20 @@ describe('Table', () => {
     });
 
     it('should support disabled drag and drop', async () => {
-      let {queryAllByRole} = render(
+      let {queryAllByRole, getByRole, getAllByRole} = render(
         <DraggableTable isDisabled />
       );
 
-      let buttons = await queryAllByRole('button');
+      let buttons = queryAllByRole('button');
       buttons.forEach(button => {
-        expect(button).not.toHaveAttribute('aria-label', expect.stringContaining('Drag'));
+        expect(button).toBeDisabled();
       });
 
-      let table = screen.getByRole('grid');
+      let table = getByRole('grid');
       expect(table).not.toHaveAttribute('data-allows-dragging', 'true');
       expect(table).not.toHaveAttribute('draggable', 'true');
 
-      let rows = screen.getAllByRole('row');
+      let rows = getAllByRole('row');
       rows.forEach(row => {
         expect(row).not.toHaveAttribute('draggable', 'true');
       });

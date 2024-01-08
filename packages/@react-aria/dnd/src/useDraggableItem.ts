@@ -151,7 +151,7 @@ export function useDraggableItem(props: DraggableItemProps, state: DraggableColl
 
   return {
     dragProps: isDisabled ? {} : dragProps,
-    dragButtonProps: isDisabled ? {} : {
+    dragButtonProps: {
       ...dragButtonProps,
       isDisabled,
       'aria-label': dragButtonLabel

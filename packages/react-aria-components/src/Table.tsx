@@ -306,8 +306,8 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
 
   let {dragAndDropHooks} = props;
   let selectionManager = state.selectionManager;
-  let isListDraggable = dragAndDropHooks?.isDisabled !== true && !!dragAndDropHooks?.useDraggableCollectionState;
-  let isListDroppable = dragAndDropHooks?.isDisabled !== true && !!dragAndDropHooks?.useDroppableCollectionState;
+  let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
+  let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
   let dragHooksProvided = useRef(isListDraggable);
   let dropHooksProvided = useRef(isListDroppable);
   useEffect(() => {
@@ -416,7 +416,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
             ref={ref}
             slot={props.slot || undefined}
             onScroll={props.onScroll}
-            data-allows-dragging={isListDraggable || undefined}
+            data-allows-dragging={(!dragAndDropHooks.isDisabled && isListDraggable) || undefined}
             data-drop-target={isRootDropTarget || undefined}
             data-focused={isFocused || undefined}
             data-focus-visible={isFocusVisible || undefined}>
@@ -1168,11 +1168,7 @@ function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
 
-  if (!dragAndDropHooks?.useDropIndicator) {
-    return null;
-  }
-
-  let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks.useDropIndicator(
+  let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
     buttonRef
