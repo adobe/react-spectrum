@@ -1167,7 +1167,6 @@ function TableDropIndicatorWrapper(props: DropIndicatorProps, ref: ForwardedRef<
   ref = useObjectRef(ref);
   let {dragAndDropHooks, dropState} = useContext(DragAndDropContext)!;
   let buttonRef = useRef<HTMLDivElement>(null);
-
   let {dropIndicatorProps, isHidden, isDropTarget} = dragAndDropHooks!.useDropIndicator!(
     props,
     dropState!,
