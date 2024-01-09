@@ -19,8 +19,8 @@ let THEMES = [
 ];
 
 let STHEMES = [
-  {label: 'Spectrum', value: 'spectrum'},
-  {label: "Spectrum2", value: "spectrum2"},
+  {label: '1', value: 'spectrum'},
+  {label: "2", value: "spectrum2"},
   {label: "Express", value: "express"}
 ];
 
