@@ -23,7 +23,7 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAppleDevice, isFirefox, mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
+import {isAppleDevice, isFirefox, mergeProps, useId} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ElementType, ReactElement, useEffect, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
@@ -117,6 +117,7 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   }
 
   let provider = useProvider();
+  // @ts-ignore
   usePressScale(domRef, isPressed, !provider?.theme?.enablePressScale);
 
   return (

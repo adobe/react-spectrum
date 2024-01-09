@@ -38,7 +38,7 @@ function Switch(props: SpectrumSwitchProps, ref: FocusableRef<HTMLLabelElement>)
   let state = useToggleState(props);
   let {inputProps, isPressed} = useSwitch(props, state, inputRef);
 
-  let switchRef = useRef();
+  let switchRef = useRef(null);
   usePressScale(switchRef, isPressed);
 
   return (

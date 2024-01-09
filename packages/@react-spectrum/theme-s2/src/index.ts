@@ -21,6 +21,7 @@ import s2 from '@adobe/spectrum-css-temp/vars/s2.css';
 import {Theme} from '@react-types/provider';
 
 export let theme: Theme = {
+  // @ts-ignore
   enablePressScale: true,
   global: {
     ...global,
