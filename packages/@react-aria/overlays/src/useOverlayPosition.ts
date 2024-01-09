@@ -13,7 +13,7 @@
 import {calculatePosition, PositionResult} from './calculatePosition';
 import {DOMAttributes} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
-import {RefObject, useCallback, useRef, useState} from 'react';
+import {RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
@@ -124,8 +124,20 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     arrowSize
   ];
 
+  // Upon opening a overlay, record the current visual viewport scale so we can freeze the overlay styles
+  let lastScale = useRef(visualViewport?.scale);
+  useEffect(() => {
+    if (isOpen) {
+      lastScale.current = visualViewport?.scale;
+    }
+  }, [isOpen]);
+
   let updatePosition = useCallback(() => {
     if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
+      return;
+    }
+
+    if (visualViewport?.scale !== lastScale.current) {
       return;
     }
 
