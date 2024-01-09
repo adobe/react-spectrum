@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import addons, { makeDecorator } from '@storybook/addons';
 import {getQueryParams} from '@storybook/client-api';
 import {Provider} from '@react-spectrum/provider';
-// import {expressThemes, themes, defaultTheme} from '../../constants';
-import {theme} from '@react-spectrum/theme-s2';
+import {expressThemes, themes, defaultTheme} from '../../constants';
+import {theme as s2Theme} from '@react-spectrum/theme-s2';
 
 document.body.style.margin = '0';
 
@@ -14,15 +14,27 @@ const providerValuesFromUrl = Object.entries(getQueryParams()).reduce((acc, [k, 
   return acc;
 }, {});
 
+let SpectrumThemes = {
+  spectrum: themes,
+  spectrum2: s2Theme,
+  express: expressThemes
+};
+console.log(SpectrumThemes.spectrum, SpectrumThemes.spectrum2, SpectrumThemes.express);
+
 function ProviderUpdater(props) {
   let [localeValue, setLocale] = useState(providerValuesFromUrl.locale || undefined);
   let [themeValue, setTheme] = useState(providerValuesFromUrl.theme || undefined);
   let [scaleValue, setScale] = useState(providerValuesFromUrl.scale || undefined);
-  let [expressValue, setExpress] = useState(providerValuesFromUrl.express === 'true');
+  let [sthemeValue, setSTheme] = useState(providerValuesFromUrl.stheme || undefined);
   let [storyReady, setStoryReady] = useState(window.parent === window || window.parent !== window.top); // reduce content flash because it takes a moment to get the provider details
   // Typically themes are provided with both light + dark, and both scales.
   // To build our selector to see all themes, we need to hack it a bit.
-  // let theme = (expressValue ? expressThemes : themes)[themeValue || 'light'] || defaultTheme;
+  let theme;
+  if (sthemeValue === 'spectrum2') {
+    theme = SpectrumThemes[sthemeValue] || defaultTheme;
+  } else {
+    theme = SpectrumThemes[sthemeValue]?.[themeValue || 'light'] || defaultTheme;
+  }
   let colorScheme = themeValue && themeValue.replace(/est$/, '');
   useEffect(() => {
     let channel = addons.getChannel();
@@ -30,7 +42,7 @@ function ProviderUpdater(props) {
       setLocale(event.locale);
       setTheme(event.theme === 'Auto' ? undefined : event.theme);
       setScale(event.scale === 'Auto' ? undefined : event.scale);
-      setExpress(event.express);
+      setSTheme(event.stheme);
       setStoryReady(true);
     };
 

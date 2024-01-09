@@ -18,6 +18,12 @@ let THEMES = [
   {label: "Darkest", value: "darkest"}
 ];
 
+let STHEMES = [
+  {label: 'Spectrum', value: 'spectrum'},
+  {label: "Spectrum2", value: "spectrum2"},
+  {label: "Express", value: "express"}
+];
+
 let SCALES = [
   {label: 'Auto', value: ''},
   {label: "Medium", value: "medium"},
@@ -36,7 +42,7 @@ let TOAST_POSITIONS = [
 ];
 
 function ProviderFieldSetter({api}) {
-  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, express: providerValuesFromUrl.express === 'true'});
+  let [values, setValues] = useState({locale: providerValuesFromUrl.locale || undefined, theme: providerValuesFromUrl.theme || undefined, scale: providerValuesFromUrl.scale || undefined, stheme: providerValuesFromUrl.stheme});
   let channel = addons.getChannel();
   let onLocaleChange = (e) => {
     let newValue = e.target.value || undefined;
@@ -62,10 +68,10 @@ function ProviderFieldSetter({api}) {
       return next;
     });
   };
-  let onExpressChange = (e) => {
-    let newValue = e.target.checked;
+  let onSThemeChange = (e) => {
+    let newValue = e.target.value || undefined;
     setValues((old) => {
-      let next = {...old, express: newValue};
+      let next = {...old, stheme: newValue};
       channel.emit('provider/updated', next);
       return next;
     });
@@ -110,8 +116,10 @@ function ProviderFieldSetter({api}) {
         </select>
       </div>
       <div style={{marginRight: '10px'}}>
-        <label htmlFor="express">Express: </label>
-        <input type="checkbox" id="express" name="express" onChange={onExpressChange} checked={values.express} />
+        <label htmlFor="express">Spectrum Version: </label>
+        <select id="stheme" name="stheme" onChange={onSThemeChange} value={values.scale}>
+          {STHEMES.map(stheme => <option key={stheme.label} value={stheme.value}>{stheme.label}</option>)}
+        </select>
       </div>
     </div>
   )
@@ -121,7 +129,7 @@ addons.register('ProviderSwitcher', (api) => {
   addons.add('ProviderSwitcher', {
     title: 'viewport',
     type: types.TOOL,
-    match: ({ viewMode }) => viewMode === 'story',
+    match: ({viewMode}) => viewMode === 'story',
     render: () => <ProviderFieldSetter api={api} />,
   });
 });
