@@ -156,14 +156,20 @@ function getDelta(
   containerOffsetWithBoundary: Offset
 ) {
   let containerScroll = containerDimensions.scroll[axis];
-  let boundaryHeight = boundaryDimensions[AXIS_SIZE[axis]];
-  let startEdgeOffset = offset - padding - containerScroll + containerOffsetWithBoundary[axis];
-  let endEdgeOffset = offset + padding - containerScroll + size + containerOffsetWithBoundary[axis];
+  // The height/width of the boundary. Matches the axis along which we are adjusting the overlay position
+  let boundarySize = boundaryDimensions[AXIS_SIZE[axis]];
+  // Calculate the edges of the boundary (accomodating for the boundary padding) and the edges of the overlay.
+  let boundaryStartEdge = boundaryDimensions.scroll[AXIS[axis]] + padding;
+  let boundaryEndEdge = boundarySize + boundaryDimensions.scroll[AXIS[axis]] - padding;
+  let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis];
+  let endEdgeOffset = offset - containerScroll + size + containerOffsetWithBoundary[axis];
 
-  if (startEdgeOffset < 0) {
-    return -startEdgeOffset;
-  } else if (endEdgeOffset > boundaryHeight) {
-    return Math.max(boundaryHeight - endEdgeOffset, -startEdgeOffset);
+  // If any of the overlay edges falls outside of the boundary, shift the overlay the required amount required to align one of the overlay's
+  // edges with the closest boundary edge.
+  if (startEdgeOffset < boundaryStartEdge) {
+    return boundaryStartEdge - startEdgeOffset;
+  } else if (endEdgeOffset > boundaryEndEdge) {
+    return Math.max(boundaryEndEdge - endEdgeOffset, boundaryStartEdge - startEdgeOffset);
   } else {
     return 0;
   }
