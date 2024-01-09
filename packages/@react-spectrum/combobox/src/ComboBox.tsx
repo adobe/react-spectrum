@@ -342,6 +342,7 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
               )
             }
             isQuiet={isQuiet}
+            shouldScale={false}
             validationState={validationState}>
             <ChevronDownMedium UNSAFE_className={classNames(styles, 'spectrum-Dropdown-chevron')} />
           </FieldButton>

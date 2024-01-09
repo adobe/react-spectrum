@@ -142,6 +142,12 @@
   --spectrum-selectlist-option-icon-color-selected: var(--spectrum-global-color-indigo-500);
 
   --spectrum-alias-neutral-background-color: var(--spectrum-neutral-background-color-default);
+
+  /* These are completely new, just to support s2 */
+  --spectrum2-exists: 1;
+  --spectrum-button-padding-y: 0;
+  --spectrum-button-padding-block-start: 0;
+  --spectrum-button-padding-block-end: 0;
 }
 
 .s2.medium {

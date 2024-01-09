@@ -23,7 +23,7 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {isAppleDevice, isFirefox, mergeProps, useId} from '@react-aria/utils';
+import {isAppleDevice, isFirefox, mergeProps, useId, useLayoutEffect} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
 import React, {ElementType, ReactElement, useEffect, useState} from 'react';
 import {SpectrumButtonProps} from '@react-types/button';
@@ -32,7 +32,7 @@ import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useFocus, useHover} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 function disablePendingProps(props) {
   // Don't allow interaction while isPending is true
@@ -108,7 +108,6 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
     staticColor = 'white';
   }
 
-  usePressScale(domRef, isPressed);
   const isPendingAriaLiveLabel = `${hasAriaLabel ? buttonProps['aria-label'] : ''} ${stringFormatter.format('pending')}`.trim();
   const isPendingAriaLiveLabelledby = hasAriaLabel ? (buttonProps['aria-labelledby']?.replace(buttonId, spinnerId) ?? spinnerId) : `${hasIcon ? iconId : ''} ${hasLabel ? textId : ''} ${spinnerId}`.trim();
 
@@ -116,6 +115,10 @@ function Button<T extends ElementType = 'button'>(props: SpectrumButtonProps<T>,
   if (isAppleDevice() && (!hasAriaLabel || isFirefox())) {
     ariaLive = 'off';
   }
+
+  let provider = useProvider();
+  usePressScale(domRef, isPressed, !provider?.theme?.enablePressScale);
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')} autoFocus={autoFocus}>
       <Element

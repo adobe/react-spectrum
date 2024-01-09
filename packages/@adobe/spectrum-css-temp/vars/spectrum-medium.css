@@ -136,6 +136,12 @@
   --spectrum-button-warning-min-width: var(--spectrum-global-dimension-size-900);
   --spectrum-button-warning-touch-hit-x: var(--spectrum-global-dimension-static-size-100);
   --spectrum-button-warning-touch-hit-y: var(--spectrum-global-dimension-static-size-100);
+  /* BEGIN RSP PATCH */
+  /* add variables for button + font alignment hack */
+  --spectrum-button-padding-y: var(--spectrum-global-dimension-size-50);
+  --spectrum-button-padding-block-start: calc(var(--spectrum-global-dimension-size-50) - 1px);
+  --spectrum-button-padding-block-end: calc(var(--spectrum-global-dimension-size-50) + 1px);
+  /* END RSP PATCH */
   --spectrum-checkbox-text-gap-key-focus: var(--spectrum-global-dimension-static-size-115);
   --spectrum-checkbox-text-gap-selected-key-focus: var(--spectrum-global-dimension-static-size-115);
   --spectrum-checkbox-text-gap-indeterminate-key-focus: var(--spectrum-global-dimension-static-size-115);

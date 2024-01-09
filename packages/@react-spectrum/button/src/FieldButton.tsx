@@ -25,7 +25,8 @@ interface FieldButtonProps extends ButtonProps, DOMProps, StyleProps {
   isActive?: boolean,
   validationState?: 'valid' | 'invalid',
   isInvalid?: boolean,
-  focusRingClass?: string
+  focusRingClass?: string,
+  shouldScale?: boolean
 }
 
 // @private
@@ -40,6 +41,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
     autoFocus,
     isActive,
     focusRingClass,
+    shouldScale = true,
     ...otherProps
   } = props;
   let domRef = useFocusableRef(ref) as RefObject<HTMLButtonElement>;
@@ -47,7 +49,7 @@ function FieldButton(props: FieldButtonProps, ref: FocusableRef) {
   let {hoverProps, isHovered} = useHover({isDisabled});
   let {styleProps} = useStyleProps(otherProps);
 
-  usePressScale(domRef, isPressed);
+  usePressScale(domRef, isPressed, !shouldScale);
 
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring', focusRingClass)} autoFocus={autoFocus}>
