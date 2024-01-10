@@ -117,6 +117,9 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     height = visualViewport?.height ?? totalHeight;
     top = visualViewport?.offsetTop ?? top;
     left = visualViewport?.offsetLeft ?? left;
+
+    scroll.top = documentElement.scrollTop || containerNode.scrollTop;
+    scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
   } else {
     ({width, height, top, left} = getOffset(containerNode));
     scroll.top = containerNode.scrollTop;
