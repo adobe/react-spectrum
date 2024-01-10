@@ -112,7 +112,7 @@ import {ListBox, ListBoxItem, Section, Header, Collection, Text} from 'react-ari
 function ContactListExample() {
   return (
     <div className="bg-gradient-to-r from-blue-500 to-sky-500 p-8 rounded-lg flex justify-center">
-      <ListBox aria-label="Contacts" selectionMode="multiple" selectionBehavior="replace" className="w-72 max-h-[290px] overflow-auto outline-none bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow scroll-pt-6">
+      <ListBox aria-label="Contacts" selectionMode="multiple" selectionBehavior="replace" className="w-72 max-h-[290px] overflow-auto outline-none bg-white text-gray-700 p-2 flex flex-col gap-2 rounded-lg shadow scroll-pb-2 scroll-pt-7">
         <ContactSection title="Favorites" items={favorites}>
           {item => <Contact item={item} />}
         </ContactSection>
