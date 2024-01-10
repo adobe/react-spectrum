@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/tabs",
-  "version": "3.8.5",
+  "version": "3.8.6",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -41,7 +41,7 @@
     "@react-aria/interactions": "^3.20.1",
     "@react-aria/tabs": "^3.8.3",
     "@react-aria/utils": "^3.23.0",
-    "@react-spectrum/picker": "^3.14.0",
+    "@react-spectrum/picker": "^3.14.1",
     "@react-spectrum/text": "^3.5.1",
     "@react-spectrum/utils": "^3.11.3",
     "@react-stately/collections": "^3.10.4",
