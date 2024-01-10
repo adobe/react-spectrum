@@ -115,15 +115,22 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     totalHeight = documentElement.clientHeight;
     width = visualViewport?.width ?? totalWidth;
     height = visualViewport?.height ?? totalHeight;
-
-    scroll.top = documentElement.scrollTop || containerNode.scrollTop;
-    scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
+    top = visualViewport?.offsetTop ?? top;
+    left = visualViewport?.offsetLeft ?? left;
   } else {
     ({width, height, top, left} = getOffset(containerNode));
     scroll.top = containerNode.scrollTop;
     scroll.left = containerNode.scrollLeft;
     totalWidth = width;
     totalHeight = height;
+  }
+
+  let isPinchZoomedIn = visualViewport?.scale > 1;
+  if (containerNode.tagName === 'BODY' || containerNode.tagName === 'HTML' && isPinchZoomedIn) {
+    // Safari will report a non-zero scrollTop/Left for the body/HTML element when pinch zoomed in unlike other browsers.
+    // Set to zero for parity calculations so we get consistent positioning of overlays across all browsers
+    scroll.top = 0;
+    scroll.left = 0;
   }
 
   return {width, height, totalWidth, totalHeight, scroll, top, left};
@@ -161,8 +168,8 @@ function getDelta(
   // Calculate the edges of the boundary (accomodating for the boundary padding) and the edges of the overlay.
   let boundaryStartEdge = boundaryDimensions.scroll[AXIS[axis]] + padding;
   let boundaryEndEdge = boundarySize + boundaryDimensions.scroll[AXIS[axis]] - padding;
-  let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis];
-  let endEdgeOffset = offset - containerScroll + size + containerOffsetWithBoundary[axis];
+  let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
+  let endEdgeOffset = offset - containerScroll + size + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
 
   // If any of the overlay edges falls outside of the boundary, shift the overlay the required amount required to align one of the overlay's
   // edges with the closest boundary edge.
@@ -290,7 +297,7 @@ function getMaxHeight(
       - (boundaryDimensions.top + boundaryDimensions.scroll.top) // this is the top of the boundary
       - (margins.top + margins.bottom + padding) // save additional space for margin and padding
     );
-  return Math.min(boundaryDimensions.height, maxHeight);
+  return Math.min(boundaryDimensions.height - (padding * 2), maxHeight);
 }
 
 function getAvailableSpace(
