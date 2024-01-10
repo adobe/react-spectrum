@@ -1,11 +1,11 @@
 import { Check, Minus } from 'lucide-react';
 import React, { ReactNode } from 'react';
-import { CheckboxProps, Checkbox as RACCheckbox, CheckboxGroup as RACCheckboxGroup, CheckboxGroupProps as RACCheckboxGroupProps, ValidationResult, composeRenderProps } from 'react-aria-components';
+import { Checkbox as AriaCheckbox, CheckboxGroup as AriaCheckboxGroup, CheckboxGroupProps as AriaCheckboxGroupProps, CheckboxProps, ValidationResult, composeRenderProps } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { Description, FieldError, Label } from './Field';
 import { composeTailwindRenderProps, focusRing } from './utils';
 
-export interface CheckboxGroupProps extends Omit<RACCheckboxGroupProps, 'children'> {
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children'> {
   label?: string,
   children?: ReactNode,
   description?: string;
@@ -14,12 +14,12 @@ export interface CheckboxGroupProps extends Omit<RACCheckboxGroupProps, 'childre
 
 export function CheckboxGroup(props: CheckboxGroupProps) {
   return (
-    <RACCheckboxGroup {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-2')}>
+    <AriaCheckboxGroup {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-2')}>
       <Label>{props.label}</Label>
       {props.children}
       {props.description && <Description>{props.description}</Description>}
       <FieldError>{props.errorMessage}</FieldError>
-    </RACCheckboxGroup>
+    </AriaCheckboxGroup>
   );
 }
 
@@ -50,11 +50,11 @@ const boxStyles = tv({
   }
 });
 
-const iconStyles = 'w-4 h-4 text-white group-disabled:text-gray-400 dark:text-slate-900 dark:group-disabled:text-slate-600 forced-colors:text-[HighlightText] forced-colors:group-disabled:text-[GrayText]';
+const iconStyles = 'w-4 h-4 text-white group-disabled:text-gray-400 dark:text-slate-900 dark:group-disabled:text-slate-600 forced-colors:text-[HighlightText]';
 
 export function Checkbox(props: CheckboxProps) {
   return (
-    <RACCheckbox {...props} className={composeRenderProps(props.className, (className, renderProps) => checkboxStyles({...renderProps, className}))}>
+    <AriaCheckbox {...props} className={composeRenderProps(props.className, (className, renderProps) => checkboxStyles({...renderProps, className}))}>
       {({isSelected, isIndeterminate, ...renderProps}) => (
         <>
           <div className={boxStyles({isSelected: isSelected || isIndeterminate, ...renderProps})}>
@@ -68,6 +68,6 @@ export function Checkbox(props: CheckboxProps) {
           {props.children}
         </>
       )}
-    </RACCheckbox>
+    </AriaCheckbox>
   );
 }

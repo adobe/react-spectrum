@@ -13,9 +13,11 @@ export interface RadioGroupProps extends Omit<RACRadioGroupProps, 'children'> {
 
 export function RadioGroup(props: RadioGroupProps) {
   return (
-    <RACRadioGroup {...props} className={composeTailwindRenderProps(props.className, 'flex flex-col gap-2')}>
+    <RACRadioGroup {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-2')}>
       <Label>{props.label}</Label>
-      {props.children}
+      <div className="flex group-orientation-vertical:flex-col gap-2 group-orientation-horizontal:gap-4">
+        {props.children}
+      </div>
       {props.description && <Description>{props.description}</Description>}
       <FieldError>{props.errorMessage}</FieldError>
     </RACRadioGroup>

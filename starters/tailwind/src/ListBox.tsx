@@ -3,16 +3,18 @@ import React from 'react';
 import {
   ListBox as AriaListBox,
   ListBoxItem as AriaListBoxItem,
+  ListBoxProps as AriaListBoxProps,
   Collection,
   Header,
   ListBoxItemProps,
-  ListBoxProps,
   Section,
   SectionProps,
   composeRenderProps
 } from 'react-aria-components';
 import { tv } from 'tailwind-variants';
 import { composeTailwindRenderProps, focusRing } from './utils';
+
+interface ListBoxProps<T> extends Omit<AriaListBoxProps<T>, 'layout' | 'orientation'> {}
 
 export function ListBox<T extends object>(
   { children, ...props }: ListBoxProps<T>
