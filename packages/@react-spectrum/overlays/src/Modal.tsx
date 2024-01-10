@@ -84,7 +84,11 @@ let ModalWrapper = forwardRef(function (props: ModalWrapperProps, ref: RefObject
   );
 
   let viewport = useViewportSize();
+  // TODO: try getting rid of this reliance on useViewport size in favor of height: "100svh" and see if that makes the
+  // modal. Maybe to do later
   let style: any = {
+    // TODO: look up why we have this and if we can use svh instead so we don't run into a modal with combobox in it + pinch zoom breaking the combobox dropdown placement
+    // not sure if that even happens though
     '--spectrum-visual-viewport-height': viewport.height + 'px'
   };
 

@@ -124,6 +124,8 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     arrowSize
   ];
 
+  // TODO: note, the position freezing breaks if body sizes itself dynamicly with the visual viewport but that might
+  // just be a non-realistic use case
   // Upon opening a overlay, record the current visual viewport scale so we can freeze the overlay styles
   let lastScale = useRef(visualViewport?.scale);
   useEffect(() => {
@@ -195,12 +197,19 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       updatePosition();
     };
 
-    visualViewport?.addEventListener('resize', onResize);
-    visualViewport?.addEventListener('scroll', onResize);
+    // Only reposition the overlay if a scroll event happens immediately as a result of resize (aka the virtual keyboard has appears)
+    // We don't want to reposition the overlay if the user has pinch zoomed in and is scrolling the viewport around.
+    let onScroll = () => {
+      if (isResizing.current) {
+        onResize();
+      }
+    };
 
+    visualViewport?.addEventListener('resize', onResize);
+    visualViewport?.addEventListener('scroll', onScroll);
     return () => {
       visualViewport?.removeEventListener('resize', onResize);
-      visualViewport?.removeEventListener('scroll', onResize);
+      visualViewport?.removeEventListener('scroll', onScroll);
     };
   }, [updatePosition]);
 
