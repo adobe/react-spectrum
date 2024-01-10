@@ -19,10 +19,13 @@ import {Key, LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect} from 'react';
 import {TextContext} from './Text';
+import { node } from 'prop-types';
 
 // TODO: Figure out what we want in this. It should be like useTreeGridState perhaps where we
 // generate a flattened collection which is all the expanded/visible tree rows. The nodes themselves should have
-// the proper parent - child information along with what level and position in set it is.
+// the proper parent - child information along with what level and position in set it is. When a row is expanded the collection should update
+// and return the new version of the flattened collection. I guess the fake DOM would reflect the fully expanded tree state so that we get the
+// proper information per node.
 // TODO: do we need columns? Just setup a single column automatically?
 // Maybe fake the collection for now. See what GridList and Table's collections look like right now
 class TreeCollection<T> extends BaseCollection<T> {
@@ -64,12 +67,16 @@ interface TreeInnerProps<T extends object> {
 }
 
 function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
+
+  // TODO: call useTreeState, but may need to modify it so that it has some of the same stuff as useTreeGridState?
+  // Don't think I need a layout since this is non virtualized, will get a keyboard delegate from useGrid
   let state = useListState({
     ...props,
     collection,
     children: undefined
   });
 
+  // TODO: replace with useGrid, will need to update useGrid to have treegrid specific things
   let {gridProps} = useGridList(props, state, ref);
 
   let children = useCachedChildren({
@@ -91,6 +98,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     isFocusVisible,
     state
   };
+
+  // TODO: double check what other render props should exist
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
@@ -98,6 +107,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     values: renderValues
   });
 
+
+  // TODO: empty state for a empty tree?
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
@@ -142,7 +153,10 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 const _Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(Tree);
 export {_Tree as Tree};
 
-export interface TreeItemRenderProps extends ItemRenderProps {}
+export interface TreeItemRenderProps extends ItemRenderProps {
+  // Whether the Tree row is expanded.
+  isExpanded: boolean
+}
 
 // TODO: will it need to support LinkProps?
 export interface TreeItemProps<T = object> extends RenderProps<TreeItemRenderProps> {
@@ -171,6 +185,9 @@ export {_TreeItem as TreeItem};
 function TreeRow({item}) {
   let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
+  // TODO replace with useGridRow perhaps. Wonder if I could use something like useGridListItem instead since it is technically a
+  // single column single cell setup. Double check what differences between useGridListItem and useGridRow/useGridCell exist
+  // since that might affect it (I think there used to be some weirdness with single column useGridRow).
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item
@@ -195,8 +212,10 @@ function TreeRow({item}) {
       ...states,
       isHovered,
       isFocusVisible,
+      // TODO: grab expanded rows from tree state
+      isExpanded: true,
       selectionMode: state.selectionManager.selectionMode,
-      selectionBehavior: state.selectionManager.selectionBehavior,
+      selectionBehavior: state.selectionManager.selectionBehavior
     }
   });
 
