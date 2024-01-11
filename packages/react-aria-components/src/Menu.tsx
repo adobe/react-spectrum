@@ -314,13 +314,12 @@ function MenuItemInnerTrigger<T>({item, popover, parentMenuRef}: MenuItemInnerPr
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(OverlayTriggerStateContext)! as RootMenuTriggerState;
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
-  let triggerRef = useRef<HTMLDivElement>(null);
   let submenuRef = useRef<HTMLDivElement>(null);
   let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
     node: item,
     parentMenuRef,
     submenuRef
-  }, submenuTriggerState, triggerRef);
+  }, submenuTriggerState, ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({
     key: item.key,
     ...submenuTriggerProps
@@ -367,7 +366,7 @@ function MenuItemInnerTrigger<T>({item, popover, parentMenuRef}: MenuItemInnerPr
           [OverlayTriggerStateContext, submenuTriggerState],
           [PopoverContext, {
             trigger: 'SubmenuMenuTrigger',
-            triggerRef,
+            triggerRef: ref,
             placement: 'end top',
             // style: {'--trigger-width': buttonWidth} as React.CSSProperties,
             ...popoverProps
