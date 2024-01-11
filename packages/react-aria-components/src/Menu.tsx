@@ -386,7 +386,7 @@ function MenuItemInnerTrigger<T>({item, popover, parentMenuRef}: MenuItemInnerTr
 }
 
 function MenuItemInner<T>({item, popover, parentMenuRef}: MenuItemInnerProps<T>) {
-  if (popover) {
+  if (popover && parentMenuRef) {
     return <MenuItemInnerTrigger item={item} popover={popover} parentMenuRef={parentMenuRef} />;
   } else {
     return <MenuItemInnerDefault item={item} />;
