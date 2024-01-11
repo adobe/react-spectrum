@@ -18,7 +18,7 @@ import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from '
 import {OverlayTriggerStateContext} from './Dialog';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext} from 'react';
 
-export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'offset'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
    * The name of the component that triggered the popover. This is reflected on the element
    * as the `data-trigger` attribute, and can be used to provide specific
@@ -44,7 +44,13 @@ export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPo
    * The container element in which the overlay portal will be placed. This may have unknown behavior depending on where it is portalled to.
    * @default document.body
    */
-  UNSTABLE_portalContainer?: Element
+  UNSTABLE_portalContainer?: Element,
+  /**
+   * The additional offset applied along the main axis between the element and its
+   * anchor element.
+   * @default 8
+   */
+  offset?: number
 }
 
 export interface PopoverRenderProps {
