@@ -42,7 +42,7 @@ callback ref or object ref was passed in. This is useful for passing refs to ari
 import {useObjectRef} from '@react-aria/utils';
 import {useButton} from '@react-aria/button';
 
-let Button = React.forwardRef((props, ref: React.ForwardedRef<HTMLButtonElement>) => {
+let Button = React.forwardRef((props: {children: React.ReactNode}, ref: React.ForwardedRef<HTMLButtonElement>) => {
   let objRef = useObjectRef(ref);
   let {buttonProps} = useButton(props, objRef);
   let {children} = props;
