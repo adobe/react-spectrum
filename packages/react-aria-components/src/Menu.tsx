@@ -310,13 +310,7 @@ function MenuItemInnerDefault<T>({item}: MenuItemInnerProps<T>) {
   );
 }
 
-interface MenuItemInnerTriggerProps<T> {
-  item: Node<T>,
-  popover: ReactElement,
-  parentMenuRef: RefObject<HTMLDivElement>
-}
-
-function MenuItemInnerTrigger<T>({item, popover, parentMenuRef}: MenuItemInnerTriggerProps<T>) {
+function MenuItemInnerTrigger<T>({item, popover, parentMenuRef}: MenuItemInnerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(OverlayTriggerStateContext)! as RootMenuTriggerState;
