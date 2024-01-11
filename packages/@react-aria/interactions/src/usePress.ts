@@ -341,6 +341,7 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         let target = e.target as Element;
+        triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
         removeAllGlobalListeners();
 
         // If a link was triggered with a key other than Enter, open the URL ourselves.
