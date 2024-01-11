@@ -58,6 +58,11 @@ html {
   color: white;
 }
 
+.item[aria-haspopup="menu"]::after {
+  content: '>';
+  justify-self: end;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
