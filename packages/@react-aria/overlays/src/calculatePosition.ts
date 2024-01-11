@@ -129,7 +129,7 @@ function getContainerDimensions(containerNode: Element): Dimensions {
   }
 
   let isPinchZoomedIn = visualViewport?.scale > 1;
-  if (containerNode.tagName === 'BODY' || containerNode.tagName === 'HTML' && isPinchZoomedIn) {
+  if ((containerNode.tagName === 'BODY' || containerNode.tagName === 'HTML') && isPinchZoomedIn) {
     // Safari will report a non-zero scrollTop/Left for the body/HTML element when pinch zoomed in unlike other browsers.
     // Set to zero for parity calculations so we get consistent positioning of overlays across all browsers
     scroll.top = 0;
