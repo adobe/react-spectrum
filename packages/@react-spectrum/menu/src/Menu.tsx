@@ -114,7 +114,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
 
 export function TrayHeaderWrapper(props) {
   let {children, isSubmenu, hasOpenSubmenu, parentMenuTreeState, rootMenuTriggerState, onBackButtonPress, wrapperKeyDown} = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/menu');
   let backButtonText = parentMenuTreeState?.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack.slice(-1)[0])?.textValue;
   let backButtonLabel = stringFormatter.format('backButton', {
     prevMenuButton: backButtonText

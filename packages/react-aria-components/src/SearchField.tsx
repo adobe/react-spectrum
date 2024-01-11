@@ -15,6 +15,7 @@ import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
+import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
@@ -96,6 +97,7 @@ function SearchField(props: SearchFieldProps, ref: ForwardedRef<HTMLDivElement>)
               errorMessage: errorMessageProps
             }
           }],
+          [GroupContext, {isInvalid: validation.isInvalid, isDisabled: props.isDisabled || false}],
           [FieldErrorContext, validation]
         ]}>
         {renderProps.children}

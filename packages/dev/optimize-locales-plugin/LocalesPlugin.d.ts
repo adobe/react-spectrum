@@ -1,7 +1,7 @@
 import {UnpluginInstance} from 'unplugin';
 
 type Options = {
-  locales: string[]
+  locales: readonly string[]
 };
 
 declare const plugin: UnpluginInstance<Options, boolean>;

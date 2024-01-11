@@ -155,14 +155,14 @@ import {TagGroup, TagList, Tag, Label, Button, Text} from 'react-aria-components
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="../react-stately/collections.html"
+  url="collections.html"
   title="Collections"
   description="Defining collections of items, async loading, and updating items over time.">
   <Collections />
 </ExampleCard>
 
 <ExampleCard
-  url="../react-stately/selection.html"
+  url="selection.html"
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
@@ -306,7 +306,7 @@ function Example() {
 
  TagGroup supports multiple selection modes. By default, selection is disabled, however this can be changed using the `selectionMode` prop.
  Use `defaultSelectedKeys` to provide a default set of selected items (uncontrolled) and `selectedKeys` to set the selected items (controlled). The value of the selected keys must match the `id` prop of the items.
- See the `react-stately` [Selection docs](../react-stately/selection.html) for more details.
+ See the [Selection](selection.html) guide for more details.
 
  ```tsx example
  import type {Selection} from 'react-aria-components';
@@ -365,7 +365,7 @@ The `<Tag>` component works with frameworks and client side routers like [Next.j
 TagGroup supports marking items as disabled using the `disabledKeys` prop. Each key in this list
 corresponds with the `id` prop passed to the `Tag` component, or automatically derived from the values passed
 to the `items` prop. Disabled items are not focusable, selectable, or keyboard navigable.
-See [Collections](../react-stately/collections.html) for more details.
+See the [Collections](collections.html) guide for more details.
 
 ```tsx example
 <MyTagGroup

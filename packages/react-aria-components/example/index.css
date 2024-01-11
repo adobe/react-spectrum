@@ -48,6 +48,11 @@ html {
   color: white;
 }
 
+.item.item.hovered {
+  background: lightsalmon;
+  color: white;
+}
+
 .item.selected {
   background: purple;
   color: white;

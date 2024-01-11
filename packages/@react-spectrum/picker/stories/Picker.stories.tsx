@@ -395,6 +395,30 @@ export const Links: PickerStory = {
   )
 };
 
+export const Quiet: PickerStory = {
+  render: () => (
+    <View>
+      <View>
+        <h4>Quiet picker with label</h4>
+        <Picker label="Choose frequency" isQuiet>
+          <Item key="rarely">Rarely</Item>
+          <Item key="sometimes">Sometimes</Item>
+          <Item key="always">Always</Item>
+        </Picker>
+      </View>
+      <hr />
+      <View>
+        <h4>Quiet picker without label</h4>
+        <Picker aria-label="Choose frequency" isQuiet>
+          <Item key="rarely">Rarely</Item>
+          <Item key="sometimes">Sometimes</Item>
+          <Item key="always">Always</Item>
+        </Picker>
+      </View>
+    </View>
+  )
+};
+
 function DefaultPicker(props: SpectrumPickerProps<object>) {
   return (
     <Picker {...props}>
