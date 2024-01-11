@@ -274,15 +274,7 @@ export class TableCollection<T> extends GridCollection<T> implements ITableColle
 
     // Default row header column to the first one.
     if (this.rowHeaderColumnKeys.size === 0) {
-      if (opts?.showSelectionCheckboxes) {
-        if (opts?.showDragButtons) {
-          this.rowHeaderColumnKeys.add(this.columns[2].key);
-        } else {
-          this.rowHeaderColumnKeys.add(this.columns[1].key);
-        }
-      } else {
-        this.rowHeaderColumnKeys.add(this.columns[0].key);
-      }
+      this.rowHeaderColumnKeys.add(this.columns.find(column => !column.props?.isDragButtonCell && !column.props?.isSelectionCell).key);
     }
   }
 
