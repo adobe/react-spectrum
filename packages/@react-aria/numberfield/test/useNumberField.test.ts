@@ -64,21 +64,21 @@ describe('useNumberField hook', () => {
         onBeforeInput,
         onInput
       });
-      inputProps.onCopy({} as any);
+      inputProps.onCopy?.({} as any);
       expect(onCopy).toHaveBeenCalled();
-      inputProps.onCut({} as any);
+      inputProps.onCut?.({} as any);
       expect(onCut).toHaveBeenCalled();
-      inputProps.onPaste({} as any);
+      inputProps.onPaste?.({} as any);
       expect(onPaste).toHaveBeenCalled();
-      inputProps.onCompositionStart({} as any);
+      inputProps.onCompositionStart?.({} as any);
       expect(onCompositionStart).toHaveBeenCalled();
-      inputProps.onCompositionEnd({} as any);
+      inputProps.onCompositionEnd?.({} as any);
       expect(onCompositionEnd).toHaveBeenCalled();
-      inputProps.onCompositionUpdate({} as any);
+      inputProps.onCompositionUpdate?.({} as any);
       expect(onCompositionUpdate).toHaveBeenCalled();
-      inputProps.onSelect({} as any);
+      inputProps.onSelect?.({} as any);
       expect(onSelect).toHaveBeenCalled();
-      inputProps.onBeforeInput({
+      inputProps.onBeforeInput?.({
         preventDefault: jest.fn(),
         target: {
           value: '',
@@ -88,7 +88,7 @@ describe('useNumberField hook', () => {
         }
       } as any);
       expect(onBeforeInput).toHaveBeenCalled();
-      inputProps.onInput({} as any);
+      inputProps.onInput?.({} as any);
       expect(onInput).toHaveBeenCalled();
     });
   });
