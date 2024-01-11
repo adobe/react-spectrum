@@ -20,6 +20,15 @@ let columns = [
   {name: 'IP Address', key: 'ip_address'}
 ];
 
+let columnsWithOutRowHeader = [
+  {name: 'First name', key: 'first_name'},
+  {name: 'Last name', key: 'last_name'},
+  {name: 'Email', key: 'email'},
+  {name: 'Department', key: 'department'},
+  {name: 'Job Title', key: 'job_title'},
+  {name: 'IP Address', key: 'ip_address'}
+];
+
 let items = [
   {id: 'a', first_name: 'Vin', last_name: 'Charlet', email: 'vcharlet0@123-reg.co.uk', ip_address: '18.45.175.130', department: 'Services', job_title: 'Analog Circuit Design manager'},
   {id: 'b', first_name: 'Lexy', last_name: 'Maddison', email: 'lmaddison1@xinhuanet.com', ip_address: '238.210.151.48', department: 'Research and Development', job_title: 'Analog Circuit Design manager'},
@@ -57,6 +66,40 @@ export function DragExample(props?) {
     <TableView aria-label="TableView with dragging enabled" selectionMode="multiple" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
       <TableHeader columns={columns}>
         {column => <Column minWidth={100} isRowHeader={column.isRowHeader}>{column.name}</Column>}
+      </TableHeader>
+      <TableBody items={items}>
+        {item => (
+          <Row>
+            {key => <Cell>{item[key]}</Cell>}
+          </Row>
+        )}
+      </TableBody>
+    </TableView>
+  );
+}
+
+export function DragWithoutRowHeaderExample(props?)  {
+  let {tableViewProps, dragHookOptions} = props;
+  let getItems = (keys) => [...keys].map(key => {
+    let item = items.find(item => item.id === key);
+    return {
+      'text/plain': `${item.first_name} ${item.last_name}`
+    };
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems,
+    getAllowedDropOperations() {
+      getAllowedDropOperationsAction();
+      return ['move', 'cancel'];
+    },
+    ...dragHookOptions
+  });
+
+  return (
+    <TableView aria-label="TableView with dragging enabled" selectionMode="multiple" width={400} height={300} onSelectionChange={s => onSelectionChange([...s])} dragAndDropHooks={dragAndDropHooks} {...tableViewProps}>
+      <TableHeader columns={columnsWithOutRowHeader}>
+        {column => <Column minWidth={100}>{column.name}</Column>}
       </TableHeader>
       <TableBody items={items}>
         {item => (

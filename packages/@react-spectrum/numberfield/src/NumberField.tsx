@@ -17,7 +17,7 @@ import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
 import {NumberFieldState, useNumberFieldState} from '@react-stately/numberfield';
-import React, {HTMLAttributes, InputHTMLAttributes, RefObject, useRef} from 'react';
+import React, {HTMLAttributes, InputHTMLAttributes, Ref, RefObject, useRef} from 'react';
 import {SpectrumNumberFieldProps} from '@react-types/numberfield';
 import {StepButton} from './StepButton';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
@@ -43,7 +43,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
 
   let {locale} = useLocale();
   let state = useNumberFieldState({...props, locale});
-  let inputRef = useRef<HTMLInputElement>();
+  let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef<HTMLElement>(ref, inputRef);
   let {
     groupProps,
@@ -62,11 +62,13 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
 
   let {isHovered, hoverProps} = useHover({isDisabled});
 
-  let validationState = props.validationState || (isInvalid ? 'invalid' : null);
+  let validationState = props.validationState || (isInvalid ? 'invalid' : undefined);
   let className =
     classNames(
       stepperStyle,
       'spectrum-Stepper',
+      // because FocusRing won't pass along the className from Field, we have to handle that ourselves
+      !props.label && style.className ? style.className : '',
       {
         'spectrum-Stepper--isQuiet': isQuiet,
         'is-disabled': isDisabled,
@@ -74,9 +76,7 @@ function NumberField(props: SpectrumNumberFieldProps, ref: FocusableRef<HTMLElem
         'is-invalid': validationState === 'invalid' && !isDisabled,
         'spectrum-Stepper--showStepper': showStepper,
         'spectrum-Stepper--isMobile': isMobile,
-        'is-hovered': isHovered,
-        // because FocusRing won't pass along the className from Field, we have to handle that ourselves
-        [style.className]: !props.label && style.className
+        'is-hovered': isHovered
       }
     );
 
@@ -124,7 +124,7 @@ interface NumberFieldInputProps extends SpectrumNumberFieldProps {
   state: NumberFieldState
 }
 
-const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: NumberFieldInputProps, ref: RefObject<HTMLElement>) {
+const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: NumberFieldInputProps, ref: Ref<HTMLDivElement>) {
   let {
     groupProps,
     inputProps,
@@ -152,7 +152,7 @@ const NumberFieldInput = React.forwardRef(function NumberFieldInput(props: Numbe
       autoFocus={autoFocus}>
       <div
         {...groupProps}
-        ref={ref as RefObject<HTMLDivElement>}
+        ref={ref}
         style={style}
         className={className}>
         <TextFieldBase
