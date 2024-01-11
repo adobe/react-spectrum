@@ -17,7 +17,7 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {chain} from '@react-aria/utils';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {Content, Footer, Header} from '@react-spectrum/view';
+import {Content, Footer, Header, View} from '@react-spectrum/view';
 import {Divider} from '@react-spectrum/divider';
 import {Flex, Grid} from '@react-spectrum/layout';
 import {Heading, Text} from '@react-spectrum/text';
@@ -27,7 +27,6 @@ import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
 import {TranslateDialog} from './../chromatic/DialogLanguages.chromatic';
-import {View} from '@react-spectrum/view';
 
 export default {
   title: 'DialogTrigger',
