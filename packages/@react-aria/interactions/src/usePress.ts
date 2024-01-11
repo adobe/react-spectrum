@@ -270,8 +270,8 @@ export function usePress(props: PressHookProps): PressResult {
             shouldStopPropagation = triggerPressStart(e, 'keyboard');
 
             // Focus may move before the key up event, so register the event on the document
-            // instead of the same element where the key down event occurred.
-
+            // instead of the same element where the key down event occurred. Make it capturing so that it will trigger
+            // before stopPropagation from useKeyboard on a child element may happen and thus we can still call triggerPress for the parent element.
             let originalTarget = e.currentTarget;
             let pressUp = (e) => {
               if (isValidKeyboardEvent(e, originalTarget) && !e.repeat && originalTarget.contains(e.target as Element) && state.target) {
@@ -341,11 +341,6 @@ export function usePress(props: PressHookProps): PressResult {
         }
 
         let target = e.target as Element;
-
-        let shouldStopPropagation = triggerPressEnd(createEvent(state.target, e), 'keyboard', state.target.contains(target));
-        if (shouldStopPropagation) {
-          state.target?.dispatchEvent(new KeyboardEvent('keyup', {...e, bubbles: false}));
-        }
         removeAllGlobalListeners();
 
         // If a link was triggered with a key other than Enter, open the URL ourselves.
