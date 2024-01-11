@@ -84,9 +84,9 @@ export function restoreTextSelection(target?: Element) {
     // If not iOS, restore the target's original user-select if any
     // Ignore state since it doesn't apply for non iOS
     if (target && modifiedElementMap.has(target)) {
-      let targetOldUserSelect = modifiedElementMap.get(target);
+      let targetOldUserSelect = modifiedElementMap.get(target) as string;
 
-      if (target.style.userSelect === 'none' && targetOldUserSelect) {
+      if (target.style.userSelect === 'none') {
         target.style.userSelect = targetOldUserSelect;
       }
 

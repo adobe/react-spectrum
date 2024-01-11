@@ -28,19 +28,19 @@ describe('Table SSR', function () {
                 <Column isRowHeader>Bar</Column>
               </TableHeader>
               <TableBody>
-                <Row key="1">
+                <Row id="1">
                   <Cell>Foo 1</Cell>
                   <Cell>Bar 1</Cell>
                 </Row>
-                <Row key="2">
+                <Row id="2">
                   <Cell>Foo 2</Cell>
                   <Cell>Bar 2</Cell>
                 </Row>
-                {show && <Row key="4">
+                {show && <Row id="4">
                   <Cell>Foo 3</Cell>
                   <Cell>Bar 3</Cell>
                 </Row>}
-                <Row key="3">
+                <Row id="3">
                   <Cell>Foo 4</Cell>
                   <Cell>Bar 4</Cell>
                 </Row>

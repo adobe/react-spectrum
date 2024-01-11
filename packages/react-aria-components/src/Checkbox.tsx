@@ -19,7 +19,7 @@ import React, {createContext, ForwardedRef, forwardRef, useContext, useRef} from
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps {}
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps {}
 
 export interface CheckboxGroupRenderProps {
   /**
