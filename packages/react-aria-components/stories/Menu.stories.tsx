@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Header, Keyboard, Menu, MenuTrigger, Popover, Section, Separator, Text} from 'react-aria-components';
+import {Button, Header, Keyboard, Menu, MenuTrigger, Popover, Section, Separator, SubmenuTrigger, Text} from 'react-aria-components';
 import {MyMenuItem} from './utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -64,6 +64,29 @@ export const MenuComplex = () => (
           <Text slot="description">Description</Text>
           <Keyboard>⌘V</Keyboard>
         </MyMenuItem>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
+export const SubmenuExample = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MyMenuItem>Foo</MyMenuItem>
+        <SubmenuTrigger>
+          <MyMenuItem>Bar</MyMenuItem>
+          <Popover>
+            <Menu className={styles.menu} onAction={action('onAction')}>
+              <MyMenuItem>Submenu Foo</MyMenuItem>
+              <MyMenuItem>Submenu Bar</MyMenuItem>
+              <MyMenuItem>Submenu Baz</MyMenuItem>
+            </Menu>
+          </Popover>
+        </SubmenuTrigger>
+        <MyMenuItem>Baz</MyMenuItem>
+        <MyMenuItem href="https://google.com">Google</MyMenuItem>
       </Menu>
     </Popover>
   </MenuTrigger>
