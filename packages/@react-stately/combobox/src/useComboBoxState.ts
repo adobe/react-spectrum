@@ -18,7 +18,7 @@ import {ListCollection, useSingleSelectListState} from '@react-stately/list';
 import {SelectState} from '@react-stately/select';
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useControlledState} from '@react-stately/utils';
-import {useMenuTriggerState} from '@react-stately/menu';
+import {useOverlayTriggerState} from '@react-stately/overlays';
 
 export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
   /** The current value of the combo box input. */
@@ -27,6 +27,8 @@ export interface ComboBoxState<T> extends SelectState<T>, FormValidationState{
   setInputValue(value: string): void,
   /** Selects the currently focused item and updates the input value. */
   commit(): void,
+  /** Controls which item will be auto focused when the menu opens. */
+  readonly focusStrategy: FocusStrategy,
   /** Opens the menu. */
   open(focusStrategy?: FocusStrategy | null, trigger?: MenuTriggerAction): void,
   /** Toggles the menu. */
@@ -62,6 +64,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
   let [showAllItems, setShowAllItems] = useState(false);
   let [isFocused, setFocusedState] = useState(false);
+  let [focusStrategy, setFocusStrategy] = useState<FocusStrategy>(null);
 
   let onSelectionChange = (key) => {
     if (props.onSelectionChange) {
@@ -111,8 +114,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
   };
 
-  let triggerState = useMenuTriggerState({...props, onOpenChange, isOpen: undefined, defaultOpen: undefined});
-  let open = (focusStrategy?: FocusStrategy, trigger?: MenuTriggerAction) => {
+  let triggerState = useOverlayTriggerState({...props, onOpenChange, isOpen: undefined, defaultOpen: undefined});
+  let open = (focusStrategy: FocusStrategy = null, trigger?: MenuTriggerAction) => {
     let displayAllItems = (trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus'));
     // Prevent open operations from triggering if there is nothing to display
     // Also prevent open operations from triggering if items are uncontrolled but defaultItems is empty, even if displayAllItems is true.
@@ -124,11 +127,12 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
       }
 
       menuOpenTrigger.current = trigger;
-      triggerState.open(focusStrategy);
+      setFocusStrategy(focusStrategy);
+      triggerState.open();
     }
   };
 
-  let toggle = (focusStrategy?: FocusStrategy, trigger?: MenuTriggerAction) => {
+  let toggle = (focusStrategy: FocusStrategy = null, trigger?: MenuTriggerAction) => {
     let displayAllItems = (trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus'));
     // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
     if (!(allowsEmptyCollection || filteredCollection.size > 0 || (displayAllItems && originalCollection.size > 0) || props.items) && !triggerState.isOpen) {
@@ -154,12 +158,13 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
   // If menu is going to close, save the current collection so we can freeze the displayed collection when the
   // user clicks outside the popover to close the menu. Prevents the menu contents from updating as the menu closes.
-  let toggleMenu = useCallback((focusStrategy) => {
+  let toggleMenu = useCallback((focusStrategy: FocusStrategy = null) => {
     if (triggerState.isOpen) {
       updateLastCollection();
     }
 
-    triggerState.toggle(focusStrategy);
+    setFocusStrategy(focusStrategy);
+    triggerState.toggle();
   }, [triggerState, updateLastCollection]);
 
   let closeMenu = useCallback(() => {
@@ -347,6 +352,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   return {
     ...validation,
     ...triggerState,
+    focusStrategy,
     toggle,
     open,
     close: commitValue,

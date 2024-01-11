@@ -22,13 +22,14 @@ export function StateTable({properties, showOptional}) {
   if (!showOptional) {
     props = props.filter(prop => !prop.optional);
   }
+  let showSelector = props.some(prop => prop.selector);
 
   return (
     <table className={`${tableStyles['spectrum-Table']} ${styles.propTable}`}>
       <thead>
         <tr>
           <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Name</td>
-          <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>CSS Selector</td>
+          {showSelector && <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>CSS Selector</td>}
           <td role="columnheader" className={tableStyles['spectrum-Table-headCell']}>Description</td>
         </tr>
       </thead>
@@ -40,11 +41,11 @@ export function StateTable({properties, showOptional}) {
                 <span className="token hljs-variable">{prop.name}</span>
               </code>
             </td>
-            <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="CSS Selector">
+            {showSelector && <td role="rowheader" className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)} data-column="CSS Selector">
               <code className={`${typographyStyles['spectrum-Code4']}`}>
                 <span className={prop.selector ? 'token hljs-string' : null}>{prop.selector || '—'}</span>
               </code>
-            </td>
+            </td>}
             <td className={clsx(tableStyles['spectrum-Table-cell'], styles.tableCell)}>{renderHTMLfromMarkdown(prop.description, {forceInline: false})}</td>
           </tr>
         ))}

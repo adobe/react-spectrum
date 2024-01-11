@@ -100,5 +100,5 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
 /**
  * A text field allows a user to enter a plain text value with a keyboard.
  */
-const _TextField = (forwardRef as forwardRefType)(TextField);
+const _TextField = /*#__PURE__*/ (forwardRef as forwardRefType)(TextField);
 export {_TextField as TextField};

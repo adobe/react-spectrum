@@ -143,6 +143,7 @@
     "jest-matchmedia-mock": "^1.1.0",
     "lerna": "^3.13.2",
     "lfcdn": "^0.4.2",
+    "lucide-react": "^0.294.0",
     "md5": "^2.2.1",
     "npm-cli-login": "^1.0.0",
     "nyc": "^10.2.0",
@@ -166,6 +167,7 @@
     "sharp": "^0.31.2",
     "sinon": "^7.3.1",
     "storybook-dark-mode": "^1.1.1-canary.120.3843.0",
+    "tailwind-variants": "^0.1.18",
     "tailwindcss": "^3.2.2",
     "tailwindcss-animate": "^1.0.7",
     "tempy": "^0.5.0",
@@ -189,7 +191,10 @@
   "@parcel/transformer-css": {
     "cssModules": {
       "global": true,
-      "exclude": ["**/*.global.css", "packages/@react-aria/example-theme/**"]
+      "exclude": [
+        "**/*.global.css",
+        "packages/@react-aria/example-theme/**"
+      ]
     },
     "drafts": {
       "nesting": true
