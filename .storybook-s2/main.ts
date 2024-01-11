@@ -23,42 +23,7 @@ const config: StorybookConfig = {
     "@storybook/addon-styling-webpack",
     // re-enable when we get single components in Figma
     "@storybook/addon-designs",
-    "storybook-dark-mode",
-    ({
-      name: "@storybook/addon-styling-webpack",
-
-      options: {
-        rules: [{
-          test: /\.css$/,
-          sideEffects: true,
-          use: [
-            require.resolve("style-loader"),
-            {
-              loader: require.resolve("css-loader"),
-              options: {
-                importLoaders: 1,
-                modules: {
-                  // css modules but the name is unmodified so we can import it for the theme
-                  localIdentName:'[local]',
-                },
-              },
-            },{
-              loader: require.resolve("postcss-loader"),
-              options: {
-                implementation: require.resolve("postcss"),
-                postcssOptions: {
-                  ident: 'postcss',
-                  plugins: [
-                    require('tailwindcss'),
-                    require('autoprefixer')
-                  ]
-                }
-              }
-            },
-          ],
-        }],
-      }
-    })
+    "storybook-dark-mode"
   ],
   framework: {
     name: "@storybook/react-webpack5",
