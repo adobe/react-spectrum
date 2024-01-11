@@ -93,7 +93,6 @@ export {_SubmenuTrigger as SubmenuTrigger};
 function SubmenuTriggerInner(props) {
   let {item, parentMenuRef} = props;
   let state = useContext(MenuStateContext)!;
-  let isOpen = state.expandedKeys.has(item.key);
 
   let children = useCachedChildren({
     items: state.collection.getChildren!(item.key),
@@ -107,17 +106,7 @@ function SubmenuTriggerInner(props) {
     }
   });
 
-  let renderProps = useRenderProps({
-    ...props,
-    id: undefined,
-    children,
-    defaultClassName: 'react-aria-MenuItem',
-    values: {
-      isOpen
-    }
-  });
-
-  return renderProps.children;
+  return children;
 }
 
 
