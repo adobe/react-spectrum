@@ -41,8 +41,9 @@ callback ref or object ref was passed in. This is useful for passing refs to ari
 ```tsx example
 import {useObjectRef} from '@react-aria/utils';
 import {useButton} from '@react-aria/button';
+import {AriaButtonProps} from '@react-types/button';
 
-let Button = React.forwardRef((props: {children: React.ReactNode}, ref: React.ForwardedRef<HTMLButtonElement>) => {
+let Button = React.forwardRef((props: AriaButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => {
   let objRef = useObjectRef(ref);
   let {buttonProps} = useButton(props, objRef);
   let {children} = props;
