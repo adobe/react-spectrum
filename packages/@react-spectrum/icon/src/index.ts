@@ -12,7 +12,7 @@
 
 /// <reference types="css-module-types" />
 
-export {Icon} from './Icon';
+export {Icon, S2Icon} from './Icon';
 export {UIIcon} from './UIIcon';
 export {Illustration} from './Illustration';
 

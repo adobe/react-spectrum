@@ -97,3 +97,31 @@ export function Icon(props: IconProps) {
       styleProps.className)
   });
 }
+
+export function S2Icon(props: IconProps) {
+  props = useSlotProps(props, 'icon');
+  let {
+    children,
+    'aria-label': ariaLabel,
+    'aria-hidden': ariaHidden,
+    ...otherProps
+  } = props;
+  let {styleProps} = useStyleProps(otherProps, iconStyleProps);
+  if (!ariaHidden) {
+    ariaHidden = undefined;
+  }
+
+  return React.cloneElement(children, {
+    ...filterDOMProps(otherProps),
+    ...{...styleProps, flex: '0 0 auto', height: '20px', width: '20px'},
+    focusable: 'false',
+    'aria-label': ariaLabel,
+    'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
+    role: 'img',
+    className: classNames(
+      styles,
+      children.props.className,
+      'spectrum-Icon',
+      styleProps.className)
+  });
+}
