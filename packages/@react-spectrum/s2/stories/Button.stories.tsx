@@ -1,4 +1,5 @@
 import {Button} from '../src/Button';
+
 import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof Button> = {
@@ -6,19 +7,14 @@ const meta: Meta<typeof Button> = {
   parameters: {
     layout: 'centered'
   },
-  argTypes: {
-
-  },
-  args: {
-    variant: 'accent',
-    children: 'Label'
-  }
+  tags: ['autodocs']
 };
 
 export default meta;
 
 type Story = StoryObj<typeof Button>;
 export const Example: Story = {
+  render: (args) => <Button {...args}>Press me</Button>,
   parameters: {
     design: {
       type: 'figma',

@@ -1,6 +1,3 @@
-import { themes } from "@storybook/theming";
-import '../src/tailwind.css';
-import {withProviderSwitcher} from './custom-addons/provider';
 
 /** @type { import('@storybook/react').Preview } */
 const preview = {
@@ -31,10 +28,5 @@ export const parameters = {
   },
   layout: 'fullscreen'
 };
-
-
-export const decorators = [
-  withProviderSwitcher
-];
 
 export default preview;
