@@ -30,6 +30,7 @@ import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
+export const SubmenuTriggerContext = createContext<ContextValue<MenuItemProps<any>, HTMLDivElement>>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
@@ -82,8 +83,8 @@ export interface SubmenuTriggerProps {
   children: ReactElement[]
 }
 
-function SubmenuTrigger<T extends object>(props: MenuItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
-  return useSSRCollectionNode('submenutrigger', props, ref, props.children);
+function SubmenuTrigger(props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+  return useSSRCollectionNode('submenutrigger', props, ref, props.children, props.children[0]);
 }
 
 let _SubmenuTrigger = /*#__PURE__*/ (forwardRef)(SubmenuTrigger) as (props: SubmenuTriggerProps) => JSX.Element;
@@ -92,40 +93,31 @@ export {_SubmenuTrigger as SubmenuTrigger};
 function SubmenuTriggerInner(props) {
   let {item, parentMenuRef} = props;
   let state = useContext(MenuStateContext)!;
-  let rootMenuTriggerState = useContext(OverlayTriggerStateContext)! as RootMenuTriggerState;
-  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
-
-  let triggerRef = useRef<HTMLButtonElement>(null);
-  let submenuRef = useRef<HTMLDivElement>(null);
-  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
-    node: item,
-    parentMenuRef,
-    submenuRef
-  }, submenuTriggerState, triggerRef);
-  
   let isOpen = state.expandedKeys.has(item.key);
+
+  let children = useCachedChildren({
+    items: state.collection.getChildren!(item.key),
+    children: childItem => {
+      switch (childItem.type) {
+        case 'item':
+          return <MenuItemInner item={childItem} popover={item.rendered[1]} parentMenuRef={parentMenuRef} submenu={item.rendered} />;
+        default:
+          throw new Error('Unsupported element type in SubmenuTrigger: ' + item.type);
+      }
+    }
+  });
 
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
-    children: item.rendered,
+    children,
     defaultClassName: 'react-aria-MenuItem',
     values: {
       isOpen
     }
   });
-  let trigger = React.cloneElement(renderProps.children[0], {...submenuTriggerProps, ref: triggerRef});
-  return (
-    <Provider
-      values={[
-        [MenuContext, {...submenuProps, ref: submenuRef}],
-        [OverlayTriggerStateContext, submenuTriggerState],
-        [PopoverContext, {triggerRef, placement: 'bottom start', ...popoverProps}]
-      ]}>
-      {trigger}
-      {renderProps.children[1]}
-    </Provider>
-  );
+
+  return renderProps.children;
 }
 
 
@@ -276,7 +268,7 @@ interface MenuItemInnerProps<T> {
   item: Node<T>
 }
 
-function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
+function MenuItemInnerReal<T>({item}: MenuItemInnerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
@@ -325,4 +317,80 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
       </Provider>
     </ElementType>
   );
+}
+
+function MenuItemInnerTrigger<T>({item, popover, ...contextProps}: MenuItemInnerProps<T>) {
+  let state = useContext(MenuStateContext)!;
+  let ref = useObjectRef<any>(item.props.ref);
+  let rootMenuTriggerState = useContext(OverlayTriggerStateContext)! as RootMenuTriggerState;
+  let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
+  let triggerRef = useRef<HTMLDivElement>(null);
+  let submenuRef = useRef<HTMLDivElement>(null);
+  let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
+    node: item,
+    parentMenuRef: contextProps?.parentMenuRef,
+    submenuRef
+  }, submenuTriggerState, triggerRef);
+  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key, ...submenuTriggerProps}, state, ref);
+  let props: MenuItemProps<T> = item.props;
+  let {isFocusVisible, focusProps} = useFocusRing();
+  let renderProps = useRenderProps({
+    ...props,
+    id: undefined,
+    children: item.rendered,
+    defaultClassName: 'react-aria-MenuItem',
+    values: {
+      ...states,
+      isHovered: states.isFocused,
+      isFocusVisible,
+      selectionMode: state.selectionManager.selectionMode,
+      selectionBehavior: state.selectionManager.selectionBehavior
+    }
+  });
+
+  let ElementType: React.ElementType = props.href ? 'a' : 'div';
+  return (
+    <ElementType
+      {...mergeProps(menuItemProps, focusProps)}
+      {...renderProps}
+      ref={ref}
+      data-disabled={states.isDisabled || undefined}
+      data-hovered={states.isFocused || undefined}
+      data-focused={states.isFocused || undefined}
+      data-focus-visible={isFocusVisible || undefined}
+      data-pressed={states.isPressed || undefined}
+      data-selected={states.isSelected || undefined}
+      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
+      <Provider
+        values={[
+          [TextContext, {
+            slots: {
+              label: labelProps,
+              description: descriptionProps
+            }
+          }],
+          [KeyboardContext, keyboardShortcutProps],
+          [MenuContext, submenuProps],
+          [OverlayTriggerStateContext, submenuTriggerState],
+          [PopoverContext, {
+            trigger: 'SubmenuMenuTrigger',
+            triggerRef,
+            placement: 'end top',
+            // style: {'--trigger-width': buttonWidth} as React.CSSProperties,
+            ...popoverProps
+          }]
+        ]}>
+        {renderProps.children}
+        {popover}
+      </Provider>
+    </ElementType>
+  );
+}
+
+function MenuItemInner<T>({item, popover, ...rest}: MenuItemInnerProps<T>) {
+  if (popover) {
+    return <MenuItemInnerTrigger item={item} popover={popover} {...rest} />;
+  } else {
+    return <MenuItemInnerReal item={item} />;
+  }
 }
