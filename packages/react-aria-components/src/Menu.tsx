@@ -98,7 +98,7 @@ function SubmenuTriggerInner(props) {
     children: childItem => {
       switch (childItem.type) {
         case 'item':
-          return <MenuItemInner item={childItem} popover={item.rendered[1]} parentMenuRef={parentMenuRef} />;
+          return <MenuItemTriggerInner item={childItem} popover={item.rendered[1]} parentMenuRef={parentMenuRef} />;
         default:
           throw new Error('Unsupported element type in SubmenuTrigger: ' + item.type);
       }
@@ -258,7 +258,7 @@ interface MenuItemInnerProps<T> {
   parentMenuRef?: RefObject<HTMLDivElement>
 }
 
-function MenuItemInnerDefault<T>({item}: MenuItemInnerProps<T>) {
+function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
@@ -315,7 +315,7 @@ interface MenuItemInnerTriggerProps<T> {
   parentMenuRef: RefObject<HTMLDivElement>
 }
 
-function MenuItemInnerTrigger<T>({item, popover, parentMenuRef}: MenuItemInnerTriggerProps<T>) {
+function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemInnerTriggerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(OverlayTriggerStateContext)! as RootMenuTriggerState;
@@ -383,12 +383,4 @@ function MenuItemInnerTrigger<T>({item, popover, parentMenuRef}: MenuItemInnerTr
       </Provider>
     </ElementType>
   );
-}
-
-function MenuItemInner<T>({item, popover, parentMenuRef}: MenuItemInnerProps<T>) {
-  if (popover && parentMenuRef) {
-    return <MenuItemInnerTrigger item={item} popover={popover} parentMenuRef={parentMenuRef} />;
-  } else {
-    return <MenuItemInnerDefault item={item} />;
-  }
 }
