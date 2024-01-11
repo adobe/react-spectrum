@@ -100,7 +100,7 @@ function SubmenuTriggerInner(props) {
     children: childItem => {
       switch (childItem.type) {
         case 'item':
-          return <MenuItemInner item={childItem} popover={item.rendered[1]} parentMenuRef={parentMenuRef} submenu={item.rendered} />;
+          return <MenuItemInner item={childItem} popover={item.rendered[1]} parentMenuRef={parentMenuRef} />;
         default:
           throw new Error('Unsupported element type in SubmenuTrigger: ' + item.type);
       }
@@ -265,10 +265,12 @@ const _MenuItem = /*#__PURE__*/ (forwardRef as forwardRefType)(MenuItem);
 export {_MenuItem as MenuItem};
 
 interface MenuItemInnerProps<T> {
-  item: Node<T>
+  item: Node<T>,
+  popover?: ReactElement,
+  parentMenuRef?: RefObject<HTMLDivElement>
 }
 
-function MenuItemInnerReal<T>({item}: MenuItemInnerProps<T>) {
+function MenuItemInnerDefault<T>({item}: MenuItemInnerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
@@ -319,7 +321,13 @@ function MenuItemInnerReal<T>({item}: MenuItemInnerProps<T>) {
   );
 }
 
-function MenuItemInnerTrigger<T>({item, popover, ...contextProps}: MenuItemInnerProps<T>) {
+interface MenuItemInnerTriggerProps<T> {
+  item: Node<T>,
+  popover: ReactElement,
+  parentMenuRef: RefObject<HTMLDivElement>
+}
+
+function MenuItemInnerTrigger<T>({item, popover, parentMenuRef}: MenuItemInnerTriggerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(OverlayTriggerStateContext)! as RootMenuTriggerState;
@@ -328,10 +336,13 @@ function MenuItemInnerTrigger<T>({item, popover, ...contextProps}: MenuItemInner
   let submenuRef = useRef<HTMLDivElement>(null);
   let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
     node: item,
-    parentMenuRef: contextProps?.parentMenuRef,
+    parentMenuRef,
     submenuRef
   }, submenuTriggerState, triggerRef);
-  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key, ...submenuTriggerProps}, state, ref);
+  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({
+    key: item.key,
+    ...submenuTriggerProps
+  }, state, ref);
   let props: MenuItemProps<T> = item.props;
   let {isFocusVisible, focusProps} = useFocusRing();
   let renderProps = useRenderProps({
@@ -387,10 +398,10 @@ function MenuItemInnerTrigger<T>({item, popover, ...contextProps}: MenuItemInner
   );
 }
 
-function MenuItemInner<T>({item, popover, ...rest}: MenuItemInnerProps<T>) {
+function MenuItemInner<T>({item, popover, parentMenuRef}: MenuItemInnerProps<T>) {
   if (popover) {
-    return <MenuItemInnerTrigger item={item} popover={popover} {...rest} />;
+    return <MenuItemInnerTrigger item={item} popover={popover} parentMenuRef={parentMenuRef} />;
   } else {
-    return <MenuItemInnerReal item={item} />;
+    return <MenuItemInnerDefault item={item} />;
   }
 }

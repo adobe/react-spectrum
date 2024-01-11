@@ -62,6 +62,7 @@ export function useMenuTriggerState(props: MenuTriggerProps): RootMenuTriggerSta
       if (level > oldStack.length) {
         return oldStack;
       }
+
       return [...oldStack.slice(0, level), triggerKey];
     });
   };
