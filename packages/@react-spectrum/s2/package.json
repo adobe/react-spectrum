@@ -11,21 +11,21 @@
     "start": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "storybook": "storybook dev -p 6006",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx ."
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "postinstall": "patch-package"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.19.1",
-    "@babel/preset-react": "^7.23.3",
-    "@storybook/addons": "^7.5.3",
+    "@adobe/spectrum-tokens": "^13.0.0-beta.9",
+    "@parcel/config-default": "2.0.0-nightly.1484",
+    "@storybook/addon-designs": "^7.0.5",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-interactions": "^7.5.3",
     "@storybook/addon-links": "^7.5.3",
     "@storybook/addon-onboarding": "^1.0.8",
-    "@storybook/addon-styling-webpack": "^0.0.5",
     "@storybook/addon-themes": "^7.5.3",
+    "@storybook/addons": "^7.5.3",
     "@storybook/blocks": "^7.5.3",
     "@storybook/client-api": "^7.5.3",
-    "@storybook/addon-designs": "^7.0.5",
     "@storybook/manager-api": "^7.5.3",
     "@storybook/preview-api": "^7.5.3",
     "@storybook/react": "^7.5.3",
@@ -44,16 +44,25 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-rulesdir": "^0.2.2",
+    "glob-promise": "^6.0.5",
+    "parcel": "2.0.0-nightly.1482",
+    "parcel-resolver-storybook": "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/parcel-resolver-storybook?master",
+    "patch-package": "^8.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-aria-components": "latest",
     "react-docgen-typescript": "^2.2.2",
     "react-dom": "^18.2.0",
     "storybook": "^7.5.3",
+    "storybook-builder-parcel": "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-builder-parcel?master",
     "storybook-dark-mode": "^3.0.1",
+    "storybook-react-parcel": "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-react-parcel?master",
     "typescript": "^5.3.2"
   },
   "resolutions": {
     "jackspeak": "2.1.1"
+  },
+  "alias": {
+    "@storybook/react-dom-shim": "@storybook/react-dom-shim/dist/react-18"
   }
 }

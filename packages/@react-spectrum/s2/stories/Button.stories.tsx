@@ -1,4 +1,7 @@
+import {Text} from 'react-aria-components';
 import {Button} from '../src/Button';
+import {Icon} from './Icon';
+import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
 
 import type {Meta, StoryObj} from '@storybook/react';
 
@@ -14,7 +17,17 @@ export default meta;
 
 type Story = StoryObj<typeof Button>;
 export const Example: Story = {
-  render: (args) => <Button {...args}>Press me</Button>,
+  render: (args) => (<div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+    <Button {...args}>Press me</Button>
+    <Button {...args}><Icon /><Text>Test</Text></Button>
+    <Button {...args} isIconOnly><Icon /></Button>
+    <Button variant="primary" style="fill">Test</Button>
+    <Button className={style({maxWidth: 32})()}>Very long button with wrapping text to see what happens</Button>
+    <Button className={style({maxWidth: 32})()}>
+      <Icon />
+      <Text>Very long button with wrapping text to see what happens</Text>
+    </Button>
+  </div>),
   parameters: {
     design: {
       type: 'figma',
