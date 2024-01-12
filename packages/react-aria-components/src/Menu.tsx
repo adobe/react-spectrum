@@ -374,7 +374,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemInnerTr
           [OverlayTriggerStateContext, submenuTriggerState],
           [PopoverContext, {
             ref: submenuRef,
-            trigger: 'SubmenuMenuTrigger',
+            trigger: 'SubmenuTrigger',
             triggerRef: ref,
             placement: 'end top',
             ...popoverProps
