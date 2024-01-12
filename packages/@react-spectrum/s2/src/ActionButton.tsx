@@ -25,7 +25,14 @@ export function ActionButton(props: ButtonProps & {size: 'XS' | 'S' | 'M' | 'L' 
         borderStyle: 'none',
         paddingX: 'edge-to-text',
         paddingY: 0,
-        borderRadius: 'control'
+        borderRadius: 'control',
+        '--iconMargin': {
+          type: 'marginTop',
+          value: {
+            default: '[calc(-2 / 14 * 1em)]',
+            isIconOnly: 0
+          }
+        }
       })({...renderProps, size: props.size})} />
   );
 }

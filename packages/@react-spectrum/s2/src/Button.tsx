@@ -55,6 +55,13 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     type: 'paddingTop',
     value: '[calc((self(minHeight) - 1lh) / 2 - self(borderWidth))]'
   },
+  '--iconMargin': {
+    type: 'marginTop',
+    value: {
+      default: '[calc(-2 / 14 * 1em)]',
+      isIconOnly: 0
+    }
+  },
   borderColor: {
     variant: {
       primary: baseColor('gray-800'),

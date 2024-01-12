@@ -406,10 +406,12 @@ export const style = createTheme({
     caretColor: colorWithAlpha,
     fill: createColorProperty({
       none: 'none',
+      currentColor: 'currentColor',
       ...color
     }),
     stroke: createColorProperty({
       none: 'none',
+      currentColor: 'currentColor',
       ...color
     }),
 
