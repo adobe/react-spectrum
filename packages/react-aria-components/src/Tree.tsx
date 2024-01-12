@@ -11,15 +11,14 @@
  */
 
 import {AriaGridListProps, FocusScope,  mergeProps, useFocusRing, useGridList, useGridListItem, useHover} from 'react-aria';
-import {BaseCollection, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
-import {Collection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
+import {BaseCollection, Collection, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
+import {Collection as CollectionType, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Key, LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect} from 'react';
 import {TextContext} from './Text';
-import { node } from 'prop-types';
 
 // TODO: Figure out what we want in this. It should be like useTreeGridState perhaps where we
 // generate a flattened collection which is all the expanded/visible tree rows. The nodes themselves should have
@@ -47,6 +46,7 @@ export interface TreeProps<T> extends Omit<AriaGridListProps<T>, 'children'>, Co
 
 
 export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
+const RenderFuncContext = createContext<{renderFunc:(item: any) => React.ReactNode}>({renderFunc: null});
 
 function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
@@ -54,7 +54,10 @@ function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivEl
   let {collection, portal} = useCollection(props);
   return (
     <>
-      {portal}
+      {/* TODO: is this the proper way we want to pass the renderFunc from  */}
+      <RenderFuncContext.Provider value={{renderFunc: typeof props.children === 'function' ? props.children : null}}>
+        {portal}
+      </RenderFuncContext.Provider>
       <TreeInner props={props} collection={collection} treeRef={ref} />
     </>
   );
@@ -62,12 +65,12 @@ function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivEl
 
 interface TreeInnerProps<T extends object> {
   props: TreeProps<T>,
-  collection: Collection<Node<T>>,
+  collection: CollectionType<Node<T>>,
   treeRef: RefObject<HTMLDivElement>
 }
 
 function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
-
+  console.log('collection', collection)
   // TODO: call useTreeState, but may need to modify it so that it has some of the same stuff as useTreeGridState?
   // Don't think I need a layout since this is non virtualized, will get a keyboard delegate from useGrid
   let state = useListState({
@@ -80,6 +83,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let {gridProps} = useGridList(props, state, ref);
 
   let children = useCachedChildren({
+    // TODO: this would the flatted rows from the collection
     items: collection,
     children: (item: Node<T>) => {
       switch (item.type) {
@@ -169,11 +173,38 @@ export interface TreeItemProps<T = object> extends RenderProps<TreeItemRenderPro
   /** An accessibility label for this item. */
   'aria-label'?: string,
   // TODO: support child item, will need to figure out how to render that in the fake dom
-  childItems?: any
+  childItems?: Iterable<T>
 }
 
+// TODO TreeItem here would need to know how to render nested TreeItems based off of its children (aka static) or for the dynamic case (check childItems existance and reuse the render func provided to Tree)
 function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
-  return useSSRCollectionNode('item', props, ref, props.children);
+  let {childItems, children} = props;
+  let {renderFunc} = useContext(RenderFuncContext);
+  // TODO: what is the best way to create the nested children? Do I use useCachedChildren (feels like that is only for the inner components)?
+  // What about Collecton?
+  // let nestedChildren;
+  // if (childItems && props) {
+  //   nestedChildren = [];
+  //   for (let item of childItems) {
+  //     nestedChildren.push(renderFunc(item));
+  //   }
+  // }
+  // let nestedChildren = useCachedChildren({
+  //   items: childItems,
+  //   children: (item) => renderFunc(item)
+  // });
+
+  let nestedChildren;
+  if (childItems) {
+    // TODO: the assumption here is that either the Tree was passed a render function aka dynamic case
+    nestedChildren = (
+      <Collection items={childItems}>
+        {renderFunc}
+      </Collection>
+    );
+  }
+
+  return useSSRCollectionNode('item', props, ref, children, nestedChildren);
 }
 
 /**
@@ -182,6 +213,8 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
 const _TreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(TreeItem);
 export {_TreeItem as TreeItem};
 
+// TODO: I think TreeRow wouldn't need any useCachedChildren or anything since it should theoretically used the flattened structure
+// Probably would just render the children? Will need to see what item has in its .rendered
 function TreeRow({item}) {
   let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);

@@ -19,7 +19,7 @@ export default {
   title: 'React Aria Components'
 };
 
-export const MyTreeItem = (props) => {
+const MyTreeItem = (props) => {
   // TODO: update the styles
   return (
     <TreeItem
@@ -44,20 +44,55 @@ export const MyTreeItem = (props) => {
   );
 };
 
+// TODO: Make static example. It may need to use <Header> so the TreeItem can have a title and then
+// have other TreeItems as children?
+
+let rows = [
+  // {id: 'projects', name: 'Projects', childItems: [
+  //   {id: 'project-2', name: 'Project 2'}
+  // ]},
+  {id: 'projects', name: 'Projects', childItems: [
+    {id: 'project-1', name: 'Project 1'},
+    {id: 'project-2', name: 'Project 2', childItems: [
+      {id: 'project-2A', name: 'Project 2A'},
+      {id: 'project-2B', name: 'Project 2B'},
+      {id: 'project-2C', name: 'Project 2C'}
+    ]},
+    {id: 'project-3', name: 'Project 3'},
+    {id: 'project-4', name: 'Project 4'},
+    {id: 'project-5', name: 'Project 5', childItems: [
+      {id: 'project-5A', name: 'Project 5A'},
+      {id: 'project-5B', name: 'Project 5B'},
+      {id: 'project-5C', name: 'Project 5C'}
+    ]}
+  ]},
+  {id: 'reports', name: 'Reports', childItems: [
+    {id: 'reports-1', name: 'Reports 1', childItems: [
+      {id: 'reports-1A', name: 'Reports 1A', childItems: [
+        {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
+          {id: 'reports-1ABC', name: 'Reports 1ABC'}
+        ]}
+      ]},
+      {id: 'reports-1B', name: 'Project 1B'},
+      {id: 'reports-1C', name: 'Project 1C'}
+    ]},
+    {id: 'reports-2', name: 'Reports 2'}
+  ]}
+];
 // TODO: finish story
-export const TreeExample = (args) => (
+export const TreeExampleDynamic = (args) => (
   // TODO: update the styles here
-  <Tree className={styles.menu} {...args} aria-label="test tree">
+  <Tree className={styles.menu} {...args} aria-label="test tree" items={rows}>
     {item => (
-      <Item childItems={item.children}>
-        <FolderIcon />
-        <Text>{item.name}</Text>
-      </Item>
+      //  TODO: figure out the TS here and how to get it to infer the item type
+      <MyTreeItem childItems={item.childItems}>
+        {item.name}
+      </MyTreeItem>
     )}
   </Tree>
 );
 
-TreeExample.story = {
+TreeExampleDynamic.story = {
   // TODO: add the proper parameters
   // args: {
   //   selectionMode: 'none',
