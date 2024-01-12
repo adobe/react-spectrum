@@ -77,7 +77,7 @@ export const SubmenuExample = () => (
         <MyMenuItem>Foo</MyMenuItem>
         <SubmenuTrigger>
           <MyMenuItem>Bar</MyMenuItem>
-          <Popover>
+          <Popover className={styles.popover}>
             <Menu className={styles.menu} onAction={action('onAction')}>
               <MyMenuItem>Submenu Foo</MyMenuItem>
               <MyMenuItem>Submenu Bar</MyMenuItem>
@@ -100,13 +100,13 @@ export const SubmenuNestedExample = () => (
         <MyMenuItem>Foo</MyMenuItem>
         <SubmenuTrigger>
           <MyMenuItem>Bar</MyMenuItem>
-          <Popover>
+          <Popover className={styles.popover}>
             <Menu className={styles.menu} onAction={action('onAction')}>
               <MyMenuItem>Submenu Foo</MyMenuItem>
               <MyMenuItem>Submenu Bar</MyMenuItem>
               <SubmenuTrigger>
                 <MyMenuItem>Submenu Baz</MyMenuItem>
-                <Popover>
+                <Popover className={styles.popover}>
                   <Menu className={styles.menu} onAction={action('onAction')}>
                     <MyMenuItem>Second Submenu Foo</MyMenuItem>
                     <MyMenuItem>Second Submenu Bar</MyMenuItem>
