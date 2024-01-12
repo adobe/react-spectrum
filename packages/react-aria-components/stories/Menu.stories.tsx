@@ -91,3 +91,35 @@ export const SubmenuExample = () => (
     </Popover>
   </MenuTrigger>
 );
+
+export const SubmenuNestedExample = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <MyMenuItem>Foo</MyMenuItem>
+        <SubmenuTrigger>
+          <MyMenuItem>Bar</MyMenuItem>
+          <Popover>
+            <Menu className={styles.menu} onAction={action('onAction')}>
+              <MyMenuItem>Submenu Foo</MyMenuItem>
+              <MyMenuItem>Submenu Bar</MyMenuItem>
+              <SubmenuTrigger>
+                <MyMenuItem>Submenu Baz</MyMenuItem>
+                <Popover>
+                  <Menu className={styles.menu} onAction={action('onAction')}>
+                    <MyMenuItem>Second Submenu Foo</MyMenuItem>
+                    <MyMenuItem>Second Submenu Bar</MyMenuItem>
+                    <MyMenuItem>Second Submenu Baz</MyMenuItem>
+                  </Menu>
+                </Popover>
+              </SubmenuTrigger>
+            </Menu>
+          </Popover>
+        </SubmenuTrigger>
+        <MyMenuItem>Baz</MyMenuItem>
+        <MyMenuItem href="https://google.com">Google</MyMenuItem>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
