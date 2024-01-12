@@ -53,19 +53,11 @@ describe('Menu', () => {
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
-    jest.spyOn(window.HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(() => 1000);
-    jest.spyOn(window.HTMLElement.prototype, 'offsetHeight', 'get').mockImplementation(() => 1000);
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.useFakeTimers();
   });
 
   afterEach(() => {
     act(() => {jest.runAllTimers();});
-    jest.clearAllMocks();
-  });
-
-  afterAll(function () {
-    jest.restoreAllMocks();
   });
 
   it('should render with default classes', () => {
