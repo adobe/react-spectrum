@@ -106,6 +106,7 @@ class TableCollection<T> extends BaseCollection<T> implements ITableCollection<T
   }
 
   getKeyAfter(key: Key) {
+    console.log('awegnwalkgen')
     let node = this.getItem(key);
     if (node?.type === 'column') {
       return node.nextKey ?? null;
@@ -301,7 +302,6 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     collection,
     children: undefined
   });
-
   let {gridProps} = useTable(props, state, ref);
 
   let {dragAndDropHooks} = props;

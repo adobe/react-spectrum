@@ -82,7 +82,7 @@ let rows = [
 // TODO: finish story
 export const TreeExampleDynamic = (args) => (
   // TODO: update the styles here
-  <Tree className={styles.menu} {...args} aria-label="test tree" items={rows}>
+  <Tree expandedKeys={['projects', 'project-5', 'reports']} className={styles.menu} {...args} aria-label="test tree" items={rows}>
     {item => (
       //  TODO: figure out the TS here and how to get it to infer the item type
       <MyTreeItem childItems={item.childItems}>
