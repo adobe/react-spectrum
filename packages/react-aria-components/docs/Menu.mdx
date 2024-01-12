@@ -45,7 +45,7 @@ type: component
 ## Example
 
 ```tsx example
-import {MenuTrigger, Button, Popover, Menu, MenuItem, SubmenuTrigger} from 'react-aria-components';
+import {MenuTrigger, Button, Popover, Menu, MenuItem} from 'react-aria-components';
 
 <MenuTrigger>
   <Button aria-label="Menu">☰</Button>
@@ -656,6 +656,8 @@ function Example() {
 Submenus can be implemented by using a `SubmenuTrigger`, where the first child inside is the submenu's trigger `MenuItem`, and the second child is the submenu itself.
 
 ```tsx example
+import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
+
 <MyMenuButton label="Actions">
   <MyItem>Cut</MyItem>
   <MyItem>Copy</MyItem>
