@@ -377,7 +377,6 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemInnerTr
             trigger: 'SubmenuMenuTrigger',
             triggerRef: ref,
             placement: 'end top',
-            // style: {'--trigger-width': buttonWidth} as React.CSSProperties,
             ...popoverProps
           }]
         ]}>
