@@ -1,3 +1,7 @@
+import {themes} from '@storybook/theming';
+import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+
+document.body.className += style({backgroundColor: 'gray-25'})();
 
 /** @type { import('@storybook/react').Preview } */
 const preview = {
@@ -7,6 +11,9 @@ const preview = {
       matchers: {
         color: /(background|color)$/i,
       },
+    },
+    docs: {
+      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? themes.dark : themes.light
     }
   },
 };
