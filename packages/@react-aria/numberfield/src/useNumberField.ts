@@ -153,7 +153,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   // We choose between numeric and decimal based on whether we allow negative and fractional numbers,
   // and based on testing on various devices to determine what keys are available in each inputMode.
   let hasDecimals = intlOptions.maximumFractionDigits > 0;
-  let hasNegative = isNaN(state.minValue) || state.minValue < 0;
+  let hasNegative = (state.minValue === undefined || isNaN(state.minValue)) || state.minValue < 0;
   let inputMode: TextInputDOMProps['inputMode'] = 'numeric';
   if (isIPhone()) {
     // iPhone doesn't have a minus sign in either numeric or decimal.
@@ -205,8 +205,8 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     value: inputValue,
     defaultValue: undefined, // defaultValue already used to populate state.inputValue, unneeded here
     autoComplete: 'off',
-    'aria-label': props['aria-label'] || null,
-    'aria-labelledby': props['aria-labelledby'] || null,
+    'aria-label': props['aria-label'] || undefined,
+    'aria-labelledby': props['aria-labelledby'] || undefined,
     id: inputId,
     type: 'text', // Can't use type="number" because then we can't have things like $ in the field.
     inputMode,
@@ -222,7 +222,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
 
   useFormReset(inputRef, state.numberValue, state.setNumberValue);
 
-  let inputProps = mergeProps(
+  let inputProps: InputHTMLAttributes<HTMLInputElement> = mergeProps(
     spinButtonProps,
     focusProps,
     textFieldProps,
@@ -255,7 +255,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     // On touch, or with a screen reader, focus the button so that the software
     // keyboard does not appear and the screen reader cursor is not moved off the button.
     if (e.pointerType === 'mouse') {
-      inputRef.current.focus();
+      inputRef.current?.focus();
     } else {
       e.target.focus();
     }
@@ -272,7 +272,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
   // the aria-label string rather than using aria-labelledby gives more flexibility to translators to change
   // the order or add additional words around the label if needed.
   let fieldLabel = props['aria-label'] || (typeof props.label === 'string' ? props.label : '');
-  let ariaLabelledby: string;
+  let ariaLabelledby: string | undefined;
   if (!fieldLabel) {
     ariaLabelledby = props.label != null ? labelProps.id : props['aria-labelledby'];
   }
