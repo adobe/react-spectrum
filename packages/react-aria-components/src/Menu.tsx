@@ -255,9 +255,7 @@ const _MenuItem = /*#__PURE__*/ (forwardRef as forwardRefType)(MenuItem);
 export {_MenuItem as MenuItem};
 
 interface MenuItemInnerProps<T> {
-  item: Node<T>,
-  popover?: ReactElement,
-  parentMenuRef?: RefObject<HTMLDivElement>
+  item: Node<T>
 }
 
 function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
@@ -311,13 +309,13 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
   );
 }
 
-interface MenuItemInnerTriggerProps<T> {
+interface MenuItemTriggerInnerProps<T> {
   item: Node<T>,
   popover: ReactElement,
   parentMenuRef: RefObject<HTMLDivElement>
 }
 
-function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemInnerTriggerProps<T>) {
+function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTriggerInnerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
