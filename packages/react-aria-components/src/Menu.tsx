@@ -30,6 +30,7 @@ import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
+export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
@@ -61,6 +62,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
       values={[
         [MenuContext, menuProps],
         [OverlayTriggerStateContext, state],
+        [RootMenuTriggerStateContext, state],
         [PopoverContext, {
           trigger: 'MenuTrigger',
           triggerRef: ref,
@@ -318,7 +320,7 @@ interface MenuItemInnerTriggerProps<T> {
 function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemInnerTriggerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
-  let rootMenuTriggerState = useContext(OverlayTriggerStateContext)! as RootMenuTriggerState;
+  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
