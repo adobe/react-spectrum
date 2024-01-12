@@ -79,7 +79,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
 export interface SubmenuTriggerProps {
   /**
-   * The contents of the SubmenuTrigger - a Item and a Menu.
+   * The contents of the SubmenuTrigger - an Item and a Popover.
    */
   children: ReactElement[]
 }
