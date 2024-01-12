@@ -495,5 +495,90 @@ describe('Menu', () => {
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
     });
+    it('should close all submenus if underlay is clicked', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole} = render(
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+              <SubmenuTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Popover>
+                  <Menu onAction={onAction}>
+                    <SubmenuTrigger>
+                      <MenuItem id="email">Email…</MenuItem>
+                      <Popover>
+                        <Menu onAction={onAction}>
+                          <MenuItem id="work">Work</MenuItem>
+                          <MenuItem id="personal">Personal</MenuItem>
+                        </Menu>
+                      </Popover>
+                    </SubmenuTrigger>
+                    <MenuItem id="sms">SMS</MenuItem>
+                    <MenuItem id="twitter">Twitter</MenuItem>
+                  </Menu>
+                </Popover>
+              </SubmenuTrigger>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let button = getByRole('button');
+      expect(button).not.toHaveAttribute('data-pressed');
+
+      await user.click(button);
+      expect(button).toHaveAttribute('data-pressed');
+
+      let menu = getAllByRole('menu')[0];
+      expect(getAllByRole('menuitem')).toHaveLength(5);
+
+      let popover = menu.closest('.react-aria-Popover');
+      expect(popover).toBeInTheDocument();
+      expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
+
+      let triggerItem = getAllByRole('menuitem')[3];
+      expect(triggerItem).toHaveTextContent('Share…');
+      expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
+      expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
+
+      // Open the submenu
+      await user.pointer({target: triggerItem});
+      act(() => {jest.runAllTimers();});
+      expect(triggerItem).toHaveAttribute('data-hovered', 'true');
+      expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
+      let submenu = getAllByRole('menu')[1];
+      expect(submenu).toBeInTheDocument();
+      
+      let submenuPopover = submenu.closest('.react-aria-Popover');
+      expect(submenuPopover).toBeInTheDocument();
+      expect(submenuPopover).toHaveAttribute('data-trigger', 'SubmenuTrigger');
+
+      let nestedTriggerItem = getAllByRole('menuitem')[5];
+      expect(nestedTriggerItem).toHaveTextContent('Email…');
+      expect(nestedTriggerItem).toHaveAttribute('aria-haspopup', 'menu');
+      expect(nestedTriggerItem).toHaveAttribute('aria-expanded', 'false');
+
+      // Open the nested submenu
+      await user.pointer({target: nestedTriggerItem});
+      act(() => {jest.runAllTimers();});
+      expect(nestedTriggerItem).toHaveAttribute('data-hovered', 'true');
+      expect(nestedTriggerItem).toHaveAttribute('aria-expanded', 'true');
+      let nestedSubmenu = getAllByRole('menu')[1];
+      expect(nestedSubmenu).toBeInTheDocument();
+
+      let nestedSubmenuPopover = nestedSubmenu.closest('.react-aria-Popover');
+      expect(nestedSubmenuPopover).toBeInTheDocument();
+      expect(nestedSubmenuPopover).toHaveAttribute('data-trigger', 'SubmenuTrigger');
+
+      await user.click(document.body);
+      expect(nestedSubmenu).not.toBeInTheDocument();
+      expect(submenu).not.toBeInTheDocument();
+    });
   });
 });
