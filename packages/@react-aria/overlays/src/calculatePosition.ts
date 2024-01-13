@@ -108,6 +108,7 @@ let visualViewport = typeof document !== 'undefined' && window.visualViewport;
 function getContainerDimensions(containerNode: Element): Dimensions {
   let width = 0, height = 0, totalWidth = 0, totalHeight = 0, top = 0, left = 0;
   let scroll: Position = {};
+  let isPinchZoomedIn = visualViewport?.scale > 1;
 
   if (containerNode.tagName === 'BODY') {
     let documentElement = document.documentElement;
@@ -115,11 +116,22 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     totalHeight = documentElement.clientHeight;
     width = visualViewport?.width ?? totalWidth;
     height = visualViewport?.height ?? totalHeight;
-    top = visualViewport?.offsetTop ?? top;
-    left = visualViewport?.offsetLeft ?? left;
-
     scroll.top = documentElement.scrollTop || containerNode.scrollTop;
     scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
+
+    // The goal of the below is to get a top/left value that represents the top/left of the visual viewport with
+    // respect to the original containing block's origin
+    if (visualViewport) {
+      if (isPinchZoomedIn) {
+        // Use page top/left since that will include scroll position offset which visualViewport.offsetTop is not enough for
+        top = visualViewport.pageTop;
+        left = visualViewport.pageLeft;
+      } else {
+        // TODO: not sure why this works tbh....
+        top = visualViewport.offsetTop;
+        left = visualViewport.offsetLeft;
+      }
+    }
   } else {
     ({width, height, top, left} = getOffset(containerNode));
     scroll.top = containerNode.scrollTop;
@@ -128,9 +140,8 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     totalHeight = height;
   }
 
-  let isPinchZoomedIn = visualViewport?.scale > 1;
   if ((containerNode.tagName === 'BODY' || containerNode.tagName === 'HTML') && isPinchZoomedIn) {
-    // Safari will report a non-zero scrollTop/Left for the body/HTML element when pinch zoomed in unlike other browsers.
+    // Safari will report a non-zero scrollTop/Left for the non-scrolling body/HTML element when pinch zoomed in unlike other browsers.
     // Set to zero for parity calculations so we get consistent positioning of overlays across all browsers
     scroll.top = 0;
     scroll.left = 0;
