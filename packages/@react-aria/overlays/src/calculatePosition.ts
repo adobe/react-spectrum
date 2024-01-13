@@ -477,7 +477,14 @@ export function calculatePosition(opts: PositionOpts): PositionResult {
   let scrollSize = getScroll(scrollNode);
   let boundaryDimensions = getContainerDimensions(boundaryElement);
   let containerDimensions = getContainerDimensions(container);
+  // If the container is the HTML element wrapping the body element, the retrieved scrollTop/scrollLeft will be equal to the
+  // body element's scroll. Set the container's scroll values to 0 since the overlay's edge position value in getDelta don't then need to be further offset
+  // by the container scroll since they are essentially the same containing element and thus in the same coordinate system
   let containerOffsetWithBoundary: Offset = boundaryElement.tagName === 'BODY' ? getOffset(container) : getPosition(container, boundaryElement);
+  if (container.tagName === 'HTML' && boundaryElement.tagName === 'BODY') {
+    containerDimensions.scroll.top = 0;
+    containerDimensions.scroll.left = 0;
+  }
 
   return calculatePositionInternal(
     placement,
