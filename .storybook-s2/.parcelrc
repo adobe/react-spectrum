@@ -1,4 +1,7 @@
 {
   "extends": "@parcel/config-default",
-  "resolvers": ["parcel-resolver-storybook", "..."]
+  "resolvers": ["parcel-resolver-storybook", "..."],
+  "transformers": {
+    "{src,stories}/*.tsx": ["../parcel-transformer-react-docgen-typescript/ReactDocgenTSTransformer.ts", "..."]
+  }
 }

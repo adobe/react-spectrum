@@ -29,6 +29,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   textAlign: 'start',
   columnGap: 'text-to-visual',
   fontFamily: 'sans',
+  fontWeight: 'bold',
   fontSize: 'control',
   minHeight: 'control',
   borderRadius: 'pill',
@@ -87,7 +88,6 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
       isDisabled: 'GrayText'
     }
   },
-  fontWeight: 'bold',
   backgroundColor: {
     style: {
       fill: {

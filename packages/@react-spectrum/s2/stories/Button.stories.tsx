@@ -21,9 +21,8 @@ export const Example: Story = {
     <Button {...args}>Press me</Button>
     <Button {...args}><Icon><NewIcon /></Icon><Text>Test</Text></Button>
     <Button {...args} isIconOnly><Icon><NewIcon /></Icon></Button>
-    <Button variant="primary" style="fill">Test</Button>
-    <Button className={style({maxWidth: 32})()}>Very long button with wrapping text to see what happens</Button>
-    <Button className={style({maxWidth: 32})()}>
+    <Button {...args} className={style({maxWidth: 32})()}>Very long button with wrapping text to see what happens</Button>
+    <Button {...args} className={style({maxWidth: 32})()}>
       <Icon><NewIcon /></Icon>
       <Text>Very long button with wrapping text to see what happens</Text>
     </Button>

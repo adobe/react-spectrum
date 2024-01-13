@@ -18,6 +18,7 @@ export function ActionButton(props: ButtonProps & {size: 'XS' | 'S' | 'M' | 'L' 
         justifyContent: 'center',
         columnGap: 'text-to-visual',
         fontFamily: 'sans',
+        fontWeight: 'medium',
         fontSize: 'control',
         height: 'control',
         transition: 'default',

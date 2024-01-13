@@ -52,6 +52,7 @@
     "react": "^18.2.0",
     "react-aria-components": "latest",
     "react-docgen-typescript": "^2.2.2",
+    "react-docgen-typescript-plugin": "^1.0.5",
     "react-dom": "^18.2.0",
     "storybook": "^7.5.3",
     "storybook-builder-parcel": "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-builder-parcel?master",
