@@ -1,8 +1,9 @@
 import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext} from 'react-aria-components';
 import {style, baseColor} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
 import {focusRing} from './style-utils.ts' with {type: 'macro'};
-import {ReactNode} from 'react';
+import {ReactNode, useRef} from 'react';
 import {mergeStyles} from '../style-macro/runtime.ts';
+import {pressScale} from './pressScale.ts';
 
 interface ButtonStyleProps {
   variant?: 'primary' | 'secondary' | 'accent' | 'negative',
@@ -40,10 +41,6 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     isIconOnly: 'square'
   },
   transition: 'default',
-  willChange: 'transform',
-  transform: {
-    isPressed: 'perspective(max(self(minHeight), 24px)) translateZ(-2px)'
-  },
   borderStyle: 'solid',
   borderWidth: {
     style: {
@@ -216,10 +213,12 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
 });
 
 export function Button(props: ButtonProps) {
+  let ref = useRef(null);
   return (
     <RACButton
       {...props}
-      style={undefined}
+      ref={ref}
+      style={pressScale(ref)}
       className={renderProps => mergeStyles(props.className, button({
         ...renderProps,
         variant: props.variant || 'primary',

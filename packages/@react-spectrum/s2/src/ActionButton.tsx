@@ -1,11 +1,16 @@
-import {Button as RACButton, ButtonProps} from 'react-aria-components';
-import {style, baseColor} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
-import {focusRing} from './style-utils.ts' with {type: 'macro'};
+import {useRef} from 'react';
+import {ButtonProps, Button as RACButton} from 'react-aria-components';
+import {baseColor, style} from '../style-macro/spectrum-theme.ts' with { type: 'macro' };
+import {pressScale} from './pressScale.ts';
+import {focusRing} from './style-utils.ts' with { type: 'macro' };
 
 export function ActionButton(props: ButtonProps & {size: 'XS' | 'S' | 'M' | 'L' | 'XL'}) {
+  let ref = useRef(null);
   return (
     <RACButton
       {...props}
+      ref={ref}
+      style={pressScale(ref)}
       className={renderProps => style({
         ...focusRing(),
         display: 'flex',
@@ -15,10 +20,6 @@ export function ActionButton(props: ButtonProps & {size: 'XS' | 'S' | 'M' | 'L' 
         fontFamily: 'sans',
         fontSize: 'control',
         height: 'control',
-        willChange: 'transform',
-        transform: {
-          isPressed: 'perspective(max(self(height), 24px)) translateZ(-2px)'
-        },
         transition: 'default',
         backgroundColor: baseColor('gray-100'),
         color: 'neutral',
