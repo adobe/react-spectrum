@@ -1,7 +1,8 @@
-import {ResourceCard} from '@react-spectrum/docs/src/ResourceCard';
-import {spawnSync} from 'child_process';
 import {Link} from '@react-spectrum/link';
 import LinkOut from '@spectrum-icons/workflow/LinkOut';
+import React from 'react';
+import {ResourceCard} from '@react-spectrum/docs/src/ResourceCard';
+import {spawnSync} from 'child_process';
 
 const gitHash = process.env.GIT_HASH || spawnSync('git', ['rev-parse', '--short', 'HEAD']).stdout.toString().trim();
 
