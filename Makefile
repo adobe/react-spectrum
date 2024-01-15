@@ -125,12 +125,14 @@ starter:
 	cd starters/docs && yarn && yarn tsc
 
 starter-zip: starter
+	cp LICENSE starters/docs/.
 	cd starters/docs && zip -r react-aria-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	mv starters/docs/react-aria-starter.zip dist/production/docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
 	cd starters/docs && yarn build-storybook
 	mv starters/docs/storybook-static dist/production/docs/react-aria-starter
 
 tailwind-starter:
+	cp LICENSE starters/tailwind/.
 	cd starters/tailwind && yarn && yarn tsc
 	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
 	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
