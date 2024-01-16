@@ -358,7 +358,8 @@
   }
 }
 
-:global(.react-aria-Meter) {
+:global(.react-aria-Meter),
+:global(.react-aria-ProgressBar) {
   --fill-color: forestgreen;
 
   display: grid;
