@@ -625,7 +625,7 @@ governing permissions and limitations under the License.
   &:disabled,
   &.is-disabled {
     background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-quiet-background-color-disabled));
-    border-color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-quiet-border-color-disabled));
+    border-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-quiet-border-color-disabled));
     color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-quiet-text-color-disabled));
   }
 }
