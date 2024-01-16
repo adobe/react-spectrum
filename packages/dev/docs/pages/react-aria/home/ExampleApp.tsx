@@ -14,7 +14,7 @@ import {Arrow} from './components';
 import {Button} from 'tailwind-starter/Button';
 import {Cell, Column, Row, TableHeader} from 'tailwind-starter/Table';
 import {Checkbox} from 'tailwind-starter/Checkbox';
-import {ChevronRight, CloudSun, Dessert, Droplet, Droplets, FilterIcon, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, ShareIcon, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon} from 'lucide-react';
+import {ChevronRight, CloudSun, Dessert, Droplet, Droplets, FilterIcon, Mail, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, ShareIcon, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon, Twitter} from 'lucide-react';
 import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, SubmenuTrigger, Table, TableBody, Text, ToggleButton, ToggleButtonProps, TooltipTrigger} from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 import {DatePicker} from 'tailwind-starter/DatePicker';
@@ -245,6 +245,19 @@ export function ExampleApp() {
                     <MenuItem id="favorite"><StarIcon aria-hidden className="w-4 h-4" /> {item.isFavorite ? 'Unfavorite' : 'Favorite'}</MenuItem>
                     <MenuItem id="edit"><PencilIcon aria-hidden className="w-4 h-4" /> Edit…</MenuItem>
                     <MenuItem id="delete"><TrashIcon aria-hidden className="w-4 h-4" /> Delete…</MenuItem>
+                    <SubmenuTrigger>
+                      <MenuItem aria-label="Share">
+                        <ShareIcon aria-hidden className="w-4 h-4" />
+                        Share
+                        <ChevronRight aria-hidden className="absolute w-4 h-4 right-2" />
+                      </MenuItem>
+                      <Popover>
+                        <Menu>
+                          <MenuItem href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Twitter"><Twitter aria-hidden className="w-4 h-4" /> Twitter…</MenuItem>
+                          <MenuItem href={`mailto:abc@example.com?subject=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Email"><Mail aria-hidden className="w-4 h-4" /> Email…</MenuItem>
+                        </Menu>
+                      </Popover>
+                    </SubmenuTrigger>
                   </Menu>
                 </MenuTrigger>
               </div>
@@ -296,15 +309,15 @@ export function ExampleApp() {
                               <MenuItem id="edit"><PencilIcon aria-hidden className="w-4 h-4" /> Edit…</MenuItem>
                               <MenuItem id="delete"><TrashIcon aria-hidden className="w-4 h-4" /> Delete…</MenuItem>
                               <SubmenuTrigger>
-                                <MenuItem>
+                                <MenuItem aria-label="Share">
                                   <ShareIcon aria-hidden className="w-4 h-4" />
                                   Share
                                   <ChevronRight aria-hidden className="absolute w-4 h-4 right-2" />
                                 </MenuItem>
                                 <Popover>
                                   <Menu>
-                                    <MenuItem href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer"><Twitter aria-hidden className="w-4 h-4" /> Twitter…</MenuItem>
-                                    <MenuItem href={`mailto:abc@example.com?subject=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer"><Mail aria-hidden className="w-4 h-4" /> Email…</MenuItem>
+                                    <MenuItem href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Twitter"><Twitter aria-hidden className="w-4 h-4" /> Twitter…</MenuItem>
+                                    <MenuItem href={`mailto:abc@example.com?subject=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Email"><Mail aria-hidden className="w-4 h-4" /> Email…</MenuItem>
                                   </Menu>
                                 </Popover>
                               </SubmenuTrigger>
