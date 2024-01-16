@@ -11,7 +11,7 @@
  */
 
 import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
-import {clamp} from '@react-aria/utils';
+import {clamp, isWebKit} from '@react-aria/utils';
 
 interface Position {
   top?: number,
@@ -120,17 +120,11 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     scroll.left = documentElement.scrollLeft || containerNode.scrollLeft;
 
     // The goal of the below is to get a top/left value that represents the top/left of the visual viewport with
-    // respect to the original containing block's origin
+    // respect to the layout viewport origin. This combined with the scrollTop/scrollLeft will allow us to calculate
+    // coordinates/values with respect to the visual viewport or with respect to the layout viewport.
     if (visualViewport) {
-      if (isPinchZoomedIn) {
-        // Use page top/left since that will include scroll position offset which visualViewport.offsetTop is not enough for
-        top = visualViewport.pageTop;
-        left = visualViewport.pageLeft;
-      } else {
-        // TODO: not sure why this works tbh....
-        top = visualViewport.offsetTop;
-        left = visualViewport.offsetLeft;
-      }
+      top = visualViewport.offsetTop;
+      left = visualViewport.offsetLeft;
     }
   } else {
     ({width, height, top, left} = getOffset(containerNode));
@@ -140,11 +134,15 @@ function getContainerDimensions(containerNode: Element): Dimensions {
     totalHeight = height;
   }
 
-  if ((containerNode.tagName === 'BODY' || containerNode.tagName === 'HTML') && isPinchZoomedIn) {
+  if (isWebKit() && (containerNode.tagName === 'BODY' || containerNode.tagName === 'HTML') && isPinchZoomedIn) {
     // Safari will report a non-zero scrollTop/Left for the non-scrolling body/HTML element when pinch zoomed in unlike other browsers.
-    // Set to zero for parity calculations so we get consistent positioning of overlays across all browsers
+    // Set to zero for parity calculations so we get consistent positioning of overlays across all browsers.
+    // Also switch to visualViewport.pageTop/pageLeft so that we still accomodate for scroll positioning for body/HTML elements that are actually scrollable
+    // before pinch zoom happens
     scroll.top = 0;
     scroll.left = 0;
+    top = visualViewport.pageTop;
+    left = visualViewport.pageLeft;
   }
 
   return {width, height, totalWidth, totalHeight, scroll, top, left};
@@ -180,6 +178,7 @@ function getDelta(
   // The height/width of the boundary. Matches the axis along which we are adjusting the overlay position
   let boundarySize = boundaryDimensions[AXIS_SIZE[axis]];
   // Calculate the edges of the boundary (accomodating for the boundary padding) and the edges of the overlay.
+  // Note that these values are with respect to the visual viewport (aka 0,0 is the top left of the viewport)
   let boundaryStartEdge = boundaryDimensions.scroll[AXIS[axis]] + padding;
   let boundaryEndEdge = boundarySize + boundaryDimensions.scroll[AXIS[axis]] - padding;
   let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
@@ -254,10 +253,6 @@ function computePosition(
     the overlay top should match the button top
   } */
 
-  // TODO: crossAxis behaves differently from offset. A positive offset value will always shift the overlay in the "direction" it has
-  // (aka a overlay positioned "top" will be shifted upwards when a positive offset is applied and a overlay positioned "bottom" will be shifted downwards with the same offset)
-  // However, a positive crossAxis value always shifts the overlay up/to the right regardless of the cross axis direction... This means that the cross axis we apply to the submenu
-  // is incorrect if the submenu needs to flip upwards since it will shift it upwards instead of downwards... Changing this behavior is a breaking change though...
   position[crossAxis] += crossOffset;
 
   // overlay top overlapping arrow with button bottom
@@ -290,10 +285,6 @@ function getMaxHeight(
   overlayHeight: number,
   heightGrowthDirection: HeightGrowthDirection
 ) {
-  // TODO: mention the change to the logic in this code, in paticular with how it affectted the tests in calculatePosition
-  // In particular the "left bottom" test case with no viewport offset was calculating a max height of 400 previously because the
-  // overlay's "height growth" was judged to be the downwards direction even though the placement was "left bottom" aligns the bottom of the overlay with the
-  // bottom of the trigger and thus the overlay grows upwards
   const containerHeight = (isContainerPositioned ? containerOffsetWithBoundary.height : boundaryDimensions[TOTAL_SIZE.height]);
   // For cases where position is set via "bottom" instead of "top", we need to calculate the true overlay top with respect to the boundary. Reverse calculate this with the same method
   // used in computePosition.
