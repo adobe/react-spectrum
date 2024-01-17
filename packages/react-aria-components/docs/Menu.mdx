@@ -219,7 +219,18 @@ function MyMenuButton<T extends object>({label, children, ...props}: MyMenuButto
 }
 
 function MyItem(props: MenuItemProps) {
-  return <MenuItem {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''}`} />
+  return (
+    <MenuItem {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''}`}>
+      {({hasSubmenu}) => (
+        <>
+          {props.children}
+          {hasSubmenu && (
+            <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} viewBox="0 0 24 24" style={{position: 'absolute', right: 0, top : 0, height: '100%'}}><path d="m9 18 6-6-6-6" /></svg>
+          )}
+        </>
+      )}
+    </MenuItem>
+  );
 }
 
 <MyMenuButton label="Edit">
@@ -663,13 +674,13 @@ import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
   <MyItem>Copy</MyItem>
   <MyItem>Delete</MyItem>
   <SubmenuTrigger>
-    <MyItem>Share</MyItem>
+    <MyItem aria-label="Share">Share</MyItem>
     <Popover>
       <Menu>
         <MyItem>SMS</MyItem>
         <MyItem>Twitter</MyItem>
         <SubmenuTrigger>
-          <MyItem>Email</MyItem>
+          <MyItem aria-label="Email">Email</MyItem>
           <Popover>
             <Menu>
               <MyItem>Work</MyItem>
@@ -687,18 +698,6 @@ import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
 
 ```css
-.my-item {
-  &[aria-haspopup="menu"] {
-    &::after {
-      content: '›';
-      content: '›' / '';
-      position: absolute;
-      right: 8px;
-      scale: 1.5;
-    }
-  }
-}
-
 .react-aria-Popover[data-trigger=SubmenuTrigger][data-placement="right"] {
   margin-left: -5px;
 }
