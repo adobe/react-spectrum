@@ -14,7 +14,7 @@ import {Arrow} from './components';
 import {Button} from 'tailwind-starter/Button';
 import {Cell, Column, Row, TableHeader} from 'tailwind-starter/Table';
 import {Checkbox} from 'tailwind-starter/Checkbox';
-import {ChevronRight, CloudSun, Dessert, Droplet, Droplets, FilterIcon, Mail, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, ShareIcon, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon, Twitter} from 'lucide-react';
+import {CloudSun, Dessert, Droplet, Droplets, FilterIcon, Mail, MoreHorizontal, PencilIcon, PlusIcon, RefreshCw, ShareIcon, SlidersIcon, StarIcon, Sun, SunDim, TrashIcon, Twitter} from 'lucide-react';
 import {ColumnProps, Dialog, DialogTrigger, DropZone, Form, Heading, isFileDropItem, Key, MenuTrigger, ModalOverlay, ModalOverlayProps, Modal as RACModal, ResizableTableContainer, Selection, SortDescriptor, SubmenuTrigger, Table, TableBody, Text, ToggleButton, ToggleButtonProps, TooltipTrigger} from 'react-aria-components';
 import {ComboBox, ComboBoxItem} from 'tailwind-starter/ComboBox';
 import {DatePicker} from 'tailwind-starter/DatePicker';
@@ -249,7 +249,6 @@ export function ExampleApp() {
                       <MenuItem aria-label="Share">
                         <ShareIcon aria-hidden className="w-4 h-4" />
                         Share
-                        <ChevronRight aria-hidden className="absolute w-4 h-4 right-2" />
                       </MenuItem>
                       <Popover>
                         <Menu>
@@ -312,7 +311,6 @@ export function ExampleApp() {
                                 <MenuItem aria-label="Share">
                                   <ShareIcon aria-hidden className="w-4 h-4" />
                                   Share
-                                  <ChevronRight aria-hidden className="absolute w-4 h-4 right-2" />
                                 </MenuItem>
                                 <Popover>
                                   <Menu>
