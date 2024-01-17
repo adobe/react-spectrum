@@ -11,7 +11,7 @@
  */
 
 
-import {AriaMenuProps, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
+import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {BaseCollection, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
@@ -22,7 +22,7 @@ import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {RootMenuTriggerState, UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -31,6 +31,7 @@ import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
 export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
+export const SubmenuContext = createContext<{popoverContainerRef: RefObject<HTMLDivElement>}>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
@@ -138,7 +139,17 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     collection,
     children: undefined
   });
+  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
+  let popoverContainerRef = useRef<HTMLDivElement>(null);
   let {menuProps} = useMenu(props, state, ref);
+
+  let [leftOffset, setLeftOffset] = useState({left: 0});
+  useEffect(() => {
+    if (popoverContainerRef.current) {
+      let {left} = popoverContainerRef.current.getBoundingClientRect();
+      setLeftOffset({left: -1 * left});
+    }
+  }, []);
 
   let children = useCachedChildren({
     items: state.collection,
@@ -159,22 +170,26 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   });
 
   return (
-    <div
-      {...filterDOMProps(props)}
-      {...menuProps}
-      ref={ref}
-      slot={props.slot || undefined}
-      onScroll={props.onScroll}
-      style={props.style}
-      className={props.className ?? 'react-aria-Menu'}>
-      <Provider
-        values={[
-          [MenuStateContext, state],
-          [SeparatorContext, {elementType: 'div'}]
-        ]}>
-        {children}
-      </Provider>
-    </div>
+    <FocusScope>
+      <div
+        {...filterDOMProps(props)}
+        {...menuProps}
+        ref={ref}
+        slot={props.slot || undefined}
+        onScroll={props.onScroll}
+        style={props.style}
+        className={props.className ?? 'react-aria-Menu'}>
+        <Provider
+          values={[
+            [MenuStateContext, state],
+            [SeparatorContext, {elementType: 'div'}],
+            [SubmenuContext, {popoverContainerRef}]
+          ]}>
+          {children}
+        </Provider>
+      </div>
+      {rootMenuTriggerState?.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} /> }
+    </FocusScope>
   );
 }
 
@@ -319,6 +334,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
+  let submenuContext = useContext(SubmenuContext)!;
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
@@ -375,6 +391,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
             trigger: 'SubmenuTrigger',
             triggerRef: ref,
             placement: 'end top',
+            UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current,
             ...popoverProps
           }]
         ]}>
