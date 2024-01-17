@@ -31,7 +31,7 @@ import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
 export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
-export const SubmenuContext = createContext<{popoverContainerRef: RefObject<HTMLDivElement>}>(null);
+export const SubmenuContext = createContext<{popoverContainerRef: RefObject<Element>}>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
@@ -401,7 +401,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
             trigger: 'SubmenuTrigger',
             triggerRef: ref,
             placement: 'end top',
-            UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current,
+            UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current || undefined,
             ...popoverProps
           }]
         ]}>
