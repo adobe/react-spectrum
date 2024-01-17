@@ -246,7 +246,12 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
   );
 }
 
-export interface MenuItemRenderProps extends ItemRenderProps {}
+export interface MenuItemRenderProps extends ItemRenderProps {
+  /** Whether the item has a submenu. */
+  hasSubmenu?: boolean,
+  /** Whether the item's submenu is open. */
+  isSubmenuOpen?: boolean
+}
 
 export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps {
   /** The unique id of the item. */
@@ -348,6 +353,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
   }, state, ref);
   let props: MenuItemProps<T> = item.props;
   let {isFocusVisible, focusProps} = useFocusRing();
+  let isSubmenuOpen = submenuTriggerState.isOpen;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -358,7 +364,9 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
       isHovered: states.isFocused,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
-      selectionBehavior: state.selectionManager.selectionBehavior
+      selectionBehavior: state.selectionManager.selectionBehavior,
+      hasSubmenu: true,
+      isSubmenuOpen
     }
   });
 
@@ -374,7 +382,9 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
       data-selected={states.isSelected || undefined}
-      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
+      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
+      data-has-submenu
+      data-is-submenu-open={isSubmenuOpen}>
       <Provider
         values={[
           [TextContext, {
