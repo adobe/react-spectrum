@@ -26,6 +26,7 @@ import Selection from '@react-spectrum/docs/pages/assets/component-illustrations
 import DragAndDrop from '@react-spectrum/docs/pages/assets/component-illustrations/DragAndDrop.svg';
 import Checkbox from '@react-spectrum/docs/pages/assets/component-illustrations/Checkbox.svg';
 import Button from '@react-spectrum/docs/pages/assets/component-illustrations/Button.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Collections
@@ -279,14 +280,14 @@ import {Table, TableHeader, TableBody, Column, Row, Cell, Button, Checkbox, Resi
 <section className={styles.cardGroup} data-size="small">
 
 <ExampleCard
-  url="../react-stately/collections.html"
+  url="collections.html"
   title="Collections"
   description="Defining collections of items, async loading, and updating items over time.">
   <Collections />
 </ExampleCard>
 
 <ExampleCard
-  url="../react-stately/selection.html"
+  url="selection.html"
   title="Selection"
   description="Interactions and data structures to represent selection.">
   <Selection />
@@ -326,6 +327,12 @@ A `Table` uses the following components, which may also be used standalone or re
 ## Examples
 
 <ExampleList tag="table" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="table" />
 
 ## Reusable wrappers
 
@@ -447,9 +454,9 @@ import type {TableProps} from 'react-aria-components';
 
 function FileTable(props: TableProps) {
   let columns = [
-    {name: 'Name', key: 'name', isRowHeader: true},
-    {name: 'Type', key: 'type'},
-    {name: 'Date Modified', key: 'date'}
+    {name: 'Name', id: 'name', isRowHeader: true},
+    {name: 'Type', id: 'type'},
+    {name: 'Date Modified', id: 'date'}
   ];
 
   let rows = [
@@ -471,7 +478,7 @@ function FileTable(props: TableProps) {
       <TableBody items={rows}>
         {item => (
           <MyRow columns={columns}>
-            {column => <Cell>{item[column.key]}</Cell>}
+            {column => <Cell>{item[column.id]}</Cell>}
           </MyRow>
         )}
       </TableBody>
@@ -485,7 +492,7 @@ function FileTable(props: TableProps) {
 ### Single selection
 
 By default, `Table` doesn't allow row selection but this can be enabled using the `selectionMode` prop. Use `defaultSelectedKeys` to provide a default set of selected rows.
-Note that the value of the selected keys must match the `key` prop of the row.
+Note that the value of the selected keys must match the `id` prop of the row.
 
 The example below enables single selection mode, and uses `defaultSelectedKeys` to select the row with id equal to `2`.
 A user can click on a different row to change the selection, or click on the same row again to deselect it entirely.
@@ -516,7 +523,7 @@ In this mode, if a single row is selected and the user presses it, it will not b
 
 ### Controlled selection
 
-To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `key` prop from the selected rows will
+To programmatically control row selection, use the `selectedKeys` prop paired with the `onSelectionChange` callback. The `id` prop from the selected rows will
 be passed into the callback when the row is pressed, allowing you to update state accordingly.
 
 ```tsx example export=true

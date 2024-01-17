@@ -1,10 +1,20 @@
 import './App.css';
-import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView, Content, Heading, Form, ComboBox, Button} from '@adobe/react-spectrum';
+import {Provider, defaultTheme, Item, TagGroup, Cell, Column, Row, TableBody, TableHeader, TableView, Content} from '@adobe/react-spectrum';
 import Lighting from './Lighting';
 import {useState} from 'react'
 import BodyContent from './BodyContent';
 import {enableTableNestedRows} from '@react-stately/flags';
-import {InlineAlert} from '@react-spectrum/inlinealert'
+import ButtonExamples from './sections/ButtonExamples';
+import CollectionExamples from './sections/CollectionExamples';
+import DateTimeExamples from './sections/DateTimeExamples';
+import FormExamples from './sections/FormExamples';
+import NavigationExamples from './sections/NavigationExamples';
+import OverlayExamples from './sections/OverlayExamples';
+import ColorExamples from './sections/ColorExamples';
+import StatusExamples from './sections/StatusExamples';
+import ContentExamples from './sections/ContentExamples';
+import PickerExamples from './sections/PickerExamples';
+import DragAndDropExamples from './sections/DragAndDropExamples';
 
 let columns = [
   {name: 'Foo', key: 'foo'},
@@ -51,21 +61,17 @@ function App() {
             }
           </TableBody>
         </TableView>
-        <InlineAlert>
-          <Heading>Payment Information</Heading>
-          <Content>Enter your billing address, shipping address, and payment method to complete your purchase.</Content>
-        </InlineAlert>
-        <Form width="250px">
-          <ComboBox label="Favorite Animal">
-            <Item key="red panda">Red Panda</Item>
-            <Item key="cat">Cat</Item>
-            <Item key="dog">Dog</Item>
-            <Item key="aardvark">Aardvark</Item>
-            <Item key="kangaroo">Kangaroo</Item>
-            <Item key="snake">Snake</Item>
-          </ComboBox>
-          <Button variant="cta">Click Me</Button>
-        </Form>
+        <ButtonExamples />
+        <CollectionExamples />
+        <ColorExamples />
+        <DateTimeExamples />
+        <FormExamples />
+        <NavigationExamples />
+        <OverlayExamples />
+        <StatusExamples />
+        <ContentExamples />
+        <PickerExamples />
+        <DragAndDropExamples />
       </div>
     </Provider>
   );
