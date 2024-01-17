@@ -74,19 +74,19 @@ export const SubmenuExample = () => (
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
-        <MyMenuItem>Foo</MyMenuItem>
+        <MyMenuItem id="Foo">Foo</MyMenuItem>
         <SubmenuTrigger>
-          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem id="Bar">Bar</MyMenuItem>
           <Popover className={styles.popover}>
             <Menu className={styles.menu} onAction={action('onAction')}>
-              <MyMenuItem>Submenu Foo</MyMenuItem>
-              <MyMenuItem>Submenu Bar</MyMenuItem>
-              <MyMenuItem>Submenu Baz</MyMenuItem>
+              <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+              <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
+              <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
             </Menu>
           </Popover>
         </SubmenuTrigger>
-        <MyMenuItem>Baz</MyMenuItem>
-        <MyMenuItem href="https://google.com">Google</MyMenuItem>
+        <MyMenuItem id="Baz">Baz</MyMenuItem>
+        <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
       </Menu>
     </Popover>
   </MenuTrigger>
@@ -97,44 +97,44 @@ export const SubmenuNestedExample = () => (
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
-        <MyMenuItem>Foo</MyMenuItem>
+        <MyMenuItem id="Foo">Foo</MyMenuItem>
         <SubmenuTrigger>
-          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem id="Bar">Bar</MyMenuItem>
           <Popover className={styles.popover}>
             <Menu className={styles.menu} onAction={action('onAction')}>
-              <MyMenuItem>Submenu Foo</MyMenuItem>
-              <MyMenuItem>Submenu Bar</MyMenuItem>
+              <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+              <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
               <SubmenuTrigger>
-                <MyMenuItem>Submenu Baz</MyMenuItem>
+                <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
                 <Popover className={styles.popover}>
                   <Menu className={styles.menu} onAction={action('onAction')}>
-                    <MyMenuItem>Second Submenu Foo</MyMenuItem>
-                    <MyMenuItem>Second Submenu Bar</MyMenuItem>
-                    <MyMenuItem>Second Submenu Baz</MyMenuItem>
+                    <MyMenuItem id="Second Submenu Foo">Second Submenu Foo</MyMenuItem>
+                    <MyMenuItem id="Second Submenu Bar">Second Submenu Bar</MyMenuItem>
+                    <MyMenuItem id="Second Submenu Baz">Second Submenu Baz</MyMenuItem>
                   </Menu>
                 </Popover>
               </SubmenuTrigger>
             </Menu>
           </Popover>
         </SubmenuTrigger>
-        <MyMenuItem>Baz</MyMenuItem>
-        <MyMenuItem href="https://google.com">Google</MyMenuItem>
+        <MyMenuItem id="Baz">Baz</MyMenuItem>
+        <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
       </Menu>
     </Popover>
   </MenuTrigger>
 );
 
 let manyItemsSubmenu = [
-  {key: 'Lvl 1 Item 1', name: 'Lvl 1 Item 1'},
-  {key: 'Lvl 1 Item 2', name: 'Lvl 1 Item 2', children: [
-    ...[...Array(30)].map((_, i) => ({key: `Lvl 2 Item ${i + 1}`, name: `Lvl 2 Item ${i + 1}`})),
-    {key: 'Lvl 2 Item 31', name: 'Lvl 2 Item 31', children: [
-      {key: 'Lvl 3 Item 1', name: 'Lvl 3 Item 1'},
-      {key: 'Lvl 3 Item 2', name: 'Lvl 3 Item 2'},
-      {key: 'Lvl 3 Item 3', name: 'Lvl 3 Item 3'}
+  {id: 'Lvl 1 Item 1', name: 'Lvl 1 Item 1'},
+  {id: 'Lvl 1 Item 2', name: 'Lvl 1 Item 2', children: [
+    ...[...Array(30)].map((_, i) => ({id: `Lvl 2 Item ${i + 1}`, name: `Lvl 2 Item ${i + 1}`})),
+    {id: 'Lvl 2 Item 31', name: 'Lvl 2 Item 31', children: [
+      {id: 'Lvl 3 Item 1', name: 'Lvl 3 Item 1'},
+      {id: 'Lvl 3 Item 2', name: 'Lvl 3 Item 2'},
+      {id: 'Lvl 3 Item 3', name: 'Lvl 3 Item 3'}
     ]}
   ]},
-  ...[...Array(30)].map((_, i) => ({key: `Lvl 1 Item ${i + 3}`, name: `Lvl 1 Item ${i + 3}`}))
+  ...[...Array(30)].map((_, i) => ({id: `Lvl 1 Item ${i + 3}`, name: `Lvl 1 Item ${i + 3}`}))
 ];
 
 let dynamicRenderFunc = (item) => {
