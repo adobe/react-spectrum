@@ -1789,7 +1789,6 @@ describe('usePress', function () {
       let el = getByText('test');
       fireEvent.keyDown(el, {key: ' '});
       fireEvent.keyUp(el, {key: ' '});
-
       expect(events).toEqual([
         {
           type: 'pressstart',

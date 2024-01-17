@@ -31,9 +31,11 @@ export default {
     onPress: action('press'),
     onPressStart: action('pressstart'),
     onPressEnd: action('pressend'),
+    onPressChange: action('presschange'),
     onPressUp: action('pressup'),
     onFocus: action('focus'),
-    onBlur: action('blur')
+    onBlur: action('blur'),
+    onKeyUp: action('keyup')
   },
   argTypes: {
     onPress: {
