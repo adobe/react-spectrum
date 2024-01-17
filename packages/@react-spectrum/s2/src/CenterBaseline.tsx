@@ -8,7 +8,7 @@ interface CenterBaselineProps {
 
 export function CenterBaseline(props: CenterBaselineProps) {
   return (
-    <div className={props.className + ' ' + raw('display: flex; align-items: center; &::before { content: "\u00a0"; width: 0; visibility: hidden }')}>
+    <div className={(props.className || '') + ' ' + raw('display: flex; align-items: center; &::before { content: "\u00a0"; width: 0; visibility: hidden }')}>
       {props.children}
     </div>
   );

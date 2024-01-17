@@ -1,18 +1,127 @@
-import {Checkbox as AriaCheckbox, CheckboxProps} from 'react-aria-components';
+import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxRenderProps} from 'react-aria-components';
+import {style, baseColor} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+import {focusRing} from './style-utils.ts' with {type: 'macro'};
+import {CenterBaseline} from './CenterBaseline.tsx';
+import CheckmarkIcon from '../ui-icons/S2_CheckmarkSize100.svg';
+import DashIcon from '../ui-icons/S2_DashSize100.svg';
+import {useRef} from 'react';
+import {pressScale} from './pressScale';
+import {mergeStyles} from '../style-macro/runtime.ts';
 
+interface CheckboxStyleProps {
+  size?: 'S' | 'M' | 'L' | 'XL',
+  isEmphasized?: boolean
+}
 
-export function Checkbox({children, ...props}: CheckboxProps) {
+interface RenderProps extends CheckboxRenderProps, CheckboxStyleProps {}
+
+interface CheckboxProps extends Omit<AriaCheckboxProps, 'className'>, CheckboxStyleProps {
+  className?: string
+}
+
+const wrapper = style<RenderProps>({
+  display: 'flex',
+  columnGap: 'text-to-control',
+  alignItems: 'baseline',
+  fontFamily: 'sans',
+  fontSize: 'control',
+  transition: 'colors',
+  color: {
+    default: 'neutral',
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    }
+  }
+});
+
+const box = style<RenderProps>({
+  ...focusRing(),
+  size: 'control-sm',
+  borderRadius: 'control-sm',
+  flexShrink: 0,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderWidth: 2,
+  boxSizing: 'border-box',
+  borderStyle: 'solid',
+  transition: 'default',
+  forcedColorAdjust: 'none',
+  backgroundColor: {
+    default: 'gray-25',
+    isSelected: {
+      default: 'neutral',
+      isEmphasized: baseColor('accent-900'),
+      forcedColors: 'Highlight',
+      isInvalid: {
+        default: baseColor('negative-900'),
+        forcedColors: 'Mark'
+      },
+      isDisabled: {
+        default: 'disabled',
+        forcedColors: 'GrayText'
+      }
+    }
+  },
+  borderColor: {
+    default: baseColor('gray-800'),
+    forcedColors: 'ButtonBorder',
+    isInvalid: {
+      default: 'negative',
+      forcedColors: 'Mark'
+    },
+    isDisabled: {
+      default: 'disabled',
+      forcedColors: 'GrayText'
+    },
+    isSelected: 'transparent'
+  }
+});
+
+const iconStyles = style<RenderProps>({
+  size: {
+    default: 2.5,
+    size: {
+      XL: 3
+    }
+  },
+  '--iconPrimary': {
+    type: 'color',
+    value: {
+      default: 'gray-25',
+      forcedColors: 'HighlightText',
+      isDisabled: 'gray-400'
+    }
+  }
+});
+
+export function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProps) {
+  let boxRef = useRef(null);
   return (
-    <AriaCheckbox {...props}>
-      {({isIndeterminate}) => (
+    <AriaCheckbox
+      {...props}
+      className={renderProps => mergeStyles(props.className, wrapper({...renderProps, size: props.size || 'M'}))}>
+      {renderProps => (
         <>
-          <div className="checkbox">
-            <svg viewBox="0 0 18 18" aria-hidden="true">
-              {isIndeterminate
-                ? <rect x={1} y={7.5} width={15} height={3} />
-                : <polyline points="1 9 7 14 15 4" />}
-            </svg>
-          </div>
+          <CenterBaseline>
+            <div 
+              ref={boxRef}
+              style={pressScale(boxRef)(renderProps)}
+              className={box({
+                ...renderProps,
+                isSelected: renderProps.isSelected || renderProps.isIndeterminate,
+                size: props.size || 'M',
+                isEmphasized: props.isEmphasized
+              })}>
+              {renderProps.isIndeterminate && 
+                <DashIcon className={iconStyles({...renderProps, size: props.size})} />
+              }
+              {renderProps.isSelected && !renderProps.isIndeterminate && 
+                <CheckmarkIcon className={iconStyles({...renderProps, size: props.size})} />
+              }
+            </div>
+          </CenterBaseline>
           {children}
         </>
       )}

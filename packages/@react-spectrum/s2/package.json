@@ -17,6 +17,7 @@
   "devDependencies": {
     "@adobe/spectrum-tokens": "^13.0.0-beta.9",
     "@parcel/config-default": "2.0.0-nightly.1484",
+    "@parcel/transformer-svg-react": "^2.11.0",
     "@storybook/addon-designs": "^7.0.5",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-interactions": "^7.5.3",
