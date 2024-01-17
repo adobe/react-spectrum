@@ -1,17 +1,18 @@
+import { CalendarIcon } from 'lucide-react';
+import React from 'react';
 import {
   DatePicker as AriaDatePicker,
   DatePickerProps as AriaDatePickerProps,
   DateValue,
-  Dialog,
   ValidationResult
 } from 'react-aria-components';
-import { DateInput } from './DateField';
 import { Button } from './Button';
 import { Calendar } from './Calendar';
-import { CalendarIcon } from 'lucide-react';
-import { FieldGroup, Label, FieldError, Description } from './Field';
+import { DateInput } from './DateField';
+import { Dialog } from './Dialog';
+import { Description, FieldError, FieldGroup, Label } from './Field';
 import { Popover } from './Popover';
-import React from 'react';
+import { composeTailwindRenderProps } from './utils';
 
 export interface DatePickerProps<T extends DateValue>
   extends AriaDatePickerProps<T> {
@@ -24,7 +25,7 @@ export function DatePicker<T extends DateValue>(
   { label, description, errorMessage, ...props }: DatePickerProps<T>
 ) {
   return (
-    <AriaDatePicker {...props} className="group flex flex-col gap-1">
+    <AriaDatePicker {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1')}>
       {label && <Label>{label}</Label>}
       <FieldGroup className="min-w-[208px] w-auto">
         <DateInput className="flex-1 min-w-[150px] px-2 py-1.5 text-sm" />
@@ -35,7 +36,7 @@ export function DatePicker<T extends DateValue>(
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
       <Popover>
-        <Dialog className="px-4 py-5 max-h-[inherit] overflow-auto outline-0">
+        <Dialog>
           <Calendar />
         </Dialog>
       </Popover>

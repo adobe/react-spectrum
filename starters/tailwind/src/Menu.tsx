@@ -1,15 +1,16 @@
+import { Check } from 'lucide-react';
+import React from 'react';
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
-  MenuItemProps,
   MenuProps as AriaMenuProps,
+  MenuItemProps,
   Separator,
   SeparatorProps,
   composeRenderProps
 } from 'react-aria-components';
+import { DropdownSection, DropdownSectionProps, dropdownItemStyles } from './ListBox';
 import { Popover, PopoverProps } from './Popover';
-import { Check } from 'lucide-react';
-import React from 'react';
 
 interface MenuProps<T> extends AriaMenuProps<T> {
   placement?: PopoverProps['placement']
@@ -18,14 +19,14 @@ interface MenuProps<T> extends AriaMenuProps<T> {
 export function Menu<T extends object>(props: MenuProps<T>) {
   return (
     <Popover placement={props.placement} className="min-w-[150px]">
-      <AriaMenu {...props} className="p-1 outline outline-0 max-h-[inherit] overflow-auto" />
+      <AriaMenu {...props} className="p-1 outline outline-0 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]" />
     </Popover>
   );
 }
 
 export function MenuItem(props: MenuItemProps) {
   return (
-    <AriaMenuItem {...props} className="group flex items-center gap-2 cursor-default select-none py-2 pl-3 pr-1 rounded-lg outline outline-0 text-gray-900 dark:text-zinc-100 disabled:text-gray-300 dark:disabled:text-zinc-600 text-sm focus:bg-blue-600 focus:text-white forced-color-adjust-none forced-colors:focus:bg-[Highlight] forced-colors:focus:text-[HighlightText]">
+    <AriaMenuItem {...props} className={dropdownItemStyles}>
       {composeRenderProps(props.children, (children, {selectionMode, isSelected}) => <>
         {selectionMode !== 'none' && (
           <span className="w-4 flex items-center">
@@ -41,5 +42,9 @@ export function MenuItem(props: MenuItemProps) {
 }
 
 export function MenuSeparator(props: SeparatorProps) {
-  return <Separator {...props} className="border-b border-gray-300 mx-3 my-1" />
+  return <Separator {...props} className="border-b border-gray-300 dark:border-zinc-700 mx-3 my-1" />
+}
+
+export function MenuSection<T extends object>(props: DropdownSectionProps<T>) {
+  return <DropdownSection {...props} />;
 }
