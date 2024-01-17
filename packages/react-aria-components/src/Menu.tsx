@@ -384,7 +384,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
       data-selected={states.isSelected || undefined}
       data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
       data-has-submenu
-      data-is-submenu-open={isSubmenuOpen}>
+      data-is-submenu-open={isSubmenuOpen || undefined}>
       <Provider
         values={[
           [TextContext, {
