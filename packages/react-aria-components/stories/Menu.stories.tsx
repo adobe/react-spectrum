@@ -123,3 +123,44 @@ export const SubmenuNestedExample = () => (
     </Popover>
   </MenuTrigger>
 );
+
+let manyItemsSubmenu = [
+  {key: 'Lvl 1 Item 1', name: 'Lvl 1 Item 1'},
+  {key: 'Lvl 1 Item 2', name: 'Lvl 1 Item 2', children: [
+    ...[...Array(30)].map((_, i) => ({key: `Lvl 2 Item ${i + 1}`, name: `Lvl 2 Item ${i + 1}`})),
+    {key: 'Lvl 2 Item 31', name: 'Lvl 2 Item 31', children: [
+      {key: 'Lvl 3 Item 1', name: 'Lvl 3 Item 1'},
+      {key: 'Lvl 3 Item 2', name: 'Lvl 3 Item 2'},
+      {key: 'Lvl 3 Item 3', name: 'Lvl 3 Item 3'}
+    ]}
+  ]},
+  ...[...Array(30)].map((_, i) => ({key: `Lvl 1 Item ${i + 3}`, name: `Lvl 1 Item ${i + 3}`}))
+];
+
+let dynamicRenderFunc = (item) => {
+  if (item.children) {
+    return (
+      <SubmenuTrigger>
+        <MyMenuItem key={item.name}>{item.name}</MyMenuItem>
+        <Popover className={styles.popover}>
+          <Menu items={item.children} className={styles.menu} onAction={action('onAction')}>
+            {(item) => dynamicRenderFunc(item)}
+          </Menu>
+        </Popover>
+      </SubmenuTrigger>
+    );
+  } else {
+    return <MyMenuItem key={item.name}>{item.name}</MyMenuItem>;
+  }
+};
+
+export const SubmenuManyItemsExample = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu items={manyItemsSubmenu} className={styles.menu} onAction={action('onAction')}>
+        {(item) => dynamicRenderFunc(item)}
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
