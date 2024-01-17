@@ -14,10 +14,11 @@ import Add from '@spectrum-icons/workflow/Add';
 import {AriaButtonProps} from '@react-types/button';
 import ChevronDownSmall from '@spectrum-icons/ui/ChevronDownSmall';
 import ChevronUpSmall from '@spectrum-icons/ui/ChevronUpSmall';
-import {classNames} from '@react-spectrum/utils';
+import {classNames, useFocusableRef} from '@react-spectrum/utils';
+import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
 import {mergeProps} from '@react-aria/utils';
-import React, {RefObject} from 'react';
+import React, {ReactElement} from 'react';
 import Remove from '@spectrum-icons/workflow/Remove';
 import stepperStyle from '@adobe/spectrum-css-temp/components/stepper/vars.css';
 import {useButton} from '@react-aria/button';
@@ -25,19 +26,20 @@ import {useHover} from '@react-aria/interactions';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 
 interface StepButtonProps extends AriaButtonProps {
-  isQuiet: boolean,
+  isQuiet?: boolean,
   direction: 'up' | 'down'
 }
 
-function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
+function StepButton(props: StepButtonProps, ref: FocusableRef<HTMLDivElement>) {
   props = useProviderProps(props);
   let {scale} = useProvider();
   let {direction, isDisabled, isQuiet} = props;
+  let domRef = useFocusableRef(ref);
   /**
    * Must use div for now because Safari pointer event bugs on disabled form elements.
    * Link https://bugs.webkit.org/show_bug.cgi?id=219188.
    */
-  let {buttonProps, isPressed} = useButton({...props, elementType: 'div'}, ref);
+  let {buttonProps, isPressed} = useButton({...props, elementType: 'div'}, domRef);
   let {hoverProps, isHovered} = useHover(props);
   return (
     <FocusRing focusRingClass={classNames(stepperStyle, 'focus-ring')}>
@@ -57,7 +59,7 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
           )
         }
         {...mergeProps(hoverProps, buttonProps)}
-        ref={ref}>
+        ref={domRef}>
         {direction === 'up' && scale === 'large' &&
           <Add UNSAFE_className={classNames(stepperStyle, 'spectrum-Stepper-button-icon', 'spectrum-Stepper-stepUpIcon')} size="S" />
         }
@@ -78,5 +80,5 @@ function StepButton(props: StepButtonProps, ref: RefObject<HTMLDivElement>) {
 /**
  * Buttons for NumberField.
  */
-let _StepButton = React.forwardRef(StepButton);
+let _StepButton = React.forwardRef(StepButton) as (props: StepButtonProps & {ref?: FocusableRef<HTMLDivElement>}) => ReactElement;
 export {_StepButton as StepButton};

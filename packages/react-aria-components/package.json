@@ -44,6 +44,7 @@
     "@react-aria/toolbar": "3.0.0-beta.1",
     "@react-aria/utils": "^3.23.0",
     "@react-stately/table": "^3.11.4",
+    "@react-stately/utils": "^3.9.0",
     "@react-types/form": "^3.7.1",
     "@react-types/grid": "^3.2.3",
     "@react-types/shared": "^3.22.0",
