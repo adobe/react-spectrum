@@ -60,7 +60,7 @@ html {
   color: white;
 }
 
-.item[aria-haspopup="menu"]::after {
+.item[data-has-submenu]::after {
   content: '›';
   content: '›' / '';
   justify-self: end;
