@@ -1,8 +1,9 @@
 import { AlertCircleIcon, InfoIcon } from "lucide-react";
-import { Dialog, DialogProps, Heading } from "react-aria-components";
-import { Button } from "./Button";
 import React, { ReactNode } from "react";
 import { chain } from "react-aria";
+import { DialogProps, Heading } from "react-aria-components";
+import { Button } from "./Button";
+import { Dialog } from "./Dialog";
 
 interface AlertDialogProps extends Omit<DialogProps, 'children'> {
   title: string,
@@ -23,7 +24,7 @@ export function AlertDialog({
   ...props
 }: AlertDialogProps) {
   return (
-    <Dialog role="alertdialog" {...props} className="outline-0 relative">
+    <Dialog role="alertdialog" {...props}>
       {({ close }) => (
         <>
           <Heading
@@ -31,7 +32,7 @@ export function AlertDialog({
             className="text-xl font-semibold leading-6 my-0">
             {title}
           </Heading>
-          <div className={`w-6 h-6 absolute right-0 top-0 stroke-2 ${variant === 'destructive' ? 'text-red-500' : 'text-blue-500'}`}>
+          <div className={`w-6 h-6 absolute right-6 top-6 stroke-2 ${variant === 'destructive' ? 'text-red-500' : 'text-blue-500'}`}>
             {variant === 'destructive' ? <AlertCircleIcon aria-hidden /> : <InfoIcon aria-hidden />}
           </div>
           <p className="mt-3 text-slate-500 dark:text-zinc-400">
