@@ -12,7 +12,7 @@
 
 import {AriaGridListProps, FocusScope,  mergeProps, useFocusRing, useGridList, useGridListItem, useHover} from 'react-aria';
 import {BaseCollection, Collection, CollectionProps, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
-import {Collection as ICollection, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
+import {Collection as ICollection, ListState, Node, SelectionBehavior, useListState, useTreeState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Expandable, Key, LinkDOMProps} from '@react-types/shared';
@@ -46,13 +46,14 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   // TODO: Add keymap from original collection and use that for get
 
   constructor(opts) {
+    let {collection, expandedKeys} = opts;
     // TODO: we don't actually need the keymap from generatateTreeGridCollection technically since index is equivalent to
     // indexOfType. However the level calculated will need to be bumped up by one so keep it?
     // Also maybe use it for this.getItem?
-    let {flattenedRows, keyMap: flattenedKeyMap} = generateTreeGridCollection<T>(opts.collection, {expandedKeys: opts.expandedKeys});
+    let {flattenedRows, keyMap} = generateTreeGridCollection<T>(collection, {expandedKeys});
     this.flattenedRows = flattenedRows;
     // TODO: replace with the flattened key map or the original one? Maybe have the state provide the original keymap?
-    this.keyMap = flattenedKeyMap;
+    this.keyMap = keyMap;
   }
 
   *[Symbol.iterator]() {
@@ -110,6 +111,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
 
   getTextValue(key: Key): string {
     // TODO: fill in
+    return 'blah';
   }
 }
 
@@ -124,9 +126,6 @@ export interface TreeProps<T> extends Omit<AriaGridListProps<T>, 'children'>, Co
   selectionBehavior?: SelectionBehavior,
   /** Provides content to display when there are no items in the list. */
   renderEmptyState?: (props: TreeRenderProps) => ReactNode
-
-
-
 }
 
 
@@ -156,7 +155,7 @@ interface TreeInnerProps<T extends object> {
 }
 
 function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
-  console.log('collection', ...collection)
+  // console.log('collection', ...collection)
   // TODO: perhaps perform post processing of the collection here? Would we call useTreeState and pass the collection to it, then
   // process the collection with the expandedKeys? Or perhaps make a new hook?
 
@@ -175,8 +174,13 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     onExpandedChange
   );
 
-  let treeGridCollection = useMemo(() => {
-    return generateTreeGridCollection<T>(collection, {expandedKeys});
+  // let treeGridCollection = useMemo(() => {
+  //   return generateTreeGridCollection<T>(collection, {expandedKeys});
+  // }, [collection, expandedKeys]);
+
+  let flattenedCollection = useMemo(() => {
+    // TODO: types
+    return new TreeCollection<object>({collection, expandedKeys});
   }, [collection, expandedKeys]);
 
   // TODO: we get the flatten rows in the proper order but the nodes aren't modified to have a new set of keys pointing to the proper "next key" that would reflect the flattened state
@@ -184,21 +188,16 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   // 1. Change this generateTreeGrid function so that it returns a new TreeCollection that has the keymap from the original base structure but uses
   // the flattened table rows when performing `getKeyBefore`, `getKeyAfter` etc, aka it would do index based look ups instead of needing to look at the keyMap.
   // Perhaps I could call generateTreeGridCollection in constructor of the TreeCollection class
-  console.log('treeGridCollection', treeGridCollection)
+  console.log('treeGridCollection', flattenedCollection)
 
 
-
-
-
-
-
-
-
-  // TODO: call useTreeState, but may need to modify it so that it has some of the same stuff as useTreeGridState?
-  // Don't think I need a layout since this is non virtualized, will get a keyboard delegate from useGrid
-  let state = useListState({
+  // TODO: use useTreeState or update useGridState to handle expandable rows?
+  // We don't have cell nodes in the collection as is so if we want to use useGridState we'll need to add those perhaps since a lot of the state and row code may expect cell keys
+  // At the moment the flattened nodes have other rows as their children which isn't what some of the useGridState code expects
+  // RSP TableView got around this by just modifying the flattened row nodes so they had cells as their childNodes and got rid of the child rows
+  let state = useTreeState({
     ...props,
-    collection,
+    collection: flattenedCollection,
     children: undefined
   });
 
@@ -207,7 +206,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 
   let children = useCachedChildren({
     // TODO: this would the flatted rows from the collection
-    items: collection,
+    // items: collection,
+    items: state.collection,
     children: (item: Node<T>) => {
       switch (item.type) {
         case 'item':
@@ -346,6 +346,7 @@ function TreeRow({item}) {
   // TODO replace with useGridRow perhaps. Wonder if I could use something like useGridListItem instead since it is technically a
   // single column single cell setup. Double check what differences between useGridListItem and useGridRow/useGridCell exist
   // since that might affect it (I think there used to be some weirdness with single column useGridRow).
+  // Also depending on the item's information with index/level, we may need to add +1 to various attributes
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
       node: item
@@ -359,7 +360,7 @@ function TreeRow({item}) {
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
-
+  // console.log('item', item);
   let props: TreeItemProps<unknown> = item.props;
   let renderProps = useRenderProps({
     ...props,
@@ -371,7 +372,8 @@ function TreeRow({item}) {
       isHovered,
       isFocusVisible,
       // TODO: grab expanded rows from tree state
-      isExpanded: true,
+      // isExpanded: true,
+      isExpanded: item.hasChildNodes ? state.expandedKeys === 'all' || state.expandedKeys.has(item.key) : undefined,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior
     }

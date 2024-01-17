@@ -73,8 +73,8 @@ let rows = [
           {id: 'reports-1ABC', name: 'Reports 1ABC'}
         ]}
       ]},
-      {id: 'reports-1B', name: 'Project 1B'},
-      {id: 'reports-1C', name: 'Project 1C'}
+      {id: 'reports-1B', name: 'Reports 1B'},
+      {id: 'reports-1C', name: 'Reports 1C'}
     ]},
     {id: 'reports-2', name: 'Reports 2'}
   ]}
