@@ -26,13 +26,13 @@ export interface TreeState<T> {
   readonly disabledKeys: Set<Key>,
 
   /** A set of keys for items that are expanded. */
-  readonly expandedKeys: Set<Key>,
+  readonly expandedKeys: 'all' | Set<Key>,
 
   /** Toggles the expanded state for an item by its key. */
   toggleKey(key: Key): void,
 
   /** Replaces the set of expanded keys. */
-  setExpandedKeys(keys: Set<Key>): void,
+  setExpandedKeys(keys: 'all' | Set<Key>): void,
 
   /** A selection manager to read and update multiple selection state. */
   readonly selectionManager: SelectionManager
@@ -65,10 +65,8 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
   }, [tree, selectionState.focusedKey]);
 
   let onToggle = (key: Key) => {
-    setExpandedKeys(toggleKey(expandedKeys, key));
+    setExpandedKeys(toggleKey(expandedKeys, key, tree));
   };
-
-  // TODO: modify
 
   return {
     collection: tree,
@@ -80,13 +78,19 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
   };
 }
 
-function toggleKey(set: Set<Key>, key: Key): Set<Key> {
-  let res = new Set(set);
-  if (res.has(key)) {
-    res.delete(key);
+function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collection: Collection<Node<T>>): Set<Key> {
+  let updatedExpandedKeys: Set<Key>;
+  if (currentExpandedKeys === 'all') {
+    updatedExpandedKeys = new Set([...collection].filter(row => row.props.hasChildItems).map(row => row.key));
+    updatedExpandedKeys.delete(key);
   } else {
-    res.add(key);
+    updatedExpandedKeys = new Set(currentExpandedKeys);
+    if (updatedExpandedKeys.has(key)) {
+      updatedExpandedKeys.delete(key);
+    } else {
+      updatedExpandedKeys.add(key);
+    }
   }
 
-  return res;
+  return updatedExpandedKeys;
 }

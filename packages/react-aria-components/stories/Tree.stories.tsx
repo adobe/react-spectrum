@@ -66,54 +66,24 @@ const StaticTreeItem = (props) => {
         selected: isSelected,
         hovered: isHovered
       })}>
-      {/* {({isExpanded}) => (
+      {({isExpanded}) => (
         <Content>
           {isExpanded && <div>Im expanded</div>}
           <Text slot="title">{props.title || props.children}</Text>
           <Button aria-label="Info">ⓘ</Button>
           <Button aria-label="Menu">☰</Button>
         </Content>
-      )} */}
-
-      {/* TODO this adds the content element to the collection properly if it isn't in the renderProps function... */}
-      <Content>
-        {/* TODO: should render a chevron that we can modify with a isExpanded render prop */}
-        {/* {isExpanded && <div>Im expanded</div>} */}
-        {/* TODO: support this title slot */}
-        <Text slot="title">{props.title || props.children}</Text>
-        {/* TODO: Test left/right keyboard movement */}
-        <Button aria-label="Info">ⓘ</Button>
-        {/* TODO: make this menu expandable later and test it */}
-        <Button aria-label="Menu">☰</Button>
-      </Content>
-      {/* Renders the nested row */}
-      {props.title ? props.children : null}
+      )}
+      {props.title && props.children}
     </TreeItem>
   );
 };
 
 
-
-
-
-{/* <>
-{({isExpanded}) => (
-  <>
-    <Content>
-      {isExpanded && <div>Im expanded</div>}
-      <Text slot="title">{props.title}</Text>
-      <Button aria-label="Info">ⓘ</Button>
-      <Button aria-label="Menu">☰</Button>
-    </Content>
-    {props.children}
-  </>
-)}
-</>  */}
-
 export const TreeExampleStatic = (args) => (
   // TODO: update the styles here
   <Tree expandedKeys="all" className={styles.menu} {...args} aria-label="test static tree">
-    {/* <StaticTreeItem id="1" textValue="Projects" title="Projects">Blah</StaticTreeItem> */}
+    <StaticTreeItem id="1" textValue="Projects">Blah</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
         <StaticTreeItem id="projects-1A" textValue="Projects-1A">
@@ -123,6 +93,11 @@ export const TreeExampleStatic = (args) => (
     </StaticTreeItem>
     <TreeItem id="reports">
       Reports
+    </TreeItem>
+    <TreeItem id="tests">
+      {({isFocused}) => (
+        <Text slot="title">{`${isFocused} tests`}</Text>
+      )}
     </TreeItem>
   </Tree>
 );

@@ -153,7 +153,7 @@ interface TreeInnerProps<T extends object> {
 }
 
 function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
-  console.log('collection', collection)
+  // console.log('collection', collection)
   // TODO: perhaps perform post processing of the collection here? Would we call useTreeState and pass the collection to it, then
   // process the collection with the expandedKeys? Or perhaps make a new hook?
 
@@ -195,6 +195,9 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   // RSP TableView got around this by just modifying the flattened row nodes so they had cells as their childNodes and got rid of the child rows
   let state = useTreeState({
     ...props,
+    selectionMode,
+    expandedKeys,
+    onExpandedChange: setExpandedKeys,
     collection: flattenedCollection,
     children: undefined
   });
@@ -317,24 +320,32 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
 
   // TODO: do we need to support a title prop to distinguish static from dynamic?
   let childRows: ReactNode | ((item: T) => ReactNode);
-  let renderedChildren: ReactNode;
+  let renderedChildren: ReactNode |((values: TreeItemRenderProps) => React.ReactNode);
   if (typeof render === 'function') {
-    // console.log('render', props.children, React.Children.count(props.children) > 1, React.Children.count(props.children), props.children.length);
-    // if (React.Children.count(props.children) > 1) {
-
-    // } else {
-      // renderedChildren = props.children;
-    // }
-
     childRows = render;
+    // TODO: assumption here is that props.children[0] is Content
     renderedChildren = props.children[0];
   } else if (typeof props.children !== 'function') {
+    console.log('childnre type', typeof props.children, React.Children.count(props.children));
+    // if we don't have a render function and props.children isn't a function (aka not a renderProps func)
     if (React.Children.count(props.children) > 1) {
+      // TODO: assumption here is that Content is first child and that the second child of the TreeItem is the Collection
       childRows = props.children[1];
       renderedChildren = props.children[0];
     } else {
-      renderedChildren = props.children;
+      // TODO: the below is if we have a renderProps function in the static case of nested rows, assumes the first child is the renderFunc
+      // and the second child is the childRow
+      if (typeof props.children[0] === 'function') {
+        renderedChildren = props.children[0];
+        childRows = props.children[1];
+      } else {
+        // TODO: this case is for static rows with the row text content just provided as a string
+        renderedChildren = props.children;
+      }
     }
+  } else {
+    // This case is if we are rendering a static tree row that has a renderProps func only
+    renderedChildren = props.children;
   }
 
   let children = useCollectionChildren({
@@ -342,7 +353,7 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
     children: childRows,
     items: childItems
   });
-  console.log('children, childRows, props.children, props.title', children, childRows, props.children[0], props.title)
+  // console.log('children, childRows, props.children, props.title', children, childRows, props.children[0], props.title)
 
   // TODO: right now I have null as rendered because the user provides <Content> which is the rendered content
   // This means however that renderProps doesn't work...
@@ -396,7 +407,6 @@ function TreeRow({item}) {
       selectionBehavior: state.selectionManager.selectionBehavior
     }
   });
-
 
   useEffect(() => {
     if (!item.textValue) {
@@ -465,23 +475,6 @@ function TreeRow({item}) {
 
 
 // TODO: Code from useTreeGridState
-function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collection: TreeGridCollection<T>): Set<Key> {
-  let updatedExpandedKeys: Set<Key>;
-  if (currentExpandedKeys === 'all') {
-    updatedExpandedKeys = new Set(collection.flattenedRows.filter(row => row.props.childItems || row.props.children.length > collection.userColumnCount).map(row => row.key));
-    updatedExpandedKeys.delete(key);
-  } else {
-    updatedExpandedKeys = new Set(currentExpandedKeys);
-    if (updatedExpandedKeys.has(key)) {
-      updatedExpandedKeys.delete(key);
-    } else {
-      updatedExpandedKeys.add(key);
-    }
-  }
-
-  return updatedExpandedKeys;
-}
-
 function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
   if (!expanded) {
     return new Set<Key>();
@@ -491,7 +484,6 @@ function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
     ? 'all'
     : new Set(expanded);
 }
-
 interface TreeGridCollectionOptions {
   showSelectionCheckboxes?: boolean,
   showDragButtons?: boolean,
