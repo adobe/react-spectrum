@@ -199,13 +199,6 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
   const valuesRef = useRef<number[]>(values);
   const isDraggingsRef = useRef<boolean[]>(isDraggings);
 
-  useEffect(() => {
-    // There are some cases where `valuesRef.current` becomes out of sync with `values`.
-    // So we update `valuesRef.current` here to make sure it's up to date.
-    // https://github.com/adobe/react-spectrum/issues/5644
-    valuesRef.current = values;
-  }, [values]);
-
   let setValues = (values: number[]) => {
     valuesRef.current = values;
     setValuesState(values);
@@ -251,6 +244,9 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
   function updateDragging(index: number, dragging: boolean) {
     if (isDisabled || !isThumbEditable(index)) {
       return;
+    }
+    if (dragging) {
+      valuesRef.current = values;
     }
 
     const wasDragging = isDraggingsRef.current[index];
