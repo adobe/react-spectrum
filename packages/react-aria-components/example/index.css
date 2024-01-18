@@ -50,6 +50,11 @@ html {
   color: white;
 }
 
+.item.submenu-open:not(.focused) {
+  background: lightslategray;
+  color: white;
+}
+
 .item.item.hovered {
   background: lightsalmon;
   color: white;
