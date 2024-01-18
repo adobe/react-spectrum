@@ -16,6 +16,7 @@ export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHe
 export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext, CheckboxGroupStateContext} from './Checkbox';
 export {ComboBox, ComboBoxContext, ComboBoxStateContext} from './ComboBox';
 export {composeRenderProps, Provider, useContextProps, useSlottedContext} from './utils';
+export {Content, ContentContext} from './Content';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext, DateFieldStateContext, TimeFieldStateContext} from './DateField';
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext, DatePickerStateContext, DateRangePickerStateContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from './Dialog';

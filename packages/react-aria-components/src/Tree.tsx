@@ -11,7 +11,7 @@
  */
 
 import {AriaGridListProps, FocusScope,  mergeProps, useFocusRing, useGridList, useGridListItem, useHover} from 'react-aria';
-import {BaseCollection, Collection, CollectionProps, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
+import {BaseCollection, Collection, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
 import {Collection as ICollection, ListState, Node, SelectionBehavior, useListState, useTreeState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
@@ -94,7 +94,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
     return this.flattenedRows[index - 1]?.key;
   }
 
-  // TODO: Double check this, straight from BaseCollection
+  // TODO: If we use the keyMap and the keymap has the extra "content" nodes, its going to be all out of wack
   getChildren(key: Key): Iterable<Node<T>> {
     let keyMap = this.keyMap;
     return {
@@ -110,8 +110,8 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 
   getTextValue(key: Key): string {
-    // TODO: fill in
-    return 'blah';
+    let item = this.getItem(key);
+    return item ? item.textValue : '';
   }
 }
 
@@ -130,19 +130,17 @@ export interface TreeProps<T> extends Omit<AriaGridListProps<T>, 'children'>, Co
 
 
 export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
-const RenderFuncContext = createContext<{renderFunc:(item: any) => React.ReactNode}>({renderFunc: null});
 
 function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, TreeContext);
   let {collection, portal} = useCollection(props);
-
+  let renderer = typeof props.children === 'function' ? props.children : null;
   return (
     <>
-      {/* TODO: is this the proper way we want to pass the renderFunc from  */}
-      <RenderFuncContext.Provider value={{renderFunc: typeof props.children === 'function' ? props.children : null}}>
+      <CollectionRendererContext.Provider value={renderer}>
         {portal}
-      </RenderFuncContext.Provider>
+      </CollectionRendererContext.Provider>
       <TreeInner props={props} collection={collection} treeRef={ref} />
     </>
   );
@@ -155,7 +153,7 @@ interface TreeInnerProps<T extends object> {
 }
 
 function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
-  // console.log('collection', ...collection)
+  console.log('collection', collection)
   // TODO: perhaps perform post processing of the collection here? Would we call useTreeState and pass the collection to it, then
   // process the collection with the expandedKeys? Or perhaps make a new hook?
 
@@ -188,7 +186,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   // 1. Change this generateTreeGrid function so that it returns a new TreeCollection that has the keymap from the original base structure but uses
   // the flattened table rows when performing `getKeyBefore`, `getKeyAfter` etc, aka it would do index based look ups instead of needing to look at the keyMap.
   // Perhaps I could call generateTreeGridCollection in constructor of the TreeCollection class
-  console.log('treeGridCollection', flattenedCollection)
+  // console.log('treeGridCollection', flattenedCollection, collection)
 
 
   // TODO: use useTreeState or update useGridState to handle expandable rows?
@@ -301,34 +299,54 @@ export interface TreeItemProps<T = object> extends RenderProps<TreeItemRenderPro
 
 // TODO TreeItem here would need to know how to render nested TreeItems based off of its children (aka static) or for the dynamic case (check childItems existance and reuse the render func provided to Tree)
 function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
-  let {childItems, children} = props;
-  let {renderFunc} = useContext(RenderFuncContext);
-  // TODO: what is the best way to create the nested children? Do I use useCachedChildren (feels like that is only for the inner components)?
-  // What about Collecton?
-  // let nestedChildren;
-  // if (childItems && props) {
-  //   nestedChildren = [];
-  //   for (let item of childItems) {
-  //     nestedChildren.push(renderFunc(item));
-  //   }
-  // }
-  // let nestedChildren = useCachedChildren({
-  //   items: childItems,
-  //   children: (item) => renderFunc(item)
-  // });
+  let {childItems} = props;
+  let render = useContext(CollectionRendererContext);
 
-  let nestedChildren;
-  if (childItems) {
-    // TODO: the assumption here is that either the Tree was passed a render function aka dynamic case
-    nestedChildren = (
-      <Collection items={childItems}>
-        {renderFunc}
-      </Collection>
-    );
+  // let nestedChildren;
+  // if (childItems) {
+  //   // TODO: the assumption here is that either the Tree was passed a render function aka dynamic case
+  //   nestedChildren = (
+  //     <Collection items={childItems}>
+  //       {render}
+  //     </Collection>
+  //   );
+  // }
+
+  // return useSSRCollectionNode('item', props, ref, children, nestedChildren);
+
+
+  // TODO: do we need to support a title prop to distinguish static from dynamic?
+  let childRows: ReactNode | ((item: T) => ReactNode);
+  let renderedChildren: ReactNode;
+  if (typeof render === 'function') {
+    // console.log('render', props.children, React.Children.count(props.children) > 1, React.Children.count(props.children), props.children.length);
+    // if (React.Children.count(props.children) > 1) {
+
+    // } else {
+      // renderedChildren = props.children;
+    // }
+
+    childRows = render;
+    renderedChildren = props.children[0];
+  } else if (typeof props.children !== 'function') {
+    if (React.Children.count(props.children) > 1) {
+      childRows = props.children[1];
+      renderedChildren = props.children[0];
+    } else {
+      renderedChildren = props.children;
+    }
   }
 
-  // TODO: at the moment we don't account for cell at all
-  return useSSRCollectionNode('item', props, ref, children, nestedChildren);
+  let children = useCollectionChildren({
+    // children: childItems ? childRows : null,
+    children: childRows,
+    items: childItems
+  });
+  console.log('children, childRows, props.children, props.title', children, childRows, props.children[0], props.title)
+
+  // TODO: right now I have null as rendered because the user provides <Content> which is the rendered content
+  // This means however that renderProps doesn't work...
+  return useSSRCollectionNode('item', props, ref, renderedChildren, children);
 }
 
 /**
@@ -386,6 +404,28 @@ function TreeRow({item}) {
     }
   }, [item.textValue]);
 
+
+  // TODO: don't need the below unless we want to track 'content' in the
+  // console.log('state.collection ', state.collection)
+  // let children = useCachedChildren({
+  //   items: state.collection.getChildren!(item.key),
+  //   children: item => {
+  //     switch (item.type) {
+  //       case 'content': {
+  //         return <>{item.rendered}</>;
+  //       }
+  //       // skip item since we don't render the nested rows as children of the parent row
+  //       case 'item':
+  //         return <></>;
+  //       default:
+  //         throw new Error('Unsupported element type in TreeRow: ' + item.type);
+  //     }
+  //   }
+  // });
+
+  // console.log('children in ROW', children)
+
+
   return (
     <>
       <div
@@ -403,12 +443,14 @@ function TreeRow({item}) {
           <Provider
             values={[
               [TextContext, {
+                //  TODO: update
                 slots: {
-                  description: descriptionProps
+                  title: {}
                 }
               }]
             ]}>
             {renderProps.children}
+            {/* {children} */}
           </Provider>
         </div>
       </div>
