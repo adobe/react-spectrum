@@ -194,7 +194,13 @@ export interface DateInputRenderProps {
    * Whether the date input is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean,
+
+  /**
+   * Whether the date input is invalid.
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean
 }
 
 export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRenderProps> {
@@ -289,6 +295,11 @@ export interface DateSegmentRenderProps extends Omit<IDateSegment, 'isEditable'>
    */
   isReadOnly: boolean,
   /**
+   * Whether the date field is disabled.
+   * @selector [data-disabled]
+   */
+  isDisabled: boolean,
+  /**
    * Whether the date field is in an invalid state.
    * @selector [data-invalid]
    */
@@ -318,6 +329,7 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
       ...segment,
       isReadOnly: !segment.isEditable,
       isInvalid: state.isInvalid,
+      isDisabled: state.isDisabled,
       isHovered,
       isFocused,
       isFocusVisible
@@ -335,6 +347,7 @@ function DateSegment({segment, ...otherProps}: DateSegmentProps, ref: ForwardedR
       data-placeholder={segment.isPlaceholder || undefined}
       data-invalid={state.isInvalid || undefined}
       data-readonly={!segment.isEditable || undefined}
+      data-disabled={state.isDisabled || undefined}
       data-type={segment.type}
       data-hovered={isHovered || undefined}
       data-focused={isFocused || undefined}

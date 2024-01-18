@@ -17,9 +17,3 @@ export default {
 export const Default = {
   args: {},
 };
-
-export const Indeterminate = {
-  args: {
-    isIndeterminate: true
-  },
-};
