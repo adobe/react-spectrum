@@ -13,7 +13,7 @@
 import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 
 export interface SliderState {
   /**
