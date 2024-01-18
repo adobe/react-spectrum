@@ -79,7 +79,12 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
    * For example, [`type`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attr-type).
    * @default 'input'
    */
-  inputElementType?: T
+  inputElementType?: T,
+  /**
+   * Controls whether inputted text is automatically capitalized and, if so, in what manner. 
+   * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
+   */
+  autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters'
 }
 
 /**
@@ -175,6 +180,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
         value,
         onChange: (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value),
         autoComplete: props.autoComplete,
+        autoCapitalize: props.autoCapitalize,
         maxLength: props.maxLength,
         minLength: props.minLength,
         name: props.name,

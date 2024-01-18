@@ -12,7 +12,7 @@
 
 import {CollectionBuilderContext} from './useTableState';
 import {PartialNode} from '@react-stately/collections';
-import React, {ReactElement} from 'react';
+import React, {JSX, ReactElement} from 'react';
 import {RowProps} from '@react-types/table';
 
 function Row<T>(props: RowProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -115,5 +115,5 @@ Row.getCollectionNode = function* getCollectionNode<T>(props: RowProps<T>, conte
  * based on the columns defined in the TableHeader.
  */
 // We don't want getCollectionNode to show up in the type definition
-let _Row = Row as <T>(props: RowProps<T>) => React.JSX.Element;
+let _Row = Row as <T>(props: RowProps<T>) => JSX.Element;
 export {_Row as Row};

@@ -250,14 +250,14 @@ describe('MenuTrigger', function () {
       Name             | Component      | props
       ${'MenuTrigger'} | ${MenuTrigger} | ${{}}
     `('$Name autofocuses the selected item on menu open', function ({Component, props}) {
-      let tree = renderComponent(Component, props, {selectedKeys: ['Bar']});
+      let tree = renderComponent(Component, props, {selectedKeys: ['Bar'], selectionMode: 'single'});
       act(() => {jest.runAllTimers();});
       let button = tree.getByRole('button');
       triggerPress(button);
       act(() => {jest.runAllTimers();});
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
-      let menuItems = within(menu).getAllByRole('menuitem');
+      let menuItems = within(menu).getAllByRole('menuitemradio');
       let selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       triggerPress(button);
@@ -271,7 +271,7 @@ describe('MenuTrigger', function () {
       fireEvent.keyUp(button, {key: 'ArrowDown', code: 40, charCode: 40});
       act(() => {jest.runAllTimers();});
       menu = tree.getByRole('menu');
-      menuItems = within(menu).getAllByRole('menuitem');
+      menuItems = within(menu).getAllByRole('menuitemradio');
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
       triggerPress(button);
@@ -281,7 +281,7 @@ describe('MenuTrigger', function () {
       // Opening menu via up arrow still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowUp', code: 38, charCode: 38});
       menu = tree.getByRole('menu');
-      menuItems = within(menu).getAllByRole('menuitem');
+      menuItems = within(menu).getAllByRole('menuitemradio');
       selectedItem = menuItems[1];
       expect(selectedItem).toBe(document.activeElement);
     });
@@ -924,23 +924,29 @@ describe('MenuTrigger', function () {
   describe('MenuTrigger trigger="longPress" focus behavior', function () {
     installPointerEvent();
 
-    function expectMenuItemToBeActive(tree, idx) {
+    function expectMenuItemToBeActive(tree, idx, selectionMode) {
+      let menuItemRole = 'menuitem';
+      if (selectionMode === 'multiple') {
+        menuItemRole = 'menuitemcheckbox';
+      } else if (selectionMode === 'single') {
+        menuItemRole = 'menuitemradio';
+      }
       let menu = tree.getByRole('menu');
       expect(menu).toBeTruthy();
-      let menuItems = within(menu).getAllByRole('menuitem');
+      let menuItems = within(menu).getAllByRole(menuItemRole);
       let selectedItem = menuItems[idx < 0 ? menuItems.length + idx : idx];
       expect(selectedItem).toBe(document.activeElement);
       return menu;
     }
 
     it('should focus the selected item on menu open', function () {
-      let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {selectedKeys: ['Bar']});
+      let tree = renderComponent(MenuTrigger, {trigger: 'longPress'}, {selectedKeys: ['Bar'], selectionMode: 'single'});
       let button = tree.getByRole('button');
       act(() => {
         triggerLongPress(button);
         jest.runAllTimers();
       });
-      let menu = expectMenuItemToBeActive(tree, 1);
+      let menu = expectMenuItemToBeActive(tree, 1, 'single');
       act(() => {
         triggerTouch(button);
         jest.runAllTimers();
@@ -949,7 +955,7 @@ describe('MenuTrigger', function () {
 
       // Opening menu via Alt+ArrowUp still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowUp', altKey: true});
-      menu = expectMenuItemToBeActive(tree, 1);
+      menu = expectMenuItemToBeActive(tree, 1, 'single');
 
       act(() => {
         triggerTouch(button);
@@ -959,7 +965,7 @@ describe('MenuTrigger', function () {
 
       // Opening menu via Alt+ArrowDown still autofocuses the selected item
       fireEvent.keyDown(button, {key: 'ArrowDown', altKey: true});
-      menu = expectMenuItemToBeActive(tree, 1);
+      menu = expectMenuItemToBeActive(tree, 1, 'single');
 
       act(() => {
         triggerTouch(button);
@@ -1000,6 +1006,7 @@ describe('MenuTrigger', function () {
         let {locale = 'en-US'} = providerProps;
         tree = render(
           <Provider theme={theme} locale={locale}>
+            <input data-testid="previous" />
             <MenuTrigger>
               <ActionButton>Menu</ActionButton>
               <Menu onAction={action('onAction')}>
@@ -1026,6 +1033,7 @@ describe('MenuTrigger', function () {
                 </ContextualHelpTrigger>
               </Menu>
             </MenuTrigger>
+            <input data-testid="next" />
           </Provider>
         );
       };
@@ -1144,7 +1152,9 @@ describe('MenuTrigger', function () {
         await user.tab();
         act(() => {jest.runAllTimers();});
         expect(dialog).not.toBeInTheDocument();
-        expect(document.activeElement).toBe(menuItems[4]);
+        expect(menu).not.toBeInTheDocument();
+        let input = tree.getByTestId('next');
+        expect(document.activeElement).toBe(input);
       });
 
       it('will close everything if the user shift tabs out of the subdialog', async function () {
@@ -1166,8 +1176,8 @@ describe('MenuTrigger', function () {
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
         expect(dialog).not.toBeInTheDocument();
-
-        expect(document.activeElement).toBe(unavailableItem);
+        let input = tree.getByTestId('previous');
+        expect(document.activeElement).toBe(input);
       });
 
       it('will close everything if the user shift tabs out of the subdialog', function () {

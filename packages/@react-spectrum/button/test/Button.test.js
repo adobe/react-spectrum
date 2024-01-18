@@ -79,6 +79,34 @@ describe('Button', function () {
   });
 
   it.each`
+    Name              | Component      | props
+    ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+    ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, onPressStart: onPressStartSpy, onPressEnd: onPressEndSpy, onPressUp: onPressUpSpy, onPressChange: onPressChangeSpy}}
+  `('$Name keyboard press and key events', async function ({Component, props}) {
+    let onKeyDownSpy = jest.fn();
+    let onKeyUpSpy = jest.fn();
+    let {getByRole} = render(<Component {...props} onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy}>Click Me</Component>);
+
+    let button = getByRole('button');
+    await user.tab();
+    expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
+    expect(document.activeElement).toBe(button);
+    await user.keyboard('{Enter}');
+    expect(onPressStartSpy).toHaveBeenCalledTimes(1);
+    expect(onPressSpy).toHaveBeenCalledTimes(1);
+    expect(onPressEndSpy).toHaveBeenCalledTimes(1);
+    expect(onPressUpSpy).toHaveBeenCalledTimes(1);
+    expect(onPressChangeSpy).toHaveBeenCalledTimes(2);
+    expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
+    expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
+
+    await user.keyboard('A');
+    expect(onKeyDownSpy).toHaveBeenCalledTimes(2);
+    expect(onKeyUpSpy).toHaveBeenCalledTimes(3);
+  });
+
+  it.each`
     Name              | Component
     ${'ActionButton'} | ${ActionButton}
     ${'Button'}       | ${Button}

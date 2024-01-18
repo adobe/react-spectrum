@@ -742,6 +742,18 @@ describe('usePress', function () {
 
       expect(spy).toHaveBeenCalled();
     });
+
+    it('should add/remove user-select: none to the element on pointer down/up', function () {
+      let res = render(
+        <Example />
+      );
+
+      let el = res.getByText('test');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(el).toHaveStyle('user-select: none');
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
+      expect(el).not.toHaveStyle('user-select: none');
+    });
   });
 
   describe('mouse events', function () {
@@ -1777,7 +1789,6 @@ describe('usePress', function () {
       let el = getByText('test');
       fireEvent.keyDown(el, {key: ' '});
       fireEvent.keyUp(el, {key: ' '});
-
       expect(events).toEqual([
         {
           type: 'pressstart',
