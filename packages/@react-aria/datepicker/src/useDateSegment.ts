@@ -98,6 +98,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
       let parsed = parser.parse(newValue);
       if (newValue.length === 0 || parsed === 0) {
         state.clearSegment(segment.type);
+        focusManager.focusPrevious();
       } else {
         state.setSegment(segment.type, parsed);
       }
