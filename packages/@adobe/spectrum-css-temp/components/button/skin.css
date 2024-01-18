@@ -601,7 +601,7 @@ governing permissions and limitations under the License.
 
 .spectrum-ActionButton--quiet {
   background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-quiet-background-color));
-  border-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-quiet-border-color));
+  border-color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-quiet-border-color));
   color: xvar(--spectrum-high-contrast-button-text, var(--spectrum-actionbutton-quiet-text-color));
 
   &:hover {
@@ -625,7 +625,7 @@ governing permissions and limitations under the License.
   &:disabled,
   &.is-disabled {
     background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-quiet-background-color-disabled));
-    border-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-quiet-border-color-disabled));
+    border-color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-quiet-border-color-disabled));
     color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-quiet-text-color-disabled));
   }
 }
