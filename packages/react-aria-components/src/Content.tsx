@@ -17,7 +17,7 @@ import {useShallowRender} from './Collection';
 // TODO: need contentContext?
 export const ContentContext = createContext<ContextValue<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>({});
 
-// TODO: this is for nested Tree rows
+// TODO: Delete this
 function Content(originalProps: HTMLAttributes<HTMLDivElement>, originalRef: ForwardedRef<HTMLDivElement>) {
   let [props, ref] = useContextProps(originalProps, originalRef, ContentContext);
   let shallow = useShallowRender('content', originalProps, originalRef);

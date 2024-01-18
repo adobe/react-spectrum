@@ -43,10 +43,16 @@ export interface TreeState<T> {
  * of items from props, item expanded state, and manages multiple selection state.
  */
 export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T> {
+  let {
+    expandedKeys: propExpandedKeys,
+    defaultExpandedKeys: propDefaultExpandedKeys,
+    onExpandedChange
+  } = props;
+
   let [expandedKeys, setExpandedKeys] = useControlledState(
-    props.expandedKeys ? new Set(props.expandedKeys) : undefined,
-    props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
-    props.onExpandedChange
+    propExpandedKeys ? convertExpanded(propExpandedKeys) : undefined,
+    propDefaultExpandedKeys ? convertExpanded(propDefaultExpandedKeys) : new Set(),
+    onExpandedChange
   );
 
   let selectionState = useMultipleSelectionState(props);
@@ -93,4 +99,14 @@ function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collectio
   }
 
   return updatedExpandedKeys;
+}
+
+function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
+  if (!expanded) {
+    return new Set<Key>();
+  }
+
+  return expanded === 'all'
+    ? 'all'
+    : new Set(expanded);
 }

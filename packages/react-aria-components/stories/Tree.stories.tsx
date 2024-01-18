@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, Content, Text, Tree, TreeItem} from 'react-aria-components';
+import {Button, Collection, Text, Tree, TreeItem, TreeItemContent} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React from 'react';
 import styles from '../example/index.css';
@@ -66,14 +66,16 @@ const StaticTreeItem = (props) => {
         selected: isSelected,
         hovered: isHovered
       })}>
-      {({isExpanded}) => (
-        <Content>
-          {isExpanded && <div>Im expanded</div>}
-          <Text slot="title">{props.title || props.children}</Text>
-          <Button aria-label="Info">ⓘ</Button>
-          <Button aria-label="Menu">☰</Button>
-        </Content>
-      )}
+      <TreeItemContent>
+        {({isExpanded}) => (
+          <>
+            {isExpanded && <div>Im expanded</div>}
+            <Text slot="title">{props.title || props.children}</Text>
+            <Button aria-label="Info">ⓘ</Button>
+            <Button aria-label="Menu">☰</Button>
+          </>
+        )}
+      </TreeItemContent>
       {props.title && props.children}
     </TreeItem>
   );
@@ -83,7 +85,7 @@ const StaticTreeItem = (props) => {
 export const TreeExampleStatic = (args) => (
   // TODO: update the styles here
   <Tree expandedKeys="all" className={styles.menu} {...args} aria-label="test static tree">
-    <StaticTreeItem id="1" textValue="Projects">Blah</StaticTreeItem>
+    <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
         <StaticTreeItem id="projects-1A" textValue="Projects-1A">
@@ -92,12 +94,16 @@ export const TreeExampleStatic = (args) => (
       </StaticTreeItem>
     </StaticTreeItem>
     <TreeItem id="reports">
-      Reports
+      <TreeItemContent>
+        Reports
+      </TreeItemContent>
     </TreeItem>
     <TreeItem id="tests">
-      {({isFocused}) => (
-        <Text slot="title">{`${isFocused} tests`}</Text>
-      )}
+      <TreeItemContent>
+        {({isFocused}) => (
+          <Text slot="title">{`${isFocused} tests`}</Text>
+        )}
+      </TreeItemContent>
     </TreeItem>
   </Tree>
 );
@@ -115,9 +121,9 @@ const MyTreeItem = (props) => {
         selected: isSelected,
         hovered: isHovered
       })}>
-      {({isExpanded}) => (
-        <>
-          <Content>
+      <TreeItemContent>
+        {({isExpanded}) => (
+          <>
             {/* TODO: should render a chevron that we can modify with a isExpanded render prop */}
             {isExpanded && <div>Im expanded</div>}
             {props.children}
@@ -125,10 +131,9 @@ const MyTreeItem = (props) => {
             <Button aria-label="Info">ⓘ</Button>
             {/* TODO: make this menu expandable later and test it */}
             <Button aria-label="Menu">☰</Button>
-          </Content>
-          {/* TODO should this have Collection here? */}
-        </>
-      )}
+          </>
+        )}
+      </TreeItemContent>
       <Collection items={props.childItems}>
         {item => (
           <MyTreeItem childItems={item.childItems} textValue={item.name}>

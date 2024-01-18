@@ -16,7 +16,6 @@ export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHe
 export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext, CheckboxGroupStateContext} from './Checkbox';
 export {ComboBox, ComboBoxContext, ComboBoxStateContext} from './ComboBox';
 export {composeRenderProps, Provider, useContextProps, useSlottedContext} from './utils';
-export {Content, ContentContext} from './Content';
 export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFieldContext, DateFieldStateContext, TimeFieldStateContext} from './DateField';
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext, DatePickerStateContext, DateRangePickerStateContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from './Dialog';
@@ -57,7 +56,7 @@ export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
 // TODO: export relevant contexts
-export {Tree, TreeItem} from './Tree';
+export {Tree, TreeItem, TreeItemContent} from './Tree';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale} from 'react-aria';
 export {FormValidationContext} from 'react-stately';

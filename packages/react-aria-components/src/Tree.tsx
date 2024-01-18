@@ -11,13 +11,13 @@
  */
 
 import {AriaGridListProps, FocusScope,  mergeProps, useFocusRing, useGridList, useGridListItem, useHover} from 'react-aria';
-import {BaseCollection, Collection, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode} from './Collection';
+import {BaseCollection, Collection, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode, useShallowRender} from './Collection';
 import {Collection as ICollection, ListState, Node, SelectionBehavior, useListState, useTreeState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Expandable, Key, LinkDOMProps} from '@react-types/shared';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext, useEffect, useMemo} from 'react';
 import {TextContext} from './Text';
 import { GridNode } from '@react-types/grid';
 import { useControlledState } from '@react-stately/utils';
@@ -153,7 +153,7 @@ interface TreeInnerProps<T extends object> {
 }
 
 function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
-  // console.log('collection', collection)
+  console.log('collection', collection)
   // TODO: perhaps perform post processing of the collection here? Would we call useTreeState and pass the collection to it, then
   // process the collection with the expandedKeys? Or perhaps make a new hook?
 
@@ -180,7 +180,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     // TODO: types
     return new TreeCollection<object>({collection, expandedKeys});
   }, [collection, expandedKeys]);
-
+  console.log('flatted', flattenedCollection)
   // TODO: we get the flatten rows in the proper order but the nodes aren't modified to have a new set of keys pointing to the proper "next key" that would reflect the flattened state
   // Couple of approaches that I can think of
   // 1. Change this generateTreeGrid function so that it returns a new TreeCollection that has the keymap from the original base structure but uses
@@ -287,7 +287,7 @@ export interface TreeItemRenderProps extends ItemRenderProps {
 }
 
 // TODO: will it need to support LinkProps?
-export interface TreeItemProps<T = object> extends RenderProps<TreeItemRenderProps> {
+export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps> {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -297,7 +297,9 @@ export interface TreeItemProps<T = object> extends RenderProps<TreeItemRenderPro
   /** An accessibility label for this item. */
   'aria-label'?: string,
   // TODO: support child item, will need to figure out how to render that in the fake dom
-  childItems?: Iterable<T>
+  childItems?: Iterable<T>,
+    /** The content of the tree row along with any nested children. Supports static items or a function for dynamic rendering. */
+  children?: ReactNode | ((item: T) => ReactElement)
 }
 
 // TODO TreeItem here would need to know how to render nested TreeItems based off of its children (aka static) or for the dynamic case (check childItems existance and reuse the render func provided to Tree)
@@ -326,26 +328,7 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
     // TODO: assumption here is that props.children[0] is Content
     renderedChildren = props.children[0];
   } else if (typeof props.children !== 'function') {
-    console.log('childnre type', typeof props.children, React.Children.count(props.children));
-    // if we don't have a render function and props.children isn't a function (aka not a renderProps func)
-    if (React.Children.count(props.children) > 1) {
-      // TODO: assumption here is that Content is first child and that the second child of the TreeItem is the Collection
-      childRows = props.children[1];
-      renderedChildren = props.children[0];
-    } else {
-      // TODO: the below is if we have a renderProps function in the static case of nested rows, assumes the first child is the renderFunc
-      // and the second child is the childRow
-      if (typeof props.children[0] === 'function') {
-        renderedChildren = props.children[0];
-        childRows = props.children[1];
-      } else {
-        // TODO: this case is for static rows with the row text content just provided as a string
-        renderedChildren = props.children;
-      }
-    }
-  } else {
-    // This case is if we are rendering a static tree row that has a renderProps func only
-    renderedChildren = props.children;
+    childRows = props.children;
   }
 
   let children = useCollectionChildren({
@@ -357,7 +340,7 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
 
   // TODO: right now I have null as rendered because the user provides <Content> which is the rendered content
   // This means however that renderProps doesn't work...
-  return useSSRCollectionNode('item', props, ref, renderedChildren, children);
+  return useSSRCollectionNode('item', props, ref, null, children);
 }
 
 /**
@@ -365,6 +348,36 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
  */
 const _TreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(TreeItem);
 export {_TreeItem as TreeItem};
+
+export interface TreeItemContentRenderProps extends ItemRenderProps {
+  // Whether the Tree row is expanded.
+  isExpanded: boolean
+}
+
+export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
+
+// TODO does this need ref or context? It only renders a fragment
+function TreeItemContent(props: TreeItemContentProps, ref) {
+  let shallow = useShallowRender('content', props, ref);
+  // let {children} = props;
+  if (shallow) {
+    return shallow;
+  }
+
+  // TODO: might not need the below? Just have a TreeItemInner instead that calls use renderProps and
+  // return (
+  //   <>
+  //     {children}
+  //   </>
+  // );
+}
+
+const _TreeItemContent = forwardRef(TreeItemContent);
+export {_TreeItemContent as TreeItemContent};
+
+
+
+
 
 // TODO: I think TreeRow wouldn't need any useCachedChildren or anything since it should theoretically used the flattened structure
 // Probably would just render the children? Will need to see what item has in its .rendered
@@ -391,21 +404,24 @@ function TreeRow({item}) {
   let {isFocusVisible, focusProps} = useFocusRing();
   // console.log('item', item);
   let props: TreeItemProps<unknown> = item.props;
+  let renderPropValues = React.useMemo(() => ({
+    ...states,
+    isHovered,
+    isFocusVisible,
+    // TODO: update the collection post processing to change item.hasChildNodes to false if the amount of children is less than 2 (aka an item doesn't have a nested row and only has content)
+    // Maybe can walk through the types of children instead and check if any of the children is of type "item"
+    isExpanded: [...state.collection.getChildren(item.key)].length > 1 ? state.expandedKeys === 'all' || state.expandedKeys.has(item.key) : undefined,
+    selectionMode: state.selectionManager.selectionMode,
+    selectionBehavior: state.selectionManager.selectionBehavior
+  }), [states, isHovered, isFocusVisible, state.selectionManager, state.expandedKeys, state.collection, item.key]);
+  // console.log('renderPropValues', renderPropValues.isExpanded, state.expandedKeys, [...state.collection.getChildren(item.key)].length)
+
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
     children: item.rendered,
     defaultClassName: 'react-aria-TreeItem',
-    values: {
-      ...states,
-      isHovered,
-      isFocusVisible,
-      // TODO: grab expanded rows from tree state
-      // isExpanded: true,
-      isExpanded: item.hasChildNodes ? state.expandedKeys === 'all' || state.expandedKeys.has(item.key) : undefined,
-      selectionMode: state.selectionManager.selectionMode,
-      selectionBehavior: state.selectionManager.selectionBehavior
-    }
+    values: renderPropValues
   });
 
   useEffect(() => {
@@ -414,24 +430,24 @@ function TreeRow({item}) {
     }
   }, [item.textValue]);
 
-
-  // TODO: don't need the below unless we want to track 'content' in the
   // console.log('state.collection ', state.collection)
-  // let children = useCachedChildren({
-  //   items: state.collection.getChildren!(item.key),
-  //   children: item => {
-  //     switch (item.type) {
-  //       case 'content': {
-  //         return <>{item.rendered}</>;
-  //       }
-  //       // skip item since we don't render the nested rows as children of the parent row
-  //       case 'item':
-  //         return <></>;
-  //       default:
-  //         throw new Error('Unsupported element type in TreeRow: ' + item.type);
-  //     }
-  //   }
-  // });
+  let children = useCachedChildren({
+    items: state.collection.getChildren!(item.key),
+    children: item => {
+      switch (item.type) {
+        case 'content': {
+          return <TreeRowContent values={renderPropValues} item={item} />;
+        }
+        // skip item since we don't render the nested rows as children of the parent row
+        case 'item':
+          return <></>;
+        default:
+          throw new Error('Unsupported element type in TreeRow: ' + item.type);
+      }
+    },
+    // TODO: double check if this is the best way to go about making sure TreeRowContent's render props is always up to date
+    dependencies: [renderPropValues]
+  });
 
   // console.log('children in ROW', children)
 
@@ -453,14 +469,14 @@ function TreeRow({item}) {
           <Provider
             values={[
               [TextContext, {
-                //  TODO: update
+                //  TODO: update, will need to pass an id for aria-labelledy?
                 slots: {
                   title: {}
                 }
               }]
             ]}>
-            {renderProps.children}
-            {/* {children} */}
+            {/* {renderProps.children} */}
+            {children}
           </Provider>
         </div>
       </div>
@@ -468,10 +484,13 @@ function TreeRow({item}) {
   );
 }
 
-
-
-
-
+function TreeRowContent({item, values}) {
+  let renderProps = useRenderProps({
+    children: item.rendered,
+    values
+  });
+  return renderProps.children;
+}
 
 
 // TODO: Code from useTreeGridState
