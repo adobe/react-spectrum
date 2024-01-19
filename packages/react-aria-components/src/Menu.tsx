@@ -370,9 +370,8 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
     }
   });
 
-  let ElementType: React.ElementType = props.href ? 'a' : 'div';
   return (
-    <ElementType
+    <div
       {...mergeProps(menuItemProps, focusProps)}
       {...renderProps}
       ref={ref}
@@ -408,6 +407,6 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
         {renderProps.children}
         {popover}
       </Provider>
-    </ElementType>
+    </div>
   );
 }
