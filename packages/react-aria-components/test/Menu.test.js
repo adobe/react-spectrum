@@ -406,6 +406,7 @@ describe('Menu', () => {
       // Click a submenu item
       await user.click(getAllByRole('menuitem')[5]);
       expect(onAction).toHaveBeenLastCalledWith('email');
+      expect(menu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
     });
     it('should support nested submenu triggers', async () => {
@@ -497,7 +498,7 @@ describe('Menu', () => {
     });
     it('should close all submenus if underlay is clicked', async () => {
       let onAction = jest.fn();
-      let {getByRole, getAllByRole} = render(
+      let {getByRole, getAllByRole, getByTestId} = render(
         <MenuTrigger>
           <Button aria-label="Menu">☰</Button>
           <Popover>
@@ -576,9 +577,14 @@ describe('Menu', () => {
       expect(nestedSubmenuPopover).toBeInTheDocument();
       expect(nestedSubmenuPopover).toHaveAttribute('data-trigger', 'SubmenuTrigger');
 
-      await user.click(document.body);
+      let underlay = getByTestId('underlay');
+      expect(underlay).toBeInTheDocument();
+      expect(underlay).toHaveAttribute('aria-hidden', 'true');
+      await user.click(underlay);
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
+      expect(menu).not.toBeInTheDocument();
+      expect(underlay).not.toBeInTheDocument();
     });
   });
 });
