@@ -21,7 +21,7 @@ import {Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import {PressResponder} from '@react-aria/interactions';
+import {PressResponder, useHover} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
 import {RootMenuTriggerState, UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 import {Separator, SeparatorContext} from './Separator';
@@ -285,6 +285,7 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 
   let props: MenuItemProps<T> = item.props;
   let {isFocusVisible, focusProps} = useFocusRing();
+  let {hoverProps, isHovered} = useHover({isDisabled: states.isDisabled});
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -292,7 +293,7 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
     defaultClassName: 'react-aria-MenuItem',
     values: {
       ...states,
-      isHovered: states.isFocused,
+      isHovered,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior
@@ -303,11 +304,11 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 
   return (
     <ElementType
-      {...mergeProps(menuItemProps, focusProps)}
+      {...mergeProps(menuItemProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-disabled={states.isDisabled || undefined}
-      data-hovered={states.isFocused || undefined}
+      data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
@@ -352,6 +353,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
     ...submenuTriggerProps
   }, state, ref);
   let props: MenuItemProps<T> = item.props;
+  let {hoverProps, isHovered} = useHover({isDisabled: states.isDisabled});
   let {isFocusVisible, focusProps} = useFocusRing();
   let isSubmenuOpen = submenuTriggerState.isOpen;
   let renderProps = useRenderProps({
@@ -361,7 +363,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
     defaultClassName: 'react-aria-MenuItem',
     values: {
       ...states,
-      isHovered: states.isFocused,
+      isHovered,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
@@ -372,11 +374,11 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
 
   return (
     <div
-      {...mergeProps(menuItemProps, focusProps)}
+      {...mergeProps(menuItemProps, focusProps, hoverProps)}
       {...renderProps}
       ref={ref}
       data-disabled={states.isDisabled || undefined}
-      data-hovered={states.isFocused || undefined}
+      data-hovered={isHovered || undefined}
       data-focused={states.isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={states.isPressed || undefined}
