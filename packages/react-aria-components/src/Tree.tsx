@@ -11,45 +11,23 @@
  */
 
 import {AriaGridListProps, FocusScope,  mergeProps, useFocusRing, useGridList, useGridListItem, useHover} from 'react-aria';
-import {BaseCollection, Collection, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useSSRCollectionNode, useShallowRender} from './Collection';
-import {Collection as ICollection, ListState, Node, SelectionBehavior, useListState, useTreeState} from 'react-stately';
+import {CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useShallowRender, useSSRCollectionNode} from './Collection';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {Expandable, Key} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {Expandable, Key, LinkDOMProps} from '@react-types/shared';
+import {GridNode} from '@react-types/grid';
+import {Collection as ICollection, Node, SelectionBehavior, useTreeState} from 'react-stately';
 import {ListStateContext} from './ListBox';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext, useEffect, useMemo} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
-import { GridNode } from '@react-types/grid';
-import { useControlledState } from '@react-stately/utils';
+import {useControlledState} from '@react-stately/utils';
 
-// TODO: Figure out what we want in this. It should be like useTreeGridState perhaps where we
-// generate a flattened collection which is all the expanded/visible tree rows. The nodes themselves should have
-// the proper parent - child information along with what level and position in set it is. When a row is expanded the collection should update
-// and return the new version of the flattened collection. I guess the fake DOM would reflect the fully expanded tree state so that we get the
-// proper information per node.
-// TODO: do we need columns? Just setup a single column automatically? What about cells?
-// Maybe fake the collection for now. See what GridList and Table's collections look like right now
-
-// TODO: two approaches perhaps that we can do.
-// 1. Make TreeCOllection's get size, getKeyBefore, etc all filter out non-expanded keys when they get called and return the particular values that we'd
-// expect as if the TreeCollection only had the expanded rows and their children's information. This means the TreeCollection itself would only rebuild if there
-// were changes to the items provided to the Tree itself, not when things are expanded/collapsed.
-
-// 2. Have TreeCollection create a key map that only contains the expanded keys and their children. Also modify the node information in such a way that it reflects only the
-// flattened row structure
-
-// 3. Something like TreeGridState which has a collection that reflects the flattened state, and then a keymap that has the non-flattened state. Kinda like 1 and 2 combined?
 class TreeCollection<T> implements ICollection<Node<T>> {
-  // TODO: should I also expose the original rows and keymap from the original collection?
   private flattenedRows: NodeValue<T>[];
   private keyMap: Map<Key, NodeValue<T>> = new Map();
-  // TODO: Add keymap from original collection and use that for get
 
   constructor(opts) {
     let {collection, expandedKeys} = opts;
-    // TODO: we don't actually need the keymap from generatateTreeGridCollection technically since index is equivalent to
-    // indexOfType. However the level calculated will need to be bumped up by one so keep it?
-    // Also maybe use it for this.getItem?
     let {flattenedRows, keyMap} = generateTreeGridCollection<T>(collection, {expandedKeys});
     this.flattenedRows = flattenedRows;
     // TODO: replace with the flattened key map or the original one? Maybe have the state provide the original keymap?
@@ -94,7 +72,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
     return this.flattenedRows[index - 1]?.key;
   }
 
-  // TODO: If we use the keyMap and the keymap has the extra "content" nodes, its going to be all out of wack
+  // Note that this will return Content nodes in addition to nested TreeItems
   getChildren(key: Key): Iterable<Node<T>> {
     let keyMap = this.keyMap;
     return {
@@ -115,8 +93,7 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-// TODO: all of below is just from GridList as scaffolding and renamed to Tree
-
+// TODO what TreeRenderProps do we want
 export interface TreeRenderProps {
 }
 
@@ -135,12 +112,10 @@ function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivEl
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
   [props, ref] = useContextProps(props, ref, TreeContext);
   let {collection, portal} = useCollection(props);
-  let renderer = typeof props.children === 'function' ? props.children : null;
+
   return (
     <>
-      <CollectionRendererContext.Provider value={renderer}>
-        {portal}
-      </CollectionRendererContext.Provider>
+      {portal}
       <TreeInner props={props} collection={collection} treeRef={ref} />
     </>
   );
@@ -153,11 +128,6 @@ interface TreeInnerProps<T extends object> {
 }
 
 function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
-  // console.log('collection', collection)
-  // TODO: perhaps perform post processing of the collection here? Would we call useTreeState and pass the collection to it, then
-  // process the collection with the expandedKeys? Or perhaps make a new hook?
-
-
   let {
     selectionMode = 'none',
     expandedKeys: propExpandedKeys,
@@ -165,34 +135,19 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     onExpandedChange
   } = props;
 
-
+  // Kinda annoying that we have to replicate this code here as well as in useTreeState, but don't want to add
+  // flattenCollection stuff to useTreeState. Think about this later
   let [expandedKeys, setExpandedKeys] = useControlledState(
     propExpandedKeys ? convertExpanded(propExpandedKeys) : undefined,
     propDefaultExpandedKeys ? convertExpanded(propDefaultExpandedKeys) : new Set(),
     onExpandedChange
   );
 
-  // let treeGridCollection = useMemo(() => {
-  //   return generateTreeGridCollection<T>(collection, {expandedKeys});
-  // }, [collection, expandedKeys]);
-
   let flattenedCollection = useMemo(() => {
     // TODO: types
     return new TreeCollection<object>({collection, expandedKeys});
   }, [collection, expandedKeys]);
-  // console.log('flatted', flattenedCollection)
-  // TODO: we get the flatten rows in the proper order but the nodes aren't modified to have a new set of keys pointing to the proper "next key" that would reflect the flattened state
-  // Couple of approaches that I can think of
-  // 1. Change this generateTreeGrid function so that it returns a new TreeCollection that has the keymap from the original base structure but uses
-  // the flattened table rows when performing `getKeyBefore`, `getKeyAfter` etc, aka it would do index based look ups instead of needing to look at the keyMap.
-  // Perhaps I could call generateTreeGridCollection in constructor of the TreeCollection class
-  // console.log('treeGridCollection', flattenedCollection, collection)
 
-
-  // TODO: use useTreeState or update useGridState to handle expandable rows?
-  // We don't have cell nodes in the collection as is so if we want to use useGridState we'll need to add those perhaps since a lot of the state and row code may expect cell keys
-  // At the moment the flattened nodes have other rows as their children which isn't what some of the useGridState code expects
-  // RSP TableView got around this by just modifying the flattened row nodes so they had cells as their childNodes and got rid of the child rows
   let state = useTreeState({
     ...props,
     selectionMode,
@@ -202,12 +157,10 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     children: undefined
   });
 
-  // TODO: replace with useGrid, will need to update useGrid to have treegrid specific things
+  // TODO: replace with useTreeGridList
   let {gridProps} = useGridList(props, state, ref);
 
   let children = useCachedChildren({
-    // TODO: this would the flatted rows from the collection
-    // items: collection,
     items: state.collection,
     children: (item: Node<T>) => {
       switch (item.type) {
@@ -302,31 +255,16 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
-// TODO TreeItem here would need to know how to render nested TreeItems based off of its children (aka static) or for the dynamic case (check childItems existance and reuse the render func provided to Tree)
 function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
   let {childItems} = props;
   let render = useContext(CollectionRendererContext);
-
-  // let nestedChildren;
-  // if (childItems) {
-  //   // TODO: the assumption here is that either the Tree was passed a render function aka dynamic case
-  //   nestedChildren = (
-  //     <Collection items={childItems}>
-  //       {render}
-  //     </Collection>
-  //   );
-  // }
-
-  // return useSSRCollectionNode('item', props, ref, children, nestedChildren);
-
-
-  // TODO: do we need to support a title prop to distinguish static from dynamic?
   let childRows: ReactNode | ((item: T) => ReactNode);
-  let renderedChildren: ReactNode;
+  let rowContent: ReactNode;
+
   if (typeof render === 'function') {
     childRows = render;
-    // TODO: assumption here is that props.children[0] is Content
-    renderedChildren = props.children[0];
+    // Assumption here is that props.children[0] is Content
+    rowContent = props.children[0];
   } else if (typeof props.children !== 'function') {
     childRows = props.children;
   }
@@ -335,10 +273,9 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
     children: childRows,
     items: childItems
   });
-  // console.log('children, childRows, props.children, props.title', children, childRows, props.children[0], props.title)
 
   // Combine the renderChildren and children so both Content and nested TreeItems are properly added to fake DOM and thus added to the built collection
-  return useSSRCollectionNode('item', props, ref, null, [renderedChildren, children]);
+  return useSSRCollectionNode('item', props, ref, null, [rowContent, children]);
 }
 
 /**
@@ -356,35 +293,23 @@ export interface TreeItemContentRenderProps extends ItemRenderProps {
 // need to do a bunch of check to figure out what is the Content and what are the actual collection elements
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
-// TODO does this need ref or context? It only renders a fragment
-function TreeItemContent(props: TreeItemContentProps, ref) {
+// TODO does this need ref or context? Its only used to shallowly render the Content node... If it was a more generic collection component then I could see an argument for it
+// having those
+function TreeItemContent(props: TreeItemContentProps) {
+  let ref = useRef(null);
   let shallow = useShallowRender('content', props, ref);
-  // let {children} = props;
   if (shallow) {
     return shallow;
   }
-
-  // TODO: might not need the below? Just have a TreeItemInner instead that calls use renderProps and
-  // return (
-  //   <>
-  //     {children}
-  //   </>
-  // );
 }
 
 const _TreeItemContent = forwardRef(TreeItemContent);
 export {_TreeItemContent as TreeItemContent};
 
-
-// TODO: I think TreeRow wouldn't need any useCachedChildren or anything since it should theoretically used the flattened structure
-// Probably would just render the children? Will need to see what item has in its .rendered
-// Also I guess we need to useGridRow and useGridCell, so that means we need cells
 function TreeRow({item}) {
   let state = useContext(ListStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
-  // TODO replace with useGridRow perhaps. Wonder if I could use something like useGridListItem instead since it is technically a
-  // single column single cell setup. Double check what differences between useGridListItem and useGridRow/useGridCell exist
-  // since that might affect it (I think there used to be some weirdness with single column useGridRow).
+  // TODO replace with useTreeListItem
   // Also depending on the item's information with index/level, we may need to add +1 to various attributes
   let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
     {
@@ -394,12 +319,12 @@ function TreeRow({item}) {
     ref
   );
 
+  // TODO: vet all this other copy pastaed code
   let {hoverProps, isHovered} = useHover({
     isDisabled: !states.allowsSelection && !states.hasAction
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
-  // console.log('item', item);
   let props: TreeItemProps<unknown> = item.props;
   let renderPropValues = React.useMemo(() => ({
     ...states,
@@ -411,7 +336,6 @@ function TreeRow({item}) {
     selectionMode: state.selectionManager.selectionMode,
     selectionBehavior: state.selectionManager.selectionBehavior
   }), [states, isHovered, isFocusVisible, state.selectionManager, state.expandedKeys, state.collection, item.key]);
-  // console.log('renderPropValues', renderPropValues.isExpanded, state.expandedKeys, [...state.collection.getChildren(item.key)].length)
 
   let renderProps = useRenderProps({
     ...props,
@@ -427,17 +351,15 @@ function TreeRow({item}) {
     }
   }, [item.textValue]);
 
-  // console.log('state.collection ', state.collection)
-  // console.log('state.coll', [...state.collection.getChildren(item.key)])
   let children = useCachedChildren({
     items: state.collection.getChildren!(item.key),
     children: item => {
       switch (item.type) {
         case 'content': {
-          console.log('gawegwagekn')
           return <TreeRowContent values={renderPropValues} item={item} />;
         }
-        // skip item since we don't render the nested rows as children of the parent row
+        // Skip item since we don't render the nested rows as children of the parent row, the flattened collection
+        // will render them each as siblings instead
         case 'item':
           return <></>;
         default:
@@ -447,9 +369,6 @@ function TreeRow({item}) {
     // TODO: double check if this is the best way to go about making sure TreeRowContent's render props is always up to date
     dependencies: [renderPropValues]
   });
-
-  // console.log('children in ROW', children)
-
 
   return (
     <>
@@ -474,7 +393,6 @@ function TreeRow({item}) {
                 }
               }]
             ]}>
-            {/* {renderProps.children} */}
             {children}
           </Provider>
         </div>
@@ -483,7 +401,7 @@ function TreeRow({item}) {
   );
 }
 
-//
+// This is separate from TreeItemContent since
 function TreeRowContent({item, values}) {
   let renderProps = useRenderProps({
     children: item.rendered,
@@ -492,8 +410,6 @@ function TreeRowContent({item, values}) {
   return renderProps.children;
 }
 
-
-// TODO: Code from useTreeGridState
 function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
   if (!expanded) {
     return new Set<Key>();
@@ -516,6 +432,7 @@ interface TreeGridCollection<T> {
   flattenedRows: NodeValue<T>[],
   userColumnCount: number
 }
+// TODO: clean up the below and get rid of columns and other table specific stuff
 function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): TreeGridCollection<T> {
   let {
     expandedKeys = new Set()
@@ -654,7 +571,6 @@ function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): 
   return {
     keyMap,
     userColumnCount,
-    flattenedRows,
-    // tableNodes: [...originalColumns, {...body, childNodes: flattenedRows}]
+    flattenedRows
   };
 }
