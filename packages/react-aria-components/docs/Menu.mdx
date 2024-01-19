@@ -677,6 +677,8 @@ function Example() {
 
 Submenus can be implemented by using a `SubmenuTrigger`, where the first child inside is the submenu's trigger `MenuItem`, and the second child is the submenu itself.
 
+### Static
+
 ```tsx example
 import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
 
@@ -702,6 +704,47 @@ import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
       </Menu>
     </Popover>
   </SubmenuTrigger>
+</MyMenuButton>
+```
+
+### Dynamic
+
+You can define a recursive function to render the nested menu items dynamically.
+
+```tsx example
+import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
+
+let items = [
+  {id: 'cut', name: 'Cut'},
+  {id: 'copy', name: 'Copy'},
+  {id: 'delete', name: 'Delete'},
+  {id: 'share', name: 'Share', children: [
+    {id: 'sms', name: 'SMS'},
+    {id: 'twitter', name: 'Twitter'},
+    {id: 'email', name: 'Email', children: [
+      {id: 'work', name: 'Work'},
+      {id: 'personal', name: 'Personal'},
+    ]}
+  ]}
+];
+
+<MyMenuButton label="Actions" items={items}>
+    {function renderSubmenu(item) {
+      if (item.children) {
+        return (
+          <SubmenuTrigger>
+            <MyItem key={item.name} aria-label={item.name}>{item.name}</MyItem>
+            <Popover>
+              <Menu items={item.children}>
+                {(item) => renderSubmenu(item)}
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+        );
+      } else {
+        return <MyItem key={item.name}>{item.name}</MyItem>;
+      }
+    }}
 </MyMenuButton>
 ```
 
