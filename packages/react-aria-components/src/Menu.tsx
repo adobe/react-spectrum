@@ -80,7 +80,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
 
 export interface SubmenuTriggerProps {
   /**
-   * The contents of the SubmenuTrigger - an Item and a Popover.
+   * The contents of the SubmenuTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the submenu).
    */
   children: ReactElement[]
 }
