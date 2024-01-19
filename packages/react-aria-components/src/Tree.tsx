@@ -153,7 +153,7 @@ interface TreeInnerProps<T extends object> {
 }
 
 function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInnerProps<T>) {
-  console.log('collection', collection)
+  // console.log('collection', collection)
   // TODO: perhaps perform post processing of the collection here? Would we call useTreeState and pass the collection to it, then
   // process the collection with the expandedKeys? Or perhaps make a new hook?
 
@@ -180,7 +180,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     // TODO: types
     return new TreeCollection<object>({collection, expandedKeys});
   }, [collection, expandedKeys]);
-  console.log('flatted', flattenedCollection)
+  // console.log('flatted', flattenedCollection)
   // TODO: we get the flatten rows in the proper order but the nodes aren't modified to have a new set of keys pointing to the proper "next key" that would reflect the flattened state
   // Couple of approaches that I can think of
   // 1. Change this generateTreeGrid function so that it returns a new TreeCollection that has the keymap from the original base structure but uses
@@ -298,7 +298,7 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   'aria-label'?: string,
   // TODO: support child item, will need to figure out how to render that in the fake dom
   childItems?: Iterable<T>,
-    /** The content of the tree row along with any nested children. Supports static items or a function for dynamic rendering. */
+  /** The content of the tree row along with any nested children. Supports static items or a function for dynamic rendering. */
   children?: ReactNode | ((item: T) => ReactElement)
 }
 
@@ -322,7 +322,7 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
 
   // TODO: do we need to support a title prop to distinguish static from dynamic?
   let childRows: ReactNode | ((item: T) => ReactNode);
-  let renderedChildren: ReactNode |((values: TreeItemRenderProps) => React.ReactNode);
+  let renderedChildren: ReactNode;
   if (typeof render === 'function') {
     childRows = render;
     // TODO: assumption here is that props.children[0] is Content
@@ -332,15 +332,13 @@ function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<H
   }
 
   let children = useCollectionChildren({
-    // children: childItems ? childRows : null,
     children: childRows,
     items: childItems
   });
   // console.log('children, childRows, props.children, props.title', children, childRows, props.children[0], props.title)
 
-  // TODO: right now I have null as rendered because the user provides <Content> which is the rendered content
-  // This means however that renderProps doesn't work...
-  return useSSRCollectionNode('item', props, ref, null, children);
+  // Combine the renderChildren and children so both Content and nested TreeItems are properly added to fake DOM and thus added to the built collection
+  return useSSRCollectionNode('item', props, ref, null, [renderedChildren, children]);
 }
 
 /**
@@ -354,6 +352,8 @@ export interface TreeItemContentRenderProps extends ItemRenderProps {
   isExpanded: boolean
 }
 
+// The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
+// need to do a bunch of check to figure out what is the Content and what are the actual collection elements
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
 // TODO does this need ref or context? It only renders a fragment
@@ -374,9 +374,6 @@ function TreeItemContent(props: TreeItemContentProps, ref) {
 
 const _TreeItemContent = forwardRef(TreeItemContent);
 export {_TreeItemContent as TreeItemContent};
-
-
-
 
 
 // TODO: I think TreeRow wouldn't need any useCachedChildren or anything since it should theoretically used the flattened structure
@@ -431,11 +428,13 @@ function TreeRow({item}) {
   }, [item.textValue]);
 
   // console.log('state.collection ', state.collection)
+  // console.log('state.coll', [...state.collection.getChildren(item.key)])
   let children = useCachedChildren({
     items: state.collection.getChildren!(item.key),
     children: item => {
       switch (item.type) {
         case 'content': {
+          console.log('gawegwagekn')
           return <TreeRowContent values={renderPropValues} item={item} />;
         }
         // skip item since we don't render the nested rows as children of the parent row
@@ -484,6 +483,7 @@ function TreeRow({item}) {
   );
 }
 
+//
 function TreeRowContent({item, values}) {
   let renderProps = useRenderProps({
     children: item.rendered,

@@ -10,53 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, Text, Tree, TreeItem, TreeItemContent} from 'react-aria-components';
+import {Button, Collection, Text, Tree, TreeItem, TreeItemContent, TreeItemProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import styles from '../example/index.css';
 
 export default {
   title: 'React Aria Components'
 };
 
+interface StaticTreeItemProps extends TreeItemProps {
+  title?: string,
+  children?: ReactNode
+}
 
-// TODO: for static, make a generic wrapper like <heading> that wraps the non-collection item contents
-// so they are omitted from the collection processing
-{/* <TreeItem>
-  <Content>
-    <title>
-      gawemgk
-    </title>
-    <button>
-
-    </button>
-  </Content>
-  // this is dynamic
-  <Collection>
-    <TreeItem></TreeItem>
-  </Collection>
-
-  OR
-  // This is static
-  <TreeItem>
-  </TreeItem>
-</TreeItem> */}
-
-
-
-
-// let projectSubItems = [
-//   {id: 'project-1', name: 'Project 1'},
-//   {id: 'project-2', name: 'Project 2', childItems: [
-//     {id: 'project-2A', name: 'Project 2A'},
-//     {id: 'project-2B', name: 'Project 2B'},
-//     {id: 'project-2C', name: 'Project 2C'}
-//   ]},
-//   {id: 'project-3', name: 'Project 3'},
-//   {id: 'project-4', name: 'Project 4'}
-// ];
-
-const StaticTreeItem = (props) => {
+const StaticTreeItem = (props: StaticTreeItemProps) => {
   // TODO: update the styles
   return (
     <TreeItem
@@ -81,16 +49,20 @@ const StaticTreeItem = (props) => {
   );
 };
 
-
 export const TreeExampleStatic = (args) => (
-  // TODO: update the styles here
-  <Tree expandedKeys="all" className={styles.menu} {...args} aria-label="test static tree">
+  <Tree defaultExpandedKeys="all" className={styles.menu} {...args} aria-label="test static tree">
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
         <StaticTreeItem id="projects-1A" textValue="Projects-1A">
           Projects-1A
         </StaticTreeItem>
+      </StaticTreeItem>
+      <StaticTreeItem id="projects-2" textValue="Projects-2">
+        Projects-2
+      </StaticTreeItem>
+      <StaticTreeItem id="projects-3" textValue="Projects-3">
+        Projects-3
       </StaticTreeItem>
     </StaticTreeItem>
     <TreeItem id="reports">
@@ -109,78 +81,7 @@ export const TreeExampleStatic = (args) => (
 );
 
 
-
-
-const MyTreeItem = (props) => {
-  // TODO: update the styles
-  return (
-    <TreeItem
-      {...props}
-      className={({isFocused, isSelected, isHovered}) => classNames(styles, 'item', {
-        focused: isFocused,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        {({isExpanded}) => (
-          <>
-            {/* TODO: should render a chevron that we can modify with a isExpanded render prop */}
-            {isExpanded && <div>Im expanded</div>}
-            {props.children}
-            {/* TODO: Test left/right keyboard movement */}
-            <Button aria-label="Info">ⓘ</Button>
-            {/* TODO: make this menu expandable later and test it */}
-            <Button aria-label="Menu">☰</Button>
-          </>
-        )}
-      </TreeItemContent>
-      <Collection items={props.childItems}>
-        {item => (
-          <MyTreeItem childItems={item.childItems} textValue={item.name}>
-            {item.name}
-          </MyTreeItem>
-        )}
-      </Collection>
-    </TreeItem>
-  );
-};
-
-// const MyTreeItem = (props) => {
-//   // TODO: update the styles
-//   return (
-//     <TreeItem
-//       {...props}
-//       className={({isFocused, isSelected, isHovered}) => classNames(styles, 'item', {
-//         focused: isFocused,
-//         selected: isSelected,
-//         hovered: isHovered
-//       })}>
-//       <Content>
-//         {/* TODO: should render a chevron that we can modify with a isExpanded render prop */}
-//         {/* {isExpanded && <div>Im expanded</div>} */}
-//         {/* {props.children} */}
-//         <Text slot="title">{props.title || props.children}</Text>
-//         {/* TODO: Test left/right keyboard movement */}
-//         <Button aria-label="Info">ⓘ</Button>
-//         {/* TODO: make this menu expandable later and test it */}
-//         <Button aria-label="Menu">☰</Button>
-//       </Content>
-//       <Collection items={props.childItems}>
-//         {item => (
-//           <MyTreeItem childItems={item.childItems} textValue={item.name}>
-//             {item.name}
-//           </MyTreeItem>
-//         )}
-//       </Collection>
-//     </TreeItem>
-//   );
-// };
-
-
 let rows = [
-  // {id: 'projects', name: 'Projects', childItems: [
-  //   {id: 'project-2', name: 'Project 2'}
-  // ]},
   {id: 'projects', name: 'Projects', childItems: [
     {id: 'project-1', name: 'Project 1'},
     {id: 'project-2', name: 'Project 2', childItems: [
@@ -209,15 +110,55 @@ let rows = [
     {id: 'reports-2', name: 'Reports 2'}
   ]}
 ];
+
+interface DynamicTreeItemProps extends TreeItemProps {
+  children?: ReactNode
+}
+
+const DynamicTreeItem = (props: DynamicTreeItemProps) => {
+  // TODO: update the styles
+  return (
+    <TreeItem
+      {...props}
+      className={({isFocused, isSelected, isHovered}) => classNames(styles, 'item', {
+        focused: isFocused,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
+      <TreeItemContent>
+        {({isExpanded}) => (
+          <>
+            {/* TODO: should render a chevron that we can modify with a isExpanded render prop */}
+            {isExpanded && <div>Im expanded</div>}
+            <Text slot="title">{props.children}</Text>
+            {/* TODO: Test left/right keyboard movement */}
+            <Button aria-label="Info">ⓘ</Button>
+            {/* TODO: make this menu expandable later and test it */}
+            <Button aria-label="Menu">☰</Button>
+          </>
+        )}
+      </TreeItemContent>
+      <Collection items={props.childItems}>
+        {item => (
+          <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
+            {item.name}
+          </DynamicTreeItem>
+        )}
+      </Collection>
+    </TreeItem>
+  );
+};
+
 // TODO: finish story
 export const TreeExampleDynamic = (args) => (
   // TODO: update the styles here
-  <Tree expandedKeys={['projects', 'project-5', 'reports']} className={styles.menu} {...args} aria-label="test dynamic tree" items={rows}>
+  // expandedKeys={['projects', 'project-5', 'reports']}
+  <Tree {...args} defaultExpandedKeys="all" className={styles.menu} aria-label="test dynamic tree" items={rows}>
     {item => (
-      //  TODO: figure out the TS here and how to get it to infer the item type
-      <MyTreeItem childItems={item.childItems} textValue={item.name}>
+      //  TODO: figure out the TS here and how to get it to infer the item type, it is because of the ...args
+      <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
         {item.name}
-      </MyTreeItem>
+      </DynamicTreeItem>
     )}
   </Tree>
 );
