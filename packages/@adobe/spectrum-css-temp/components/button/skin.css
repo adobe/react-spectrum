@@ -534,12 +534,12 @@ governing permissions and limitations under the License.
 
     &:disabled,
     &.is-disabled {
-      background-color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-background-color-selected-disabled));
+      background-color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-background-color-selected-disabled));
       border-color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-border-color-selected-disabled));
-      color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-text-color-selected-disabled));
+      color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-text-color-selected-disabled));
 
       .spectrum-Icon {
-        fill: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-icon-color-selected-disabled));
+        fill: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-icon-color-selected-disabled));
       }
     }
   }
@@ -588,12 +588,12 @@ governing permissions and limitations under the License.
 
     &:disabled,
     &.is-disabled {
-      background-color:  xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-emphasized-background-color-selected-disabled));
+      background-color:  xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-emphasized-background-color-selected-disabled));
       border-color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-emphasized-border-color-selected-disabled));
-      color: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-emphasized-text-color-selected-disabled));
+      color: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-emphasized-text-color-selected-disabled));
 
       .spectrum-Icon {
-        fill: xvar(--spectrum-high-contrast-gray-text, var(--spectrum-actionbutton-emphasized-icon-color-selected-disabled));
+        fill: xvar(--spectrum-high-contrast-button-face, var(--spectrum-actionbutton-emphasized-icon-color-selected-disabled));
       }
     }
   }
@@ -658,6 +658,7 @@ governing permissions and limitations under the License.
   --spectrum-actionbutton-static-border-color: transparent;
   --spectrum-actionbutton-static-border-color-hover: transparent;
   --spectrum-actionbutton-static-border-color-active: transparent;
+  --spectrum-actionbutton-static-border-disabled: transparent;
 }
 
 .spectrum-ActionButton--staticBlack {
@@ -688,6 +689,7 @@ governing permissions and limitations under the License.
   --spectrum-actionbutton-static-border-color: transparent;
   --spectrum-actionbutton-static-border-color-hover: transparent;
   --spectrum-actionbutton-static-border-color-active: transparent;
+  --spectrum-actionbutton-static-border-disabled: transparent;
 }
 
 .spectrum-ActionButton--staticColor {
@@ -815,6 +817,7 @@ governing permissions and limitations under the License.
     --spectrum-actionbutton-static-background-color: transparent;
     --spectrum-actionbutton-static-background-color-disabled: transparent;
     --spectrum-actionbutton-static-border-color-selected-disabled: transparent;
+    --spectrum-actionbutton-static-border-disabled: transparent;
 
     &:hover {
       border-color: var(--spectrum-actionbutton-static-border-color-hover);
