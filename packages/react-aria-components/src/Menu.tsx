@@ -188,7 +188,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           {children}
         </Provider>
       </div>
-      {rootMenuTriggerState?.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} /> }
+      {rootMenuTriggerState?.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} /> }
     </FocusScope>
   );
 }
