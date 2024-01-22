@@ -1,3 +1,5 @@
+import { ChevronDown } from 'lucide-react';
+import React from 'react';
 import {
   ComboBox as AriaComboBox,
   ComboBoxProps as AriaComboBoxProps,
@@ -5,12 +7,11 @@ import {
   ListBoxItemProps,
   ValidationResult
 } from 'react-aria-components';
-import { Description, FieldError, FieldGroup, Label, Input } from './Field';
 import { Button } from './Button';
+import { Description, FieldError, FieldGroup, Input, Label } from './Field';
+import { DropdownItem, DropdownSection, DropdownSectionProps } from './ListBox';
 import { Popover } from './Popover';
-import { ChevronDown } from 'lucide-react';
-import { DropdownItem } from './ListBox';
-import React from 'react';
+import { composeTailwindRenderProps } from './utils';
 
 export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<T>, 'children'> {
   label?: string;
@@ -23,7 +24,7 @@ export function ComboBox<T extends object>(
   { label, description, errorMessage, children, items, ...props }: ComboBoxProps<T>
 ) {
   return (
-    <AriaComboBox {...props} className="group flex flex-col gap-1">
+    <AriaComboBox {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1')}>
       <Label>{label}</Label>
       <FieldGroup>
         <Input />
@@ -34,7 +35,7 @@ export function ComboBox<T extends object>(
       {description && <Description>{description}</Description>}
       <FieldError>{errorMessage}</FieldError>
       <Popover className="w-[--trigger-width]">
-        <ListBox items={items} className="outline-0 p-1 max-h-[inherit] overflow-auto">
+        <ListBox items={items} className="outline-0 p-1 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]">
           {children}
         </ListBox>
       </Popover>
@@ -44,4 +45,8 @@ export function ComboBox<T extends object>(
 
 export function ComboBoxItem(props: ListBoxItemProps) {
   return <DropdownItem {...props} />;
+}
+
+export function ComboBoxSection<T extends object>(props: DropdownSectionProps<T>) {
+  return <DropdownSection {...props} />;
 }

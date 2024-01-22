@@ -1,21 +1,21 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import React from 'react';
 import {
   Calendar as AriaCalendar,
+  CalendarGridHeader as AriaCalendarGridHeader,
+  CalendarProps as AriaCalendarProps,
   CalendarCell,
   CalendarGrid,
-  CalendarProps as AriaCalendarProps,
+  CalendarGridBody,
+  CalendarHeaderCell,
   DateValue,
   Heading,
   Text,
-  CalendarGridHeader as AriaCalendarGridHeader,
-  CalendarHeaderCell,
-  CalendarGridBody,
   useLocale
 } from 'react-aria-components';
+import { tv } from 'tailwind-variants';
 import { Button } from './Button';
-import {focusRing} from './utils';
-import React from 'react';
-import {tv} from 'tailwind-variants';
+import { focusRing } from './utils';
 
 const cellStyles = tv({
   extend: focusRing,
@@ -23,15 +23,15 @@ const cellStyles = tv({
   variants: {
     isSelected: {
       false: 'text-zinc-900 dark:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-700 pressed:bg-gray-200 dark:pressed:bg-zinc-600',
-      true: 'bg-blue-600 text-white forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]'
+      true: 'bg-blue-600 invalid:bg-red-600 text-white forced-colors:bg-[Highlight] forced-colors:invalid:bg-[Mark] forced-colors:text-[HighlightText]'
     },
     isDisabled: {
-      true: 'text-gray-300 dark:text-zinc-600 forced-colors:!text-[GrayText]'
+      true: 'text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText]'
     }
   }
 });
 
-export interface CalendarProps<T extends DateValue> extends AriaCalendarProps<T> {
+export interface CalendarProps<T extends DateValue> extends Omit<AriaCalendarProps<T>, 'visibleDuration'> {
   errorMessage?: string;
 }
 

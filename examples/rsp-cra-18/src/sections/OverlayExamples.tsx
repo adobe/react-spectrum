@@ -16,7 +16,7 @@ export default function OverlayExamples() {
             Delete unnecessary files to free up space.
           </AlertDialog>
         </DialogTrigger>
-        <ContextualHelp width="size-0"variant="info">
+        <ContextualHelp alignSelf="start" variant="info">
           <Heading>Need help?</Heading>
           <Content>
             <Text>

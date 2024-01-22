@@ -1,7 +1,7 @@
-import {composeRenderProps, Button as RACButton, ButtonProps as RACButtonProps} from 'react-aria-components';
 import React from 'react';
-import {tv} from 'tailwind-variants';
-import {focusRing} from './utils';
+import { composeRenderProps, Button as RACButton, ButtonProps as RACButtonProps } from 'react-aria-components';
+import { tv } from 'tailwind-variants';
+import { focusRing } from './utils';
 
 export interface ButtonProps extends RACButtonProps {
   variant?: 'primary' | 'secondary' | 'destructive' | 'icon'
@@ -18,7 +18,7 @@ let button = tv({
       icon: 'border-0 p-1 flex items-center justify-center text-gray-600 hover:bg-black/[5%] pressed:bg-black/10 dark:text-zinc-400 dark:hover:bg-white/10 dark:pressed:bg-white/20 disabled:bg-transparent'
     },
     isDisabled: {
-      true: 'bg-gray-100 dark:bg-zinc-800 text-gray-300 dark:text-zinc-600 forced-colors:!text-[GrayText] border-black/5 dark:border-white/5'
+      true: 'bg-gray-100 dark:bg-zinc-800 text-gray-300 dark:text-zinc-600 forced-colors:text-[GrayText] border-black/5 dark:border-white/5'
     }
   },
   defaultVariants: {
