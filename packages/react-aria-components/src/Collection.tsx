@@ -511,6 +511,9 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
   private mutatedNodes: Set<ElementNode<T>> = new Set();
   private subscriptions: Set<() => void> = new Set();
   private transactionCount = 0;
+  // When the initial collection is empty or all nodes are deleted
+  // a commit should finalize the collection even if mutatednodes is empty
+  private needsCommit = true;
 
   constructor(collection: C) {
     // @ts-ignore
@@ -584,6 +587,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
     let collection = this.getMutableCollection();
     collection.removeNode(node.node.key);
     this.markDirty(node);
+    this.needsCommit = true;
   }
 
   /** Finalizes the collection update, updating all nodes and freezing the collection. */
@@ -605,7 +609,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
     this.dirtyNodes.clear();
 
-    if (this.mutatedNodes.size) {
+    if (this.mutatedNodes.size || this.needsCommit) {
       let collection = this.getMutableCollection();
       for (let element of this.mutatedNodes) {
         if (element.isConnected) {
@@ -615,6 +619,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
       collection.commit(this.firstChild?.node.key ?? null, this.lastChild?.node.key ?? null, this.isSSR);
       this.mutatedNodes.clear();
+      this.needsCommit = false;
     }
 
     this.collectionMutated = false;
@@ -664,6 +669,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
   let {children, items, idScope, addIdAndValue, dependencies = []} = props;
 
   // Invalidate the cache whenever the parent value changes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   let cache = useMemo(() => new WeakMap(), dependencies);
   return useMemo(() => {
     if (items && typeof children === 'function') {
