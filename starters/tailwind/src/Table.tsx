@@ -1,31 +1,32 @@
+import { ArrowUp } from 'lucide-react';
+import React from 'react';
 import {
-  Button,
   Cell as AriaCell,
-  Collection,
   Column as AriaColumn,
-  ColumnProps,
   Row as AriaRow,
-  RowProps,
   Table as AriaTable,
   TableHeader as AriaTableHeader,
-  TableHeaderProps,
-  TableProps,
-  ResizableTableContainer,
-  useTableOptions,
+  Button,
+  CellProps,
+  Collection,
+  ColumnProps,
   ColumnResizer,
   Group,
+  ResizableTableContainer,
+  RowProps,
+  TableHeaderProps,
+  TableProps,
   composeRenderProps,
-  CellProps
+  useTableOptions
 } from 'react-aria-components';
-import {Checkbox} from './Checkbox';
-import {ArrowUp} from 'lucide-react';
-import React from 'react';
-import {tv} from 'tailwind-variants';
-import {focusRing} from './utils';
+import { twMerge } from 'tailwind-merge';
+import { tv } from 'tailwind-variants';
+import { Checkbox } from './Checkbox';
+import { composeTailwindRenderProps, focusRing } from './utils';
 
 export function Table(props: TableProps) {
   return (
-    <ResizableTableContainer className="max-h-[280px] w-[550px] overflow-auto scroll-pt-[2.281rem] scroll-pt-[2.281rem] relative border dark:border-zinc-600 rounded-lg">
+    <ResizableTableContainer className="max-h-[280px] w-[550px] overflow-auto scroll-pt-[2.281rem] relative border dark:border-zinc-600 rounded-lg">
       <AriaTable {...props} className="border-separate border-spacing-0" />
     </ResizableTableContainer>
   );
@@ -38,12 +39,12 @@ const columnStyles = tv({
 
 const resizerStyles = tv({
   extend: focusRing,
-  base: 'w-px px-[8px] translate-x-[8px] box-content py-1 h-5 bg-clip-content bg-gray-400 dark:bg-zinc-500 forced-colors:!bg-[ButtonBorder] cursor-col-resize rounded resizing:bg-blue-600 forced-colors:resizing:!bg-[Highlight] resizing:w-[2px] resizing:pl-[7px] -outline-offset-2'
+  base: 'w-px px-[8px] translate-x-[8px] box-content py-1 h-5 bg-clip-content bg-gray-400 dark:bg-zinc-500 forced-colors:bg-[ButtonBorder] cursor-col-resize rounded resizing:bg-blue-600 forced-colors:resizing:bg-[Highlight] resizing:w-[2px] resizing:pl-[7px] -outline-offset-2'
 });
 
 export function Column(props: ColumnProps) {
   return (
-    <AriaColumn {...props} className="[&:hover]:z-20 [&:focus-within]:z-20 text-start text-sm font-semibold text-gray-700 dark:text-zinc-300 cursor-default">
+    <AriaColumn {...props} className={composeTailwindRenderProps(props.className, '[&:hover]:z-20 [&:focus-within]:z-20 text-start text-sm font-semibold text-gray-700 dark:text-zinc-300 cursor-default')}>
       {composeRenderProps(props.children, (children, { allowsSorting, sortDirection }) => (
         <div className="flex items-center">
           <Group
@@ -58,7 +59,7 @@ export function Column(props: ColumnProps) {
                   sortDirection === 'descending' ? 'rotate-180' : ''
                 }`}
               >
-                {sortDirection && <ArrowUp aria-hidden className="w-4 h-4 text-gray-500 dark:text-zinc-400 forced-colors:!text-[ButtonText]" />}
+                {sortDirection && <ArrowUp aria-hidden className="w-4 h-4 text-gray-500 dark:text-zinc-400 forced-colors:text-[ButtonText]" />}
               </span>
             )}
           </Group>
@@ -69,13 +70,11 @@ export function Column(props: ColumnProps) {
   );
 }
 
-export function TableHeader<T extends object>(
-  { columns, children }: TableHeaderProps<T>
-) {
+export function TableHeader<T extends object>(props: TableHeaderProps<T>) {
   let { selectionBehavior, selectionMode, allowsDragging } = useTableOptions();
 
   return (
-    <AriaTableHeader className="sticky top-0 z-10 bg-gray-100/60 dark:bg-zinc-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-gray-100 dark:supports-[-moz-appearance:none]:bg-zinc-700 forced-colors:!bg-[Canvas] rounded-t-lg border-b dark:border-b-zinc-700">
+    <AriaTableHeader {...props} className={twMerge('sticky top-0 z-10 bg-gray-100/60 dark:bg-zinc-700/60 backdrop-blur-md supports-[-moz-appearance:none]:bg-gray-100 dark:supports-[-moz-appearance:none]:bg-zinc-700 forced-colors:bg-[Canvas] rounded-t-lg border-b dark:border-b-zinc-700', props.className)}>
       {/* Add extra columns for drag and drop and selection. */}
       {allowsDragging && <Column />}
       {selectionBehavior === 'toggle' && (
@@ -83,8 +82,8 @@ export function TableHeader<T extends object>(
           {selectionMode === 'multiple' && <Checkbox slot="selection" />}
         </AriaColumn>
       )}
-      <Collection items={columns}>
-        {children}
+      <Collection items={props.columns}>
+        {props.children}
       </Collection>
     </AriaTableHeader>
   );

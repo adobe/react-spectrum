@@ -1,18 +1,20 @@
+import { XIcon } from 'lucide-react';
+import React, { createContext, useContext } from 'react';
 import {
-  Button,
   Tag as AriaTag,
   TagGroup as AriaTagGroup,
   TagGroupProps as AriaTagGroupProps,
+  TagProps as AriaTagProps,
+  Button,
   TagList,
   TagListProps,
-  TagProps as AriaTagProps,
-  Text
+  Text,
+  composeRenderProps
 } from 'react-aria-components';
+import { twMerge } from 'tailwind-merge';
+import { tv } from 'tailwind-variants';
 import { Description, Label } from './Field';
-import { XIcon } from 'lucide-react';
-import React from 'react';
-import {tv} from 'tailwind-variants';
-import {focusRing} from './utils';
+import { focusRing } from './utils';
 
 const colors = {
   gray: 'bg-gray-100 text-gray-600 border-gray-200 hover:border-gray-300 dark:bg-zinc-700 dark:text-zinc-300 dark:border-zinc-600 dark:hover:border-zinc-500',
@@ -22,8 +24,9 @@ const colors = {
 };
 
 type Color = keyof typeof colors;
+const ColorContext = createContext<Color>('gray');
 
-const styles = tv({
+const tagStyles = tv({
   extend: focusRing,
   base: 'transition cursor-default text-xs rounded-full border px-3 py-0.5 flex items-center max-w-fit gap-1',
   variants: {
@@ -32,6 +35,9 @@ const styles = tv({
       green: '',
       yellow: '',
       blue: ''
+    },
+    allowsRemoving: {
+      true: 'pr-1'
     },
     isSelected: {
       true: 'bg-blue-600 text-white border-transparent forced-colors:bg-[Highlight] forced-colors:text-[HighlightText] forced-color-adjust-none'
@@ -48,6 +54,7 @@ const styles = tv({
 });
 
 export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'> {
+  color?: Color;
   label?: string;
   description?: string;
   errorMessage?: string;
@@ -69,25 +76,43 @@ export function TagGroup<T extends object>(
   }: TagGroupProps<T>
 ) {
   return (
-    <AriaTagGroup {...props} className="flex flex-col gap-1">
+    <AriaTagGroup {...props} className={twMerge('flex flex-col gap-1', props.className)}>
       <Label>{label}</Label>
-      <TagList items={items} renderEmptyState={renderEmptyState} className="flex flex-wrap gap-1">
-        {children}
-      </TagList>
+      <ColorContext.Provider value={props.color || 'gray'}>
+        <TagList items={items} renderEmptyState={renderEmptyState} className="flex flex-wrap gap-1">
+          {children}
+        </TagList>
+      </ColorContext.Provider>
       {description && <Description>{description}</Description>}
       {errorMessage && <Text slot="errorMessage" className="text-sm text-red-600">{errorMessage}</Text>}
     </AriaTagGroup>
   );
 }
 
-export function Tag({ children, color = 'gray', ...props }: TagProps) {
+const removeButtonStyles = tv({
+  extend: focusRing,
+  base: 'cursor-default rounded-full transition-[background-color] p-0.5 flex items-center justify-center hover:bg-black/10 dark:hover:bg-white/10 pressed:bg-black/20 dark:pressed:bg-white/20'
+});
+
+export function Tag({ children, color, ...props }: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
+  let groupColor = useContext(ColorContext);
   return (
-    <AriaTag textValue={textValue} {...props} className={renderProps => styles({...renderProps, color})}>
+    <AriaTag
+      textValue={textValue}
+      {...props}
+      className={composeRenderProps(
+        props.className,
+        (className, renderProps) => tagStyles({...renderProps, className, color: color || groupColor})
+      )}>
       {({ allowsRemoving }) => (
         <>
           {children}
-          {allowsRemoving && <Button slot="remove"><XIcon aria-hidden className="w-3 h-3" /></Button>}
+          {allowsRemoving &&
+            <Button slot="remove" className={removeButtonStyles}>
+              <XIcon aria-hidden className="w-3 h-3" />
+            </Button>
+          }
         </>
       )}
     </AriaTag>

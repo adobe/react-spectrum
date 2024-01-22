@@ -1,13 +1,14 @@
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import React from 'react';
 import {
-  Button,
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
-  ValidationResult,
-  ButtonProps
+  Button,
+  ButtonProps,
+  ValidationResult
 } from 'react-aria-components';
-import { FieldGroup, FieldError, Description, Label, Input, fieldBorderStyles } from './Field';
-import React from 'react';
+import { Description, FieldError, FieldGroup, Input, Label, fieldBorderStyles } from './Field';
+import { composeTailwindRenderProps } from './utils';
 
 export interface NumberFieldProps extends AriaNumberFieldProps {
   label?: string;
@@ -19,7 +20,7 @@ export function NumberField(
   { label, description, errorMessage, ...props }: NumberFieldProps
 ) {
   return (
-    <AriaNumberField {...props} className="group flex flex-col gap-1">
+    <AriaNumberField {...props} className={composeTailwindRenderProps(props.className, 'group flex flex-col gap-1')}>
       <Label>{label}</Label>
       <FieldGroup>
         {renderProps => (<>

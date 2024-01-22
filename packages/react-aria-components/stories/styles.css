@@ -357,3 +357,33 @@
     opacity: 0.4;
   }
 }
+
+:global(.react-aria-Meter),
+:global(.react-aria-ProgressBar) {
+  --fill-color: forestgreen;
+
+  display: grid;
+  grid-template-areas: "label value"
+                       "bar bar";
+  grid-template-columns: 1fr auto;
+  gap: 4px;
+  width: 250px;
+  color: var(--text-color);
+
+  :global(.value) {
+    grid-area: value;
+  }
+
+  :global(.bar) {
+    grid-area: bar;
+    box-shadow: inset 0px 0px 0px 1px var(--spectrum-global-color-gray-400);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  :global(.fill) {
+    background: var(--fill-color);
+    height: 100%;
+  }
+}
