@@ -124,7 +124,7 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     arrowSize
   ];
 
-  // TODO: note, the position freezing breaks if body sizes itself dynamicly with the visual viewport but that might
+  // Note, the position freezing breaks if body sizes itself dynamicly with the visual viewport but that might
   // just be a non-realistic use case
   // Upon opening a overlay, record the current visual viewport scale so we can freeze the overlay styles
   let lastScale = useRef(visualViewport?.scale);
