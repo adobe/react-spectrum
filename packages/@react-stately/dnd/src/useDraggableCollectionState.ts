@@ -18,7 +18,9 @@ export interface DraggableCollectionStateOptions extends DraggableCollectionProp
   /** A collection of items. */
   collection: Collection<Node<unknown>>,
   /** An interface for reading and updating multiple selection state. */
-  selectionManager: MultipleSelectionManager
+  selectionManager: MultipleSelectionManager,
+  /** Whether the drag events should be disabled. */
+  isDisabled?: boolean
 }
 
 export interface DraggableCollectionState {
@@ -54,6 +56,7 @@ export interface DraggableCollectionState {
 export function useDraggableCollectionState(props: DraggableCollectionStateOptions): DraggableCollectionState {
   let {
     getItems,
+    isDisabled,
     collection,
     selectionManager,
     onDragStart,
@@ -62,6 +65,9 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     preview,
     getAllowedDropOperations
   } = props;
+  if (isDisabled) {
+    selectionManager.isDisabled = () => true;
+  }
   let [, setDragging] = useState(false);
   let draggingKeys = useRef(new Set<Key>());
   let draggedKey = useRef(null);

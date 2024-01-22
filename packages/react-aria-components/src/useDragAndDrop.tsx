@@ -130,9 +130,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
         return useDraggableCollectionState({...props, ...options} as DraggableCollectionStateOptions);
       };
       hooks.useDraggableCollection = useDraggableCollection;
-      hooks.useDraggableItem = function useDraggableItemOverride(props: DraggableItemProps, state: DraggableCollectionState) {
-        return useDraggableItem({...props, ...options}, state);
-      };
+      hooks.useDraggableItem = useDraggableItem;
       hooks.DragPreview = DragPreview;
       hooks.renderDragPreview = renderDragPreview;
     }
@@ -141,9 +139,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(props: DroppableCollectionStateOptions) {
         return useDroppableCollectionState({...props, ...options});
       },
-      hooks.useDroppableItem = function useDroppableItemOverride(props: DroppableItemOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) {
-        return useDroppableItem({...props, ...options}, state, ref);
-      };
+      hooks.useDroppableItem = useDroppableItem;
       hooks.useDroppableCollection = function useDroppableCollectionOverride(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) {
         return useDroppableCollection({...props, ...options}, state, ref);
       };
