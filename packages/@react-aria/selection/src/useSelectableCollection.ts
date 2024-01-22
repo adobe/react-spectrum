@@ -409,7 +409,10 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         if (!isVirtualized) {
           scrollIntoView(scrollRef.current, element);
         }
-        scrollIntoViewport(element, {containingElement: ref.current});
+        // Avoid scroll in iOS VO, since it may cause overlay to close (i.e. RAC submenu)
+        if (modality !== 'virtual') {
+          scrollIntoViewport(element, {containingElement: ref.current});
+        }
       }
     }
 
