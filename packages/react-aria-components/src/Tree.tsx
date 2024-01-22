@@ -10,13 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaGridListProps, FocusScope,  mergeProps, useFocusRing, useGridList, useGridListItem, useHover} from 'react-aria';
+import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
+import {FocusScope,  mergeProps, useFocusRing, useGridList, useGridListItem, useHover} from 'react-aria';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useShallowRender, useSSRCollectionNode} from './Collection';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {Expandable, Key} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {GridNode} from '@react-types/grid';
-import {Collection as ICollection, Node, SelectionBehavior, useTreeState} from 'react-stately';
+import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
@@ -93,12 +94,16 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-// TODO what TreeRenderProps do we want
+// TODO what TreeRenderProps do we want?
+// isEmpty
+// isFocused,
+// isFocusVisible,
+// state
 export interface TreeRenderProps {
 }
 
-// TODO: double check these props, get rid of AriaGridListProps later
-export interface TreeProps<T> extends Omit<AriaGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
+// TODO: double check these props
+export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** Provides content to display when there are no items in the list. */
@@ -107,6 +112,7 @@ export interface TreeProps<T> extends Omit<AriaGridListProps<T>, 'children'>, Co
 
 
 export const TreeContext = createContext<ContextValue<TreeProps<any>, HTMLDivElement>>(null);
+export const TreeStateContext = createContext<TreeState<any> | null>(null);
 
 function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   // Render the portal first so that we have the collection by the time we render the DOM in SSR.
@@ -157,8 +163,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     children: undefined
   });
 
-  // TODO: replace with useTreeGridList
-  let {gridProps} = useGridList(props, state, ref);
+  let {gridProps} = useTreeGridList(props, state, ref);
 
   let children = useCachedChildren({
     items: state.collection,
@@ -189,7 +194,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   });
 
 
-  // TODO: empty state for a empty tree?
+  // TODO: empty state for a empty tree? will need the proper aria props to reflect like in Tableveiw
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
@@ -217,7 +222,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
         data-focus-visible={isFocusVisible || undefined}>
         <Provider
           values={[
-            [ListStateContext, state]
+            [TreeStateContext, state]
           ]}>
           {children}
         </Provider>
@@ -307,11 +312,11 @@ const _TreeItemContent = forwardRef(TreeItemContent);
 export {_TreeItemContent as TreeItemContent};
 
 function TreeRow({item}) {
-  let state = useContext(ListStateContext)!;
+  let state = useContext(TreeStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   // TODO replace with useTreeListItem
   // Also depending on the item's information with index/level, we may need to add +1 to various attributes
-  let {rowProps, gridCellProps, descriptionProps, ...states} = useGridListItem(
+  let {rowProps, gridCellProps, descriptionProps, ...states} = useTreeGridListItem(
     {
       node: item
     },
@@ -320,8 +325,9 @@ function TreeRow({item}) {
   );
 
   // TODO: vet all this other copy pastaed code
+  // TODO: does this need onAction check?
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction
+    isDisabled: !states.allowsSelection
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
@@ -389,7 +395,7 @@ function TreeRow({item}) {
               [TextContext, {
                 //  TODO: update, will need to pass an id for aria-labelledy?
                 slots: {
-                  title: {}
+                  title: descriptionProps
                 }
               }]
             ]}>
@@ -401,7 +407,7 @@ function TreeRow({item}) {
   );
 }
 
-// This is separate from TreeItemContent since
+// This is separate from TreeItemContent since it needs to call useRenderProps
 function TreeRowContent({item, values}) {
   let renderProps = useRenderProps({
     children: item.rendered,

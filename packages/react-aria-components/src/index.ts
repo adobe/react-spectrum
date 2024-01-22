@@ -56,7 +56,7 @@ export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
 // TODO: export relevant contexts
-export {Tree, TreeItem, TreeItemContent} from './Tree';
+export {Tree, TreeItem, TreeContext, TreeItemContent, TreeStateContext} from './Tree';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale} from 'react-aria';
 export {FormValidationContext} from 'react-stately';
