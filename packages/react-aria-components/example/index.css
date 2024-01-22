@@ -45,6 +45,10 @@ html {
   }
 }
 
+.item[data-disabled] {
+  opacity: 0.4;
+}
+
 .item.focused {
   background: gray;
   color: white;

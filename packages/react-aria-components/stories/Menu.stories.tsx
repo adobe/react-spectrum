@@ -164,3 +164,26 @@ export const SubmenuManyItemsExample = () => (
     </Popover>
   </MenuTrigger>
 );
+
+export const SubmenuDisabledExample = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')} disabledKeys={['Bar']}>
+        <MyMenuItem id="Foo">Foo</MyMenuItem>
+        <SubmenuTrigger>
+          <MyMenuItem id="Bar">Bar</MyMenuItem>
+          <Popover className={styles.popover}>
+            <Menu className={styles.menu} onAction={action('onAction')}>
+              <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+              <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
+              <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
+            </Menu>
+          </Popover>
+        </SubmenuTrigger>
+        <MyMenuItem id="Baz">Baz</MyMenuItem>
+        <MyMenuItem id="Google" href="https://google.com">Google</MyMenuItem>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
