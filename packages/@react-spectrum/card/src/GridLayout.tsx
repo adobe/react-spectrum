@@ -256,7 +256,7 @@ export class GridLayout<T> extends BaseLayout<T> {
     }
 
     let row = this.collection.rows[indexRowBelow];
-    return getFirstItem(getChildNodes(row, this.collection))?.key;
+    return row ? getFirstItem(getChildNodes(row, this.collection))?.key : null;
   }
 
   getKeyAbove(key: Key) {
@@ -271,6 +271,6 @@ export class GridLayout<T> extends BaseLayout<T> {
     }
 
     let row = this.collection.rows[indexRowAbove];
-    return getFirstItem(getChildNodes(row, this.collection))?.key;
+    return row ? getFirstItem(getChildNodes(row, this.collection))?.key : null;
   }
 }
