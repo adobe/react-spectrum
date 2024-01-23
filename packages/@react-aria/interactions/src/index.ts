@@ -17,6 +17,7 @@ export {
   isFocusVisible,
   getInteractionModality,
   setInteractionModality,
+  setupFocus,
   useInteractionModality,
   useFocusVisible,
   useFocusVisibleListener
