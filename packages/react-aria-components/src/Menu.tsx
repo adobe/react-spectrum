@@ -22,7 +22,7 @@ import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
 import {PressResponder, useHover} from '@react-aria/interactions';
-import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
 import {RootMenuTriggerState, UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -140,14 +140,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   let popoverContainerRef = useRef<HTMLDivElement>(null);
   let {menuProps} = useMenu(props, state, ref);
 
-  let [leftOffset, setLeftOffset] = useState({left: 0});
-  useEffect(() => {
-    if (popoverContainerRef.current) {
-      let {left} = popoverContainerRef.current.getBoundingClientRect();
-      setLeftOffset({left: -1 * left});
-    }
-  }, []);
-
   let children = useCachedChildren({
     items: state.collection,
     children: (item) => {
@@ -185,7 +177,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           {children}
         </Provider>
       </div>
-      {rootMenuTriggerState?.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: 0, ...leftOffset}} /> }
+      {rootMenuTriggerState?.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: 0}} /> }
     </FocusScope>
   );
 }
