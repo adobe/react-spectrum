@@ -18,46 +18,53 @@ export default {
   title: 'React Aria Components'
 };
 
-export const SliderExample = () => (
-  <Slider
-    data-testid="slider-example"
-    defaultValue={[30, 60]}
-    style={{
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      width: 300
-    }}>
-    <div style={{display: 'flex', alignSelf: 'stretch'}}>
-      <Label>Test</Label>
-      <SliderOutput style={{flex: '1 0 auto', textAlign: 'end'}}>
-        {({state}) => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
-      </SliderOutput>
-    </div>
-    <SliderTrack
-      style={{
-        position: 'relative',
-        height: 30,
-        width: '100%'
-      }}>
-      <div
+export const SliderExample = () => {
+  const [value, setValue] = React.useState([30, 60]);
+  return (
+    <div>
+      <Slider<number[]>
+        data-testid="slider-example"
+        value={value}
+        onChange={setValue}
         style={{
-          position: 'absolute',
-          backgroundColor: 'gray',
-          height: 3,
-          top: 13,
-          width: '100%'
-        }} />
-      <CustomThumb index={0}>
-        <Label>A</Label>
-      </CustomThumb>
-      <CustomThumb index={1}>
-        <Label>B</Label>
-      </CustomThumb>
-    </SliderTrack>
-  </Slider>
-);
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: 300
+        }}>
+        <div style={{display: 'flex', alignSelf: 'stretch'}}>
+          <Label>Test</Label>
+          <SliderOutput style={{flex: '1 0 auto', textAlign: 'end'}}>
+            {({state}) => `${state.getThumbValueLabel(0)} - ${state.getThumbValueLabel(1)}`}
+          </SliderOutput>
+        </div>
+        <SliderTrack
+          style={{
+            position: 'relative',
+            height: 30,
+            width: '100%'
+          }}>
+          <div
+            style={{
+              position: 'absolute',
+              backgroundColor: 'gray',
+              height: 3,
+              top: 13,
+              width: '100%'
+            }} />
+          <CustomThumb index={0}>
+            <Label>A</Label>
+          </CustomThumb>
+          <CustomThumb index={1}>
+            <Label>B</Label>
+          </CustomThumb>
+        </SliderTrack>
+      </Slider>
+      <button onClick={() => setValue([0, 100])}>reset</button>
+    </div>
+  );
+};
 
 export const SliderCSS = (props: SliderProps) => (
   <Slider {...props} defaultValue={30} className={styles.slider}>
