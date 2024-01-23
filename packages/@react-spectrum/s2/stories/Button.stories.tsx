@@ -17,16 +17,40 @@ export default meta;
 
 type Story = StoryObj<typeof Button>;
 export const Example: Story = {
-  render: (args) => (<div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
-    <Button {...args}>Press me</Button>
-    <Button {...args}><Icon><NewIcon /></Icon><Text>Test</Text></Button>
-    <Button {...args} isIconOnly><Icon><NewIcon /></Icon></Button>
-    <Button {...args} className={style({maxWidth: 32})()}>Very long button with wrapping text to see what happens</Button>
-    <Button {...args} className={style({maxWidth: 32})()}>
-      <Icon><NewIcon /></Icon>
-      <Text>Very long button with wrapping text to see what happens</Text>
-    </Button>
-  </div>),
+  render: (args) => {
+    let buttons = (
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
+        <Button {...args}>Press me</Button>
+        <Button {...args}><Icon><NewIcon /></Icon><Text>Test</Text></Button>
+        <Button {...args}><Icon><NewIcon /></Icon></Button>
+        <Button {...args} className={style({maxWidth: 32})()}>Very long button with wrapping text to see what happens</Button>
+        <Button {...args} className={style({maxWidth: 32})()}>
+          <Icon><NewIcon /></Icon>
+          <Text>Very long button with wrapping text to see what happens</Text>
+        </Button>
+      </div>
+    );
+    if (args.staticColor) {
+      return (
+        <div
+          className={style({
+            padding: 8,
+            backgroundColor: {
+              staticColor: {
+                black: {default: 'yellow-400', dark: 'yellow-1100'},
+                white: {default: 'blue-900', dark: 'blue-500'}
+              }
+            },
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2
+          })({staticColor: args.staticColor})}>
+          {buttons}
+        </div>
+      );
+    }
+    return buttons;
+  },
   parameters: {
     design: {
       type: 'figma',

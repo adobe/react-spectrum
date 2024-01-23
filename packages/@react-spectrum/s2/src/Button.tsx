@@ -9,8 +9,7 @@ interface ButtonStyleProps {
   variant?: 'primary' | 'secondary' | 'accent' | 'negative',
   style?: 'fill' | 'outline',
   size?: 'S' | 'M' | 'L' | 'XL',
-  staticColor?: 'white' | 'black',
-  isIconOnly?: boolean
+  staticColor?: 'white' | 'black'
 }
 
 interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children'>, ButtonStyleProps {
@@ -23,7 +22,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   display: 'flex',
   alignItems: {
     default: 'baseline',
-    isIconOnly: 'center'
+    ':has([slot=icon]:only-child)': 'center'
   },
   justifyContent: 'center',
   textAlign: 'start',
@@ -35,11 +34,11 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   borderRadius: 'pill',
   paddingX: {
     default: 'pill',
-    isIconOnly: 0
+    ':has([slot=icon]:only-child)': 0
   },
   paddingY: 0,
   aspectRatio: {
-    isIconOnly: 'square'
+    ':has([slot=icon]:only-child)': 'square'
   },
   transition: 'default',
   borderStyle: 'solid',
@@ -57,7 +56,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     type: 'marginTop',
     value: {
       default: '[calc(-2 / 14 * 1em)]',
-      isIconOnly: 0
+      ':has([slot=icon]:only-child)': 0
     }
   },
   borderColor: {
@@ -224,8 +223,7 @@ export function Button(props: ButtonProps) {
         variant: props.variant || 'primary',
         style: props.style || 'fill',
         size: props.size || 'M',
-        staticColor: props.staticColor,
-        isIconOnly: props.isIconOnly
+        staticColor: props.staticColor
       }))}>
       <TextContext.Provider value={{className: style({paddingY: '--labelPadding'})()}}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

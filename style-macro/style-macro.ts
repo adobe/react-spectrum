@@ -81,7 +81,6 @@ interface MacroContext {
 
 export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemeProperties<T>, Condition<T>> {
   let themePropertyMap = createValueLookup(Object.keys(theme.properties), true);
-  let themeConditionMap = createValueLookup(['default', ...Object.values(theme.conditions)]);
   let propertyFunctions = new Map(Object.entries(theme.properties).map(([k, v]) => {
     if (typeof v === 'function') {
       return [k, v];
@@ -91,23 +90,16 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
   let dependencies = new Set<string>();
   return function style(this: MacroContext | void, style) {
-    // Declare layers for each condition in the theme ahead of time so the order is always correct.
-    let css = '@layer ';
-    let first = true;
-    for (let name of themeConditionMap.values()) {
-      if (first) {
-        first = false;
-      } else {
-        css += ', ';
-      }
-      css += name;
-    }
-    css += ';\n\n';
-
     // Generate rules for each property.
     let rules = new Map<string, Rule[]>();
     let values =  new Map();
     dependencies.clear();
+    let usedPriorities = 1;
+    let setRules = (key: string, value: [number, Rule[]]) => {
+      usedPriorities = Math.max(usedPriorities, value[0]);
+      rules.set(key, value[1]);
+    };
+
     for (let key in style) {
       let value = style[key]!;
       let themeProperty = key;
@@ -123,10 +115,10 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       if (theme.shorthands[key]) {
         for (let prop of theme.shorthands[key]) {
           values.set(prop, value);
-          rules.set(prop, compileValue(prop, prop, value));
+          setRules(prop, compileValue(prop, prop, value));
         }
       } else if (themeProperty in theme.properties) {
-        rules.set(key, compileValue(key, themeProperty, value));
+        setRules(key, compileValue(key, themeProperty, value));
       }
     }
 
@@ -140,19 +132,31 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         }
         let name = `--${themePropertyMap.get(dep)}`;
         // Could potentially use @property to prevent the var from inheriting in children.
-        rules.set(name, compileValue(name, dep, value));
-        rules.set(dep, compileValue(dep, dep, name));
+        setRules(name, compileValue(name, dep, value));
+        setRules(dep, compileValue(dep, dep, name));
       }
     }
     dependencies.clear();
 
+    // Declare layers for each priority ahead of time so the order is always correct.
+    let css = '@layer ';
+    let first = true;
+    for (let i = 0; i < usedPriorities; i++) {
+      if (first) {
+        first = false;
+      } else {
+        css += ', ';
+      }
+      css += generateName(i, true);
+    }
+    css += ';\n\n';    
+
     // Generate JS and CSS for each rule.
     let js = 'let rules = "";\n';
-    let printedRules = new Set<string>();
     for (let propertyRules of rules.values()) {
       js += printJS(propertyRules) + '\n';
       for (let rule of propertyRules) {
-        css += printRule(rule, printedRules) + '\n\n';
+        css += printRule(rule) + '\n\n';
       }
     }
 
@@ -169,17 +173,18 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
   };
 
   function compileValue(property: string, themeProperty: string, value: StyleValue<Value, Condition<T>, any>) {
-    return conditionalToRules(value as PropertyValueDefinition<Value>, new Set(), new Set(), (value, conditions, skipConditions) => {
-      return compileRule(property, themeProperty, value, conditions, skipConditions);
+    return conditionalToRules(value as PropertyValueDefinition<Value>, 0, new Set(), new Set(), (value, priority, conditions, skipConditions) => {
+      return compileRule(property, themeProperty, value, priority, conditions, skipConditions);
     });
   }
 
   function conditionalToRules<P extends CustomValue | any[]>(
     value: PropertyValueDefinition<P>,
+    parentPriority: number,
     currentConditions: Set<string>,
     skipConditions: Set<string>,
-    fn: (value: P, conditions: Set<string>, skipConditions: Set<string>) => Rule[]
-  ) {
+    fn: (value: P, priority: number, conditions: Set<string>, skipConditions: Set<string>) => [number, Rule[]]
+  ): [number, Rule[]] {
     if (value && typeof value === 'object' && !Array.isArray(value)) {
       let rules: Rule[] = [];
 
@@ -189,7 +194,8 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       // Skip the default condition if we're already filtering by one of the other possible conditions.
       // For example, if someone specifies `dark: 'gray-400'`, only include the dark version of `gray-400` from the theme.
       let skipDefault = Object.keys(value).some(k => currentConditions.has(k));
-      let wasThemeCondition = false;
+      let wasCSSCondition = false;
+      let priority = parentPriority;
 
       for (let condition in value) {
         if (skipConditions.has(condition) || (condition === 'default' && skipDefault)) {
@@ -202,42 +208,63 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         // If a theme condition comes after runtime conditions, create a new grouping.
         // This makes the CSS class unconditional so it appears outside the `else` block in the JS.
         // The @layer order in the generated CSS will ensure that it overrides classes applied by runtime conditions.
-        let isThemeCondition = condition in theme.conditions;
-        if (!wasThemeCondition && isThemeCondition && rules.length) {
+        let isCSSCondition = condition in theme.conditions || condition.startsWith(':');
+        if (!wasCSSCondition && isCSSCondition && rules.length) {
           rules = [{prelude: '', condition: '', body: rules}];
         }
-        wasThemeCondition = isThemeCondition;
+        wasCSSCondition = isCSSCondition;
 
-        if (condition === 'default' || isThemeCondition || /^is[A-Z]/.test(condition)) {
+        // Increment the current priority whenever we see a new CSS condition.
+        if (isCSSCondition) {
+          priority++;
+        }
+
+        // If this is a runtime condition, inherit the priority from the parent rule.
+        // Otherwise, use the current maximum of the parent and current priorities.
+        let rulePriority = isCSSCondition ? priority : parentPriority;
+
+        if (condition === 'default' || isCSSCondition || /^is[A-Z]/.test(condition)) {
           let subConditions = currentConditions;
-          if (condition in theme.conditions) {
+          if (isCSSCondition) {
             subConditions = new Set([...currentConditions, condition]);
           }
-          rules.push(...compileCondition(currentConditions, condition, conditionalToRules(val, subConditions, subSkipConditions, fn)));
+          let [subPriority, subRules] = conditionalToRules(val, rulePriority, subConditions, subSkipConditions, fn);
+          rules.push(...compileCondition(currentConditions, condition, priority, subRules));
+          priority = Math.max(priority, subPriority);
         } else if (val && typeof val === 'object' && !Array.isArray(val)) {
           for (let key in val) {
-            rules.push(...compileCondition(currentConditions, `${condition} === ${JSON.stringify(key)}`, conditionalToRules(val[key], currentConditions, subSkipConditions, fn)));
+            let [subPriority, subRules] = conditionalToRules(val[key], rulePriority, currentConditions, subSkipConditions, fn);
+            rules.push(...compileCondition(currentConditions, `${condition} === ${JSON.stringify(key)}`, priority, subRules));
+            priority = Math.max(priority, subPriority);
           }
         }
       }
-      return rules;
+      return [priority, rules];
     } else {
-      return fn(value, currentConditions, skipConditions);
+      return fn(value, parentPriority, currentConditions, skipConditions);
     }
   }
 
-  function compileCondition(conditions: Set<string>, condition: string, rules: Rule[]): Rule[] {
-    if (condition === 'default') {
+  function compileCondition(conditions: Set<string>, condition: string, priority: number, rules: Rule[]): Rule[] {
+    if (condition === 'default' || conditions.has(condition)) {
       return [{prelude: '', condition: '', body: rules}];
     }
 
-    if (condition in theme.conditions) {
-      if (conditions.has(condition)) {
-        return [{prelude: '', condition: '', body: rules}];
+    if (condition in theme.conditions || condition.startsWith(':')) {
+      // Conditions starting with : are CSS pseudo classes. Nest them inside the parent rule.
+      let prelude = theme.conditions[condition] || condition;
+      if (prelude.startsWith(':')) {
+        return [{
+          prelude: `@layer ${generateName(priority, true)}`,
+          body: rules.map(rule => ({prelude: rule.prelude, body: [{...rule, prelude: '&' + prelude}], condition: ''})),
+          condition: ''
+        }];
       }
+
+      // Otherwise, wrap the rule in the condition (e.g. @media).
       return [{
-        prelude: `@layer ${themeConditionMap.get(theme.conditions[condition])}`,
-        body: [{prelude: theme.conditions[condition], body: rules, condition: ''}],
+        prelude: `@layer ${generateName(priority, true)}`,
+        body: [{prelude, body: rules, condition: ''}],
         condition: ''
       }];
     }
@@ -245,7 +272,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     return [{prelude: '', condition, body: rules}];
   }
 
-  function compileRule(property: string, themeProperty: string, value: Value, conditions: Set<string>, skipConditions: Set<string>): Rule[] {
+  function compileRule(property: string, themeProperty: string, value: Value, priority: number, conditions: Set<string>, skipConditions: Set<string>): [number, Rule[]] {
     // Generate selector. This consists of three parts:
     // 1. Property. For custom properties we use a hash. For theme properties, we use the index within the theme.
     // 2. Conditions. This uses the index within the theme.
@@ -261,7 +288,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     if (propertyFunction) {
       // Expand value to conditional CSS values, and then to rules.
       let res = propertyFunction(value, property);
-      return conditionalToRules(res, conditions, skipConditions, (value, conditions) => {
+      return conditionalToRules(res, priority, conditions, skipConditions, (value, priority, conditions) => {
         let [obj, p] = value;
         let body = '';
         for (let key in obj) {
@@ -278,27 +305,25 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         }
 
         let selector = prelude;
-        for (let condition of conditions) {
-          if (condition in theme.conditions) {
-            selector += themeConditionMap.get(theme.conditions[condition]);
-          }
+        if (priority > 0) {
+          selector += generateName(priority);
         }
 
-        let rules = [{
+        let rules: Rule[] = [{
           condition: '',
           prelude: selector + p,
           body
         }];
 
         if (conditions.size === 0) {
-          return [{
+          rules = [{
             prelude: '@layer a',
             body: rules,
             condition: ''
           }];
         }
 
-        return rules;
+        return [0, rules];
       });
     } else {
       throw new Error('Unknown property ' + themeProperty);
@@ -365,20 +390,13 @@ function hash(v: string) {
   return hash;
 }
 
-function printRule(rule: Rule, printedRules: Set<string>, indent = ''): string {
+function printRule(rule: Rule, indent = ''): string {
   if (!rule.prelude && typeof rule.body !== 'string') {
-    return rule.body.map(b => printRule(b, printedRules, indent)).join('\n\n');
-  }
-
-  if (typeof rule.body === 'string') {
-    if (printedRules.has(rule.prelude)) {
-      return '';
-    }
-    printedRules.add(rule.prelude);
+    return rule.body.map(b => printRule(b, indent)).join('\n\n');
   }
 
   return `${indent}${rule.prelude} {
-${typeof rule.body === 'string' ? indent + '  ' + rule.body : rule.body.map(b => printRule(b, printedRules, indent + '  ')).join('\n\n')}
+${typeof rule.body === 'string' ? indent + '  ' + rule.body : rule.body.map(b => printRule(b, indent + '  ')).join('\n\n')}
 ${indent}}`;
 }
 
@@ -403,9 +421,16 @@ function printJS(rules: Rule[], indent = ''): string {
 }
 
 function printRuleChildren(rule: Rule, indent = '') {
-  return typeof rule.body === 'string'
-    ? `rules += ' ${rule.prelude.slice(1)}';`
-    : printJS(rule.body, indent);
+  let res = '';
+  if (rule.prelude.startsWith('.')) {
+    res +=  `rules += ' ${rule.prelude.slice(1)}';`;
+  }
+
+  if (Array.isArray(rule.body)) {
+    res += printJS(rule.body, indent);
+  }
+
+  return res;
 }
 
 export function raw(this: MacroContext | void, css: string) {

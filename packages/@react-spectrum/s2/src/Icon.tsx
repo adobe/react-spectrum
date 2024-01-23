@@ -8,7 +8,7 @@ interface IconProps {
 
 export function Icon(props: IconProps) {
   return (
-    <CenterBaseline className={style({marginStart: '--iconMargin', flexShrink: 0})()}>
+    <CenterBaseline slot="icon" className={style({marginStart: '--iconMargin', flexShrink: 0})()}>
       {cloneElement(props.children, {
         className: style({
           fill: 'currentColor',

@@ -70,15 +70,15 @@ export type RenderProps<K extends string> = {
 export type StyleValue<V extends Value, C extends string, R extends RenderProps<string>> = V | Conditional<V, C, R>;
 export type Condition<T extends Theme> = 'default' | Extract<keyof T['conditions'], string>;
 type Conditional<V extends Value, C extends string, R extends RenderProps<string>> =
-  ThemeConditions<V, C, R> & DynamicConditions<V, C, R>
+  CSSConditions<V, C, R> & RuntimeConditions<V, C, R>
 
-type ThemeConditions<V extends Value, C extends string, R extends RenderProps<string>> = {
-  [name in C]?: StyleValue<V, C, R>
+type CSSConditions<V extends Value, C extends string, R extends RenderProps<string>> = {
+  [name in C | `:${string}`]?: StyleValue<V, C, R>
 };
 
 // If render props are unknown, allow any custom conditions to be inferred.
 // Unfortunately this breaks "may only specify known properties" errors.
-type DynamicConditions<V extends Value, C extends string, R extends RenderProps<string>> =
+type RuntimeConditions<V extends Value, C extends string, R extends RenderProps<string>> =
   [R] extends [never]
     ? UnknownConditions<V, C>
     : RenderPropConditions<V, C, R>;
