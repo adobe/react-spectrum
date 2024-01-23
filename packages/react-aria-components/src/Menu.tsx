@@ -85,12 +85,9 @@ export interface SubmenuTriggerProps {
   children: ReactElement[]
 }
 
-function SubmenuTrigger(props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
+export function SubmenuTrigger(props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
   return useSSRCollectionNode('submenutrigger', props, ref, props.children, props.children[0]);
 }
-
-let _SubmenuTrigger = /*#__PURE__*/ (forwardRef)(SubmenuTrigger) as (props: SubmenuTriggerProps) => JSX.Element;
-export {_SubmenuTrigger as SubmenuTrigger};
 
 function SubmenuTriggerInner(props) {
   let {item, parentMenuRef} = props;
