@@ -184,7 +184,7 @@ function getDelta(
   let startEdgeOffset = offset - containerScroll + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
   let endEdgeOffset = offset - containerScroll + size + containerOffsetWithBoundary[axis] - boundaryDimensions[AXIS[axis]];
 
-  // If any of the overlay edges falls outside of the boundary, shift the overlay the required amount required to align one of the overlay's
+  // If any of the overlay edges falls outside of the boundary, shift the overlay the required amount to align one of the overlay's
   // edges with the closest boundary edge.
   if (startEdgeOffset < boundaryStartEdge) {
     return boundaryStartEdge - startEdgeOffset;
