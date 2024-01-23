@@ -742,22 +742,22 @@ let items = [
 ];
 
 <MyMenuButton label="Actions" items={items}>
-    {function renderSubmenu(item) {
-      if (item.children) {
-        return (
-          <SubmenuTrigger>
-            <MyItem key={item.name} aria-label={item.name}>{item.name}</MyItem>
-            <Popover>
-              <Menu items={item.children}>
-                {(item) => renderSubmenu(item)}
-              </Menu>
-            </Popover>
-          </SubmenuTrigger>
-        );
-      } else {
-        return <MyItem key={item.name}>{item.name}</MyItem>;
-      }
-    }}
+  {function renderSubmenu(item) {
+    if (item.children) {
+      return (
+        <SubmenuTrigger>
+          <MyItem key={item.name} aria-label={item.name}>{item.name}</MyItem>
+          <Popover>
+            <Menu items={item.children}>
+              {(item) => renderSubmenu(item)}
+            </Menu>
+          </Popover>
+        </SubmenuTrigger>
+      );
+    } else {
+      return <MyItem key={item.name}>{item.name}</MyItem>;
+    }
+  }}
 </MyMenuButton>
 ```
 
