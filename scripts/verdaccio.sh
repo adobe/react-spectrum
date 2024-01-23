@@ -127,11 +127,6 @@ then
   yarn build --public-url ./
   mv dist ../../$verdaccio_path/rac-spectrum-tailwind
 
-  # Build starter storybook
-  cd ../../starters/docs
-  yarn build-storybook
-  mv storybook-static ../../$verdaccio_path/starter-storybook
-
   cd ../..
 
   # Get the tarball size of each published package.

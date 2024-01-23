@@ -21,6 +21,7 @@ import {Divider} from '@react-spectrum/divider';
 import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
 import {Keyboard} from '@react-spectrum/text';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Overlays
@@ -90,6 +91,7 @@ import {DialogTrigger, Modal, Dialog, Button, Heading, TextField, Label, Input} 
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 100;
 
   &[data-entering] {
     animation: modal-fade 200ms;
@@ -172,6 +174,12 @@ import {Modal, ModalOverlay} from 'react-aria-components';
 ## Examples
 
 <ExampleList tag="modal" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="modal" tailwindComponent="alertdialog" />
 
 ## Interactions
 

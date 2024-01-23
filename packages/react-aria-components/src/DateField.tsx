@@ -194,7 +194,13 @@ export interface DateInputRenderProps {
    * Whether the date input is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean
+  isDisabled: boolean,
+
+  /**
+   * Whether the date input is invalid.
+   * @selector [data-invalid]
+   */
+  isInvalid: boolean
 }
 
 export interface DateInputProps extends SlotProps, StyleRenderProps<DateInputRenderProps> {
