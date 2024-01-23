@@ -244,10 +244,18 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
 }
 
 export interface MenuItemRenderProps extends ItemRenderProps {
-  /** Whether the item has a submenu. */
-  hasSubmenu?: boolean,
-  /** Whether the item's submenu is open. */
-  isSubmenuOpen?: boolean
+  /**
+   * Whether the item has a submenu.
+   * 
+   * @selector [data-has-submenu]
+   */
+  hasSubmenu: boolean,
+  /**
+   * Whether the item's submenu is open.
+   * 
+   * @selector [data-open]
+   */
+  isOpen: boolean
 }
 
 export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderProps>, LinkDOMProps {
@@ -293,7 +301,9 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
       isHovered,
       isFocusVisible,
       selectionMode: state.selectionManager.selectionMode,
-      selectionBehavior: state.selectionManager.selectionBehavior
+      selectionBehavior: state.selectionManager.selectionBehavior,
+      hasSubmenu: false,
+      isOpen: false
     }
   });
 
@@ -352,7 +362,6 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
   let props: MenuItemProps<T> = item.props;
   let {hoverProps, isHovered} = useHover({isDisabled: states.isDisabled});
   let {isFocusVisible, focusProps} = useFocusRing();
-  let isSubmenuOpen = submenuTriggerState.isOpen;
   let renderProps = useRenderProps({
     ...props,
     id: undefined,
@@ -365,7 +374,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
       selectionMode: state.selectionManager.selectionMode,
       selectionBehavior: state.selectionManager.selectionBehavior,
       hasSubmenu: true,
-      isSubmenuOpen
+      isOpen: submenuTriggerState.isOpen
     }
   });
 
@@ -382,7 +391,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
       data-selected={states.isSelected || undefined}
       data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
       data-has-submenu
-      data-is-submenu-open={isSubmenuOpen || undefined}>
+      data-open={submenuTriggerState.isOpen || undefined}>
       <Provider
         values={[
           [TextContext, {

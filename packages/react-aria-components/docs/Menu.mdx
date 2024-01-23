@@ -227,7 +227,7 @@ function MyMenuButton<T extends object>({label, children, ...props}: MyMenuButto
 
 function MyItem(props: MenuItemProps) {
   return (
-    <MenuItem {...props} className={({isFocused, isSelected, isSubmenuOpen}) => `my-item ${isFocused ? 'focused' : ''} ${isSubmenuOpen ? 'submenu-open' : ''}`}>
+    <MenuItem {...props} className={({isFocused, isSelected, isOpen}) => `my-item ${isFocused ? 'focused' : ''} ${isOpen ? 'open' : ''}`}>
       {({hasSubmenu}) => (
         <>
           {props.children}
@@ -265,7 +265,7 @@ function MyItem(props: MenuItemProps) {
     background: #e70073;
     color: white;
   }
-  &.submenu-open:not(.focused) {
+  &.open:not(.focused) {
     background: #dedede;
     color: var(--text-color);
   }

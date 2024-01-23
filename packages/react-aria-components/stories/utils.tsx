@@ -19,10 +19,10 @@ export const MyMenuItem = (props: MenuItemProps) => {
   return (
     <MenuItem
       {...props}
-      className={({isFocused, isSelected, isSubmenuOpen}) => classNames(styles, 'item', {
+      className={({isFocused, isSelected, isOpen}) => classNames(styles, 'item', {
         focused: isFocused,
         selected: isSelected,
-        'submenu-open': isSubmenuOpen
+        open: isOpen
       })} />
   );
 };

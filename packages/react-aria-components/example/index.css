@@ -54,7 +54,7 @@ html {
   color: white;
 }
 
-.item.submenu-open:not(.focused) {
+.item.open:not(.focused) {
   background: lightslategray;
   color: white;
 }

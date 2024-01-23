@@ -390,12 +390,15 @@ describe('Menu', () => {
       expect(triggerItem).toHaveTextContent('Share…');
       expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
+      expect(triggerItem).toHaveAttribute('data-has-submenu', 'true');
+      expect(triggerItem).not.toHaveAttribute('data-open');
 
       // Open the submenu
       await user.pointer({target: triggerItem});
       act(() => {jest.runAllTimers();});
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
+      expect(triggerItem).toHaveAttribute('data-open', 'true');
       let submenu = getAllByRole('menu')[1];
       expect(submenu).toBeInTheDocument();
       
@@ -460,12 +463,15 @@ describe('Menu', () => {
       expect(triggerItem).toHaveTextContent('Share…');
       expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
+      expect(triggerItem).toHaveAttribute('data-has-submenu', 'true');
+      expect(triggerItem).not.toHaveAttribute('data-open');
 
       // Open the submenu
       await user.pointer({target: triggerItem});
       act(() => {jest.runAllTimers();});
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
+      expect(triggerItem).toHaveAttribute('data-open', 'true');
       let submenu = getAllByRole('menu')[1];
       expect(submenu).toBeInTheDocument();
       
@@ -477,12 +483,15 @@ describe('Menu', () => {
       expect(nestedTriggerItem).toHaveTextContent('Email…');
       expect(nestedTriggerItem).toHaveAttribute('aria-haspopup', 'menu');
       expect(nestedTriggerItem).toHaveAttribute('aria-expanded', 'false');
+      expect(nestedTriggerItem).toHaveAttribute('data-has-submenu', 'true');
+      expect(nestedTriggerItem).not.toHaveAttribute('data-open');
 
       // Open the nested submenu
       await user.pointer({target: nestedTriggerItem});
       act(() => {jest.runAllTimers();});
       expect(nestedTriggerItem).toHaveAttribute('data-hovered', 'true');
       expect(nestedTriggerItem).toHaveAttribute('aria-expanded', 'true');
+      expect(nestedTriggerItem).toHaveAttribute('data-open', 'true');
       let nestedSubmenu = getAllByRole('menu')[1];
       expect(nestedSubmenu).toBeInTheDocument();
 
@@ -547,12 +556,15 @@ describe('Menu', () => {
       expect(triggerItem).toHaveTextContent('Share…');
       expect(triggerItem).toHaveAttribute('aria-haspopup', 'menu');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'false');
+      expect(triggerItem).toHaveAttribute('data-has-submenu', 'true');
+      expect(triggerItem).not.toHaveAttribute('data-open');
 
       // Open the submenu
       await user.pointer({target: triggerItem});
       act(() => {jest.runAllTimers();});
       expect(triggerItem).toHaveAttribute('data-hovered', 'true');
       expect(triggerItem).toHaveAttribute('aria-expanded', 'true');
+      expect(triggerItem).toHaveAttribute('data-open', 'true');
       let submenu = getAllByRole('menu')[1];
       expect(submenu).toBeInTheDocument();
       
@@ -564,12 +576,15 @@ describe('Menu', () => {
       expect(nestedTriggerItem).toHaveTextContent('Email…');
       expect(nestedTriggerItem).toHaveAttribute('aria-haspopup', 'menu');
       expect(nestedTriggerItem).toHaveAttribute('aria-expanded', 'false');
+      expect(nestedTriggerItem).toHaveAttribute('data-has-submenu', 'true');
+      expect(nestedTriggerItem).not.toHaveAttribute('data-open');
 
       // Open the nested submenu
       await user.pointer({target: nestedTriggerItem});
       act(() => {jest.runAllTimers();});
       expect(nestedTriggerItem).toHaveAttribute('data-hovered', 'true');
       expect(nestedTriggerItem).toHaveAttribute('aria-expanded', 'true');
+      expect(nestedTriggerItem).toHaveAttribute('data-open', 'true');
       let nestedSubmenu = getAllByRole('menu')[1];
       expect(nestedSubmenu).toBeInTheDocument();
 
