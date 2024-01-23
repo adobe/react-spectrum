@@ -11,6 +11,7 @@
  */
 
 import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
+import {getLastItem} from '@react-stately/collections';
 import {HTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {SelectableItemStates} from '@react-aria/selection';
@@ -62,39 +63,37 @@ export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state
   } = useGridListItem(props, state, ref);
 
   let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
-  // TODO:
-  let treeNode = state.collection.getItem(node.key);
-  if (treeNode != null) {
+  if (node != null) {
     // TODO: Update the below check perhaps if I add information to the node to indicate that it has child rows
+    let hasChildRows = [...state.collection.getChildren(node.key)].length > 1;
     console.log('node', node)
-    let hasChildRows = [...state.collection.getChildren(treeNode.key)].length > 1;
     treeGridRowProps = {
-      onKeyDown: (e) => {
-        if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === treeNode.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(treeNode.key)) {
-          state.toggleKey(treeNode.key);
+      onKeyDownCapture: (e) => {
+        if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+          state.toggleKey(node.key);
           e.stopPropagation();
-        } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === treeNode.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(treeNode.key))) {
-          state.toggleKey(treeNode.key);
+        } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
+          state.toggleKey(node.key);
           e.stopPropagation();
         }
       },
-      // TODO: check these values.
-      // We want these values even in non-virtualized case because browsers don't compute these values consistently
+      // TODO Note that the below values operate off the assumption that the Content node in the collection always exists for every row and that there is only one
+      // If we can't operate off that assumption, will have to do further post processing in flattenTree
       'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
-      'aria-level': treeNode.level,
-      // TODO:: check this
-      'aria-posinset': treeNode.index + 1,
-      // TODO: see what info I have here, might not to do this complicated stuff
-      // 'aria-setsize': treeNode.level > 1 ?
-      //   (getLastItem(state.keyMap.get(treeNode?.parentKey).childNodes) as GridNode<T>).indexOfType + 1 :
-      //   (getLastItem(state.keyMap.get(state.collection.body.key).childNodes) as GridNode<T>).indexOfType + 1
+      'aria-level': node.level + 1,
+      'aria-posinset': node.level > 0 ? node.index : node.index + 1,
+      'aria-setsize': node.level > 0 ?
+        (getLastItem(state.collection.getChildren(node?.parentKey))).index :
+        [...state.collection].filter(row => row.level === 0).at(-1).index + 1
     };
   }
 
 
   // TODO: does a treeGridListItem include onAction/link stuff??
   return {
-    rowProps: mergeProps(rowProps, treeGridRowProps),
+    // TODO: these both having capturing keydown listeners is problematic because stopPropagation won't stop the keydown from useGridList, so focus still moves into the cell... Might mean that I need to use useGridRow?
+    // Alternatively, move these changes into useGridList onKeyDown and forgo this new hook
+    rowProps: mergeProps(treeGridRowProps, rowProps),
     gridCellProps,
     descriptionProps,
     // TODO: should it return a state specifically for isExpanded? Or is aria attribute sufficient?

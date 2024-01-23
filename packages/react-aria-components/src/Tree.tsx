@@ -11,14 +11,12 @@
  */
 
 import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
-import {FocusScope,  mergeProps, useFocusRing, useGridList, useGridListItem, useHover} from 'react-aria';
 import {CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useShallowRender, useSSRCollectionNode} from './Collection';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {Expandable, Key} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {GridNode} from '@react-types/grid';
+import {FocusScope,  mergeProps, useFocusRing, useHover} from 'react-aria';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
-import {ListStateContext} from './ListBox';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 import {useControlledState} from '@react-stately/utils';
@@ -29,12 +27,14 @@ class TreeCollection<T> implements ICollection<Node<T>> {
 
   constructor(opts) {
     let {collection, expandedKeys} = opts;
-    let {flattenedRows, keyMap} = generateTreeGridCollection<T>(collection, {expandedKeys});
+    let {flattenedRows} = flattenTree<T>(collection, {expandedKeys});
     this.flattenedRows = flattenedRows;
     // TODO: replace with the flattened key map or the original one? Maybe have the state provide the original keymap?
-    this.keyMap = keyMap;
+    this.keyMap = collection.keyMap;
   }
 
+  // TODO: should this collection's getters reflect the flattened structure or the original structure
+  // If we respresent the flattened structure, it is easier for the keyboard nav but harder to find the
   *[Symbol.iterator]() {
     yield* this.flattenedRows;
   }
@@ -162,6 +162,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     collection: flattenedCollection,
     children: undefined
   });
+  console.log('state', state.collection);
 
   let {gridProps} = useTreeGridList(props, state, ref);
 
@@ -425,158 +426,47 @@ function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
     ? 'all'
     : new Set(expanded);
 }
+
+
+
+// TODO: add something that processes the collection and modifies the level and index values, returning a new keymap and set of nodes
+
+
 interface TreeGridCollectionOptions {
-  showSelectionCheckboxes?: boolean,
-  showDragButtons?: boolean,
   expandedKeys: 'all' | Set<Key>
 }
 
-// TODO: These should perhaps be NodeValue instead of gridNode?
+// TODO: update name when we decide how much post processing we want to do
 interface TreeGridCollection<T> {
-  keyMap: Map<Key, NodeValue<T>>,
-  // tableNodes: GridNode<T>[],
-  flattenedRows: NodeValue<T>[],
-  userColumnCount: number
+  flattenedRows: NodeValue<T>[]
 }
-// TODO: clean up the below and get rid of columns and other table specific stuff
-function generateTreeGridCollection<T>(nodes, opts: TreeGridCollectionOptions): TreeGridCollection<T> {
+
+function flattenTree<T>(nodes, opts: TreeGridCollectionOptions): TreeGridCollection<T> {
   let {
     expandedKeys = new Set()
   } = opts;
 
-  // let body: GridNode<T>;
   let flattenedRows = [];
-  // TODO: get rid of column count
-  let columnCount = 0;
-  let userColumnCount = 0;
-  let originalColumns = [];
-  let keyMap = new Map();
 
-  if (opts?.showSelectionCheckboxes) {
-    columnCount++;
-  }
-
-  if (opts?.showDragButtons) {
-    columnCount++;
-  }
-
-  let topLevelRows = [];
-  let visit = (node: GridNode<T>) => {
-    switch (node.type) {
-      // case 'body':
-      //   body = node;
-      //   keyMap.set(body.key, body);
-      //   break;
-      // case 'column':
-      //   if (!node.hasChildNodes) {
-      //     userColumnCount++;
-      //   }
-      //   break;
-      case 'item':
-        topLevelRows.push(node);
-        return;
+  let visitNode = (node: NodeValue<T>) => {
+    if (node.type === 'item') {
+      flattenedRows.push(node);
     }
 
     for (let child of nodes.getChildren(node.key)) {
-      visit(child);
+      if (child.type === 'item') {
+        if (expandedKeys === 'all' || expandedKeys.has(node.key)) {
+          visitNode(child);
+        }
+      }
     }
   };
 
   for (let node of nodes) {
-    if (node.type === 'column') {
-      originalColumns.push(node);
-    }
-    visit(node);
-  }
-  columnCount += userColumnCount;
-
-  // Update each grid node in the treegrid table with values specific to a treegrid structure. Also store a set of flattened row nodes for TableCollection to consume
-  let globalRowCount = 0;
-  let visitNode = (node: GridNode<T>, i?: number) => {
-    // Clone row node and its children so modifications to the node for treegrid specific values aren't applied on the nodes provided
-    // to TableCollection. Index, level, and parent keys are all changed to reflect a flattened row structure rather than the treegrid structure
-    // values automatically calculated via CollectionBuilder
-    if (node.type === 'item') {
-      let childNodes = [];
-      for (let child of  nodes.getChildren(node.key)) {
-        // TODO: get rid of this cell handling
-        if (child.type === 'cell') {
-          let cellClone = {...child};
-          if (cellClone.index + 1 === columnCount) {
-            cellClone.nextKey = null;
-          }
-          childNodes.push({...cellClone});
-        }
-      }
-      let clone = {...node, childNodes: childNodes, level: 1, index: globalRowCount++};
-      flattenedRows.push(clone);
-    }
-
-    let newProps = {};
-
-    // Assign indexOfType to cells and rows for aria-posinset
-    if (node.type !== 'placeholder' && node.type !== 'column') {
-      newProps['indexOfType'] = i;
-    }
-
-    // Use Object.assign instead of spread to preserve object reference for keyMap. Also ensures retrieving nodes
-    // via .childNodes returns the same object as the one found via keyMap look up
-    Object.assign(node, newProps);
-    keyMap.set(node.key, node);
-
-    let lastNode: GridNode<T>;
-    let rowIndex = 0;
-    for (let child of nodes.getChildren(node.key)) {
-      if (!(child.type === 'item' && expandedKeys !== 'all' && !expandedKeys.has(node.key))) {
-        if (child.parentKey == null) {
-          // if child is a cell/expanded row/column and the parent key isn't already established by the collection, match child node to parent row
-          child.parentKey = node.key;
-        }
-
-        if (lastNode) {
-          lastNode.nextKey = child.key;
-          child.prevKey = lastNode.key;
-        } else {
-          child.prevKey = null;
-        }
-
-        if (child.type === 'item') {
-          visitNode(child, rowIndex++);
-        } else {
-          // We enforce that the cells come before rows so can just reuse cell index
-          visitNode(child, child.index);
-        }
-
-        lastNode = child;
-      }
-    }
-
-    if (lastNode) {
-      lastNode.nextKey = null;
-    }
-  };
-
-  let last: GridNode<T>;
-  topLevelRows.forEach((node: GridNode<T>, i) => {
-    visitNode(node as GridNode<T>, i);
-
-    if (last) {
-      last.nextKey = node.key;
-      node.prevKey = last.key;
-    } else {
-      node.prevKey = null;
-    }
-
-    last = node;
-  });
-
-  if (last) {
-    last.nextKey = null;
+    visitNode(node);
   }
 
   return {
-    keyMap,
-    userColumnCount,
     flattenedRows
   };
 }

@@ -71,6 +71,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
   }, [tree, selectionState.focusedKey]);
 
   let onToggle = (key: Key) => {
+    let newSet = toggleKey(expandedKeys, key, tree);
     setExpandedKeys(toggleKey(expandedKeys, key, tree));
   };
 
@@ -87,7 +88,11 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
 function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collection: Collection<Node<T>>): Set<Key> {
   let updatedExpandedKeys: Set<Key>;
   if (currentExpandedKeys === 'all') {
-    updatedExpandedKeys = new Set([...collection].filter(row => row.props.hasChildItems).map(row => row.key));
+    // TODO: would be nice if the collection row information differentiated between childNodes vs childItems
+    // so we didn't have to keep iterating through info, perhaps make the user pass a prop to TreeItem for childItems/hasChildRows even in the static case?
+    updatedExpandedKeys = new Set([...collection].filter(row => {
+      return row.props.childItems || [...collection.getChildren(row.key)].filter(child => child.type === 'item').length > 0;
+    }).map(row => row.key));
     updatedExpandedKeys.delete(key);
   } else {
     updatedExpandedKeys = new Set(currentExpandedKeys);
@@ -97,7 +102,6 @@ function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collectio
       updatedExpandedKeys.add(key);
     }
   }
-
   return updatedExpandedKeys;
 }
 
