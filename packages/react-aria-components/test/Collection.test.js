@@ -6,29 +6,29 @@ import {useCollection} from '../src/Collection';
 
 const CollectionTest = (props) => {
   const result = useCollection(props);
-  props.spyConnection.current = result.collection;
+  props.spyCollection.current = result.collection;
   return <>{result.portal}</>;
 };
 
-const renderItems = (items, spyConnection) => (
-  <CollectionTest spyConnection={spyConnection}>
+const renderItems = (items, spyCollection) => (
+  <CollectionTest spyCollection={spyCollection}>
     {items.map((item) => <ListBoxItem key={item} />)}
   </CollectionTest>
 );
 
 describe('Collection', () => {
   it('should be frozen even in case of empty initial collection', () => {
-    let spyConnection = {};
-    render(renderItems([], spyConnection));
-    expect(spyConnection.current.frozen).toBe(true);
+    let spyCollection = {};
+    render(renderItems([], spyCollection));
+    expect(spyCollection.current.frozen).toBe(true);
   });
 
   it('should have correct firstKey, lastKey and should be frozen after all items are deleted', () => {
-    let spyConnection = {};
-    const {rerender} = render(renderItems(['a'], spyConnection));
-    rerender(renderItems([], spyConnection));
-    expect(spyConnection.current.frozen).toBe(true);
-    expect(spyConnection.current.firstKey).toBe(null);
-    expect(spyConnection.current.lastKey).toBe(null);
+    let spyCollection = {};
+    const {rerender} = render(renderItems(['a'], spyCollection));
+    rerender(renderItems([], spyCollection));
+    expect(spyCollection.current.frozen).toBe(true);
+    expect(spyCollection.current.firstKey).toBe(null);
+    expect(spyCollection.current.lastKey).toBe(null);
   });
 });
