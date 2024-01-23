@@ -113,7 +113,7 @@ export function Styles() {
             </Window>
             <Window toolbar={<AddressBar>https://your-app.com</AddressBar>}>
               <div className="flex-1 flex items-center justify-center bg-gray-50 dark:bg-zinc-800 py-20">
-                <Button className="bg-blue-600 text-white pressed:bg-blue-700 border border-white/10 rounded-lg px-4 py-2 cursor-default outline outline-0 focus-visible:outline-2 outline-blue-600 outline-offset-2">
+                <Button className="bg-blue-600 text-white pressed:bg-blue-700 border border-white/10 rounded-lg px-4 py-2 cursor-default outline outline-0 focus-visible:outline-2 outline-blue-600 dark:outline-blue-500 outline-offset-2">
                   Initiate launch sequence…
                 </Button>
               </div>
