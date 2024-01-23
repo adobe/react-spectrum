@@ -73,7 +73,7 @@ export function useSpinButton(
       case 'PageUp':
         if (onIncrementPage) {
           e.preventDefault();
-          onIncrementPage();
+          onIncrementPage?.();
           break;
         }
       // fallthrough!
@@ -81,13 +81,13 @@ export function useSpinButton(
       case 'Up':
         if (onIncrement) {
           e.preventDefault();
-          onIncrement();
+          onIncrement?.();
         }
         break;
       case 'PageDown':
         if (onDecrementPage) {
           e.preventDefault();
-          onDecrementPage();
+          onDecrementPage?.();
           break;
         }
       // fallthrough
@@ -95,19 +95,19 @@ export function useSpinButton(
       case 'Down':
         if (onDecrement) {
           e.preventDefault();
-          onDecrement();
+          onDecrement?.();
         }
         break;
       case 'Home':
         if (onDecrementToMin) {
           e.preventDefault();
-          onDecrementToMin();
+          onDecrementToMin?.();
         }
         break;
       case 'End':
         if (onIncrementToMax) {
           e.preventDefault();
-          onIncrementToMax();
+          onIncrementToMax?.();
         }
         break;
     }
@@ -126,23 +126,23 @@ export function useSpinButton(
   // This ensures that macOS VoiceOver announces it as "minus" even with other characters between the minus sign
   // and the number (e.g. currency symbol). Otherwise it announces nothing because it assumes the character is a hyphen.
   // In addition, replace the empty string with the word "Empty" so that iOS VoiceOver does not read "50%" for an empty field.
-  textValue = textValue === '' ? stringFormatter.format('Empty') : (textValue || `${value}`).replace('-', '\u2212');
+  let ariaTextValue = textValue === '' ? stringFormatter.format('Empty') : (textValue || `${value}`).replace('-', '\u2212');
 
   useEffect(() => {
     if (isFocused.current) {
       clearAnnouncer('assertive');
-      announce(textValue, 'assertive');
+      announce(ariaTextValue, 'assertive');
     }
-  }, [textValue]);
+  }, [ariaTextValue]);
 
   const onIncrementPressStart = useEffectEvent(
     (initialStepDelay: number) => {
       clearAsync();
-      onIncrement();
+      onIncrement?.();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
-          if (isNaN(maxValue) || isNaN(value) || value < maxValue) {
+          if ((maxValue === undefined || isNaN(maxValue)) || (value === undefined || isNaN(value)) || value < maxValue) {
             onIncrementPressStart(60);
           }
         },
@@ -154,11 +154,11 @@ export function useSpinButton(
   const onDecrementPressStart = useEffectEvent(
     (initialStepDelay: number) => {
       clearAsync();
-      onDecrement();
+      onDecrement?.();
       // Start spinning after initial delay
       _async.current = window.setTimeout(
         () => {
-          if (isNaN(minValue) || isNaN(value) || value > minValue) {
+          if ((minValue === undefined || isNaN(minValue)) || (value === undefined || isNaN(value)) || value > minValue) {
             onDecrementPressStart(60);
           }
         },
@@ -176,13 +176,13 @@ export function useSpinButton(
   return {
     spinButtonProps: {
       role: 'spinbutton',
-      'aria-valuenow': !isNaN(value) ? value : null,
-      'aria-valuetext': textValue,
+      'aria-valuenow': value !== undefined && !isNaN(value) ? value : undefined,
+      'aria-valuetext': ariaTextValue,
       'aria-valuemin': minValue,
       'aria-valuemax': maxValue,
-      'aria-disabled': isDisabled || null,
-      'aria-readonly': isReadOnly || null,
-      'aria-required': isRequired || null,
+      'aria-disabled': isDisabled || undefined,
+      'aria-readonly': isReadOnly || undefined,
+      'aria-required': isRequired || undefined,
       onKeyDown,
       onFocus,
       onBlur

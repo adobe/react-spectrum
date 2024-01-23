@@ -21,7 +21,7 @@ export interface StepListProps<T> extends CollectionBase<T>, SingleSelection {
   /** The key of the initially last completed step (uncontrolled). */
   defaultLastCompletedStep?: Key,
   /** Callback for when the last completed step changes. */
-  onLastCompletedStepChange?: (key: Key) => void,
+  onLastCompletedStepChange?: (key: Key | null) => void,
   /** Whether the step list is disabled. Steps will not be focusable or interactive. */
   isDisabled?: boolean,
   /** Whether the step list is read only. Steps will be focusable but non-interactive. */
@@ -38,25 +38,29 @@ export interface StepListState<T> extends SingleSelectListState<T> {
 export function useStepListState<T extends object>(props: StepListProps<T>): StepListState<T> {
   let state = useSingleSelectListState<T>(props);
 
-  let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key>(props.lastCompletedStep, props.defaultLastCompletedStep, props.onLastCompletedStepChange);
+  let [lastCompletedStep, setLastCompletedStep] = useControlledState<Key | null>(props.lastCompletedStep, props.defaultLastCompletedStep ?? null, props.onLastCompletedStepChange);
   const {setSelectedKey: realSetSelectedKey, selectedKey, collection} = state;
   const {indexMap, keysLinkedList} = useMemo(() => buildKeysMaps(collection), [collection]);
   const selectedIdx = indexMap.get(selectedKey);
 
-  const isCompleted = useCallback((step: Key) => {
+  const isCompleted = useCallback((step: Key | null | undefined) => {
     if (step === undefined) {
       return false;
     }
 
-    return indexMap.get(step) <= indexMap.get(lastCompletedStep);
+    return (step !== null &&
+      lastCompletedStep !== null &&
+      indexMap.has(step) &&
+      indexMap.has(lastCompletedStep) &&
+      indexMap.get(step)! <= indexMap.get(lastCompletedStep)!);
   }, [indexMap, lastCompletedStep]);
 
   const findDefaultSelectedKey = useCallback((collection: Collection<Node<T>> | null, disabledKeys: Set<Key>) => {
-    let selectedKey = null;
-    if (collection) {
+    let selectedKey: Key | null = null;
+    if (collection && collection.size > 0) {
       selectedKey = collection.getFirstKey();
       // loop over keys until we find one that isn't completed or disabled and select that
-      while (selectedKey !== collection.getLastKey() && (disabledKeys.has(selectedKey) || isCompleted(selectedKey))) {
+      while (selectedKey !== collection.getLastKey() && selectedKey && (disabledKeys.has(selectedKey) || isCompleted(selectedKey))) {
         selectedKey = collection.getKeyAfter(selectedKey);
       }
     }
@@ -66,18 +70,21 @@ export function useStepListState<T extends object>(props: StepListProps<T>): Ste
 
   useEffect(() => {
     // Ensure a step is always selected (in case no selected key was specified or if selected item was deleted from collection)
-    let selectedKey = state.selectedKey;
+    let selectedKey: Key | null = state.selectedKey;
     if (state.selectionManager.isEmpty || !state.collection.getItem(selectedKey)) {
       selectedKey = findDefaultSelectedKey(state.collection, state.disabledKeys);
-      state.selectionManager.replaceSelection(selectedKey);
+      if (selectedKey !== null) {
+        state.selectionManager.replaceSelection(selectedKey);
+      }
     }
 
     if (state.selectionManager.focusedKey == null) {
       state.selectionManager.setFocusedKey(selectedKey);
     }
 
-    if (selectedIdx > 0 && selectedIdx > (indexMap.get(lastCompletedStep) ?? -1) + 1) {
-      setLastCompletedStep(keysLinkedList.get(selectedKey));
+    let lcs = (lastCompletedStep !== null ? indexMap.get(lastCompletedStep) : -1) ?? -1;
+    if (selectedIdx !== undefined && selectedIdx > 0 && selectedIdx > lcs + 1 && selectedKey !== null && keysLinkedList.has(selectedKey)) {
+      setLastCompletedStep(keysLinkedList.get(selectedKey)!);
     }
   });
 
@@ -111,11 +118,11 @@ export function useStepListState<T extends object>(props: StepListProps<T>): Ste
   };
 }
 
-function buildKeysMaps<T>(coll: Collection<Node<T>>): { indexMap: Map<Key, number>, keysLinkedList: Map<Key, Key> } {
+function buildKeysMaps<T>(coll: Collection<Node<T>>) {
   const indexMap = new Map<Key, number>();
-  const keysLinkedList = new Map<Key, Key>();
+  const keysLinkedList = new Map<Key, Key | undefined>();
   let i = 0;
-  let prev: Node<T> = undefined;
+  let prev: Node<T> | undefined = undefined;
   for (const item of coll) {
     indexMap.set(item.key, i);
     keysLinkedList.set(item.key, prev?.key);
