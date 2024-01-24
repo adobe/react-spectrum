@@ -58,22 +58,23 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
 
   // We want the group to handle keyboard navigation between tags.
   delete rowProps.onKeyDownCapture;
-  delete states.descriptionProps;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let {descriptionProps: _, ...stateWithoutDescription} = states;
 
   let onKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
       if (state.selectionManager.isSelected(item.key)) {
-        onRemove(new Set(state.selectionManager.selectedKeys));
+        onRemove?.(new Set(state.selectionManager.selectedKeys));
       } else {
-        onRemove(new Set([item.key]));
+        onRemove?.(new Set([item.key]));
       }
     }
   };
 
-  let modality: string = useInteractionModality();
+  let modality = useInteractionModality();
   if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
-    modality = 'touch';
+    modality = 'pointer';
   }
   let description = onRemove && (modality === 'keyboard' || modality === 'virtual') ? stringFormatter.format('removeDescription') : '';
   let descProps = useDescription(description);
@@ -99,7 +100,7 @@ export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefO
       'aria-errormessage': props['aria-errormessage'],
       'aria-label': props['aria-label']
     }),
-    ...states,
+    ...stateWithoutDescription,
     allowsRemoving: !!onRemove
   };
 }
