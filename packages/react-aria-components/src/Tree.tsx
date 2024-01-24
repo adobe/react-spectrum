@@ -11,7 +11,7 @@
  */
 
 import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
-import {CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useShallowRender, useSSRCollectionNode} from './Collection';
+import {BaseCollection, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useShallowRender, useSSRCollectionNode} from './Collection';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {Expandable, Key} from '@react-types/shared';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
@@ -22,19 +22,19 @@ import {TextContext} from './Text';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
-  private flattenedRows: NodeValue<T>[];
+  private flattenedRows: Node<T>[];
   private keyMap: Map<Key, NodeValue<T>> = new Map();
 
   constructor(opts) {
     let {collection, expandedKeys} = opts;
-    let {flattenedRows} = flattenTree<T>(collection, {expandedKeys});
+    let {flattenedRows, keyMap} = flattenTree<T>(collection, {expandedKeys});
     this.flattenedRows = flattenedRows;
-    // TODO: replace with the flattened key map or the original one? Maybe have the state provide the original keymap?
-    this.keyMap = collection.keyMap;
+    // Use generated keyMap because it contains the modified collection nodes (aka it adjusts the indexes so that they ignore the existence of the Content items)
+    this.keyMap = keyMap;
   }
 
   // TODO: should this collection's getters reflect the flattened structure or the original structure
-  // If we respresent the flattened structure, it is easier for the keyboard nav but harder to find the
+  // If we respresent the flattened structure, it is easier for the keyboard nav but harder to find all the nodes
   *[Symbol.iterator]() {
     yield* this.flattenedRows;
   }
@@ -129,7 +129,7 @@ function Tree<T extends object>(props: TreeProps<T>, ref: ForwardedRef<HTMLDivEl
 
 interface TreeInnerProps<T extends object> {
   props: TreeProps<T>,
-  collection: ICollection<Node<T>>,
+  collection: BaseCollection<T>,
   treeRef: RefObject<HTMLDivElement>
 }
 
@@ -150,7 +150,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   );
 
   let flattenedCollection = useMemo(() => {
-    // TODO: types
     return new TreeCollection<object>({collection, expandedKeys});
   }, [collection, expandedKeys]);
 
@@ -162,7 +161,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     collection: flattenedCollection,
     children: undefined
   });
-  console.log('state', state.collection);
 
   let {gridProps} = useTreeGridList(props, state, ref);
 
@@ -426,47 +424,62 @@ function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
     ? 'all'
     : new Set(expanded);
 }
-
-
-
-// TODO: add something that processes the collection and modifies the level and index values, returning a new keymap and set of nodes
-
-
 interface TreeGridCollectionOptions {
   expandedKeys: 'all' | Set<Key>
 }
 
 // TODO: update name when we decide how much post processing we want to do
-interface TreeGridCollection<T> {
-  flattenedRows: NodeValue<T>[]
+interface FlattenedTree<T> {
+  flattenedRows: Node<T>[],
+  keyMap: Map<Key, NodeValue<T>>
 }
 
-function flattenTree<T>(nodes, opts: TreeGridCollectionOptions): TreeGridCollection<T> {
+// TODO: Do we really need to modify the index values of each of the item nodes? I'm doing this so that the aria hooks don't assume that the collection's structure
+// has to be the RAC structure (aka it has Content Nodes and Row node and thus the index calculated for each row is offset by 1 due to the Content Node). Instead, I'm making the processed Tree structure here only
+// have the tree rows and discarding the content items since they aren't needed for expanding/collapsing or for calculating the relevant aria attributes
+// This feels like it falls more inline with the existing Tree Collection structure anyways
+function flattenTree<T>(collection, opts: TreeGridCollectionOptions): FlattenedTree<T> {
   let {
     expandedKeys = new Set()
   } = opts;
-
+  let keyMap = new Map();
   let flattenedRows = [];
 
-  let visitNode = (node: NodeValue<T>) => {
+  let visitNode = (node: Node<T>) => {
     if (node.type === 'item') {
-      flattenedRows.push(node);
+      let parentKey = node?.parentKey;
+      let clone = {...node};
+      if (parentKey != null) {
+        // TODO: assumes that non item content node will be always placed before the child rows and that there is only 1. If we can't make this assumption then we can filter out
+        // every non-item per level and assign indicies based off the node's position in said filtered array
+        let hasContentNode = [...collection.getChildren(parentKey)][0].type !== 'item';
+        if (hasContentNode) {
+          clone.index = node.index - 1;
+          keyMap.set(clone.key, clone);
+        }
+      } else {
+        keyMap.set(node.key, node);
+      }
+
+      if ((expandedKeys === 'all' && node.type === 'item') || (expandedKeys !== 'all' && expandedKeys.has(node.key))) {
+        // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
+        flattenedRows.push(keyMap.get(node.key));
+      }
+    } else if (node.type !== null) {
+      keyMap.set(node.key, node);
     }
 
-    for (let child of nodes.getChildren(node.key)) {
-      if (child.type === 'item') {
-        if (expandedKeys === 'all' || expandedKeys.has(node.key)) {
-          visitNode(child);
-        }
-      }
+    for (let child of collection.getChildren(node.key)) {
+      visitNode(child);
     }
   };
 
-  for (let node of nodes) {
+  for (let node of collection) {
     visitNode(node);
   }
 
   return {
-    flattenedRows
+    flattenedRows,
+    keyMap
   };
 }

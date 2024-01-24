@@ -77,13 +77,12 @@ export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state
           e.stopPropagation();
         }
       },
-      // TODO Note that the below values operate off the assumption that the Content node in the collection always exists for every row and that there is only one
-      // If we can't operate off that assumption, will have to do further post processing in flattenTree
+      // TODO The below operates off the assumption that the row node's indexes and levels are 0 indexed. This matches TreeCollection and the processed TreeCollection in RAC Tree
       'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
       'aria-level': node.level + 1,
-      'aria-posinset': node.level > 0 ? node.index : node.index + 1,
+      'aria-posinset': node.index + 1,
       'aria-setsize': node.level > 0 ?
-        (getLastItem(state.collection.getChildren(node?.parentKey))).index :
+        (getLastItem(state.collection.getChildren(node?.parentKey))).index + 1 :
         [...state.collection].filter(row => row.level === 0).at(-1).index + 1
     };
   }
