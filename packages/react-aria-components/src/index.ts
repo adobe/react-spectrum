@@ -20,7 +20,7 @@ export {DateField, DateInput, DateSegment, TimeField, DateFieldContext, TimeFiel
 export {DatePicker, DateRangePicker, DatePickerContext, DateRangePickerContext, DatePickerStateContext, DateRangePickerStateContext} from './DatePicker';
 export {DialogTrigger, Dialog, DialogContext, OverlayTriggerStateContext} from './Dialog';
 export {DropZone, DropZoneContext} from './DropZone';
-export {FieldError} from './FieldError';
+export {FieldError, FieldErrorContext} from './FieldError';
 export {FileTrigger} from './FileTrigger';
 export {Form} from './Form';
 export {GridList, GridListItem, GridListContext} from './GridList';
