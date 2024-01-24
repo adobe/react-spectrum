@@ -66,7 +66,6 @@ export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state
   if (node != null) {
     // TODO: Update the below check perhaps if I add information to the node to indicate that it has child rows
     let hasChildRows = [...state.collection.getChildren(node.key)].length > 1;
-    console.log('node', node)
     treeGridRowProps = {
       onKeyDownCapture: (e) => {
         if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {

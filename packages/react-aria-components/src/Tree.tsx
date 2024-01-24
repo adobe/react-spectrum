@@ -461,7 +461,7 @@ function flattenTree<T>(collection, opts: TreeGridCollectionOptions): FlattenedT
         keyMap.set(node.key, node);
       }
 
-      if ((expandedKeys === 'all' && node.type === 'item') || (expandedKeys !== 'all' && expandedKeys.has(node.key))) {
+      if (node.level === 0 || (expandedKeys === 'all' && node.type === 'item') || (expandedKeys !== 'all' && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
         // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
         flattenedRows.push(keyMap.get(node.key));
       }

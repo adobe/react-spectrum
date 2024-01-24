@@ -71,7 +71,6 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
   }, [tree, selectionState.focusedKey]);
 
   let onToggle = (key: Key) => {
-    let newSet = toggleKey(expandedKeys, key, tree);
     setExpandedKeys(toggleKey(expandedKeys, key, tree));
   };
 
