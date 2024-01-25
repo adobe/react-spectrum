@@ -15,7 +15,6 @@ type Access = [any, string, 'get' | 'set'];
 type SpyTarget = Method | Access
 type MockCalls = Array<() => any>
 
-// TODO: ask if this stuff should also live in the react-spectrum/test-util package? What about the SSR stuff as well?
 // Util for mockImplementation that automatically handles extra calls needed for strict mode
 export function mockImplementation(spyTarget: SpyTarget, mockCalls: MockCalls, retainLastMock = true) {
   if (mockCalls.length === 0) {

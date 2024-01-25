@@ -12,9 +12,13 @@
 
 import {act, fireEvent} from '@testing-library/react';
 
-// Triggers a "longPress" event on an element.
 export const DEFAULT_LONG_PRESS_TIME = 500;
 
+/**
+ * Simulates a "long press" event on a element.
+ * @param element - Element to long press.
+ * @param opts - Options to pass to the simulated event. See https://testing-library.com/docs/dom-testing-library/api-events/#fireevent for more info.
+ */
 export function triggerLongPress(element: HTMLElement, opts = {}): void {
   fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
   act(() => {
