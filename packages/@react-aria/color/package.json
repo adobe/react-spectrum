@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/color",
-  "version": "3.0.0-beta.28",
+  "version": "3.0.0-beta.29",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -26,7 +26,7 @@
     "@react-aria/interactions": "^3.20.1",
     "@react-aria/slider": "^3.7.4",
     "@react-aria/spinbutton": "^3.6.1",
-    "@react-aria/textfield": "^3.14.0",
+    "@react-aria/textfield": "^3.14.1",
     "@react-aria/utils": "^3.23.0",
     "@react-aria/visually-hidden": "^3.8.8",
     "@react-stately/color": "^3.5.1",

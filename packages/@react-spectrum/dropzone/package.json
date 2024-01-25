@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/dropzone",
-  "version": "3.0.0-rc.0",
+  "version": "3.0.0-rc.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -41,7 +41,7 @@
     "@react-spectrum/utils": "^3.11.3",
     "@react-types/shared": "^3.22.0",
     "@swc/helpers": "^0.5.0",
-    "react-aria-components": "^1.0.0"
+    "react-aria-components": "^1.0.1"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1",

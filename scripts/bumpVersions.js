@@ -217,7 +217,7 @@ class VersionManager {
               </tr>
             `).join('\n')}
               ${[...this.changedPackages].filter(pkg => !excludedPackages.has(pkg) && this.existingPackages.has(pkg)).map(pkg => {
-                let json = JSON.parse(fs.readFileSync(`packages/${pkg}/package.json`, 'utf8'));
+                let json = JSON.parse(fs.readFileSync(this.workspacePackages[pkg].location + '/package.json', 'utf8'));
                 let version = semver.parse(json.version);
                 return `
                   <tr>

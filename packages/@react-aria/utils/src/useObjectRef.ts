@@ -15,7 +15,7 @@ import {MutableRefObject, useMemo, useRef} from 'react';
 /**
  * Offers an object ref for a given callback ref or an object ref. Especially
  * helfpul when passing forwarded refs (created using `React.forwardRef`) to
- * React Aria Hooks.
+ * React Aria hooks.
  *
  * @param forwardedRef The original ref intended to be used.
  * @returns An object ref that updates the given ref.
