@@ -12,12 +12,14 @@
 
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {getLastItem} from '@react-stately/collections';
 import {getRowId, listMap} from './utils';
 import {getScrollParent, getSyntheticLinkProps, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
+import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
-import {KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
+import type {TreeState} from '@react-stately/tree';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaGridListItemOptions {
@@ -38,13 +40,25 @@ export interface GridListItemAria extends SelectableItemStates {
   descriptionProps: DOMAttributes
 }
 
+// TODO: export from somewhere central
+const EXPANSION_KEYS = {
+  'expand': {
+    ltr: 'ArrowRight',
+    rtl: 'ArrowLeft'
+  },
+  'collapse': {
+    ltr: 'ArrowLeft',
+    rtl: 'ArrowRight'
+  }
+};
+
 /**
  * Provides the behavior and accessibility implementation for a row in a grid list.
  * @param props - Props for the row.
  * @param state - State of the parent list, as returned by `useListState`.
  * @param ref - The ref attached to the row element.
  */
-export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T>, ref: RefObject<FocusableElement>): GridListItemAria {
+export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement>): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,
@@ -53,7 +67,11 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   } = props;
 
   let {direction} = useLocale();
-  let {onAction, linkBehavior} = listMap.get(state);
+  let onAction, linkBehavior;
+  if (!('expandedKeys' in state)) {
+    ({onAction, linkBehavior} = listMap.get(state));
+  }
+
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -64,7 +82,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     // (e.g. clicking on a row button)
     if (
       (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !ref.current.contains(document.activeElement)
+      !ref.current?.contains(document.activeElement)
     ) {
       focusSafely(ref.current);
     }
@@ -81,6 +99,22 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     linkBehavior
   });
 
+  let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
+  let hasChildRows;
+  if (node != null && 'expandedKeys' in state) {
+    // TODO: Update the below check perhaps if I add information to the node to indicate that it has child rows
+    hasChildRows = [...state.collection.getChildren(node.key)].length > 1;
+    treeGridRowProps = {
+      // TODO The below operates off the assumption that the row node's indexes and levels are 0 indexed. This matches TreeCollection and the processed TreeCollection in RAC Tree
+      'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
+      'aria-level': node.level + 1,
+      'aria-posinset': node?.index + 1,
+      'aria-setsize': node.level > 0 ?
+        (getLastItem(state.collection.getChildren(node?.parentKey))).index + 1 :
+        [...state.collection].filter(row => row.level === 0).at(-1).index + 1
+    };
+  }
+
   let onKeyDown = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as Element)) {
       return;
@@ -88,6 +122,18 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
+
+    if ('expandedKeys' in state && document.activeElement === ref.current) {
+      if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+        state.toggleKey(node.key);
+        e.stopPropagation();
+        return;
+      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
+        state.toggleKey(node.key);
+        e.stopPropagation();
+        return;
+      }
+    }
 
     switch (e.key) {
       case 'ArrowLeft': {
@@ -200,7 +246,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   return {
-    rowProps,
+    rowProps: {...mergeProps(rowProps, treeGridRowProps)},
     gridCellProps,
     descriptionProps: {
       id: descriptionId

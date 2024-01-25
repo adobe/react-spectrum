@@ -11,16 +11,13 @@
  */
 
 import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
-import {getLastItem} from '@react-stately/collections';
-import {HTMLAttributes, RefObject} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {RefObject} from 'react';
 import {SelectableItemStates} from '@react-aria/selection';
 import {TreeState} from '@react-stately/tree';
 import {useGridListItem} from '@react-aria/gridlist';
-import {useLocale} from '@react-aria/i18n';
 
 export interface AriaTreeGridListItemOptions {
-  // TODO: update this to match the proper
+  // TODO: update this to match the proper node type
   /** An object representing the treegrid item. Contains all the relevant information that makes up the treegrid row. */
   node: Node<unknown>
 }
@@ -34,18 +31,6 @@ export interface TreeGridListItemAria extends Omit<SelectableItemStates, 'hasAct
   descriptionProps: DOMAttributes
 }
 
-// TODO: export from somewhere central
-const EXPANSION_KEYS = {
-  'expand': {
-    ltr: 'ArrowRight',
-    rtl: 'ArrowLeft'
-  },
-  'collapse': {
-    ltr: 'ArrowLeft',
-    rtl: 'ArrowRight'
-  }
-};
-
 /**
  * Provides the behavior and accessibility implementation for a row in a grid list.
  * @param props - Props for the row.
@@ -53,8 +38,6 @@ const EXPANSION_KEYS = {
  * @param ref - The ref attached to the row element.
  */
 export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state: TreeState<T>, ref: RefObject<FocusableElement>): TreeGridListItemAria {
-  let {node} = props;
-  let {direction} = useLocale();
   let {
     rowProps,
     gridCellProps,
@@ -62,36 +45,12 @@ export function useTreeGridListItem<T>(props: AriaTreeGridListItemOptions, state
     ...states
   } = useGridListItem(props, state, ref);
 
-  let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
-  if (node != null) {
-    // TODO: Update the below check perhaps if I add information to the node to indicate that it has child rows
-    let hasChildRows = [...state.collection.getChildren(node.key)].length > 1;
-    treeGridRowProps = {
-      onKeyDownCapture: (e) => {
-        if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
-          state.toggleKey(node.key);
-          e.stopPropagation();
-        } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
-          state.toggleKey(node.key);
-          e.stopPropagation();
-        }
-      },
-      // TODO The below operates off the assumption that the row node's indexes and levels are 0 indexed. This matches TreeCollection and the processed TreeCollection in RAC Tree
-      'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
-      'aria-level': node.level + 1,
-      'aria-posinset': node.index + 1,
-      'aria-setsize': node.level > 0 ?
-        (getLastItem(state.collection.getChildren(node?.parentKey))).index + 1 :
-        [...state.collection].filter(row => row.level === 0).at(-1).index + 1
-    };
-  }
 
-
-  // TODO: does a treeGridListItem include onAction/link stuff??
+  // TODO: should a treeGridListItem include onAction/link stuff?? If so it might be more reasonable to just have useGridListItem. Right now
+  // useTreeGridList is separate from useGridList cuz I don't want to include isVirtualized, shouldFocusWrap, onAction, and link behavior
+  // cuz I'm not sure it should support those in tree/we don't have support for those yet
   return {
-    // TODO: these both having capturing keydown listeners is problematic because stopPropagation won't stop the keydown from useGridList, so focus still moves into the cell... Might mean that I need to use useGridRow?
-    // Alternatively, move these changes into useGridList onKeyDown and forgo this new hook
-    rowProps: mergeProps(treeGridRowProps, rowProps),
+    rowProps,
     gridCellProps,
     descriptionProps,
     // TODO: should it return a state specifically for isExpanded? Or is aria attribute sufficient?
