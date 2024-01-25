@@ -103,4 +103,3 @@ function ControlledAccordion<T>(props: SpectrumAccordionProps<T>) {
     </Accordion>
   );
 }
-
