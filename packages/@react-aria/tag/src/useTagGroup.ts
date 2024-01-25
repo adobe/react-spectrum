@@ -91,7 +91,7 @@ export function useTagGroup<T>(props: AriaTagGroupOptions<T>, state: ListState<T
   // If the last tag is removed, focus the container.
   let prevCount = useRef(state.collection.size);
   useEffect(() => {
-    if (prevCount.current > 0 && state.collection.size === 0 && isFocusWithin) {
+    if (ref.current && prevCount.current > 0 && state.collection.size === 0 && isFocusWithin) {
       ref.current.focus();
     }
     prevCount.current = state.collection.size;
