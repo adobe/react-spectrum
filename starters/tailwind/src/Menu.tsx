@@ -13,12 +13,13 @@ import { DropdownSection, DropdownSectionProps, dropdownItemStyles } from './Lis
 import { Popover, PopoverProps } from './Popover';
 
 interface MenuProps<T> extends AriaMenuProps<T> {
-  placement?: PopoverProps['placement']
+  placement?: PopoverProps['placement'],
+  isSubmenu?: boolean
 }
 
 export function Menu<T extends object>(props: MenuProps<T>) {
   return (
-    <Popover placement={props.placement} className="min-w-[150px] data-[trigger=SubmenuTrigger]:placement-right:-ml-1 data-[trigger=SubmenuTrigger]:placement-left:-mr-1">
+    <Popover placement={props.placement} className="min-w-[150px]" isSubmenu={props.isSubmenu}>
       <AriaMenu {...props} className="p-1 outline outline-0 max-h-[inherit] overflow-auto [clip-path:inset(0_0_0_0_round_.75rem)]" />
     </Popover>
   );

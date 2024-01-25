@@ -250,12 +250,10 @@ export function ExampleApp() {
                         <ShareIcon aria-hidden className="w-4 h-4" />
                         Share
                       </MenuItem>
-                      <Popover>
-                        <Menu>
-                          <MenuItem href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Twitter"><Twitter aria-hidden className="w-4 h-4" /> Twitter…</MenuItem>
-                          <MenuItem href={`mailto:abc@example.com?subject=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Email"><Mail aria-hidden className="w-4 h-4" /> Email…</MenuItem>
-                        </Menu>
-                      </Popover>
+                      <Menu isSubmenu>
+                        <MenuItem href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Twitter"><Twitter aria-hidden className="w-4 h-4" /> Twitter…</MenuItem>
+                        <MenuItem href={`mailto:abc@example.com?subject=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Email"><Mail aria-hidden className="w-4 h-4" /> Email…</MenuItem>
+                      </Menu>
                     </SubmenuTrigger>
                   </Menu>
                 </MenuTrigger>
@@ -312,12 +310,10 @@ export function ExampleApp() {
                                   <ShareIcon aria-hidden className="w-4 h-4" />
                                   Share
                                 </MenuItem>
-                                <Popover>
-                                  <Menu>
-                                    <MenuItem href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Twitter"><Twitter aria-hidden className="w-4 h-4" /> Twitter…</MenuItem>
-                                    <MenuItem href={`mailto:abc@example.com?subject=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Email"><Mail aria-hidden className="w-4 h-4" /> Email…</MenuItem>
-                                  </Menu>
-                                </Popover>
+                                <Menu isSubmenu>
+                                  <MenuItem href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Twitter"><Twitter aria-hidden className="w-4 h-4" /> Twitter…</MenuItem>
+                                  <MenuItem href={`mailto:abc@example.com?subject=${encodeURIComponent(item.common_name)}`} target="blank" rel="noopener noreferrer" aria-label="Email"><Mail aria-hidden className="w-4 h-4" /> Email…</MenuItem>
+                                </Menu>
                               </SubmenuTrigger>
                             </Menu>
                           </MenuTrigger>
