@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, Text, Tree, TreeItem, TreeItemContent, TreeItemProps} from 'react-aria-components';
+import {Button, Collection, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React, {ReactNode} from 'react';
 import styles from '../example/index.css';
@@ -35,12 +35,13 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
         hovered: isHovered
       })}>
       <TreeItemContent>
-        {({isExpanded}) => (
+        {({isExpanded, hasChildRows, level}) => (
           <>
-            {isExpanded && <div>Im expanded</div>}
+            {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
             <Text slot="title">{props.title || props.children}</Text>
             <Button aria-label="Info">ⓘ</Button>
             <Button aria-label="Menu">☰</Button>
+            <div>{level}</div>
           </>
         )}
       </TreeItemContent>
@@ -65,21 +66,42 @@ export const TreeExampleStatic = (args) => (
         Projects-3
       </StaticTreeItem>
     </StaticTreeItem>
-    <TreeItem id="reports">
+    <TreeItem id="reports" textValue="Reports">
       <TreeItemContent>
         Reports
       </TreeItemContent>
     </TreeItem>
-    <TreeItem id="tests">
+    <TreeItem id="Tests" textValue="Tests">
       <TreeItemContent>
         {({isFocused}) => (
-          <Text slot="title">{`${isFocused} tests`}</Text>
+          <Text slot="title">{`${isFocused} Tests`}</Text>
         )}
       </TreeItemContent>
     </TreeItem>
   </Tree>
 );
 
+TreeExampleStatic.story = {
+  // TODO: add the proper parameters
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle'
+  },
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'radio',
+        options: ['none', 'single', 'multiple']
+      }
+    },
+    selectionBehavior: {
+      control: {
+        type: 'radio',
+        options: ['toggle', 'replace']
+      }
+    }
+  }
+};
 
 let rows = [
   {id: 'projects', name: 'Projects', childItems: [
@@ -111,12 +133,13 @@ let rows = [
   ]}
 ];
 
-interface DynamicTreeItemProps extends TreeItemProps {
+interface DynamicTreeItemProps extends TreeItemProps<object> {
   children?: ReactNode
 }
 
 const DynamicTreeItem = (props: DynamicTreeItemProps) => {
-  // TODO: update the styles
+  let {childItems} = props;
+
   return (
     <TreeItem
       {...props}
@@ -126,20 +149,20 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
         hovered: isHovered
       })}>
       <TreeItemContent>
-        {({isExpanded}) => (
+        {({isExpanded, hasChildRows, level}) => (
           <>
-            {/* TODO: should render a chevron that we can modify with a isExpanded render prop */}
-            {isExpanded && <div>Im expanded</div>}
+            {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
             <Text slot="title">{props.children}</Text>
             {/* TODO: Test left/right keyboard movement */}
             <Button aria-label="Info">ⓘ</Button>
             {/* TODO: make this menu expandable later and test it */}
             <Button aria-label="Menu">☰</Button>
+            <div>{level}</div>
           </>
         )}
       </TreeItemContent>
-      <Collection items={props.childItems}>
-        {item => (
+      <Collection items={childItems}>
+        {(item: any) => (
           <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
             {item.name}
           </DynamicTreeItem>
@@ -149,13 +172,10 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
   );
 };
 
-// TODO: finish story
-export const TreeExampleDynamic = (args) => (
+export const TreeExampleDynamic = (args: TreeProps<unknown>) => (
   // TODO: update the styles here
-  // expandedKeys={['projects', 'project-5', 'reports']}
   <Tree {...args} defaultExpandedKeys="all" className={styles.menu} aria-label="test dynamic tree" items={rows}>
-    {item => (
-      //  TODO: figure out the TS here and how to get it to infer the item type, it is because of the ...args
+    {(item) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
         {item.name}
       </DynamicTreeItem>
@@ -165,28 +185,37 @@ export const TreeExampleDynamic = (args) => (
 
 TreeExampleDynamic.story = {
   // TODO: add the proper parameters
-  // args: {
-  //   selectionMode: 'none',
-  //   selectionBehavior: 'toggle',
-  //   shouldFocusOnHover: false
-  // },
-  // argTypes: {
-  //   selectionMode: {
-  //     control: {
-  //       type: 'radio',
-  //       options: ['none', 'single', 'multiple']
-  //     }
-  //   },
-  //   selectionBehavior: {
-  //     control: {
-  //       type: 'radio',
-  //       options: ['toggle', 'replace']
-  //     }
-  //   }
-  // },
-  // parameters: {
-  //   description: {
-  //     data: 'Hover styles should have higher specificity than focus style for testing purposes. Hover style should not be applied on keyboard focus even if shouldFocusOnHover is true'
-  //   }
-  // }
+  args: {
+    selectionMode: 'none',
+    selectionBehavior: 'toggle'
+  },
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'radio',
+        options: ['none', 'single', 'multiple']
+      }
+    },
+    selectionBehavior: {
+      control: {
+        type: 'radio',
+        options: ['toggle', 'replace']
+      }
+    }
+  }
 };
+
+export const EmptyTree = (args: TreeProps<unknown>) => (
+  <Tree
+    {...args}
+    className={styles.menu}
+    aria-label="test dynamic tree"
+    items={[]}
+    renderEmptyState={() => <span>Nothing in tree</span>}>
+    {(item) => (
+      <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
+        {item.name}
+      </DynamicTreeItem>
+    )}
+  </Tree>
+);

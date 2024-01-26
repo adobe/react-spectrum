@@ -12,11 +12,15 @@
 
 import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@react-aria/tree';
 import {BaseCollection, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useShallowRender, useSSRCollectionNode} from './Collection';
-import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ButtonContext} from './Button';
+import {CheckboxContext} from './Checkbox';
+import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {Expandable, Key} from '@react-types/shared';
-import {filterDOMProps, useObjectRef} from '@react-aria/utils';
-import {FocusScope,  mergeProps, useFocusRing, useHover} from 'react-aria';
+import {filterDOMProps, isAndroid, useObjectRef} from '@react-aria/utils';
+import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover, useLocalizedStringFormatter} from 'react-aria';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
+// @ts-ignore
+import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {TextContext} from './Text';
 import {useControlledState} from '@react-stately/utils';
@@ -94,12 +98,27 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-// TODO what TreeRenderProps do we want?
-// isEmpty
-// isFocused,
-// isFocusVisible,
-// state
+// TODO: these are copied straight from GridList, double check
 export interface TreeRenderProps {
+  /**
+   * Whether the tree has no items and should display its empty state.
+   * @selector [data-empty]
+   */
+  isEmpty: boolean,
+  /**
+   * Whether the tree is currently focused.
+   * @selector [data-focused]
+   */
+  isFocused: boolean,
+  /**
+   * Whether the tree is currently keyboard focused.
+   * @selector [data-focus-visible]
+   */
+  isFocusVisible: boolean,
+  /**
+   * State of the grid list.
+   */
+  state: TreeState<unknown>
 }
 
 // TODO: double check these props
@@ -184,7 +203,6 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     state
   };
 
-  // TODO: double check what other render props should exist
   let renderProps = useRenderProps({
     className: props.className,
     style: props.style,
@@ -192,14 +210,18 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     values: renderValues
   });
 
-
-  // TODO: empty state for a empty tree? will need the proper aria props to reflect like in Tableveiw
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
     let content = props.renderEmptyState(renderValues);
+    let treeGridRowProps = {
+      'aria-level': 1,
+      'aria-posinset': 1,
+      'aria-setsize': 1
+    };
+
     emptyState = (
-      <div role="row" style={{display: 'contents'}}>
+      <div role="row" style={{display: 'contents'}} {...treeGridRowProps}>
         <div role="gridcell" style={{display: 'contents'}}>
           {content}
         </div>
@@ -239,21 +261,21 @@ const _Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(Tree);
 export {_Tree as Tree};
 
 export interface TreeItemRenderProps extends ItemRenderProps {
-  // Whether the Tree row is expanded.
+  // Whether the tree row is expanded.
   isExpanded: boolean
 }
 
 // TODO: will it need to support LinkProps?
 export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps> {
-  /** The unique id of the item. */
+  /** The unique id of the tree row. */
   id?: Key,
-  /** The object value that this item represents. When using dynamic collections, this is set automatically. */
+  /** The object value that this tree row represents. When using dynamic collections, this is set automatically. */
   value?: T,
-  /** A string representation of the item's contents, used for features like typeahead. */
-  textValue?: string,
-  /** An accessibility label for this item. */
+  /** A string representation of the tree row's contents, used for features like typeahead. */
+  textValue: string,
+  /** An accessibility label for this tree row. */
   'aria-label'?: string,
-  // TODO: support child item, will need to figure out how to render that in the fake dom
+  /** A list of child tree row objects used when dynamically rendering the tree row children. */
   childItems?: Iterable<T>,
   /** The content of the tree row along with any nested children. Supports static items or a function for dynamic rendering. */
   children?: ReactNode | ((item: T) => ReactElement)
@@ -289,8 +311,12 @@ const _TreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(TreeItem);
 export {_TreeItem as TreeItem};
 
 export interface TreeItemContentRenderProps extends ItemRenderProps {
-  // Whether the Tree row is expanded.
-  isExpanded: boolean
+  // Whether the tree row is expanded.
+  isExpanded: boolean,
+  // Whether the tree row has child rows.
+  hasChildRows: boolean,
+  // What level the tree row has within the tree.
+  level: number
 }
 
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
@@ -313,34 +339,34 @@ export {_TreeItemContent as TreeItemContent};
 function TreeRow({item}) {
   let state = useContext(TreeStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
-  // TODO replace with useTreeListItem
-  // Also depending on the item's information with index/level, we may need to add +1 to various attributes
-  let {rowProps, gridCellProps, descriptionProps, ...states} = useTreeGridListItem(
-    {
-      node: item
-    },
-    state,
-    ref
-  );
+  let {rowProps, gridCellProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
+  // eslint-disable-next-line no-undef
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
+  let isExpanded = rowProps['aria-expanded'] === true;
+  let hasChildRows = [...state.collection.getChildren(item.key)].length > 1;
+  let level = rowProps['aria-level'];
 
-  // TODO: vet all this other copy pastaed code
-  // TODO: does this need onAction check?
   let {hoverProps, isHovered} = useHover({
     isDisabled: !states.allowsSelection
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
+  let {checkboxProps} = useGridListSelectionCheckbox(
+    {key: item.key},
+    state
+  );
+
   let props: TreeItemProps<unknown> = item.props;
   let renderPropValues = React.useMemo(() => ({
     ...states,
     isHovered,
     isFocusVisible,
-    // TODO: update the collection post processing to change item.hasChildNodes to false if the amount of children is less than 2 (aka an item doesn't have a nested row and only has content)
-    // Maybe can walk through the types of children instead and check if any of the children is of type "item"
-    isExpanded: [...state.collection.getChildren(item.key)].length > 1 ? state.expandedKeys === 'all' || state.expandedKeys.has(item.key) : undefined,
+    isExpanded,
+    hasChildRows,
+    level,
     selectionMode: state.selectionManager.selectionMode,
     selectionBehavior: state.selectionManager.selectionBehavior
-  }), [states, isHovered, isFocusVisible, state.selectionManager, state.expandedKeys, state.collection, item.key]);
+  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -352,9 +378,29 @@ function TreeRow({item}) {
 
   useEffect(() => {
     if (!item.textValue) {
-      console.warn('A `textValue` prop is required for <TreeItem> elements with non-plain text children in order to support accessibility features such as type to select.');
+      console.warn('A `textValue` prop is required for <TreeItem> elements in order to support accessibility features such as type to select.');
     }
   }, [item.textValue]);
+
+
+  let expandButtonProps = {
+    onPress: () => {
+      state.toggleKey(item.key);
+    },
+    // TODO: will need to provide translations for a chevron button if need be.
+    'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
+    // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
+    // TODO: with how slots work and the order in which things get merged, this doesn't actually get applied...
+    tabIndex: isAndroid() ? -1 : null
+  };
+
+  let expandButtonRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (hasChildRows && !expandButtonRef.current) {
+      console.warn('Expandable tree rows must contain a expand button so screen reader users can expand/collapse the row.');
+    }
+  // eslint-disable-next-line
+  }, []);
 
   let children = useCachedChildren({
     items: state.collection.getChildren!(item.key),
@@ -381,6 +427,10 @@ function TreeRow({item}) {
         {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps)}
         {...renderProps}
         ref={ref}
+        // TODO: make sure I have the equivalent data properties as the render props
+        data-expanded={isExpanded}
+        data-has-child-rows={hasChildRows}
+        data-level={level}
         data-selected={states.isSelected || undefined}
         data-disabled={states.isDisabled || undefined}
         data-hovered={isHovered || undefined}
@@ -390,11 +440,27 @@ function TreeRow({item}) {
         data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
         <div {...gridCellProps} style={{display: 'contents'}}>
           <Provider
+            // TODO: check that the proper props are making it through
             values={[
+              [CheckboxContext, {
+                slots: {
+                  selection: checkboxProps
+                }
+              }],
               [TextContext, {
-                //  TODO: update, will need to pass an id for aria-labelledy?
                 slots: {
                   title: descriptionProps
+                }
+              }],
+              // TODO: don't think I need to pass isExpanded here since it can be sourced from the renderProps? Might be worthwhile passing it down?
+              // TODO: make the button get automatically skipped by keyboard navigation though
+              [ButtonContext, {
+                slots: {
+                  [defaultSlot]: {},
+                  chevron: {
+                    ...expandButtonProps,
+                    ref: expandButtonRef
+                  }
                 }
               }]
             ]}>

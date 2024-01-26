@@ -67,6 +67,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   } = props;
 
   let {direction} = useLocale();
+  // TODO: should onAction for tree grids be toggling row expansion? Or should we limit it to just clicking on the chevron?
+  // Worried about row clicking for selection being interfered with
   let onAction, linkBehavior;
   if (!('expandedKeys' in state)) {
     ({onAction, linkBehavior} = listMap.get(state));
@@ -104,9 +106,10 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   if (node != null && 'expandedKeys' in state) {
     // TODO: Update the below check perhaps if I add information to the node to indicate that it has child rows
     hasChildRows = [...state.collection.getChildren(node.key)].length > 1;
+    let isExpanded = hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined;
     treeGridRowProps = {
       // TODO The below operates off the assumption that the row node's indexes and levels are 0 indexed. This matches TreeCollection and the processed TreeCollection in RAC Tree
-      'aria-expanded': hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined,
+      'aria-expanded': isExpanded,
       'aria-level': node.level + 1,
       'aria-posinset': node?.index + 1,
       'aria-setsize': node.level > 0 ?
@@ -245,6 +248,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     'aria-colindex': 1
   };
 
+  // TODO: should isExpanded and hasChildRows be a item state that gets returned by the hook?
   return {
     rowProps: {...mergeProps(rowProps, treeGridRowProps)},
     gridCellProps,
