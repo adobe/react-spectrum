@@ -333,7 +333,8 @@ function TreeItemContent(props: TreeItemContentProps) {
   }
 }
 
-const _TreeItemContent = forwardRef(TreeItemContent);
+// TODO: is this pure needed?
+const _TreeItemContent = /*#__PURE__*/ TreeItemContent;
 export {_TreeItemContent as TreeItemContent};
 
 function TreeRow<T>({item}: {item: Node<T>}) {
@@ -354,6 +355,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
     {key: item.key},
     state
   );
+  console.log('checkbox Props', checkboxProps)
 
   let props: TreeItemProps<unknown> = item.props;
   let renderPropValues = React.useMemo(() => ({
@@ -445,9 +447,12 @@ function TreeRow<T>({item}: {item: Node<T>}) {
                   selection: checkboxProps
                 }
               }],
+              // TODO maybe don't need this? Perhaps we can just reply on the text value provided since the user will alway
+              // be providing a textValue since they always provide a wrapping TreeItemContent
               [TextContext, {
                 slots: {
-                  title: descriptionProps
+                  [defaultSlot]: {},
+                  description: descriptionProps
                 }
               }],
               // TODO: don't think I need to pass isExpanded here since it can be sourced from the renderProps? Might be worthwhile passing it down?

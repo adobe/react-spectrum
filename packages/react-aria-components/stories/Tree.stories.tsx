@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Collection, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React, {ReactNode} from 'react';
 import styles from '../example/index.css';
@@ -24,6 +24,25 @@ interface StaticTreeItemProps extends TreeItemProps {
   children: ReactNode
 }
 
+function MyCheckbox({children, ...props}: CheckboxProps) {
+  return (
+    <Checkbox {...props}>
+      {({isIndeterminate}) => (
+        <>
+          <div className="checkbox">
+            <svg viewBox="0 0 18 18" aria-hidden="true">
+              {isIndeterminate
+                ? <rect x={1} y={7.5} width={15} height={3} />
+                : <polyline points="1 9 7 14 15 4" />}
+            </svg>
+          </div>
+          {children}
+        </>
+      )}
+    </Checkbox>
+  );
+}
+
 const StaticTreeItem = (props: StaticTreeItemProps) => {
   // TODO: update the styles
   return (
@@ -35,10 +54,13 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
         hovered: isHovered
       })}>
       <TreeItemContent>
-        {({isExpanded, hasChildRows, level}) => (
+        {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior}) => (
           <>
             {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
-            <Text slot="title">{props.title || props.children}</Text>
+            {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+              <MyCheckbox slot="selection" />
+            )}
+            <Text>{props.title || props.children}</Text>
             <Button aria-label="Info">ⓘ</Button>
             <Button aria-label="Menu">☰</Button>
             <div>{level}</div>
@@ -74,7 +96,7 @@ export const TreeExampleStatic = (args) => (
     <TreeItem id="Tests" textValue="Tests">
       <TreeItemContent>
         {({isFocused}) => (
-          <Text slot="title">{`${isFocused} Tests`}</Text>
+          <Text>{`${isFocused} Tests`}</Text>
         )}
       </TreeItemContent>
     </TreeItem>
@@ -149,10 +171,13 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
         hovered: isHovered
       })}>
       <TreeItemContent>
-        {({isExpanded, hasChildRows, level}) => (
+        {({isExpanded, hasChildRows, level, selectionBehavior, selectionMode}) => (
           <>
             {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
-            <Text slot="title">{props.children}</Text>
+            {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+              <MyCheckbox slot="selection" />
+            )}
+            <Text>{props.children}</Text>
             {/* TODO: Test left/right keyboard movement */}
             <Button aria-label="Info">ⓘ</Button>
             {/* TODO: make this menu expandable later and test it */}
