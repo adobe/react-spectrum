@@ -159,7 +159,7 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   hasSetupGlobalListeners.set(windowObject, {focus});
 }
 
-const tearDownWindowFocusTracking = (element, loadListener) => {
+const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   const windowObject = getOwnerWindow(element);
   const documentObject = getOwnerDocument(element);
   if (loadListener) {
