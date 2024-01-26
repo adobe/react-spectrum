@@ -51,8 +51,8 @@ class TreeCollection<T> implements ICollection<Node<T>> {
     return this.keyMap.keys();
   }
 
-  getItem(key: Key) {
-    return this.keyMap.get(key);
+  getItem(key: Key): Node<T> | null {
+    return this.keyMap.get(key) || null;
   }
 
   at(idx: number) {
@@ -182,9 +182,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   });
 
   let {gridProps} = useTreeGridList(props, state, ref);
-
   let children = useCachedChildren({
-    items: state.collection,
+    items: state.collection as ICollection<Node<T>>,
     children: (item: Node<T>) => {
       switch (item.type) {
         case 'item':
@@ -277,31 +276,32 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   'aria-label'?: string,
   /** A list of child tree row objects used when dynamically rendering the tree row children. */
   childItems?: Iterable<T>,
+  // TODO: made this required since the user needs to pass Content at least
   /** The content of the tree row along with any nested children. Supports static items or a function for dynamic rendering. */
-  children?: ReactNode | ((item: T) => ReactElement)
+  children: ReactNode | ((item: T) => ReactElement)
 }
 
 function TreeItem<T extends object>(props: TreeItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
-  let {childItems} = props;
+  let {childItems, children} = props;
   let render = useContext(CollectionRendererContext);
   let childRows: ReactNode | ((item: T) => ReactNode);
-  let rowContent: ReactNode;
+  let rowContent: ReactNode | null;
 
   if (typeof render === 'function') {
     childRows = render;
     // Assumption here is that props.children[0] is Content
-    rowContent = props.children[0];
-  } else if (typeof props.children !== 'function') {
-    childRows = props.children;
+    rowContent = children![0];
+  } else if (typeof children !== 'function') {
+    childRows = children;
   }
 
-  let children = useCollectionChildren({
+  let collectionChildren = useCollectionChildren({
     children: childRows,
     items: childItems
   });
 
   // Combine the renderChildren and children so both Content and nested TreeItems are properly added to fake DOM and thus added to the built collection
-  return useSSRCollectionNode('item', props, ref, null, [rowContent, children]);
+  return useSSRCollectionNode('item', props, ref, null, [rowContent, collectionChildren]);
 }
 
 /**
@@ -336,14 +336,13 @@ function TreeItemContent(props: TreeItemContentProps) {
 const _TreeItemContent = forwardRef(TreeItemContent);
 export {_TreeItemContent as TreeItemContent};
 
-function TreeRow({item}) {
+function TreeRow<T>({item}: {item: Node<T>}) {
   let state = useContext(TreeStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
   let {rowProps, gridCellProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
-  // eslint-disable-next-line no-undef
   let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
   let isExpanded = rowProps['aria-expanded'] === true;
-  let hasChildRows = [...state.collection.getChildren(item.key)].length > 1;
+  let hasChildRows = [...state.collection.getChildren!(item.key)]?.length > 1;
   let level = rowProps['aria-level'];
 
   let {hoverProps, isHovered} = useHover({
@@ -503,12 +502,12 @@ interface FlattenedTree<T> {
 // has to be the RAC structure (aka it has Content Nodes and Row node and thus the index calculated for each row is offset by 1 due to the Content Node). Instead, I'm making the processed Tree structure here only
 // have the tree rows and discarding the content items since they aren't needed for expanding/collapsing or for calculating the relevant aria attributes
 // This feels like it falls more inline with the existing Tree Collection structure anyways
-function flattenTree<T>(collection, opts: TreeGridCollectionOptions): FlattenedTree<T> {
+function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
   let {
     expandedKeys = new Set()
   } = opts;
-  let keyMap = new Map();
-  let flattenedRows = [];
+  let keyMap: Map<Key, NodeValue<T>> = new Map();
+  let flattenedRows: Node<T>[] = [];
 
   let visitNode = (node: Node<T>) => {
     if (node.type === 'item') {
@@ -519,19 +518,19 @@ function flattenTree<T>(collection, opts: TreeGridCollectionOptions): FlattenedT
         // every non-item per level and assign indicies based off the node's position in said filtered array
         let hasContentNode = [...collection.getChildren(parentKey)][0].type !== 'item';
         if (hasContentNode) {
-          clone.index = node.index - 1;
-          keyMap.set(clone.key, clone);
+          clone.index = node?.index != null ? node?.index - 1 : 0;
         }
+        keyMap.set(clone.key, clone as NodeValue<T>);
       } else {
-        keyMap.set(node.key, node);
+        keyMap.set(node.key, node as NodeValue<T>);
       }
 
-      if (node.level === 0 || (expandedKeys === 'all' && node.type === 'item') || (expandedKeys !== 'all' && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
+      if (node.level === 0 || (expandedKeys === 'all' && node.type === 'item') || (expandedKeys !== 'all' && parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
         // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
-        flattenedRows.push(keyMap.get(node.key));
+        flattenedRows.push(keyMap.get(node.key) || node);
       }
     } else if (node.type !== null) {
-      keyMap.set(node.key, node);
+      keyMap.set(node.key, node as NodeValue<T>);
     }
 
     for (let child of collection.getChildren(node.key)) {

@@ -21,7 +21,7 @@ export default {
 
 interface StaticTreeItemProps extends TreeItemProps {
   title?: string,
-  children?: ReactNode
+  children: ReactNode
 }
 
 const StaticTreeItem = (props: StaticTreeItemProps) => {
@@ -134,7 +134,7 @@ let rows = [
 ];
 
 interface DynamicTreeItemProps extends TreeItemProps<object> {
-  children?: ReactNode
+  children: ReactNode
 }
 
 const DynamicTreeItem = (props: DynamicTreeItemProps) => {
@@ -205,6 +205,10 @@ TreeExampleDynamic.story = {
   }
 };
 
+interface ItemType {
+  childItems: Iterable<object>,
+  name: string
+}
 export const EmptyTree = (args: TreeProps<unknown>) => (
   <Tree
     {...args}
@@ -212,9 +216,9 @@ export const EmptyTree = (args: TreeProps<unknown>) => (
     aria-label="test dynamic tree"
     items={[]}
     renderEmptyState={() => <span>Nothing in tree</span>}>
-    {(item) => (
-      <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
-        {item.name}
+    {(item: ItemType) => (
+      <DynamicTreeItem childItems={item?.childItems} textValue={item?.name}>
+        {item?.name}
       </DynamicTreeItem>
     )}
   </Tree>
