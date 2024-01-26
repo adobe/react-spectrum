@@ -66,5 +66,9 @@
   },
   "alias": {
     "@storybook/react-dom-shim": "@storybook/react-dom-shim/dist/react-18"
+  },
+  "dependencies": {
+    "@adobe/react-spectrum": "^3.33.1",
+    "react-aria": "^3.31.1"
   }
 }
