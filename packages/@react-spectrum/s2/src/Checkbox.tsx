@@ -63,7 +63,7 @@ const box = style<RenderProps>({
         forcedColors: 'Mark'
       },
       isDisabled: {
-        default: 'disabled',
+        default: 'gray-400',
         forcedColors: 'GrayText'
       }
     }
@@ -76,7 +76,7 @@ const box = style<RenderProps>({
       forcedColors: 'Mark'
     },
     isDisabled: {
-      default: 'disabled',
+      default: 'gray-400',
       forcedColors: 'GrayText'
     },
     isSelected: 'transparent'
@@ -94,8 +94,7 @@ const iconStyles = style<RenderProps>({
     type: 'color',
     value: {
       default: 'gray-25',
-      forcedColors: 'HighlightText',
-      isDisabled: 'gray-400'
+      forcedColors: 'HighlightText'
     }
   }
 });

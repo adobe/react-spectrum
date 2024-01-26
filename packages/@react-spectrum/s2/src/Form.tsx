@@ -4,13 +4,15 @@ import {createContext, useContext} from 'react';
 import {SpectrumLabelableProps} from '@react-types/shared';
 
 interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'contextualHelp'> {
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  isDisabled?: boolean,
+  isEmphasized?: boolean
 }
 
 interface FormProps extends FormStyleProps, RACFormProps {}
 
 export const FormContext = createContext<FormStyleProps | null>(null);
-export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
+export function useFormProps<T extends FormStyleProps>(props: T): T {
   let ctx = useContext(FormContext);
   if (ctx) {
     return {...ctx, ...props};
@@ -20,7 +22,7 @@ export function useFormProps<T extends SpectrumLabelableProps>(props: T): T {
 }
 
 export function Form(props: FormProps) {
-  let {labelPosition = 'top', labelAlign, necessityIndicator, isRequired, size, ...formProps} = props;
+  let {labelPosition = 'top', labelAlign, necessityIndicator, isRequired, isDisabled, isEmphasized, size, ...formProps} = props;
 
   return (
     <RACForm 
@@ -36,7 +38,16 @@ export function Form(props: FormProps) {
         rowGap: 6, // TODO: confirm
         columnGap: 'text-to-control'
       })({labelPosition})}>
-      <FormContext.Provider value={{labelPosition, labelAlign, necessityIndicator, isRequired, size}}>
+      <FormContext.Provider 
+        value={{
+          labelPosition,
+          labelAlign,
+          necessityIndicator,
+          isRequired,
+          isDisabled,
+          isEmphasized,
+          size
+        }}>
         {props.children}
       </FormContext.Provider>
     </RACForm>
