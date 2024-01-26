@@ -48,22 +48,26 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
   return (
     <TreeItem
       {...props}
-      className={({isFocused, isSelected, isHovered}) => classNames(styles, 'item', {
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
         focused: isFocused,
+        'focus-visible': isFocusVisible,
         selected: isSelected,
         hovered: isHovered
       })}>
       <TreeItemContent>
         {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior}) => (
           <>
-            {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
               <MyCheckbox slot="selection" />
             )}
-            <Text>{props.title || props.children}</Text>
-            <Button aria-label="Info">ⓘ</Button>
-            <Button aria-label="Menu">☰</Button>
-            <div>{level}</div>
+            <div
+              className={classNames(styles, 'content-wrapper')}
+              style={{marginInlineStart: `${(!hasChildRows && 20) + (level - 1) * 15}px`}}>
+              {hasChildRows && <Button className={styles.chevron} slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+              <Text className={styles.title}>{props.title || props.children}</Text>
+              <Button className={styles.button} aria-label="Info">ⓘ</Button>
+              <Button className={styles.button} aria-label="Menu">☰</Button>
+            </div>
           </>
         )}
       </TreeItemContent>
@@ -73,7 +77,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
 };
 
 export const TreeExampleStatic = (args) => (
-  <Tree defaultExpandedKeys="all" className={styles.menu} {...args} aria-label="test static tree">
+  <Tree defaultExpandedKeys="all" className={styles.tree} {...args} aria-label="test static tree">
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
@@ -88,12 +92,28 @@ export const TreeExampleStatic = (args) => (
         Projects-3
       </StaticTreeItem>
     </StaticTreeItem>
-    <TreeItem id="reports" textValue="Reports">
+    <TreeItem
+      id="reports"
+      textValue="Reports"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
       <TreeItemContent>
         Reports
       </TreeItemContent>
     </TreeItem>
-    <TreeItem id="Tests" textValue="Tests">
+    <TreeItem
+      id="Tests"
+      textValue="Tests"
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
+        focused: isFocused,
+        'focus-visible': isFocusVisible,
+        selected: isSelected,
+        hovered: isHovered
+      })}>
       <TreeItemContent>
         {({isFocused}) => (
           <Text>{`${isFocused} Tests`}</Text>
@@ -104,7 +124,6 @@ export const TreeExampleStatic = (args) => (
 );
 
 TreeExampleStatic.story = {
-  // TODO: add the proper parameters
   args: {
     selectionMode: 'none',
     selectionBehavior: 'toggle'
@@ -165,24 +184,25 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
   return (
     <TreeItem
       {...props}
-      className={({isFocused, isSelected, isHovered}) => classNames(styles, 'item', {
+      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'tree-item', {
         focused: isFocused,
+        'focus-visible': isFocusVisible,
         selected: isSelected,
         hovered: isHovered
       })}>
       <TreeItemContent>
         {({isExpanded, hasChildRows, level, selectionBehavior, selectionMode}) => (
           <>
-            {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
               <MyCheckbox slot="selection" />
             )}
-            <Text>{props.children}</Text>
-            {/* TODO: Test left/right keyboard movement */}
-            <Button aria-label="Info">ⓘ</Button>
-            {/* TODO: make this menu expandable later and test it */}
-            <Button aria-label="Menu">☰</Button>
-            <div>{level}</div>
+            <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildRows && 20) + (level - 1) * 15}px`}}>
+              {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+              <Text>{props.children}</Text>
+              <Button className={styles.button} aria-label="Info">ⓘ</Button>
+              {/* TODO: make this menu expandable later and test it */}
+              <Button className={styles.button} aria-label="Menu">☰</Button>
+            </div>
           </>
         )}
       </TreeItemContent>
@@ -199,7 +219,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
 
 export const TreeExampleDynamic = (args: TreeProps<unknown>) => (
   // TODO: update the styles here
-  <Tree {...args} defaultExpandedKeys="all" className={styles.menu} aria-label="test dynamic tree" items={rows}>
+  <Tree {...args} defaultExpandedKeys="all" className={styles.tree} aria-label="test dynamic tree" items={rows}>
     {(item) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
         {item.name}
@@ -237,7 +257,7 @@ interface ItemType {
 export const EmptyTree = (args: TreeProps<unknown>) => (
   <Tree
     {...args}
-    className={styles.menu}
+    className={styles.tree}
     aria-label="test dynamic tree"
     items={[]}
     renderEmptyState={() => <span>Nothing in tree</span>}>
