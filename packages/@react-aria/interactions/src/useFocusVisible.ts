@@ -171,7 +171,7 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   if (!hasSetupGlobalListeners.has(windowObject)) {
     return;
   }
-  windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject).focus;
+  windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject)!.focus;
 
   documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
   documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
