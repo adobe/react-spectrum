@@ -1,9 +1,9 @@
 import type {Value, CSSValue, CSSProperties, PropertyFunction, PropertyValueMap, Theme, Condition, StyleFunction, StyleValue, ThemeProperties, PropertyValueDefinition, CustomValue} from './types';
 
-export function createArbitraryProperty<T extends Value>(fn: (value: T) => CSSProperties): PropertyFunction<T> {
-  return (value) => {
+export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties): PropertyFunction<T> {
+  return (value, property) => {
     let selector = Array.isArray(value) ? value.map(v => generateArbitraryValueSelector(String(v))).join('') : generateArbitraryValueSelector(String(value));
-    return {default: [fn(value), selector]};
+    return {default: [fn(value, property), selector]};
   };
 }
 
@@ -173,7 +173,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
   };
 
   function compileValue(property: string, themeProperty: string, value: StyleValue<Value, Condition<T>, any>) {
-    return conditionalToRules(value as PropertyValueDefinition<Value>, 0, new Set(), new Set(), (value, priority, conditions, skipConditions) => {
+    return conditionalToRules(value as any, 0, new Set(), new Set(), (value, priority, conditions, skipConditions) => {
       return compileRule(property, themeProperty, value, priority, conditions, skipConditions);
     });
   }

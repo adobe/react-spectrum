@@ -2,7 +2,7 @@ import type * as CSS from 'csstype';
 
 export type CSSValue = string | number;
 export type CustomValue = string | number | boolean;
-export type Value = CustomValue | CustomValue[];
+export type Value = CustomValue | readonly CustomValue[];
 export type PropertyValueDefinition<T> = T | {[condition: string]: PropertyValueDefinition<T>};
 export type PropertyValueMap<T extends CSSValue = CSSValue> = {
   [name in T]: PropertyValueDefinition<string>
@@ -123,8 +123,13 @@ type Variants<T, K extends keyof T> = K extends any ? {
 } : never;
 
 type InferCustomPropertyValue<T> = T extends {value: infer V} ? V : never;
-export type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
-type RuntimeConditionsObject<C extends keyof any, S extends Style<any, any, any>> = UnionToIntersection<
+
+// https://stackoverflow.com/questions/49401866/all-possible-keys-of-an-union-type
+type KeysOfUnion<T> = T extends T ? keyof T: never;
+type KeyValue<T, K extends KeysOfUnion<T>> =  T extends {[k in K]?: any} ? T[K] : never;
+type MergeUnion<T> = { [K in KeysOfUnion<T>]: KeyValue<T, K> };
+
+type RuntimeConditionsObject<C extends keyof any, S extends Style<any, any, any>> = MergeUnion<
   ExtractConditionalValue<C,
     | Values<S, Exclude<keyof S, CustomProperty>>
     // Skip top-level object for custom properties and go straight to value.
@@ -142,7 +147,7 @@ export type RuntimeStyleFunction<S, R> = Keys<R> extends never ? () => string & 
 // If an render prop type was provided, use that so that we get autocomplete for conditions.
 // Otherwise, fall back to inferring the render props from the style definition itself.
 type InferProps<R, C extends keyof any, S extends Style<any, any, any>> = [R] extends [never] ? AllowOthers<RuntimeConditionsObject<C, S>> : R;
-type AllowOthers<R> = Keys<R> extends never ? never : R & {[x: string]: any}
+type AllowOthers<R> = Keys<R> extends never ? never : R | {[x: string]: any}
 export type StyleFunction<T extends ThemeProperties<Theme>, C extends string> =
   <R extends RenderProps<string> = never, S extends Style<T, C, R> = Style<T, C, R>>(style: S) => RuntimeStyleFunction<IncludedProperties<S>, InferProps<R, C, S>>;
 

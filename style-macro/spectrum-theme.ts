@@ -249,7 +249,7 @@ const radius = {
   'control-sm': 4 / 14 + 'em'
 };
 
-type GridTrack = 'none' | 'subgrid' | (string & {}) | GridTrackSize[];
+type GridTrack = 'none' | 'subgrid' | (string & {}) | readonly GridTrackSize[];
 type GridTrackSize = 'auto' | 'min-content' | 'max-content' | `${number}fr` | `minmax(${string}, ${string})` | keyof typeof baseSpacing;
 
 let gridTrack = (value: GridTrack) => {
@@ -407,6 +407,26 @@ export const style = createTheme({
     fill: createColorProperty({
       none: 'none',
       currentColor: 'currentColor',
+      accent: weirdColorToken(tokens['accent-visual-color']),
+      neutral: weirdColorToken(tokens['neutral-visual-color']),
+      negative: weirdColorToken(tokens['negative-visual-color']),
+      informative: weirdColorToken(tokens['informative-visual-color']),
+      positive: weirdColorToken(tokens['positive-visual-color']),
+      notice: weirdColorToken(tokens['notice-visual-color']),
+      gray: weirdColorToken(tokens['gray-visual-color']),
+      red: weirdColorToken(tokens['red-visual-color']),
+      orange: weirdColorToken(tokens['orange-visual-color']),
+      yellow: weirdColorToken(tokens['yellow-visual-color']),
+      chartreuse: weirdColorToken(tokens['chartreuse-visual-color']),
+      celery: weirdColorToken(tokens['celery-visual-color']),
+      green: weirdColorToken(tokens['green-visual-color']),
+      seafoam: weirdColorToken(tokens['seafoam-visual-color']),
+      cyan: weirdColorToken(tokens['cyan-visual-color']),
+      blue: weirdColorToken(tokens['blue-visual-color']),
+      indigo: weirdColorToken(tokens['indigo-visual-color']),
+      purple: weirdColorToken(tokens['purple-visual-color']),
+      fuchsia: weirdColorToken(tokens['fuchsia-visual-color']),
+      magenta: weirdColorToken(tokens['magenta-visual-color']),
       ...color
     }),
     stroke: createColorProperty({
@@ -575,7 +595,7 @@ export const style = createTheme({
       '-webkit-line-clamp': value
     })),
     hyphens: ['none', 'manual', 'auto'] as const,
-    whitespace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'] as const,
+    whiteSpace: ['normal', 'nowrap', 'pre', 'pre-line', 'pre-wrap', 'break-spaces'] as const,
     textWrap: ['wrap', 'nowrap', 'balance', 'pretty'] as const,
     wordBreak: ['normal', 'break-all', 'keep-all'] as const, // also overflowWrap??
     boxDecorationBreak: ['slice', 'clone'] as const,
@@ -649,22 +669,25 @@ export const style = createTheme({
     justifySelf: ['auto', 'start', 'end', 'center', 'stretch'] as const,
     flexDirection: ['row', 'column', 'row-reverse', 'column-reverse'] as const,
     flexWrap: ['wrap', 'wrap-reverse', 'nowrap'] as const,
-    flex: createArbitraryProperty((value: CSS.Property.Flex) => ({flex: value})),
-    flexShrink: createArbitraryProperty((value: CSS.Property.FlexShrink) => ({flexShrink: value})),
-    flexGrow: createArbitraryProperty((value: CSS.Property.FlexGrow) => ({flexGrow: value})),
-    gridColumn: createArbitraryProperty((value: CSS.Property.GridColumn) => ({gridColumn: value})),
-    gridColumnStart: createArbitraryProperty((value: CSS.Property.GridColumnStart) => ({gridColumnStart: value})),
-    gridColumnEnd: createArbitraryProperty((value: CSS.Property.GridColumnEnd) => ({gridColumnEnd: value})),
-    gridRow: createArbitraryProperty((value: CSS.Property.GridRow) => ({gridRow: value})),
-    gridRowStart: createArbitraryProperty((value: CSS.Property.GridRowStart) => ({gridRowStart: value})),
-    gridRowEnd: createArbitraryProperty((value: CSS.Property.GridRowEnd) => ({gridRowEnd: value})),
+    flex: createArbitraryProperty((value: CSS.Property.Flex, property) => ({[property]: value})),
+    flexShrink: createArbitraryProperty((value: CSS.Property.FlexShrink, property) => ({[property]: value})),
+    flexGrow: createArbitraryProperty((value: CSS.Property.FlexGrow, property) => ({[property]: value})),
+    gridColumn: createArbitraryProperty((value: CSS.Property.GridColumn, property) => ({[property]: value})),
+    gridColumnStart: createArbitraryProperty((value: CSS.Property.GridColumnStart, property) => ({[property]: value})),
+    gridColumnEnd: createArbitraryProperty((value: CSS.Property.GridColumnEnd, property) => ({[property]: value})),
+    gridRow: createArbitraryProperty((value: CSS.Property.GridRow, property) => ({[property]: value})),
+    gridRowStart: createArbitraryProperty((value: CSS.Property.GridRowStart, property) => ({[property]: value})),
+    gridRowEnd: createArbitraryProperty((value: CSS.Property.GridRowEnd, property) => ({[property]: value})),
     gridAutoFlow: ['row', 'column', 'dense', 'row dense', 'column dense'] as const,
-    gridAutoRows: createArbitraryProperty((value: GridTrackSize) => ({gridAutoRows: gridTrackSize(value)})),
-    gridAutoColumns: createArbitraryProperty((value: GridTrackSize) => ({gridAutoRows: gridTrackSize(value)})),
-    gridTemplateColumns: createArbitraryProperty((value: GridTrack) => ({gridTemplateColumns: gridTrack(value)})),
-    gridTemplateRows: createArbitraryProperty((value: GridTrack) => ({gridTemplateRows: gridTrack(value)})),
+    gridAutoRows: createArbitraryProperty((value: GridTrackSize, property) => ({[property]: gridTrackSize(value)})),
+    gridAutoColumns: createArbitraryProperty((value: GridTrackSize, property) => ({[property]: gridTrackSize(value)})),
+    gridTemplateColumns: createArbitraryProperty((value: GridTrack, property) => ({[property]: gridTrack(value)})),
+    gridTemplateRows: createArbitraryProperty((value: GridTrack, property) => ({[property]: gridTrack(value)})),
+    gridTemplateAreas: createArbitraryProperty((value: string[], property) => ({[property]: value.map(v => `"${v}"`).join('')})),
+    gridArea: createArbitraryProperty((value: string, property) => ({[property]: value})),
     float: ['inline-start', 'inline-end', 'right', 'left', 'none'] as const,
     clear: ['inline-start', 'inline-end', 'left', 'right', 'both', 'none'] as const,
+    contain: ['none', 'strict', 'content', 'size', 'inline-size', 'layout', 'style', 'paint'] as const,
     boxSizing: ['border-box', 'content-box'] as const,
     tableLayout: ['auto', 'fixed'] as const,
     captionSide: ['top', 'bottom'] as const,

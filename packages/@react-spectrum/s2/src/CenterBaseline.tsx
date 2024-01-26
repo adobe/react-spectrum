@@ -14,3 +14,5 @@ export function CenterBaseline(props: CenterBaselineProps) {
     </div>
   );
 }
+
+export const centerBaselineBefore = raw('&::before { content: "\u00a0"; width: 0; visibility: hidden }');

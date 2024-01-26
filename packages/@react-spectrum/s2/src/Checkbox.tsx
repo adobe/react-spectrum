@@ -4,9 +4,10 @@ import {focusRing} from './style-utils.ts' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline.tsx';
 import CheckmarkIcon from '../ui-icons/S2_CheckmarkSize100.svg';
 import DashIcon from '../ui-icons/S2_DashSize100.svg';
-import {useRef} from 'react';
+import {useContext, useRef} from 'react';
 import {pressScale} from './pressScale';
 import {mergeStyles} from '../style-macro/runtime.ts';
+import {FormContext, useFormProps} from './Form.tsx';
 
 interface CheckboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
@@ -19,7 +20,7 @@ interface CheckboxProps extends Omit<AriaCheckboxProps, 'className'>, CheckboxSt
   className?: string
 }
 
-const wrapper = style<RenderProps>({
+const wrapper = style({
   display: 'flex',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
@@ -32,6 +33,9 @@ const wrapper = style<RenderProps>({
       default: 'disabled',
       forcedColors: 'GrayText'
     }
+  },
+  gridColumnStart: {
+    isInForm: 'field'
   }
 });
 
@@ -98,10 +102,12 @@ const iconStyles = style<RenderProps>({
 
 export function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProps) {
   let boxRef = useRef(null);
+  let isInForm = !!useContext(FormContext);
+  props = useFormProps(props);
   return (
     <AriaCheckbox
       {...props}
-      className={renderProps => mergeStyles(props.className, wrapper({...renderProps, size: props.size || 'M'}))}>
+      className={renderProps => mergeStyles(props.className, wrapper({...renderProps, isInForm, size: props.size || 'M'}))}>
       {renderProps => (
         <>
           <CenterBaseline>
