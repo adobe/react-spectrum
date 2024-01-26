@@ -21,7 +21,8 @@ html {
   display: flex;
 
   .content-wrapper {
-    gap: 5px;
+    display: flex;
+    gap: 2px;
   }
 
   .button,

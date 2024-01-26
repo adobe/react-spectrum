@@ -62,7 +62,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
             )}
             <div
               className={classNames(styles, 'content-wrapper')}
-              style={{marginInlineStart: `${(!hasChildRows && 20) + (level - 1) * 15}px`}}>
+              style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
               {hasChildRows && <Button className={styles.chevron} slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
               <Text className={styles.title}>{props.title || props.children}</Text>
               <Button className={styles.button} aria-label="Info">ⓘ</Button>
@@ -141,7 +141,10 @@ TreeExampleStatic.story = {
         options: ['toggle', 'replace']
       }
     }
-  }
+  },
+  parameters: {
+    description: {
+      data: 'Note that the last two items are just to test bare minimum TreeItem and thus dont have the checkbox or any of the other contents that the other items have. The last item tests the isFocused renderProp'}}
 };
 
 let rows = [
@@ -196,7 +199,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
               <MyCheckbox slot="selection" />
             )}
-            <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildRows && 20) + (level - 1) * 15}px`}}>
+            <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
               {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
               <Text>{props.children}</Text>
               <Button className={styles.button} aria-label="Info">ⓘ</Button>

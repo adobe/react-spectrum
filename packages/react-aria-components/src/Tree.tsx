@@ -355,7 +355,6 @@ function TreeRow<T>({item}: {item: Node<T>}) {
     {key: item.key},
     state
   );
-  console.log('checkbox Props', checkboxProps)
 
   let props: TreeItemProps<unknown> = item.props;
   let renderPropValues = React.useMemo(() => ({
