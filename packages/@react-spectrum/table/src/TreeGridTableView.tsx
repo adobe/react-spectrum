@@ -31,7 +31,6 @@ function TreeGridTableView<T extends object>(props: TreeGridTableProps<T>, ref: 
     showDragButtons: isTableDraggable,
     selectionBehavior: props.selectionStyle === 'highlight' ? 'replace' : 'toggle'
   });
-  console.log('state', state);
 
   // If the selection behavior changes in state, we need to update showSelectionCheckboxes here due to the circular dependency...
   let shouldShowCheckboxes = state.selectionManager.selectionBehavior !== 'replace';

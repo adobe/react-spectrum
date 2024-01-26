@@ -387,7 +387,6 @@ function TreeRow({item}) {
     onPress: () => {
       state.toggleKey(item.key);
     },
-    // TODO: will need to provide translations for a chevron button if need be.
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
     // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
     // TODO: with how slots work and the order in which things get merged, this doesn't actually get applied...

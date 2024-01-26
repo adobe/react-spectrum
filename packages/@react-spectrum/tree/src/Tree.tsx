@@ -77,7 +77,7 @@ function TreeItem<T>(props: TreeItemProps<T>) {
     hasChildNodes
   } = item;
 
-  let isExpanded = state.expandedKeys.has(key);
+  let isExpanded = state.expandedKeys === 'all' || state.expandedKeys.has(key);
   let isSelected = state.selectionManager.isSelected(key);
 
   let itemClassName = classNames(styles, 'spectrum-TreeView-item', {

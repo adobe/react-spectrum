@@ -669,7 +669,6 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
     if (items && typeof children === 'function') {
       let res: ReactElement[] = [];
       for (let item of items) {
-        // console.log('item', item)
         let rendered = cache.get(item);
         if (!rendered) {
           rendered = children(item);
