@@ -130,7 +130,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       return;
     }
 
-    let isTestEnv = process.env.NODE_ENV === 'test';
+    let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
     let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
     let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
     let w = isTestEnv && !isClientWidthMocked ? Infinity : dom.clientWidth;

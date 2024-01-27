@@ -656,7 +656,8 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   getVisibleLayoutInfos() {
-    let isTestEnv = process.env.NODE_ENV === 'test';
+    let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
+
     let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
     let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
 
