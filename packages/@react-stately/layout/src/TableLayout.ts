@@ -304,8 +304,6 @@ export class TableLayout<T> extends ListLayout<T> {
     if (this.isLoading) {
       // Add some margin around the loader to ensure that scrollbars don't flicker in and out.
       let rect = new Rect(40,  Math.max(y, 40), (width || this.virtualizer.visibleRect.width) - 80, children.length === 0 ? this.virtualizer.visibleRect.height - 80 : 60);
-      // TODO: alternative to making VirtualizerItem return dummy values for top/right/left/width/height is to add fallbacks here in the rects calculated for the nodes
-      // Going with VirtualizerItem change for now since it is more centralized and doesn't require changes to all sorts of layouts
       let loader = new LayoutInfo('loader', 'loader', rect);
       loader.parentKey = 'body';
       loader.isSticky = !this.disableSticky && children.length === 0;

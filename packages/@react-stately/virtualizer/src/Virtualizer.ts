@@ -656,7 +656,6 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   getVisibleLayoutInfos() {
-    // TODO: move this check to somewhere common so it can be shared? Double check that this is the route we wanna go
     let isTestEnv = process.env.NODE_ENV === 'test';
     let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
     let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
@@ -1141,7 +1140,6 @@ export class Virtualizer<T extends object, V, W> {
     }
   }
 
-  // TODO: perhaps have the isTestEnv check here as well and set to Infinity/Infinity? Or just rely on ScrollView setting contentSize as infnity?
   private _getContentRect(): Rect {
     return new Rect(0, 0, this.contentSize.width, this.contentSize.height);
   }

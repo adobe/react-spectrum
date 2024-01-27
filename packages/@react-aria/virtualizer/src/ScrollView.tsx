@@ -129,7 +129,7 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
     if (!dom) {
       return;
     }
-    // TODO: move this check to somewhere common so it can be shared? Double check that this is the route we wanna go
+
     let isTestEnv = process.env.NODE_ENV === 'test';
     let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
     let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
@@ -194,7 +194,6 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   }
 
   innerStyle = {
-    // TODO: If width and height aren't finite (aka is Infinity or NaN), don't use those values since it is invalid css
     width: Number.isFinite(contentSize.width) ? contentSize.width : undefined,
     height: Number.isFinite(contentSize.height) ? contentSize.height : undefined,
     pointerEvents: isScrolling ? 'none' : 'auto',

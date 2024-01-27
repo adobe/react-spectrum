@@ -147,7 +147,6 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
     return res;
   }
 
-  // TODO: can have isVisible just return true instead of mocking the visible rect, but virtualizer mocks are more centralized
   isVisible(node: LayoutNode, rect: Rect) {
     return node.layoutInfo.rect.intersects(rect) || node.layoutInfo.isSticky || this.virtualizer.isPersistedKey(node.layoutInfo.key);
   }

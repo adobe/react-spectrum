@@ -74,12 +74,12 @@ let itemsWithFalsyId = [
 ];
 
 let manyItems = [];
-for (let i = 1; i <= 30; i++) {
+for (let i = 1; i <= 100; i++) {
   manyItems.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i, baz: 'Baz ' + i});
 }
 
 let manyColumns = [];
-for (let i = 1; i <= 5; i++) {
+for (let i = 1; i <= 100; i++) {
   manyColumns.push({id: i, name: 'Column ' + i});
 }
 
@@ -138,12 +138,19 @@ function pointerEvent(type, opts) {
 }
 
 export let tableTests = () => {
-  let offsetHeight;
+  let offsetWidth, offsetHeight;
   let user;
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
+    offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
+    offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
+  });
+
+  afterAll(function () {
+    offsetWidth.mockReset();
+    offsetHeight.mockReset();
   });
 
   afterEach(() => {
@@ -1245,7 +1252,7 @@ export let tableTests = () => {
       });
     });
 
-    describe.skip('PageDown', function () {
+    describe('PageDown', function () {
       it('should focus the cell a page below', function () {
         let tree = renderMany();
         focusCell(tree, 'Foo 1');
@@ -1277,7 +1284,7 @@ export let tableTests = () => {
       });
     });
 
-    describe.skip('PageUp', function () {
+    describe('PageUp', function () {
       it('should focus the cell a page above', function () {
         let tree = renderMany();
         focusCell(tree, 'Foo 25');
@@ -1429,14 +1436,14 @@ export let tableTests = () => {
 
       describe('type ahead with dialog triggers', function () {
         beforeEach(function () {
-          // offsetHeight.mockRestore();
+          offsetHeight.mockRestore();
           offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
             .mockImplementationOnce(() => 20)
             .mockImplementation(() => 100);
         });
         afterEach(function () {
           offsetHeight.mockRestore();
-          // offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
+          offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
         });
         it('does not pick up typeahead from a dialog', async function () {
           offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get')
@@ -1770,8 +1777,7 @@ export let tableTests = () => {
       });
     });
 
-    // Skip since we aren't moving height and scroll calcs need them
-    describe.skip('scrolling', function () {
+    describe('scrolling', function () {
       it('should scroll to a cell when it is focused', function () {
         let tree = renderMany();
         let body = tree.getByRole('grid').childNodes[1];
@@ -2265,15 +2271,14 @@ export let tableTests = () => {
         fireEvent.keyDown(getCell(tree, 'Baz 10'), {key: 'End', shiftKey: true, ctrlKey: true});
 
         let expected = [];
-        for (let i = 10; i <= 30; i++) {
+        for (let i = 10; i <= 100; i++) {
           expected.push('Foo ' + i);
         }
 
         checkSelection(onSelectionChange, expected);
       });
 
-      // Skip the pagedown/up ones when we aren't mocking client height since those rely on math to calculate where to move focus
-      it.skip('should extend a selection with Shift + PageDown', function () {
+      it('should extend a selection with Shift + PageDown', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -2294,7 +2299,7 @@ export let tableTests = () => {
         checkSelection(onSelectionChange, expected);
       });
 
-      it.skip('should extend a selection with Shift + PageUp', function () {
+      it('should extend a selection with Shift + PageUp', function () {
         let onSelectionChange = jest.fn();
         let tree = renderTable({onSelectionChange});
 
@@ -2400,7 +2405,7 @@ export let tableTests = () => {
         await user.click(rows[4]);
 
         let expected = [];
-        for (let i = 1; i <= 30; i++) {
+        for (let i = 1; i <= 100; i++) {
           if (i !== 4) {
             expected.push('Foo ' + i);
           }
@@ -4120,7 +4125,7 @@ export let tableTests = () => {
       expect(within(table).queryByRole('progressbar')).toBeNull();
     });
 
-    it.skip('should fire onLoadMore when scrolling near the bottom', function () {
+    it('should fire onLoadMore when scrolling near the bottom', function () {
       let items = [];
       for (let i = 1; i <= 100; i++) {
         items.push({id: i, foo: 'Foo ' + i, bar: 'Bar ' + i});
@@ -4164,7 +4169,7 @@ export let tableTests = () => {
       expect(onLoadMore).toHaveBeenCalledTimes(1);
     });
 
-    it.skip('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
+    it('should automatically fire onLoadMore if there aren\'t enough items to fill the Table', function () {
       let items = [{id: 1, foo: 'Foo 1', bar: 'Bar 1'}];
       let onLoadMoreSpy = jest.fn();
 
