@@ -605,7 +605,7 @@ export class Document<T, C extends BaseCollection<T> = BaseCollection<T>> extend
 
     this.dirtyNodes.clear();
 
-    if (this.mutatedNodes.size) {
+    if (this.mutatedNodes.size || this.collectionMutated) {
       let collection = this.getMutableCollection();
       for (let element of this.mutatedNodes) {
         if (element.isConnected) {
@@ -664,6 +664,7 @@ export function useCachedChildren<T extends object>(props: CachedChildrenOptions
   let {children, items, idScope, addIdAndValue, dependencies = []} = props;
 
   // Invalidate the cache whenever the parent value changes.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   let cache = useMemo(() => new WeakMap(), dependencies);
   return useMemo(() => {
     if (items && typeof children === 'function') {

@@ -225,14 +225,14 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     </div>
   );
 
-  let wrapperClassName = label ? classNames(
+  let wrapperClassName = classNames(
     styles,
     'spectrum-Field',
     {
       'spectrum-Dropdown-fieldWrapper--quiet': isQuiet,
       'spectrum-Dropdown-fieldWrapper--positionSide': labelPosition === 'side'
     }
-  ) : '';
+  );
 
   return (
     <Field
