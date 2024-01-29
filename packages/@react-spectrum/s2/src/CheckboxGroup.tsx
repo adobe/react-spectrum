@@ -9,8 +9,8 @@ import React, {useContext} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {FieldLabel, HelpText} from './Field';
 import {SpectrumLabelableProps, Orientation} from '@react-types/shared';
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
-import {field} from './style-utils.ts' with {type: 'macro'};
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {field} from './style-utils' with {type: 'macro'};
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children'>, SpectrumLabelableProps {
   children?: React.ReactNode,

@@ -1,11 +1,11 @@
 import {Group, GroupProps, Input as RACInput, InputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text, InputRenderProps} from 'react-aria-components';
-import {baseColor, style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
-import {focusRing} from './style-utils.ts' with {type: 'macro'};
+import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {focusRing} from './style-utils' with {type: 'macro'};
 import AsteriskIcon from '../ui-icons/S2_AsteriskSize100.svg';
 import AlertIcon from '../s2wf-icons/assets/react/s2IconAlertTriangle20N.js';
-import {Icon} from './Icon.tsx';
-import {mergeStyles} from '../style-macro/runtime.ts';
-import {CenterBaseline, centerBaselineBefore} from './CenterBaseline.tsx';
+import {Icon} from './Icon';
+import {mergeStyles} from '../style-macro/runtime';
+import {CenterBaseline, centerBaselineBefore} from './CenterBaseline';
 import {NecessityIndicator, Alignment} from '@react-types/shared';
 
 interface FieldLabelProps extends LabelProps {

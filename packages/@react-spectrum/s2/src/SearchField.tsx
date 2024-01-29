@@ -7,14 +7,14 @@ import {
   ButtonRenderProps
 } from 'react-aria-components';
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {field} from './style-utils.ts' with {type: 'macro'};
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+import {field} from './style-utils' with {type: 'macro'};
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import SearchIcon from '../s2wf-icons/assets/react/s2IconSearch20N.js';
 import CrossIcon from '../ui-icons/S2_CrossSize100.svg';
-import {Icon} from './Icon.tsx';
-import {raw} from '../style-macro/style-macro.ts' with {type: 'macro'};
+import {Icon} from './Icon';
+import {raw} from '../style-macro/style-macro' with {type: 'macro'};
 import {useContext} from 'react';
-import {FormContext, useFormProps} from './Form.tsx';
+import {FormContext, useFormProps} from './Form';
 import {SpectrumLabelableProps} from '@react-types/shared';
 
 export interface SearchFieldProps extends AriaSearchFieldProps, SpectrumLabelableProps {

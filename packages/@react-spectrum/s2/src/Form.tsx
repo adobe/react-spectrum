@@ -1,5 +1,5 @@
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {createContext, useContext} from 'react';
 import {SpectrumLabelableProps} from '@react-types/shared';
 

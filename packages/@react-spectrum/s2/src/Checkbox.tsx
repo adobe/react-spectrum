@@ -1,13 +1,13 @@
 import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxRenderProps} from 'react-aria-components';
-import {style, baseColor} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
-import {focusRing} from './style-utils.ts' with {type: 'macro'};
-import {CenterBaseline} from './CenterBaseline.tsx';
+import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {focusRing} from './style-utils' with {type: 'macro'};
+import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/S2_CheckmarkSize100.svg';
 import DashIcon from '../ui-icons/S2_DashSize100.svg';
 import {useContext, useRef} from 'react';
 import {pressScale} from './pressScale';
-import {mergeStyles} from '../style-macro/runtime.ts';
-import {FormContext, useFormProps} from './Form.tsx';
+import {mergeStyles} from '../style-macro/runtime';
+import {FormContext, useFormProps} from './Form';
 
 interface CheckboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',

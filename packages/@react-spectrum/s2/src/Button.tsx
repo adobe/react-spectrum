@@ -1,9 +1,9 @@
 import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext} from 'react-aria-components';
-import {style, baseColor} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
-import {focusRing} from './style-utils.ts' with {type: 'macro'};
+import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {focusRing} from './style-utils' with {type: 'macro'};
 import {ReactNode, useRef} from 'react';
-import {mergeStyles} from '../style-macro/runtime.ts';
-import {pressScale} from './pressScale.ts';
+import {mergeStyles} from '../style-macro/runtime';
+import {pressScale} from './pressScale';
 
 interface ButtonStyleProps {
   variant?: 'primary' | 'secondary' | 'accent' | 'negative',

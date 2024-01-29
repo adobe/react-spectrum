@@ -14,12 +14,12 @@ import AlertTriangle from '../s2wf-icons/assets/react/s2IconAlertTriangle20N';
 import CheckmarkCircle from '../s2wf-icons/assets/react/s2IconCheckmarkCircle20N';
 import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing} from './style-utils.ts' with {type: 'macro'};
+import {focusRing} from './style-utils' with {type: 'macro'};
 import InfoCircle from '../s2wf-icons/assets/react/s2IconInfoCircle20N';
-import {mergeStyles} from '../style-macro/runtime.ts';
+import {mergeStyles} from '../style-macro/runtime';
 import React, {ReactNode, useEffect, useRef} from 'react';
 import {SlotProvider, useDOMRef} from '@react-spectrum/utils';
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {useFocusRing} from 'react-aria';
 
 export interface SpectrumInlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {

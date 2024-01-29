@@ -4,12 +4,12 @@ import {
   SwitchRenderProps
 } from 'react-aria-components';
 import React, {useContext, useRef} from 'react';
-import {baseColor, style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
-import {FormContext, useFormProps} from './Form.tsx';
-import {CenterBaseline} from './CenterBaseline.tsx';
-import {pressScale} from './pressScale.ts';
-import {focusRing} from './style-utils.ts' with {type: 'macro'};
-import {mergeStyles} from '../style-macro/runtime.ts';
+import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {FormContext, useFormProps} from './Form';
+import {CenterBaseline} from './CenterBaseline';
+import {pressScale} from './pressScale';
+import {focusRing} from './style-utils' with {type: 'macro'};
+import {mergeStyles} from '../style-macro/runtime';
 
 interface SwitchStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',

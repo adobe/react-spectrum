@@ -284,6 +284,9 @@ const transitionTimingFunction = {
   'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)'
 };
 
+// TODO: do these need tokens or are arbitrary values ok?
+let durationProperty = createArbitraryProperty((value: number | string, property) => ({[property]: typeof value === 'number' ? value + 'ms' : value}));
+
 const colorWithAlpha = createColorProperty(color);
 
 export const style = createTheme({
@@ -635,29 +638,18 @@ export const style = createTheme({
       transitionDuration: '150ms',
       transitionTimingFunction: transitionTimingFunction.default
     }), transitionProperty),
-    transitionDelay: {
-      0: '0s',
-      75: '75ms',
-      100: '100ms',
-      150: '150ms',
-      200: '200ms',
-      300: '300ms',
-      500: '500ms',
-      700: '700ms',
-      1000: '1000ms'
-    },
-    transitionDuration: {
-      0: '0s',
-      75: '75ms',
-      100: '100ms',
-      150: '150ms',
-      200: '200ms',
-      300: '300ms',
-      500: '500ms',
-      700: '700ms',
-      1000: '1000ms'
-    },
+    transitionDelay: durationProperty,
+    transitionDuration: durationProperty,
     transitionTimingFunction,
+    animation: createArbitraryProperty((value: string) => ({
+      animationName: value,
+      animationDuration: '150ms',
+      animationTimingFunction: transitionTimingFunction.default
+    })),
+    animationDuration: durationProperty,
+    animationDelay: durationProperty,
+    animationDirection: ['normal', 'reverse', 'alternate', 'alternate-reverse'] as const,
+    animationFillMode: ['none', 'forwards', 'backwards', 'both'] as const,
 
     // layout
     display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'] as const, // tables?

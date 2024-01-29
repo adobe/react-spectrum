@@ -1,7 +1,7 @@
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {ReactElement, cloneElement} from 'react';
-import {CenterBaseline} from './CenterBaseline.tsx';
-import {mergeStyles} from '../style-macro/runtime.ts';
+import {CenterBaseline} from './CenterBaseline';
+import {mergeStyles} from '../style-macro/runtime';
 
 interface IconProps {
   className?: string,

@@ -446,3 +446,17 @@ export function raw(this: MacroContext | void, css: string) {
   }
   return className;
 }
+
+export function keyframes(this: MacroContext | void, css: string) {
+  let name = generateArbitraryValueSelector(css, true);
+  css = `@keyframes ${name} {
+  ${css}
+}`;
+  if (typeof this?.addAsset === 'function') {
+    this.addAsset({
+      type: 'css',
+      content: css
+    });
+  }
+  return name;
+}

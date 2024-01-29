@@ -8,8 +8,8 @@ import {
   useSlottedContext
 } from 'react-aria-components';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {field} from './style-utils.ts' with {type: 'macro'};
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+import {field} from './style-utils' with {type: 'macro'};
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {SpectrumLabelableProps} from '@react-types/shared';
 import {useContext} from 'react';
 import {FormContext, useFormProps} from './Form';

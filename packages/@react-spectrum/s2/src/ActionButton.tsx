@@ -1,8 +1,8 @@
 import {useRef} from 'react';
 import {ButtonProps, ButtonRenderProps, Button as RACButton} from 'react-aria-components';
-import {baseColor, style} from '../style-macro/spectrum-theme.ts' with { type: 'macro' };
-import {pressScale} from './pressScale.ts';
-import {focusRing} from './style-utils.ts' with { type: 'macro' };
+import {baseColor, style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {pressScale} from './pressScale';
+import {focusRing} from './style-utils' with { type: 'macro' };
 
 export interface ActionButtonStyleProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',

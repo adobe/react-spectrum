@@ -1,5 +1,5 @@
 import {ReactNode} from 'react';
-import {raw} from '../style-macro/style-macro.ts' with {type: 'macro'};
+import {raw} from '../style-macro/style-macro' with {type: 'macro'};
 
 interface CenterBaselineProps {
   className?: string,
