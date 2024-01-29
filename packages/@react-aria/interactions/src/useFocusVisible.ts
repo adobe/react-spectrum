@@ -37,7 +37,10 @@ export interface FocusVisibleResult {
 
 let currentModality: null | Modality = null;
 let changeHandlers = new Set<Handler>();
-export let hasSetupGlobalListeners = new Map<Window, boolean>(); // We use a map here to support setting event listeners across multiple document objects.
+interface GlobalListenerData {
+  focus: () => void
+}
+export let hasSetupGlobalListeners = new Map<Window, GlobalListenerData>(); // We use a map here to support setting event listeners across multiple document objects.
 let hasEventBeforeFocus = false;
 let hasBlurredWindowRecently = false;
 
@@ -153,45 +156,65 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
 
   // Add unmount handler
   windowObject.addEventListener('beforeunload', () => {
-    documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
-    documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
-    documentObject.removeEventListener('click', handleClickEvent, true);
-    windowObject.removeEventListener('focus', handleFocusEvent, true);
-    windowObject.removeEventListener('blur', handleWindowBlur, false);
-
-    if (typeof PointerEvent !== 'undefined') {
-      documentObject.removeEventListener('pointerdown', handlePointerEvent, true);
-      documentObject.removeEventListener('pointermove', handlePointerEvent, true);
-      documentObject.removeEventListener('pointerup', handlePointerEvent, true);
-    } else {
-      documentObject.removeEventListener('mousedown', handlePointerEvent, true);
-      documentObject.removeEventListener('mousemove', handlePointerEvent, true);
-      documentObject.removeEventListener('mouseup', handlePointerEvent, true);
-    }
-
-    if (hasSetupGlobalListeners.has(windowObject)) {
-      hasSetupGlobalListeners.delete(windowObject);
-    }
+    tearDownWindowFocusTracking(element);
   }, {once: true});
 
-  hasSetupGlobalListeners.set(windowObject, true);
+  hasSetupGlobalListeners.set(windowObject, {focus});
 }
 
-export const setupFocus = (element?: HTMLElement | null) => {
+const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
+  const windowObject = getOwnerWindow(element);
   const documentObject = getOwnerDocument(element);
+  if (loadListener) {
+    documentObject.removeEventListener('DOMContentLoaded', loadListener);
+  }
+  if (!hasSetupGlobalListeners.has(windowObject)) {
+    return;
+  }
+  windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject)!.focus;
+
+  documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
+  documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
+  documentObject.removeEventListener('click', handleClickEvent, true);
+  windowObject.removeEventListener('focus', handleFocusEvent, true);
+  windowObject.removeEventListener('blur', handleWindowBlur, false);
+
+  if (typeof PointerEvent !== 'undefined') {
+    documentObject.removeEventListener('pointerdown', handlePointerEvent, true);
+    documentObject.removeEventListener('pointermove', handlePointerEvent, true);
+    documentObject.removeEventListener('pointerup', handlePointerEvent, true);
+  } else {
+    documentObject.removeEventListener('mousedown', handlePointerEvent, true);
+    documentObject.removeEventListener('mousemove', handlePointerEvent, true);
+    documentObject.removeEventListener('mouseup', handlePointerEvent, true);
+  }
+
+  hasSetupGlobalListeners.delete(windowObject);
+};
+
+/**
+ * Adds a window (ie iframe) to the list of windows that are being tracked for focus visible.
+ * @param element @default document.body - The element provided will be used to get the window to add.
+ */
+export const addWindowFocusTracking = (element?: HTMLElement | null) => {
+  const documentObject = getOwnerDocument(element);
+  let loadListener;
   if (documentObject.readyState !== 'loading') {
     setupGlobalFocusEvents(element);
   } else {
-    documentObject.addEventListener('DOMContentLoaded', () =>
-      setupGlobalFocusEvents(element)
-    );
+    loadListener = () => {
+      setupGlobalFocusEvents(element);
+    };
+    documentObject.addEventListener('DOMContentLoaded', loadListener);
   }
+
+  return () => tearDownWindowFocusTracking(element, loadListener);
 };
 
 // Server-side rendering does not have the document object defined
 // eslint-disable-next-line no-restricted-globals
 if (typeof document !== 'undefined') {
-  setupFocus();
+  addWindowFocusTracking();
 }
 
 /**
