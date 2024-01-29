@@ -5,11 +5,12 @@ html {
 
 .tree {
   display: block;
-  min-width: 150px;
-  width: fit-content;
   margin: 4px 0 0 0;
   border: 1px solid gray;
-  background:white
+  background:white;
+  width: 200px;
+  height: 300px;
+  overflow: auto;
 }
 
 .tree-item {
@@ -29,6 +30,7 @@ html {
   [slot=chevron] {
     background-color: transparent;
     border: none;
+    color: black;
   }
 
   [slot=chevron] {

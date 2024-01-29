@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {Button, Checkbox, CheckboxProps, Collection, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
 import React, {ReactNode} from 'react';
@@ -65,8 +66,8 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
               style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
               {hasChildRows && <Button className={styles.chevron} slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
               <Text className={styles.title}>{props.title || props.children}</Text>
-              <Button className={styles.button} aria-label="Info">ⓘ</Button>
-              <Button className={styles.button} aria-label="Menu">☰</Button>
+              <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
+              <Button className={styles.button} aria-label="Menu" onPress={action('Menu press')}>☰</Button>
             </div>
           </>
         )}
@@ -77,7 +78,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
 };
 
 export const TreeExampleStatic = (args) => (
-  <Tree defaultExpandedKeys="all" className={styles.tree} {...args} aria-label="test static tree">
+  <Tree defaultExpandedKeys="all" className={styles.tree} {...args} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
@@ -202,9 +203,9 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
             <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
               {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
               <Text>{props.children}</Text>
-              <Button className={styles.button} aria-label="Info">ⓘ</Button>
+              <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
               {/* TODO: make this menu expandable later and test it */}
-              <Button className={styles.button} aria-label="Menu">☰</Button>
+              <Button className={styles.button} aria-label="Menu" onPress={action('Menu press')}>☰</Button>
             </div>
           </>
         )}
@@ -222,7 +223,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
 
 export const TreeExampleDynamic = (args: TreeProps<unknown>) => (
   // TODO: update the styles here
-  <Tree {...args} defaultExpandedKeys="all" className={styles.tree} aria-label="test dynamic tree" items={rows}>
+  <Tree {...args} defaultExpandedKeys="all" className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     {(item) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
         {item.name}

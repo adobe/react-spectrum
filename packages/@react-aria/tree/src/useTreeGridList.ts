@@ -25,11 +25,6 @@ import {TreeState} from '@react-stately/tree';
 import {useGridList} from '@react-aria/gridlist';
 
 export interface TreeGridListProps<T> extends CollectionBase<T>, MultipleSelection {
-  /**
-   * Handler that is called when a user performs an action on an item. The exact user event depends on
-   * the collection's `selectionBehavior` prop and the interaction modality.
-   */
-  onAction?: (key: Key) => void,
   /** Whether `disabledKeys` applies to all interactions, or only selection. */
   disabledBehavior?: DisabledBehavior
 }
