@@ -9,13 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, fireEvent, render, renderHook, screen} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils';
+import {addWindowFocusTracking, useFocusVisible, useFocusVisibleListener} from '../';
+import {hasSetupGlobalListeners} from '../src/useFocusVisible';
 import React from 'react';
-import {useFocusVisible, useFocusVisibleListener} from '../';
+import {render as ReactDOMRender} from 'react-dom';
 
 function Example(props) {
   const {isFocusVisible} = useFocusVisible();
-  return <div id={props.id}>example{isFocusVisible && '-focusVisible'}</div>;
+  return <div {...props}>example{isFocusVisible && '-focusVisible'}</div>;
 }
 
 function toggleBrowserTabs() {
@@ -89,6 +91,199 @@ describe('useFocusVisible', function () {
     toggleBrowserWindow();
 
     expect(el.textContent).toBe('example');
+  });
+
+  describe('Setups global event listeners in a different window', () => {
+    let iframe;
+    let iframeRoot;
+    beforeEach(() => {
+      iframe = document.createElement('iframe');
+      window.document.body.appendChild(iframe);
+      iframeRoot = iframe.contentWindow.document.createElement('div');
+      iframe.contentWindow.document.body.appendChild(iframeRoot);
+    });
+
+    afterEach(async () => {
+      fireEvent(iframe.contentWindow, new Event('beforeunload'));
+      iframe.remove();
+    });
+
+    it('sets up focus listener in a different window', async function () {
+      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      await waitFor(() => {
+        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+      });
+      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+
+      // Focus in iframe before setupFocus should not do anything
+      fireEvent.focus(iframe.contentWindow.document.body);
+      expect(el.textContent).toBe('example');
+
+      // Setup focus in iframe
+      addWindowFocusTracking(iframeRoot);
+      expect(el.textContent).toBe('example');
+
+      // Focus in iframe after setupFocus
+      fireEvent.focus(iframe.contentWindow.document.body);
+      expect(el.textContent).toBe('example-focusVisible');
+    });
+
+    it('removes event listeners on beforeunload', async function () {
+      let tree = render(<Example data-testid="iframe-example" />, iframeRoot);
+
+      await waitFor(() => {
+        expect(tree.getByTestId('iframe-example')).toBeTruthy();
+      });
+      const el = tree.getByTestId('iframe-example');
+      // trigger keyboard focus
+      fireEvent.keyDown(el, {key: 'a'});
+      fireEvent.keyUp(el, {key: 'a'});
+      expect(el.textContent).toBe('example-focusVisible');
+
+      fireEvent.mouseDown(el);
+      fireEvent.mouseUp(el);
+      expect(el.textContent).toBe('example');
+
+      // Focus events after beforeunload no longer work
+      fireEvent(iframe.contentWindow, new Event('beforeunload'));
+      fireEvent.focus(iframe.contentWindow.document.body);
+      expect(el.textContent).toBe('example');
+    });
+
+    it('removes event listeners using teardown function', async function () {
+      let tree = render(<Example data-testid="iframe-example" />, iframeRoot);
+      let tearDown = addWindowFocusTracking(iframeRoot);
+
+      await waitFor(() => {
+        expect(tree.getByTestId('iframe-example')).toBeTruthy();
+      });
+      const el = tree.getByTestId('iframe-example');
+      // trigger keyboard focus
+      fireEvent.keyDown(el, {key: 'a'});
+      fireEvent.keyUp(el, {key: 'a'});
+      expect(el.textContent).toBe('example-focusVisible');
+
+      fireEvent.mouseDown(el);
+      fireEvent.mouseUp(el);
+      expect(el.textContent).toBe('example');
+
+      tearDown();
+      fireEvent.focus(iframe.contentWindow.document.body);
+      expect(el.textContent).toBe('example');
+    });
+
+    it('removes the window object from the hasSetupGlobalListeners object on beforeunload', async function () {
+      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      expect(hasSetupGlobalListeners.size).toBe(1);
+      expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
+
+      // After setup focus
+      addWindowFocusTracking(iframeRoot);
+      expect(hasSetupGlobalListeners.size).toBe(2);
+      expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeTruthy();
+
+      // After unmount
+      fireEvent(iframe.contentWindow, new Event('beforeunload'));
+      expect(hasSetupGlobalListeners.size).toBe(1);
+      expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
+    });
+
+    it('removes the window object from the hasSetupGlobalListeners object if we preemptively tear down', async function () {
+      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      expect(hasSetupGlobalListeners.size).toBe(1);
+      expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
+
+      // After setup focus
+      let tearDown = addWindowFocusTracking(iframeRoot);
+      expect(hasSetupGlobalListeners.size).toBe(2);
+      expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeTruthy();
+
+      tearDown();
+      expect(hasSetupGlobalListeners.size).toBe(1);
+      expect(hasSetupGlobalListeners.get(window)).toBeTruthy();
+      expect(hasSetupGlobalListeners.get(iframe.contentWindow)).toBeFalsy();
+    });
+
+    it('returns positive isFocusVisible result after toggling browser tabs after keyboard navigation', async function () {
+      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      addWindowFocusTracking(iframeRoot);
+
+      // Fire focus in iframe
+      await waitFor(() => {
+        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+      });
+      fireEvent.focus(iframe.contentWindow.document.body);
+
+      // Iframe event listeners
+      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+      expect(el.textContent).toBe('example-focusVisible');
+
+      // Toggling browser tabs should have the same behavior since the iframe is on the same tab as before.
+      fireEvent.keyDown(el, {key: 'Tab'});
+      toggleBrowserTabs();
+      expect(el.textContent).toBe('example-focusVisible');
+    });
+
+    it('returns negative isFocusVisible result after toggling browser tabs without prior keyboard navigation', async function () {
+      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      addWindowFocusTracking(iframeRoot);
+
+      // Fire focus in iframe
+      await waitFor(() => {
+        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+      });
+      fireEvent.focus(iframe.contentWindow.document.body);
+
+      // Iframe event listeners
+      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+      expect(el.textContent).toBe('example-focusVisible');
+
+      fireEvent.mouseDown(el);
+      expect(el.textContent).toBe('example');
+    });
+
+    it('returns positive isFocusVisible result after toggling browser window after keyboard navigation', async function () {
+      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      addWindowFocusTracking(iframeRoot);
+
+      // Fire focus in iframe
+      await waitFor(() => {
+        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+      });
+      fireEvent.focus(iframe.contentWindow.document.body);
+
+      // Iframe event listeners
+      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+      expect(el.textContent).toBe('example-focusVisible');
+
+      fireEvent.keyDown(el, {key: 'Tab'});
+      toggleBrowserWindow();
+      expect(el.textContent).toBe('example-focusVisible');
+    });
+
+    it('returns negative isFocusVisible result after toggling browser window without prior keyboard navigation', async function () {
+      ReactDOMRender(<Example id="iframe-example" />, iframeRoot);
+      addWindowFocusTracking(iframeRoot);
+
+      // Fire focus in iframe
+      await waitFor(() => {
+        expect(document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]')).toBeTruthy();
+      });
+      fireEvent.focus(iframe.contentWindow.document.body);
+
+      // Iframe event listeners
+      const el = document.querySelector('iframe').contentWindow.document.body.querySelector('div[id="iframe-example"]');
+      expect(el.textContent).toBe('example-focusVisible');
+
+      fireEvent.mouseDown(el);
+      toggleBrowserWindow();
+      expect(el.textContent).toBe('example');
+    });
   });
 });
 
