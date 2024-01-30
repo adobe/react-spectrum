@@ -212,7 +212,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
       </TreeItemContent>
       <Collection items={childItems}>
         {(item: any) => (
-          <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
+          <DynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
             {item.name}
           </DynamicTreeItem>
         )}
@@ -233,25 +233,31 @@ export const TreeExampleDynamic = (args: TreeProps<unknown>) => (
 );
 
 TreeExampleDynamic.story = {
-  // TODO: add the proper parameters
+  ...TreeExampleStatic.story,
+  parameters: null
+};
+
+export const WithActions = {
+  render: TreeExampleDynamic,
+  ...TreeExampleDynamic,
   args: {
-    selectionMode: 'none',
-    selectionBehavior: 'toggle'
-  },
-  argTypes: {
-    selectionMode: {
-      control: {
-        type: 'radio',
-        options: ['none', 'single', 'multiple']
-      }
-    },
-    selectionBehavior: {
-      control: {
-        type: 'radio',
-        options: ['toggle', 'replace']
-      }
-    }
+    onAction: action('onAction'),
+    ...TreeExampleDynamic.story.args
   }
+};
+
+export const WithLinks = (args: TreeProps<unknown>) => (
+  <Tree {...args} defaultExpandedKeys="all" className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    {(item) => (
+      <DynamicTreeItem href="https://adobe.com/" childItems={item.childItems} textValue={item.name}>
+        {item.name}
+      </DynamicTreeItem>
+    )}
+  </Tree>
+);
+
+WithLinks.story = {
+  ...TreeExampleDynamic.story
 };
 
 interface ItemType {

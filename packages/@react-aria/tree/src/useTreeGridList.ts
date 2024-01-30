@@ -10,29 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaGridListItemOptions, AriaGridListProps, GridListProps, useGridList} from '@react-aria/gridlist';
 import {
-  AriaLabelingProps,
-  CollectionBase,
-  DisabledBehavior,
   DOMAttributes,
-  DOMProps,
-  Key,
-  KeyboardDelegate,
-  MultipleSelection
+  KeyboardDelegate
 } from '@react-types/shared';
 import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
-import {useGridList} from '@react-aria/gridlist';
 
-export interface TreeGridListProps<T> extends CollectionBase<T>, MultipleSelection {
-  /** Whether `disabledKeys` applies to all interactions, or only selection. */
-  disabledBehavior?: DisabledBehavior
-}
+export interface TreeGridListProps<T> extends GridListProps<T> {}
 
-export interface AriaTreeGridListProps<T> extends TreeGridListProps<T>, DOMProps, AriaLabelingProps {}
+export interface AriaTreeGridListProps<T> extends AriaGridListProps<T> {}
 
-// TODO: support link behavior or focus wrapping?
-export interface AriaTreeGridListOptions<T> extends Omit<AriaTreeGridListProps<T>, 'children'> {
+// TODO: support focus wrapping?
+export interface AriaTreeGridListOptions extends Omit<AriaGridListItemOptions, 'children' | 'isVirtualized' | 'shouldFocusWrap'> {
   /**
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
@@ -52,7 +43,7 @@ export interface TreeGridListAria {
  * @param state - State for the treegrid, as returned by `useTreeState`.
  * @param ref - The ref attached to the treegrid element.
  */
-export function useTreeGridList<T>(props: AriaTreeGridListOptions<T>, state: TreeState<T>, ref: RefObject<HTMLElement>): TreeGridListAria {
+export function useTreeGridList<T>(props: AriaTreeGridListOptions, state: TreeState<T>, ref: RefObject<HTMLElement>): TreeGridListAria {
   let {gridProps} = useGridList(props, state, ref);
   gridProps.role = 'treegrid';
 

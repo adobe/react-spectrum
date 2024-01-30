@@ -15,7 +15,7 @@ import {BaseCollection, CollectionProps, CollectionRendererContext, ItemRenderPr
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {Expandable, Key} from '@react-types/shared';
+import {Expandable, Key, LinkDOMProps} from '@react-types/shared';
 import {filterDOMProps, isAndroid, useObjectRef} from '@react-aria/utils';
 import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover, useLocalizedStringFormatter} from 'react-aria';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
@@ -265,7 +265,7 @@ export interface TreeItemRenderProps extends ItemRenderProps {
 }
 
 // TODO: will it need to support LinkProps?
-export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps> {
+export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps {
   /** The unique id of the tree row. */
   id?: Key,
   /** The object value that this tree row represents. When using dynamic collections, this is set automatically. */

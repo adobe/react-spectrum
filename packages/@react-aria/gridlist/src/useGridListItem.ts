@@ -67,13 +67,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   } = props;
 
   let {direction} = useLocale();
-  // TODO: should onAction for tree grids be toggling row expansion? Or should we limit it to just clicking on the chevron?
-  // Worried about row clicking for selection being interfered with
-  let onAction, linkBehavior;
-  if (!('expandedKeys' in state)) {
-    ({onAction, linkBehavior} = listMap.get(state));
-  }
-
+  let {onAction, linkBehavior} = listMap.get(state);
   let descriptionId = useSlotId();
 
   // We need to track the key of the item at the time it was last focused so that we force
@@ -90,22 +84,16 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
-  let {itemProps, ...itemStates} = useSelectableItem({
-    selectionManager: state.selectionManager,
-    key: node.key,
-    ref,
-    isVirtualized,
-    shouldSelectOnPressUp,
-    onAction: onAction ? () => onAction(node.key) : undefined,
-    focus,
-    linkBehavior
-  });
-
   let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
   let hasChildRows;
+  let hasLink = state.selectionManager.isLink(node.key);
   if (node != null && 'expandedKeys' in state) {
-    // TODO: Update the below check perhaps if I add information to the node to indicate that it has child rows
     hasChildRows = [...state.collection.getChildren(node.key)].length > 1;
+    if (onAction == null && !hasLink && state.selectionManager.selectionMode === 'none' && hasChildRows) {
+      onAction = () => state.toggleKey(node.key);
+    }
+
+    // TODO: Update the below check perhaps if I add information to the node to indicate that it has child rows
     let isExpanded = hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined;
     treeGridRowProps = {
       // TODO The below operates off the assumption that the row node's indexes and levels are 0 indexed. This matches TreeCollection and the processed TreeCollection in RAC Tree
@@ -117,6 +105,18 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
         [...state.collection].filter(row => row.level === 0).at(-1).index + 1
     };
   }
+
+  let {itemProps, ...itemStates} = useSelectableItem({
+    selectionManager: state.selectionManager,
+    key: node.key,
+    ref,
+    isVirtualized,
+    shouldSelectOnPressUp,
+    onAction: onAction ? () => onAction(node.key) : undefined,
+    focus,
+    linkBehavior
+  });
+
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as Element)) {
