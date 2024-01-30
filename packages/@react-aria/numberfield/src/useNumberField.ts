@@ -75,6 +75,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     onKeyUp,
     description,
     errorMessage,
+    isScrollingDisabled,
     ...otherProps
   } = props;
 
@@ -145,7 +146,7 @@ export function useNumberField(props: AriaNumberFieldProps, state: NumberFieldSt
     }
   }, [decrement, increment]);
   // If the input isn't supposed to receive input, disable scrolling.
-  let scrollingDisabled = isDisabled || isReadOnly || !focusWithin;
+  let scrollingDisabled = isScrollingDisabled || isDisabled || isReadOnly || !focusWithin;
   useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, inputRef);
 
   // The inputMode attribute influences the software keyboard that is shown on touch devices.

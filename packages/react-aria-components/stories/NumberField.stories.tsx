@@ -17,13 +17,23 @@ export default {
   title: 'React Aria Components'
 };
 
-export const NumberFieldExample = () => (
-  <NumberField data-testid="number-field-example" formatOptions={{style: 'currency', currency: 'USD'}}>
-    <Label>Test</Label>
-    <Group style={{display: 'flex'}}>
-      <Button slot="decrement">-</Button>
-      <Input />
-      <Button slot="increment">+</Button>
-    </Group>
-  </NumberField>
-);
+export const NumberFieldExample = {
+  args: {
+    defaultValue: 0,
+    minValue: 0,
+    maxValue: 100,
+    step: 1,
+    formatOptions: {style: 'currency', currency: 'USD'},
+    isScrollingDisabled: false
+  },
+  render: (args) => (
+    <NumberField {...args}>
+      <Label>Test</Label>
+      <Group style={{display: 'flex'}}>
+        <Button slot="decrement">-</Button>
+        <Input />
+        <Button slot="increment">+</Button>
+      </Group>
+    </NumberField>
+  )
+};
