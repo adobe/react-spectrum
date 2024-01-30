@@ -96,6 +96,7 @@ function ListBox<T extends object>(props: ListBoxProps<T>, ref: ForwardedRef<HTM
   if (state) {
     return isHidden ? null : <ListBoxInner state={state} props={props} listBoxRef={ref} />;
   }
+
   return <StandaloneListBox props={props} listBoxRef={ref} />;
 }
 
