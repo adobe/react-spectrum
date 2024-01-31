@@ -42,9 +42,9 @@ describe('useColorField', function () {
     expect(inputProps['aria-valuetext']).toBeNull();
     expect(inputProps['aria-valuemin']).toBeNull();
     expect(inputProps['aria-valuemax']).toBeNull();
-    expect(inputProps['aria-required']).toBeNull();
-    expect(inputProps['aria-disabled']).toBeNull();
-    expect(inputProps['aria-readonly']).toBeNull();
+    expect(inputProps['aria-required']).toBeUndefined();
+    expect(inputProps['aria-disabled']).toBeUndefined();
+    expect(inputProps['aria-readonly']).toBeUndefined();
     expect(inputProps['aria-invalid']).toBeUndefined();
     expect(inputProps.disabled).toBe(false);
     expect(inputProps.readOnly).toBe(false);
