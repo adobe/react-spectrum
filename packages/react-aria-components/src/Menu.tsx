@@ -85,6 +85,11 @@ export interface SubmenuTriggerProps {
   children: ReactElement[]
 }
 
+/**
+ * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
+ * 
+ * @version alpha
+ */
 export function SubmenuTrigger(props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
   return useSSRCollectionNode('submenutrigger', props, ref, props.children, props.children[0]);
 }
