@@ -141,7 +141,6 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     collection,
     children: undefined
   });
-  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let popoverContainerRef = useRef<HTMLDivElement>(null);
   let {menuProps} = useMenu(props, state, ref);
 
@@ -182,7 +181,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           {children}
         </Provider>
       </div>
-      {rootMenuTriggerState?.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: 0}} /> }
+      <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: 0}} />
     </FocusScope>
   );
 }
@@ -405,7 +404,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
             trigger: 'SubmenuTrigger',
             triggerRef: ref,
             placement: 'end top',
-            UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current || undefined,
+            UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current,
             ...popoverProps
           }]
         ]}>

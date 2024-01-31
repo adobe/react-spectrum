@@ -106,7 +106,6 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
       case 'Escape':
         e.stopPropagation();
         state.closeAll();
-        ref.current.focus();
         break;
     }
   };
