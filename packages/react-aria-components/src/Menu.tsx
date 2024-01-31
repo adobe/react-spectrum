@@ -404,7 +404,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
             trigger: 'SubmenuTrigger',
             triggerRef: ref,
             placement: 'end top',
-            UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current,
+            UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current || undefined,
             ...popoverProps
           }]
         ]}>
