@@ -82,7 +82,12 @@ export interface SubmenuTriggerProps {
   /**
    * The contents of the SubmenuTrigger. The first child should be an Item (the trigger) and the second child should be the Popover (for the submenu).
    */
-  children: ReactElement[]
+  children: ReactElement[],
+  /**
+   * The delay time in milliseconds for the submenu to appear after hovering over the trigger.
+   * @default 200
+   */
+  delay?: number
 }
 
 /**
@@ -103,7 +108,7 @@ function SubmenuTriggerInner(props) {
     children: childItem => {
       switch (childItem.type) {
         case 'item':
-          return <MenuItemTriggerInner item={childItem} popover={item.rendered[1]} parentMenuRef={parentMenuRef} />;
+          return <MenuItemTriggerInner item={childItem} popover={item.rendered[1]} parentMenuRef={parentMenuRef} delay={item.props.delay} />;
         default:
           throw new Error('Unsupported element type in SubmenuTrigger: ' + item.type);
       }
@@ -336,10 +341,11 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 interface MenuItemTriggerInnerProps<T> {
   item: Node<T>,
   popover: ReactElement,
-  parentMenuRef: RefObject<HTMLDivElement>
+  parentMenuRef: RefObject<HTMLDivElement>,
+  delay?: number
 }
 
-function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTriggerInnerProps<T>) {
+function MenuItemTriggerInner<T>({item, popover, parentMenuRef, delay}: MenuItemTriggerInnerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
@@ -349,7 +355,8 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
   let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
     node: item,
     parentMenuRef,
-    submenuRef
+    submenuRef,
+    delay
   }, submenuTriggerState, ref);
   let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({
     key: item.key,

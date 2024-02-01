@@ -69,13 +69,13 @@ export const MenuComplex = () => (
   </MenuTrigger>
 );
 
-export const SubmenuExample = () => (
+export const SubmenuExample = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
         <MyMenuItem id="Foo">Foo</MyMenuItem>
-        <SubmenuTrigger>
+        <SubmenuTrigger {...args}>
           <MyMenuItem id="Bar">Bar</MyMenuItem>
           <Popover className={styles.popover}>
             <Menu className={styles.menu} onAction={action('onAction')}>
@@ -92,19 +92,19 @@ export const SubmenuExample = () => (
   </MenuTrigger>
 );
 
-export const SubmenuNestedExample = () => (
+export const SubmenuNestedExample = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')}>
         <MyMenuItem id="Foo">Foo</MyMenuItem>
-        <SubmenuTrigger>
+        <SubmenuTrigger {...args}>
           <MyMenuItem id="Bar">Bar</MyMenuItem>
           <Popover className={styles.popover}>
             <Menu className={styles.menu} onAction={action('onAction')}>
               <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
               <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
-              <SubmenuTrigger>
+              <SubmenuTrigger {...args}>
                 <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
                 <Popover className={styles.popover}>
                   <Menu className={styles.menu} onAction={action('onAction')}>
@@ -137,14 +137,14 @@ let manyItemsSubmenu = [
   ...[...Array(30)].map((_, i) => ({id: `Lvl 1 Item ${i + 3}`, name: `Lvl 1 Item ${i + 3}`}))
 ];
 
-let dynamicRenderFunc = (item) => {
+let dynamicRenderFunc = (item, args) => {
   if (item.children) {
     return (
-      <SubmenuTrigger>
+      <SubmenuTrigger {...args}>
         <MyMenuItem key={item.name}>{item.name}</MyMenuItem>
         <Popover className={styles.popover}>
           <Menu items={item.children} className={styles.menu} onAction={action('onAction')}>
-            {(item) => dynamicRenderFunc(item)}
+            {(item) => dynamicRenderFunc(item, args)}
           </Menu>
         </Popover>
       </SubmenuTrigger>
@@ -154,24 +154,24 @@ let dynamicRenderFunc = (item) => {
   }
 };
 
-export const SubmenuManyItemsExample = () => (
+export const SubmenuManyItemsExample = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu items={manyItemsSubmenu} className={styles.menu} onAction={action('onAction')}>
-        {(item) => dynamicRenderFunc(item)}
+        {(item) => dynamicRenderFunc(item, args)}
       </Menu>
     </Popover>
   </MenuTrigger>
 );
 
-export const SubmenuDisabledExample = () => (
+export const SubmenuDisabledExample = (args) => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>
     <Popover>
       <Menu className={styles.menu} onAction={action('onAction')} disabledKeys={['Bar']}>
         <MyMenuItem id="Foo">Foo</MyMenuItem>
-        <SubmenuTrigger>
+        <SubmenuTrigger {...args}>
           <MyMenuItem id="Bar">Bar</MyMenuItem>
           <Popover className={styles.popover}>
             <Menu className={styles.menu} onAction={action('onAction')}>
@@ -187,3 +187,19 @@ export const SubmenuDisabledExample = () => (
     </Popover>
   </MenuTrigger>
 );
+
+let submenuArgs = {
+  args: {
+    delay: 200
+  },
+  argTypes: {
+    delay: {
+      control: 'number'
+    }
+  }
+};
+
+SubmenuExample.story = {...submenuArgs};
+SubmenuNestedExample.story = {...submenuArgs};
+SubmenuManyItemsExample.story = {...submenuArgs};
+SubmenuDisabledExample.story = {...submenuArgs};
