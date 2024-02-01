@@ -66,7 +66,7 @@ export const dropdownItemStyles = tv({
   compoundVariants: [
     {
       isFocused: false,
-      isSubmenuOpen: true,
+      isOpen: true,
       className: 'bg-gray-100 dark:bg-zinc-700/60'
     }
   ]

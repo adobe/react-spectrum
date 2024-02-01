@@ -375,42 +375,42 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef}: MenuItemTrigger
   });
 
   return (
-    <div
-      {...mergeProps(menuItemProps, focusProps, hoverProps)}
-      {...renderProps}
-      ref={ref}
-      data-disabled={states.isDisabled || undefined}
-      data-hovered={isHovered || undefined}
-      data-focused={states.isFocused || undefined}
-      data-focus-visible={isFocusVisible || undefined}
-      data-pressed={states.isPressed || undefined}
-      data-selected={states.isSelected || undefined}
-      data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
-      data-has-submenu
-      data-open={submenuTriggerState.isOpen || undefined}>
-      <Provider
-        values={[
-          [TextContext, {
-            slots: {
-              label: labelProps,
-              description: descriptionProps
-            }
-          }],
-          [KeyboardContext, keyboardShortcutProps],
-          [MenuContext, submenuProps],
-          [OverlayTriggerStateContext, submenuTriggerState],
-          [PopoverContext, {
-            ref: submenuRef,
-            trigger: 'SubmenuTrigger',
-            triggerRef: ref,
-            placement: 'end top',
-            UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current || undefined,
-            ...popoverProps
-          }]
-        ]}>
+    <Provider
+      values={[
+        [TextContext, {
+          slots: {
+            label: labelProps,
+            description: descriptionProps
+          }
+        }],
+        [KeyboardContext, keyboardShortcutProps],
+        [MenuContext, submenuProps],
+        [OverlayTriggerStateContext, submenuTriggerState],
+        [PopoverContext, {
+          ref: submenuRef,
+          trigger: 'SubmenuTrigger',
+          triggerRef: ref,
+          placement: 'end top',
+          UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current || undefined,
+          ...popoverProps
+        }]
+      ]}>
+      <div
+        {...mergeProps(menuItemProps, focusProps, hoverProps)}
+        {...renderProps}
+        ref={ref}
+        data-disabled={states.isDisabled || undefined}
+        data-hovered={isHovered || undefined}
+        data-focused={states.isFocused || undefined}
+        data-focus-visible={isFocusVisible || undefined}
+        data-pressed={states.isPressed || undefined}
+        data-selected={states.isSelected || undefined}
+        data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}
+        data-has-submenu
+        data-open={submenuTriggerState.isOpen || undefined}>
         {renderProps.children}
-        {popover}
-      </Provider>
-    </div>
+      </div>
+      {popover}
+    </Provider>
   );
 }
