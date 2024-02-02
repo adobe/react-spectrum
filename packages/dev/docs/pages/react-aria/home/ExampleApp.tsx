@@ -173,26 +173,26 @@ export function ExampleApp() {
   let isSmall = useMediaQuery('(max-width: 640px)');
 
   return (
-    <div className="flex flex-col h-full gap-4 p-4">
+    <div className="h-full flex flex-col gap-4 p-4">
       <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1.1fr_auto_auto_1fr_auto] gap-2 items-end">
         <SearchField aria-label="Search" value={search} onChange={setSearch} className="col-span-3 sm:col-span-1" />
         <DialogTrigger>
           <TooltipTrigger>
-            <Button aria-label="Filters" variant="secondary" className="relative flex-shrink-0 p-0 w-9 h-9">
+            <Button aria-label="Filters" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 relative">
               <FilterIcon aria-hidden className="inline w-5 h-5" />
-              {filters > 0 && <div className="absolute h-4 text-xs text-white bg-blue-600 rounded-full -top-2 -right-2 aspect-square">{filters}</div>}
+              {filters > 0 && <div className="absolute -top-2 -right-2 rounded-full h-4 aspect-square text-white text-xs bg-blue-600">{filters}</div>}
             </Button>
             <Tooltip>Filters</Tooltip>
           </TooltipTrigger>
           <Popover showArrow>
             <Dialog className="outline outline-0 p-4 max-h-[inherit] overflow-auto w-[350px]">
-              <Heading slot="title" className="mb-2 text-lg font-semibold">Filters</Heading>
-              {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute px-2 py-1 text-xs top-4 right-4">Clear</Button>}
+              <Heading slot="title" className="text-lg font-semibold mb-2">Filters</Heading>
+              {filters > 0 && <Button onPress={clearFilters} variant="secondary" className="absolute top-4 right-4 py-1 px-2 text-xs">Clear</Button>}
               <div className="flex flex-col gap-4">
                 <Checkbox isSelected={favorite} onChange={setFavorite}>Favorite</Checkbox>
                 <TagGroup label="Cycle" selectionMode="multiple" selectedKeys={cycles} onSelectionChange={setCycles}>
-                  <Tag id="Annual" color="green" textValue="Annual"><RefreshCw className="flex-shrink-0 w-4 h-4" /> Annual</Tag>
-                  <Tag id="Perennial" color="green" textValue="Perennial"><RefreshCw className="flex-shrink-0 w-4 h-4" /> Perennial</Tag>
+                  <Tag id="Annual" color="green" textValue="Annual"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Annual</Tag>
+                  <Tag id="Perennial" color="green" textValue="Perennial"><RefreshCw className="w-4 h-4 flex-shrink-0" /> Perennial</Tag>
                 </TagGroup>
                 <TagGroup label="Sunlight" selectionMode="multiple" selectedKeys={sunlight} onSelectionChange={setSunlight}>
                   <Tag id="full sun" color="yellow" textValue="Full Sun">{sunIcons['full sun']} Full Sun</Tag>
@@ -210,7 +210,7 @@ export function ExampleApp() {
         </DialogTrigger>
         <MenuTrigger>
           <TooltipTrigger>
-            <Button aria-label="Columns" variant="secondary" className="flex-shrink-0 hidden p-0 w-9 h-9 sm:block">
+            <Button aria-label="Columns" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 hidden sm:block">
               <SlidersIcon aria-hidden className="inline w-5 h-5" />
             </Button>
             <Tooltip>Columns</Tooltip>
@@ -223,7 +223,7 @@ export function ExampleApp() {
           </Menu>
         </MenuTrigger>
         <DialogTrigger>
-          <Button aria-label="Add plant" variant="secondary" className="flex-shrink-0 col-start-5 p-0 w-9 h-9">
+          <Button aria-label="Add plant" variant="secondary" className="w-9 h-9 flex-shrink-0 p-0 col-start-5">
             <PlusIcon aria-hidden className="inline w-5 h-5" />
           </Button>
           <PlantModal>
@@ -237,8 +237,8 @@ export function ExampleApp() {
             <GridListItem textValue={item.common_name}>
               <div className="grid grid-cols-[40px_1fr_auto] gap-x-2 w-full">
                 <img alt="" src={item.default_image?.thumbnail} className="inline rounded row-span-3 object-contain h-[40px]" />
-                <span className="capitalize truncate">{item.common_name}</span>
-                <span className="col-start-2 row-start-2 text-xs text-gray-600 truncate dark:text-zinc-400">{item.scientific_name}</span>
+                <span className="truncate capitalize">{item.common_name}</span>
+                <span className="truncate text-xs text-gray-600 dark:text-zinc-400 col-start-2 row-start-2">{item.scientific_name}</span>
                 <MenuTrigger>
                   <Button aria-label="Actions" variant="icon" className="row-span-2 place-self-center"><MoreHorizontal className="w-5 h-5" /></Button>
                   <Menu placement="bottom end" onAction={action => onAction(item, action)}>
@@ -273,8 +273,8 @@ export function ExampleApp() {
                         <Cell textValue={item.common_name}>
                           <div className="grid grid-cols-[40px_1fr] gap-x-2">
                             <img alt="" src={item.default_image?.thumbnail} className="inline rounded row-span-2 object-contain h-[40px]" />
-                            <span className="capitalize truncate">{item.common_name}</span>
-                            <span className="text-xs text-gray-600 truncate dark:text-zinc-400">{item.scientific_name}</span>
+                            <span className="truncate capitalize">{item.common_name}</span>
+                            <span className="truncate text-xs text-gray-600 dark:text-zinc-400">{item.scientific_name}</span>
                           </div>
                         </Cell>
                       );
@@ -328,18 +328,18 @@ const labelStyles = {
 };
 
 function Label({color, icon, children}: {color: keyof typeof labelStyles, icon: React.ReactNode, children: React.ReactNode}) {
-  return <span className={`${labelStyles[color]} text-xs rounded-full border px-2 flex items-center max-w-fit gap-1`}>{icon} <span className="capitalize truncate">{children}</span></span>;
+  return <span className={`${labelStyles[color]} text-xs rounded-full border px-2 flex items-center max-w-fit gap-1`}>{icon} <span className="truncate capitalize">{children}</span></span>;
 }
 
-const cycleIcon = <RefreshCw aria-hidden="true" className="flex-shrink-0 w-4 h-4" />;
+const cycleIcon = <RefreshCw aria-hidden="true" className="w-4 h-4 flex-shrink-0" />;
 function CycleLabel({cycle}: {cycle: string}) {
   return <Label color="green" icon={cycleIcon}>{cycle}</Label>;
 }
 
 const sunIcons: Record<string, ReactElement> = {
-  'full sun': <Sun aria-hidden="true" className="flex-shrink-0 w-4 h-4" />,
-  'part sun': <SunDim aria-hidden="true" className="flex-shrink-0 w-4 h-4" />,
-  'part shade': <CloudSun aria-hidden="true" className="flex-shrink-0 w-4 h-4" />
+  'full sun': <Sun aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
+  'part sun': <SunDim aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
+  'part shade': <CloudSun aria-hidden="true" className="w-4 h-4 flex-shrink-0" />
 };
 
 const sunColors: Record<string, keyof typeof labelStyles> = {
@@ -357,9 +357,9 @@ function getSunlight(item: Plant) {
 }
 
 const wateringIcons: Record<string, ReactElement> = {
-  'Frequent': <Droplets aria-hidden="true" className="flex-shrink-0 w-4 h-4" />,
-  'Average': <Droplet aria-hidden="true" className="flex-shrink-0 w-4 h-4" />,
-  'Minimum': <Dessert aria-hidden="true" className="flex-shrink-0 w-4 h-4" />
+  'Frequent': <Droplets aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
+  'Average': <Droplet aria-hidden="true" className="w-4 h-4 flex-shrink-0" />,
+  'Minimum': <Dessert aria-hidden="true" className="w-4 h-4 flex-shrink-0" />
 };
 
 const wateringColors: Record<string, keyof typeof labelStyles> = {
@@ -375,12 +375,12 @@ function WateringLabel({watering}: {watering: string}) {
 function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant) => void}) {
   let [droppedImage, setDroppedImage] = useState(item?.default_image?.thumbnail);
   return (
-    <Dialog className="relative outline outline-0">
+    <Dialog className="outline outline-0 relative">
       {({close}) => (
         <>
           <Heading
             slot="title"
-            className="my-0 text-2xl font-semibold leading-6 text-slate-700 dark:text-zinc-300">
+            className="text-2xl font-semibold leading-6 my-0 text-slate-700 dark:text-zinc-300">
             {item ? 'Edit Plant' : 'Add Plant'}
           </Heading>
           <Form
@@ -395,7 +395,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
               data.isFavorite = item?.isFavorite || false;
               onSave(data);
             }}
-            className="flex flex-col gap-3 mt-6">
+            className="mt-6 flex flex-col gap-3">
             <div className="flex gap-4">
               <DropZone
                 getDropOperation={types => types.has('image/jpeg') || types.has('image/png') ? 'copy' : 'cancel'}
@@ -407,12 +407,12 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
                 }}
                 className="w-24 sm:w-32 p-2 flex items-center justify-center flex-shrink-0 border-2 border-gray-400 border-dashed rounded-xl text-gray-500 dark:text-gray-300 focus-visible:border-blue-600 forced-colors:focus-visible:border-[Highlight] focus-visible:border-solid drop-target:border-blue-600 forced-colors:drop-target:border-[Highlight] drop-target:border-solid drop-target:bg-blue-200 dark:drop-target:bg-blue-800/60 drop-target:text-blue-600 dark:drop-target:text-blue-300">
                 {droppedImage
-                  ? <img alt="" src={droppedImage} className="object-contain w-full h-full aspect-square" />
-                  : <Text slot="label" className="text-sm italic text-center">Drop or paste image here</Text>
+                  ? <img alt="" src={droppedImage} className="w-full h-full object-contain aspect-square" />
+                  : <Text slot="label" className="italic text-sm text-center">Drop or paste image here</Text>
                 }
                 <input type="hidden" name="image" value={droppedImage} />
               </DropZone>
-              <div className="flex flex-col flex-1 min-w-0 gap-3">
+              <div className="flex flex-col gap-3 flex-1 min-w-0">
                 <ComboBox label="Common Name" name="common_name" isRequired items={plants} defaultInputValue={item?.common_name} allowsCustomValue autoFocus={navigator.maxTouchPoints === 0}>
                   {plant => <ComboBoxItem>{plant.common_name}</ComboBoxItem>}
                 </ComboBox>
@@ -434,7 +434,7 @@ function PlantDialog({item, onSave}: {item?: Plant | null, onSave: (item: Plant)
               <SelectItem id="Minimum" textValue="Minimum">{wateringIcons['Minimum']} Minimum</SelectItem>
             </Select>
             <DatePicker label="Date Planted" isRequired defaultValue={item ? today(getLocalTimeZone()) : null} />
-            <div className="flex justify-end gap-2 mt-6">
+            <div className="mt-6 flex justify-end gap-2">
               <Button variant="secondary" onPress={close}>
                 Cancel
               </Button>
