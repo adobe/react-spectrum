@@ -17,7 +17,7 @@ export {
   isFocusVisible,
   getInteractionModality,
   setInteractionModality,
-  setupFocus,
+  addWindowFocusTracking,
   useInteractionModality,
   useFocusVisible,
   useFocusVisibleListener
