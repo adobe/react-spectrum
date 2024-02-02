@@ -56,7 +56,7 @@ describe('ColorWheel', () => {
     expect(slider).toHaveAttribute('min', '0');
     expect(slider).toHaveAttribute('max', '360');
     expect(slider).toHaveAttribute('step', '1');
-    expect(slider).toHaveAttribute('aria-valuetext', '0°');
+    expect(slider).toHaveAttribute('aria-valuetext', '0°, Red');
   });
 
   it('the slider is focusable', async () => {
