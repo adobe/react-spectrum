@@ -9,7 +9,6 @@ import {tv} from 'tailwind-variants';
 
 export interface PopoverProps extends Omit<AriaPopoverProps, 'children'> {
   showArrow?: boolean,
-  isSubmenu?: boolean,
   children: React.ReactNode
 }
 
@@ -25,12 +24,10 @@ const styles = tv({
   }
 });
 
-export function Popover({ children, showArrow, isSubmenu, className, ...props }: PopoverProps) {
-  let offset = showArrow ? 12 : 8;
-  offset = isSubmenu ? offset - 6 : offset;
+export function Popover({ children, showArrow, className, ...props }: PopoverProps) {
   return (
     <AriaPopover
-      offset={offset}
+      offset={showArrow ? 12 : 8}
       {...props}
       className={composeRenderProps(className, (className, renderProps) => styles({...renderProps, className}))}>
       {showArrow &&

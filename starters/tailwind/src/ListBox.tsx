@@ -62,14 +62,7 @@ export const dropdownItemStyles = tv({
     isFocused: {
       true: 'bg-blue-600 text-white forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]'
     }
-  },
-  compoundVariants: [
-    {
-      isFocused: false,
-      isOpen: true,
-      className: 'bg-gray-100 dark:bg-zinc-700/60'
-    }
-  ]
+  }
 });
 
 export function DropdownItem(props: ListBoxItemProps) {
@@ -77,10 +70,10 @@ export function DropdownItem(props: ListBoxItemProps) {
   return (
     <AriaListBoxItem {...props} textValue={textValue} className={dropdownItemStyles}>
       {composeRenderProps(props.children, (children, {isSelected}) => <>
-        <span className="flex-1 flex items-center gap-2 truncate font-normal group-selected:font-semibold">
+        <span className="flex items-center flex-1 gap-2 font-normal truncate group-selected:font-semibold">
           {children}
         </span>
-        <span className="w-5 flex items-center">
+        <span className="flex items-center w-5">
           {isSelected && <Check className="w-4 h-4" />}
         </span>
       </>)}
