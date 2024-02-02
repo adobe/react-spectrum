@@ -2,8 +2,8 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {Text} from 'react-aria-components';
 import NewIcon from '../s2wf-icons/assets/react/s2IconNew20N';
 import {Button} from '../src/Button';
-import {Icon} from '../src/Icon.tsx';
-import {style} from '../style-macro/spectrum-theme.ts' with { type: 'macro' };
+import {Icon} from '../src/Icon';
+import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof Button> = {
   component: Button,

@@ -1,4 +1,4 @@
-import {createColorProperty, createMappedProperty, createTheme, createArbitraryProperty} from './style-macro.ts';
+import {createColorProperty, createMappedProperty, createTheme, createArbitraryProperty} from './style-macro';
 import type * as CSS from 'csstype';
 import tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
@@ -213,8 +213,15 @@ const sizing = {
   }
 };
 
+// TODO: make the keys into numbers in typescript somehow?
+const negativeSpacing: {[Key in keyof typeof scaledSpacing as `-${Key}`]: (typeof scaledSpacing)[Key]} =
+  Object.fromEntries(Object.entries(scaledSpacing).map(([k, v]) =>
+    [`-${k}`, {default: `-${v.default}`, touch: `-${v.touch}`}]
+  )) as any;
+
 const margin = {
   ...spacing,
+  ...negativeSpacing,
   auto: 'auto'
 };
 
@@ -250,7 +257,7 @@ const radius = {
 };
 
 type GridTrack = 'none' | 'subgrid' | (string & {}) | readonly GridTrackSize[];
-type GridTrackSize = 'auto' | 'min-content' | 'max-content' | `${number}fr` | `minmax(${string}, ${string})` | keyof typeof baseSpacing;
+type GridTrackSize = 'auto' | 'min-content' | 'max-content' | `${number}fr` | `minmax(${string}, ${string})` | keyof typeof baseSpacing | (string & {});
 
 let gridTrack = (value: GridTrack) => {
   if (typeof value === 'string') {
@@ -324,7 +331,9 @@ export const style = createTheme({
       disabled: {
         ...colorToken(tokens['disabled-content-color'])
         // forcedColors: 'GrayText'
-      }
+      },
+      heading: colorToken(tokens['heading-color']),
+      body: colorToken(tokens['body-color'])
     }),
     backgroundColor: createColorProperty({
       ...color,
@@ -382,7 +391,10 @@ export const style = createTheme({
       disabled: {
         ...colorToken(tokens['disabled-background-color'])
         // forcedColors: 'GrayText'
-      }
+      },
+      base: weirdColorToken(tokens['background-base-color']),
+      'layer-1': weirdColorToken(tokens['background-layer-1-color']),
+      'layer-2': weirdColorToken(tokens['background-layer-2-color'])
     }),
     borderColor: createColorProperty({
       ...color,
@@ -442,6 +454,7 @@ export const style = createTheme({
     borderSpacing: baseSpacing, // TODO: separate x and y
     flexBasis: {
       auto: 'auto',
+      full: '100%',
       ...baseSpacing
     },
     rowGap: spacing,
@@ -490,6 +503,7 @@ export const style = createTheme({
     textIndent: baseSpacing,
     translate: {
       ...baseSpacing,
+      ...negativeSpacing,
       '1/2': '50%',
       '1/3': '33.333333%',
       '2/3': '66.666667%',
@@ -675,7 +689,7 @@ export const style = createTheme({
     gridAutoColumns: createArbitraryProperty((value: GridTrackSize, property) => ({[property]: gridTrackSize(value)})),
     gridTemplateColumns: createArbitraryProperty((value: GridTrack, property) => ({[property]: gridTrack(value)})),
     gridTemplateRows: createArbitraryProperty((value: GridTrack, property) => ({[property]: gridTrack(value)})),
-    gridTemplateAreas: createArbitraryProperty((value: string[], property) => ({[property]: value.map(v => `"${v}"`).join('')})),
+    gridTemplateAreas: createArbitraryProperty((value: readonly string[], property) => ({[property]: value.map(v => `"${v}"`).join('')})),
     gridArea: createArbitraryProperty((value: string, property) => ({[property]: value})),
     float: ['inline-start', 'inline-end', 'right', 'left', 'none'] as const,
     clear: ['inline-start', 'inline-end', 'left', 'right', 'both', 'none'] as const,
@@ -760,6 +774,7 @@ export const style = createTheme({
     borderBottomRadius: ['borderBottomStartRadius', 'borderBottomEndRadius'] as const,
     borderStartRadius: ['borderTopStartRadius', 'borderBottomStartRadius'] as const,
     borderEndRadius: ['borderTopEndRadius', 'borderBottomEndRadius'] as const,
+    inset: ['top', 'bottom', 'left', 'right'] as const,
     insetX: ['insetStart', 'insetEnd'] as const,
     insetY: ['top', 'bottom'] as const,
     placeItems: ['alignItems', 'justifyItems'] as const,

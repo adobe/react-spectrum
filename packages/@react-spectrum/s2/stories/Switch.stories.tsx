@@ -1,6 +1,6 @@
 import {Switch} from '../src/Switch';
 import type {Meta} from '@storybook/react';
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof Switch> = {
   component: Switch,

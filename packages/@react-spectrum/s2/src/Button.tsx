@@ -202,6 +202,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     }
   },
   outlineColor: {
+    default: 'focus-ring',
     staticColor: {
       white: 'white',
       black: 'black'

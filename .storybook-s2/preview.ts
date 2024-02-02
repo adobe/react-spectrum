@@ -1,7 +1,7 @@
 import {themes} from '@storybook/theming';
 import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
 
-document.body.className += style({backgroundColor: 'gray-25'})();
+document.body.className += style({backgroundColor: 'base'})();
 
 /** @type { import('@storybook/react').Preview } */
 const preview = {

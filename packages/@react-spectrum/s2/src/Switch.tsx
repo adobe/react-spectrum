@@ -27,6 +27,7 @@ const wrapper = style({
   display: 'flex',
   columnGap: 'text-to-control',
   alignItems: 'baseline',
+  width: 'fit',
   fontFamily: 'sans',
   fontSize: 'control',
   transition: 'colors',

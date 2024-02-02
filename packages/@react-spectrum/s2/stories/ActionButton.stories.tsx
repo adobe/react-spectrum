@@ -3,7 +3,7 @@ import {Text} from 'react-aria-components';
 import NewIcon from '../s2wf-icons/assets/react/s2IconNew20N';
 import {ActionButton} from '../src/ActionButton';
 import {Icon} from '../src/Icon';
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,

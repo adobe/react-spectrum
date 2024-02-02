@@ -3,11 +3,11 @@ import {Form} from '../src/Form';
 import type {Meta} from '@storybook/react';
 import {TextArea, TextField} from '../src/TextField';
 import {Button} from '../src/Button';
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
-import {Checkbox} from '../src/Checkbox.tsx';
-import {SearchField} from '../src/SearchField.tsx';
-import {CheckboxGroup} from '../src/CheckboxGroup.tsx';
-import {Switch} from '../src/Switch.tsx';
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {Checkbox} from '../src/Checkbox';
+import {SearchField} from '../src/SearchField';
+import {CheckboxGroup} from '../src/CheckboxGroup';
+import {Switch} from '../src/Switch';
 
 const meta: Meta<typeof Form> = {
   component: Form,

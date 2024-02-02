@@ -72,8 +72,9 @@ export type Condition<T extends Theme> = 'default' | Extract<keyof T['conditions
 type Conditional<V extends Value, C extends string, R extends RenderProps<string>> =
   CSSConditions<V, C, R> & RuntimeConditions<V, C, R>
 
+type ArbitraryCondition = `:${string}` | `@${string}`;
 type CSSConditions<V extends Value, C extends string, R extends RenderProps<string>> = {
-  [name in C | `:${string}`]?: StyleValue<V, C, R>
+  [name in C]?: StyleValue<V, C, R>
 };
 
 // If render props are unknown, allow any custom conditions to be inferred.
@@ -149,7 +150,7 @@ export type RuntimeStyleFunction<S, R> = Keys<R> extends never ? () => string & 
 type InferProps<R, C extends keyof any, S extends Style<any, any, any>> = [R] extends [never] ? AllowOthers<RuntimeConditionsObject<C, S>> : R;
 type AllowOthers<R> = Keys<R> extends never ? never : R | {[x: string]: any}
 export type StyleFunction<T extends ThemeProperties<Theme>, C extends string> =
-  <R extends RenderProps<string> = never, S extends Style<T, C, R> = Style<T, C, R>>(style: S) => RuntimeStyleFunction<IncludedProperties<S>, InferProps<R, C, S>>;
+  <R extends RenderProps<string> = never, S extends Style<T, C, R> = Style<T, C | ArbitraryCondition, R>>(style: S) => RuntimeStyleFunction<IncludedProperties<S>, InferProps<R, C | ArbitraryCondition, S>>;
 
 // Creates a version of ThemeProperties with excluded keys mapped to never.
 // This allows creating a component prop that only accepts certain style props.

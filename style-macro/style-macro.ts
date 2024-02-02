@@ -208,7 +208,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         // If a theme condition comes after runtime conditions, create a new grouping.
         // This makes the CSS class unconditional so it appears outside the `else` block in the JS.
         // The @layer order in the generated CSS will ensure that it overrides classes applied by runtime conditions.
-        let isCSSCondition = condition in theme.conditions || condition.startsWith(':');
+        let isCSSCondition = condition in theme.conditions || /^[@:]/.test(condition);
         if (!wasCSSCondition && isCSSCondition && rules.length) {
           rules = [{prelude: '', condition: '', body: rules}];
         }
@@ -250,7 +250,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       return [{prelude: '', condition: '', body: rules}];
     }
 
-    if (condition in theme.conditions || condition.startsWith(':')) {
+    if (condition in theme.conditions || /^[@:]/.test(condition)) {
       // Conditions starting with : are CSS pseudo classes. Nest them inside the parent rule.
       let prelude = theme.conditions[condition] || condition;
       if (prelude.startsWith(':')) {

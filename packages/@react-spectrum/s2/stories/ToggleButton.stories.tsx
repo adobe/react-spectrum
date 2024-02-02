@@ -1,7 +1,7 @@
 import {ToggleButton} from '../src/ToggleButton';
 import type {Meta, StoryFn} from '@storybook/react';
 import {Icon} from '../src/Icon';
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import NewIcon from '../s2wf-icons/assets/react/s2IconNew20N';
 import {Text} from 'react-aria-components';
 
