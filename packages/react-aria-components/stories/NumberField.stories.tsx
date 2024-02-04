@@ -24,7 +24,7 @@ export const NumberFieldExample = {
     maxValue: 100,
     step: 1,
     formatOptions: {style: 'currency', currency: 'USD'},
-    isScrollingDisabled: false
+    isWheelDisabled: false
   },
   render: (args) => (
     <NumberField {...args}>

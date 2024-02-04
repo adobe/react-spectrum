@@ -33,7 +33,7 @@ export interface NumberFieldProps extends InputBase, Validation<number>, Focusab
   /**
    * Enables or disables changing the value with scroll.
    */
-  isScrollingDisabled?: boolean
+  isWheelDisabled?: boolean
 }
 
 export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLabelingProps, TextInputDOMEvents {
