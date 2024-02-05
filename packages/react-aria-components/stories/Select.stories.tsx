@@ -61,3 +61,23 @@ export const SelectRenderProps = () => (
     )}
   </Select>
 );
+
+let manyItems = [...Array(100)].map((_, i) => ({id: i, name: `Item ${i}`}));
+
+export const SelectManyItems = () => (
+  <Select>
+    <Label style={{display: 'block'}}>Test</Label>
+    <Button>
+      <SelectValue />
+      <span aria-hidden="true" style={{paddingLeft: 5}}>▼</span>
+    </Button>
+    <Popover>
+      <OverlayArrow>
+        <svg width={12} height={12}><path d="M0 0,L6 6,L12 0" /></svg>
+      </OverlayArrow>
+      <ListBox items={manyItems} className={styles.menu}>
+        {item => <MyListBoxItem>{item.name}</MyListBoxItem>}
+      </ListBox>
+    </Popover>
+  </Select>
+);

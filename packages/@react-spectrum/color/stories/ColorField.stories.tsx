@@ -79,6 +79,9 @@ export default {
     isInvalid: {
       control: 'boolean'
     },
+    isWheelDisabled: {
+      control: 'boolean'
+    },
     description: {
       control: 'text'
     },

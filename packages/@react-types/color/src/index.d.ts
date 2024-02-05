@@ -99,7 +99,9 @@ export interface Color {
 
 export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 'onChange'>, InputBase, Validation<Color | null>, FocusableProps, TextInputBase, LabelableProps, HelpTextProps {
   /** Handler that is called when the value changes. */
-  onChange?: (color: Color | null) => void
+  onChange?: (color: Color | null) => void,
+  /** Enables or disables changing the value with scroll. */
+  isWheelDisabled?: boolean
 }
 
 export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
