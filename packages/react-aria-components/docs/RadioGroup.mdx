@@ -261,7 +261,7 @@ The `onChange` event is fired when the user selects a radio.
 
 ```tsx example
 function Example() {
-  let [selected, setSelected] = React.useState('');
+  let [selected, setSelected] = React.useState(null);
 
   return (
     <>
@@ -269,7 +269,7 @@ function Example() {
         <Radio value="wizard">Wizard</Radio>
         <Radio value="dragon">Dragon</Radio>
       </MyRadioGroup>
-      <p>You have selected: {selected}</p>
+      <p>You have selected: {selected ?? ''}</p>
     </>
   );
 }
