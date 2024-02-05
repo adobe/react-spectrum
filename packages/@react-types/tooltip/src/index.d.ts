@@ -46,7 +46,13 @@ export interface SpectrumTooltipTriggerProps extends Omit<TooltipTriggerProps, '
    * anchor element.
    * @default 7
    */
-  offset?: number
+  offset?: number,
+  /**
+   * The container element in which the menu's overlay or tray portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: Element
 }
 
 export interface TooltipProps {

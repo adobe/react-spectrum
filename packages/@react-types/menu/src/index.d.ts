@@ -48,7 +48,13 @@ export interface SpectrumMenuTriggerProps extends MenuTriggerProps {
    * Whether the Menu closes when a selection is made.
    * @default true
    */
-  closeOnSelect?: boolean
+  closeOnSelect?: boolean,
+  /**
+   * The container element in which the menu's overlay or tray portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: HTMLElement
 }
 
 export interface MenuProps<T> extends CollectionBase<T>, MultipleSelection {
