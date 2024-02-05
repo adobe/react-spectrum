@@ -63,6 +63,7 @@
           "./packages/@react-aria/tabs",
           "./packages/@react-aria/tag",
           "./packages/@react-aria/toggle",
+          "./packages/@react-aria/u",
           "./packages/@react-aria/visually-hidden",
           "./packages/@react-aria/w",
           "./packages/@react-aria/x",

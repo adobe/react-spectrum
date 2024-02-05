@@ -287,7 +287,7 @@ interface MenuItemInnerProps<T> {
 function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
-  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key}, state, ref);
+  let {menuItemProps, labelProps, descriptionProps, keyboardShortcutProps, ...states} = useMenuItem({key: item.key, 'aria-label': item.props?.['aria-label']}, state, ref);
 
   let props: MenuItemProps<T> = item.props;
   let {isFocusVisible, focusProps} = useFocusRing();

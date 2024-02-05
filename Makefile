@@ -109,6 +109,7 @@ build:
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
+	cp packages/dev/docs/pages/disallow-robots.txt dist/$$(git rev-parse HEAD)/docs/robots.txt
 
 website-production:
 	node scripts/buildWebsite.js $$PUBLIC_URL

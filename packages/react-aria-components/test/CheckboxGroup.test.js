@@ -243,4 +243,39 @@ describe('CheckboxGroup', () => {
       expect(checkbox.closest('.react-aria-Checkbox')).not.toHaveAttribute('data-invalid');
     }
   });
+
+  it('should support focus events', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let {getAllByRole, getByText} = render(
+      <>
+        <TestCheckboxGroup groupProps={{onBlur, onFocus, onFocusChange}} />
+        <button>Steal focus</button>
+      </>
+    );
+    let checkboxes = getAllByRole('checkbox');
+    let button = getByText('Steal focus');
+
+    // first gaining focus
+    await user.tab();
+    expect(document.activeElement).toBe(checkboxes[0]);
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+
+    // inner focus changes shouldn't call the callbacks.
+    await user.tab();
+    expect(document.activeElement).toBe(checkboxes[1]);
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+
+    // `onBlur` and the following `onFocusChange` only should be called when losing focus to an outer element.
+    await user.click(button);
+    expect(document.activeElement).toBe(button);
+    expect(onBlur).toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);
+  });
 });

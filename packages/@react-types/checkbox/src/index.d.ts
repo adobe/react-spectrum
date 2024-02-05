@@ -16,6 +16,7 @@ import {
   DOMProps,
   FocusableDOMProps,
   FocusableProps,
+  FocusEvents,
   HelpTextProps,
   InputBase,
   InputDOMProps,
@@ -71,7 +72,7 @@ export interface CheckboxProps extends ToggleProps {
 
 export interface AriaCheckboxProps extends CheckboxProps, AriaToggleProps {}
 
-export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps {}
+export interface AriaCheckboxGroupProps extends CheckboxGroupProps, DOMProps, AriaLabelingProps, AriaValidationProps, FocusEvents {}
 
 export interface AriaCheckboxGroupItemProps extends Omit<AriaCheckboxProps, 'isSelected' | 'defaultSelected'> {
   value: string
