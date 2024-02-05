@@ -22,6 +22,7 @@ import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
 import {Keyboard} from '@react-spectrum/text';
 import Link from '@react-spectrum/docs/pages/assets/component-illustrations/Link.svg';
 import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
 
 ---
 category: Navigation
@@ -47,7 +48,7 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
 
 <Breadcrumbs>
   <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
-  <Breadcrumb><Link href="/react-aria">React Aria</Link></Breadcrumb>
+  <Breadcrumb><Link href="/react-aria/">React Aria</Link></Breadcrumb>
   <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
 </Breadcrumbs>
 ```
@@ -159,6 +160,12 @@ import {Breadcrumbs, Breadcrumb, Link} from 'react-aria-components';
 
 </section>
 
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="breadcrumbs" />
+
 ## Content
 
 `Breadcrumbs` follows the [Collection Components API](collections.html), accepting both static and dynamic collections.
@@ -231,7 +238,7 @@ When breadcrumbs are used as a main navigation element for a page, they can be p
 <nav aria-label="Breadcrumbs">
   <Breadcrumbs>
     <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
-    <Breadcrumb><Link href="/react-aria">React Aria</Link></Breadcrumb>
+    <Breadcrumb><Link href="/react-aria/">React Aria</Link></Breadcrumb>
     <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
   </Breadcrumbs>
 </nav>
@@ -246,7 +253,7 @@ Breadcrumbs can be disabled using the `isDisabled` prop. This indicates that nav
 ```tsx example
 <Breadcrumbs isDisabled>
   <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
-  <Breadcrumb><Link href="/react-aria">React Aria</Link></Breadcrumb>
+  <Breadcrumb><Link href="/react-aria/">React Aria</Link></Breadcrumb>
   <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
 </Breadcrumbs>
 ```
@@ -276,7 +283,7 @@ Individual breadcrumbs can also be disabled by passing the `isDisabled` prop to 
 ```tsx example
 <Breadcrumbs>
   <Breadcrumb><Link href="/">Home</Link></Breadcrumb>
-  <Breadcrumb><Link isDisabled href="/react-aria">React Aria</Link></Breadcrumb>
+  <Breadcrumb><Link isDisabled href="/react-aria/">React Aria</Link></Breadcrumb>
   <Breadcrumb><Link>Breadcrumbs</Link></Breadcrumb>
 </Breadcrumbs>
 ```

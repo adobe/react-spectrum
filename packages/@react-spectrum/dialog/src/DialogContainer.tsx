@@ -27,7 +27,8 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
     type = 'modal',
     onDismiss,
     isDismissable,
-    isKeyboardDismissDisabled
+    isKeyboardDismissDisabled,
+    UNSTABLE_portalContainer
   } = props;
 
   let childArray = React.Children.toArray(children);
@@ -39,7 +40,7 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
 
   // React.Children.toArray mutates the children, and we need them to be stable
   // between renders so that the lastChild comparison works.
-  let child = null;
+  let child: ReactElement | undefined = undefined;
   if (Array.isArray(children)) {
     child = children.find(React.isValidElement);
   } else if (React.isValidElement(children)) {
@@ -67,6 +68,7 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
 
   return (
     <Modal
+      container={UNSTABLE_portalContainer}
       state={state}
       type={type}
       isDismissable={isDismissable}
