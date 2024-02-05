@@ -392,19 +392,27 @@ export function calculatePositionInternal(
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, containerOffsetWithBoundary);
   position[crossAxis] += delta;
 
-  let maxHeight = getMaxHeight(
-    position,
-    boundaryDimensions,
-    containerOffsetWithBoundary,
-    isContainerPositioned,
-    margins,
-    padding,
-    overlaySize.height,
-    heightGrowthDirection
-  );
+  // If the overlay has a height of 0, don't set a maxHeight since we might be in the first render of a RAC collection component
+  // and thus the collection hasn't been computed yet. Only calculate the positioning once we have the true height of the popover
+  // with contents so we can properly postiion it.
+  let maxHeight;
+  if (overlaySize.height === 0) {
+    maxHeight = undefined;
+  } else {
+    maxHeight = getMaxHeight(
+      position,
+      boundaryDimensions,
+      containerOffsetWithBoundary,
+      isContainerPositioned,
+      margins,
+      padding,
+      overlaySize.height,
+      heightGrowthDirection
+    );
 
-  if (userSetMaxHeight && userSetMaxHeight < maxHeight) {
-    maxHeight = userSetMaxHeight;
+    if (userSetMaxHeight && userSetMaxHeight < maxHeight) {
+      maxHeight = userSetMaxHeight;
+    }
   }
 
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
