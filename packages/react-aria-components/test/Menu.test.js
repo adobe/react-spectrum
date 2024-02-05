@@ -500,7 +500,7 @@ describe('Menu', () => {
       expect(nestedSubmenuPopover).toHaveAttribute('data-trigger', 'SubmenuTrigger');
 
       // Click a nested submenu item
-      await user.click(getAllByRole('menuitem')[8]);
+      await user.click(getAllByRole('menuitem')[5]);
       expect(onAction).toHaveBeenLastCalledWith('work');
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
@@ -671,6 +671,7 @@ describe('Menu', () => {
       expect(document.activeElement).toBe(button);
     });
     it('should restore focus to menu trigger if nested submenu is closed with Escape key', async () => {
+      document.elementFromPoint = jest.fn().mockImplementation(query => query);
       let {getByRole, getAllByRole} = render(
         <MenuTrigger>
           <Button aria-label="Menu">☰</Button>
