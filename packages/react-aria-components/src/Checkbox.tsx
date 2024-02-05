@@ -226,7 +226,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
       data-invalid={isInvalid || undefined}
       data-required={props.isRequired || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...inputProps} {...focusProps} ref={inputRef} />
+        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </label>
