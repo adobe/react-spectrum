@@ -150,9 +150,13 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
 
   let style = {...popoverProps.style, ...renderProps.style};
 
+  let onPointerDown = () => {
+    state.close();
+  };
+
   return (
     <Overlay isExiting={isExiting} portalContainer={UNSTABLE_portalContainer}>
-      {!props.isNonModal && state.isOpen && <div {...underlayProps} style={{position: 'fixed', inset: 0}} />}
+      {!props.isNonModal && state.isOpen && <div data-testid="underlay" {...mergeProps(underlayProps, {onPointerDown})} style={{position: 'fixed', inset: 0}} />}
       <div
         {...mergeProps(filterDOMProps(props as any), popoverProps)}
         {...renderProps}

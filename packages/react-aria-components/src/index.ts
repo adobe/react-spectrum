@@ -33,7 +33,7 @@ export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
 export {ListBox, ListBoxItem, ListBoxContext, ListStateContext} from './ListBox';
-export {Menu, MenuItem, MenuTrigger, MenuContext, MenuStateContext} from './Menu';
+export {Menu, MenuItem, MenuTrigger, MenuContext, MenuStateContext, SubmenuTrigger} from './Menu';
 export {Meter, MeterContext} from './Meter';
 export {Modal, ModalOverlay, ModalContext} from './Modal';
 export {NumberField, NumberFieldContext, NumberFieldStateContext} from './NumberField';
