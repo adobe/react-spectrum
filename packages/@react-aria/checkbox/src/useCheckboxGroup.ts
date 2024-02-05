@@ -16,6 +16,7 @@ import {CheckboxGroupState} from '@react-stately/checkbox';
 import {DOMAttributes, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
 import {useField} from '@react-aria/label';
+import {useFocusWithin} from '@react-aria/interactions';
 
 export interface CheckboxGroupAria extends ValidationResult {
   /** Props for the checkbox group wrapper element. */
@@ -56,11 +57,18 @@ export function useCheckboxGroup(props: AriaCheckboxGroupProps, state: CheckboxG
 
   let domProps = filterDOMProps(props, {labelable: true});
 
+  let {focusWithinProps} = useFocusWithin({
+    onBlurWithin: props.onBlur,
+    onFocusWithin: props.onFocus,
+    onFocusWithinChange: props.onFocusChange
+  });
+
   return {
     groupProps: mergeProps(domProps, {
       role: 'group',
       'aria-disabled': isDisabled || undefined,
-      ...fieldProps
+      ...fieldProps,
+      ...focusWithinProps
     }),
     labelProps,
     descriptionProps,
