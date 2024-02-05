@@ -31,7 +31,6 @@ import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
 export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
-export const SubmenuContext = createContext<{popoverContainerRef: RefObject<Element>} | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
@@ -181,7 +180,8 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           values={[
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
-            [SubmenuContext, {popoverContainerRef}]
+            // eslint-disable-next-line rulesdir/pure-render
+            [PopoverContext, {UNSTABLE_portalContainer: popoverContainerRef.current || undefined}]
           ]}>
           {children}
         </Provider>
@@ -349,7 +349,6 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef, delay}: MenuItem
   let state = useContext(MenuStateContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
-  let submenuContext = useContext(SubmenuContext)!;
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
   let submenuRef = useRef<HTMLDivElement>(null);
   let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
@@ -398,7 +397,6 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef, delay}: MenuItem
           trigger: 'SubmenuTrigger',
           triggerRef: ref,
           placement: 'end top',
-          UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current || undefined,
           ...popoverProps
         }]
       ]}>
