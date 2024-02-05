@@ -11,15 +11,16 @@
  */
 
 export function getScrollParent(node: Element, checkForOverflow?: boolean): Element {
-  if (isScrollable(node, checkForOverflow)) {
-    node = node.parentElement;
+  let scrollableNode: Element | null = node;
+  if (isScrollable(scrollableNode, checkForOverflow)) {
+    scrollableNode = scrollableNode.parentElement;
   }
 
-  while (node && !isScrollable(node, checkForOverflow)) {
-    node = node.parentElement;
+  while (scrollableNode && !isScrollable(scrollableNode, checkForOverflow)) {
+    scrollableNode = scrollableNode.parentElement;
   }
 
-  return node || document.scrollingElement || document.documentElement;
+  return scrollableNode || document.scrollingElement || document.documentElement;
 }
 
 export function isScrollable(node: Element, checkForOverflow?: boolean): boolean {

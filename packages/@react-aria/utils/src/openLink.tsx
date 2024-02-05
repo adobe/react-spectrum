@@ -116,21 +116,21 @@ function getSyntheticLink(target: Element, open: (link: HTMLAnchorElement) => vo
     open(target);
   } else if (target.hasAttribute('data-href')) {
     let link = document.createElement('a');
-    link.href = target.getAttribute('data-href');
+    link.href = target.getAttribute('data-href')!;
     if (target.hasAttribute('data-target')) {
-      link.target = target.getAttribute('data-target');
+      link.target = target.getAttribute('data-target')!;
     }
     if (target.hasAttribute('data-rel')) {
-      link.rel = target.getAttribute('data-rel');
+      link.rel = target.getAttribute('data-rel')!;
     }
     if (target.hasAttribute('data-download')) {
-      link.download = target.getAttribute('data-download');
+      link.download = target.getAttribute('data-download')!;
     }
     if (target.hasAttribute('data-ping')) {
-      link.ping = target.getAttribute('data-ping');
+      link.ping = target.getAttribute('data-ping')!;
     }
     if (target.hasAttribute('data-referrer-policy')) {
-      link.referrerPolicy = target.getAttribute('data-referrer-policy');
+      link.referrerPolicy = target.getAttribute('data-referrer-policy')!;
     }
     target.appendChild(link);
     open(link);

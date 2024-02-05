@@ -23,14 +23,14 @@ export function useEvent<K extends keyof GlobalEventHandlersEventMap>(
   let isDisabled = handler == null;
 
   useEffect(() => {
-    if (isDisabled) {
+    if (isDisabled || !ref.current) {
       return;
     }
 
     let element = ref.current;
-    element.addEventListener(event, handleEvent, options);
+    element.addEventListener(event, handleEvent as EventListener, options);
     return () => {
-      element.removeEventListener(event, handleEvent, options);
+      element.removeEventListener(event, handleEvent as EventListener, options);
     };
   }, [ref, event, options, isDisabled, handleEvent]);
 }
