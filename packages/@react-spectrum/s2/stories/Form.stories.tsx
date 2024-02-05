@@ -8,6 +8,8 @@ import {Checkbox} from '../src/Checkbox';
 import {SearchField} from '../src/SearchField';
 import {CheckboxGroup} from '../src/CheckboxGroup';
 import {Switch} from '../src/Switch';
+import {Radio} from '../src/Radio';
+import {RadioGroup} from '../src/RadioGroup';
 
 const meta: Meta<typeof Form> = {
   component: Form,
@@ -29,6 +31,11 @@ export const Example = (args: any) => (
       <Checkbox value="baseball">Baseball</Checkbox>
       <Checkbox value="basketball">Basketball</Checkbox>
     </CheckboxGroup>
+    <RadioGroup orientation="horizontal" label="Favorite pet">
+      <Radio value="cat">Cat</Radio>
+      <Radio value="dog">Dog</Radio>
+      <Radio value="plant" isDisabled>Plant</Radio>
+    </RadioGroup>
     <TextField label="City" name="city" description="A long description to test help text wrapping." />
     <TextField label="A long label to test wrapping behavior" name="long" />
     <SearchField label="Search" name="search" />
