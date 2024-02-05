@@ -263,9 +263,8 @@ const _Tab = /*#__PURE__*/ (forwardRef as forwardRefType)(Tab);
 export {_Tab as Tab};
 
 function TabInner({item, state}: {item: Node<object>, state: TabListState<object>}) {
-  let {key} = item;
   let ref = useObjectRef<any>(item.props.ref);
-  let {tabProps, isSelected, isDisabled, isPressed} = useTab({key}, state, ref);
+  let {tabProps, isSelected, isDisabled, isPressed} = useTab({key: item.key, ...item.props}, state, ref);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover({
     isDisabled

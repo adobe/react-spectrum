@@ -90,6 +90,14 @@ describe('Menu', () => {
     }
   });
 
+  it('should support aria-label on the menu items', () => {
+    let {getAllByRole} = renderMenu({}, {'aria-label': 'test'});
+
+    for (let menuitem of getAllByRole('menuitem')) {
+      expect(menuitem).toHaveAttribute('aria-label', 'test');
+    }
+  });
+
   it('should support the slot prop', () => {
     let {getByRole} = render(
       <MenuContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
