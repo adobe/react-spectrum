@@ -664,6 +664,7 @@ export const style = createTheme({
     animationDelay: durationProperty,
     animationDirection: ['normal', 'reverse', 'alternate', 'alternate-reverse'] as const,
     animationFillMode: ['none', 'forwards', 'backwards', 'both'] as const,
+    animationTimingFunction: ['ease', 'ease-in', 'ease-out', 'linear', 'step-start', 'step-end'] as const,
 
     // layout
     display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'] as const, // tables?
