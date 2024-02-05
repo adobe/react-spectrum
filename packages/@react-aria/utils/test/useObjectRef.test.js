@@ -21,7 +21,7 @@ describe('useObjectRef', () => {
 
     expect(result.current).toBeDefined();
     expect(result.current).not.toBeNull();
-    expect(result.current.current).toBeUndefined();
+    expect(result.current.current).toBeNull();
   });
 
   it('should support React.forwardRef for an object ref', () => {
