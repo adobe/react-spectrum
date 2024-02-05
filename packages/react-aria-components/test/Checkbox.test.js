@@ -92,6 +92,33 @@ describe('Checkbox', () => {
     expect(label).not.toHaveClass('focus');
   });
 
+  it('should support focus events', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    let {getByRole, getByText} = render(
+      <>
+        <Checkbox onFocus={onFocus} onFocusChange={onFocusChange} onBlur={onBlur}>Test</Checkbox>
+        <button>Steal focus</button>
+      </>
+    );
+
+    let checkbox = getByRole('checkbox');
+    let button = getByText('Steal focus');
+
+    await user.tab();
+    expect(document.activeElement).toBe(checkbox);
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);
+
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    expect(onBlur).toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);
+  });
+
   it('should support press state', () => {
     let {getByRole} = render(<Checkbox className={({isPressed}) => isPressed ? 'pressed' : ''}>Test</Checkbox>);
     let checkbox = getByRole('checkbox').closest('label');
