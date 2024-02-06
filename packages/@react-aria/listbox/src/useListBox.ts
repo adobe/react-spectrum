@@ -13,12 +13,12 @@
 import {AriaListBoxProps} from '@react-types/listbox';
 import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {KeyboardEventHandler, useSelectableList} from '@react-aria/selection';
 import {listData} from './utils';
 import {ListState} from '@react-stately/list';
 import {RefObject} from 'react';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLabel} from '@react-aria/label';
-import {useSelectableList} from '@react-aria/selection';
 
 export interface ListBoxAria {
   /** Props for the listbox element. */
@@ -36,6 +36,11 @@ export interface AriaListBoxOptions<T> extends Omit<AriaListBoxProps<T>, 'childr
    * to override the default.
    */
   keyboardDelegate?: KeyboardDelegate,
+
+  /**
+   * An optional keyboard event handler to override default keyboard actions.
+   */
+  keyboardEventHandler?: KeyboardEventHandler,
 
   /**
    * Whether the listbox items should use virtual focus instead of being focused directly.

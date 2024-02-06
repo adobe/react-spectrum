@@ -13,10 +13,10 @@
 import {AriaAccordionProps} from '@react-types/accordion';
 import {ButtonHTMLAttributes, RefObject} from 'react';
 import {DOMAttributes, Node} from '@react-types/shared';
+import {KeyboardEventHandler, useSelectableItem, useSelectableList} from '@react-aria/selection';
 import {mergeProps, useId} from '@react-aria/utils';
 import {TreeState} from '@react-stately/tree';
 import {useButton} from '@react-aria/button';
-import {useSelectableItem, useSelectableList} from '@react-aria/selection';
 
 export interface AccordionAria {
   /** Props for the accordion container element. */
@@ -32,6 +32,13 @@ export interface AccordionItemAria {
   buttonProps: ButtonHTMLAttributes<HTMLElement>,
   /** Props for the accordion item content element. */
   regionProps: DOMAttributes
+}
+
+export interface AccordionItemAriaOptions<T> extends AccordionItemAriaProps<T> {
+  /**
+   * An optional keyboard event handler to override default keyboard actions.
+   */
+  keyboardEventHandler?: KeyboardEventHandler
 }
 
 export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: TreeState<T>, ref: RefObject<HTMLButtonElement>): AccordionItemAria {

@@ -44,6 +44,47 @@ export const MenuExample = () => (
   </MenuTrigger>
 );
 
+export const MenuCustomKeyboardHandler = () => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu
+        keyboardEventHandler={(e: React.KeyboardEvent) => {
+          switch (e.key) {
+            case 'j': {
+              if (e.ctrlKey) {
+                return 'nav-down';
+              }
+            }
+            case 'k': {
+              if (e.ctrlKey) {
+                return 'nav-up';
+              }
+            }
+          }
+          return null;
+        }}
+        className={styles.menu}
+        onAction={action('onAction')}>
+        <Section className={styles.group}>
+          <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
+          <MyMenuItem href="https://google.com">Google</MyMenuItem>
+        </Section>
+        <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+        <Section className={styles.group}>
+          <Header style={{fontSize: '1.2em'}}>Section 2</Header>
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
+        </Section>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
 export const MenuComplex = () => (
   <MenuTrigger>
     <Button aria-label="Menu">☰</Button>

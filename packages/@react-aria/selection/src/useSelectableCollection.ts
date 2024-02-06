@@ -21,6 +21,20 @@ import {MultipleSelectionManager} from '@react-stately/selection';
 import {useLocale} from '@react-aria/i18n';
 import {useTypeSelect} from './useTypeSelect';
 
+export type KeyboardAction = 'nav-down'
+  | 'nav-up'
+  | 'nav-left'
+  | 'nav-right'
+  | 'nav-start'
+  | 'nav-end'
+  | 'nav-page-down'
+  | 'nav-page-up'
+  | 'select-all'
+  | 'clear-selection'
+  | ''
+
+export type KeyboardEventHandler = (e: KeyboardEvent, m: MultipleSelectionManager, d: KeyboardDelegate) => KeyboardAction | null
+
 export interface AriaSelectableCollectionOptions {
   /**
    * An interface for reading and updating multiple selection state.
@@ -30,6 +44,10 @@ export interface AriaSelectableCollectionOptions {
    * A delegate object that implements behavior for keyboard focus movement.
    */
   keyboardDelegate: KeyboardDelegate,
+  /**
+   * A handler for custom keyboard actions.
+   */
+  keyboardEventHandler?: (e: KeyboardEvent, m: MultipleSelectionManager, d: KeyboardDelegate) => KeyboardAction | null,
   /**
    * The ref attached to the element representing the collection.
    */
@@ -103,6 +121,7 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let {
     selectionManager: manager,
     keyboardDelegate: delegate,
+    keyboardEventHandler,
     ref,
     autoFocus = false,
     shouldFocusWrap = false,
@@ -160,104 +179,182 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       }
     };
 
+    const navDown = () => {
+      if (delegate.getKeyBelow) {
+        e.preventDefault();
+        let nextKey = manager.focusedKey != null
+            ? delegate.getKeyBelow(manager.focusedKey)
+            : delegate.getFirstKey?.();
+        if (nextKey == null && shouldFocusWrap) {
+          nextKey = delegate.getFirstKey?.(manager.focusedKey);
+        }
+        navigateToKey(nextKey);
+      }
+    };
+
+    const navUp = () => {
+      if (delegate.getKeyAbove) {
+        e.preventDefault();
+        let nextKey = manager.focusedKey != null
+            ? delegate.getKeyAbove(manager.focusedKey)
+            : delegate.getLastKey?.();
+        if (nextKey == null && shouldFocusWrap) {
+          nextKey = delegate.getLastKey?.(manager.focusedKey);
+        }
+        navigateToKey(nextKey);
+      }
+    };
+
+    const navLeft = () => {
+      if (delegate.getKeyLeftOf) {
+        e.preventDefault();
+        let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
+        if (nextKey == null && shouldFocusWrap) {
+          nextKey = direction === 'rtl' ? delegate.getFirstKey?.(manager.focusedKey) : delegate.getLastKey?.(manager.focusedKey);
+        }
+        navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
+      }
+    };
+
+    const navRight = () => {
+      if (delegate.getKeyRightOf) {
+        e.preventDefault();
+        let nextKey = delegate.getKeyRightOf(manager.focusedKey);
+        if (nextKey == null && shouldFocusWrap) {
+          nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
+        }
+        navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
+      }
+    };
+
+    const navStart = () => {
+      if (delegate.getFirstKey) {
+        e.preventDefault();
+        let firstKey = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
+        manager.setFocusedKey(firstKey);
+        if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
+          manager.extendSelection(firstKey);
+        } else if (selectOnFocus) {
+          manager.replaceSelection(firstKey);
+        }
+      }
+    };
+
+    const navEnd = () => {
+      if (delegate.getLastKey) {
+        e.preventDefault();
+        let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
+        manager.setFocusedKey(lastKey);
+        if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
+          manager.extendSelection(lastKey);
+        } else if (selectOnFocus) {
+          manager.replaceSelection(lastKey);
+        }
+      }
+    };
+
+    const navPageDown = () => {
+      if (delegate.getKeyPageBelow) {
+        e.preventDefault();
+        let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
+        navigateToKey(nextKey);
+      }
+    };
+
+    const navPageUp = () => {
+      if (delegate.getKeyPageAbove) {
+        e.preventDefault();
+        let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
+        navigateToKey(nextKey);
+      }
+    };
+
+    const selectAll = () => {
+      if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
+        e.preventDefault();
+        manager.selectAll();
+      }
+    };
+
+    const clearSelection = () => {
+      e.preventDefault();
+      if (!disallowEmptySelection) {
+        manager.clearSelection();
+      }
+    };
+
+    const action = keyboardEventHandler?.(e, manager, delegate) ?? null;
+
+    if (action !== null) {
+      switch (action) {
+        case 'nav-down':
+          navDown();
+          break;
+        case 'nav-up':
+          navUp();
+          break;
+        case 'nav-left':
+          navLeft();
+          break;
+        case 'nav-right':
+          navRight();
+          break;
+        case 'nav-start':
+          navStart();
+          break;
+        case 'nav-end':
+          navEnd();
+          break;
+        case 'nav-page-down':
+          navPageDown();
+          break;
+        case 'nav-page-up':
+          navPageUp();
+          break;
+        case 'select-all':
+          selectAll();
+          break;
+        case 'clear-selection':
+          clearSelection();
+          break;
+      }
+      return;
+    }
+
     switch (e.key) {
       case 'ArrowDown': {
-        if (delegate.getKeyBelow) {
-          e.preventDefault();
-          let nextKey = manager.focusedKey != null
-              ? delegate.getKeyBelow(manager.focusedKey)
-              : delegate.getFirstKey?.();
-          if (nextKey == null && shouldFocusWrap) {
-            nextKey = delegate.getFirstKey?.(manager.focusedKey);
-          }
-          navigateToKey(nextKey);
-        }
+        navDown();
         break;
       }
       case 'ArrowUp': {
-        if (delegate.getKeyAbove) {
-          e.preventDefault();
-          let nextKey = manager.focusedKey != null
-              ? delegate.getKeyAbove(manager.focusedKey)
-              : delegate.getLastKey?.();
-          if (nextKey == null && shouldFocusWrap) {
-            nextKey = delegate.getLastKey?.(manager.focusedKey);
-          }
-          navigateToKey(nextKey);
-        }
+        navUp();
         break;
       }
       case 'ArrowLeft': {
-        if (delegate.getKeyLeftOf) {
-          e.preventDefault();
-          let nextKey = delegate.getKeyLeftOf(manager.focusedKey);
-          if (nextKey == null && shouldFocusWrap) {
-            nextKey = direction === 'rtl' ? delegate.getFirstKey?.(manager.focusedKey) : delegate.getLastKey?.(manager.focusedKey);
-          }
-          navigateToKey(nextKey, direction === 'rtl' ? 'first' : 'last');
-        }
+        navLeft();
         break;
       }
       case 'ArrowRight': {
-        if (delegate.getKeyRightOf) {
-          e.preventDefault();
-          let nextKey = delegate.getKeyRightOf(manager.focusedKey);
-          if (nextKey == null && shouldFocusWrap) {
-            nextKey = direction === 'rtl' ? delegate.getLastKey?.(manager.focusedKey) : delegate.getFirstKey?.(manager.focusedKey);
-          }
-          navigateToKey(nextKey, direction === 'rtl' ? 'last' : 'first');
-        }
+        navRight();
         break;
       }
       case 'Home':
-        if (delegate.getFirstKey) {
-          e.preventDefault();
-          let firstKey = delegate.getFirstKey(manager.focusedKey, isCtrlKeyPressed(e));
-          manager.setFocusedKey(firstKey);
-          if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
-            manager.extendSelection(firstKey);
-          } else if (selectOnFocus) {
-            manager.replaceSelection(firstKey);
-          }
-        }
+        navStart();
         break;
       case 'End':
-        if (delegate.getLastKey) {
-          e.preventDefault();
-          let lastKey = delegate.getLastKey(manager.focusedKey, isCtrlKeyPressed(e));
-          manager.setFocusedKey(lastKey);
-          if (isCtrlKeyPressed(e) && e.shiftKey && manager.selectionMode === 'multiple') {
-            manager.extendSelection(lastKey);
-          } else if (selectOnFocus) {
-            manager.replaceSelection(lastKey);
-          }
-        }
+        navEnd();
         break;
       case 'PageDown':
-        if (delegate.getKeyPageBelow) {
-          e.preventDefault();
-          let nextKey = delegate.getKeyPageBelow(manager.focusedKey);
-          navigateToKey(nextKey);
-        }
+        navPageDown();
         break;
       case 'PageUp':
-        if (delegate.getKeyPageAbove) {
-          e.preventDefault();
-          let nextKey = delegate.getKeyPageAbove(manager.focusedKey);
-          navigateToKey(nextKey);
-        }
+        navPageUp();
         break;
       case 'a':
-        if (isCtrlKeyPressed(e) && manager.selectionMode === 'multiple' && disallowSelectAll !== true) {
-          e.preventDefault();
-          manager.selectAll();
-        }
+        selectAll();
         break;
       case 'Escape':
-        e.preventDefault();
-        if (!disallowEmptySelection) {
-          manager.clearSelection();
-        }
+        clearSelection();
         break;
       case 'Tab': {
         if (!allowsTabNavigation) {

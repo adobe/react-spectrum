@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {AriaSelectableCollectionOptions, useSelectableItem, useSelectableList} from '../src';
 import {CollectionBase, Node} from '@react-types/shared';
 import {Item} from '@react-spectrum/actiongroup';
 import {List} from './List';
@@ -17,15 +18,16 @@ import {ListState, useListState} from '@react-stately/list';
 import * as React from 'react';
 import {Section} from '@react-spectrum/menu';
 import styles from './styles.css';
-import {useSelectableItem, useSelectableList} from '../src';
 
 function SelectableList(props: CollectionBase<any> & {
   isSubUlRelativelyPositioned: boolean,
-  isUlRelativelyPositioned: boolean
+  isUlRelativelyPositioned: boolean,
+  keyboardEventHandler?: AriaSelectableCollectionOptions['keyboardEventHandler']
 }) {
   const state = useListState(props);
   const listRef = React.useRef<HTMLUListElement>(null);
   const {listProps} = useSelectableList({
+    keyboardEventHandler: props.keyboardEventHandler,
     ref: listRef,
     selectionManager: state.selectionManager,
     collection: state.collection,
@@ -177,6 +179,33 @@ export const RelativeUlRelativeSubUl = () => (
 
 RelativeUlRelativeSubUl.story = {
   name: 'Relative ul, relative sub ul'
+};
+
+export const CustomKeyboardEventHandler = () => (
+  <SelectableList
+    isSubUlRelativelyPositioned
+    isUlRelativelyPositioned
+    keyboardEventHandler={(e: React.KeyboardEvent) => {
+      switch (e.key) {
+        case 'j': {
+          if (e.ctrlKey) {
+            return 'nav-down';
+          }
+        }
+        case 'k': {
+          if (e.ctrlKey) {
+            return 'nav-up';
+          }
+        }
+      }
+      return null;
+    }}>
+    {options}
+  </SelectableList>
+);
+
+CustomKeyboardEventHandler.story = {
+  name: 'Custom keyboard event handler'
 };
 
 export const SingleSelectAllowEmptySelectOnFocus = () => (

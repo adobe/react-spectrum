@@ -21,12 +21,12 @@ import {
   MultipleSelection
 } from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
+import {KeyboardEventHandler, useSelectableList} from '@react-aria/selection';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
 import {RefObject} from 'react';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
 import {useHasTabbableChild} from '@react-aria/focus';
-import {useSelectableList} from '@react-aria/selection';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
   /**
@@ -48,6 +48,10 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * to override the default.
    */
   keyboardDelegate?: KeyboardDelegate,
+  /**
+   * An optional keyboard event handler to override default keyboard actions.
+   */
+  keyboardEventHandler?: KeyboardEventHandler,
   /**
    * Whether focus should wrap around when the end/start is reached.
    * @default false
@@ -79,6 +83,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   let {
     isVirtualized,
     keyboardDelegate,
+    keyboardEventHandler,
     onAction,
     linkBehavior = 'action'
   } = props;
@@ -93,6 +98,7 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     disabledKeys: state.disabledKeys,
     ref,
     keyboardDelegate: keyboardDelegate,
+    keyboardEventHandler,
     isVirtualized,
     selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
     shouldFocusWrap: props.shouldFocusWrap,
