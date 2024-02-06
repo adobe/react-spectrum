@@ -33,7 +33,7 @@ const tooltip = style<TooltipRenderProps>({
   minHeight: 6,
   color: {
     default: 'gray-25',
-    forcedColors: 'GrayText'
+    forcedColors: 'ButtonText'
   },
   borderWidth: {
     forcedColors: 1
@@ -68,7 +68,7 @@ const tooltip = style<TooltipRenderProps>({
     isExiting: 'reverse'
   },
   animationTimingFunction: {
-    isExiting: 'ease-in'
+    isExiting: 'in'
   },
   '--originX': {
     type: 'translate',
@@ -94,7 +94,7 @@ const tooltip = style<TooltipRenderProps>({
   }
 });
 
-const iconStyles = style<TooltipRenderProps>({
+const arrowStyles = style<TooltipRenderProps>({
   display: 'block',
   fill: 'gray-800',
   rotate: {
@@ -107,8 +107,8 @@ const iconStyles = style<TooltipRenderProps>({
   },
   translate: {
     placement: {
-      left: '[-2.5px]',
-      right: '[2.5px]'
+      left: '[-25%]',
+      right: '1/4'
     }
   }
 });
@@ -123,7 +123,7 @@ export function Tooltip({children, ...props}: TooltipProps) {
       {renderProps => (
         <>
           <OverlayArrow>
-            <svg className={iconStyles(renderProps)} xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5">
+            <svg className={arrowStyles(renderProps)} xmlns="http://www.w3.org/2000/svg" width="10" height="5" viewBox="0 0 10 5">
               <path d="M4.29289 4.29289L0 0H10L5.70711 4.29289C5.31658 4.68342 4.68342 4.68342 4.29289 4.29289Z" />
             </svg>
           </OverlayArrow>

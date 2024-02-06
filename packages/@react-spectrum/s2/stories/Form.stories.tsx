@@ -31,7 +31,7 @@ export const Example = (args: any) => (
       <Checkbox value="baseball">Baseball</Checkbox>
       <Checkbox value="basketball">Basketball</Checkbox>
     </CheckboxGroup>
-    <RadioGroup orientation="horizontal" label="Favorite pet">
+    <RadioGroup label="Favorite pet">
       <Radio value="cat">Cat</Radio>
       <Radio value="dog">Dog</Radio>
       <Radio value="plant" isDisabled>Plant</Radio>

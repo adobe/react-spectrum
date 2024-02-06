@@ -283,7 +283,7 @@ const transitionProperty = {
 };
 
 // TODO
-const transitionTimingFunction = {
+const timingFunction = {
   default: 'cubic-bezier(0.4, 0, 0.2, 1)',
   linear: 'linear',
   in: 'cubic-bezier(0.4, 0, 1, 1)',
@@ -650,21 +650,21 @@ export const style = createTheme({
     transition: createMappedProperty(value => ({
       transitionProperty: value,
       transitionDuration: '150ms',
-      transitionTimingFunction: transitionTimingFunction.default
+      transitionTimingFunction: timingFunction.default
     }), transitionProperty),
     transitionDelay: durationProperty,
     transitionDuration: durationProperty,
-    transitionTimingFunction,
+    transitionTimingFunction: timingFunction,
     animation: createArbitraryProperty((value: string) => ({
       animationName: value,
       animationDuration: '150ms',
-      animationTimingFunction: transitionTimingFunction.default
+      animationTimingFunction: timingFunction.default
     })),
     animationDuration: durationProperty,
     animationDelay: durationProperty,
     animationDirection: ['normal', 'reverse', 'alternate', 'alternate-reverse'] as const,
     animationFillMode: ['none', 'forwards', 'backwards', 'both'] as const,
-    animationTimingFunction: ['ease', 'ease-in', 'ease-out', 'linear', 'step-start', 'step-end'] as const,
+    animationTimingFunction: timingFunction,
 
     // layout
     display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'] as const, // tables?

@@ -1,12 +1,16 @@
+import type {Meta} from '@storybook/react';
 import {RadioGroup} from '../src/RadioGroup';
 import {Radio} from '../src/Radio';
-
-import type {Meta} from '@storybook/react';
+import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
 
 const meta: Meta<typeof RadioGroup> = {
   component: RadioGroup,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=164%3A16723'
+    }
   },
   tags: ['autodocs']
 };
@@ -25,3 +29,9 @@ export const Example = (args: any) => (
 Example.args = {
   label: 'Favorite sport'
 };
+
+export const LongLabel = (args: any) => (
+  <RadioGroup className={style({maxWidth: 32})()} {...args}>
+    <Radio value="longLabel">Radio with very long label so we can see wrapping</Radio>
+  </RadioGroup>
+);
