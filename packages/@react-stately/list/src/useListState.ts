@@ -77,8 +77,8 @@ export function useListState<T extends object>(props: ListProps<T>): ListState<T
       let index = Math.min(
         (
           diff > 1 ?
-          Math.max(startItem.index - diff + 1, 0) :
-          startItem.index
+          Math.max(startItem?.index - diff + 1, 0) :
+          startItem?.index
         ),
         itemNodes.length - 1);
       let newNode:Node<T>;
