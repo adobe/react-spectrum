@@ -33,8 +33,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
     shouldFlip = true,
     direction = 'bottom',
     closeOnSelect,
-    trigger = 'press',
-    UNSTABLE_portalContainer
+    trigger = 'press'
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
@@ -75,7 +74,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray state={state} isFixedHeight container={UNSTABLE_portalContainer}>
+      <Tray state={state} isFixedHeight>
         {menu}
       </Tray>
     );
@@ -84,7 +83,6 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
       <Popover
         UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
         state={state}
-        container={UNSTABLE_portalContainer}
         triggerRef={menuTriggerRef}
         scrollRef={menuRef}
         placement={initialPlacement}
