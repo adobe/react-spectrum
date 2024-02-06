@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-'use client';
-
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
 export {Breadcrumbs} from '@react-spectrum/breadcrumbs';
