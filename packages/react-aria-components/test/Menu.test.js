@@ -513,7 +513,7 @@ describe('Menu', () => {
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
     });
-    it('should close all submenus if underlay is clicked', async () => {
+    it('should close all submenus if interacting outside root submenu', async () => {
       let onAction = jest.fn();
       let {getByRole, getAllByRole, getByTestId} = render(
         <MenuTrigger>
@@ -603,7 +603,7 @@ describe('Menu', () => {
       let underlay = getByTestId('underlay');
       expect(underlay).toBeInTheDocument();
       expect(underlay).toHaveAttribute('aria-hidden', 'true');
-      await user.click(underlay);
+      await user.click(document.body);
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
       expect(menu).not.toBeInTheDocument();

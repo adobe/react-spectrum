@@ -21,7 +21,7 @@ import {Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import {PressResponder, useHover} from '@react-aria/interactions';
+import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
 import {RootMenuTriggerState, UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 import {Separator, SeparatorContext} from './Separator';
@@ -57,6 +57,8 @@ export function MenuTrigger(props: MenuTriggerProps) {
     ref: ref,
     onResize: onResize
   });
+
+  useInteractOutside({ref: ref, onInteractOutside: state.close, isDisabled: !state.isOpen});
 
   return (
     <Provider
