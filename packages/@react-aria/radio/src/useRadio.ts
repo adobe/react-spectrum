@@ -107,6 +107,7 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
       checked,
       value,
       onChange,
+      'aria-checked': checked,
       'aria-describedby': [
         props['aria-describedby'],
         state.isInvalid ? errorMessageId : null,

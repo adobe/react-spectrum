@@ -214,18 +214,21 @@ describe('RadioGroup', () => {
     let label = radios[0].closest('label');
 
     expect(radios[0]).not.toBeChecked();
+    expect(radios[0]).toHaveAttribute('aria-checked', 'false');
     expect(label).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
 
     await user.click(radios[0]);
     expect(onChange).toHaveBeenLastCalledWith('a');
     expect(radios[0]).toBeChecked();
+    expect(radios[0]).toHaveAttribute('aria-checked', 'true');
     expect(label).toHaveAttribute('data-selected', 'true');
     expect(label).toHaveClass('selected');
 
     await user.click(radios[1]);
     expect(onChange).toHaveBeenLastCalledWith('b');
     expect(radios[0]).not.toBeChecked();
+    expect(radios[0]).toHaveAttribute('aria-checked', 'false');
     expect(label).not.toHaveAttribute('data-selected');
     expect(label).not.toHaveClass('selected');
   });

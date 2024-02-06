@@ -137,8 +137,11 @@ describe('Radios', function () {
     expect(radios[2].value).toBe('dragons');
 
     expect(radios[0].checked).toBe(false);
+    expect(radios[0]).toHaveAttribute('aria-checked', 'false');
     expect(radios[1].checked).toBe(false);
+    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
     expect(radios[2].checked).toBe(false);
+    expect(radios[2]).toHaveAttribute('aria-checked', 'false');
 
     let dogs = getByLabelText('Dogs');
     await user.click(dogs);
@@ -146,8 +149,11 @@ describe('Radios', function () {
     expect(onChangeSpy).toHaveBeenCalledWith('dogs');
 
     expect(radios[0].checked).toBe(true);
+    expect(radios[0]).toHaveAttribute('aria-checked', 'true');
     expect(radios[1].checked).toBe(false);
+    expect(radios[1]).toHaveAttribute('aria-checked', 'false');
     expect(radios[2].checked).toBe(false);
+    expect(radios[2]).toHaveAttribute('aria-checked', 'false');
   });
 
   it.each`
