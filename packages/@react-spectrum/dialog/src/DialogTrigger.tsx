@@ -28,7 +28,6 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
     targetRef,
     isDismissable,
     isKeyboardDismissDisabled,
-    UNSTABLE_portalContainer,
     ...positionProps
   } = props;
   if (!Array.isArray(children) || children.length > 2) {
@@ -72,7 +71,6 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
     return (
       <PopoverTrigger
         {...positionProps}
-        UNSTABLE_portalContainer={UNSTABLE_portalContainer}
         state={state}
         targetRef={targetRef}
         trigger={trigger}
@@ -91,7 +89,6 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
           <Modal
             state={state}
             isDismissable={type === 'modal' ? isDismissable : false}
-            container={UNSTABLE_portalContainer}
             type={type}
             isKeyboardDismissDisabled={isKeyboardDismissDisabled}
             onExiting={onExiting}
@@ -103,7 +100,6 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
         return (
           <Tray
             state={state}
-            container={UNSTABLE_portalContainer}
             isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
             {typeof content === 'function' ? content(state.close) : content}
           </Tray>
@@ -147,7 +143,7 @@ DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) 
 let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX.Element;
 export {_DialogTrigger as DialogTrigger};
 
-function PopoverTrigger({state, targetRef, trigger, content, hideArrow, UNSTABLE_portalContainer, ...props}) {
+function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props}) {
   let triggerRef = useRef<HTMLElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
 
@@ -159,7 +155,6 @@ function PopoverTrigger({state, targetRef, trigger, content, hideArrow, UNSTABLE
   let overlay = (
     <Popover
       {...props}
-      container={UNSTABLE_portalContainer}
       hideArrow={hideArrow}
       triggerRef={targetRef || triggerRef}
       state={state}>
