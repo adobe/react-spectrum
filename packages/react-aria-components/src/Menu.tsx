@@ -92,7 +92,7 @@ export interface SubmenuTriggerProps {
 
 /**
  * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
- * 
+ *
  * @version alpha
  */
 export function SubmenuTrigger(props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
@@ -247,13 +247,13 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
    * Whether the item has a submenu.
-   * 
+   *
    * @selector [data-has-submenu]
    */
   hasSubmenu: boolean,
   /**
    * Whether the item's submenu is open.
-   * 
+   *
    * @selector [data-open]
    */
   isOpen: boolean
