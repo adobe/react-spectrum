@@ -143,6 +143,10 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       return;
     }
 
+    if (!maxHeight && overlayRef.current) {
+      (overlayRef.current as HTMLElement).style.maxHeight = 'none';
+    }
+
     let position = calculatePosition({
       placement: translateRTL(placement, direction),
       overlayNode: overlayRef.current,
