@@ -29,8 +29,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
     crossOffset = DEFAULT_CROSS_OFFSET,
     isDisabled,
     offset = DEFAULT_OFFSET,
-    trigger: triggerAction,
-    UNSTABLE_portalContainer
+    trigger: triggerAction
   } = props;
 
   let [trigger, tooltip] = React.Children.toArray(children) as [ReactElement, ReactElement];
@@ -89,7 +88,7 @@ function TooltipTrigger(props: SpectrumTooltipTriggerProps) {
           arrowRef: arrowRef,
           ...tooltipProps
         }}>
-        <Overlay isOpen={state.isOpen} nodeRef={overlayRef} container={UNSTABLE_portalContainer}>
+        <Overlay isOpen={state.isOpen} nodeRef={overlayRef}>
           {tooltip}
         </Overlay>
       </TooltipContext.Provider>
