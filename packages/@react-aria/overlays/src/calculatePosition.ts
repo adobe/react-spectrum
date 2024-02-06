@@ -392,8 +392,7 @@ export function calculatePositionInternal(
   let delta = getDelta(crossAxis, position[crossAxis], overlaySize[crossSize], boundaryDimensions, containerDimensions, padding, containerOffsetWithBoundary);
   position[crossAxis] += delta;
 
-  let maxHeight;
-  maxHeight = getMaxHeight(
+  let maxHeight = getMaxHeight(
     position,
     boundaryDimensions,
     containerOffsetWithBoundary,
@@ -407,6 +406,7 @@ export function calculatePositionInternal(
   if (userSetMaxHeight && userSetMaxHeight < maxHeight) {
     maxHeight = userSetMaxHeight;
   }
+
   overlaySize.height = Math.min(overlaySize.height, maxHeight);
 
   position = computePosition(childOffset, boundaryDimensions, overlaySize, placementInfo, normalizedOffset, crossOffset, containerOffsetWithBoundary, isContainerPositioned, arrowSize, arrowBoundaryOffset);
