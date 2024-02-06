@@ -399,7 +399,6 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef, delay}: MenuItem
           triggerRef: ref,
           placement: 'end top',
           UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current || undefined,
-          containerPadding: 0,
           ...popoverProps
         }]
       ]}>
