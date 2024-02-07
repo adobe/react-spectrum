@@ -3,8 +3,7 @@ const spawn = require('child_process').spawnSync;
 const fs = require('fs');
 const Octokit = require('@octokit/rest');
 
-let token = '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';
-const octokit = new Octokit({auth: token});
+const octokit = new Octokit();
 
 run();
 
