@@ -31,7 +31,7 @@ import {UNSTABLE_useSubmenuTrigger} from '@react-aria/menu';
 export const MenuContext = createContext<ContextValue<MenuProps<any>, HTMLDivElement>>(null);
 export const MenuStateContext = createContext<TreeState<unknown> | null>(null);
 export const RootMenuTriggerStateContext = createContext<RootMenuTriggerState | null>(null);
-export const SubmenuContext = createContext<{popoverContainerRef: RefObject<Element>} | null>(null);
+export const SubmenuContext = createContext<{popoverContainer: Element | null} | null>(null);
 
 export interface MenuTriggerProps extends BaseMenuTriggerProps {
   children?: ReactNode
@@ -146,7 +146,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     collection,
     children: undefined
   });
-  let popoverContainerRef = useRef<HTMLDivElement>(null);
+  let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
   let {menuProps} = useMenu(props, state, ref);
 
   let children = useCachedChildren({
@@ -181,12 +181,12 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           values={[
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
-            [SubmenuContext, {popoverContainerRef}]
+            [SubmenuContext, {popoverContainer}]
           ]}>
           {children}
         </Provider>
       </div>
-      <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: 0}} />
+      <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0}} />
     </FocusScope>
   );
 }
@@ -398,7 +398,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef, delay}: MenuItem
           trigger: 'SubmenuTrigger',
           triggerRef: ref,
           placement: 'end top',
-          UNSTABLE_portalContainer: submenuContext.popoverContainerRef.current || undefined,
+          UNSTABLE_portalContainer: submenuContext.popoverContainer || undefined,
           ...popoverProps
         }]
       ]}>
