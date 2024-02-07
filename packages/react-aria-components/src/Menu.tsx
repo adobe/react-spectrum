@@ -13,14 +13,14 @@
 
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {BaseCollection, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
-import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
+import {MenuTriggerProps as BaseMenuTriggerProps, Node as RSPNode, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {Header} from './Header';
 import {Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
-import {PopoverContext} from './Popover';
+import {PopoverContext, PopoverProps} from './Popover';
 import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
 import {RootMenuTriggerState, UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
@@ -57,8 +57,6 @@ export function MenuTrigger(props: MenuTriggerProps) {
     ref: ref,
     onResize: onResize
   });
-
-  useInteractOutside({ref: ref, onInteractOutside: state.close, isDisabled: !state.isOpen});
 
   return (
     <Provider
@@ -150,6 +148,8 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   });
   let popoverContainerRef = useRef<HTMLDivElement>(null);
   let {menuProps} = useMenu(props, state, ref);
+  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
+  let popoverContext = useContext(PopoverContext)!;
 
   let children = useCachedChildren({
     items: state.collection,
@@ -167,6 +167,17 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           throw new Error('Unsupported node type in Menu: ' + item.type);
       }
     }
+  });
+  
+  let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
+  useInteractOutside({
+    ref: popoverContainerRef,
+    onInteractOutside: () => {
+      if (rootMenuTriggerState) {
+        rootMenuTriggerState.close();
+      }
+    },
+    isDisabled: isSubmenu || rootMenuTriggerState?.UNSTABLE_expandedKeysStack.length === 0
   });
 
   return (
@@ -200,7 +211,7 @@ const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
 interface MenuSectionProps<T> extends StyleProps {
-  section: Node<T>
+  section: RSPNode<T>
 }
 
 function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
@@ -283,7 +294,7 @@ const _MenuItem = /*#__PURE__*/ (forwardRef as forwardRefType)(MenuItem);
 export {_MenuItem as MenuItem};
 
 interface MenuItemInnerProps<T> {
-  item: Node<T>
+  item: RSPNode<T>
 }
 
 function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
@@ -341,7 +352,7 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 }
 
 interface MenuItemTriggerInnerProps<T> {
-  item: Node<T>,
+  item: RSPNode<T>,
   popover: ReactElement,
   parentMenuRef: RefObject<HTMLDivElement>,
   delay?: number
