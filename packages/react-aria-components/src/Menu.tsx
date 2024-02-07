@@ -172,8 +172,8 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
   useInteractOutside({
     ref: popoverContainerRef,
-    onInteractOutside: () => {
-      if (rootMenuTriggerState) {
+    onInteractOutside: (e) => {
+      if (rootMenuTriggerState && !ref.current?.contains(e.target as HTMLElement)) {
         rootMenuTriggerState.close();
       }
     },
