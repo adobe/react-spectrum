@@ -13,7 +13,7 @@
 
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {BaseCollection, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
-import {MenuTriggerProps as BaseMenuTriggerProps, Node as RSPNode, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
+import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {Header} from './Header';
@@ -168,7 +168,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
       }
     }
   });
-  
+
   let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
   useInteractOutside({
     ref: popoverContainerRef,
@@ -211,7 +211,7 @@ const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
 interface MenuSectionProps<T> extends StyleProps {
-  section: RSPNode<T>
+  section: Node<T>
 }
 
 function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
@@ -294,7 +294,7 @@ const _MenuItem = /*#__PURE__*/ (forwardRef as forwardRefType)(MenuItem);
 export {_MenuItem as MenuItem};
 
 interface MenuItemInnerProps<T> {
-  item: RSPNode<T>
+  item: Node<T>
 }
 
 function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
@@ -352,7 +352,7 @@ function MenuItemInner<T>({item}: MenuItemInnerProps<T>) {
 }
 
 interface MenuItemTriggerInnerProps<T> {
-  item: RSPNode<T>,
+  item: Node<T>,
   popover: ReactElement,
   parentMenuRef: RefObject<HTMLDivElement>,
   delay?: number
