@@ -56,17 +56,17 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     }
   }, []);
 
+  let menuLevel = contextProps.submenuLevel ?? -1;
+  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel + 1]) != null;
   useInteractOutside({
     ref: domRef,
     onInteractOutside: (e) => {
-      if (!isSubmenu && !popoverContainerRef.current?.contains(e.target) && !trayContainerRef.current?.contains(e.target)) {
+      if (!isSubmenu && hasOpenSubmenu && !popoverContainerRef.current?.contains(e.target) && !trayContainerRef.current?.contains(e.target)) {
         rootMenuTriggerState.close();
       }
     }
   });
 
-  let menuLevel = contextProps.submenuLevel ?? -1;
-  let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel + 1]) != null;
   // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
