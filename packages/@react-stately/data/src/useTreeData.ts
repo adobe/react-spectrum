@@ -114,7 +114,7 @@ export interface TreeData<T extends object> {
    */
   update(key: Key, newValue: T): void
 }
-let creation = 0;
+
 /**
  * Manages state for an immutable tree data structure, and provides convenience methods to
  * update the data over time.
@@ -141,7 +141,6 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     return {
       items: initialItems.map(item => {
         let node: TreeNode<T> = {
-          creation: creation++,
           key: getKey(item),
           parentKey: parentKey,
           value: item,
@@ -166,16 +165,15 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     // Create a new node. If null, then delete the node, otherwise replace.
     let newNode = update(node);
     if (newNode == null) {
-      deleteNode(node);
+      deleteNode(node, map);
     } else {
-      addNode(newNode);
+      addNode(newNode, map);
     }
 
     // Walk up the tree and update each parent to refer to the new children.
     while (node.parentKey) {
       let nextParent = map.get(node.parentKey);
       let copy: TreeNode<T> = {
-        creation: creation++,
         key: nextParent.key,
         parentKey: nextParent.parentKey,
         value: nextParent.value,
@@ -218,17 +216,17 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     };
   }
 
-  function addNode(node: TreeNode<T>) {
+  function addNode(node: TreeNode<T>, map) {
     map.set(node.key, node);
     for (let child of node.children) {
-      addNode(child);
+      addNode(child, map);
     }
   }
 
-  function deleteNode(node: TreeNode<T>) {
+  function deleteNode(node: TreeNode<T>, map) {
     map.delete(node.key);
     for (let child of node.children) {
-      deleteNode(child);
+      deleteNode(child, map);
     }
   }
 
@@ -241,7 +239,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     },
     insert(parentKey: Key | null, index: number, ...values: T[]) {
       setItems(({items, mappy: originalMap}) => {
-        let {items: nodes, mappy: newMap} = buildTree(values, parentKey);
+        let {items: nodes, mappy: newMap} = buildTree(values, parentKey, originalMap);
 
         // If parentKey is null, insert into the root.
         if (parentKey == null) {
@@ -308,16 +306,18 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     remove(...keys: Key[]) {
       let newItems = items;
       let prevMap = map;
+      let tree;
       for (let key of keys) {
-        let tree = updateTree(newItems, key, () => null, prevMap);
+        tree = updateTree(newItems, key, () => null, prevMap);
         prevMap = tree.mappy;
+        newItems = tree.items;
       }
 
       setItems(tree);
 
       let selection = new Set(selectedKeys);
       for (let key of selectedKeys) {
-        if (!map.has(key)) {
+        if (!tree.mappy.has(key)) {
           selection.delete(key);
         }
       }
@@ -373,7 +373,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           children: null
         };
 
-        let tree = buildTree(getChildren(newValue), node.key);
+        let tree = buildTree(getChildren(newValue), node.key, originalMap);
         node.children = tree.items;
         return node;
       }, originalMap));

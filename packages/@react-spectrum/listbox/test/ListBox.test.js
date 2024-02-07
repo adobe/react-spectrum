@@ -889,9 +889,8 @@ describe('ListBox', function () {
   });
 
   describe('When focused item is removed', function () {
-    it.only('should move focus to the next item that is not disabled', () => {
+    it('should move focus to the next item that is not disabled', () => {
       let tree = render(<Provider theme={theme}><FocusExample /></Provider>);
-      console.log('done render')
       act(() => jest.runAllTimers());
       let listbox = tree.getByRole('listbox');
       let options = within(listbox).getAllByRole('option');
@@ -911,7 +910,6 @@ describe('ListBox', function () {
       expect(document.activeElement).toBe(confirmationDialog);
       let confirmationDialogButton = within(confirmationDialog).getByRole('button');
       expect(confirmationDialogButton).toBeInTheDocument();
-      console.log('deleting')
       triggerPress(confirmationDialogButton);
       act(() => jest.runAllTimers());
       options = within(listbox).getAllByRole('option');
