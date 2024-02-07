@@ -148,7 +148,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           children: null
         };
 
-        node.children = buildTree(getChildren(item), node.key, map)[0];
+        node.children = buildTree(getChildren(item), node.key, map).items;
         map.set(node.key, node);
         return node;
       }),
