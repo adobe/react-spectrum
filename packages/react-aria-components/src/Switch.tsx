@@ -10,78 +10,110 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwitch, VisuallyHidden} from 'react-aria';
-import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
-import {ToggleState, useToggleState} from 'react-stately';
+import {
+  AriaSwitchProps,
+  HoverEvents,
+  mergeProps,
+  useFocusRing,
+  useHover,
+  useSwitch,
+  VisuallyHidden,
+} from "react-aria";
+import {
+  ContextValue,
+  forwardRefType,
+  removeDataAttributes,
+  RenderProps,
+  SlotProps,
+  useContextProps,
+  useRenderProps,
+} from "./utils";
+import { filterDOMProps } from "@react-aria/utils";
+import React, { createContext, ForwardedRef, forwardRef, useRef } from "react";
+import { ToggleState, useToggleState } from "react-stately";
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {}
+export interface SwitchProps
+  extends Omit<AriaSwitchProps, "children">,
+    HoverEvents,
+    RenderProps<SwitchRenderProps>,
+    SlotProps {}
 
 export interface SwitchRenderProps {
   /**
    * Whether the switch is selected.
    * @selector [data-selected]
    */
-  isSelected: boolean,
+  isSelected: boolean;
   /**
    * Whether the switch is currently hovered with a mouse.
    * @selector [data-hovered]
    */
-  isHovered: boolean,
+  isHovered: boolean;
   /**
    * Whether the switch is currently in a pressed state.
    * @selector [data-pressed]
    */
-  isPressed: boolean,
+  isPressed: boolean;
   /**
    * Whether the switch is focused, either via a mouse or keyboard.
    * @selector [data-focused]
    */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the switch is keyboard focused.
    * @selector [data-focus-visible]
    */
-  isFocusVisible: boolean,
+  isFocusVisible: boolean;
   /**
    * Whether the switch is disabled.
    * @selector [data-disabled]
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the switch is read only.
    * @selector [data-readonly]
    */
-  isReadOnly: boolean,
+  isReadOnly: boolean;
   /**
    * State of the switch.
    */
-  state: ToggleState
+  state: ToggleState;
 }
 
-export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
+export const SwitchContext =
+  createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
 function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
   let inputRef = useRef<HTMLInputElement>(null);
   let state = useToggleState(props);
-  let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed} = useSwitch({
-    ...removeDataAttributes(props),
-    // ReactNode type doesn't allow function children.
-    children: typeof props.children === 'function' ? true : props.children
-  }, state, inputRef);
-  let {isFocused, isFocusVisible, focusProps} = useFocusRing();
+  let {
+    labelProps,
+    inputProps,
+    isSelected,
+    isDisabled,
+    isReadOnly,
+    isPressed,
+  } = useSwitch(
+    {
+      ...removeDataAttributes(props),
+      // ReactNode type doesn't allow function children.
+      children: typeof props.children === "function" ? true : props.children,
+    },
+    state,
+    inputRef
+  );
+  let { isFocused, isFocusVisible, focusProps } = useFocusRing();
   let isInteractionDisabled = props.isDisabled || props.isReadOnly;
 
-  let {hoverProps, isHovered} = useHover({
+  let { hoverProps, isHovered } = useHover({
     ...props,
-    isDisabled: isInteractionDisabled
+    isDisabled: isInteractionDisabled,
   });
 
   let renderProps = useRenderProps({
     ...props,
-    defaultClassName: 'react-aria-Switch',
+    defaultClassName: "react-aria-Switch",
     values: {
       isSelected,
       isPressed,
@@ -90,8 +122,8 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
       isFocusVisible,
       isDisabled,
       isReadOnly,
-      state
-    }
+      state,
+    },
   });
 
   let DOMProps = filterDOMProps(props);
@@ -108,9 +140,10 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
       data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-disabled={isDisabled || undefined}
-      data-readonly={isReadOnly || undefined}>
+      data-readonly={isReadOnly || undefined}
+    >
       <VisuallyHidden elementType="span">
-        <input {...inputProps} {...focusProps} ref={inputRef} />
+        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </label>
@@ -121,4 +154,4 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
  * A switch allows a user to turn a setting on or off.
  */
 const _Switch = /*#__PURE__*/ (forwardRef as forwardRefType)(Switch);
-export {_Switch as Switch};
+export { _Switch as Switch };
