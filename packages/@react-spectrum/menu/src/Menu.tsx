@@ -61,10 +61,11 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   useInteractOutside({
     ref: domRef,
     onInteractOutside: (e) => {
-      if (!isSubmenu && hasOpenSubmenu && !popoverContainerRef.current?.contains(e.target) && !trayContainerRef.current?.contains(e.target)) {
+      if (!popoverContainerRef.current?.contains(e.target) && !trayContainerRef.current?.contains(e.target)) {
         rootMenuTriggerState.close();
       }
-    }
+    },
+    isDisabled: isSubmenu || !hasOpenSubmenu
   });
 
   // TODO: add slide transition
