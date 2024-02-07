@@ -165,7 +165,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       addNode(newNode);
     }
 
-    // Walk up the tree and update each parent to refer to the new chilren.
+    // Walk up the tree and update each parent to refer to the new children.
     while (node.parentKey) {
       let nextParent = map.get(node.parentKey);
       let copy: TreeNode<T> = {
@@ -295,8 +295,10 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     },
     remove(...keys: Key[]) {
       let newItems = items;
+      let prevMap = map;
       for (let key of keys) {
-        newItems = updateTree(newItems, key, () => null, map);
+        newItems = updateTree(newItems, key, () => null, prevMap);
+        prevMap = newItems[1];
       }
 
       setItems(newItems);
@@ -315,7 +317,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     },
     move(key: Key, toParentKey: Key | null, index: number) {
       setItems(([items, originalMap]) => {
-        let node = map.get(key);
+        let node = originalMap.get(key);
         if (!node) {
           return items;
         }
@@ -330,14 +332,14 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         // If parentKey is null, insert into the root.
         if (toParentKey == null) {
           return [[
-            ...items.slice(0, index),
+            ...items[0].slice(0, index),
             movedNode,
-            ...items.slice(index)
-          ], originalMap];
+            ...items[0].slice(index)
+          ], items[1]];
         }
 
         // Otherwise, update the parent node and its ancestors.
-        return updateTree(items, toParentKey, parentNode => ({
+        return updateTree(items[0], toParentKey, parentNode => ({
           key: parentNode.key,
           parentKey: parentNode.parentKey,
           value: parentNode.value,
@@ -346,7 +348,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
             movedNode,
             ...parentNode.children.slice(index)
           ]
-        }), originalMap);
+        }), items[1]);
       });
     },
     update(oldKey: Key, newValue: T) {
@@ -358,8 +360,9 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           children: null
         };
 
-        node.children = buildTree(getChildren(newValue), node.key);
-        return node;
+        let tree = buildTree(getChildren(newValue), node.key);
+        node.children = tree[0];
+        return [node, tree[1]];
       }, originalMap));
     }
   };
