@@ -133,8 +133,11 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
-  function buildTree(initialItems: T[] = [], parentKey?: Key | null) {
-    let map = new Map<Key, TreeNode<T>>();
+  function buildTree(initialItems: T[] = [], parentKey?: Key | null, acc: Map<Key, TreeNode<T>>) {
+    let map = acc;
+    if (!acc) {
+      map = new Map<Key, TreeNode<T>>();
+    }
     return [initialItems.map(item => {
       let node: TreeNode<T> = {
         creation: creation++,
@@ -144,7 +147,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         children: null
       };
 
-      node.children = buildTree(getChildren(item), node.key);
+      node.children = buildTree(getChildren(item), node.key, map)[0];
       map.set(node.key, node);
       return node;
     }), map];
