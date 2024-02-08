@@ -128,8 +128,8 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   } = options;
 
   // We only want to compute this on initial render.
-  let [tree, setItems] = useState<{items: TreeNode<T>[], mappy: Map<Key, TreeNode<T>>}>(() => buildTree(initialItems));
-  let {items, mappy: map} = tree;
+  let [tree, setItems] = useState<{items: TreeNode<T>[], nodeMap: Map<Key, TreeNode<T>>}>(() => buildTree(initialItems));
+  let {items, nodeMap} = tree;
 
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
@@ -151,14 +151,14 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
         map.set(node.key, node);
         return node;
       }),
-      mappy: map
+      nodeMap: map
     };
   }
 
   function updateTree(items: TreeNode<T>[], key: Key, update: (node: TreeNode<T>) => TreeNode<T>, originalMap: Map<Key, TreeNode<T>>) {
     let node = originalMap.get(key);
     if (!node) {
-      return {items, mappy: originalMap};
+      return {items, nodeMap: originalMap};
     }
     let map = new Map<Key, TreeNode<T>>(originalMap);
 
@@ -205,25 +205,24 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
     return {
       items: items.map(item => {
-        // if (item.key === node.key) {
         if (item === node) {
           return newNode;
         }
 
         return item;
       }),
-      mappy: map
+      nodeMap: map
     };
   }
 
-  function addNode(node: TreeNode<T>, map) {
+  function addNode(node: TreeNode<T>, map: Map<Key, TreeNode<T>>) {
     map.set(node.key, node);
     for (let child of node.children) {
       addNode(child, map);
     }
   }
 
-  function deleteNode(node: TreeNode<T>, map) {
+  function deleteNode(node: TreeNode<T>, map: Map<Key, TreeNode<T>>) {
     map.delete(node.key);
     for (let child of node.children) {
       deleteNode(child, map);
@@ -235,21 +234,21 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     selectedKeys,
     setSelectedKeys,
     getItem(key: Key) {
-      return map.get(key);
+      return nodeMap.get(key);
     },
     insert(parentKey: Key | null, index: number, ...values: T[]) {
-      setItems(({items, mappy: originalMap}) => {
-        let {items: nodes, mappy: newMap} = buildTree(values, parentKey, originalMap);
+      setItems(({items, nodeMap: originalMap}) => {
+        let {items: newNodes, nodeMap: newMap} = buildTree(values, parentKey, originalMap);
 
         // If parentKey is null, insert into the root.
         if (parentKey == null) {
           return {
             items: [
               ...items.slice(0, index),
-              ...nodes,
+              ...newNodes,
               ...items.slice(index)
             ],
-            mappy: newMap
+            nodeMap: newMap
           };
         }
 
@@ -260,30 +259,30 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           value: parentNode.value,
           children: [
             ...parentNode.children.slice(0, index),
-            ...nodes,
+            ...newNodes,
             ...parentNode.children.slice(index)
           ]
         }), newMap);
       });
     },
     insertBefore(key: Key, ...values: T[]): void {
-      let node = map.get(key);
+      let node = nodeMap.get(key);
       if (!node) {
         return;
       }
 
-      let parentNode = map.get(node.parentKey);
+      let parentNode = nodeMap.get(node.parentKey);
       let nodes = parentNode ? parentNode.children : items;
       let index = nodes.indexOf(node);
       this.insert(parentNode?.key, index, ...values);
     },
     insertAfter(key: Key, ...values: T[]): void {
-      let node = map.get(key);
+      let node = nodeMap.get(key);
       if (!node) {
         return;
       }
 
-      let parentNode = map.get(node.parentKey);
+      let parentNode = nodeMap.get(node.parentKey);
       let nodes = parentNode ? parentNode.children : items;
       let index = nodes.indexOf(node);
       this.insert(parentNode?.key, index + 1, ...values);
@@ -295,7 +294,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       if (parentKey == null) {
         this.insert(null, items.length, ...values);
       } else {
-        let parentNode = map.get(parentKey);
+        let parentNode = nodeMap.get(parentKey);
         if (!parentNode) {
           return;
         }
@@ -305,19 +304,19 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     },
     remove(...keys: Key[]) {
       let newItems = items;
-      let prevMap = map;
-      let tree;
+      let prevMap = nodeMap;
+      let newTree;
       for (let key of keys) {
-        tree = updateTree(newItems, key, () => null, prevMap);
-        prevMap = tree.mappy;
-        newItems = tree.items;
+        newTree = updateTree(newItems, key, () => null, prevMap);
+        prevMap = newTree.nodeMap;
+        newItems = newTree.items;
       }
 
-      setItems(tree);
+      setItems(newTree);
 
       let selection = new Set(selectedKeys);
       for (let key of selectedKeys) {
-        if (!tree.mappy.has(key)) {
+        if (!newTree.nodeMap.has(key)) {
           selection.delete(key);
         }
       }
@@ -328,14 +327,14 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       this.remove(...selectedKeys);
     },
     move(key: Key, toParentKey: Key | null, index: number) {
-      setItems(({items, mappy: originalMap}) => {
+      setItems(({items, nodeMap: originalMap}) => {
         let node = originalMap.get(key);
         if (!node) {
-          return {items, mappy: originalMap};
+          return {items, nodeMap: originalMap};
         }
 
-        let tree = updateTree(items, key, () => null, originalMap);
-        let {items: newItems, mappy: map} = tree;
+        let {items: newItems, nodeMap: newMap} = updateTree(items, key, () => null, originalMap);
+
 
         const movedNode = {
           ...node,
@@ -348,7 +347,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
             ...newItems.slice(0, index),
             movedNode,
             ...newItems.slice(index)
-          ], mappy: map};
+          ], nodeMap: newMap};
         }
 
         // Otherwise, update the parent node and its ancestors.
@@ -361,11 +360,11 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
             movedNode,
             ...parentNode.children.slice(index)
           ]
-        }), map);
+        }), newMap);
       });
     },
     update(oldKey: Key, newValue: T) {
-      setItems(({items, mappy: originalMap}) => updateTree(items, oldKey, oldNode => {
+      setItems(({items, nodeMap: originalMap}) => updateTree(items, oldKey, oldNode => {
         let node: TreeNode<T> = {
           key: oldNode.key,
           parentKey: oldNode.parentKey,
