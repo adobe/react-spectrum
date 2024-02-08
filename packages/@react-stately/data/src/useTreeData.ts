@@ -11,7 +11,7 @@
  */
 
 import {Key} from '@react-types/shared';
-import {useMemo, useState} from 'react';
+import {useState} from 'react';
 
 export interface TreeOptions<T extends object> {
   /** Initial root items in the tree. */
