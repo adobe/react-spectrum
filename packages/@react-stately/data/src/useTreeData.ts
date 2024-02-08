@@ -299,6 +299,10 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
       }
     },
     remove(...keys: Key[]) {
+      if (keys.length === 0) {
+        return;
+      }
+
       let newItems = items;
       let prevMap = nodeMap;
       let newTree;
