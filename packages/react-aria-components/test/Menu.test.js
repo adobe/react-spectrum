@@ -508,7 +508,7 @@ describe('Menu', () => {
       expect(nestedSubmenuPopover).toHaveAttribute('data-trigger', 'SubmenuTrigger');
 
       // Click a nested submenu item
-      await user.click(getAllByRole('menuitem')[5]);
+      await user.click(getAllByRole('menuitem')[8]);
       expect(onAction).toHaveBeenLastCalledWith('work');
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
