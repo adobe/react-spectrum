@@ -128,16 +128,12 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
   } = options;
 
   // We only want to compute this on initial render.
-  let [tree, setItems] = useState<{items: TreeNode<T>[], nodeMap: Map<Key, TreeNode<T>>}>(() => buildTree(initialItems));
+  let [tree, setItems] = useState<{items: TreeNode<T>[], nodeMap: Map<Key, TreeNode<T>>}>(() => buildTree(initialItems, new Map()));
   let {items, nodeMap} = tree;
 
   let [selectedKeys, setSelectedKeys] = useState(new Set<Key>(initialSelectedKeys || []));
 
-  function buildTree(initialItems: T[] = [], parentKey?: Key | null, acc?: Map<Key, TreeNode<T>>) {
-    let map = acc;
-    if (!acc) {
-      map = new Map<Key, TreeNode<T>>();
-    }
+  function buildTree(initialItems: T[] = [], map: Map<Key, TreeNode<T>>, parentKey?: Key | null) {
     return {
       items: initialItems.map(item => {
         let node: TreeNode<T> = {
@@ -147,7 +143,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           children: null
         };
 
-        node.children = buildTree(getChildren(item), node.key, map).items;
+        node.children = buildTree(getChildren(item), map, node.key).items;
         map.set(node.key, node);
         return node;
       }),
@@ -238,8 +234,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
     },
     insert(parentKey: Key | null, index: number, ...values: T[]) {
       setItems(({items, nodeMap: originalMap}) => {
-        let map = new Map<Key, TreeNode<T>>(originalMap);
-        let {items: newNodes, nodeMap: newMap} = buildTree(values, parentKey, map);
+        let {items: newNodes, nodeMap: newMap} = buildTree(values, originalMap, parentKey);
 
         // If parentKey is null, insert into the root.
         if (parentKey == null) {
@@ -373,7 +368,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
           children: null
         };
 
-        let tree = buildTree(getChildren(newValue), node.key, originalMap);
+        let tree = buildTree(getChildren(newValue), originalMap, node.key);
         node.children = tree.items;
         return node;
       }, originalMap));
