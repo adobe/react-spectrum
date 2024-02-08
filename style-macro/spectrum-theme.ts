@@ -125,7 +125,9 @@ const baseSpacing = {
   4: '1rem', // 16px - spacing-300
   4.5: '1.125rem', // 18px
   5: '1.25rem', // 20px
+  5.5: '1.375rem', // 22px
   6: '1.5rem', // 24px - spacing-400
+  6.5: '1.625rem', // 26px
   7: '1.75rem', // 28px
   8: '2rem', // 32px - spacing-500
   9: '2.25rem', // 36px
