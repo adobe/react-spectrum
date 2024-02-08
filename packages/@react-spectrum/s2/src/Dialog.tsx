@@ -1,12 +1,14 @@
-import {Dialog as RACDialog, DialogProps as RACDialogProps, HeadingContext, Provider, composeRenderProps, HeaderContext} from 'react-aria-components';
+import {Dialog as RACDialog, DialogProps as RACDialogProps, Provider, composeRenderProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {ButtonGroupContext, ContentContext, FooterContext, ImageContext} from './Content';
+import {ButtonGroupContext, ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
 import {CloseButton} from './CloseButton';
 import {useMediaQuery} from '@react-spectrum/utils';
+import {createContext, useContext} from 'react';
+import {Modal} from './Modal';
 
-interface DialogProps extends RACDialogProps {
+export interface DialogProps extends RACDialogProps {
   isDismissable?: boolean,
-  size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
+  size?: 'S' | 'M' | 'L'
 }
 
 const image = style({
@@ -51,7 +53,36 @@ const buttonGroup = style({
   marginStart: 'auto'
 });
 
+interface DialogContextValue {
+  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  isDismissable?: boolean
+}
+
+export const DialogContext = createContext<DialogContextValue>({
+  type: 'modal',
+  isDismissable: false
+});
+
 export function Dialog(props: DialogProps) {
+  let ctx = useContext(DialogContext);
+  let isDismissable = ctx.isDismissable || props.isDismissable;
+
+  switch (ctx.type) {
+    case 'modal':
+    case 'fullscreen':
+    case 'fullscreenTakeover': {
+      let size = ctx.type === 'modal' ? props.size : ctx.type;
+      return (
+        <Modal size={size} isDismissable={isDismissable}>
+          <DialogInner {...props} {...ctx} isDismissable={isDismissable} />
+        </Modal>
+      );
+    }
+    // TODO: popover/tray
+  }
+}
+
+function DialogInner(props: DialogProps & DialogContextValue) {
   // The button group in fullscreen dialogs usually goes at the top, but
   // when the window is small, it moves to the bottom. We could do this in
   // pure CSS with display: none, but then the ref would go to two places.
@@ -60,7 +91,7 @@ export function Dialog(props: DialogProps) {
   // we don't evaluate the media query until JS loads.
   let isSmall = useMediaQuery('(max-width: 640px)');
   let buttonGroupPlacement = 'bottom';
-  if (props.size === 'fullscreen' || props.size === 'fullscreenTakeover') {
+  if (props.type === 'fullscreen' || props.type === 'fullscreenTakeover') {
     buttonGroupPlacement = isSmall ? 'bottom' : 'top';
   }
 
@@ -76,6 +107,7 @@ export function Dialog(props: DialogProps) {
       className={style({
         display: 'flex',
         flexDirection: 'column',
+        flex: 1,
         maxHeight: '[inherit]',
         boxSizing: 'border-box',
         outlineStyle: 'none',

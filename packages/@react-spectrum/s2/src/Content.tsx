@@ -1,5 +1,5 @@
-import {ForwardedRef, HTMLAttributes, ImgHTMLAttributes, createContext, forwardRef} from 'react';
-import {Heading as RACHeading, HeadingContext, HeadingProps, Header as RACHeader, useContextProps, HeaderContext} from 'react-aria-components';
+import {ForwardedRef, HTMLAttributes, ImgHTMLAttributes, createContext, forwardRef, useContext} from 'react';
+import {Heading as RACHeading, HeadingProps, Header as RACHeader, useContextProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {mergeStyles} from '../style-macro/runtime';
 
@@ -11,6 +11,8 @@ interface SlottedValue<T> {
 type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
 type ContextValue<T, E extends Element> = SlottedContextValue<WithRef<T, E>>;
 type WithRef<T, E> = T & {ref?: ForwardedRef<E>};
+
+export const HeadingContext = createContext<ContextValue<HeadingProps, HTMLHeadingElement>>({});
 
 // Wrapper around RAC Heading to unmount when hidden.
 function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
@@ -24,6 +26,8 @@ function Heading(props: HeadingProps, ref: ForwardedRef<HTMLHeadingElement>) {
 
 const _Heading = forwardRef(Heading);
 export {_Heading as Heading};
+
+export const HeaderContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
 function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
   [props, ref] = useContextProps(props, ref, HeaderContext);

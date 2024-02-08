@@ -1,6 +1,6 @@
 import {Modal as RACModal, ModalOverlay, ModalOverlayProps} from 'react-aria-components';
-import { style } from '../style-macro/spectrum-theme' with {type: 'macro'};
-import { keyframes } from '../style-macro/style-macro' with {type: 'macro'};
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
 
 interface ModalProps extends ModalOverlayProps {
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
@@ -57,6 +57,7 @@ export function Modal(props: ModalProps) {
         {...props}
         className={renderProps => style({
           display: 'flex',
+          flexDirection: 'column',
           borderRadius: {
             default: 'xl',
             size: {
@@ -111,7 +112,11 @@ export function Modal(props: ModalProps) {
             isEntering: 'normal',
             isExiting: 'reverse'
           },
-          animationFillMode: 'both'
+          animationFillMode: 'both',
+          // Transparent outline for WHCM.
+          outlineStyle: 'solid',
+          outlineWidth: 1,
+          outlineColor: 'transparent'
         })({...renderProps, size: props.size || 'M'})} />
     </ModalOverlay>
   );
