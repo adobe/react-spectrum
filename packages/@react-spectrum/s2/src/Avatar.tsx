@@ -88,7 +88,7 @@ export function Avatar(props: AvatarStyleProps) {
   } = props;
   let {isFocusVisible, focusProps} = useFocusRing();
 
-  let SvgAvatar = !!generic ? genericAvatars[generic] : 'img';
+  let SvgAvatar = generic ? genericAvatars[generic] : 'img';
 
   return (
     <SvgAvatar

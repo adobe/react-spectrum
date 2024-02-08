@@ -96,30 +96,33 @@ const handle = style<RenderProps>({
     },
     isSelected: 'gray-25'
   },
-  transition: 'default',
-  transform: {
-    // In the default state, the handle is 8px smaller than the track. When selected it grows to 6px smaller than the track.
-    // Normally this could be calculated as a scale transform with (trackHeight - 8px) / trackHeight, however,
-    // CSS does not allow division with units. To solve this we use a 3d perspective transform. Perspective is the
-    // distance from the Z=0 plane to the viewer. Since we want to scale the handle by a fixed amount and we cannot divide
-    // by a value with units, we can set the Z translation to a fixed amount and change the perspective in order to achieve
-    // the desired effect. Given the following formula:
-    //
-    //   scale = perspective / (perspective - translateZ)
-    //
-    // and desired scale factors (accounting for the 2px border on each side of the track):
-    //
-    //   defaultScale = (trackHeight - 8px) / (trackHeight - 4px)
-    //   selectedScale = (trackHeight - 6px) / (trackHeight - 4px)
-    //
-    // we can solve for the perspective needed in each case where translateZ is hard coded to -4px:
-    //
-    //    defaultPerspective = trackHeight - 8px
-    //    selectedPerspective = 2 * (trackHeight - 6px)
-    default: 'perspective(calc(var(--trackHeight) - 8px)) translateZ(-4px)',
+  transition: 'default'
+});
+
+// Use an inline style to calculate the transform so we can combine it with the press scale.
+const transformStyle = ({isSelected}: SwitchRenderProps) => ({
+  // In the default state, the handle is 8px smaller than the track. When selected it grows to 6px smaller than the track.
+  // Normally this could be calculated as a scale transform with (trackHeight - 8px) / trackHeight, however,
+  // CSS does not allow division with units. To solve this we use a 3d perspective transform. Perspective is the
+  // distance from the Z=0 plane to the viewer. Since we want to scale the handle by a fixed amount and we cannot divide
+  // by a value with units, we can set the Z translation to a fixed amount and change the perspective in order to achieve
+  // the desired effect. Given the following formula:
+  //
+  //   scale = perspective / (perspective - translateZ)
+  //
+  // and desired scale factors (accounting for the 2px border on each side of the track):
+  //
+  //   defaultScale = (trackHeight - 8px) / (trackHeight - 4px)
+  //   selectedScale = (trackHeight - 6px) / (trackHeight - 4px)
+  //
+  // we can solve for the perspective needed in each case where translateZ is hard coded to -4px:
+  //
+  //    defaultPerspective = trackHeight - 8px
+  //    selectedPerspective = 2 * (trackHeight - 6px)
+  transform: isSelected
     // The selected state also translates the X position to the end of the track (minus the borders).
-    isSelected: 'translateX(calc(var(--trackWidth) - 100% - 4px)) perspective(calc(2 * (var(--trackHeight) - 6px))) translateZ(-4px)'
-  }
+    ? 'translateX(calc(var(--trackWidth) - 100% - 4px)) perspective(calc(2 * (var(--trackHeight) - 6px))) translateZ(-4px)'
+    : 'perspective(calc(var(--trackHeight) - 8px)) translateZ(-4px)'
 });
 
 export function Switch({children, ...props}: SwitchProps) {
@@ -141,7 +144,7 @@ export function Switch({children, ...props}: SwitchProps) {
               })}>
               <div
                 ref={handleRef}
-                style={pressScale(handleRef)(renderProps)}
+                style={pressScale(handleRef, transformStyle)(renderProps)}
                 className={handle(renderProps)} />
             </div>
           </CenterBaseline>

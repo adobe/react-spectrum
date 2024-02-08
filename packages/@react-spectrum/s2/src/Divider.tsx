@@ -60,7 +60,7 @@ export function Divider(props: DividerProps) {
               default: 1,
               size: {
                 S: 'px',
-                M: .5,
+                M: .5
               }
             }
           }
@@ -72,7 +72,7 @@ export function Divider(props: DividerProps) {
               default: 1,
               size: {
                 S: 'px',
-                M: .5,
+                M: .5
               }
             }
           }

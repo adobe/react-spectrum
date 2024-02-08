@@ -16,10 +16,10 @@ const meta: Meta<typeof Divider> = {
 
 export default meta;
 
-//className={style({color: 'neutral'})()}
 export const Example = {
   render: (args: any) => (
-    <section className={style({
+    <section
+      className={style({
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
