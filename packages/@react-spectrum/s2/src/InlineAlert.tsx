@@ -18,9 +18,11 @@ import {focusRing} from './style-utils' with {type: 'macro'};
 import InfoCircle from '../s2wf-icons/assets/react/s2IconInfoCircle20N';
 import {mergeStyles} from '../style-macro/runtime';
 import React, {ReactNode, useEffect, useRef} from 'react';
-import {SlotProvider, useDOMRef} from '@react-spectrum/utils';
+import {useDOMRef} from '@react-spectrum/utils';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {useFocusRing} from 'react-aria';
+import {Provider, HeadingContext} from 'react-aria-components';
+import {ContentContext} from './Content';
 
 export interface SpectrumInlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
   /**
@@ -93,7 +95,7 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
         style: {
           border: 'gray-25',
           subtleFill: 'notice-200',
-          boldFill: 'notice' // TODO: check with design since this doesn't pass contrast in dark mode
+          boldFill: 'notice'
         }
       },
       negative: {
@@ -119,14 +121,21 @@ const icon = style<InlineStylesProps>({
   fill: {
     default: {
       variant: {
-        informative: 'blue-800', // TODO: update semantic aliases for icon colors after devon's PR is merged in 
-        positive: 'green-700',
-        notice: 'orange-700',
-        negative: 'red-800'
+        informative: 'informative',
+        positive: 'positive',
+        notice: 'notice',
+        negative: 'negative'
       }
     },
     style: {
-      boldFill: 'transparent-white-900'
+      boldFill: {
+        variant: {
+          informative: 'white',
+          positive: 'white',
+          notice: 'black',
+          negative: 'white'
+        }
+      }
     },
     forcedColors: 'ButtonText'
   }
@@ -152,6 +161,39 @@ let ICONS = {
   neutral: undefined
 };
 
+const heading = style<InlineStylesProps>({
+  marginTop: 0, 
+  color: {
+    style: {
+      border: 'gray-900',
+      subtleFill: 'gray-900',
+      boldFill: {
+        default: 'white',
+        variant: {
+          notice: 'black'
+        }
+      }
+    }
+  }, 
+  gridArea: 'heading'
+});
+
+const content = style<InlineStylesProps>({
+  color: {
+    style: {
+      border: 'gray-900',
+      subtleFill: 'gray-800',
+      boldFill: {
+        default: 'white',
+        variant: {
+          notice: 'black'
+        }
+      }
+    }
+  },
+  gridArea: 'content'
+});
+
 function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
@@ -161,30 +203,6 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
   } = props;
 
   let domRef = useDOMRef(ref);
-
-  let slots = {
-    heading: {UNSAFE_className: style({
-      marginTop: 0, 
-      color: {
-        style: {
-          border: 'gray-900',
-          subtleFill: 'gray-900',
-          boldFill: 'transparent-white-900'
-        }
-      }, 
-      gridArea: 'heading'})({variant, style: styleFill})
-    },
-    content: {UNSAFE_className: style({
-      color: {
-        style: {
-          border: 'gray-900',
-          subtleFill: 'gray-800',
-          boldFill: 'transparent-white-800'
-        } 
-      },
-      gridArea: 'content'})({variant, style: styleFill})
-    }
-  };
 
   let Icon = null;
   let iconAlt = '';
@@ -216,13 +234,17 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
         isFocusVisible
       }))}>
       <div 
-        className={grid({...props})}>
-        <SlotProvider slots={slots}>
+        className={grid(props)}>
+        <Provider 
+          values={[
+            [HeadingContext, {className: heading({variant, style: styleFill})}],
+            [ContentContext, {className: content({variant, style: styleFill})}]
+          ]}>
           {Icon && <Icon
-            className={icon({...props})}
+            className={icon(props)}
             aria-label={iconAlt} />}
           {children}
-        </SlotProvider>
+        </Provider>
       </div>
     </div>
   );
