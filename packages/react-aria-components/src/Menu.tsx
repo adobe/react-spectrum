@@ -14,7 +14,7 @@
 import {AriaMenuProps, FocusScope, mergeProps, useFocusRing, useMenu, useMenuItem, useMenuSection, useMenuTrigger} from 'react-aria';
 import {BaseCollection, CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
 import {MenuTriggerProps as BaseMenuTriggerProps, Node, TreeState, useMenuTriggerState, useTreeState} from 'react-stately';
-import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot} from './utils';
+import {ContextValue, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, useContextProps, useRenderProps, useSlot, useSlottedContext} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef, useResizeObserver} from '@react-aria/utils';
 import {Header} from './Header';
 import {Key, LinkDOMProps} from '@react-types/shared';
@@ -346,6 +346,7 @@ interface MenuItemTriggerInnerProps<T> {
 
 function MenuItemTriggerInner<T>({item, popover, parentMenuRef, delay}: MenuItemTriggerInnerProps<T>) {
   let state = useContext(MenuStateContext)!;
+  let popoverContext = useSlottedContext(PopoverContext)!;
   let ref = useObjectRef<any>(item.props.ref);
   let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: item.key}, rootMenuTriggerState);
@@ -396,6 +397,7 @@ function MenuItemTriggerInner<T>({item, popover, parentMenuRef, delay}: MenuItem
           trigger: 'SubmenuTrigger',
           triggerRef: ref,
           placement: 'end top',
+          UNSTABLE_portalContainer: popoverContext.UNSTABLE_portalContainer || undefined,
           ...popoverProps
         }]
       ]}>
