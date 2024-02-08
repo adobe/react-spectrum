@@ -11,17 +11,18 @@ import {BlogPostLayout, Hero} from '@react-spectrum/docs';
 export default BlogPostLayout;
 
 ---
-description: In this release ADD MORE
+description: In this release, we're excited to launch a Tailwind CSS starter kit for all React Aria Components, removing "use client" from our packages, and fixing plenty of bugs!
 
 date: 2024-02-07
 ---
 
 # February 07, 2024 Release
 
-Welcome to the first release of the new year! ADD MORE
+Welcome to the first release of the new year! We are excited that in addition to the downloadable Storybook starter kit for React Aria Components, a downloadable Tailwind CSS starter kit will also be available complete with support for dark mode, high contrast mode, and all UI states. 
 
-As always, huge thanks to everyone in our community for their feedback and contributions to make this release possible!
+Also, due to some complications, we are reverting the recent addition of "use client" from our packages which was intended to support Next.js server components. Instead, we are enforcing that RAC and RSP components be imported by a client component, and Next.js will throw a build time error if our package is found being imported from a server component. 
 
+As always, huge thanks and appreciation for everyone in our community for their feedback and contributions to make this release possible!
 
 ## Enhancements
 * Tailwind CSS starter kit - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5666) - [PR](https://github.com/adobe/react-spectrum/pull/5710)
@@ -72,12 +73,9 @@ As always, huge thanks to everyone in our community for their feedback and contr
 **React Spectrum Submenus (Alpha)**
 * Make submenu properly size itself to fill available room and improve overlay positioning when pinch zoomed - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5660)
 
-
 **React Aria Components Submenus (Alpha)**
 * RAC: Submenu support - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5648) -  [PR](https://github.com/adobe/react-spectrum/pull/5825) - [PR](https://github.com/adobe/react-spectrum/pull/5823)
 * Fix RAC submenu flipping - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5808)
-
-
 
 
 ## Released packages
