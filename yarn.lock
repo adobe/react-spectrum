@@ -21117,14 +21117,6 @@ react-dom@^18.0.0:
     loose-envify "^1.1.0"
     scheduler "^0.22.0"
 
-react-dom@^18.3.0-canary-2cd19ed1d-20240207:
-  version "18.3.0-canary-2cd19ed1d-20240207"
-  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.3.0-canary-2cd19ed1d-20240207.tgz#24759a8eb114bd8d3d543af332fb52d0872a7281"
-  integrity sha512-vo0KNb73J0vEGvmpr6uh+q/9579liEVU9wgVH3KbaZg4+Q7j6jcneXUvwp6Vf4xxLNNOI94CwcDcDvguLm6O6A==
-  dependencies:
-    loose-envify "^1.1.0"
-    scheduler "0.24.0-canary-2cd19ed1d-20240207"
-
 react-element-to-jsx-string@^14.3.4:
   version "14.3.4"
   resolved "https://registry.yarnpkg.com/react-element-to-jsx-string/-/react-element-to-jsx-string-14.3.4.tgz#709125bc72f06800b68f9f4db485f2c7d31218a8"
@@ -21210,13 +21202,6 @@ react@^18.0.0:
   version "18.1.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.1.0.tgz#6f8620382decb17fdc5cc223a115e2adbf104890"
   integrity sha512-4oL8ivCz5ZEPyclFQXaNksK3adutVS8l2xzZU0cqEFrE9Sb7fC0EFK5uEk74wIreL1DERyjvsU915j1pcT2uEQ==
-  dependencies:
-    loose-envify "^1.1.0"
-
-react@^18.3.0-canary-2cd19ed1d-20240207:
-  version "18.3.0-canary-2cd19ed1d-20240207"
-  resolved "https://registry.yarnpkg.com/react/-/react-18.3.0-canary-2cd19ed1d-20240207.tgz#9c1f481b71fde2d3ba3dbc38ab96e291bbb5c769"
-  integrity sha512-Fu00nsyCds3mH713G9/zjif2P3O8j49vNqmv1gMQjYi4SosmhOW2BlLOpOASwmHCpgPspYs8YTCDRAXkT+3o8g==
   dependencies:
     loose-envify "^1.1.0"
 
@@ -22154,13 +22139,6 @@ saxes@^6.0.0:
   integrity sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==
   dependencies:
     xmlchars "^2.2.0"
-
-scheduler@0.24.0-canary-2cd19ed1d-20240207:
-  version "0.24.0-canary-2cd19ed1d-20240207"
-  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.24.0-canary-2cd19ed1d-20240207.tgz#48075b97f1afbea3ed6caf1f70ac72576f25c07f"
-  integrity sha512-9+0q2o4q0Nhlk7rGJf6sL08+Zp2qilbUkWCMhmDXC/codtdrzE9WqrxakqrpHet7NmZigcVyPKJFSWH6kS+uLw==
-  dependencies:
-    loose-envify "^1.1.0"
 
 scheduler@^0.16.2:
   version "0.16.2"
