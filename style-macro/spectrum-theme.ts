@@ -86,6 +86,7 @@ const color = {
   ...simpleColorScale('transparent-black'),
 
   // High contrast mode.
+  Background: 'Background',
   ButtonBorder: 'ButtonBorder',
   ButtonFace: 'ButtonFace',
   ButtonText: 'ButtonText',
@@ -163,8 +164,8 @@ const spacing = {
   'pill': 'calc(self(height, self(minHeight)) / 2)'
 };
 
-const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch: string}} = 
-  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) => 
+const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch: string}} =
+  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
     [k, {default: v, touch: parseFloat(v) * 1.25 + v.match(/[^0-9.]+/)![0]}])
   ) as any;
 
@@ -552,7 +553,7 @@ export const style = createTheme({
           XL: fontSizeToken(tokens['font-size-300'])
         }
       }
-      // '3xl': '1.875rem', // 
+      // '3xl': '1.875rem', //
       // '4xl': '2.25rem',
       // '5xl': '3rem',
       // '6xl': '3.75rem',
@@ -664,6 +665,7 @@ export const style = createTheme({
     animationDelay: durationProperty,
     animationDirection: ['normal', 'reverse', 'alternate', 'alternate-reverse'] as const,
     animationFillMode: ['none', 'forwards', 'backwards', 'both'] as const,
+    animationIterationCount: createArbitraryProperty((value: string) => ({animationIterationCount: value})),
     animationTimingFunction: timingFunction,
 
     // layout
