@@ -40,7 +40,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     ...mergeProps(contextProps, props)
   };
   let domRef = useDOMRef(ref);
-  let popoverContainerRef = useRef(null);
+  let [popoverContainer, setPopoverContainer] = useState(null);
   let trayContainerRef = useRef(null);
   let state = useTreeState(completeProps);
   let submenuRef = useRef<HTMLDivElement>(null);
@@ -48,18 +48,20 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   let {styleProps} = useStyleProps(completeProps);
   useSyncRef(contextProps, domRef);
   let [leftOffset, setLeftOffset] = useState({left: 0});
+  let prevPopoverContainer = useRef(null);
   useEffect(() => {
-    if (popoverContainerRef.current) {
-      let {left} = popoverContainerRef.current.getBoundingClientRect();
+    if (popoverContainer && prevPopoverContainer.current !== popoverContainer && leftOffset.left === 0) {
+      prevPopoverContainer.current = popoverContainer;
+      let {left} = popoverContainer.getBoundingClientRect();
       setLeftOffset({left: -1 * left});
     }
-  }, []);
+  }, [leftOffset, popoverContainer]);
 
   let menuLevel = contextProps.submenuLevel ?? -1;
   let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel + 1]) != null;
   // TODO: add slide transition
   return (
-    <MenuStateContext.Provider value={{popoverContainerRef, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
+    <MenuStateContext.Provider value={{popoverContainer, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
       <div style={{height: hasOpenSubmenu ? '100%' : undefined}} ref={trayContainerRef} />
       <FocusScope>
         <TrayHeaderWrapper
@@ -106,7 +108,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
             })}
           </div>
         </TrayHeaderWrapper>
-        {rootMenuTriggerState?.isOpen && <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} /> }
+        {rootMenuTriggerState?.isOpen && <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: -5, ...leftOffset}} /> }
       </FocusScope>
     </MenuStateContext.Provider>
   );

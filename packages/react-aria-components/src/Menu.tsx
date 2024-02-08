@@ -91,7 +91,7 @@ export interface SubmenuTriggerProps {
 
 /**
  * A submenu trigger is used to wrap a submenu's trigger item and the submenu itself.
- * 
+ *
  * @version alpha
  */
 export function SubmenuTrigger(props: SubmenuTriggerProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
@@ -145,7 +145,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     collection,
     children: undefined
   });
-  let popoverContainerRef = useRef<HTMLDivElement>(null);
+  let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
   let {menuProps} = useMenu(props, state, ref);
 
   let children = useCachedChildren({
@@ -180,13 +180,12 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           values={[
             [MenuStateContext, state],
             [SeparatorContext, {elementType: 'div'}],
-            // eslint-disable-next-line rulesdir/pure-render
-            [PopoverContext, {UNSTABLE_portalContainer: popoverContainerRef.current || undefined}]
+            [PopoverContext, {UNSTABLE_portalContainer: popoverContainer || undefined}]
           ]}>
           {children}
         </Provider>
       </div>
-      <div ref={popoverContainerRef} style={{width: '100vw', position: 'absolute', top: 0}} />
+      <div ref={setPopoverContainer} style={{width: '100vw', position: 'absolute', top: 0}} />
     </FocusScope>
   );
 }
@@ -247,13 +246,13 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
 export interface MenuItemRenderProps extends ItemRenderProps {
   /**
    * Whether the item has a submenu.
-   * 
+   *
    * @selector [data-has-submenu]
    */
   hasSubmenu: boolean,
   /**
    * Whether the item's submenu is open.
-   * 
+   *
    * @selector [data-open]
    */
   isOpen: boolean

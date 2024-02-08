@@ -25,8 +25,7 @@ import {useViewportSize} from '@react-aria/utils';
 interface TrayProps extends AriaModalOverlayProps, StyleProps, Omit<OverlayProps, 'nodeRef' | 'shouldContainFocus'> {
   children: ReactNode,
   state: OverlayTriggerState,
-  isFixedHeight?: boolean,
-  container?: Element
+  isFixedHeight?: boolean
 }
 
 interface TrayWrapperProps extends TrayProps {
