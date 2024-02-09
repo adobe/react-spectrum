@@ -23,7 +23,7 @@ declare function forwardRef<T, P = {}>(
 
 export type forwardRefType = typeof forwardRef;
 
-export const defaultSlot = Symbol('default');
+export const DEFAULT_SLOT = Symbol('default');
 
 interface SlottedValue<T> {
   slots?: Record<string | symbol, T>
@@ -169,10 +169,10 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
   if (ctx && typeof ctx === 'object' && 'slots' in ctx && ctx.slots) {
     let availableSlots = new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`));
 
-    if (!slot && !ctx.slots[defaultSlot]) {
+    if (!slot && !ctx.slots[DEFAULT_SLOT]) {
       throw new Error(`A slot prop is required. Valid slot names are ${availableSlots}.`);
     }
-    let slotKey = slot || defaultSlot;
+    let slotKey = slot || DEFAULT_SLOT;
     if (!ctx.slots[slotKey]) {
       // @ts-ignore
       throw new Error(`Invalid slot "${slot}". Valid slot names are ${availableSlots}.`);
