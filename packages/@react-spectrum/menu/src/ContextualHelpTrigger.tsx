@@ -43,7 +43,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
 
   let triggerRef = useRef<HTMLLIElement>(null);
   let popoverRef = useRef(null);
-  let {popoverContainerRef, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
+  let {popoverContainer, trayContainerRef, rootMenuTriggerState, menu: parentMenuRef, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, {...rootMenuTriggerState, ...state});
   let submenuRef = unwrapDOMRef(popoverRef);
@@ -145,7 +145,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
         onDismissButtonPress={onDismissButtonPress}
         onBlurWithin={onBlurWithin}
-        container={popoverContainerRef.current}
+        container={popoverContainer}
         state={submenuTriggerState}
         ref={popoverRef}
         triggerRef={triggerRef}

@@ -36,7 +36,11 @@ export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLa
   /** A custom aria-label for the decrement button. If not provided, the localized string "Decrement" is used. */
   decrementAriaLabel?: string,
   /** A custom aria-label for the increment button. If not provided, the localized string "Increment" is used. */
-  incrementAriaLabel?: string
+  incrementAriaLabel?: string,
+  /**
+   * Enables or disables changing the value with scroll.
+   */
+  isWheelDisabled?: boolean
 }
 
 export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<number>, InputDOMProps, StyleProps, SpectrumLabelableProps {

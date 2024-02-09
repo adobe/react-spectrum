@@ -1679,7 +1679,7 @@ describe('DateRangePicker', function () {
 
           await user.tab({shift: true});
           await user.tab({shift: true});
-          await user.keyboard('2024[ArrowLeft]3[ArrowLeft]2');
+          await user.keyboard('2024[ArrowLeft]2[ArrowLeft]2');
           act(() => document.activeElement.blur());
 
           expect(group).not.toHaveAttribute('aria-describedby');

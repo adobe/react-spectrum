@@ -1213,8 +1213,8 @@ describe('MenuTrigger', function () {
         expect(document.activeElement).toBe(dialog);
 
         let underlay = tree.getByTestId('underlay', {hidden: true});
-        fireEvent.pointerDown(underlay);
-        fireEvent.pointerUp(underlay);
+        fireEvent.mouseDown(underlay);
+        fireEvent.mouseUp(underlay);
         act(() => {jest.runAllTimers();});
         act(() => {jest.runAllTimers();});
         expect(dialog).not.toBeInTheDocument();
