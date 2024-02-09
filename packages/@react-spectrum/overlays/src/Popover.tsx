@@ -117,14 +117,10 @@ const PopoverWrapper = forwardRef((props: PopoverWrapperProps, ref: RefObject<HT
   }, state);
   let {focusWithinProps} = useFocusWithin(props);
 
-  let onPointerDown = () => {
-    state.close();
-  };
-
   // Attach Transition's nodeRef to outermost wrapper for node.reflow: https://github.com/reactjs/react-transition-group/blob/c89f807067b32eea6f68fd6c622190d88ced82e2/src/Transition.js#L231
   return (
     <div ref={wrapperRef}>
-      {!isNonModal && <Underlay isTransparent {...mergeProps(underlayProps, {onPointerDown})} isOpen={isOpen} /> }
+      {!isNonModal && <Underlay isTransparent {...mergeProps(underlayProps)} isOpen={isOpen} /> }
       <div
         {...styleProps}
         {...mergeProps(popoverProps, focusWithinProps)}
