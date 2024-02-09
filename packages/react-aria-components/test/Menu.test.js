@@ -409,7 +409,7 @@ describe('Menu', () => {
       expect(triggerItem).toHaveAttribute('data-open', 'true');
       let submenu = getAllByRole('menu')[1];
       expect(submenu).toBeInTheDocument();
-      
+
       let submenuPopover = submenu.closest('.react-aria-Popover');
       expect(submenuPopover).toBeInTheDocument();
       expect(submenuPopover).toHaveAttribute('data-trigger', 'SubmenuTrigger');
@@ -482,7 +482,7 @@ describe('Menu', () => {
       expect(triggerItem).toHaveAttribute('data-open', 'true');
       let submenu = getAllByRole('menu')[1];
       expect(submenu).toBeInTheDocument();
-      
+
       let submenuPopover = submenu.closest('.react-aria-Popover');
       expect(submenuPopover).toBeInTheDocument();
       expect(submenuPopover).toHaveAttribute('data-trigger', 'SubmenuTrigger');
@@ -513,7 +513,7 @@ describe('Menu', () => {
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
     });
-    it('should close all submenus if underlay is clicked', async () => {
+    it('should close all submenus if interacting outside root submenu', async () => {
       let onAction = jest.fn();
       let {getByRole, getAllByRole, getByTestId} = render(
         <MenuTrigger>
@@ -575,7 +575,7 @@ describe('Menu', () => {
       expect(triggerItem).toHaveAttribute('data-open', 'true');
       let submenu = getAllByRole('menu')[1];
       expect(submenu).toBeInTheDocument();
-      
+
       let submenuPopover = submenu.closest('.react-aria-Popover');
       expect(submenuPopover).toBeInTheDocument();
       expect(submenuPopover).toHaveAttribute('data-trigger', 'SubmenuTrigger');
@@ -603,7 +603,7 @@ describe('Menu', () => {
       let underlay = getByTestId('underlay');
       expect(underlay).toBeInTheDocument();
       expect(underlay).toHaveAttribute('aria-hidden', 'true');
-      await user.click(underlay);
+      await user.click(document.body);
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
       expect(menu).not.toBeInTheDocument();
@@ -662,7 +662,7 @@ describe('Menu', () => {
       expect(triggerItem).toHaveAttribute('data-open', 'true');
       let submenu = getAllByRole('menu')[1];
       expect(submenu).toBeInTheDocument();
-      
+
       let submenuItems = within(submenu).getAllByRole('menuitem');
       expect(submenuItems).toHaveLength(3);
 
@@ -673,7 +673,7 @@ describe('Menu', () => {
       fireEvent.keyDown(document.activeElement, {key: 'Escape'});
       fireEvent.keyUp(document.activeElement, {key: 'Escape'});
       act(() => {jest.runAllTimers();});
-      
+
       expect(submenu).not.toBeInTheDocument();
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
@@ -740,7 +740,7 @@ describe('Menu', () => {
       expect(triggerItem).toHaveAttribute('data-open', 'true');
       let submenu = getAllByRole('menu')[1];
       expect(submenu).toBeInTheDocument();
-      
+
       let submenuItems = within(submenu).getAllByRole('menuitem');
       expect(submenuItems).toHaveLength(3);
 
@@ -760,11 +760,78 @@ describe('Menu', () => {
       fireEvent.keyDown(document.activeElement, {key: 'Escape'});
       fireEvent.keyUp(document.activeElement, {key: 'Escape'});
       act(() => {jest.runAllTimers();});
-      
+
       expect(nestedSubmenu).not.toBeInTheDocument();
       expect(submenu).not.toBeInTheDocument();
       expect(menu).not.toBeInTheDocument();
       expect(document.activeElement).toBe(button);
+    });
+    it('should not close the menu when clicking on a element within the submenu tree', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole, queryAllByRole} = render(
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <MenuItem id="open">Open</MenuItem>
+              <MenuItem id="rename">Rename…</MenuItem>
+              <MenuItem id="duplicate">Duplicate</MenuItem>
+              <SubmenuTrigger>
+                <MenuItem id="share">Share…</MenuItem>
+                <Popover>
+                  <Menu onAction={onAction}>
+                    <SubmenuTrigger>
+                      <MenuItem id="email">Email…</MenuItem>
+                      <Popover>
+                        <Menu onAction={onAction}>
+                          <MenuItem id="work">Work</MenuItem>
+                          <MenuItem id="personal">Personal</MenuItem>
+                        </Menu>
+                      </Popover>
+                    </SubmenuTrigger>
+                    <MenuItem id="sms">SMS</MenuItem>
+                    <MenuItem id="twitter">Twitter</MenuItem>
+                  </Menu>
+                </Popover>
+              </SubmenuTrigger>
+              <MenuItem id="delete">Delete…</MenuItem>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let button = getByRole('button');
+      expect(button).not.toHaveAttribute('data-pressed');
+
+      await user.click(button);
+      expect(button).toHaveAttribute('data-pressed');
+
+      let menu = getAllByRole('menu')[0];
+      expect(getAllByRole('menuitem')).toHaveLength(5);
+
+      let popover = menu.closest('.react-aria-Popover');
+      expect(popover).toBeInTheDocument();
+
+      let triggerItem = getAllByRole('menuitem')[3];
+
+      // Open the submenu
+      await user.pointer({target: triggerItem});
+      act(() => {jest.runAllTimers();});
+      let submenu = getAllByRole('menu')[1];
+      expect(submenu).toBeInTheDocument();
+
+      let nestedTriggerItem = getAllByRole('menuitem')[5];
+
+      // Click a nested submenu item trigger
+      await user.click(nestedTriggerItem);
+      act(() => {jest.runAllTimers();});
+      let menus = getAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(3);
+
+      await user.click(getAllByRole('menuitem')[6]);
+      menus = queryAllByRole('menu', {hidden: true});
+      expect(menus).toHaveLength(0);
+      expect(menu).not.toBeInTheDocument();
     });
   });
 });

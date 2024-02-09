@@ -20,8 +20,8 @@ import {Header} from './Header';
 import {Key, LinkDOMProps} from '@react-types/shared';
 import {KeyboardContext} from './Keyboard';
 import {OverlayTriggerStateContext} from './Dialog';
-import {PopoverContext} from './Popover';
-import {PressResponder, useHover} from '@react-aria/interactions';
+import {PopoverContext, PopoverProps} from './Popover';
+import {PressResponder, useHover, useInteractOutside} from '@react-aria/interactions';
 import React, {createContext, ForwardedRef, forwardRef, ReactElement, ReactNode, RefObject, useCallback, useContext, useRef, useState} from 'react';
 import {RootMenuTriggerState, UNSTABLE_useSubmenuTriggerState} from '@react-stately/menu';
 import {Separator, SeparatorContext} from './Separator';
@@ -147,6 +147,8 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
   });
   let [popoverContainer, setPopoverContainer] = useState<HTMLDivElement | null>(null);
   let {menuProps} = useMenu(props, state, ref);
+  let rootMenuTriggerState = useContext(RootMenuTriggerStateContext)!;
+  let popoverContext = useContext(PopoverContext)!;
 
   let children = useCachedChildren({
     items: state.collection,
@@ -164,6 +166,17 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
           throw new Error('Unsupported node type in Menu: ' + item.type);
       }
     }
+  });
+
+  let isSubmenu = (popoverContext as PopoverProps)?.trigger === 'SubmenuTrigger';
+  useInteractOutside({
+    ref,
+    onInteractOutside: (e) => {
+      if (rootMenuTriggerState && !popoverContainer?.contains(e.target as HTMLElement)) {
+        rootMenuTriggerState.close();
+      }
+    },
+    isDisabled: isSubmenu || rootMenuTriggerState?.UNSTABLE_expandedKeysStack.length === 0
   });
 
   return (

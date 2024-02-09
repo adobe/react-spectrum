@@ -24,6 +24,7 @@ import {mergeProps, useSlotId, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
+import {useInteractOutside} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenu} from '@react-aria/menu';
 import {useTreeState} from '@react-stately/tree';
@@ -59,6 +60,16 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
 
   let menuLevel = contextProps.submenuLevel ?? -1;
   let hasOpenSubmenu = state.collection.getItem(rootMenuTriggerState?.UNSTABLE_expandedKeysStack[menuLevel + 1]) != null;
+  useInteractOutside({
+    ref: domRef,
+    onInteractOutside: (e) => {
+      if (!popoverContainer?.contains(e.target) && !trayContainerRef.current?.contains(e.target)) {
+        rootMenuTriggerState.close();
+      }
+    },
+    isDisabled: isSubmenu || !hasOpenSubmenu
+  });
+
   // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainer, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
