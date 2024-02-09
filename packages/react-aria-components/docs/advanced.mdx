@@ -115,6 +115,46 @@ function Stepper({children}) {
 
 The slots provided by each built-in React Aria component are shown in the Anatomy section of their documentation.
 
+#### Default slot
+
+The default slot is used to provide props to a component without specifying a slot name. This approach allows you to assign a default slot to a component for its default use case and enables you to specify a slot name for a specific use case.
+
+This example shows a custom `Button` component with slots for an icon with no slot name or an icon with a slot named "end".
+
+```tsx
+import {Button, DEFAULT_SLOT} from 'react-aria-components';
+
+function MyCustomButton({children}) {
+  return (
+    <IconContext.Provider
+      value={{
+        slots: {
+          [DEFAULT_SLOT]: {
+            className: "start-icon"
+          },
+          end: {
+            className: "end-icon"
+          }
+        }
+      }}>
+        <Button>{children}</Button>
+    </IconContext.Provider>
+  );
+}
+
+<MyCustomButton>
+  {/* Consumes the props passed to the default slot */}
+  <BellIcon />
+  <Text>Icon + Label</Text>
+</MyCustomButton>
+
+<MyCustomButton>
+  <Text>Label + Icon</Text>
+  {/* Consumes the props passed to the "end" slot */}
+  <BellIcon slot="end" />
+</MyCustomButton>
+```
+
 ### Provider
 
 In complex components, you may need to provide many contexts. The `Provider` component is a utility that makes it easier to provide multiple React contexts without manually nesting them. This can be achieved by passing pairs of contexts and values as an array to the `values` prop.
