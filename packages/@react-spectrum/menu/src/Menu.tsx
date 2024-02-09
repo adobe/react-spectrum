@@ -63,7 +63,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
   useInteractOutside({
     ref: domRef,
     onInteractOutside: (e) => {
-      if (!popoverContainerRef.current?.contains(e.target) && !trayContainerRef.current?.contains(e.target)) {
+      if (!popoverContainer?.contains(e.target) && !trayContainerRef.current?.contains(e.target)) {
         rootMenuTriggerState.close();
       }
     },
