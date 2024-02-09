@@ -332,8 +332,9 @@ describe('Submenu', function () {
 
     // @ts-ignore
     let underlay = tree.getByTestId('underlay', {hidden: true});
-    fireEvent.pointerDown(underlay);
-    fireEvent.pointerUp(underlay);
+    // TODO: use mouseDown for now, adding installPointerEvents makes some the other tests break
+    fireEvent.mouseDown(underlay);
+    fireEvent.mouseUp(underlay);
     act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
     menus = tree.queryAllByRole('menu', {hidden: true});
