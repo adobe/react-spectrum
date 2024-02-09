@@ -232,12 +232,11 @@ describe('TimeField', function () {
 
         fireEvent.keyDown(document.activeElement, {key: 'Backspace'});
         fireEvent.keyUp(document.activeElement, {key: 'Backspace'});
-        expect(segments[0]).toHaveFocus();
+        expect(segments[1]).toHaveFocus();
         expect(segments[1]).toHaveAttribute('aria-valuetext', 'Empty');
         expect(timezone.getAttribute('aria-label')).toBe('time zone, ');
         expect(within(timezone).getByText('PDT')).toBeInTheDocument();
 
-        await user.tab();
         fireEvent.keyDown(document.activeElement, {key: 'ArrowUp'});
         fireEvent.keyUp(document.activeElement, {key: 'ArrowUp'});
         expect(segments[1]).toHaveAttribute('aria-valuetext', '00');
