@@ -367,10 +367,8 @@ function Option<T>({item}: OptionProps<T>) {
     ref
   );
 
-  let isHoverDisabled = (!states.allowsSelection && !states.hasAction) && 
-                        !(item.props.onHoverStart || item.props.onHoverChange || item.props.onHoverEnd);
   let {hoverProps, isHovered} = useHover({
-    isDisabled: isHoverDisabled,
+    isDisabled: !states.allowsSelection && !states.hasAction,
     onHoverStart: item.props.onHoverStart,
     onHoverChange: item.props.onHoverChange,
     onHoverEnd: item.props.onHoverEnd
