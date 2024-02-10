@@ -141,7 +141,8 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
           });
 
           let item = scrollRef.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
-          router.open(item, e);
+          let itemProps = manager.getItemProps(key);
+          router.open(item, e, itemProps.href, itemProps.routerOptions);
 
           return;
         }
