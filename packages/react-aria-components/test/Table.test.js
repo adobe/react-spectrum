@@ -488,6 +488,70 @@ describe('Table', () => {
     expect(document.activeElement).toBe(rows[3]);
   });
 
+  it('should support isDisabled prop on rows', async () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Table" selectionMode="multiple" disabledBehavior="all">
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow isDisabled>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+          <MyRow>
+            <Cell>Foo 3</Cell>
+            <Cell>Bar 3</Cell>
+            <Cell>Baz 3</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+    let items = getAllByRole('row');
+    expect(items[2]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[1]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[3]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <Table aria-label="Table" selectionMode="multiple" disabledBehavior="all">
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow onAction={onAction}>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+    let items = getAllByRole('row');
+    await user.click(items[1]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support sorting', () => {
     let {getAllByRole} = renderTable({
       tableProps: {sortDescriptor: {column: 'name', direction: 'ascending'}, onSortChange: jest.fn()},

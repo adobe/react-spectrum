@@ -60,7 +60,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (!this.disabledKeys.has(key) && (!pred || pred(item))) {
+      if (!this.disabledKeys.has(key) && !item?.props?.isDisabled && (!pred || pred(item))) {
         return key;
       }
 
@@ -75,7 +75,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (!this.disabledKeys.has(key) && (!pred || pred(item))) {
+      if (!this.disabledKeys.has(key) && !item?.props?.isDisabled && (!pred || pred(item))) {
         return key;
       }
 

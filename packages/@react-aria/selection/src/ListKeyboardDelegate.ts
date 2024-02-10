@@ -66,7 +66,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     key = this.collection.getKeyAfter(key);
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item.type === 'item' && !this.disabledKeys.has(key) && !item?.props?.isDisabled) {
         return key;
       }
 
@@ -80,7 +80,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     key = this.collection.getKeyBefore(key);
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item.type === 'item' && !this.disabledKeys.has(key) && !item?.props?.isDisabled) {
         return key;
       }
 
@@ -170,7 +170,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let key = this.collection.getFirstKey();
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item?.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item?.type === 'item' && !this.disabledKeys.has(key) && !item?.props?.isDisabled) {
         return key;
       }
 
@@ -184,7 +184,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let key = this.collection.getLastKey();
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item.type === 'item' && !this.disabledKeys.has(key) && !item?.props?.isDisabled) {
         return key;
       }
 
