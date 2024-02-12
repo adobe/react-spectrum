@@ -228,9 +228,7 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
   value?: T,
   /** A string representation of the item's contents, used for features like typeahead. */
-  textValue?: string,
-  /** An accessibility label for this item. */
-  'aria-label'?: string
+  textValue?: string
 }
 
 function GridListItem<T extends object>(props: GridListItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {

@@ -24,7 +24,7 @@ import {useLocale} from '@react-aria/i18n';
 
 interface SubmenuTriggerProps {
   /**
-   * The contents of the SubmenuTrigger - a Item and a Menu.
+   * The contents of the SubmenuTrigger - an Item and a Menu.
    */
   children: ReactElement[],
   targetKey: Key
@@ -40,7 +40,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
   } = props;
 
   let [menuTrigger, menu] = React.Children.toArray(children);
-  let {popoverContainerRef, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
+  let {popoverContainer, trayContainerRef, menu: parentMenuRef, submenu: menuRef, rootMenuTriggerState, state} = useMenuStateContext();
   let triggerNode = state.collection.getItem(targetKey);
   let submenuTriggerState = UNSTABLE_useSubmenuTriggerState({triggerKey: targetKey}, rootMenuTriggerState);
   let {submenuTriggerProps, submenuProps, popoverProps} = UNSTABLE_useSubmenuTrigger({
@@ -101,7 +101,7 @@ function SubmenuTrigger(props: SubmenuTriggerProps) {
         {...popoverProps}
         onDismissButtonPress={onDismissButtonPress}
         UNSAFE_className={classNames(styles, 'spectrum-Submenu-popover')}
-        container={popoverContainerRef.current}
+        container={popoverContainer}
         containerPadding={0}
         crossOffset={offset}
         offset={offset}

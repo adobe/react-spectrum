@@ -10,6 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
+// Mark as a client only package. This will cause a build time error if you try 
+// to import it from a React Server Component in a framework like Next.js.
+import 'client-only';
+
 export {Breadcrumbs, BreadcrumbsContext, Breadcrumb} from './Breadcrumbs';
 export {Button, ButtonContext} from './Button';
 export {Calendar, CalendarGrid, CalendarGridHeader, CalendarGridBody, CalendarHeaderCell, CalendarCell, RangeCalendar, CalendarContext, RangeCalendarContext, CalendarStateContext, RangeCalendarStateContext} from './Calendar';
@@ -33,7 +37,7 @@ export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
 export {ListBox, ListBoxItem, ListBoxContext, ListStateContext} from './ListBox';
-export {Menu, MenuItem, MenuTrigger, MenuContext, MenuStateContext} from './Menu';
+export {Menu, MenuItem, MenuTrigger, MenuContext, MenuStateContext, RootMenuTriggerStateContext, SubmenuTrigger} from './Menu';
 export {Meter, MeterContext} from './Meter';
 export {Modal, ModalOverlay, ModalContext} from './Modal';
 export {NumberField, NumberFieldContext, NumberFieldStateContext} from './NumberField';
@@ -80,7 +84,7 @@ export type {LabelProps} from './Label';
 export type {LinkProps} from './Link';
 export type {LinkRenderProps} from './Link';
 export type {ListBoxProps, ListBoxRenderProps, ListBoxItemProps, ListBoxItemRenderProps} from './ListBox';
-export type {MenuProps, MenuItemProps, MenuItemRenderProps, MenuTriggerProps} from './Menu';
+export type {MenuProps, MenuItemProps, MenuItemRenderProps, MenuTriggerProps, SubmenuTriggerProps} from './Menu';
 export type {MeterProps, MeterRenderProps} from './Meter';
 export type {ModalOverlayProps, ModalRenderProps} from './Modal';
 export type {NumberFieldProps, NumberFieldRenderProps} from './NumberField';
