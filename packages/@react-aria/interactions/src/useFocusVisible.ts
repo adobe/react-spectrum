@@ -193,8 +193,21 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
 };
 
 /**
+ * EXPERIMENTAL
  * Adds a window (i.e. iframe) to the list of windows that are being tracked for focus visible.
+ *
+ * Sometimes apps render portions of their tree into an iframe. In this case, we cannot accurately track if the focus
+ * is visible because we cannot see interactions inside the iframe. If you have this in your application's architecture,
+ * then this function will attach event listeners inside the iframe. You should call `addWindowFocusTracking` with an
+ * element from inside the window you wish to add. We'll retrieve the relevant elements based on that.
+ * Note, you do not need to call this for the default window, as we call it for you.
+ *
+ * When you are ready to stop listening, but you do not wish to unmount the iframe, you may call the cleanup function
+ * returned by `addWindowFocusTracking`. Otherwise, when you unmount the iframe, all listeners and state will be cleaned
+ * up automatically for you.
+ *
  * @param element @default document.body - The element provided will be used to get the window to add.
+ * @returns A function to remove the event listeners and cleanup the state.
  */
 export function addWindowFocusTracking(element?: HTMLElement | null): () => void {
   const documentObject = getOwnerDocument(element);
