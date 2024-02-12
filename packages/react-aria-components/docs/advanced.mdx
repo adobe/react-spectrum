@@ -122,37 +122,35 @@ The default slot is used to provide props to a component without specifying a sl
 This example shows a custom `Button` component with slots for an icon with no slot name or an icon with a slot named "end".
 
 ```tsx
-import {Button, DEFAULT_SLOT} from 'react-aria-components';
+import {Button, ButtonContext, DEFAULT_SLOT} from 'react-aria-components';
 
-function MyCustomButton({children}) {
+function MyCustomComponent({children}) {
   return (
-    <IconContext.Provider
+    <ButtonContext.Provider
       value={{
         slots: {
           [DEFAULT_SLOT]: {
-            className: "start-icon"
+            className: "left-button"
           },
           end: {
-            className: "end-icon"
+            className: "right-button"
           }
         }
       }}>
-        <Button>{children}</Button>
-    </IconContext.Provider>
+      {children}
+    </ButtonContext.Provider>
   );
 }
 
-<MyCustomButton>
+<MyCustomComponent>
   {/* Consumes the props passed to the default slot */}
-  <BellIcon />
-  <Text>Icon + Label</Text>
-</MyCustomButton>
+  <Button>Click me</Button>
+</MyCustomComponent>
 
-<MyCustomButton>
-  <Text>Label + Icon</Text>
+<MyCustomComponent>
   {/* Consumes the props passed to the "end" slot */}
-  <BellIcon slot="end" />
-</MyCustomButton>
+  <Button slot="end">Click me</Button>
+</MyCustomComponent>
 ```
 
 ### Provider
