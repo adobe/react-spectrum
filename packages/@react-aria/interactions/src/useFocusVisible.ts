@@ -193,7 +193,7 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
 };
 
 /**
- * Adds a window (ie iframe) to the list of windows that are being tracked for focus visible.
+ * Adds a window (i.e. iframe) to the list of windows that are being tracked for focus visible.
  * @param element @default document.body - The element provided will be used to get the window to add.
  */
 export function addWindowFocusTracking(element?: HTMLElement | null): () => void {
