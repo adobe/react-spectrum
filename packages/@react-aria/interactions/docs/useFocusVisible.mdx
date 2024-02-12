@@ -74,3 +74,17 @@ function Example() {
   );
 }
 ```
+
+## Advanced
+
+<PageDescription>{docs.exports.addWindowFocusTracking.description}</PageDescription>
+<FunctionAPI function={docs.exports.addWindowFocusTracking} links={docs.links} />
+<br />
+Sometimes apps render portions of their tree into an iframe. In this case, we cannot accurately track if the focus
+is visible because we cannot see interactions inside the iframe. If you have this in your application's architecture
+then we have a function which can attach our event listeners inside the iframe, `addWindowFocusTracking`. Note, this
+is not needed for your default window, as we call it for you.
+
+When you are ready to stop listening, but you do not wish to unmount the iframe, you may call the cleanup function
+returned by `addWindowFocusTracking`. Otherwise, when you unmount the iframe, all listeners and state will be cleaned
+up automatically for you.
