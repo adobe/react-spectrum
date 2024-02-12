@@ -47,7 +47,7 @@ As always, huge thanks and appreciation for everyone in our community for their 
 * Fix RAC progressbar and meter overflow - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5706)
 * Allow passing readonly array to Locales plugin [@stefanprobst](https://github.com/stefanprobst) - [PR](https://github.com/adobe/react-spectrum/pull/5646)
 * Fix width overflow issue for quiet picker [@pr7prashant](https://github.com/pr7prashant) - [PR](https://github.com/adobe/react-spectrum/pull/5592)
-* Remove use client from types declaration files in build - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5649)
+* Remove "use client" from types declaration files in build - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5649)
 * Fix onPress when used with onKeyUp on a button - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5554)
 * Add isInvalid to DateInputRenderProps - [@alex-mcgovern](https://github.com/alex-mcgovern) - [PR](https://github.com/adobe/react-spectrum/pull/5670)
 * Fix ComboBox async loading runtime error - [@sookmax](https://github.com/sookmax) - [PR](https://github.com/adobe/react-spectrum/pull/5689)
@@ -59,6 +59,8 @@ As always, huge thanks and appreciation for everyone in our community for their 
 * Add missing aria-labels to ListBox, Menu, Tabs items in RAC - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5796)
 * Add sort compare to useListData - [@piecyk](https://github.com/piecyk) - [PR](https://github.com/adobe/react-spectrum/pull/5773)
 * Remove "use client" and mark packages as client-only instead - [@devongovett](https://github.com/devongovett) - [PR](https://github.com/adobe/react-spectrum/pull/5826)
+* Pure render for tree data - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5835)
+* Make long content in Quiet Picker properly truncate when in fixed width container - [@freddiejbawden](https://github.com/freddiejbawden) - [PR](https://github.com/adobe/react-spectrum/pull/5813)
 
 ## Docs
 * Improve Breadcrumb example links - [@ktabors](https://github.com/ktabors) - [PR](https://github.com/adobe/react-spectrum/pull/5533)
@@ -74,8 +76,11 @@ As always, huge thanks and appreciation for everyone in our community for their 
 * Make submenu properly size itself to fill available room and improve overlay positioning when pinch zoomed - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5660)
 
 **React Aria Components Submenus (Alpha)**
-* Submenu support for RAC - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5648) -  [PR](https://github.com/adobe/react-spectrum/pull/5825) - [PR](https://github.com/adobe/react-spectrum/pull/5823)
+* Submenu support for RAC - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5648)
+* Fix Submenu chevron from getting hidden - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5823)
+* Export RootMenuTriggerContext and SubmenuTriggerProps - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5825)
 * Fix RAC submenu flipping - [@LFDanLu](https://github.com/LFDanLu) - [PR](https://github.com/adobe/react-spectrum/pull/5808)
-
+* Ensure 2 renders for Submenu portal container - [@snowystinger](https://github.com/snowystinger) - [PR](https://github.com/adobe/react-spectrum/pull/5828)
+* Close all Submenus when interacting outside of root submenu - [@reidbarber](https://github.com/reidbarber) - [PR](https://github.com/adobe/react-spectrum/pull/5827)
 
 ## Released packages
