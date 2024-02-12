@@ -209,7 +209,7 @@ export function addWindowFocusTracking(element?: HTMLElement | null): () => void
   }
 
   return () => tearDownWindowFocusTracking(element, loadListener);
-};
+}
 
 // Server-side rendering does not have the document object defined
 // eslint-disable-next-line no-restricted-globals
