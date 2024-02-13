@@ -59,7 +59,8 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     menuTrigger = 'input',
     allowsEmptyCollection = false,
     allowsCustomValue,
-    shouldCloseOnBlur = true
+    shouldCloseOnBlur = true,
+    onOpenChange: propsOnOpenChange
   } = props;
 
   let [showAllItems, setShowAllItems] = useState(false);
@@ -103,9 +104,14 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
   // Track what action is attempting to open the menu
   let menuOpenTrigger = useRef('focus' as MenuTriggerAction);
+
+  let [bla, setBlah] = useState(false);
+
   let onOpenChange = (open: boolean) => {
-    if (props.onOpenChange) {
-      props.onOpenChange(open, open ? menuOpenTrigger.current : undefined);
+    // TODO queue up an onOpenChange call when the menu truely opens
+    setBlah(open);
+    if (props.onOpenChange && !open) {
+      props.onOpenChange(open, undefined);
     }
 
     selectionManager.setFocused(open);
@@ -120,7 +126,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     // Prevent open operations from triggering if there is nothing to display
     // Also prevent open operations from triggering if items are uncontrolled but defaultItems is empty, even if displayAllItems is true.
     // This is to prevent comboboxes with empty defaultItems from opening but allow controlled items comboboxes to open even if the inital list is empty (assumption is user will provide swap the empty list with a base list via onOpenChange returning `menuTrigger` manual)
-    if (allowsEmptyCollection || filteredCollection.size > 0 || (displayAllItems && originalCollection.size > 0) || props.items) {
+    if (filteredCollection.size > 0 || (displayAllItems && originalCollection.size > 0) || props.items) {
       if (displayAllItems && !triggerState.isOpen && props.items === undefined) {
         // Show all items if menu is manually opened. Only care about this if items are undefined
         setShowAllItems(true);
@@ -135,7 +141,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
   let toggle = (focusStrategy: FocusStrategy = null, trigger?: MenuTriggerAction) => {
     let displayAllItems = (trigger === 'manual' || (trigger === 'focus' && menuTrigger === 'focus'));
     // If the menu is closed and there is nothing to display, early return so toggle isn't called to prevent extraneous onOpenChange
-    if (!(allowsEmptyCollection || filteredCollection.size > 0 || (displayAllItems && originalCollection.size > 0) || props.items) && !triggerState.isOpen) {
+    if (!(filteredCollection.size > 0 || (displayAllItems && originalCollection.size > 0) || props.items) && !triggerState.isOpen) {
       return;
     }
 
@@ -183,14 +189,15 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
   let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
   let lastSelectedKeyText = useRef(collection.getItem(selectedKey)?.textValue ?? '');
+  let lastCollectionRef = useRef(filteredCollection);
   // intentional omit dependency array, want this to happen on every render
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Open and close menu automatically when the input value changes if the input is focused,
     // and there are items in the collection or allowEmptyCollection is true.
     if (
+      !bla &&
       isFocused &&
-      (filteredCollection.size > 0 || allowsEmptyCollection) &&
       !triggerState.isOpen &&
       inputValue !== lastValue &&
       menuTrigger !== 'manual'
@@ -201,6 +208,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     // Close the menu if the collection is empty. Don't close menu if filtered collection size is 0
     // but we are currently showing all items via button press
     if (
+      triggerState.isOpen && (allowsEmptyCollection || lastCollectionRef.current.size > 0) &&
       !showAllItems &&
       !allowsEmptyCollection &&
       triggerState.isOpen &&
@@ -255,6 +263,7 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
 
     lastSelectedKey.current = selectedKey;
     lastSelectedKeyText.current = selectedItemText;
+    lastCollectionRef.current = collection;
   });
 
   let validation = useFormValidationState({
@@ -349,9 +358,20 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     }
   }, [triggerState.isOpen, originalCollection, filteredCollection, showAllItems, lastCollection]);
 
+  useEffect(() => {
+    // TODO: this is getting called too many times if the user types rapidly, we'll want to add a condition that
+    // skips this logic if we are already going to call onOpenChange with true
+    if (bla === true && triggerState.isOpen && (allowsEmptyCollection || displayedCollection.size > 0)) {
+      propsOnOpenChange(true, menuOpenTrigger.current)
+      setBlah(false);
+    }
+  }, [bla, triggerState.isOpen, allowsEmptyCollection, displayedCollection, propsOnOpenChange]);
+
+
   return {
     ...validation,
     ...triggerState,
+    isOpen: triggerState.isOpen && (allowsEmptyCollection || displayedCollection.size > 0),
     focusStrategy,
     toggle,
     open,
