@@ -926,6 +926,15 @@ describe('Menu', () => {
 
       expect(groupsInSubmenu[1]).toHaveAttribute('aria-labelledby');
       expect(document.getElementById(groupsInSubmenu[1].getAttribute('aria-labelledby'))).toHaveTextContent('Personal');
+
+      await user.click(submenuItems[0]);
+      act(() => {jest.runAllTimers();});
+
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onAction).toHaveBeenLastCalledWith('email-work');
+
+      expect(submenu).not.toBeInTheDocument();
+      expect(menu).not.toBeInTheDocument();
     });
   });
 });
