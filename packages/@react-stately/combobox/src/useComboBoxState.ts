@@ -187,6 +187,12 @@ export function useComboBoxState<T extends object>(props: ComboBoxStateOptions<T
     setInputValue(itemText);
   };
 
+
+  // TODO: perhaps the final approach should be to put the onOpenChange callback logic completely into the useEffect below (or at least the calls for onOpenChange for when the menu opens)
+  // On every render we can calcuate if a menu would be shown or not by checking "triggerState.isOpen && (allowsEmptyCollection || displayedCollection.size > 0)," and if that flips
+  // to true then we call onOpenChange with true. Will need to track the previous "triggerState.isOpen && (allowsEmptyCollection || displayedCollection.size > 0)" state so we only call it once
+  // and don't call if it is already open.
+
   let lastSelectedKey = useRef(props.selectedKey ?? props.defaultSelectedKey ?? null);
   let lastSelectedKeyText = useRef(collection.getItem(selectedKey)?.textValue ?? '');
   let lastCollectionRef = useRef(filteredCollection);
