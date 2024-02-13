@@ -835,7 +835,7 @@ describe('Menu', () => {
     });
     it('should support sections', async () => {
       let onAction = jest.fn();
-      let {getByRole, getAllByRole, queryAllByRole} = render(
+      let {getByRole, getAllByRole} = render(
         <MenuTrigger>
           <Button aria-label="Menu">☰</Button>
           <Popover>
