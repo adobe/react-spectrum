@@ -226,8 +226,12 @@ function MyMenuButton<T extends object>({label, children, ...props}: MyMenuButto
 }
 
 function MyItem(props: MenuItemProps) {
+  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
-    <MenuItem {...props} className={({isFocused, isSelected, isOpen}) => `my-item ${isFocused ? 'focused' : ''} ${isOpen ? 'open' : ''}`}>
+    <MenuItem 
+      {...props}
+      textValue={textValue}
+      className={({isFocused, isSelected, isOpen}) => `my-item ${isFocused ? 'focused' : ''} ${isOpen ? 'open' : ''}`}>
       {({hasSubmenu}) => (
         <>
           {props.children}
@@ -700,13 +704,13 @@ import {Menu, Popover, SubmenuTrigger} from 'react-aria-components';
   <MyItem>Copy</MyItem>
   <MyItem>Delete</MyItem>
   <SubmenuTrigger>
-    <MyItem aria-label="Share">Share</MyItem>
+    <MyItem>Share</MyItem>
     <Popover>
       <Menu>
         <MyItem>SMS</MyItem>
         <MyItem>Twitter</MyItem>
         <SubmenuTrigger>
-          <MyItem aria-label="Email">Email</MyItem>
+          <MyItem>Email</MyItem>
           <Popover>
             <Menu>
               <MyItem>Work</MyItem>
@@ -746,7 +750,7 @@ let items = [
     if (item.children) {
       return (
         <SubmenuTrigger>
-          <MyItem key={item.name} aria-label={item.name}>{item.name}</MyItem>
+          <MyItem key={item.name}>{item.name}</MyItem>
           <Popover>
             <Menu items={item.children}>
               {(item) => renderSubmenu(item)}
