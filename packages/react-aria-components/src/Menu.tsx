@@ -211,7 +211,7 @@ export {_Menu as Menu};
 
 interface MenuSectionProps<T> extends StyleProps {
   section: Node<T>,
-  parentMenuRef: RefObject<HTMLElement>
+  parentMenuRef: RefObject<HTMLDivElement>
 }
 
 function MenuSection<T>({section, className, style, parentMenuRef, ...otherProps}: MenuSectionProps<T>) {
