@@ -833,5 +833,108 @@ describe('Menu', () => {
       expect(menus).toHaveLength(0);
       expect(menu).not.toBeInTheDocument();
     });
+    it('should support sections', async () => {
+      let onAction = jest.fn();
+      let {getByRole, getAllByRole} = render(
+        <MenuTrigger>
+          <Button aria-label="Menu">☰</Button>
+          <Popover>
+            <Menu onAction={onAction}>
+              <Section>
+                <Header>Actions</Header>
+                <MenuItem id="open">Open</MenuItem>
+                <MenuItem id="rename">Rename…</MenuItem>
+                <MenuItem id="duplicate">Duplicate</MenuItem>
+                <SubmenuTrigger>
+                  <MenuItem id="share">Share…</MenuItem>
+                  <Popover>
+                    <Menu onAction={onAction}>
+                      <Section>
+                        <Header>Work</Header>
+                        <MenuItem id="email-work">Email</MenuItem>
+                        <MenuItem id="sms-work">SMS</MenuItem>
+                        <MenuItem id="twitter-work">Twitter</MenuItem>
+                      </Section>
+                      <Separator />
+                      <Section>
+                        <Header>Personal</Header>
+                        <MenuItem id="email-personal">Email</MenuItem>
+                        <MenuItem id="sms-personal">SMS</MenuItem>
+                        <MenuItem id="twitter-personal">Twitter</MenuItem>
+                      </Section>
+                    </Menu>
+                  </Popover>
+                </SubmenuTrigger>
+                <MenuItem id="delete">Delete…</MenuItem>
+              </Section>
+              <Separator />
+              <Section>
+                <Header>Settings</Header>
+                <MenuItem id="user">User Settings</MenuItem>
+                <MenuItem id="system">System Settings</MenuItem>
+              </Section>
+            </Menu>
+          </Popover>
+        </MenuTrigger>
+      );
+
+      let button = getByRole('button');
+      expect(button).not.toHaveAttribute('data-pressed');
+
+      await user.click(button);
+      expect(button).toHaveAttribute('data-pressed');
+
+      let groups = getAllByRole('group');
+      expect(groups).toHaveLength(2);
+
+      expect(groups[0]).toHaveClass('react-aria-Section');
+      expect(groups[1]).toHaveClass('react-aria-Section');
+
+      expect(groups[0]).toHaveAttribute('aria-labelledby');
+      expect(document.getElementById(groups[0].getAttribute('aria-labelledby'))).toHaveTextContent('Actions');
+
+      expect(groups[1]).toHaveAttribute('aria-labelledby');
+      expect(document.getElementById(groups[1].getAttribute('aria-labelledby'))).toHaveTextContent('Settings');
+
+      let menu = getAllByRole('menu')[0];
+      expect(getAllByRole('menuitem')).toHaveLength(7);
+
+      let popover = menu.closest('.react-aria-Popover');
+      expect(popover).toBeInTheDocument();
+      expect(popover).toHaveAttribute('data-trigger', 'MenuTrigger');
+
+      let triggerItem = getAllByRole('menuitem')[3];
+      expect(triggerItem).toHaveTextContent('Share…');
+
+      // Open the submenu
+      await user.pointer({target: triggerItem});
+      act(() => {jest.runAllTimers();});
+      let submenu = getAllByRole('menu')[1];
+      expect(submenu).toBeInTheDocument();
+
+      let submenuItems = within(submenu).getAllByRole('menuitem');
+      expect(submenuItems).toHaveLength(6);
+
+      let groupsInSubmenu = within(submenu).getAllByRole('group');
+      expect(groupsInSubmenu).toHaveLength(2);
+
+      expect(groupsInSubmenu[0]).toHaveClass('react-aria-Section');
+      expect(groupsInSubmenu[1]).toHaveClass('react-aria-Section');
+
+      expect(groupsInSubmenu[0]).toHaveAttribute('aria-labelledby');
+      expect(document.getElementById(groupsInSubmenu[0].getAttribute('aria-labelledby'))).toHaveTextContent('Work');
+
+      expect(groupsInSubmenu[1]).toHaveAttribute('aria-labelledby');
+      expect(document.getElementById(groupsInSubmenu[1].getAttribute('aria-labelledby'))).toHaveTextContent('Personal');
+
+      await user.click(submenuItems[0]);
+      act(() => {jest.runAllTimers();});
+
+      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(onAction).toHaveBeenLastCalledWith('email-work');
+
+      expect(submenu).not.toBeInTheDocument();
+      expect(menu).not.toBeInTheDocument();
+    });
   });
 });
