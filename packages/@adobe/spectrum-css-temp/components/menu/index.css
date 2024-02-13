@@ -251,6 +251,7 @@ governing permissions and limitations under the License.
   justify-self: end;
   align-self: flex-start;
   padding-inline-start: var(--spectrum-global-dimension-size-300);
+  box-sizing: content-box;
 }
 
 .spectrum-Menu-wrapper {

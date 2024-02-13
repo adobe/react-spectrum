@@ -362,7 +362,7 @@ function Option<T>({item}: OptionProps<T>) {
   let state = useContext(ListStateContext)!;
   let {dragAndDropHooks, dragState, dropState} = useContext(DragAndDropContext)!;
   let {optionProps, labelProps, descriptionProps, ...states} = useOption(
-    {key: item.key},
+    {key: item.key, 'aria-label': item.props?.['aria-label']},
     state,
     ref
   );

@@ -30,7 +30,12 @@ export interface AriaSubmenuTriggerProps {
   /** Ref of the menu that contains the submenu trigger. */
   parentMenuRef: RefObject<HTMLElement>,
   /** Ref of the submenu opened by the submenu trigger. */
-  submenuRef: RefObject<HTMLElement>
+  submenuRef: RefObject<HTMLElement>,
+  /**
+   * The delay time in milliseconds for the submenu to appear after hovering over the trigger.
+   * @default 200
+   */
+  delay?: number
 }
 
 interface SubmenuTriggerProps extends AriaMenuItemProps {
@@ -59,7 +64,7 @@ export interface SubmenuTriggerAria<T> {
  * @param ref - Ref to the submenu trigger element.
  */
 export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, state: SubmenuTriggerState, ref: RefObject<FocusableElement>): SubmenuTriggerAria<T> {
-  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, node} = props;
+  let {parentMenuRef, submenuRef, type = 'menu', isDisabled, node, delay = 200} = props;
   let submenuTriggerId = useId();
   let overlayId = useId();
   let {direction} = useLocale();
@@ -188,7 +193,7 @@ export function UNSTABLE_useSubmenuTrigger<T>(props: AriaSubmenuTriggerProps, st
         if (!openTimeout.current) {
           openTimeout.current = setTimeout(() => {
             onSubmenuOpen();
-          }, 200);
+          }, delay);
         }
       } else if (!isHovered) {
         cancelOpenTimeout();

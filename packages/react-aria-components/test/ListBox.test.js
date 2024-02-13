@@ -86,6 +86,14 @@ describe('ListBox', () => {
     }
   });
 
+  it('should support aria-label on the listbox items', () => {
+    let {getAllByRole} = renderListbox({}, {'aria-label': 'test'});
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('aria-label', 'test');
+    }
+  });
+
   it('should support the slot prop', () => {
     let {getByRole} = render(
       <ListBoxContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>

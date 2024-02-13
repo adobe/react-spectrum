@@ -1,6 +1,6 @@
 {
   "name": "@react-aria/calendar",
-  "version": "3.5.4",
+  "version": "3.5.5",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -23,10 +23,10 @@
   },
   "dependencies": {
     "@internationalized/date": "^3.5.1",
-    "@react-aria/i18n": "^3.10.0",
-    "@react-aria/interactions": "^3.20.1",
+    "@react-aria/i18n": "^3.10.1",
+    "@react-aria/interactions": "^3.21.0",
     "@react-aria/live-announcer": "^3.3.1",
-    "@react-aria/utils": "^3.23.0",
+    "@react-aria/utils": "^3.23.1",
     "@react-stately/calendar": "^3.4.3",
     "@react-types/button": "^3.9.1",
     "@react-types/calendar": "^3.4.3",

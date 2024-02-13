@@ -214,12 +214,12 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
   useResizeObserver({
     ref: objectRef,
     onResize() {
-      setWidth(objectRef.current?.clientWidth);
+      setWidth(objectRef.current?.clientWidth ?? 0);
     }
   });
 
   useLayoutEffect(() => {
-    setWidth(objectRef.current?.clientWidth);
+    setWidth(objectRef.current?.clientWidth ?? 0);
   }, [objectRef]);
 
   let ctx = useMemo(() => ({
@@ -940,6 +940,9 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
   let objectRef = useObjectRef(ref);
   let [cursor, setCursor] = useState('');
   useEffect(() => {
+    if (!objectRef.current) {
+      return;
+    }
     let style = window.getComputedStyle(objectRef.current);
     setCursor(style.cursor);
   }, [objectRef, resizableDirection]);
