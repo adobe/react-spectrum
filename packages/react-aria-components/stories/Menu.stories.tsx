@@ -188,6 +188,50 @@ export const SubmenuDisabledExample = (args) => (
   </MenuTrigger>
 );
 
+export const SubmenuSectionsExample = (args) => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <Section className={styles.group}>
+          <Header style={{fontSize: '1.2em'}}>Section 1</Header>
+          <MyMenuItem>Foo</MyMenuItem>
+          <SubmenuTrigger {...args}>
+            <MyMenuItem id="Bar">Bar</MyMenuItem>
+            <Popover className={styles.popover}>
+              <Menu className={styles.menu} onAction={action('onAction')}>
+                <Section className={styles.group}>
+                  <Header style={{fontSize: '1.2em'}}>Submenu Section 1</Header>
+                  <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+                  <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
+                  <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
+                  <MyMenuItem href="https://google.com">Google</MyMenuItem>
+                </Section>
+                <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+                <Section className={styles.group}>
+                  <Header style={{fontSize: '1.2em'}}>Submenu Section 2</Header>
+                  <MyMenuItem id="Submenu Foo 2">Submenu Foo</MyMenuItem>
+                  <MyMenuItem id="Submenu Bar 2">Submenu Bar</MyMenuItem>
+                  <MyMenuItem id="Submenu Baz 2">Submenu Baz</MyMenuItem>
+                </Section>
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+          <MyMenuItem>Baz</MyMenuItem>
+          <MyMenuItem href="https://google.com">Google</MyMenuItem>
+        </Section>
+        <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+        <Section className={styles.group}>
+          <Header style={{fontSize: '1.2em'}}>Section 2</Header>
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
+        </Section>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+
 let submenuArgs = {
   args: {
     delay: 200
