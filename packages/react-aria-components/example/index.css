@@ -66,6 +66,8 @@ html {
 .menu, .group {
   padding: 0;
   list-style: none;
+  overflow-y: auto;
+  max-height: inherit;
 }
 
 .item {
@@ -94,8 +96,17 @@ html {
   }
 }
 
+.item[data-disabled] {
+  opacity: 0.4;
+}
+
 .item.focused {
   background: gray;
+  color: white;
+}
+
+.item.open:not(.focused) {
+  background: lightslategray;
   color: white;
 }
 
@@ -107,6 +118,20 @@ html {
 .item.selected {
   background: purple;
   color: white;
+}
+
+.item[data-has-submenu]::after {
+  content: '›';
+  content: '›' / '';
+  justify-self: end;
+}
+
+.popover[data-trigger=SubmenuTrigger][data-placement="right"] {
+  margin-left: -8px;
+}
+
+.popover[data-trigger=SubmenuTrigger][data-placement="left"] {
+  margin-right: -8px;
 }
 
 .wrapper {

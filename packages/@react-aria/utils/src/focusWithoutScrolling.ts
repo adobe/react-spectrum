@@ -38,12 +38,12 @@ export function focusWithoutScrolling(element: FocusableElement) {
   }
 }
 
-let supportsPreventScrollCached: boolean = null;
+let supportsPreventScrollCached: boolean | null = null;
 function supportsPreventScroll() {
   if (supportsPreventScrollCached == null) {
     supportsPreventScrollCached = false;
     try {
-      var focusElem = document.createElement('div');
+      let focusElem = document.createElement('div');
       focusElem.focus({
         get preventScroll() {
           supportsPreventScrollCached = true;
@@ -59,9 +59,9 @@ function supportsPreventScroll() {
 }
 
 function getScrollableElements(element: FocusableElement): ScrollableElement[] {
-  var parent = element.parentNode;
-  var scrollableElements: ScrollableElement[] = [];
-  var rootScrollingElement = document.scrollingElement || document.documentElement;
+  let parent = element.parentNode;
+  let scrollableElements: ScrollableElement[] = [];
+  let rootScrollingElement = document.scrollingElement || document.documentElement;
 
   while (parent instanceof HTMLElement && parent !== rootScrollingElement) {
     if (

@@ -940,6 +940,7 @@ export function FocusExample(args = {}) {
     getKey: (item) => item.name,
     getChildren: (item:{name:string, children?:{name:string, children?:{name:string}[]}[]}) => item.children
   });
+
   let [dialog, setDialog] = useState(null);
   let ref = useRef(null);
   return (

@@ -69,7 +69,7 @@ export interface StyleProps {
   style?: CSSProperties
 }
 
-export interface DOMProps extends StyleProps {
+export interface DOMProps extends StyleProps, SharedDOMProps {
   /** The children of the component. */
   children?: ReactNode
 }
