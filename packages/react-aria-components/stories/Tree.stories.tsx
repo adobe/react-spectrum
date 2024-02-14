@@ -78,7 +78,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
 };
 
 export const TreeExampleStatic = (args) => (
-  <Tree defaultExpandedKeys="all" className={styles.tree} {...args} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+  <Tree  className={styles.tree} {...args} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
@@ -145,7 +145,9 @@ TreeExampleStatic.story = {
   },
   parameters: {
     description: {
-      data: 'Note that the last two items are just to test bare minimum TreeItem and thus dont have the checkbox or any of the other contents that the other items have. The last item tests the isFocused renderProp'}}
+      data: 'Note that the last two items are just to test bare minimum TreeItem and thus dont have the checkbox or any of the other contents that the other items have. The last item tests the isFocused renderProp'
+    }
+  }
 };
 
 let rows = [
@@ -243,7 +245,8 @@ export const WithActions = {
   args: {
     onAction: action('onAction'),
     ...TreeExampleDynamic.story.args
-  }
+  },
+  name: 'Tree with actions'
 };
 
 export const WithLinks = (args: TreeProps<unknown>) => (
@@ -257,7 +260,13 @@ export const WithLinks = (args: TreeProps<unknown>) => (
 );
 
 WithLinks.story = {
-  ...TreeExampleDynamic.story
+  ...TreeExampleDynamic.story,
+  name: 'Tree with links',
+  parameters: {
+    description: {
+      data: 'every tree item should link to adobe.com'
+    }
+  }
 };
 
 interface ItemType {

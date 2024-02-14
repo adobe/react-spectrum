@@ -347,7 +347,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   let level = rowProps['aria-level'];
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection
+    isDisabled: !states.allowsSelection && !states.hasAction
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
