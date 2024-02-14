@@ -70,7 +70,13 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
   },
   color: {
     default: 'neutral',
-    isSelected: 'gray-25',
+    isSelected: {
+      default: 'gray-25',
+      isEmphasized: {
+        default: 'gray-25',
+        dark: 'gray-1000'
+      }
+    },
     isDisabled: 'disabled',
     staticColor: {
       white: {

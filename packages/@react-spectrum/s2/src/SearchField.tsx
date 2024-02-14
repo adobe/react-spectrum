@@ -1,16 +1,13 @@
 import {
-  Button,
   SearchField as AriaSearchField,
   SearchFieldProps as AriaSearchFieldProps,
-  ValidationResult,
-  ButtonProps,
-  ButtonRenderProps
+  ValidationResult
 } from 'react-aria-components';
+import {ClearButton} from './ClearButton';
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {field} from './style-utils' with {type: 'macro'};
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import SearchIcon from '../s2wf-icons/assets/react/s2IconSearch20N.js';
-import CrossIcon from '../ui-icons/S2_CrossSize100.svg';
 import {Icon} from './Icon';
 import {raw} from '../style-macro/style-macro' with {type: 'macro'};
 import {useContext} from 'react';
@@ -36,15 +33,22 @@ export function SearchField(props: SearchFieldProps) {
     labelAlign = 'start',
     ...searchFieldProps
   } = props;
-  
+
   return (
-    <AriaSearchField 
+    <AriaSearchField
       {...searchFieldProps}
       className={style({
         ...field(),
         '--iconMargin': {
           type: 'marginTop',
           value: '[calc(-2 / 14 * 1em)]'
+        },
+        color: {
+          default: 'neutral',
+          isDisabled: {
+            default: 'disabled',
+            forcedColors: 'GrayText'
+          }
         }
       })({
         size: props.size,
@@ -61,7 +65,7 @@ export function SearchField(props: SearchFieldProps) {
           necessityIndicator={necessityIndicator}>
           {label}
         </FieldLabel>
-        <FieldGroup 
+        <FieldGroup
           isDisabled={isDisabled}
           size={props.size}
           className={style({
@@ -75,7 +79,7 @@ export function SearchField(props: SearchFieldProps) {
           <Input className={raw('&::-webkit-search-cancel-button { display: none }')} />
           {!isEmpty && <ClearButton size={props.size} isDisabled={isDisabled} />}
         </FieldGroup>
-        <HelpText 
+        <HelpText
           size={props.size}
           isDisabled={isDisabled}
           isInvalid={isInvalid}
@@ -87,50 +91,3 @@ export function SearchField(props: SearchFieldProps) {
   );
 }
 
-interface ClearButtonStyleProps {
-  size?: 'S' | 'M' | 'L' | 'XL'
-}
-
-interface ClearButtonRenderProps extends ButtonRenderProps, ClearButtonStyleProps {}
-interface ClearButtonProps extends ButtonProps, ClearButtonStyleProps {}
-
-function ClearButton(props: ClearButtonProps) {
-  return (
-    <Button 
-      {...props}
-      className={renderProps => style<ClearButtonRenderProps>({
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 'full',
-        width: 'control',
-        borderStyle: 'none',
-        backgroundColor: 'transparent',
-        transition: 'default',
-        padding: 0,
-        color: {
-          default: 'neutral',
-          isDisabled: {
-            default: 'disabled',
-            forcedColors: 'GrayText'
-          }
-        },
-        '--iconPrimary': {
-          type: 'fill',
-          value: 'currentColor'
-        }
-      })({...renderProps, size: props.size || 'M'})}>
-      <CrossIcon 
-        className={style({
-          size: {
-            size: {
-              S: 2,
-              M: 2,
-              L: 2.5,
-              XL: 2.5 // ???
-            }
-          }
-        })({size: props.size})} />
-    </Button>
-  );
-}

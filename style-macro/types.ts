@@ -41,8 +41,8 @@ type Merge<T> = T extends any ? T : never;
 
 // Pre-compute value types for all theme properties ahead of time.
 export type ThemeProperties<T extends Theme> = Merge<{
-  [K in keyof T['properties'] | keyof T['shorthands']]: K extends keyof T['properties'] 
-    ? Merge<PropertyValue2<T['properties'][K]>> 
+  [K in keyof T['properties'] | keyof T['shorthands']]: K extends keyof T['properties']
+    ? Merge<PropertyValue2<T['properties'][K]>>
     : Merge<PropertyValue2<T['properties'][T['shorthands'][K][0]]>>
 }>;
 
@@ -88,7 +88,7 @@ type UnknownConditions<V extends Value, C extends string> = {
   [name: string]: StyleValue<V, C, never> | VariantMap<string, V, C, never>
 };
 
-type BooleanConditionName = `is${Capitalize<string>}`;
+type BooleanConditionName = `is${Capitalize<string>}` | `allows${Capitalize<string>}`;
 type RenderPropConditions<V extends Value, C extends string, R extends RenderProps<string>> = {
   [K in keyof R]?: K extends BooleanConditionName ? StyleValue<V, C, R> : VariantMap<R[K], V, C, R>
 };

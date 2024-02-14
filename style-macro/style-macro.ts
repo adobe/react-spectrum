@@ -149,7 +149,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       }
       css += generateName(i, true);
     }
-    css += ';\n\n';    
+    css += ';\n\n';
 
     // Generate JS and CSS for each rule.
     let js = 'let rules = "";\n';
@@ -190,7 +190,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
       // Later conditions in parent rules override conditions in child rules.
       let subSkipConditions = new Set([...skipConditions, ...Object.keys(value)]);
-      
+
       // Skip the default condition if we're already filtering by one of the other possible conditions.
       // For example, if someone specifies `dark: 'gray-400'`, only include the dark version of `gray-400` from the theme.
       let skipDefault = Object.keys(value).some(k => currentConditions.has(k));
@@ -223,7 +223,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         // Otherwise, use the current maximum of the parent and current priorities.
         let rulePriority = isCSSCondition ? priority : parentPriority;
 
-        if (condition === 'default' || isCSSCondition || /^is[A-Z]/.test(condition)) {
+        if (condition === 'default' || isCSSCondition || /^is[A-Z]/.test(condition) || /^allows[A-Z]/.test(condition)) {
           let subConditions = currentConditions;
           if (isCSSCondition) {
             subConditions = new Set([...currentConditions, condition]);
