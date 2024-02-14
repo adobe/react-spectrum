@@ -125,7 +125,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
-  let onAction = data?.onAction ? () => data.onAction(key) : undefined;
+  let onAction = data?.onAction ? () => data?.onAction?.(key) : undefined;
   let {itemProps, isPressed, isFocused, hasAction, allowsSelection} = useSelectableItem({
     selectionManager: state.selectionManager,
     key,
