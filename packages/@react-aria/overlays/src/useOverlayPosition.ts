@@ -13,7 +13,7 @@
 import {calculatePosition, PositionResult} from './calculatePosition';
 import {DOMAttributes} from '@react-types/shared';
 import {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';
-import {RefObject, useCallback, useRef, useState} from 'react';
+import {RefObject, useCallback, useEffect, useRef, useState} from 'react';
 import {useCloseOnScroll} from './useCloseOnScroll';
 import {useLayoutEffect, useResizeObserver} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
@@ -124,9 +124,29 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
     arrowSize
   ];
 
+  // Note, the position freezing breaks if body sizes itself dynamicly with the visual viewport but that might
+  // just be a non-realistic use case
+  // Upon opening a overlay, record the current visual viewport scale so we can freeze the overlay styles
+  let lastScale = useRef(visualViewport?.scale);
+  useEffect(() => {
+    if (isOpen) {
+      lastScale.current = visualViewport?.scale;
+    }
+  }, [isOpen]);
+
   let updatePosition = useCallback(() => {
     if (shouldUpdatePosition === false || !isOpen || !overlayRef.current || !targetRef.current || !scrollRef.current || !boundaryElement) {
       return;
+    }
+
+    if (visualViewport?.scale !== lastScale.current) {
+      return;
+    }
+
+    // Always reset the overlay's previous max height if not defined by the user so that we can compensate for
+    // RAC collections populating after a second render and properly set a correct max height + positioning when it populates.
+    if (!maxHeight && overlayRef.current) {
+      (overlayRef.current as HTMLElement).style.maxHeight = 'none';
     }
 
     let position = calculatePosition({
@@ -183,12 +203,19 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       updatePosition();
     };
 
-    visualViewport?.addEventListener('resize', onResize);
-    visualViewport?.addEventListener('scroll', onResize);
+    // Only reposition the overlay if a scroll event happens immediately as a result of resize (aka the virtual keyboard has appears)
+    // We don't want to reposition the overlay if the user has pinch zoomed in and is scrolling the viewport around.
+    let onScroll = () => {
+      if (isResizing.current) {
+        onResize();
+      }
+    };
 
+    visualViewport?.addEventListener('resize', onResize);
+    visualViewport?.addEventListener('scroll', onScroll);
     return () => {
       visualViewport?.removeEventListener('resize', onResize);
-      visualViewport?.removeEventListener('scroll', onResize);
+      visualViewport?.removeEventListener('scroll', onScroll);
     };
   }, [updatePosition]);
 

@@ -56,23 +56,34 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     }
   }
 
+  let rectStyles = {
+    top: layoutInfo.rect.y - (parent ? parent.rect.y : 0),
+    [xProperty]: layoutInfo.rect.x - (parent ? parent.rect.x : 0),
+    width: layoutInfo.rect.width,
+    height: layoutInfo.rect.height
+  };
+
+  // Get rid of any non finite values since they aren't valid css values
+  Object.entries(rectStyles).forEach(([key, value]) => {
+    if (!Number.isFinite(value)) {
+      rectStyles[key] = undefined;
+    }
+  });
+
   let style: CSSProperties = {
     position: layoutInfo.isSticky ? 'sticky' : 'absolute',
     // Sticky elements are positioned in normal document flow. Display inline-block so that they don't push other sticky columns onto the following rows.
     display: layoutInfo.isSticky ? 'inline-block' : undefined,
     overflow: layoutInfo.allowOverflow ? 'visible' : 'hidden',
-    top: layoutInfo.rect.y - (parent ? parent.rect.y : 0),
-    [xProperty]: layoutInfo.rect.x - (parent ? parent.rect.x : 0),
     transition: 'all',
     WebkitTransition: 'all',
     WebkitTransitionDuration: 'inherit',
     transitionDuration: 'inherit',
-    width: layoutInfo.rect.width,
-    height: layoutInfo.rect.height,
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,
-    contain: 'size layout style'
+    contain: 'size layout style',
+    ...rectStyles
   };
 
   cache.set(layoutInfo, style);

@@ -21,8 +21,8 @@ import {MutableRefObject, useMemo, useRef} from 'react';
  * @returns An object ref that updates the given ref.
  * @see https://reactjs.org/docs/forwarding-refs.html
  */
-export function useObjectRef<T>(forwardedRef?: ((instance: T | null) => void) | MutableRefObject<T | null> | null): MutableRefObject<T> {
-  const objRef = useRef<T>();
+export function useObjectRef<T>(forwardedRef?: ((instance: T | null) => void) | MutableRefObject<T | null> | null): MutableRefObject<T | null> {
+  const objRef: MutableRefObject<T | null> = useRef<T>(null);
   return useMemo(() => ({
     get current() {
       return objRef.current;

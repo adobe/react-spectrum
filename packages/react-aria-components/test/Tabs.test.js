@@ -79,6 +79,21 @@ describe('Tabs', () => {
     expect(tabpanel).toHaveAttribute('data-test', 'tabpanel');
   });
 
+  it('should support aria props on the tabs', () => {
+    let {getAllByRole} = renderTabs({}, {}, {
+      'aria-label': 'label',
+      'aria-labelledby': 'labelledby',
+      'aria-describedby': 'describedby',
+      'aria-details': 'details'
+    }, {});
+    for (let tab of getAllByRole('tab')) {
+      expect(tab).toHaveAttribute('aria-label', 'label');
+      expect(tab).toHaveAttribute('aria-labelledby', 'labelledby');
+      expect(tab).toHaveAttribute('aria-describedby', 'describedby');
+      expect(tab).toHaveAttribute('aria-details', 'details');
+    }
+  });
+
   it('should support render props', () => {
     let {getByRole} = render(
       <Tabs orientation="horizontal">
