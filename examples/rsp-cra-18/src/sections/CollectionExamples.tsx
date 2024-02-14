@@ -1,4 +1,5 @@
 import {ActionMenu, Flex, Divider, Item, ListBox, ListView, MenuTrigger, Menu, ActionButton, TableBody, TableView, Row, Cell, TableHeader, Column, TagGroup} from '@adobe/react-spectrum';
+import {SubmenuTrigger} from "@react-spectrum/menu";
 
 export default function CollectionExamples(){
     return (
@@ -36,6 +37,21 @@ export default function CollectionExamples(){
               <Item key="copy">Copy</Item>
               <Item key="paste">Paste</Item>
               <Item key="replace">Replace</Item>
+              <SubmenuTrigger>
+                <Item key="share">Share</Item>
+                <Menu onAction={(key) => alert(key)}>
+                  <Item key="copy-link">Copy Link</Item>
+                  <SubmenuTrigger>
+                    <Item key="email">Email</Item>
+                    <Menu onAction={(key) => alert(key)}>
+                      <Item key="attachment">Email as Attachment</Item>
+                      <Item key="link">Email as Link</Item>
+                    </Menu>
+                  </SubmenuTrigger>
+                  <Item key="sms">SMS</Item>
+                </Menu>
+              </SubmenuTrigger>
+              <Item key="delete">Delete</Item>
             </Menu>
           </MenuTrigger>
           <TableView
