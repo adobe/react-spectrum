@@ -487,7 +487,7 @@ describe('Tree', () => {
   describe('expanding and collapsing', () => {
     // TODO check the various grid aria/data attributes here
     // check attribtues for the chevron here and other tree grid related properties
-    // TODO: test disabledBehavior and ex
+    // TODO: test disabledBehavior and expanding
   });
 
 
@@ -499,6 +499,57 @@ describe('Tree', () => {
   describe('keyboard interactions', () => {
     // TODO test navigation between the interactive elements in the tree
     // test expand and collapse
+  });
+
+  describe('empty state', () => {
+    it('should allow the user to tab to the empty tree', async () => {
+      let {getAllByRole, getByRole} = render(
+        <Tree
+          className={({isEmpty, isFocused, isFocusVisible}) => `isEmpty: ${isEmpty}, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}
+          aria-label="test empty tree"
+          items={[]}
+          renderEmptyState={({isEmpty, isFocused, isFocusVisible}) => <span>{`Nothing in tree, isEmpty: ${isEmpty}, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}</span>}>
+          {(item) => (
+            <TreeItem>
+              <TreeItemContent>
+                {item.title}
+              </TreeItemContent>
+            </TreeItem>
+          )}
+        </Tree>
+      );
+
+      let tree = getByRole('treegrid');
+      expect(tree).toHaveAttribute('data-empty', 'true');
+      expect(tree).not.toHaveAttribute('data-focused');
+      expect(tree).not.toHaveAttribute('data-focus-visible');
+      expect(tree).toHaveClass('isEmpty: true, isFocused: false, isFocusVisible: false');
+
+      let row = getAllByRole('row')[0];
+      expect(row).toHaveAttribute('aria-level', '1');
+      expect(row).toHaveAttribute('aria-posinset', '1');
+      expect(row).toHaveAttribute('aria-setsize', '1');
+      let gridCell = within(row).getByRole('gridcell');
+      expect(gridCell).toHaveTextContent('Nothing in tree, isEmpty: true, isFocused: false, isFocusVisible: false');
+
+      await user.tab();
+      expect(document.activeElement).toBe(tree);
+      expect(tree).toHaveAttribute('data-empty', 'true');
+      expect(tree).toHaveAttribute('data-focused', 'true');
+      expect(tree).toHaveAttribute('data-focus-visible', 'true');
+      expect(tree).toHaveClass('isEmpty: true, isFocused: true, isFocusVisible: true');
+      expect(gridCell).toHaveTextContent('Nothing in tree, isEmpty: true, isFocused: true, isFocusVisible: true');
+
+      await user.tab();
+      expect(tree).toHaveAttribute('data-empty', 'true');
+      expect(tree).not.toHaveAttribute('data-focused');
+      expect(tree).not.toHaveAttribute('data-focus-visible');
+      expect(tree).toHaveClass('isEmpty: true, isFocused: false, isFocusVisible: false');
+      expect(row).toHaveAttribute('aria-level', '1');
+      expect(row).toHaveAttribute('aria-posinset', '1');
+      expect(row).toHaveAttribute('aria-setsize', '1');
+      expect(gridCell).toHaveTextContent('Nothing in tree, isEmpty: true, isFocused: false, isFocusVisible: false');
+    });
   });
 
   // TODO check empty state and the properties it has

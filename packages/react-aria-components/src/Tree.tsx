@@ -212,6 +212,7 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
+    // TODO: probably not useful to have isEmpty passed to renderEmptyState
     let content = props.renderEmptyState(renderValues);
     let treeGridRowProps = {
       'aria-level': 1,
