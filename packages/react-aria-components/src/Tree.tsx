@@ -385,7 +385,9 @@ function TreeRow<T>({item}: {item: Node<T>}) {
 
   let expandButtonProps = {
     onPress: () => {
-      state.toggleKey(item.key);
+      if (!states.isDisabled) {
+        state.toggleKey(item.key);
+      }
     },
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
     // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it

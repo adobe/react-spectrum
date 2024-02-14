@@ -78,7 +78,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
 };
 
 export const TreeExampleStatic = (args) => (
-  <Tree  className={styles.tree} {...args} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+  <Tree  className={styles.tree} {...args} disabledKeys={["projects"]} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
@@ -127,7 +127,8 @@ export const TreeExampleStatic = (args) => (
 TreeExampleStatic.story = {
   args: {
     selectionMode: 'none',
-    selectionBehavior: 'toggle'
+    selectionBehavior: 'toggle',
+    disabledBehavior: 'selection'
   },
   argTypes: {
     selectionMode: {
@@ -140,6 +141,12 @@ TreeExampleStatic.story = {
       control: {
         type: 'radio',
         options: ['toggle', 'replace']
+      }
+    },
+    disabledBehavior: {
+      control: {
+        type: 'radio',
+        options: ['selection', 'all']
       }
     }
   },
@@ -225,7 +232,7 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
 
 export const TreeExampleDynamic = (args: TreeProps<unknown>) => (
   // TODO: update the styles here
-  <Tree {...args} defaultExpandedKeys="all" className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+  <Tree {...args} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     {(item) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
         {item.name}

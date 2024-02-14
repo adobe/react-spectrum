@@ -126,12 +126,19 @@ describe('Tree', () => {
       expect(row).toHaveAttribute('aria-setsize');
       expect(row).toHaveAttribute('data-has-child-rows');
       expect(row).toHaveAttribute('data-rac');
+           // tested
       expect(row).not.toHaveAttribute('data-selected');
+            // tested
       expect(row).not.toHaveAttribute('data-disabled');
+      // tested
       expect(row).not.toHaveAttribute('data-hovered');
+         // tested
       expect(row).not.toHaveAttribute('data-focused');
+           // tested
       expect(row).not.toHaveAttribute('data-focus-visible');
+           // tested
       expect(row).not.toHaveAttribute('data-pressed');
+           // tested
       expect(row).not.toHaveAttribute('data-selection-mode');
     }
   });
@@ -244,9 +251,12 @@ describe('Tree', () => {
       expect(expandableRow).not.toHaveAttribute('data-hovered');
       expect(expandableRow).not.toHaveClass('hover');
 
-      rerender(<StaticTree treeProps={{selectionMode: 'none', disabledKeys: ['projects']}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
+      // Test a completely inert expandable row
+      // Note the disabledBehavior setting here, by default we make disableKey keys NOT restrict expandablity of the row. Similar pattern to Table
+      rerender(<StaticTree treeProps={{selectionMode: 'none', disabledBehavior: 'all', disabledKeys: ['projects']}} rowProps={{className: ({isHovered}) => isHovered ? 'hover' : ''}} />);
 
       expandableRow = getAllByRole('row')[1];
+      expect(expandableRow).toHaveAttribute('data-disabled', 'true');
       expect(expandableRow).not.toHaveAttribute('data-hovered');
       expect(expandableRow).not.toHaveClass('hover');
 
@@ -308,8 +318,10 @@ describe('Tree', () => {
       expect(expandableRow).not.toHaveAttribute('data-pressed');
       expect(expandableRow).not.toHaveClass('pressed');
 
-      rerender(<StaticTree treeProps={{selectionMode: 'none', disabledKeys: ['projects']}} rowProps={{className: ({isPressed}) => isPressed ? 'pressed' : ''}} />);
+      // Test a completely inert expandable row
+      rerender(<StaticTree treeProps={{selectionMode: 'none', disabledBehavior: 'all',  disabledKeys: ['projects']}} rowProps={{className: ({isPressed}) => isPressed ? 'pressed' : ''}} />);
       expandableRow = getAllByRole('row')[1];
+      expect(expandableRow).toHaveAttribute('data-disabled', 'true');
       expect(expandableRow).not.toHaveAttribute('data-pressed');
       expect(expandableRow).not.toHaveClass('pressed');
 
@@ -330,7 +342,7 @@ describe('Tree', () => {
       expect(row).toHaveAttribute('data-focused');
       expect(row).toHaveClass('focus');
 
-      rerender(<StaticTree rowProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus-visible' : ''}} />);
+      rerender(<StaticTree treeProps={{selectionMode: 'multiple', disabledKeys: ['projects']}} rowProps={{className: ({isFocusVisible}) => isFocusVisible ? 'focus-visible' : ''}} />);
       row = getAllByRole('row')[0];
       expect(row).not.toHaveAttribute('data-focus-visible');
       expect(row).not.toHaveClass('focus-visible');
@@ -344,11 +356,13 @@ describe('Tree', () => {
       expect(row).toHaveClass('focus-visible');
 
       let disabledRow = getAllByRole('row')[1];
+      expect(disabledRow).not.toHaveAttribute('data-disabled', 'true');
       expect(disabledRow).not.toHaveAttribute('data-focus-visible');
       expect(disabledRow).not.toHaveClass('focus-visible');
 
       await user.keyboard('{ArrowDown}');
       disabledRow = getAllByRole('row')[1];
+      // Note that the row is able to be focused because default disabledBehavior is 'selection'
       expect(disabledRow).toHaveAttribute('data-focus-visible', 'true');
       expect(disabledRow).toHaveClass('focus-visible');
       expect(row).not.toHaveAttribute('data-focus-visible');
@@ -356,7 +370,7 @@ describe('Tree', () => {
     });
 
     it('should support actions on rows', async () => {
-      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', onAction, onSelectionChange, disabledKeys: ['projects']}}  />);
+      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', disabledBehavior: 'all', onAction, onSelectionChange, disabledKeys: ['projects']}}  />);
 
       let row = getAllByRole('row')[0];
       await user.click(row);
@@ -364,7 +378,9 @@ describe('Tree', () => {
       expect(onAction).toHaveBeenLastCalledWith('Photos');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
+      // Due to disabledBehavior being set to 'all' this expandable row has its action disabled
       let disabledRow = getAllByRole('row')[1];
+      expect(disabledRow).toHaveAttribute('data-disabled', 'true');
       await user.click(disabledRow);
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
@@ -467,11 +483,11 @@ describe('Tree', () => {
 
 
   // TODO: check data attributes for the tree and the tree rows
-  // also check multi select vs single select attributes
 
   describe('expanding and collapsing', () => {
     // TODO check the various grid aria/data attributes here
     // check attribtues for the chevron here and other tree grid related properties
+    // TODO: test disabledBehavior and ex
   });
 
 
@@ -488,4 +504,5 @@ describe('Tree', () => {
   // TODO check empty state and the properties it has
   // TODO check dynamic state
   // DOuble check that style props go through as well
+
 });
