@@ -822,8 +822,8 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   private _flushVisibleViews() {
-    // CollectionVirtualizer deals with a flattened set of LayoutInfos, but they can represent heirarchy
-    // by referencing a parentKey. Just before rendering the visible views, we rebuild this heirarchy
+    // CollectionVirtualizer deals with a flattened set of LayoutInfos, but they can represent hierarchy
+    // by referencing a parentKey. Just before rendering the visible views, we rebuild this hierarchy
     // by creating a mapping of views by parent key and recursively calling the delegate's renderWrapper
     // method to build the final tree.
     let viewsByParentKey = new Map([[null, []]]);

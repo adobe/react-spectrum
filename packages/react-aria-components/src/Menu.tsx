@@ -155,7 +155,7 @@ function MenuInner<T extends object>({props, collection, menuRef: ref}: MenuInne
     children: (item) => {
       switch (item.type) {
         case 'section':
-          return <MenuSection section={item} />;
+          return <MenuSection section={item} parentMenuRef={ref} />;
         case 'separator':
           return <Separator {...item.props} />;
         case 'item':
@@ -210,10 +210,11 @@ const _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
 interface MenuSectionProps<T> extends StyleProps {
-  section: Node<T>
+  section: Node<T>,
+  parentMenuRef: RefObject<HTMLDivElement>
 }
 
-function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionProps<T>) {
+function MenuSection<T>({section, className, style, parentMenuRef, ...otherProps}: MenuSectionProps<T>) {
   let state = useContext(MenuStateContext)!;
   let [headingRef, heading] = useSlot();
   let {headingProps, groupProps} = useMenuSection({
@@ -238,6 +239,8 @@ function MenuSection<T>({section, className, style, ...otherProps}: MenuSectionP
         }
         case 'item':
           return <MenuItemInner item={item} />;
+        case 'submenutrigger':
+          return <SubmenuTriggerInner item={item} parentMenuRef={parentMenuRef} />;
         default:
           throw new Error('Unsupported element type in Section: ' + item.type);
       }
