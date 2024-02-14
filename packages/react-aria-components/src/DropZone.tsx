@@ -85,11 +85,17 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
       values={[
         [TextContext, {id: textId, slot: 'label'}]
       ]}>
+      {/* eslint-disable-next-line */}
       <div
         {...mergeProps(dropProps, hoverProps, DOMProps)}
         {...renderProps}
         slot={props.slot || undefined}
         ref={ref}
+        onClick={(e) => {
+          if (e.currentTarget === e.target) {
+            buttonRef.current?.focus();
+          }
+        }}
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}
