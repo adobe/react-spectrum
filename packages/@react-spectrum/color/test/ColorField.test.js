@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {ColorField} from '../';
@@ -293,7 +293,7 @@ describe('ColorField', function () {
     Name                                | expected                 | key
     ${'increment with arrow up key'}    | ${parseColor('#AAAAAB')}  | ${'ArrowUp'}
     ${'decrement with arrow down key'}  | ${parseColor('#AAAAA9')}  | ${'ArrowDown'}
-  `('should handle $Name event', function ({expected, key}) {
+  `('should handle $Name event', async function ({expected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({
       defaultValue: '#aaa',
@@ -302,8 +302,8 @@ describe('ColorField', function () {
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe('#AAAAAA');
 
-    fireEvent.keyDown(colorField, {key});
-    fireEvent.keyUp(colorField, {key});
+    await user.tab();
+    await user.keyboard(`{${key}}`);
     expect(onChangeSpy).toHaveBeenCalledWith(expected);
     expect(colorField.value).toBe(expected.toString('hex'));
   });
@@ -332,22 +332,22 @@ describe('ColorField', function () {
     Name                                 | props                                   | initExpected  | key
     ${'not increment beyond max value'}  | ${{defaultValue: '#fffffe'}}            | ${'#FFFFFE'}  | ${'ArrowUp'}
     ${'increment to max value'}          | ${{defaultValue: '#aabbcc'}}            | ${'#AABBCC'}  | ${'End'}
-  `('should $Name', function ({props, initExpected, key}) {
+  `('should $Name', async function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe(initExpected);
 
     let maxColor = parseColor('#FFFFFF');
-    fireEvent.keyDown(colorField, {key});
-    fireEvent.keyUp(colorField, {key});
+    await user.tab();
+    await user.keyboard(`{${key}}`);
     expect(onChangeSpy).toHaveBeenCalledWith(maxColor);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(colorField.value).toBe(maxColor.toString('hex'));
 
     // repeat action to make sure onChange is not called when already at max
-    fireEvent.keyDown(colorField, {key});
-    fireEvent.keyUp(colorField, {key});
+    await user.tab();
+    await user.keyboard(`{${key}}`);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -355,22 +355,22 @@ describe('ColorField', function () {
     Name                                 | props                                   | initExpected  | key
     ${'not decrement beyond min value'}  | ${{defaultValue: '#000001'}}            | ${'#000001'}  | ${'ArrowDown'}
     ${'decrement to min value'}          | ${{defaultValue: '#aabbcc'}}            | ${'#AABBCC'}  | ${'Home'}
-  `('should $Name', function ({props, initExpected, key}) {
+  `('should $Name', async function ({props, initExpected, key}) {
     let onChangeSpy = jest.fn();
     let {getByLabelText} = renderComponent({...props, onChange: onChangeSpy});
     let colorField = getByLabelText('Primary Color');
     expect(colorField.value).toBe(initExpected);
 
     let minColor = parseColor('#000000');
-    fireEvent.keyDown(colorField, {key});
-    fireEvent.keyUp(colorField, {key});
+    await user.tab();
+    await user.keyboard(`{${key}}`);
     expect(onChangeSpy).toHaveBeenCalledWith(minColor);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(colorField.value).toBe(minColor.toString('hex'));
 
     // repeat action to make sure onChange is not called when already at min
-    fireEvent.keyDown(colorField, {key});
-    fireEvent.keyUp(colorField, {key});
+    await user.tab();
+    await user.keyboard(`{${key}}`);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
   });
 

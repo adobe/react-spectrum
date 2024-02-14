@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils-internal';
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
