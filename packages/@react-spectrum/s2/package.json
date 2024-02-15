@@ -51,7 +51,7 @@
     "patch-package": "^8.0.0",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
-    "react-aria-components": "latest",
+    "react-aria-components": "^1.1.0",
     "react-docgen-typescript": "^2.2.2",
     "react-docgen-typescript-plugin": "^1.0.5",
     "react-dom": "^18.2.0",
@@ -68,7 +68,7 @@
     "@storybook/react-dom-shim": "@storybook/react-dom-shim/dist/react-18"
   },
   "dependencies": {
-    "@adobe/react-spectrum": "^3.33.1",
-    "react-aria": "^3.31.1"
+    "@adobe/react-spectrum": "^3.34.0",
+    "react-aria": "^3.32.0"
   }
 }
