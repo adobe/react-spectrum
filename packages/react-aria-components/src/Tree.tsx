@@ -430,7 +430,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
         {...renderProps}
         ref={ref}
         // TODO: make sure I have the equivalent data properties as the render props
-        data-expanded={isExpanded}
+        data-expanded={hasChildRows ? isExpanded : undefined}
         data-has-child-rows={hasChildRows}
         data-level={level}
         data-selected={states.isSelected || undefined}

@@ -11,9 +11,13 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Button, Checkbox, Text, Tree, TreeItem, TreeItemContent} from '../';
+import {Button, Checkbox, Collection, Text, Tree, TreeItem, TreeItemContent} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+
+let onSelectionChange = jest.fn();
+let onAction = jest.fn();
+let onExpandedChange = jest.fn();
 
 let StaticTreeItem = (props) => {
   return (
@@ -37,7 +41,7 @@ let StaticTreeItem = (props) => {
 };
 
 let StaticTree = ({treeProps, rowProps}) => (
-  <Tree defaultExpandedKeys="all" aria-label="test tree" {...treeProps}>
+  <Tree defaultExpandedKeys="all" aria-label="test tree" onExpandedChange={onExpandedChange} {...treeProps}>
     <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects" {...rowProps}>
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1" {...rowProps}>
@@ -55,13 +59,72 @@ let StaticTree = ({treeProps, rowProps}) => (
   </Tree>
 );
 
-// let DynamicTree = () => {
+let rows = [
+  {id: 'projects', name: 'Projects', childItems: [
+    {id: 'project-1', name: 'Project 1'},
+    {id: 'project-2', name: 'Project 2', childItems: [
+      {id: 'project-2A', name: 'Project 2A'},
+      {id: 'project-2B', name: 'Project 2B'},
+      {id: 'project-2C', name: 'Project 2C'}
+    ]},
+    {id: 'project-3', name: 'Project 3'},
+    {id: 'project-4', name: 'Project 4'},
+    {id: 'project-5', name: 'Project 5', childItems: [
+      {id: 'project-5A', name: 'Project 5A'},
+      {id: 'project-5B', name: 'Project 5B'},
+      {id: 'project-5C', name: 'Project 5C'}
+    ]}
+  ]},
+  {id: 'reports', name: 'Reports', childItems: [
+    {id: 'reports-1', name: 'Reports 1', childItems: [
+      {id: 'reports-1A', name: 'Reports 1A', childItems: [
+        {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
+          {id: 'reports-1ABC', name: 'Reports 1ABC'}
+        ]}
+      ]},
+      {id: 'reports-1B', name: 'Reports 1B'},
+      {id: 'reports-1C', name: 'Reports 1C'}
+    ]},
+    {id: 'reports-2', name: 'Reports 2'}
+  ]}
+];
 
-// };
+let DynamicTreeItem = (props) => {
+  return (
+    <TreeItem {...props}>
+      <TreeItemContent>
+        {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
+          <>
+            {(selectionMode === 'multiple' || props.href != null) && selectionBehavior === 'toggle' && (
+              <Checkbox slot="selection" />
+            )}
+            {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+            <Text>{props.title || props.children}</Text>
+            <Button aria-label="Info">ⓘ</Button>
+            <Button aria-label="Menu">☰</Button>
+          </>
+        )}
+      </TreeItemContent>
+      <Collection items={props.childItems}>
+        {(item) => (
+          <DynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
+            {item.name}
+          </DynamicTreeItem>
+        )}
+      </Collection>
+    </TreeItem>
+  );
+};
 
-
-let onSelectionChange = jest.fn();
-let onAction = jest.fn();
+let DynamicTree = ({treeProps, rowProps}) => (
+  <Tree defaultExpandedKeys="all" aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} {...treeProps}>
+    {(item) => (
+      <DynamicTreeItem childItems={item.childItems} textValue={item.name} {...rowProps}>
+        {item.name}
+      </DynamicTreeItem>
+    )}
+  </Tree>
+);
 
 describe('Tree', () => {
   let user;
@@ -110,37 +173,151 @@ describe('Tree', () => {
     }
   });
 
+  it('should support style', () => {
+    let {getByRole} = render(<StaticTree treeProps={{style: {width: 200}}} />);
+
+    let tree = getByRole('treegrid');
+    expect(tree).toHaveAttribute('style', expect.stringContaining('width: 200px'));
+  });
+
   it('should have the base set of aria and data attributes', () => {
     let {getByRole, getAllByRole} = render(<StaticTree treeProps={{defaultExpandedKeys: 'none'}} />);
     let tree = getByRole('treegrid');
     expect(tree).toHaveAttribute('data-rac');
+    expect(tree).toHaveAttribute('aria-label', 'test tree');
     expect(tree).not.toHaveAttribute('data-empty');
     expect(tree).not.toHaveAttribute('data-focused');
     expect(tree).not.toHaveAttribute('data-focus-visible');
 
     for (let row of getAllByRole('row')) {
-      expect(row).toHaveAttribute('data-expanded', 'false');
       expect(row).toHaveAttribute('aria-level');
       expect(row).toHaveAttribute('data-level');
       expect(row).toHaveAttribute('aria-posinset');
       expect(row).toHaveAttribute('aria-setsize');
       expect(row).toHaveAttribute('data-has-child-rows');
       expect(row).toHaveAttribute('data-rac');
-           // tested
       expect(row).not.toHaveAttribute('data-selected');
-            // tested
       expect(row).not.toHaveAttribute('data-disabled');
-      // tested
       expect(row).not.toHaveAttribute('data-hovered');
-         // tested
       expect(row).not.toHaveAttribute('data-focused');
-           // tested
       expect(row).not.toHaveAttribute('data-focus-visible');
-           // tested
       expect(row).not.toHaveAttribute('data-pressed');
-           // tested
       expect(row).not.toHaveAttribute('data-selection-mode');
     }
+  });
+
+  it('should have the expected attributes on the rows', () => {
+    let {getAllByRole} = render(<StaticTree />);
+
+    let rows = getAllByRole('row');
+    let rowNoChild = rows[0];
+    expect(rowNoChild).toHaveAttribute('aria-label', 'Photos');
+    expect(rowNoChild).not.toHaveAttribute('aria-expanded');
+    expect(rowNoChild).not.toHaveAttribute('data-expanded');
+    expect(rowNoChild).toHaveAttribute('aria-level', '1');
+    expect(rowNoChild).toHaveAttribute('data-level', '1');
+    expect(rowNoChild).toHaveAttribute('aria-posinset', '1');
+    expect(rowNoChild).toHaveAttribute('aria-setsize', '2');
+    expect(rowNoChild).toHaveAttribute('data-has-child-rows', 'false');
+    expect(rowNoChild).toHaveAttribute('data-rac');
+
+    let rowWithChildren = rows[1];
+    expect(rowWithChildren).toHaveAttribute('aria-label', 'Projects');
+    expect(rowWithChildren).toHaveAttribute('aria-expanded', 'true');
+    expect(rowWithChildren).toHaveAttribute('data-expanded', 'true');
+    expect(rowWithChildren).toHaveAttribute('aria-level', '1');
+    expect(rowWithChildren).toHaveAttribute('data-level', '1');
+    expect(rowWithChildren).toHaveAttribute('aria-posinset', '2');
+    expect(rowWithChildren).toHaveAttribute('aria-setsize', '2');
+    expect(rowWithChildren).toHaveAttribute('data-has-child-rows', 'true');
+    expect(rowWithChildren).toHaveAttribute('data-rac');
+
+    let level2ChildRow = rows[2];
+    expect(level2ChildRow).toHaveAttribute('aria-label', 'Projects-1');
+    expect(level2ChildRow).toHaveAttribute('aria-expanded', 'true');
+    expect(level2ChildRow).toHaveAttribute('data-expanded', 'true');
+    expect(level2ChildRow).toHaveAttribute('aria-level', '2');
+    expect(level2ChildRow).toHaveAttribute('data-level', '2');
+    expect(level2ChildRow).toHaveAttribute('aria-posinset', '1');
+    expect(level2ChildRow).toHaveAttribute('aria-setsize', '3');
+    expect(level2ChildRow).toHaveAttribute('data-has-child-rows', 'true');
+    expect(level2ChildRow).toHaveAttribute('data-rac');
+
+    let level3ChildRow = rows[3];
+    expect(level3ChildRow).toHaveAttribute('aria-label', 'Projects-1A');
+    expect(level3ChildRow).not.toHaveAttribute('aria-expanded');
+    expect(level3ChildRow).not.toHaveAttribute('data-expanded');
+    expect(level3ChildRow).toHaveAttribute('aria-level', '3');
+    expect(level3ChildRow).toHaveAttribute('data-level', '3');
+    expect(level3ChildRow).toHaveAttribute('aria-posinset', '1');
+    expect(level3ChildRow).toHaveAttribute('aria-setsize', '1');
+    expect(level3ChildRow).toHaveAttribute('data-has-child-rows', 'false');
+    expect(level3ChildRow).toHaveAttribute('data-rac');
+
+    let level2ChildRow2 = rows[4];
+    expect(level2ChildRow2).toHaveAttribute('aria-label', 'Projects-2');
+    expect(level2ChildRow2).not.toHaveAttribute('aria-expanded');
+    expect(level2ChildRow2).not.toHaveAttribute('data-expanded');
+    expect(level2ChildRow2).toHaveAttribute('aria-level', '2');
+    expect(level2ChildRow2).toHaveAttribute('data-level', '2');
+    expect(level2ChildRow2).toHaveAttribute('aria-posinset', '2');
+    expect(level2ChildRow2).toHaveAttribute('aria-setsize', '3');
+    expect(level2ChildRow2).toHaveAttribute('data-has-child-rows', 'false');
+    expect(level2ChildRow2).toHaveAttribute('data-rac');
+
+    let level2ChildRow3 = rows[5];
+    expect(level2ChildRow3).toHaveAttribute('aria-label', 'Projects-3');
+    expect(level2ChildRow3).not.toHaveAttribute('aria-expanded');
+    expect(level2ChildRow3).not.toHaveAttribute('data-expanded');
+    expect(level2ChildRow3).toHaveAttribute('aria-level', '2');
+    expect(level2ChildRow3).toHaveAttribute('data-level', '2');
+    expect(level2ChildRow3).toHaveAttribute('aria-posinset', '3');
+    expect(level2ChildRow3).toHaveAttribute('aria-setsize', '3');
+    expect(level2ChildRow3).toHaveAttribute('data-has-child-rows', 'false');
+    expect(level2ChildRow3).toHaveAttribute('data-rac');
+  });
+
+  it('should support dynamic trees', () => {
+    let {getByRole, getAllByRole} = render(<DynamicTree />);
+    let tree = getByRole('treegrid');
+    expect(tree).toHaveAttribute('class', 'react-aria-Tree');
+
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(20);
+
+    // Check the rough structure to make sure dynamic rows are rendering as expected (just checks the expandable rows and their attributes)
+    expect(rows[0]).toHaveAttribute('aria-label', 'Projects');
+    expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+    expect(rows[0]).toHaveAttribute('aria-level', '1');
+    expect(rows[0]).toHaveAttribute('aria-posinset', '1');
+    expect(rows[0]).toHaveAttribute('aria-setsize', '2');
+    expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
+
+    expect(rows[2]).toHaveAttribute('aria-label', 'Project 2');
+    expect(rows[2]).toHaveAttribute('aria-expanded', 'true');
+    expect(rows[2]).toHaveAttribute('aria-level', '2');
+    expect(rows[2]).toHaveAttribute('aria-posinset', '2');
+    expect(rows[2]).toHaveAttribute('aria-setsize', '5');
+    expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
+
+    expect(rows[8]).toHaveAttribute('aria-label', 'Project 5');
+    expect(rows[8]).toHaveAttribute('aria-expanded', 'true');
+    expect(rows[8]).toHaveAttribute('aria-level', '2');
+    expect(rows[8]).toHaveAttribute('aria-posinset', '5');
+    expect(rows[8]).toHaveAttribute('aria-setsize', '5');
+    expect(rows[8]).toHaveAttribute('data-has-child-rows', 'true');
+
+    expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+    expect(rows[12]).toHaveAttribute('aria-expanded', 'true');
+    expect(rows[12]).toHaveAttribute('aria-level', '1');
+    expect(rows[12]).toHaveAttribute('aria-posinset', '2');
+    expect(rows[12]).toHaveAttribute('aria-setsize', '2');
+    expect(rows[12]).toHaveAttribute('data-has-child-rows', 'true');
+
+    expect(rows[16]).toHaveAttribute('aria-label', 'Reports 1ABC');
+    expect(rows[16]).toHaveAttribute('aria-level', '5');
+    expect(rows[16]).toHaveAttribute('aria-posinset', '1');
+    expect(rows[16]).toHaveAttribute('aria-setsize', '1');
   });
 
   it('should render checkboxes for selection', async () => {
@@ -390,6 +567,11 @@ describe('Tree', () => {
       expect(onAction).toHaveBeenCalledTimes(2);
       expect(onAction).toHaveBeenLastCalledWith('projects-1');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+      await user.keyboard('{Enter}');
+      expect(onAction).toHaveBeenCalledTimes(3);
+      expect(onAction).toHaveBeenLastCalledWith('projects-1');
+      expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
     describe('links', function () {
@@ -478,28 +660,158 @@ describe('Tree', () => {
         });
       });
     });
+
+    describe('keyboard interactions', () => {
+      // TODO test navigation between the interactive elements in the tree
+      // test typeahead
+      // test arrowup/down/home/end (make sure it skips past collapsed rows)
+    });
   });
 
-
-
-  // TODO: check data attributes for the tree and the tree rows
 
   describe('expanding and collapsing', () => {
-    // TODO check the various grid aria/data attributes here
+    describe.each(['mouse', 'keyboard'])('%s', (type) => {
+      let trigger = async (item, key = 'ArrowRight') => {
+        if (type === 'mouse') {
+          await user.click(item);
+        } else {
+          await user.keyboard(`{${key}}`);
+        }
+      };
+
+      it('should expand/collapse a row when clicking/using Enter on the row itself and there arent any other primary actions', async function () {
+        // test clicking on the row and using arrow right/left
+        // test that the row count changes and that expanded attributes change
+        let {getByRole, getAllByRole} = render(<DynamicTree />);
+        let tree = getByRole('treegrid');
+        expect(tree).toHaveAttribute('class', 'react-aria-Tree');
+
+        let rows = getAllByRole('row');
+        expect(rows).toHaveLength(20);
+
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('aria-level', '1');
+        expect(rows[0]).toHaveAttribute('aria-posinset', '1');
+        expect(rows[0]).toHaveAttribute('aria-setsize', '2');
+        expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+
+        // Check we can open/close a top level row
+        await trigger(rows[0], 'ArrowLeft');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[0]).toHaveAttribute('aria-level', '1');
+        expect(rows[0]).toHaveAttribute('aria-posinset', '1');
+        expect(rows[0]).toHaveAttribute('aria-setsize', '2');
+        expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        // Note that the children of the parent row will still be in the "expanded" array
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        rows = getAllByRole('row');
+        expect(rows).toHaveLength(9);
+
+        await trigger(rows[0], 'ArrowRight');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('aria-level', '1');
+        expect(rows[0]).toHaveAttribute('aria-posinset', '1');
+        expect(rows[0]).toHaveAttribute('aria-setsize', '2');
+        expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(2);
+        expect(new Set(onExpandedChange.mock.calls[1][0])).toEqual(new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        rows = getAllByRole('row');
+        expect(rows).toHaveLength(20);
+
+        await user.keyboard('{ArrowDown}');
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(rows[2]);
+        expect(rows[2]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[2]).toHaveAttribute('data-expanded', 'true');
+        expect(rows[2]).toHaveAttribute('aria-level', '2');
+        expect(rows[2]).toHaveAttribute('aria-posinset', '2');
+        expect(rows[2]).toHaveAttribute('aria-setsize', '5');
+        expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
+
+        // Check we can close a nested row and it doesn't affect the parent
+        await trigger(rows[2], 'ArrowLeft');
+        expect(document.activeElement).toBe(rows[2]);
+        expect(rows[2]).toHaveAttribute('aria-expanded', 'false');
+        expect(rows[2]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[2]).toHaveAttribute('aria-level', '2');
+        expect(rows[2]).toHaveAttribute('aria-posinset', '2');
+        expect(rows[2]).toHaveAttribute('aria-setsize', '5');
+        expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('aria-level', '1');
+        expect(rows[0]).toHaveAttribute('aria-posinset', '1');
+        expect(rows[0]).toHaveAttribute('aria-setsize', '2');
+        expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(3);
+        expect(new Set(onExpandedChange.mock.calls[2][0])).toEqual(new Set(['projects', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        rows = getAllByRole('row');
+        expect(rows).toHaveLength(17);
+
+        // Check behavior of onExpandedChange when a nested row is already closed and the parent is collapsed
+        await user.keyboard('{ArrowUp}');
+        await user.keyboard('{ArrowUp}');
+        await trigger(rows[0], 'ArrowLeft');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(onExpandedChange).toHaveBeenCalledTimes(4);
+        expect(new Set(onExpandedChange.mock.calls[3][0])).toEqual(new Set(['project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        rows = getAllByRole('row');
+        expect(rows).toHaveLength(9);
+
+        // Check that the nested collapsed row is still closed when the parent is reexpanded
+        await trigger(rows[0], 'ArrowRight');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(onExpandedChange).toHaveBeenCalledTimes(5);
+        expect(new Set(onExpandedChange.mock.calls[4][0])).toEqual(new Set(['projects', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        rows = getAllByRole('row');
+        expect(rows).toHaveLength(17);
+      });
+
+      it('should not expand if disabledBehabior is "all" and the row is disabled', async function () {
+
+      });
+
+      it('should expand if disabledBehabior is "selecion" and the row is disabled', async function () {
+
+      });
+
+      it('should not expand when clicking/using Enter on the row if the row is selectable', async function () {
+
+      });
+
+      it('should not expand when clicking/using Enter on the row if the row has an action', async function () {
+
+      });
+
+      it('should not expand when clicking/using Enter on the row if the row has a link', async function () {
+
+      });
+    });
+
+    it('should support controlled expansion', function () {
+
+    });
+
+    it('should have apply the proper attributes to the chevron', function () {
+
+    });
     // check attribtues for the chevron here and other tree grid related properties
-    // TODO: test disabledBehavior and expanding
+    // TODO: test disabledBehavior and expanding with keyboard/click
+    // do for both pointer and keyboard (enter for expand if no onAction)
+
+    // test controlled expansion
   });
 
 
-  describe('pointer interactions', () => {
-    // test expand and collapse
-    // test actions and links and stuff
-  });
-
-  describe('keyboard interactions', () => {
-    // TODO test navigation between the interactive elements in the tree
-    // test expand and collapse
-  });
 
   describe('empty state', () => {
     it('should allow the user to tab to the empty tree', async () => {
@@ -551,9 +863,6 @@ describe('Tree', () => {
       expect(gridCell).toHaveTextContent('Nothing in tree, isEmpty: true, isFocused: false, isFocusVisible: false');
     });
   });
-
-  // TODO check empty state and the properties it has
-  // TODO check dynamic state
   // DOuble check that style props go through as well
 
 });
