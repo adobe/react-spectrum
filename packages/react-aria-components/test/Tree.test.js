@@ -41,7 +41,7 @@ let StaticTreeItem = (props) => {
 };
 
 let StaticTree = ({treeProps, rowProps}) => (
-  <Tree defaultExpandedKeys="all" aria-label="test tree" onExpandedChange={onExpandedChange} {...treeProps}>
+  <Tree defaultExpandedKeys="all" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects" {...rowProps}>
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1" {...rowProps}>
@@ -117,7 +117,7 @@ let DynamicTreeItem = (props) => {
 };
 
 let DynamicTree = ({treeProps, rowProps}) => (
-  <Tree defaultExpandedKeys="all" aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} {...treeProps}>
+  <Tree defaultExpandedKeys="all" aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     {(item) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name} {...rowProps}>
         {item.name}
@@ -321,7 +321,7 @@ describe('Tree', () => {
   });
 
   it('should render checkboxes for selection', async () => {
-    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single', onSelectionChange}} rowProps={{href: 'https://google.com'}} />);
+    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single'}} rowProps={{href: 'https://google.com'}} />);
     let tree = getByRole('treegrid');
     expect(tree).not.toHaveAttribute('aria-multiselectable');
 
@@ -346,7 +346,7 @@ describe('Tree', () => {
   });
 
   it('should not render checkboxes for selection with selectionBehavior=replace ', async () => {
-    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionBehavior: 'replace', onSelectionChange}} />);
+    let {getByRole, getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', selectionBehavior: 'replace'}} />);
     let tree = getByRole('treegrid');
     expect(tree).toHaveAttribute('aria-multiselectable', 'true');
 
@@ -547,7 +547,7 @@ describe('Tree', () => {
     });
 
     it('should support actions on rows', async () => {
-      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', disabledBehavior: 'all', onAction, onSelectionChange, disabledKeys: ['projects']}}  />);
+      let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'multiple', disabledBehavior: 'all', onAction, disabledKeys: ['projects']}}  />);
 
       let row = getAllByRole('row')[0];
       await user.click(row);
@@ -680,12 +680,7 @@ describe('Tree', () => {
       };
 
       it('should expand/collapse a row when clicking/using Enter on the row itself and there arent any other primary actions', async function () {
-        // test clicking on the row and using arrow right/left
-        // test that the row count changes and that expanded attributes change
-        let {getByRole, getAllByRole} = render(<DynamicTree />);
-        let tree = getByRole('treegrid');
-        expect(tree).toHaveAttribute('class', 'react-aria-Tree');
-
+        let {getAllByRole} = render(<DynamicTree />);
         let rows = getAllByRole('row');
         expect(rows).toHaveLength(20);
 
@@ -700,7 +695,7 @@ describe('Tree', () => {
         expect(onExpandedChange).toHaveBeenCalledTimes(0);
 
         // Check we can open/close a top level row
-        await trigger(rows[0], 'ArrowLeft');
+        await trigger(rows[0], 'Enter');
         expect(document.activeElement).toBe(rows[0]);
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
         expect(rows[0]).toHaveAttribute('data-expanded', 'false');
@@ -714,7 +709,7 @@ describe('Tree', () => {
         rows = getAllByRole('row');
         expect(rows).toHaveLength(9);
 
-        await trigger(rows[0], 'ArrowRight');
+        await trigger(rows[0], 'Enter');
         expect(document.activeElement).toBe(rows[0]);
         expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
         expect(rows[0]).toHaveAttribute('data-expanded', 'true');
@@ -776,24 +771,167 @@ describe('Tree', () => {
         expect(rows).toHaveLength(17);
       });
 
-      it('should not expand if disabledBehabior is "all" and the row is disabled', async function () {
+      it('should not expand/collapse if disabledBehavior is "all" and the row is disabled', async function () {
+        let {getAllByRole, rerender} = render(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'all', expandedKeys: 'all'}} />);
+        let rows = getAllByRole('row');
+        expect(rows).toHaveLength(20);
 
+        await user.tab();
+        // Since first row is disabled, we can't keyboard focus it
+        expect(document.activeElement).toBe(rows[1]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('aria-disabled', 'true');
+        expect(rows[0]).toHaveAttribute('data-disabled', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+
+        // Try clicking on first row
+        await trigger(rows[0], 'Space');
+        expect(document.activeElement).toBe(rows[1]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+
+        rerender(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'all', expandedKeys: []}} />);
+        await user.tab();
+        rows = getAllByRole('row');
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(rows[0]).toHaveAttribute('aria-disabled', 'true');
+        expect(rows[0]).toHaveAttribute('data-disabled', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+
+        await trigger(rows[0], 'Space');
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
       });
 
-      it('should expand if disabledBehabior is "selecion" and the row is disabled', async function () {
+      it('should expand/collapse if disabledBehavior is "selection" and the row is disabled', async function () {
+        let {getAllByRole} = render(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'selection', selectionMode: 'multiple'}} />);
+        let rows = getAllByRole('row');
 
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+        expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+        // Since selection is enabled, we need to click the chevron even for disabled rows since it is still regarded as the primary action
+        let chevron = within(rows[0]).getAllByRole('button')[0];
+        await trigger(chevron, 'ArrowLeft');
+        // TODO: reenable this when we make it so the chevron button isn't focusable via click/keyboard nav
+        // expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+        await trigger(chevron);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(2);
+        expect(new Set(onExpandedChange.mock.calls[1][0])).toEqual(new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+        let disabledCheckbox = within(rows[0]).getByRole('checkbox');
+        expect(disabledCheckbox).toHaveAttribute('disabled');
       });
 
       it('should not expand when clicking/using Enter on the row if the row is selectable', async function () {
+        let {getAllByRole} = render(<DynamicTree treeProps={{selectionMode: 'multiple'}} />);
+        let rows = getAllByRole('row');
 
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+        expect(onSelectionChange).toHaveBeenCalledTimes(0);
+
+        await trigger(rows[0], 'Enter');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+        expect(onSelectionChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onSelectionChange.mock.calls[0][0])).toEqual(new Set(['projects']));
+
+        await trigger(rows[0], 'Enter');
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
+        expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set([]));
+
+        let chevron = within(rows[0]).getAllByRole('button')[0];
+        await trigger(chevron, 'ArrowLeft');
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(onSelectionChange).toHaveBeenCalledTimes(2);
       });
 
       it('should not expand when clicking/using Enter on the row if the row has an action', async function () {
+        let {getAllByRole} = render(<DynamicTree treeProps={{onAction}} />);
+        let rows = getAllByRole('row');
 
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+        expect(onAction).toHaveBeenCalledTimes(0);
+
+        await trigger(rows[0], 'Enter');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+        expect(onAction).toHaveBeenCalledTimes(1);
+        expect(onAction).toHaveBeenLastCalledWith('projects');
+
+        let chevron = within(rows[0]).getAllByRole('button')[0];
+        await trigger(chevron, 'ArrowLeft');
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
+        expect(onAction).toHaveBeenCalledTimes(1);
       });
 
       it('should not expand when clicking/using Enter on the row if the row has a link', async function () {
+        let {getAllByRole} = render(<DynamicTree rowProps={{href: 'https://google.com'}} />);
+        let rows = getAllByRole('row');
+        expect(rows[0]).toHaveAttribute('data-href');
 
+        await user.tab();
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+
+        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+        window.addEventListener('click', onClick, {once: true});
+        await trigger(rows[0], 'Enter');
+        expect(onClick).toHaveBeenCalledTimes(1);
+        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'true');
+        expect(onExpandedChange).toHaveBeenCalledTimes(0);
+        expect(document.activeElement).toBe(document.body)
+
+        await user.tab();
+        let chevron = within(rows[0]).getAllByRole('button')[0];
+        await trigger(chevron, 'ArrowLeft');
+        expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+        expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+        expect(onExpandedChange).toHaveBeenCalledTimes(1);
+        expect(new Set(onExpandedChange.mock.calls[0][0])).toEqual(new Set(['project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB']));
       });
     });
 
@@ -801,7 +939,7 @@ describe('Tree', () => {
 
     });
 
-    it('should have apply the proper attributes to the chevron', function () {
+    it('should apply the proper attributes to the chevron', function () {
 
     });
     // check attribtues for the chevron here and other tree grid related properties

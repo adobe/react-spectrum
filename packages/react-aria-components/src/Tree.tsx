@@ -391,8 +391,8 @@ function TreeRow<T>({item}: {item: Node<T>}) {
       }
     },
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
-    // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
-    // TODO: with how slots work and the order in which things get merged, this doesn't actually get applied...
+    // TODO: the below actually isn't enough to have keyboard navigation skip over it, we need it to be a span type button but
+    // RAC buttons are always a "button" type element.
     tabIndex: isAndroid() ? -1 : null
   };
 
