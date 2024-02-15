@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, fireEvent, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils-internal';
 import {addWindowFocusTracking, useFocusVisible, useFocusVisibleListener} from '../';
 import {hasSetupGlobalListeners} from '../src/useFocusVisible';
 import React from 'react';

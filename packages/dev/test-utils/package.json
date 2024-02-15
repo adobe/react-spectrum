@@ -1,5 +1,5 @@
 {
-  "name": "@react-spectrum/test-utils",
+  "name": "@react-spectrum/test-utils-internal",
   "version": "3.0.0-alpha.1",
   "private": true,
   "description": "Spectrum UI components in React",
@@ -12,27 +12,14 @@
     "dist",
     "src"
   ],
-  "sideEffects": [
-    "*.css"
-  ],
-  "targets": {
-    "main": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
-    },
-    "module": {
-      "includeNodeModules": [
-        "@adobe/spectrum-css-temp"
-      ]
-    }
-  },
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
     "@react-aria/ssr": "^3.0.0",
+    "@react-spectrum/test-utils": "3.0.0-alpha.1",
     "@swc/helpers": "^0.5.0",
     "resolve": "^1.17.0"
   },
@@ -41,9 +28,6 @@
     "@testing-library/user-event": "^14.4.3",
     "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
     "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
-  },
-  "devDependencies": {
-    "@adobe/spectrum-css-temp": "3.0.0-alpha.1"
   },
   "publishConfig": {
     "access": "public"
