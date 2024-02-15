@@ -12,7 +12,7 @@
 
 import {createRef} from 'react';
 import {FocusableElement} from '@react-types/shared';
-import {renderHook} from '@react-spectrum/test-utils-internal';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useActionGroup} from '../';
 import {useListState} from '@react-stately/list';
 

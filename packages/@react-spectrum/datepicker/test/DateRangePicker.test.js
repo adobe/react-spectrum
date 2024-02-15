@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, getAllByRole as getAllByRoleInContainer, pointerMap, render as render_, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, getAllByRole as getAllByRoleInContainer, pointerMap, render as render_, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, getLocalTimeZone, toCalendarDateTime, today} from '@internationalized/date';
 import {DateRangePicker} from '../';
@@ -305,7 +305,7 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).toHaveBeenCalledTimes(1);
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
 
-      await user.click(button);
+      triggerPress(button);
       act(() => jest.runAllTimers());
 
       let dialog = getByRole('dialog');
@@ -336,7 +336,7 @@ describe('DateRangePicker', function () {
       expect(onFocusSpy).toHaveBeenCalledTimes(1);
     });
 
-    it('should open popover and call picker onFocus', async function () {
+    it('should open popover and call picker onFocus', function () {
       let {getByRole} = render(<DateRangePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} />);
       let button = getByRole('button');
 
@@ -344,7 +344,7 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      await user.click(button);
+      triggerPress(button);
       act(() => jest.runAllTimers());
 
       let dialog = getByRole('dialog');
@@ -362,7 +362,7 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      await user.click(button);
+      triggerPress(button);
       act(() => jest.runAllTimers());
 
       let dialog = getByRole('dialog');
@@ -417,7 +417,7 @@ describe('DateRangePicker', function () {
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('should trigger key event in popover and focus/blur/key events are not called', async function () {
+    it('should trigger key event in popover and focus/blur/key events are not called', function () {
       let {getByRole} = render(<DateRangePicker label="Date" onBlur={onBlurSpy} onFocus={onFocusSpy} onFocusChange={onFocusChangeSpy} onKeyDown={onKeyDownSpy} onKeyUp={onKeyUpSpy} />);
       let button = getByRole('button');
 
@@ -427,7 +427,7 @@ describe('DateRangePicker', function () {
       expect(onFocusChangeSpy).not.toHaveBeenCalled();
       expect(onFocusSpy).not.toHaveBeenCalled();
 
-      await user.click(button);
+      triggerPress(button);
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -446,7 +446,7 @@ describe('DateRangePicker', function () {
   });
 
   describe('calendar popover', function () {
-    it('should emit onChange when selecting a date range in the calendar in uncontrolled mode', async function () {
+    it('should emit onChange when selecting a date range in the calendar in uncontrolled mode', function () {
       let onChange = jest.fn();
       let {getByRole, getByTestId, getAllByRole, getByLabelText} = render(
         <Provider theme={theme}>
@@ -460,7 +460,7 @@ describe('DateRangePicker', function () {
       expect(getTextValue(endDate)).toBe('5/6/2019');
 
       let button = getByRole('button');
-      await user.click(button);
+      triggerPress(button);
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -469,20 +469,17 @@ describe('DateRangePicker', function () {
       let selected = cells.filter(cell => cell.getAttribute('aria-selected') === 'true');
       expect(selected[0].children[0]).toHaveAttribute('aria-label', 'Selected Range: Sunday, February 3 to Monday, May 6, 2019, Sunday, February 3, 2019 selected');
 
-      await user.click(getByLabelText('Sunday, February 10, 2019 selected'));
-      await user.click(getByLabelText('Sunday, February 17, 2019'));
-      act(() => jest.runAllTimers());
+      triggerPress(getByLabelText('Sunday, February 10, 2019 selected'));
+      triggerPress(getByLabelText('Sunday, February 17, 2019'));
 
-      await waitFor(() => {
-        expect(dialog).not.toBeInTheDocument();
-      });
+      expect(dialog).not.toBeInTheDocument();
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2019, 2, 10), end: new CalendarDate(2019, 2, 17)});
       expect(getTextValue(startDate)).toBe('2/10/2019'); // uncontrolled
       expect(getTextValue(endDate)).toBe('2/17/2019');
     });
 
-    it('should display time fields when a CalendarDateTime value is used', async function () {
+    it('should display time fields when a CalendarDateTime value is used', function () {
       let onChange = jest.fn();
       let {getByRole, getByTestId, getAllByRole, getByLabelText, getAllByLabelText} = render(
         <Provider theme={theme}>
@@ -496,7 +493,7 @@ describe('DateRangePicker', function () {
       expect(getTextValue(endDate)).toBe('5/6/2019, 10:45 AM');
 
       let button = getByRole('button');
-      await user.click(button);
+      triggerPress(button);
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -512,8 +509,8 @@ describe('DateRangePicker', function () {
       expect(getTextValue(endTimeField)).toBe('10:45 AM');
 
       // selecting a date should not close the popover
-      await user.click(getByLabelText('Sunday, February 10, 2019 selected'));
-      await user.click(getByLabelText('Sunday, February 17, 2019'));
+      triggerPress(getByLabelText('Sunday, February 10, 2019 selected'));
+      triggerPress(getByLabelText('Sunday, February 17, 2019'));
 
       expect(dialog).toBeVisible();
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -554,7 +551,7 @@ describe('DateRangePicker', function () {
       expect(getTextValue(endDate)).toBe('2/17/2019, 11:45 AM');
     });
 
-    it('should not fire onChange until both date range and time range are selected', async function () {
+    it('should not fire onChange until both date range and time range are selected', function () {
       let onChange = jest.fn();
       let {getByRole, getAllByRole, getByTestId, getAllByLabelText} = render(
         <Provider theme={theme}>
@@ -569,7 +566,7 @@ describe('DateRangePicker', function () {
       expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
-      await user.click(button);
+      triggerPress(button);
 
       let dialog = getByRole('dialog');
       expect(dialog).toBeVisible();
@@ -586,8 +583,8 @@ describe('DateRangePicker', function () {
 
       // selecting a date should not close the popover
       let enabledCells = cells.filter(cell => !cell.hasAttribute('aria-disabled'));
-      await user.click(enabledCells[0].firstChild);
-      await user.click(enabledCells[1].firstChild);
+      triggerPress(enabledCells[0].firstChild);
+      triggerPress(enabledCells[1].firstChild);
 
       expect(dialog).toBeVisible();
       expect(onChange).not.toHaveBeenCalled();
@@ -665,7 +662,7 @@ describe('DateRangePicker', function () {
       expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
-      await user.click(button);
+      triggerPress(button);
       act(() => jest.runAllTimers());
 
       let dialog = getByRole('dialog');
@@ -673,8 +670,8 @@ describe('DateRangePicker', function () {
 
       let cells = getAllByRole('gridcell');
       let enabledCells = cells.filter(cell => !cell.hasAttribute('aria-disabled'));
-      await user.click(enabledCells[0].firstChild);
-      await user.click(enabledCells[1].firstChild);
+      triggerPress(enabledCells[0].firstChild);
+      triggerPress(enabledCells[1].firstChild);
       expect(onChange).not.toHaveBeenCalled();
 
       await user.click(document.body);
@@ -704,7 +701,7 @@ describe('DateRangePicker', function () {
       expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getByRole('button');
-      await user.click(button);
+      triggerPress(button);
       act(() => jest.runAllTimers());
 
       let dialog = getByRole('dialog');
@@ -752,15 +749,15 @@ describe('DateRangePicker', function () {
       expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
 
       let button = getAllByRole('button')[0];
-      await user.click(button);
+      triggerPress(button);
 
       let cells = getAllByRole('gridcell');
       let startTimeField = getAllByLabelText('Start time')[0];
       let endTimeField = getAllByLabelText('End time')[0];
 
       let enabledCells = cells.filter(cell => !cell.hasAttribute('aria-disabled'));
-      await user.click(enabledCells[0].firstChild);
-      await user.click(enabledCells[1].firstChild);
+      triggerPress(enabledCells[0].firstChild);
+      triggerPress(enabledCells[1].firstChild);
 
       for (let timeField of [startTimeField, endTimeField]) {
         let hour = within(timeField).getByLabelText('hour,');
@@ -790,11 +787,11 @@ describe('DateRangePicker', function () {
       expect(getTextValue(endDate).replace(' ', ' ')).toBe(formatter.format(endValue.toDate(getLocalTimeZone())));
 
       let clear = getAllByRole('button')[1];
-      await user.click(clear);
+      triggerPress(clear);
       expectPlaceholder(startDate, 'mm/dd/yyyy, ––:–– AM');
       expectPlaceholder(endDate, 'mm/dd/yyyy, ––:–– AM');
 
-      await user.click(button);
+      triggerPress(button);
       cells = getAllByRole('gridcell');
       let selected = cells.find(cell => cell.getAttribute('aria-selected') === 'true');
       expect(selected).toBeUndefined();
@@ -1086,30 +1083,30 @@ describe('DateRangePicker', function () {
   });
 
   describe('focus management', function () {
-    it('should focus the first segment of each field on mouse down', async function () {
+    it('should focus the first segment of each field on mouse down', function () {
       let {getByTestId} = render(<DateRangePicker label="Date range" />);
       let startDate = getByTestId('start-date');
       let endDate = getByTestId('end-date');
       let startSegments = getAllByRoleInContainer(startDate, 'spinbutton');
       let endSegments = getAllByRoleInContainer(endDate, 'spinbutton');
 
-      await user.click(startDate);
+      triggerPress(startDate);
       expect(startSegments[0]).toHaveFocus();
 
       act(() => document.activeElement.blur());
 
-      await user.click(endDate);
+      triggerPress(endDate);
       expect(endSegments[0]).toHaveFocus();
     });
 
-    it('should focus the first segment of the end date on mouse down on the dash', async function () {
+    it('should focus the first segment of the end date on mouse down on the dash', function () {
       let {getByTestId} = render(<DateRangePicker label="Date range" />);
       let rangeDash = getByTestId('date-range-dash');
       let startDate = getByTestId('start-date');
       let startSegments = getAllByRoleInContainer(startDate, 'spinbutton');
 
       fireEvent(rangeDash, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
-      await user.click(rangeDash);
+      triggerPress(rangeDash);
       expect(startSegments[0]).toHaveFocus();
     });
   });

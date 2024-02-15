@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Button, OverlayArrow, Tooltip, TooltipTrigger} from 'react-aria-components';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

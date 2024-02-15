@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {clearToastQueue, ToastContainer, ToastQueue} from '../src/ToastContainer';
 import {defaultTheme} from '@adobe/react-spectrum';
@@ -60,12 +60,12 @@ describe('Toast Provider and Container', function () {
     act(() => jest.runAllTimers());
   });
 
-  it('renders a button that triggers a toast', async () => {
+  it('renders a button that triggers a toast', () => {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
     expect(queryByRole('alert')).toBeNull();
-    await user.click(button);
+    triggerPress(button);
 
     let region = getByRole('region');
     expect(region).toHaveAttribute('aria-label', 'Notifications');
@@ -75,27 +75,27 @@ describe('Toast Provider and Container', function () {
 
     button = within(alert).getByRole('button');
     expect(button).toHaveAttribute('aria-label', 'Close');
-    await user.click(button);
+    triggerPress(button);
 
     fireAnimationEnd(alert);
     expect(queryByRole('alert')).toBeNull();
   });
 
-  it('should label icon by variant', async () => {
+  it('should label icon by variant', () => {
     let {getByRole} = renderComponent(<RenderToastButton variant="positive" />);
     let button = getByRole('button');
-    await user.click(button);
+    triggerPress(button);
 
     let alert = getByRole('alert');
     let icon = within(alert).getByRole('img');
     expect(icon).toHaveAttribute('aria-label', 'Success');
   });
 
-  it('removes a toast via timeout', async () => {
+  it('removes a toast via timeout', () => {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton timeout={5000} />);
     let button = getByRole('button');
 
-    await user.click(button);
+    triggerPress(button);
 
     let toast = getByRole('alert');
     expect(toast).toBeVisible();
@@ -114,7 +114,7 @@ describe('Toast Provider and Container', function () {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton timeout={5000} />);
     let button = getByRole('button');
 
-    await user.click(button);
+    triggerPress(button);
 
     let toast = getByRole('alert');
     expect(toast).toBeVisible();
@@ -134,11 +134,11 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alert')).toBeNull();
   });
 
-  it('pauses timers when focusing', async () => {
+  it('pauses timers when focusing', () => {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton timeout={5000} />);
     let button = getByRole('button');
 
-    await user.click(button);
+    triggerPress(button);
 
     let toast = getByRole('alert');
     expect(toast).toBeVisible();
@@ -158,41 +158,41 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alert')).toBeNull();
   });
 
-  it('renders a toast with an action', async () => {
+  it('renders a toast with an action', () => {
     let onAction = jest.fn();
     let onClose = jest.fn();
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton actionLabel="Action" onAction={onAction} onClose={onClose} />);
     let button = getByRole('button');
 
     expect(queryByRole('alert')).toBeNull();
-    await user.click(button);
+    triggerPress(button);
 
     let alert = getByRole('alert');
     expect(alert).toBeVisible();
 
     let buttons = within(alert).getAllByRole('button');
     expect(buttons[0]).toHaveTextContent('Action');
-    await user.click(buttons[0]);
+    triggerPress(buttons[0]);
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it('closes toast on action', async () => {
+  it('closes toast on action', () => {
     let onAction = jest.fn();
     let onClose = jest.fn();
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton actionLabel="Action" onAction={onAction} onClose={onClose} shouldCloseOnAction />);
     let button = getByRole('button');
 
     expect(queryByRole('alert')).toBeNull();
-    await user.click(button);
+    triggerPress(button);
 
     let alert = getByRole('alert');
     expect(alert).toBeVisible();
 
     let buttons = within(alert).getAllByRole('button');
     expect(buttons[0]).toHaveTextContent('Action');
-    await user.click(buttons[0]);
+    triggerPress(buttons[0]);
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
@@ -202,7 +202,7 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alert')).toBeNull();
   });
 
-  it('prioritizes toasts based on variant', async () => {
+  it('prioritizes toasts based on variant', () => {
     function ToastPriorites(props = {}) {
       return (
         <div>
@@ -226,54 +226,54 @@ describe('Toast Provider and Container', function () {
     // show info toast first. error toast should supersede it.
 
     expect(queryByRole('alert')).toBeNull();
-    await user.click(buttons[0]);
+    triggerPress(buttons[0]);
 
     let alert = getByRole('alert');
     expect(alert).toBeVisible();
     expect(alert).toHaveTextContent('Info');
 
-    await user.click(buttons[1]);
+    triggerPress(buttons[1]);
     fireAnimationEnd(alert);
 
     alert = getByRole('alert');
     expect(alert).toHaveTextContent('Error');
 
-    await user.click(within(alert).getByRole('button'));
+    triggerPress(within(alert).getByRole('button'));
     fireAnimationEnd(alert);
 
     alert = getByRole('alert');
     expect(alert).toHaveTextContent('Info');
 
-    await user.click(within(alert).getByRole('button'));
+    triggerPress(within(alert).getByRole('button'));
     fireAnimationEnd(alert);
     expect(queryByRole('alert')).toBeNull();
 
     // again, but with error toast first.
 
-    await user.click(buttons[1]);
+    triggerPress(buttons[1]);
     alert = getByRole('alert');
     expect(alert).toHaveTextContent('Error');
 
-    await user.click(buttons[0]);
+    triggerPress(buttons[0]);
     alert = getByRole('alert');
     expect(alert).toHaveTextContent('Error');
 
-    await user.click(within(alert).getByRole('button'));
+    triggerPress(within(alert).getByRole('button'));
     fireAnimationEnd(alert);
 
     alert = getByRole('alert');
     expect(alert).toHaveTextContent('Info');
 
-    await user.click(within(alert).getByRole('button'));
+    triggerPress(within(alert).getByRole('button'));
     fireAnimationEnd(alert);
     expect(queryByRole('alert')).toBeNull();
   });
 
-  it('can focus toast region using F6', async () => {
+  it('can focus toast region using F6', () => {
     let {getByRole} = renderComponent(<RenderToastButton timeout={5000} />);
     let button = getByRole('button');
 
-    await user.click(button);
+    triggerPress(button);
 
     let toast = getByRole('alert');
     expect(toast).toBeVisible();
@@ -286,46 +286,46 @@ describe('Toast Provider and Container', function () {
     expect(document.activeElement).toBe(region);
   });
 
-  it('should restore focus when a toast exits', async () => {
+  it('should restore focus when a toast exits', () => {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
-    await user.click(button);
+    triggerPress(button);
 
     let toast = getByRole('alert');
     let closeButton = within(toast).getByRole('button');
     act(() => closeButton.focus());
 
-    await user.click(closeButton);
+    triggerPress(closeButton);
     fireAnimationEnd(toast);
     expect(queryByRole('alert')).toBeNull();
     expect(document.activeElement).toBe(button);
   });
 
-  it('should move focus to container when a toast exits and there are more', async () => {
+  it('should move focus to container when a toast exits and there are more', () => {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
-    await user.click(button);
-    await user.click(button);
+    triggerPress(button);
+    triggerPress(button);
 
     let toast = getByRole('alert');
     let closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
+    triggerPress(closeButton);
     fireAnimationEnd(toast);
 
     expect(document.activeElement).toBe(getByRole('region'));
 
     toast = getByRole('alert');
     closeButton = within(toast).getByRole('button');
-    await user.click(closeButton);
+    triggerPress(closeButton);
     fireAnimationEnd(toast);
 
     expect(queryByRole('alert')).toBeNull();
     expect(document.activeElement).toBe(button);
   });
 
-  it('should support programmatically closing toasts', async () => {
+  it('should support programmatically closing toasts', () => {
     function ToastToggle() {
       let [close, setClose] = useState(null);
 
@@ -348,17 +348,17 @@ describe('Toast Provider and Container', function () {
     let {getByRole, queryByRole} = renderComponent(<ToastToggle />);
     let button = getByRole('button');
 
-    await user.click(button);
+    triggerPress(button);
 
     let toast = getByRole('alert');
     expect(toast).toBeVisible();
 
-    await user.click(button);
+    triggerPress(button);
     fireAnimationEnd(toast);
     expect(queryByRole('alert')).toBeNull();
   });
 
-  it('should only render one ToastContainer', async () => {
+  it('should only render one ToastContainer', () => {
     let {getByRole, getAllByRole, rerender} = render(
       <Provider theme={defaultTheme}>
         <ToastContainer key="first" />
@@ -368,7 +368,7 @@ describe('Toast Provider and Container', function () {
     );
 
     let button = getByRole('button');
-    await user.click(button);
+    triggerPress(button);
 
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
@@ -405,14 +405,14 @@ describe('Toast Provider and Container', function () {
     expect(getAllByRole('alert')).toHaveLength(1);
   });
 
-  it('should support custom toast events', async () => {
+  it('should support custom toast events', () => {
     let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
 
     let onToast = jest.fn().mockImplementation(e => e.preventDefault());
     window.addEventListener('react-spectrum-toast', onToast);
 
     let button = getByRole('button');
-    await user.click(button);
+    triggerPress(button);
 
     expect(queryByRole('alert')).toBeNull();
     expect(onToast).toHaveBeenCalledTimes(1);
@@ -425,7 +425,7 @@ describe('Toast Provider and Container', function () {
     window.removeEventListener('react-spectrum-toast', onToast);
   });
 
-  it('should support custom aria-label', async () => {
+  it('should support custom aria-label', () => {
     let {getByRole} = render(
       <Provider theme={defaultTheme}>
         <ToastContainer aria-label="Toasts" />
@@ -434,7 +434,7 @@ describe('Toast Provider and Container', function () {
     );
 
     let button = getByRole('button');
-    await user.click(button);
+    triggerPress(button);
 
     let region = getByRole('region');
     expect(region).toHaveAttribute('aria-label', 'Toasts');

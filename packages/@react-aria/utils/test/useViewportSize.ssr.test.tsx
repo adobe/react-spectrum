@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {testSSR} from '@react-spectrum/test-utils-internal';
+import {testSSR} from '@react-spectrum/test-utils';
 
 describe('useViewportSize SSR', () => {
   it('should render without errors', async () => {

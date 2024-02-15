@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {renderHook} from '@react-spectrum/test-utils-internal';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useRef} from 'react';
 import {useToast} from '../';
 

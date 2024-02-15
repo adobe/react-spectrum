@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils';
 import {DataTransfer, DragEvent} from './mocks';
 import {Draggable} from './examples';
 import {DroppableGridExample} from '../stories/DroppableGrid';
@@ -319,12 +319,14 @@ describe('useDroppableCollection', () => {
   });
 
   describe('keyboard', () => {
-    let pressKey = async (key) => {
-      await user.keyboard(`[${key}]`);
+    let pressKey = (key) => {
+      fireEvent.keyDown(document.activeElement, {key});
+      fireEvent.keyUp(document.activeElement, {key});
     };
 
-    afterEach(async () => {
-      await user.keyboard('[Escape]');
+    afterEach(() => {
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
     });
 
     it('should perform basic drag and drop', async () => {
@@ -342,7 +344,7 @@ describe('useDroppableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       cells = within(grid).getAllByRole('gridcell');
@@ -350,16 +352,16 @@ describe('useDroppableCollection', () => {
 
       expect(document.activeElement).toBe(within(cells[0]).getByRole('button'));
 
-      await pressKey('ArrowDown');
+      pressKey('ArrowDown');
       expect(document.activeElement).toBe(within(cells[1]).getByRole('button'));
 
-      await pressKey('ArrowDown');
+      pressKey('ArrowDown');
       expect(document.activeElement).toBe(within(cells[2]).getByRole('button'));
 
-      await pressKey('ArrowDown');
+      pressKey('ArrowDown');
       expect(document.activeElement).toBe(within(cells[3]).getByRole('button'));
 
-      await pressKey('Enter');
+      pressKey('Enter');
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
         type: 'drop',
@@ -403,7 +405,7 @@ describe('useDroppableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       cells = within(grid).getAllByRole('gridcell');
@@ -421,7 +423,7 @@ describe('useDroppableCollection', () => {
 
       for (let i = 0; i < cells.length; i++) {
         if (i > 0) {
-          await pressKey('ArrowDown');
+          pressKey('ArrowDown');
         }
 
         expect(document.activeElement).toBe(within(cells[i]).getByRole('button'));
@@ -444,7 +446,7 @@ describe('useDroppableCollection', () => {
         });
       }
 
-      await pressKey('ArrowDown');
+      pressKey('ArrowDown');
       expect(document.activeElement).toBe(within(cells[0]).getByRole('button'));
       expect(onDragExit).toHaveBeenCalledTimes(7);
       expect(onDragExit).toHaveBeenLastCalledWith({
@@ -463,7 +465,7 @@ describe('useDroppableCollection', () => {
       });
 
       for (let i = cells.length - 1; i >= 0; i--) {
-        await pressKey('ArrowUp');
+        pressKey('ArrowUp');
 
         expect(document.activeElement).toBe(within(cells[i]).getByRole('button'));
         expect(onDragExit).toHaveBeenCalledTimes(7 + cells.length - i);
@@ -483,7 +485,7 @@ describe('useDroppableCollection', () => {
         });
       }
 
-      await pressKey('ArrowUp');
+      pressKey('ArrowUp');
       expect(document.activeElement).toBe(within(cells[cells.length - 1]).getByRole('button'));
       expect(onDragExit).toHaveBeenCalledTimes(cells.length * 2 + 1);
       expect(onDragExit).toHaveBeenLastCalledWith({
@@ -519,7 +521,7 @@ describe('useDroppableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       cells = within(grid).getAllByRole('gridcell');
@@ -533,7 +535,7 @@ describe('useDroppableCollection', () => {
         target: {type: 'root'}
       });
 
-      await pressKey('End');
+      pressKey('End');
       expect(onDragExit).toHaveBeenCalledTimes(1);
       expect(onDragExit).toHaveBeenLastCalledWith({
         type: 'dropexit',
@@ -550,7 +552,7 @@ describe('useDroppableCollection', () => {
         target: {type: 'item', key: '3', dropPosition: 'after'}
       });
 
-      await pressKey('Home');
+      pressKey('Home');
       expect(onDragExit).toHaveBeenCalledTimes(2);
       expect(onDragExit).toHaveBeenLastCalledWith({
         type: 'dropexit',
@@ -589,7 +591,7 @@ describe('useDroppableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       cells = within(grid).getAllByRole('gridcell');
@@ -604,7 +606,7 @@ describe('useDroppableCollection', () => {
 
       for (let i = 0; i < pageDownTargets.length; i++) {
         if (i > 0) {
-          await pressKey('PageDown');
+          pressKey('PageDown');
 
           expect(onDragExit).toHaveBeenCalledTimes(i);
           expect(onDragExit).toHaveBeenLastCalledWith({
@@ -632,7 +634,7 @@ describe('useDroppableCollection', () => {
       ];
 
       for (let i = 0; i < pageUpTargets.length; i++) {
-        await pressKey('PageUp');
+        pressKey('PageUp');
         expect(onDragExit).toHaveBeenCalledTimes(pageDownTargets.length + i);
         expect(onDragExit).toHaveBeenLastCalledWith({
           type: 'dropexit',
@@ -673,7 +675,7 @@ describe('useDroppableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       cells = within(grid).getAllByRole('gridcell');
@@ -688,7 +690,7 @@ describe('useDroppableCollection', () => {
 
       for (let i = 0; i < pageDownTargets.length; i++) {
         if (i > 0) {
-          await pressKey('PageDown');
+          pressKey('PageDown');
 
           expect(onDragExit).toHaveBeenCalledTimes(i);
           expect(onDragExit).toHaveBeenLastCalledWith({
@@ -715,7 +717,7 @@ describe('useDroppableCollection', () => {
       ];
 
       for (let i = 0; i < pageUpTargets.length; i++) {
-        await pressKey('PageUp');
+        pressKey('PageUp');
         expect(onDragExit).toHaveBeenCalledTimes(pageDownTargets.length + i);
         expect(onDragExit).toHaveBeenLastCalledWith({
           type: 'dropexit',
@@ -756,7 +758,7 @@ describe('useDroppableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       cells = within(grid).getAllByRole('gridcell');
@@ -771,7 +773,7 @@ describe('useDroppableCollection', () => {
 
       for (let i = 0; i < pageDownTargets.length; i++) {
         if (i > 0) {
-          await pressKey('PageDown');
+          pressKey('PageDown');
 
           expect(onDragExit).toHaveBeenCalledTimes(i);
           expect(onDragExit).toHaveBeenLastCalledWith({
@@ -798,7 +800,7 @@ describe('useDroppableCollection', () => {
       ];
 
       for (let i = 0; i < pageUpTargets.length; i++) {
-        await pressKey('PageUp');
+        pressKey('PageUp');
         expect(onDragExit).toHaveBeenCalledTimes(pageDownTargets.length + i);
         expect(onDragExit).toHaveBeenLastCalledWith({
           type: 'dropexit',
@@ -833,13 +835,13 @@ describe('useDroppableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
-      await pressKey('ArrowDown');
+      pressKey('ArrowDown');
       expect(document.activeElement).toBe(cells[1]);
 
       await user.tab({shift: true});
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between Two and Three');
@@ -860,25 +862,25 @@ describe('useDroppableCollection', () => {
 
       await user.tab();
       await user.tab();
-      await pressKey('Space');
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
 
-      await pressKey('ArrowDown');
-      await pressKey('ArrowDown');
-      await pressKey('Space');
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[2]);
       expect(rows[2]).toHaveAttribute('aria-selected', 'true');
 
-      await pressKey('ArrowUp');
-      await pressKey('Space');
+      pressKey('ArrowUp');
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
       await user.tab({shift: true});
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'Insert after Three');
@@ -901,22 +903,22 @@ describe('useDroppableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
-      await pressKey('ArrowDown');
-      await pressKey('ArrowDown');
-      await pressKey('ArrowDown');
-      await pressKey('Space');
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[2]);
       expect(rows[2]).toHaveAttribute('aria-selected', 'true');
 
-      await pressKey('ArrowUp');
-      await pressKey('Space');
+      pressKey('ArrowUp');
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
       await user.tab({shift: true});
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'Insert between One and Two');
@@ -940,22 +942,22 @@ describe('useDroppableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
-      await pressKey('ArrowDown');
-      await pressKey('ArrowDown');
-      await pressKey('ArrowDown');
-      await pressKey('Space');
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[2]);
       expect(rows[2]).toHaveAttribute('aria-selected', 'true');
 
-      await pressKey('ArrowUp');
-      await pressKey('Space');
+      pressKey('ArrowUp');
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
       await user.tab({shift: true});
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Two');
@@ -977,25 +979,25 @@ describe('useDroppableCollection', () => {
 
       await user.tab();
       await user.tab();
-      await pressKey('Space');
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[0]);
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
 
-      await pressKey('ArrowDown');
-      await pressKey('ArrowDown');
-      await pressKey('Space');
+      pressKey('ArrowDown');
+      pressKey('ArrowDown');
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[2]);
       expect(rows[2]).toHaveAttribute('aria-selected', 'true');
 
-      await pressKey('ArrowUp');
-      await pressKey('Space');
+      pressKey('ArrowUp');
+      pressKey(' ');
       expect(document.activeElement).toBe(cells[1]);
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
       await user.tab({shift: true});
       expect(document.activeElement).toBe(draggable);
 
-      await pressKey('Enter');
+      pressKey('Enter');
       act(() => jest.runAllTimers());
 
       expect(document.activeElement).toHaveAttribute('aria-label', 'Drop on Three');
@@ -1008,8 +1010,9 @@ describe('useDroppableCollection', () => {
       fireEvent.focus(document.body);
     });
 
-    afterEach(async () => {
-      await user.keyboard('[Escape]');
+    afterEach(() => {
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
     });
 
     it('should perform basic drag and drop', async () => {

@@ -11,10 +11,9 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, render} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import React from 'react';
-import userEvent from '@testing-library/user-event';
 import {useSpinButton} from '../';
 
 function Example(props) {
@@ -47,75 +46,67 @@ describe('useSpinButton', function () {
     expect(el).toHaveAttribute('aria-readonly', 'true');
   });
 
-  it('should trigger onIncrement on arrow up', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('should trigger onIncrement on arrow up', function () {
     let onIncrement = jest.fn();
     let res = render(<Example value={2} onIncrement={onIncrement} />);
-    act(() => res.getByTestId('test').focus());
-    await user.keyboard('{ArrowUp}');
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'ArrowUp'});
     expect(onIncrement).toHaveBeenCalledTimes(1);
   });
 
-  it('should trigger onDecrement on arrow down', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('should trigger onDecrement on arrow down', function () {
     let onDecrement = jest.fn();
     let res = render(<Example value={2} onDecrement={onDecrement} />);
-    act(() => res.getByTestId('test').focus());
-    await user.keyboard('{ArrowDown}');
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'ArrowDown'});
     expect(onDecrement).toHaveBeenCalledTimes(1);
   });
 
-  it('should trigger onIncrementPage on page up', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('should trigger onIncrementPage on page up', function () {
     let onIncrementPage = jest.fn();
     let res = render(<Example value={2} onIncrementPage={onIncrementPage} />);
-    act(() => res.getByTestId('test').focus());
-    await user.keyboard('{PageUp}');
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'PageUp'});
     expect(onIncrementPage).toHaveBeenCalledTimes(1);
   });
 
-  it('should fall back to onIncrement on page up if onIncrementPage is not available', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('should fall back to onIncrement on page up if onIncrementPage is not available', function () {
     let onIncrement = jest.fn();
     let res = render(<Example value={2} onIncrement={onIncrement} />);
-    act(() => res.getByTestId('test').focus());
-    await user.keyboard('{PageUp}');
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'PageUp'});
     expect(onIncrement).toHaveBeenCalledTimes(1);
   });
 
-  it('should trigger onDecrementPage on page up', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('should trigger onDecrementPage on page up', function () {
     let onDecrementPage = jest.fn();
     let res = render(<Example value={2} onDecrementPage={onDecrementPage} />);
-    act(() => res.getByTestId('test').focus());
-    await user.keyboard('{PageDown}');
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'PageDown'});
     expect(onDecrementPage).toHaveBeenCalledTimes(1);
   });
 
-  it('should fall back to onDecrement on page up if onDecrementPage is not available', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('should fall back to onDecrement on page up if onDecrementPage is not available', function () {
     let onDecrement = jest.fn();
     let res = render(<Example value={2} onDecrement={onDecrement} />);
-    act(() => res.getByTestId('test').focus());
-    await user.keyboard('{PageDown}');
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'PageDown'});
     expect(onDecrement).toHaveBeenCalledTimes(1);
   });
 
-  it('should trigger onDecrementToMin on home key', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('should trigger onDecrementToMin on home key', function () {
     let onDecrementToMin = jest.fn();
     let res = render(<Example value={2} onDecrementToMin={onDecrementToMin} minValue={1} />);
-    act(() => res.getByTestId('test').focus());
-    await user.keyboard('{Home}');
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'Home'});
     expect(onDecrementToMin).toHaveBeenCalledTimes(1);
   });
 
-  it('should trigger onIncrementToMax on end key', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('should trigger onIncrementToMax on end key', function () {
     let onIncrementToMax = jest.fn();
     let res = render(<Example value={2} onIncrementToMax={onIncrementToMax} maxValue={1} />);
-    act(() => res.getByTestId('test').focus());
-    await user.keyboard('{End}');
+    let el = res.getByTestId('test');
+    fireEvent.keyDown(el, {key: 'End'});
     expect(onIncrementToMax).toHaveBeenCalledTimes(1);
   });
 

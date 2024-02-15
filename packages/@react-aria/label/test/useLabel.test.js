@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {renderHook} from '@react-spectrum/test-utils-internal';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useLabel} from '../';
 
 describe('useLabel hook', () => {
