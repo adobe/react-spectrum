@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Adobe. All rights reserved.
+ * Copyright 2020 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,21 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-const {Optimizer} = require('@parcel/plugin');
-const {blobToString} = require('@parcel/utils');
+/// <reference types="css-module-types" />
 
-module.exports = new Optimizer({
-  async optimize({bundle, contents, map}) {
-    if (!/@react-spectrum|react-aria-components/.test(bundle.target.distDir)) {
-      return {contents, map};
-    }
-
-    map?.offsetLines(2, 0);
-    return {
-      contents: `"use client";
-
-${await blobToString(contents)}`,
-      map
-    };
-  }
-});
+export * from '@react-aria/test-utils';
+export * from './testSetup';

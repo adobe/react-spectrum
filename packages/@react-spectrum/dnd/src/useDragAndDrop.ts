@@ -102,7 +102,7 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDropHooks {
     if (isDroppable) {
       hooks.useDroppableCollectionState = function useDroppableCollectionStateOverride(props: DroppableCollectionStateOptions) {
         return useDroppableCollectionState({...props, ...options});
-      },
+      };
       hooks.useDroppableItem = useDroppableItem;
       hooks.useDroppableCollection = function useDroppableCollectionOverride(props: DroppableCollectionOptions, state: DroppableCollectionState, ref: RefObject<HTMLElement>) {
         return useDroppableCollection({...props, ...options}, state, ref);

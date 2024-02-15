@@ -46,6 +46,7 @@ export function useColorField(
     isDisabled,
     isReadOnly,
     isRequired,
+    isWheelDisabled,
     validationBehavior = 'aria'
   } = props;
 
@@ -90,7 +91,7 @@ export function useColorField(
     }
   }, [decrement, increment]);
   // If the input isn't supposed to receive input, disable scrolling.
-  let scrollingDisabled = isDisabled || isReadOnly || !focusWithin;
+  let scrollingDisabled = isWheelDisabled || isDisabled || isReadOnly || !focusWithin;
   useScrollWheel({onScroll: onWheel, isDisabled: scrollingDisabled}, ref);
 
   let onChange = value => {

@@ -14,7 +14,7 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
-import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Key, LinkDOMProps} from '@react-types/shared';
@@ -228,9 +228,7 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
   value?: T,
   /** A string representation of the item's contents, used for features like typeahead. */
-  textValue?: string,
-  /** An accessibility label for this item. */
-  'aria-label'?: string
+  textValue?: string
 }
 
 function GridListItem<T extends object>(props: GridListItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
@@ -350,7 +348,7 @@ function GridListRow({item}) {
               }],
               [ButtonContext, {
                 slots: {
-                  [defaultSlot]: {},
+                  [DEFAULT_SLOT]: {},
                   drag: {
                     ...draggableItem?.dragButtonProps,
                     ref: dragButtonRef,

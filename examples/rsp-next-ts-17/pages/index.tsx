@@ -84,6 +84,7 @@ import {
 import ReorderableListView from "../components/ReorderableListView";
 import {ToastQueue} from '@react-spectrum/toast';
 import {InlineAlert} from '@react-spectrum/inlinealert'
+import { SubmenuTrigger } from "@react-spectrum/menu";
 
 let nestedItems = [
   {foo: 'Lvl 1 Foo 1', bar: 'Lvl 1 Bar 1', baz: 'Lvl 1 Baz 1', childRows: [
@@ -162,6 +163,21 @@ export default function Home() {
                 <Item key="copy">Copy</Item>
                 <Item key="paste">Paste</Item>
                 <Item key="replace">Replace</Item>
+                <SubmenuTrigger>
+                  <Item key="share">Share</Item>
+                  <Menu onAction={(key) => ToastQueue.positive(key.toString())}>
+                    <Item key="copy-ink">Copy Link</Item>
+                    <SubmenuTrigger>
+                      <Item key="email">Email</Item>
+                      <Menu onAction={(key) => ToastQueue.positive(key.toString())}>
+                        <Item key="attachment">Email as Attachment</Item>
+                        <Item key="link">Email as Link</Item>
+                      </Menu>
+                    </SubmenuTrigger>
+                    <Item key="sms">SMS</Item>
+                  </Menu>
+                </SubmenuTrigger>
+                <Item key="delete">Delete</Item>
               </Menu>
             </MenuTrigger>
             <MenuTrigger>

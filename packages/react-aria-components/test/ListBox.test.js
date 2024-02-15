@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {DropIndicator, Header, ListBox, ListBoxContext, ListBoxItem, Section, Text, useDragAndDrop} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
@@ -83,6 +83,14 @@ describe('ListBox', () => {
 
     for (let option of getAllByRole('option')) {
       expect(option).toHaveAttribute('data-bar', 'foo');
+    }
+  });
+
+  it('should support aria-label on the listbox items', () => {
+    let {getAllByRole} = renderListbox({}, {'aria-label': 'test'});
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('aria-label', 'test');
     }
   });
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils-internal';
 import {composeStories} from '@storybook/testing-react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -332,8 +332,9 @@ describe('Submenu', function () {
 
     // @ts-ignore
     let underlay = tree.getByTestId('underlay', {hidden: true});
-    fireEvent.pointerDown(underlay);
-    fireEvent.pointerUp(underlay);
+    // TODO: use mouseDown for now, adding installPointerEvents makes some the other tests break
+    fireEvent.mouseDown(underlay);
+    fireEvent.mouseUp(underlay);
     act(() => {jest.runAllTimers();});
     act(() => {jest.runAllTimers();});
     menus = tree.queryAllByRole('menu', {hidden: true});

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, renderHook} from '@react-spectrum/test-utils';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useListData} from '../src/useListData';
 
@@ -26,7 +26,12 @@ const many = [
   {name: 'Three'},
   {name: 'Four'},
   {name: 'Five'},
-  {name: 'Six'}
+  {name: 'Six'},
+  {name: 'Seven'},
+  {name: 'Eight'},
+  {name: 'Nine'},
+  {name: 'Ten'},
+  {name: 'Eleven'}
 ];
 
 let getKey = (item) => item.name;
@@ -390,14 +395,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[1],
         many[0],
         many[2],
         many[3],
         many[4],
-        many[5]
+        many[5],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -427,14 +437,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[0],
         many[3],
         many[1],
         many[2],
         many[4],
-        many[5]
+        many[5],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -447,14 +462,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[0],
         many[4],
         many[5],
         many[1],
         many[2],
-        many[3]
+        many[3],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -467,14 +487,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[1],
         many[3],
         many[0],
         many[2],
         many[4],
-        many[5]
+        many[5],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -487,14 +512,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[0],
         many[3],
         many[5],
         many[1],
         many[2],
-        many[4]
+        many[4],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -507,14 +537,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[1],
         many[0],
         many[4],
         many[2],
         many[3],
-        many[5]
+        many[5],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
   });
@@ -529,14 +564,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[1],
         many[2],
         many[0],
         many[3],
         many[4],
-        many[5]
+        many[5],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -549,14 +589,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[0],
         many[1],
         many[2],
         many[4],
         many[3],
-        many[5]
+        many[5],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -569,14 +614,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[0],
         many[3],
         many[4],
         many[1],
         many[2],
-        many[5]
+        many[5],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -589,14 +639,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[0],
         many[1],
         many[4],
         many[5],
         many[2],
-        many[3]
+        many[3],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -609,14 +664,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[1],
         many[3],
         many[4],
         many[0],
         many[2],
-        many[5]
+        many[5],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -629,14 +689,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[0],
         many[1],
         many[3],
         many[5],
         many[2],
-        many[4]
+        many[4],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -649,14 +714,19 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[1],
         many[2],
         many[0],
         many[4],
         many[3],
-        many[5]
+        many[5],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
       ]);
     });
 
@@ -669,14 +739,44 @@ describe('useListData', function () {
       });
 
       expect(result.current.items).not.toBe(initialResult.items);
-      expect(result.current.items).toHaveLength(6);
+      expect(result.current.items).toHaveLength(11);
       expect(result.current.items).toEqual([
         many[0],
         many[4],
         many[1],
         many[2],
         many[3],
-        many[5]
+        many[5],
+        many[6],
+        many[7],
+        many[8],
+        many[9],
+        many[10]
+      ]);
+    });
+
+    it('should move multiple items after that item', function () {
+      let {result} = renderHook(() => useListData({initialItems: many, getKey}));
+      let initialResult = result.current;
+
+      act(() => {
+        result.current.moveAfter('Seven', ['Nine', 'Ten', 'Eleven']);
+      });
+
+      expect(result.current.items).not.toBe(initialResult.items);
+      expect(result.current.items).toHaveLength(11);
+      expect(result.current.items).toEqual([
+        many[0],
+        many[1],
+        many[2],
+        many[3],
+        many[4],
+        many[5],
+        many[6],
+        many[8],
+        many[9],
+        many[10],
+        many[7]
       ]);
     });
   });

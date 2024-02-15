@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {ColorWheel} from '../';
 import {ControlledHSL} from '../stories/ColorWheel.stories';
 import {parseColor} from '@react-stately/color';
@@ -145,81 +145,77 @@ describe('ColorWheel', () => {
   });
 
   describe('keyboard events', () => {
-    it('works', () => {
+    it('works', async () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
-      fireEvent.keyDown(slider, {key: 'Right'});
+      await user.keyboard('{ArrowRight}');
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 1).toString('hsla'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
       expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 1).toString('hsla'));
-      fireEvent.keyDown(slider, {key: 'Left'});
+      await user.keyboard('{ArrowLeft}');
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
       expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
     });
 
-    it('doesn\'t work when disabled', () => {
+    it('doesn\'t work when disabled', async () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} isDisabled />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
-      fireEvent.keyDown(slider, {key: 'Right'});
+      await user.keyboard('{ArrowRight}');
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
-      fireEvent.keyDown(slider, {key: 'Left'});
+      await user.keyboard('{ArrowLeft}');
       expect(onChangeSpy).toHaveBeenCalledTimes(0);
     });
 
-    it('wraps around', () => {
+    it('wraps around', async () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
-      fireEvent.keyDown(slider, {key: 'Left'});
+      await user.keyboard('{ArrowLeft}');
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 359).toString('hsla'));
     });
 
-    it('respects page steps', () => {
+    it('respects page steps', async () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
-      fireEvent.keyDown(slider, {key: 'PageUp'});
-      fireEvent.keyUp(slider, {key: 'PageUp'});
+      await user.keyboard('{PageUp}');
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
       expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
-      fireEvent.keyDown(slider, {key: 'PageDown'});
-      fireEvent.keyUp(slider, {key: 'PageDown'});
+      await user.keyboard('{PageDown}');
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(2);
       expect(onChangeEndSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
     });
 
-    it('respects page steps from shift arrow', () => {
+    it('respects page steps from shift arrow', async () => {
       let defaultColor = parseColor('hsl(0, 100%, 50%)');
       let {getByRole} = render(<ColorWheel defaultValue={defaultColor} onChange={onChangeSpy} onChangeEnd={onChangeEndSpy} />);
       let slider = getByRole('slider');
       act(() => {slider.focus();});
 
-      fireEvent.keyDown(slider, {key: 'Right', shiftKey: true});
-      fireEvent.keyUp(slider, {key: 'Right', shiftKey: true});
+      await user.keyboard('{Shift>}{ArrowRight}{/Shift}');
       expect(onChangeSpy).toHaveBeenCalledTimes(1);
       expect(onChangeSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(1);
       expect(onChangeEndSpy.mock.calls[0][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 15).toString('hsla'));
-      fireEvent.keyDown(slider, {key: 'Left', shiftKey: true});
-      fireEvent.keyUp(slider, {key: 'Left', shiftKey: true});
+      await user.keyboard('{Shift>}{ArrowLeft}{/Shift}');
       expect(onChangeSpy).toHaveBeenCalledTimes(2);
       expect(onChangeSpy.mock.calls[1][0].toString('hsla')).toBe(defaultColor.withChannelValue('hue', 0).toString('hsla'));
       expect(onChangeEndSpy).toHaveBeenCalledTimes(2);

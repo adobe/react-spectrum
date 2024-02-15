@@ -9,6 +9,7 @@ const attributes = {
     'allows-removing',
     'allows-sorting',
     'allows-dragging',
+    'has-submenu',
 
     // States
     'open',

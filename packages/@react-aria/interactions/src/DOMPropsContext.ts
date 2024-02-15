@@ -20,7 +20,7 @@ interface DOMPropsResponderProps extends DOMAttributes {
 
 interface IDOMPropsResponderContext extends DOMAttributes {
   register(): void,
-  ref?: MutableRefObject<Element>
+  ref?: MutableRefObject<Element | null>
 }
 
 export const DOMPropsResponderContext = React.createContext<IDOMPropsResponderContext | null>(null);

@@ -11,7 +11,7 @@
  */
 
 import {parseColor} from '../src/Color';
-import {renderHook} from '@react-spectrum/test-utils';
+import {renderHook} from '@react-spectrum/test-utils-internal';
 import {useColor} from '../src/useColor';
 
 describe('useColor tests', function () {
