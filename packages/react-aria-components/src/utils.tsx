@@ -12,7 +12,7 @@
 
 import {AriaLabelingProps, DOMProps as SharedDOMProps} from '@react-types/shared';
 import {mergeProps, mergeRefs, useLayoutEffect, useObjectRef} from '@react-aria/utils';
-import React, {Context, createContext, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, RefObject, UIEvent, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {Context, createContext, CSSProperties, ForwardedRef, JSX, ReactNode, RefCallback, RefObject, UIEvent, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {useIsSSR} from 'react-aria';
 
@@ -23,12 +23,10 @@ declare function forwardRef<T, P = {}>(
 
 export type forwardRefType = typeof forwardRef;
 
-export const slotCallbackSymbol = Symbol('callback');
-export const defaultSlot = Symbol('default');
+export const DEFAULT_SLOT = Symbol('default');
 
 interface SlottedValue<T> {
-  slots?: Record<string | symbol, T>,
-  [slotCallbackSymbol]?: (value: T) => void
+  slots?: Record<string | symbol, T>
 }
 
 export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
@@ -171,10 +169,10 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
   if (ctx && typeof ctx === 'object' && 'slots' in ctx && ctx.slots) {
     let availableSlots = new Intl.ListFormat().format(Object.keys(ctx.slots).map(p => `"${p}"`));
 
-    if (!slot && !ctx.slots[defaultSlot]) {
+    if (!slot && !ctx.slots[DEFAULT_SLOT]) {
       throw new Error(`A slot prop is required. Valid slot names are ${availableSlots}.`);
     }
-    let slotKey = slot || defaultSlot;
+    let slotKey = slot || DEFAULT_SLOT;
     if (!ctx.slots[slotKey]) {
       // @ts-ignore
       throw new Error(`Invalid slot "${slot}". Valid slot names are ${availableSlots}.`);
@@ -188,7 +186,7 @@ export function useSlottedContext<T>(context: Context<SlottedContextValue<T>>, s
 export function useContextProps<T, U extends SlotProps, E extends Element>(props: T & SlotProps, ref: ForwardedRef<E>, context: Context<ContextValue<U, E>>): [T, RefObject<E>] {
   let ctx = useSlottedContext(context, props.slot) || {};
   // @ts-ignore - TS says "Type 'unique symbol' cannot be used as an index type." but not sure why.
-  let {ref: contextRef, [slotCallbackSymbol]: callback, ...contextProps} = ctx;
+  let {ref: contextRef, ...contextProps} = ctx;
   let mergedRef = useObjectRef(useMemo(() => mergeRefs(ref, contextRef), [ref, contextRef]));
   let mergedProps = mergeProps(contextProps, props) as unknown as T;
 
@@ -204,13 +202,6 @@ export function useContextProps<T, U extends SlotProps, E extends Element>(props
     // @ts-ignore
     mergedProps.style = {...contextProps.style, ...props.style};
   }
-
-  // A parent component might need the props from a child, so call slot callback if needed.
-  useEffect(() => {
-    if (callback) {
-      callback(props);
-    }
-  }, [callback, props]);
 
   return [mergedProps, mergedRef];
 }

@@ -37,4 +37,4 @@ function App() {
 ## Learn more
 
 React Spectrum is part of a family of libraries that help you build adaptive, accessible, and robust user experiences.
-Learn more about [React Aria](https://react-spectrum.adobe.com/react-aria/index.html) and [React Stately](https://react-spectrum.adobe.com/react-stately/index.html) if you'd like to build you own component library from scratch on [our website](https://react-spectrum.adobe.com/index.html).
+Learn more about [React Aria](https://react-spectrum.adobe.com/react-aria/index.html) and [React Stately](https://react-spectrum.adobe.com/react-stately/index.html) if you'd like to build your own component library from scratch on [our website](https://react-spectrum.adobe.com/index.html).

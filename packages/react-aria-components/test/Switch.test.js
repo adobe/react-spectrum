@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {Switch, SwitchContext} from '../';
 import userEvent from '@testing-library/user-event';
@@ -106,6 +106,36 @@ describe('Switch', () => {
     await user.tab();
     expect(label).not.toHaveAttribute('data-focus-visible');
     expect(label).not.toHaveClass('focus');
+  });
+
+  it('should support focus events', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    
+    let {getByRole, getByText} = render(
+      <>
+        <Switch onBlur={onBlur} onFocus={onFocus} onFocusChange={onFocusChange}>Test</Switch>
+        <button>Steal focus</button>
+      </>
+    );
+
+    let s = getByRole('switch');
+    let button = getByText('Steal focus');
+
+    await user.tab();
+    expect(document.activeElement).toBe(s);
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenLastCalledWith(true);
+
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    expect(onBlur).toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 
   it('should support press state', () => {
