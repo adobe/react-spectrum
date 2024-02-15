@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {render as ReactDOMRender} from 'react-dom';
 import {useInteractOutside} from '../';

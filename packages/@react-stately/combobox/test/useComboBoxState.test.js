@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import React from 'react';
 import {useComboBoxState} from '../';

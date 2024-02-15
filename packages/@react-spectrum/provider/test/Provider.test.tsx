@@ -13,7 +13,7 @@
 // needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
 // eslint-disable-next-line rsp-rules/sort-imports
-import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Provider} from '../';
@@ -146,7 +146,7 @@ describe('Provider', () => {
     expect(provider2.classList.contains('spectrum--light')).toBeTruthy();
   });
 
-  it('Nested providers pass props to children', async () => {
+  it('Nested providers pass props to children', () => {
     let onPressSpy = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme} isDisabled>
@@ -156,7 +156,7 @@ describe('Provider', () => {
       </Provider>
     );
     let button = getByRole('button');
-    await user.click(button);
+    triggerPress(button);
     expect(onPressSpy).not.toHaveBeenCalled();
     expect(button.classList.contains('spectrum-ActionButton--quiet')).toBeTruthy();
     onPressSpy.mockClear();

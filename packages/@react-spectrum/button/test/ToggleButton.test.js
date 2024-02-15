@@ -10,14 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
+import {render, triggerPress} from '@react-spectrum/test-utils';
 import {ToggleButton} from '../';
-import userEvent from '@testing-library/user-event';
 
 describe('ToggleButton', function () {
-  it('handles defaults', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('handles defaults', function () {
     let onPress = jest.fn();
     let onChange = jest.fn();
     let {getByRole} = render(<ToggleButton onPress={onPress} onChange={onChange}>Click Me</ToggleButton>);
@@ -25,14 +23,13 @@ describe('ToggleButton', function () {
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-pressed', 'false');
 
-    await user.click(button);
+    triggerPress(button);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith(true);
     expect(button).toHaveAttribute('aria-pressed', 'true');
   });
 
-  it('supports defaultSelected', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('supports defaultSelected', function () {
     let onPress = jest.fn();
     let onChange = jest.fn();
     let {getByRole} = render(<ToggleButton defaultSelected onPress={onPress} onChange={onChange}>Click Me</ToggleButton>);
@@ -40,14 +37,13 @@ describe('ToggleButton', function () {
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-pressed', 'true');
 
-    await user.click(button);
+    triggerPress(button);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith(false);
     expect(button).toHaveAttribute('aria-pressed', 'false');
   });
 
-  it('supports isSelected', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('supports isSelected', function () {
     let onPress = jest.fn();
     let onChange = jest.fn();
     let {getByRole} = render(<ToggleButton isSelected onPress={onPress} onChange={onChange}>Click Me</ToggleButton>);
@@ -55,7 +51,7 @@ describe('ToggleButton', function () {
     let button = getByRole('button');
     expect(button).toHaveAttribute('aria-pressed', 'true');
 
-    await user.click(button);
+    triggerPress(button);
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith(false);
     expect(button).toHaveAttribute('aria-pressed', 'true');

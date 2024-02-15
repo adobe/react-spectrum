@@ -12,7 +12,7 @@
 
 import {OverlayContainer, OverlayProvider, useModal} from '..';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils-internal';
+import {render} from '@react-spectrum/test-utils';
 
 function ModalDOM(props) {
   let {modalProps} = useModal();

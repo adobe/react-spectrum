@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Grid} from '../stories/example';
 import {Item} from '@react-stately/collections';
 import React from 'react';
@@ -54,30 +54,30 @@ describe('useGrid', () => {
     await user.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
 
     act(() => tree.getAllByRole('switch')[1].focus());
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
   });
 
@@ -87,25 +87,25 @@ describe('useGrid', () => {
     await user.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('row')[0]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
   });
 
@@ -115,19 +115,19 @@ describe('useGrid', () => {
     await user.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
   });
 
@@ -137,22 +137,22 @@ describe('useGrid', () => {
     await user.tab();
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
-    await user.keyboard('[ArrowRight]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[1]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('switch')[0]);
 
-    await user.keyboard('[ArrowLeft]');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowLeft'});
     expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[0]);
   });
 });

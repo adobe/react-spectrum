@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {DropIndicator, Header, ListBox, ListBoxContext, ListBoxItem, Section, Text, useDragAndDrop} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';

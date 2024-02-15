@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {ButtonGroup} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useEffect, useRef} from 'react';
 import {theme} from '@react-spectrum/theme-default';
-import userEvent from '@testing-library/user-event';
 
 let buttonGroupId = 'button-group';
 let onPressSpy1 = jest.fn();
@@ -49,8 +48,7 @@ describe('ButtonGroup', function () {
   it.each`
     Name               | Component        | props
     ${'ButtonGroup'}   | ${ButtonGroup}   | ${{}}
-  `('$Name renders multiple buttons', async function ({Component, props}) {
-    let user = userEvent.setup({delay: null, pointerMap});
+  `('$Name renders multiple buttons', function ({Component, props}) {
     let tree = renderComponent(Component, props);
     let buttonGroup = tree.getByTestId(buttonGroupId);
     expect(buttonGroup).toBeTruthy();
@@ -63,9 +61,9 @@ describe('ButtonGroup', function () {
     expect(button2).toBeTruthy();
     expect(button3).toBeTruthy();
 
-    await user.click(button1);
-    await user.click(button2);
-    await user.click(button3);
+    triggerPress(button1);
+    triggerPress(button2);
+    triggerPress(button3);
 
     expect(onPressSpy1).toHaveBeenCalledTimes(1);
     expect(onPressSpy2).toHaveBeenCalledTimes(1);
@@ -95,8 +93,7 @@ describe('ButtonGroup', function () {
   it.each`
     Name               | Component        | props
     ${'ButtonGroup'}   | ${ButtonGroup}   | ${{isDisabled: true}}
-  `('$Name supports disabling all buttons within via isDisabled', async function ({Component, props}) {
-    let user = userEvent.setup({delay: null, pointerMap});
+  `('$Name supports disabling all buttons within via isDisabled', function ({Component, props}) {
     let tree = renderComponent(Component, props);
     let buttonGroup = tree.getByTestId(buttonGroupId);
     expect(buttonGroup).toBeTruthy();
@@ -105,9 +102,9 @@ describe('ButtonGroup', function () {
     let button2 = within(buttonGroup).getByText('Button2');
     let button3 = within(buttonGroup).getByText('Button3');
 
-    await user.click(button1);
-    await user.click(button2);
-    await user.click(button3);
+    triggerPress(button1);
+    triggerPress(button2);
+    triggerPress(button3);
 
     expect(onPressSpy1).toHaveBeenCalledTimes(0);
     expect(onPressSpy2).toHaveBeenCalledTimes(0);

@@ -13,7 +13,7 @@
 import {Card} from '../src';
 import {composeStories} from '@storybook/testing-react';
 import * as defaultStories from '../chromatic/Card.chromatic';
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import * as quietStories from '../chromatic/QuietCard.chromatic';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

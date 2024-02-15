@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent} from '@react-spectrum/test-utils';
 import {Cell, Column, Row, TableBody, TableHeader} from '@react-stately/table';
 import {composeStories} from '@storybook/testing-react';
 import {Key} from '@react-types/shared';

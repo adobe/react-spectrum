@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {DataTransfer, DataTransferItem, DragEvent} from './mocks';
 import {DraggableCollectionExample} from '../stories/DraggableCollection';
 import {DraggableListBox} from '../stories/DraggableListBox';
@@ -316,8 +316,9 @@ describe('useDraggableCollection', () => {
   });
 
   describe('keyboard', () => {
-    afterEach(async () => {
-      await user.keyboard('[Escape]');
+    afterEach(() => {
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
     });
 
     it('should drag a single item', async () => {
@@ -340,14 +341,17 @@ describe('useDraggableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
-      await user.keyboard('[ArrowDown]');
+      fireEvent.keyDown(cells[0], {key: 'ArrowDown'});
+      fireEvent.keyUp(cells[0], {key: 'ArrowDown'});
       expect(document.activeElement).toBe(cells[1]);
 
-      await user.keyboard('[ArrowRight]');
+      fireEvent.keyDown(cells[1], {key: 'ArrowRight'});
+      fireEvent.keyUp(cells[1], {key: 'ArrowRight'});
       let dragButton = within(cells[1]).getByRole('button');
       expect(document.activeElement).toBe(dragButton);
 
-      await user.keyboard('[Enter]');
+      fireEvent.keyDown(dragButton, {key: 'Enter'});
+      fireEvent.keyUp(dragButton, {key: 'Enter'});
       act(() => jest.runAllTimers());
       expect(cells[0]).not.toHaveClass('is-dragging');
       expect(cells[1]).toHaveClass('is-dragging');
@@ -363,7 +367,8 @@ describe('useDraggableCollection', () => {
 
       expect(document.activeElement).toBe(droppable);
 
-      await user.keyboard('[Enter]');
+      fireEvent.keyDown(dragButton, {key: 'Enter'});
+      fireEvent.keyUp(dragButton, {key: 'Enter'});
       act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
@@ -419,20 +424,25 @@ describe('useDraggableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
-      await user.keyboard('[Space]');
+      fireEvent.keyDown(cells[0], {key: ' '});
+      fireEvent.keyUp(cells[0], {key: ' '});
       expect(rows[0]).toHaveAttribute('aria-selected', 'true');
 
-      await user.keyboard('[ArrowDown]');
+      fireEvent.keyDown(cells[0], {key: 'ArrowDown'});
+      fireEvent.keyUp(cells[0], {key: 'ArrowDown'});
       expect(document.activeElement).toBe(cells[1]);
 
-      await user.keyboard('[Space]');
+      fireEvent.keyDown(cells[1], {key: ' '});
+      fireEvent.keyUp(cells[1], {key: ' '});
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
-      await user.keyboard('[ArrowRight]');
+      fireEvent.keyDown(cells[1], {key: 'ArrowRight'});
+      fireEvent.keyUp(cells[1], {key: 'ArrowRight'});
       let dragButton = within(cells[1]).getByRole('button');
       expect(document.activeElement).toBe(dragButton);
 
-      await user.keyboard('[Enter]');
+      fireEvent.keyDown(dragButton, {key: 'Enter'});
+      fireEvent.keyUp(dragButton, {key: 'Enter'});
       act(() => jest.runAllTimers());
       expect(cells[0]).toHaveClass('is-dragging');
       expect(cells[1]).toHaveClass('is-dragging');
@@ -448,7 +458,8 @@ describe('useDraggableCollection', () => {
 
       expect(document.activeElement).toBe(droppable);
 
-      await user.keyboard('[Enter]');
+      fireEvent.keyDown(dragButton, {key: 'Enter'});
+      fireEvent.keyUp(dragButton, {key: 'Enter'});
       act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
@@ -512,17 +523,21 @@ describe('useDraggableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(cells[0]);
 
-      await user.keyboard('[ArrowDown]');
+      fireEvent.keyDown(cells[0], {key: 'ArrowDown'});
+      fireEvent.keyUp(cells[0], {key: 'ArrowDown'});
       expect(document.activeElement).toBe(cells[1]);
 
-      await user.keyboard('[Space]');
+      fireEvent.keyDown(cells[1], {key: ' '});
+      fireEvent.keyUp(cells[1], {key: ' '});
       expect(rows[1]).toHaveAttribute('aria-selected', 'true');
 
-      await user.keyboard('[ArrowRight]');
+      fireEvent.keyDown(cells[1], {key: 'ArrowRight'});
+      fireEvent.keyUp(cells[1], {key: 'ArrowRight'});
       let dragButton = within(cells[1]).getByRole('button');
       expect(document.activeElement).toBe(dragButton);
 
-      await user.keyboard('[Enter]');
+      fireEvent.keyDown(dragButton, {key: 'Enter'});
+      fireEvent.keyUp(dragButton, {key: 'Enter'});
       act(() => jest.runAllTimers());
       expect(cells[0]).not.toHaveClass('is-dragging');
       expect(cells[1]).toHaveClass('is-dragging');
@@ -538,7 +553,8 @@ describe('useDraggableCollection', () => {
 
       expect(document.activeElement).toBe(droppable);
 
-      await user.keyboard('[Enter]');
+      fireEvent.keyDown(dragButton, {key: 'Enter'});
+      fireEvent.keyUp(dragButton, {key: 'Enter'});
       act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
@@ -597,19 +613,23 @@ describe('useDraggableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(options[0]);
 
-      await user.keyboard('[Space]');
+      fireEvent.keyDown(options[0], {key: ' '});
+      fireEvent.keyUp(options[0], {key: ' '});
       expect(options[0]).toHaveAttribute('aria-selected', 'true');
       expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to start dragging');
 
-      await user.keyboard('[ArrowDown]');
+      fireEvent.keyDown(options[0], {key: 'ArrowDown'});
+      fireEvent.keyUp(options[0], {key: 'ArrowDown'});
       expect(document.activeElement).toBe(options[1]);
 
-      await user.keyboard('[Space]');
+      fireEvent.keyDown(options[1], {key: ' '});
+      fireEvent.keyUp(options[1], {key: ' '});
       expect(options[1]).toHaveAttribute('aria-selected', 'true');
       expect(options[1]).toHaveAttribute('aria-describedby');
       expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Press Enter to drag 2 selected items.');
 
-      await user.keyboard('[Enter]');
+      fireEvent.keyDown(options[1], {key: 'Enter'});
+      fireEvent.keyUp(options[1], {key: 'Enter'});
       act(() => jest.runAllTimers());
 
       expect(onDragStart).toHaveBeenCalledTimes(1);
@@ -622,7 +642,8 @@ describe('useDraggableCollection', () => {
 
       expect(document.activeElement).toBe(droppable);
 
-      await user.keyboard('[Enter]');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
@@ -683,24 +704,28 @@ describe('useDraggableCollection', () => {
       await user.tab();
       expect(document.activeElement).toBe(options[0]);
 
-      await user.keyboard('[Space]');
+      fireEvent.keyDown(options[0], {key: ' '});
+      fireEvent.keyUp(options[0], {key: ' '});
       expect(options[0]).toHaveAttribute('aria-selected', 'true');
       expect(document.getElementById(options[0].getAttribute('aria-describedby'))).toHaveTextContent('Press Alt + Enter to start dragging');
 
-      await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+      fireEvent.keyDown(options[0], {key: 'ArrowDown', shiftKey: true});
+      fireEvent.keyUp(options[0], {key: 'ArrowDown', shiftKey: true});
       expect(document.activeElement).toBe(options[1]);
 
       expect(options[1]).toHaveAttribute('aria-selected', 'true');
       expect(options[1]).toHaveAttribute('aria-describedby');
       expect(document.getElementById(options[1].getAttribute('aria-describedby'))).toHaveTextContent('Press Alt + Enter to drag 2 selected items.');
 
-      await user.keyboard('[Enter]');
+      fireEvent.keyDown(options[1], {key: 'Enter'});
+      fireEvent.keyUp(options[1], {key: 'Enter'});
       act(() => jest.runAllTimers());
 
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onDragStart).toHaveBeenCalledTimes(0);
 
-      await user.keyboard('{Alt>}{Enter}{/Alt}');
+      fireEvent.keyDown(options[1], {key: 'Enter', altKey: true});
+      fireEvent.keyUp(options[1], {key: 'Enter', altKey: true});
       act(() => jest.runAllTimers());
 
       expect(onDragStart).toHaveBeenCalledTimes(1);
@@ -713,7 +738,8 @@ describe('useDraggableCollection', () => {
 
       expect(document.activeElement).toBe(droppable);
 
-      await user.keyboard('[Enter]');
+      fireEvent.keyDown(document.activeElement, {key: 'Enter'});
+      fireEvent.keyUp(document.activeElement, {key: 'Enter'});
       act(() => jest.runAllTimers());
       expect(onDrop).toHaveBeenCalledTimes(1);
       expect(onDrop).toHaveBeenCalledWith({
@@ -758,8 +784,9 @@ describe('useDraggableCollection', () => {
       fireEvent.focus(document.body);
     });
 
-    afterEach(async () => {
-      await user.keyboard('[Escape]');
+    afterEach(() => {
+      fireEvent.keyDown(document.body, {key: 'Escape'});
+      fireEvent.keyUp(document.body, {key: 'Escape'});
     });
 
     it('should drag a single item', async () => {

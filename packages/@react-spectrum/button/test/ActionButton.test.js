@@ -11,9 +11,8 @@
  */
 
 import {ActionButton} from '../';
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
-import userEvent from '@testing-library/user-event';
+import {render, triggerPress} from '@react-spectrum/test-utils';
 
 describe('ActionButton', function () {
   let onPressSpy = jest.fn();
@@ -25,12 +24,11 @@ describe('ActionButton', function () {
   it.each`
     Name              | Component        | props
     ${'ActionButton'} | ${ActionButton}  | ${{onPress: onPressSpy}}
-  `('$Name handles defaults', async function ({Component, props}) {
-    let user = userEvent.setup({delay: null, pointerMap});
+  `('$Name handles defaults', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    await user.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
     expect(button).not.toHaveAttribute('aria-pressed');
     expect(button).not.toHaveAttribute('aria-checked');

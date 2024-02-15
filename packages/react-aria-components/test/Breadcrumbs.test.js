@@ -12,7 +12,7 @@
 
 import {Breadcrumb, Breadcrumbs, BreadcrumbsContext, Link} from 'react-aria-components';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils-internal';
+import {render} from '@react-spectrum/test-utils';
 
 let renderBreadcrumbs = (breadcrumbsProps, itemProps) => render(
   <Breadcrumbs {...breadcrumbsProps}>

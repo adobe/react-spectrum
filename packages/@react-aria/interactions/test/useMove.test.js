@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installMouseEvent, installPointerEvent, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useMove} from '../';
 
