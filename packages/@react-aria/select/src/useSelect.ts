@@ -13,9 +13,9 @@
 import {AriaButtonProps} from '@react-types/button';
 import {AriaListBoxOptions} from '@react-aria/listbox';
 import {AriaSelectProps} from '@react-types/select';
-import {chain, filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {DOMAttributes, FocusableElement, KeyboardDelegate, ValidationResult} from '@react-types/shared';
-import {FocusEvent, RefObject, useMemo} from 'react';
+import {chain, filterDOMProps, getOwnerDocument, mergeProps, useId} from '@react-aria/utils';
+import {DOMAttributes, FocusableElement, Key, KeyboardDelegate, ValidationResult} from '@react-types/shared';
+import {FocusEvent, KeyboardEvent, RefObject, useEffect, useMemo, useRef} from 'react';
 import {ListKeyboardDelegate, useTypeSelect} from '@react-aria/selection';
 import {SelectState} from '@react-stately/select';
 import {setInteractionModality} from '@react-aria/interactions';
@@ -89,30 +89,44 @@ export function useSelect<T>(props: AriaSelectOptions<T>, state: SelectState<T>,
     ref
   );
 
+  let requestRef = useRef<number>();
+
   let onKeyDown = (e: KeyboardEvent) => {
+    let {target} = e;
+    let key: Key;
+
     switch (e.key) {
       case 'ArrowLeft': {
         // prevent scrolling containers
         e.preventDefault();
 
-        let key = state.selectedKey != null ? delegate.getKeyAbove(state.selectedKey) : delegate.getFirstKey();
-        if (key) {
-          state.setSelectedKey(key);
-        }
+        key = state.selectedKey != null ? delegate.getKeyAbove(state.selectedKey) : delegate.getFirstKey();
         break;
       }
       case 'ArrowRight': {
         // prevent scrolling containers
         e.preventDefault();
 
-        let key = state.selectedKey != null ? delegate.getKeyBelow(state.selectedKey) : delegate.getFirstKey();
-        if (key) {
-          state.setSelectedKey(key);
-        }
+        key = state.selectedKey != null ? delegate.getKeyBelow(state.selectedKey) : delegate.getFirstKey();
         break;
       }
     }
+
+    if (key) {
+      // Wait until the next render to change the selection, so that any other key handlers are done running.
+      requestRef.current = requestAnimationFrame(() => {
+        // If focus is no longer on the event target, don't change the selection.
+        if (target !== getOwnerDocument(target as Element).activeElement) {
+          return;
+        }
+        state.setSelectedKey(key);
+      });
+    }
   };
+
+  useEffect(() => {
+    return () => cancelAnimationFrame(requestRef.current);
+  }, []);
 
   let {typeSelectProps} = useTypeSelect({
     keyboardDelegate: delegate,
