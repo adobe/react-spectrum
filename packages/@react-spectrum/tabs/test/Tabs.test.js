@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockImplementation, pointerMap, render, waitFor, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, mockImplementation, pointerMap, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {Item, TabList, TabPanels, Tabs} from '../src';
 import {Links as LinksExample} from '../stories/Tabs.stories';
 import {Provider} from '@react-spectrum/provider';
@@ -211,7 +211,7 @@ describe('Tabs', function () {
     expect(onSelectionChange).toBeCalledTimes(1);
   });
 
-  it('supports using click to change tab', async function () {
+  it('supports using click to change tab', function () {
     let container = renderComponent({keyboardActivation: 'manual', defaultSelectedKey: defaultItems[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
@@ -219,7 +219,7 @@ describe('Tabs', function () {
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
 
     let secondItem = tabs[1];
-    await user.click(secondItem);
+    triggerPress(secondItem);
     expect(secondItem).toHaveAttribute('aria-selected', 'true');
     expect(secondItem).toHaveAttribute('aria-controls');
     let tabpanel = document.getElementById(secondItem.getAttribute('aria-controls'));
@@ -361,7 +361,7 @@ describe('Tabs', function () {
     expect(document.activeElement).toBe(tabpanel);
   });
 
-  it('collapses when it can\'t render all the tabs horizontally', async function () {
+  it('collapses when it can\'t render all the tabs horizontally', function () {
     let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
     let mockCalls = [
       function () {
@@ -408,11 +408,11 @@ describe('Tabs', function () {
     expect(picker).toHaveAttribute('aria-label', 'Test Tabs');
     expect(picker).toHaveAttribute('aria-labelledby', `${pickerLabel.id} ${picker.id} external label`);
 
-    await user.click(picker);
+    triggerPress(picker);
     act(() => jest.runAllTimers());
     let listbox = getByRole('listbox');
     let option = within(listbox).getByText('Tab 3');
-    await user.click(option);
+    triggerPress(option);
     act(() => jest.runAllTimers());
 
     expect(onSelectionChange).toBeCalledTimes(1);
@@ -655,7 +655,7 @@ describe('Tabs', function () {
 
   });
 
-  it('disabled tabs cannot be selected via collapse picker', async function () {
+  it('disabled tabs cannot be selected via collapse picker', function () {
     let target = [HTMLDivElement.prototype, 'getBoundingClientRect'];
     let mockCalls = [
       function () {
@@ -699,16 +699,16 @@ describe('Tabs', function () {
 
     let picker = getByRole('button');
 
-    await user.click(picker);
+    triggerPress(picker);
     act(() => jest.runAllTimers());
     let listbox = getByRole('listbox');
     let option = within(listbox).getByText('Tab 3');
-    await user.click(option);
+    triggerPress(option);
     act(() => jest.runAllTimers());
     expect(onSelectionChange).not.toHaveBeenCalled();
 
     option = within(listbox).getByText('Tab 2 body');
-    await user.click(option);
+    triggerPress(option);
     act(() => jest.runAllTimers());
     expect(onSelectionChange).toHaveBeenCalledWith('');
     tabpanel = getByRole('tabpanel');
@@ -739,18 +739,18 @@ describe('Tabs', function () {
     await waitFor(() => expect(tabpanel).not.toHaveAttribute('tabindex'));
 
     let tabs = getAllByRole('tab');
-    await user.click(tabs[1]);
+    triggerPress(tabs[1]);
     tabpanel = getByRole('tabpanel');
 
     await waitFor(() => expect(tabpanel).toHaveAttribute('tabindex', '0'));
 
-    await user.click(tabs[0]);
+    triggerPress(tabs[0]);
     tabpanel = getByRole('tabpanel');
 
     await waitFor(() => expect(tabpanel).not.toHaveAttribute('tabindex'));
   });
 
-  it('TabPanel children do not share values between panels', async () => {
+  it('TabPanel children do not share values between panels', () => {
     let {getByDisplayValue, getAllByRole, getByTestId} = render(
       <Provider theme={theme}>
         <Tabs aria-label="Tab Example" maxWidth={500}>
@@ -776,7 +776,7 @@ describe('Tabs', function () {
     expect(getByDisplayValue('A String')).toBeTruthy();
 
     let tabs = getAllByRole('tab');
-    await user.click(tabs[1]);
+    triggerPress(tabs[1]);
 
     tabPanelInput = getByTestId('panel2_input');
     expect(tabPanelInput.value).toBe('');
@@ -827,14 +827,14 @@ describe('Tabs', function () {
     }
   });
 
-  it('fires onSelectionChange when clicking on the current tab', async function () {
+  it('fires onSelectionChange when clicking on the current tab', function () {
     let container = renderComponent({defaultSelectedKey: defaultItems[0].name, onSelectionChange});
     let tablist = container.getByRole('tablist');
     let tabs = within(tablist).getAllByRole('tab');
     let firstItem = tabs[0];
     expect(firstItem).toHaveAttribute('aria-selected', 'true');
 
-    await user.click(firstItem);
+    triggerPress(firstItem);
     expect(onSelectionChange).toBeCalledTimes(1);
     expect(onSelectionChange).toHaveBeenCalledWith(defaultItems[0].name);
   });
@@ -872,7 +872,7 @@ describe('Tabs', function () {
     expect(tabs[2]).toHaveAttribute('tabindex', '-1');
   });
 
-  it('should support tabs as links', async function () {
+  it('should support tabs as links', function () {
     let {getAllByRole} = render(<Provider theme={theme}><LinksExample /></Provider>);
 
     let tabs = getAllByRole('tab');
@@ -884,7 +884,7 @@ describe('Tabs', function () {
     expect(tabs[2]).toHaveAttribute('href', '/three');
 
     expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
-    await user.click(tabs[1]);
+    triggerPress(tabs[1]);
     expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
 
     fireEvent.keyDown(tabs[1], {key: 'ArrowRight'});

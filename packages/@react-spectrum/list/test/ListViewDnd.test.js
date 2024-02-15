@@ -17,9 +17,10 @@ import {
   installPointerEvent,
   pointerMap,
   render as renderComponent,
+  triggerPress,
   waitFor,
   within
-} from '@react-spectrum/test-utils-internal';
+} from '@react-spectrum/test-utils';
 import {CUSTOM_DRAG_TYPE} from '@react-aria/dnd/src/constants';
 import {DataTransfer, DataTransferItem, DragEvent, FileSystemDirectoryEntry, FileSystemFileEntry} from '@react-aria/dnd/test/mocks';
 import {DIRECTORY_DRAG_TYPE} from '@react-aria/dnd';
@@ -271,10 +272,10 @@ describe('ListView', function () {
         let droppable = getByText('Drop here');
         let rows = getAllByRole('row');
 
-        await user.click(within(rows[0]).getByRole('checkbox'));
-        await user.click(within(rows[1]).getByRole('checkbox'));
-        await user.click(within(rows[2]).getByRole('checkbox'));
-        await user.click(within(rows[3]).getByRole('checkbox'));
+        triggerPress(within(rows[0]).getByRole('checkbox'));
+        triggerPress(within(rows[1]).getByRole('checkbox'));
+        triggerPress(within(rows[2]).getByRole('checkbox'));
+        triggerPress(within(rows[3]).getByRole('checkbox'));
         // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
         // await user.click(within(rows[0]).getByRole('checkbox'));
         // await user.click(within(rows[1]).getByRole('checkbox'));
@@ -454,8 +455,8 @@ describe('ListView', function () {
         expect(within(rows[2]).getByRole('gridcell')).toHaveTextContent('Item Three');
         expect(within(rows[3]).getByRole('gridcell')).toHaveTextContent('Item Four');
 
-        await user.click(within(rows[1]).getByRole('checkbox'));
-        await user.click(within(rows[2]).getByRole('checkbox'));
+        triggerPress(within(rows[1]).getByRole('checkbox'));
+        triggerPress(within(rows[2]).getByRole('checkbox'));
         // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
         // await user.click(within(rows[1]).getByRole('checkbox'));
         // await user.click(within(rows[2]).getByRole('checkbox'));
@@ -561,8 +562,8 @@ describe('ListView', function () {
         expect(within(list2rows[1]).getByRole('gridcell')).toHaveTextContent('Item Eight');
         expect(within(list2rows[2]).getByRole('gridcell')).toHaveTextContent('Item Nine');
 
-        await user.click(within(list1rows[0]).getByRole('checkbox'));
-        await user.click(within(list1rows[2]).getByRole('checkbox'));
+        triggerPress(within(list1rows[0]).getByRole('checkbox'));
+        triggerPress(within(list1rows[2]).getByRole('checkbox'));
         // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
         // await user.click(within(list1rows[0]).getByRole('checkbox'));
         // await user.click(within(list1rows[2]).getByRole('checkbox'));
@@ -650,7 +651,7 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(rows[7]);
       });
 
-      it('should update the global DnD state properly if dropping on a non-collection', async function () {
+      it('should update the global DnD state properly if dropping on a non-collection', function () {
         let {getAllByRole, getByRole, getByText} = render(
           <DraggableListView />
         );
@@ -658,10 +659,10 @@ describe('ListView', function () {
         let grid = getByRole('grid');
         let droppable = getByText('Drop here');
         let rows = getAllByRole('row');
-        await user.click(within(rows[0]).getByRole('checkbox'));
-        await user.click(within(rows[1]).getByRole('checkbox'));
-        await user.click(within(rows[2]).getByRole('checkbox'));
-        await user.click(within(rows[3]).getByRole('checkbox'));
+        triggerPress(within(rows[0]).getByRole('checkbox'));
+        triggerPress(within(rows[1]).getByRole('checkbox'));
+        triggerPress(within(rows[2]).getByRole('checkbox'));
+        triggerPress(within(rows[3]).getByRole('checkbox'));
         // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
         // await user.click(within(rows[0]).getByRole('checkbox'));
         // await user.click(within(rows[1]).getByRole('checkbox'));
@@ -698,14 +699,14 @@ describe('ListView', function () {
         expect(onDragEnd).toHaveBeenCalledTimes(1);
       });
 
-      it('should reset the global drop state on drag end even if a drop doesn\'t happen', async function () {
+      it('should reset the global drop state on drag end even if a drop doesn\'t happen', function () {
         let {getAllByRole, getByRole} = render(
           <DraggableListView />
         );
 
         let grid = getByRole('grid');
         let rows = getAllByRole('row');
-        await user.click(within(rows[0]).getByRole('checkbox'));
+        triggerPress(within(rows[0]).getByRole('checkbox'));
         // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
         // await user.click(within(rows[0]).getByRole('checkbox'));
         let cellA = within(rows[0]).getByRole('gridcell');
@@ -753,7 +754,7 @@ describe('ListView', function () {
         });
       });
 
-      it('should update the dropCollectionRef during drag operations', async function () {
+      it('should update the dropCollectionRef during drag operations', function () {
         let {getAllByRole} = render(
           <DragBetweenListsComplex />
         );
@@ -762,7 +763,7 @@ describe('ListView', function () {
         let rows = within(list).getAllByRole('row');
         let internalFolder = rows[2];
 
-        await user.click(within(rows[0]).getByRole('checkbox'));
+        triggerPress(within(rows[0]).getByRole('checkbox'));
         // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
         // await user.click(within(rows[0]).getByRole('checkbox'));
         let dragCell = within(rows[0]).getByRole('gridcell');
@@ -792,8 +793,8 @@ describe('ListView', function () {
 
       describe('using util handlers', function () {
         async function dragWithinList(rows, dropTarget, targetX = 1, targetY = 1) {
-          await user.click(within(rows[0]).getByRole('checkbox'));
-          await user.click(within(rows[1]).getByRole('checkbox'));
+          triggerPress(within(rows[0]).getByRole('checkbox'));
+          triggerPress(within(rows[1]).getByRole('checkbox'));
           // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
           // await user.click(within(rows[0]).getByRole('checkbox'));
           // await user.click(within(rows[1]).getByRole('checkbox'));
@@ -815,8 +816,8 @@ describe('ListView', function () {
         }
 
         async function dragBetweenLists(sourceRows, dropTarget, targetX = 1, targetY = 1) {
-          await user.click(within(sourceRows[0]).getByRole('checkbox'));
-          await user.click(within(sourceRows[1]).getByRole('checkbox'));
+          triggerPress(within(sourceRows[0]).getByRole('checkbox'));
+          triggerPress(within(sourceRows[1]).getByRole('checkbox'));
           // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
           // await user.click(within(sourceRows[0]).getByRole('checkbox'));
           // await user.click(within(sourceRows[1]).getByRole('checkbox'));
@@ -1298,7 +1299,7 @@ describe('ListView', function () {
           });
         });
 
-        it('should automatically disallow various drops if their respective util handler isn\'t provided', async function () {
+        it('should automatically disallow various drops if their respective util handler isn\'t provided', function () {
           let {getAllByRole} = render(
             <DragBetweenListsComplex firstListDnDOptions={{...mockUtilityOptions, onReorder: null, onItemDrop: null, onRootDrop: null, onInsert: null}} />
           );
@@ -1310,8 +1311,8 @@ describe('ListView', function () {
           let list1Rows = within(grids[0]).getAllByRole('row', {hidden: true});
           expect(list1Rows).toHaveLength(6);
           let list2Rows = within(grids[1]).getAllByRole('row');
-          await user.click(within(list2Rows[0]).getByRole('checkbox'));
-          await user.click(within(list2Rows[1]).getByRole('checkbox'));
+          triggerPress(within(list2Rows[0]).getByRole('checkbox'));
+          triggerPress(within(list2Rows[1]).getByRole('checkbox'));
           // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
           // await user.click(within(list2Rows[0]).getByRole('checkbox'));
           // await user.click(within(list2Rows[1]).getByRole('checkbox'));
@@ -1583,8 +1584,8 @@ describe('ListView', function () {
 
           let dropTarget = within(grids[0]).getAllByRole('row')[0];
           let list2Rows = within(grids[1]).getAllByRole('row');
-          await user.click(within(list2Rows[0]).getByRole('checkbox'));
-          await user.click(within(list2Rows[6]).getByRole('checkbox'));
+          triggerPress(within(list2Rows[0]).getByRole('checkbox'));
+          triggerPress(within(list2Rows[6]).getByRole('checkbox'));
           // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
           // await user.click(within(list2Rows[0]).getByRole('checkbox'));
           // await user.click(within(list2Rows[6]).getByRole('checkbox'));
@@ -2920,7 +2921,7 @@ describe('ListView', function () {
       checkSelection(onSelectionChange, ['a']);
     });
 
-    it('should toggle selection upon clicking the row checkbox', async function () {
+    it('should toggle selection upon clicking the row checkbox', function () {
       let {getAllByRole} = render(
         <DraggableListView />
       );
@@ -2928,7 +2929,7 @@ describe('ListView', function () {
       let row = getAllByRole('row')[0];
       expect(row).toHaveAttribute('aria-selected', 'false');
       expect(row).toHaveAttribute('draggable', 'true');
-      await user.click(within(row).getByRole('checkbox'));
+      triggerPress(within(row).getByRole('checkbox'));
       // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
       // await user.click(within(row).getByRole('checkbox'));
       expect(row).toHaveAttribute('aria-selected', 'true');
@@ -3317,7 +3318,7 @@ describe('ListView', function () {
     });
 
     describe('accessibility', function () {
-      it('drag handle should reflect the correct number of draggable rows',  async function () {
+      it('drag handle should reflect the correct number of draggable rows',  function () {
 
         let {getAllByRole} = render(
           <DraggableListView listViewProps={{defaultSelectedKeys: ['a', 'b', 'c']}} />
@@ -3342,14 +3343,14 @@ describe('ListView', function () {
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag Adobe InDesign');
 
         // After selecting row 4, the aria-label should reflect 4 selected items rather than just "Drag Adobe InDesign"
-        await user.click(within(rows[3]).getByRole('checkbox'));
+        triggerPress(within(rows[3]).getByRole('checkbox'));
         // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
         // await user.click(within(rows[3]).getByRole('checkbox'));
         expect(dragButtonA).toHaveAttribute('aria-label', 'Drag 4 selected items');
         expect(dragButtonB).toHaveAttribute('aria-label', 'Drag 4 selected items');
         expect(dragButtonD).toHaveAttribute('aria-label', 'Drag 4 selected items');
 
-        await user.click(within(rows[0]).getByRole('checkbox'));
+        triggerPress(within(rows[0]).getByRole('checkbox'));
         // TODO: reinstate these when https://github.com/testing-library/user-event/issues/1119 is fixed
         // await user.click(within(rows[0]).getByRole('checkbox'));
         expect(dragButtonA).toHaveAttribute('aria-label', 'Drag Adobe Photoshop');

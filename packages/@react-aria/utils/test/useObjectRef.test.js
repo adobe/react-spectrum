@@ -11,7 +11,7 @@
  */
 
 import React, {useEffect} from 'react';
-import {render, renderHook, screen} from '@react-spectrum/test-utils-internal';
+import {render, renderHook, screen} from '@react-spectrum/test-utils';
 // eslint-disable-next-line rulesdir/useLayoutEffectRule
 import {useLayoutEffect, useObjectRef} from '../';
 

@@ -7,7 +7,7 @@ let workspacePackages = JSON.parse(output);
 
 let excludedPackages = new Set([
   '@adobe/spectrum-css-temp',
-  '@react-spectrum/test-utils-internal',
+  '@react-spectrum/test-utils',
   '@spectrum-icons/build-tools',
   '@react-spectrum/docs'
 ]);

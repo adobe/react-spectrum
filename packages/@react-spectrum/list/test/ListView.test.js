@@ -12,7 +12,7 @@
 
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerPress, within} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {announce} from '@react-aria/live-announcer';
 import {FocusExample} from '../stories/ListViewActions.stories';
@@ -230,17 +230,17 @@ describe('ListView', function () {
     expect(gridCells[0]).toHaveTextContent('Foo');
   });
 
-  it('should retain focus on the pressed child', async function () {
+  it('should retain focus on the pressed child', function () {
     let tree = renderListWithFocusables();
     let button = within(getRow(tree, 'Foo')).getAllByRole('button')[1];
-    await user.click(button);
+    triggerPress(button);
     expect(document.activeElement).toBe(button);
   });
 
-  it('should focus the row if the cell is pressed', async function () {
+  it('should focus the row if the cell is pressed', function () {
     let tree = renderList({selectionMode: 'single'});
     let cell = within(getRow(tree, 'Bar')).getByRole('gridcell');
-    await user.click(cell);
+    triggerPress(cell);
     act(() => {
       jest.runAllTimers();
     });
@@ -336,13 +336,13 @@ describe('ListView', function () {
           expect(document.activeElement).toBe(start);
         });
 
-        it('should move focus to previous cell in RTL', async function () {
+        it('should move focus to previous cell in RTL', function () {
           let tree = renderListWithFocusables({locale: 'ar-AE'});
           // Should move from button two to button one
           let start = within(getRow(tree, 'Foo')).getAllByRole('button')[1];
           let end = within(getRow(tree, 'Foo')).getAllByRole('button')[0];
           // Need to press to set a modality, otherwise useSelectableCollection will think this is a tab operation
-          await user.click(start);
+          triggerPress(start);
           expect(document.activeElement).toHaveTextContent('button2 Foo');
           expect(document.activeElement).toBe(start);
           moveFocus('ArrowRight');
@@ -375,13 +375,13 @@ describe('ListView', function () {
           expect(document.activeElement).toBe(start);
         });
 
-        it('should move focus to next cell in RTL', async function () {
+        it('should move focus to next cell in RTL', function () {
           let tree = renderListWithFocusables({locale: 'ar-AE'});
           // Should move from button one to button two
           let start = within(getRow(tree, 'Foo')).getAllByRole('button')[0];
           let end = within(getRow(tree, 'Foo')).getAllByRole('button')[1];
           // Need to press to set a modality, otherwise useSelectableCollection will think this is a tab operation
-          await user.click(start);
+          triggerPress(start);
           expect(document.activeElement).toHaveTextContent('button1 Foo');
           expect(document.activeElement).toBe(start);
           moveFocus('ArrowLeft');
@@ -400,85 +400,85 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(start);
       });
 
-      it('should move focus to above row', async function () {
+      it('should move focus to above row', function () {
         let tree = renderListWithFocusables({selectionMode: 'single'});
         let start = getRow(tree, 'Bar');
         let end = getRow(tree, 'Foo');
-        await user.click(start);
+        triggerPress(start);
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(end);
       });
 
-      it('should skip disabled rows', async function () {
+      it('should skip disabled rows', function () {
         let tree = renderListWithFocusables({disabledKeys: ['bar'], selectionMode: 'single'});
         let start = getRow(tree, 'Baz');
         let end = getRow(tree, 'Foo');
-        await user.click(start);
+        triggerPress(start);
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(end);
       });
 
-      it('should allow focus on disabled rows with disabledBehavior="selection"', async function () {
+      it('should allow focus on disabled rows with disabledBehavior="selection"', function () {
         let tree = renderListWithFocusables({disabledKeys: ['foo'], disabledBehavior: 'selection', selectionMode: 'single'});
         let start = getRow(tree, 'Bar');
         let end = getRow(tree, 'Foo');
-        await user.click(start);
+        triggerPress(start);
         moveFocus('ArrowUp');
         expect(document.activeElement).toBe(end);
       });
     });
 
     describe('ArrowDown', function () {
-      it('should not wrap focus', async function () {
+      it('should not wrap focus', function () {
         let tree = renderListWithFocusables({selectionMode: 'single'});
         let start = getRow(tree, 'Baz');
-        await user.click(start);
+        triggerPress(start);
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(start);
       });
 
-      it('should move focus to below row', async function () {
+      it('should move focus to below row', function () {
         let tree = renderListWithFocusables({selectionMode: 'single'});
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Bar');
-        await user.click(start);
+        triggerPress(start);
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(end);
       });
 
-      it('should skip disabled rows', async function () {
+      it('should skip disabled rows', function () {
         let tree = renderListWithFocusables({disabledKeys: ['bar'], selectionMode: 'single'});
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Baz');
-        await user.click(start);
+        triggerPress(start);
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(end);
       });
 
-      it('should allow focus on disabled rows with disabledBehavior="selection"', async function () {
+      it('should allow focus on disabled rows with disabledBehavior="selection"', function () {
         let tree = renderListWithFocusables({disabledKeys: ['bar'], disabledBehavior: 'selection', selectionMode: 'single'});
         let start = getRow(tree, 'Foo');
         let end = getRow(tree, 'Bar');
-        await user.click(start);
+        triggerPress(start);
         moveFocus('ArrowDown');
         expect(document.activeElement).toBe(end);
       });
     });
 
     describe('PageUp', function () {
-      it('should move focus to a row a page above when focus starts on a row', async function () {
+      it('should move focus to a row a page above when focus starts on a row', function () {
         let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
         let start = getRow(tree, 'Foo 25');
-        await user.click(start);
+        triggerPress(start);
         moveFocus('PageUp');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
       });
 
-      it('should move focus to a row a page above when focus starts in the row cell', async function () {
+      it('should move focus to a row a page above when focus starts in the row cell', function () {
         let tree = renderListWithFocusables({items: manyItems});
         let focusables = within(getRow(tree, 'Foo 25')).getAllByRole('button');
         let start = focusables[0];
-        await user.click(start);
+        triggerPress(start);
         expect(document.activeElement).toBe(start);
         moveFocus('PageUp');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
@@ -495,11 +495,11 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(getRow(tree, 'Foo 49'));
       });
 
-      it('should move focus to a row a page below when focus starts in the row cell', async function () {
+      it('should move focus to a row a page below when focus starts in the row cell', function () {
         let tree = renderListWithFocusables({items: manyItems});
         let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
         let start = focusables[0];
-        await user.click(start);
+        triggerPress(start);
         expect(document.activeElement).toBe(start);
         moveFocus('PageDown');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 25'));
@@ -509,19 +509,19 @@ describe('ListView', function () {
     });
 
     describe('Home', function () {
-      it('should move focus to the first row when focus starts on a row', async function () {
+      it('should move focus to the first row when focus starts on a row', function () {
         let tree = renderListWithFocusables({items: manyItems, selectionMode: 'single'});
         let start = getRow(tree, 'Foo 15');
-        await user.click(start);
+        triggerPress(start);
         moveFocus('Home');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
       });
 
-      it('should move focus to the first row when focus starts in the row cell', async function () {
+      it('should move focus to the first row when focus starts in the row cell', function () {
         let tree = renderListWithFocusables({items: manyItems});
         let focusables = within(getRow(tree, 'Foo 15')).getAllByRole('button');
         let start = focusables[0];
-        await user.click(start);
+        triggerPress(start);
         expect(document.activeElement).toBe(start);
         moveFocus('Home');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 1'));
@@ -536,18 +536,18 @@ describe('ListView', function () {
         expect(document.activeElement).toBe(getRow(tree, 'Foo 100'));
       });
 
-      it('should move focus to the last row when focus starts in the row cell', async function () {
+      it('should move focus to the last row when focus starts in the row cell', function () {
         let tree = renderListWithFocusables({items: manyItems});
         let focusables = within(getRow(tree, 'Foo 1')).getAllByRole('button');
         let start = focusables[0];
-        await user.click(start);
+        triggerPress(start);
         expect(document.activeElement).toBe(start);
         moveFocus('End');
         expect(document.activeElement).toBe(getRow(tree, 'Foo 100'));
       });
     });
 
-    it('should move focus to the next item that is not disabled when the focused item is removed', async () => {
+    it('should move focus to the next item that is not disabled when the focused item is removed', () => {
       let tree = render(<FocusExample />);
       let rows = tree.getAllByRole('row');
       act(() => rows[3].focus());
@@ -555,7 +555,7 @@ describe('ListView', function () {
       moveFocus('ArrowRight');
       expect(document.activeElement).toBe(within(rows[3]).getByRole('button'));
       expect(rows[4]).toHaveAttribute('aria-disabled', 'true');
-      await user.click(document.activeElement);
+      triggerPress(document.activeElement);
       act(() => {
         jest.runAllTimers();
       });
@@ -565,7 +565,7 @@ describe('ListView', function () {
       expect(document.activeElement).toBe(rows[rows.length - 1]);
       moveFocus('ArrowRight');
       expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
-      await user.click(document.activeElement);
+      triggerPress(document.activeElement);
       act(() => {
         jest.runAllTimers();
       });
@@ -573,7 +573,7 @@ describe('ListView', function () {
       expect(document.activeElement).toBe(rows[rows.length - 1]);
       moveFocus('ArrowRight');
       expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
-      await user.click(document.activeElement);
+      triggerPress(document.activeElement);
       act(() => {
         jest.runAllTimers();
       });
@@ -581,7 +581,7 @@ describe('ListView', function () {
       expect(document.activeElement).toBe(rows[rows.length - 1]);
       moveFocus('ArrowRight');
       expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
-      await user.click(document.activeElement);
+      triggerPress(document.activeElement);
       act(() => {
         jest.runAllTimers();
       });
@@ -589,7 +589,7 @@ describe('ListView', function () {
       expect(document.activeElement).toBe(rows[rows.length - 1]);
       moveFocus('ArrowRight');
       expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
-      await user.click(document.activeElement);
+      triggerPress(document.activeElement);
       act(() => {
         jest.runAllTimers();
       });
@@ -597,7 +597,7 @@ describe('ListView', function () {
       expect(document.activeElement).toBe(rows[rows.length - 1]);
       moveFocus('ArrowRight');
       expect(document.activeElement).toBe(within(rows[rows.length - 1]).getByRole('button'));
-      await user.click(document.activeElement);
+      triggerPress(document.activeElement);
       act(() => {
         jest.runAllTimers();
       });
@@ -705,16 +705,16 @@ describe('ListView', function () {
       </ListView>
     );
 
-    it('should announce the selected or deselected row', async function () {
+    it('should announce the selected or deselected row', function () {
       let onSelectionChange = jest.fn();
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'single'});
 
       let row = tree.getAllByRole('row')[1];
-      await user.click(row);
+      triggerPress(row);
       expect(announce).toHaveBeenLastCalledWith('Bar selected.');
       expect(announce).toHaveBeenCalledTimes(1);
 
-      await user.click(row);
+      triggerPress(row);
       expect(announce).toHaveBeenLastCalledWith('Bar not selected.');
       expect(announce).toHaveBeenCalledTimes(2);
     });
@@ -806,34 +806,30 @@ describe('ListView', function () {
       expect(announce).toHaveBeenCalledTimes(3);
     });
 
-    it('should support range selection', async function () {
+    it('should support range selection', function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
       let rows = tree.getAllByRole('row');
-      await user.click(rows[0]);
+      triggerPress(rows[0]);
       checkSelection(onSelectionChange, ['foo']);
       onSelectionChange.mockClear();
-      await user.keyboard('{Shift>}');
-      await user.click(rows[2]);
-      await user.keyboard('{/Shift}');
+      triggerPress(rows[2], {shiftKey: true});
       checkSelection(onSelectionChange, ['foo', 'bar', 'baz']);
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('3 items selected.');
       expect(announce).toHaveBeenCalledTimes(2);
 
-      await user.keyboard('{Shift>}');
-      await user.click(rows[0], {shiftKey: true});
-      await user.keyboard('{/Shift}');
+      triggerPress(rows[0], {shiftKey: true});
       checkSelection(onSelectionChange, ['foo']);
       expect(announce).toHaveBeenLastCalledWith('1 item selected.');
       expect(announce).toHaveBeenCalledTimes(3);
     });
 
-    it('should support select all and clear all via keyboard', async function () {
+    it('should support select all and clear all via keyboard', function () {
       let tree = renderSelectionList({onSelectionChange, selectionMode: 'multiple'});
 
       let rows = tree.getAllByRole('row');
-      await user.click(rows[0]);
+      triggerPress(rows[0]);
       checkSelection(onSelectionChange, ['foo']);
       onSelectionChange.mockClear();
       expect(announce).toHaveBeenLastCalledWith('Foo selected.');
@@ -1532,16 +1528,16 @@ describe('ListView', function () {
 
   describe('links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
-      let trigger = async (item, key = 'Enter') => {
+      let trigger = (item, key = 'Enter') => {
         if (type === 'mouse') {
-          await user.click(item);
+          triggerPress(item);
         } else {
           fireEvent.keyDown(item, {key});
           fireEvent.keyUp(item, {key});
         }
       };
 
-      it('should support links with selectionMode="none"', async function () {
+      it('should support links with selectionMode="none"', function () {
         let {getAllByRole} = render(
           <Provider theme={theme}>
             <ListView aria-label="listview">
@@ -1559,7 +1555,7 @@ describe('ListView', function () {
 
         let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
-        await trigger(items[0]);
+        trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
@@ -1583,7 +1579,7 @@ describe('ListView', function () {
 
         let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
-        await trigger(items[0]);
+        trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
@@ -1593,7 +1589,7 @@ describe('ListView', function () {
 
         onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick);
-        await trigger(items[1], ' ');
+        trigger(items[1], ' ');
         expect(onClick).not.toHaveBeenCalled();
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
         window.removeEventListener('click', onClick);
@@ -1618,7 +1614,7 @@ describe('ListView', function () {
         let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick);
         if (type === 'mouse') {
-          await user.click(items[0]);
+          triggerPress(items[0]);
         } else {
           fireEvent.keyDown(items[0], {key: ' '});
           fireEvent.keyUp(items[0], {key: ' '});
@@ -1652,14 +1648,14 @@ describe('ListView', function () {
         );
 
         let items = getAllByRole('row');
-        await trigger(items[0]);
+        trigger(items[0]);
         expect(navigate).toHaveBeenCalledWith('/one');
 
         navigate.mockReset();
         let onClick = jest.fn().mockImplementation(e => e.preventDefault());
         window.addEventListener('click', onClick, {once: true});
 
-        await trigger(items[1]);
+        trigger(items[1]);
         expect(navigate).not.toHaveBeenCalled();
         expect(onClick).toHaveBeenCalledTimes(1);
       });

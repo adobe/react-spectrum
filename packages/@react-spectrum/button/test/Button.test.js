@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
 import {ActionButton, Button, ClearButton, LogicButton} from '../';
 import {Checkbox, defaultTheme} from '@adobe/react-spectrum';
 import {Form} from '@react-spectrum/form';
@@ -187,12 +187,12 @@ describe('Button', function () {
     ${'Button'}       | ${Button}
     ${'ClearButton'}  | ${ClearButton}
     ${'LogicButton'}  | ${LogicButton}
-  `('$Name handles deprecated onClick', async function ({Component}) {
+  `('$Name handles deprecated onClick', function ({Component}) {
     let spyWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     let {getByRole} = render(<Component onClick={onPressSpy}>Click Me</Component>);
 
     let button = getByRole('button');
-    await user.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
     expect(spyWarn).toHaveBeenCalledWith('onClick is deprecated, please use onPress');
   });
@@ -202,19 +202,21 @@ describe('Button', function () {
     ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a'}}
     ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a'}}
     ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, elementType: 'a'}}
-  `('$Name can have elementType=a', async function ({Component, props}) {
+  `('$Name can have elementType=a', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
     expect(button).not.toHaveAttribute('type', 'button');
-    await user.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
 
-    await user.keyboard('{Enter}');
+    fireEvent.keyDown(button, {key: 'Enter', code: 13});
+    fireEvent.keyUp(button, {key: 'Enter', code: 13});
     expect(onPressSpy).toHaveBeenCalledTimes(2);
 
-    await user.keyboard('[Space]');
+    fireEvent.keyDown(button, {key: ' ', code: 32});
+    fireEvent.keyUp(button, {key: ' ', code: 32});
     expect(onPressSpy).toHaveBeenCalledTimes(3);
   });
 
@@ -223,13 +225,13 @@ describe('Button', function () {
     ${'ActionButton'} | ${ActionButton}| ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
     ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
     ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, elementType: 'a', href: '#only-hash-in-jsdom'}}
-  `('$Name can have elementType=a with an href', async function ({Component, props}) {
+  `('$Name can have elementType=a with an href', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
     expect(button).toHaveAttribute('tabindex', '0');
     expect(button).toHaveAttribute('href', '#only-hash-in-jsdom');
-    await user.click(button);
+    triggerPress(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 
@@ -239,11 +241,11 @@ describe('Button', function () {
     ${'Button'}       | ${Button}      | ${{onPress: onPressSpy, isDisabled: true}}
     ${'ClearButton'}  | ${ClearButton} | ${{onPress: onPressSpy, isDisabled: true}}
     ${'LogicButton'}  | ${LogicButton} | ${{onPress: onPressSpy, isDisabled: true}}
-  `('$Name does not respond when disabled', async function ({Component, props}) {
+  `('$Name does not respond when disabled', function ({Component, props}) {
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button');
-    await user.click(button);
+    triggerPress(button);
     expect(button).toBeDisabled();
     expect(onPressSpy).not.toHaveBeenCalled();
   });
@@ -261,7 +263,7 @@ describe('Button', function () {
   });
 
 
-  it('prevents default for non-submit types', async function () {
+  it('prevents default for non-submit types', function () {
     let eventDown;
     let eventUp;
     let btn = React.createRef();
@@ -279,19 +281,20 @@ describe('Button', function () {
     btn.current.UNSAFE_getDOMNode().addEventListener('keyup', e => eventUp = e);
 
     let button = getByRole('button');
-    act(() => button.focus());
-    await user.keyboard('{Enter}');
+    fireEvent.keyDown(button, {key: 'Enter'});
+    fireEvent.keyUp(button, {key: 'Enter'});
     expect(eventDown.defaultPrevented).toBeTruthy();
     expect(eventUp.defaultPrevented).toBeTruthy();
 
-    await user.keyboard('[Space]');
+    fireEvent.keyDown(button, {key: ' '});
+    fireEvent.keyUp(button, {key: ' '});
     expect(eventDown.defaultPrevented).toBeTruthy();
     expect(eventUp.defaultPrevented).toBeTruthy();
   });
 
   // we only need to test that we allow the browser to do the default thing when space or enter is pressed on a submit button
   // space submits on key up and is actually a click
-  it('submit in form using space', async function () {
+  it('submit in form using space', function () {
     let eventUp;
     let btn = React.createRef();
     let {getByRole} = render(
@@ -305,13 +308,13 @@ describe('Button', function () {
     btn.current.UNSAFE_getDOMNode().addEventListener('keyup', e => eventUp = e);
 
     let button = getByRole('button');
-    act(() => button.focus());
-    await user.keyboard('{Space}');
+    fireEvent.keyDown(button, {key: ' '});
+    fireEvent.keyUp(button, {key: ' '});
     expect(eventUp.defaultPrevented).toBeFalsy();
   });
 
   // enter submits on keydown
-  it('submit in form using enter', async function () {
+  it('submit in form using enter', function () {
     let eventDown;
     let btn = React.createRef();
     let {getByRole} = render(
@@ -322,19 +325,16 @@ describe('Button', function () {
         </Form>
       </Provider>
     );
-    btn.current.UNSAFE_getDOMNode().addEventListener('keydown', e => {
-      eventDown = {...e};
-      // Prevent default to avoid "Error: Not implemented: HTMLFormElement.prototype.requestSubmit"
-      e.preventDefault();
-    });
+    btn.current.UNSAFE_getDOMNode().addEventListener('keydown', e => eventDown = e);
+
     let button = getByRole('button');
-    act(() => button.focus());
-    await user.keyboard('[Enter]');
+    fireEvent.keyDown(button, {key: 'Enter'});
+    fireEvent.keyUp(button, {key: 'Enter'});
     expect(eventDown.defaultPrevented).toBeFalsy();
   });
 
   // isPending state
-  it('displays a spinner after a short delay when isPending prop is true', async function () {
+  it('displays a spinner after a short delay when isPending prop is true', function () {
     let onPressSpy = jest.fn();
     function TestComponent() {
       let [pending, setPending] = useState(false);
@@ -352,13 +352,13 @@ describe('Button', function () {
     let {getByRole, queryByRole} = render(<TestComponent />);
     let button = getByRole('button');
     expect(button).not.toHaveAttribute('aria-disabled');
-    await user.click(button);
+    triggerPress(button);
     // Button is disabled immediately, but spinner visibility is delayed
     expect(button).toHaveAttribute('aria-disabled', 'true');
     let spinner = queryByRole('progressbar');
     expect(spinner).not.toBeInTheDocument();
     // Multiple clicks shouldn't call onPressSpy
-    await user.click(button);
+    triggerPress(button);
     act(() => {
       jest.advanceTimersByTime(spinnerVisibilityDelay);
     });

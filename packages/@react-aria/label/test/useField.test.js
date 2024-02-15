@@ -12,7 +12,7 @@
 
 import {composeStories} from '@storybook/testing-react';
 import React from 'react';
-import {render, renderHook} from '@react-spectrum/test-utils-internal';
+import {render, renderHook} from '@react-spectrum/test-utils';
 import * as stories from '../stories/useField.stories';
 import {useField} from '../';
 

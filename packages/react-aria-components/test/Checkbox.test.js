@@ -11,7 +11,7 @@
  */
 
 import {Checkbox, CheckboxContext} from '../';
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
