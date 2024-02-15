@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {KeyboardNavigation} from '../stories/useTreeState.stories';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

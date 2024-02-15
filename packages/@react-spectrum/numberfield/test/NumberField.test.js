@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
@@ -267,7 +267,7 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenLastCalledWith(0);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onBlurSpy).toHaveBeenCalledTimes(1);
@@ -278,7 +278,7 @@ describe('NumberField', function () {
     act(() => {textField.blur();});
     expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onBlurSpy).toHaveBeenCalledTimes(2); // blur spy is called after each blur
@@ -386,34 +386,34 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name increment value by one when increment button is pressed', async () => {
+  `('$Name increment value by one when increment button is pressed', () => {
     let {incrementButton} = renderNumberField({defaultValue: 0, onChange: onChangeSpy});
 
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1);
   });
 
   it.each`
     Name
     ${'NumberField'}
-  `('$Name decrement value by one when increment button is pressed', async () => {
+  `('$Name decrement value by one when increment button is pressed', () => {
     let {decrementButton} = renderNumberField({defaultValue: 0, onChange: onChangeSpy});
 
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(-1);
   });
 
   it.each`
     Name
     ${'NumberField'}
-  `('$Name use step for increasing and decreasing value', async () => {
+  `('$Name use step for increasing and decreasing value', () => {
     let {decrementButton, incrementButton} = renderNumberField({defaultValue: 0, step: 10, onChange: onChangeSpy});
 
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(-10);
 
     onChangeSpy.mockReset();
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
   });
 
@@ -486,7 +486,7 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name onChange is not called when controlled at minValue and decrement is pressed', async () => {
+  `('$Name onChange is not called when controlled at minValue and decrement is pressed', () => {
     let {
       container,
       decrementButton
@@ -495,14 +495,14 @@ describe('NumberField', function () {
     expect(container).toBeTruthy();
     expect(container).toHaveAttribute('role', 'group');
     expect(container).not.toHaveAttribute('aria-invalid');
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(0);
   });
 
   it.each`
     Name
     ${'v3 NumberField'}
-  `('$Name onChange is not called when controlled at maxValue and increment is pressed', async () => {
+  `('$Name onChange is not called when controlled at maxValue and increment is pressed', () => {
     let {
       container,
       incrementButton
@@ -511,7 +511,7 @@ describe('NumberField', function () {
     expect(container).toBeTruthy();
     expect(container).toHaveAttribute('role', 'group');
     expect(container).not.toHaveAttribute('aria-invalid');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(0);
   });
 
@@ -559,7 +559,7 @@ describe('NumberField', function () {
     } = renderNumberField({onChange: onChangeSpy, onBlur: onBlurSpy});
 
     expect(textField).toHaveAttribute('value', '');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '0');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
@@ -573,7 +573,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
     expect(onBlurSpy).toHaveBeenCalledTimes(1);
 
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
     expect(textField).toHaveAttribute('value', '0');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenCalledWith(0);
@@ -591,7 +591,7 @@ describe('NumberField', function () {
     } = renderNumberField({onChange: onChangeSpy, minValue: 3});
 
     expect(textField).toHaveAttribute('value', '');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '3');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(3);
@@ -603,7 +603,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
 
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
     expect(textField).toHaveAttribute('value', '3');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(3);
@@ -620,7 +620,7 @@ describe('NumberField', function () {
     } = renderNumberField({onChange: onChangeSpy, maxValue: 3});
 
     expect(textField).toHaveAttribute('value', '');
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
     expect(textField).toHaveAttribute('value', '3');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(3);
@@ -632,7 +632,7 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(NaN);
 
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '0');
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(0);
@@ -792,7 +792,7 @@ describe('NumberField', function () {
     expect(textField).toHaveAttribute('value', '25%');
     expect(onChangeSpy).toHaveBeenLastCalledWith(0.25);
     act(() => {textField.focus();});
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     act(() => {textField.blur();});
     expect(textField).toHaveAttribute('value', '26%');
     expect(onChangeSpy).toHaveBeenLastCalledWith(0.26);
@@ -842,14 +842,14 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField'}
-  `('$Name properly formats value when value changes', async () => {
+  `('$Name properly formats value when value changes', () => {
     let {textField, incrementButton, decrementButton} = renderNumberField({defaultValue: 10, formatOptions: {style: 'currency', currency: 'EUR'}});
 
     expect(textField).toHaveAttribute('value', '€10.00');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '€11.00');
-    await user.click(decrementButton);
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
+    triggerPress(decrementButton);
     expect(textField).toHaveAttribute('value', '€9.00');
   });
 
@@ -882,7 +882,7 @@ describe('NumberField', function () {
     let {textField, incrementButton} = renderNumberField({onChange: onChangeSpy, defaultValue: -10, formatOptions: {style: 'currency', currency: 'USD', currencySign: 'accounting'}});
 
     expect(textField).toHaveAttribute('value', '($10.00)');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '($9.00)');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(-9);
@@ -962,7 +962,7 @@ describe('NumberField', function () {
     }, {locale: 'el-GR'});
 
     expect(textField).toHaveAttribute('value', '-10,00 $');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '-9,00 $');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(-9);
@@ -1017,14 +1017,14 @@ describe('NumberField', function () {
     ${'US Euros negative'}     | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'en-US'} | ${['-€10.00', '-€9.00', '-€11.00']}
     ${'French Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'fr-FR'} | ${['-10,00 €', '-9,00 €', '-11,00 €']}
     ${'Arabic Euros negative'} | ${{defaultValue: -10, formatOptions: {style: 'currency', currency: 'EUR'}}} | ${'ar-AE'} | ${['‏‎-10.00 €', '‏‎-9.00 €', '‏‎-11.00 €']}
-  `('$Name pressing increment & decrement keeps formatting', async ({props, locale, expected}) => {
+  `('$Name pressing increment & decrement keeps formatting', ({props, locale, expected}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField({minValue: -15, ...props}, {locale});
 
     expect(textField).toHaveAttribute('value', expected[0]);
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', expected[1]);
-    await user.click(decrementButton);
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
+    triggerPress(decrementButton);
     expect(textField).toHaveAttribute('value', expected[2]);
   });
 
@@ -1428,13 +1428,13 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     await user.keyboard('1');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.001);
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.002);
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.003);
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledWith(1.004);
     act(() => {textField.blur();});
   });
@@ -1447,7 +1447,7 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     await user.keyboard('2');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     act(() => {textField.blur();});
@@ -1460,7 +1460,7 @@ describe('NumberField', function () {
 
     act(() => {textField.focus();});
     await user.keyboard('3');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(3);
     expect(onChangeSpy).toHaveBeenLastCalledWith(5);
     act(() => {textField.blur();});
@@ -1481,7 +1481,7 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     await user.keyboard('2');
     expect(textField).toHaveAttribute('value', '2');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(3);
     expect(textField).toHaveAttribute('value', '3');
@@ -1491,7 +1491,7 @@ describe('NumberField', function () {
     await user.clear(textField);
     await user.keyboard('2');
     expect(textField).toHaveAttribute('value', '2');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(textField).toHaveAttribute('value', '3');
     act(() => {textField.blur();});
@@ -1506,7 +1506,7 @@ describe('NumberField', function () {
     act(() => {textField.focus();});
     await user.keyboard('2');
     expect(textField).toHaveAttribute('value', '2');
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(1);
     expect(textField).toHaveAttribute('value', '1');
@@ -1516,7 +1516,7 @@ describe('NumberField', function () {
     await user.clear(textField);
     await user.keyboard('2');
     expect(textField).toHaveAttribute('value', '2');
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(textField).toHaveAttribute('value', '1');
     act(() => {textField.blur();});
@@ -1727,14 +1727,14 @@ describe('NumberField', function () {
   it.each`
     Name                          | props
     ${'NumberField controlled'}   | ${{value: 10, onChange: onChangeSpy}}
-  `('$Name 10 is rendered and will not change the value in the input for steppers', async ({props}) => {
+  `('$Name 10 is rendered and will not change the value in the input for steppers', ({props}) => {
     let {textField, incrementButton, decrementButton} = renderNumberField(props);
     expect(textField).toHaveAttribute('value', '10');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '10');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(11);
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
     expect(textField).toHaveAttribute('value', '10');
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenCalledWith(9);
@@ -1757,7 +1757,7 @@ describe('NumberField', function () {
   it.each`
     Name
     ${'NumberField controlled'}
-  `('$Name 10 is rendered and will change if the controlled version is implemented', async () => {
+  `('$Name 10 is rendered and will change if the controlled version is implemented', () => {
     function NumberFieldControlled(props) {
       let {onChange} = props;
       let [value, setValue] = useState(10);
@@ -1774,11 +1774,11 @@ describe('NumberField', function () {
     let incrementButton = buttons[0];
     let decrementButton = buttons[1];
     expect(textField).toHaveAttribute('value', '€10.00');
-    await user.click(incrementButton);
+    triggerPress(incrementButton);
     expect(textField).toHaveAttribute('value', '€11.00');
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     expect(onChangeSpy).toHaveBeenCalledWith(11);
-    await user.click(decrementButton);
+    triggerPress(decrementButton);
     expect(onChangeSpy).toHaveBeenCalledTimes(2);
     expect(onChangeSpy).toHaveBeenLastCalledWith(10);
     expect(textField).toHaveAttribute('value', '€10.00');
@@ -2213,7 +2213,7 @@ describe('NumberField', function () {
     });
   });
 
-  it('can be reset to blank using null', async () => {
+  it('can be reset to blank using null', () => {
     function NumberFieldControlled(props) {
       let {onChange} = props;
       let [value, setValue] = useState(10);
@@ -2234,7 +2234,7 @@ describe('NumberField', function () {
     let resetButton = getByText('Reset');
 
     expect(textField).toHaveAttribute('value', '10');
-    await user.click(resetButton);
+    triggerPress(resetButton);
     expect(resetSpy).toHaveBeenCalledTimes(1);
     expect(textField).toHaveAttribute('value', '');
   });

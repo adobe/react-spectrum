@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils-internal';
+import {fireEvent, screen, testSSR} from '@react-spectrum/test-utils';
 
 describe('TagGroup SSR', function () {
   it('should render without errors', async function () {

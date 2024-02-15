@@ -11,7 +11,7 @@
  */
 
 import {Accordion, Item} from '../src';
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -74,7 +74,7 @@ describe('Accordion', function () {
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
   });
 
-  it('allows users to open and close accordion item with enter / space key', async function () {
+  it('allows users to open and close accordion item with enter / space key', function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
@@ -82,29 +82,31 @@ describe('Accordion', function () {
     act(() => {selectedItem.focus();});
     expect(document.activeElement).toBe(selectedItem);
 
-    await user.keyboard('{Enter}');
+    fireEvent.keyDown(selectedItem, {key: 'Enter'});
+    fireEvent.keyUp(selectedItem, {key: 'Enter'});
     expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
 
-    await user.keyboard('{Enter}');
+    fireEvent.keyDown(selectedItem, {key: 'Enter'});
+    fireEvent.keyUp(selectedItem, {key: 'Enter'});
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
   });
 
-  it('allows users to naviagte accordion headers through arrow keys', async function () {
+  it('allows users to naviagte accordion headers through arrow keys', function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let [firstItem, secondItem, thirdItem] = buttons;
     act(() => {firstItem.focus();});
 
     expect(document.activeElement).toBe(firstItem);
-    await user.keyboard('{ArrowUp}');
+    fireEvent.keyDown(firstItem, {key: 'ArrowUp'});
     expect(document.activeElement).toBe(firstItem);
-    await user.keyboard('{ArrowDown}');
+    fireEvent.keyDown(firstItem, {key: 'ArrowDown'});
     expect(document.activeElement).toBe(secondItem);
-    await user.keyboard('{ArrowDown}');
+    fireEvent.keyDown(secondItem, {key: 'ArrowDown'});
     expect(document.activeElement).toBe(thirdItem);
-    await user.keyboard('{ArrowDown}');
+    fireEvent.keyDown(thirdItem, {key: 'ArrowDown'});
     expect(document.activeElement).toBe(thirdItem);
-    await user.keyboard('{ArrowUp}');
+    fireEvent.keyDown(thirdItem, {key: 'ArrowUp'});
     expect(document.activeElement).toBe(secondItem);
   });
 

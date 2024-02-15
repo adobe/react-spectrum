@@ -11,7 +11,7 @@
  */
 
 jest.mock('@react-aria/live-announcer');
-import {act, fireEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {announce} from '@react-aria/live-announcer';
 import {CalendarDate, isWeekend} from '@internationalized/date';
 import {RangeCalendar} from '../';
@@ -20,6 +20,12 @@ import {useLocale} from '@react-aria/i18n';
 import userEvent from '@testing-library/user-event';
 
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+let keyCodes = {'Enter': 13, ' ': 32, 'PageUp': 33, 'PageDown': 34, 'End': 35, 'Home': 36, 'ArrowLeft': 37, 'ArrowUp': 38, 'ArrowRight': 39, 'ArrowDown': 40, Escape: 27};
+
+function type(key) {
+  fireEvent.keyDown(document.activeElement, {key});
+  fireEvent.keyUp(document.activeElement, {key});
+}
 
 describe('RangeCalendar', () => {
   let user;
@@ -242,7 +248,7 @@ describe('RangeCalendar', () => {
       expect(document.getElementById(cell.getAttribute('aria-describedby'))).toHaveTextContent('Click to start selecting date range');
 
       // enter selection mode
-      fireEvent.keyDown(grid, {key: 'Enter'});
+      fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell.parentElement).toHaveAttribute('aria-selected');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())} selected`);
@@ -253,7 +259,7 @@ describe('RangeCalendar', () => {
     it.each`
       Name          | RangeCalendar    | props
       ${'v3'}       | ${RangeCalendar} | ${{defaultValue: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
-    `('$Name can select a range with the keyboard (uncontrolled)', async ({RangeCalendar, props}) => {
+    `('$Name can select a range with the keyboard (uncontrolled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
         <RangeCalendar
@@ -267,10 +273,10 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
 
       // Select a new date
-      await user.keyboard('{ArrowLeft}');
+      type('ArrowLeft');
 
       // Begin selecting
-      await user.keyboard('{Enter}');
+      type('Enter');
 
       // Auto advances by one day
       selectedDates = getAllByLabelText('selected', {exact: false});
@@ -279,10 +285,10 @@ describe('RangeCalendar', () => {
       expect(onChange).toHaveBeenCalledTimes(0);
 
       // Move focus
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
+      type('ArrowRight');
+      type('ArrowRight');
+      type('ArrowRight');
+      type('ArrowRight');
 
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('4');
@@ -290,7 +296,7 @@ describe('RangeCalendar', () => {
       expect(onChange).toHaveBeenCalledTimes(0);
 
       // End selection
-      await user.keyboard('[Space]');
+      type(' ');
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('4'); // uncontrolled
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('9');
@@ -304,7 +310,7 @@ describe('RangeCalendar', () => {
     it.each`
       Name          | RangeCalendar    | props
       ${'v3'}       | ${RangeCalendar} | ${{value: {start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}}}
-    `('$Name can select a range with the keyboard (controlled)', async ({RangeCalendar, props}) => {
+    `('$Name can select a range with the keyboard (controlled)', ({RangeCalendar, props}) => {
       let onChange = jest.fn();
       let {getAllByLabelText} = render(
         <RangeCalendar
@@ -318,10 +324,10 @@ describe('RangeCalendar', () => {
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
 
       // Select a new date
-      await user.keyboard('{ArrowLeft}');
+      type('ArrowLeft');
 
       // Begin selecting
-      await user.keyboard('{Enter}');
+      type('Enter');
 
       // Auto advances by one day
       selectedDates = getAllByLabelText('selected', {exact: false});
@@ -330,10 +336,10 @@ describe('RangeCalendar', () => {
       expect(onChange).toHaveBeenCalledTimes(0);
 
       // Move focus
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
-      await user.keyboard('{ArrowRight}');
+      type('ArrowRight');
+      type('ArrowRight');
+      type('ArrowRight');
+      type('ArrowRight');
 
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('4');
@@ -341,7 +347,7 @@ describe('RangeCalendar', () => {
       expect(onChange).toHaveBeenCalledTimes(0);
 
       // End selection
-      await user.keyboard('[Space]');
+      type(' ');
       selectedDates = getAllByLabelText('selected', {exact: false});
       expect(selectedDates[0].textContent).toBe('5'); // controlled
       expect(selectedDates[selectedDates.length - 1].textContent).toBe('10');
@@ -352,7 +358,7 @@ describe('RangeCalendar', () => {
       expect(end).toEqual(new CalendarDate(2019, 6, 9));
     });
 
-    it('does not enter selection mode with the keyboard if isReadOnly', async () => {
+    it('does not enter selection mode with the keyboard if isReadOnly', () => {
       let {getByRole, getByLabelText} = render(<RangeCalendar isReadOnly autoFocus />);
 
       let grid = getByRole('grid');
@@ -362,7 +368,7 @@ describe('RangeCalendar', () => {
       expect(document.activeElement).toBe(cell);
 
       // try to enter selection mode
-      await user.keyboard('{Enter}');
+      fireEvent.keyDown(grid, {key: 'Enter', keyCode: keyCodes.Enter});
       expect(grid).not.toHaveAttribute('aria-activedescendant');
       expect(cell.parentElement).not.toHaveAttribute('aria-selected');
       expect(cell).toHaveAttribute('aria-label', `Today, ${cellFormatter.format(new Date())}`);
@@ -1011,7 +1017,7 @@ describe('RangeCalendar', () => {
       expect(onChange).not.toHaveBeenCalled();
 
       // Cancel
-      await user.keyboard('{Escape}');
+      type('Escape');
 
       // Should revert selection
       selectedDates = getAllByLabelText('selected', {exact: false});
@@ -1153,7 +1159,7 @@ describe('RangeCalendar', () => {
       expect(cell).toHaveAttribute('aria-disabled', 'true');
     });
 
-    it('advances selection backwards when starting a selection at the end of an available range', async () => {
+    it('advances selection backwards when starting a selection at the end of an available range', () => {
       const isDateUnavailable = (date) => {
         const disabledIntervals = [[new CalendarDate(2021, 12, 6), new CalendarDate(2021, 12, 10)], [new CalendarDate(2021, 12, 22), new CalendarDate(2021, 12, 26)]];
         return disabledIntervals.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
@@ -1167,7 +1173,7 @@ describe('RangeCalendar', () => {
 
       let cell = getByRole('button', {name: 'Tuesday, December 21, 2021'});
       act(() => cell.focus());
-      await user.keyboard('{Enter}');
+      act(() => type('Enter'));
 
       let cell2 = getByRole('button', {name: /Monday, December 20, 2021/});
       expect(document.activeElement).toBe(cell2);
@@ -1223,7 +1229,7 @@ describe('RangeCalendar', () => {
       await user.click(cell);
       expect(cell.parentElement).toHaveAttribute('aria-selected', 'true');
 
-      await user.keyboard('{PageDown}');
+      act(() => type('PageDown'));
 
       cell = getByRole('button', {name: 'Saturday, April 9, 2022'});
       expect(document.activeElement).toBe(cell);
@@ -1347,13 +1353,13 @@ describe('RangeCalendar', () => {
       expect(announce).toHaveBeenCalledWith('Selected Range: Monday, June 10 to Monday, June 17, 2019', 'polite', 4000);
     });
 
-    it('ensures that the active descendant is announced when the focused date changes', async () => {
+    it('ensures that the active descendant is announced when the focused date changes', () => {
       let {getAllByLabelText} = render(<RangeCalendar defaultValue={{start: new CalendarDate(2019, 6, 5), end: new CalendarDate(2019, 6, 10)}} autoFocus />);
 
       let selectedDates = getAllByLabelText('selected', {exact: false});
 
       expect(selectedDates[0]).toHaveFocus();
-      await user.keyboard('{ArrowRight}');
+      type('ArrowRight');
 
       expect(selectedDates[1]).toHaveFocus();
     });

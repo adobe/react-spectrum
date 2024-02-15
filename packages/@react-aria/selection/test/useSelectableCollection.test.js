@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, installPointerEvent, pointerMap, render, simulateDesktop, simulateMobile} from '@react-spectrum/test-utils-internal';
+import {fireEvent, installPointerEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
 import {List} from '../stories/List';
 import React from 'react';
@@ -24,7 +24,7 @@ describe('useSelectableCollection', () => {
   });
 
   beforeEach(() => {
-    simulateDesktop(750);
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 750);
   });
 
   it('selects the first item it focuses if selectOnFocus', async () => {
@@ -57,17 +57,20 @@ describe('useSelectableCollection', () => {
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(options[1]).not.toHaveAttribute('aria-selected');
     expect(options[2]).not.toHaveAttribute('aria-selected');
-    await user.keyboard('{Control>}{ArrowDown}{/Control}');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
     expect(document.activeElement).toBe(options[1]);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(options[1]).not.toHaveAttribute('aria-selected');
     expect(options[2]).not.toHaveAttribute('aria-selected');
-    await user.keyboard('{Control>}{ArrowDown}{/Control}');
+    fireEvent.keyDown(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
+    fireEvent.keyUp(document.activeElement, {key: 'ArrowDown', ctrlKey: true});
     expect(document.activeElement).toBe(options[2]);
     expect(options[0]).toHaveAttribute('aria-selected', 'true');
     expect(options[1]).not.toHaveAttribute('aria-selected');
     expect(options[2]).not.toHaveAttribute('aria-selected');
-    await user.keyboard('[Space]');
+    fireEvent.keyDown(document.activeElement, {key: ' '});
+    fireEvent.keyUp(document.activeElement, {key: ' '});
     expect(options[0]).not.toHaveAttribute('aria-selected');
     expect(options[1]).not.toHaveAttribute('aria-selected');
     expect(options[2]).toHaveAttribute('aria-selected', 'true');
@@ -86,7 +89,7 @@ describe('useSelectableCollection', () => {
   `('always uses toggle for $type', ({prepare, actions: [start, end]}) => {
     prepare();
     it('uses toggle mode when the interaction is touch', () => {
-      simulateMobile(700);
+      jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
       let {getAllByRole} = render(
         <List selectionMode="multiple" selectionBehavior="replace">
           <Item>Paco de Lucia</Item>

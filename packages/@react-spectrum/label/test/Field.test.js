@@ -12,7 +12,7 @@
 
 import {Content, ContextualHelp, Heading} from '@adobe/react-spectrum';
 import {Field} from '../';
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useField} from '@react-aria/label';
 import userEvent from '@testing-library/user-event';

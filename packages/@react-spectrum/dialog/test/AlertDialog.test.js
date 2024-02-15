@@ -11,15 +11,13 @@
  */
 
 import {AlertDialog} from '../';
-import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
+import {render, triggerPress} from '@react-spectrum/test-utils';
 import {theme} from '@react-spectrum/theme-default';
-import userEvent from '@testing-library/user-event';
 
 describe('AlertDialog', function () {
-  it('renders alert dialog with onPrimaryAction', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('renders alert dialog with onPrimaryAction', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole} = render(
       <Provider theme={theme}>
@@ -33,13 +31,12 @@ describe('AlertDialog', function () {
     expect(document.activeElement).toBe(dialog);
 
     let button = getByRole('button');
-    await user.click(button);
+    triggerPress(button);
     expect(onPrimaryAction).toHaveBeenCalledTimes(1);
     expect(onPrimaryAction).toHaveBeenCalledWith();
   });
 
-  it('renders 2 button alert dialog with onPrimaryAction / onCancel', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('renders 2 button alert dialog with onPrimaryAction / onCancel', function () {
     let onCancelSpy = jest.fn();
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
@@ -54,20 +51,19 @@ describe('AlertDialog', function () {
     expect(document.activeElement).toBe(dialog);
 
     let cancelButton = getByText('cancel');
-    await user.click(cancelButton);
+    triggerPress(cancelButton);
     expect(onPrimaryAction).toHaveBeenCalledTimes(0);
     expect(onCancelSpy).toHaveBeenCalledTimes(1);
     expect(onCancelSpy).toHaveBeenCalledWith();
 
     let confirmButton = getByText('confirm');
-    await user.click(confirmButton);
+    triggerPress(confirmButton);
     expect(onPrimaryAction).toHaveBeenCalledTimes(1);
     expect(onCancelSpy).toHaveBeenCalledTimes(1);
     expect(onPrimaryAction).toHaveBeenCalledWith();
   });
 
-  it('renders a 3 button alert dialog with onPrimaryAction / onCancel', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('renders a 3 button alert dialog with onPrimaryAction / onCancel', function () {
     let onCancelSpy = jest.fn();
     let onPrimaryAction = jest.fn();
     let onSecondaryAction = jest.fn();
@@ -85,24 +81,23 @@ describe('AlertDialog', function () {
     let confirmButton = getByText('confirm');
     let secondaryButton = getByText('secondary');
     let cancelButton = getByText('cancel');
-    await user.click(secondaryButton);
+    triggerPress(secondaryButton);
     expect(onSecondaryAction).toHaveBeenCalledTimes(1);
     expect(onSecondaryAction).toHaveBeenLastCalledWith();
     expect(onCancelSpy).toHaveBeenCalledTimes(0);
 
-    await user.click(confirmButton);
+    triggerPress(confirmButton);
     expect(onPrimaryAction).toHaveBeenCalledTimes(1);
     expect(onPrimaryAction).toHaveBeenLastCalledWith();
     expect(onCancelSpy).toHaveBeenCalledTimes(0);
 
-    await user.click(cancelButton);
+    triggerPress(cancelButton);
     expect(onPrimaryAction).toHaveBeenCalledTimes(1);
     expect(onCancelSpy).toHaveBeenCalledTimes(1);
     expect(onCancelSpy).toHaveBeenLastCalledWith();
   });
 
-  it('disable its confirm button', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('disable its confirm button', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
@@ -116,7 +111,7 @@ describe('AlertDialog', function () {
     expect(document.activeElement).toBe(dialog);
 
     let button = getByText('confirm');
-    await user.click(button);
+    triggerPress(button);
     expect(onPrimaryAction).toHaveBeenCalledTimes(0);
   });
 
@@ -146,8 +141,7 @@ describe('AlertDialog', function () {
     expect(document.activeElement).toBe(button);
   });
 
-  it('disable its secondary button', async function () {
-    let user = userEvent.setup({delay: null, pointerMap});
+  it('disable its secondary button', function () {
     let onPrimaryAction = jest.fn();
     let {getByRole, getByText} = render(
       <Provider theme={theme}>
@@ -161,7 +155,7 @@ describe('AlertDialog', function () {
     expect(document.activeElement).toBe(dialog);
 
     let button = getByText('secondary');
-    await user.click(button);
+    triggerPress(button);
     expect(onPrimaryAction).toHaveBeenCalledTimes(0);
   });
 

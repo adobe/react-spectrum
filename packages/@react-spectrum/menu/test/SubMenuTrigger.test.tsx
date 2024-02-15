@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, installPointerEvent, pointerMap, render as renderComponent, triggerTouch, within} from '@react-spectrum/test-utils';
 import {composeStories} from '@storybook/testing-react';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';

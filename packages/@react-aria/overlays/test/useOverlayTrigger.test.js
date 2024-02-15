@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils-internal';
+import {fireEvent, render} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {useOverlayPosition, useOverlayTrigger} from '../';
 import {useOverlayTriggerState} from '@react-stately/overlays';

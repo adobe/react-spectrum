@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {testSSR} from '@react-spectrum/test-utils-internal';
+import {testSSR} from '@react-spectrum/test-utils';
 
 describe('Calendar SSR', function () {
   it('should render a Calendar without errors', async function () {

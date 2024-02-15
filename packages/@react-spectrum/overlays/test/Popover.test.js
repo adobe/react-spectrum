@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, render, triggerPress, waitFor} from '@react-spectrum/test-utils';
 import {Dialog} from '@react-spectrum/dialog';
 import {Popover} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {useOverlayTriggerState} from '@react-stately/overlays';
-import userEvent from '@testing-library/user-event';
 
 function PopoverWithDialog({children}) {
   let ref = useRef();
@@ -204,7 +203,6 @@ describe('Popover', function () {
     });
 
     it('hides the popover when clicking outside', async function () {
-      let user = userEvent.setup({delay: null, pointerMap});
       let onOpenChange = jest.fn();
       let {getByTestId} = render(
         <Provider theme={theme}>
@@ -218,7 +216,7 @@ describe('Popover', function () {
       await waitFor(() => {
         expect(getByTestId('popover')).toBeVisible();
       }); // wait for animation
-      await user.click(document.body);
+      triggerPress(document.body);
       expect(onOpenChange).toHaveBeenCalledTimes(1);
     });
 

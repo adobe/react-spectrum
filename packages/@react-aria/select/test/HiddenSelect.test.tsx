@@ -1,6 +1,6 @@
 import {HiddenSelect, HiddenSelectProps} from '../src';
 import {Item} from 'react-stately';
-import {pointerMap} from '@react-spectrum/test-utils-internal';
+import {pointerMap} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {render, screen} from '@testing-library/react';
 import {SelectProps, useSelectState} from '@react-stately/select';
