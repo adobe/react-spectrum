@@ -86,7 +86,7 @@ function ListBoxBase<T>(props: ListBoxBaseProps<T>, ref: RefObject<HTMLDivElemen
   let {styleProps} = useStyleProps(props);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/listbox');
 
-  // This overrides collection view's renderWrapper to support heirarchy of items in sections.
+  // This overrides collection view's renderWrapper to support hierarchy of items in sections.
   // The header is extracted from the children so it can receive ARIA labeling properties.
   type View = ReusableView<Node<T>, ReactNode>;
   let renderWrapper = (parent: View, reusableView: View, children: View[], renderChildren: (views: View[]) => ReactElement[]) => {

@@ -208,7 +208,7 @@ function Draggable() {
 
 ## Drag previews
 
-By default, the drag preview shown under the user's pointer or finger is a copy of the original element that started the drag. A custom preview can be rendered using the `<DragPreview>` component. This accepts a function as a child which receives the dragged data that was returned by `getItems`, and returns a rendered preview for those items. The `DragPreview` is linked with `useDrag` via a ref, passed to the `preview` property. The `DragPreview` should be placed in the component heirarchy appropriately, so that it receives any React context or inherited styles that it needs to render correctly.
+By default, the drag preview shown under the user's pointer or finger is a copy of the original element that started the drag. A custom preview can be rendered using the `<DragPreview>` component. This accepts a function as a child which receives the dragged data that was returned by `getItems`, and returns a rendered preview for those items. The `DragPreview` is linked with `useDrag` via a ref, passed to the `preview` property. The `DragPreview` should be placed in the component hierarchy appropriately, so that it receives any React context or inherited styles that it needs to render correctly.
 
 This example renders a custom drag preview which shows the text of the first drag item.
 
