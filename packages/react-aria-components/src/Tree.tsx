@@ -22,7 +22,6 @@ import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeSt
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
-import {TextContext} from './Text';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
@@ -98,7 +97,6 @@ class TreeCollection<T> implements ICollection<Node<T>> {
   }
 }
 
-// TODO: these are copied straight from GridList, double check
 export interface TreeRenderProps {
   /**
    * Whether the tree has no items and should display its empty state.
@@ -126,7 +124,7 @@ export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>
   /** How multiple selection should behave in the collection. */
   selectionBehavior?: SelectionBehavior,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: (props: TreeRenderProps) => ReactNode
+  renderEmptyState?: (props: Omit<TreeRenderProps, 'isEmpty'>) => ReactNode
 }
 
 
@@ -212,8 +210,9 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
   let emptyState: ReactNode = null;
   let emptyStatePropOverrides: HTMLAttributes<HTMLElement> | null = null;
   if (state.collection.size === 0 && props.renderEmptyState) {
-    // TODO: probably not useful to have isEmpty passed to renderEmptyState
-    let content = props.renderEmptyState(renderValues);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    let {isEmpty, ...values} = renderValues;
+    let content = props.renderEmptyState({...values});
     let treeGridRowProps = {
       'aria-level': 1,
       'aria-posinset': 1,
@@ -265,7 +264,6 @@ export interface TreeItemRenderProps extends ItemRenderProps {
   isExpanded: boolean
 }
 
-// TODO: will it need to support LinkProps?
 export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps {
   /** The unique id of the tree row. */
   id?: Key,
@@ -341,7 +339,7 @@ export {_TreeItemContent as TreeItemContent};
 function TreeRow<T>({item}: {item: Node<T>}) {
   let state = useContext(TreeStateContext)!;
   let ref = useObjectRef<HTMLDivElement>(item.props.ref);
-  let {rowProps, gridCellProps, descriptionProps, ...states} = useTreeGridListItem({node: item}, state, ref);
+  let {rowProps, gridCellProps, ...states} = useTreeGridListItem({node: item}, state, ref);
   let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
   let isExpanded = rowProps['aria-expanded'] === true;
   let hasChildRows = [...state.collection.getChildren!(item.key)]?.length > 1;
@@ -429,7 +427,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
         {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps)}
         {...renderProps}
         ref={ref}
-        // TODO: make sure I have the equivalent data properties as the render props
+        // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?
         data-expanded={hasChildRows ? isExpanded : undefined}
         data-has-child-rows={hasChildRows}
         data-level={level}
@@ -442,22 +440,14 @@ function TreeRow<T>({item}: {item: Node<T>}) {
         data-selection-mode={state.selectionManager.selectionMode === 'none' ? undefined : state.selectionManager.selectionMode}>
         <div {...gridCellProps} style={{display: 'contents'}}>
           <Provider
-            // TODO: check that the proper props are making it through
             values={[
               [CheckboxContext, {
                 slots: {
                   selection: checkboxProps
                 }
               }],
-              // TODO maybe don't need this? Perhaps we can just reply on the text value provided since the user will alway
-              // be providing a textValue since they always provide a wrapping TreeItemContent
-              [TextContext, {
-                slots: {
-                  [defaultSlot]: {},
-                  description: descriptionProps
-                }
-              }],
-              // TODO: don't think I need to pass isExpanded here since it can be sourced from the renderProps? Might be worthwhile passing it down?
+              // TODO: No description slot supported, doesn't exist in design
+              // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
               // TODO: make the button get automatically skipped by keyboard navigation though
               [ButtonContext, {
                 slots: {
@@ -499,16 +489,11 @@ interface TreeGridCollectionOptions {
   expandedKeys: 'all' | Set<Key>
 }
 
-// TODO: update name when we decide how much post processing we want to do
 interface FlattenedTree<T> {
   flattenedRows: Node<T>[],
   keyMap: Map<Key, NodeValue<T>>
 }
 
-// TODO: Do we really need to modify the index values of each of the item nodes? I'm doing this so that the aria hooks don't assume that the collection's structure
-// has to be the RAC structure (aka it has Content Nodes and Row node and thus the index calculated for each row is offset by 1 due to the Content Node). Instead, I'm making the processed Tree structure here only
-// have the tree rows and discarding the content items since they aren't needed for expanding/collapsing or for calculating the relevant aria attributes
-// This feels like it falls more inline with the existing Tree Collection structure anyways
 function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionOptions): FlattenedTree<T> {
   let {
     expandedKeys = new Set()
@@ -521,7 +506,7 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
       let parentKey = node?.parentKey;
       let clone = {...node};
       if (parentKey != null) {
-        // TODO: assumes that non item content node will be always placed before the child rows and that there is only 1. If we can't make this assumption then we can filter out
+        // TODO: assumes that non item content node (aka TreeItemContent always placed before Collection) will be always placed before the child rows. If we can't make this assumption then we can filter out
         // every non-item per level and assign indicies based off the node's position in said filtered array
         let hasContentNode = [...collection.getChildren(parentKey)][0].type !== 'item';
         if (hasContentNode) {

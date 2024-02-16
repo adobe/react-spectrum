@@ -574,6 +574,14 @@ describe('Tree', () => {
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
+    it('should support onScroll', () => {
+      let onScroll = jest.fn();
+      let {getByRole} = render(<StaticTree treeProps={{onScroll}} />);
+      let tree = getByRole('treegrid');
+      fireEvent.scroll(tree);
+      expect(onScroll).toHaveBeenCalled();
+    });
+
     describe('links', function () {
       describe.each(['mouse', 'keyboard'])('%s', (type) => {
         let trigger = async (item, key = 'Enter') => {
@@ -1085,10 +1093,10 @@ describe('Tree', () => {
     it('should allow the user to tab to the empty tree', async () => {
       let {getAllByRole, getByRole} = render(
         <Tree
-          className={({isEmpty, isFocused, isFocusVisible}) => `isEmpty: ${isEmpty}, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}
+          className={({isFocused, isFocusVisible}) => `isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}
           aria-label="test empty tree"
           items={[]}
-          renderEmptyState={({isEmpty, isFocused, isFocusVisible}) => <span>{`Nothing in tree, isEmpty: ${isEmpty}, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}</span>}>
+          renderEmptyState={({isEmpty, isFocused, isFocusVisible}) => <span>{`Nothing in tree, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}</span>}>
           {(item) => (
             <TreeItem>
               <TreeItemContent>
@@ -1103,32 +1111,32 @@ describe('Tree', () => {
       expect(tree).toHaveAttribute('data-empty', 'true');
       expect(tree).not.toHaveAttribute('data-focused');
       expect(tree).not.toHaveAttribute('data-focus-visible');
-      expect(tree).toHaveClass('isEmpty: true, isFocused: false, isFocusVisible: false');
+      expect(tree).toHaveClass('isFocused: false, isFocusVisible: false');
 
       let row = getAllByRole('row')[0];
       expect(row).toHaveAttribute('aria-level', '1');
       expect(row).toHaveAttribute('aria-posinset', '1');
       expect(row).toHaveAttribute('aria-setsize', '1');
       let gridCell = within(row).getByRole('gridcell');
-      expect(gridCell).toHaveTextContent('Nothing in tree, isEmpty: true, isFocused: false, isFocusVisible: false');
+      expect(gridCell).toHaveTextContent('Nothing in tree, isFocused: false, isFocusVisible: false');
 
       await user.tab();
       expect(document.activeElement).toBe(tree);
       expect(tree).toHaveAttribute('data-empty', 'true');
       expect(tree).toHaveAttribute('data-focused', 'true');
       expect(tree).toHaveAttribute('data-focus-visible', 'true');
-      expect(tree).toHaveClass('isEmpty: true, isFocused: true, isFocusVisible: true');
-      expect(gridCell).toHaveTextContent('Nothing in tree, isEmpty: true, isFocused: true, isFocusVisible: true');
+      expect(tree).toHaveClass('isFocused: true, isFocusVisible: true');
+      expect(gridCell).toHaveTextContent('Nothing in tree, isFocused: true, isFocusVisible: true');
 
       await user.tab();
       expect(tree).toHaveAttribute('data-empty', 'true');
       expect(tree).not.toHaveAttribute('data-focused');
       expect(tree).not.toHaveAttribute('data-focus-visible');
-      expect(tree).toHaveClass('isEmpty: true, isFocused: false, isFocusVisible: false');
+      expect(tree).toHaveClass('isFocused: false, isFocusVisible: false');
       expect(row).toHaveAttribute('aria-level', '1');
       expect(row).toHaveAttribute('aria-posinset', '1');
       expect(row).toHaveAttribute('aria-setsize', '1');
-      expect(gridCell).toHaveTextContent('Nothing in tree, isEmpty: true, isFocused: false, isFocusVisible: false');
+      expect(gridCell).toHaveTextContent('Nothing in tree, isFocused: false, isFocusVisible: false');
     });
   });
 });

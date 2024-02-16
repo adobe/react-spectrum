@@ -45,7 +45,6 @@ function MyCheckbox({children, ...props}: CheckboxProps) {
 }
 
 const StaticTreeItem = (props: StaticTreeItemProps) => {
-  // TODO: update the styles
   return (
     <TreeItem
       {...props}
@@ -231,7 +230,6 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
 };
 
 export const TreeExampleDynamic = (args: TreeProps<unknown>) => (
-  // TODO: update the styles here
   <Tree {...args} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     {(item) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
