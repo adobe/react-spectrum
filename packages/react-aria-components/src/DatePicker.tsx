@@ -95,7 +95,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     validationBehavior: props.validationBehavior ?? 'native'
   }, state, groupRef);
 
-  // Allows calander width to match input group
+  // Allows calendar width to match input group
   let [groupWidth, setGroupWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
     if (groupRef.current) {
@@ -197,7 +197,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     validationBehavior: props.validationBehavior ?? 'native'
   }, state, groupRef);
 
-  // Allows calander width to match input group
+  // Allows calendar width to match input group
   let [groupWidth, setGroupWidth] = useState<string | null>(null);
   let onResize = useCallback(() => {
     if (groupRef.current) {
