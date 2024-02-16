@@ -14,7 +14,7 @@ import {AriaTreeGridListProps, useTreeGridList, useTreeGridListItem} from '@reac
 import {BaseCollection, CollectionProps, CollectionRendererContext, ItemRenderProps, NodeValue, useCachedChildren, useCollection, useCollectionChildren, useShallowRender, useSSRCollectionNode} from './Collection';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
-import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {Expandable, Key, LinkDOMProps} from '@react-types/shared';
 import {filterDOMProps, isAndroid, useObjectRef} from '@react-aria/utils';
 import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover, useLocalizedStringFormatter} from 'react-aria';
@@ -451,7 +451,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
               // TODO: make the button get automatically skipped by keyboard navigation though
               [ButtonContext, {
                 slots: {
-                  [defaultSlot]: {},
+                  [DEFAULT_SLOT]: {},
                   chevron: {
                     ...expandButtonProps,
                     ref: expandButtonRef
