@@ -114,7 +114,7 @@ export interface TreeRenderProps {
    */
   isFocusVisible: boolean,
   /**
-   * State of the grid list.
+   * State of the tree.
    */
   state: TreeState<unknown>
 }
