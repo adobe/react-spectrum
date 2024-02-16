@@ -159,16 +159,16 @@ governing permissions and limitations under the License.
 .spectrum-Field.spectrum-Dropdown-fieldWrapper--quiet {
   display: inline-flex;
   flex-direction: column;
-  inline-size: 100%;
-  max-width: max-content;
+  inline-size: max-content;
+  max-width: 100%;
 
   .spectrum-Dropdown--quiet {
     inline-size: auto;
     min-inline-size: var(--spectrum-dropdown-quiet-min-width);
 
     .spectrum-Dropdown-trigger {
-      inline-size: 100%;
-      max-width: max-content;
+      inline-size: max-content;
+      max-width: 100%;
     }
   }
 
