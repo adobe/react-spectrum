@@ -178,9 +178,8 @@ ListBoxDnd.story = {
   }
 };
 
-
 export const ListBoxHover = () => (
-  <ListBox className={styles.menu} aria-label="test listbox">
+  <ListBox className={styles.menu} aria-label="test listbox" onAction={action('onAction')} >
     <MyListBoxItem onHoverStart={action('onHoverStart')} onHoverChange={action('onHoverChange')} onHoverEnd={action('onHoverEnd')}>Hover</MyListBoxItem>
     <MyListBoxItem>Bar</MyListBoxItem>
     <MyListBoxItem>Baz</MyListBoxItem>
