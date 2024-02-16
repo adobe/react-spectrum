@@ -585,7 +585,7 @@ describe('Tree', () => {
           }
         };
 
-        it('should support links with selectionMode="none"', async function () {
+        it('should support links with selectionMode="none"', async () => {
           let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'none'}} rowProps={{href: 'https://google.com/'}} />);
           let items = getAllByRole('row');
           for (let item of items) {
@@ -601,7 +601,7 @@ describe('Tree', () => {
           expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
         });
 
-        it.each(['single', 'multiple'])('should support links with selectionBehavior="toggle" selectionMode="%s"', async function (selectionMode) {
+        it.each(['single', 'multiple'])('should support links with selectionBehavior="toggle" selectionMode="%s"', async (selectionMode) => {
           let {getAllByRole} = render(<StaticTree treeProps={{selectionMode}} rowProps={{href: 'https://google.com/'}} />);
           let items = getAllByRole('row');
           for (let item of items) {
@@ -626,7 +626,7 @@ describe('Tree', () => {
           expect(items[1]).toHaveAttribute('aria-selected', 'true');
         });
 
-        it.each(['single', 'multiple'])('should support links with selectionBehavior="replace" selectionMode="%s"', async function (selectionMode) {
+        it.each(['single', 'multiple'])('should support links with selectionBehavior="replace" selectionMode="%s"', async (selectionMode) => {
           let {getAllByRole} = render(<StaticTree treeProps={{selectionMode, selectionBehavior: 'replace'}} rowProps={{href: 'https://google.com/'}} />);
 
           let items = getAllByRole('row');
@@ -662,12 +662,113 @@ describe('Tree', () => {
     });
 
     describe('keyboard interactions', () => {
-      // TODO test navigation between the interactive elements in the tree
-      // test typeahead
-      // test arrowup/down/home/end (make sure it skips past collapsed rows)
+      it('left and right arrows should navigate between interactive elements in the row', async () => {
+        let {getAllByRole} = render(<DynamicTree treeProps={{selectionMode: 'multiple'}} />);
+        let expandableRow = getAllByRole('row')[0];
+        let buttons = within(expandableRow).getAllByRole('button');
+        let checkbox = within(expandableRow).getByRole('checkbox');
+
+        await user.tab();
+        expect(expandableRow).toHaveAttribute('aria-expanded', 'true');
+        expect(document.activeElement).toBe(expandableRow);
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(checkbox);
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(buttons[0]);
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(buttons[1]);
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(buttons[2]);
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(expandableRow);
+
+        // Test that if focus is on the row that right will expand and collapse if it isn't already
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(expandableRow);
+        expect(expandableRow).toHaveAttribute('aria-expanded', 'false');
+
+        await user.keyboard('{ArrowRight}');
+        expect(document.activeElement).toBe(expandableRow);
+        expect(expandableRow).toHaveAttribute('aria-expanded', 'true');
+
+        // Resume testing navigation to interacive elements
+        await user.keyboard('{ArrowLeft}');
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(buttons[2]);
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(buttons[1]);
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(buttons[0]);
+        await user.keyboard('{ArrowLeft}');
+        expect(document.activeElement).toBe(checkbox);
+      });
+
+      it('should support type ahead', async () => {
+        let {getAllByRole, queryByText} = render(<DynamicTree />);
+        await user.tab();
+        let rows = getAllByRole('row');
+        expect(document.activeElement).toBe(rows[0]);
+        await user.keyboard('Reports 1ABC');
+        expect(document.activeElement).toBe(rows[16]);
+
+        act(() => {jest.runAllTimers();});
+        await user.keyboard('Pro');
+        expect(document.activeElement).toBe(rows[0]);
+
+        // Test typeahead doesn't match against hidden rows
+        await user.click(rows[12]);
+        expect(queryByText('Reports 1ABC')).toBeFalsy();
+        await user.keyboard('Reports 1ABC');
+        expect(document.activeElement).toBe(rows[12]);
+        expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+      });
+
+      it('should navigate between visible rows when using Arrow Up/Down', async () => {
+        let {getAllByRole} = render(<DynamicTree />);
+        await user.tab();
+        let rows = getAllByRole('row');
+        expect(rows).toHaveLength(20);
+        expect(document.activeElement).toBe(rows[0]);
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(rows[1]);
+        expect(rows[1]).toHaveAttribute('aria-label', 'Project 1');
+        await user.keyboard('{ArrowUp}');
+
+        // Collapse parent row and try arrow navigation again
+        await user.keyboard('{ArrowLeft}');
+        rows = getAllByRole('row');
+        expect(rows).toHaveLength(9);
+        await user.keyboard('{ArrowDown}');
+        expect(document.activeElement).toBe(rows[1]);
+        expect(rows[1]).toHaveAttribute('aria-label', 'Reports');
+        await user.keyboard('{ArrowUp}');
+        expect(document.activeElement).toBe(rows[0]);
+        expect(rows[0]).toHaveAttribute('aria-label', 'Projects');
+      });
+
+      it('should navigate between visible rows when using Home/End', async () => {
+        let {getAllByRole} = render(<DynamicTree />);
+        await user.tab();
+        let rows = getAllByRole('row');
+        expect(rows).toHaveLength(20);
+        expect(document.activeElement).toBe(rows[0]);
+        await user.keyboard('{End}');
+        expect(document.activeElement).toBe(rows[19]);
+        expect(rows[19]).toHaveAttribute('aria-label', 'Reports 2');
+        await user.keyboard('{Home}');
+        expect(document.activeElement).toBe(rows[0]);
+
+        // Collapse the 2nd top level row and try End/Home again
+        await user.click(rows[12]);
+        rows = getAllByRole('row');
+        expect(rows).toHaveLength(13);
+        await user.keyboard('{Home}');
+        await user.keyboard('{End}');
+        expect(document.activeElement).toBe(rows[12]);
+        expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+      });
     });
   });
-
 
   describe('expanding and collapsing', () => {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
@@ -679,7 +780,7 @@ describe('Tree', () => {
         }
       };
 
-      it('should expand/collapse a row when clicking/using Enter on the row itself and there arent any other primary actions', async function () {
+      it('should expand/collapse a row when clicking/using Enter on the row itself and there arent any other primary actions', async () => {
         let {getAllByRole} = render(<DynamicTree />);
         let rows = getAllByRole('row');
         expect(rows).toHaveLength(20);
@@ -771,7 +872,7 @@ describe('Tree', () => {
         expect(rows).toHaveLength(17);
       });
 
-      it('should not expand/collapse if disabledBehavior is "all" and the row is disabled', async function () {
+      it('should not expand/collapse if disabledBehavior is "all" and the row is disabled', async () => {
         let {getAllByRole, rerender} = render(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'all', expandedKeys: 'all'}} />);
         let rows = getAllByRole('row');
         expect(rows).toHaveLength(20);
@@ -807,7 +908,7 @@ describe('Tree', () => {
         expect(onExpandedChange).toHaveBeenCalledTimes(0);
       });
 
-      it('should expand/collapse if disabledBehavior is "selection" and the row is disabled', async function () {
+      it('should expand/collapse if disabledBehavior is "selection" and the row is disabled', async () => {
         let {getAllByRole} = render(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'selection', selectionMode: 'multiple'}} />);
         let rows = getAllByRole('row');
 
@@ -840,7 +941,7 @@ describe('Tree', () => {
         expect(disabledCheckbox).toHaveAttribute('disabled');
       });
 
-      it('should not expand when clicking/using Enter on the row if the row is selectable', async function () {
+      it('should not expand when clicking/using Enter on the row if the row is selectable', async () => {
         let {getAllByRole} = render(<DynamicTree treeProps={{selectionMode: 'multiple'}} />);
         let rows = getAllByRole('row');
 
@@ -875,7 +976,7 @@ describe('Tree', () => {
         expect(onSelectionChange).toHaveBeenCalledTimes(2);
       });
 
-      it('should not expand when clicking/using Enter on the row if the row has an action', async function () {
+      it('should not expand when clicking/using Enter on the row if the row has an action', async () => {
         let {getAllByRole} = render(<DynamicTree treeProps={{onAction}} />);
         let rows = getAllByRole('row');
 
@@ -903,7 +1004,7 @@ describe('Tree', () => {
         expect(onAction).toHaveBeenCalledTimes(1);
       });
 
-      it('should not expand when clicking/using Enter on the row if the row has a link', async function () {
+      it('should not expand when clicking/using Enter on the row if the row has a link', async () => {
         let {getAllByRole} = render(<DynamicTree rowProps={{href: 'https://google.com'}} />);
         let rows = getAllByRole('row');
         expect(rows[0]).toHaveAttribute('data-href');
@@ -923,7 +1024,7 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
         expect(rows[0]).toHaveAttribute('data-expanded', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(0);
-        expect(document.activeElement).toBe(document.body)
+        expect(document.activeElement).toBe(document.body);
 
         await user.tab();
         let chevron = within(rows[0]).getAllByRole('button')[0];
@@ -935,21 +1036,50 @@ describe('Tree', () => {
       });
     });
 
-    it('should support controlled expansion', function () {
+    it('should support controlled expansion', async () => {
+      function ControlledTree() {
+        let [expandedKeys, setExpandedKeys] = React.useState(new Set([]));
 
+        return (
+          <DynamicTree treeProps={{expandedKeys, onExpandedChange: setExpandedKeys}} />
+        );
+      }
+
+      let {getAllByRole} = render(<ControlledTree />);
+      let rows = getAllByRole('row');
+      expect(rows).toHaveLength(2);
+
+      await user.tab();
+      expect(document.activeElement).toBe(rows[0]);
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+      expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+
+      await user.click(rows[0]);
+      rows = getAllByRole('row');
+      expect(rows).toHaveLength(7);
+
+      await user.click(rows[0]);
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+      expect(rows[0]).toHaveAttribute('data-expanded', 'false');
+      rows = getAllByRole('row');
+      expect(rows).toHaveLength(2);
     });
 
-    it('should apply the proper attributes to the chevron', function () {
+    it('should apply the proper attributes to the chevron', async () => {
+      let {getAllByRole} = render(<DynamicTree />);
+      let rows = getAllByRole('row');
+      let chevron = within(rows[0]).getAllByRole('button')[0];
 
+      await user.tab();
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
+      expect(chevron).toHaveAttribute('aria-label', 'Collapse');
+      expect(chevron).toHaveAttribute('slot', 'chevron');
+
+      await user.click(rows[0]);
+      expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
+      expect(chevron).toHaveAttribute('aria-label', 'Expand');
     });
-    // check attribtues for the chevron here and other tree grid related properties
-    // TODO: test disabledBehavior and expanding with keyboard/click
-    // do for both pointer and keyboard (enter for expand if no onAction)
-
-    // test controlled expansion
   });
-
-
 
   describe('empty state', () => {
     it('should allow the user to tab to the empty tree', async () => {
@@ -1001,6 +1131,4 @@ describe('Tree', () => {
       expect(gridCell).toHaveTextContent('Nothing in tree, isEmpty: true, isFocused: false, isFocusVisible: false');
     });
   });
-  // DOuble check that style props go through as well
-
 });
