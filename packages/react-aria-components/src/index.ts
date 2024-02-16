@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-// Mark as a client only package. This will cause a build time error if you try 
+// Mark as a client only package. This will cause a build time error if you try
 // to import it from a React Server Component in a framework like Next.js.
 import 'client-only';
 
@@ -59,7 +59,6 @@ export {TextField, TextFieldContext} from './TextField';
 export {ToggleButton, ToggleButtonContext} from './ToggleButton';
 export {Toolbar, ToolbarContext} from './Toolbar';
 export {TooltipTrigger, Tooltip, TooltipTriggerStateContext, TooltipContext} from './Tooltip';
-// TODO: export relevant contexts
 export {Tree, TreeItem, TreeContext, TreeItemContent, TreeStateContext} from './Tree';
 export {useDragAndDrop, DropIndicator, DropIndicatorContext, DragAndDropContext} from './useDragAndDrop';
 export {DIRECTORY_DRAG_TYPE, isDirectoryDropItem, isFileDropItem, isTextDropItem, SSRProvider, RouterProvider, I18nProvider, useLocale} from 'react-aria';
@@ -108,8 +107,7 @@ export type {TextProps} from './Text';
 export type {ToggleButtonProps, ToggleButtonRenderProps} from './ToggleButton';
 export type {ToolbarProps, ToolbarRenderProps} from './Toolbar';
 export type {TooltipProps, TooltipRenderProps, TooltipTriggerComponentProps} from './Tooltip';
-// TODO: update these when we finalize the
-export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps} from './Tree';
+export type {TreeProps, TreeRenderProps, TreeItemProps, TreeItemRenderProps, TreeItemContentProps, TreeItemContentRenderProps} from './Tree';
 export type {DragAndDropHooks, DragAndDropOptions, DropIndicatorProps} from './useDragAndDrop';
 export type {ContextValue, SlotProps} from './utils';
 

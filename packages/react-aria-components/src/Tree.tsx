@@ -15,7 +15,7 @@ import {BaseCollection, CollectionProps, CollectionRendererContext, ItemRenderPr
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
-import {Expandable, Key, LinkDOMProps} from '@react-types/shared';
+import {DisabledBehavior, Expandable, Key, LinkDOMProps} from '@react-types/shared';
 import {filterDOMProps, isAndroid, useObjectRef} from '@react-aria/utils';
 import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, useHover, useLocalizedStringFormatter} from 'react-aria';
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
@@ -119,12 +119,16 @@ export interface TreeRenderProps {
   state: TreeState<unknown>
 }
 
-// TODO: double check these props
 export interface TreeProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, CollectionProps<T>, StyleRenderProps<TreeRenderProps>, SlotProps, ScrollableProps<HTMLDivElement>, Expandable {
-  /** How multiple selection should behave in the collection. */
+  /** How multiple selection should behave in the tree. */
   selectionBehavior?: SelectionBehavior,
   /** Provides content to display when there are no items in the list. */
-  renderEmptyState?: (props: Omit<TreeRenderProps, 'isEmpty'>) => ReactNode
+  renderEmptyState?: (props: Omit<TreeRenderProps, 'isEmpty'>) => ReactNode,
+  /**
+   * Whether `disabledKeys` applies to all interactions, or only selection.
+   * @default 'selection'
+   */
+  disabledBehavior?: DisabledBehavior
 }
 
 
@@ -155,7 +159,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     selectionMode = 'none',
     expandedKeys: propExpandedKeys,
     defaultExpandedKeys: propDefaultExpandedKeys,
-    onExpandedChange
+    onExpandedChange,
+    disabledBehavior = 'selection'
   } = props;
 
   // Kinda annoying that we have to replicate this code here as well as in useTreeState, but don't want to add
@@ -176,7 +181,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
     expandedKeys,
     onExpandedChange: setExpandedKeys,
     collection: flattenedCollection,
-    children: undefined
+    children: undefined,
+    disabledBehavior
   });
 
   let {gridProps} = useTreeGridList(props, state, ref);
@@ -259,7 +265,8 @@ function TreeInner<T extends object>({props, collection, treeRef: ref}: TreeInne
 const _Tree = /*#__PURE__*/ (forwardRef as forwardRefType)(Tree);
 export {_Tree as Tree};
 
-export interface TreeItemRenderProps extends ItemRenderProps {
+// TODO: readd the rest of the render props when tree supports them
+export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
   // Whether the tree row is expanded.
   isExpanded: boolean
 }
@@ -319,7 +326,7 @@ export interface TreeItemContentRenderProps extends ItemRenderProps {
 }
 
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
-// need to do a bunch of check to figure out what is the Content and what are the actual collection elements
+// need to do a bunch of check to figure out what is the Content and what are the actual collection elements (aka child rows) of the TreeItem
 export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRenderProps>, 'children'> {}
 
 // TODO does this need ref or context? Its only used to shallowly render the Content node... If it was a more generic collection component then I could see an argument for it
@@ -448,7 +455,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
               }],
               // TODO: No description slot supported, doesn't exist in design
               // TODO: don't think I need to pass isExpanded to the button here since it can be sourced from the renderProps? Might be worthwhile passing it down?
-              // TODO: make the button get automatically skipped by keyboard navigation though
+              // TODO: make the button get automatically skipped by keyboard navigation
               [ButtonContext, {
                 slots: {
                   [DEFAULT_SLOT]: {},

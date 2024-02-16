@@ -11,8 +11,9 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Checkbox, CheckboxProps, Collection, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps} from 'react-aria-components';
+import {Button, Checkbox, CheckboxProps, Collection, Menu, MenuTrigger, Popover, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps} from 'react-aria-components';
 import {classNames} from '@react-spectrum/utils';
+import {MyMenuItem} from './utils';
 import React, {ReactNode} from 'react';
 import styles from '../example/index.css';
 
@@ -66,7 +67,16 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
               {hasChildRows && <Button className={styles.chevron} slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
               <Text className={styles.title}>{props.title || props.children}</Text>
               <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
-              <Button className={styles.button} aria-label="Menu" onPress={action('Menu press')}>☰</Button>
+              <MenuTrigger>
+                <Button aria-label="Menu">☰</Button>
+                <Popover>
+                  <Menu className={styles.menu} onAction={action('menu action')}>
+                    <MyMenuItem>Foo</MyMenuItem>
+                    <MyMenuItem>Bar</MyMenuItem>
+                    <MyMenuItem>Baz</MyMenuItem>
+                  </Menu>
+                </Popover>
+              </MenuTrigger>
             </div>
           </>
         )}
@@ -212,8 +222,16 @@ const DynamicTreeItem = (props: DynamicTreeItemProps) => {
               {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
               <Text>{props.children}</Text>
               <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
-              {/* TODO: make this menu expandable later and test it */}
-              <Button className={styles.button} aria-label="Menu" onPress={action('Menu press')}>☰</Button>
+              <MenuTrigger>
+                <Button aria-label="Menu">☰</Button>
+                <Popover>
+                  <Menu className={styles.menu} onAction={action('menu action')}>
+                    <MyMenuItem>Foo</MyMenuItem>
+                    <MyMenuItem>Bar</MyMenuItem>
+                    <MyMenuItem>Baz</MyMenuItem>
+                  </Menu>
+                </Popover>
+              </MenuTrigger>
             </div>
           </>
         )}

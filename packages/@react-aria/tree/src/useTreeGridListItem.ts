@@ -16,7 +16,6 @@ import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
 
 export interface AriaTreeGridListItemOptions extends Omit<AriaGridListItemOptions, 'isVirtualized'> {
-  // TODO: update this to match the proper node type
   /** An object representing the treegrid item. Contains all the relevant information that makes up the treegrid row. */
   node: Node<unknown>
 }

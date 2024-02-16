@@ -58,7 +58,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
     onExpandedChange
   );
 
-  let selectionState = useMultipleSelectionState({...props, disabledBehavior: props.disabledBehavior || 'selection'});
+  let selectionState = useMultipleSelectionState(props);
   let disabledKeys = useMemo(() =>
     props.disabledKeys ? new Set(props.disabledKeys) : new Set<Key>()
   , [props.disabledKeys]);

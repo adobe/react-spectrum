@@ -40,7 +40,6 @@ export interface GridListItemAria extends SelectableItemStates {
   descriptionProps: DOMAttributes
 }
 
-// TODO: export from somewhere central
 const EXPANSION_KEYS = {
   'expand': {
     ltr: 'ArrowRight',
@@ -88,15 +87,15 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   let hasChildRows;
   let hasLink = state.selectionManager.isLink(node.key);
   if (node != null && 'expandedKeys' in state) {
+    // TODO: ideally node.hasChildNodes would be a way to tell if a row has child nodes, but the row's contents make it so that value is always
+    // true...
     hasChildRows = [...state.collection.getChildren(node.key)].length > 1;
     if (onAction == null && !hasLink && state.selectionManager.selectionMode === 'none' && hasChildRows) {
       onAction = () => state.toggleKey(node.key);
     }
 
-    // TODO: Update the below check perhaps if I add information to the node to indicate that it has child rows
     let isExpanded = hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined;
     treeGridRowProps = {
-      // TODO The below operates off the assumption that the row node's indexes and levels are 0 indexed. This matches TreeCollection and the processed TreeCollection in RAC Tree
       'aria-expanded': isExpanded,
       'aria-level': node.level + 1,
       'aria-posinset': node?.index + 1,
@@ -116,7 +115,6 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     focus,
     linkBehavior
   });
-
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
     if (!e.currentTarget.contains(e.target as Element)) {
