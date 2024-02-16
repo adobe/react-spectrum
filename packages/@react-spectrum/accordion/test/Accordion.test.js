@@ -20,7 +20,7 @@ import userEvent from '@testing-library/user-event';
 let items = [
   {key: 'one', title: 'one title', children: 'one children'},
   {key: 'two', title: 'two title', children: 'two children'},
-  {key: 'three', title: 'three title', children: 'three children'}
+  {key: 'three', title: 'three title', children: <input type="text" />, hasChildItems: false}
 ];
 
 function renderComponent(props) {
@@ -28,7 +28,7 @@ function renderComponent(props) {
     <Provider theme={theme}>
       <Accordion {...props} defaultExpandedKeys={['one']} items={items}>
         {item => (
-          <Item key={item.key} title={item.title}>
+          <Item key={item.key} title={item.title} hasChildItems={item.hasChildItems}>
             {item.children}
           </Item>
         )}
@@ -130,5 +130,18 @@ describe('Accordion', function () {
     expect(document.activeElement).not.toBe(thirdItem);
     await user.tab({shift: true});
     expect(document.activeElement).toBe(thirdItem);
+  });
+
+  it('allows users to type inside accordion items', async function () {
+    let tree = renderComponent();
+    let buttons = tree.getAllByRole('button');
+    let itemWithInputHeader = buttons[2];
+    act(() => itemWithInputHeader.click());
+
+    let [input] = tree.getAllByRole('textbox');
+    act(() => input.focus());
+
+    await user.type(input, 'Type example');
+    expect(input.value).toEqual('Type example');
   });
 });
