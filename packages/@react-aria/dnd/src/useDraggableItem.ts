@@ -65,7 +65,7 @@ const MESSAGES = {
  */
 export function useDraggableItem(props: DraggableItemProps, state: DraggableCollectionState): DraggableItemResult {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
-  let isDisabled = state.selectionManager.isDisabled(props.key);
+  let isDisabled = state.isDisabled || state.selectionManager.isDisabled(props.key);
   let {dragProps, dragButtonProps} = useDrag({
     getItems() {
       return state.getItems(props.key);

@@ -32,6 +32,8 @@ export interface DraggableCollectionState {
   draggedKey: Key | null,
   /** The keys of the items that are currently being dragged. */
   draggingKeys: Set<Key>,
+  /** Whether drag events are disabled. */
+  isDisabled?: boolean,
   /** Returns whether the given key is currently being dragged. */
   isDragging(key: Key): boolean,
   /** Returns the keys of the items that will be dragged with the given key (e.g. selected items). */
@@ -65,9 +67,6 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     preview,
     getAllowedDropOperations
   } = props;
-  if (isDisabled) {
-    selectionManager.isDisabled = () => true;
-  }
   let [, setDragging] = useState(false);
   let draggingKeys = useRef(new Set<Key>());
   let draggedKey = useRef(null);
@@ -101,6 +100,7 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     getItems(key) {
       return getItems(getKeys(key));
     },
+    isDisabled,
     preview,
     getAllowedDropOperations,
     startDrag(key, event) {
