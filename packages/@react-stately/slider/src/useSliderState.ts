@@ -198,6 +198,7 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
 
   const valuesRef = useRef<number[]>(values);
   const isDraggingsRef = useRef<boolean[]>(isDraggings);
+
   let setValues = (values: number[]) => {
     valuesRef.current = values;
     setValuesState(values);
@@ -243,6 +244,9 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
   function updateDragging(index: number, dragging: boolean) {
     if (isDisabled || !isThumbEditable(index)) {
       return;
+    }
+    if (dragging) {
+      valuesRef.current = values;
     }
 
     const wasDragging = isDraggingsRef.current[index];

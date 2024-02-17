@@ -86,6 +86,14 @@ describe('ListBox', () => {
     }
   });
 
+  it('should support aria-label on the listbox items', () => {
+    let {getAllByRole} = renderListbox({}, {'aria-label': 'test'});
+
+    for (let option of getAllByRole('option')) {
+      expect(option).toHaveAttribute('aria-label', 'test');
+    }
+  });
+
   it('should support the slot prop', () => {
     let {getByRole} = render(
       <ListBoxContext.Provider value={{slots: {test: {'aria-label': 'test'}}}}>
@@ -280,7 +288,10 @@ describe('ListBox', () => {
   });
 
   it('should support hover', async () => {
-    let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : ''});
+    let hoverStartSpy = jest.fn();
+    let hoverChangeSpy = jest.fn();
+    let hoverEndSpy = jest.fn();
+    let {getAllByRole} = renderListbox({selectionMode: 'multiple'}, {className: ({isHovered}) => isHovered ? 'hover' : '', onHoverStart: hoverStartSpy, onHoverEnd: hoverEndSpy, onHoverChange: hoverChangeSpy});
     let option = getAllByRole('option')[0];
 
     expect(option).not.toHaveAttribute('data-hovered');
@@ -289,10 +300,14 @@ describe('ListBox', () => {
     await user.hover(option);
     expect(option).toHaveAttribute('data-hovered', 'true');
     expect(option).toHaveClass('hover');
+    expect(hoverStartSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(1);
 
     await user.unhover(option);
     expect(option).not.toHaveAttribute('data-hovered');
     expect(option).not.toHaveClass('hover');
+    expect(hoverEndSpy).toHaveBeenCalledTimes(1);
+    expect(hoverChangeSpy).toHaveBeenCalledTimes(2);
   });
 
   it('should not show hover state when item is not interactive', async () => {

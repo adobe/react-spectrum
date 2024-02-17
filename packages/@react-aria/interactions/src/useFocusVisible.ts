@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {isMac, isVirtualClick} from '@react-aria/utils';
+import {getOwnerDocument, getOwnerWindow, isMac, isVirtualClick} from '@react-aria/utils';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
@@ -37,7 +37,10 @@ export interface FocusVisibleResult {
 
 let currentModality: null | Modality = null;
 let changeHandlers = new Set<Handler>();
-let hasSetupGlobalListeners = false;
+interface GlobalListenerData {
+  focus: () => void
+}
+export let hasSetupGlobalListeners = new Map<Window, GlobalListenerData>(); // We use a map here to support setting event listeners across multiple document objects.
 let hasEventBeforeFocus = false;
 let hasBlurredWindowRecently = false;
 
@@ -114,49 +117,117 @@ function handleWindowBlur() {
 /**
  * Setup global event listeners to control when keyboard focus style should be visible.
  */
-function setupGlobalFocusEvents() {
-  if (typeof window === 'undefined' || hasSetupGlobalListeners) {
+function setupGlobalFocusEvents(element?: HTMLElement | null) {
+  if (typeof window === 'undefined' || hasSetupGlobalListeners.get(getOwnerWindow(element))) {
     return;
   }
+
+  const windowObject = getOwnerWindow(element);
+  const documentObject = getOwnerDocument(element);
 
   // Programmatic focus() calls shouldn't affect the current input modality.
   // However, we need to detect other cases when a focus event occurs without
   // a preceding user event (e.g. screen reader focus). Overriding the focus
   // method on HTMLElement.prototype is a bit hacky, but works.
-  let focus = HTMLElement.prototype.focus;
-  HTMLElement.prototype.focus = function () {
+  let focus = windowObject.HTMLElement.prototype.focus;
+  windowObject.HTMLElement.prototype.focus = function () {
     hasEventBeforeFocus = true;
     focus.apply(this, arguments as unknown as [options?: FocusOptions | undefined]);
   };
 
-  document.addEventListener('keydown', handleKeyboardEvent, true);
-  document.addEventListener('keyup', handleKeyboardEvent, true);
-  document.addEventListener('click', handleClickEvent, true);
+  documentObject.addEventListener('keydown', handleKeyboardEvent, true);
+  documentObject.addEventListener('keyup', handleKeyboardEvent, true);
+  documentObject.addEventListener('click', handleClickEvent, true);
 
   // Register focus events on the window so they are sure to happen
   // before React's event listeners (registered on the document).
-  window.addEventListener('focus', handleFocusEvent, true);
-  window.addEventListener('blur', handleWindowBlur, false);
+  windowObject.addEventListener('focus', handleFocusEvent, true);
+  windowObject.addEventListener('blur', handleWindowBlur, false);
 
   if (typeof PointerEvent !== 'undefined') {
-    document.addEventListener('pointerdown', handlePointerEvent, true);
-    document.addEventListener('pointermove', handlePointerEvent, true);
-    document.addEventListener('pointerup', handlePointerEvent, true);
+    documentObject.addEventListener('pointerdown', handlePointerEvent, true);
+    documentObject.addEventListener('pointermove', handlePointerEvent, true);
+    documentObject.addEventListener('pointerup', handlePointerEvent, true);
   } else {
-    document.addEventListener('mousedown', handlePointerEvent, true);
-    document.addEventListener('mousemove', handlePointerEvent, true);
-    document.addEventListener('mouseup', handlePointerEvent, true);
+    documentObject.addEventListener('mousedown', handlePointerEvent, true);
+    documentObject.addEventListener('mousemove', handlePointerEvent, true);
+    documentObject.addEventListener('mouseup', handlePointerEvent, true);
   }
 
-  hasSetupGlobalListeners = true;
+  // Add unmount handler
+  windowObject.addEventListener('beforeunload', () => {
+    tearDownWindowFocusTracking(element);
+  }, {once: true});
+
+  hasSetupGlobalListeners.set(windowObject, {focus});
 }
 
-if (typeof document !== 'undefined') {
-  if (document.readyState !== 'loading') {
-    setupGlobalFocusEvents();
-  } else {
-    document.addEventListener('DOMContentLoaded', setupGlobalFocusEvents);
+const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
+  const windowObject = getOwnerWindow(element);
+  const documentObject = getOwnerDocument(element);
+  if (loadListener) {
+    documentObject.removeEventListener('DOMContentLoaded', loadListener);
   }
+  if (!hasSetupGlobalListeners.has(windowObject)) {
+    return;
+  }
+  windowObject.HTMLElement.prototype.focus = hasSetupGlobalListeners.get(windowObject)!.focus;
+
+  documentObject.removeEventListener('keydown', handleKeyboardEvent, true);
+  documentObject.removeEventListener('keyup', handleKeyboardEvent, true);
+  documentObject.removeEventListener('click', handleClickEvent, true);
+  windowObject.removeEventListener('focus', handleFocusEvent, true);
+  windowObject.removeEventListener('blur', handleWindowBlur, false);
+
+  if (typeof PointerEvent !== 'undefined') {
+    documentObject.removeEventListener('pointerdown', handlePointerEvent, true);
+    documentObject.removeEventListener('pointermove', handlePointerEvent, true);
+    documentObject.removeEventListener('pointerup', handlePointerEvent, true);
+  } else {
+    documentObject.removeEventListener('mousedown', handlePointerEvent, true);
+    documentObject.removeEventListener('mousemove', handlePointerEvent, true);
+    documentObject.removeEventListener('mouseup', handlePointerEvent, true);
+  }
+
+  hasSetupGlobalListeners.delete(windowObject);
+};
+
+/**
+ * EXPERIMENTAL
+ * Adds a window (i.e. iframe) to the list of windows that are being tracked for focus visible.
+ *
+ * Sometimes apps render portions of their tree into an iframe. In this case, we cannot accurately track if the focus
+ * is visible because we cannot see interactions inside the iframe. If you have this in your application's architecture,
+ * then this function will attach event listeners inside the iframe. You should call `addWindowFocusTracking` with an
+ * element from inside the window you wish to add. We'll retrieve the relevant elements based on that.
+ * Note, you do not need to call this for the default window, as we call it for you.
+ *
+ * When you are ready to stop listening, but you do not wish to unmount the iframe, you may call the cleanup function
+ * returned by `addWindowFocusTracking`. Otherwise, when you unmount the iframe, all listeners and state will be cleaned
+ * up automatically for you.
+ *
+ * @param element @default document.body - The element provided will be used to get the window to add.
+ * @returns A function to remove the event listeners and cleanup the state.
+ */
+export function addWindowFocusTracking(element?: HTMLElement | null): () => void {
+  const documentObject = getOwnerDocument(element);
+  let loadListener;
+  if (documentObject.readyState !== 'loading') {
+    setupGlobalFocusEvents(element);
+  } else {
+    loadListener = () => {
+      setupGlobalFocusEvents(element);
+    };
+    documentObject.addEventListener('DOMContentLoaded', loadListener);
+  }
+
+  return () => tearDownWindowFocusTracking(element, loadListener);
+}
+
+// Server-side rendering does not have the document object defined
+// eslint-disable-next-line no-restricted-globals
+if (typeof document !== 'undefined') {
+  addWindowFocusTracking();
 }
 
 /**
@@ -213,11 +284,16 @@ const nonTextInputTypes = new Set([
  * focus visible style can be properly set.
  */
 function isKeyboardFocusEvent(isTextInput: boolean, modality: Modality, e: HandlerEvent) {
-  isTextInput = isTextInput || 
-    (e?.target instanceof HTMLInputElement && !nonTextInputTypes.has(e?.target?.type)) ||
-    e?.target instanceof HTMLTextAreaElement ||
-    (e?.target instanceof HTMLElement && e?.target.isContentEditable);
-  return !(isTextInput && modality === 'keyboard' && e instanceof KeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
+  const IHTMLInputElement = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).HTMLInputElement : HTMLInputElement;
+  const IHTMLTextAreaElement = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).HTMLTextAreaElement : HTMLTextAreaElement;
+  const IHTMLElement = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).HTMLElement : HTMLElement;
+  const IKeyboardEvent = typeof window !== 'undefined' ? getOwnerWindow(e?.target as Element).KeyboardEvent : KeyboardEvent;
+
+  isTextInput = isTextInput ||
+    (e?.target instanceof IHTMLInputElement && !nonTextInputTypes.has(e?.target?.type)) ||
+    e?.target instanceof IHTMLTextAreaElement ||
+    (e?.target instanceof IHTMLElement && e?.target.isContentEditable);
+  return !(isTextInput && modality === 'keyboard' && e instanceof IKeyboardEvent && !FOCUS_VISIBLE_INPUT_KEYS[e.key]);
 }
 
 /**

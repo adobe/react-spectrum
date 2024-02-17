@@ -110,7 +110,7 @@ function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
       data-disabled={isDisabled || undefined}
       data-readonly={isReadOnly || undefined}>
       <VisuallyHidden elementType="span">
-        <input {...inputProps} {...focusProps} ref={inputRef} />
+        <input {...mergeProps(inputProps, focusProps)} ref={inputRef} />
       </VisuallyHidden>
       {renderProps.children}
     </label>

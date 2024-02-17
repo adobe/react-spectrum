@@ -4,7 +4,7 @@ import {buildHeaderRows, TableColumnResizeState} from '@react-stately/table';
 import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {ColumnSize, ColumnStaticSize, TableCollection as ITableCollection, TableProps as SharedTableProps} from '@react-types/table';
-import {ContextValue, defaultSlot, DOMProps, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, DOMProps, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DisabledBehavior, DraggableCollectionState, DroppableCollectionState, Node, SelectionBehavior, SelectionMode, SortDirection, TableState, useTableColumnResizeState, useTableState} from 'react-stately';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {DraggableItemResult, DragPreviewRenderer, DropIndicatorAria, DroppableCollectionResult, FocusScope, ListKeyboardDelegate, mergeProps, useFocusRing, useHover, useLocale, useLocalizedStringFormatter, useTable, useTableCell, useTableColumnHeader, useTableColumnResize, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox, useVisuallyHidden} from 'react-aria';
@@ -214,12 +214,12 @@ function ResizableTableContainer(props: ResizableTableContainerProps, ref: Forwa
   useResizeObserver({
     ref: objectRef,
     onResize() {
-      setWidth(objectRef.current?.clientWidth);
+      setWidth(objectRef.current?.clientWidth ?? 0);
     }
   });
 
   useLayoutEffect(() => {
-    setWidth(objectRef.current?.clientWidth);
+    setWidth(objectRef.current?.clientWidth ?? 0);
   }, [objectRef]);
 
   let ctx = useMemo(() => ({
@@ -940,6 +940,9 @@ function ColumnResizer(props: ColumnResizerProps, ref: ForwardedRef<HTMLDivEleme
   let objectRef = useObjectRef(ref);
   let [cursor, setCursor] = useState('');
   useEffect(() => {
+    if (!objectRef.current) {
+      return;
+    }
     let style = window.getComputedStyle(objectRef.current);
     setCursor(style.cursor);
   }, [objectRef, resizableDirection]);
@@ -1101,7 +1104,7 @@ function TableRow<T>({item}: {item: GridNode<T>}) {
             }],
             [ButtonContext, {
               slots: {
-                [defaultSlot]: {},
+                [DEFAULT_SLOT]: {},
                 drag: {
                   ...draggableItem?.dragButtonProps,
                   ref: dragButtonRef,
