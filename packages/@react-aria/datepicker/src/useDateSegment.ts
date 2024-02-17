@@ -98,8 +98,8 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     }
     if (parser.isValidPartialNumber(segment.text) && !state.isReadOnly && !segment.isPlaceholder) {
       let newValue = segment.text.slice(0, -1);
-      newValue = newValue === '0' ? '' : newValue;
       let parsed = parser.parse(newValue);
+      newValue = parsed === 0 ? '' : newValue;
       if (newValue.length === 0 || parsed === 0) {
         state.clearSegment(segment.type);
       } else {
