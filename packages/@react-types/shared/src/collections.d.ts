@@ -166,7 +166,7 @@ export interface Node<T> {
   key: Key,
   /** The object value the node was created from. */
   value: T | null,
-  /** The level of depth this node is at in the heirarchy. */
+  /** The level of depth this node is at in the hierarchy. */
   level: number,
   /** Whether this item has children, even if not loaded yet. */
   hasChildNodes: boolean,

@@ -110,13 +110,15 @@ describe('Checkbox', () => {
     expect(document.activeElement).toBe(checkbox);
     expect(onBlur).not.toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenLastCalledWith(true);
 
     await user.tab();
     expect(document.activeElement).toBe(button);
     expect(onBlur).toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(2);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 
   it('should support press state', () => {

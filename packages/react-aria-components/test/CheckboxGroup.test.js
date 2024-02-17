@@ -262,7 +262,8 @@ describe('CheckboxGroup', () => {
     expect(document.activeElement).toBe(checkboxes[0]);
     expect(onBlur).not.toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenLastCalledWith(true);
 
     // inner focus changes shouldn't call the callbacks.
     await user.tab();
@@ -270,12 +271,14 @@ describe('CheckboxGroup', () => {
     expect(onBlur).not.toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
     expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenLastCalledWith(true);
 
     // `onBlur` and the following `onFocusChange` only should be called when losing focus to an outer element.
     await user.click(button);
     expect(document.activeElement).toBe(button);
     expect(onBlur).toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(2);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 });
