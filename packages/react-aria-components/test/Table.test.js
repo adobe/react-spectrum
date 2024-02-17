@@ -123,6 +123,15 @@ let DraggableTable = (props) => {
   return <TestTable tableProps={{dragAndDropHooks}} />;
 };
 
+let DraggableTableWithSelection = (props) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    ...props
+  });
+
+  return <TestTable tableProps={{dragAndDropHooks, selectionMode: 'multiple'}} />;
+};
+
 let columns = [
   {name: 'Name', id: 'name', isRowHeader: true},
   {name: 'Type', id: 'type'},
@@ -800,6 +809,27 @@ describe('Table', () => {
       rows.forEach(row => {
         expect(row).not.toHaveAttribute('draggable', 'true');
       });
+    });
+
+    it('should allow selection even when drag and drop is disabled', async () => {
+      let {getAllByRole} = render(
+        <DraggableTableWithSelection isDisabled />
+    );
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+      }
+
+      let checkbox = getAllByRole('checkbox')[0];
+      expect(checkbox).toHaveAttribute('aria-label', 'Select All');
+
+      await user.click(checkbox);
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).toBeChecked();
+      }
     });
   });
 
