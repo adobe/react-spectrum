@@ -222,6 +222,12 @@ function MenuSection<T>({section, className, style, parentMenuRef, ...otherProps
     'aria-label': section['aria-label'] ?? undefined
   });
 
+  // determine if the separator is the last key in the entire collection
+  let lastKey = state.collection.getLastKey();
+  let lastItem = state.collection.getItem(lastKey);
+  let parentKey = lastItem.parentKey;
+  let isLast = parentKey === section.key;
+
   let children = useCachedChildren({
     items: state.collection.getChildren!(section.key),
     children: item => {
@@ -241,6 +247,8 @@ function MenuSection<T>({section, className, style, parentMenuRef, ...otherProps
           return <MenuItemInner item={item} />;
         case 'submenutrigger':
           return <SubmenuTriggerInner item={item} parentMenuRef={parentMenuRef} />;
+        case 'separator':
+          return isLast ? <></> : <Separator {...item.props} />;
         default:
           throw new Error('Unsupported element type in Section: ' + item.type);
       }

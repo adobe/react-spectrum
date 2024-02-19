@@ -232,6 +232,53 @@ export const SubmenuSectionsExample = (args) => (
   </MenuTrigger>
 );
 
+export const SubmenuCustomSectionsExample = (args) => (
+  <MenuTrigger>
+    <Button aria-label="Menu">☰</Button>
+    <Popover>
+      <Menu className={styles.menu} onAction={action('onAction')}>
+        <CustomSection className={styles.group} title="Section 1">
+          <MyMenuItem>Foo</MyMenuItem>
+          <SubmenuTrigger {...args}>
+            <MyMenuItem id="Bar">Bar</MyMenuItem>
+            <Popover className={styles.popover}>
+              <Menu className={styles.menu} onAction={action('onAction')}>
+                <CustomSection className={styles.group} title="Submenu Section 1">
+                  <MyMenuItem id="Submenu Foo">Submenu Foo</MyMenuItem>
+                  <MyMenuItem id="Submenu Bar">Submenu Bar</MyMenuItem>
+                  <MyMenuItem id="Submenu Baz">Submenu Baz</MyMenuItem>
+                  <MyMenuItem href="https://google.com">Google</MyMenuItem>
+                </CustomSection>
+                <CustomSection className={styles.group} title="Submenu Section 2">
+                  <MyMenuItem id="Submenu Foo 2">Submenu Foo</MyMenuItem>
+                  <MyMenuItem id="Submenu Bar 2">Submenu Bar</MyMenuItem>
+                  <MyMenuItem id="Submenu Baz 2">Submenu Baz</MyMenuItem>
+                </CustomSection>
+              </Menu>
+            </Popover>
+          </SubmenuTrigger>
+          <MyMenuItem>Baz</MyMenuItem>
+          <MyMenuItem href="https://google.com">Google</MyMenuItem>
+        </CustomSection>
+        <CustomSection className={styles.group} title="Section 2">
+          <MyMenuItem>Foo</MyMenuItem>
+          <MyMenuItem>Bar</MyMenuItem>
+          <MyMenuItem>Baz</MyMenuItem>
+        </CustomSection>
+      </Menu>
+    </Popover>
+  </MenuTrigger>
+);
+let CustomSection = (props) => {
+  return (
+    <Section className={styles.group}>
+      <Header style={{fontSize: '1.2em'}}>{props.title}</Header>
+      {props.children}
+      <Separator style={{borderTop: '1px solid gray', margin: '2px 5px'}} />
+    </Section>
+  );
+};
+
 let submenuArgs = {
   args: {
     delay: 200
@@ -247,3 +294,4 @@ SubmenuExample.story = {...submenuArgs};
 SubmenuNestedExample.story = {...submenuArgs};
 SubmenuManyItemsExample.story = {...submenuArgs};
 SubmenuDisabledExample.story = {...submenuArgs};
+SubmenuCustomSectionsExample.story = {...submenuArgs};
