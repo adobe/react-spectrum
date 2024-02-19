@@ -1,4 +1,4 @@
-import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext} from 'react-aria-components';
+import {ButtonContext, ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext, Provider, useContextProps} from 'react-aria-components';
 import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {focusRing} from './style-utils' with {type: 'macro'};
 import {ReactNode, useRef} from 'react';
@@ -213,7 +213,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
 });
 
 export function Button(props: ButtonProps) {
-  let ref = useRef(null);
+  let ref = useRef<HTMLButtonElement | null>(null);
+  [props, ref] = useContextProps(props, ref, ButtonContext);
   return (
     <RACButton
       {...props}
@@ -226,9 +227,11 @@ export function Button(props: ButtonProps) {
         size: props.size || 'M',
         staticColor: props.staticColor
       }))}>
-      <TextContext.Provider value={{className: style({paddingY: '--labelPadding'})()}}>
+      <Provider values={[
+        [TextContext, {className: style({paddingY: '--labelPadding'})()}]
+      ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
-      </TextContext.Provider>
+      </Provider>
     </RACButton>
   );
 }

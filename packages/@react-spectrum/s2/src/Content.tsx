@@ -8,9 +8,9 @@ interface SlottedValue<T> {
   slots?: Record<string | symbol, T>
 }
 
-type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
-type ContextValue<T, E extends Element> = SlottedContextValue<WithRef<T, E>>;
-type WithRef<T, E> = T & {ref?: ForwardedRef<E>};
+export type SlottedContextValue<T> = SlottedValue<T> | T | null | undefined;
+export type ContextValue<T, E extends Element> = SlottedContextValue<WithRef<T, E>>;
+export type WithRef<T, E> = T & {ref?: ForwardedRef<E>};
 
 export const HeadingContext = createContext<ContextValue<HeadingProps, HTMLHeadingElement>>({});
 
@@ -88,25 +88,3 @@ function Image(props: ImgHTMLAttributes<HTMLImageElement>, ref: ForwardedRef<HTM
 
 const _Image = forwardRef(Image);
 export {_Image as Image};
-
-export const ButtonGroupContext = createContext<ContextValue<HTMLAttributes<HTMLDivElement>, HTMLDivElement>>({});
-
-// TODO: move to real implementation
-function ButtonGroup(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, ButtonGroupContext);
-  if (props.hidden) {
-    return null;
-  }
-  return (
-    <div 
-      {...props}
-      ref={ref}
-      className={mergeStyles(style({
-        display: 'flex',
-        gap: 4
-      })(), props.className)} />
-  );
-}
-
-const _ButtonGroup = forwardRef(ButtonGroup);
-export {_ButtonGroup as ButtonGroup};

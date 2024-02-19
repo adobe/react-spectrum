@@ -18,6 +18,8 @@
     "@adobe/spectrum-tokens": "^13.0.0-beta.9",
     "@parcel/config-default": "2.0.0-nightly.1498",
     "@parcel/transformer-svg-react": "2.11.1-nightly.3121",
+    "@react-aria/utils": "^3.23.0",
+    "@react-spectrum/utils": "^3.11.3",
     "@storybook/addon-designs": "^7.0.5",
     "@storybook/addon-essentials": "^7.5.3",
     "@storybook/addon-interactions": "^7.5.3",

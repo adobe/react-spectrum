@@ -1,6 +1,7 @@
 import {Dialog as RACDialog, DialogProps as RACDialogProps, Provider, composeRenderProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {ButtonGroupContext, ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
+import {ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
+import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
 import {useMediaQuery} from '@react-spectrum/utils';
 import {createContext, useContext} from 'react';
@@ -50,7 +51,8 @@ const footer = style({
 });
 
 const buttonGroup = style({
-  marginStart: 'auto'
+  marginStart: 'auto',
+  maxWidth: 'full'
 });
 
 interface DialogContextValue {
@@ -102,7 +104,7 @@ function DialogInner(props: DialogProps & DialogContextValue) {
   // TODO: manage focus when the button group placement changes and focus was on one of the buttons?
 
   return (
-    <RACDialog 
+    <RACDialog
       {...props}
       className={style({
         display: 'flex',
@@ -114,7 +116,7 @@ function DialogInner(props: DialogProps & DialogContextValue) {
         overflow: 'auto',
         fontFamily: 'sans'
       })()}>
-      {composeRenderProps(props.children, (children, {close}) => 
+      {composeRenderProps(props.children, (children, {close}) =>
         // Render the children multiple times inside the wrappers we need to implement the layout.
         // Each instance hides certain children so that they are all rendered in the correct locations.
         (<>
@@ -131,7 +133,7 @@ function DialogInner(props: DialogProps & DialogContextValue) {
             {children}
           </Provider>
           {/* Top header: heading, header, dismiss button, and button group (in fullscreen dialogs). */}
-          <div 
+          <div
             className={style({
               // Wrapper that creates the margin for the dismiss button.
               display: 'flex',
@@ -144,7 +146,7 @@ function DialogInner(props: DialogProps & DialogContextValue) {
               },
               marginTop: 3
             })({isDismissable: props.isDismissable})}>
-            <div 
+            <div
               className={style({
                 // Wrapper for heading, header, and button group.
                 // This swaps orientation from horizontal to vertical at small screen sizes.
@@ -178,7 +180,7 @@ function DialogInner(props: DialogProps & DialogContextValue) {
                 {children}
               </Provider>
             </div>
-            {props.isDismissable && 
+            {props.isDismissable &&
               <CloseButton onPress={close} className={style({marginBottom: 3})()} />
             }
           </div>
@@ -195,7 +197,7 @@ function DialogInner(props: DialogProps & DialogContextValue) {
             {children}
           </Provider>
           {/* Footer and button group */}
-          <div 
+          <div
             className={style({
               display: 'flex',
               marginX: 8,
@@ -215,7 +217,7 @@ function DialogInner(props: DialogProps & DialogContextValue) {
                 [HeaderContext, {hidden: true}],
                 [ContentContext, {hidden: true}],
                 [FooterContext, {className: footer()}],
-                [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'bottom', className: buttonGroup()}]
+                [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'bottom', className: buttonGroup(), align: 'end'}]
               ]}>
               {children}
             </Provider>

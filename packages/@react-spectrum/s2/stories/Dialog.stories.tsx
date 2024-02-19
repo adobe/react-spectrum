@@ -1,6 +1,7 @@
 import type {Meta} from '@storybook/react';
 import {Dialog} from '../src/Dialog';
-import {ButtonGroup, Content, Footer, Heading, Header, Image} from '../src/Content';
+import {ButtonGroup} from '../src/ButtonGroup';
+import {Content, Footer, Heading, Header, Image} from '../src/Content';
 import {Button} from '../src/Button';
 import {Checkbox} from '../src/Checkbox';
 import {DialogTrigger} from '../src/DialogTrigger';
@@ -49,13 +50,14 @@ function ExampleDialog(args: any) {
           {args.showHeading && <Heading slot="title">{args.title}</Heading>}
           {args.showHeader && <Header>Header</Header>}
           <Content>
-            {[...Array(args.paragraphs)].map((_, i) => 
+            {[...Array(args.paragraphs)].map((_, i) =>
               <p key={i} style={{marginTop: i === 0 ? 0 : undefined, marginBottom: i === args.paragraphs - 1 ? 0 : undefined}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in</p>
             )}
           </Content>
           {args.showFooter && <Footer><Checkbox>Don't show this again</Checkbox></Footer>}
           {args.showButtons &&
             <ButtonGroup>
+              <Button onPress={close} variant="primary">Defer</Button>
               <Button onPress={close} variant="secondary">Cancel</Button>
               <Button onPress={close} variant="accent">Save</Button>
             </ButtonGroup>
