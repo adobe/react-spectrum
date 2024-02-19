@@ -224,9 +224,14 @@ function MenuSection<T>({section, className, style, parentMenuRef, ...otherProps
 
   // determine if the separator is the last key in the entire collection
   let lastKey = state.collection.getLastKey();
-  let lastItem = state.collection.getItem(lastKey);
-  let parentKey = lastItem.parentKey;
-  let isLast = parentKey === section.key;
+  let isLast = false;
+  if (lastKey) {
+    let lastItem = state.collection.getItem(lastKey);
+    if (lastItem) {
+      let parentKey = lastItem.parentKey;
+      isLast = parentKey === section.key;
+    }
+  }
 
   let children = useCachedChildren({
     items: state.collection.getChildren!(section.key),
