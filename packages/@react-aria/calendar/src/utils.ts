@@ -19,8 +19,8 @@ import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMemo} from 'react';
 
 interface HookData {
-  ariaLabel: string,
-  ariaLabelledBy: string,
+  ariaLabel?: string,
+  ariaLabelledBy?: string,
   errorMessageId: string,
   selectedDateDescription: string
 }

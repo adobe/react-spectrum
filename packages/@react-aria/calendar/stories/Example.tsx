@@ -20,7 +20,7 @@ import {useDateFormatter, useLocale} from '@react-aria/i18n';
 export function Example(props) {
   let {locale} = useLocale();
   const {visibleDuration} = props;
-  
+
   let state = useCalendarState({
     ...props,
     locale,
@@ -35,7 +35,7 @@ export function Example(props) {
       gridCount = visibleDuration.months;
     }
 
-    let components = [];
+    let components: React.JSX.Element[] = [];
     for (let i = 0; i < gridCount; i++) {
       components.push(<CalendarGrid key={i} state={state} visibleDuration={visibleDuration} offset={{months: i}} />);
     }
@@ -78,11 +78,11 @@ function CalendarGrid({state, visibleDuration, offset = {}}: {state: CalendarSta
       </div>
         ))}
   </div>);
-  
+
 }
 
 function Cell(props) {
-  let ref = useRef();
+  let ref = useRef(null);
   let {cellProps, buttonProps} = useCalendarCell(props, props.state, ref);
 
   let dateFormatter = useDateFormatter({

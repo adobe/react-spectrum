@@ -36,6 +36,7 @@
           "./packages/@internationalized",
           "./packages/@react-aria/a",
           "./packages/@react-aria/b",
+          "./packages/@react-aria/calendar",
           "./packages/@react-aria/checkbox",
           "./packages/@react-aria/l",
           "./packages/@react-aria/meter",

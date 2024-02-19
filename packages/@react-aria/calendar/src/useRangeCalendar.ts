@@ -50,7 +50,10 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     }
 
     let target = e.target as Element;
-    let body = document.getElementById(res.calendarProps.id);
+    let body;
+    if (res.calendarProps.id) {
+      body = document.getElementById(res.calendarProps.id);
+    }
     if (
       body &&
       body.contains(document.activeElement) &&
@@ -65,7 +68,7 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
 
   // Also stop range selection on blur, e.g. tabbing away from the calendar.
   res.calendarProps.onBlur = e => {
-    if ((!e.relatedTarget || !ref.current.contains(e.relatedTarget)) && state.anchorDate) {
+    if ((!e.relatedTarget || !ref.current?.contains(e.relatedTarget)) && state.anchorDate) {
       state.selectFocusedDate();
     }
   };
