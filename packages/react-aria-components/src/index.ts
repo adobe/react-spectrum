@@ -32,7 +32,7 @@ export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading, HeadingContext} from './Heading';
 export {Input, InputContext} from './Input';
-export {Section, Collection} from './Collection';
+export {Section, Collection, CollectionRendererContext} from './Collection';
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
@@ -79,7 +79,7 @@ export type {GridListProps, GridListRenderProps, GridListItemProps, GridListItem
 export type {GroupProps, GroupRenderProps} from './Group';
 export type {HeadingProps} from './Heading';
 export type {InputProps, InputRenderProps} from './Input';
-export type {SectionProps} from './Collection';
+export type {SectionProps, CollectionRenderer} from './Collection';
 export type {LabelProps} from './Label';
 export type {LinkProps} from './Link';
 export type {LinkRenderProps} from './Link';
