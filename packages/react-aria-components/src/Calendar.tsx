@@ -105,7 +105,7 @@ function Calendar<T extends DateValue>(props: CalendarProps<T>, ref: ForwardedRe
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
           [CalendarStateContext, state],
-          [CalendarGridContext, props.isFixedWeeks],
+          [CalendarGridContext, props.isFixedWeeks || false],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps
@@ -185,7 +185,7 @@ function RangeCalendar<T extends DateValue>(props: RangeCalendarProps<T>, ref: F
           }],
           [HeadingContext, {'aria-hidden': true, level: 2, children: title}],
           [RangeCalendarStateContext, state],
-          [CalendarGridContext, props.isFixedWeeks],
+          [CalendarGridContext, props.isFixedWeeks || false],
           [TextContext, {
             slots: {
               errorMessage: errorMessageProps
