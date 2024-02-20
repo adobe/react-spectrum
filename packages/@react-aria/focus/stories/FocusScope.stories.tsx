@@ -210,3 +210,14 @@ export const IgnoreRestoreFocus = {
 export const FocusableFirstInScope = {
   render: () => <FocusableFirstInScopeExample />
 };
+
+export const FocusableInputForm = {
+  render: () => (
+    <FocusScope contain>
+      <form>
+        <input type="search" />
+        <button type="submit">Submit</button>
+      </form>
+    </FocusScope>
+  )
+};

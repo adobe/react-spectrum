@@ -314,7 +314,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain?: boolean) 
 
     // Handle the Tab key to contain focus within the scope
     let onKeyDown = (e) => {
-      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || !shouldContainFocus(scopeRef)) {
+      if (e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey || !shouldContainFocus(scopeRef) || e.isComposing) {
         return;
       }
 
