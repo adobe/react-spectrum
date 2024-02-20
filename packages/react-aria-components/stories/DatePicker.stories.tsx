@@ -16,10 +16,14 @@ import React from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components',
+  argTypes: {
+    isFixedWeeks: {control: 'boolean'}
+  }
 };
 
-export const DatePickerExample = () => (
+
+export const DatePickerExample = (args) => (
   <DatePicker data-testid="date-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
@@ -37,14 +41,14 @@ export const DatePickerExample = () => (
         padding: 20
       }}>
       <Dialog>
-        <Calendar style={{width: 220}}>
+        <Calendar style={{width: 220}} isFixedWeeks={args.isFixedWeeks}>
           <div style={{display: 'flex', alignItems: 'center'}}>
             <Button slot="previous">&lt;</Button>
             <Heading style={{flex: 1, textAlign: 'center'}} />
             <Button slot="next">&gt;</Button>
           </div>
           <CalendarGrid style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth && !args.isFixedWeeks ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
           </CalendarGrid>
         </Calendar>
       </Dialog>
@@ -52,7 +56,11 @@ export const DatePickerExample = () => (
   </DatePicker>
 );
 
-export const DateRangePickerExample = () => (
+DatePickerExample.args = {
+  isFixedWeeks: false
+};
+
+export const DateRangePickerExample = (args) => (
   <DateRangePicker data-testid="date-range-picker-example">
     <Label style={{display: 'block'}}>Date</Label>
     <Group style={{display: 'inline-flex'}}>
@@ -76,17 +84,21 @@ export const DateRangePickerExample = () => (
         padding: 20
       }}>
       <Dialog>
-        <RangeCalendar style={{width: 220}}>
+        <RangeCalendar style={{width: 220}} isFixedWeeks={args.isFixedWeeks}>
           <div style={{display: 'flex', alignItems: 'center'}}>
             <Button slot="previous">&lt;</Button>
             <Heading style={{flex: 1, textAlign: 'center'}} />
             <Button slot="next">&gt;</Button>
           </div>
           <CalendarGrid style={{width: '100%'}}>
-            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+            {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth && !args.isFixedWeeks ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
           </CalendarGrid>
         </RangeCalendar>
       </Dialog>
     </Popover>
   </DateRangePicker>
 );
+
+DateRangePickerExample.args = {
+  isFixedWeeks: false
+};
