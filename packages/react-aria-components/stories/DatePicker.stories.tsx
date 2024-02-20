@@ -68,7 +68,8 @@ export const DatePickerTriggerWidthExample = () => (
         color: 'CanvasText',
         border: '1px solid gray',
         padding: 20,
-        width: 'calc(var(--trigger-width) - 20px * 2 - 1px * 2)'
+        boxSizing: 'border-box',
+        width: 'var(--trigger-width)'
       }}>
       <Dialog>
         <Calendar>
