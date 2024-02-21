@@ -197,6 +197,10 @@ export const CustomKeyboardEventHandler = () => (
             return 'nav-up';
           }
         }
+        case 'ArrowUp': {
+          e.preventDefault();
+          return 'noop';
+        }
       }
       return null;
     }}>

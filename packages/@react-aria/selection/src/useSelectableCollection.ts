@@ -31,7 +31,7 @@ export type KeyboardAction = 'nav-down'
   | 'nav-page-up'
   | 'select-all'
   | 'clear-selection'
-  | ''
+  | 'noop'
 
 export type KeyboardEventHandler = (e: KeyboardEvent, m: MultipleSelectionManager, d: KeyboardDelegate) => KeyboardAction | null
 
@@ -289,36 +289,37 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
       switch (action) {
         case 'nav-down':
           navDown();
-          break;
+          return;
         case 'nav-up':
           navUp();
-          break;
+          return;
         case 'nav-left':
           navLeft();
-          break;
+          return;
         case 'nav-right':
           navRight();
-          break;
+          return;
         case 'nav-start':
           navStart();
-          break;
+          return;
         case 'nav-end':
           navEnd();
-          break;
+          return;
         case 'nav-page-down':
           navPageDown();
-          break;
+          return;
         case 'nav-page-up':
           navPageUp();
-          break;
+          return;
         case 'select-all':
           selectAll();
-          break;
+          return;
         case 'clear-selection':
           clearSelection();
-          break;
+          return;
+        case 'noop':
+          return;
       }
-      return;
     }
 
     switch (e.key) {
