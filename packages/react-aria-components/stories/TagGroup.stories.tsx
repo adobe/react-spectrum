@@ -11,6 +11,7 @@
  */
 
 import {
+  Button,
   CollectionRenderer,
   CollectionRendererContext,
   Label,
@@ -20,7 +21,8 @@ import {
   TagList,
   TagProps
 } from 'react-aria-components';
-import React, {useContext, useMemo} from 'react';
+import {Node} from '@react-types/shared';
+import React, {useContext, useMemo, useState} from 'react';
 
 export default {
   title: 'React Aria Components'
@@ -65,8 +67,12 @@ function MyTag(props: TagProps) {
 
 export const TagGroupCollapsingExample = (props: TagGroupProps & {maxTags?: number}) => {
   let {maxTags, ...otherProps} = props;
+  let [showAll, setShowAll] = useState(false);
+  let onAction = () => {
+    setShowAll(val => !val);
+  };
   return (
-    <CollapsingCollection count={maxTags}>
+    <CollapsingCollection count={maxTags} showAll={showAll} onAction={onAction}>
       <TagGroup {...otherProps}>
         <Label>Categories</Label>
         <TagList style={{display: 'flex', gap: 4}}>
@@ -106,11 +112,14 @@ TagGroupCollapsingExample.argTypes = {
 };
 
 // Context for passing the count for the custom renderer
-let CollapseContext = React.createContext();
+interface ICollapseContext {
+  count?: number, onAction: () => void, showAll: boolean
+}
+let CollapseContext = React.createContext<ICollapseContext>({onAction: () => {}, showAll: false});
 
-function CollapsingCollection({children, count}) {
+function CollapsingCollection({children, count, onAction, showAll}) {
   return (
-    <CollapseContext.Provider value={{count}}>
+    <CollapseContext.Provider value={{count, onAction, showAll}}>
       <CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
         {children}
       </CollectionRendererContext.Provider>
@@ -118,24 +127,25 @@ function CollapsingCollection({children, count}) {
   );
 }
 
-let CollapsingCollectionRenderer: CollectionRenderer = (collection, parent) => {
-  let {count} = useContext(CollapseContext);
+let CollapsingCollectionRenderer: CollectionRenderer = (collection) => {
+  let {count, onAction, showAll} = useContext(CollapseContext);
   let children = useMemo(() => {
-    let children = [];
+    let result: Node<unknown>[] = [];
     let index = 0;
     for (let key of collection.getKeys()) {
-      children.push(collection.getItem(key));
+      result.push(collection.getItem(key)!);
       index++;
-      if (!Number.isNaN(count) && index >= count) {
+      if (!showAll && count != null && !Number.isNaN(count) && index >= count) {
         break;
       }
     }
-    return children;
-  }, [collection, count]);
+    return result;
+  }, [collection, count, showAll]);
   return (
     <>
-      {children.map(node => node.render(node))}
-      {children.length !== collection.size && <span>Show All</span>}
+      {children.map(node => node.render?.(node))}
+      {children.length !== collection.size && <Button onPress={onAction}>Show All</Button>}
+      {showAll && <Button onPress={onAction}>Collapse</Button>}
     </>
   );
 };
