@@ -10,8 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {Label, Tag, TagGroup, TagGroupProps, TagList, TagProps} from 'react-aria-components';
-import React from 'react';
+import {
+  CollectionRenderer,
+  CollectionRendererContext,
+  Label,
+  Tag,
+  TagGroup,
+  TagGroupProps,
+  TagList,
+  TagProps
+} from 'react-aria-components';
+import React, {useContext, useMemo} from 'react';
 
 export default {
   title: 'React Aria Components'
@@ -52,3 +61,81 @@ TagGroupExample.argTypes = {
 function MyTag(props: TagProps) {
   return <Tag {...props} style={({isSelected}) => ({border: '1px solid gray', borderRadius: 4, padding: '0 4px', background: isSelected ? 'black' : '', color: isSelected ? 'white' : '', cursor: props.href ? 'pointer' : 'default'})} />;
 }
+
+
+export const TagGroupCollapsingExample = (props: TagGroupProps & {maxTags?: number}) => {
+  let {maxTags, ...otherProps} = props;
+  return (
+    <CollapsingCollection count={maxTags}>
+      <TagGroup {...otherProps}>
+        <Label>Categories</Label>
+        <TagList style={{display: 'flex', gap: 4}}>
+          <MyTag href="https://nytimes.com">News</MyTag>
+          <MyTag>Travel</MyTag>
+          <MyTag>Gaming</MyTag>
+          <MyTag>Shopping</MyTag>
+        </TagList>
+      </TagGroup>
+    </CollapsingCollection>
+  );
+};
+
+TagGroupCollapsingExample.args = {
+  selectionMode: 'none',
+  selectionBehavior: 'toggle'
+};
+
+TagGroupCollapsingExample.argTypes = {
+  selectionMode: {
+    control: {
+      type: 'inline-radio',
+      options: ['none', 'single', 'multiple']
+    }
+  },
+  selectionBehavior: {
+    control: {
+      type: 'inline-radio',
+      options: ['toggle', 'replace']
+    }
+  },
+  maxTags: {
+    control: {
+      type: 'number'
+    }
+  }
+};
+
+// Context for passing the count for the custom renderer
+let CollapseContext = React.createContext();
+
+function CollapsingCollection({children, count}) {
+  return (
+    <CollapseContext.Provider value={{count}}>
+      <CollectionRendererContext.Provider value={CollapsingCollectionRenderer}>
+        {children}
+      </CollectionRendererContext.Provider>
+    </CollapseContext.Provider>
+  );
+}
+
+let CollapsingCollectionRenderer: CollectionRenderer = (collection, parent) => {
+  let {count} = useContext(CollapseContext);
+  let children = useMemo(() => {
+    let children = [];
+    let index = 0;
+    for (let key of collection.getKeys()) {
+      children.push(collection.getItem(key));
+      index++;
+      if (!Number.isNaN(count) && index >= count) {
+        break;
+      }
+    }
+    return children;
+  }, [collection, count]);
+  return (
+    <>
+      {children.map(node => node.render(node))}
+      {children.length !== collection.size && <span>Show All</span>}
+    </>
+  );
+};
