@@ -115,7 +115,7 @@ function Button() {
 }
 
 const IframeWrapper = ({children}) => {
-  const iframeRef = useRef(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   useEffect(() => {
     if (iframeRef.current) {
