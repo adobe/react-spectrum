@@ -258,5 +258,19 @@ export const FocusableInputForm = {
     autoFocus: {
       control: 'boolean'
     }
+  },
+  parameters: {
+    description: {
+      data: `
+1. Open OS keyboard settings
+2. Add Chinese Pinyin - Simplified
+3. Go to the third input
+4. Type "ni", a set of suggestions should appear
+5. Press Tab 3x and see how it shows different suggestions
+6. Go to the first input
+7. Repeat steps 4&5
+8. See how it leaves the suggestions and jumps to the form button
+`
+    }
   }
 };
