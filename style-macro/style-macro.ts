@@ -79,7 +79,7 @@ interface MacroContext {
   addAsset(asset: {type: string, content: string}): void
 }
 
-export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemeProperties<T>, Condition<T>> {
+export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemeProperties<T>, 'default' | Extract<keyof T['conditions'], string>> {
   let themePropertyMap = createValueLookup(Object.keys(theme.properties), true);
   let propertyFunctions = new Map(Object.entries(theme.properties).map(([k, v]) => {
     if (typeof v === 'function') {

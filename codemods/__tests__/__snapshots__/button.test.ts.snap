@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Renames variants 1`] = `
+"import { Button } from "@react-spectrum/rainbow";
+
+<div>
+  <Button variant="accent">Test</Button>
+  <Button variant="primary" staticColor="white">Test</Button>
+</div>"
+`;

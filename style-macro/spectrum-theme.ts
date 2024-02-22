@@ -533,7 +533,7 @@ export const style = createTheme({
 
     // text
     fontFamily: {
-      sans: 'adobe-clown, ui-sans-serif, system-ui, sans-serif',
+      sans: 'adobe-clown, adobe-clean, ui-sans-serif, system-ui, sans-serif',
       serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
       mono: 'ui-monospace, Menlo, Monaco, Consalas, "Courier New", monospace'
     },

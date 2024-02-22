@@ -13,12 +13,16 @@ import {raw} from '../style-macro/style-macro' with {type: 'macro'};
 import {useContext} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {SpectrumLabelableProps} from '@react-types/shared';
+import {CSSProp} from '../style-macro/types';
+import {mergeStyles} from '../style-macro/runtime';
 
-export interface SearchFieldProps extends AriaSearchFieldProps, SpectrumLabelableProps {
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style'>, SpectrumLabelableProps {
   label?: string,
   description?: string,
   errorMessage?: string | ((validation: ValidationResult) => string),
-  size?: 'S' | 'M' | 'L' | 'XL'
+  size?: 'S' | 'M' | 'L' | 'XL',
+  // TODO
+  css?: CSSProp<typeof style, 'marginY'>
 }
 
 export function SearchField(props: SearchFieldProps) {
@@ -37,7 +41,7 @@ export function SearchField(props: SearchFieldProps) {
   return (
     <AriaSearchField
       {...searchFieldProps}
-      className={style({
+      className={mergeStyles(props.css, style({
         ...field(),
         '--iconMargin': {
           type: 'marginTop',
@@ -54,9 +58,9 @@ export function SearchField(props: SearchFieldProps) {
         size: props.size,
         labelPosition,
         isInForm: !!formContext
-      })}>
+      }))}>
       {({isDisabled, isInvalid, isEmpty}) => (<>
-        <FieldLabel
+        {label && <FieldLabel
           isDisabled={isDisabled}
           isRequired={props.isRequired}
           size={props.size}
@@ -64,8 +68,8 @@ export function SearchField(props: SearchFieldProps) {
           labelAlign={labelAlign}
           necessityIndicator={necessityIndicator}>
           {label}
-        </FieldLabel>
-        <FieldGroup
+        </FieldLabel>}
+        <FieldGroup 
           isDisabled={isDisabled}
           size={props.size}
           className={style({

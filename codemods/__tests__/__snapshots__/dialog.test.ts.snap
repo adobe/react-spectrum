@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Moves close function from DialogTrigger to Dialog 1`] = `
+"import { Divider } from '@adobe/react-spectrum';
+
+import { DialogTrigger, Button, Dialog, Heading, Content } from "@react-spectrum/rainbow";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  <Dialog>{close => <>
+      <Heading>Test</Heading>
+      <Divider />
+      <Content>Content</Content>
+    </>}</Dialog>
+</DialogTrigger>"
+`;
+
+exports[`Removes divider 1`] = `
+"import { Divider } from '@adobe/react-spectrum';
+
+import { Dialog, Heading, Content } from "@react-spectrum/rainbow";
+
+<Dialog>
+  <Heading>Test</Heading>
+
+  <Content>Content</Content>
+</Dialog>"
+`;
+
+exports[`bails when it cannot move the close function 1`] = `
+"import { Divider } from '@adobe/react-spectrum';
+
+import { DialogTrigger, Button, Dialog, Heading, Content } from "@react-spectrum/rainbow";
+
+<DialogTrigger>
+  <Button>Test</Button>
+  {(close) => 
+    // TODO: update this dialog to move the close function inside
+    <ReusableDialog />
+  }
+</DialogTrigger>"
+`;
