@@ -339,7 +339,6 @@ function TreeItemContent(props: TreeItemContentProps) {
   }
 }
 
-// TODO: is this pure needed?
 const _TreeItemContent = /*#__PURE__*/ TreeItemContent;
 export {_TreeItemContent as TreeItemContent};
 

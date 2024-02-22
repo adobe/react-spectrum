@@ -21,8 +21,6 @@ import {TreeState} from '@react-stately/tree';
 export interface TreeGridListProps<T> extends GridListProps<T> {}
 
 export interface AriaTreeGridListProps<T> extends AriaGridListProps<T> {}
-
-// TODO: support focus wrapping?
 export interface AriaTreeGridListOptions<T> extends Omit<AriaGridListOptions<T>, 'children' | 'isVirtualized' | 'shouldFocusWrap'> {
   /**
    * An optional keyboard delegate implementation for type to select,

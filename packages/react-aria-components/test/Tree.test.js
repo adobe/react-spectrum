@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Button, Checkbox, Collection, Text, Tree, TreeItem, TreeItemContent} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -471,7 +471,7 @@ describe('Tree', () => {
       expect(row).not.toHaveClass('pressed');
     });
 
-    it('should not update the hover state if the row is not interactive', () => {
+    it('should not update the press state if the row is not interactive', () => {
       let {getAllByRole, rerender} = render(<StaticTree treeProps={{selectionMode: 'none'}} rowProps={{className: ({isPressed}) => isPressed ? 'pressed' : ''}} />);
 
       let row = getAllByRole('row')[0];
@@ -588,8 +588,7 @@ describe('Tree', () => {
           if (type === 'mouse') {
             await user.click(item);
           } else {
-            fireEvent.keyDown(item, {key});
-            fireEvent.keyUp(item, {key});
+            await user.keyboard(`{${key}}`);
           }
         };
 
@@ -601,8 +600,11 @@ describe('Tree', () => {
             expect(item).toHaveAttribute('data-href');
           }
 
-          let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-          window.addEventListener('click', onClick, {once: true});
+          if (type === 'keyboard') {
+            await user.tab();
+          }
+
+          let onClick = mockClickDefault();
           await trigger(items[0]);
           expect(onClick).toHaveBeenCalledTimes(1);
           expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -617,8 +619,11 @@ describe('Tree', () => {
             expect(item).toHaveAttribute('data-href');
           }
 
-          let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-          window.addEventListener('click', onClick, {once: true});
+          if (type === 'keyboard') {
+            await user.tab();
+          }
+
+          let onClick = mockClickDefault();
           await trigger(items[0]);
           expect(onClick).toHaveBeenCalledTimes(1);
           expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -627,10 +632,12 @@ describe('Tree', () => {
           await user.click(within(items[0]).getByRole('checkbox'));
           expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-          onClick = jest.fn().mockImplementation(e => e.preventDefault());
-          window.addEventListener('click', onClick, {once: true});
+          if (type === 'keyboard') {
+            await user.keyboard('{ArrowLeft}');
+            await user.keyboard('{ArrowDown}');
+          }
           await trigger(items[1], ' ');
-          expect(onClick).not.toHaveBeenCalled();
+          expect(onClick).toHaveBeenCalledTimes(1);
           expect(items[1]).toHaveAttribute('aria-selected', 'true');
         });
 
@@ -643,24 +650,20 @@ describe('Tree', () => {
             expect(item).toHaveAttribute('data-href');
           }
 
-          let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-          window.addEventListener('click', onClick, {once: true});
+          let onClick = mockClickDefault();
           if (type === 'mouse') {
             await user.click(items[0]);
           } else {
-            fireEvent.keyDown(items[0], {key: ' '});
-            fireEvent.keyUp(items[0], {key: ' '});
+            await user.tab();
+            await user.keyboard('{Space}');
           }
-          // expect(onClick).not.toHaveBeenCalled();
+          expect(onClick).not.toHaveBeenCalled();
           expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-          onClick = jest.fn().mockImplementation(e => e.preventDefault());
-          window.addEventListener('click', onClick, {once: true});
           if (type === 'mouse') {
             await user.dblClick(items[0], {pointerType: 'mouse'});
           } else {
-            fireEvent.keyDown(items[0], {key: 'Enter'});
-            fireEvent.keyUp(items[0], {key: 'Enter'});
+            await user.keyboard('{Enter}');
           }
           expect(onClick).toHaveBeenCalledTimes(1);
           expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -690,7 +693,7 @@ describe('Tree', () => {
         await user.keyboard('{ArrowRight}');
         expect(document.activeElement).toBe(expandableRow);
 
-        // Test that if focus is on the row that right will expand and collapse if it isn't already
+        // Test that if focus is on the row that right/left will expand/collapse if it isn't already
         await user.keyboard('{ArrowLeft}');
         expect(document.activeElement).toBe(expandableRow);
         expect(expandableRow).toHaveAttribute('aria-expanded', 'false');
@@ -1023,8 +1026,7 @@ describe('Tree', () => {
         expect(rows[0]).toHaveAttribute('data-expanded', 'true');
         expect(onExpandedChange).toHaveBeenCalledTimes(0);
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(rows[0], 'Enter');
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
