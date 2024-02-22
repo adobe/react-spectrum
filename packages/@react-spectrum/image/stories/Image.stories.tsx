@@ -30,7 +30,6 @@ export const ImageOnError: ComponentStory<typeof Image> = (args: SpectrumImagePr
     const [isImageMissing, setIsImageMissing] = useState(false);
 
     const onErrorHandler = (err) => {
-        console.log('###3 err', err);
         setIsImageMissing(true);
     }
     return (
