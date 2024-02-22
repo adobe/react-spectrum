@@ -40,7 +40,7 @@ let StaticTreeItem = (props) => {
   );
 };
 
-let StaticTree = ({treeProps, rowProps}) => (
+let StaticTree = ({treeProps = {}, rowProps = {}}) => (
   <Tree defaultExpandedKeys="all" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects" {...rowProps}>
@@ -106,7 +106,7 @@ let DynamicTreeItem = (props) => {
         )}
       </TreeItemContent>
       <Collection items={props.childItems}>
-        {(item) => (
+        {(item: any) => (
           <DynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
             {item.name}
           </DynamicTreeItem>
@@ -116,9 +116,9 @@ let DynamicTreeItem = (props) => {
   );
 };
 
-let DynamicTree = ({treeProps, rowProps}) => (
+let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
   <Tree defaultExpandedKeys="all" aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
-    {(item) => (
+    {(item: any) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name} {...rowProps}>
         {item.name}
       </DynamicTreeItem>
@@ -1098,11 +1098,11 @@ describe('Tree', () => {
           className={({isFocused, isFocusVisible}) => `isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}
           aria-label="test empty tree"
           items={[]}
-          renderEmptyState={({isEmpty, isFocused, isFocusVisible}) => <span>{`Nothing in tree, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}</span>}>
-          {(item) => (
-            <TreeItem>
+          renderEmptyState={({isFocused, isFocusVisible}) => <span>{`Nothing in tree, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}</span>}>
+          {() => (
+            <TreeItem textValue="dummy value">
               <TreeItemContent>
-                {item.title}
+                Dummy Value
               </TreeItemContent>
             </TreeItem>
           )}
