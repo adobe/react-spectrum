@@ -1,6 +1,6 @@
 {
   "name": "@react-spectrum/buttongroup",
-  "version": "3.6.10",
+  "version": "3.6.11",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
@@ -36,10 +36,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/utils": "^3.23.1",
-    "@react-spectrum/utils": "^3.11.4",
-    "@react-types/buttongroup": "^3.3.6",
-    "@react-types/shared": "^3.22.0",
+    "@react-aria/utils": "^3.23.2",
+    "@react-spectrum/utils": "^3.11.5",
+    "@react-types/buttongroup": "^3.3.7",
+    "@react-types/shared": "^3.22.1",
     "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {

@@ -17,11 +17,11 @@ import {DateFieldContext} from './DateField';
 import {DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRangePickerStateOptions, useDatePickerState, useDateRangePickerState} from 'react-stately';
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface DatePickerRenderProps {
@@ -95,6 +95,19 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
     validationBehavior: props.validationBehavior ?? 'native'
   }, state, groupRef);
 
+  // Allows calendar width to match input group
+  let [groupWidth, setGroupWidth] = useState<string | null>(null);
+  let onResize = useCallback(() => {
+    if (groupRef.current) {
+      setGroupWidth(groupRef.current.offsetWidth + 'px');
+    }
+  }, []);
+
+  useResizeObserver({
+    ref: groupRef,
+    onResize: onResize
+  });
+
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({
     ...props,
@@ -122,7 +135,12 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [CalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {trigger: 'DatePicker', triggerRef: groupRef, placement: 'bottom start'}],
+        [PopoverContext, {
+          trigger: 'DatePicker', 
+          triggerRef: groupRef, 
+          placement: 'bottom start', 
+          style: {'--trigger-width': groupWidth} as React.CSSProperties
+        }],
         [DialogContext, dialogProps],
         [TextContext, {
           slots: {
@@ -179,6 +197,19 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
     validationBehavior: props.validationBehavior ?? 'native'
   }, state, groupRef);
 
+  // Allows calendar width to match input group
+  let [groupWidth, setGroupWidth] = useState<string | null>(null);
+  let onResize = useCallback(() => {
+    if (groupRef.current) {
+      setGroupWidth(groupRef.current.offsetWidth + 'px');
+    }
+  }, []);
+
+  useResizeObserver({
+    ref: groupRef,
+    onResize: onResize
+  });
+
   let {focusProps, isFocused, isFocusVisible} = useFocusRing({within: true});
   let renderProps = useRenderProps({
     ...props,
@@ -205,7 +236,12 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
         [LabelContext, {...labelProps, ref: labelRef, elementType: 'span'}],
         [RangeCalendarContext, calendarProps],
         [OverlayTriggerStateContext, state],
-        [PopoverContext, {trigger: 'DateRangePicker', triggerRef: groupRef, placement: 'bottom start'}],
+        [PopoverContext, {
+          trigger: 'DateRangePicker', 
+          triggerRef: groupRef, 
+          placement: 'bottom start',
+          style: {'--trigger-width': groupWidth} as React.CSSProperties
+        }],
         [DialogContext, dialogProps],
         [DateFieldContext, {
           slots: {

@@ -70,6 +70,7 @@ export function useAccordion<T>(props: AriaAccordionProps<T>, state: TreeState<T
     ...props,
     ...state,
     allowsTabNavigation: true,
+    disallowTypeAhead: true,
     ref
   });
   return {
