@@ -1,13 +1,14 @@
 import {ButtonContext, ButtonProps, Provider, SlotProps, useContextProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {ReactNode, useRef, useCallback, ForwardedRef, forwardRef, createContext} from 'react';
+import {ReactNode, useRef, useCallback, forwardRef, createContext} from 'react';
 import {mergeStyles} from '../style-macro/runtime';
 import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {
   useDOMRef,
   useResizeObserver
 } from '@react-spectrum/utils';
-import { ContextValue } from './Content';
+import {ContextValue} from './Content';
+import {DOMRef} from '@react-types/shared';
 
 interface ButtonGroupStyleProps {
   orientation?: 'horizontal' | 'vertical',
@@ -21,7 +22,7 @@ interface ButtonGroupProps extends ButtonGroupStyleProps, SlotProps {
   children: ReactNode
 }
 
-export const ButtonGroupContext = createContext<ContextValue<ButtonGroupProps, HTMLDivElement>>({});
+export const ButtonGroupContext = createContext<ContextValue<Omit<ButtonGroupProps, 'children'>, HTMLDivElement>>({});
 
 const buttongroup = style<ButtonGroupStyleProps>({
   display: 'inline-flex',
@@ -69,12 +70,12 @@ const button = style<ButtonProps>({
   flexShrink: 0
 });
 
-function ButtonGroup(props: ButtonGroupProps, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, ButtonGroupContext);
+function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
+  [props, domRef] = useContextProps(props, domRef, ButtonGroupContext);
   let {size = 'M'} = props;
   let {orientation = 'horizontal', align, children} = props;
 
-  let domRef = useDOMRef(ref);
   let [hasOverflow, setHasOverflow] = useValueEffect(false);
 
   let checkForOverflow = useCallback(() => {
@@ -131,6 +132,7 @@ function ButtonGroup(props: ButtonGroupProps, ref: ForwardedRef<HTMLDivElement>)
       }))}>
       <Provider
         values={[
+          // @ts-ignore
           [ButtonContext, {className: button({}), size}] // extend our button context?
         ]}>
         {children}

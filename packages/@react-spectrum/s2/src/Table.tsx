@@ -20,7 +20,7 @@ export function Table(props: TableProps) {
   return <AriaTable {...props} />;
 }
 
-export function Column<T extends object>(props: ColumnProps<T>) {
+export function Column(props: ColumnProps) {
   return (
     <AriaColumn {...props}>
       {({allowsSorting, sortDirection}) => (

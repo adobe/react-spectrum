@@ -1,6 +1,6 @@
 import {ProgressCircle} from '../src/ProgressCircle';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style-macro/spectrum-theme.ts' with { type: 'macro' };
+import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof ProgressCircle> = {
   component: ProgressCircle,

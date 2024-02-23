@@ -1,7 +1,5 @@
-import {ForwardedRef, HTMLAttributes, ImgHTMLAttributes, createContext, forwardRef, useContext} from 'react';
+import {ForwardedRef, HTMLAttributes, ImgHTMLAttributes, createContext, forwardRef} from 'react';
 import {Heading as RACHeading, HeadingProps, Header as RACHeader, useContextProps} from 'react-aria-components';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {mergeStyles} from '../style-macro/runtime';
 
 // TODO: export these types from RAC?
 interface SlottedValue<T> {

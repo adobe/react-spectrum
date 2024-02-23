@@ -22,6 +22,7 @@ export function transformUnsafeStyle(
         let alternate = handleProperty(element, property.key.name, property.value.alternate);
         if (consequent && alternate) {
           let test = property.value.test;
+          // eslint-disable-next-line max-depth
           if (test.type === 'BinaryExpression' && test.operator === '===' && test.left.type === 'Identifier' && test.right.type === 'StringLiteral') {
             res.macroValues.push({
               key: prop,
@@ -33,6 +34,7 @@ export function transformUnsafeStyle(
             });
           } else {
             let condition = nameFromExpression(test) || `isCondition${res.conditions!.length}`;
+            // eslint-disable-next-line max-depth
             if (!/^is[A-Z]/.test(condition)) {
               condition = `is${capitalize(condition)}`;
             }

@@ -1,9 +1,10 @@
 export {Avatar} from './Avatar';
 export {ActionButton} from './ActionButton';
 export {Button} from './Button';
+export {ButtonGroup} from './ButtonGroup';
 export {Checkbox} from './Checkbox';
 export {CheckboxGroup} from './CheckboxGroup';
-export {Heading, Header, Content, Footer, Image, ButtonGroup} from './Content';
+export {Heading, Header, Content, Footer, Image} from './Content';
 export {Dialog} from './Dialog';
 export {DialogTrigger} from './DialogTrigger';
 export {DialogContainer, useDialogContainer} from './DialogContainer';

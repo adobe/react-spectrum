@@ -22,7 +22,7 @@ export const Example: Story = {
     let buttons = (
       <ButtonGroup {...args}>
         <Button>Press me</Button>
-        <Button variant='accent'><Icon><NewIcon /></Icon><Text>Test</Text></Button>
+        <Button variant="accent"><Icon><NewIcon /></Icon><Text>Test</Text></Button>
         <Button><Icon><NewIcon /></Icon></Button>
         <Button variant="negative" className={style({maxWidth: 32})()}>Very long button with wrapping text to see what happens</Button>
         <Button variant="secondary" className={style({maxWidth: 32})()}>

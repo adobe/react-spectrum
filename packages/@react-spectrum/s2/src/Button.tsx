@@ -227,9 +227,10 @@ export function Button(props: ButtonProps) {
         size: props.size || 'M',
         staticColor: props.staticColor
       }))}>
-      <Provider values={[
-        [TextContext, {className: style({paddingY: '--labelPadding'})()}]
-      ]}>
+      <Provider
+        values={[
+          [TextContext, {className: style({paddingY: '--labelPadding'})()}]
+        ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
       </Provider>
     </RACButton>

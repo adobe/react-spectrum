@@ -242,8 +242,8 @@ function getStylePropValue(prop: string, value: namedTypes.ObjectProperty['value
             } else if (element?.type === 'CallExpression') {
               // TODO: match to import using scope
               if (
-                element.callee.type === 'Identifier' && 
-                element.callee.name === 'minmax' && 
+                element.callee.type === 'Identifier' &&
+                element.callee.name === 'minmax' &&
                 element.arguments.length === 2 &&
                 (element.arguments[0].type === 'StringLiteral' || element.arguments[0].type === 'NumericLiteral') &&
                 (element.arguments[1].type === 'StringLiteral' || element.arguments[1].type === 'NumericLiteral')
@@ -254,7 +254,7 @@ function getStylePropValue(prop: string, value: namedTypes.ObjectProperty['value
                 values.push(`minmax(${min}, ${max})`);
               }
               // TODO: handle repeat() and fit-content()
-            } else { 
+            } else {
               // bail
               return;
             }
@@ -402,15 +402,14 @@ function getResponsiveValue(prop: string, value: namedTypes.ObjectExpression, el
       let propertyValue = getPropValue(property.value);
       if (propertyValue && propertyValue.type !== 'ObjectExpression') {
         let val = getStylePropValue(prop, propertyValue, element, colorVersion, property.key.name);
-        if (val) {
-          if (val.macroValues) {
-            res[breakpoints[property.key.name as keyof typeof breakpoints]] = val.macroValues[0].value;
-          }
-
-          if (val.dynamicValues) {
-            custom.push(...val.dynamicValues);
-          }
+        if (val && val.macroValues) {
+          res[breakpoints[property.key.name as keyof typeof breakpoints]] = val.macroValues[0].value;
         }
+
+        if (val && val.dynamicValues) {
+          custom.push(...val.dynamicValues);
+        }
+
         continue;
       }
     }
@@ -584,7 +583,7 @@ export function transformStyleProps(j: API['jscodeshift'], path: ASTPath<namedTy
           )
         ]
       ),
-      conditions.size 
+      conditions.size
         ? [j.objectExpression(
           [...conditions].map(([k, v]) => j.objectProperty.from({key: j.identifier(k), value: v, shorthand: v.type === 'Identifier' && v.name === k}))
         )]
