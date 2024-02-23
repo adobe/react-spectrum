@@ -36,37 +36,40 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     isVirtualClick.current = e.width === 0 && e.height === 0;
   });
 
-  // Stop range selection when pressing or releasing a pointer outside the calendar body,
-  // except when pressing the next or previous buttons to switch months.
-  let endDragging = (e: PointerEvent) => {
-    if (isVirtualClick.current) {
-      isVirtualClick.current = false;
-      return;
-    }
-
-    state.setDragging(false);
+  // Cancel range selection when not releasing a pointer on a CalendarCell
+  useEvent(windowRef, 'pointerup', (e) => {
     if (!state.anchorDate) {
       return;
     }
 
     let target = e.target as Element;
-    let body = document.getElementById(res.calendarProps.id);
     if (
-      body &&
-      body.contains(document.activeElement) &&
-      (!body.contains(target) || !target.closest('button, [role="button"]'))
+      ref.current &&
+      ref.current.contains(document.activeElement) &&
+      (!ref.current.contains(target) ||
+        !target.closest('button, [role="button"]'))
     ) {
-      state.selectFocusedDate();
+      state.setAnchorDate(null);
     }
-  };
+  });
 
+  let endDragging = () => {
+    if (isVirtualClick.current) {
+      isVirtualClick.current = false;
+      return;
+    }
+    state.setDragging(false);
+  };
   useEvent(windowRef, 'pointerup', endDragging);
   useEvent(windowRef, 'pointercancel', endDragging);
 
-  // Also stop range selection on blur, e.g. tabbing away from the calendar.
+  // Cancel range selection on blur, e.g. tabbing away from the calendar.
   res.calendarProps.onBlur = e => {
-    if ((!e.relatedTarget || !ref.current.contains(e.relatedTarget)) && state.anchorDate) {
-      state.selectFocusedDate();
+    if (!state.anchorDate) {
+      return;
+    }
+    if (!e.relatedTarget || !ref.current.contains(e.relatedTarget)) {
+      state.setAnchorDate(null);
     }
   };
 

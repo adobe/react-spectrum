@@ -561,7 +561,7 @@ describe('RangeCalendar', () => {
       expect(end).toEqual(new CalendarDate(2019, 6, 19));
     });
 
-    it('releasing drag outside calendar commits it', () => {
+    it('cancel ongoing selection when releasing drag outside calendar', () => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
 
@@ -582,13 +582,9 @@ describe('RangeCalendar', () => {
       fireEvent.pointerUp(document.body);
 
       selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('22');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('25');
-      expect(onChange).toHaveBeenCalledTimes(1);
-
-      let {start, end} = onChange.mock.calls[0][0];
-      expect(start).toEqual(new CalendarDate(2019, 6, 22));
-      expect(end).toEqual(new CalendarDate(2019, 6, 25));
+      expect(selectedDates[0].textContent).toBe('10');
+      expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');
+      expect(onChange).toHaveBeenCalledTimes(0);
     });
 
     describe('touch', () => {
@@ -693,7 +689,7 @@ describe('RangeCalendar', () => {
       });
     });
 
-    it('clicking outside calendar commits selection', async () => {
+    it('cancel ongoing selection when clicking outside calendar', async () => {
       let onChange = jest.fn();
       let {getAllByLabelText, getByText} = render(<RangeCalendar onChange={onChange} defaultValue={{start: new CalendarDate(2019, 6, 10), end: new CalendarDate(2019, 6, 20)}} />);
 
@@ -714,13 +710,9 @@ describe('RangeCalendar', () => {
       await user.click(document.body);
 
       selectedDates = getAllByLabelText('selected', {exact: false});
-      expect(selectedDates[0].textContent).toBe('22');
-      expect(selectedDates[selectedDates.length - 1].textContent).toBe('25');
-      expect(onChange).toHaveBeenCalledTimes(1);
-
-      let {start, end} = onChange.mock.calls[0][0];
-      expect(start).toEqual(new CalendarDate(2019, 6, 22));
-      expect(end).toEqual(new CalendarDate(2019, 6, 25));
+      expect(selectedDates[0].textContent).toBe('10');
+      expect(selectedDates[selectedDates.length - 1].textContent).toBe('20');
+      expect(onChange).toHaveBeenCalledTimes(0);
     });
 
     it('clicking on next/previous buttons does not commit selection', async () => {
@@ -1210,7 +1202,7 @@ describe('RangeCalendar', () => {
       expect(getByRole('button', {name: 'Sunday, December 5, 2021'}).parentElement).not.toHaveAttribute('aria-selected', 'true');
     });
 
-    it('selects the nearest available date when blurring the calendar', async () => {
+    it('cancel ongoing selection when blurring the calendar', async () => {
       let onChange = jest.fn();
       function Example() {
         let {locale} = useLocale();
@@ -1238,7 +1230,7 @@ describe('RangeCalendar', () => {
 
       act(() => cell.blur());
 
-      expect(onChange).toHaveBeenCalledWith({start: new CalendarDate(2022, 3, 9), end: new CalendarDate(2022, 4, 8)});
+      expect(onChange).toHaveBeenCalledTimes(0);
     });
 
     it('should support invalid state', () => {
