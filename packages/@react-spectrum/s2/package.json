@@ -14,10 +14,11 @@
     "*.css"
   ],
   "scripts": {
+    "check-types": "tsc",
     "start": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "storybook": "storybook dev -p 6006",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx .",
+    "lint": "concurrently \"yarn check-types\" \"eslint --ext .js,.jsx,.ts,.tsx .\"",
     "postinstall": "patch-package",
     "build": "parcel build src/index.ts"
   },
@@ -90,6 +91,7 @@
     "@adobe/react-spectrum": "^3.34.0",
     "@react-aria/utils": "^3.23.0",
     "@react-spectrum/utils": "^3.11.3",
+    "concurrently": "^8.2.2",
     "react-aria": "^3.31.1",
     "react-aria-components": "^1.1.0"
   },
