@@ -1,7 +1,12 @@
+import '../src/page';
 import {themes} from '@storybook/theming';
-import {style} from '../style-macro/spectrum-theme.ts' with {type: 'macro'};
+import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
+import { store } from 'storybook-dark-mode/dist/esm/Tool';
+import { addons } from '@storybook/preview-api';
 
-document.body.className += style({backgroundColor: 'base'})();
+const channel = addons.getChannel();
+document.documentElement.dataset.theme = store().current === 'dark' ? 'dark' : 'light';
+channel.on(DARK_MODE_EVENT_NAME, isDark => document.documentElement.dataset.theme = isDark ? 'dark' : 'light');
 
 /** @type { import('@storybook/react').Preview } */
 const preview = {

@@ -81,6 +81,7 @@ interface MacroContext {
 
 export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemeProperties<T>, 'default' | Extract<keyof T['conditions'], string>> {
   let themePropertyMap = createValueLookup(Object.keys(theme.properties), true);
+  let themeConditionMap = createValueLookup(Object.keys(theme.conditions), true);
   let propertyFunctions = new Map(Object.entries(theme.properties).map(([k, v]) => {
     if (typeof v === 'function') {
       return [k, v];
@@ -141,7 +142,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // Declare layers for each priority ahead of time so the order is always correct.
     let css = '@layer ';
     let first = true;
-    for (let i = 0; i < usedPriorities; i++) {
+    for (let i = 0; i <= usedPriorities; i++) {
       if (first) {
         first = false;
       } else {
@@ -263,7 +264,9 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
       // Otherwise, wrap the rule in the condition (e.g. @media).
       return [{
-        prelude: `@layer ${generateName(priority, true)}`,
+        // Top level layer is based on the priority of the rule, not the condition.
+        // Also group in a sub-layer based on the condition so that lightningcss can more effectively deduplicate rules.
+        prelude: `@layer ${generateName(priority, true)}.${themeConditionMap.get(condition) || generateArbitraryValueSelector(condition, true)}`,
         body: [{prelude, body: rules, condition: ''}],
         condition: ''
       }];
@@ -305,8 +308,10 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         }
 
         let selector = prelude;
-        if (priority > 0) {
-          selector += generateName(priority);
+        if (conditions.size > 0) {
+          for (let condition of conditions) {
+            selector += themeConditionMap.get(condition) || generateArbitraryValueSelector(condition);
+          }
         }
 
         let rules: Rule[] = [{

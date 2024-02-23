@@ -561,6 +561,7 @@ export function transformStyleProps(j: API['jscodeshift'], path: ASTPath<namedTy
   }
 
   let hasMacros = false;
+  let usedLightDark = false;
   if (macroValues.size) {
     hasMacros = true;
     let classNameAttribute;
@@ -570,6 +571,20 @@ export function transformStyleProps(j: API['jscodeshift'], path: ASTPath<namedTy
         classNameAttribute = path.get('openingElement').get('attributes').get(index);
       }
     }
+
+    let valueToAST = (v: object | string | number | boolean): kinds.ExpressionKind => {
+      if (Array.isArray(v)) {
+        return j.arrayExpression(v.map(v => valueToAST(v)));
+      } else if (typeof v === 'object') {
+        if ('default' in v && typeof v.default === 'string' && 'dark' in v && typeof v.dark === 'string') {
+          usedLightDark = true;
+          return j.callExpression(j.identifier('lightDark'), [j.stringLiteral(v.default), j.stringLiteral(v.dark)]);
+        }
+        return j.objectExpression(Object.entries(v).map(([k, v]) => j.objectProperty(j.identifier(k), valueToAST(v))));
+      } else {
+        return j.literal(v);
+      }
+    };
 
     // Generate macro call.
     let macroCall = j.callExpression(
@@ -621,15 +636,5 @@ export function transformStyleProps(j: API['jscodeshift'], path: ASTPath<namedTy
     );
   }
 
-  return hasMacros;
-}
-
-function valueToAST(v: object | string | number | boolean): kinds.ExpressionKind {
-  if (Array.isArray(v)) {
-    return j.arrayExpression(v.map(v => valueToAST(v)));
-  } else if (typeof v === 'object') {
-    return j.objectExpression(Object.entries(v).map(([k, v]) => j.objectProperty(j.identifier(k), valueToAST(v))));
-  } else {
-    return j.literal(v);
-  }
+  return {hasMacros, usedLightDark};
 }

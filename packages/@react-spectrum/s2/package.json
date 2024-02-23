@@ -10,6 +10,27 @@
   "main": "dist/main.js",
   "module": "dist/module.js",
   "types": "dist/types.d.ts",
+  "page": "dist/page.js",
+  "source": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types.d.ts",
+      "module": "./dist/module.js",
+      "import": "./dist/import.mjs",
+      "require": "./dist/main.js"
+    },
+    "./page.css": "./dist/page.css"
+  },
+  "targets": {
+    "module": {},
+    "main": {},
+    "types": {},
+    "page": {
+      "source": "src/page.ts",
+      "isLibrary": true
+    }
+  },
+  "browserslist": "last 2 Chrome versions, last 2 Safari versions, last 2 Firefox versions, last 2 Edge versions",
   "sideEffects": [
     "*.css"
   ],
@@ -20,7 +41,7 @@
     "storybook": "storybook dev -p 6006",
     "lint": "concurrently \"yarn check-types\" \"eslint --ext .js,.jsx,.ts,.tsx .\"",
     "postinstall": "patch-package",
-    "build": "parcel build src/index.ts"
+    "build": "parcel build && rm -rf dist/page.js*"
   },
   "devDependencies": {
     "@adobe/spectrum-tokens": "^13.0.0-beta.9",
@@ -75,14 +96,15 @@
     "react-dom": "^18.2.0",
     "storybook": "^7.5.3",
     "storybook-builder-parcel": "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-builder-parcel?master",
-    "storybook-dark-mode": "^3.0.1",
+    "storybook-dark-mode": "^3.0.3",
     "storybook-react-parcel": "https://gitpkg.now.sh/mischnic/storybook-parcel/packages/storybook-react-parcel?master",
     "typescript": "^5.3.2"
   },
   "resolutions": {
     "jackspeak": "2.1.1",
     "recast": "0.23.4",
-    "ast-types": "0.16.1"
+    "ast-types": "0.16.1",
+    "@storybook/core-common": "7.6.10"
   },
   "alias": {
     "@storybook/react-dom-shim": "@storybook/react-dom-shim/dist/react-18"

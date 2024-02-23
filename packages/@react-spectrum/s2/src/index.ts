@@ -13,6 +13,7 @@ export {Form} from './Form';
 export {Icon} from './Icon';
 export {InlineAlert} from './InlineAlert';
 export {ProgressCircle} from './ProgressCircle';
+export {Provider} from './Provider';
 export {Radio} from './Radio';
 export {RadioGroup} from './RadioGroup';
 export {SearchField} from './SearchField';

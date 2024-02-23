@@ -3,17 +3,11 @@ import type * as CSS from 'csstype';
 import tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
 function colorToken(token: typeof tokens['gray-25']) {
-  return {
-    default: token.sets.light.value,
-    dark: token.sets.dark.value
-  };
+  return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
 }
 
 function weirdColorToken(token: typeof tokens['accent-background-color-default']) {
-  return {
-    default: token.sets.light.sets.light.value,
-    dark: token.sets.dark.sets.dark.value
-  };
+  return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
 }
 
 function pxToRem(px: string) {
@@ -112,6 +106,10 @@ export function baseColor(base: keyof typeof color) {
   };
 }
 
+export function lightDark(light: keyof typeof color, dark: keyof typeof color): `[${string}]` {
+  return `[light-dark(${color[light]}, ${color[dark]})]`;
+}
+
 const baseSpacing = {
   px: '1px',
   0: '0px',
@@ -166,8 +164,8 @@ const spacing = {
   'pill': 'calc(self(height, self(minHeight)) / 2)'
 };
 
-const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch: string}} =
-  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
+const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch: string}} = 
+  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) => 
     [k, {default: v, touch: parseFloat(v) * 1.25 + v.match(/[^0-9.]+/)![0]}])
   ) as any;
 
@@ -305,34 +303,34 @@ export const style = createTheme({
     color: createColorProperty({
       ...color,
       accent: {
-        ...colorToken(tokens['accent-content-color-default']),
+        default: colorToken(tokens['accent-content-color-default']),
         isHovered: colorToken(tokens['accent-content-color-hover']),
         isFocusVisible: colorToken(tokens['accent-content-color-key-focus']),
         isPressed: colorToken(tokens['accent-content-color-down'])
         // isSelected: colorToken(tokens['accent-content-color-selected']), // same as pressed
       },
       neutral: {
-        ...colorToken(tokens['neutral-content-color-default']),
+        default: colorToken(tokens['neutral-content-color-default']),
         isHovered: colorToken(tokens['neutral-content-color-hover']),
         isFocusVisible: colorToken(tokens['neutral-content-color-key-focus']),
         isPressed: colorToken(tokens['neutral-content-color-down'])
         // isSelected: colorToken(tokens['neutral-subdued-content-color-selected']),
       },
       'neutral-subdued': {
-        ...colorToken(tokens['neutral-subdued-content-color-default']),
+        default: colorToken(tokens['neutral-subdued-content-color-default']),
         isHovered: colorToken(tokens['neutral-subdued-content-color-hover']),
         isFocusVisible: colorToken(tokens['neutral-subdued-content-color-key-focus']),
         isPressed: colorToken(tokens['neutral-subdued-content-color-down'])
         // isSelected: colorToken(tokens['neutral-subdued-content-color-selected']),
       },
       negative: {
-        ...colorToken(tokens['negative-content-color-default']),
+        default: colorToken(tokens['negative-content-color-default']),
         isHovered: colorToken(tokens['negative-content-color-hover']),
         isFocusVisible: colorToken(tokens['negative-content-color-key-focus']),
         isPressed: colorToken(tokens['negative-content-color-down'])
       },
       disabled: {
-        ...colorToken(tokens['disabled-content-color'])
+        default: colorToken(tokens['disabled-content-color'])
         // forcedColors: 'GrayText'
       },
       heading: colorToken(tokens['heading-color']),
@@ -341,37 +339,37 @@ export const style = createTheme({
     backgroundColor: createColorProperty({
       ...color,
       accent: {
-        ...weirdColorToken(tokens['accent-background-color-default']),
+        default: weirdColorToken(tokens['accent-background-color-default']),
         isHovered: weirdColorToken(tokens['accent-background-color-hover']),
         isFocusVisible: weirdColorToken(tokens['accent-background-color-key-focus']),
         isPressed: weirdColorToken(tokens['accent-background-color-down'])
       },
       neutral: {
-        ...colorToken(tokens['neutral-background-color-default']),
+        default: colorToken(tokens['neutral-background-color-default']),
         isHovered: colorToken(tokens['neutral-background-color-hover']),
         isFocusVisible: colorToken(tokens['neutral-background-color-key-focus']),
         isPressed: colorToken(tokens['neutral-background-color-down'])
       },
       'neutral-subdued': {
-        ...weirdColorToken(tokens['neutral-subdued-background-color-default']),
+        default: weirdColorToken(tokens['neutral-subdued-background-color-default']),
         isHovered: weirdColorToken(tokens['neutral-subdued-background-color-hover']),
         isFocusVisible: weirdColorToken(tokens['neutral-subdued-background-color-key-focus']),
         isPressed: weirdColorToken(tokens['neutral-subdued-background-color-down'])
       },
       negative: {
-        ...weirdColorToken(tokens['negative-background-color-default']),
+        default: weirdColorToken(tokens['negative-background-color-default']),
         isHovered: weirdColorToken(tokens['negative-background-color-hover']),
         isFocusVisible: weirdColorToken(tokens['negative-background-color-key-focus']),
         isPressed: weirdColorToken(tokens['negative-background-color-down'])
       },
       informative: {
-        ...weirdColorToken(tokens['informative-background-color-default']),
+        default: weirdColorToken(tokens['informative-background-color-default']),
         isHovered: weirdColorToken(tokens['informative-background-color-hover']),
         isFocusVisible: weirdColorToken(tokens['informative-background-color-key-focus']),
         isPressed: weirdColorToken(tokens['informative-background-color-down'])
       },
       positive: {
-        ...weirdColorToken(tokens['positive-background-color-default']),
+        default: weirdColorToken(tokens['positive-background-color-default']),
         isHovered: weirdColorToken(tokens['positive-background-color-hover']),
         isFocusVisible: weirdColorToken(tokens['positive-background-color-key-focus']),
         isPressed: weirdColorToken(tokens['positive-background-color-down'])
@@ -391,10 +389,7 @@ export const style = createTheme({
       purple: weirdColorToken(tokens['purple-background-color-default']),
       fuchsia: weirdColorToken(tokens['fuchsia-background-color-default']),
       magenta: weirdColorToken(tokens['magenta-background-color-default']),
-      disabled: {
-        ...colorToken(tokens['disabled-background-color'])
-        // forcedColors: 'GrayText'
-      },
+      disabled: colorToken(tokens['disabled-background-color']),
       base: weirdColorToken(tokens['background-base-color']),
       'layer-1': weirdColorToken(tokens['background-layer-1-color']),
       'layer-2': weirdColorToken(tokens['background-layer-2-color'])
@@ -402,20 +397,19 @@ export const style = createTheme({
     borderColor: createColorProperty({
       ...color,
       negative: {
-        ...colorToken(tokens['negative-border-color-default']),
+        default: colorToken(tokens['negative-border-color-default']),
         isHovered: colorToken(tokens['negative-border-color-hover']),
         isFocusVisible: colorToken(tokens['negative-border-color-key-focus']),
         isPressed: colorToken(tokens['negative-border-color-down'])
       },
-      disabled: {
-        ...colorToken(tokens['disabled-border-color'])
+      disabled: colorToken(tokens['disabled-border-color'])
         // forcedColors: 'GrayText'
-      }
+      
     }),
     outlineColor: createColorProperty({
       ...color,
       'focus-ring': {
-        ...colorToken(tokens['focus-indicator-color']),
+        default: colorToken(tokens['focus-indicator-color']),
         forcedColors: 'Highlight'
       }
     }),
@@ -636,6 +630,7 @@ export const style = createTheme({
     borderBottomStartRadius: createMappedProperty(value => ({borderEndStartRadius: value}), radius),
     borderBottomEndRadius: createMappedProperty(value => ({borderEndEndRadius: value}), radius),
     forcedColorAdjust: ['auto', 'none'] as const,
+    colorScheme: ['light', 'dark', 'light dark'] as const,
     backgroundPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
     backgroundSize: ['auto', 'cover', 'contain'] as const,
     backgroundAttachment: ['fixed', 'local', 'scroll'] as const,
@@ -791,7 +786,6 @@ export const style = createTheme({
     overscrollBehavior: ['overscrollBehaviorX', 'overscrollBehaviorY'] as const
   },
   conditions: {
-    dark: '@media (prefers-color-scheme: dark)',
     forcedColors: '@media (forced-colors: active)',
     // This detects touch primary devices as best as we can.
     // Ideally we'd use (pointer: course) but browser/device support is inconsistent.

@@ -107,7 +107,7 @@ export function nameFromExpression(expr: namedTypes.ObjectProperty['value']): st
     case 'SequenceExpression':
       return expr.expressions.reduce((p, e) => {
         let v = nameFromExpression(e);
-        return p ? capitalize(v) : v;
+        return p ? p + capitalize(v) : v;
       }, '');
     default:
       return '';

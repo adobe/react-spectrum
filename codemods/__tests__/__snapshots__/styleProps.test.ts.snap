@@ -113,7 +113,7 @@ exports[`Handles UNSAFE_style 1`] = `
 `;
 
 exports[`Handles View 1`] = `
-"import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+"import { style, lightDark } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
 
 <div
   className={style({
@@ -121,12 +121,7 @@ exports[`Handles View 1`] = `
     borderColor: "gray-400",
     borderRadius: "lg",
     padding: 5,
-
-    backgroundColor: {
-      default: "blue-1000",
-      dark: "blue-900"
-    },
-
+    backgroundColor: lightDark("blue-1000", "blue-900"),
     flex: 1
   })()}>
   Test
@@ -134,7 +129,7 @@ exports[`Handles View 1`] = `
 `;
 
 exports[`Handles View colorVersion={5} 1`] = `
-"import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+"import { style, lightDark } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
 
 <div
   className={style({
@@ -142,11 +137,7 @@ exports[`Handles View colorVersion={5} 1`] = `
     borderColor: "gray-200",
     borderRadius: "lg",
     padding: 5,
-
-    backgroundColor: {
-      default: "blue-1000",
-      dark: "blue-900"
-    }
+    backgroundColor: lightDark("blue-1000", "blue-900")
   })()}>
   Test
 </div>"

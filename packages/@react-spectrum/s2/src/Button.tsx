@@ -30,6 +30,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   fontFamily: 'sans',
   fontWeight: 'bold',
   fontSize: 'control',
+  userSelect: 'none',
   minHeight: 'control',
   borderRadius: 'pill',
   paddingX: {

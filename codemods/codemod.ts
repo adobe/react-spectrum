@@ -40,6 +40,7 @@ export default function transformer(file: FileInfo, api: API) {
     
   let importedComponents = new Map();
   let hasMacros = false;
+  let usedLightDark = false;
   let elements = imports.map(path => {
     if (path.node.specifiers) {
       return path.node.specifiers.flatMap(specifier => {
@@ -76,7 +77,7 @@ export default function transformer(file: FileInfo, api: API) {
     let elementName = importSpecifier.value.imported.name as string;
     let res = transformStyleProps(j, path, elementName);
     if (res) {
-      hasMacros = true;
+      ({hasMacros, usedLightDark} = res);
     }
 
     switch (elementName) {
@@ -93,8 +94,12 @@ export default function transformer(file: FileInfo, api: API) {
   });
   
   if (hasMacros) {
+    let specifiers = [j.importSpecifier(j.identifier('style'))];
+    if (usedLightDark) {
+      specifiers.push(j.importSpecifier(j.identifier('lightDark')));
+    }
     let macroImport = j.importDeclaration(
-      [j.importSpecifier(j.identifier('style'))],
+      specifiers,
       j.literal('@react-spectrum/rainbow/style-macro/spectrum-theme')
     );
 

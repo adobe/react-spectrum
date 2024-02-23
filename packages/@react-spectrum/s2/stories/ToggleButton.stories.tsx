@@ -28,8 +28,8 @@ export const Example: StoryFn<typeof ToggleButton> = (args) => {
           padding: 8,
           backgroundColor: {
             staticColor: {
-              black: {default: 'yellow-400', dark: 'yellow-1100'},
-              white: {default: 'blue-900', dark: 'blue-500'}
+              black: 'yellow',
+              white: 'blue'
             }
           },
           display: 'flex',

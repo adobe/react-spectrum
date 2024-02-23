@@ -27,6 +27,7 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
   fontFamily: 'sans',
   fontWeight: 'medium',
   fontSize: 'control',
+  userSelect: 'none',
   height: 'control',
   transition: 'default',
   forcedColorAdjust: 'none',
@@ -72,10 +73,7 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
     default: 'neutral',
     isSelected: {
       default: 'gray-25',
-      isEmphasized: {
-        default: 'gray-25',
-        dark: 'gray-1000'
-      }
+      isEmphasized: 'white'
     },
     isDisabled: 'disabled',
     staticColor: {

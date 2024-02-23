@@ -27,8 +27,8 @@ export const Example = {
         color: 'neutral',
         backgroundColor: {
           staticColor: {
-            black: {default: 'yellow-400', dark: 'yellow-1100'},
-            white: {default: 'blue-900', dark: 'blue-500'}
+            black: 'yellow',
+            white: 'blue'
           }
         }
       })({staticColor: args.staticColor})}>
