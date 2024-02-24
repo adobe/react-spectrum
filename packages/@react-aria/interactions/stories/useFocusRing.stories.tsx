@@ -122,11 +122,13 @@ const IframeWrapper = ({children}) => {
       const main = document.createElement('main');
       const iframeDocument = iframeRef.current.contentDocument;
 
-      iframeDocument.body.innerHTML = '';
-      iframeDocument.body.appendChild(main);
-      ReactDOM.render(children, main);
+      if (iframeDocument) {
+        iframeDocument.body.innerHTML = '';
+        iframeDocument.body.appendChild(main);
+        ReactDOM.render(children, main);
 
-      return addWindowFocusTracking(iframeDocument.body);
+        return addWindowFocusTracking(iframeDocument.body);
+      }
     }
   }, [children]);
 
