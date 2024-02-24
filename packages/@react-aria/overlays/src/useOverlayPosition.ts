@@ -264,7 +264,7 @@ function useResize(onResize) {
   }, [onResize]);
 }
 
-function translateRTL(position, direction) {
+export function translateRTL(position, direction) {
   if (direction === 'rtl') {
     return position.replace('start', 'right').replace('end', 'left');
   }

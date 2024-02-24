@@ -10,8 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Axis, Placement, PlacementAxis, SizeAxis} from '@react-types/overlays';
+import {Axis, PlacementAxis, Placement as PlacementSuperset, SizeAxis} from '@react-types/overlays';
 import {clamp, isWebKit} from '@react-aria/utils';
+
+type Placement = Exclude<PlacementSuperset, 'start'|'start top'|'start bottom'|'end'|'end top'|'end bottom'>
+export type PlacementSubset = Placement;
 
 interface Position {
   top?: number,

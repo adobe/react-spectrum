@@ -22,7 +22,12 @@ export const OverlayArrowContext = createContext<ContextValue<OverlayArrowContex
   placement: 'bottom'
 });
 
-export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'children'>, RenderProps<OverlayArrowRenderProps> {}
+export interface OverlayArrowProps extends Omit<HTMLAttributes<HTMLDivElement>, 'className' | 'style' | 'children'>, RenderProps<OverlayArrowRenderProps> {
+  /**
+   * The adjustment of the arrow position (in CSS pixel) with respect to the default position on its main axis.
+   */
+  offset?: number
+}
 
 export interface OverlayArrowRenderProps {
   /**
@@ -52,6 +57,17 @@ function OverlayArrow(props: OverlayArrowProps, ref: ForwardedRef<HTMLDivElement
   // spread merged with the other style object
   if (renderProps.style) {
     Object.keys(renderProps.style).forEach(key => renderProps.style![key] === undefined && delete renderProps.style![key]);
+  }
+
+  if (props.offset && renderProps.style) {
+    if (typeof renderProps.style.top === 'number') {
+      // direct assignment like `renderProps.style.top += props.offset;` would produce different results,
+      // depending on whether `props.style` exists or not. (possibly related to `props.style` not being copied in `useRenderProps` but not entirely sure why)
+      // (e.g.) <OverlayArrow offset={-10.5}> v.s. <OverlayArrow offset={-10.5} style={{color: 'red'}}> would produce different `top` values.
+      renderProps.style = {...renderProps.style, top: renderProps.style.top + props.offset};
+    } else if (typeof renderProps.style.left === 'number') {
+      renderProps.style = {...renderProps.style, left: renderProps.style.left + props.offset};
+    }
   }
 
   return (
