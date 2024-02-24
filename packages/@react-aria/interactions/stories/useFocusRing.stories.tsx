@@ -120,7 +120,7 @@ const IframeWrapper = ({children}) => {
   useEffect(() => {
     if (iframeRef.current) {
       const main = document.createElement('main');
-      const iframeDocument = iframeRef.current.contentDocument || iframeRef.current.contentWindow.document;
+      const iframeDocument = iframeRef.current.contentDocument || iframeRef.current.contentWindow?.document;
       iframeDocument.body.innerHTML = '';
       iframeDocument.body.appendChild(main);
       ReactDOM.render(children, main);
