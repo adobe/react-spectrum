@@ -56,7 +56,9 @@ export interface ComboBoxProps<T extends object> extends Omit<AriaComboBoxProps<
    * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
    * @default 'key'
    */
-  formValue?: 'text' | 'key'
+  formValue?: 'text' | 'key',
+  /** Whether the combo box allows the menu to be open when the collection is empty. */
+  allowsEmptyCollection?: boolean
 }
 
 export const ComboBoxContext = createContext<ContextValue<ComboBoxProps<any>, HTMLDivElement>>(null);
