@@ -373,8 +373,8 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     }
   });
 
-  let isListDraggable = !dragAndDropHooks.isDisabled && hasDragHooks;
-  let isListDroppable = !dragAndDropHooks.isDisabled && hasDropHooks;
+  let isListDraggable = !!dragAndDropHooks?.isDisabled && hasDragHooks;
+  let isListDroppable = !!dragAndDropHooks?.isDisabled && hasDropHooks;
   let {selectionBehavior, selectionMode, disallowEmptySelection} = state.selectionManager;
   let ctx = useMemo(() => ({
     selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
