@@ -91,7 +91,12 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
         {...renderProps}
         slot={props.slot || undefined}
         ref={ref}
-        onClick={() => buttonRef.current?.focus()}
+        onClick={(e) => {
+          let target = e.target as HTMLElement;
+          if (!target.matches('input')) {
+            buttonRef.current?.focus();
+          }
+        }}
         data-hovered={isHovered || undefined}
         data-focused={isFocused || undefined}
         data-focus-visible={isFocusVisible || undefined}

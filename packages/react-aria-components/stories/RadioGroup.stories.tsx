@@ -11,7 +11,7 @@
  */
 
 import {Button, Dialog, DialogTrigger, Label, Modal, ModalOverlay, Radio, RadioGroup} from 'react-aria-components';
-import React from 'react';
+import React, {useState} from 'react';
 import styles from '../example/index.css';
 
 export default {
@@ -24,6 +24,23 @@ export const RadioGroupExample = () => {
       data-testid="radio-group-example"
       className={styles.radiogroup}>
       <Label>Favorite pet</Label>
+      <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
+      <Radio className={styles.radio} value="cats">Cat</Radio>
+      <Radio className={styles.radio} value="dragon">Dragon</Radio>
+    </RadioGroup>
+  );
+};
+
+export const RadioGroupControlledExample = () => {
+  let [selected, setSelected] = useState<string|null>(null);
+  
+  return (
+    <RadioGroup
+      data-testid="radio-group-example"
+      className={styles.radiogroup}
+      value={selected}
+      onChange={setSelected}>
+      <Label>Favorite pet (controlled)</Label>
       <Radio className={styles.radio} value="dogs" data-testid="radio-dog">Dog</Radio>
       <Radio className={styles.radio} value="cats">Cat</Radio>
       <Radio className={styles.radio} value="dragon">Dragon</Radio>
