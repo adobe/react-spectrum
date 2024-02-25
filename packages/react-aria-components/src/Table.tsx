@@ -326,7 +326,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   let dragPreview: JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
-  if (hasDragHooks) {
+  if (hasDragHooks && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection,
       selectionManager,
@@ -340,7 +340,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       : null;
   }
 
-  if (hasDropHooks) {
+  if (hasDropHooks && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection,
       selectionManager
