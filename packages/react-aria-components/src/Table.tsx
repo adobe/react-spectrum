@@ -306,18 +306,18 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
 
   let {dragAndDropHooks} = props;
   let selectionManager = state.selectionManager;
-  let hasDragHooks = !!dragAndDropHooks?.useDraggableCollectionState;
-  let hasDropHooks = !!dragAndDropHooks?.useDroppableCollectionState;
-  let dragHooksProvided = useRef(hasDragHooks);
-  let dropHooksProvided = useRef(hasDropHooks);
+  let isListDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
+  let isListDroppable = !!dragAndDropHooks?.useDroppableCollectionState;
+  let dragHooksProvided = useRef(isListDraggable);
+  let dropHooksProvided = useRef(isListDroppable);
   useEffect(() => {
-    if (dragHooksProvided.current !== hasDragHooks) {
+    if (dragHooksProvided.current !== isListDraggable) {
       console.warn('Drag hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
-    if (dropHooksProvided.current !== hasDropHooks) {
+    if (dropHooksProvided.current !== isListDroppable) {
       console.warn('Drop hooks were provided during one render, but not another. This should be avoided as it may produce unexpected behavior.');
     }
-  }, [hasDragHooks, hasDropHooks]);
+  }, [isListDraggable, isListDroppable]);
 
   let dragState: DraggableCollectionState | undefined = undefined;
   let dropState: DroppableCollectionState | undefined = undefined;
@@ -326,7 +326,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
   let dragPreview: JSX.Element | null = null;
   let preview = useRef<DragPreviewRenderer>(null);
 
-  if (hasDragHooks && dragAndDropHooks) {
+  if (isListDraggable && dragAndDropHooks) {
     dragState = dragAndDropHooks.useDraggableCollectionState!({
       collection,
       selectionManager,
@@ -340,7 +340,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       : null;
   }
 
-  if (hasDropHooks && dragAndDropHooks) {
+  if (isListDroppable && dragAndDropHooks) {
     dropState = dragAndDropHooks.useDroppableCollectionState!({
       collection,
       selectionManager
@@ -373,8 +373,6 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
     }
   });
 
-  let isListDraggable = !!dragAndDropHooks?.isDisabled && hasDragHooks;
-  let isListDroppable = !!dragAndDropHooks?.isDisabled && hasDropHooks;
   let {selectionBehavior, selectionMode, disallowEmptySelection} = state.selectionManager;
   let ctx = useMemo(() => ({
     selectionBehavior: selectionMode === 'none' ? null : selectionBehavior,
@@ -418,7 +416,7 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
             ref={ref}
             slot={props.slot || undefined}
             onScroll={props.onScroll}
-            data-allows-dragging={isListDraggable || undefined}
+            data-allows-dragging={(isListDraggable && !dragAndDropHooks?.isDisabled) || undefined}
             data-drop-target={isRootDropTarget || undefined}
             data-focused={isFocused || undefined}
             data-focus-visible={isFocusVisible || undefined}>
