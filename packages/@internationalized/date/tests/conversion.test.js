@@ -349,8 +349,8 @@ describe('CalendarDate conversion', function () {
       });
 
       it('persian to gregorian for months greater than 6', function () {
-        let date = new CalendarDate(new PersianCalendar(), 1399, 12, 12);
-        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(2021, 3, 2));
+        let date = new CalendarDate(new PersianCalendar(), 1401, 10, 1);
+        expect(toCalendar(date, new GregorianCalendar())).toEqual(new CalendarDate(2022, 12, 22));
       });
 
       it('gregorian to persian', function () {
@@ -359,8 +359,8 @@ describe('CalendarDate conversion', function () {
       });
 
       it('gregorian to persian for months greater than 6', function () {
-        let date = new CalendarDate(2021, 3, 2);
-        expect(toCalendar(date, new PersianCalendar())).toEqual(new CalendarDate(new PersianCalendar(), 1399, 12, 12));
+        let date = new CalendarDate(2022, 12, 22);
+        expect(toCalendar(date, new PersianCalendar())).toEqual(new CalendarDate(new PersianCalendar(), 1401, 10, 1));
       });
       
     });
