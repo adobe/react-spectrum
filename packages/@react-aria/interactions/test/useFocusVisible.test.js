@@ -305,10 +305,8 @@ describe('useFocusVisible', function () {
       });
       addWindowFocusTracking(iframeRoot);
 
-      // Iframe event listeners
       const el = document.querySelector('iframe').contentWindow.document.body.querySelector('button[id="iframe-example"]');
 
-      // toggleBrowserWindow();
       fireEvent.focus(iframe.contentWindow.document.body);
       fireEvent.keyDown(el, {key: 'Tab'});
 
