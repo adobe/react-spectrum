@@ -28,7 +28,7 @@ export interface ImageProps {
   /**
    * onError callback - If an error occurs while loading or rendering an image
   */
-  onError?: () => void
+  onError?: (err: any) => void
 }
 
 export interface SpectrumImageProps extends ImageProps, DOMProps, StyleProps {

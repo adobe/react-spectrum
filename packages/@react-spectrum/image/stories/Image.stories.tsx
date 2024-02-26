@@ -22,18 +22,19 @@ export default meta;
 
 export const Default: ComponentStory<typeof Image> = (args: SpectrumImageProps) => {
     return (
-        <Image src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" />
+        <Image width={'500px'} height={'500px'} src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" />
     )
 }
 
 export const ImageOnError: ComponentStory<typeof Image> = (args: SpectrumImageProps) => {
     const [isImageMissing, setIsImageMissing] = useState(false);
+    const DEFAULT_IMAGE = 'https://i.imgur.com/DhygPot.jpg';
 
-    const onErrorHandler = (err) => {
+    const onErrorHandler = () => {
         setIsImageMissing(true);
     }
     return (
-        <Image src={isImageMissing ? 'https://i.imgur.com/c3gTKSJ.jpg' : 'https://i.imgur.com/Z7AzH2332c.png'} alt="Eiffel Tower at sunset" onError={onErrorHandler} />
+        <Image width={'500px'} height={'500px'} src={isImageMissing ? DEFAULT_IMAGE : 'https://i.imgur.com/Z7AzH2332c.png'} alt="starry sky" onError={onErrorHandler} />
     )
 }
 
