@@ -28,7 +28,15 @@ let excludedProps = new Set([
   'onCompositionUpdate',
   'onSelect',
   'onBeforeInput',
-  'onInput'
+  'onInput',
+  'onKeyDown',
+  'onKeyUp',
+  'onHoverStart',
+  'onHoverEnd',
+  'onHoverChange',
+  'onFocus',
+  'onBlur',
+  'onFocusChange'
 ]);
 let docGenParser = withCompilerOptions(compilerOptions, {
   shouldExtractLiteralValuesFromEnum: true,
