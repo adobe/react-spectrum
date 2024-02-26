@@ -210,3 +210,67 @@ export const IgnoreRestoreFocus = {
 export const FocusableFirstInScope = {
   render: () => <FocusableFirstInScopeExample />
 };
+
+
+function FocusableInputFormExample(args) {
+  let [isOpen, setOpen] = React.useState(false);
+  let {contain, restoreFocus, autoFocus} = args;
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Open</button>
+      {isOpen && (
+        <>
+          <div style={{display: 'flex', flexDirection: 'column', marginBottom: '10px'}}>
+            <FocusScope contain={contain} restoreFocus={restoreFocus} autoFocus={autoFocus}>
+              <label htmlFor="first-input">First Input</label>
+              <input id="first-input" />
+              <label htmlFor="second-input">Second Input</label>
+              <input id="second-input" />
+            </FocusScope>
+          </div>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            <label htmlFor="third-input">Third Input</label>
+            <input id="third-input" />
+          </div>
+          <button onClick={() => setOpen(false)}>Close</button>
+        </>
+      )}
+    </>
+  );
+}
+
+export const FocusableInputForm = {
+  name: 'FocusableInputForm',
+  render: (args) => <FocusableInputFormExample {...args} />,
+  args: {
+    contain: true,
+    restoreFocus: true,
+    autoFocus: true
+  },
+  argTypes: {
+    contain: {
+      control: 'boolean'
+    },
+    restoreFocus: {
+      control: 'boolean'
+    },
+    autoFocus: {
+      control: 'boolean'
+    }
+  },
+  parameters: {
+    description: {
+      data: `
+1. Open OS keyboard settings
+2. Add Chinese Pinyin - Simplified
+3. Go to the third input
+4. Type "ni", a set of suggestions should appear
+5. Press Tab 3x and see how it shows different suggestions
+6. Go to the first input
+7. Repeat steps 4&5
+8. See how it leaves the suggestions and jumps to the form button
+`
+    }
+  }
+};
