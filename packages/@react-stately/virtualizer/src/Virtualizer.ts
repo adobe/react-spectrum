@@ -656,7 +656,18 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   getVisibleLayoutInfos() {
-    let rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();
+    let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
+
+    let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
+    let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
+
+    let rect;
+    if (isTestEnv && !(isClientWidthMocked && isClientHeightMocked)) {
+      rect = this._getContentRect();
+    } else {
+      rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();
+    }
+
     this._visibleLayoutInfos = this._getLayoutInfoMap(rect);
     return this._visibleLayoutInfos;
   }
@@ -822,8 +833,8 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   private _flushVisibleViews() {
-    // CollectionVirtualizer deals with a flattened set of LayoutInfos, but they can represent heirarchy
-    // by referencing a parentKey. Just before rendering the visible views, we rebuild this heirarchy
+    // CollectionVirtualizer deals with a flattened set of LayoutInfos, but they can represent hierarchy
+    // by referencing a parentKey. Just before rendering the visible views, we rebuild this hierarchy
     // by creating a mapping of views by parent key and recursively calling the delegate's renderWrapper
     // method to build the final tree.
     let viewsByParentKey = new Map([[null, []]]);

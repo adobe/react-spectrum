@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {AriaDialogProps, useDialog, useId, useOverlayTrigger} from 'react-aria';
-import {ContextValue, defaultSlot, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, SlotProps, StyleProps, useContextProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {HeadingContext} from './Heading';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
@@ -104,7 +104,7 @@ function Dialog(props: DialogProps, ref: ForwardedRef<HTMLElement>) {
         values={[
           [HeadingContext, {
             slots: {
-              [defaultSlot]: {},
+              [DEFAULT_SLOT]: {},
               title: {...titleProps, level: 2}
             }
           }]

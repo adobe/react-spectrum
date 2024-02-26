@@ -112,7 +112,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
 
   // Handle the escape key
   let onKeyDown = (e) => {
-    if (e.key === 'Escape' && !isKeyboardDismissDisabled) {
+    if (e.key === 'Escape' && !isKeyboardDismissDisabled && !e.nativeEvent.isComposing) {
       e.stopPropagation();
       e.preventDefault();
       onHide();
