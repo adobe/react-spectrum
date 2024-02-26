@@ -9,26 +9,32 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import {fireEvent, render, screen} from '@react-spectrum/test-utils';
+import {Image} from '../src';
 import React from 'react';
-import { Image } from '../src';
-import {render, screen, fireEvent} from '@react-spectrum/test-utils';
-
 
 describe('Image', () => {
-    test('renders correctly', () => {
-        render(<Image src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" />)
+  test('renders correctly', () => {
+    render(<Image src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" />);
 
-        expect(screen.getByRole('img', {
-            name: /sky and roof/i
-        })).toBeInTheDocument();
-    })
+    expect(
+      screen.getByRole('img', {
+        name: /sky and roof/i
+      })
+    ).toBeInTheDocument();
+  });
 
-    test('on error callback', () => {
-        const mockOnErrorCallback = jest.fn();
+  test('on error callback', () => {
+    const mockOnErrorCallback = jest.fn();
 
-        render(<Image src="https://i.imgur.com/Z7AzH2c.png" alt="Sky and roof" onError={mockOnErrorCallback} />)
-        fireEvent.error(screen.getByAltText("Sky and roof"));
+    render(
+      <Image
+        src="https://i.imgur.com/Z7AzH2c.png"
+        alt="Sky and roof"
+        onError={mockOnErrorCallback} />
+    );
+    fireEvent.error(screen.getByAltText('Sky and roof'));
 
-        expect(mockOnErrorCallback).toBeCalled()
-    })
-})
+    expect(mockOnErrorCallback).toBeCalled();
+  });
+});
