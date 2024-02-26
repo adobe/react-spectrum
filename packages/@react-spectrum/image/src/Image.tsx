@@ -29,7 +29,6 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
     objectFit,
     src,
     alt,
-    onError,
     ...otherProps
   } = props;
   let {styleProps} = useStyleProps(otherProps);
@@ -58,8 +57,7 @@ function Image(props: SpectrumImageProps, ref: DOMRef<HTMLDivElement>) {
         alt={userProvidedAlt || alt}
         style={{objectFit}}
         className={classNames(styles, 'spectrum-Image-img')} 
-        onError={props?.onError}
-      />
+        onError={props?.onError} />
     </div>
   );
 }
