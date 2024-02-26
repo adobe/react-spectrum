@@ -15,7 +15,8 @@ interface FieldLabelProps extends LabelProps {
   necessityIndicator?: NecessityIndicator,
   labelAlign?: Alignment,
   labelPosition?: 'top' | 'side',
-  includeNecessityIndicatorInAccessibilityName?: boolean
+  includeNecessityIndicatorInAccessibilityName?: boolean,
+  staticColor?: 'white' | 'black'
 }
 
 export function FieldLabel(props: FieldLabelProps) {
@@ -27,39 +28,50 @@ export function FieldLabel(props: FieldLabelProps) {
     includeNecessityIndicatorInAccessibilityName = false,
     labelAlign,
     labelPosition,
+    staticColor,
     ...labelProps
   } = props;
 
   return (
     <Label
       {...labelProps}
-      className={style({
-        gridArea: 'label',
-        fontFamily: 'sans',
-        fontSize: 'control',
-        lineHeight: 100,
-        cursor: 'default',
-        color: {
-          default: 'neutral-subdued',
-          isDisabled: 'disabled'
-        },
-        textAlign: {
-          labelAlign: {
-            start: 'start',
-            end: 'end'
+      className={mergeStyles(
+        style({
+          gridArea: 'label',
+          fontFamily: 'sans',
+          fontSize: 'control',
+          lineHeight: 100,
+          cursor: 'default',
+          color: {
+            default: 'neutral-subdued',
+            isDisabled: 'disabled',
+            staticColor: {
+              white: {
+                default: 'transparent-white-700'
+              },
+              black: {
+                default: 'transparent-black-900'
+              }
+            },
+            forcedColors: 'ButtonText'
+          },
+          textAlign: {
+            labelAlign: {
+              start: 'start',
+              end: 'end'
+            }
+          },
+          contain: {
+            labelPosition: {
+              top: 'inline-size'
+            }
+          },
+          paddingBottom: {
+            labelPosition: {
+              top: '--field-gap'
+            }
           }
-        },
-        contain: {
-          labelPosition: {
-            top: 'inline-size'
-          }
-        },
-        paddingBottom: {
-          labelPosition: {
-            top: '--field-gap'
-          }
-        }
-      })({labelAlign, labelPosition, isDisabled, size})}>
+        })({labelAlign, labelPosition, isDisabled, size, staticColor}), props.className)}>
       {props.children}
       {(isRequired || necessityIndicator === 'label') && (
         <span className={style({whiteSpace: 'nowrap'})()}>

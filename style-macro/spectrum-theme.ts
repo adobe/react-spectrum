@@ -664,6 +664,7 @@ export const style = createTheme({
     animationFillMode: ['none', 'forwards', 'backwards', 'both'] as const,
     animationIterationCount: createArbitraryProperty((value: string) => ({animationIterationCount: value})),
     animationTimingFunction: timingFunction,
+    animationIterationCount: ['infinite', 'once'] as const,
 
     // layout
     display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'] as const, // tables?
