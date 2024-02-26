@@ -88,7 +88,8 @@ const color = {
   Highlight: 'Highlight',
   HighlightText: 'HighlightText',
   GrayText: 'GrayText',
-  Mark: 'Mark'
+  Mark: 'Mark',
+  LinkText: 'LinkText'
 };
 
 export function baseColor(base: keyof typeof color) {
@@ -604,7 +605,10 @@ export const style = createTheme({
     textTransform: ['uppercase', 'lowercase', 'capitalize', 'none'] as const,
     textAlign: ['start', 'center', 'end', 'justify'] as const,
     verticalAlign: ['baseline', 'top', 'middle', 'bottom', 'text-top', 'text-bottom', 'sub', 'super'] as const,
-    textDecoration: ['underline', 'overline', 'line-through', 'none'] as const,
+    textDecoration: createMappedProperty((value) => ({
+      textDecoration: value === 'none' ? 'none' : `${value} ${tokens['text-underline-thickness'].value}`,
+      textUnderlineOffset: value === 'underline' ? tokens['text-underline-gap'].value : undefined
+    }), ['underline', 'overline', 'line-through', 'none'] as const),
     textOverflow: ['ellipsis', 'clip'] as const,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     truncate: createArbitraryProperty((_value: true) => ({

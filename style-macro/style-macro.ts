@@ -297,6 +297,9 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         for (let key in obj) {
           let k = key as any;
           let value = obj[k];
+          if (value === undefined) {
+            continue;
+          }
           if (typeof value === 'string') {
             // Replace self() references with variables and track the dependencies.
             value = value.replace(/self\(([a-zA-Z]+)/g, (_, v) => {

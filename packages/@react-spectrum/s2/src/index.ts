@@ -12,6 +12,7 @@ export {Divider} from './Divider';
 export {Form} from './Form';
 export {Icon} from './Icon';
 export {InlineAlert} from './InlineAlert';
+export {Link} from './Link';
 export {ProgressCircle} from './ProgressCircle';
 export {Provider} from './Provider';
 export {Radio} from './Radio';
