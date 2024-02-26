@@ -63,7 +63,8 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
     validate,
     name,
     isReadOnly,
-    onSubmit = () => {}
+    onSubmit = () => {},
+    UNSTABLE_portalContainer
   } = props;
 
   let {contains} = useFilter({sensitivity: 'base'});
@@ -156,7 +157,7 @@ function _MobileSearchAutocomplete<T extends object>(props: SpectrumSearchAutoco
         </SearchAutocompleteButton>
       </Field>
       <input {...inputProps} ref={inputRef} />
-      <Tray state={state} isFixedHeight {...overlayProps}>
+      <Tray state={state} isFixedHeight {...overlayProps} container={UNSTABLE_portalContainer}>
         <SearchAutocompleteTray
           {...props}
           onClose={state.close}

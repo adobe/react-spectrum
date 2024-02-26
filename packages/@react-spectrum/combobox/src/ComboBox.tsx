@@ -81,7 +81,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
     allowsCustomValue,
     menuWidth: customMenuWidth,
     name,
-    formValue = 'text'
+    formValue = 'text',
+    UNSTABLE_portalContainer
   } = props;
   if (allowsCustomValue) {
     formValue = 'text';
@@ -181,7 +182,8 @@ const ComboBoxBase = React.forwardRef(function ComboBoxBase<T extends object>(pr
         placement={`${direction} ${align}`}
         hideArrow
         isNonModal
-        shouldFlip={shouldFlip}>
+        shouldFlip={shouldFlip}
+        container={UNSTABLE_portalContainer}>
         <ListBoxBase
           {...listBoxProps}
           ref={listBoxRef}

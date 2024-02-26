@@ -70,5 +70,11 @@ export interface SpectrumPickerProps<T> extends AriaSelectProps<T>, AsyncLoadabl
   /** Width of the menu. By default, matches width of the trigger. Note that the minimum width of the dropdown is always equal to the trigger's width. */
   menuWidth?: DimensionValue,
   /** Whether the element should receive focus on render. */
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  /**
+   * The container element in which the picker's overlay or tray portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: HTMLElement
 }

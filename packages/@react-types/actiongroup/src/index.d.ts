@@ -70,5 +70,11 @@ export interface SpectrumActionGroupProps<T> extends AriaActionGroupProps<T>, St
    */
   buttonLabelBehavior?: 'show' | 'collapse' | 'hide',
   /** The icon displayed in the dropdown menu button when a selectable ActionGroup is collapsed. */
-  summaryIcon?: ReactElement
+  summaryIcon?: ReactElement,
+  /**
+   * The container element in which the picker's overlay or tray portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: HTMLElement
 }

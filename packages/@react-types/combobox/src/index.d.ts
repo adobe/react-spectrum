@@ -106,5 +106,11 @@ export interface SpectrumComboBoxProps<T> extends SpectrumTextInputBase, Omit<Ar
    * When `allowsCustomValue` is `true`, this option does not apply and the text is always submitted.
    * @default 'text'
    */
-  formValue?: 'text' | 'key'
+  formValue?: 'text' | 'key',
+  /**
+   * The container element in which the combobox's overlay or tray portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: HTMLElement
 }

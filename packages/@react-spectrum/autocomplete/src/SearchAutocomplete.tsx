@@ -76,7 +76,8 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
     loadingState,
     onLoadMore,
     onSubmit = () => {},
-    validate
+    validate,
+    UNSTABLE_portalContainer
   } = props;
 
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/autocomplete');
@@ -167,7 +168,8 @@ function _SearchAutocompleteBase<T extends object>(props: SpectrumSearchAutocomp
         placement={`${direction} ${align}`}
         hideArrow
         isNonModal
-        shouldFlip={shouldFlip}>
+        shouldFlip={shouldFlip}
+        container={UNSTABLE_portalContainer}>
         <ListBoxBase
           {...listBoxProps}
           ref={listBoxRef}

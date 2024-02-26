@@ -74,5 +74,11 @@ export interface SpectrumSearchAutocompleteProps<T> extends SpectrumTextInputBas
   menuWidth?: DimensionValue,
   onLoadMore?: () => void,
   /** An icon to display at the start of the input. */
-  icon?: ReactElement | null
+  icon?: ReactElement | null,
+  /**
+   * The container element in which the field's overlay or tray portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: HTMLElement
 }

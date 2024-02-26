@@ -53,6 +53,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     onAction,
     buttonLabelBehavior,
     summaryIcon,
+    UNSTABLE_portalContainer,
     ...otherProps
   } = props;
 
@@ -205,7 +206,8 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
         summaryIcon={summaryIcon}
         hideButtonText={hideButtonText}
         isOnlyItem={visibleItems === 0}
-        orientation={orientation} />
+        orientation={orientation}
+        UNSTABLE_portalContainer={UNSTABLE_portalContainer} />
     );
   }
 
@@ -247,7 +249,8 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
                 item={item}
                 state={state}
                 hideButtonText={hideButtonText}
-                orientation={orientation} />
+                orientation={orientation}
+                UNSTABLE_portalContainer={UNSTABLE_portalContainer} />
             ))}
             {menuItem}
           </Provider>
@@ -271,10 +274,11 @@ interface ActionGroupItemProps<T> extends DOMProps, StyleProps {
   staticColor?: 'white' | 'black',
   hideButtonText?: boolean,
   orientation?: 'horizontal' | 'vertical',
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  UNSTABLE_portalContainer?: HTMLElement
 }
 
-function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor, onAction, hideButtonText, orientation}: ActionGroupItemProps<T>) {
+function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor, onAction, hideButtonText, orientation, UNSTABLE_portalContainer}: ActionGroupItemProps<T>) {
   let ref = useRef(null);
   let {buttonProps} = useActionGroupItem({key: item.key}, state);
   isDisabled = isDisabled || state.disabledKeys.has(item.key);
@@ -347,7 +351,7 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
 
   if (hideButtonText && textContent) {
     button = (
-      <TooltipTrigger placement={orientation === 'vertical' ? 'end' : 'top'}>
+      <TooltipTrigger placement={orientation === 'vertical' ? 'end' : 'top'} UNSTABLE_portalContainer={UNSTABLE_portalContainer}>
         {button}
         <Tooltip>{textContent}</Tooltip>
       </TooltipTrigger>
@@ -374,7 +378,7 @@ interface ActionGroupMenuProps<T> extends AriaLabelingProps {
   onAction?: (key: Key) => void
 }
 
-function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items, onAction, summaryIcon, hideButtonText, isOnlyItem, orientation, ...otherProps}: ActionGroupMenuProps<T>) {
+function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items, onAction, summaryIcon, hideButtonText, isOnlyItem, orientation, UNSTABLE_portalContainer, ...otherProps}: ActionGroupMenuProps<T>) {
   // Use the key of the first item within the menu as the key of the button.
   // The key must actually exist in the collection for focus to work correctly.
   let key = items[0].key;
@@ -430,7 +434,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
 
   return (
     // Use a PressResponder to send DOM props through.
-    <MenuTrigger align={isOnlyItem ? 'start' : 'end'} direction={orientation === 'vertical' ? 'end' : 'bottom'}>
+    <MenuTrigger align={isOnlyItem ? 'start' : 'end'} direction={orientation === 'vertical' ? 'end' : 'bottom'} UNSTABLE_portalContainer={UNSTABLE_portalContainer}>
       <SlotProvider
         slots={{
           text: {

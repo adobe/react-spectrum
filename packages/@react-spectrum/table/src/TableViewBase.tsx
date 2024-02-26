@@ -147,6 +147,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
     onResizeStart: propsOnResizeStart,
     onResizeEnd: propsOnResizeEnd,
     dragAndDropHooks,
+    UNSTABLE_portalContainer,
     state
   } = props;
   let isTableDraggable = !!dragAndDropHooks?.useDraggableCollectionState;
@@ -489,7 +490,7 @@ function TableViewBase<T extends object>(props: TableBaseProps<T>, ref: DOMRef<H
   );
 
   return (
-    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen}}>
+    <TableContext.Provider value={{state, dragState, dropState, dragAndDropHooks, isTableDraggable, isTableDroppable, layout, onResizeStart, onResize: props.onResize, onResizeEnd, headerRowHovered, isInResizeMode, setIsInResizeMode, isEmpty, onFocusedResizer, headerMenuOpen, setHeaderMenuOpen, UNSTABLE_portalContainer}}>
       <TableVirtualizer
         {...mergedProps}
         {...styleProps}
@@ -822,7 +823,8 @@ function ResizableTableColumnHeader(props) {
     isEmpty,
     isInResizeMode,
     headerMenuOpen,
-    setHeaderMenuOpen
+    setHeaderMenuOpen,
+    UNSTABLE_portalContainer
   } = useTableContext();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let {pressProps, isPressed} = usePress({isDisabled: isEmpty});
@@ -914,7 +916,7 @@ function ResizableTableColumnHeader(props) {
             )
           )
         }>
-        <MenuTrigger onOpenChange={setHeaderMenuOpen} align={menuAlign}>
+        <MenuTrigger onOpenChange={setHeaderMenuOpen} align={menuAlign} UNSTABLE_portalContainer={UNSTABLE_portalContainer}>
           <TableColumnHeaderButton alignment={alignment} ref={triggerRef} focusProps={focusProps}>
             {columnProps.allowsSorting &&
               <ArrowDownSmall UNSAFE_className={classNames(styles, 'spectrum-Table-sortedIcon')} />

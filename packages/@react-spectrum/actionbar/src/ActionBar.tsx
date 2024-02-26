@@ -112,6 +112,7 @@ function ActionBarInner<T>(props: ActionBarInnerProps<T>, ref: Ref<HTMLDivElemen
             overflowMode="collapse"
             buttonLabelBehavior="collapse"
             onAction={onAction}
+            UNSTABLE_portalContainer={props.UNSTABLE_portalContainer}
             UNSAFE_className={classNames(styles, 'react-spectrum-ActionBar-actionGroup')}>
             {children}
           </ActionGroup>

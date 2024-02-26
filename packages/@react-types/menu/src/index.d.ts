@@ -79,5 +79,11 @@ export interface SpectrumActionMenuProps<T> extends CollectionBase<T>, Omit<Spec
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean,
   /** Handler that is called when an item is selected. */
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  /**
+   * The container element in which the action menu's overlay or tray portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: HTMLElement
 }
