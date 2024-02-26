@@ -130,7 +130,7 @@ export function ActionButton(props: ActionButtonProps) {
     <RACButton
       {...props}
       ref={ref}
-      style={pressScale(ref)}
+      style={pressScale(ref, props.style)}
       className={renderProps => styles({
         ...renderProps,
         staticColor: props.staticColor,

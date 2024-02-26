@@ -527,7 +527,17 @@ export const style = createTheme({
 
     // text
     fontFamily: {
-      sans: 'adobe-clown, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+      sans: {
+        default: 'adobe-clown, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+        ':lang(ar)': 'myriad-arabic, ui-sans-serif, system-ui, sans-serif',
+        ':lang(he)': 'myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
+        ':lang(ja)': "adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif",
+        ':lang(ko)': "adobe-clean-han-korean, source-han-korean, 'Malgun Gothic', 'Apple Gothic', sans-serif",
+        ':lang(zh)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
+        // TODO: are these fallbacks supposed to be different than above?
+        ':lang(zh-hant)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
+        ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif",
+      },
       serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
       mono: 'ui-monospace, Menlo, Monaco, Consalas, "Courier New", monospace'
     },
