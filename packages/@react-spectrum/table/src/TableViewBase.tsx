@@ -122,7 +122,8 @@ export interface TableContextValue<T> {
   onResize: (widths: Map<Key, ColumnSize>) => void,
   onResizeEnd: (widths: Map<Key, ColumnSize>) => void,
   headerMenuOpen: boolean,
-  setHeaderMenuOpen: (val: boolean) => void
+  setHeaderMenuOpen: (val: boolean) => void,
+  UNSTABLE_portalContainer: HTMLElement
 }
 
 export const TableContext = React.createContext<TableContextValue<unknown>>(null);

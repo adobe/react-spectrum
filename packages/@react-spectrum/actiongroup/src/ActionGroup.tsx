@@ -375,7 +375,8 @@ interface ActionGroupMenuProps<T> extends AriaLabelingProps {
   summaryIcon?: ReactNode,
   isOnlyItem?: boolean,
   orientation?: 'horizontal' | 'vertical',
-  onAction?: (key: Key) => void
+  onAction?: (key: Key) => void,
+  UNSTABLE_portalContainer?: HTMLElement
 }
 
 function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items, onAction, summaryIcon, hideButtonText, isOnlyItem, orientation, UNSTABLE_portalContainer, ...otherProps}: ActionGroupMenuProps<T>) {
