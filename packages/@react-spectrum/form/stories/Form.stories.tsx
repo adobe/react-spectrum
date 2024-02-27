@@ -745,3 +745,18 @@ export function ServerValidation() {
 ServerValidation.story = {
   parameters: {description: {data: 'This story is to test that server errors appear after submission, and are cleared when a field is modified.'}}
 };
+
+export let NumberFieldFormSubmit = {
+  render: () => {
+    return (
+      <Form
+        onSubmit={(e) => {
+          e.preventDefault();
+          action('submitted the form')();
+        }}>
+        <NumberField label="Number" name="number" />
+      </Form>
+    );
+  },
+  parameters: {description: {data: 'Try using "Enter" to submit the form from the NumberField. It should call an action in the actions panel.'}}
+};
