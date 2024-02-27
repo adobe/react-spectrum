@@ -162,6 +162,18 @@ export const DropzoneWithRenderProps = (props) => (
   </div>
 );
 
+export const DropzoneWithRenderPropsExample = {
+  args: {
+    isDisabled: true
+  },
+  argTypes: {
+    isDisabled: {control: 'boolean'}
+  },
+  render: (args) => (
+    <DropzoneWithRenderProps {...args} />
+  )
+};
+
 const Draggable = () => {
   let buttonRef = useRef(null);
   let {dragProps, isDragging} = useDrag({

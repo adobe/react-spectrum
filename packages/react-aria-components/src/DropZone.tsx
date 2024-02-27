@@ -42,11 +42,17 @@ export interface DropZoneRenderProps {
   isDropTarget: boolean
 }
 
-export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {}
+export interface DropZoneProps extends Omit<DropOptions, 'getDropOperationForPoint' | 'ref' | 'hasDropButton'>, HoverEvents, RenderProps<DropZoneRenderProps>, SlotProps, AriaLabelingProps {
+  /**
+   * Whether the dropzone is disabled.
+   */
+  isDisabled?: boolean
+}
 
 export const DropZoneContext = createContext<ContextValue<DropZoneProps, HTMLDivElement>>(null);
 
 function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
+  let {isDisabled} = props;
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
@@ -63,6 +69,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let labelProps = useLabels({'aria-labelledby': ariaLabelledby});
 
   let {clipboardProps} = useClipboard({
+    isDisabled,
     onPaste: (items) => props.onDrop?.({
       type: 'drop',
       items,
