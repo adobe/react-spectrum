@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {act, fireEvent, pointerMap, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, render, renderHook, screen, waitFor} from '@react-spectrum/test-utils';
 import {addWindowFocusTracking, useFocusVisible, useFocusVisibleListener} from '../';
 import {hasSetupGlobalListeners} from '../src/useFocusVisible';
 import {mergeProps} from '@react-aria/utils';
@@ -17,7 +17,6 @@ import React from 'react';
 import {render as ReactDOMRender} from 'react-dom';
 import {useButton} from '@react-aria/button';
 import {useFocusRing} from '@react-aria/focus';
-import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   const {isFocusVisible} = useFocusVisible();
@@ -61,11 +60,6 @@ function toggleBrowserWindow() {
 }
 
 describe('useFocusVisible', function () {
-  let user;
-
-  beforeAll(() => {
-    user = userEvent.setup({delay: null, pointerMap});
-  });
   beforeEach(() => {
     fireEvent.focus(document.body);
   });
