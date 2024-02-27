@@ -81,3 +81,22 @@ To internationalize an `Image`, a localized string should be passed to the `alt`
     objectFit="cover" />
 </Flex>
 ```
+
+### Error callback example
+
+```tsx example
+const {isImageMissing, setIsImageMissing} = useState(false);
+const DEFAULT_IMAGE = 'https://771623823872.png';
+
+const onErrorCallback = (err) => {
+  setIsImageMissing(true)
+}
+
+<Flex width="100%" height="200px">
+  <Image
+    src={ isImageMissing ? DEFAULT_IMAGE : "https://i.imgur.com/c3gTKSJ.jpg"}
+    alt="Eiffel Tower at sunset"
+    onError={onErrorCallback} />
+</Flex>
+```
+
