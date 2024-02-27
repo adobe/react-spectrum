@@ -11,6 +11,7 @@
  */
 
 import {DOMProps, StyleProps} from '@react-types/shared';
+import {ReactEventHandler} from 'react';
 
 export interface ImageProps {
   /**
