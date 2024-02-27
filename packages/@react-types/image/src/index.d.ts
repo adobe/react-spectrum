@@ -28,7 +28,7 @@ export interface ImageProps {
   /**
    * Callback - If an error occurs while loading or rendering an image.
    */
-  onError?: (err: any) => void
+  onError?: ReactEventHandler<HTMLImageElement>
 }
 
 export interface SpectrumImageProps extends ImageProps, DOMProps, StyleProps {
