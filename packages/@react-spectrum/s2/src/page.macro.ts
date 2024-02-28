@@ -10,6 +10,7 @@ export function generatePageStyles(this: any) {
     content: `html {
       color-scheme: light dark;
       background: ${weirdColorToken(tokens['background-base-color'])};
+      -webkit-tap-highlight-color: rgba(0,0,0,0); /* Prevent tap highlights */
     
       &[data-theme=light] {
         color-scheme: light;
