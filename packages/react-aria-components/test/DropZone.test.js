@@ -319,6 +319,8 @@ describe('DropZone', () => {
           </>
         );
         let dropzone = tree.getByTestId('disabled');
+        expect(dropzone).toHaveAttribute('data-disabled', 'true');
+
         let draggable = tree.getByText('Drag me');
         expect(dropzone).toHaveClass('react-aria-DropZone');
         expect(draggable).toHaveAttribute('draggable', 'true');
