@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import {Item, Menu, Section} from '../';
@@ -19,6 +19,7 @@ import {MenuContext} from '../src/context';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 let menuId = 'menu-id';
 
@@ -243,14 +244,15 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange}}
-    `('$Name supports using click to change item selection', function ({Component, props}) {
+    `('$Name supports using click to change item selection', async function ({Component, props}) {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
 
       // Trigger a menu item via press
       let item = menuItems[4];
-      triggerPress(item);
+      await user.click(item);
       expect(item).toHaveAttribute('aria-checked', 'true');
       let checkmark = within(item).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
@@ -267,14 +269,15 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{selectionMode: 'single', onSelectionChange, disabledKeys: ['Baz']}}
-    `('$Name supports disabled items', function ({Component, props}) {
+    `('$Name supports disabled items', async function ({Component, props}) {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
       let menuItems = within(menu).getAllByRole('menuitemradio');
 
       // Attempt to trigger the disabled item
       let disabledItem = menuItems[2];
-      triggerPress(disabledItem);
+      await user.click(disabledItem);
       expect(disabledItem).toHaveAttribute('aria-checked', 'false');
       expect(disabledItem).toHaveAttribute('aria-disabled', 'true');
 
@@ -291,7 +294,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple'}}
-    `('$Name supports selecting multiple items', function ({Component, props}) {
+    `('$Name supports selecting multiple items', async function ({Component, props}) {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
 
@@ -301,14 +305,14 @@ describe('Menu', function () {
 
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let firstItem = menuItems[3];
-      triggerPress(firstItem);
+      await user.click(firstItem);
       expect(firstItem).toHaveAttribute('aria-checked', 'true');
       let checkmark = within(firstItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
 
       // Select a different menu item
       let secondItem = menuItems[1];
-      triggerPress(secondItem);
+      await user.click(secondItem);
       expect(secondItem).toHaveAttribute('aria-checked', 'true');
       checkmark = within(secondItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
@@ -325,7 +329,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar']}}
-    `('$Name supports multiple defaultSelectedKeys (uncontrolled)', function ({Component, props}) {
+    `('$Name supports multiple defaultSelectedKeys (uncontrolled)', async function ({Component, props}) {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
 
@@ -350,7 +355,7 @@ describe('Menu', function () {
 
       // Select a different menu item
       let thirdItem = menuItems[4];
-      triggerPress(thirdItem);
+      await user.click(thirdItem);
       expect(thirdItem).toHaveAttribute('aria-checked', 'true');
       checkmark = within(thirdItem).getByRole('img', {hidden: true});
       expect(checkmark).toBeTruthy();
@@ -368,7 +373,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', selectedKeys: ['Foo', 'Bar']}}
-    `('$Name supports multiple selectedKeys (controlled)', function ({Component, props}) {
+    `('$Name supports multiple selectedKeys (controlled)', async function ({Component, props}) {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
 
@@ -393,7 +399,7 @@ describe('Menu', function () {
 
       // Select a different menu item
       let thirdItem = menuItems[4];
-      triggerPress(thirdItem);
+      await user.click(thirdItem);
       expect(thirdItem).toHaveAttribute('aria-checked', 'false');
       checkmark = within(thirdItem).queryByRole('img', {hidden: true});
       expect(checkmark).toBeNull();
@@ -409,7 +415,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar']}}
-    `('$Name supports deselection', function ({Component, props}) {
+    `('$Name supports deselection', async function ({Component, props}) {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
 
@@ -433,7 +440,7 @@ describe('Menu', function () {
       expect(checkmark).toBeTruthy();
 
       // Deselect the first item
-      triggerPress(firstItem);
+      await user.click(firstItem);
       expect(firstItem).toHaveAttribute('aria-checked', 'false');
       checkmark = within(firstItem).queryByRole('img', {hidden: true});
       expect(checkmark).toBeNull();
@@ -449,14 +456,15 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'multiple', defaultSelectedKeys: ['Foo', 'Bar'], disabledKeys: ['Baz']}}
-    `('$Name supports disabledKeys', function ({Component, props}) {
+    `('$Name supports disabledKeys', async function ({Component, props}) {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
 
       // Attempt to trigger disabled item
       let menuItems = within(menu).getAllByRole('menuitemcheckbox');
       let disabledItem = menuItems[2];
-      triggerPress(disabledItem);
+      await user.click(disabledItem);
 
       expect(disabledItem).toHaveAttribute('aria-checked', 'false');
       expect(disabledItem).toHaveAttribute('aria-disabled', 'true');
@@ -473,7 +481,8 @@ describe('Menu', function () {
     it.each`
       Name        | Component | props
       ${'Menu'}   | ${Menu}   | ${{onSelectionChange, selectionMode: 'none'}}
-    `('$Name prevents selection of any items', function ({Component, props}) {
+    `('$Name prevents selection of any items', async function ({Component, props}) {
+      let user = userEvent.setup({delay: null, pointerMap});
       let tree = renderComponent(Component, {}, props);
       let menu = tree.getByRole('menu');
 
@@ -486,7 +495,7 @@ describe('Menu', function () {
       let firstItem = menuItems[3];
       let secondItem = menuItems[4];
       let thirdItem = menuItems[1];
-      triggerPress(firstItem);
+      await user.click(firstItem);
       fireEvent.keyDown(secondItem, {key: ' ', code: 32, charCode: 32});
       fireEvent.keyDown(thirdItem, {key: 'Enter', code: 13, charCode: 13});
       expect(firstItem).not.toHaveAttribute('aria-checked', 'true');
@@ -559,7 +568,8 @@ describe('Menu', function () {
     });
   });
 
-  it('supports DialogTrigger as a wrapper around items', function () {
+  it('supports DialogTrigger as a wrapper around items', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let tree = render(
       <Provider theme={theme}>
         <Menu aria-label="menu" id={menuId} selectionMode="none">
@@ -578,8 +588,8 @@ describe('Menu', function () {
     let menu = tree.getByRole('menu');
     let menuItem = within(menu).getByRole('menuitem');
 
+    await user.click(menuItem);
     act(() => {
-      triggerPress(menuItem);
       jest.runAllTimers();
     });
 
@@ -596,7 +606,8 @@ describe('Menu', function () {
   });
 
   describe('supports onAction', function () {
-    it('Menu with static list supports onAction', function () {
+    it('Menu with static list supports onAction', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
       let onAction = jest.fn();
       let onSelectionChange = jest.fn();
       let tree = render(
@@ -617,22 +628,23 @@ describe('Menu', function () {
         within(menu).getByText('Three')
       ];
 
-      triggerPress(item1);
+      await user.click(item1);
       expect(onAction).toHaveBeenCalledWith('One');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
 
-      triggerPress(item2);
+      await user.click(item2);
       expect(onAction).toHaveBeenCalledWith('Two');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
 
-      triggerPress(item3);
+      await user.click(item3);
       expect(onAction).toHaveBeenCalledWith('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
 
-    it('Menu with generative list supports onAction', function () {
+    it('Menu with generative list supports onAction', async function () {
+      let user = userEvent.setup({delay: null, pointerMap});
       let onAction = jest.fn();
       let onSelectionChange = jest.fn();
       let flatItems = [
@@ -658,17 +670,17 @@ describe('Menu', function () {
         within(menu).getByText('Three')
       ];
 
-      triggerPress(item1);
+      await user.click(item1);
       expect(onAction).toHaveBeenCalledWith('One');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
 
-      triggerPress(item2);
+      await user.click(item2);
       expect(onAction).toHaveBeenCalledWith('Two');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
 
 
-      triggerPress(item3);
+      await user.click(item3);
       expect(onAction).toHaveBeenCalledWith('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(0);
     });
@@ -738,7 +750,8 @@ describe('Menu', function () {
 
   describe('supports links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
-      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', function (selectionMode) {
+      it.each(['none', 'single', 'multiple'])('with selectionMode = %s', async function (selectionMode) {
+        let user = userEvent.setup({delay: null, pointerMap});
         let onAction = jest.fn();
         let onSelectionChange = jest.fn();
         let tree = render(
@@ -766,7 +779,7 @@ describe('Menu', function () {
         window.addEventListener('click', onClick);
 
         if (type === 'mouse') {
-          triggerPress(items[1]);
+          await user.click(items[1]);
         } else {
           fireEvent.keyDown(items[1], {key: 'Enter'});
           fireEvent.keyUp(items[1], {key: 'Enter'});

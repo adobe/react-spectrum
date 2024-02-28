@@ -10,12 +10,14 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {Pressable, PressResponder} from '../';
 import React from 'react';
+import userEvent from '@testing-library/user-event';
 
 describe('PressResponder', function () {
-  it('should handle press events on nested pressable children', function () {
+  it('should handle press events on nested pressable children', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let onPress = jest.fn();
     let {getByRole} = render(
       <PressResponder onPress={onPress}>
@@ -26,9 +28,7 @@ describe('PressResponder', function () {
     );
 
     let button = getByRole('button');
-    fireEvent.mouseDown(button);
-    fireEvent.mouseUp(button);
-    fireEvent.click(button);
+    await user.click(button);
 
     expect(onPress).toHaveBeenCalledTimes(1);
   });
@@ -75,7 +75,8 @@ describe('PressResponder', function () {
     warn.mockRestore();
   });
 
-  it('should merge with existing props, not overwrite', function () {
+  it('should merge with existing props, not overwrite', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let onPress = jest.fn();
     let onClick = jest.fn();
     let {getByRole} = render(
@@ -89,9 +90,7 @@ describe('PressResponder', function () {
     );
 
     let button = getByRole('button');
-    fireEvent.mouseDown(button);
-    fireEvent.mouseUp(button);
-    fireEvent.click(button);
+    await user.click(button);
 
     expect(onPress).toHaveBeenCalledTimes(1);
     expect(onClick).toHaveBeenCalledTimes(1);

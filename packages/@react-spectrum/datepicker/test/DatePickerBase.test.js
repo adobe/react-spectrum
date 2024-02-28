@@ -10,12 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, render as render_, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, pointerMap, render as render_, simulateDesktop, within} from '@react-spectrum/test-utils-internal';
 import {CalendarDate, parseZonedDateTime} from '@internationalized/date';
 import {DatePicker, DateRangePicker} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 
 function pointerEvent(type, opts) {
   let evt = new Event(type, {bubbles: true, cancelable: true});
@@ -41,7 +42,7 @@ function render(el) {
 
 describe('DatePickerBase', function () {
   beforeAll(() => {
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    simulateDesktop();
   });
 
   afterAll(() => {
@@ -167,11 +168,12 @@ describe('DatePickerBase', function () {
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
-    `('$Name should focus placeholderValue in calendar', ({Component}) => {
+    `('$Name should focus placeholderValue in calendar', async ({Component}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let {getByRole} = render(<Component label="Date" placeholderValue={new CalendarDate(2019, 6, 5)} />);
 
       let button = getByRole('button');
-      triggerPress(button);
+      await user.click(button);
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-label', 'June 2019');
@@ -182,11 +184,12 @@ describe('DatePickerBase', function () {
       Name                   | Component          | props
       ${'DatePicker'}        | ${DatePicker}      | ${{defaultValue: new CalendarDate(2019, 7, 5)}}
       ${'DateRangePicker'}   | ${DateRangePicker} | ${{defaultValue: {start: new CalendarDate(2019, 7, 5), end: new CalendarDate(2019, 7, 10)}}}
-    `('$Name should focus selected date over placeholderValue', ({Component, props}) => {
+    `('$Name should focus selected date over placeholderValue', async ({Component, props}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let {getByRole} = render(<Component label="Date" {...props} placeholderValue={new CalendarDate(2019, 6, 5)} />);
 
       let button = getByRole('button');
-      triggerPress(button);
+      await user.click(button);
 
       let grid = getByRole('grid');
       expect(grid).toHaveAttribute('aria-label', 'July 2019');
@@ -239,7 +242,8 @@ describe('DatePickerBase', function () {
       Name                   | Component
       ${'DatePicker'}        | ${DatePicker}
       ${'DateRangePicker'}   | ${DateRangePicker}
-    `('$Name should open a calendar popover when clicking the button', ({Component}) => {
+    `('$Name should open a calendar popover when clicking the button', async ({Component}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let {getAllByRole} = render(
         <Provider theme={theme}>
           <Component label="Date" />
@@ -262,7 +266,7 @@ describe('DatePickerBase', function () {
       expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(button).not.toHaveAttribute('aria-controls');
 
-      triggerPress(button);
+      await user.click(button);
 
       let dialog = getAllByRole('dialog')[0];
       expect(dialog).toBeVisible();
@@ -373,7 +377,8 @@ describe('DatePickerBase', function () {
       Name                   | Component          | props
       ${'DatePicker'}        | ${DatePicker}      | ${{defaultValue: new CalendarDate(2021, 10, 3)}}
       ${'DateRangePicker'}   | ${DateRangePicker} | ${{defaultValue: {start: new CalendarDate(2021, 10, 3), end: new CalendarDate(2021, 10, 4)}}}
-    `('$Name should pass validationState and errorMessage to calendar', ({Component, props}) => {
+    `('$Name should pass validationState and errorMessage to calendar', async ({Component, props}) => {
+      let user = userEvent.setup({delay: null, pointerMap});
       let {getAllByRole} = render(
         <Provider theme={theme}>
           <Component {...props} label="Date" errorMessage="Selected dates cannot include weekends." validationState="invalid" />
@@ -385,7 +390,7 @@ describe('DatePickerBase', function () {
       expect(button).toHaveAttribute('aria-expanded', 'false');
       expect(button).not.toHaveAttribute('aria-controls');
 
-      triggerPress(button);
+      await user.click(button);
 
       let dialog = getAllByRole('dialog')[0];
       let grid = within(dialog).getByRole('grid');

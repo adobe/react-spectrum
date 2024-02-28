@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import {Button, FileTrigger, Link} from '../';
-import {pointerMap, render} from '@react-spectrum/test-utils';
+import {pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -95,9 +95,9 @@ describe('FileTrigger', () => {
         <Button>Upload Directory</Button>
       </FileTrigger>
     );
-  
+
     let input = document.querySelector('input[type="file"]');
     expect(input).toHaveAttribute('webkitdirectory');
   });
-  
+
 });

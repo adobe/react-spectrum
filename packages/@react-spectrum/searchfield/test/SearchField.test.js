@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import React from 'react';
 import {SearchField} from '../';
@@ -183,12 +183,13 @@ describe('Search', () => {
   it.each`
     Name                | Component
     ${'v3 SearchField'} | ${SearchField}
-  `('$Name clears the input field if the clear button is pressed and the field is uncontrolled', ({Component}) => {
+  `('$Name clears the input field if the clear button is pressed and the field is uncontrolled', async ({Component}) => {
+    let user = userEvent.setup({delay: null, pointerMap});
     let tree = renderComponent(Component, {defaultValue: inputText, onChange, onClear});
     let input = tree.getByTestId(testId);
     let clearButton = tree.getByLabelText('Clear search');
     expect(input.value).toBe(inputText);
-    triggerPress(clearButton);
+    await user.click(clearButton);
     expect(onChange).toBeCalledTimes(1);
 
     expect(onChange).toHaveBeenLastCalledWith('');

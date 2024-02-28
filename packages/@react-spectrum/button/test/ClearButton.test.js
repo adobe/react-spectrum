@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, render, triggerPress} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import {ClearButton} from '../';
 import React from 'react';
+import userEvent from '@testing-library/user-event';
 
 // NOTE: ClearButton doesn't use Button.tsx as a base and thus differs from v2 ClearButton in a couple ways
 // Refinement of ClearButton to be done later
@@ -27,11 +28,12 @@ describe('ClearButton', function () {
   it.each`
     Name                | Component      | props
     ${'v3 ClearButton'} | ${ClearButton} | ${{onPress: onPressSpy}}
-  `('$Name handles defaults', function ({Component, props}) {
+  `('$Name handles defaults', async function ({Component, props}) {
+    let user = userEvent.setup({delay: null, pointerMap});
     let {getByRole} = render(<Component {...props}>Click Me</Component>);
 
     let button = getByRole('button', {hidden: true});
-    triggerPress(button);
+    await user.click(button);
     expect(onPressSpy).toHaveBeenCalledTimes(1);
   });
 

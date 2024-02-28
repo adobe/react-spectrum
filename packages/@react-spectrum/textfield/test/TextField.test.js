@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils-internal';
 import {Button} from '@react-spectrum/button';
 import Checkmark from '@spectrum-icons/workflow/Checkmark';
 import {Form} from '@react-spectrum/form';

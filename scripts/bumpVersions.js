@@ -30,7 +30,7 @@ let levels = {
 // Packages never to release
 let excludedPackages = new Set([
   '@adobe/spectrum-css-temp',
-  '@react-spectrum/test-utils',
+  '@react-spectrum/test-utils-internal',
   '@spectrum-icons/build-tools',
   '@react-spectrum/docs'
 ]);

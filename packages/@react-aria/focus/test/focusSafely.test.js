@@ -11,7 +11,7 @@
  */
 
 
-import {act, render} from '@react-spectrum/test-utils';
+import {act, render} from '@react-spectrum/test-utils-internal';
 import {focusSafely} from '../';
 import React from 'react';
 import * as ReactAriaUtils from '../../utils/index';

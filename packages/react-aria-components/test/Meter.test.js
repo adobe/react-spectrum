@@ -12,7 +12,7 @@
 
 import {Label, Meter, MeterContext} from 'react-aria-components';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
+import {render} from '@react-spectrum/test-utils-internal';
 
 let TestMeter = (props) => (
   <Meter value={25} data-foo="bar" {...props}>

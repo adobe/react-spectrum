@@ -12,7 +12,7 @@
 
 // needs to be imported first
 import MatchMediaMock from 'jest-matchmedia-mock';
-import {renderHook} from '@react-spectrum/test-utils';
+import {renderHook} from '@react-spectrum/test-utils-internal';
 import {useColorScheme} from '../src/mediaQueries';
 
 let theme = {

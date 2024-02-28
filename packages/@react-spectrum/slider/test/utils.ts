@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent} from '@react-spectrum/test-utils';
+import {act, fireEvent} from '@react-spectrum/test-utils-internal';
 
 function pressKeyOnButton(key, button) {
   fireEvent.keyDown(button, {key});

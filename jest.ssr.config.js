@@ -36,8 +36,8 @@ module.exports = {
 
   testTimeout: 30000,
 
-  globalSetup: require.resolve('@react-spectrum/test-utils/src/ssrSetup'),
-  globalTeardown: require.resolve('@react-spectrum/test-utils/src/ssrTeardown'),
+  globalSetup: require.resolve('@react-spectrum/test-utils-internal/src/ssrSetup'),
+  globalTeardown: require.resolve('@react-spectrum/test-utils-internal/src/ssrTeardown'),
 
   // The test environment that will be used for testing
   testEnvironment: 'jsdom',

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, render} from '@react-spectrum/test-utils-internal';
 import {mergeProps, useTooltip, useTooltipTrigger} from 'react-aria';
 import React from 'react';
 import {useTooltipTriggerState} from '../src';
@@ -197,4 +197,3 @@ describe('useTooltipTriggerState', function () {
     });
   });
 });
-

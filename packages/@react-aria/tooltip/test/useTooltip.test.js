@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useInteractionModality} from '@react-aria/interactions';
 import {useTooltip, useTooltipTrigger} from '../';

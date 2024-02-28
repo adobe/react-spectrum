@@ -1173,3 +1173,21 @@ function renderEmptyState() {
   {[]}
 </ListView>
 ```
+
+## Testing
+
+The ListView features automatic virtualization and may need specific mocks in a test environment to enable said virtualization properly.
+It also features long press interactions on its rows depending on the row actions provided and if user is interacting with the list on
+a touch device. Please see the following sections in the testing docs for more information on how to handle these
+behaviors in your test suite.
+
+[Timers](./testing.html#timers)
+
+[Desktop vs Mobile](./testing.html#desktop-vs-mobile)
+
+[Virtualized Components](./testing.html#virtualized-components)
+
+[Long press](./testing.html#simulating-user-long-press)
+
+Please also refer to [React Spectrum's test suite](https://github.com/adobe/react-spectrum/blob/main/packages/%40react-spectrum/list/test/ListView.test.js) if you find that the above
+isn't sufficient when resolving issues in your own test cases.

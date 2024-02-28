@@ -12,7 +12,7 @@
 
 import {Illustration} from '../';
 import React from 'react';
-import {render} from '@react-spectrum/test-utils';
+import {render} from '@react-spectrum/test-utils-internal';
 
 let CustomIllustration = (props) => <svg {...props}><path d="M 10,150 L 70,10 L 130,150 z" /></svg>;
 
@@ -27,7 +27,7 @@ describe('Illustration', function () {
     expect(illustration).toHaveAttribute('focusable', 'false');
     expect(illustration).toHaveAttribute('aria-label', 'custom illustration');
   });
-  
+
   it.each`
     Name      | Component
     ${'Illustration'} | ${Illustration}

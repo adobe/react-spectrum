@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, waitFor} from '@react-spectrum/test-utils';
+import {act, pointerMap, render, simulateMobile, waitFor} from '@react-spectrum/test-utils-internal';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
@@ -18,10 +18,14 @@ import {Item, Menu, MenuTrigger, Section} from '@react-spectrum/menu';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
+import userEvent from '@testing-library/user-event';
 import {watchModals} from '../';
 
 describe('watchModals', () => {
+  let user;
+
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
   });
 
@@ -44,9 +48,7 @@ describe('watchModals', () => {
     expect(queryByRole('separator')).toBeNull();
 
     expect(document.activeElement).toBe(modal);
-
-    fireEvent.keyDown(modal, {key: 'Escape'});
-    fireEvent.keyUp(modal, {key: 'Escape'});
+    await user.keyboard('{Escape}');
 
     act(() => {
       jest.runAllTimers();
@@ -73,9 +75,7 @@ describe('watchModals', () => {
       </>
     );
     expect(getByRole('separator')).toBeVisible();
-    act(() => {
-      triggerPress(getByLabelText('Trigger'));
-    });
+    await user.click(getByLabelText('Trigger'));
     act(() => {
       jest.runAllTimers();
     });
@@ -106,9 +106,7 @@ describe('watchModals', () => {
     );
     // expect just the button labeled Trigger, and open the first dialog
     expect(getByRole('separator')).toBeVisible();
-    act(() => {
-      triggerPress(getByLabelText('Trigger'));
-    });
+    await user.click(getByLabelText('Trigger'));
     act(() => {
       jest.runAllTimers();
     });
@@ -123,9 +121,7 @@ describe('watchModals', () => {
     let buttons = getAllByRole('button');
     expect(buttons.length).toBe(1);
     expect(buttons[0]).toBe(getByLabelText('Nested Trigger'));
-    act(() => {
-      triggerPress(getByLabelText('Nested Trigger'));
-    });
+    await user.click(getByLabelText('Nested Trigger'));
     act(() => {
       jest.runAllTimers();
     });
@@ -139,8 +135,8 @@ describe('watchModals', () => {
     expect(queryByRole('separator')).toBeNull();
 
     // start closing dialogs
-    fireEvent.keyDown(innerDialog, {key: 'Escape'});
-    fireEvent.keyUp(innerDialog, {key: 'Escape'});
+    await user.keyboard('{Escape}');
+
     act(() => {
       jest.runAllTimers();
     });
@@ -155,8 +151,7 @@ describe('watchModals', () => {
     expect(queryByRole('separator')).toBeNull();
 
     // close the outer dialog
-    fireEvent.keyDown(dialog, {key: 'Escape'});
-    fireEvent.keyUp(dialog, {key: 'Escape'});
+    await user.keyboard('{Escape}');
     act(() => {
       jest.runAllTimers();
     });
@@ -196,9 +191,8 @@ describe('watchModals', () => {
       </>
     );
     expect(getByRole('separator')).toBeVisible();
-    act(() => {
-      triggerPress(getByLabelText('Trigger'));
-    });
+    await user.click(getByLabelText('Trigger'));
+
     act(() => {
       jest.runAllTimers();
     });
@@ -215,7 +209,7 @@ describe('watchModals', () => {
       ]}
     ];
     // menu should be a tray
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
+    simulateMobile();
     watchModals();
     let {getByLabelText, getByRole, queryByRole} = render(
       <>
@@ -235,9 +229,7 @@ describe('watchModals', () => {
       </>
     );
     expect(getByRole('separator')).toBeVisible();
-    act(() => {
-      triggerPress(getByLabelText('Trigger'));
-    });
+    await user.click(getByLabelText('Trigger'));
     act(() => {
       jest.runAllTimers();
     });
@@ -259,9 +251,7 @@ describe('watchModals', () => {
       </>
     );
     expect(getByRole('separator')).toBeVisible();
-    act(() => {
-      triggerPress(getByLabelText('Trigger'));
-    });
+    await user.click(getByLabelText('Trigger'));
     act(() => {
       jest.runAllTimers();
     });

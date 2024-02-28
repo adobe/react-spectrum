@@ -10,9 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, render} from '@react-spectrum/test-utils';
+import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useKeyboard} from '../';
+import userEvent from '@testing-library/user-event';
 
 function Example(props) {
   let {keyboardProps} = useKeyboard(props);
@@ -20,7 +21,8 @@ function Example(props) {
 }
 
 describe('useKeyboard', function () {
-  it('should handle keyboard events', function () {
+  it('should handle keyboard events', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let events = [];
     let addEvent = (e) => events.push({type: e.type, target: e.target});
     let tree = render(
@@ -30,8 +32,8 @@ describe('useKeyboard', function () {
     );
 
     let el = tree.getByTestId('example');
-    fireEvent.keyDown(el, {key: 'A'});
-    fireEvent.keyUp(el, {key: 'A'});
+    act(() => el.focus());
+    await user.keyboard('A');
 
     expect(events).toEqual([
       {type: 'keydown', target: el},
@@ -39,7 +41,8 @@ describe('useKeyboard', function () {
     ]);
   });
 
-  it('should not handle events when disabled', function () {
+  it('should not handle events when disabled', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let events = [];
     let addEvent = (e) => events.push({type: e.type, target: e.target});
     let tree = render(
@@ -50,13 +53,14 @@ describe('useKeyboard', function () {
     );
 
     let el = tree.getByTestId('example');
-    fireEvent.keyDown(el, {key: 'A'});
-    fireEvent.keyUp(el, {key: 'A'});
+    act(() => el.focus());
+    await user.keyboard('A');
 
     expect(events).toEqual([]);
   });
 
-  it('events do not bubble by default', function () {
+  it('events do not bubble by default', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let onWrapperKeyDown = jest.fn();
     let onWrapperKeyUp = jest.fn();
     let onInnerKeyDown = jest.fn();
@@ -70,8 +74,8 @@ describe('useKeyboard', function () {
     );
 
     let el = tree.getByTestId('example');
-    fireEvent.keyDown(el, {key: 'A'});
-    fireEvent.keyUp(el, {key: 'A'});
+    act(() => el.focus());
+    await user.keyboard('A');
 
     expect(onInnerKeyDown).toHaveBeenCalledTimes(1);
     expect(onInnerKeyUp).toHaveBeenCalledTimes(1);
@@ -79,7 +83,8 @@ describe('useKeyboard', function () {
     expect(onWrapperKeyUp).not.toHaveBeenCalled();
   });
 
-  it('events bubble when continuePropagation is called', function () {
+  it('events bubble when continuePropagation is called', async function () {
+    let user = userEvent.setup({delay: null, pointerMap});
     let onWrapperKeyDown = jest.fn();
     let onWrapperKeyUp = jest.fn();
     let onInnerKeyDown = jest.fn(e => e.continuePropagation());
@@ -93,8 +98,8 @@ describe('useKeyboard', function () {
     );
 
     let el = tree.getByTestId('example');
-    fireEvent.keyDown(el, {key: 'A'});
-    fireEvent.keyUp(el, {key: 'A'});
+    act(() => el.focus());
+    await user.keyboard('A');
 
     expect(onInnerKeyDown).toHaveBeenCalledTimes(1);
     expect(onInnerKeyUp).toHaveBeenCalledTimes(1);
