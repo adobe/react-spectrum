@@ -93,9 +93,13 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let parser = useMemo(() => new NumberParser(locale, {maximumFractionDigits: 0}), [locale]);
 
   let backspace = () => {
+    if (segment.text === segment.placeholder) {
+      focusManager.focusPrevious();
+    }
     if (parser.isValidPartialNumber(segment.text) && !state.isReadOnly && !segment.isPlaceholder) {
       let newValue = segment.text.slice(0, -1);
       let parsed = parser.parse(newValue);
+      newValue = parsed === 0 ? '' : newValue;
       if (newValue.length === 0 || parsed === 0) {
         state.clearSegment(segment.type);
       } else {

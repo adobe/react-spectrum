@@ -27,7 +27,7 @@ export interface FocusableProviderProps extends DOMAttributes {
 }
 
 interface FocusableContextValue extends FocusableProviderProps {
-  ref?: MutableRefObject<FocusableElement>
+  ref?: MutableRefObject<FocusableElement | null>
 }
 
 let FocusableContext = React.createContext<FocusableContextValue | null>(null);

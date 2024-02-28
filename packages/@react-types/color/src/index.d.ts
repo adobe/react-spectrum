@@ -102,7 +102,10 @@ export interface ColorFieldProps extends Omit<ValueBase<string | Color | null>, 
   onChange?: (color: Color | null) => void
 }
 
-export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {}
+export interface AriaColorFieldProps extends ColorFieldProps, AriaLabelingProps, FocusableDOMProps, Omit<TextInputDOMProps, 'minLength' | 'maxLength' | 'pattern' | 'type' | 'inputMode' | 'autoComplete'>, AriaValidationProps {
+  /** Enables or disables changing the value with scroll. */
+  isWheelDisabled?: boolean
+}
 
 export interface SpectrumColorFieldProps extends SpectrumTextInputBase, Omit<AriaColorFieldProps, 'isInvalid' | 'validationState'>, SpectrumFieldValidation<Color | null>, SpectrumLabelableProps, StyleProps {
   /** Whether the ColorField should be displayed with a quiet style. */

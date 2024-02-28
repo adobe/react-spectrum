@@ -7,6 +7,7 @@
     "type": "git",
     "url": "https://github.com/adobe/react-spectrum"
   },
+  "packageManager": "yarn@1.22.19",
   "scripts": {
     "check-types": "tsc && tsc-strict",
     "install-16": "yarn add -W react@^16.8.0 react-dom@^16.8.0 @testing-library/react@^12 @testing-library/react-hooks@^8 @testing-library/dom@^8",
@@ -23,7 +24,7 @@
     "start:docs": "DOCS_ENV=dev parcel 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "build:docs": "DOCS_ENV=staging parcel build 'packages/@react-{spectrum,aria,stately}/*/docs/*.mdx' 'packages/react-aria-components/docs/**/*.mdx' 'packages/@internationalized/*/docs/*.mdx' 'packages/dev/docs/pages/**/*.mdx'",
     "test": "cross-env STRICT_MODE=1 yarn jest",
-    "test-loose": "yarn jest",
+    "test-loose": "cross-env VIRT_ON=1 yarn jest",
     "test-storybook": "test-storybook --url http://localhost:9003  --browsers chromium --no-cache",
     "build": "make build",
     "test:ssr": "cross-env STRICT_MODE=1 yarn jest --config jest.ssr.config.js",
@@ -168,7 +169,7 @@
     "sinon": "^7.3.1",
     "storybook-dark-mode": "^1.1.1-canary.120.3843.0",
     "tailwind-variants": "^0.1.18",
-    "tailwindcss": "^3.2.2",
+    "tailwindcss": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
     "tempy": "^0.5.0",
     "typescript": "5.2.2",

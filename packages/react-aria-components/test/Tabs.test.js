@@ -13,7 +13,7 @@
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
-import {TabsExample} from '../stories/index.stories';
+import {TabsExample} from '../stories/Tabs.stories';
 import userEvent from '@testing-library/user-event';
 
 let renderTabs = (tabsProps, tablistProps, tabProps, tabpanelProps) => render(
@@ -77,6 +77,21 @@ describe('Tabs', () => {
 
     let tabpanel = getByRole('tabpanel');
     expect(tabpanel).toHaveAttribute('data-test', 'tabpanel');
+  });
+
+  it('should support aria props on the tabs', () => {
+    let {getAllByRole} = renderTabs({}, {}, {
+      'aria-label': 'label',
+      'aria-labelledby': 'labelledby',
+      'aria-describedby': 'describedby',
+      'aria-details': 'details'
+    }, {});
+    for (let tab of getAllByRole('tab')) {
+      expect(tab).toHaveAttribute('aria-label', 'label');
+      expect(tab).toHaveAttribute('aria-labelledby', 'labelledby');
+      expect(tab).toHaveAttribute('aria-describedby', 'describedby');
+      expect(tab).toHaveAttribute('aria-details', 'details');
+    }
   });
 
   it('should support render props', () => {

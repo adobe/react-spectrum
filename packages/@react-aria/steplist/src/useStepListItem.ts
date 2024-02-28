@@ -51,7 +51,7 @@ export function useStepListItem<T>(props: AriaStepListItemProps, state: StepList
       event.stopPropagation();
     }
 
-    itemProps.onKeyDown(event);
+    itemProps.onKeyDown?.(event);
   };
 
   return {

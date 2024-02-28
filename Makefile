@@ -109,13 +109,13 @@ build:
 
 website:
 	yarn build:docs --public-url /reactspectrum/$$(git rev-parse HEAD)/docs --dist-dir dist/$$(git rev-parse HEAD)/docs
+	cp packages/dev/docs/pages/disallow-robots.txt dist/$$(git rev-parse HEAD)/docs/robots.txt
 
 website-production:
 	node scripts/buildWebsite.js $$PUBLIC_URL
 	cp packages/dev/docs/pages/robots.txt dist/production/docs/robots.txt
-	$(MAKE) starter
-	cd starters/docs && zip -r react-aria-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
-	mv starters/docs/react-aria-starter.zip dist/production/docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
+	$(MAKE) starter-zip
+	$(MAKE) tailwind-starter
 
 check-examples:
 	node scripts/extractExamples.mjs
@@ -124,3 +124,18 @@ check-examples:
 starter:
 	node scripts/extractStarter.mjs
 	cd starters/docs && yarn && yarn tsc
+
+starter-zip: starter
+	cp LICENSE starters/docs/.
+	cd starters/docs && zip -r react-aria-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	mv starters/docs/react-aria-starter.zip dist/production/docs/react-aria-starter.$$(git rev-parse --short HEAD).zip
+	cd starters/docs && yarn build-storybook
+	mv starters/docs/storybook-static dist/production/docs/react-aria-starter
+
+tailwind-starter:
+	cp LICENSE starters/tailwind/.
+	cd starters/tailwind && yarn && yarn tsc
+	cd starters/tailwind && zip -r react-aria-tailwind-starter.zip . -x .gitignore .DS_Store "node_modules/*" "storybook-static/*"
+	mv starters/tailwind/react-aria-tailwind-starter.zip dist/production/docs/react-aria-tailwind-starter.$$(git rev-parse --short HEAD).zip
+	cd starters/tailwind && yarn build-storybook
+	mv starters/tailwind/storybook-static dist/production/docs/react-aria-tailwind-starter
