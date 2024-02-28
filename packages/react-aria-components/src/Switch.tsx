@@ -62,7 +62,7 @@ export interface SwitchRenderProps {
 
 export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
-function Switch(props: SwitchProps & {inputRef: RefObject<HTMLInputElement>}, ref: ForwardedRef<HTMLLabelElement>) {
+function Switch(props: SwitchProps & {inputRef?: RefObject<HTMLInputElement>}, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, SwitchContext);
   let {
     inputRef: userInputRef

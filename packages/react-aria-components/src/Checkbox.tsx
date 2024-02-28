@@ -159,7 +159,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
 
 export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLLabelElement>>(null);
 
-function Checkbox(props: CheckboxProps & {inputRef: RefObject<HTMLInputElement>}, ref: ForwardedRef<HTMLLabelElement>) {
+function Checkbox(props: CheckboxProps & {inputRef?: RefObject<HTMLInputElement>}, ref: ForwardedRef<HTMLLabelElement>) {
   [props, ref] = useContextProps(props, ref, CheckboxContext);
   let {
     inputRef: userInputRef
