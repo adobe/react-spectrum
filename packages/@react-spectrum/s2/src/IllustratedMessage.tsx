@@ -18,6 +18,7 @@ import {IllustrationContext} from './Illustration';
 import {mergeStyles} from '../style-macro/runtime';
 import {HeadingContext, Provider} from 'react-aria-components';
 import {ContentContext} from './Content';
+import {ButtonGroupContext} from './ButtonGroup';
 
 interface S2SpectrumIllustratedMessageProps extends Omit<SpectrumIllustratedMessageProps, 'className' | 'style' | 'children'>, IllustratedMessageStyleProps {
   className?: string,
@@ -124,6 +125,11 @@ const content = style<IllustratedMessageStyleProps>({
   alignSelf: 'start'
 });
 
+const buttonGroup = style({
+  gridArea: 'buttonGroup',
+  marginTop: 4
+});
+
 interface IllustratedMessageContextProps extends Omit<S2SpectrumIllustratedMessageProps, 'children'> {
   isInDropZone?: boolean,
   isDropTarget?: boolean
@@ -156,7 +162,8 @@ export function IllustratedMessage(props: S2SpectrumIllustratedMessageProps) {
         values={[
           [HeadingContext, {className: heading({orientation, size})}],
           [ContentContext, {className: content({orientation, size})}],
-          [IllustrationContext, {className: illustration({orientation, size, isInDropZone, isDropTarget})}]
+          [IllustrationContext, {className: illustration({orientation, size, isInDropZone, isDropTarget})}],
+          [ButtonGroupContext, {className: buttonGroup()}]
         ]}>
         {children}
       </Provider>

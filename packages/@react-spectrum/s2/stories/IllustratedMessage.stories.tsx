@@ -1,10 +1,10 @@
 import type {Meta} from '@storybook/react';
 import {IllustratedMessage} from '../src/IllustratedMessage';
 import {Button} from '../src/Button';
-import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 import {Illustration} from '../src/Illustration';
 import Cloud from '../spectrum-illustrations/Cloud.svg';
 import {Heading, Content} from '../src/Content';
+import {ButtonGroup} from '../src/ButtonGroup';
 
 const meta: Meta<typeof IllustratedMessage> = {
   component: IllustratedMessage,
@@ -30,11 +30,10 @@ export const Example = (args: any) => (
     </Heading>
     <Content>
       Illustrated message description. Give more information about what a user can do, expect, or how to make items appear.    </Content>
-    {/* TODO: Swap out div with ButtonGroup */}
-    <div className={style({display: 'flex', gridArea: 'buttonGroup', alignSelf: 'start', gap: 2, marginTop: 4})()} >
+    <ButtonGroup>
       <Button variant="secondary" >Label</Button>
       <Button variant="accent" >Label</Button>
-    </div>
+    </ButtonGroup>
   </IllustratedMessage>
 );
 
