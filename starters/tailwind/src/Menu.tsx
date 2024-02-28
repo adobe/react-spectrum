@@ -27,7 +27,7 @@ export function Menu<T extends object>(props: MenuProps<T>) {
 export function MenuItem(props: MenuItemProps) {
   return (
     <AriaMenuItem {...props} className={dropdownItemStyles}>
-      {composeRenderProps(props.children, (children, {selectionMode, isSelected}) => <>
+      {composeRenderProps(props.children, (children, {selectionMode, isSelected, hasSubmenu}) => <>
         {selectionMode !== 'none' && (
           <span className="flex items-center w-4">
             {isSelected && <Check aria-hidden className="w-4 h-4" />}
@@ -36,6 +36,9 @@ export function MenuItem(props: MenuItemProps) {
         <span className="flex items-center flex-1 gap-2 font-normal truncate group-selected:font-semibold">
           {children}
         </span>
+        {hasSubmenu && (
+          <ChevronRight aria-hidden className="absolute w-4 h-4 right-2" />
+        )}
       </>)}
     </AriaMenuItem>
   );
