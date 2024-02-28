@@ -20,10 +20,10 @@
   display: flex;
   pointer-events: none;
   outline: none;
+  margin-block-end: 8px;
 
   .spectrum-Toast {
-    position: absolute;
-    margin: 16px;
+    margin: 8px;
     pointer-events: all;
   }
 
