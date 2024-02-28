@@ -53,47 +53,47 @@ export const Example: Story = {
 };
 
 const messages = {
-  "ar-AR": {
-    "button": "يحرر",
-    "copy": "ينسخ",
-    "cut": "يقطع",
-    "paste": "معجون"
+  'ar-AR': {
+    'button': 'يحرر',
+    'copy': 'ينسخ',
+    'cut': 'يقطع',
+    'paste': 'معجون'
   },
-  "en-US": {
-    "button": "Edit",
-    "copy": "Copy",
-    "cut": "Cut",
-    "paste": "Paste"
+  'en-US': {
+    'button': 'Edit',
+    'copy': 'Copy',
+    'cut': 'Cut',
+    'paste': 'Paste'
   },
-  "he-IL": {
-    "button": "לַעֲרוֹך",
-    "copy": "עותק",
-    "cut": "גזירה",
-    "paste": "לְהַדבִּיק"
+  'he-IL': {
+    'button': 'לַעֲרוֹך',
+    'copy': 'עותק',
+    'cut': 'גזירה',
+    'paste': 'לְהַדבִּיק'
   },
-  "ja-JP": {
-    "button": "編集",
-    "copy": "コピー",
-    "cut": "切る",
-    "paste": "ペースト"
+  'ja-JP': {
+    'button': '編集',
+    'copy': 'コピー',
+    'cut': '切る',
+    'paste': 'ペースト'
   },
-  "ko-KR": {
-    "button": "편집하다",
-    "copy": "복사",
-    "cut": "자르다",
-    "paste": "반죽"
+  'ko-KR': {
+    'button': '편집하다',
+    'copy': '복사',
+    'cut': '자르다',
+    'paste': '반죽'
   },
-  "zh-CN": {
-    "button": "编辑",
-    "copy": "复制",
-    "cut": "切",
-    "paste": "粘贴"
+  'zh-CN': {
+    'button': '编辑',
+    'copy': '复制',
+    'cut': '切',
+    'paste': '粘贴'
   },
-  "zh-TW": {
-    "button": "編輯",
-    "copy": "複製",
-    "cut": "切",
-    "paste": "粘貼"
+  'zh-TW': {
+    'button': '編輯',
+    'copy': '複製',
+    'cut': '切',
+    'paste': '粘貼'
   }
 };
 
@@ -160,4 +160,4 @@ export const Fonts: Story = {
       </div>
     );
   }
-}
+};

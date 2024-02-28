@@ -165,8 +165,8 @@ const spacing = {
   'pill': 'calc(self(height, self(minHeight)) / 2)'
 };
 
-const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch: string}} = 
-  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) => 
+const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch: string}} =
+  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
     [k, {default: v, touch: parseFloat(v) * 1.25 + v.match(/[^0-9.]+/)![0]}])
   ) as any;
 
@@ -405,7 +405,7 @@ export const style = createTheme({
       },
       disabled: colorToken(tokens['disabled-border-color'])
         // forcedColors: 'GrayText'
-      
+
     }),
     outlineColor: createColorProperty({
       ...color,
@@ -537,7 +537,7 @@ export const style = createTheme({
         ':lang(zh)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
         // TODO: are these fallbacks supposed to be different than above?
         ':lang(zh-hant)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
-        ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif",
+        ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
       },
       serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
       mono: 'ui-monospace, Menlo, Monaco, Consalas, "Courier New", monospace'
@@ -678,7 +678,6 @@ export const style = createTheme({
     animationFillMode: ['none', 'forwards', 'backwards', 'both'] as const,
     animationIterationCount: createArbitraryProperty((value: string) => ({animationIterationCount: value})),
     animationTimingFunction: timingFunction,
-    animationIterationCount: ['infinite', 'once'] as const,
 
     // layout
     display: ['block', 'inline-block', 'inline', 'flex', 'inline-flex', 'grid', 'inline-grid', 'contents', 'list-item', 'none'] as const, // tables?
