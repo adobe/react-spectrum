@@ -56,7 +56,7 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DropZoneContext);
   let buttonRef = useRef<HTMLButtonElement>(null);
   let {dropProps, dropButtonProps, isDropTarget} = useDrop({...props, ref: buttonRef, hasDropButton: true});
-  let {buttonProps} = useButton(dropButtonProps, buttonRef);
+  let {buttonProps} = useButton(dropButtonProps || {}, buttonRef);
   let {hoverProps, isHovered} = useHover(props);
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
