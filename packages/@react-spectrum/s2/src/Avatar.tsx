@@ -1,6 +1,4 @@
-import {focusRing} from './style-utils' with { type: 'macro' };
 import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
-import {useFocusRing} from 'react-aria';
 import {useRef} from 'react';
 
 import ColorAvatar from '../avatars/avatar_color_16';
@@ -40,7 +38,6 @@ export interface AvatarStyleProps {
 }
 
 const imageStyles = style({
-  ...focusRing(),
   borderRadius: 'full',
   size: {
     default: 5,
@@ -86,19 +83,16 @@ export function Avatar(props: AvatarStyleProps) {
     generic,
     ...otherProps
   } = props;
-  let {isFocusVisible, focusProps} = useFocusRing();
 
   let SvgAvatar = generic ? genericAvatars[generic] : 'img';
 
   return (
     <SvgAvatar
       {...otherProps}
-      {...focusProps}
       ref={ref}
-      tabIndex={isDisabled ? undefined : 1}
       alt={alt}
       role="img"
-      className={imageStyles({isDisabled, size: String(size), isFocusVisible: !isDisabled && isFocusVisible})}
+      className={imageStyles({isDisabled, size: String(size)})}
       src={!generic ? src : undefined} />
   );
 } 
