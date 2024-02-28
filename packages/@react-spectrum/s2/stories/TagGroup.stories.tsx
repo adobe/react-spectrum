@@ -3,13 +3,18 @@ import {action} from '@storybook/addon-actions';
 import NewIcon from '../s2wf-icons/assets/react/s2IconNew20N';
 import {Icon} from '../src/Icon';
 import {Text} from 'react-aria-components';
+import {Link} from '../src/Link';
 
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof TagGroup> = {
   component: TagGroup,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=715%3A2687'
+    }
   },
   args: {
     onRemove: undefined,
@@ -40,12 +45,6 @@ export let Example = {
   },
   args: {
     label: 'Ice cream flavor'
-  },
-  parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=715%3A2687'
-    }
   }
 };
 
@@ -66,20 +65,14 @@ export let Disabled = {
   },
   args: {
     label: 'Ice cream flavor'
-  },
-  parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=715%3A2687'
-    }
   }
 };
 
-// TODO: when there is Link component, also style for light/dark?
+// TODO: Style for light/dark?
 function renderEmptyState() {
   return (
     <span>
-      No categories. Put a link here to add some.
+      No categories. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.
     </span>
   );
 }
@@ -95,11 +88,21 @@ export let Empty = {
   },
   args: {
     label: 'Ice cream flavor'
+  }
+};
+
+export let Links = {
+  render: (args: any) => {
+    return (
+      <TagGroup {...args} disabledKeys={new Set(['google'])}>
+        <Tag id="adobe" href="https://adobe.com">Adobe</Tag>
+        <Tag id="google">Google</Tag>
+        <Tag id="apple" href="https://apple.com">Apple</Tag>
+      </TagGroup>
+    );
   },
-  parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=715%3A2687'
-    }
+  args: {
+    label: 'Tags as links',
+    selectionMode: 'none'
   }
 };

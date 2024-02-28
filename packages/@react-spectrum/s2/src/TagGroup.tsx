@@ -28,10 +28,9 @@ export interface TagGroupProps<T>
   extends
     Omit<AriaTagGroupProps, 'children'>,
     Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>,
-    SpectrumLabelableProps {
+    Omit<SpectrumLabelableProps, 'isRequired'> {
   label?: string,
   description?: string,
-  errorMessage?: string,
   size?: 'S' | 'M' | 'L',
   isEmphasized?: boolean
 }
@@ -42,11 +41,9 @@ export function TagGroup<T extends object>(
   {
     label,
     description,
-    errorMessage,
     items,
     labelPosition = 'top',
     labelAlign = 'start',
-    isRequired,
     children,
     renderEmptyState,
     isEmphasized,
@@ -66,7 +63,7 @@ export function TagGroup<T extends object>(
         ...field(),
         '--field-gap': {
           type: 'rowGap',
-          value: '[calc(var(--field-height) - 1lh)]'
+          value: '[calc((var(--field-height) - 1lh) / 2)]'
         }
       })({
         size: props.size,
@@ -75,7 +72,6 @@ export function TagGroup<T extends object>(
       })}>
       <FieldLabel
         size={size}
-        isRequired={isRequired}
         labelPosition={labelPosition}
         labelAlign={labelAlign}
         necessityIndicator={props.necessityIndicator}>
@@ -104,7 +100,8 @@ export function TagGroup<T extends object>(
                 marginX: {
                   default: '-1', // use negative number when theme TS is ready
                   isEmpty: 0
-                }
+                },
+                fontFamily: 'sans'
               })({isEmpty})}>
               {children}
             </TagList>
@@ -113,9 +110,7 @@ export function TagGroup<T extends object>(
       </div>
       <HelpText
         size={size}
-        description={description}>
-        {errorMessage}
-      </HelpText>
+        description={description} />
     </AriaTagGroup>
   );
 }
@@ -146,10 +141,7 @@ const tagStyles = style({
     default: 'neutral',
     isSelected: {
       default: 'gray-25',
-      isEmphasized: {
-        default: 'gray-25',
-        dark: 'gray-1000'
-      }
+      isEmphasized: 'white'
     },
     isDisabled: 'disabled',
     forcedColors: {
@@ -169,7 +161,10 @@ const tagStyles = style({
   paddingY: 0,
   margin: 1,
   borderRadius: 'control',
-  cursor: 'default',
+  cursor: {
+    default: 'default',
+    isLink: 'pointer'
+  },
   '--iconMargin': {
     type: 'marginTop',
     value: {
@@ -182,13 +177,14 @@ export function Tag({children, ...props}: RSPTagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   let {size = 'M', isEmphasized} = useContext(TagGroupContext);
   let ref = useRef(null);
+  let isLink = props.href != null;
   return (
     <AriaTag
       textValue={textValue}
       {...props}
       ref={ref}
       style={pressScale(ref)}
-      className={renderProps => tagStyles({...renderProps, size, isEmphasized})} >
+      className={renderProps => tagStyles({...renderProps, size, isEmphasized, isLink})} >
       {composeRenderProps(children, (children, {allowsRemoving, isDisabled}) => (
         <>
           <div
