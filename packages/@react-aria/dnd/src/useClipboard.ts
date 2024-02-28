@@ -69,7 +69,6 @@ export function useClipboard(options: ClipboardProps): ClipboardResult {
   let {isDisabled} = options;
   let isFocusedRef = useRef(false);
   let {focusProps} = useFocus({
-    isDisabled,
     onFocusChange: (isFocused) => {
       isFocusedRef.current = isFocused;
     }

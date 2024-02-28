@@ -10,7 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, DragEvent, HTMLAttributes,  RefObject, useRef, useState} from 'react';
+import {AriaButtonProps} from '@react-types/button';
+import {DragEvent, HTMLAttributes,  RefObject, useRef, useState} from 'react';
 import * as DragManager from './DragManager';
 import {DragTypes, globalAllowedDropOperations, globalDndState, readFromDataTransfer, setGlobalDnDState, setGlobalDropEffect} from './utils';
 import {DROP_EFFECT_TO_DROP_OPERATION, DROP_OPERATION, DROP_OPERATION_ALLOWED, DROP_OPERATION_TO_DROP_EFFECT} from './constants';
@@ -59,7 +60,7 @@ export interface DropResult {
   /** Whether the drop target is currently focused or hovered. */
   isDropTarget: boolean,
   /** Props for the explicit drop button affordance, if any. */
-  dropButtonProps?: ButtonHTMLAttributes<HTMLButtonElement>
+  dropButtonProps?: AriaButtonProps
 }
 
 const DROP_ACTIVATE_TIMEOUT = 800;
@@ -337,7 +338,7 @@ export function useDrop(options: DropOptions): DropResult {
   if (isDisabled) {
     return {
       dropProps: {},
-      dropButtonProps: {disabled: true},
+      dropButtonProps: {isDisabled: true},
       isDropTarget: false
     };
   }
