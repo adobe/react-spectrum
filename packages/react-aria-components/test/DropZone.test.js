@@ -517,9 +517,9 @@ describe('DropZone', () => {
     });
 
     it('should not allow paste into the dropzone if disabled', async () => {
-      let tree = render(
+      let {rerender, getByRole} = render(
         <>
-          <DropZone isDisabled data-testid="disabled" onDrop={onDrop}>
+          <DropZone isDisabled onDrop={onDrop}>
             <Text slot="label">
               Cannot paste here
             </Text>
@@ -527,13 +527,43 @@ describe('DropZone', () => {
         </>
       );
   
-      let dropzone = tree.getByTestId('disabled');
+      let button = getByRole('button');
+      await user.tab();
+      expect(document.activeElement).not.toBe(button);
+
+      rerender(
+        <DropZone onDrop={onDrop}>
+          <Text slot="label">
+            Can paste here now
+          </Text>
+        </DropZone>
+      );
+
+      button = getByRole('button');
+
       let clipboardData = new DataTransfer();
+      await user.tab();
+      expect(document.activeElement).toBe(button);
+
       clipboardData.items.add('hello world', 'text/plain');
 
-      fireEvent.paste(dropzone, {clipboardData});
-      expect(onDrop).not.toHaveBeenCalled();
+      let allowDefaultPaste = fireEvent(button, new ClipboardEvent('beforepaste', {clipboardData}));
+      expect(allowDefaultPaste).toBe(false);
+
+      fireEvent(button, new ClipboardEvent('paste', {clipboardData}));
+
+      expect(onDrop).toHaveBeenCalledTimes(1);
+      expect(onDrop).toHaveBeenCalledWith(
+        {
+          type: 'drop',
+          x: 0,
+          y: 0,
+          dropOperation: 'copy',
+          items: expect.any(Array)
+        }
+      );
+
+      expect(await onDrop.mock.calls[0][0].items[0].getText('text/plain')).toBe('hello world');
     });
-  
   });
 });
