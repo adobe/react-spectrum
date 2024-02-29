@@ -60,7 +60,6 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
   };
 
   useEvent(windowRef, 'pointerup', endDragging);
-  useEvent(windowRef, 'pointercancel', endDragging);
 
   // Also stop range selection on blur, e.g. tabbing away from the calendar.
   res.calendarProps.onBlur = e => {
