@@ -136,7 +136,7 @@ export const DropzoneExampleWithCopyableObject = (props) => (
   </div>
 );
 
-export const DropzoneWithRenderProps = (props) => (
+const DropzoneWithRenderPropsExample = (props) => (
   <div>
     <Draggable />
     <Copyable />
@@ -161,6 +161,18 @@ export const DropzoneWithRenderProps = (props) => (
     </DropZone>
   </div>
 );
+
+export const DropzoneWithRenderProps = {
+  args: {
+    isDisabled: false
+  },
+  argTypes: {
+    isDisabled: {control: 'boolean'}
+  },
+  render: (args) => (
+    <DropzoneWithRenderPropsExample {...args} />
+  )
+};
 
 const Draggable = () => {
   let buttonRef = useRef(null);
