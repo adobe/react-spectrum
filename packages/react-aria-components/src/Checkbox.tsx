@@ -13,7 +13,7 @@ import {AriaCheckboxGroupProps, AriaCheckboxProps, HoverEvents, mergeProps, useC
 import {CheckboxGroupState, useCheckboxGroupState, useToggleState} from 'react-stately';
 import {ContextValue, forwardRefType, Provider, RACValidation, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef} from 'react';
 import {TextContext} from './Text';
@@ -160,12 +160,14 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
 export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLLabelElement>>(null);
 
 function Checkbox(props: CheckboxProps & {inputRef?: RefObject<HTMLInputElement>}, ref: ForwardedRef<HTMLLabelElement>) {
-  [props, ref] = useContextProps(props, ref, CheckboxContext);
   let {
-    inputRef: userInputRef
+    inputRef: userProvidedInputRef,
+    ...otherProps
   } = props;
+  [props, ref] = useContextProps(otherProps, ref, CheckboxContext);
   let groupState = useContext(CheckboxGroupStateContext);
   let defaultInputRef = useRef<HTMLInputElement>(null);
+  let userInputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef));
   let inputRef = userInputRef || defaultInputRef;
   let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks

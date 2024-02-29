@@ -12,7 +12,7 @@
 
 import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwitch, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
@@ -63,11 +63,13 @@ export interface SwitchRenderProps {
 export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
 function Switch(props: SwitchProps & {inputRef?: RefObject<HTMLInputElement>}, ref: ForwardedRef<HTMLLabelElement>) {
-  [props, ref] = useContextProps(props, ref, SwitchContext);
   let {
-    inputRef: userInputRef
+    inputRef: userProvidedInputRef,
+    ...otherProps
   } = props;
+  [props, ref] = useContextProps(otherProps, ref, SwitchContext);
   let defaultInputRef = useRef<HTMLInputElement>(null);
+  let userInputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef));
   let inputRef = userInputRef || defaultInputRef;
   let state = useToggleState(props);
   let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed} = useSwitch({
