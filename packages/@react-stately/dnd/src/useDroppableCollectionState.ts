@@ -115,6 +115,7 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
   return {
     collection,
     selectionManager,
+    isDisabled,
     target,
     setTarget(newTarget) {
       if (this.isDropTarget(newTarget)) {

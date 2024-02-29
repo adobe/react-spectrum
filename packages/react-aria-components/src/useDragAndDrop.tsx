@@ -63,13 +63,7 @@ interface DropHooks {
   ListDropTargetDelegate: typeof ListDropTargetDelegate
 }
 
-export type DragAndDropHooks = DragHooks & DropHooks & {
-  /**
-   * Determines whether drag and drop functionality is disabled for the collection.
-   * If set to true, both dragging items out of and dropping items into the collection are disabled.
-   */
-  isDisabled?: boolean
-};
+export type DragAndDropHooks = DragHooks & DropHooks
 
 export interface DragAndDrop {
   /** Drag and drop hooks for the collection element.  */
@@ -113,13 +107,8 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       getItems,
       renderDragPreview,
       renderDropIndicator,
-      dropTargetDelegate,
-      isDisabled
+      dropTargetDelegate
     } = options;
-
-    if (isDisabled) {
-      options.acceptedDragTypes = [];
-    }
 
     let isDraggable = !!getItems;
     let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
@@ -148,7 +137,6 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       hooks.dropTargetDelegate = dropTargetDelegate;
       hooks.ListDropTargetDelegate = ListDropTargetDelegate;
     }
-    hooks.isDisabled = isDisabled;
 
     return hooks;
   }, [options]);
