@@ -5,12 +5,13 @@ import {
   CheckboxProps as AriaCheckboxProps,
   ValidationResult
 } from 'react-aria-components';
-import React, {useContext} from 'react';
+import React, {useContext, forwardRef} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {FieldLabel, HelpText} from './Field';
-import {SpectrumLabelableProps, Orientation} from '@react-types/shared';
+import {SpectrumLabelableProps, Orientation, DOMRef} from '@react-types/shared';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {field} from './style-utils' with {type: 'macro'};
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children'>, SpectrumLabelableProps {
   children?: React.ReactNode,
@@ -21,7 +22,7 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'childr
   orientation?: Orientation
 }
 
-export function CheckboxGroup(props: CheckboxGroupProps) {
+function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
@@ -36,10 +37,12 @@ export function CheckboxGroup(props: CheckboxGroupProps) {
     orientation = 'vertical',
     ...groupProps
   } = props;
+  let domRef = useDOMRef(ref);
 
   return (
     <AriaCheckboxGroup 
       {...groupProps}
+      ref={domRef}
       className={style({
         ...field(),
         // Double the usual gap because of the internal padding within checkbox that spectrum has.
@@ -93,3 +96,6 @@ export function CheckboxGroup(props: CheckboxGroupProps) {
     </AriaCheckboxGroup>
   );
 }
+
+let _CheckboxGroup = forwardRef(CheckboxGroup);
+export {_CheckboxGroup as CheckboxGroup};

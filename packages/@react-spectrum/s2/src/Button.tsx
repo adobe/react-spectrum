@@ -1,9 +1,11 @@
 import {ButtonContext, ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext, Provider, useContextProps} from 'react-aria-components';
 import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {focusRing} from './style-utils' with {type: 'macro'};
-import {ReactNode, useRef} from 'react';
+import {ReactNode, forwardRef} from 'react';
 import {mergeStyles} from '../style-macro/runtime';
 import {pressScale} from './pressScale';
+import {FocusableRef} from '@react-types/shared';
+import {useFocusableRef} from '@react-spectrum/utils';
 
 interface ButtonStyleProps {
   variant?: 'primary' | 'secondary' | 'accent' | 'negative',
@@ -213,14 +215,15 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   forcedColorAdjust: 'none'
 });
 
-export function Button(props: ButtonProps) {
-  let ref = useRef<HTMLButtonElement | null>(null);
-  [props, ref] = useContextProps(props, ref, ButtonContext);
+function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+  let domRef = useFocusableRef(ref);
+  [props, domRef] = useContextProps(props, domRef, ButtonContext);
+  
   return (
     <RACButton
       {...props}
-      ref={ref}
-      style={pressScale(ref)}
+      ref={domRef}
+      style={pressScale(domRef)}
       className={renderProps => mergeStyles(props.className, button({
         ...renderProps,
         variant: props.variant || 'primary',
@@ -228,7 +231,7 @@ export function Button(props: ButtonProps) {
         size: props.size || 'M',
         staticColor: props.staticColor
       }))}>
-      <Provider
+      <Provider 
         values={[
           [TextContext, {className: style({paddingY: '--labelPadding'})()}]
         ]}>
@@ -237,3 +240,6 @@ export function Button(props: ButtonProps) {
     </RACButton>
   );
 }
+
+let _Button = forwardRef(Button);
+export {_Button as Button};

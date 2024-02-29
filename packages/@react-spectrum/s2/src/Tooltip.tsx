@@ -6,8 +6,10 @@ import {
   TooltipProps as AriaTooltipProps,
   TooltipRenderProps
 } from 'react-aria-components';
-import React, {useRef} from 'react';
+import React, {forwardRef} from 'react';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface TooltipProps extends Omit<AriaTooltipProps, 'children'> {
   className?: string,
@@ -113,12 +115,12 @@ const arrowStyles = style<TooltipRenderProps>({
   }
 });
 
-export function Tooltip({children, ...props}: TooltipProps) {
-  let ref = useRef(null);
+function Tooltip({children, ...props}: TooltipProps, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
   return (
     <AriaTooltip
       {...props}
-      ref={ref}
+      ref={domRef}
       className={renderProps => mergeStyles(props.className, tooltip({...renderProps}))}>
       {renderProps => (
         <>
@@ -135,3 +137,7 @@ export function Tooltip({children, ...props}: TooltipProps) {
     </AriaTooltip>
   );
 }
+
+let _Tooltip = forwardRef(Tooltip);
+export {_Tooltip as Tooltip};
+

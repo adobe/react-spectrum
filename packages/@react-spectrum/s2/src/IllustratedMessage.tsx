@@ -11,13 +11,15 @@
  */
 
 import {filterDOMProps} from '@react-aria/utils';
-import {ReactNode, useRef, useContext, createContext} from 'react';
+import {ReactNode, forwardRef, useContext, createContext} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {IllustrationContext} from './Illustration';
 import {mergeStyles} from '../style-macro/runtime';
 import {HeadingContext, Provider} from 'react-aria-components';
 import {ContentContext} from './Content';
+import {DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
 import {ButtonGroupContext} from './ButtonGroup';
 
 interface S2SpectrumIllustratedMessageProps extends Omit<SpectrumIllustratedMessageProps, 'className' | 'style' | 'children'>, IllustratedMessageStyleProps {
@@ -137,14 +139,15 @@ interface IllustratedMessageContextProps extends Omit<S2SpectrumIllustratedMessa
 
 export const IllustratedMessageContext = createContext<IllustratedMessageContextProps | null>(null);
 
-export function IllustratedMessage(props: S2SpectrumIllustratedMessageProps) {
+function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     orientation = 'horizontal',
     size = 'M',
     ...otherProps
   } = props;
-  let ref = useRef(null);
+
+  let domRef = useDOMRef(ref);
 
   let ctx = useContext(IllustratedMessageContext);
   let isInDropZone = !!ctx;
@@ -157,7 +160,7 @@ export function IllustratedMessage(props: S2SpectrumIllustratedMessageProps) {
         size: props.size || 'M',
         orientation: props.orientation || 'horizontal'
       }))}
-      ref={ref}>
+      ref={domRef}>
       <Provider 
         values={[
           [HeadingContext, {className: heading({orientation, size})}],
@@ -170,3 +173,6 @@ export function IllustratedMessage(props: S2SpectrumIllustratedMessageProps) {
     </div>
   );
 }
+
+let _IllustratedMessage = forwardRef(IllustratedMessage);
+export {_IllustratedMessage as IllustratedMessage};

@@ -1,19 +1,21 @@
 import {ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps} from 'react-aria-components';
 import {pressScale} from './pressScale';
-import {useRef} from 'react';
+import {forwardRef} from 'react';
 import {ActionButtonStyleProps, styles} from './ActionButton';
+import {FocusableRef} from '@react-types/shared';
+import {useFocusableRef} from '@react-spectrum/utils';
 
 interface ToggleButtonProps extends RACToggleButtonProps, ActionButtonStyleProps {
   isEmphasized?: boolean
 }
 
-export function ToggleButton(props: ToggleButtonProps) {
-  let ref = useRef(null);
+function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+  let domRef = useFocusableRef(ref);
   return (
     <RACToggleButton 
       {...props}
-      ref={ref}
-      style={pressScale(ref)}
+      ref={domRef}
+      style={pressScale(domRef)}
       className={renderProps => styles({
         ...renderProps,
         staticColor: props.staticColor,
@@ -23,3 +25,7 @@ export function ToggleButton(props: ToggleButtonProps) {
       })} />
   );
 }
+
+let _ToggleButton = forwardRef(ToggleButton);
+export {_ToggleButton as ToggleButton};
+

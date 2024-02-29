@@ -1,6 +1,8 @@
-import {useRef} from 'react';
+import {forwardRef} from 'react';
 import {Separator as RACSeparator, SeparatorProps as RACSeparatorProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
 
 /*
  * Adding as it's own type to deal with size being a part of the theme so we
@@ -22,13 +24,13 @@ interface DividerSpectrumProps {
 
 interface DividerProps extends DividerSpectrumProps, RACSeparatorProps {}
 
-export function Divider(props: DividerProps) {
-  let ref = useRef(null);
+function Divider(props: DividerProps, ref: DOMRef) {
+  let domRef = useDOMRef(ref);
 
   return (
     <RACSeparator
       {...props}
-      ref={ref}
+      ref={domRef}
       className={style<DividerSpectrumProps>({
         alignSelf: 'stretch', /* hr elements are given a default margin, reset it so that flex can work */
         backgroundColor: {
@@ -80,3 +82,6 @@ export function Divider(props: DividerProps) {
       })({size: props.size || 'M', orientation: props.orientation || 'horizontal', staticColor: props.staticColor})} />
   );
 }
+
+let _Divider = forwardRef(Divider);
+export {_Divider as Divider};

@@ -5,7 +5,9 @@ import {
 } from 'react-aria-components';
 import CrossIcon from '../ui-icons/S2_CrossSize100.svg';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-
+import {FocusableRef} from '@react-types/shared';
+import {useFocusableRef} from '@react-spectrum/utils';
+import {forwardRef} from 'react';
 
 interface ClearButtonStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
@@ -14,10 +16,13 @@ interface ClearButtonStyleProps {
 interface ClearButtonRenderProps extends ButtonRenderProps, ClearButtonStyleProps {}
 interface ClearButtonProps extends ButtonProps, ClearButtonStyleProps {}
 
-export function ClearButton(props: ClearButtonProps) {
+function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+  let domRef = useFocusableRef(ref);
+
   return (
     <Button
       {...props}
+      ref={domRef}
       className={renderProps => style<ClearButtonRenderProps>({
         display: 'flex',
         alignItems: 'center',
@@ -48,3 +53,6 @@ export function ClearButton(props: ClearButtonProps) {
     </Button>
   );
 }
+
+let _ClearButton = forwardRef(ClearButton);
+export {_ClearButton as ClearButton};

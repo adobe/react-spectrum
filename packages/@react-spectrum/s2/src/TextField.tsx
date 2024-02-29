@@ -5,14 +5,18 @@ import {
   ValidationResult,
   composeRenderProps,
   TextAreaContext,
-  useSlottedContext
+  useSlottedContext,
+  InputContext,
+  Provider
 } from 'react-aria-components';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {field} from './style-utils' with {type: 'macro'};
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {SpectrumLabelableProps} from '@react-types/shared';
-import {useContext} from 'react';
+import {useContext, Ref, forwardRef, useRef, useImperativeHandle} from 'react';
 import {FormContext, useFormProps} from './Form';
+import {TextFieldRef} from '@react-types/textfield';
+import {createFocusableRef} from '@react-spectrum/utils';
 
 export interface TextFieldProps extends AriaTextFieldProps, SpectrumLabelableProps {
   label?: string,
@@ -21,28 +25,39 @@ export interface TextFieldProps extends AriaTextFieldProps, SpectrumLabelablePro
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export function TextField(props: TextFieldProps) {
+function TextField(props: TextFieldProps, ref: Ref<TextFieldRef>) {
   return (
-    <TextFieldBase {...props}>
+    <_TextFieldBase 
+      {...props}
+      ref={ref}>
       <Input />
-    </TextFieldBase>
+    </_TextFieldBase>
   );
 }
 
-export function TextArea(props: TextFieldProps) {
+let _TextField = forwardRef(TextField);
+export {_TextField as TextField};
+
+function TextArea(props: TextFieldProps, ref: Ref<TextFieldRef>) {
   return (
-    <TextFieldBase 
+    <_TextFieldBase 
       {...props}
+      ref={ref}
       fieldGroupClassName={style({
         alignItems: 'baseline',
         height: 'auto'
       })()}>
       <TextAreaInput />
-    </TextFieldBase>
+    </_TextFieldBase>
   );
 }
 
-function TextFieldBase(props: TextFieldProps & {fieldGroupClassName?: string}) {
+let _TextArea = forwardRef(TextArea);
+export {_TextArea as TextArea};
+
+function TextFieldBase(props: TextFieldProps & {fieldGroupClassName?: string}, ref: Ref<TextFieldRef>) {
+  let inputRef = useRef<HTMLInputElement>(null);
+  let domRef = useRef<HTMLDivElement>(null);
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
@@ -56,9 +71,24 @@ function TextFieldBase(props: TextFieldProps & {fieldGroupClassName?: string}) {
     ...textFieldProps
   } = props;
 
+  // Expose imperative interface for ref
+  useImperativeHandle(ref, () => ({
+    ...createFocusableRef(domRef, inputRef),
+    select() {
+      if (inputRef.current) {
+        inputRef.current.select();
+      }
+    },
+    getInputElement() {
+      return inputRef.current;
+    }
+  }));
+
+
   return (
     <AriaTextField 
       {...textFieldProps}
+      ref={domRef}
       className={style(field())({
         size: props.size,
         labelPosition,
@@ -76,7 +106,10 @@ function TextFieldBase(props: TextFieldProps & {fieldGroupClassName?: string}) {
         </FieldLabel>
         {/* TODO: set GroupContext in RAC TextField */}
         <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size} className={fieldGroupClassName}>
-          {children}
+          <Provider
+            values={[[InputContext, {ref: inputRef}]]}>
+            {children}
+          </Provider>
           {isInvalid && <FieldErrorIcon />}
         </FieldGroup>
         <HelpText 
@@ -90,6 +123,9 @@ function TextFieldBase(props: TextFieldProps & {fieldGroupClassName?: string}) {
     </AriaTextField>
   );
 }
+
+let _TextFieldBase = forwardRef(TextFieldBase);
+export {_TextFieldBase as TextFieldBase};
 
 function TextAreaInput() {
   // Force re-render when value changes so we update the height.

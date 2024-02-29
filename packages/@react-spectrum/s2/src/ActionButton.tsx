@@ -1,8 +1,10 @@
-import {useRef} from 'react';
 import {ButtonProps, ButtonRenderProps, Button as RACButton} from 'react-aria-components';
 import {baseColor, style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
 import {focusRing} from './style-utils' with { type: 'macro' };
+import {FocusableRef} from '@react-types/shared';
+import {useFocusableRef} from '@react-spectrum/utils';
+import {forwardRef} from 'react';
 
 export interface ActionButtonStyleProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
@@ -124,13 +126,14 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
   }
 });
 
-export function ActionButton(props: ActionButtonProps) {
-  let ref = useRef(null);
+function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+  let domRef = useFocusableRef(ref);
+
   return (
     <RACButton
       {...props}
-      ref={ref}
-      style={pressScale(ref, props.style)}
+      ref={domRef}
+      style={pressScale(domRef, props.style)}
       className={renderProps => styles({
         ...renderProps,
         staticColor: props.staticColor,
@@ -139,3 +142,6 @@ export function ActionButton(props: ActionButtonProps) {
       })} />
   );
 }
+
+let _ActionButton = forwardRef(ActionButton);
+export {_ActionButton as ActionButton};

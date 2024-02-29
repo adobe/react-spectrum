@@ -1,7 +1,8 @@
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {createContext, useContext} from 'react';
-import {SpectrumLabelableProps} from '@react-types/shared';
+import {createContext, useContext, forwardRef} from 'react';
+import {SpectrumLabelableProps, DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
 
 interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'contextualHelp'> {
   size?: 'S' | 'M' | 'L' | 'XL',
@@ -21,12 +22,14 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
   return props;
 }
 
-export function Form(props: FormProps) {
+function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
   let {labelPosition = 'top', labelAlign, necessityIndicator, isRequired, isDisabled, isEmphasized, size, ...formProps} = props;
+  let domRef = useDOMRef(ref);
 
   return (
     <RACForm 
       {...formProps}
+      ref={domRef}
       className={style({
         display: 'grid',
         gridTemplateColumns: {
@@ -53,3 +56,6 @@ export function Form(props: FormProps) {
     </RACForm>
   );
 }
+
+let _Form = forwardRef(Form);
+export {_Form as Form};

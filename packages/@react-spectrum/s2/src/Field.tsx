@@ -6,7 +6,9 @@ import AlertIcon from '../s2wf-icons/assets/react/s2IconAlertTriangle20N.js';
 import {Icon} from './Icon';
 import {mergeStyles} from '../style-macro/runtime';
 import {CenterBaseline, centerBaselineBefore} from './CenterBaseline';
-import {NecessityIndicator, Alignment} from '@react-types/shared';
+import {NecessityIndicator, Alignment, DOMRef} from '@react-types/shared';
+import {forwardRef, ForwardedRef} from 'react';
+import {useDOMRef} from '@react-spectrum/utils';
 
 interface FieldLabelProps extends LabelProps {
   isDisabled?: boolean,
@@ -19,7 +21,7 @@ interface FieldLabelProps extends LabelProps {
   staticColor?: 'white' | 'black'
 }
 
-export function FieldLabel(props: FieldLabelProps) {
+function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
   let {
     isDisabled,
     isRequired,
@@ -32,9 +34,12 @@ export function FieldLabel(props: FieldLabelProps) {
     ...labelProps
   } = props;
 
+  let domRef = useDOMRef(ref);
+
   return (
     <Label
       {...labelProps}
+      ref={domRef}
       className={mergeStyles(
         style({
           gridArea: 'label',
@@ -108,6 +113,9 @@ export function FieldLabel(props: FieldLabelProps) {
   );
 }
 
+let _FieldLabel = forwardRef(FieldLabel);
+export {_FieldLabel as FieldLabel};
+
 interface FieldGroupProps extends GroupProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
@@ -178,10 +186,11 @@ export function FieldGroup(props: FieldGroupProps) {
   );
 }
 
-export function Input(props: InputProps) {
+function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <RACInput
       {...props}
+      ref={ref}
       className={composeRenderProps(props.className, (className, renderProps) => mergeStyles(style<InputRenderProps>({
         padding: 0,
         backgroundColor: 'transparent',
@@ -195,6 +204,9 @@ export function Input(props: InputProps) {
       })(renderProps), className))} />
   );
 }
+
+let _Input = forwardRef(Input);
+export {_Input as Input};
 
 interface HelpTextProps extends FieldErrorProps {
   size?: 'S' | 'M' | 'L' | 'XL',
@@ -221,11 +233,14 @@ const helpTextStyles = style({
   paddingTop: '--field-gap'
 });
 
-export function HelpText(props: HelpTextProps) {
+export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDivElement>, errorRef?: DOMRef<HTMLDivElement>}) {
+  let domDescriptionRef = useDOMRef(props.descriptionRef || null);
+  let domErrorRef = useDOMRef(props.errorRef || null);
   if (!props.isInvalid && props.description) {
     return (
       <Text
         slot="description"
+        ref={domDescriptionRef}
         className={helpTextStyles({size: props.size || 'M', isDisabled: props.isDisabled})}>
         {props.description}
       </Text>
@@ -235,6 +250,7 @@ export function HelpText(props: HelpTextProps) {
   return (
     <FieldError
       {...props}
+      ref={domErrorRef}
       className={renderProps => helpTextStyles({...renderProps, size: props.size || 'M', isDisabled: props.isDisabled})}>
       {composeRenderProps(props.children, (children, {validationErrors}) => (<>
         {props.showErrorIcon &&

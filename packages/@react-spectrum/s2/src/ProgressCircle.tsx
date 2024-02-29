@@ -1,9 +1,11 @@
 import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {clamp, useObjectRef} from '@react-aria/utils';
+import {clamp} from '@react-aria/utils';
 import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
 import {mergeStyles} from '../style-macro/runtime';
 import {ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
-import React, {CSSProperties, ForwardedRef} from 'react';
+import React, {CSSProperties} from 'react';
+import {DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface ProgressCircleStyleProps {
   size?: 'S' | 'M' | 'L',
@@ -429,7 +431,7 @@ interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'st
   UNSAFE_className?: string
 }
 
-function ProgressCircle(props: ProgressCircleProps, ref: ForwardedRef<HTMLDivElement>) {
+function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
   let {
     value = 0,
     minValue = 0,
@@ -441,7 +443,7 @@ function ProgressCircle(props: ProgressCircleProps, ref: ForwardedRef<HTMLDivEle
     'aria-labelledby': ariaLabelledby,
     UNSAFE_className
   } = props;
-  let domRef = useObjectRef(ref);
+  let domRef = useDOMRef(ref);
 
   value = clamp(value, minValue, maxValue);
 

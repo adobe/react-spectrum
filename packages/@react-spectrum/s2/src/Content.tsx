@@ -1,5 +1,7 @@
 import {ForwardedRef, HTMLAttributes, ImgHTMLAttributes, createContext, forwardRef} from 'react';
 import {Heading as RACHeading, HeadingProps, Header as RACHeader, useContextProps} from 'react-aria-components';
+import {DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
 
 // TODO: export these types from RAC?
 interface SlottedValue<T> {
@@ -27,13 +29,14 @@ export {_Heading as Heading};
 
 export const HeaderContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
-function Header(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
-  [props, ref] = useContextProps(props, ref, HeaderContext);
+function Header(props: HTMLAttributes<HTMLElement>, ref: DOMRef) {
+  let domRef = useDOMRef(ref);
+  [props, domRef] = useContextProps(props, domRef, HeaderContext);
   if (props.hidden) {
     return null;
   }
 
-  return <RACHeader {...props} ref={ref} />;
+  return <RACHeader {...props} ref={domRef} />;
 }
 
 const _Header = forwardRef(Header);
@@ -41,12 +44,13 @@ export {_Header as Header};
 
 export const ContentContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLDivElement>>({});
 
-function Content(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLDivElement>) {
-  [props, ref] = useContextProps(props, ref, ContentContext);
+function Content(props: HTMLAttributes<HTMLElement>, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
+  [props, domRef] = useContextProps(props, domRef, ContentContext);
   if (props.hidden) {
     return null;
   }
-  return <div {...props} ref={ref} />;
+  return <div {...props} ref={domRef} />;
 }
 
 const _Content = forwardRef(Content);
@@ -54,12 +58,13 @@ export {_Content as Content};
 
 export const FooterContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
-function Footer(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLElement>) {
-  [props, ref] = useContextProps(props, ref, FooterContext);
+function Footer(props: HTMLAttributes<HTMLElement>, ref: DOMRef) {
+  let domRef = useDOMRef(ref);
+  [props, domRef] = useContextProps(props, domRef, FooterContext);
   if (props.hidden) {
     return null;
   }
-  return <footer {...props} ref={ref} />;
+  return <footer {...props} ref={domRef} />;
 }
 
 const _Footer = forwardRef(Footer);
@@ -67,8 +72,9 @@ export {_Footer as Footer};
 
 export const ImageContext = createContext<ContextValue<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>>({});
 
-function Image(props: ImgHTMLAttributes<HTMLImageElement>, ref: ForwardedRef<HTMLImageElement>) {
-  [props, ref] = useContextProps(props, ref, ImageContext);
+function Image(props: ImgHTMLAttributes<HTMLImageElement>, ref: DOMRef<HTMLImageElement>) {
+  let domRef = useDOMRef(ref);
+  [props, domRef] = useContextProps(props, domRef, ImageContext);
   if (props.hidden) {
     return null;
   }
@@ -81,7 +87,7 @@ function Image(props: ImgHTMLAttributes<HTMLImageElement>, ref: ForwardedRef<HTM
     );
   }
 
-  return <img alt={props.alt} {...props} ref={ref} />;
+  return <img alt={props.alt} {...props} ref={domRef} />;
 }
 
 const _Image = forwardRef(Image);

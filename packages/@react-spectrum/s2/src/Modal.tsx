@@ -1,6 +1,9 @@
 import {Modal as RACModal, ModalOverlay, ModalOverlayProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
+import {DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
+import {forwardRef} from 'react';
 
 interface ModalProps extends ModalOverlayProps {
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
@@ -28,7 +31,9 @@ const fadeAndSlide = keyframes(`
   }
 `);
 
-export function Modal(props: ModalProps) {
+function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
+  
   return (
     <ModalOverlay
       {...props}
@@ -55,6 +60,7 @@ export function Modal(props: ModalProps) {
       })}>
       <RACModal
         {...props}
+        ref={domRef}
         className={renderProps => style({
           display: 'flex',
           flexDirection: 'column',
@@ -121,3 +127,7 @@ export function Modal(props: ModalProps) {
     </ModalOverlay>
   );
 }
+
+let _Modal = forwardRef(Modal);
+export {_Modal as Modal};
+

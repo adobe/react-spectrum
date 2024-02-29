@@ -12,17 +12,16 @@ import {
 import {field, focusRing} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
-import {SpectrumLabelableProps} from '@react-types/shared';
+import {SpectrumLabelableProps, DOMRef} from '@react-types/shared';
 import {ClearButton} from './ClearButton';
 import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
-import {createContext, useContext, useRef} from 'react';
-
+import {createContext, useContext, useRef, forwardRef} from 'react';
+import {useDOMRef} from '@react-spectrum/utils';
 
 // Get types from RSP and extend those?
 
 interface RSPTagProps extends TagProps {}
-
 
 export interface TagGroupProps<T>
   extends
@@ -37,7 +36,7 @@ export interface TagGroupProps<T>
 
 const TagGroupContext = createContext<TagGroupProps<any>>({});
 
-export function TagGroup<T extends object>(
+function TagGroup<T extends object>(
   {
     label,
     description,
@@ -48,17 +47,20 @@ export function TagGroup<T extends object>(
     renderEmptyState,
     isEmphasized,
     ...props
-  }: TagGroupProps<T>
+  }: TagGroupProps<T>,
+  ref: DOMRef<HTMLDivElement>
 ) {
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {size = 'M'} = props;
+  let domRef = useDOMRef(ref);
 
   // TODO collapse behavior, need a custom collection render so we can limit the number of children
   // but this isn't possible yet
   return (
     <AriaTagGroup
       {...props}
+      ref={domRef}
       className={style({
         ...field(),
         '--field-gap': {
@@ -114,6 +116,9 @@ export function TagGroup<T extends object>(
     </AriaTagGroup>
   );
 }
+
+let _TagGroup = forwardRef(TagGroup);
+export {_TagGroup as TagGroup};
 
 const tagStyles = style({
   ...focusRing(),

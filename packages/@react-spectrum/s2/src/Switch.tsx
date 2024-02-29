@@ -3,13 +3,15 @@ import {
   SwitchProps as AriaSwitchProps,
   SwitchRenderProps
 } from 'react-aria-components';
-import React, {useContext, useRef} from 'react';
+import React, {useContext, useRef, forwardRef} from 'react';
 import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {CenterBaseline} from './CenterBaseline';
 import {pressScale} from './pressScale';
 import {focusRing} from './style-utils' with {type: 'macro'};
 import {mergeStyles} from '../style-macro/runtime';
+import {FocusableRef} from '@react-types/shared';
+import {useFocusableRef} from '@react-spectrum/utils';
 
 interface SwitchStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
@@ -125,13 +127,15 @@ const transformStyle = ({isSelected}: SwitchRenderProps) => ({
     : 'perspective(calc(var(--trackHeight) - 8px)) translateZ(-4px)'
 });
 
-export function Switch({children, ...props}: SwitchProps) {
+function Switch({children, ...props}: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+  let domRef = useFocusableRef(ref);
   let handleRef = useRef(null);
   let isInForm = !!useContext(FormContext);
   props = useFormProps(props);
   return (
     <AriaSwitch
       {...props}
+      ref={domRef}
       className={renderProps => mergeStyles(props.className, wrapper({...renderProps, isInForm, size: props.size || 'M'}))}>
       {renderProps => (
         <>
@@ -154,3 +158,6 @@ export function Switch({children, ...props}: SwitchProps) {
     </AriaSwitch>
   );
 }
+
+let _Switch = forwardRef(Switch);
+export {_Switch as Switch};

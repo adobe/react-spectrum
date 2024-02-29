@@ -3,8 +3,10 @@ import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macr
 import {focusRing} from './style-utils' with {type: 'macro'};
 import CrossIcon from '../ui-icons/S2_CrossSize300.svg';
 import {pressScale} from './pressScale';
-import {useRef} from 'react';
+import {forwardRef} from 'react';
 import {mergeStyles} from '../style-macro/runtime';
+import {FocusableRef} from '@react-types/shared';
+import {useFocusableRef} from '@react-spectrum/utils';
 
 interface CloseButtonProps extends Omit<ButtonProps, 'className'> {
   className?: string,
@@ -63,13 +65,13 @@ const styles = style({
   }
 });
 
-export function CloseButton(props: CloseButtonProps) {
-  let ref = useRef(null);
+function CloseButton(props: CloseButtonProps, ref: FocusableRef<HTMLButtonElement>) {
+  let domRef = useFocusableRef(ref);
   return (
     <Button
       {...props}
-      ref={ref}
-      style={pressScale(ref)}
+      ref={domRef}
+      style={pressScale(domRef)}
       className={renderProps => mergeStyles(styles(renderProps), props.className)}>
       <CrossIcon
         className={style({
@@ -83,3 +85,6 @@ export function CloseButton(props: CloseButtonProps) {
     </Button>
   );
 }
+
+let _CloseButton = forwardRef(CloseButton);
+export {_CloseButton as CloseButton};

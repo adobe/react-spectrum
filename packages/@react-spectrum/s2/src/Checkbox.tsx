@@ -4,10 +4,12 @@ import {focusRing} from './style-utils' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/S2_CheckmarkSize100.svg';
 import DashIcon from '../ui-icons/S2_DashSize100.svg';
-import {useContext, useRef} from 'react';
+import {useContext, useRef, forwardRef} from 'react';
 import {pressScale} from './pressScale';
 import {mergeStyles} from '../style-macro/runtime';
 import {FormContext, useFormProps} from './Form';
+import {FocusableRef} from '@react-types/shared';
+import {useFocusableRef} from '@react-spectrum/utils';
 
 interface CheckboxStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
@@ -100,13 +102,16 @@ const iconStyles = style<RenderProps>({
   }
 });
 
-export function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProps) {
+function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProps, ref: FocusableRef<HTMLLabelElement>) {
   let boxRef = useRef(null);
+  let domRef = useFocusableRef(ref);
   let isInForm = !!useContext(FormContext);
   props = useFormProps(props);
+
   return (
     <AriaCheckbox
       {...props}
+      ref={domRef}
       className={renderProps => mergeStyles(props.className, wrapper({...renderProps, isInForm, size: props.size || 'M'}))}>
       {renderProps => (
         <>
@@ -134,3 +139,6 @@ export function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProp
     </AriaCheckbox>
   );
 }
+
+let _Checkbox = forwardRef(Checkbox);
+export {_Checkbox as Checkbox};

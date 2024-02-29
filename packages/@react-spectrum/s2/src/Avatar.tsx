@@ -1,5 +1,6 @@
 import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
-import {useRef} from 'react';
+import {DOMRef} from '@react-types/shared';
+import {forwardRef} from 'react';
 
 import ColorAvatar from '../avatars/avatar_color_16';
 import DatasetsAvatar from '../avatars/avatar_datasets_16';
@@ -73,8 +74,7 @@ let genericAvatars = {
   [GenericAvatarSvg.zoom]: ZoomAvatar
 };
 
-export function Avatar(props: AvatarStyleProps) {
-  let ref = useRef(null);
+function Avatar(props: AvatarStyleProps, ref: DOMRef<HTMLImageElement>) {
   let {
     alt = '',
     isDisabled,
@@ -96,3 +96,6 @@ export function Avatar(props: AvatarStyleProps) {
       src={!generic ? src : undefined} />
   );
 } 
+
+let _Avatar = forwardRef(Avatar);
+export {_Avatar as Avatar};

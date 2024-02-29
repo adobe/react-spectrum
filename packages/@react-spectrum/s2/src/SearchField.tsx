@@ -10,9 +10,11 @@ import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import SearchIcon from '../s2wf-icons/assets/react/s2IconSearch20N.js';
 import {Icon} from './Icon';
 import {raw} from '../style-macro/style-macro' with {type: 'macro'};
-import {useContext} from 'react';
+import {useContext, forwardRef, Ref, useRef, useImperativeHandle} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {SpectrumLabelableProps} from '@react-types/shared';
+import {TextFieldRef} from '@react-types/textfield';
+import {createFocusableRef} from '@react-spectrum/utils';
 import {CSSProp} from '../style-macro/types';
 import {mergeStyles} from '../style-macro/runtime';
 
@@ -25,7 +27,7 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
   css?: CSSProp<typeof style, 'marginY'>
 }
 
-export function SearchField(props: SearchFieldProps) {
+function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
   let formContext = useContext(FormContext);
   props = useFormProps(props);
   let {
@@ -38,9 +40,27 @@ export function SearchField(props: SearchFieldProps) {
     ...searchFieldProps
   } = props;
 
+  let domRef = useRef<HTMLDivElement>(null);
+  let inputRef = useRef<HTMLInputElement>(null);
+
+  // Expose imperative interface for ref
+  useImperativeHandle(ref, () => ({
+    ...createFocusableRef(domRef, inputRef),
+    select() {
+      if (inputRef.current) {
+        inputRef.current.select();
+      }
+    },
+    getInputElement() {
+      return inputRef.current;
+    }
+  }));
+
+
   return (
     <AriaSearchField
       {...searchFieldProps}
+      ref={domRef}
       className={mergeStyles(props.css, style({
         ...field(),
         '--iconMargin': {
@@ -80,7 +100,7 @@ export function SearchField(props: SearchFieldProps) {
           <Icon className={style({marginEnd: 'text-to-visual'})()}>
             <SearchIcon />
           </Icon>
-          <Input className={raw('&::-webkit-search-cancel-button { display: none }')} />
+          <Input ref={inputRef} className={raw('&::-webkit-search-cancel-button { display: none }')} />
           {!isEmpty && <ClearButton size={props.size} isDisabled={isDisabled} />}
         </FieldGroup>
         <HelpText
@@ -95,3 +115,5 @@ export function SearchField(props: SearchFieldProps) {
   );
 }
 
+let _SearchField = forwardRef(SearchField);
+export {_SearchField as SearchField};

@@ -3,9 +3,10 @@ import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
 import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';
-import {useMediaQuery} from '@react-spectrum/utils';
-import {createContext, useContext} from 'react';
+import {useMediaQuery, useDOMRef} from '@react-spectrum/utils';
+import {createContext, useContext, forwardRef, RefObject} from 'react';
 import {Modal} from './Modal';
+import {DOMRef} from '@react-types/shared';
 
 export interface DialogProps extends RACDialogProps {
   isDismissable?: boolean,
@@ -65,9 +66,10 @@ export const DialogContext = createContext<DialogContextValue>({
   isDismissable: false
 });
 
-export function Dialog(props: DialogProps) {
+function Dialog(props: DialogProps, ref: DOMRef) {
   let ctx = useContext(DialogContext);
   let isDismissable = ctx.isDismissable || props.isDismissable;
+  let domRef = useDOMRef(ref);
 
   switch (ctx.type) {
     case 'modal':
@@ -76,7 +78,7 @@ export function Dialog(props: DialogProps) {
       let size = ctx.type === 'modal' ? props.size : ctx.type;
       return (
         <Modal size={size} isDismissable={isDismissable}>
-          <DialogInner {...props} {...ctx} isDismissable={isDismissable} />
+          <DialogInner {...props} {...ctx} dialogRef={domRef} isDismissable={isDismissable} />
         </Modal>
       );
     }
@@ -84,7 +86,10 @@ export function Dialog(props: DialogProps) {
   }
 }
 
-function DialogInner(props: DialogProps & DialogContextValue) {
+let _Dialog = forwardRef(Dialog);
+export {_Dialog as Dialog};
+
+function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefObject<HTMLElement>}) {
   // The button group in fullscreen dialogs usually goes at the top, but
   // when the window is small, it moves to the bottom. We could do this in
   // pure CSS with display: none, but then the ref would go to two places.
@@ -106,6 +111,7 @@ function DialogInner(props: DialogProps & DialogContextValue) {
   return (
     <RACDialog
       {...props}
+      ref={props.dialogRef}
       className={style({
         display: 'flex',
         flexDirection: 'column',

@@ -1,8 +1,10 @@
 import {DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {ReactNode, useRef, createContext} from 'react';
+import {ReactNode, forwardRef, createContext} from 'react';
 import {mergeStyles} from '../style-macro/runtime';
 import {IllustratedMessageContext} from './IllustratedMessage';
+import {DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
 
 interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children'>{
   className?: string,
@@ -54,13 +56,13 @@ const banner = style<DropZoneRenderProps>({
 
 export const S2DropZoneContext = createContext<DropZoneRenderProps | null>(null);
 
-export function DropZone(props: DropZoneProps) {
-  let ref = useRef(null);
+function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
+  let domRef = useDOMRef(ref);
 
   return (
     <RACDropZone
       {...props}
-      ref={ref}
+      ref={domRef}
       className={renderProps => mergeStyles(props.className, dropzone(renderProps))}>
       {renderProps => (
         <>
@@ -79,3 +81,6 @@ export function DropZone(props: DropZoneProps) {
     </RACDropZone>
   );
 }
+
+let _DropZone = forwardRef(DropZone);
+export {_DropZone as DropZone};
