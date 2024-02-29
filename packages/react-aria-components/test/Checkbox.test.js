@@ -237,7 +237,7 @@ describe('Checkbox', () => {
     let contextInputRef = React.createRef();
     let {getByRole} = render(
       <CheckboxContext.Provider value={{inputRef: contextInputRef}}>
-        <Checkbox>Test</Checkbox>
+        <Checkbox inputRef={inputRef}>Test</Checkbox>
       </CheckboxContext.Provider>
     );
     expect(inputRef.current).toBe(getByRole('checkbox'));
