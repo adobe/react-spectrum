@@ -43,7 +43,11 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
     },
     isSelected: {
       default: 'neutral',
-      isEmphasized: 'accent'
+      isEmphasized: 'accent',
+      isDisabled: {
+        default: 'gray-100',
+        isQuiet: 'transparent'
+      }
     },
     staticColor: {
       white: {
@@ -52,7 +56,13 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
           default: 'transparent-white-100',
           isQuiet: 'transparent'
         },
-        isSelected: baseColor('transparent-white-800')
+        isSelected: {
+          default: baseColor('transparent-white-800'),
+          isDisabled: {
+            default: 'transparent-white-100',
+            isQuiet: 'transparent'
+          }
+        }
       },
       black: {
         ...baseColor('transparent-black-100'),
@@ -60,14 +70,20 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
           default: 'transparent-black-100',
           isQuiet: 'transparent'
         },
-        isSelected: baseColor('transparent-black-800')
+        isSelected: {
+          default: baseColor('transparent-black-800'),
+          isDisabled: {
+            default: 'transparent-black-100',
+            isQuiet: 'transparent'
+          }
+        }
       }
     },
     forcedColors: {
       default: 'ButtonFace',
       isSelected: {
         default: 'Highlight',
-        isDisabled: 'GrayText'
+        isDisabled: 'ButtonFace'
       }
     }
   },
@@ -94,8 +110,7 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
       default: 'ButtonText',
       isSelected: 'HighlightText',
       isDisabled: {
-        default: 'GrayText',
-        isSelected: 'HighlightText'
+        default: 'GrayText'
       }
     }
   },
