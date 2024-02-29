@@ -13,7 +13,7 @@
 import {AriaSwitchProps, HoverEvents, mergeProps, useFocusRing, useHover, useSwitch, VisuallyHidden} from 'react-aria';
 import {ContextValue, forwardRefType, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, MutableRefObject, useRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {}
@@ -62,14 +62,14 @@ export interface SwitchRenderProps {
 
 export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
-function Switch(props: SwitchProps & {inputRef?: RefObject<HTMLInputElement>}, ref: ForwardedRef<HTMLLabelElement>) {
+function Switch(props: SwitchProps & {inputRef?: MutableRefObject<HTMLInputElement>}, ref: ForwardedRef<HTMLLabelElement>) {
   let {
-    inputRef: userProvidedInputRef,
+    inputRef: userProvidedInputRef = null,
     ...otherProps
   } = props;
   [props, ref] = useContextProps(otherProps, ref, SwitchContext);
   let defaultInputRef = useRef<HTMLInputElement>(null);
-  let userInputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef));
+  let userInputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
   let inputRef = userInputRef || defaultInputRef;
   let state = useToggleState(props);
   let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed} = useSwitch({
