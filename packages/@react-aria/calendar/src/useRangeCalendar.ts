@@ -64,6 +64,9 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
 
   // Also stop range selection on blur, e.g. tabbing away from the calendar.
   res.calendarProps.onBlur = e => {
+    if (!ref.current) {
+      return;
+    }
     if ((!e.relatedTarget || !ref.current.contains(e.relatedTarget)) && state.anchorDate) {
       state.selectFocusedDate();
     }
