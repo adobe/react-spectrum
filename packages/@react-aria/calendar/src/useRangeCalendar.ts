@@ -50,11 +50,10 @@ export function useRangeCalendar<T extends DateValue>(props: AriaRangeCalendarPr
     }
 
     let target = e.target as Element;
-    let body = document.getElementById(res.calendarProps.id);
     if (
-      body &&
-      body.contains(document.activeElement) &&
-      (!body.contains(target) || !target.closest('button, [role="button"]'))
+      ref.current &&
+      ref.current.contains(document.activeElement) &&
+      (!ref.current.contains(target) || !target.closest('button, [role="button"]'))
     ) {
       state.selectFocusedDate();
     }
