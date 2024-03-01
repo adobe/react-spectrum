@@ -12,7 +12,7 @@
 
 import AlertTriangle from '../s2wf-icons/assets/react/s2IconAlertTriangle20N';
 import CheckmarkCircle from '../s2wf-icons/assets/react/s2IconCheckmarkCircle20N';
-import {DOMProps, DOMRef, StyleProps} from '@react-types/shared';
+import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing} from './style-utils' with {type: 'macro'};
 import InfoCircle from '../s2wf-icons/assets/react/s2IconInfoCircle20N';
@@ -23,6 +23,7 @@ import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {useFocusRing} from 'react-aria';
 import {Provider, HeadingContext} from 'react-aria-components';
 import {ContentContext} from './Content';
+import {StyleProps} from './styles';
 
 export interface SpectrumInlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
   /**
