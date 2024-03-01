@@ -69,6 +69,11 @@ export const IFrame = {
   name: 'focus state in dynamic iframe'
 };
 
+export const ShadowRoot = {
+  render: () => <ShadowRootExample />,
+  name: 'focus state in shadow root'
+};
+
 function SearchExample() {
   const [items, setItems] = useState(manyRows);
 
@@ -144,6 +149,51 @@ function IFrameExample() {
         <Button />
         <Button />
       </IframeWrapper>
+    </>
+  );
+}
+
+function ShadowDomWrapper({children}) {
+  const container = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const _container = container.current;
+
+    if (!_container) {return;}
+
+    const div = document.createElement('div');
+    _container.appendChild(div);
+
+    const shadowRoot = div.attachShadow({mode: 'open'});
+    const main = document.createElement('main');
+    shadowRoot.appendChild(main);
+    ReactDOM.render(children, main);
+
+    const teardown = addWindowFocusTracking(shadowRoot);
+
+    return () => {
+      teardown();
+      if (_container) {
+        _container.innerHTML = '';
+      }
+    };
+  }, [children]);
+
+  return <div ref={container} />;
+}
+
+function ShadowRootExample() {
+  return (
+    <>
+      <Button />
+      <div style={{backgroundColor: 'aliceblue', padding: 10}}>
+        Inside Shadow DOM
+        <ShadowDomWrapper>
+          <Button />
+          <Button />
+          <Button />
+        </ShadowDomWrapper>
+      </div>
     </>
   );
 }
