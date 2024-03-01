@@ -19,7 +19,8 @@ interface ButtonGroupStyleProps {
 
 interface ButtonGroupProps extends ButtonGroupStyleProps, SlotProps {
   className?: string,
-  children: ReactNode
+  children: ReactNode,
+  isDisabled?: boolean
 }
 
 export const ButtonGroupContext = createContext<ContextValue<Omit<ButtonGroupProps, 'children'>, HTMLDivElement>>({});
@@ -74,7 +75,7 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   [props, domRef] = useContextProps(props, domRef, ButtonGroupContext);
   let {size = 'M'} = props;
-  let {orientation = 'horizontal', align, children} = props;
+  let {orientation = 'horizontal', align, children, isDisabled} = props;
 
   let [hasOverflow, setHasOverflow] = useValueEffect(false);
 
@@ -133,7 +134,7 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
       <Provider
         values={[
           // @ts-ignore
-          [ButtonContext, {className: button({}), size}] // extend our button context?
+          [ButtonContext, {className: button({}), size, isDisabled: isDisabled}] // extend our button context?
         ]}>
         {children}
       </Provider>
