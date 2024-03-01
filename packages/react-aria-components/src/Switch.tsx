@@ -17,6 +17,9 @@ import React, {createContext, ForwardedRef, forwardRef, MutableRefObject, useRef
 import {ToggleState, useToggleState} from 'react-stately';
 
 export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {
+  /**
+   * A ref for the HTML input element.
+   */
   inputRef?: MutableRefObject<HTMLInputElement>
 }
 
