@@ -1,8 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/react';
 import {Text} from 'react-aria-components';
-import NewIcon from '../s2wf-icons/assets/react/s2IconNew20N';
+import NewIcon from '../src/wf-icons/New';
 import {ActionButton} from '../src/ActionButton';
-import {Icon} from '../src/Icon';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof ActionButton> = {
@@ -19,9 +18,9 @@ type Story = StoryObj<typeof ActionButton>;
 export const Example: Story = {
   render: (args) => {
     let buttons = (<div style={{display: 'flex', gap: 8}}>
-      <ActionButton {...args}><Icon><NewIcon /></Icon></ActionButton>
+      <ActionButton {...args}><NewIcon /></ActionButton>
       <ActionButton {...args}>Press me</ActionButton>
-      <ActionButton {...args}><Icon><NewIcon /></Icon><Text>Press me</Text></ActionButton>
+      <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>
     </div>);
     if (args.staticColor) {
       return (
@@ -103,59 +102,59 @@ export const Fonts: Story = {
       <div style={{display: 'grid', gridTemplateColumns: 'repeat(5, auto)', alignItems: 'center', justifyItems: 'start', gap: 8}}>
         <div lang="en-US" style={{display: 'contents'}}>
           English (adobe-colin)
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['en-US'].button}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['en-US'].copy}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['en-US'].cut}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['en-US'].paste}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].button}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].copy}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].cut}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['en-US'].paste}</Text></ActionButton>
         </div>
         <div lang="en-US" style={{display: 'contents'}}>
           English (adobe-clean)
-          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><Icon><NewIcon /></Icon><Text>{messages['en-US'].button}</Text></ActionButton>
-          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><Icon><NewIcon /></Icon><Text>{messages['en-US'].copy}</Text></ActionButton>
-          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><Icon><NewIcon /></Icon><Text>{messages['en-US'].cut}</Text></ActionButton>
-          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><Icon><NewIcon /></Icon><Text>{messages['en-US'].paste}</Text></ActionButton>
+          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].button}</Text></ActionButton>
+          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].copy}</Text></ActionButton>
+          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].cut}</Text></ActionButton>
+          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].paste}</Text></ActionButton>
         </div>
         <div lang="ar-AR" dir="rtl" style={{display: 'contents'}}>
           Arabic (myriad-arabic)
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ar-AR'].button}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ar-AR'].copy}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ar-AR'].cut}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ar-AR'].paste}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].button}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].copy}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].cut}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ar-AR'].paste}</Text></ActionButton>
         </div>
         <div lang="he-IL" dir="rtl" style={{display: 'contents'}}>
           Hebrew (myriad-hebrew)
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['he-IL'].button}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['he-IL'].copy}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['he-IL'].cut}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['he-IL'].paste}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['he-IL'].button}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['he-IL'].copy}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['he-IL'].cut}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['he-IL'].paste}</Text></ActionButton>
         </div>
         <div lang="ja-JP" style={{display: 'contents'}}>
           Japanese (adobe-clean-han-japanese)
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ja-JP'].button}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ja-JP'].copy}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ja-JP'].cut}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ja-JP'].paste}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ja-JP'].button}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ja-JP'].copy}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ja-JP'].cut}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ja-JP'].paste}</Text></ActionButton>
         </div>
         <div lang="ko-KR" style={{display: 'contents'}}>
           Korean (adobe-clean-han-korean)
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ko-KR'].button}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ko-KR'].copy}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ko-KR'].cut}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['ko-KR'].paste}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ko-KR'].button}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ko-KR'].copy}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ko-KR'].cut}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['ko-KR'].paste}</Text></ActionButton>
         </div>
         <div lang="zh-Hans" style={{display: 'contents'}}>
           Simplified Chinese (adobe-clean-han-simplified-c)
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['zh-CN'].button}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['zh-CN'].copy}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['zh-CN'].cut}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['zh-CN'].paste}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['zh-CN'].button}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['zh-CN'].copy}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['zh-CN'].cut}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['zh-CN'].paste}</Text></ActionButton>
         </div>
         <div lang="zh-Hant" style={{display: 'contents'}}>
           Traditional Chinese (adobe-clean-han-traditional)
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['zh-TW'].button}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['zh-TW'].copy}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['zh-TW'].cut}</Text></ActionButton>
-          <ActionButton {...args}><Icon><NewIcon /></Icon><Text>{messages['zh-TW'].paste}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['zh-TW'].button}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['zh-TW'].copy}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['zh-TW'].cut}</Text></ActionButton>
+          <ActionButton {...args}><NewIcon /><Text>{messages['zh-TW'].paste}</Text></ActionButton>
         </div>
       </div>
     );

@@ -2,7 +2,7 @@ import {Group, GroupProps, Input as RACInput, InputProps, Label, LabelProps, Fie
 import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {focusRing} from './style-utils' with {type: 'macro'};
 import AsteriskIcon from '../ui-icons/S2_AsteriskSize100.svg';
-import AlertIcon from '../s2wf-icons/assets/react/s2IconAlertTriangle20N.js';
+import AlertIcon from './wf-icons/AlertTriangle';
 import {Icon} from './Icon';
 import {mergeStyles} from '../style-macro/runtime';
 import {CenterBaseline, centerBaselineBefore} from './CenterBaseline';
@@ -82,7 +82,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
         <span className={style({whiteSpace: 'nowrap'})()}>
           &nbsp;
           {necessityIndicator === 'icon' &&
-            <AsteriskIcon 
+            <AsteriskIcon
               className={style({
                 '--iconPrimary': {
                   type: 'fill',
@@ -177,7 +177,7 @@ export function FieldGroup(props: FieldGroupProps) {
         }
       }}
       className={composeRenderProps(
-        props.className, 
+        props.className,
         (className, renderProps) => centerBaselineBefore + mergeStyles(
           fieldGroupStyles({...renderProps, size: props.size || 'M'}),
           className

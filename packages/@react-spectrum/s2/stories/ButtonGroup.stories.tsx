@@ -1,9 +1,8 @@
 import type {Meta, StoryObj} from '@storybook/react';
 import {Text} from 'react-aria-components';
-import NewIcon from '../s2wf-icons/assets/react/s2IconNew20N';
+import NewIcon from '../src/wf-icons/New';
 import {ButtonGroup} from '../src/ButtonGroup';
 import {Button} from '../src/Button';
-import {Icon} from '../src/Icon';
 import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof ButtonGroup> = {
@@ -22,11 +21,11 @@ export const Example: Story = {
     let buttons = (
       <ButtonGroup {...args}>
         <Button>Press me</Button>
-        <Button variant="accent"><Icon><NewIcon /></Icon><Text>Test</Text></Button>
-        <Button><Icon><NewIcon /></Icon></Button>
+        <Button variant="accent"><NewIcon /><Text>Test</Text></Button>
+        <Button><NewIcon /></Button>
         <Button variant="negative" className={style({maxWidth: 32})()}>Very long button with wrapping text to see what happens</Button>
         <Button variant="secondary" className={style({maxWidth: 32})()}>
-          <Icon><NewIcon /></Icon>
+          <NewIcon />
           <Text>Very long button with wrapping text to see what happens</Text>
         </Button>
       </ButtonGroup>

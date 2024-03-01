@@ -40,7 +40,9 @@
     "build-storybook": "storybook build",
     "storybook": "storybook dev -p 6006",
     "lint": "concurrently \"yarn check-types\" \"eslint --ext .js,.jsx,.ts,.tsx .\"",
-    "postinstall": "patch-package",
+    "build-icons": "node scripts/generateIcons.mjs",
+    "build:icons": "node scripts/buildIcons.mjs",
+    "postinstall": "patch-package && yarn build:icons",
     "build": "parcel build && rm -rf dist/page.js*",
     "prepare": "husky"
   },
@@ -84,6 +86,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-rulesdir": "^0.2.2",
+    "fast-glob": "^3.2.6",
     "glob-promise": "^6.0.5",
     "husky": "^9.0.11",
     "jest": "^29.7.0",

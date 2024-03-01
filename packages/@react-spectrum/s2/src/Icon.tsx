@@ -1,12 +1,15 @@
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {ReactElement, cloneElement} from 'react';
+import {CSSProperties, ReactElement, cloneElement} from 'react';
 import {CenterBaseline} from './CenterBaseline';
 import {mergeStyles} from '../style-macro/runtime';
 
-interface IconProps {
+export interface IconProps {
   className?: string,
+  style?: CSSProperties,
   children: ReactElement
 }
+
+export interface IconPropsWithoutChildren extends Omit<IconProps, 'children'> {}
 
 export function Icon(props: IconProps) {
   return (

@@ -7,7 +7,7 @@ import {ClearButton} from './ClearButton';
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {field} from './style-utils' with {type: 'macro'};
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import SearchIcon from '../s2wf-icons/assets/react/s2IconSearch20N.js';
+import SearchIcon from '../src/wf-icons/Search';
 import {Icon} from './Icon';
 import {raw} from '../style-macro/style-macro' with {type: 'macro'};
 import {useContext, forwardRef, Ref, useRef, useImperativeHandle} from 'react';
@@ -89,7 +89,7 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
           necessityIndicator={necessityIndicator}>
           {label}
         </FieldLabel>}
-        <FieldGroup 
+        <FieldGroup
           isDisabled={isDisabled}
           size={props.size}
           className={style({

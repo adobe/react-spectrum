@@ -1,8 +1,7 @@
 import {ToggleButton} from '../src/ToggleButton';
 import type {Meta, StoryFn} from '@storybook/react';
-import {Icon} from '../src/Icon';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import NewIcon from '../s2wf-icons/assets/react/s2IconNew20N';
+import NewIcon from '../src/wf-icons/New';
 import {Text} from 'react-aria-components';
 
 const meta: Meta<typeof ToggleButton> = {
@@ -17,9 +16,9 @@ export default meta;
 
 export const Example: StoryFn<typeof ToggleButton> = (args) => {
   let buttons = (<div style={{display: 'flex', gap: 8}}>
-    <ToggleButton {...args}><Icon><NewIcon /></Icon></ToggleButton>
+    <ToggleButton {...args}><NewIcon /></ToggleButton>
     <ToggleButton {...args}>Press me</ToggleButton>
-    <ToggleButton {...args}><Icon><NewIcon /></Icon><Text>Press me</Text></ToggleButton>
+    <ToggleButton {...args}><NewIcon /><Text>Press me</Text></ToggleButton>
   </div>);
   if (args.staticColor) {
     return (

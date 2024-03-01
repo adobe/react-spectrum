@@ -1,7 +1,6 @@
 import {Tag, TagGroup} from '../src/TagGroup';
 import {action} from '@storybook/addon-actions';
-import NewIcon from '../s2wf-icons/assets/react/s2IconNew20N';
-import {Icon} from '../src/Icon';
+import NewIcon from '../src/wf-icons/New';
 import {Text} from 'react-aria-components';
 import {Link} from '../src/Link';
 
@@ -56,7 +55,7 @@ export let Disabled = {
 
     return (
       <TagGroup {...args} disabledKeys={new Set(['mint', 'vanilla'])}>
-        <Tag id="chocolate" textValue="chocolate"><Icon><NewIcon /></Icon><Text>Chocolate</Text></Tag>
+        <Tag id="chocolate" textValue="chocolate"><NewIcon /><Text>Chocolate</Text></Tag>
         <Tag id="mint">Mint</Tag>
         <Tag id="strawberry">Strawberry</Tag>
         <Tag id="vanilla">Vanilla</Tag>

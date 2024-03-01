@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertTriangle from '../s2wf-icons/assets/react/s2IconAlertTriangle20N';
-import CheckmarkCircle from '../s2wf-icons/assets/react/s2IconCheckmarkCircle20N';
+import AlertTriangle from './wf-icons/AlertTriangle';
+import CheckmarkCircle from './wf-icons/CheckmarkCircle';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {focusRing} from './style-utils' with {type: 'macro'};
-import InfoCircle from '../s2wf-icons/assets/react/s2IconInfoCircle20N';
+import InfoCircle from './wf-icons/InfoCircle';
 import {mergeStyles} from '../style-macro/runtime';
 import React, {ReactNode, useEffect, useRef} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -38,7 +38,7 @@ export interface SpectrumInlineAlertProps extends DOMProps, StyleProps, InlineSt
 
 interface InlineStylesProps {
   /**
-   * The semantic tone of a Inline Alert. 
+   * The semantic tone of a Inline Alert.
    * @default neutral
    */
   variant?: 'informative' | 'positive' | 'notice' | 'negative' | 'neutral',
@@ -163,7 +163,7 @@ let ICONS = {
 };
 
 const heading = style<InlineStylesProps>({
-  marginTop: 0, 
+  marginTop: 0,
   color: {
     style: {
       border: 'gray-900',
@@ -175,7 +175,7 @@ const heading = style<InlineStylesProps>({
         }
       }
     }
-  }, 
+  },
   gridArea: 'heading'
 });
 
@@ -234,9 +234,9 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
         style: styleFill,
         isFocusVisible
       }))}>
-      <div 
+      <div
         className={grid(props)}>
-        <Provider 
+        <Provider
           values={[
             [HeadingContext, {className: heading({variant, style: styleFill})}],
             [ContentContext, {className: content({variant, style: styleFill})}]

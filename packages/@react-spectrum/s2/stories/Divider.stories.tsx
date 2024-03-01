@@ -1,7 +1,6 @@
 import {ActionButton} from '../src/ActionButton';
 import {Divider} from '../src/Divider';
-import {Icon} from '../src/Icon';
-import NewIcon from '../s2wf-icons/assets/react/s2IconNew20N';
+import NewIcon from '../src/wf-icons/New';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 
 import type {Meta} from '@storybook/react';
@@ -35,9 +34,9 @@ export const Example = {
       <h1>Buttons</h1>
       <Divider {...args} />
       <section style={{display: 'flex', gap: '5px'}}>
-        <ActionButton aria-label="fake button, new icon, no action" size="M" staticColor={args.staticColor}><Icon><NewIcon /></Icon></ActionButton>
+        <ActionButton aria-label="fake button, new icon, no action" size="M" staticColor={args.staticColor}><NewIcon /></ActionButton>
         <Divider {...args} />
-        <ActionButton aria-label="fake button, new icon, no action" size="M" staticColor={args.staticColor}><Icon><NewIcon /></Icon></ActionButton>
+        <ActionButton aria-label="fake button, new icon, no action" size="M" staticColor={args.staticColor}><NewIcon /></ActionButton>
       </section>
     </section>
   ),
