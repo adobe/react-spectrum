@@ -82,12 +82,35 @@ To internationalize an `Image`, a localized string should be passed to the `alt`
 </Flex>
 ```
 
+
+### OnLoad callback example
+
+```tsx example
+function ImageItem({ src }) {
+
+  const onLoadCallback = () => {
+    //do something when image is loaded
+  }
+
+  return (
+    <Flex width="100%" height="200px">
+      <Image
+        src={ isImageMissing ? DEFAULT_IMAGE : src }
+        alt="Eiffel Tower at sunset"
+        onLoad={onLoadCallback} />
+    </Flex>
+  )
+}
+
+<ImageItem src="https://i.imgur.com/c3gTKSJ.jpg" />
+```
+
 ### Error callback example
 
 ```tsx example
 function ImageItem({ src }) {
   const [isImageMissing, setIsImageMissing] = React.useState(false);
-  const DEFAULT_IMAGE = 'https://771623823872.png';
+  const DEFAULT_IMAGE = 'https://i.imgur.com/Z7AzH2c.png';
 
   const onErrorCallback = () => {
     setIsImageMissing(true)
