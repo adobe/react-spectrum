@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockClickDefault, render, triggerPress, within} from '@react-spectrum/test-utils';
 import Bell from '@spectrum-icons/workflow/Bell';
 import {FocusExample} from '../stories/ListBox.stories';
 import {Item, ListBox, Section} from '../';
@@ -975,8 +975,7 @@ describe('ListBox', function () {
           expect(item).toHaveAttribute('href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -999,20 +998,17 @@ describe('ListBox', function () {
           expect(item).toHaveAttribute('href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
         expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         trigger(items[1]);
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-        expect(onClick.mock.calls[0][0].target.href).toBe('https://adobe.com/');
+        expect(onClick).toHaveBeenCalledTimes(2);
+        expect(onClick.mock.calls[1][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[1][0].target.href).toBe('https://adobe.com/');
         expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
       });
 
@@ -1032,8 +1028,7 @@ describe('ListBox', function () {
         expect(navigate).toHaveBeenCalledWith('/one');
 
         navigate.mockReset();
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
 
         trigger(items[1]);
         expect(navigate).not.toHaveBeenCalled();
