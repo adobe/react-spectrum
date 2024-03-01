@@ -1,0 +1,51 @@
+.spectrum-Tree-checkbox {
+  padding-inline-start: var(--spectrum-global-dimension-size-150);
+  padding-inline-end: 0px;
+}
+
+.spectrum-Tree-row {
+  display: flex;
+  height: var(----spectrum-global-dimension-size-400);
+  /* TODO: all of these came over from copy pasta of the table cell, will refactor */
+  box-sizing: border-box;
+  font-size: var(--spectrum-table-cell-text-size);
+  font-weight: var(--spectrum-table-cell-text-font-weight);
+  /* need to subtract 1px here because 14px * 1.5 + 14px + 14px = 49px, and we want 48px */
+  line-height: calc(calc(var(--spectrum-table-cell-text-size) * var(--spectrum-table-cell-text-line-height)) - 1px);
+  /* padding: var(--spectrum-table-cell-padding-y) var(--spectrum-table-cell-padding-x); */
+/* TODO: can't use display grid cuz this is put on row but there is an intermediate grid cell, can just style the elements directly (margin auto on chevron button to center it etc) */
+  /* &.spectrum-Table-cell--hasExpandCollapseButton { */
+    /* display: grid;
+    grid-template-columns: minmax(0, auto) minmax(0, auto) var(--spectrum-global-dimension-size-400) minmax(0, auto) 1fr;
+    grid-template-rows: 1fr;
+    grid-template-areas: "drag-handle checkbox expand-button icon title contents"; */
+    /* TODO: add height */
+  /* } */
+}
+
+/* TODO checkbox has 12px left padding and X right padding depending on level of indentation (0 if top level, 16 if 1st level  */
+
+.spectrum-Tree-expandButton {
+  /* grid-area: expand-button; */
+  height: var(--spectrum-global-dimension-size-400);
+  width: var(--spectrum-global-dimension-size-400);
+  /* margin: calc(var(--spectrum-table-cell-padding-y) * -1) 0; */
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  outline: none;
+  transition: transform ease var(--spectrum-global-animation-duration-100);
+  &.is-open {
+    [dir='ltr'] & {
+      transform: rotate(90deg);
+    }
+    [dir='rtl'] & {
+      transform: rotate(-90deg);
+    }
+  }
+}
+
+.react-spectrum-Tree-actions {
+  color: red;
+}
