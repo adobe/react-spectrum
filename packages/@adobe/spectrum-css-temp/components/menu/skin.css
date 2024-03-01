@@ -100,6 +100,38 @@ governing permissions and limitations under the License.
   color: var(--spectrum-heading-subtitle3-text-color);
 }
 
+@keyframes spectrum-TraySubmenu-slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@keyframes spectrum-TraySubmenu-slideOutRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.spectrum-TraySubmenu-enter {
+  animation-name: spectrum-TraySubmenu-slideInRight;
+  animation-duration: var(--spectrum-global-animation-duration-600);
+  animation-fill-mode: forwards;
+  animation-timing-function: var(--spectrum-global-animation-ease-out);
+}
+
+.spectrum-TraySubmenu-exit {
+  animation-name: spectrum-TraySubmenu-slideOutRight;
+  animation-duration: var(--spectrum-global-animation-duration-600);
+  animation-fill-mode: forwards;
+  animation-timing-function: var(--spectrum-global-animation-ease-in);
+}
+
 @media (forced-colors: active) {
   .spectrum-Menu-divider {
     background-color: CanvasText;

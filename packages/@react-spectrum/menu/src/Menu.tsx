@@ -135,6 +135,20 @@ export function TrayHeaderWrapper(props) {
   let headingId = useSlotId();
   let isMobile = useIsMobileDevice();
   let {direction} = useLocale();
+  let [traySubmenuAnimation, setTraySubmenuAnimation] = useState('');
+
+  useEffect(() => {
+    if (isSubmenu && !hasOpenSubmenu) {
+      setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
+    }
+  }, [hasOpenSubmenu, isSubmenu]);
+
+  let handleBackButtonPress = () => {
+    setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
+    setTimeout(() => {
+      onBackButtonPress();
+    }, 300); // Matches transition duration
+  };
 
   return (
     <>
@@ -153,13 +167,13 @@ export function TrayHeaderWrapper(props) {
             }
           )
         }>
-        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper')} onKeyDown={wrapperKeyDown}>
+        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper', {[traySubmenuAnimation]: isMobile})} onKeyDown={wrapperKeyDown}>
           {isMobile && isSubmenu && !hasOpenSubmenu && (
             <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
               <ActionButton
                 aria-label={backButtonLabel}
                 isQuiet
-                onPress={onBackButtonPress}>
+                onPress={handleBackButtonPress}>
                 {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
                 {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
               </ActionButton>

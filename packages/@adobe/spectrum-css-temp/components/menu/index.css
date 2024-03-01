@@ -267,6 +267,7 @@ governing permissions and limitations under the License.
     width: 100%;
     border: none;
     background-color: unset;
+    overflow-x: hidden; /* Prevents scrollbar from appearing during submenu transition */
 
     &.is-expanded {
       position: absolute;
