@@ -16,7 +16,9 @@ import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import React, {createContext, ForwardedRef, forwardRef, MutableRefObject, useRef} from 'react';
 import {ToggleState, useToggleState} from 'react-stately';
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {}
+export interface SwitchProps extends Omit<AriaSwitchProps, 'children'>, HoverEvents, RenderProps<SwitchRenderProps>, SlotProps {
+  inputRef?: MutableRefObject<HTMLInputElement>
+}
 
 export interface SwitchRenderProps {
   /**
@@ -62,7 +64,7 @@ export interface SwitchRenderProps {
 
 export const SwitchContext = createContext<ContextValue<SwitchProps, HTMLLabelElement>>(null);
 
-function Switch(props: SwitchProps & {inputRef?: MutableRefObject<HTMLInputElement>}, ref: ForwardedRef<HTMLLabelElement>) {
+function Switch(props: SwitchProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {
     inputRef: userProvidedInputRef = null,
     ...otherProps

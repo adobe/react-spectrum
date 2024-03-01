@@ -19,7 +19,9 @@ import React, {createContext, ForwardedRef, forwardRef, MutableRefObject, useCon
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
-export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps {}
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'children' | 'validationState' | 'validationBehavior'>, HoverEvents, RACValidation, RenderProps<CheckboxRenderProps>, SlotProps {
+  inputRef?: MutableRefObject<HTMLInputElement>
+}
 
 export interface CheckboxGroupRenderProps {
   /**
@@ -159,7 +161,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: ForwardedRef<HTMLDivEleme
 
 export const CheckboxContext = createContext<ContextValue<CheckboxProps, HTMLLabelElement>>(null);
 
-function Checkbox(props: CheckboxProps & {inputRef?: MutableRefObject<HTMLInputElement>}, ref: ForwardedRef<HTMLLabelElement>) {
+function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
   let {
     inputRef: userProvidedInputRef = null,
     ...otherProps
