@@ -30,7 +30,17 @@ export interface TextFieldRenderProps {
    * Whether the value is invalid.
    * @selector [data-invalid]
    */
-  isInvalid: boolean
+  isInvalid: boolean,
+  /**
+   * Whether the text field is read only.
+   * @selector [data-readonly]
+   */
+  isReadOnly: boolean,
+  /**
+   * Whether the text field is required.
+   * @selector [data-required]
+   */
+  isRequired: boolean
 }
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'label' | 'placeholder' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, Omit<DOMProps, 'style' | 'className' | 'children'>, SlotProps, RenderProps<TextFieldRenderProps> {
@@ -65,7 +75,9 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
     ...props,
     values: {
       isDisabled: props.isDisabled || false,
-      isInvalid: validation.isInvalid
+      isInvalid: validation.isInvalid,
+      isReadOnly: props.isReadOnly || false,
+      isRequired: props.isRequired || false
     },
     defaultClassName: 'react-aria-TextField'
   });
@@ -77,7 +89,9 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
       ref={ref}
       slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}
-      data-invalid={validation.isInvalid || undefined}>
+      data-invalid={validation.isInvalid || undefined}
+      data-readonly={props.isReadOnly || undefined}
+      data-required={props.isRequired || undefined}>
       <Provider
         values={[
           [LabelContext, {...labelProps, ref: labelRef}],
