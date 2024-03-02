@@ -57,10 +57,12 @@ export function useToggle(props: AriaToggleProps, state: ToggleState, ref: RefOb
     state.setSelected(e.target.checked);
   };
 
-  let hasChildren = children != null;
-  let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
-  if (!hasChildren && !hasAriaLabel) {
-    console.warn('If you do not provide children, you must specify an aria-label for accessibility');
+  if (process.env.NODE_ENV !== 'production') {
+    let hasChildren = children != null;
+    let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
+    if (!hasChildren && !hasAriaLabel) {
+      console.warn('If you do not provide children, you must specify an aria-label for accessibility');
+    }
   }
 
   // This handles focusing the input on pointer down, which Safari does not do by default.

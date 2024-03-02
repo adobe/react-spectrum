@@ -49,10 +49,12 @@ export function useRadio(props: AriaRadioProps, state: RadioGroupState, ref: Ref
 
   const isDisabled = props.isDisabled || state.isDisabled;
 
-  let hasChildren = children != null;
-  let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
-  if (!hasChildren && !hasAriaLabel) {
-    console.warn('If you do not provide children, you must specify an aria-label for accessibility');
+  if (process.env.NODE_ENV !== 'production') {
+    let hasChildren = children != null;
+    let hasAriaLabel = ariaLabel != null || ariaLabelledby != null;
+    if (!hasChildren && !hasAriaLabel) {
+      console.warn('If you do not provide children, you must specify an aria-label for accessibility');
+    }
   }
 
   let checked = state.selectedValue === value;

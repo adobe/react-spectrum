@@ -26,8 +26,10 @@ function Well(props: SpectrumWellProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  if (!role && (props['aria-label'] || props['aria-labelledby'])) {
-    console.warn('A labelled Well must have a role.');
+  if (process.env.NODE_ENV !== 'production') {
+    if (!role && (props['aria-label'] || props['aria-labelledby'])) {
+      console.warn('A labelled Well must have a role.');
+    }
   }
 
   return (

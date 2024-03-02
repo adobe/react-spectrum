@@ -54,8 +54,10 @@ export function useMenu<T>(props: AriaMenuOptions<T>, state: TreeState<T>, ref: 
     ...otherProps
   } = props;
 
-  if (!props['aria-label'] && !props['aria-labelledby']) {
-    console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
+  if (process.env.NODE_ENV !== 'production') {
+    if (!props['aria-label'] && !props['aria-labelledby']) {
+      console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
+    }
   }
 
   let domProps = filterDOMProps(props, {labelable: true});

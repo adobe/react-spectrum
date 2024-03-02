@@ -75,8 +75,10 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   } = props;
   let {selectionManager: manager} = state;
 
-  if (!props['aria-label'] && !props['aria-labelledby']) {
-    console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
+  if (process.env.NODE_ENV !== 'production') {
+    if (!props['aria-label'] && !props['aria-labelledby']) {
+      console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
+    }
   }
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).

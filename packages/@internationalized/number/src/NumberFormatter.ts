@@ -196,8 +196,10 @@ export function numberFormatSignDisplayPolyfill(numberFormat: Intl.NumberFormat,
       let noSign = numberFormat.format(num);
       // ignore RTL/LTR marker character
       let minus = negative.replace(noSign, '').replace(/\u200e|\u061C/, '');
-      if ([...minus].length !== 1) {
-        console.warn('@react-aria/i18n polyfill for NumberFormat signDisplay: Unsupported case');
+      if (process.env.NODE_ENV !== 'production') {
+        if ([...minus].length !== 1) {
+          console.warn('@react-aria/i18n polyfill for NumberFormat signDisplay: Unsupported case');
+        }
       }
       let positive = negative.replace(noSign, '!!!').replace(minus, '+').replace('!!!', noSign);
       return positive;

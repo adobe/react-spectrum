@@ -29,12 +29,14 @@ function StatusLight(props: SpectrumStatusLightProps, ref: DOMRef<HTMLDivElement
   let domRef = useDOMRef(ref);
   let {styleProps} = useStyleProps(otherProps);
 
-  if (!children && !props['aria-label']) {
-    console.warn('If no children are provided, an aria-label must be specified');
-  }
+  if (process.env.NODE_ENV !== 'production') {
+    if (!children && !props['aria-label']) {
+      console.warn('If no children are provided, an aria-label must be specified');
+    }
 
-  if (!role && (props['aria-label'] || props['aria-labelledby'])) {
-    console.warn('A labelled StatusLight must have a role.');
+    if (!role && (props['aria-label'] || props['aria-labelledby'])) {
+      console.warn('A labelled StatusLight must have a role.');
+    }
   }
 
   return (
