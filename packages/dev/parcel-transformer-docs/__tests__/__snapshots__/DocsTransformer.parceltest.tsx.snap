@@ -1,5 +1,64 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`DocsTransformer - API builtins writes export entry for mapped types 1`] = `
+{
+  "exports": {
+    "Mutable": {
+      "id": "/test/src/index.tsx:Mutable",
+      "type": "link",
+    },
+  },
+  "links": {
+    "/test/src/index.tsx:Mutable": {
+      "description": null,
+      "id": "/test/src/index.tsx:Mutable",
+      "name": "Mutable",
+      "type": "alias",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": {
+        "readonly": "-",
+        "type": "mapped",
+        "typeAnnotation": {
+          "indexType": {
+            "id": "/test/src/index.tsx:P",
+            "name": "P",
+            "type": "identifier",
+          },
+          "objectType": {
+            "id": "/test/src/index.tsx:T",
+            "name": "T",
+            "type": "identifier",
+          },
+          "type": "indexedAccess",
+        },
+        "typeParameter": {
+          "constraint": {
+            "operator": "keyof",
+            "type": "typeOperator",
+            "value": {
+              "id": "/test/src/index.tsx:T",
+              "name": "T",
+              "type": "identifier",
+            },
+          },
+          "default": null,
+          "isMappedType": true,
+          "name": "P",
+          "type": "typeParameter",
+        },
+      },
+    },
+  },
+}
+`;
+
 exports[`DocsTransformer - API builtins writes export entry for referenced function 1`] = `
 {
   "exports": {
@@ -26,7 +85,12 @@ exports[`DocsTransformer - API builtins writes export entry for static number 1`
 {
   "exports": {
     "a": {
-      "type": "any",
+      "id": "/test/src/index.tsx:a",
+      "name": "a",
+      "type": "variable",
+      "typeAnnotation": {
+        "type": "number",
+      },
     },
   },
   "links": {},
@@ -37,7 +101,12 @@ exports[`DocsTransformer - API builtins writes export entry for static string 1`
 {
   "exports": {
     "b": {
-      "type": "any",
+      "id": "/test/src/index.tsx:b",
+      "name": "b",
+      "type": "variable",
+      "typeAnnotation": {
+        "type": "string",
+      },
     },
   },
   "links": {},
@@ -82,8 +151,8 @@ exports[`DocsTransformer - API identifiers writes export entry for identifiers 1
 {
   "exports": {
     "Column": {
-      "id": null,
-      "name": null,
+      "id": "/test/src/column.tsx:Column",
+      "name": "Column",
       "parameters": [
         {
           "description": null,
@@ -119,6 +188,2033 @@ exports[`DocsTransformer - API identifiers writes export entry for identifiers 1
 }
 `;
 
+exports[`DocsTransformer - API identifiers writes export entry for identifiers real file 1`] = `
+{
+  "exports": {
+    "Column": {
+      "id": "/test/src/src.tsx:SpectrumColumn",
+      "name": "Column",
+      "type": "variable",
+      "typeAnnotation": {
+        "parameters": [
+          {
+            "name": "props",
+            "rest": false,
+            "type": "parameter",
+            "value": {
+              "base": {
+                "imported": "SpectrumColumnProps",
+                "local": "SpectrumColumnProps",
+                "specifier": "@react-types/table",
+                "type": "reference",
+              },
+              "type": "application",
+              "typeParameters": [
+                {
+                  "id": "/test/src/src.tsx:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+              ],
+            },
+          },
+        ],
+        "return": {
+          "id": "/test/src/src.tsx:JSX.Element",
+          "name": "JSX.Element",
+          "type": "identifier",
+        },
+        "type": "function",
+        "typeParameters": [
+          {
+            "constraint": null,
+            "default": null,
+            "name": "T",
+            "type": "typeParameter",
+          },
+        ],
+      },
+    },
+    "SpectrumColumnProps": {
+      "extends": [],
+      "id": "/packages/@react-types/table/src/index.d.ts:SpectrumColumnProps",
+      "name": "SpectrumColumnProps",
+      "properties": {
+        "align": {
+          "default": "'start'",
+          "description": "The alignment of the column's contents relative to its allotted width.",
+          "indexType": null,
+          "name": "align",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "type": "string",
+                "value": "start",
+              },
+              {
+                "type": "string",
+                "value": "center",
+              },
+              {
+                "type": "string",
+                "value": "end",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "allowsResizing": {
+          "default": null,
+          "description": "Whether the column allows resizing.",
+          "indexType": null,
+          "name": "allowsResizing",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "allowsSorting": {
+          "default": null,
+          "description": "Whether the column allows sorting.",
+          "indexType": null,
+          "name": "allowsSorting",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "childColumns": {
+          "default": null,
+          "description": "A list of child columns used when dynamically rendering nested child columns.",
+          "indexType": null,
+          "name": "childColumns",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elementType": {
+              "id": "/packages/@react-types/table/src/index.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+            "type": "array",
+          },
+        },
+        "children": {
+          "default": null,
+          "description": "Static child columns or content to render as the column header.",
+          "indexType": null,
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "name": "ReactNode",
+                "type": "identifier",
+              },
+              {
+                "base": {
+                  "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                  "type": "link",
+                },
+                "type": "application",
+                "typeParameters": [
+                  {
+                    "id": "/packages/@react-types/table/src/index.d.ts:T",
+                    "name": "T",
+                    "type": "identifier",
+                  },
+                ],
+              },
+              {
+                "elementType": {
+                  "base": {
+                    "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                    "type": "link",
+                  },
+                  "type": "application",
+                  "typeParameters": [
+                    {
+                      "id": "/packages/@react-types/table/src/index.d.ts:T",
+                      "name": "T",
+                      "type": "identifier",
+                    },
+                  ],
+                },
+                "type": "array",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "defaultWidth": {
+          "default": null,
+          "description": "The default width of the column.",
+          "indexType": null,
+          "name": "defaultWidth",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "type": "link",
+              },
+              {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "hideHeader": {
+          "default": null,
+          "description": "Whether the column should hide its header text. A tooltip with the column's header text
+will be displayed when the column header is focused instead. Note that this prop is specifically for columns
+that contain ActionButtons in place of text content.",
+          "indexType": null,
+          "name": "hideHeader",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "isRowHeader": {
+          "default": null,
+          "description": "Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation.",
+          "indexType": null,
+          "name": "isRowHeader",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "maxWidth": {
+          "default": null,
+          "description": "The maximum width of the column.",
+          "indexType": null,
+          "name": "maxWidth",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "type": "link",
+              },
+              {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "minWidth": {
+          "default": null,
+          "description": "The minimum width of the column.",
+          "indexType": null,
+          "name": "minWidth",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "type": "link",
+              },
+              {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "showDivider": {
+          "default": null,
+          "description": "Whether the column should render a divider between it and the next column.",
+          "indexType": null,
+          "name": "showDivider",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "textValue": {
+          "default": null,
+          "description": "A string representation of the column's contents, used for accessibility announcements.",
+          "indexType": null,
+          "name": "textValue",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "title": {
+          "default": null,
+          "description": "Rendered contents of the column if \`children\` contains child columns.",
+          "indexType": null,
+          "name": "title",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "width": {
+          "default": null,
+          "description": "The width of the column.",
+          "indexType": null,
+          "name": "width",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "type": "link",
+              },
+              {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+  },
+  "links": {
+    "/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize": {
+      "description": "Widths that change size in relation to the remaining space and in ratio to other dynamic columns.
+All numbers must be integers and greater than 0.
+FR units take up remaining, if any, space in the table.",
+      "id": "/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize",
+      "name": "ColumnDynamicSize",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "number",
+          },
+          {
+            "type": "string",
+            "value": "fr",
+          },
+        ],
+        "type": "template",
+      },
+    },
+    "/packages/@react-types/table/src/index.d.ts:ColumnElement": {
+      "description": null,
+      "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
+      "name": "ColumnElement",
+      "type": "alias",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": {
+        "base": {
+          "name": "ReactElement",
+          "type": "identifier",
+        },
+        "type": "application",
+        "typeParameters": [
+          {
+            "base": {
+              "id": "/packages/@react-types/table/src/index.d.ts:ColumnProps",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/packages/@react-types/table/src/index.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "/packages/@react-types/table/src/index.d.ts:ColumnProps": {
+      "extends": [],
+      "id": "/packages/@react-types/table/src/index.d.ts:ColumnProps",
+      "name": "ColumnProps",
+      "properties": {
+        "allowsResizing": {
+          "default": null,
+          "description": "Whether the column allows resizing.",
+          "indexType": null,
+          "name": "allowsResizing",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "allowsSorting": {
+          "default": null,
+          "description": "Whether the column allows sorting.",
+          "indexType": null,
+          "name": "allowsSorting",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "childColumns": {
+          "default": null,
+          "description": "A list of child columns used when dynamically rendering nested child columns.",
+          "indexType": null,
+          "name": "childColumns",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elementType": {
+              "id": "/packages/@react-types/table/src/index.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+            "type": "array",
+          },
+        },
+        "children": {
+          "default": null,
+          "description": "Static child columns or content to render as the column header.",
+          "indexType": null,
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "name": "ReactNode",
+                "type": "identifier",
+              },
+              {
+                "base": {
+                  "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                  "type": "link",
+                },
+                "type": "application",
+                "typeParameters": [
+                  {
+                    "id": "/packages/@react-types/table/src/index.d.ts:T",
+                    "name": "T",
+                    "type": "identifier",
+                  },
+                ],
+              },
+              {
+                "elementType": {
+                  "base": {
+                    "id": "/packages/@react-types/table/src/index.d.ts:ColumnElement",
+                    "type": "link",
+                  },
+                  "type": "application",
+                  "typeParameters": [
+                    {
+                      "id": "/packages/@react-types/table/src/index.d.ts:T",
+                      "name": "T",
+                      "type": "identifier",
+                    },
+                  ],
+                },
+                "type": "array",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "defaultWidth": {
+          "default": null,
+          "description": "The default width of the column.",
+          "indexType": null,
+          "name": "defaultWidth",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "type": "link",
+              },
+              {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "isRowHeader": {
+          "default": null,
+          "description": "Whether a column is a [row header](https://www.w3.org/TR/wai-aria-1.1/#rowheader) and should be announced by assistive technology during row navigation.",
+          "indexType": null,
+          "name": "isRowHeader",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "maxWidth": {
+          "default": null,
+          "description": "The maximum width of the column.",
+          "indexType": null,
+          "name": "maxWidth",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "type": "link",
+              },
+              {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "minWidth": {
+          "default": null,
+          "description": "The minimum width of the column.",
+          "indexType": null,
+          "name": "minWidth",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+                "type": "link",
+              },
+              {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "textValue": {
+          "default": null,
+          "description": "A string representation of the column's contents, used for accessibility announcements.",
+          "indexType": null,
+          "name": "textValue",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "title": {
+          "default": null,
+          "description": "Rendered contents of the column if \`children\` contains child columns.",
+          "indexType": null,
+          "name": "title",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "width": {
+          "default": null,
+          "description": "The width of the column.",
+          "indexType": null,
+          "name": "width",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
+                "type": "link",
+              },
+              {
+                "type": "null",
+              },
+            ],
+            "type": "union",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+    "/packages/@react-types/table/src/index.d.ts:ColumnSize": {
+      "description": "All possible sizes a column can be assigned.",
+      "id": "/packages/@react-types/table/src/index.d.ts:ColumnSize",
+      "name": "ColumnSize",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+            "type": "link",
+          },
+          {
+            "id": "/packages/@react-types/table/src/index.d.ts:ColumnDynamicSize",
+            "type": "link",
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize": {
+      "description": "Widths that result in a constant pixel value for the same Table width.",
+      "id": "/packages/@react-types/table/src/index.d.ts:ColumnStaticSize",
+      "name": "ColumnStaticSize",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "number",
+          },
+          {
+            "elements": [
+              {
+                "type": "number",
+              },
+            ],
+            "type": "template",
+          },
+          {
+            "elements": [
+              {
+                "type": "number",
+              },
+              {
+                "type": "string",
+                "value": "%",
+              },
+            ],
+            "type": "template",
+          },
+        ],
+        "type": "union",
+      },
+    },
+  },
+}
+`;
+
+exports[`DocsTransformer - API interface merging merges omit properties when extending 1`] = `
+{
+  "exports": {
+    "Baz": {
+      "extends": [],
+      "id": "/test/src/index.tsx:Baz",
+      "name": "Baz",
+      "properties": {
+        "foo": {
+          "default": null,
+          "indexType": null,
+          "name": "foo",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": [],
+    },
+  },
+  "links": {},
+}
+`;
+
+exports[`DocsTransformer - API interface merging merges properties when extending 1`] = `
+{
+  "exports": {
+    "State": {
+      "extends": [],
+      "id": "/test/src/index.tsx:State",
+      "name": "State",
+      "properties": {
+        "foo": {
+          "default": null,
+          "indexType": null,
+          "name": "foo",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "id": "/test/src/index.tsx:Foo",
+            "name": "Foo",
+            "type": "identifier",
+          },
+        },
+        "isValid": {
+          "default": null,
+          "indexType": null,
+          "name": "isValid",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": [],
+    },
+  },
+  "links": {},
+}
+`;
+
+exports[`DocsTransformer - API interface merging merges properties when extending and does not substitute generics when none are provided 1`] = `
+{
+  "exports": {
+    "Baz": {
+      "extends": [],
+      "id": "/test/src/index.tsx:Baz",
+      "name": "Baz",
+      "properties": {
+        "coo": {
+          "default": null,
+          "indexType": null,
+          "name": "coo",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "id": "/test/src/index.tsx:F",
+            "name": "F",
+            "type": "identifier",
+          },
+        },
+        "foo": {
+          "default": null,
+          "indexType": null,
+          "name": "foo",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": [],
+    },
+  },
+  "links": {},
+}
+`;
+
+exports[`DocsTransformer - API interface merging merges properties when extending with split exports 1`] = `
+{
+  "exports": {
+    "SpectrumTagGroupProps": {
+      "extends": [],
+      "id": "/test/src/index.tsx:SpectrumTagGroupProps",
+      "name": "SpectrumTagGroupProps",
+      "properties": {
+        "actionLabel": {
+          "default": null,
+          "indexType": null,
+          "name": "actionLabel",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "aria-describedby": {
+          "default": null,
+          "description": "Identifies the element (or elements) that describes the object.",
+          "indexType": null,
+          "name": "aria-describedby",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "aria-details": {
+          "default": null,
+          "description": "Identifies the element (or elements) that provide a detailed, extended description for the object.",
+          "indexType": null,
+          "name": "aria-details",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "aria-label": {
+          "default": null,
+          "description": "Defines a string value that labels the current element.",
+          "indexType": null,
+          "name": "aria-label",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "aria-labelledby": {
+          "default": null,
+          "description": "Identifies the element (or elements) that labels the current element.",
+          "indexType": null,
+          "name": "aria-labelledby",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "children": {
+          "default": null,
+          "description": "The contents of the collection.",
+          "indexType": null,
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/test/src/index.tsx:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "defaultSelectedKeys": {
+          "default": null,
+          "description": "The initial selected keys in the collection (uncontrolled).",
+          "indexType": null,
+          "name": "defaultSelectedKeys",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "type": "string",
+                "value": "all",
+              },
+              {
+                "base": {
+                  "id": "/packages/@react-types/shared/src/selection.d.ts:Iterable",
+                  "name": "Iterable",
+                  "type": "identifier",
+                },
+                "type": "application",
+                "typeParameters": [
+                  {
+                    "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+                    "type": "link",
+                  },
+                ],
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "description": {
+          "default": null,
+          "description": "A description for the field. Provides a hint such as specific requirements for what to choose.",
+          "indexType": null,
+          "name": "description",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "disabledKeys": {
+          "default": null,
+          "description": "The item keys that are disabled. These items cannot be selected, focused, or otherwise interacted with.",
+          "indexType": null,
+          "name": "disabledKeys",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "name": "Iterable",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+                "type": "link",
+              },
+            ],
+          },
+        },
+        "disallowEmptySelection": {
+          "default": null,
+          "description": "Whether the collection allows empty selection.",
+          "indexType": null,
+          "name": "disallowEmptySelection",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "errorMessage": {
+          "default": null,
+          "description": "An error message for the field.",
+          "indexType": null,
+          "name": "errorMessage",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "id": {
+          "default": null,
+          "description": "The element's unique identifier. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/id).",
+          "indexType": null,
+          "name": "id",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "isDisabled": {
+          "default": null,
+          "description": "Whether the description is displayed with lighter text.",
+          "indexType": null,
+          "name": "isDisabled",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "isInvalid": {
+          "default": null,
+          "description": "Whether the input value is invalid.",
+          "indexType": null,
+          "name": "isInvalid",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "isRequired": {
+          "default": null,
+          "description": "Whether user input is required on the input before form submission.",
+          "indexType": null,
+          "name": "isRequired",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "items": {
+          "default": null,
+          "description": "Item objects in the collection.",
+          "indexType": null,
+          "name": "items",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "name": "Iterable",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/test/src/index.tsx:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "label": {
+          "default": null,
+          "description": "The content to display as the label.",
+          "indexType": null,
+          "name": "label",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "onAction": {
+          "default": null,
+          "indexType": null,
+          "name": "onAction",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "parameters": [],
+            "return": {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": [],
+          },
+        },
+        "onRemove": {
+          "default": null,
+          "description": "Handler that is called when a user deletes a tag.",
+          "indexType": null,
+          "name": "onRemove",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "parameters": [
+              {
+                "description": null,
+                "name": "keys",
+                "rest": false,
+                "type": "parameter",
+                "value": {
+                  "base": {
+                    "id": "/packages/@react-aria/tag/src/useTagGroup.ts:Set",
+                    "name": "Set",
+                    "type": "identifier",
+                  },
+                  "type": "application",
+                  "typeParameters": [
+                    {
+                      "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+                      "type": "link",
+                    },
+                  ],
+                },
+              },
+            ],
+            "return": {
+              "description": null,
+              "type": "void",
+            },
+            "type": "function",
+            "typeParameters": [],
+          },
+        },
+        "onSelectionChange": {
+          "default": null,
+          "description": "Handler that is called when the selection changes.",
+          "indexType": null,
+          "name": "onSelectionChange",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "parameters": [
+              {
+                "description": null,
+                "name": "keys",
+                "rest": false,
+                "type": "parameter",
+                "value": {
+                  "id": "/packages/@react-types/shared/src/selection.d.ts:Selection",
+                  "type": "link",
+                },
+              },
+            ],
+            "return": {
+              "description": null,
+              "type": "any",
+            },
+            "type": "function",
+            "typeParameters": [],
+          },
+        },
+        "selectedKeys": {
+          "default": null,
+          "description": "The currently selected keys in the collection (controlled).",
+          "indexType": null,
+          "name": "selectedKeys",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "type": "string",
+                "value": "all",
+              },
+              {
+                "base": {
+                  "id": "/packages/@react-types/shared/src/selection.d.ts:Iterable",
+                  "name": "Iterable",
+                  "type": "identifier",
+                },
+                "type": "application",
+                "typeParameters": [
+                  {
+                    "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+                    "type": "link",
+                  },
+                ],
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "selectionBehavior": {
+          "default": null,
+          "description": "How multiple selection should behave in the collection.",
+          "indexType": null,
+          "name": "selectionBehavior",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "id": "/packages/@react-types/shared/src/selection.d.ts:SelectionBehavior",
+            "type": "link",
+          },
+        },
+        "selectionMode": {
+          "default": null,
+          "description": "The type of selection that is allowed in the collection.",
+          "indexType": null,
+          "name": "selectionMode",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "id": "/packages/@react-types/shared/src/selection.d.ts:SelectionMode",
+            "type": "link",
+          },
+        },
+        "validate": {
+          "default": null,
+          "description": "A function that returns an error message if a given value is invalid.
+Validation errors are displayed to the user when the form is submitted
+if \`validationBehavior="native"\`. For realtime validation, use the \`isInvalid\`
+prop instead.",
+          "indexType": null,
+          "name": "validate",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "parameters": [
+              {
+                "description": null,
+                "name": "value",
+                "rest": false,
+                "type": "parameter",
+                "value": {
+                  "id": "/packages/@react-types/shared/src/inputs.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": {
+              "elements": [
+                {
+                  "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationError",
+                  "type": "link",
+                },
+                {
+                  "type": "boolean",
+                  "value": true,
+                },
+                {
+                  "type": "null",
+                },
+                {
+                  "type": "undefined",
+                },
+              ],
+              "type": "union",
+            },
+            "type": "function",
+            "typeParameters": [],
+          },
+        },
+        "validationBehavior": {
+          "default": "'aria'",
+          "description": "Whether to use native HTML form validation to prevent form submission
+when the value is missing or invalid, or mark the field as required
+or invalid via ARIA.",
+          "indexType": null,
+          "name": "validationBehavior",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "type": "string",
+                "value": "aria",
+              },
+              {
+                "type": "string",
+                "value": "native",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "validationState": {
+          "access": "private",
+          "default": null,
+          "indexType": null,
+          "name": "validationState",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
+            "type": "link",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+  },
+  "links": {
+    "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionChildren",
+      "name": "CollectionChildren",
+      "type": "alias",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": {
+        "elements": [
+          {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+          {
+            "elementType": {
+              "base": {
+                "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+                "type": "link",
+              },
+              "type": "application",
+              "typeParameters": [
+                {
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+              ],
+            },
+            "type": "array",
+          },
+          {
+            "parameters": [
+              {
+                "name": "item",
+                "rest": false,
+                "type": "parameter",
+                "value": {
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+              },
+            ],
+            "return": {
+              "base": {
+                "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+                "type": "link",
+              },
+              "type": "application",
+              "typeParameters": [
+                {
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                  "name": "T",
+                  "type": "identifier",
+                },
+              ],
+            },
+            "type": "function",
+            "typeParameters": [],
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/shared/src/collections.d.ts:CollectionElement": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/collections.d.ts:CollectionElement",
+      "name": "CollectionElement",
+      "type": "alias",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": {
+        "elements": [
+          {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:SectionElement",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+          {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/shared/src/collections.d.ts:ItemElement": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+      "name": "ItemElement",
+      "type": "alias",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": {
+        "base": {
+          "name": "ReactElement",
+          "type": "identifier",
+        },
+        "type": "application",
+        "typeParameters": [
+          {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:ItemProps",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "/packages/@react-types/shared/src/collections.d.ts:ItemProps": {
+      "extends": [],
+      "id": "/packages/@react-types/shared/src/collections.d.ts:ItemProps",
+      "name": "ItemProps",
+      "properties": {
+        "aria-label": {
+          "default": null,
+          "description": "An accessibility label for this item.",
+          "indexType": null,
+          "name": "aria-label",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "childItems": {
+          "default": null,
+          "description": "A list of child item objects. Used for dynamic collections.",
+          "indexType": null,
+          "name": "childItems",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "name": "Iterable",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "children": {
+          "default": null,
+          "description": "Rendered contents of the item or child items.",
+          "indexType": null,
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+        "download": {
+          "default": null,
+          "description": "Causes the browser to download the linked URL. A string may be provided to suggest a file name. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#download).",
+          "indexType": null,
+          "name": "download",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "type": "boolean",
+              },
+              {
+                "type": "string",
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "hasChildItems": {
+          "default": null,
+          "description": "Whether this item has children, even if not loaded yet.",
+          "indexType": null,
+          "name": "hasChildItems",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "boolean",
+          },
+        },
+        "href": {
+          "default": null,
+          "description": "A URL to link to. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#href).",
+          "indexType": null,
+          "name": "href",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "ping": {
+          "default": null,
+          "description": "A space-separated list of URLs to ping when the link is followed. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#ping).",
+          "indexType": null,
+          "name": "ping",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "referrerPolicy": {
+          "default": null,
+          "description": "How much of the referrer to send when following the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#referrerpolicy).",
+          "indexType": null,
+          "name": "referrerPolicy",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "name": "HTMLAttributeReferrerPolicy",
+            "type": "identifier",
+          },
+        },
+        "rel": {
+          "default": null,
+          "description": "The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel).",
+          "indexType": null,
+          "name": "rel",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "target": {
+          "default": null,
+          "description": "The target window for the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target).",
+          "indexType": null,
+          "name": "target",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "name": "HTMLAttributeAnchorTarget",
+            "type": "identifier",
+          },
+        },
+        "textValue": {
+          "default": null,
+          "description": "A string representation of the item's contents, used for features like typeahead.",
+          "indexType": null,
+          "name": "textValue",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "title": {
+          "default": null,
+          "description": "Rendered contents of the item if \`children\` contains child items.",
+          "indexType": null,
+          "name": "title",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+    "/packages/@react-types/shared/src/collections.d.ts:ItemRenderer": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/collections.d.ts:ItemRenderer",
+      "name": "ItemRenderer",
+      "type": "alias",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": {
+        "parameters": [
+          {
+            "name": "item",
+            "rest": false,
+            "type": "parameter",
+            "value": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+          },
+        ],
+        "return": {
+          "base": {
+            "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+            "type": "link",
+          },
+          "type": "application",
+          "typeParameters": [
+            {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+              "name": "T",
+              "type": "identifier",
+            },
+          ],
+        },
+        "type": "function",
+        "typeParameters": [],
+      },
+    },
+    "/packages/@react-types/shared/src/collections.d.ts:SectionElement": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/collections.d.ts:SectionElement",
+      "name": "SectionElement",
+      "type": "alias",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+      "value": {
+        "base": {
+          "name": "ReactElement",
+          "type": "identifier",
+        },
+        "type": "application",
+        "typeParameters": [
+          {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:SectionProps",
+              "type": "link",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    "/packages/@react-types/shared/src/collections.d.ts:SectionProps": {
+      "extends": [],
+      "id": "/packages/@react-types/shared/src/collections.d.ts:SectionProps",
+      "name": "SectionProps",
+      "properties": {
+        "aria-label": {
+          "default": null,
+          "description": "An accessibility label for the section.",
+          "indexType": null,
+          "name": "aria-label",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+        "children": {
+          "default": null,
+          "description": "Static child items or a function to render children.",
+          "indexType": null,
+          "name": "children",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "elements": [
+              {
+                "base": {
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+                  "type": "link",
+                },
+                "type": "application",
+                "typeParameters": [
+                  {
+                    "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                    "name": "T",
+                    "type": "identifier",
+                  },
+                ],
+              },
+              {
+                "elementType": {
+                  "base": {
+                    "id": "/packages/@react-types/shared/src/collections.d.ts:ItemElement",
+                    "type": "link",
+                  },
+                  "type": "application",
+                  "typeParameters": [
+                    {
+                      "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                      "name": "T",
+                      "type": "identifier",
+                    },
+                  ],
+                },
+                "type": "array",
+              },
+              {
+                "base": {
+                  "id": "/packages/@react-types/shared/src/collections.d.ts:ItemRenderer",
+                  "type": "link",
+                },
+                "type": "application",
+                "typeParameters": [
+                  {
+                    "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                    "name": "T",
+                    "type": "identifier",
+                  },
+                ],
+              },
+            ],
+            "type": "union",
+          },
+        },
+        "items": {
+          "default": null,
+          "description": "Item objects in the section.",
+          "indexType": null,
+          "name": "items",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "base": {
+              "id": "/packages/@react-types/shared/src/collections.d.ts:Iterable",
+              "name": "Iterable",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/packages/@react-types/shared/src/collections.d.ts:T",
+                "name": "T",
+                "type": "identifier",
+              },
+            ],
+          },
+        },
+        "title": {
+          "default": null,
+          "description": "Rendered contents of the section, e.g. a header.",
+          "indexType": null,
+          "name": "title",
+          "optional": true,
+          "type": "property",
+          "value": {
+            "name": "ReactNode",
+            "type": "identifier",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": [
+        {
+          "constraint": null,
+          "default": null,
+          "name": "T",
+          "type": "typeParameter",
+        },
+      ],
+    },
+    "/packages/@react-types/shared/src/inputs.d.ts:ValidationError": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationError",
+      "name": "ValidationError",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "string",
+          },
+          {
+            "elementType": {
+              "type": "string",
+            },
+            "type": "array",
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/shared/src/inputs.d.ts:ValidationState": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/inputs.d.ts:ValidationState",
+      "name": "ValidationState",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "string",
+            "value": "valid",
+          },
+          {
+            "type": "string",
+            "value": "invalid",
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/shared/src/key.d.ts:Key": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+      "name": "Key",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "string",
+          },
+          {
+            "type": "number",
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/shared/src/selection.d.ts:Selection": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/selection.d.ts:Selection",
+      "name": "Selection",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "string",
+            "value": "all",
+          },
+          {
+            "base": {
+              "id": "/packages/@react-types/shared/src/selection.d.ts:Set",
+              "name": "Set",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "id": "/packages/@react-types/shared/src/key.d.ts:Key",
+                "type": "link",
+              },
+            ],
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/shared/src/selection.d.ts:SelectionBehavior": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/selection.d.ts:SelectionBehavior",
+      "name": "SelectionBehavior",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "string",
+            "value": "toggle",
+          },
+          {
+            "type": "string",
+            "value": "replace",
+          },
+        ],
+        "type": "union",
+      },
+    },
+    "/packages/@react-types/shared/src/selection.d.ts:SelectionMode": {
+      "description": null,
+      "id": "/packages/@react-types/shared/src/selection.d.ts:SelectionMode",
+      "name": "SelectionMode",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "elements": [
+          {
+            "type": "string",
+            "value": "none",
+          },
+          {
+            "type": "string",
+            "value": "single",
+          },
+          {
+            "type": "string",
+            "value": "multiple",
+          },
+        ],
+        "type": "union",
+      },
+    },
+  },
+}
+`;
+
+exports[`DocsTransformer - API interfaces can infer properties 1`] = `
+{
+  "exports": {
+    "IntrinsicHTMLAttributes": {
+      "id": "/test/src/index.tsx:IntrinsicHTMLAttributes",
+      "type": "link",
+    },
+  },
+  "links": {
+    "/test/src/index.tsx:IntrinsicHTMLAttributes": {
+      "description": null,
+      "id": "/test/src/index.tsx:IntrinsicHTMLAttributes",
+      "name": "IntrinsicHTMLAttributes",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "type": "mapped",
+        "typeAnnotation": {
+          "checkType": {
+            "indexType": {
+              "id": "/test/src/index.tsx:K",
+              "name": "K",
+              "type": "identifier",
+            },
+            "objectType": {
+              "id": "/test/src/index.tsx:ReactDOM",
+              "name": "ReactDOM",
+              "type": "identifier",
+            },
+            "type": "indexedAccess",
+          },
+          "extendsType": {
+            "base": {
+              "id": "/test/src/index.tsx:DOMFactory",
+              "name": "DOMFactory",
+              "type": "identifier",
+            },
+            "type": "application",
+            "typeParameters": [
+              {
+                "type": "infer",
+                "value": {
+                  "constraint": null,
+                  "default": null,
+                  "name": "T",
+                  "type": "typeParameter",
+                },
+              },
+              {
+                "type": "any",
+              },
+            ],
+          },
+          "falseType": {
+            "type": "never",
+          },
+          "trueType": {
+            "id": "/test/src/index.tsx:T",
+            "name": "T",
+            "type": "identifier",
+          },
+          "type": "conditional",
+        },
+        "typeParameter": {
+          "constraint": {
+            "operator": "keyof",
+            "type": "typeOperator",
+            "value": {
+              "id": "/test/src/index.tsx:ReactDOM",
+              "name": "ReactDOM",
+              "type": "identifier",
+            },
+          },
+          "default": null,
+          "isMappedType": true,
+          "name": "K",
+          "type": "typeParameter",
+        },
+      },
+    },
+  },
+}
+`;
+
+exports[`DocsTransformer - API interfaces can omit properties 1`] = `
+{
+  "exports": {
+    "State": {
+      "extends": [],
+      "id": "/test/src/index.tsx:State",
+      "name": "State",
+      "properties": {
+        "b": {
+          "default": null,
+          "indexType": null,
+          "name": "b",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "type": "string",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": [],
+    },
+  },
+  "links": {},
+}
+`;
+
+exports[`DocsTransformer - API interfaces can pick properties 1`] = `
+{
+  "exports": {},
+  "links": {},
+}
+`;
+
 exports[`DocsTransformer - API interfaces follows imported interfaces 1`] = `
 {
   "exports": {
@@ -139,7 +2235,7 @@ exports[`DocsTransformer - API interfaces follows imported interfaces 1`] = `
       ],
       "return": {
         "description": null,
-        "type": "any",
+        "type": "null",
       },
       "type": "function",
       "typeParameters": [],
@@ -169,6 +2265,45 @@ exports[`DocsTransformer - API interfaces follows imported interfaces 1`] = `
 }
 `;
 
+exports[`DocsTransformer - API interfaces follows local references 1`] = `
+{
+  "exports": {
+    "State": {
+      "extends": [],
+      "id": "/test/src/index.tsx:State",
+      "name": "State",
+      "properties": {
+        "foo": {
+          "default": null,
+          "indexType": null,
+          "name": "foo",
+          "optional": false,
+          "type": "property",
+          "value": {
+            "id": "/test/src/index.tsx:Foo",
+            "type": "link",
+          },
+        },
+      },
+      "type": "interface",
+      "typeParameters": [],
+    },
+  },
+  "links": {
+    "/test/src/index.tsx:Foo": {
+      "description": null,
+      "id": "/test/src/index.tsx:Foo",
+      "name": "Foo",
+      "type": "alias",
+      "typeParameters": [],
+      "value": {
+        "type": "string",
+      },
+    },
+  },
+}
+`;
+
 exports[`DocsTransformer - API interfaces writes export entry for interface 1`] = `
 {
   "exports": {
@@ -190,6 +2325,25 @@ exports[`DocsTransformer - API interfaces writes export entry for interface 1`] 
       },
       "type": "interface",
       "typeParameters": [],
+    },
+  },
+  "links": {},
+}
+`;
+
+exports[`DocsTransformer - API links css modules 1`] = `
+{
+  "exports": {
+    "theme": {
+      "id": "/test/src/index.tsx:theme",
+      "name": "theme",
+      "type": "variable",
+      "typeAnnotation": {
+        "imported": "Theme",
+        "local": "Theme",
+        "specifier": "./theme",
+        "type": "reference",
+      },
     },
   },
   "links": {},

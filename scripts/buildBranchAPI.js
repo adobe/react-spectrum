@@ -16,6 +16,7 @@ const packageJSON = require('../package.json');
 const path = require('path');
 const glob = require('fast-glob');
 const spawn = require('cross-spawn');
+const replace = require('replace-in-file');
 let yargs = require('yargs');
 
 
@@ -31,7 +32,9 @@ build().catch(err => {
 });
 
 /**
- * Building this will run the docs builder using the apiCheck pipeline in .parcelrc
+ * Building this will run the docs builder using the apiCheck pipeline in .parcelrc.
+ * We must use two pipelines, one for entry points, and one for processing dependencies. If we try to use the same pipeline for both, parcel
+ * will get confused and fail.
  * This will generate json containing the visible (API/exposed) type definitions for each package
  * This is run against the current branch by copying the current branch into a temporary directory and building there
  */
@@ -42,8 +45,9 @@ async function build() {
     console.log('checking out archive of', argv.githash, 'into', archiveDir);
     await run('sh', ['-c', `git archive ${argv.githash} | tar -x -C ${archiveDir}`], {stdio: 'inherit'});
   }
-  let srcDir = archiveDir ?? path.join(__dirname, '..');
-  let distDir = path.join(__dirname, '..', 'dist', argv.output ?? 'branch-api');
+  let projectDir = path.join(__dirname, '..');
+  let srcDir = archiveDir ?? projectDir;
+  let distDir = path.join(projectDir, 'dist', argv.output ?? 'branch-api');
   // if we already have a directory with a built dist, remove it so we can write cleanly into it at the end
   fs.removeSync(distDir);
   // Create a temp directory to build the site in
@@ -56,6 +60,9 @@ async function build() {
     version: '0.0.0',
     private: true,
     workspaces: [
+      'packages/react-stately',
+      'packages/react-aria',
+      'packages/react-aria-components',
       'packages/*/*'
     ],
     devDependencies: Object.fromEntries(
@@ -95,20 +102,24 @@ async function build() {
   }`);
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(srcDir, 'yarn.lock'), path.join(dir, 'yarn.lock'));
-  fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
-  fs.copySync(path.join(srcDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
-  fs.copySync(path.join(srcDir, 'lib'), path.join(dir, 'lib'));
-  fs.copySync(path.join(srcDir, 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
+  fs.copySync(path.join(srcDir, 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'), {dereference: true});
   // need dev from latest on branch since it will generate the API for diffing, and in older commits it may not be able to do this or
   // does it in a different format
-  fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
-  fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
+  fs.copySync(path.join(projectDir, 'yarn.lock'), path.join(dir, 'yarn.lock'), {dereference: true});
+  fs.copySync(path.join(projectDir, 'postcss.config.js'), path.join(dir, 'postcss.config.js'), {dereference: true});
+  fs.copySync(path.join(projectDir, 'lib'), path.join(dir, 'lib'), {dereference: true});
+  fs.copySync(path.join(projectDir, 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'), {dereference: true});
+  fs.copySync(path.join(projectDir, 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {dereference: true});
+  fs.copySync(path.join(projectDir, '.parcelrc'), path.join(dir, '.parcelrc'), {dereference: true});
+  fs.copySync(path.join(projectDir, 'tsconfig.json'), path.join(dir, 'tsconfig.json'), {dereference: true});
 
-  // Only copy babel patch over
-  let patches = fs.readdirSync(path.join(srcDir, 'patches'));
-  let babelPatch = patches.find(name => name.startsWith('@babel'));
-  fs.copySync(path.join(srcDir, 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
+  // Only copy relevant patches
+  let patches = fs.readdirSync(path.join(projectDir, 'patches'), {dereference: true});
+  let eligiblePatches = patches.filter(name => name.startsWith('@babel') || name.startsWith('@parcel'));
+  console.log('copy patches', eligiblePatches);
+  for (let patch of eligiblePatches) {
+    fs.copySync(path.join(projectDir, 'patches', patch), path.join(dir, 'patches', patch), {dereference: true});
+  }
 
   let excludeList = ['@react-spectrum/story-utils'];
   // Copy packages over to temp dir
@@ -138,11 +149,18 @@ async function build() {
   }
 
   // Install dependencies from npm
+  fs.removeSync(path.join(dir, 'packages', 'dev', 'docs', 'node_modules'));
   await run('yarn', {cwd: dir, stdio: 'inherit'});
-
+  // uncomment to locally debug parcel in node_modules
+  fs.copySync(path.join(projectDir, 'node_modules', '@parcel'), path.join(dir, 'node_modules', '@parcel'), {dereference: true});
   // Build the website
   console.log('building api files');
   await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
+  await replace({
+    files: path.join(dir, 'packages', '**', 'api.json'),
+    from: new RegExp(dir, 'g'),
+    to: argv.output ? '/base' : '/branch'
+  });
 
   // Copy the build back into dist, and delete the temp dir.
   fs.copySync(path.join(dir, 'packages'), distDir, {dereference: true});

@@ -17,6 +17,7 @@ const path = require('path');
 const glob = require('fast-glob');
 const spawn = require('cross-spawn');
 let yargs = require('yargs');
+const replace = require('replace-in-file');
 
 
 let argv = yargs
@@ -30,7 +31,9 @@ build().catch(err => {
 });
 
 /**
- * Building this will run the docs builder using the apiCheck pipeline in .parcelrc
+ * Building this will run the docs builder using the apiCheck pipeline in .parcelrc.
+ * We must use two pipelines, one for entry points, and one for processing dependencies. If we try to use the same pipeline for both, parcel
+ * will get confused and fail.
  * This will generate json containing the visible (API/exposed) type definitions for each package
  * This is run against a downloaded copy of the last published version of each package into a temporary directory and build there
  */
@@ -101,22 +104,34 @@ async function build() {
   // copy the docs from the current package into the temp dir.
   let packagesDir = path.join(__dirname, '..', 'packages');
   let packages = glob.sync('*/**/package.json', {cwd: packagesDir});
-  for (let p of packages) {
-    let json = JSON.parse(fs.readFileSync(path.join(packagesDir, p), 'utf8'));
-    if (!json.private && json.name !== '@adobe/react-spectrum') {
-      try {
-        // this npm view will fail if the package isn't on npm
-        // otherwise we want to check if there is any version that isn't a nightly
-        let results = JSON.parse(await run('npm', ['view', json.name, 'versions', '--json']));
-        if (results.some(version => !version.includes('nightly'))) {
-          pkg.dependencies[json.name] = 'latest';
-          console.log('added', json.name);
-        }
-      } catch (e) {
-        // continue
-      }
+  async function addDeps() {
+    let promises = [];
+    for (let p of packages) {
+      let promise = new Promise((resolve, reject) => {
+        fs.readFile(path.join(packagesDir, p), 'utf8').then(async (contents) => {
+          let json = JSON.parse(contents);
+          if (!json.private && json.name !== '@adobe/react-spectrum') {
+            try {
+              // this npm view will fail if the package isn't on npm
+              // otherwise we want to check if there is any version that isn't a nightly
+              let results = JSON.parse(await run('npm', ['view', json.name, 'versions', '--json']));
+              if (results.some(version => !version.includes('nightly'))) {
+                pkg.dependencies[json.name] = 'latest';
+                console.log('added', json.name);
+              }
+            } catch (e) {
+              // continue
+            }
+          }
+          resolve();
+        });
+      });
+      promises.push(promise);
     }
+    return Promise.all(promises);
   }
+
+  await addDeps();
   pkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
   cleanPkg.devDependencies['babel-plugin-transform-glob-import'] = '*';
 
@@ -133,18 +148,18 @@ async function build() {
   }`);
 
   // Copy necessary code and configuration over
-  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'));
-  fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
-  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'));
-  fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
-  fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'));
-  fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'));
-  fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'));
+  fs.copySync(path.join(__dirname, '..', 'yarn.lock'), path.join(dir, 'yarn.lock'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'packages', '@adobe', 'spectrum-css-temp'), path.join(dir, 'packages', '@adobe', 'spectrum-css-temp'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'postcss.config.js'), path.join(dir, 'postcss.config.js'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'lib'), path.join(dir, 'lib'), {dereference: true});
+  fs.copySync(path.join(__dirname, '..', 'CONTRIBUTING.md'), path.join(dir, 'CONTRIBUTING.md'), {dereference: true});
 
   // Only copy babel patch over
   let patches = fs.readdirSync(path.join(__dirname, '..', 'patches'));
   let babelPatch = patches.find(name => name.startsWith('@babel'));
-  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch));
+  fs.copySync(path.join(__dirname, '..', 'patches', babelPatch), path.join(dir, 'patches', babelPatch), {dereference: true});
 
   // Copy package.json for each package into docs dir so we can find the correct version numbers
   console.log('moving over from node_modules');
@@ -159,9 +174,9 @@ async function build() {
       delete json.main;
       delete json.module;
       delete json.devDependencies;
-      json.apiCheck = 'dist/api.json';
+      json['apiCheck'] = 'dist/api.json';
       json.targets = {
-        apiCheck: {}
+        'apiCheck': {}
       };
       fs.writeFileSync(path.join(dir, 'packages', p), JSON.stringify(json, false, 2));
     }
@@ -175,13 +190,18 @@ async function build() {
 
   // Build the website
   console.log('building api files');
-  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}'], {cwd: dir, stdio: 'inherit'});
+  await run('yarn', ['parcel', 'build', 'packages/@react-{spectrum,aria,stately}/*/', 'packages/@internationalized/{message,string,date,number}', '--target', 'apiCheck'], {cwd: dir, stdio: 'inherit'});
 
   // Copy the build back into dist, and delete the temp dir.
   // dev/docs/node_modules has some react spectrum components, we don't want those, and i couldn't figure out how to not build them
   // it probably means two different versions, so there may be a bug lurking here
   fs.removeSync(path.join(dir, 'packages', 'dev'));
   fs.removeSync(path.join(dir, 'packages', '@react-spectrum', 'button', 'node_modules'));
+  await replace({
+    files: path.join(dir, 'packages', '**', 'api.json'),
+    from: new RegExp(dir, 'g'),
+    to: '/base'
+  });
   fs.copySync(path.join(dir, 'packages'), distDir);
   fs.removeSync(dir);
 }

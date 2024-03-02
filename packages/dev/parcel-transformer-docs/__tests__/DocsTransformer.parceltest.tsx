@@ -19,9 +19,9 @@ describe('DocsTransformer - API', () => {
       name: '@adobe/parcel-transformer-test-app',
       version: '0.0.2',
       private: true,
-      apiCheck: './dist/api.json',
+      'apiCheck': './dist/api.json',
       targets: {
-        apiCheck: {
+        'apiCheck': {
           source: './src/index.tsx'
         }
       },
@@ -53,7 +53,13 @@ describe('DocsTransformer - API', () => {
     });
 
   // every test must supply at least the 'index' file, they can include more, but that must be the entry point
-  async function writeSourceFile(name, contents) {
+  async function writeSourceFile(name: string, contents:string, packageName?: string) {
+    if (packageName) {
+      return inputFS.writeFile(`test/${packageName}/${name}`, contents, {});
+    }
+    if (name.split('.').length > 1) {
+      return inputFS.writeFile(`test/src/${name}`, contents, {});
+    }
     return inputFS.writeFile(`test/src/${name}.tsx`, contents, {});
   }
 
@@ -65,7 +71,9 @@ describe('DocsTransformer - API', () => {
     // i was unable to find a jest matcher that could handle Object keys that varied, finding matches for the value was easy
     // "/Users/username/parcel/packages/test/src/index.tsx:Foo" -> "/test/src/index.tsx:Foo"
     const code = JSON.parse(
-      outputFS.readFileSync(join(inputFS.cwd(), 'test', 'dist', 'api.json'), 'utf8').replace(/(")(\/.*)(\/test\/.*?")/g, '$1$3')
+      outputFS.readFileSync(join(inputFS.cwd(), 'test', 'dist', 'api.json'), 'utf8')
+        .replace(/(")(\/.*)(\/test\/.*?")/g, '$1$3')
+        .replace(/(")(\/.*)(\/packages\/.*?")/g, '$1$3')
     );
     return code;
   }
@@ -106,6 +114,16 @@ describe('DocsTransformer - API', () => {
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
+
+    it('writes export entry for mapped types', async () => {
+      await writeSourceFile('index', `
+      export type Mutable<T> = {
+        -readonly[P in keyof T]: T[P]
+      };
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
   });
 
   describe('components', () => {
@@ -113,7 +131,7 @@ describe('DocsTransformer - API', () => {
       await writeSourceFile('index', `
     import React from 'react';
 
-    export function App1(props) {
+    export function App1(props): JSX.Element {
       return <div />;
     }
     `);
@@ -188,9 +206,53 @@ describe('DocsTransformer - API', () => {
     `);
       await writeSourceFile('index', `
     import {Foo} from './component';
-    export function Bar(props: Foo) {
+    export function Bar(props: Foo): null {
       return null;
     }
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('follows local references', async () => {
+      await writeSourceFile('index', `
+    type Foo = string
+    export interface State {
+      foo: Foo
+    }
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('can omit properties', async () => {
+      await writeSourceFile('index', `
+    interface Foo {
+      a: number
+      b: string
+    }
+    export interface State extends Omit<Foo, 'a'> {}
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('can infer properties', async () => {
+      await writeSourceFile('index', `
+    export type IntrinsicHTMLAttributes = {
+      [K in keyof ReactDOM]: ReactDOM[K] extends DOMFactory<infer T, any> ? T : never
+    };
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('can pick properties', async () => {
+      await writeSourceFile('index', `
+    type IntrinsicHTMLAttributes = {
+      [K in keyof ReactDOM]: ReactDOM[K] extends DOMFactory<infer T, any> ? T : never
+    };
+    type TextFieldIntrinsicElements = keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>;
     `);
       let code = await runBuild();
       expect(code).toMatchSnapshot();
@@ -211,6 +273,113 @@ describe('DocsTransformer - API', () => {
       let code = await runBuild();
       expect(code).toMatchSnapshot();
     }, 50000);
+
+    it('writes export entry for identifiers real file', async () => {
+      await writeSourceFile('src', `
+    import {Column} from '@react-stately/table';
+    import {SpectrumColumnProps} from '@react-types/table';
+    const SpectrumColumn: <T>(props: SpectrumColumnProps<T>) => JSX.Element = Column as <T>(props: SpectrumColumnProps<T>) => JSX.Element;
+    export {SpectrumColumn as Column};
+    export type {SpectrumColumnProps} from '@react-types/table';
+    `);
+      await writeSourceFile('index', `
+    export * from './src';
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
   });
 
+  describe('links', () => {
+    it('css modules', async () => {
+      await writeSourceFile('theme', `
+        export type CSSModule = {
+          [className: string]: string
+        };
+        export interface Theme {
+          global?: CSSModule,
+          light?: CSSModule
+        };
+      `);
+      await writeSourceFile('defaultTheme', `
+        import {Theme} from './theme';
+        let defaultTheme: Theme = {
+          global: 'global'
+        };
+        export default defaultTheme;
+      `);
+      await writeSourceFile('index', `
+        import defaultTheme from './defaultTheme';
+        import {Theme} from './theme';
+        export let theme: Theme = {
+          ...defaultTheme,
+          global: {
+            ...defaultTheme.global
+          }
+        };
+      `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+  });
+
+  describe('interface merging', () => {
+    it('merges properties when extending', async () => {
+      await writeSourceFile('index', `
+    interface Validation {
+      isValid: boolean;
+    }
+    export interface State extends Validation {
+      foo: Foo
+    }
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('merges properties when extending and does not substitute generics when none are provided', async () => {
+      await writeSourceFile('index', `
+      export interface Baz extends Foo<string> {}
+
+      interface Foo<T> extends Coo {
+        foo: T
+      }
+
+      interface Coo<F = Element> {
+        coo: F
+      }
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('merges omit properties when extending', async () => {
+      await writeSourceFile('index', `
+      export interface Baz extends Foo<string> {}
+
+      interface Foo<T> extends Omit<Coo, 'coo'> {
+        foo: T
+      }
+
+      interface Coo<F = Element> {
+        coo: F
+      }
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+
+    it('merges properties when extending with split exports', async () => {
+      await writeSourceFile('index', `
+    import {AriaTagGroupProps} from '@react-aria/tag';
+    import {SpectrumHelpTextProps, Validation} from '@react-types/shared';
+    export interface SpectrumTagGroupProps<T> extends AriaTagGroupProps<T>, Validation, Omit<SpectrumHelpTextProps, 'showErrorIcon'> {
+      actionLabel?: string,
+      onAction?: () => void
+    }
+    `);
+      let code = await runBuild();
+      expect(code).toMatchSnapshot();
+    }, 50000);
+  });
 });

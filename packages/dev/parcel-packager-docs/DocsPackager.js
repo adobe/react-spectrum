@@ -77,9 +77,23 @@ module.exports = new Packager({
       let keyStack = [];
       let fn = (t, k) => {
         if (t && t.type === 'reference') {
-          let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier);
-          let res = bundleGraph.getResolvedAsset(dep, bundle);
-          let result = res ? processAsset(res)[t.imported] : null;
+          // re-exporting in a named export may split the dependency, so we need to find the correct one
+          let dep = bundleGraph.getDependencies(asset).find(d => d.specifier === t.specifier && d.symbols.hasExportSymbol(t.imported));
+          if (!dep) {
+            return {
+              type: 'identifier',
+              name: t.local
+            };
+          }
+          let resAsset = bundleGraph.getResolvedAsset(dep, bundle);
+          if (!resAsset) {
+            return {
+              type: 'identifier',
+              name: t.local
+            };
+          }
+          let res = bundleGraph.getSymbolResolution(resAsset, t.imported, bundle);
+          let result = res ? processAsset(res.asset)[res.exportSymbol] : null;
           if (result) {
             t = result;
           } else {
@@ -96,13 +110,14 @@ module.exports = new Packager({
 
         let hasParams = false;
         if (t && (t.type === 'alias' || t.type === 'interface') && t.typeParameters && application && shouldMerge(t, k, keyStack)) {
+
           let params = Object.assign({}, paramStack[paramStack.length - 1]);
           t.typeParameters.forEach((p, i) => {
             let v = application[i] || p.default;
             params[p.name] = v;
           });
           paramStack.push(params);
-          // so we don't replace the type parameters in the extended interface
+          // so we don't replace the type parameters in the extended interface if they don't use this application's generics
           application = null;
           hasParams = true;
         } else if (t && (t.type === 'alias' || t.type === 'interface' || t.type === 'component') && t.typeParameters && keyStack.length === 0) {
