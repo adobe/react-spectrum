@@ -12,18 +12,20 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
-import {Button, ButtonContext, Collection, Text, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useContextProps} from 'react-aria-components';
+import {Button, ButtonContext, Collection, Tree, TreeItem, TreeItemContent, TreeItemProps, TreeProps, useContextProps} from 'react-aria-components';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {SlotProvider, classNames} from '@react-spectrum/utils';
+import {classNames, SlotProvider} from '@react-spectrum/utils';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
 import {isAndroid} from '@react-aria/utils';
 import React, {ReactNode, useRef} from 'react';
 import styles from './styles.css';
+import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
+
 
 
 export default {
@@ -120,37 +122,41 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
   return (
     <TreeItem
       {...props}
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Tree-row', {
-        focused: isFocused,
+      className={({isFocused, isSelected, isHovered, isFocusVisible, isPressed}) => classNames(styles, 'spectrum-Tree-row', {
+        'is-focused': isFocused,
         'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
+        'is-selected': isSelected,
+        'is-hovered': isHovered,
+        'is-active': isPressed
       })}>
       <TreeItemContent>
         {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior}) => (
-          <>
+          <div className={classNames(styles, 'spectrum-Tree-cell-grid')}>
             {/* TODO refactor the below to match a single container with grid definition */}
             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
-              <Checkbox UNSAFE_className={classNames(styles, 'spectrum-Tree-checkbox')} slot="selection" />
+              <Checkbox UNSAFE_className={classNames(styles, 'spectrum-Tree-checkbox')} UNSAFE_style={{marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} slot="selection" />
             )}
             {hasChildRows && <ExpandableRowChevron isExpanded={isExpanded} />}
             {/* TODO does this slot provider even work within RAC? Taken from ListView */}
             <SlotProvider
               slots={{
-                text: {UNSAFE_className: styles['react-spectrum-Tree-content']},
-                illustration: {UNSAFE_className: styles['react-spectrum-ListViewItem-thumbnail']},
-                image: {UNSAFE_className: styles['react-spectrum-ListViewItem-thumbnail']},
-                actionButton: {UNSAFE_className: styles['react-spectrum-Tree-actions'], isQuiet: true},
+                text: {UNSAFE_className: classNames(styles, 'spectrum-Tree-content')},
+                // TODO: handle the images later
+                // illustration: {UNSAFE_className: styles['spectrum-ListViewItem-thumbnail']},
+                // image: {UNSAFE_className: styles['react-spectrum-ListViewItem-thumbnail']},
+                // TODO: handle action group and stuff the same way it is handled in ListView
+                actionButton: {UNSAFE_className: classNames(styles, 'spectrum-Tree-actions'), isQuiet: true},
                 actionGroup: {
-                  // UNSAFE_className: styles['react-spectrum-ListViewItem-actions'],
-                  UNSAFE_className: 'gawkjegnkawjegb',
+                  UNSAFE_className: classNames(styles, 'spectrum-Tree-actions'),
                   isQuiet: true,
-                  density: 'compact'
-                },
-                actionMenu: {UNSAFE_className: styles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
+                  density: 'compact',
+                  buttonLabelBehavior: 'hide'
+                }
+                // TODO handle action menu the same way as in ListView
+                // actionMenu: {UNSAFE_className: styles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
               }}>
-              <Text className={styles.title}>{props.title || props.children}</Text>
-              <ActionGroup buttonLabelBehavior="hide">
+              <Text>{props.title || props.children}</Text>
+              <ActionGroup>
                 <Item key="edit">
                   <Edit />
                   <Text>Edit</Text>
@@ -161,9 +167,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
                 </Item>
               </ActionGroup>
             </SlotProvider>
-            {/* <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
-            <Button className={styles.button} aria-label="Edit" onPress={action('Edit press')}>ⓘ</Button> */}
-          </>
+          </div>
         )}
       </TreeItemContent>
       {props.title && props.children}
@@ -171,42 +175,9 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
   );
 };
 
-
-
-// const StaticTreeItem = (props: StaticTreeItemProps) => {
-//   return (
-//     <TreeItem
-//       {...props}
-//       className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Tree-row', {
-//         focused: isFocused,
-//         'focus-visible': isFocusVisible,
-//         selected: isSelected,
-//         hovered: isHovered
-//       })}>
-//       <TreeItemContent>
-//         {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior}) => (
-//           <>
-//             {/* TODO refactor the below to match a single container with grid definition */}
-//             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
-//               <Checkbox slot="selection" />
-//             )}
-//             <div
-//               className={classNames(styles, 'content-wrapper')}
-//               style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
-//               {hasChildRows && <ExpandableRowChevron isExpanded={isExpanded} />}
-//               <Text className={styles.title}>{props.title || props.children}</Text>
-//               <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
-//             </div>
-//           </>
-//         )}
-//       </TreeItemContent>
-//       {props.title && props.children}
-//     </TreeItem>
-//   );
-// };
-
+// TODO add a resizable wrapper around this but for now apply a widht and height
 export const TreeExampleStatic = (args) => (
-  <Tree  className={styles.tree} {...args} disabledKeys={['projects']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+  <Tree {...args} style={{height: '300px', width: '300px'}} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
@@ -221,34 +192,6 @@ export const TreeExampleStatic = (args) => (
         Projects-3
       </StaticTreeItem>
     </StaticTreeItem>
-    <TreeItem
-      id="reports"
-      textValue="Reports"
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Tree-row', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        Reports
-      </TreeItemContent>
-    </TreeItem>
-    <TreeItem
-      id="Tests"
-      textValue="Tests"
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Tree-row', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        {({isFocused}) => (
-          <Text>{`${isFocused} Tests`}</Text>
-        )}
-      </TreeItemContent>
-    </TreeItem>
   </Tree>
 );
 
