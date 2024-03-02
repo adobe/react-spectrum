@@ -20,11 +20,9 @@ export function useControlledState<T, C = T>(value: T, defaultValue: T, onChange
   let isControlledRef = useRef(value !== undefined);
   let isControlled = value !== undefined;
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      let wasControlled = isControlledRef.current;
-      if (wasControlled !== isControlled) {
-        console.warn(`WARN: A component changed from ${wasControlled ? 'controlled' : 'uncontrolled'} to ${isControlled ? 'controlled' : 'uncontrolled'}.`);
-      }
+    let wasControlled = isControlledRef.current;
+    if (wasControlled !== isControlled) {
+      console.warn(`WARN: A component changed from ${wasControlled ? 'controlled' : 'uncontrolled'} to ${isControlled ? 'controlled' : 'uncontrolled'}.`);
     }
     isControlledRef.current = isControlled;
   }, [isControlled]);
