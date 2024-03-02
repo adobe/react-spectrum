@@ -83,10 +83,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     linkBehavior = 'action'
   } = props;
 
-  if (process.env.NODE_ENV !== 'production') {
-    if (!props['aria-label'] && !props['aria-labelledby']) {
-      console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
-    }
+  if (!props['aria-label'] && !props['aria-labelledby']) {
+    console.warn('An aria-label or aria-labelledby prop is required for accessibility.');
   }
 
   let {listProps} = useSelectableList({

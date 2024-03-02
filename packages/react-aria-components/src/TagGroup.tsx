@@ -232,10 +232,8 @@ function TagItem({item}) {
   });
 
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'production') {
-      if (!item.textValue) {
-        console.warn('A `textValue` prop is required for <Tag> elements with non-plain text children for accessibility.');
-      }
+    if (!item.textValue) {
+      console.warn('A `textValue` prop is required for <Tag> elements with non-plain text children for accessibility.');
     }
   }, [item.textValue]);
 
