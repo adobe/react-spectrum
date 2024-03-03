@@ -1,5 +1,5 @@
-export const getOwnerDocument = (el: Element | null | undefined): Document | ShadowRoot => {
-  return el?.getRootNode() ?? document;
+export const getOwnerDocument = (el: Element | null | undefined): Document => {
+  return el?.ownerDocument ?? document;
 };
 
 export const getOwnerWindow = (
@@ -11,4 +11,16 @@ export const getOwnerWindow = (
 
   const doc = getOwnerDocument(el as Element | null | undefined);
   return doc.defaultView || window;
+};
+
+export const getRootNode = (el: Element | null | undefined): Document | (ShadowRoot & {
+  body: ShadowRoot
+}) => {
+  const rootNode = el?.getRootNode() ?? document;
+
+  if (rootNode instanceof ShadowRoot) {
+    rootNode.body = rootNode;
+  }
+
+  return rootNode;
 };
