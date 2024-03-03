@@ -108,6 +108,36 @@ describe('Switch', () => {
     expect(label).not.toHaveClass('focus');
   });
 
+  it('should support focus events', async () => {
+    let onBlur = jest.fn();
+    let onFocus = jest.fn();
+    let onFocusChange = jest.fn();
+    
+    let {getByRole, getByText} = render(
+      <>
+        <Switch onBlur={onBlur} onFocus={onFocus} onFocusChange={onFocusChange}>Test</Switch>
+        <button>Steal focus</button>
+      </>
+    );
+
+    let s = getByRole('switch');
+    let button = getByText('Steal focus');
+
+    await user.tab();
+    expect(document.activeElement).toBe(s);
+    expect(onBlur).not.toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenLastCalledWith(true);
+
+    await user.tab();
+    expect(document.activeElement).toBe(button);
+    expect(onBlur).toHaveBeenCalled();
+    expect(onFocus).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenLastCalledWith(false);
+  });
+
   it('should support press state', () => {
     let {getByRole} = render(<Switch className={({isPressed}) => isPressed ? 'pressed' : ''}>Test</Switch>);
     let s = getByRole('switch').closest('label');

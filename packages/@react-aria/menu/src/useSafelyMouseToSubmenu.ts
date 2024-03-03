@@ -44,6 +44,7 @@ export function useSafelyMouseToSubmenu(options: SafelyMouseToSubmenuOptions) {
   let reset = () => {
     setPreventPointerEvents(false);
     movementsTowardsSubmenuCount.current = ALLOWED_INVALID_MOVEMENTS;
+    prevPointerPos.current = undefined;
   };
 
   let modality = useInteractionModality();

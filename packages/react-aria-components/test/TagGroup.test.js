@@ -11,7 +11,7 @@
  */
 
 import {Button, Label, Tag, TagGroup, TagList, Text} from '../';
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -275,8 +275,7 @@ describe('TagGroup', () => {
         expect(items[1]).toHaveAttribute('data-href', 'https://adobe.com');
         expect(items[2]).not.toHaveAttribute('data-href');
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick);
+        let onClick = mockClickDefault();
 
         await trigger(items[1]);
         expect(onSelectionChange).not.toHaveBeenCalled();

@@ -134,7 +134,11 @@ export class ToastQueue<T> {
       }
     }
 
-    this.queue.splice(low, 0, toast);
+    if (toast.priority) {
+      this.queue.splice(low, 0, toast);
+    } else {
+      this.queue.unshift(toast);
+    }
 
     toast.animation = low < this.maxVisibleToasts ? 'entering' : 'queued';
     let i = this.maxVisibleToasts;
@@ -157,23 +161,28 @@ export class ToastQueue<T> {
       this.queue.splice(index, 1);
     }
 
-    this.updateVisibleToasts();
+    this.updateVisibleToasts(index);
   }
 
   /** Removes a toast from the visible toasts after an exiting animation. */
   remove(key: string) {
+    let index = this.queue.findIndex(t => t.key === key);
     this.visibleToasts = this.visibleToasts.filter(t => t.key !== key);
-    this.updateVisibleToasts();
+    this.updateVisibleToasts(index);
   }
 
-  private updateVisibleToasts() {
+  private updateVisibleToasts(oldIndex = -1) {
     let toasts = this.queue.slice(0, this.maxVisibleToasts);
     if (this.hasExitAnimation) {
       let prevToasts: QueuedToast<T>[] = this.visibleToasts
-        .filter(t => !toasts.some(t2 => t.key === t2.key))
-        .map(t => ({...t, animation: 'exiting'}));
+          .filter(t => !toasts.some(t2 => t.key === t2.key))
+          .map(t => ({...t, animation: 'exiting'}));
 
-      this.visibleToasts = prevToasts.concat(toasts).sort((a, b) => b.priority - a.priority);
+      if (oldIndex !== -1) {
+        toasts.splice(oldIndex, 0, prevToasts?.[0]);
+      }
+
+      this.visibleToasts = toasts;
     } else {
       this.visibleToasts = toasts;
     }

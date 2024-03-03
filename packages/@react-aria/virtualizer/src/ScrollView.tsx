@@ -130,8 +130,12 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
       return;
     }
 
-    let w = dom.clientWidth;
-    let h = dom.clientHeight;
+    let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
+    let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
+    let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
+    let w = isTestEnv && !isClientWidthMocked ? Infinity : dom.clientWidth;
+    let h = isTestEnv && !isClientHeightMocked ? Infinity : dom.clientHeight;
+
     if (sizeToFit && contentSize.width > 0 && contentSize.height > 0) {
       if (sizeToFit === 'width') {
         w = Math.min(w, contentSize.width);
@@ -190,8 +194,8 @@ function ScrollView(props: ScrollViewProps, ref: RefObject<HTMLDivElement>) {
   }
 
   innerStyle = {
-    width: contentSize.width,
-    height: contentSize.height,
+    width: Number.isFinite(contentSize.width) ? contentSize.width : undefined,
+    height: Number.isFinite(contentSize.height) ? contentSize.height : undefined,
     pointerEvents: isScrolling ? 'none' : 'auto',
     position: 'relative',
     ...innerStyle
