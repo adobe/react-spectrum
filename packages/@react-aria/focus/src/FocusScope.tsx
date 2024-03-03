@@ -407,7 +407,7 @@ function isElementInAnyScope(element: Element) {
   return isElementInChildScope(element);
 }
 
-function isElementInScope(element?: Element | null, scope?: Element[] | null) {
+function isElementInScope(element?: Element | null | ShadowRoot, scope?: Element[] | null) {
   if (!element) {
     return false;
   }
