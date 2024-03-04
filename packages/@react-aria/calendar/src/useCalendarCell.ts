@@ -10,44 +10,59 @@
  * governing permissions and limitations under the License.
  */
 
-import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
-import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
-import {getEraFormat, hookData} from './utils';
-import {getInteractionModality, usePress} from '@react-aria/interactions';
+import {
+  CalendarDate,
+  isEqualDay,
+  isSameDay,
+  isToday,
+} from '@internationalized/date';
+import { CalendarState, RangeCalendarState } from '@react-stately/calendar';
+import { DOMAttributes } from '@react-types/shared';
+import {
+  focusWithoutScrolling,
+  getScrollParent,
+  mergeProps,
+  scrollIntoViewport,
+  useDeepMemo,
+  useDescription,
+} from '@react-aria/utils';
+import { getEraFormat, hookData } from './utils';
+import { getInteractionModality, usePress } from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {RefObject, useEffect, useMemo, useRef} from 'react';
-import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
+import { RefObject, useEffect, useMemo, useRef } from 'react';
+import {
+  useDateFormatter,
+  useLocalizedStringFormatter,
+} from '@react-aria/i18n';
 
 export interface AriaCalendarCellProps {
   /** The date that this cell represents. */
-  date: CalendarDate,
+  date: CalendarDate;
   /**
    * Whether the cell is disabled. By default, this is determined by the
    * Calendar's `minValue`, `maxValue`, and `isDisabled` props.
    */
-  isDisabled?: boolean
+  isDisabled?: boolean;
 }
 
 export interface CalendarCellAria {
   /** Props for the grid cell element (e.g. `<td>`). */
-  cellProps: DOMAttributes,
+  cellProps: DOMAttributes;
   /** Props for the button element within the cell. */
-  buttonProps: DOMAttributes,
+  buttonProps: DOMAttributes;
   /** Whether the cell is currently being pressed. */
-  isPressed: boolean,
+  isPressed: boolean;
   /** Whether the cell is selected. */
-  isSelected: boolean,
+  isSelected: boolean;
   /** Whether the cell is focused. */
-  isFocused: boolean,
+  isFocused: boolean;
   /**
    * Whether the cell is disabled, according to the calendar's `minValue`, `maxValue`, and `isDisabled` props.
    * Disabled dates are not focusable, and cannot be selected by the user. They are typically
    * displayed with a dimmed appearance.
    */
-  isDisabled: boolean,
+  isDisabled: boolean;
   /**
    * Whether the cell is unavailable, according to the calendar's `isDateUnavailable` prop. Unavailable dates remain
    * focusable, but cannot be selected by the user. They should be displayed with a visual affordance to indicate they
@@ -56,44 +71,54 @@ export interface CalendarCellAria {
    * Note that because they are focusable, unavailable dates must meet a 4.5:1 color contrast ratio,
    * [as defined by WCAG](https://www.w3.org/WAI/WCAG21/Understanding/contrast-minimum.html).
    */
-  isUnavailable: boolean,
+  isUnavailable: boolean;
   /**
    * Whether the cell is outside the visible range of the calendar.
    * For example, dates before the first day of a month in the same week.
    */
-  isOutsideVisibleRange: boolean,
+  isOutsideVisibleRange: boolean;
   /** Whether the cell is part of an invalid selection. */
-  isInvalid: boolean,
+  isInvalid: boolean;
   /** The day number formatted according to the current locale. */
-  formattedDate: string
+  formattedDate: string;
 }
 
 /**
  * Provides the behavior and accessibility implementation for a calendar cell component.
  * A calendar cell displays a date cell within a calendar grid which can be selected by the user.
  */
-export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
-  let {date, isDisabled} = props;
-  let {errorMessageId, selectedDateDescription} = hookData.get(state);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
+export function useCalendarCell(
+  props: AriaCalendarCellProps,
+  state: CalendarState | RangeCalendarState,
+  ref: RefObject<HTMLElement>
+): CalendarCellAria {
+  let { date, isDisabled } = props;
+  let { errorMessageId, selectedDateDescription } = hookData.get(state);
+  let stringFormatter = useLocalizedStringFormatter(
+    intlMessages,
+    '@react-aria/calendar'
+  );
   let dateFormatter = useDateFormatter({
     weekday: 'long',
     day: 'numeric',
     month: 'long',
     year: 'numeric',
     era: getEraFormat(date),
-    timeZone: state.timeZone
+    timeZone: state.timeZone,
   });
   let isSelected = state.isSelected(date);
   let isFocused = state.isCellFocused(date);
   isDisabled = isDisabled || state.isCellDisabled(date);
   let isUnavailable = state.isCellUnavailable(date);
   let isSelectable = !isDisabled && !isUnavailable;
-  let isInvalid = state.isValueInvalid && (
-    'highlightedRange' in state
-      ? !state.anchorDate && state.highlightedRange && date.compare(state.highlightedRange.start) >= 0 && date.compare(state.highlightedRange.end) <= 0
-      : state.value && isSameDay(state.value, date)
-  );
+  let isInvalid =
+    state.isValueInvalid &&
+    ('highlightedRange' in state
+      ? !state.anchorDate &&
+        state.highlightedRange &&
+        date.compare(state.highlightedRange.start) >= 0 &&
+        date.compare(state.highlightedRange.end) <= 0
+      : state.value && isSameDay(state.value, date));
 
   if (isInvalid) {
     isSelected = true;
@@ -102,12 +127,15 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   // For performance, reuse the same date object as before if the new date prop is the same.
   // This allows subsequent useMemo results to be reused.
   date = useDeepMemo<CalendarDate>(date, isEqualDay);
-  let nativeDate = useMemo(() => date.toDate(state.timeZone), [date, state.timeZone]);
+  let nativeDate = useMemo(
+    () => date.toDate(state.timeZone),
+    [date, state.timeZone]
+  );
 
   // aria-label should be localize Day of week, Month, Day and Year without Time.
   let isDateToday = isToday(date, state.timeZone);
   let label = useMemo(() => {
-    let label = '';
+    let label = ';
 
     // If this is a range calendar, add a description of the full selected range
     // to the first and last selected date.
@@ -123,13 +151,16 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     label += dateFormatter.format(nativeDate);
     if (isDateToday) {
       // If date is today, set appropriate string depending on selected state:
-      label = stringFormatter.format(isSelected ? 'todayDateSelected' : 'todayDate', {
-        date: label
-      });
+      label = stringFormatter.format(
+        isSelected ? 'todayDateSelected' : 'todayDate',
+        {
+          date: label,
+        }
+      );
     } else if (isSelected) {
       // If date is selected but not today:
       label = stringFormatter.format('dateSelected', {
-        date: label
+        date: label,
       });
     }
 
@@ -140,18 +171,31 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     }
 
     return label;
-  }, [dateFormatter, nativeDate, stringFormatter, isSelected, isDateToday, date, state, selectedDateDescription]);
+  }, [
+    dateFormatter,
+    nativeDate,
+    stringFormatter,
+    isSelected,
+    isDateToday,
+    date,
+    state,
+    selectedDateDescription,
+  ]);
 
   // When a cell is focused and this is a range calendar, add a prompt to help
   // screenreader users know that they are in a range selection mode.
   let rangeSelectionPrompt = '';
   if ('anchorDate' in state && isFocused && !state.isReadOnly && isSelectable) {
-    // If selection has started add "click to finish selecting range"
+    // If selection has started add 'click to finish selecting range'
     if (state.anchorDate) {
-      rangeSelectionPrompt = stringFormatter.format('finishRangeSelectionPrompt');
-    // Otherwise, add "click to start selecting range" prompt
+      rangeSelectionPrompt = stringFormatter.format(
+        'finishRangeSelectionPrompt'
+      );
+      // Otherwise, add 'click to start selecting range' prompt
     } else {
-      rangeSelectionPrompt = stringFormatter.format('startRangeSelectionPrompt');
+      rangeSelectionPrompt = stringFormatter.format(
+        'startRangeSelectionPrompt'
+      );
     }
   }
 
@@ -160,7 +204,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   let isAnchorPressed = useRef(false);
   let isRangeBoundaryPressed = useRef(false);
   let touchDragTimerRef = useRef(null);
-  let {pressProps, isPressed} = usePress({
+  let { pressProps, isPressed } = usePress({
     // When dragging to select a range, we don't want dragging over the original anchor
     // again to trigger onPressStart. Cancel presses immediately when the pointer exits.
     shouldCancelOnPointerExit: 'anchorDate' in state && !!state.anchorDate,
@@ -172,7 +216,11 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
         return;
       }
 
-      if ('highlightedRange' in state && !state.anchorDate && (e.pointerType === 'mouse' || e.pointerType === 'touch')) {
+      if (
+        'highlightedRange' in state &&
+        !state.anchorDate &&
+        (e.pointerType === 'mouse' || e.pointerType === 'touch')
+      ) {
         // Allow dragging the start or end date of a range to modify it
         // rather than starting a new selection.
         // Don't allow dragging when invalid, or weird jumping behavior may occur as date ranges
@@ -251,11 +299,11 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           // For range selection, auto-advance the focused date by one if using keyboard.
           // This gives an indication that you're selecting a range rather than a single date.
           // For mouse, this is unnecessary because users will see the indication on hover. For screen readers,
-          // there will be an announcement to "click to finish selecting range" (above).
+          // there will be an announcement to 'click to finish selecting range' (above).
           state.selectDate(date);
-          let nextDay = date.add({days: 1});
+          let nextDay = date.add({ days: 1 });
           if (state.isInvalid(nextDay)) {
-            nextDay = date.subtract({days: 1});
+            nextDay = date.subtract({ days: 1 });
           }
           if (!state.isInvalid(nextDay)) {
             state.setFocusedDate(nextDay);
@@ -266,7 +314,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           state.setFocusedDate(date);
         }
       }
-    }
+    },
   });
 
   let tabIndex = null;
@@ -286,8 +334,13 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       // Also only scroll into view if the cell actually got focused.
       // There are some cases where the cell might be disabled or inside,
       // an inert container and we don't want to scroll then.
-      if (getInteractionModality() !== 'pointer' && document.activeElement === ref.current) {
-        scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
+      if (
+        getInteractionModality() !== 'pointer' &&
+        document.activeElement === ref.current
+      ) {
+        scrollIntoViewport(ref.current, {
+          containingElement: getScrollParent(ref.current),
+        });
       }
     }
   }, [isFocused, ref]);
@@ -295,17 +348,23 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   let cellDateFormatter = useDateFormatter({
     day: 'numeric',
     timeZone: state.timeZone,
-    calendar: date.calendar.identifier
+    calendar: date.calendar.identifier,
   });
 
-  let formattedDate = useMemo(() => cellDateFormatter.formatToParts(nativeDate).find(part => part.type === 'day').value, [cellDateFormatter, nativeDate]);
+  let formattedDate = useMemo(
+    () =>
+      cellDateFormatter
+        .formatToParts(nativeDate)
+        .find((part) => part.type === 'day').value,
+    [cellDateFormatter, nativeDate]
+  );
 
   return {
     cellProps: {
       role: 'gridcell',
       'aria-disabled': !isSelectable || null,
       'aria-selected': isSelected || null,
-      'aria-invalid': isInvalid || null
+      'aria-invalid': isInvalid || null,
     },
     buttonProps: mergeProps(pressProps, {
       onFocus() {
@@ -318,13 +377,20 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       'aria-disabled': !isSelectable || null,
       'aria-label': label,
       'aria-invalid': isInvalid || null,
-      'aria-describedby': [
-        isInvalid ? errorMessageId : null,
-        descriptionProps['aria-describedby']
-      ].filter(Boolean).join(' ') || undefined,
+      'aria-describedby':
+        [
+          isInvalid ? errorMessageId : null,
+          descriptionProps['aria-describedby'],
+        ]
+          .filter(Boolean)
+          .join(' ') || undefined,
       onPointerEnter(e) {
         // Highlight the date on hover or drag over a date when selecting a range.
-        if ('highlightDate' in state && (e.pointerType !== 'touch' || state.isDragging) && isSelectable) {
+        if (
+          'highlightDate' in state &&
+          (e.pointerType !== 'touch' || state.isDragging) &&
+          isSelectable
+        ) {
           state.highlightDate(date);
         }
       },
@@ -333,7 +399,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
           // This is necessary on touch devices to allow dragging
           // outside the original pressed element.
           // (JSDOM does not support this)
-          if ("releasePointerCapture" in e.target) {
+          if ('releasePointerCapture' in e.target) {
             e.target.releasePointerCapture(e.pointerId);
           }
         } catch {
@@ -347,15 +413,17 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
       onContextMenu(e) {
         // Prevent context menu on long press.
         e.preventDefault();
-      }
+      },
     }),
     isPressed,
     isFocused,
     isSelected,
     isDisabled,
     isUnavailable,
-    isOutsideVisibleRange: date.compare(state.visibleRange.start) < 0 || date.compare(state.visibleRange.end) > 0,
+    isOutsideVisibleRange:
+      date.compare(state.visibleRange.start) < 0 ||
+      date.compare(state.visibleRange.end) > 0,
     isInvalid,
-    formattedDate
+    formattedDate,
   };
 }
