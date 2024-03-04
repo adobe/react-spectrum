@@ -117,22 +117,20 @@ function Button() {
 const IframeWrapper = ({children}) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-  useEffect(() => {
-    if (iframeRef.current) {
-      const main = document.createElement('main');
-      const iframeDocument = iframeRef.current.contentDocument;
+  let onLoad = () => {
+    const main = document.createElement('main');
+    const iframeDocument = iframeRef.current.contentDocument;
 
-      if (iframeDocument) {
-        iframeDocument.body.innerHTML = '';
-        iframeDocument.body.appendChild(main);
-        ReactDOM.render(children, main);
+    if (iframeDocument) {
+      iframeDocument.body.innerHTML = '';
+      iframeDocument.body.appendChild(main);
+      ReactDOM.render(children, main);
 
-        return addWindowFocusTracking(iframeDocument.body);
-      }
+      return addWindowFocusTracking(iframeDocument.body);
     }
-  }, [children]);
+  };
 
-  return <iframe title="test" ref={iframeRef} />;
+  return <iframe title="test" ref={iframeRef} onLoad={onLoad} />;
 };
 
 function IFrameExample() {
