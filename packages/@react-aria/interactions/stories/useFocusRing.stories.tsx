@@ -14,7 +14,7 @@ import {addWindowFocusTracking} from '../src';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Key} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {SearchField} from '@react-spectrum/searchfield';
 import {useButton} from '@react-aria/button';
