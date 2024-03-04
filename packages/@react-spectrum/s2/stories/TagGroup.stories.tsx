@@ -71,7 +71,7 @@ export let Disabled = {
 function renderEmptyState() {
   return (
     <span>
-      No categories. <Link><a href="//react-spectrum.com">Click here</a></Link> to add some.
+      No categories. <Link href="https://react-spectrum.adobe.com/">Click here</Link> to add some.
     </span>
   );
 }
