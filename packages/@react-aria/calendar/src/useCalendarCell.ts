@@ -329,11 +329,19 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
         }
       },
       onPointerDown(e) {
-        // This is necessary on touch devices to allow dragging
-        // outside the original pressed element.
-        // (JSDOM does not support this)
-        if ('releasePointerCapture' in e.target) {
-          e.target.releasePointerCapture(e.pointerId);
+        try {
+          // This is necessary on touch devices to allow dragging
+          // outside the original pressed element.
+          // (JSDOM does not support this)
+          if ("releasePointerCapture" in e.target) {
+            e.target.releasePointerCapture(e.pointerId);
+          }
+        } catch {
+          // `releasePointerCapture` sometimes fails when being invoked with the exception:
+          //  DOMException: Failed to execute 'releasePointerCapture' on 'Element':
+          //  No active pointer with the given id is found.
+          //
+          // There's no need to do anything in case of failure
         }
       },
       onContextMenu(e) {
