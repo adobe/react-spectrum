@@ -21,7 +21,7 @@ import {FocusScope,  mergeProps, useFocusRing, useGridListSelectionCheckbox, use
 import {Collection as ICollection, Node, SelectionBehavior, TreeState, useTreeState} from 'react-stately';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactElement, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {useControlledState} from '@react-stately/utils';
 
 class TreeCollection<T> implements ICollection<Node<T>> {
@@ -339,7 +339,7 @@ export function TreeItemContent(props: TreeItemContentProps) {
   }
 }
 
-export const TreeItemContentContext = createContext<TreeItemContentRenderProps>(null);
+export const TreeItemContentContext = createContext<TreeItemContentRenderProps | null>(null);
 
 function TreeRow<T>({item}: {item: Node<T>}) {
   let state = useContext(TreeStateContext)!;
@@ -361,7 +361,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   );
 
   let props: TreeItemProps<unknown> = item.props;
-  let renderPropValues = React.useMemo(() => ({
+  let renderPropValues = React.useMemo<TreeItemContentRenderProps>(() => ({
     ...states,
     isHovered,
     isFocusVisible,
