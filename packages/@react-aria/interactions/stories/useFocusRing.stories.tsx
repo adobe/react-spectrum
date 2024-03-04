@@ -10,10 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {addWindowFocusTracking} from '../src';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Key} from '@react-types/shared';
-import React, {useState} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {useEffect, useRef, useState} from 'react';
+import ReactDOM from 'react-dom';
 import {SearchField} from '@react-spectrum/searchfield';
+import {useButton} from '@react-aria/button';
+import {useFocusRing} from '@react-aria/focus';
 
 interface IColumn {
   name: string,
@@ -59,6 +64,11 @@ export const SearchTableview = {
   }
 };
 
+export const IFrame = {
+  render: () => <IFrameExample />,
+  name: 'focus state in dynamic iframe'
+};
+
 function SearchExample() {
   const [items, setItems] = useState(manyRows);
 
@@ -87,5 +97,53 @@ function SearchExample() {
         </TableBody>
       </TableView>
     </div>
+  );
+}
+
+function Button() {
+  const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+  const {buttonProps} = useButton({}, buttonRef);
+  const {focusProps, isFocusVisible, isFocused} = useFocusRing();
+
+  return (
+    <button ref={buttonRef} {...mergeProps(buttonProps, focusProps)}>
+      Focus Visible: {isFocusVisible ? 'true' : 'false'} <br />
+      Focused: {isFocused ? 'true' : 'false'}
+    </button>
+  );
+}
+
+const IframeWrapper = ({children}) => {
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  useEffect(() => {
+    if (iframeRef.current) {
+      const main = document.createElement('main');
+      const iframeDocument = iframeRef.current.contentDocument;
+
+      if (iframeDocument) {
+        iframeDocument.body.innerHTML = '';
+        iframeDocument.body.appendChild(main);
+        ReactDOM.render(children, main);
+
+        return addWindowFocusTracking(iframeDocument.body);
+      }
+    }
+  }, [children]);
+
+  return <iframe title="test" ref={iframeRef} />;
+};
+
+function IFrameExample() {
+  return (
+    <>
+      <Button />
+      <IframeWrapper>
+        <Button />
+        <Button />
+        <Button />
+      </IframeWrapper>
+    </>
   );
 }
