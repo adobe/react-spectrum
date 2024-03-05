@@ -48,4 +48,8 @@
     text-transform: var(--spectrum-helptext-neutral-textonly-text-transform);
     letter-spacing: var(--spectrum-helptext-neutral-textonly-text-letter-spacing);
   }
+
+  &.is-disabled {
+    cursor: default;
+  }
 }
