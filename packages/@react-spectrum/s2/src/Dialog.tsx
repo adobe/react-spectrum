@@ -1,4 +1,4 @@
-import {Dialog as RACDialog, DialogProps as RACDialogProps, Provider, composeRenderProps} from 'react-aria-components';
+import {Dialog as RACDialog, DialogProps as RACDialogProps, Provider, composeRenderProps, PopoverProps as AriaPopoverProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
 import {ButtonGroupContext} from './ButtonGroup';
@@ -6,6 +6,7 @@ import {CloseButton} from './CloseButton';
 import {useMediaQuery, useDOMRef} from '@react-spectrum/utils';
 import {createContext, useContext, forwardRef, RefObject} from 'react';
 import {Modal} from './Modal';
+import {Popover} from './Popover';
 import {DOMRef} from '@react-types/shared';
 
 export interface DialogProps extends RACDialogProps {
@@ -56,14 +57,17 @@ const buttonGroup = style({
   maxWidth: 'full'
 });
 
-interface DialogContextValue {
+interface DialogContextValue extends Pick<AriaPopoverProps, 'placement' | 'shouldFlip'> {
   type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
-  isDismissable?: boolean
+  isDismissable?: boolean,
+  hideArrow?: boolean
 }
 
 export const DialogContext = createContext<DialogContextValue>({
   type: 'modal',
-  isDismissable: false
+  isDismissable: false,
+  hideArrow: false,
+  shouldFlip: true
 });
 
 function Dialog(props: DialogProps, ref: DOMRef) {
@@ -82,7 +86,19 @@ function Dialog(props: DialogProps, ref: DOMRef) {
         </Modal>
       );
     }
+    case 'popover':
+      // get hideArrow from dialog instead?
+      return (
+        <Popover hideArrow={ctx.hideArrow} placement={ctx.placement} shouldFlip={ctx.shouldFlip}>
+          <DialogInner {...props} {...ctx} dialogRef={domRef} isDismissable={isDismissable} />
+        </Popover>
+      );
+
     // TODO: popover/tray
+    // how do we want to do popover, v3 dialogtrigger rendered it, not the dialog
+    // in addition, how do we want to handle the margins that dialog currently imposes, just change them to 0 for popover?
+    // in order for the dialog to contain scrolling behavior, we'd need to follow what i did for menu otherwise the internal padding
+    // of the popover will squish the scrollable content area and the scroll bar will appear to be inside instead of part of the popover
   }
 }
 

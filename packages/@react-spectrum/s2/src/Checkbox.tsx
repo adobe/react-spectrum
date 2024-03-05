@@ -42,7 +42,7 @@ const wrapper = style({
   }
 });
 
-const box = style<RenderProps>({
+export const box = style<RenderProps>({
   ...focusRing(),
   size: 'control-sm',
   borderRadius: 'control-sm',
@@ -86,7 +86,7 @@ const box = style<RenderProps>({
   }
 });
 
-const iconStyles = style<RenderProps>({
+export const iconStyles = style<RenderProps>({
   size: {
     default: 2.5,
     size: {
@@ -116,7 +116,7 @@ function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProps, ref:
       {renderProps => (
         <>
           <CenterBaseline>
-            <div 
+            <div
               ref={boxRef}
               style={pressScale(boxRef)(renderProps)}
               className={box({
@@ -125,10 +125,10 @@ function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProps, ref:
                 size: props.size || 'M',
                 isEmphasized: props.isEmphasized
               })}>
-              {renderProps.isIndeterminate && 
+              {renderProps.isIndeterminate &&
                 <DashIcon className={iconStyles({...renderProps, size: props.size})} />
               }
-              {renderProps.isSelected && !renderProps.isIndeterminate && 
+              {renderProps.isSelected && !renderProps.isIndeterminate &&
                 <CheckmarkIcon className={iconStyles({...renderProps, size: props.size})} />
               }
             </div>

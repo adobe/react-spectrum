@@ -50,6 +50,7 @@
     "@adobe/spectrum-tokens": "^13.0.0-beta.9",
     "@parcel/config-default": "2.0.0-nightly.1498",
     "@parcel/packager-ts": "2.0.0-nightly.1498",
+    "@parcel/transformer-image": "2.11.1-nightly.3121",
     "@parcel/transformer-svg-react": "2.11.1-nightly.3121",
     "@parcel/transformer-typescript-types": "2.0.0-nightly.1498",
     "@react-aria/utils": "^3.23.0",
@@ -120,7 +121,8 @@
     "@react-spectrum/utils": "^3.11.3",
     "concurrently": "^8.2.2",
     "react-aria": "^3.31.1",
-    "react-aria-components": "^1.1.0"
+    "react-aria-components": "^1.1.0",
+    "sharp": "^0.31.1"
   },
   "peerDependencies": {
     "react": "^18.2.0",

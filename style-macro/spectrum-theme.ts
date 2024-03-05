@@ -2,6 +2,10 @@ import {createColorProperty, createMappedProperty, createTheme, createArbitraryP
 import type * as CSS from 'csstype';
 import tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
+interface MacroContext {
+  addAsset(asset: {type: string, content: string}): void
+}
+
 function colorToken(token: typeof tokens['gray-25']) {
   return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
 }
@@ -440,6 +444,8 @@ export const style = createTheme({
       purple: weirdColorToken(tokens['purple-visual-color']),
       fuchsia: weirdColorToken(tokens['fuchsia-visual-color']),
       magenta: weirdColorToken(tokens['magenta-visual-color']),
+      'layer-1': weirdColorToken(tokens['background-layer-1-color']),
+      'layer-2': weirdColorToken(tokens['background-layer-2-color']),
       ...color
     }),
     stroke: createColorProperty({
@@ -510,6 +516,34 @@ export const style = createTheme({
       '3/4': '75%',
       full: '100%'
     },
+    translateX: createMappedProperty(value => ({
+      '--translateX': value,
+      translate: 'var(--translateX, 0) var(--translateY, 0)'
+    }), {
+      ...baseSpacing,
+      ...negativeSpacing,
+      '1/2': '50%',
+      '1/3': '33.333333%',
+      '2/3': '66.666667%',
+      '1/4': '25%',
+      '2/4': '50%',
+      '3/4': '75%',
+      full: '100%'
+    }),
+    translateY: createMappedProperty(value => ({
+      '--translateY': value,
+      translate: 'var(--translateX, 0) var(--translateY, 0)'
+    }), {
+      ...baseSpacing,
+      ...negativeSpacing,
+      '1/2': '50%',
+      '1/3': '33.333333%',
+      '2/3': '66.666667%',
+      '1/4': '25%',
+      '2/4': '50%',
+      '3/4': '75%',
+      full: '100%'
+    }),
     rotate: createArbitraryProperty((value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`) => ({rotate: typeof value === 'number' ? `${value}deg` : value})),
     scale: createArbitraryProperty((value: number) => ({scale: value})),
     transform: createArbitraryProperty((value: string) => ({transform: value})),
@@ -630,6 +664,7 @@ export const style = createTheme({
 
     // effects
     boxShadow: {
+      'elevated-light': '0px 0px 3px 0px rgba(0, 0, 0, 0.12), 0px 3px 8px 0px rgba(0, 0, 0, 0.04), 0px 4px 16px 0px rgba(0, 0, 0, 0.08)',
       sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
       default: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
       md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
@@ -638,6 +673,9 @@ export const style = createTheme({
       '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
       inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
       none: 'none'
+    },
+    filter: {
+      'elevated-light': 'drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.12)) drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.04)) drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.08))'
     },
     borderTopStartRadius: createMappedProperty(value => ({borderStartStartRadius: value}), radius),
     borderTopEndRadius: createMappedProperty(value => ({borderStartEndRadius: value}), radius),
@@ -818,3 +856,7 @@ export const style = createTheme({
     '2xl': '@media (min-width: 1536px)'
   }
 });
+
+export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing) {
+  return `calc(${baseSpacing[height]} * 3 / 8)`;
+}

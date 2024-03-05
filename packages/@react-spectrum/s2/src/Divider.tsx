@@ -1,6 +1,7 @@
 import {forwardRef} from 'react';
 import {Separator as RACSeparator, SeparatorProps as RACSeparatorProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {mergeStyles} from '../style-macro/runtime';
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 
@@ -31,55 +32,59 @@ function Divider(props: DividerProps, ref: DOMRef) {
     <RACSeparator
       {...props}
       ref={domRef}
-      className={style<DividerSpectrumProps>({
-        alignSelf: 'stretch', /* hr elements are given a default margin, reset it so that flex can work */
-        backgroundColor: {
-          default: 'gray-200',
-          size: {
-            L: 'gray-800'
-          },
-          staticColor: {
-            white: {
-              default: 'transparent-white-200',
-              size: {
-                L: 'transparent-white-800'
+      className={mergeStyles(
+        style({ // default resets that can be overridden
+          margin: 0 /* hr elements are given a default margin, reset it so that flex can work */
+        })(),
+        props.className,
+        style<DividerSpectrumProps>({
+          alignSelf: 'stretch', /* hr elements are given a default margin, reset it so that flex can work */
+          backgroundColor: {
+            default: 'gray-200',
+            size: {
+              L: 'gray-800'
+            },
+            staticColor: {
+              white: {
+                default: 'transparent-white-200',
+                size: {
+                  L: 'transparent-white-800'
+                }
+              },
+              black: {
+                default: 'transparent-black-200',
+                size: {
+                  L: 'transparent-black-800'
+                }
               }
             },
-            black: {
-              default: 'transparent-black-200',
-              size: {
-                L: 'transparent-black-800'
+            forcedColors: 'ButtonBorder'
+          },
+          borderStyle: 'none',
+          borderRadius: 'full',
+          height: {
+            orientation: {
+              horizontal: {
+                default: 1,
+                size: {
+                  S: 'px',
+                  M: .5
+                }
               }
             }
           },
-          forcedColors: 'ButtonBorder'
-        },
-        borderStyle: 'none',
-        borderRadius: 'full',
-        height: {
-          orientation: {
-            horizontal: {
-              default: 1,
-              size: {
-                S: 'px',
-                M: .5
+          width: {
+            orientation: {
+              vertical: {
+                default: 1,
+                size: {
+                  S: 'px',
+                  M: .5
+                }
               }
             }
           }
-        },
-        margin: 0, /* hr elements are given a default margin, reset it so that flex can work */
-        width: {
-          orientation: {
-            vertical: {
-              default: 1,
-              size: {
-                S: 'px',
-                M: .5
-              }
-            }
-          }
-        }
-      })({size: props.size || 'M', orientation: props.orientation || 'horizontal', staticColor: props.staticColor})} />
+        })({size: props.size || 'M', orientation: props.orientation || 'horizontal', staticColor: props.staticColor}))} />
   );
 }
 

@@ -1,5 +1,5 @@
 import {ForwardedRef, HTMLAttributes, ImgHTMLAttributes, createContext, forwardRef} from 'react';
-import {Heading as RACHeading, HeadingProps, Header as RACHeader, useContextProps} from 'react-aria-components';
+import {Heading as RACHeading, HeadingProps, Header as RACHeader, useContextProps, Text as TextAria, Keyboard as KeyboardAria} from 'react-aria-components';
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 
@@ -55,6 +55,32 @@ function Content(props: HTMLAttributes<HTMLElement>, ref: DOMRef<HTMLDivElement>
 
 const _Content = forwardRef(Content);
 export {_Content as Content};
+
+export const TextContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLDivElement>>({});
+
+function Text(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, TextContext);
+  if (props.hidden) {
+    return null;
+  }
+  return <TextAria {...props} ref={ref} />;
+}
+
+const _Text = forwardRef(Text);
+export {_Text as Text};
+
+export const KeyboardContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLDivElement>>({});
+
+function Keyboard(props: HTMLAttributes<HTMLElement>, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, KeyboardContext);
+  if (props.hidden) {
+    return null;
+  }
+  return <KeyboardAria {...props} ref={ref} />;
+}
+
+const _Keyboard = forwardRef(Keyboard);
+export {_Keyboard as Keyboard};
 
 export const FooterContext = createContext<ContextValue<HTMLAttributes<HTMLElement>, HTMLElement>>({});
 
