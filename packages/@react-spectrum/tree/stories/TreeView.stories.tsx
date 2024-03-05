@@ -27,6 +27,8 @@ import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
 
 
+// TODO: add tree package to root package exlude css see Devons PR.
+// Get rid of the existing Tree in the package, we don't need it anymore
 
 export default {
   title: 'Tree'
@@ -64,9 +66,9 @@ interface StaticTreeItemProps extends TreeItemProps {
 //   );
 // }
 
-// TODO: the props here is just isExpanded for now since it will come from the render props
 interface ExpandableRowChevronProps {
-  isExpanded?: boolean
+  isExpanded?: boolean,
+  isDisabled?: boolean
 }
 
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
@@ -103,7 +105,8 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
           styles,
           'spectrum-Tree-expandButton',
           {
-            'is-open': fullProps.isExpanded
+            'is-open': fullProps.isExpanded,
+            'is-disabled': fullProps.isDisabled
           }
         )
       }>
@@ -122,26 +125,27 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
   return (
     <TreeItem
       {...props}
-      className={({isFocused, isSelected, isHovered, isFocusVisible, isPressed}) => classNames(styles, 'spectrum-Tree-row', {
+      className={({isFocused, isSelected, isHovered, isFocusVisible, isPressed, isDisabled}) => classNames(styles, 'spectrum-Tree-row', {
         'is-focused': isFocused,
         'focus-visible': isFocusVisible,
         'is-selected': isSelected,
         'is-hovered': isHovered,
-        'is-active': isPressed
+        'is-active': isPressed,
+        'is-disabled': isDisabled
       })}>
       <TreeItemContent>
-        {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior}) => (
+        {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled}) => (
           <div className={classNames(styles, 'spectrum-Tree-cell-grid')}>
             {/* TODO refactor the below to match a single container with grid definition */}
             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
               <Checkbox UNSAFE_className={classNames(styles, 'spectrum-Tree-checkbox')} UNSAFE_style={{marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} slot="selection" />
             )}
-            {hasChildRows && <ExpandableRowChevron isExpanded={isExpanded} />}
+            {hasChildRows && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
             {/* TODO does this slot provider even work within RAC? Taken from ListView */}
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: classNames(styles, 'spectrum-Tree-content')},
-                // TODO: handle the images later
+                // TODO: handle the images later since we don't have a thumbnail component
                 // illustration: {UNSAFE_className: styles['spectrum-ListViewItem-thumbnail']},
                 // image: {UNSAFE_className: styles['react-spectrum-ListViewItem-thumbnail']},
                 // TODO: handle action group and stuff the same way it is handled in ListView
@@ -152,11 +156,11 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
                   density: 'compact',
                   buttonLabelBehavior: 'hide'
                 }
-                // TODO handle action menu the same way as in ListView
+                // TODO handle action menu the same way as in ListView. Should it support a action menu?
                 // actionMenu: {UNSAFE_className: styles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
               }}>
               <Text>{props.title || props.children}</Text>
-              <ActionGroup>
+              <ActionGroup isDisabled={isDisabled}>
                 <Item key="edit">
                   <Edit />
                   <Text>Edit</Text>
@@ -177,7 +181,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
 
 // TODO add a resizable wrapper around this but for now apply a widht and height
 export const TreeExampleStatic = (args) => (
-  <Tree {...args} style={{height: '300px', width: '300px'}} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+  <Tree {...args} style={{height: '300px', width: '300px'}} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects">
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">

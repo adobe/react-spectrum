@@ -79,6 +79,7 @@
   }
 
   &.focus-visible.focus-visible  {
+    /* todo: see if I can apply this box shadow  to the element directly otherwise make a new div instead of a psudeo element. */
     &:after {
        /* Negative block start causes borders to actually be shared between items. Only works if we allow item overflow to be visible, like card focus rings. */
       inset-block-start: -2px;
@@ -98,15 +99,6 @@
   }
 
   &.is-selected {
-    background-color: var(--spectrum-listview-item-background-color-hover);
-
-    &.is-hovered,
-    &.is-active {
-      background-color: var(--spectrum-listview-item-background-color-hover);
-    }
-  }
-
-  &.is-selected {
     background-color: var(--spectrum-listview-item-background-color-selected);
     &.is-hovered,
     &.is-active {
@@ -121,6 +113,12 @@
         inset -1px 0 0 0 var(--spectrum-listview-item-border-color-selected),
         inset 0 -1px 0 0 var(--spectrum-listview-item-border-color-selected),
         inset 0 1px 0 0 var(--spectrum-listview-item-border-color-selected);
+    }
+  }
+
+  &.is-disabled {
+    & .spectrum-Tree-content {
+      color: var(--spectrum-listview-item-text-color-disabled);
     }
   }
 }
@@ -167,13 +165,17 @@
       transform: rotate(-90deg);
     }
   }
+
+  &.is-disabled {
+    color: var(--spectrum-alias-icon-color-disabled);
+  }
 }
 
 .spectrum-Tree-actions {
   grid-area: actions;
   flex-grow: 0;
   flex-shrink: 0;
-  /* TODO: I made this one up, confirm desired behavior */
+  /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
   padding-inline-start: var(--spectrum-global-dimension-size-50);
   padding-inline-end: var(--spectrum-global-dimension-size-50);
 }
