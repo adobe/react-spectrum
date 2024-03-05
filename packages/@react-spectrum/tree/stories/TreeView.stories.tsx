@@ -44,28 +44,6 @@ interface StaticTreeItemProps extends TreeItemProps {
 // will be user provided. This means what I have below will need to be the internals and is then exposed to the user as a wrapper to which
 // the user provides the <Text> and/or provides other elements as sibliings
 
-// The chevron button will be a custom implementation like it is in TableView so no need to provide slot to the RSP Button. It just needs to consume from ButtonContext and have
-// the chevron slot
-
-// function MyCheckbox({children, ...props}: CheckboxProps) {
-//   return (
-//     <Checkbox {...props}>
-//       {({isIndeterminate}) => (
-//         <>
-//           <div className="checkbox">
-//             <svg viewBox="0 0 18 18" aria-hidden="true">
-//               {isIndeterminate
-//                 ? <rect x={1} y={7.5} width={15} height={3} />
-//                 : <polyline points="1 9 7 14 15 4" />}
-//             </svg>
-//           </div>
-//           {children}
-//         </>
-//       )}
-//     </Checkbox>
-//   );
-// }
-
 interface ExpandableRowChevronProps {
   isExpanded?: boolean,
   isDisabled?: boolean
@@ -74,9 +52,7 @@ interface ExpandableRowChevronProps {
 function ExpandableRowChevron(props: ExpandableRowChevronProps) {
   let expandButtonRef = useRef();
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
-    // TODO: move some/all of the chevron button setup into a separate hook?
   let {direction} = useLocale();
-  // let {state} = useTableContext();
 
 
   // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
@@ -99,7 +75,6 @@ function ExpandableRowChevron(props: ExpandableRowChevronProps) {
       ref={ref}
       // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
       tabIndex={isAndroid() ? -1 : undefined}
-      // TODO: replace with appropriate classNames
       className={
         classNames(
           styles,
@@ -171,6 +146,7 @@ const StaticTreeItem = (props: StaticTreeItemProps) => {
                 </Item>
               </ActionGroup>
             </SlotProvider>
+            <div className={classNames(styles, 'spectrum-Tree-row-outline')} />
           </div>
         )}
       </TreeItemContent>
@@ -223,11 +199,6 @@ TreeExampleStatic.story = {
         type: 'radio',
         options: ['selection', 'all']
       }
-    }
-  },
-  parameters: {
-    description: {
-      data: 'Note that the last two items are just to test bare minimum TreeItem and thus dont have the checkbox or any of the other contents that the other items have. The last item tests the isFocused renderProp'
     }
   }
 };

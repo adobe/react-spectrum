@@ -28,7 +28,6 @@ import {useToggleState} from '@react-stately/toggle';
 
 function Checkbox(props: SpectrumCheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   let originalProps = props;
-  // TODO: double check that this works
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useFocusableRef(ref, inputRef);
 
