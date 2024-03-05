@@ -623,7 +623,7 @@ export const style = createTheme({
     // text
     fontFamily: {
       sans: {
-        default: 'adobe-clown, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+        default: adobe-clean, ui-sans-serif, system-ui, sans-serif',
         ':lang(ar)': 'myriad-arabic, ui-sans-serif, system-ui, sans-serif',
         ':lang(he)': 'myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
         ':lang(ja)': "adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif",
