@@ -1,3 +1,4 @@
+/* TODO: placeholder tokens, will need to pare these down on which ones we actually use */
 .spectrum-Tree,
 .spectrum-Tree-row {
   --spectrum-listview-item-compact-padding-y: var(--spectrum-global-dimension-size-50);
@@ -43,9 +44,11 @@
 }
 
 /* TODO: add more stuff from ListView since it pretty much matches the styles, add the blue outlines next */
-
+/* TODO: add disabled styles */
 .spectrum-Tree-row {
+  position: relative;
   display: flex;
+  /* TODO: this height is too small since the action button group's focus ring will breach containment  */
   height: var(----spectrum-global-dimension-size-400);
   width: 100%;
   box-sizing: border-box;
@@ -55,15 +58,39 @@
   line-height: var(--spectrum-listview-item-line-height);
   color: var(--spectrum-listview-item-text-color);
   outline: 0;
-  min-height: var(--spectrum-global-dimension-size-500);
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    inset-inline-start: 0;
+    inset-inline-end: 0;
+    inset-block-end: 0;
+    inset-block-start: 0;
+    z-index: 3;
+    pointer-events: none;
+
+    forced-color-adjust: none;
+  }
 
   &.is-hovered,
   &.is-focused {
     background-color: var(--spectrum-listview-item-background-color-hover);
   }
 
-  &.focus-visible {
-    background-color: var(--spectrum-listview-item-background-color-hover);
+  &.focus-visible.focus-visible  {
+    &:after {
+       /* Negative block start causes borders to actually be shared between items. Only works if we allow item overflow to be visible, like card focus rings. */
+      inset-block-start: -2px;
+      box-shadow:
+        inset 2px 0 0 0 var(--spectrum-listview-item-border-color-key-focus),
+        inset -2px 0 0 0 var(--spectrum-listview-item-border-color-key-focus),
+        inset 0 -2px 0 0 var(--spectrum-listview-item-border-color-key-focus),
+        inset 0 2px 0 0 var(--spectrum-listview-item-border-color-key-focus);
+
+      /* forced-color-adjust: none, so that box-shadow style will render */
+      forced-color-adjust: none;
+    }
   }
 
   &.is-active {
@@ -77,9 +104,23 @@
     &.is-active {
       background-color: var(--spectrum-listview-item-background-color-hover);
     }
+  }
 
-    &.focus-visible {
-      background-color: var(--spectrum-listview-item-background-color-selected-key-focus);
+  &.is-selected {
+    background-color: var(--spectrum-listview-item-background-color-selected);
+    &.is-hovered,
+    &.is-active {
+      background-color: var(--spectrum-listview-item-background-color-selected-hover);
+    }
+
+    /* Negative block start causes borders to actually be shared between items. Only works if we allow item overflow to be visible, like card focus rings. */
+    &:after {
+      inset-block-start: -1px;
+      box-shadow:
+        inset 1px 0 0 0 var(--spectrum-listview-item-border-color-selected),
+        inset -1px 0 0 0 var(--spectrum-listview-item-border-color-selected),
+        inset 0 -1px 0 0 var(--spectrum-listview-item-border-color-selected),
+        inset 0 1px 0 0 var(--spectrum-listview-item-border-color-selected);
     }
   }
 }
@@ -134,6 +175,7 @@
   flex-shrink: 0;
   /* TODO: I made this one up, confirm desired behavior */
   padding-inline-start: var(--spectrum-global-dimension-size-50);
+  padding-inline-end: var(--spectrum-global-dimension-size-50);
 }
 
 .spectrum-Tree-actionmenu {
