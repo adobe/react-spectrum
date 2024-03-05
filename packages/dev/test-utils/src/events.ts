@@ -121,3 +121,11 @@ export function typeText(el: HTMLElement, value: string, opts?: any) {
     skipClick = true;
   }
 }
+
+// Mocks and prevents the next click's default operation
+export function mockClickDefault(opts = {}) {
+  let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+  window.addEventListener('click', onClick, opts);
+
+  return onClick;
+}

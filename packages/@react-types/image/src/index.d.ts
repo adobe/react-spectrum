@@ -27,11 +27,11 @@ export interface ImageProps {
    */
   objectFit?: any, // move to styleProps for images and type better
   /**
-   * Callback - If an error occurs while loading or rendering an image.
+   * Callback - If an error occurs while loading or rendering an image, see [Image loading errors](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img#image_loading_errors).
    */
   onError?: ReactEventHandler<HTMLImageElement>,
   /**
-   * Callback - image on load.
+   * Callback - Called when the image has successfully loaded, see [load event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/load_event).
    */
   onLoad?: ReactEventHandler<HTMLImageElement>
 }
