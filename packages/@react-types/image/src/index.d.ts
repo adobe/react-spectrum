@@ -31,7 +31,7 @@ export interface ImageProps {
    */
   onError?: ReactEventHandler<HTMLImageElement>,
   /**
-   * Callback - image on load.
+   * Callback - Called when the image has successfully loaded, see [load event](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/load_event).
    */
   onLoad?: ReactEventHandler<HTMLImageElement>
 }
