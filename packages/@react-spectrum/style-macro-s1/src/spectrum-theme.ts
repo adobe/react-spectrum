@@ -349,7 +349,7 @@ const sizing = {
   screen: '100vh',
   min: 'min-content',
   max: 'max-content',
-  fit: 'fit-content',
+  fit: 'fit-content'
 };
 
 // TODO: make the keys into numbers in typescript somehow?
@@ -390,7 +390,7 @@ const radius = {
   lg: 'var(--spectrum-alias-border-radius-medium)',
   xl: 'var(--spectrum-alias-border-radius-large)',
   full: '9999px',
-  pill: 'calc(self(height, self(minHeight, 9999px)) / 2)',
+  pill: 'calc(self(height, self(minHeight, 9999px)) / 2)'
 };
 
 type GridTrack = 'none' | 'subgrid' | (string & {}) | readonly GridTrackSize[];
@@ -643,7 +643,7 @@ export const style = createTheme({
       lg: 'var(--spectrum-global-dimension-font-size-200)',
       xl: 'var(--spectrum-global-dimension-font-size-300)',
       '2xl': 'var(--spectrum-global-dimension-font-size-400)',
-      '3xl': 'var(--spectrum-global-dimension-font-size-500)',
+      '3xl': 'var(--spectrum-global-dimension-font-size-500)'
     },
     fontWeight: {
       thin: '100',
