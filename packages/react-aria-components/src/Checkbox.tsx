@@ -15,7 +15,7 @@ import {ContextValue, forwardRefType, Provider, RACValidation, RenderProps, Slot
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {LabelContext} from './Label';
-import React, {createContext, ForwardedRef, forwardRef, MutableRefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, MutableRefObject, useContext} from 'react';
 import {TextContext} from './Text';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<CheckboxGroupRenderProps>, SlotProps {}
@@ -171,9 +171,7 @@ function Checkbox(props: CheckboxProps, ref: ForwardedRef<HTMLLabelElement>) {
   } = props;
   [props, ref] = useContextProps(otherProps, ref, CheckboxContext);
   let groupState = useContext(CheckboxGroupStateContext);
-  let defaultInputRef = useRef<HTMLInputElement>(null);
-  let userInputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
-  let inputRef = userInputRef || defaultInputRef;
+  let inputRef = useObjectRef(mergeRefs(userProvidedInputRef, props.inputRef !== undefined ? props.inputRef : null));
   let {labelProps, inputProps, isSelected, isDisabled, isReadOnly, isPressed, isInvalid} = groupState
     // eslint-disable-next-line react-hooks/rules-of-hooks
     ? useCheckboxGroupItem({
