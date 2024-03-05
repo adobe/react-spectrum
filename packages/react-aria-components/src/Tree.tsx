@@ -348,7 +348,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
   let isExpanded = rowProps['aria-expanded'] === true;
   let hasChildRows = [...state.collection.getChildren!(item.key)]?.length > 1;
-  let level = rowProps['aria-level'];
+  let level = rowProps['aria-level'] || 1;
 
   let {hoverProps, isHovered} = useHover({
     isDisabled: !states.allowsSelection && !states.hasAction
