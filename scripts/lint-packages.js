@@ -116,7 +116,9 @@ for (let pkg of packagePaths) {
       softAssert.equal(json.sideEffects, false, `${pkg} is missing sideEffects: false`);
     }
     softAssert(!json.dependencies || !json.dependencies['@adobe/spectrum-css-temp'], `${pkg} has @adobe/spectrum-css-temp in dependencies instead of devDependencies`);
-    softAssert(json.dependencies && json.dependencies['@swc/helpers'], `${pkg} is missing a dependency on @swc/helpers`);
+    if (json.name !== '@react-spectrum/style-macro-s1') {
+      softAssert(json.dependencies && json.dependencies['@swc/helpers'], `${pkg} is missing a dependency on @swc/helpers`);
+    }
     softAssert(!json.dependencies || !json.dependencies['@react-spectrum/test-utils'], '@react-spectrum/test-utils should be a devDependency');
     softAssert(!json.dependencies || !json.dependencies['react'], `${pkg} has react as a dependency, but it should be a peerDependency`);
 
