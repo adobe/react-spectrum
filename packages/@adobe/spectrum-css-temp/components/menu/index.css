@@ -261,13 +261,16 @@ governing permissions and limitations under the License.
     display: flex;
     flex-direction: column;
     overflow: auto;
+
+    &.spectrum-Submenu-wrapper--isMobile {
+      overflow-x: hidden; /* Prevents scrollbar from appearing during submenu transition */
+    }
   }
 
   &.spectrum-Menu-wrapper--isMobile {
     width: 100%;
     border: none;
     background-color: unset;
-    overflow-x: hidden; /* Prevents scrollbar from appearing during submenu transition */
 
     &.is-expanded {
       position: absolute;

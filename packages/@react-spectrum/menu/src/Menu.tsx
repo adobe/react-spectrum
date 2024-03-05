@@ -70,13 +70,27 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     isDisabled: isSubmenu || !hasOpenSubmenu
   });
 
-  // TODO: add slide transition
+  let [traySubmenuAnimation, setTraySubmenuAnimation] = useState('');
+  let isMobile = useIsMobileDevice();
+  useEffect(() => {
+    if (!hasOpenSubmenu) {
+      setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
+    }
+  }, [hasOpenSubmenu, isSubmenu]);
+
+  let handleBackButtonPress = () => {
+    setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
+    setTimeout(() => {
+      contextProps.onBackButtonPress();
+    }, 300); // Matches transition duration
+  };
+
   return (
     <MenuStateContext.Provider value={{popoverContainer, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
       <div style={{height: hasOpenSubmenu ? '100%' : undefined}} ref={trayContainerRef} />
       <FocusScope>
         <TrayHeaderWrapper
-          onBackButtonPress={contextProps.onBackButtonPress}
+          onBackButtonPress={handleBackButtonPress}
           hasOpenSubmenu={hasOpenSubmenu}
           isSubmenu={isSubmenu}
           parentMenuTreeState={parentMenuTreeState}
@@ -89,6 +103,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
               classNames(
                 styles,
                 'spectrum-Menu',
+                {[traySubmenuAnimation]: isMobile},
                 styleProps.className
               )
             }>
@@ -135,20 +150,6 @@ export function TrayHeaderWrapper(props) {
   let headingId = useSlotId();
   let isMobile = useIsMobileDevice();
   let {direction} = useLocale();
-  let [traySubmenuAnimation, setTraySubmenuAnimation] = useState('');
-
-  useEffect(() => {
-    if (isSubmenu && !hasOpenSubmenu) {
-      setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
-    }
-  }, [hasOpenSubmenu, isSubmenu]);
-
-  let handleBackButtonPress = () => {
-    setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
-    setTimeout(() => {
-      onBackButtonPress();
-    }, 300); // Matches transition duration
-  };
 
   return (
     <>
@@ -167,13 +168,13 @@ export function TrayHeaderWrapper(props) {
             }
           )
         }>
-        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper', {[traySubmenuAnimation]: isMobile})} onKeyDown={wrapperKeyDown}>
+        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper', {'spectrum-Submenu-wrapper--isMobile': isMobile})} onKeyDown={wrapperKeyDown}>
           {isMobile && isSubmenu && !hasOpenSubmenu && (
             <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
               <ActionButton
                 aria-label={backButtonLabel}
                 isQuiet
-                onPress={handleBackButtonPress}>
+                onPress={onBackButtonPress}>
                 {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
                 {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
               </ActionButton>
