@@ -1,10 +1,10 @@
-import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxRenderProps} from 'react-aria-components';
+import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxRenderProps, ContextValue, useContextProps, CheckboxGroupStateContext} from 'react-aria-components';
 import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {focusRing} from './style-utils' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/S2_CheckmarkSize100.svg';
 import DashIcon from '../ui-icons/S2_DashSize100.svg';
-import {useContext, useRef, forwardRef} from 'react';
+import {useContext, useRef, forwardRef, createContext} from 'react';
 import {pressScale} from './pressScale';
 import {mergeStyles} from '../style-macro/runtime';
 import {FormContext, useFormProps} from './Form';
@@ -21,6 +21,10 @@ interface RenderProps extends CheckboxRenderProps, CheckboxStyleProps {}
 interface CheckboxProps extends Omit<AriaCheckboxProps, 'className'>, CheckboxStyleProps {
   className?: string
 }
+
+interface CheckboxContextValue extends CheckboxProps, CheckboxStyleProps {}
+
+export const CheckboxContext = createContext<ContextValue<CheckboxContextValue, HTMLLabelElement>>(null);
 
 const wrapper = style({
   display: 'flex',
@@ -106,7 +110,10 @@ function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProps, ref:
   let boxRef = useRef(null);
   let domRef = useFocusableRef(ref);
   let isInForm = !!useContext(FormContext);
+  [props, domRef] = useContextProps(props, domRef, CheckboxContext);
   props = useFormProps(props);
+  let isInCheckboxGroup = !!useContext(CheckboxGroupStateContext);
+  let ctx = useContext(CheckboxContext) as CheckboxContextValue; 
 
   return (
     <AriaCheckbox
@@ -123,7 +130,7 @@ function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProps, ref:
                 ...renderProps,
                 isSelected: renderProps.isSelected || renderProps.isIndeterminate,
                 size: props.size || 'M',
-                isEmphasized: props.isEmphasized
+                isEmphasized: isInCheckboxGroup ? ctx.isEmphasized : props.isEmphasized
               })}>
               {renderProps.isIndeterminate &&
                 <DashIcon className={iconStyles({...renderProps, size: props.size})} />

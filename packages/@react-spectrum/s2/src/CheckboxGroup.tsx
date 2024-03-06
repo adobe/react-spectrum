@@ -12,6 +12,7 @@ import {SpectrumLabelableProps, Orientation, DOMRef} from '@react-types/shared';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {field} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {CheckboxContext} from './Checkbox';
 
 export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children'>, SpectrumLabelableProps {
   children?: React.ReactNode,
@@ -19,7 +20,8 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'childr
   description?: string,
   errorMessage?: string | ((validation: ValidationResult) => string),
   size?: 'S' | 'M' | 'L' | 'XL',
-  orientation?: Orientation
+  orientation?: Orientation,
+  isEmphasized?: boolean
 }
 
 function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
@@ -35,6 +37,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
     necessityIndicator = 'icon',
     size = 'M',
     orientation = 'vertical',
+    isEmphasized,
     ...groupProps
   } = props;
   let domRef = useDOMRef(ref);
@@ -82,7 +85,9 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
             flexWrap: 'wrap'
           })({orientation})}>
           <FormContext.Provider value={{...formContext, size}}>
-            {children}
+            <CheckboxContext.Provider value={{isEmphasized}}>
+              {children}
+            </CheckboxContext.Provider>
           </FormContext.Provider>
         </div>
         <HelpText 

@@ -20,6 +20,19 @@ export const Example = (args: any) => (
   </CheckboxGroup>
 );
 
+
+export const CheckboxGroupOverridesIsEmphasized = (args: any) => (
+  <CheckboxGroup {...args}>
+    <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
+    <Checkbox value="baseball">Baseball</Checkbox>
+    <Checkbox value="basketball">Basketball</Checkbox>
+  </CheckboxGroup>
+);
+
 Example.args = {
+  label: 'Favorite sports'
+};
+
+CheckboxGroupOverridesIsEmphasized.args = {
   label: 'Favorite sports'
 };

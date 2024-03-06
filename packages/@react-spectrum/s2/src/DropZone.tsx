@@ -6,7 +6,7 @@ import {IllustratedMessageContext} from './IllustratedMessage';
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 
-interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children'>{
+interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled'>{
   className?: string,
   /** The content to display in the drop zone. */
   children?: ReactNode,
