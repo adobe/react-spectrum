@@ -11,20 +11,19 @@
  */
 
 import {filterDOMProps} from '@react-aria/utils';
-import {ReactNode, forwardRef, useContext, createContext} from 'react';
+import {forwardRef, useContext, createContext} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {IllustrationContext} from './Illustration';
-import {mergeStyles} from '../style-macro/runtime';
 import {HeadingContext, Provider} from 'react-aria-components';
 import {ContentContext} from './Content';
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 import {ButtonGroupContext} from './ButtonGroup';
+import {CSSPropWithHeight, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
-interface S2SpectrumIllustratedMessageProps extends Omit<SpectrumIllustratedMessageProps, 'className' | 'style' | 'children'>, IllustratedMessageStyleProps {
-  className?: string,
-  children: ReactNode
+interface S2SpectrumIllustratedMessageProps extends SpectrumIllustratedMessageProps, IllustratedMessageStyleProps {
+  css?: CSSPropWithHeight
 }
 
 interface IllustratedMessageStyleProps {
@@ -87,7 +86,7 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
       horizontal: 'center'
     }
   }
-});
+}, getAllowedOverrides({height: true}));
 
 const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolean, isDropTarget?: boolean}>({
   gridArea: 'illustration',
@@ -121,7 +120,7 @@ const heading = style<IllustratedMessageStyleProps>({
   margin: 0
 });
 
-const content = style<IllustratedMessageStyleProps>({
+const content = style({
   color: 'gray-800',
   gridArea: 'content',
   alignSelf: 'start'
@@ -144,6 +143,8 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
     children,
     orientation = 'horizontal',
     size = 'M',
+    UNSAFE_className = '',
+    UNSAFE_style,
     ...otherProps
   } = props;
 
@@ -156,17 +157,18 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
   return (
     <div
       {...filterDOMProps(otherProps)}
-      className={mergeStyles(props.className, illustratedMessage({
+      style={UNSAFE_style}
+      className={UNSAFE_className + illustratedMessage({
         size: props.size || 'M',
         orientation: props.orientation || 'horizontal'
-      }))}
+      }, props.css)}
       ref={domRef}>
       <Provider 
         values={[
           [HeadingContext, {className: heading({orientation, size})}],
-          [ContentContext, {className: content({orientation, size})}],
+          [ContentContext, {className: content}],
           [IllustrationContext, {className: illustration({orientation, size, isInDropZone, isDropTarget})}],
-          [ButtonGroupContext, {className: buttonGroup()}]
+          [ButtonGroupContext, {css: buttonGroup}]
         ]}>
         {children}
       </Provider>

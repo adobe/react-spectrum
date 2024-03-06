@@ -4,30 +4,28 @@ import {
   TagGroupProps as AriaTagGroupProps,
   TagList,
   TagListProps,
-  TagProps,
+  TagProps as AriaTagProps,
   composeRenderProps,
   Provider,
   TextContext
 } from 'react-aria-components';
-import {field, focusRing} from './style-utils' with {type: 'macro'};
+import {StyleProps, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {SpectrumLabelableProps, DOMRef} from '@react-types/shared';
 import {ClearButton} from './ClearButton';
 import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
-import {createContext, useContext, useRef, forwardRef} from 'react';
+import {createContext, useContext, useRef, forwardRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 
 // Get types from RSP and extend those?
 
-interface RSPTagProps extends TagProps {}
+interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
+  children?: ReactNode
+}
 
-export interface TagGroupProps<T>
-  extends
-    Omit<AriaTagGroupProps, 'children'>,
-    Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>,
-    Omit<SpectrumLabelableProps, 'isRequired'> {
+export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired'>, StyleProps {
   label?: string,
   description?: string,
   size?: 'S' | 'M' | 'L',
@@ -46,6 +44,8 @@ function TagGroup<T extends object>(
     children,
     renderEmptyState,
     isEmphasized,
+    UNSAFE_className = '',
+    UNSAFE_style,
     ...props
   }: TagGroupProps<T>,
   ref: DOMRef<HTMLDivElement>
@@ -61,17 +61,18 @@ function TagGroup<T extends object>(
     <AriaTagGroup
       {...props}
       ref={domRef}
-      className={style({
+      style={UNSAFE_style}
+      className={UNSAFE_className + style({
         ...field(),
         '--field-gap': {
           type: 'rowGap',
           value: '[calc((var(--field-height) - 1lh) / 2)]'
         }
-      })({
+      }, getAllowedOverrides())({
         size: props.size,
         labelPosition: labelPosition,
         isInForm: !!formContext
-      })}>
+      }, props.css)}>
       <FieldLabel
         size={size}
         labelPosition={labelPosition}
@@ -88,7 +89,7 @@ function TagGroup<T extends object>(
             // but the gap changes depending on t-shirt size in vertical (row).
           columnGap: 4,
           rowGap: '--field-gap'
-        })()}>
+        })}>
         <FormContext.Provider value={{...formContext, size}}>
           <Provider
             values={[
@@ -178,7 +179,7 @@ const tagStyles = style({
   }
 });
 
-export function Tag({children, ...props}: RSPTagProps) {
+export function Tag({children, ...props}: TagProps) {
   let textValue = typeof children === 'string' ? children : undefined;
   let {size = 'M', isEmphasized} = useContext(TagGroupContext);
   let ref = useRef(null);
@@ -199,7 +200,7 @@ export function Tag({children, ...props}: RSPTagProps) {
               gap: 'text-to-visual',
               forcedColorAdjust: 'none',
               backgroundColor: 'transparent'
-            })()}>
+            })}>
             {children}
           </div>
           {allowsRemoving && (

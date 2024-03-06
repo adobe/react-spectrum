@@ -1,12 +1,11 @@
 import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxRenderProps, ContextValue, useContextProps, CheckboxGroupStateContext} from 'react-aria-components';
 import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {focusRing} from './style-utils' with {type: 'macro'};
+import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/S2_CheckmarkSize100.svg';
 import DashIcon from '../ui-icons/S2_DashSize100.svg';
-import {useContext, useRef, forwardRef, createContext} from 'react';
+import {useContext, useRef, forwardRef, createContext, ReactNode} from 'react';
 import {pressScale} from './pressScale';
-import {mergeStyles} from '../style-macro/runtime';
 import {FormContext, useFormProps} from './Form';
 import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
@@ -18,8 +17,8 @@ interface CheckboxStyleProps {
 
 interface RenderProps extends CheckboxRenderProps, CheckboxStyleProps {}
 
-interface CheckboxProps extends Omit<AriaCheckboxProps, 'className'>, CheckboxStyleProps {
-  className?: string
+interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'style' | 'children'>, StyleProps, CheckboxStyleProps {
+  children?: ReactNode
 }
 
 interface CheckboxContextValue extends CheckboxProps, CheckboxStyleProps {}
@@ -44,7 +43,7 @@ const wrapper = style({
   gridColumnStart: {
     isInForm: 'field'
   }
-});
+}, getAllowedOverrides());
 
 export const box = style<RenderProps>({
   ...focusRing(),
@@ -106,7 +105,7 @@ export const iconStyles = style<RenderProps>({
   }
 });
 
-function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProps, ref: FocusableRef<HTMLLabelElement>) {
+function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLabelElement>) {
   let boxRef = useRef(null);
   let domRef = useFocusableRef(ref);
   let isInForm = !!useContext(FormContext);
@@ -119,7 +118,8 @@ function Checkbox({children, ...props}: CheckboxProps & CheckboxStyleProps, ref:
     <AriaCheckbox
       {...props}
       ref={domRef}
-      className={renderProps => mergeStyles(props.className, wrapper({...renderProps, isInForm, size: props.size || 'M'}))}>
+      style={props.UNSAFE_style}
+      className={renderProps => (props.UNSAFE_className || '') + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.css)}>
       {renderProps => (
         <>
           <CenterBaseline>

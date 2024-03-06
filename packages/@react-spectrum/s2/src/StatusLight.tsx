@@ -3,8 +3,8 @@ import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {filterDOMProps} from '@react-aria/utils';
 import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
 import {CenterBaseline} from './CenterBaseline';
-import {mergeStyles} from '../style-macro/runtime';
 import {useDOMRef} from '@react-spectrum/utils';
+import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 interface StatusLightStyleProps {
   /**
@@ -16,7 +16,7 @@ interface StatusLightStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaLabelingProps {
+export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaLabelingProps, StyleProps {
   /** The content to display as the label. */
   children?: ReactNode,
   /**
@@ -42,7 +42,7 @@ const wrapper = style<StatusLightStyleProps>({
       neutral: 'gray-600'
     }
   }
-});
+}, getAllowedOverrides());
 
 const light = style<StatusLightStyleProps>({
   size: {
@@ -79,7 +79,7 @@ const light = style<StatusLightStyleProps>({
 });
 
 function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, size = 'M', variant, role} = props;
+  let {children, size = 'M', variant, role, UNSAFE_className = '', UNSAFE_style, css} = props;
   let domRef = useDOMRef(ref);
 
   if (!children && !props['aria-label']) {
@@ -95,7 +95,8 @@ function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
       {...filterDOMProps(props, {labelable: !!role})}
       ref={domRef}
       role={role}
-      className={mergeStyles(wrapper({size, variant}), props.className)}>
+      style={UNSAFE_style}
+      className={UNSAFE_className + wrapper({size, variant}, css)}>
       <CenterBaseline>
         <svg className={light({size, variant})} aria-hidden="true">
           <circle r="50%" cx="50%" cy="50%" />

@@ -5,7 +5,7 @@ import {
 } from 'react-aria-components';
 import {ClearButton} from './ClearButton';
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {field} from './style-utils' with {type: 'macro'};
+import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import SearchIcon from '../src/wf-icons/Search';
 import {Icon} from './Icon';
@@ -15,16 +15,12 @@ import {FormContext, useFormProps} from './Form';
 import {SpectrumLabelableProps} from '@react-types/shared';
 import {TextFieldRef} from '@react-types/textfield';
 import {createFocusableRef} from '@react-spectrum/utils';
-import {CSSProp} from '../style-macro/types';
-import {mergeStyles} from '../style-macro/runtime';
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style'>, SpectrumLabelableProps {
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style'>, StyleProps, SpectrumLabelableProps {
   label?: string,
   description?: string,
   errorMessage?: string | ((validation: ValidationResult) => string),
-  size?: 'S' | 'M' | 'L' | 'XL',
-  // TODO
-  css?: CSSProp<typeof style, 'marginY'>
+  size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
@@ -37,6 +33,8 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
     necessityIndicator,
     labelPosition = 'top',
     labelAlign = 'start',
+    UNSAFE_className = '',
+    UNSAFE_style,
     ...searchFieldProps
   } = props;
 
@@ -61,7 +59,8 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
     <AriaSearchField
       {...searchFieldProps}
       ref={domRef}
-      className={mergeStyles(props.css, style({
+      style={UNSAFE_style}
+      className={UNSAFE_className + style({
         ...field(),
         '--iconMargin': {
           type: 'marginTop',
@@ -74,11 +73,11 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
             forcedColors: 'GrayText'
           }
         }
-      })({
+      }, getAllowedOverrides())({
         size: props.size,
         labelPosition,
         isInForm: !!formContext
-      }))}>
+      }, props.css)}>
       {({isDisabled, isInvalid, isEmpty}) => (<>
         {label && <FieldLabel
           isDisabled={isDisabled}
@@ -92,15 +91,15 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
         <FieldGroup
           isDisabled={isDisabled}
           size={props.size}
-          className={style({
+          css={style({
             borderRadius: 'full',
             paddingStart: 'pill',
             paddingEnd: 0
           })}>
-          <Icon className={style({marginEnd: 'text-to-visual'})()}>
+          <Icon css={style({marginEnd: 'text-to-visual'})}>
             <SearchIcon />
           </Icon>
-          <Input ref={inputRef} className={raw('&::-webkit-search-cancel-button { display: none }')} />
+          <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
           {!isEmpty && <ClearButton size={props.size} isDisabled={isDisabled} />}
         </FieldGroup>
         <HelpText

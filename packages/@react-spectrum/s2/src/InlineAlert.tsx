@@ -14,18 +14,16 @@ import AlertTriangle from './wf-icons/AlertTriangle';
 import CheckmarkCircle from './wf-icons/CheckmarkCircle';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {focusRing} from './style-utils' with {type: 'macro'};
+import {CSSProp, UnsafeStyles, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import InfoCircle from './wf-icons/InfoCircle';
-import {mergeStyles} from '../style-macro/runtime';
 import React, {ReactNode, useEffect, useRef} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {useFocusRing} from 'react-aria';
 import {Provider, HeadingContext} from 'react-aria-components';
 import {ContentContext} from './Content';
-import {StyleProps} from './styles';
 
-export interface SpectrumInlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
+export interface SpectrumInlineAlertProps extends DOMProps, UnsafeStyles, InlineStylesProps {
   /**
    * The contents of the Inline Alert.
    */
@@ -33,7 +31,8 @@ export interface SpectrumInlineAlertProps extends DOMProps, StyleProps, InlineSt
   /**
    * Whether to automatically focus the Inline Alert when it first renders.
    */
-  autoFocus?: boolean
+  autoFocus?: boolean,
+  css?: CSSProp
 }
 
 interface InlineStylesProps {
@@ -115,7 +114,7 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
       }
     }
   }
-});
+}, getAllowedOverrides());
 
 const icon = style<InlineStylesProps>({
   gridArea: 'icon',
@@ -142,7 +141,7 @@ const icon = style<InlineStylesProps>({
   }
 });
 
-const grid = style<InlineStylesProps>({
+const grid = style({
   display: 'grid',
   columnGap: 6,
   gridTemplateColumns: '1fr auto',
@@ -229,20 +228,21 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
       tabIndex={autoFocus ? -1 : undefined}
       autoFocus={autoFocus}
       role="alert"
-      className={mergeStyles(props.UNSAFE_className, inlineAlert({
+      style={props.UNSAFE_style}
+      className={(props.UNSAFE_className || '') + inlineAlert({
         variant,
         style: styleFill,
         isFocusVisible
-      }))}>
+      }, props.css)}>
       <div
-        className={grid(props)}>
+        className={grid}>
         <Provider
           values={[
             [HeadingContext, {className: heading({variant, style: styleFill})}],
             [ContentContext, {className: content({variant, style: styleFill})}]
           ]}>
           {Icon && <Icon
-            className={icon(props)}
+            UNSAFE_className={icon(props)}
             aria-label={iconAlt} />}
           {children}
         </Provider>

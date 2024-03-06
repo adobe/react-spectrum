@@ -29,7 +29,7 @@ export const Example = (args: any) => {
       <Draggable />
       <DropZone 
         {...args}
-        className={style({width: '[320px]', height: '[280px]'})()}
+        className={style({width: '[320px]', height: '[280px]'})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -56,7 +56,7 @@ export const ExampleWithFileTrigger = (args: any) => {
       <Draggable />
       <DropZone 
         {...args}
-        className={style({width: '[380px]', height: '[280px]'})()}
+        className={style({width: '[380px]', height: '[280px]'})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -70,7 +70,7 @@ export const ExampleWithFileTrigger = (args: any) => {
             Or, select a file from your computer
           </Content>
           {/* TODO: Swap out with ButtonGroup */}
-          <div className={style({display: 'flex', gridArea: 'buttonGroup', alignSelf: 'start', gap: 2, marginTop: 4})()} >
+          <div className={style({display: 'flex', gridArea: 'buttonGroup', alignSelf: 'start', gap: 2, marginTop: 4})} >
             <FileTrigger
               onSelect={() => setIsFilled(true)}>
               <Button variant="accent" >Browse files</Button>
@@ -91,7 +91,7 @@ export const LongBanner = (args: any) => {
       <DropZone 
         {...args}
         replaceMessage="A really long message that will show the text wrapping hopefully"
-        className={style({width: '[320px]', height: '[280px]'})()}
+        className={style({width: '[320px]', height: '[280px]'})}
         isFilled={isFilled}
         onDrop={() => setIsFilled(true)}>
         <IllustratedMessage>
@@ -137,7 +137,7 @@ function Draggable() {
   return (
     <FocusRing >
       <div
-        className={style({color: 'gray-900'})()}
+        className={style({color: 'gray-900'})}
         ref={ref}
         {...mergeProps(dragProps, buttonProps, clipboardProps)}>
         <span>Drag me</span>

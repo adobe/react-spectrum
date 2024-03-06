@@ -109,10 +109,10 @@ export const Fonts: Story = {
         </div>
         <div lang="en-US" style={{display: 'contents'}}>
           English (adobe-clean)
-          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].button}</Text></ActionButton>
-          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].copy}</Text></ActionButton>
-          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].cut}</Text></ActionButton>
-          <ActionButton {...args} style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].paste}</Text></ActionButton>
+          <ActionButton {...args} UNSAFE_style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].button}</Text></ActionButton>
+          <ActionButton {...args} UNSAFE_style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].copy}</Text></ActionButton>
+          <ActionButton {...args} UNSAFE_style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].cut}</Text></ActionButton>
+          <ActionButton {...args} UNSAFE_style={{fontFamily: 'adobe-clean'}}><NewIcon /><Text>{messages['en-US'].paste}</Text></ActionButton>
         </div>
         <div lang="ar-AR" dir="rtl" style={{display: 'contents'}}>
           Arabic (myriad-arabic)

@@ -1,13 +1,13 @@
 import {DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {ReactNode, forwardRef, createContext} from 'react';
-import {mergeStyles} from '../style-macro/runtime';
 import {IllustratedMessageContext} from './IllustratedMessage';
+import {CSSPropWithHeight, UnsafeStyles, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 
-interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled'>{
-  className?: string,
+interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled'>, UnsafeStyles {
+  css?: CSSPropWithHeight,
   /** The content to display in the drop zone. */
   children?: ReactNode,
   /** Whether the drop zone has been filled. */
@@ -38,7 +38,7 @@ const dropzone = style<DropZoneRenderProps>({
   },
   borderRadius: 'lg',
   padding: 6
-});
+}, getAllowedOverrides({height: true}));
 
 const banner = style<DropZoneRenderProps>({
   position: 'absolute',
@@ -63,7 +63,8 @@ function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
     <RACDropZone
       {...props}
       ref={domRef}
-      className={renderProps => mergeStyles(props.className, dropzone(renderProps))}>
+      style={props.UNSAFE_style}
+      className={renderProps => (props.UNSAFE_className || '') + dropzone(renderProps, props.css)}>
       {renderProps => (
         <>
           <IllustratedMessageContext.Provider value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget}}>

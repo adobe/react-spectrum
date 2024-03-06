@@ -1,10 +1,10 @@
 import {ButtonProps, ButtonRenderProps, Button as RACButton} from 'react-aria-components';
 import {baseColor, style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
-import {focusRing} from './style-utils' with { type: 'macro' };
+import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with { type: 'macro' };
 import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
-import {forwardRef} from 'react';
+import {ReactNode, forwardRef} from 'react';
 
 export interface ActionButtonStyleProps {
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
@@ -17,7 +17,9 @@ interface ToggleButtonStyleProps {
   isEmphasized?: boolean
 }
 
-interface ActionButtonProps extends ButtonProps, ActionButtonStyleProps {}
+interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children'>, StyleProps, ActionButtonStyleProps {
+  children?: ReactNode
+}
 
 // These styles handle both ActionButton and ToggleButton
 export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps>({
@@ -139,7 +141,7 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
   aspectRatio: {
     ':has([slot=icon]:only-child)': 'square'
   }
-});
+}, getAllowedOverrides());
 
 function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
@@ -148,13 +150,13 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
     <RACButton
       {...props}
       ref={domRef}
-      style={pressScale(domRef, props.style)}
-      className={renderProps => styles({
+      style={pressScale(domRef, props.UNSAFE_style)}
+      className={renderProps => (props.UNSAFE_className || '') + styles({
         ...renderProps,
         staticColor: props.staticColor,
         size: props.size,
         isQuiet: props.isQuiet
-      })} />
+      }, props.css)} />
   );
 }
 

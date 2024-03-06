@@ -220,9 +220,9 @@ const sizing = {
 };
 
 // TODO: make the keys into numbers in typescript somehow?
-const negativeSpacing: {[Key in keyof typeof scaledSpacing as `-${Key}`]: (typeof scaledSpacing)[Key]} =
-  Object.fromEntries(Object.entries(scaledSpacing).map(([k, v]) =>
-    [`-${k}`, {default: `-${v.default}`, touch: `-${v.touch}`}]
+const negativeSpacing: {[Key in keyof typeof baseSpacing as `-${Key}`]: (typeof baseSpacing)[Key]} =
+  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
+    [`-${k}`, `-${v}`]
   )) as any;
 
 const margin = {
@@ -461,7 +461,7 @@ export const style = createTheme({
       cinnamon: weirdColorToken(tokens['cinnamon-visual-color']),
       brown: weirdColorToken(tokens['brown-visual-color']),
       silver: weirdColorToken(tokens['silver-visual-color']),
-      'layer-1': weirdColorToken(tokens['background-layer-1-color']),
+      'layer-1': colorToken(tokens['background-layer-1-color']),
       'layer-2': weirdColorToken(tokens['background-layer-2-color']),
       ...color
     }),

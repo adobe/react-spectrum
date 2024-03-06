@@ -1,6 +1,7 @@
 import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 import {DOMRef} from '@react-types/shared';
 import {forwardRef} from 'react';
+import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 import ColorAvatar from '../avatars/avatar_color_16';
 import DatasetsAvatar from '../avatars/avatar_datasets_16';
@@ -30,7 +31,7 @@ enum GenericAvatarSvg {
   zoom = 'zoom'
 }
 
-export interface AvatarStyleProps {
+export interface AvatarProps extends StyleProps {
   generic?: GenericAvatarSvg,
   isDisabled?: boolean,
   size?: 4 | 4.5 | 5 | 5.5 | 6.5 | 7 | 8 | 9 | 10,
@@ -56,7 +57,7 @@ const imageStyles = style({
   opacity: {
     isDisabled: .3
   }
-});
+}, getAllowedOverrides());
 
 // TODO - Need feedback on if they are open sourced and how they should be hosted
 let genericAvatars = {
@@ -74,13 +75,15 @@ let genericAvatars = {
   [GenericAvatarSvg.zoom]: ZoomAvatar
 };
 
-function Avatar(props: AvatarStyleProps, ref: DOMRef<HTMLImageElement>) {
+function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
   let {
     alt = '',
     isDisabled,
     size = 5,
     src,
     generic,
+    UNSAFE_style,
+    UNSAFE_className = '',
     ...otherProps
   } = props;
 
@@ -92,7 +95,8 @@ function Avatar(props: AvatarStyleProps, ref: DOMRef<HTMLImageElement>) {
       ref={ref}
       alt={alt}
       role="img"
-      className={imageStyles({isDisabled, size: String(size)})}
+      style={UNSAFE_style}
+      className={UNSAFE_className + imageStyles({isDisabled, size: String(size)}, props.css)}
       src={!generic ? src : undefined} />
   );
 } 

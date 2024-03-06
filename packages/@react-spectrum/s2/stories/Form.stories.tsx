@@ -42,6 +42,6 @@ export const Example = (args: any) => (
     <TextArea label="Comment" name="comment" />
     <Switch>Wi-Fi</Switch>
     <Checkbox>I agree to the terms</Checkbox>
-    <Button type="submit" variant="primary" className={style({gridColumnStart: 'field', width: 'fit'})()}>Submit</Button>
+    <Button type="submit" variant="primary" css={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
   </Form>
 );

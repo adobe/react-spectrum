@@ -23,8 +23,8 @@ export const Example: Story = {
         <Button>Press me</Button>
         <Button variant="accent"><NewIcon /><Text>Test</Text></Button>
         <Button><NewIcon /></Button>
-        <Button variant="negative" className={style({maxWidth: 32})()}>Very long button with wrapping text to see what happens</Button>
-        <Button variant="secondary" className={style({maxWidth: 32})()}>
+        <Button variant="negative" css={style({maxWidth: 32})}>Very long button with wrapping text to see what happens</Button>
+        <Button variant="secondary" css={style({maxWidth: 32})}>
           <NewIcon />
           <Text>Very long button with wrapping text to see what happens</Text>
         </Button>

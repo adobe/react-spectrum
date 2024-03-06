@@ -1,26 +1,24 @@
 import {
   CheckboxGroup as AriaCheckboxGroup,
   CheckboxGroupProps as AriaCheckboxGroupProps,
-  // eslint-disable-next-line
-  CheckboxProps as AriaCheckboxProps,
   ValidationResult
 } from 'react-aria-components';
-import React, {useContext, forwardRef} from 'react';
+import {useContext, forwardRef, ReactNode} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {FieldLabel, HelpText} from './Field';
 import {SpectrumLabelableProps, Orientation, DOMRef} from '@react-types/shared';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {field} from './style-utils' with {type: 'macro'};
+import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {CheckboxContext} from './Checkbox';
 
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'children'>, SpectrumLabelableProps {
-  children?: React.ReactNode,
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps {
   label?: string,
   description?: string,
   errorMessage?: string | ((validation: ValidationResult) => string),
   size?: 'S' | 'M' | 'L' | 'XL',
   orientation?: Orientation,
+  children?: ReactNode,
   isEmphasized?: boolean
 }
 
@@ -37,6 +35,8 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
     necessityIndicator = 'icon',
     size = 'M',
     orientation = 'vertical',
+    UNSAFE_className = '',
+    UNSAFE_style,
     isEmphasized,
     ...groupProps
   } = props;
@@ -46,18 +46,19 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
     <AriaCheckboxGroup 
       {...groupProps}
       ref={domRef}
-      className={style({
+      style={UNSAFE_style}
+      className={UNSAFE_className + style({
         ...field(),
         // Double the usual gap because of the internal padding within checkbox that spectrum has.
         '--field-gap': {
           type: 'rowGap',
           value: '[calc(var(--field-height) - 1lh)]'
         }
-      })({
+      }, getAllowedOverrides())({
         size: props.size,
         labelPosition,
         isInForm: !!formContext
-      })}>
+      }, props.css)}>
       {({isDisabled, isInvalid}) => (<>
         <FieldLabel
           isDisabled={isDisabled}

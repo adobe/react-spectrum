@@ -1,14 +1,13 @@
 import {CenterBaseline} from './CenterBaseline';
-import {focusRing} from './style-utils' with {type: 'macro'};
+import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
-import {mergeStyles} from '../style-macro/runtime';
 import {pressScale} from './pressScale';
 import {
   Radio as AriaRadio,
   RadioProps as AriaRadioProps,
   RadioRenderProps
 } from 'react-aria-components';
-import {useContext, useRef} from 'react';
+import {ReactNode, useContext, useRef} from 'react';
 import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
 
 export interface RadioStyleProps {
@@ -18,8 +17,8 @@ export interface RadioStyleProps {
 
 interface RenderProps extends RadioRenderProps, RadioStyleProps {}
 
-interface RadioProps extends Omit<AriaRadioProps, 'className'>, RadioStyleProps {
-  className?: string
+interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children'>, StyleProps, RadioStyleProps {
+  children?: ReactNode
 }
 
 const wrapper = style({
@@ -39,7 +38,7 @@ const wrapper = style({
   gridColumnStart: {
     isInForm: 'field'
   }
-});
+}, getAllowedOverrides());
 
 const circle = style<RenderProps>({
   ...focusRing(),
@@ -76,14 +75,16 @@ const circle = style<RenderProps>({
   }
 });
 
-export function Radio({children, ...props}: RadioProps) {
+export function Radio(props: RadioProps) {
+  let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let circleRef = useRef(null);
   let isInForm = !!useContext(FormContext);
   props = useFormProps(props);
   return (
     <AriaRadio
       {...props}
-      className={renderProps => mergeStyles(props.className, wrapper({...renderProps, isInForm, size: props.size || 'M'}))}>
+      style={UNSAFE_style}
+      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.css)}>
       {renderProps => (
         <>
           <CenterBaseline>

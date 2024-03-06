@@ -1,3 +1,6 @@
+import {StyleString} from '../style-macro/types';
+import {CSSProperties} from 'react';
+
 export const focusRing = () => ({
   outlineStyle: {
     default: 'none',
@@ -54,3 +57,63 @@ export const field = () => ({
   },
   columnGap: 'text-to-control'
 } as const);
+
+const allowedOverrides = [
+  'margin',
+  'marginStart',
+  'marginEnd',
+  'marginTop',
+  'marginBottom',
+  'marginX',
+  'marginY',
+  'width',
+  'minWidth',
+  'maxWidth',
+  'flex',
+  'flexGrow',
+  'flexShrink',
+  'flexBasis',
+  'justifySelf',
+  'alignSelf',
+  'order', 
+  'gridArea', 
+  'gridRow',
+  'gridRowStart',
+  'gridRowEnd',
+  'gridColumn',
+  'gridColumnStart',
+  'gridColumnEnd',
+  'position',
+  'zIndex',
+  'top',
+  'bottom',
+  'inset',
+  'insetX',
+  'insetY',
+  'insetStart',
+  'insetEnd'
+] as const;
+
+const heightProperties = [
+  'size',
+  'height',
+  'minHeight',
+  'maxHeight'
+] as const;
+
+export type CSSProp = StyleString<(typeof allowedOverrides)[number]>;
+export type CSSPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof heightProperties)[number]>;
+export interface UnsafeStyles {
+  /** Sets the CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. Only use as a **last resort**. Use the `style` macro via the `css` prop instead. */
+  UNSAFE_className?: string,
+  /** Sets inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. Only use as a **last resort**. Use the `style` macro via the `css` prop instead. */
+  UNSAFE_style?: CSSProperties
+}
+
+export interface StyleProps extends UnsafeStyles {
+  css?: CSSProp
+}
+
+export function getAllowedOverrides({height = false} = {}) {
+  return (allowedOverrides as unknown as string[]).concat(height ? heightProperties : []);
+}

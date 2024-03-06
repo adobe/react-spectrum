@@ -1,7 +1,7 @@
 import {
   Menu as AriaMenu,
   MenuItem as AriaMenuItem,
-  MenuItemProps,
+  MenuItemProps as AriaMenuItemProps,
   MenuProps as AriaMenuProps,
   MenuTrigger,
   MenuTriggerProps,
@@ -13,7 +13,7 @@ import {
 } from 'react-aria-components';
 import {box, iconStyles} from './Checkbox';
 import {TextContext, HeadingContext, HeaderContext, Text, ImageContext, KeyboardContext} from './Content';
-import {focusRing} from './style-utils' with {type: 'macro'};
+import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {style, baseColor, edgeToText} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {mergeStyles} from '../style-macro/runtime';
 import {Popover} from './Popover';
@@ -28,8 +28,7 @@ import {Divider} from './Divider';
 // need to strip id's from icons
 
 
-export interface MenuProps<T>
-  extends AriaMenuProps<T> {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'style' | 'className'>, StyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
@@ -137,7 +136,7 @@ let menuitem = style({
     isLink: 'pointer'
   },
   transition: 'default'
-});
+}, getAllowedOverrides());
 
 let checkmark = style({
   visibility: {
@@ -238,23 +237,32 @@ export function Menu<T extends object>(props: MenuProps<T>) {
   let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
   let {
     children,
-    size = ctxSize
+    size = ctxSize,
+    UNSAFE_style,
+    UNSAFE_className,
+    css
   } = props;
 
   // TODO: change offset/crossoffset based on size? scale?
   // actual values?
   return (
-    <Popover hideArrow offset={isSubmenu ? -8 : 0} crossOffset={isSubmenu ? 4 : 0}>
-      <div role="presentation" className={menuWrapper()}>
+    <Popover 
+      hideArrow
+      offset={isSubmenu ? -8 : 0}
+      crossOffset={isSubmenu ? 4 : 0}
+      UNSAFE_style={UNSAFE_style}
+      UNSAFE_className={UNSAFE_className}
+      css={css}>
+      <div role="presentation" className={menuWrapper}>
         <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
           <Provider
             values={[
               [HeaderContext, {
                 slots: {
-                  header: {className: sectionHeader()}
+                  header: {className: sectionHeader}
                 }
               }],
-            [HeadingContext, {className: sectionHeading()}],
+            [HeadingContext, {className: sectionHeading}],
               [TextContext, {
                 slots: {
                   'section-description': {className: description({size})}
@@ -279,23 +287,27 @@ export function MenuSection<T extends object>(props: SectionProps<T>) {
     <>
       <AriaSection
         {...props}
-        className={section()}>
+        className={section}>
         {props.children}
       </AriaSection>
       <Divider
-        className={style({
+        UNSAFE_className={style({
           display: {
             default: 'grid',
             ':last-child': 'none'
           },
           gridColumn: '2 / -2',
           marginY: 2.5 // height of the menu separator is 12px, and the divider is 2px
-        })()} />
+        })} />
     </>
   );
 }
 
-export function MenuItem(props: Omit<MenuItemProps, 'children'> & {children: ReactNode}) {
+interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className'>, StyleProps {
+  children: ReactNode
+}
+
+export function MenuItem(props: MenuItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalMenuContext);
@@ -303,8 +315,8 @@ export function MenuItem(props: Omit<MenuItemProps, 'children'> & {children: Rea
     <AriaMenuItem
       {...props}
       ref={ref}
-      style={pressScale(ref)}
-      className={renderProps => menuitem({...renderProps, isFocused: (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused, size, isLink})}>
+      style={pressScale(ref, props.UNSAFE_style)}
+      className={renderProps => (props.UNSAFE_className || '') + menuitem({...renderProps, isFocused: (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused, size, isLink}, props.css)}>
       {composeRenderProps(props.children, (children, renderProps) => {
         let checkboxRenderProps = {...renderProps, size, isFocused: false, isFocusVisible: false, isIndeterminate: false, isReadOnly: false, isInvalid: false, isRequired: false};
         return (
@@ -313,15 +325,15 @@ export function MenuItem(props: Omit<MenuItemProps, 'children'> & {children: Rea
               values={[
                 [IconContext, {
                   slots: {
-                    icon: {className: icon()},
-                    descriptor: {className: descriptor()} // TODO: remove once we have default?
+                    icon: {css: icon},
+                    descriptor: {css: descriptor} // TODO: remove once we have default?
                   }
                 }],
                 [TextContext, {
                   slots: {
-                    label: {className: label()},
+                    label: {className: label},
                     description: {className: description({size})},
-                    value: {className: value()}
+                    value: {className: value}
                   }
                 }],
                 [KeyboardContext, {className: keyboard({size, isDisabled: renderProps.isDisabled})}],
@@ -329,13 +341,13 @@ export function MenuItem(props: Omit<MenuItemProps, 'children'> & {children: Rea
               ]}>
               {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon className={checkmark({...renderProps, size})} />}
               {renderProps.selectionMode === 'multiple' && !isLink && !renderProps.hasSubmenu && (
-                <div className={mergeStyles(checkbox(), box(checkboxRenderProps))}>
+                <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
                   <CheckmarkIcon className={iconStyles(checkboxRenderProps)} />
                 </div>
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-              {isLink && <LinkOutIcon  slot="descriptor" className={descriptor()} />}
-              {renderProps.hasSubmenu && <ChevronRightIcon  slot="descriptor" className={descriptor()} />}
+              {isLink && <LinkOutIcon  slot="descriptor" css={descriptor} />}
+              {renderProps.hasSubmenu && <ChevronRightIcon  slot="descriptor" css={descriptor} />}
             </Provider>
           </>
         );

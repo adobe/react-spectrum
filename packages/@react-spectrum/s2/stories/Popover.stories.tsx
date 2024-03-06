@@ -35,7 +35,7 @@ export const Example: Story = {
             <Form>
               <TextField label="First Name" name="firstName" />
               <TextField label="Last Name" name="firstName" />
-              <Button type="submit" variant="primary" className={style({gridColumnStart: 'field', width: 'fit'})()}>Submit</Button>
+              <Button type="submit" variant="primary" css={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
             </Form>
           </Content>
         </Dialog>

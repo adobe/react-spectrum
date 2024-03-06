@@ -13,7 +13,7 @@ import {
   ValidationResult
 } from 'react-aria-components';
 import ChevronIcon from '../ui-icons/S2_ChevronSize100.svg';
-import {field, focusRing} from './style-utils' with {type: 'macro'};
+import {StyleProps, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {
   FieldLabel,
   HelpText
@@ -28,8 +28,7 @@ export interface PickerStyleProps {
   isQuiet?: boolean
 }
 
-export interface PickerProps<T extends object>
-  extends Omit<AriaSelectProps<T>, 'children'>, PickerStyleProps, SpectrumLabelableProps {
+export interface PickerProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>, PickerStyleProps, SpectrumLabelableProps, StyleProps {
   description?: string,
   errorMessage?: string | ((validation: ValidationResult) => string),
   label?: string,
@@ -37,9 +36,9 @@ export interface PickerProps<T extends object>
   children: React.ReactNode | ((item: T) => React.ReactNode)
 }
 
-export interface PickerSelectProps extends PickerStyleProps, AriaSelectRenderProps {}
+interface PickerSelectProps extends PickerStyleProps, AriaSelectRenderProps {}
 
-export interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
+interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
 
 const selectWrapper = style<PickerSelectProps & SpectrumLabelableProps & {isInForm?: boolean}>({
   ...field(),
@@ -52,7 +51,7 @@ const selectWrapper = style<PickerSelectProps & SpectrumLabelableProps & {isInFo
     },
     isQuiet: 'fit'
   }
-});
+}, getAllowedOverrides());
 
 const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   ...focusRing(),
@@ -70,6 +69,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
   borderRadius: 'control',
   alignItems: 'center',
   height: 'control',
+  transition: 'default',
   columnGap: {
     default: 'text-to-control',
     isQuiet: 'text-to-visual'
@@ -143,19 +143,22 @@ export function Picker<T extends object>(props: PickerProps<T>) {
     labelPosition = 'top',
     labelAlign = 'start',
     necessityIndicator,
+    UNSAFE_className = '',
+    UNSAFE_style,
     ...pickerProps
   } = props;
 
   return (
     <AriaSelect
       {...pickerProps}
-      className={renderProps => selectWrapper({
+      style={UNSAFE_style}
+      className={renderProps => UNSAFE_className + selectWrapper({
         ...renderProps,
         isInForm: !!formContext,
         isQuiet: isQuiet,
         labelPosition,
         size: size
-      })}>
+      }, props.css)}>
       {({isDisabled, isFocusVisible}) => (
         <>
           <FieldLabel
@@ -176,14 +179,14 @@ export function Picker<T extends object>(props: PickerProps<T>) {
               size: size
             })}>
             <SelectValue
-              className={valueStyles()} />
+              className={valueStyles} />
             <ChevronIcon
               className={iconStyles({
                 isDisabled: isDisabled,
                 isQuiet: isQuiet,
                 size: size
               })} />
-            {isFocusVisible && isQuiet && <span className={quietFocusLine()} /> }
+            {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
           </Button>
           <HelpText
             size={size}

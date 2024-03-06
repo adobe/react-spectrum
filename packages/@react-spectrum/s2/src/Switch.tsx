@@ -3,13 +3,12 @@ import {
   SwitchProps as AriaSwitchProps,
   SwitchRenderProps
 } from 'react-aria-components';
-import React, {useContext, useRef, forwardRef} from 'react';
+import {useContext, useRef, forwardRef, ReactNode} from 'react';
 import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {CenterBaseline} from './CenterBaseline';
 import {pressScale} from './pressScale';
-import {focusRing} from './style-utils' with {type: 'macro'};
-import {mergeStyles} from '../style-macro/runtime';
+import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
 
@@ -20,9 +19,8 @@ interface SwitchStyleProps {
 
 interface RenderProps extends SwitchRenderProps, SwitchStyleProps {}
 
-export interface SwitchProps extends Omit<AriaSwitchProps, 'children' | 'className'>, SwitchStyleProps {
-  children: React.ReactNode,
-  className?: string
+export interface SwitchProps extends Omit<AriaSwitchProps, 'className' | 'style' | 'children'>, StyleProps, SwitchStyleProps {
+  children?: ReactNode
 }
 
 const wrapper = style({
@@ -43,7 +41,7 @@ const wrapper = style({
   gridColumnStart: {
     isInForm: 'field'
   }
-});
+}, getAllowedOverrides());
 
 const track = style<RenderProps>({
   ...focusRing(),
@@ -127,7 +125,8 @@ const transformStyle = ({isSelected}: SwitchRenderProps) => ({
     : 'perspective(calc(var(--trackHeight) - 8px)) translateZ(-4px)'
 });
 
-function Switch({children, ...props}: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
+  let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let domRef = useFocusableRef(ref);
   let handleRef = useRef(null);
   let isInForm = !!useContext(FormContext);
@@ -136,7 +135,8 @@ function Switch({children, ...props}: SwitchProps, ref: FocusableRef<HTMLLabelEl
     <AriaSwitch
       {...props}
       ref={domRef}
-      className={renderProps => mergeStyles(props.className, wrapper({...renderProps, isInForm, size: props.size || 'M'}))}>
+      style={UNSAFE_style}
+      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.css)}>
       {renderProps => (
         <>
           <CenterBaseline>

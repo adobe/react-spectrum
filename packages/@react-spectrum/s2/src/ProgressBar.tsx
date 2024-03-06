@@ -6,6 +6,7 @@ import {
   ProgressBarProps as AriaProgressBarProps
 } from 'react-aria-components';
 import {FieldLabel} from './Field';
+import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 interface ProgressBarStyleProps {
   /**
@@ -21,10 +22,9 @@ interface ProgressBarStyleProps {
   staticColor?: 'white' | 'black' // TODO: Is there a black static color in S2?
 }
 
-interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className'>, ProgressBarStyleProps {
+interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style'>, ProgressBarStyleProps, StyleProps {
   /** The content to display as the label. */
-  label?: string, // TODO: string or ReactNode?
-  className?: string
+  label?: string // TODO: string or ReactNode?
 }
 
 // TODO:
@@ -60,13 +60,13 @@ const wrapper = style<ProgressBarStyleProps>({
     value: '[calc((self(height) - 1lh) / 2 + .25rem)]'
   },
   columnGap: 3 // spacing-200
-});
+}, getAllowedOverrides());
 
-const labelStyles = style<ProgressBarStyleProps>({
+const labelStyles = style({
   gridArea: 'label'
 });
 
-const value = style<ProgressBarStyleProps>({
+const valueStyles = style({
   gridArea: 'value'
 });
 
@@ -140,16 +140,20 @@ const indeterminateAnimation = style({
   position: 'relative'
 });
 
-export function ProgressBar({label, ...props}: ProgressBarProps) {
+export function ProgressBar(props: ProgressBarProps) {
+  let {label, UNSAFE_style, UNSAFE_className = ''} = props;
   return (
-    <AriaProgressBar {...props} className={mergeStyles(wrapper({...props, size: props.size || 'M'}), props.className)}>
+    <AriaProgressBar
+      {...props}
+      style={UNSAFE_style}
+      className={UNSAFE_className + wrapper({...props, size: props.size || 'M'}, props.css)}>
       {({percentage, valueText}) => (
         <>
-          <FieldLabel size={props.size || 'M'} labelAlign="start" labelPosition="top" staticColor={props.staticColor} className={labelStyles({...props})}>{label}</FieldLabel>
-          <FieldLabel size={props.size || 'M'} labelAlign="end" staticColor={props.staticColor} className={value({...props})}>{valueText}</FieldLabel>
+          <FieldLabel size={props.size || 'M'} labelAlign="start" labelPosition="top" staticColor={props.staticColor} css={labelStyles}>{label}</FieldLabel>
+          <FieldLabel size={props.size || 'M'} labelAlign="end" staticColor={props.staticColor} css={valueStyles}>{valueText}</FieldLabel>
           <div className={track({...props})}>
             <div
-              className={mergeStyles(fill({...props, staticColor: props.staticColor}), (props.isIndeterminate ? indeterminateAnimation() : ''))}
+              className={mergeStyles(fill({...props, staticColor: props.staticColor}), (props.isIndeterminate ? indeterminateAnimation : null))}
               style={{width: props.isIndeterminate ? `${100 * (136 / 192)}%` : percentage + '%'}} />
           </div>
         </>

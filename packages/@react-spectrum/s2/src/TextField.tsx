@@ -10,15 +10,16 @@ import {
   Provider
 } from 'react-aria-components';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {field} from './style-utils' with {type: 'macro'};
+import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {SpectrumLabelableProps} from '@react-types/shared';
 import {useContext, Ref, forwardRef, useRef, useImperativeHandle} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {TextFieldRef} from '@react-types/textfield';
 import {createFocusableRef} from '@react-spectrum/utils';
+import {StyleString} from '../style-macro/types';
 
-export interface TextFieldProps extends AriaTextFieldProps, SpectrumLabelableProps {
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'className' | 'style'>, StyleProps, SpectrumLabelableProps {
   label?: string,
   description?: string,
   errorMessage?: string | ((validation: ValidationResult) => string),
@@ -43,10 +44,10 @@ function TextArea(props: TextFieldProps, ref: Ref<TextFieldRef>) {
     <_TextFieldBase 
       {...props}
       ref={ref}
-      fieldGroupClassName={style({
+      fieldGroupCss={style({
         alignItems: 'baseline',
         height: 'auto'
-      })()}>
+      })}>
       <TextAreaInput />
     </_TextFieldBase>
   );
@@ -55,7 +56,7 @@ function TextArea(props: TextFieldProps, ref: Ref<TextFieldRef>) {
 let _TextArea = forwardRef(TextArea);
 export {_TextArea as TextArea};
 
-function TextFieldBase(props: TextFieldProps & {fieldGroupClassName?: string}, ref: Ref<TextFieldRef>) {
+function TextFieldBase(props: TextFieldProps & {fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
   let formContext = useContext(FormContext);
@@ -67,7 +68,9 @@ function TextFieldBase(props: TextFieldProps & {fieldGroupClassName?: string}, r
     necessityIndicator,
     labelPosition = 'top',
     labelAlign = 'start',
-    fieldGroupClassName,
+    fieldGroupCss,
+    UNSAFE_style,
+    UNSAFE_className = '',
     ...textFieldProps
   } = props;
 
@@ -89,11 +92,12 @@ function TextFieldBase(props: TextFieldProps & {fieldGroupClassName?: string}, r
     <AriaTextField 
       {...textFieldProps}
       ref={domRef}
-      className={style(field())({
+      style={UNSAFE_style}
+      className={UNSAFE_className + style(field(), getAllowedOverrides())({
         size: props.size,
         labelPosition,
         isInForm: !!formContext
-      })}>
+      }, props.css)}>
       {composeRenderProps(props.children, (children, {isDisabled, isInvalid}) => (<>
         <FieldLabel
           isDisabled={isDisabled}
@@ -105,7 +109,7 @@ function TextFieldBase(props: TextFieldProps & {fieldGroupClassName?: string}, r
           {label}
         </FieldLabel>
         {/* TODO: set GroupContext in RAC TextField */}
-        <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size} className={fieldGroupClassName}>
+        <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size} css={fieldGroupCss}>
           <Provider
             values={[[InputContext, {ref: inputRef}]]}>
             {children}

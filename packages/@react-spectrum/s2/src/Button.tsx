@@ -1,8 +1,7 @@
 import {ButtonContext, ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext, Provider, useContextProps} from 'react-aria-components';
 import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {focusRing} from './style-utils' with {type: 'macro'};
+import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {ReactNode, forwardRef} from 'react';
-import {mergeStyles} from '../style-macro/runtime';
 import {pressScale} from './pressScale';
 import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
@@ -14,9 +13,8 @@ interface ButtonStyleProps {
   staticColor?: 'white' | 'black'
 }
 
-interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children'>, ButtonStyleProps {
-  className?: string,
-  children: ReactNode
+interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
+  children?: ReactNode
 }
 
 const button = style<ButtonRenderProps & ButtonStyleProps>({
@@ -213,7 +211,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     forcedColors: 'Highlight'
   },
   forcedColorAdjust: 'none'
-});
+}, getAllowedOverrides());
 
 function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
@@ -223,17 +221,17 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
     <RACButton
       {...props}
       ref={domRef}
-      style={pressScale(domRef)}
-      className={renderProps => mergeStyles(props.className, button({
+      style={pressScale(domRef, props.UNSAFE_style)}
+      className={renderProps => (props.UNSAFE_className || '') + button({
         ...renderProps,
         variant: props.variant || 'primary',
         style: props.style || 'fill',
         size: props.size || 'M',
         staticColor: props.staticColor
-      }))}>
-      <Provider 
+      }, props.css)}>
+      <Provider
         values={[
-          [TextContext, {className: style({paddingY: '--labelPadding'})()}]
+          [TextContext, {className: style({paddingY: '--labelPadding'})}]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
       </Provider>

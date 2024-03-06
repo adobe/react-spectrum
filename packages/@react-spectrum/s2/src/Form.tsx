@@ -1,8 +1,9 @@
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {createContext, useContext, forwardRef} from 'react';
+import {createContext, useContext, forwardRef, ReactNode} from 'react';
 import {SpectrumLabelableProps, DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
+import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'contextualHelp'> {
   size?: 'S' | 'M' | 'L' | 'XL',
@@ -10,7 +11,9 @@ interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'context
   isEmphasized?: boolean
 }
 
-interface FormProps extends FormStyleProps, RACFormProps {}
+interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'children'>, StyleProps {
+  children?: ReactNode
+}
 
 export const FormContext = createContext<FormStyleProps | null>(null);
 export function useFormProps<T extends FormStyleProps>(props: T): T {
@@ -30,7 +33,8 @@ function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
     <RACForm 
       {...formProps}
       ref={domRef}
-      className={style({
+      style={props.UNSAFE_style}
+      className={(props.UNSAFE_className || '') + style({
         display: 'grid',
         gridTemplateColumns: {
           labelPosition: {
@@ -40,7 +44,7 @@ function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
         },
         rowGap: 6, // TODO: confirm
         columnGap: 'text-to-control'
-      })({labelPosition})}>
+      }, getAllowedOverrides())({labelPosition}, props.css)}>
       <FormContext.Provider 
         value={{
           labelPosition,

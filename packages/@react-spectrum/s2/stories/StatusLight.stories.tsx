@@ -19,7 +19,7 @@ Example.args = {
   variant: 'positive'
 };
 
-export const LongLabel = (args: any) => <StatusLight {...args} className={style({maxWidth: 32})()}>StatusLight with very long label so we can see wrapping</StatusLight>;
+export const LongLabel = (args: any) => <StatusLight {...args} css={style({maxWidth: 32})}>StatusLight with very long label so we can see wrapping</StatusLight>;
 
 LongLabel.args = {
   variant: 'positive'

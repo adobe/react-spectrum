@@ -90,7 +90,8 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
   }));
 
   let dependencies = new Set<string>();
-  return function style(this: MacroContext | void, style) {
+  let hasConditions = false;
+  return function style(this: MacroContext | void, style, allowedOverrides?: readonly string[]) {
     // Generate rules for each property.
     let rules = new Map<string, Rule[]>();
     let values =  new Map();
@@ -101,6 +102,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       rules.set(key, value[1]);
     };
 
+    hasConditions = false;
     for (let key in style) {
       let value = style[key]!;
       let themeProperty = key;
@@ -152,16 +154,57 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     }
     css += ';\n\n';
 
-    // Generate JS and CSS for each rule.
+    // If allowed overrides are provided, generate code to match the input override string and include only allowed classes.
+    // Also generate a variable for each overridable property that overlaps with the style definition. If those are defined,
+    // the defaults from the style definition are omitted.
+    let allowedOverridesSet = new Set<string>();
     let js = 'let rules = "";\n';
-    for (let propertyRules of rules.values()) {
-      js += printJS(propertyRules) + '\n';
+    if (allowedOverrides?.length) {
+      for (let property of allowedOverrides) {
+        if (themePropertyMap.has(property as string)) {
+          allowedOverridesSet.add(themePropertyMap.get(property as string)!);
+        }
+      }
+      
+      js += `let matches = (overrides || '').match(/(?:^|\\s)(?:${[...allowedOverridesSet].join('|')})[^\\s]+/g) || [];\n`;
+      js += 'rules += matches.join(\'\');\n';
+      let loop = '';
+      for (let property of rules.keys()) {
+        let themeProperty = themePropertyMap.get(property);
+        if (themeProperty && allowedOverridesSet.has(themeProperty)) {
+          js += `let $${themeProperty} = false;\n`;
+          loop += `  if (p.startsWith("${themeProperty}")) $${themeProperty} = true;\n`;
+        }
+      }
+      if (loop) {
+        js += 'for (let p of matches) {\n';
+        js += loop;
+        js += '}\n';
+      }
+    }
+
+    // Generate JS and CSS for each rule.
+    let isStatic = !(hasConditions || allowedOverrides);
+    let className = '';
+    for (let [property, propertyRules] of rules) {
+      if (isStatic) {
+        className += getStaticClassName(propertyRules);
+      } else {
+        let themeProperty = themePropertyMap.get(property);
+        let allowsOverrides = themeProperty && allowedOverridesSet.has(themeProperty);
+        if (allowsOverrides) {
+          // Omit the value if an override was passed in.
+          js += `if (!$${themeProperty}) {\n`;
+        }  
+        js += printJS(propertyRules) + '\n';
+        if (allowsOverrides) {
+          js += '}\n';
+        }
+      }
       for (let rule of propertyRules) {
         css += printRule(rule) + '\n\n';
       }
     }
-
-    js += 'return rules;';
 
     if (typeof this?.addAsset === 'function') {
       this.addAsset({
@@ -170,6 +213,14 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       });
     }
 
+    if (isStatic) {
+      return className;
+    }
+
+    js += 'return rules;';
+    if (allowedOverrides) {
+      return new Function('props', 'overrides', js) as any;
+    }
     return new Function('props', js) as any;
   };
 
@@ -272,6 +323,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       }];
     }
 
+    hasConditions = true;
     return [{prelude: '', condition, body: rules}];
   }
 
@@ -367,16 +419,12 @@ function generateName(index: number, atStart = false): string {
     return String.fromCharCode((index - 26) + 65);
   }
 
-  if (index < 62) {
+  if (index < 62 && !atStart) {
     // numbers
-    let res = String.fromCharCode((index - 52) + 48);
-    if (atStart) {
-      res = '_' + res;
-    }
-    return res;
+    return String.fromCharCode((index - 52) + 48);
   }
 
-  return '_' + generateName(index - 62);
+  return '_' + generateName(index - (atStart ? 52 : 62));
 }
 
 // For arbitrary values, we use a hash of the string to generate the class name.
@@ -439,6 +487,10 @@ function printRuleChildren(rule: Rule, indent = '') {
   }
 
   return res;
+}
+
+function getStaticClassName(rules: Rule[]): string {
+  return rules.map(rule => (rule.prelude.startsWith('.') ? ' ' + rule.prelude.slice(1) : '') + (Array.isArray(rule.body) ? getStaticClassName(rule.body) : '')).join('');
 }
 
 export function raw(this: MacroContext | void, css: string) {

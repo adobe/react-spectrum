@@ -1,19 +1,18 @@
 import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
-import {mergeStyles} from '../style-macro/runtime';
 import {
   OverlayArrow,
   Tooltip as AriaTooltip,
   TooltipProps as AriaTooltipProps,
   TooltipRenderProps
 } from 'react-aria-components';
-import React, {forwardRef} from 'react';
+import {ReactNode, forwardRef} from 'react';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
+import {UnsafeStyles} from './style-utils';
 
-export interface TooltipProps extends Omit<AriaTooltipProps, 'children'> {
-  className?: string,
-  children: React.ReactNode
+export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style'>, UnsafeStyles {
+  children: ReactNode
 }
 
 const slide = keyframes(`
@@ -115,13 +114,15 @@ const arrowStyles = style<TooltipRenderProps>({
   }
 });
 
-function Tooltip({children, ...props}: TooltipProps, ref: DOMRef<HTMLDivElement>) {
+function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
+  let {children, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);
   return (
     <AriaTooltip
       {...props}
       ref={domRef}
-      className={renderProps => mergeStyles(props.className, tooltip({...renderProps}))}>
+      style={UNSAFE_style}
+      className={renderProps => UNSAFE_className + tooltip({...renderProps})}>
       {renderProps => (
         <>
           <OverlayArrow>
@@ -129,7 +130,7 @@ function Tooltip({children, ...props}: TooltipProps, ref: DOMRef<HTMLDivElement>
               <path d="M4.29289 4.29289L0 0H10L5.70711 4.29289C5.31658 4.68342 4.68342 4.68342 4.29289 4.29289Z" />
             </svg>
           </OverlayArrow>
-          <div className={style({paddingY: '--labelPadding'})()}>
+          <div className={style({paddingY: '--labelPadding'})}>
             {children}
           </div>
         </>

@@ -1,16 +1,17 @@
-import {Group, GroupProps, Input as RACInput, InputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text, InputRenderProps} from 'react-aria-components';
+import {Group, GroupProps, Input as RACInput, InputProps as RACInputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text} from 'react-aria-components';
 import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {focusRing} from './style-utils' with {type: 'macro'};
+import {StyleProps, UnsafeStyles, focusRing} from './style-utils' with {type: 'macro'};
 import AsteriskIcon from '../ui-icons/S2_AsteriskSize100.svg';
 import AlertIcon from './wf-icons/AlertTriangle';
 import {Icon} from './Icon';
 import {mergeStyles} from '../style-macro/runtime';
 import {CenterBaseline, centerBaselineBefore} from './CenterBaseline';
 import {NecessityIndicator, Alignment, DOMRef} from '@react-types/shared';
-import {forwardRef, ForwardedRef} from 'react';
+import {forwardRef, ForwardedRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
+import {StyleString} from '../style-macro/types';
 
-interface FieldLabelProps extends LabelProps {
+interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'children'>, StyleProps {
   isDisabled?: boolean,
   isRequired?: boolean,
   size?: 'S' | 'M' | 'L' | 'XL',
@@ -18,7 +19,8 @@ interface FieldLabelProps extends LabelProps {
   labelAlign?: Alignment,
   labelPosition?: 'top' | 'side',
   includeNecessityIndicatorInAccessibilityName?: boolean,
-  staticColor?: 'white' | 'black'
+  staticColor?: 'white' | 'black',
+  children?: ReactNode
 }
 
 function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
@@ -31,6 +33,8 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
     labelAlign,
     labelPosition,
     staticColor,
+    UNSAFE_style,
+    UNSAFE_className = '',
     ...labelProps
   } = props;
 
@@ -40,7 +44,8 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
     <Label
       {...labelProps}
       ref={domRef}
-      className={mergeStyles(
+      style={UNSAFE_style}
+      className={UNSAFE_className + mergeStyles(
         style({
           gridArea: 'label',
           fontFamily: 'sans',
@@ -76,10 +81,10 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
               top: '--field-gap'
             }
           }
-        })({labelAlign, labelPosition, isDisabled, size, staticColor}), props.className)}>
+        })({labelAlign, labelPosition, isDisabled, size, staticColor}), props.css)}>
       {props.children}
       {(isRequired || necessityIndicator === 'label') && (
-        <span className={style({whiteSpace: 'nowrap'})()}>
+        <span className={style({whiteSpace: 'nowrap'})}>
           &nbsp;
           {necessityIndicator === 'icon' &&
             <AsteriskIcon
@@ -116,8 +121,10 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
 let _FieldLabel = forwardRef(FieldLabel);
 export {_FieldLabel as FieldLabel};
 
-interface FieldGroupProps extends GroupProps {
-  size?: 'S' | 'M' | 'L' | 'XL'
+interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'children'>, UnsafeStyles {
+  size?: 'S' | 'M' | 'L' | 'XL',
+  children?: ReactNode,
+  css?: StyleString
 }
 
 const fieldGroupStyles = style({
@@ -126,6 +133,7 @@ const fieldGroupStyles = style({
   display: 'flex',
   alignItems: 'center',
   height: 'control',
+  // TODO: this should actually stretch to fill the parent Field if that has a width defined.
   width: 44,
   boxSizing: 'border-box',
   paddingX: 'edge-to-text',
@@ -176,22 +184,23 @@ export function FieldGroup(props: FieldGroupProps) {
           e.currentTarget.querySelector('input')?.focus();
         }
       }}
-      className={composeRenderProps(
-        props.className,
-        (className, renderProps) => centerBaselineBefore + mergeStyles(
-          fieldGroupStyles({...renderProps, size: props.size || 'M'}),
-          className
-        )
+      style={props.UNSAFE_style}
+      className={renderProps => (props.UNSAFE_className || '') + ' ' + centerBaselineBefore + mergeStyles(
+        fieldGroupStyles({...renderProps, size: props.size || 'M'}),
+        props.css
       )} />
   );
 }
+
+export interface InputProps extends Omit<RACInputProps, 'className' | 'style'>, StyleProps {}
 
 function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
   return (
     <RACInput
       {...props}
       ref={ref}
-      className={composeRenderProps(props.className, (className, renderProps) => mergeStyles(style<InputRenderProps>({
+      style={props.UNSAFE_style}
+      className={props.UNSAFE_className + mergeStyles(style({
         padding: 0,
         backgroundColor: 'transparent',
         color: '[inherit]',
@@ -201,7 +210,7 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
         minWidth: 0,
         outlineStyle: 'none',
         borderStyle: 'none'
-      })(renderProps), className))} />
+      }), props.css)} />
   );
 }
 
@@ -255,7 +264,7 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
       {composeRenderProps(props.children, (children, {validationErrors}) => (<>
         {props.showErrorIcon &&
           <Icon>
-            <AlertIcon style={{fill: 'currentColor'}} />
+            <AlertIcon UNSAFE_style={{fill: 'currentColor'}} />
           </Icon>
         }
         <span>{children || validationErrors.join(' ')}</span>
@@ -268,12 +277,11 @@ export function FieldErrorIcon() {
   return (
     <CenterBaseline>
       <AlertIcon
-        className={style({
-          'fill': 'negative',
-          size: '[calc(20 / 14 * 1em)]',
+        // TODO: add back color
+        css={style({
           marginStart: 'text-to-visual',
           marginEnd: '[calc(-2 / 14 * 1em)]' // ??
-        })()} />
+        })} />
     </CenterBaseline>
   );
 }

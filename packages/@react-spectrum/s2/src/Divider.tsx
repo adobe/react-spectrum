@@ -1,9 +1,9 @@
 import {forwardRef} from 'react';
 import {Separator as RACSeparator, SeparatorProps as RACSeparatorProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {mergeStyles} from '../style-macro/runtime';
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
+import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 /*
  * Adding as it's own type to deal with size being a part of the theme so we
@@ -23,7 +23,57 @@ interface DividerSpectrumProps {
   staticColor?: 'white' | 'black'
 }
 
-interface DividerProps extends DividerSpectrumProps, RACSeparatorProps {}
+// TODO: allow overriding height (only when orientation is vertical)??
+interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style'>, StyleProps {}
+
+const divider = style<DividerSpectrumProps>({
+  alignSelf: 'stretch',
+  backgroundColor: {
+    default: 'gray-200',
+    size: {
+      L: 'gray-800'
+    },
+    staticColor: {
+      white: {
+        default: 'transparent-white-200',
+        size: {
+          L: 'transparent-white-800'
+        }
+      },
+      black: {
+        default: 'transparent-black-200',
+        size: {
+          L: 'transparent-black-800'
+        }
+      }
+    },
+    forcedColors: 'ButtonBorder'
+  },
+  borderStyle: 'none',
+  borderRadius: 'full',
+  height: {
+    orientation: {
+      horizontal: {
+        default: 1,
+        size: {
+          S: 'px',
+          M: .5
+        }
+      }
+    }
+  },
+  width: {
+    orientation: {
+      vertical: {
+        default: 1,
+        size: {
+          S: 'px',
+          M: .5
+        }
+      }
+    }
+  }
+}, getAllowedOverrides());
 
 function Divider(props: DividerProps, ref: DOMRef) {
   let domRef = useDOMRef(ref);
@@ -32,59 +82,12 @@ function Divider(props: DividerProps, ref: DOMRef) {
     <RACSeparator
       {...props}
       ref={domRef}
-      className={mergeStyles(
-        style({ // default resets that can be overridden
-          margin: 0 /* hr elements are given a default margin, reset it so that flex can work */
-        })(),
-        props.className,
-        style<DividerSpectrumProps>({
-          alignSelf: 'stretch', /* hr elements are given a default margin, reset it so that flex can work */
-          backgroundColor: {
-            default: 'gray-200',
-            size: {
-              L: 'gray-800'
-            },
-            staticColor: {
-              white: {
-                default: 'transparent-white-200',
-                size: {
-                  L: 'transparent-white-800'
-                }
-              },
-              black: {
-                default: 'transparent-black-200',
-                size: {
-                  L: 'transparent-black-800'
-                }
-              }
-            },
-            forcedColors: 'ButtonBorder'
-          },
-          borderStyle: 'none',
-          borderRadius: 'full',
-          height: {
-            orientation: {
-              horizontal: {
-                default: 1,
-                size: {
-                  S: 'px',
-                  M: .5
-                }
-              }
-            }
-          },
-          width: {
-            orientation: {
-              vertical: {
-                default: 1,
-                size: {
-                  S: 'px',
-                  M: .5
-                }
-              }
-            }
-          }
-        })({size: props.size || 'M', orientation: props.orientation || 'horizontal', staticColor: props.staticColor}))} />
+      style={props.UNSAFE_style}
+      className={(props.UNSAFE_className || '') + divider({
+        size: props.size || 'M',
+        orientation: props.orientation || 'horizontal',
+        staticColor: props.staticColor
+      }, props.css)} />
   );
 }
 

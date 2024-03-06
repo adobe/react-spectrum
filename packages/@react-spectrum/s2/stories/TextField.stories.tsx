@@ -3,6 +3,7 @@ import {TextArea, TextField} from '../src/TextField';
 
 import type {Meta} from '@storybook/react';
 import {Button} from '../src/Button';
+import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof TextField> = {
   component: TextField,
@@ -35,4 +36,10 @@ Validation.args = {
 export const TextAreaExample = (args: any) => <TextArea {...args} />;
 TextAreaExample.args = {
   label: 'Comment'
+};
+
+export const CustomWidth = (args: any) => <TextField {...args} css={style({width: 52})} />;
+
+CustomWidth.args = {
+  label: 'Name'
 };

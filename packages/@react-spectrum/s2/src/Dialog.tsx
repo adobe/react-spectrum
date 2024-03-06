@@ -8,8 +8,10 @@ import {createContext, useContext, forwardRef, RefObject} from 'react';
 import {Modal} from './Modal';
 import {Popover} from './Popover';
 import {DOMRef} from '@react-types/shared';
+import {StyleProps} from './style-utils';
 
-export interface DialogProps extends RACDialogProps {
+// TODO: what style overrides should be allowed?
+export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
   isDismissable?: boolean,
   size?: 'S' | 'M' | 'L'
 }
@@ -128,7 +130,8 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
     <RACDialog
       {...props}
       ref={props.dialogRef}
-      className={style({
+      style={props.UNSAFE_style}
+      className={(props.UNSAFE_className || '') + style({
         display: 'flex',
         flexDirection: 'column',
         flex: 1,
@@ -137,7 +140,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
         outlineStyle: 'none',
         overflow: 'auto',
         fontFamily: 'sans'
-      })()}>
+      })}>
       {composeRenderProps(props.children, (children, {close}) =>
         // Render the children multiple times inside the wrappers we need to implement the layout.
         // Each instance hides certain children so that they are all rendered in the correct locations.
@@ -145,7 +148,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
           {/* Hero image */}
           <Provider
             values={[
-              [ImageContext, {className: image()}],
+              [ImageContext, {className: image}],
               [HeadingContext, {hidden: true}],
               [HeaderContext, {hidden: true}],
               [ContentContext, {hidden: true}],
@@ -189,12 +192,12 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
                   default: 'start',
                   sm: 'center'
                 }
-              })()}>
+              })}>
               <Provider
                 values={[
                   [ImageContext, {hidden: true}],
-                  [HeadingContext, {className: heading()}],
-                  [HeaderContext, {className: header()}],
+                  [HeadingContext, {className: heading}],
+                  [HeaderContext, {className: header}],
                   [ContentContext, {hidden: true}],
                   [FooterContext, {hidden: true}],
                   [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'top'}]
@@ -203,7 +206,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
               </Provider>
             </div>
             {props.isDismissable &&
-              <CloseButton onPress={close} className={style({marginBottom: 3})()} />
+              <CloseButton onPress={close} css={style({marginBottom: 3})} />
             }
           </div>
           {/* Main content */}
@@ -212,7 +215,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
               [ImageContext, {hidden: true}],
               [HeadingContext, {hidden: true}],
               [HeaderContext, {hidden: true}],
-              [ContentContext, {className: content()}],
+              [ContentContext, {className: content}],
               [FooterContext, {hidden: true}],
               [ButtonGroupContext, {hidden: true}]
             ]}>
@@ -231,15 +234,15 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
               gap: 6,
               alignItems: 'center',
               flexWrap: 'wrap'
-            })()}>
+            })}>
             <Provider
               values={[
                 [ImageContext, {hidden: true}],
                 [HeadingContext, {hidden: true}],
                 [HeaderContext, {hidden: true}],
                 [ContentContext, {hidden: true}],
-                [FooterContext, {className: footer()}],
-                [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'bottom', className: buttonGroup(), align: 'end'}]
+                [FooterContext, {className: footer}],
+                [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'bottom', css: buttonGroup, align: 'end'}]
               ]}>
               {children}
             </Provider>

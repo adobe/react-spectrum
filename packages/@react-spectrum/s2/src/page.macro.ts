@@ -1,4 +1,5 @@
 import tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
+import {MacroContext} from '@parcel/macros';
 
 function colorToken(token: typeof tokens['gray-25']) {
   return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
@@ -8,8 +9,8 @@ function weirdColorToken(token: typeof tokens['background-layer-2-color']) {
   return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
 }
 
-export function generatePageStyles(this: any) {
-  this.addAsset({
+export function generatePageStyles(this: MacroContext | void) {
+  this?.addAsset({
     type: 'css',
     content: `html {
       color-scheme: light dark;

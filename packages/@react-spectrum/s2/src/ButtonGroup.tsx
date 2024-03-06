@@ -1,7 +1,6 @@
-import {ButtonContext, ButtonProps, Provider, SlotProps, useContextProps} from 'react-aria-components';
+import {ButtonContext, Provider, SlotProps, useContextProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {ReactNode, useRef, useCallback, forwardRef, createContext} from 'react';
-import {mergeStyles} from '../style-macro/runtime';
 import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {
   useDOMRef,
@@ -9,6 +8,7 @@ import {
 } from '@react-spectrum/utils';
 import {ContextValue} from './Content';
 import {DOMRef} from '@react-types/shared';
+import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 interface ButtonGroupStyleProps {
   orientation?: 'horizontal' | 'vertical',
@@ -17,7 +17,7 @@ interface ButtonGroupStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-interface ButtonGroupProps extends ButtonGroupStyleProps, SlotProps {
+interface ButtonGroupProps extends ButtonGroupStyleProps, SlotProps, StyleProps {
   className?: string,
   children: ReactNode,
   isDisabled?: boolean
@@ -65,11 +65,7 @@ const buttongroup = style<ButtonGroupStyleProps>({
       }
     }
   }
-});
-
-const button = style<ButtonProps>({
-  flexShrink: 0
-});
+}, getAllowedOverrides());
 
 function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
@@ -126,15 +122,16 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   return (
     <div
       ref={domRef}
-      className={mergeStyles(props.className, buttongroup({
+      style={props.UNSAFE_style}
+      className={(props.UNSAFE_className || '') + buttongroup({
         align,
         orientation: orientation === 'vertical' || hasOverflow ? 'vertical' : 'horizontal',
         size
-      }))}>
+      }, props.css)}>
       <Provider
         values={[
           // @ts-ignore
-          [ButtonContext, {className: button({}), size, isDisabled: isDisabled}] // extend our button context?
+          [ButtonContext, {UNSAFE_className: style({flexShrink: 0}), size, isDisabled}] // extend our button context?
         ]}>
         {children}
       </Provider>

@@ -1,11 +1,11 @@
 import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {clamp} from '@react-aria/utils';
 import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
-import {mergeStyles} from '../style-macro/runtime';
 import {ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
 import React, {CSSProperties} from 'react';
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
+import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 export interface ProgressCircleStyleProps {
   size?: 'S' | 'M' | 'L',
@@ -299,7 +299,7 @@ const wrapper = style<ProgressCircleStyleProps>({
   ...circleDims,
   display: 'inline-block',
   position: 'relative'
-});
+}, getAllowedOverrides());
 
 const trackStyles = {
   ...circleDims,
@@ -426,10 +426,7 @@ const fillSubMask2Indeterminate = style({
   animation: fillMask2Frames,
   ...commonFillSubMaskIndeterminate
 });
-interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className'>, ProgressCircleStyleProps {
-  className?: string,
-  UNSAFE_className?: string
-}
+interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className'>, ProgressCircleStyleProps, StyleProps {}
 
 function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
   let {
@@ -441,7 +438,8 @@ function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>)
     isIndeterminate = false,
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
-    UNSAFE_className
+    UNSAFE_style,
+    UNSAFE_className = ''
   } = props;
   let domRef = useDOMRef(ref);
 
@@ -471,23 +469,24 @@ function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>)
     <RACProgressBar
       {...props}
       ref={domRef}
-      className={renderProps => mergeStyles(props.className, UNSAFE_className, wrapper({
+      style={UNSAFE_style}
+      className={renderProps => UNSAFE_className + wrapper({
         ...renderProps,
         size
-      }))}>
+      }, props.css)}>
       <div dir="ltr">
         <div className={track({size, staticColor})} />
-        <div className={isIndeterminate ? fillsWrapperIndeterminate() : fillsWrapper()}>
-          <div className={fillMask1()}>
+        <div className={isIndeterminate ? fillsWrapperIndeterminate : fillsWrapper}>
+          <div className={fillMask1}>
             <div
-              className={isIndeterminate ? fillSubMask1Indeterminate() : fillSubMask()}
+              className={isIndeterminate ? fillSubMask1Indeterminate : fillSubMask}
               style={subMask1Style}>
               <div className={fill({size, staticColor})} />
             </div>
           </div>
-          <div className={fillMask2()}>
+          <div className={fillMask2}>
             <div
-              className={isIndeterminate ? fillSubMask2Indeterminate() : fillSubMask()}
+              className={isIndeterminate ? fillSubMask2Indeterminate : fillSubMask}
               style={subMask2Style}>
               <div className={fill({size, staticColor})} />
             </div>
