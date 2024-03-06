@@ -18,6 +18,7 @@ export {Provider} from './Provider';
 export {Radio} from './Radio';
 export {RadioGroup} from './RadioGroup';
 export {SearchField} from './SearchField';
+export {StatusLight} from './StatusLight';
 export {Switch} from './Switch';
 export {TextArea, TextField} from './TextField';
 export {ToggleButton} from './ToggleButton';

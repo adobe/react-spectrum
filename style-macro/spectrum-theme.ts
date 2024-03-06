@@ -245,17 +245,17 @@ const inset = {
 
 const borderWidth = {
   0: '0px',
-  1: '1px', // border-width-100
-  2: '2px', // border-width-200
-  4: '4px' // border-width-400
+  1: tokens['border-width-100'].value,
+  2: tokens['border-width-200'].value,
+  4: tokens['border-width-400'].value
 };
 
 const radius = {
-  none: '0px',
-  sm: '0.25rem', // 4px
-  default: '0.5rem', // 8px
-  lg: '0.625rem', // 10px
-  xl: '1rem', // 16px
+  none: tokens['corner-radius-none'].value, // 0px
+  sm: pxToRem(tokens['corner-radius-small-default'].value), // 4px
+  default: pxToRem(tokens['corner-radius-medium-default'].value), // 8px
+  lg: pxToRem(tokens['corner-radius-large-default'].value), // 10px
+  xl: pxToRem(tokens['corner-radius-extra-large-default'].value), // 16px
   full: '9999px',
   pill: 'calc(self(height, self(minHeight, 9999px)) / 2)',
   control: 8 / 14 + 'em', // automatic based on font size (e.g. t-shirt size logarithmic scale)
@@ -367,6 +367,12 @@ export const style = createTheme({
         isFocusVisible: weirdColorToken(tokens['negative-background-color-key-focus']),
         isPressed: weirdColorToken(tokens['negative-background-color-down'])
       },
+      'negative-subdued': {
+        default: colorToken(tokens['negative-subdued-background-color-default']),
+        isHovered: colorToken(tokens['negative-subdued-background-color-hover']),
+        isFocusVisible: colorToken(tokens['negative-subdued-background-color-key-focus']),
+        isPressed: colorToken(tokens['negative-subdued-background-color-down'])
+      },
       informative: {
         default: weirdColorToken(tokens['informative-background-color-default']),
         isHovered: weirdColorToken(tokens['informative-background-color-hover']),
@@ -394,10 +400,16 @@ export const style = createTheme({
       purple: weirdColorToken(tokens['purple-background-color-default']),
       fuchsia: weirdColorToken(tokens['fuchsia-background-color-default']),
       magenta: weirdColorToken(tokens['magenta-background-color-default']),
+      pink: weirdColorToken(tokens['pink-background-color-default']),
+      turquoise: weirdColorToken(tokens['turquoise-background-color-default']),
+      cinnamon: weirdColorToken(tokens['cinnamon-background-color-default']),
+      brown: weirdColorToken(tokens['brown-background-color-default']),
+      silver: weirdColorToken(tokens['silver-background-color-default']),
       disabled: colorToken(tokens['disabled-background-color']),
-      base: weirdColorToken(tokens['background-base-color']),
-      'layer-1': weirdColorToken(tokens['background-layer-1-color']),
-      'layer-2': weirdColorToken(tokens['background-layer-2-color'])
+      base: colorToken(tokens['background-base-color']),
+      'layer-1': colorToken(tokens['background-layer-1-color']),
+      'layer-2': weirdColorToken(tokens['background-layer-2-color']),
+      pasteboard: weirdColorToken(tokens['background-pasteboard-color'])
     }),
     borderColor: createColorProperty({
       ...color,
@@ -444,6 +456,11 @@ export const style = createTheme({
       purple: weirdColorToken(tokens['purple-visual-color']),
       fuchsia: weirdColorToken(tokens['fuchsia-visual-color']),
       magenta: weirdColorToken(tokens['magenta-visual-color']),
+      pink: weirdColorToken(tokens['pink-visual-color']),
+      turquoise: weirdColorToken(tokens['turquoise-visual-color']),
+      cinnamon: weirdColorToken(tokens['cinnamon-visual-color']),
+      brown: weirdColorToken(tokens['brown-visual-color']),
+      silver: weirdColorToken(tokens['silver-visual-color']),
       'layer-1': weirdColorToken(tokens['background-layer-1-color']),
       'layer-2': weirdColorToken(tokens['background-layer-2-color']),
       ...color

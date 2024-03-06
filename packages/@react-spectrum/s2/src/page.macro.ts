@@ -1,6 +1,10 @@
 import tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
 
-function weirdColorToken(token: typeof tokens['background-base-color']) {
+function colorToken(token: typeof tokens['gray-25']) {
+  return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
+}
+
+function weirdColorToken(token: typeof tokens['background-layer-2-color']) {
   return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
 }
 
@@ -9,7 +13,7 @@ export function generatePageStyles(this: any) {
     type: 'css',
     content: `html {
       color-scheme: light dark;
-      background: ${weirdColorToken(tokens['background-base-color'])};
+      background: ${colorToken(tokens['background-base-color'])};
       -webkit-tap-highlight-color: rgba(0,0,0,0); /* Prevent tap highlights */
     
       &[data-theme=light] {
@@ -21,7 +25,7 @@ export function generatePageStyles(this: any) {
       }
     
       &[data-background=layer-1] {
-        background: ${weirdColorToken(tokens['background-layer-1-color'])};
+        background: ${colorToken(tokens['background-layer-1-color'])};
       }
     
       &[data-background=layer-2] {
