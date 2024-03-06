@@ -40,7 +40,6 @@ import {useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
 function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'actionGroup');
-  console.log('useSlotProps', props)
 
   let {
     isEmphasized,

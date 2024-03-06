@@ -12,4 +12,6 @@
 
 /// <reference types="css-module-types" />
 
-export {Item, Section, Tree} from './Tree';
+export {Item, TreeView} from './Tree';
+// TODO: check this export
+export type {SpectrumTreeViewProps} from './Tree';

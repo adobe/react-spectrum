@@ -12,271 +12,100 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
-import {Button, ButtonContext, Collection, Tree, TreeItem, TreeItemContent, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, TreeProps, useContextProps} from 'react-aria-components';
-import {Checkbox} from '@react-spectrum/checkbox';
-import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
-import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {classNames, SlotProvider} from '@react-spectrum/utils';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
-import {Flex} from '@react-spectrum/layout';
-import {isAndroid} from '@react-aria/utils';
-import React, {ReactNode, useRef} from 'react';
-import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
-import styles from './styles.css';
+import React from 'react';
+import {SpectrumTreeViewProps, Item as TreeItemBlah, TreeView} from '../src';
 import {Text} from '@react-spectrum/text';
-import {useButton} from '@react-aria/button';
-import {useLocale} from '@react-aria/i18n';
-
-
-
-// TODO: add tree package to root package exlude css see Devons PR.
-// Get rid of the existing Tree in the package, we don't need it anymore
 
 export default {
   title: 'Tree'
 };
 
-interface StaticTreeItemProps extends TreeItemProps {
-  title?: string,
-  children: ReactNode
-}
-
-// TODO replace Checkbox with the RSP versions. They will need to be modified to consume from RAC contexts
-// Also note that they will mainly be handled by use, only the user provided buttons/elements that fit in the extra content section
-// will be user provided. This means what I have below will need to be the internals and is then exposed to the user as a wrapper to which
-// the user provides the <Text> and/or provides other elements as sibliings
-
-interface ExpandableRowChevronProps {
-  isExpanded?: boolean,
-  isDisabled?: boolean
-}
-
-
-// TODO: how are we going to tell between a static and dynamic case? I guess we would need to set up the TreeItemContent wrapper and Collection for the user. I guess we can check if the stuff passed to
-// Tree itself is a function (aka dynamic) or not (aka static) and then use either of the below to decide whether to render using StaticTreeItem or DynamicTreeItem internally.
-
-// For the styling of the padding per level, can just pass a direct style prop to the Checkbox that adds the desired margin instead of needing to add some kind of class
-// For the additional styling of the Text, can just pass it via slots if need be
-
-
-
-const expandButton = style<ExpandableRowChevronProps>({
-  gridArea: 'expand-button',
-  height: 'full',
-  // TODO: check this one, might not need it
-  aspectRatio: 'square',
-  display: 'flex',
-  flexWrap: 'wrap',
-  alignContent: 'center',
-  justifyContent: 'center',
-  outlineStyle: 'none',
-  color: {
-    isDisabled: 'gray-400'
-  },
-  transform: {
-    // TODO: need RTL
-    isExpanded: 'rotate(90deg)'
-  }
-});
-
-function ExpandableRowChevronMacros(props: ExpandableRowChevronProps) {
-  let expandButtonRef = useRef();
-  let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
-  let {isExpanded, isDisabled} = fullProps;
-  let {direction} = useLocale();
-
-
-  // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
-  let {buttonProps} = useButton({
-    ...fullProps,
-    // // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
-    // onPress: () => {
-    //   (state as TreeGridState<unknown>).toggleKey(cell.parentKey);
-    //   if (!isFocusVisible()) {
-    //     state.selectionManager.setFocused(true);
-    //     state.selectionManager.setFocusedKey(cell.parentKey);
-    //   }
-    // },
-    elementType: 'span'
-  }, ref);
-
-  return (
-    <span
-      {...buttonProps}
-      ref={ref}
-      // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
-      tabIndex={isAndroid() ? -1 : undefined}
-      className={expandButton({isExpanded, isDisabled})}>
-      {direction === 'ltr' ? <ChevronRightMedium /> : <ChevronLeftMedium />}
-    </span>
-  );
-}
-
-const treeRow = style<TreeItemRenderProps>({
-  position: 'relative',
-  display: 'flex',
-  height: 8,
-  width: 'full',
-  boxSizing: 'border-box',
-  fontSize: 'base',
-  fontWeight: 'normal',
-  lineHeight: 200,
-  color: 'body',
-  outlineStyle: 'none',
-
-  // TODO: not sure where to get the equivalent colors here, for instance isHovered is spectrum 600 with 10% opacity but I don't think that exists in the theme
-  backgroundColor: {
-    isHovered: '[var(--spectrum-table-row-background-color-hover)]',
-    isFocused: '[var(--spectrum-table-row-background-color-hover)]',
-    isPressed: '[var(--spectrum-table-row-background-color-down)]',
-    isSelected: {
-      default: '[var(--spectrum-table-row-background-color-selected)]',
-      isHovered: '[var(--spectrum-table-row-background-color-hover)]',
-      isPressed: '[var(--spectrum-table-row-background-color-hover)]'
-    }
-  }
-});
-
-const treeCellGrid = style({
-  display: 'grid',
-  width: 'full',
-  alignItems: 'center',
-  gridTemplateColumns: 'minmax(0, auto) minmax(0, auto) var(--spectrum-global-dimension-size-400) minmax(0, auto) 1fr minmax(0, auto)',
-  gridTemplateRows: '1fr',
-  gridTemplateAreas: [
-    'drag-handle checkbox expand-button icon content actions'
-  ]
-});
-
-
-// TODO: These styles lose against the spectrum class names, so I've did unsafe for the ones that get overridden
-const treeCheckbox = style({
-  gridArea: 'checkbox',
-  transitionDuration: '160ms',
-  paddingStart: '[var(--spectrum-global-dimension-size-150)]',
-  paddingEnd: 0
-});
-
-const treeContent = style<Pick<TreeItemContentRenderProps, 'isDisabled'>>({
-  gridArea: 'content',
-  color: {
-    isDisabled: 'gray-400'
-  }
-});
-
-const treeActions = style({
-  gridArea: 'actions',
-  flexGrow: 0,
-  flexShrink: 0,
-  /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
-  paddingStart: '[var(--spectrum-global-dimension-size-50)]',
-  paddingEnd: '[var(--spectrum-global-dimension-size-50)]'
-});
-
-const treeRowOutline = style({
-  content: '',
-  display: 'block',
-  position: 'absolute',
-  insetStart: 0,
-  insetEnd: 0,
-  top: {
-    default: 0,
-    isFocusVisible: '[-2px]',
-    isSelected: {
-      default: '[-1px]',
-      isFocusVisible: '[-2px]',
-    }
-  },
-  bottom: 0,
-  pointerEvents: 'none',
-  forcedColorAdjust: 'none',
-
-  boxShadow: {
-    isFocusVisible: '[inset 2px 0 0 0 var(--spectrum-alias-focus-color), inset -2px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -2px 0 0 var(--spectrum-alias-focus-color), inset 0 2px 0 0 var(--spectrum-alias-focus-color)]',
-    isSelected: {
-      default: '[inset 1px 0 0 0 var(--spectrum-alias-focus-color), inset -1px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -1px 0 0 var(--spectrum-alias-focus-color), inset 0 1px 0 0 var(--spectrum-alias-focus-color)]',
-      isFocusVisible: '[inset 2px 0 0 0 var(--spectrum-alias-focus-color), inset -2px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -2px 0 0 var(--spectrum-alias-focus-color), inset 0 2px 0 0 var(--spectrum-alias-focus-color)]'
-    }
-  }
-})
-
-const StaticTreeItemMacros = (props: StaticTreeItemProps) => {
-  return (
-    <TreeItem
-      {...props}
-      className={renderProps => treeRow({
-        ...renderProps
-      })}>
-      <TreeItemContent>
-        {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
-          <div className={treeCellGrid()}>
-            {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
-              <Checkbox
-                UNSAFE_className={treeCheckbox()}
-                UNSAFE_style={{
-                  marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`,
-                  paddingInlineEnd: '0px'
-                }}
-                slot="selection" />
-            )}
-            {hasChildRows && <ExpandableRowChevronMacros isDisabled={isDisabled} isExpanded={isExpanded} />}
-            <SlotProvider
-              slots={{
-                text: {UNSAFE_className: treeContent({isDisabled})},
-                // TODO: handle the images later since we don't have a thumbnail component
-                // illustration: {UNSAFE_className: styles['spectrum-ListViewItem-thumbnail']},
-                // image: {UNSAFE_className: styles['react-spectrum-ListViewItem-thumbnail']},
-                // TODO: handle action group and stuff the same way it is handled in ListView
-                actionButton: {UNSAFE_className: treeActions(), isQuiet: true},
-                actionGroup: {
-                  UNSAFE_className: treeActions(),
-                  isQuiet: true,
-                  density: 'compact',
-                  buttonLabelBehavior: 'hide'
-                }
-                // TODO handle action menu the same way as in ListView. Should it support a action menu?
-                // actionMenu: {UNSAFE_className: styles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
-              }}>
-              <Text>{props.title || props.children}</Text>
-              <ActionGroup isDisabled={isDisabled}>
-                <Item key="edit">
-                  <Edit />
-                  <Text>Edit</Text>
-                </Item>
-                <Item key="delete">
-                  <Delete />
-                  <Text>Delete</Text>
-                </Item>
-              </ActionGroup>
-            </SlotProvider>
-            <div className={treeRowOutline({isFocusVisible, isSelected})} />
-          </div>
-        )}
-      </TreeItemContent>
-      {props.title && props.children}
-    </TreeItem>
-  );
-};
+// TODO add href story and onAction story for static and dynamic
 
 // TODO add a resizable wrapper around this but for now apply a widht and height
 export const TreeExampleStatic = (args) => (
-  <Tree {...args} style={{height: '300px', width: '300px'}} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-    <StaticTreeItemMacros id="Photos" textValue="Photos">Photos</StaticTreeItemMacros>
-    <StaticTreeItemMacros id="projects" textValue="Projects" title="Projects">
-      <StaticTreeItemMacros id="projects-1" textValue="Projects-1" title="Projects-1">
-        <StaticTreeItemMacros id="projects-1A" textValue="Projects-1A">
-          Projects-1A
-        </StaticTreeItemMacros>
-      </StaticTreeItemMacros>
-      <StaticTreeItemMacros id="projects-2" textValue="Projects-2">
-        Projects-2
-      </StaticTreeItemMacros>
-      <StaticTreeItemMacros id="projects-3" textValue="Projects-3">
-        Projects-3
-      </StaticTreeItemMacros>
-    </StaticTreeItemMacros>
-  </Tree>
+  <TreeView {...args} height={300} width={300} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <TreeItemBlah id="Photos" textValue="Photos">
+      <Text>Photos</Text>
+      <ActionGroup onAction={action('onActionGroup action')}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionGroup>
+    </TreeItemBlah>
+    <TreeItemBlah id="projects" textValue="Projects">
+      <Text>Projects</Text>
+      <ActionGroup onAction={action('onActionGroup action')}>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionGroup>
+      <TreeItemBlah id="projects-1" textValue="Projects-1">
+        <Text>Projects-1</Text>
+        <ActionGroup onAction={action('onActionGroup action')}>
+          <Item key="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+        <TreeItemBlah id="projects-1A" textValue="Projects-1A">
+          <Text>Projects-1A</Text>
+          <ActionGroup onAction={action('onActionGroup action')}>
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </TreeItemBlah>
+      </TreeItemBlah>
+      <TreeItemBlah id="projects-2" textValue="Projects-2">
+        <Text>Projects-2</Text>
+        <ActionGroup onAction={action('onActionGroup action')}>
+          <Item key="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+      </TreeItemBlah>
+      <TreeItemBlah id="projects-3" textValue="Projects-3">
+        <Text>Projects-3</Text>
+        <ActionGroup onAction={action('onActionGroup action')}>
+          <Item key="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+      </TreeItemBlah>
+    </TreeItemBlah>
+  </TreeView>
 );
 
 TreeExampleStatic.story = {
@@ -337,55 +166,24 @@ let rows = [
   ]}
 ];
 
-interface DynamicTreeItemProps extends TreeItemProps<object> {
-  children: ReactNode
-}
-
-const DynamicTreeItem = (props: DynamicTreeItemProps) => {
-  let {childItems} = props;
-
-  return (
-    <TreeItem
-      {...props}
-      className={({isFocused, isSelected, isHovered, isFocusVisible}) => classNames(styles, 'spectrum-Tree-row', {
-        focused: isFocused,
-        'focus-visible': isFocusVisible,
-        selected: isSelected,
-        hovered: isHovered
-      })}>
-      <TreeItemContent>
-        {({isExpanded, hasChildRows, level, selectionBehavior, selectionMode}) => (
-          <>
-            {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
-              <MyCheckbox slot="selection" />
-            )}
-            <div className={styles['content-wrapper']} style={{marginInlineStart: `${(!hasChildRows ? 20 : 0) + (level - 1) * 15}px`}}>
-              {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
-              <Text>{props.children}</Text>
-              <Button className={styles.button} aria-label="Info" onPress={action('Info press')}>ⓘ</Button>
-            </div>
-          </>
-        )}
-      </TreeItemContent>
-      <Collection items={childItems}>
-        {(item: any) => (
-          <DynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
-            {item.name}
-          </DynamicTreeItem>
-        )}
-      </Collection>
-    </TreeItem>
-  );
-};
-
-export const TreeExampleDynamic = (args: TreeProps<unknown>) => (
-  <Tree {...args} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} className={styles.tree} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+export const TreeExampleDynamic = (args: SpectrumTreeViewProps) => (
+  <TreeView {...args} width={300} height={300} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     {(item) => (
-      <DynamicTreeItem childItems={item.childItems} textValue={item.name}>
-        {item.name}
-      </DynamicTreeItem>
+      <TreeItemBlah childItems={item.childItems} textValue={item.name}>
+        <Text>{item.name}</Text>
+        <ActionGroup onAction={action('onActionGroup action')}>
+          <Item key="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+      </TreeItemBlah>
     )}
-  </Tree>
+  </TreeView>
 );
 
 TreeExampleDynamic.story = {
