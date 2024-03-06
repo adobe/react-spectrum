@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, mockImplementation, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, mockClickDefault, mockImplementation, pointerMap, render, triggerPress, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {chain} from '@react-aria/utils';
 import {Item} from '@react-stately/collections';
@@ -748,8 +748,7 @@ describe('TagGroup', function () {
       expect(tag).toHaveAttribute('data-href');
     }
 
-    let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-    window.addEventListener('click', onClick, {once: true});
+    let onClick = mockClickDefault();
     triggerPress(tags[0]);
     expect(onClick).toHaveBeenCalledTimes(1);
     expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
