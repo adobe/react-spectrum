@@ -419,6 +419,11 @@ ${value.exact ? '\\}' : '}'}`;
   if (value.type === 'keyof') {
     return `keyof ${processType(value.keyof)}`;
   }
+
+  if (value.type === 'template') {
+    return value.elements.map(processType).join();
+  }
+
   console.log('unknown type', value);
 }
 
