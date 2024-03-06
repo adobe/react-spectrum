@@ -47,7 +47,7 @@
   position: relative;
   display: flex;
   /* TODO: this height is too small since the action button group's focus ring will breach containment. Ask spectrum about that  */
-  height: var(----spectrum-global-dimension-size-400);
+  height: var(--spectrum-global-dimension-size-400);
   width: 100%;
   box-sizing: border-box;
   font-size: var(--spectrum-table-cell-text-size, var(--spectrum-alias-font-size-default));
