@@ -28,7 +28,9 @@
     "@react-aria/interactions": "^3.21.1",
     "@react-aria/selection": "^3.17.5",
     "@react-aria/utils": "^3.23.2",
+    "@react-stately/collections": "^3.10.4",
     "@react-stately/list": "^3.10.3",
+    "@react-stately/tree": "^3.7.5",
     "@react-types/shared": "^3.22.1",
     "@swc/helpers": "^0.5.0"
   },
