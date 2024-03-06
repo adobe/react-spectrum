@@ -76,7 +76,7 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     if (!hasOpenSubmenu) {
       setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
     }
-  }, [hasOpenSubmenu, isSubmenu]);
+  }, [hasOpenSubmenu, isMobile]);
 
   let handleBackButtonPress = () => {
     setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
