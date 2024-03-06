@@ -9,8 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ComponentMeta, ComponentStory, ComponentStoryObj} from '@storybook/react';
-import {Image, SpectrumImageProps} from '../';
+import {ComponentMeta, ComponentStoryObj} from '@storybook/react';
+import {Image} from '../';
 import React, {useState} from 'react';
 
 export type ImageStory = ComponentStoryObj<typeof Image>;
