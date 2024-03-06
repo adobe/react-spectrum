@@ -66,13 +66,13 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   useLayoutEffect(() => {
     let container = ref.current.closest('[role=region]') as HTMLElement;
     return () => {
-      if (container && container.contains(document.activeElement)) {
+      if (container && container.contains(document.activeElement) && state.visibleToasts.filter(t => t.animation !== 'exiting').length < 1) {
         // Focus must be delayed for focus ring to appear, but we can't wait
         // until useEffect cleanup to check if focus was inside the container.
         focusOnUnmount.current = container;
       }
     };
-  }, [ref]);
+  }, [ref, state.visibleToasts]);
 
   // eslint-disable-next-line
   useEffect(() => {
