@@ -52,113 +52,12 @@ interface ExpandableRowChevronProps {
   isDisabled?: boolean
 }
 
-function ExpandableRowChevron(props: ExpandableRowChevronProps) {
-  let expandButtonRef = useRef();
-  let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
-  let {direction} = useLocale();
-
-
-  // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
-  let {buttonProps} = useButton({
-    ...fullProps,
-    // // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
-    // onPress: () => {
-    //   (state as TreeGridState<unknown>).toggleKey(cell.parentKey);
-    //   if (!isFocusVisible()) {
-    //     state.selectionManager.setFocused(true);
-    //     state.selectionManager.setFocusedKey(cell.parentKey);
-    //   }
-    // },
-    elementType: 'span'
-  }, ref);
-
-  return (
-    <span
-      {...buttonProps}
-      ref={ref}
-      // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
-      tabIndex={isAndroid() ? -1 : undefined}
-      className={
-        classNames(
-          styles,
-          'spectrum-Tree-expandButton',
-          {
-            'is-open': fullProps.isExpanded,
-            'is-disabled': fullProps.isDisabled
-          }
-        )
-      }>
-      {direction === 'ltr' ? <ChevronRightMedium /> : <ChevronLeftMedium />}
-    </span>
-  );
-}
-
 
 // TODO: how are we going to tell between a static and dynamic case? I guess we would need to set up the TreeItemContent wrapper and Collection for the user. I guess we can check if the stuff passed to
 // Tree itself is a function (aka dynamic) or not (aka static) and then use either of the below to decide whether to render using StaticTreeItem or DynamicTreeItem internally.
 
 // For the styling of the padding per level, can just pass a direct style prop to the Checkbox that adds the desired margin instead of needing to add some kind of class
 // For the additional styling of the Text, can just pass it via slots if need be
-const StaticTreeItem = (props: StaticTreeItemProps) => {
-  return (
-    <TreeItem
-      {...props}
-      className={({isFocused, isSelected, isHovered, isFocusVisible, isPressed, isDisabled}) => classNames(styles, 'spectrum-Tree-row', {
-        'is-focused': isFocused,
-        'focus-visible': isFocusVisible,
-        'is-selected': isSelected,
-        'is-hovered': isHovered,
-        'is-active': isPressed,
-        'is-disabled': isDisabled
-      })}>
-      <TreeItemContent>
-        {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled}) => (
-          <div className={classNames(styles, 'spectrum-Tree-cell-grid')}>
-            {/* TODO refactor the below to match a single container with grid definition */}
-            {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
-              <Checkbox UNSAFE_className={classNames(styles, 'spectrum-Tree-checkbox')} UNSAFE_style={{marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} slot="selection" />
-            )}
-            {hasChildRows && <ExpandableRowChevron isDisabled={isDisabled} isExpanded={isExpanded} />}
-            {/* TODO does this slot provider even work within RAC? Taken from ListView */}
-            <SlotProvider
-              slots={{
-                text: {UNSAFE_className: classNames(styles, 'spectrum-Tree-content')},
-                // TODO: handle the images later since we don't have a thumbnail component
-                // illustration: {UNSAFE_className: styles['spectrum-ListViewItem-thumbnail']},
-                // image: {UNSAFE_className: styles['react-spectrum-ListViewItem-thumbnail']},
-                // TODO: handle action group and stuff the same way it is handled in ListView
-                actionButton: {UNSAFE_className: classNames(styles, 'spectrum-Tree-actions'), isQuiet: true},
-                actionGroup: {
-                  UNSAFE_className: classNames(styles, 'spectrum-Tree-actions'),
-                  isQuiet: true,
-                  density: 'compact',
-                  buttonLabelBehavior: 'hide'
-                }
-                // TODO handle action menu the same way as in ListView. Should it support a action menu?
-                // actionMenu: {UNSAFE_className: styles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
-              }}>
-              <Text>{props.title || props.children}</Text>
-              <ActionGroup isDisabled={isDisabled}>
-                <Item key="edit">
-                  <Edit />
-                  <Text>Edit</Text>
-                </Item>
-                <Item key="delete">
-                  <Delete />
-                  <Text>Delete</Text>
-                </Item>
-              </ActionGroup>
-            </SlotProvider>
-            <div className={classNames(styles, 'spectrum-Tree-row-outline')} />
-          </div>
-        )}
-      </TreeItemContent>
-      {props.title && props.children}
-    </TreeItem>
-  );
-};
-
-
 
 
 
@@ -312,7 +211,6 @@ const StaticTreeItemMacros = (props: StaticTreeItemProps) => {
       <TreeItemContent>
         {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
           <div className={treeCellGrid()}>
-            {/* TODO refactor the below to match a single container with grid definition */}
             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
               <Checkbox
                 UNSAFE_className={treeCheckbox()}
@@ -361,44 +259,24 @@ const StaticTreeItemMacros = (props: StaticTreeItemProps) => {
   );
 };
 
-
-
 // TODO add a resizable wrapper around this but for now apply a widht and height
 export const TreeExampleStatic = (args) => (
-  <Flex>
-    <Tree {...args} style={{height: '300px', width: '300px'}} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      <StaticTreeItem id="Photos" textValue="Photos">Photos</StaticTreeItem>
-      <StaticTreeItem id="projects" textValue="Projects" title="Projects">
-        <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1">
-          <StaticTreeItem id="projects-1A" textValue="Projects-1A">
-            Projects-1A
-          </StaticTreeItem>
-        </StaticTreeItem>
-        <StaticTreeItem id="projects-2" textValue="Projects-2">
-          Projects-2
-        </StaticTreeItem>
-        <StaticTreeItem id="projects-3" textValue="Projects-3">
-          Projects-3
-        </StaticTreeItem>
-      </StaticTreeItem>
-    </Tree>
-    <Tree {...args} style={{height: '300px', width: '300px'}} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-      <StaticTreeItemMacros id="Photos" textValue="Photos">Photos</StaticTreeItemMacros>
-      <StaticTreeItemMacros id="projects" textValue="Projects" title="Projects">
-        <StaticTreeItemMacros id="projects-1" textValue="Projects-1" title="Projects-1">
-          <StaticTreeItemMacros id="projects-1A" textValue="Projects-1A">
-            Projects-1A
-          </StaticTreeItemMacros>
-        </StaticTreeItemMacros>
-        <StaticTreeItemMacros id="projects-2" textValue="Projects-2">
-          Projects-2
-        </StaticTreeItemMacros>
-        <StaticTreeItemMacros id="projects-3" textValue="Projects-3">
-          Projects-3
+  <Tree {...args} style={{height: '300px', width: '300px'}} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <StaticTreeItemMacros id="Photos" textValue="Photos">Photos</StaticTreeItemMacros>
+    <StaticTreeItemMacros id="projects" textValue="Projects" title="Projects">
+      <StaticTreeItemMacros id="projects-1" textValue="Projects-1" title="Projects-1">
+        <StaticTreeItemMacros id="projects-1A" textValue="Projects-1A">
+          Projects-1A
         </StaticTreeItemMacros>
       </StaticTreeItemMacros>
-    </Tree>
-  </Flex>
+      <StaticTreeItemMacros id="projects-2" textValue="Projects-2">
+        Projects-2
+      </StaticTreeItemMacros>
+      <StaticTreeItemMacros id="projects-3" textValue="Projects-3">
+        Projects-3
+      </StaticTreeItemMacros>
+    </StaticTreeItemMacros>
+  </Tree>
 );
 
 TreeExampleStatic.story = {
