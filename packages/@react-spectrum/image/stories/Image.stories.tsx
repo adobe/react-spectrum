@@ -9,9 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import {ComponentMeta, ComponentStory} from '@storybook/react';
+import {ComponentMeta, ComponentStory, ComponentStoryObj} from '@storybook/react';
 import {Image, SpectrumImageProps} from '../';
 import React, {useState} from 'react';
+
+export type ImageStory = ComponentStoryObj<typeof Image>;
 
 let meta = {
   title: 'Image',
@@ -20,22 +22,21 @@ let meta = {
 
 export default meta;
 
-export const Default: ComponentStory<typeof Image> = (
-  args: SpectrumImageProps
-) => {
-  return (
-    <Image
-      {...args}
-      width={'500px'}
-      height={'500px'}
-      src="https://i.imgur.com/Z7AzH2c.png"
-      alt="Sky and roof" />
-  );
+export const Default: ImageStory = {
+  render: (args) => {
+    return (
+      <Image
+        {...args}
+        width={'500px'}
+        height={'500px'}
+        src="https://i.imgur.com/Z7AzH2c.png"
+        alt="Sky and roof" />
+    );
+  },
+  parameters: {description: {data: 'You should see a 500x500 image of the sky and a roof.'}}
 };
 
-export const ImageOnError: ComponentStory<typeof Image> = (
-  args: SpectrumImageProps
-) => {
+let ImageErrorExample = (props) => {
   const [isImageMissing, setIsImageMissing] = useState(false);
   const DEFAULT_IMAGE = 'https://i.imgur.com/DhygPot.jpg';
 
@@ -44,7 +45,7 @@ export const ImageOnError: ComponentStory<typeof Image> = (
   };
   return (
     <Image
-      {...args}
+      {...props}
       width={'500px'}
       height={'500px'}
       src={
@@ -53,4 +54,9 @@ export const ImageOnError: ComponentStory<typeof Image> = (
       alt="starry sky"
       onError={onErrorHandler} />
   );
+};
+
+export const ImageOnError: ImageStory = {
+  render: (args) => <ImageErrorExample {...args} />,
+  parameters: {description: {data: 'You should see a picture of a starry night sky, that is the fallback image.'}}
 };
