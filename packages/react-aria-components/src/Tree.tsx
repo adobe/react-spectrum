@@ -267,23 +267,23 @@ export {_Tree as Tree};
 
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
-  // Whether the tree row is expanded.
+  // Whether the tree item is expanded.
   isExpanded: boolean
 }
 
 export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps {
-  /** The unique id of the tree row. */
+  /** The unique id of the tree item. */
   id?: Key,
-  /** The object value that this tree row represents. When using dynamic collections, this is set automatically. */
+  /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
   value?: T,
-  /** A string representation of the tree row's contents, used for features like typeahead. */
+  /** A string representation of the tree item's contents, used for features like typeahead. */
   textValue: string,
-  /** An accessibility label for this tree row. */
+  /** An accessibility label for this tree item. */
   'aria-label'?: string,
-  /** A list of child tree row objects used when dynamically rendering the tree row children. */
+  /** A list of child tree row objects used when dynamically rendering the tree item children. */
   childItems?: Iterable<T>,
   // TODO: made this required since the user needs to pass Content at least
-  /** The content of the tree row along with any nested children. Supports static items or a function for dynamic rendering. */
+  /** The content of the tree item along with any nested children. Supports static items or a function for dynamic rendering. */
   children: ReactNode | ((item: T) => ReactElement)
 }
 

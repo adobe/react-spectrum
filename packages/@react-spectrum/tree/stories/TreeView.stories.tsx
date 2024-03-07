@@ -26,39 +26,12 @@ export default {
 
 // TODO: audit the package json
 // TODO add href story and onAction story for static and dynamic
-
-// TODO add a resizable wrapper around this but for now apply a widht and height
+// TODO: This story crashes on save and story switch, not sure why or if only local...
 export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
-  <TreeView {...args} height={300} width={300} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-    <TreeViewItem id="Photos" textValue="Photos">
-      <Text>Photos</Text>
-      <Folder />
-      <ActionGroup onAction={action('onActionGroup action')}>
-        <Item key="edit">
-          <Edit />
-          <Text>Edit</Text>
-        </Item>
-        <Item key="delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionGroup>
-    </TreeViewItem>
-    <TreeViewItem id="projects" textValue="Projects">
-      <Text>Projects</Text>
-      <Folder />
-      <ActionGroup onAction={action('onActionGroup action')}>
-        <Item key="edit">
-          <Edit />
-          <Text>Edit</Text>
-        </Item>
-        <Item key="delete">
-          <Delete />
-          <Text>Delete</Text>
-        </Item>
-      </ActionGroup>
-      <TreeViewItem id="projects-1" textValue="Projects-1">
-        <Text>Projects-1</Text>
+  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+    <TreeView {...args} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      <TreeViewItem id="Photos" textValue="Photos">
+        <Text>Photos</Text>
         <Folder />
         <ActionGroup onAction={action('onActionGroup action')}>
           <Item key="edit">
@@ -70,8 +43,64 @@ export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
             <Text>Delete</Text>
           </Item>
         </ActionGroup>
-        <TreeViewItem id="projects-1A" textValue="Projects-1A">
-          <Text>Projects-1A</Text>
+      </TreeViewItem>
+      <TreeViewItem id="projects" textValue="Projects">
+        <Text>Projects</Text>
+        <Folder />
+        <ActionGroup onAction={action('onActionGroup action')}>
+          <Item key="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+        <TreeViewItem id="projects-1" textValue="Projects-1">
+          <Text>Projects-1</Text>
+          <Folder />
+          <ActionGroup onAction={action('onActionGroup action')}>
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+          <TreeViewItem id="projects-1A" textValue="Projects-1A">
+            <Text>Projects-1A</Text>
+            <FileTxt />
+            <ActionGroup onAction={action('onActionGroup action')}>
+              <Item key="edit">
+                <Edit />
+                <Text>Edit</Text>
+              </Item>
+              <Item key="delete">
+                <Delete />
+                <Text>Delete</Text>
+              </Item>
+            </ActionGroup>
+          </TreeViewItem>
+        </TreeViewItem>
+        <TreeViewItem id="projects-2" textValue="Projects-2">
+          <Text>Projects-2</Text>
+          <FileTxt />
+          <ActionGroup onAction={action('onActionGroup action')}>
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </TreeViewItem>
+        <TreeViewItem id="projects-3" textValue="Projects-3">
+          <Text>Projects-3</Text>
           <FileTxt />
           <ActionGroup onAction={action('onActionGroup action')}>
             <Item key="edit">
@@ -85,36 +114,8 @@ export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
           </ActionGroup>
         </TreeViewItem>
       </TreeViewItem>
-      <TreeViewItem id="projects-2" textValue="Projects-2">
-        <Text>Projects-2</Text>
-        <FileTxt />
-        <ActionGroup onAction={action('onActionGroup action')}>
-          <Item key="edit">
-            <Edit />
-            <Text>Edit</Text>
-          </Item>
-          <Item key="delete">
-            <Delete />
-            <Text>Delete</Text>
-          </Item>
-        </ActionGroup>
-      </TreeViewItem>
-      <TreeViewItem id="projects-3" textValue="Projects-3">
-        <Text>Projects-3</Text>
-        <FileTxt />
-        <ActionGroup onAction={action('onActionGroup action')}>
-          <Item key="edit">
-            <Edit />
-            <Text>Edit</Text>
-          </Item>
-          <Item key="delete">
-            <Delete />
-            <Text>Delete</Text>
-          </Item>
-        </ActionGroup>
-      </TreeViewItem>
-    </TreeViewItem>
-  </TreeView>
+    </TreeView>
+  </div>
 );
 
 TreeExampleStatic.story = {
@@ -176,24 +177,26 @@ let rows = [
 ];
 
 export const TreeExampleDynamic = (args: SpectrumTreeViewProps<unknown>) => (
-  <TreeView {...args} width={300} height={300} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-    {(item) => (
-      <TreeViewItem childItems={item.childItems} textValue={item.name}>
-        <Text>{item.name}</Text>
-        {item.icon}
-        <ActionGroup onAction={action('onActionGroup action')}>
-          <Item key="edit">
-            <Edit />
-            <Text>Edit</Text>
-          </Item>
-          <Item key="delete">
-            <Delete />
-            <Text>Delete</Text>
-          </Item>
-        </ActionGroup>
-      </TreeViewItem>
-    )}
-  </TreeView>
+  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+    <TreeView {...args} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      {(item) => (
+        <TreeViewItem childItems={item.childItems} textValue={item.name}>
+          <Text>{item.name}</Text>
+          {item.icon}
+          <ActionGroup onAction={action('onActionGroup action')}>
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </TreeViewItem>
+      )}
+    </TreeView>
+  </div>
 );
 
 TreeExampleDynamic.story = {

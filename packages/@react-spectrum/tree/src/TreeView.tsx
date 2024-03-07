@@ -13,18 +13,17 @@
 
 import {AriaTreeGridListProps} from '@react-aria/tree';
 import {ButtonContext, Collection, Tree, TreeItem, TreeItemContent, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, useContextProps} from 'react-aria-components';
-import React, {createContext, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {DOMRef, Expandable, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {isAndroid} from '@react-aria/utils';
-import {Text} from '@react-spectrum/text';
+import React, {createContext, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
+import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
-
 
 export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
   /** Provides content to display when there are no items in the tree. */
@@ -40,9 +39,14 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>,
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-export interface SpectrumTreeViewItemProps extends TreeItemProps {
-  title?: string,
-  children: ReactNode
+// TODO: I removed title since tree rows can have action buttons and stuff unlike other instances of items that use title (aka Sections and Columns) that typically don't have
+// any other content that their internal text content
+// TODO: write tests for all of these props to make sure things are propagating
+export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value'> {
+  /** Rendered contents of the tree item or child items. */
+  children: ReactNode,
+  /** Whether this item has children, even if not loaded yet. */
+  hasChildItems?: boolean
 }
 
 interface TreeRendererContextValue {
@@ -54,7 +58,16 @@ function useTreeRendererContext(): TreeRendererContextValue {
   return useContext(TreeRendererContext)!;
 }
 
-// TODO rename file to TreeView
+// TODO: the below is needed so the borders of the top and bottom row isn't cut off if the TreeView is wrapped within a container by always reserving the 2px needed for the
+// keyboard focus ring
+const tree = style({
+  borderWidth: 2,
+  boxSizing: 'border-box',
+  borderXWidth: 0,
+  borderStyle: 'solid',
+  borderColor: 'transparent'
+});
+
 function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {children} = props;
 
@@ -68,7 +81,7 @@ function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <Tree {...props} {...styleProps} ref={domRef}>
+      <Tree {...props} {...styleProps} className={tree()} ref={domRef}>
         {props.children}
       </Tree>
     </TreeRendererContext.Provider>
@@ -129,7 +142,10 @@ const treeContent = style<Pick<TreeItemContentRenderProps, 'isDisabled'>>({
   gridArea: 'content',
   color: {
     isDisabled: 'gray-400'
-  }
+  },
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden'
 });
 
 const treeActions = style({
@@ -171,7 +187,8 @@ const treeRowOutline = style({
 export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
   let {
     children,
-    childItems
+    childItems,
+    hasChildItems
   } = props;
 
   let content;
@@ -219,11 +236,10 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
                 slot="selection" />
             )}
             <div style={{gridArea: 'level-padding', marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} />
-            {hasChildRows && <ExpandableRowChevronMacros isDisabled={isDisabled} isExpanded={isExpanded} />}
+            {(hasChildRows || hasChildItems) && <ExpandableRowChevronMacros isDisabled={isDisabled} isExpanded={isExpanded} />}
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: treeContent({isDisabled})},
-                // TODO update this
                 icon: {UNSAFE_className: treeIcon(), size: 'S'},
                 actionButton: {UNSAFE_className: treeActions(), isQuiet: true},
                 actionGroup: {
@@ -231,7 +247,8 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
                   isQuiet: true,
                   density: 'compact',
                   buttonLabelBehavior: 'hide',
-                  isDisabled
+                  isDisabled,
+                  overflowMode: 'collapse'
                 }
                 // TODO handle action menu the same way as in ListView. Should it support a action menu?
                 // actionMenu: {UNSAFE_className: styles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
