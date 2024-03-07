@@ -141,6 +141,7 @@ describe('Tabs', () => {
     await user.tab();
     expect(document.activeElement).toBe(tab);
     expect(tab).toHaveAttribute('data-focus-visible', 'true');
+    expect(tab).toHaveAttribute('data-focused', 'true');
     expect(tab).toHaveClass('focus');
 
     await user.tab();

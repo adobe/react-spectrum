@@ -343,6 +343,7 @@ export function useTreeData<T extends object>(options: TreeOptions<T>): TreeData
 
         // If parentKey is null, insert into the root.
         if (toParentKey == null) {
+          newMap.set(movedNode.key, movedNode);
           return {items: [
             ...newItems.slice(0, index),
             movedNode,
