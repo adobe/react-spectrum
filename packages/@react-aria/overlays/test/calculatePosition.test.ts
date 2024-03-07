@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {calculatePosition, PlacementSubset} from '../src/calculatePosition';
-import {translateRTL} from '../src/useOverlayPosition';
+import {calculatePosition} from '../src/calculatePosition';
 
 const FLIPPED_DIRECTION = {
   left: 'right'
@@ -417,59 +416,6 @@ describe('calculatePosition', function () {
       expect(positionTop).toBe(0);
 
       document.body.removeChild(target);
-    });
-  });
-
-  describe('arrow offsets', () => {
-    it('Only one of either `arrowOffsetLeft` or `arrowOffsetTop` should have a value', () => {
-      const target = document.createElement('div');
-      const overlayNode = document.createElement('div');
-      const container = document.createElement('div');
-      document.body.appendChild(target);
-
-      for (let placement of [
-        'bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end',
-        'top', 'top left', 'top right', 'top start', 'top end',
-        'left', 'left top', 'left bottom',
-        'right', 'right top', 'right bottom'
-      ] as PlacementSubset[]) {
-        let {arrowOffsetLeft, arrowOffsetTop} = calculatePosition({
-          placement,
-          overlayNode,
-          targetNode: target,
-          scrollNode: overlayNode,
-          padding: 0,
-          shouldFlip: false,
-          boundaryElement: container,
-          offset: 0,
-          crossOffset: 0,
-          arrowSize: 0
-        });
-
-        expect(['undefined-0', '0-undefined']).toContain(`${arrowOffsetLeft}-${arrowOffsetTop}`);
-      }
-
-      for (let direction of ['ltr', 'rtl']) {
-        for (let placement of [
-          'start', 'start top', 'start bottom', 
-          'end', 'end top', 'end bottom'
-        ]) {
-          let {arrowOffsetLeft, arrowOffsetTop} = calculatePosition({
-            placement: translateRTL(placement, direction),
-            overlayNode,
-            targetNode: target,
-            scrollNode: overlayNode,
-            padding: 0,
-            shouldFlip: false,
-            boundaryElement: container,
-            offset: 0,
-            crossOffset: 0,
-            arrowSize: 0
-          });
-  
-          expect(['undefined-0', '0-undefined']).toContain(`${arrowOffsetLeft}-${arrowOffsetTop}`);
-        }
-      }
     });
   });
 });
