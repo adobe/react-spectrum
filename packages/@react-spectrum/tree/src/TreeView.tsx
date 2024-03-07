@@ -58,8 +58,11 @@ function useTreeRendererContext(): TreeRendererContextValue {
   return useContext(TreeRendererContext)!;
 }
 
+// TODO: add animations for rows appearing and disappearing
+
 // TODO: the below is needed so the borders of the top and bottom row isn't cut off if the TreeView is wrapped within a container by always reserving the 2px needed for the
-// keyboard focus ring
+// keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
+// scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
 const tree = style({
   borderWidth: 2,
   boxSizing: 'border-box',
@@ -128,13 +131,13 @@ const treeCellGrid = style({
 const treeCheckbox = style({
   gridArea: 'checkbox',
   transitionDuration: '160ms',
-  paddingStart: 3,
-  paddingEnd: 0
+  marginStart: 3,
+  marginEnd: 0
 });
 
 const treeIcon = style({
   gridArea: 'icon',
-  paddingEnd: 2
+  marginEnd: 2
 });
 
 
@@ -153,8 +156,8 @@ const treeActions = style({
   flexGrow: 0,
   flexShrink: 0,
   /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
-  paddingStart: .5,
-  paddingEnd: .5
+  marginStart: .5,
+  marginEnd: .5
 });
 
 const treeRowOutline = style({
@@ -231,6 +234,7 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
               <Checkbox
+                isEmphasized
                 UNSAFE_className={treeCheckbox()}
                 UNSAFE_style={{paddingInlineEnd: '0px'}}
                 slot="selection" />
