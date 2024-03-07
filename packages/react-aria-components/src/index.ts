@@ -32,7 +32,7 @@ export {Group, GroupContext} from './Group';
 export {Header, HeaderContext} from './Header';
 export {Heading, HeadingContext} from './Heading';
 export {Input, InputContext} from './Input';
-export {Section, Collection} from './Collection';
+export {Section, Collection, CollectionProps} from './Collection';
 export {Keyboard, KeyboardContext} from './Keyboard';
 export {Label, LabelContext} from './Label';
 export {Link, LinkContext} from './Link';
