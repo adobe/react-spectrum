@@ -11,33 +11,39 @@
  */
 
 
-import React, {createContext, isValidElement, ReactNode, useContext, useMemo, useRef} from 'react';
-import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
-import {ButtonContext, Collection, Tree, TreeItem, TreeItemContent, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, TreeProps, useContextProps} from 'react-aria-components';
+import {AriaTreeGridListProps} from '@react-aria/tree';
+import React, {createContext, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
+import {ButtonContext, Collection, Tree, TreeItem, TreeItemContent, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, useContextProps} from 'react-aria-components';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
 import {isAndroid} from '@react-aria/utils';
+import {DOMRef, Expandable, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
-import {SlotProvider, useStyleProps} from '@react-spectrum/utils';
-import {SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
+import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 
 
-// TODO: bring in TreeProps but only what we actually want from there, add to index
-export interface SpectrumTreeViewProps extends StyleProps, SpectrumSelectionProps  {
-
+export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
+  /** Provides content to display when there are no items in the tree. */
+  renderEmptyState?: () => JSX.Element,
+   /**
+   * Handler that is called when a user performs an action on an item. The exact user event depends on
+   * the collection's `selectionStyle` prop and the interaction modality.
+   */
+  onAction?: (key: Key) => void,
+  /**
+   * The contents of the tree.
+   */
+  children?: ReactNode | ((item: T) => ReactNode),
 }
 
-// TODO: export this too
-interface TreeViewItemProps extends TreeItemProps {
+export interface SpectrumTreeViewItemProps extends TreeItemProps {
   title?: string,
   children: ReactNode
 }
-
-// TODO export the TreeItem as Item and move to index file instead
-export {TreeViewItem as Item};
 
 interface TreeRendererContextValue {
   renderer?: (item) => React.ReactElement<any, string | React.JSXElementConstructor<any>>
@@ -49,10 +55,8 @@ function useTreeRendererContext(): TreeRendererContextValue {
 }
 
 // TODO rename file to TreeView
-// TODO figure out props
-export function TreeView<T>(props: SpectrumTreeViewProps) {
+function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {children} = props;
-  // TODO use styleProps and pass to Tree
 
   let renderer;
   if (typeof children === 'function') {
@@ -60,9 +64,11 @@ export function TreeView<T>(props: SpectrumTreeViewProps) {
   }
 
   let {styleProps} = useStyleProps(props);
+  let domRef = useDOMRef(ref);
+
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <Tree {...props} {...styleProps}>
+      <Tree {...props} {...styleProps} ref={domRef}>
         {props.children}
       </Tree>
     </TreeRendererContext.Provider>
@@ -98,7 +104,7 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   alignItems: 'center',
-  gridTemplateColumns: 'minmax(0, auto) minmax(0, auto) minmax(0, auto) var(--spectrum-global-dimension-size-400) minmax(0, auto) 1fr minmax(0, auto)',
+  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 8, 'minmax(0, auto)', '1fr', 'minmax(0, auto)'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions'
@@ -109,9 +115,15 @@ const treeCellGrid = style({
 const treeCheckbox = style({
   gridArea: 'checkbox',
   transitionDuration: '160ms',
-  paddingStart: '[var(--spectrum-global-dimension-size-150)]',
+  paddingStart: 3,
   paddingEnd: 0
 });
+
+const treeIcon = style({
+  gridArea: 'icon',
+  paddingEnd: 2
+});
+
 
 const treeContent = style<Pick<TreeItemContentRenderProps, 'isDisabled'>>({
   gridArea: 'content',
@@ -125,8 +137,8 @@ const treeActions = style({
   flexGrow: 0,
   flexShrink: 0,
   /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
-  paddingStart: '[var(--spectrum-global-dimension-size-50)]',
-  paddingEnd: '[var(--spectrum-global-dimension-size-50)]'
+  paddingStart: .5,
+  paddingEnd: .5
 });
 
 const treeRowOutline = style({
@@ -156,8 +168,7 @@ const treeRowOutline = style({
   }
 })
 
-// TODO see if we can repurpose this to also suit the dynamic case
-const TreeViewItem = (props: TreeViewItemProps) => {
+export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
   let {
     children,
     childItems
@@ -183,7 +194,6 @@ const TreeViewItem = (props: TreeViewItemProps) => {
     });
   }
 
-  // TODO: how do we tell what should be passed to the tree item in the Collection here? we don't know the format of childItmes? I guess we need to grab the renderer?
   if (childItems != null && renderer) {
     nestedRows = (
       <Collection items={childItems}>
@@ -202,12 +212,10 @@ const TreeViewItem = (props: TreeViewItemProps) => {
         {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
           <div className={treeCellGrid()}>
             {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+              // TODO: add transition?
               <Checkbox
                 UNSAFE_className={treeCheckbox()}
-                UNSAFE_style={{
-                  marginInlineEnd: '0px',
-                  paddingInlineEnd: '0px'
-                }}
+                UNSAFE_style={{paddingInlineEnd: '0px'}}
                 slot="selection" />
             )}
             <div style={{gridArea: 'level-padding', marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} />
@@ -215,10 +223,8 @@ const TreeViewItem = (props: TreeViewItemProps) => {
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: treeContent({isDisabled})},
-                // TODO: handle the images later since we don't have a thumbnail component
-                // illustration: {UNSAFE_className: styles['spectrum-ListViewItem-thumbnail']},
-                // image: {UNSAFE_className: styles['react-spectrum-ListViewItem-thumbnail']},
-                // TODO: handle action group and stuff the same way it is handled in ListView
+                // TODO update this
+                icon: {UNSAFE_className: treeIcon(), size: 'S'},
                 actionButton: {UNSAFE_className: treeActions(), isQuiet: true},
                 actionGroup: {
                   UNSAFE_className: treeActions(),
@@ -236,8 +242,6 @@ const TreeViewItem = (props: TreeViewItemProps) => {
           </div>
         )}
       </TreeItemContent>
-      {/* If user provided a prop.title, this means the child of said item is a nested item
-      {title && children} */}
       {nestedRows}
     </TreeItem>
   );
@@ -277,14 +281,6 @@ function ExpandableRowChevronMacros(props: ExpandableRowChevronProps) {
   // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
   let {buttonProps} = useButton({
     ...fullProps,
-    // // Desktop and mobile both toggle expansion of a native expandable row on mouse/touch up
-    // onPress: () => {
-    //   (state as TreeGridState<unknown>).toggleKey(cell.parentKey);
-    //   if (!isFocusVisible()) {
-    //     state.selectionManager.setFocused(true);
-    //     state.selectionManager.setFocusedKey(cell.parentKey);
-    //   }
-    // },
     elementType: 'span'
   }, ref);
 
@@ -299,3 +295,9 @@ function ExpandableRowChevronMacros(props: ExpandableRowChevronProps) {
     </span>
   );
 }
+
+/**
+ * A tree view provides users with a way to navigate nested hierarchical information.
+ */
+const _TreeView = React.forwardRef(TreeView) as <T>(props: SpectrumTreeViewProps<T> & {ref?: DOMRef<HTMLDivElement>}) => ReactElement;
+export {_TreeView as TreeView};

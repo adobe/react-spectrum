@@ -14,21 +14,25 @@ import {action} from '@storybook/addon-actions';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
+import FileTxt from '@spectrum-icons/workflow/FileTxt';
+import Folder from '@spectrum-icons/workflow/Folder';
 import React from 'react';
-import {SpectrumTreeViewProps, Item as TreeItemBlah, TreeView} from '../src';
+import {SpectrumTreeViewProps, TreeView, TreeViewItem} from '../src';
 import {Text} from '@react-spectrum/text';
 
 export default {
   title: 'Tree'
 };
 
+// TODO: audit the package json
 // TODO add href story and onAction story for static and dynamic
 
 // TODO add a resizable wrapper around this but for now apply a widht and height
-export const TreeExampleStatic = (args) => (
+export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
   <TreeView {...args} height={300} width={300} disabledKeys={['projects-1']} aria-label="test static tree" onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
-    <TreeItemBlah id="Photos" textValue="Photos">
+    <TreeViewItem id="Photos" textValue="Photos">
       <Text>Photos</Text>
+      <Folder />
       <ActionGroup onAction={action('onActionGroup action')}>
         <Item key="edit">
           <Edit />
@@ -39,9 +43,10 @@ export const TreeExampleStatic = (args) => (
           <Text>Delete</Text>
         </Item>
       </ActionGroup>
-    </TreeItemBlah>
-    <TreeItemBlah id="projects" textValue="Projects">
+    </TreeViewItem>
+    <TreeViewItem id="projects" textValue="Projects">
       <Text>Projects</Text>
+      <Folder />
       <ActionGroup onAction={action('onActionGroup action')}>
         <Item key="edit">
           <Edit />
@@ -52,8 +57,9 @@ export const TreeExampleStatic = (args) => (
           <Text>Delete</Text>
         </Item>
       </ActionGroup>
-      <TreeItemBlah id="projects-1" textValue="Projects-1">
+      <TreeViewItem id="projects-1" textValue="Projects-1">
         <Text>Projects-1</Text>
+        <Folder />
         <ActionGroup onAction={action('onActionGroup action')}>
           <Item key="edit">
             <Edit />
@@ -64,8 +70,9 @@ export const TreeExampleStatic = (args) => (
             <Text>Delete</Text>
           </Item>
         </ActionGroup>
-        <TreeItemBlah id="projects-1A" textValue="Projects-1A">
+        <TreeViewItem id="projects-1A" textValue="Projects-1A">
           <Text>Projects-1A</Text>
+          <FileTxt />
           <ActionGroup onAction={action('onActionGroup action')}>
             <Item key="edit">
               <Edit />
@@ -76,10 +83,11 @@ export const TreeExampleStatic = (args) => (
               <Text>Delete</Text>
             </Item>
           </ActionGroup>
-        </TreeItemBlah>
-      </TreeItemBlah>
-      <TreeItemBlah id="projects-2" textValue="Projects-2">
+        </TreeViewItem>
+      </TreeViewItem>
+      <TreeViewItem id="projects-2" textValue="Projects-2">
         <Text>Projects-2</Text>
+        <FileTxt />
         <ActionGroup onAction={action('onActionGroup action')}>
           <Item key="edit">
             <Edit />
@@ -90,9 +98,10 @@ export const TreeExampleStatic = (args) => (
             <Text>Delete</Text>
           </Item>
         </ActionGroup>
-      </TreeItemBlah>
-      <TreeItemBlah id="projects-3" textValue="Projects-3">
+      </TreeViewItem>
+      <TreeViewItem id="projects-3" textValue="Projects-3">
         <Text>Projects-3</Text>
+        <FileTxt />
         <ActionGroup onAction={action('onActionGroup action')}>
           <Item key="edit">
             <Edit />
@@ -103,8 +112,8 @@ export const TreeExampleStatic = (args) => (
             <Text>Delete</Text>
           </Item>
         </ActionGroup>
-      </TreeItemBlah>
-    </TreeItemBlah>
+      </TreeViewItem>
+    </TreeViewItem>
   </TreeView>
 );
 
@@ -137,40 +146,41 @@ TreeExampleStatic.story = {
 };
 
 let rows = [
-  {id: 'projects', name: 'Projects', childItems: [
-    {id: 'project-1', name: 'Project 1'},
-    {id: 'project-2', name: 'Project 2', childItems: [
-      {id: 'project-2A', name: 'Project 2A'},
-      {id: 'project-2B', name: 'Project 2B'},
-      {id: 'project-2C', name: 'Project 2C'}
+  {id: 'projects', name: 'Projects', icon: <Folder />, childItems: [
+    {id: 'project-1', name: 'Project 1', icon: <FileTxt />},
+    {id: 'project-2', name: 'Project 2', icon: <Folder />, childItems: [
+      {id: 'project-2A', name: 'Project 2A', icon: <FileTxt />},
+      {id: 'project-2B', name: 'Project 2B', icon: <FileTxt />},
+      {id: 'project-2C', name: 'Project 2C', icon: <FileTxt />}
     ]},
-    {id: 'project-3', name: 'Project 3'},
-    {id: 'project-4', name: 'Project 4'},
-    {id: 'project-5', name: 'Project 5', childItems: [
-      {id: 'project-5A', name: 'Project 5A'},
-      {id: 'project-5B', name: 'Project 5B'},
-      {id: 'project-5C', name: 'Project 5C'}
+    {id: 'project-3', name: 'Project 3', icon: <FileTxt />},
+    {id: 'project-4', name: 'Project 4', icon: <FileTxt />},
+    {id: 'project-5', name: 'Project 5', icon: <Folder />, childItems: [
+      {id: 'project-5A', name: 'Project 5A', icon: <FileTxt />},
+      {id: 'project-5B', name: 'Project 5B', icon: <FileTxt />},
+      {id: 'project-5C', name: 'Project 5C', icon: <FileTxt />}
     ]}
   ]},
-  {id: 'reports', name: 'Reports', childItems: [
-    {id: 'reports-1', name: 'Reports 1', childItems: [
-      {id: 'reports-1A', name: 'Reports 1A', childItems: [
-        {id: 'reports-1AB', name: 'Reports 1AB', childItems: [
-          {id: 'reports-1ABC', name: 'Reports 1ABC'}
+  {id: 'reports', name: 'Reports', icon: <Folder />, childItems: [
+    {id: 'reports-1', name: 'Reports 1', icon: <Folder />, childItems: [
+      {id: 'reports-1A', name: 'Reports 1A', icon: <Folder />, childItems: [
+        {id: 'reports-1AB', name: 'Reports 1AB', icon: <Folder />, childItems: [
+          {id: 'reports-1ABC', name: 'Reports 1ABC', icon: <FileTxt />}
         ]}
       ]},
-      {id: 'reports-1B', name: 'Reports 1B'},
-      {id: 'reports-1C', name: 'Reports 1C'}
+      {id: 'reports-1B', name: 'Reports 1B', icon: <FileTxt />},
+      {id: 'reports-1C', name: 'Reports 1C', icon: <FileTxt />}
     ]},
-    {id: 'reports-2', name: 'Reports 2'}
+    {id: 'reports-2', name: 'Reports 2', icon: <FileTxt />}
   ]}
 ];
 
-export const TreeExampleDynamic = (args: SpectrumTreeViewProps) => (
+export const TreeExampleDynamic = (args: SpectrumTreeViewProps<unknown>) => (
   <TreeView {...args} width={300} height={300} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
     {(item) => (
-      <TreeItemBlah childItems={item.childItems} textValue={item.name}>
+      <TreeViewItem childItems={item.childItems} textValue={item.name}>
         <Text>{item.name}</Text>
+        {item.icon}
         <ActionGroup onAction={action('onActionGroup action')}>
           <Item key="edit">
             <Edit />
@@ -181,7 +191,7 @@ export const TreeExampleDynamic = (args: SpectrumTreeViewProps) => (
             <Text>Delete</Text>
           </Item>
         </ActionGroup>
-      </TreeItemBlah>
+      </TreeViewItem>
     )}
   </TreeView>
 );
