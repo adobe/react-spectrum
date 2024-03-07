@@ -45,6 +45,7 @@
     "@react-aria/utils": "^3.23.2",
     "@react-aria/virtualizer": "^3.1.0",
     "@react-spectrum/checkbox": "^3.9.4",
+    "@react-spectrum/style-macro-s1": "^3.5.3",
     "@react-spectrum/text": "^3.5.3",
     "@react-spectrum/utils": "^3.1.0",
     "@react-stately/collections": "^3.1.0",

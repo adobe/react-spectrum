@@ -12,24 +12,24 @@
 
 
 import {AriaTreeGridListProps} from '@react-aria/tree';
-import React, {createContext, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {ButtonContext, Collection, Tree, TreeItem, TreeItemContent, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, useContextProps} from 'react-aria-components';
+import React, {createContext, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {isAndroid} from '@react-aria/utils';
 import {DOMRef, Expandable, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {isAndroid} from '@react-aria/utils';
 import {Text} from '@react-spectrum/text';
-import {useButton} from '@react-aria/button';
-import {useLocale} from '@react-aria/i18n';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
+import {useButton} from '@react-aria/button';
+import {useLocale} from '@react-aria/i18n';
 
 
 export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>, 'children'>, StyleProps, SpectrumSelectionProps, Expandable {
   /** Provides content to display when there are no items in the tree. */
   renderEmptyState?: () => JSX.Element,
-   /**
+  /**
    * Handler that is called when a user performs an action on an item. The exact user event depends on
    * the collection's `selectionStyle` prop and the interaction modality.
    */
@@ -37,7 +37,7 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>,
   /**
    * The contents of the tree.
    */
-  children?: ReactNode | ((item: T) => ReactNode),
+  children?: ReactNode | ((item: T) => ReactNode)
 }
 
 export interface SpectrumTreeViewItemProps extends TreeItemProps {
@@ -152,7 +152,7 @@ const treeRowOutline = style({
     isFocusVisible: '[-2px]',
     isSelected: {
       default: '[-1px]',
-      isFocusVisible: '[-2px]',
+      isFocusVisible: '[-2px]'
     }
   },
   bottom: 0,
@@ -166,7 +166,7 @@ const treeRowOutline = style({
       isFocusVisible: '[inset 2px 0 0 0 var(--spectrum-alias-focus-color), inset -2px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -2px 0 0 var(--spectrum-alias-focus-color), inset 0 2px 0 0 var(--spectrum-alias-focus-color)]'
     }
   }
-})
+});
 
 export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
   let {
@@ -199,7 +199,7 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
       <Collection items={childItems}>
         {renderer}
       </Collection>
-    )
+    );
   }
 
   return (
