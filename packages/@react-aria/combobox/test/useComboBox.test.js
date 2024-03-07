@@ -132,7 +132,7 @@ describe('useComboBox', function () {
     expect(toggleSpy).toHaveBeenLastCalledWith(null, 'manual');
   });
 
-  it('should not prevent onBlur when no button provided', function () {
+  it('should call onBlur when no button provided and you leave the field', function () {
     let onBlurMock = jest.fn();
     let initialProps = {...props, buttonRef: {current: null}, onBlur: onBlurMock};
     let {result: state} = renderHook((props) => useComboBoxState(props), {initialProps});
