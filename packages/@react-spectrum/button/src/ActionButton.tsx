@@ -26,7 +26,7 @@ import {useProviderProps} from '@react-spectrum/provider';
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'actionButton');
-  // console.log('props', props)
+
   let {
     isQuiet,
     isDisabled,
