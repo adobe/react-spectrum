@@ -1,4 +1,4 @@
-import {ButtonContext, Provider, SlotProps, useContextProps} from 'react-aria-components';
+import {Provider, SlotProps, useContextProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {ReactNode, useRef, useCallback, forwardRef, createContext} from 'react';
 import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
@@ -9,6 +9,7 @@ import {
 import {ContextValue} from './Content';
 import {DOMRef} from '@react-types/shared';
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {ButtonContext} from './Button';
 
 interface ButtonGroupStyleProps {
   orientation?: 'horizontal' | 'vertical',
@@ -130,8 +131,7 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
       }, props.css)}>
       <Provider
         values={[
-          // @ts-ignore
-          [ButtonContext, {UNSAFE_className: style({flexShrink: 0}), size, isDisabled}] // extend our button context?
+          [ButtonContext, {css: style({flexShrink: 0}), size, isDisabled}]
         ]}>
         {children}
       </Provider>

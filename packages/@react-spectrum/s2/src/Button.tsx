@@ -1,10 +1,11 @@
-import {ButtonContext, ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext, Provider, useContextProps} from 'react-aria-components';
+import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext, Provider, Link, LinkProps} from 'react-aria-components';
 import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {ReactNode, forwardRef} from 'react';
+import {ReactNode, createContext, forwardRef, useContext} from 'react';
 import {pressScale} from './pressScale';
 import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {mergeProps} from 'react-aria';
 
 interface ButtonStyleProps {
   variant?: 'primary' | 'secondary' | 'accent' | 'negative',
@@ -16,6 +17,16 @@ interface ButtonStyleProps {
 interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
   children?: ReactNode
 }
+
+interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
+  children?: ReactNode
+}
+
+interface ButtonContextValue extends ButtonStyleProps, StyleProps {
+  isDisabled?: boolean
+}
+
+export const ButtonContext = createContext<ButtonContextValue>({});
 
 const button = style<ButtonRenderProps & ButtonStyleProps>({
   ...focusRing(),
@@ -33,6 +44,9 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   userSelect: 'none',
   minHeight: 'control',
   borderRadius: 'pill',
+  boxSizing: 'border-box',
+  width: 'fit',
+  textDecoration: 'none', // for link buttons
   paddingX: {
     default: 'pill',
     ':has([slot=icon]:only-child)': 0
@@ -215,7 +229,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
 
 function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
-  [props, domRef] = useContextProps(props, domRef, ButtonContext);
+  let ctx = useContext(ButtonContext);
+  props = mergeProps(ctx, props);
   
   return (
     <RACButton
@@ -241,3 +256,33 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
 
 let _Button = forwardRef(Button);
 export {_Button as Button};
+
+function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>) {
+  let domRef = useFocusableRef(ref);
+  let ctx = useContext(ButtonContext);
+  props = mergeProps(ctx, props);
+
+  return (
+    <Link
+      {...props}
+      ref={domRef}
+      style={pressScale(domRef, props.UNSAFE_style)}
+      className={renderProps => (props.UNSAFE_className || '') + button({
+        ...renderProps,
+        variant: props.variant || 'primary',
+        style: props.style || 'fill',
+        size: props.size || 'M',
+        staticColor: props.staticColor
+      }, props.css)}>
+      <Provider
+        values={[
+          [TextContext, {className: style({paddingY: '--labelPadding'})}]
+        ]}>
+        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+      </Provider>
+    </Link>
+  );
+}
+
+let _LinkButton = forwardRef(LinkButton);
+export {_LinkButton as LinkButton};
