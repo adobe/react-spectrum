@@ -119,10 +119,9 @@ describe('Tabs', function () {
     fireEvent.keyDown(nextSelectedItem, {key: 'ArrowLeft', code: 37, charCode: 37});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
 
-    /** Changes selection regardless if it's horizontal tabs. */
+    /** prevent changing tabs for horizontal orientations in aria-selected */
     fireEvent.keyDown(selectedItem, {key: 'ArrowUp', code: 38, charCode: 38});
-    nextSelectedItem = tabs[2];
-    expect(nextSelectedItem).toHaveAttribute('aria-selected', 'true');
+    expect(selectedItem).toHaveAttribute('aria-selected', 'true');
     fireEvent.keyDown(selectedItem, {key: 'ArrowDown', code: 40, charCode: 40});
     expect(selectedItem).toHaveAttribute('aria-selected', 'true');
   });
