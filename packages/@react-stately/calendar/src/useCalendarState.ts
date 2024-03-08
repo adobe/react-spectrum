@@ -138,6 +138,10 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
 
   function setValue(newValue: CalendarDate) {
     if (!props.isDisabled && !props.isReadOnly) {
+      if (newValue === null) {
+        setControlledValue(null);
+        return;
+      }
       newValue = constrainValue(newValue, minValue, maxValue);
       newValue = previousAvailableDate(newValue, startDate, isDateUnavailable);
       if (!newValue) {
