@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-
 import {AriaTreeGridListProps} from '@react-aria/tree';
-import {ButtonContext, Collection, Tree, TreeItem, TreeItemContent, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, useContextProps} from 'react-aria-components';
+import {ButtonContext, Collection, Tree, TreeItem, TreeItemContent, TreeItemContentRenderProps, TreeItemProps, TreeItemRenderProps, TreeRenderProps, useContextProps} from 'react-aria-components';
 import {Checkbox} from '@react-spectrum/checkbox';
 import ChevronLeftMedium from '@spectrum-icons/ui/ChevronLeftMedium';
 import ChevronRightMedium from '@spectrum-icons/ui/ChevronRightMedium';
-import {DOMRef, Expandable, Key, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
 import {isAndroid} from '@react-aria/utils';
 import React, {createContext, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
@@ -42,7 +41,7 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>,
 // TODO: I removed title since tree rows can have action buttons and stuff unlike other instances of items that use title (aka Sections and Columns) that typically don't have
 // any other content that their internal text content
 // TODO: write tests for all of these props to make sure things are propagating
-export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value'> {
+export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'selectionBehavior'> {
   /** Rendered contents of the tree item or child items. */
   children: ReactNode,
   /** Whether this item has children, even if not loaded yet. */
@@ -63,16 +62,31 @@ function useTreeRendererContext(): TreeRendererContextValue {
 // TODO: the below is needed so the borders of the top and bottom row isn't cut off if the TreeView is wrapped within a container by always reserving the 2px needed for the
 // keyboard focus ring. Perhaps find a different way of rendering the outlines since the top of the item doesn't
 // scroll into view due to how the ring is offset. Alternatively, have the tree render the top/bottom outline like it does in Listview
-const tree = style({
+const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
   borderWidth: 2,
   boxSizing: 'border-box',
   borderXWidth: 0,
   borderStyle: 'solid',
-  borderColor: 'transparent'
+  borderColor: 'transparent',
+  justifyContent: {
+    isEmpty: 'center'
+  },
+  alignItems: {
+    isEmpty: 'center'
+  },
+  width: {
+    isEmpty: 'full'
+  },
+  height: {
+    isEmpty: 'full'
+  },
+  display: {
+    isEmpty: 'flex'
+  }
 });
 
 function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef<HTMLDivElement>) {
-  let {children} = props;
+  let {children, selectionStyle} = props;
 
   let renderer;
   if (typeof children === 'function') {
@@ -81,10 +95,11 @@ function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef
 
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
+  let selectionBehavior = selectionStyle === 'highlight' ? 'replace' : 'toggle';
 
   return (
     <TreeRendererContext.Provider value={{renderer}}>
-      <Tree {...props} {...styleProps} className={tree()} ref={domRef}>
+      <Tree {...props} {...styleProps} className={({isEmpty}) => tree({isEmpty})} selectionBehavior={selectionBehavior as SelectionBehavior} ref={domRef}>
         {props.children}
       </Tree>
     </TreeRendererContext.Provider>
@@ -108,11 +123,7 @@ const treeRow = style<TreeItemRenderProps>({
     isHovered: '[var(--spectrum-table-row-background-color-hover)]',
     isFocused: '[var(--spectrum-table-row-background-color-hover)]',
     isPressed: '[var(--spectrum-table-row-background-color-down)]',
-    isSelected: {
-      default: '[var(--spectrum-table-row-background-color-selected)]',
-      isHovered: '[var(--spectrum-table-row-background-color-hover)]',
-      isPressed: '[var(--spectrum-table-row-background-color-hover)]'
-    }
+    isSelected: '[var(--spectrum-table-row-background-color-selected)]'
   }
 });
 
@@ -120,7 +131,8 @@ const treeCellGrid = style({
   display: 'grid',
   width: 'full',
   alignItems: 'center',
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 8, 'minmax(0, auto)', '1fr', 'minmax(0, auto)'],
+  // TODO: needed to use spectrum var since gridTemplateColumns uses baseSizing and not scaled sizing
+  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 'var(--spectrum-global-dimension-size-400)', 'minmax(0, auto)', '1fr', 'minmax(0, auto)'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions'
@@ -157,7 +169,7 @@ const treeActions = style({
   flexShrink: 0,
   /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
   marginStart: .5,
-  marginEnd: .5
+  marginEnd: 1
 });
 
 const treeRowOutline = style({
@@ -244,7 +256,8 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: treeContent({isDisabled})},
-                icon: {UNSAFE_className: treeIcon(), size: 'S'},
+                // Need to do inline since the macros don't override spectrum class styles
+                icon: {UNSAFE_className: treeIcon(), UNSAFE_style: {color: isDisabled && 'var(--spectrum-alias-icon-color-disabled)'}, size: 'S'},
                 actionButton: {UNSAFE_className: treeActions(), isQuiet: true},
                 actionGroup: {
                   UNSAFE_className: treeActions(),
