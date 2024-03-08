@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {ForwardedRef} from 'react';
+import {ForwardedRef, MutableRefObject} from 'react';
 
 /**
  * Merges multiple refs into one. Works with either callback or object refs.
  */
-export function mergeRefs<T>(...refs: ForwardedRef<T>[]): ForwardedRef<T> {
+export function mergeRefs<T>(...refs: Array<ForwardedRef<T> | MutableRefObject<T>>): ForwardedRef<T> {
   if (refs.length === 1) {
     return refs[0];
   }
