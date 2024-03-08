@@ -239,7 +239,11 @@ const helpTextStyles = style({
     isDisabled: 'disabled'
   },
   contain: 'inline-size',
-  paddingTop: '--field-gap'
+  paddingTop: '--field-gap',
+  cursor: {
+    default: 'text',
+    isDisabled: 'default'
+  }
 });
 
 export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDivElement>, errorRef?: DOMRef<HTMLDivElement>}) {
