@@ -12,7 +12,7 @@
 
 import clsx from 'clsx';
 import {mergeIds} from '../src/useId';
-import {mergeProps} from '../';
+import {mergeProps} from '../src/mergeProps';
 
 
 describe('mergeProps', function () {
@@ -83,5 +83,14 @@ describe('mergeProps', function () {
     let mergedProps = mergeProps({id: id1}, {id: id2}, {id: id3});
     let mergedIds = mergeIds(mergeIds(id1, id2), id3);
     expect(mergedProps.id).toBe(mergedIds);
+  });
+
+  it('combines styles', function () {
+    let style1 = {height: '50px', width: '50px', 'color': 'red'};
+    let style2 = {height: '75px', color: 'orange'};
+    let style3 = {backgroundColor: 'blue'};
+    let mergedProps = mergeProps({style: style1}, {style: style2}, {style: style3});
+    let mergedStyles = {...style1, ...style2, ...style3};
+    expect(mergedProps.style).toMatchObject(mergedStyles);
   });
 });
