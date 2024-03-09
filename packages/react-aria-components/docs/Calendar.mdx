@@ -864,7 +864,7 @@ function CalendarValue() {
 This example shows the `Footer` component, which is placed inside the `Calendar`. In this component, we use `CalendarStateContext` to get the `setValue` method from the `CalendarState` object. Next, by clicking on the button, we set the `setValue` to `null` to reset the `Calendar` `value`.
 
 ```tsx example
-import React, {useContext} from 'react';
+import {useContext} from 'react';
 import {CalendarStateContext, Button} from 'react-aria-components';
 
 function Footer() {
