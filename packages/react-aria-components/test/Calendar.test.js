@@ -285,17 +285,19 @@ describe('Calendar', () => {
     expect(headers.map(h => h.textContent)).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
   });
 
-  it('should support setting "null" for setValue from SelectStateContext and resetting value of calendar', () => {
+  it('should support setting "null" for method setValue', () => {
 
     const Footer = () => {
-      const {setValue} = useContext(CalendarStateContext);
+      const state = useContext(CalendarStateContext);
+      const {setValue} = state;
+
       return (
         <div>
           <Button 
             slot={null} 
             className="reset-button"
             onPress={() => setValue(null)}>
-            Set "null" for sevValue
+            Reset value
           </Button>
         </div>
       );
@@ -317,7 +319,7 @@ describe('Calendar', () => {
             )}
           </CalendarGridHeader>
           <CalendarGridBody className="grid-body">
-            {(date) => <CalendarCell date={date} />}
+            {(date) => <CalendarCell date={date} className={({isSelected}) => isSelected ? 'selected' : ''} />}
           </CalendarGridBody>
         </CalendarGrid>
         <Footer />
@@ -331,11 +333,13 @@ describe('Calendar', () => {
 
     fireEvent.click(cell);
     expect(cell).toHaveAttribute('data-selected', 'true');
+    expect(cell).toHaveClass('selected');
 
     const resetButton = grid.querySelector('.reset-button');
     expect(resetButton).toBeInTheDocument();
 
     fireEvent.click(resetButton);
     expect(cell).not.toHaveAttribute('data-selected');
+    expect(cell).not.toHaveClass('selected');
   });
 });
