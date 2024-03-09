@@ -55,7 +55,7 @@ export const DateFieldExample = (props) => (
   <DateField
     {...props}
     minValue={props.minValue ? fromAbsolute(props.minValue, getLocalTimeZone()) : undefined}
-    maxValue={props.minValue ? fromAbsolute(props.minValue, getLocalTimeZone()) : undefined}
+    maxValue={props.maxValue ? fromAbsolute(props.maxValue, getLocalTimeZone()) : undefined}
     data-testid="date-field-example"
     defaultValue={parseAbsoluteToLocal('2024-01-01T01:01:00Z')}>
     <Label style={{display: 'block'}}>Date</Label>
