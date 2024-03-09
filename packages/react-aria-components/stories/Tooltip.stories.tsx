@@ -40,17 +40,83 @@ export const TooltipExample = () => (
 );
 
 export const TooltipArrowBoundaryOffsetExample = {
-  render: () => {
+  argTypes: {
+    topLeft: {
+      defaultValue: 25,
+      control: {
+        type: 'range',
+        min: -100,
+        max: 100
+      }
+    },
+    topRight: {
+      defaultValue: 25,
+      control: {
+        type: 'range',
+        min: -100,
+        max: 100
+      }
+    },
+    leftTop: {
+      defaultValue: 15,
+      control: {
+        type: 'range',
+        min: -100,
+        max: 100
+      }
+    },
+    leftBotton: {
+      defaultValue: 15,
+      control: {
+        type: 'range',
+        min: -100,
+        max: 100
+      }
+    },
+    rightTop: {
+      defaultValue: 15,
+      control: {
+        type: 'range',
+        min: -100,
+        max: 100
+      }
+    },
+    rightBottom: {
+      defaultValue: 15,
+      control: {
+        type: 'range',
+        min: -100,
+        max: 100
+      }
+    },
+    bottomLeft: {
+      defaultValue: 25,
+      control: {
+        type: 'range',
+        min: -100,
+        max: 100
+      }
+    },
+    bottomRight: {
+      defaultValue: 25,
+      control: {
+        type: 'range',
+        min: -100,
+        max: 100
+      }
+    }
+  }, 
+  render: ({topLeft, topRight, leftTop, leftBotton, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
     return (
       <div style={{display: 'flex', flexDirection: 'column'}}>
         <div style={{display: 'flex'}}>
           <div style={{padding: 12}}>
-            <TooltipTrigger delay={0} closeDelay={0}>
+            <TooltipTrigger isOpen delay={0} closeDelay={0}>
               <Button style={{width: 200, height: 100}}>Top left</Button>
               <Tooltip
                 placement="top left"
                 offset={7}
-                arrowBoundaryOffset={25}
+                arrowBoundaryOffset={topLeft}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',
@@ -68,12 +134,12 @@ export const TooltipArrowBoundaryOffsetExample = {
             </TooltipTrigger>
           </div>
           <div style={{padding: 12}}>
-            <TooltipTrigger delay={0} closeDelay={0}>
+            <TooltipTrigger isOpen delay={0} closeDelay={0}>
               <Button style={{width: 200, height: 100}}>Top right</Button>
               <Tooltip
                 placement="top right"
                 offset={7}
-                arrowBoundaryOffset={25}
+                arrowBoundaryOffset={topRight}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',
@@ -93,12 +159,12 @@ export const TooltipArrowBoundaryOffsetExample = {
         </div>
         <div style={{display: 'flex'}}>
           <div style={{padding: 12}}>
-            <TooltipTrigger delay={0} closeDelay={0}>
+            <TooltipTrigger isOpen delay={0} closeDelay={0}>
               <Button style={{width: 200, height: 100}}>Left top</Button>
               <Tooltip
                 placement="left top"
                 offset={7}
-                arrowBoundaryOffset={16}
+                arrowBoundaryOffset={leftTop}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',
@@ -116,12 +182,12 @@ export const TooltipArrowBoundaryOffsetExample = {
             </TooltipTrigger>
           </div>
           <div style={{padding: 12}}>
-            <TooltipTrigger delay={0} closeDelay={0}>
+            <TooltipTrigger isOpen delay={0} closeDelay={0}>
               <Button style={{width: 200, height: 100}}>Left bottom</Button>
               <Tooltip
                 placement="left bottom"
                 offset={7}
-                arrowBoundaryOffset={16}
+                arrowBoundaryOffset={leftBotton}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',
@@ -141,12 +207,12 @@ export const TooltipArrowBoundaryOffsetExample = {
         </div>
         <div style={{display: 'flex'}}>
           <div style={{padding: 12}}>
-            <TooltipTrigger delay={0} closeDelay={0}>
+            <TooltipTrigger isOpen delay={0} closeDelay={0}>
               <Button style={{width: 200, height: 100}}>Right top</Button>
               <Tooltip
                 placement="right top"
                 offset={7}
-                arrowBoundaryOffset={16}
+                arrowBoundaryOffset={rightTop}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',
@@ -164,12 +230,12 @@ export const TooltipArrowBoundaryOffsetExample = {
             </TooltipTrigger>
           </div>
           <div style={{padding: 12}}>
-            <TooltipTrigger delay={0} closeDelay={0}>
+            <TooltipTrigger isOpen delay={0} closeDelay={0}>
               <Button style={{width: 200, height: 100}}>Right bottom</Button>
               <Tooltip
                 placement="right bottom"
                 offset={7}
-                arrowBoundaryOffset={16}
+                arrowBoundaryOffset={rightBottom}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',
@@ -189,12 +255,12 @@ export const TooltipArrowBoundaryOffsetExample = {
         </div>
         <div style={{display: 'flex'}}>
           <div style={{padding: 12}}>
-            <TooltipTrigger delay={0} closeDelay={0}>
+            <TooltipTrigger isOpen delay={0} closeDelay={0}>
               <Button style={{width: 200, height: 100}}>Bottom left</Button>
               <Tooltip
                 placement="bottom left"
                 offset={7}
-                arrowBoundaryOffset={25}
+                arrowBoundaryOffset={bottomLeft}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',
@@ -212,12 +278,12 @@ export const TooltipArrowBoundaryOffsetExample = {
             </TooltipTrigger>
           </div>
           <div style={{padding: 12}}>
-            <TooltipTrigger delay={0} closeDelay={0}>
+            <TooltipTrigger isOpen delay={0} closeDelay={0}>
               <Button style={{width: 200, height: 100}}>Bottom right</Button>
               <Tooltip
                 placement="bottom right"
                 offset={7}
-                arrowBoundaryOffset={25}
+                arrowBoundaryOffset={bottomRight}
                 style={{
                   background: 'Canvas',
                   color: 'CanvasText',
