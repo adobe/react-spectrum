@@ -26,8 +26,8 @@ function isLeapYear(year: number): boolean {
 }
 
 function persianToJulianDay(year: number, month: number, day: number): number {
-  let y0 = year > 0 ? year - 474 : year - 473; // epochBase 
-  let y1 = mod(y0, 2820) + 474; // epochYear 
+  let y0 = year > 0 ? year - 474 : year - 473;
+  let y1 = mod(y0, 2820) + 474;
   let offset = month <= 7 ? 31 * (month - 1) : 30 * (month - 1) + 6;
 
   return (
