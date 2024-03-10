@@ -27,7 +27,7 @@ function Footer() {
         slot={null} 
         className="reset-button"
         onPress={() => {
-          // reset value
+          // reset value 
           setValue(null);
         }}>
         Reset value
