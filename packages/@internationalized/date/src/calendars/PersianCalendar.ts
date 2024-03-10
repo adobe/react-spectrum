@@ -17,24 +17,23 @@ import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {mod} from '../utils';
 
-const PERSIAN_EPOCH = 1948321; // 622/03/19 Julian C.E.
+const PERSIAN_EPOCH = 1948320.5; // 622/03/19 Julian C.E.
 
 function isLeapYear(year: number): boolean {
-  let y0 = year > 0 ? year - 474 : year - 473;
-  let y1 = mod(y0, 2820) + 474;
-
-  return mod((y1 + 38) * 31, 128) < 31;
+  return (
+    ((((year - (year > 0 ? 474 : 473)) % 2820) + 474 + 38) * 682) % 2816 < 682
+  );
 }
 
 function persianToJulianDay(year: number, month: number, day: number): number {
-  let y0 = year > 0 ? year - 474 : year - 473;
-  let y1 = mod(y0, 2820) + 474;
+  let y0 = year > 0 ? year - 474 : year - 473; // epochBase 
+  let y1 = mod(y0, 2820) + 474; // epochYear 
   let offset = month <= 7 ? 31 * (month - 1) : 30 * (month - 1) + 6;
 
   return (
-    PERSIAN_EPOCH -
-    1 +
+    PERSIAN_EPOCH - 1 +
     1029983 * Math.floor(y0 / 2820) +
+    Math.floor(((y1 * 682) - 110) / 2816) +
     365 * (y1 - 1) +
     Math.floor((31 * y1 - 5) / 128) +
     offset +
@@ -52,17 +51,27 @@ export class PersianCalendar implements Calendar {
   identifier = 'persian';
 
   fromJulianDay(jd: number): CalendarDate {
+    let aux1, aux2;
     let d0 = jd - persianToJulianDay(475, 1, 1);
     let n2820 = Math.floor(d0 / 1029983);
     let d1 = mod(d0, 1029983);
-    let y2820 = d1 === 1029982 ? 2820 : Math.floor((128 * d1 + 46878) / 46751);
+    let y2820;
+
+    if (d1 === 1029982) {
+      y2820 = 2820;
+    } else {
+      aux1 = Math.floor(d1 / 366);
+      aux2 = mod(d1, 366);
+      y2820 = Math.floor(((2134 * aux1) + (2816 * aux2) + 2815) / 1028522) + aux1 + 1;
+    }
+
     let year = 474 + 2820 * n2820 + y2820;
     if (year <= 0) {
       year--;
     }
 
     let yDay = jd - persianToJulianDay(year, 1, 1) + 1;
-    let month = yDay <= 186 ? Math.ceil(yDay / 31) : Math.ceil((yDay - 6) / 31);
+    let month = yDay <= 186 ? Math.ceil(yDay / 31) : Math.ceil((yDay - 6) / 30);
     let day = jd - persianToJulianDay(year, month, 1) + 1;
 
     return new CalendarDate(this, year, month, day);
@@ -77,15 +86,17 @@ export class PersianCalendar implements Calendar {
   }
 
   getDaysInMonth(date: AnyCalendarDate): number {
-    if (date.month <= 6) {
-      return 31;
+    let gregorianDaysInMonth = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+
+    if (date.month < 1 || date.month > 12) {
+      throw new Error('$month Out Of Range Exception');
     }
 
-    if (date.month <= 11) {
+    if (date.year && isLeapYear(date.year) && date.month === 12) {
       return 30;
     }
 
-    return isLeapYear(date.year) ? 30 : 29;
+    return gregorianDaysInMonth[date.month - 1];
   }
 
   getEras() {
