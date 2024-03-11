@@ -12,3 +12,9 @@ export const getOwnerWindow = (
   const doc = getOwnerDocument(el as Element | null | undefined);
   return doc.defaultView || window;
 };
+
+export const getRootNode = (el: Element | null | undefined): Document | (ShadowRoot & {
+  body: ShadowRoot
+}) => {
+  return el?.getRootNode() ?? document;
+};
