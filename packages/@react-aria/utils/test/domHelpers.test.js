@@ -100,6 +100,7 @@ describe('getRootNode', () => {
 
     expect(getRootNode(shadowDiv)).toBe(innerShadowRoot);
 
+    // Teardown
     document.body.removeChild(outerHostDiv);
   });
 
