@@ -11,36 +11,36 @@
  */
 
 
-import {getOwnerDocument, getOwnerWindow} from '../';
+import {getOwnerWindow, getRootNode} from '../';
 import React, {createRef} from 'react';
 import {render} from '@react-spectrum/test-utils';
 
-describe('getOwnerDocument', () => {
+describe('getRootNode', () => {
   test.each([null, undefined])('returns the document if the argument is %p', (value) => {
-    expect(getOwnerDocument(value)).toBe(document);
+    expect(getRootNode(value)).toBe(document);
   });
 
   it('returns the document if the element is in the document', () => {
     const div = document.createElement('div');
     window.document.body.appendChild(div);
-    expect(getOwnerDocument(div)).toBe(document);
+    expect(getRootNode(div)).toBe(document);
   });
 
   it('returns the document if object passed in does not have an ownerdocument', () => {
     const div = document.createElement('div');
-    expect(getOwnerDocument(div)).toBe(document);
+    expect(getRootNode(div)).toBe(document);
   });
 
   it('returns the document if nothing is passed in', () => {
-    expect(getOwnerDocument()).toBe(document);
-    expect(getOwnerDocument(null)).toBe(document);
-    expect(getOwnerDocument(undefined)).toBe(document);
+    expect(getRootNode()).toBe(document);
+    expect(getRootNode(null)).toBe(document);
+    expect(getRootNode(undefined)).toBe(document);
   });
 
   it('returns the document if ref exists, but is not associated with an element', () => {
     const ref = createRef();
 
-    expect(getOwnerDocument(ref.current)).toBe(document);
+    expect(getRootNode(ref.current)).toBe(document);
   });
 
   it("returns the iframe's document if the element is in an iframe", () => {
@@ -49,9 +49,9 @@ describe('getOwnerDocument', () => {
     window.document.body.appendChild(iframe);
     iframe.contentWindow.document.body.appendChild(iframeDiv);
 
-    expect(getOwnerDocument(iframeDiv)).not.toBe(document);
-    expect(getOwnerDocument(iframeDiv)).toBe(iframe.contentWindow.document);
-    expect(getOwnerDocument(iframeDiv)).toBe(iframe.contentDocument);
+    expect(getRootNode(iframeDiv)).not.toBe(document);
+    expect(getRootNode(iframeDiv)).toBe(iframe.contentWindow.document);
+    expect(getRootNode(iframeDiv)).toBe(iframe.contentDocument);
 
     // Teardown
     iframe.remove();
@@ -68,9 +68,9 @@ describe('getOwnerDocument', () => {
       container: iframeDiv
     });
 
-    expect(getOwnerDocument(ref.current)).not.toBe(document);
-    expect(getOwnerDocument(ref.current)).toBe(iframe.contentWindow.document);
-    expect(getOwnerDocument(ref.current)).toBe(iframe.contentDocument);
+    expect(getRootNode(ref.current)).not.toBe(document);
+    expect(getRootNode(ref.current)).toBe(iframe.contentWindow.document);
+    expect(getRootNode(ref.current)).toBe(iframe.contentDocument);
   });
 
 });

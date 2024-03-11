@@ -13,8 +13,20 @@ export const getOwnerWindow = (
   return doc.defaultView || window;
 };
 
-export const getRootNode = (el: Element | null | undefined): Document | (ShadowRoot & {
-  body: ShadowRoot
-}) => {
-  return el?.getRootNode() ?? document;
+export const getRootNode = (el: Element | null | undefined): Document | ShadowRoot => {
+  // Fallback to document if the element is null or undefined
+  if (!el) {
+    return document;
+  }
+
+  const rootNode = el.getRootNode ? el.getRootNode() : document;
+
+  // Check if the rootNode is a Document, or if the element is disconnected from the DOM
+  // In such cases, rootNode could either be the actual Document or a ShadowRoot,
+  // but for disconnected nodes, we want to ensure consistency by returning the Document.
+  if (rootNode instanceof Document || !(el.isConnected)) {
+    return document;
+  }
+
+  return rootNode;
 };
