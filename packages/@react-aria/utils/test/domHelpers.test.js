@@ -73,6 +73,49 @@ describe('getRootNode', () => {
     expect(getRootNode(ref.current)).toBe(iframe.contentDocument);
   });
 
+  it('returns the shadow root if the element is in a shadow DOM', () => {
+    // Setup shadow DOM
+    const hostDiv = document.createElement('div');
+    const shadowRoot = hostDiv.attachShadow({mode: 'open'});
+    const shadowDiv = document.createElement('div');
+    shadowRoot.appendChild(shadowDiv);
+    document.body.appendChild(hostDiv);
+
+    expect(getRootNode(shadowDiv)).toBe(shadowRoot);
+
+    // Teardown
+    document.body.removeChild(hostDiv);
+  });
+
+  it('returns the correct shadow root for nested shadow DOMs', () => {
+    // Setup nested shadow DOM
+    const outerHostDiv = document.createElement('div');
+    const outerShadowRoot = outerHostDiv.attachShadow({mode: 'open'});
+    const innerHostDiv = document.createElement('div');
+    outerShadowRoot.appendChild(innerHostDiv);
+    const innerShadowRoot = innerHostDiv.attachShadow({mode: 'open'});
+    const shadowDiv = document.createElement('div');
+    innerShadowRoot.appendChild(shadowDiv);
+    document.body.appendChild(outerHostDiv);
+
+    expect(getRootNode(shadowDiv)).toBe(innerShadowRoot);
+
+    document.body.removeChild(outerHostDiv);
+  });
+
+  it('returns the document for elements directly inside the shadow host', () => {
+    const hostDiv = document.createElement('div');
+    document.body.appendChild(hostDiv);
+    hostDiv.attachShadow({mode: 'open'});
+    const directChildDiv = document.createElement('div');
+    hostDiv.appendChild(directChildDiv);
+
+    expect(getRootNode(directChildDiv)).toBe(document);
+
+    // Teardown
+    document.body.removeChild(hostDiv);
+  });
+
 });
 
 describe('getOwnerWindow', () => {
