@@ -717,7 +717,9 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
  */
 export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions, scope?: Element[]) {
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
-  let walker = getRootNode(root).createTreeWalker(
+  const document = getRootNode(root);
+  const docWalker = document instanceof ShadowRoot ? document.ownerDocument : document;
+  let walker = docWalker.createTreeWalker(
     root,
     NodeFilter.SHOW_ELEMENT,
     {

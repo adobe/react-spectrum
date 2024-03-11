@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getOwnerDocument, getOwnerWindow, isMac, isVirtualClick} from '@react-aria/utils';
+import {getOwnerWindow, getRootNode, isMac, isVirtualClick} from '@react-aria/utils';
 import {useEffect, useState} from 'react';
 import {useIsSSR} from '@react-aria/ssr';
 
@@ -123,7 +123,7 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
   }
 
   const windowObject = getOwnerWindow(element);
-  const documentObject = getOwnerDocument(element);
+  const documentObject = getRootNode(element);
 
   // Programmatic focus() calls shouldn't affect the current input modality.
   // However, we need to detect other cases when a focus event occurs without
@@ -164,7 +164,7 @@ function setupGlobalFocusEvents(element?: HTMLElement | null) {
 
 const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
   const windowObject = getOwnerWindow(element);
-  const documentObject = getOwnerDocument(element);
+  const documentObject = getRootNode(element);
   if (loadListener) {
     documentObject.removeEventListener('DOMContentLoaded', loadListener);
   }
@@ -210,7 +210,7 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
  * @returns A function to remove the event listeners and cleanup the state.
  */
 export function addWindowFocusTracking(element?: HTMLElement | null): () => void {
-  const documentObject = getOwnerDocument(element);
+  const documentObject = getRootNode(element);
   let loadListener;
   if (documentObject.readyState !== 'loading') {
     setupGlobalFocusEvents(element);

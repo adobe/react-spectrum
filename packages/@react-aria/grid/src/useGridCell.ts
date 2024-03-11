@@ -12,7 +12,7 @@
 
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
-import {getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
+import {getDeepActiveElement, getScrollParent, mergeProps, scrollIntoViewport} from '@react-aria/utils';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
 import {GridState} from '@react-stately/grid';
@@ -70,9 +70,10 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
   // it is focused, otherwise the cell itself is focused.
   let focus = () => {
     let treeWalker = getFocusableTreeWalker(ref.current);
+    const documentActiveElement = getDeepActiveElement();
     if (focusMode === 'child') {
       // If focus is already on a focusable child within the cell, early return so we don't shift focus
-      if (ref.current.contains(document.activeElement) && ref.current !== document.activeElement) {
+      if (ref.current.contains(documentActiveElement) && ref.current !== documentActiveElement) {
         return;
       }
 
@@ -87,7 +88,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
 
     if (
       (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
-      !ref.current.contains(document.activeElement)
+      !ref.current.contains(documentActiveElement)
     ) {
       focusSafely(ref.current);
     }
@@ -110,7 +111,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     }
 
     let walker = getFocusableTreeWalker(ref.current);
-    walker.currentNode = document.activeElement;
+    walker.currentNode = getDeepActiveElement();
 
     switch (e.key) {
       case 'ArrowLeft': {
@@ -232,7 +233,7 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
     // If the cell itself is focused, wait a frame so that focus finishes propagatating
     // up to the tree, and move focus to a focusable child if possible.
     requestAnimationFrame(() => {
-      if (focusMode === 'child' && document.activeElement === ref.current) {
+      if (focusMode === 'child' && getDeepActiveElement() === ref.current) {
         focus();
       }
     });

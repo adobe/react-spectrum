@@ -9,8 +9,8 @@ export const getOwnerWindow = (
     return el;
   }
 
-  const doc = getOwnerDocument(el as Element | null | undefined);
-  return doc.defaultView || window;
+  const doc = getRootNode(el as Element | null | undefined);
+  return doc instanceof ShadowRoot ?  doc.ownerDocument.defaultView || window :  doc.defaultView || window;
 };
 
 export const getRootNode = (el: Element | null | undefined): Document | (ShadowRoot & {
@@ -23,4 +23,12 @@ export const getRootNode = (el: Element | null | undefined): Document | (ShadowR
   }
 
   return rootNode;
+};
+
+export const getDeepActiveElement = () => {
+  let activeElement = document.activeElement;
+  while (activeElement.shadowRoot && activeElement.shadowRoot.activeElement) {
+    activeElement = activeElement.shadowRoot.activeElement;
+  }
+  return activeElement;
 };

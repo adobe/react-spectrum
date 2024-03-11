@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getOwnerDocument, useEffectEvent} from '@react-aria/utils';
+import {getRootNode, useEffectEvent} from '@react-aria/utils';
 import {RefObject, useEffect, useRef} from 'react';
 
 export interface InteractOutsideProps {
@@ -59,7 +59,8 @@ export function useInteractOutside(props: InteractOutsideProps) {
     }
 
     const element = ref.current;
-    const documentObject = getOwnerDocument(element);
+    const rootNode = getRootNode(element);
+    const documentObject = rootNode instanceof ShadowRoot ? rootNode.ownerDocument : rootNode;
 
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {

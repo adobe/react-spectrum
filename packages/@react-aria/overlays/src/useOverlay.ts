@@ -92,7 +92,8 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   };
 
   let onInteractOutsideStart = (e: PointerEvent) => {
-    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
+    const actualTarget = e.composedPath()[0] as Element;
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(actualTarget)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
         e.preventDefault();
@@ -101,7 +102,8 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   };
 
   let onInteractOutside = (e: PointerEvent) => {
-    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
+    const actualTarget = e.composedPath()[0] as Element;
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(actualTarget)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
         e.preventDefault();
