@@ -11,16 +11,15 @@
  */
 
 import {addWindowFocusTracking} from '../src';
+import {Button} from 'react-aria-components';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
+import Frame from 'react-frame-component';
 import {Key} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import React, {useEffect, useRef, useState} from 'react';
-import ReactDOM, {createPortal} from 'react-dom';
 import {SearchField} from '@react-spectrum/searchfield';
 import {useButton} from '@react-aria/button';
 import {useFocusRing} from '@react-aria/focus';
-import Frame from 'react-frame-component';
-import {Button} from 'react-aria-components';
 
 interface IColumn {
   name: string,
@@ -105,11 +104,10 @@ function SearchExample() {
 function MyButton(props) {
   const buttonRef = props.btnRef;
 
-  const {buttonProps} = useButton({}, buttonRef);
   const {focusProps, isFocusVisible, isFocused} = useFocusRing();
 
   return (
-    <Button ref={buttonRef} {...mergeProps(buttonProps, focusProps)}>
+    <Button ref={buttonRef} {...focusProps}>
       Focus Visible: {isFocusVisible ? 'true' : 'false'} <br />
       Focused: {isFocused ? 'true' : 'false'}
     </Button>
