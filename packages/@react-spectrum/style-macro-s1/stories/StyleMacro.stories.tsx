@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,23 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-import {ForwardedRef, MutableRefObject} from 'react';
+import React from 'react';
+import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 
-/**
- * Merges multiple refs into one. Works with either callback or object refs.
- */
-export function mergeRefs<T>(...refs: Array<ForwardedRef<T> | MutableRefObject<T>>): ForwardedRef<T> {
-  if (refs.length === 1) {
-    return refs[0];
-  }
+export default {
+  title: 'S1 Style Macro'
+};
 
-  return (value: T | null) => {
-    for (let ref of refs) {
-      if (typeof ref === 'function') {
-        ref(value);
-      } else if (ref != null) {
-        ref.current = value;
-      }
-    }
-  };
+export function Example() {
+  return (
+    <div className={style({backgroundColor: 'orange-500', color: 'black', fontSize: 'lg', paddingX: 8, paddingY: 4, borderRadius: 'default'})()}>
+      Test
+    </div>
+  );
 }
