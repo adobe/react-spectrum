@@ -78,11 +78,11 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
                 horizontal: 'row'
               }
             },
-            lineHeight: 100,
+            lineHeight: 'ui',
             rowGap: '--field-gap',
             // Spectrum uses a fixed spacing value for horizontal, 
             // but the gap changes depending on t-shirt size in vertical.
-            columnGap: 4,
+            columnGap: 16,
             flexWrap: 'wrap'
           })({orientation})}>
           <FormContext.Provider value={{...formContext, size}}>

@@ -278,17 +278,17 @@ const fillsRotate = keyframes(`
 
 const circleDims = {
   height: {
-    default: 8,
+    default: 32,
     size: {
-      S: 4,
-      L: 16
+      S: 16,
+      L: 64
     }
   },
   width: {
-    default: 8,
+    default: 32,
     size: {
-      S: 4,
-      L: 16
+      S: 16,
+      L: 64
     }
   },
   aspectRatio: 'square'
@@ -306,7 +306,6 @@ const trackStyles = {
   boxSizing: 'border-box',
   borderStyle: 'solid',
   borderWidth: {
-    // TODO: this needs to be 3 for default but that doesn't exist
     default: '[3px]',
     size: {
       S: 2,
@@ -358,8 +357,7 @@ const fillsWrapperStyles = {
   position: 'absolute',
   top: 0,
   left: 0,
-  width: 'full',
-  height: 'full'
+  size: 'full'
 } as const;
 
 const fillsWrapper = style({
@@ -379,7 +377,7 @@ const fillsWrapperIndeterminate = style({
 
 const commonFillMask = {
   position: 'absolute',
-  width: '1/2',
+  width: '[50%]',
   height: 'full',
   transformOrigin: '[100% center]',
   overflow: 'hidden'

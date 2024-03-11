@@ -18,7 +18,7 @@ const meta: Meta<typeof Link> = {
         return (
           <div
             className={style({
-              padding: 8,
+              padding: 32,
               backgroundColor: {
                 staticColor: {
                   black: 'yellow',
@@ -27,7 +27,7 @@ const meta: Meta<typeof Link> = {
               },
               display: 'flex',
               flexDirection: 'column',
-              gap: 2
+              gap: 8
             })({staticColor: ctx.args.staticColor})}>
             {story()}
           </div>
@@ -47,7 +47,7 @@ export const Inline = (args: any) => (
         default: 'body',
         staticColor: {white: 'white', black: 'black'}
       },
-      fontSize: 'lg',
+      fontSize: 'body',
       fontFamily: 'sans'
     })({staticColor: args.staticColor})}>
     Checkbox groups should use <Link {...args}>help text</Link> for error messaging and descriptions. Descriptions are valuable for giving context.

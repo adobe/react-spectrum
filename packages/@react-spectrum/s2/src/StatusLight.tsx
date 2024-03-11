@@ -1,5 +1,5 @@
 import {ReactNode, forwardRef} from 'react';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {size, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {filterDOMProps} from '@react-aria/utils';
 import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
 import {CenterBaseline} from './CenterBaseline';
@@ -47,10 +47,10 @@ const wrapper = style<StatusLightStyleProps>({
 const light = style<StatusLightStyleProps>({
   size: {
     size: {
-      S: 2,
-      M: 2.5,
-      L: 3,
-      XL: 3.5
+      S: 8,
+      M: size(10),
+      L: 12,
+      XL: size(14)
     }
   },
   fill: {

@@ -26,7 +26,7 @@ export const Example: Story = {
       return (
         <div
           className={style({
-            padding: 8,
+            padding: 32,
             backgroundColor: {
               staticColor: {
                 black: 'yellow',
@@ -35,7 +35,7 @@ export const Example: Story = {
             },
             display: 'flex',
             flexDirection: 'column',
-            gap: 2
+            gap: 8
           })({staticColor: args.staticColor})}>
           {buttons}
         </div>

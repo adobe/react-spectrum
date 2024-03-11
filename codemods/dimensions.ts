@@ -84,44 +84,38 @@ const dimensions = {
   'single-line-width': 192 // size-2400
 };
 
-const pixelValueToSpacingValue = {
-  0: 0,
-  1: 'px',
-  2: 0.5,
-  4: 1,
-  6: 1.5,
-  8: 2,
-  10: 2.5,
-  12: 3,
-  14: 3.5,
-  16: 4,
-  18: 4.5,
-  20: 5,
-  24: 6,
-  28: 7,
-  32: 8,
-  36: 9,
-  40: 10,
-  44: 11,
-  48: 12,
-  56: 14,
-  64: 16,
-  80: 20,
-  96: 24,
-  112: 28,
-  128: 32,
-  144: 36,
-  160: 40,
-  176: 44,
-  192: 48,
-  208: 52,
-  224: 56,
-  240: 60,
-  256: 64,
-  288: 72,
-  320: 80,
-  384: 96
-};
+const spacingValues = [
+  0,
+  4,
+  8,
+  12,
+  16,
+  20,
+  24,
+  28,
+  32,
+  36,
+  40,
+  44,
+  48,
+  56,
+  64,
+  80,
+  96,
+  112,
+  128,
+  144,
+  160,
+  176,
+  192,
+  208,
+  224,
+  240,
+  256,
+  288,
+  320,
+  384
+];
 
 const UNIT_RE = /(%|px|em|rem|vw|vh|auto|cm|mm|in|pt|pc|ex|ch|rem|vmin|vmax|fr)$/;
 const FUNC_RE = /^\s*\w+\(/;
@@ -155,9 +149,8 @@ export function convertDimension(value: DimensionValue, toPixels = false) {
     return `${pixelValue}px`;
   }
 
-  let spacingValue = pixelValueToSpacingValue[pixelValue as keyof typeof pixelValueToSpacingValue];
-  if (spacingValue != null) {
-    return spacingValue;
+  if (spacingValues.includes(pixelValue)) {
+    return pixelValue;
   }
 
   // TODO: Convert to rems? Find nearest value?

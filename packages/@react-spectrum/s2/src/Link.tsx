@@ -36,7 +36,7 @@ const link = style<LinkRenderProps & LinkStyleProps>({
     isStandalone: 'medium'
   },
   fontSize: {
-    isStandalone: 'base'
+    isStandalone: 'ui'
   },
   textDecoration: {
     default: 'underline',

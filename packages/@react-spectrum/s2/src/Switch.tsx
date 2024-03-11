@@ -4,7 +4,7 @@ import {
   SwitchRenderProps
 } from 'react-aria-components';
 import {useContext, useRef, forwardRef, ReactNode} from 'react';
-import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {baseColor, fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {CenterBaseline} from './CenterBaseline';
 import {pressScale} from './pressScale';
@@ -48,7 +48,7 @@ const track = style<RenderProps>({
   borderRadius: 'full',
   '--trackWidth': {
     type: 'width',
-    value: '[calc(26 / 14 * 1em)]'
+    value: fontRelative(26)
   },
   '--trackHeight': {
     type: 'height',

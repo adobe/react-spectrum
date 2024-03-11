@@ -1,7 +1,7 @@
 import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext, Provider, Link, LinkProps} from 'react-aria-components';
-import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {ReactNode, createContext, forwardRef, useContext} from 'react';
+import {style, baseColor, fontRelative} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {StyleProps, centerPadding, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {createContext, ReactNode, forwardRef, useContext} from 'react';
 import {pressScale} from './pressScale';
 import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
@@ -65,12 +65,12 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   },
   '--labelPadding': {
     type: 'paddingTop',
-    value: '[calc((self(minHeight) - 1lh) / 2 - self(borderWidth))]'
+    value: centerPadding()
   },
   '--iconMargin': {
     type: 'marginTop',
     value: {
-      default: '[calc(-2 / 14 * 1em)]',
+      default: fontRelative(-2),
       ':has([slot=icon]:only-child)': 0
     }
   },

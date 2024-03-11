@@ -14,7 +14,7 @@ import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {SpectrumLabelableProps, DOMRef} from '@react-types/shared';
 import {ClearButton} from './ClearButton';
-import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {fontRelative, style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
 import {createContext, useContext, useRef, forwardRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -62,13 +62,7 @@ function TagGroup<T extends object>(
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + style({
-        ...field(),
-        '--field-gap': {
-          type: 'rowGap',
-          value: '[calc((var(--field-height) - 1lh) / 2)]'
-        }
-      }, getAllowedOverrides())({
+      className={UNSAFE_className + style(field(), getAllowedOverrides())({
         size: props.size,
         labelPosition: labelPosition,
         isInForm: !!formContext
@@ -85,10 +79,8 @@ function TagGroup<T extends object>(
           gridArea: 'input',
           display: 'flex',
           flexWrap: 'wrap',
-            // Spectrum uses a fixed spacing value for horizontal (column),
-            // but the gap changes depending on t-shirt size in vertical (row).
-          columnGap: 4,
-          rowGap: '--field-gap'
+          // TODO: what should this gap be?
+          gap: 16
         })}>
         <FormContext.Provider value={{...formContext, size}}>
           <Provider
@@ -101,7 +93,7 @@ function TagGroup<T extends object>(
               renderEmptyState={renderEmptyState}
               className={({isEmpty}) => style({
                 marginX: {
-                  default: '-1', // use negative number when theme TS is ready
+                  default: -4, // use negative number when theme TS is ready
                   isEmpty: 0
                 },
                 fontFamily: 'sans'
@@ -165,7 +157,7 @@ const tagStyles = style({
     allowsRemoving: 0
   },
   paddingY: 0,
-  margin: 1,
+  margin: 4,
   borderRadius: 'control',
   cursor: {
     default: 'default',
@@ -174,7 +166,7 @@ const tagStyles = style({
   '--iconMargin': {
     type: 'marginTop',
     value: {
-      default: '[calc(-2 / 14 * 1em)]'
+      default: fontRelative(-2)
     }
   }
 });

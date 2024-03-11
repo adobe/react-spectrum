@@ -37,7 +37,7 @@ const dropzone = style<DropZoneRenderProps>({
     isFocusVisible: 'blue-800'
   },
   borderRadius: 'lg',
-  padding: 6
+  padding: 24
 }, getAllowedOverrides({height: true}));
 
 const banner = style<DropZoneRenderProps>({
@@ -45,8 +45,8 @@ const banner = style<DropZoneRenderProps>({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  minHeight: 5,
-  maxWidth: 52,
+  minHeight: 20,
+  maxWidth: 208,
   backgroundColor: 'accent',
   borderRadius: 'default',
   color: 'white',

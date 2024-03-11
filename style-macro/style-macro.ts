@@ -7,9 +7,12 @@ export function createArbitraryProperty<T extends Value>(fn: (value: T, property
   };
 }
 
-export function createMappedProperty<T extends CSSValue>(fn: (value: string, property: string) => CSSProperties, values: PropertyValueMap<T> | string[]): PropertyFunction<T> {
-  let valueMap = createValueLookup(Array.isArray(values) ? values : Object.values(values).flatMap((v: any) => typeof v === 'object' ? Object.values(v) : [v]));
+function recursiveValues(obj: object): string[] {
+  return Object.values(obj).flatMap(v => typeof v === 'object' ? recursiveValues(v) : [v]);
+}
 
+export function createMappedProperty<T extends CSSValue>(fn: (value: string, property: string) => CSSProperties, values: PropertyValueMap<T> | string[]): PropertyFunction<T> {
+  let valueMap = createValueLookup(Array.isArray(values) ? values : recursiveValues(values));
   return (value, property) => {
     let v = parseArbitraryValue(value);
     if (v) {
@@ -116,9 +119,19 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
       // Expand shorthands to longhands so that merging works as expected.
       if (theme.shorthands[key]) {
-        for (let prop of theme.shorthands[key]) {
-          values.set(prop, value);
-          setRules(prop, compileValue(prop, prop, value));
+        let shorthand = theme.shorthands[key];
+        if (typeof shorthand === 'function') {
+          let expanded = shorthand(value);
+          for (let k in expanded) {
+            let v = expanded[k];
+            values.set(k, v);
+            setRules(k, compileValue(k, k, v));
+          }
+        } else {
+          for (let prop of shorthand) {
+            values.set(prop, value);
+            setRules(prop, compileValue(prop, prop, value));
+          }
         }
       } else if (themeProperty in theme.properties) {
         setRules(key, compileValue(key, themeProperty, value));

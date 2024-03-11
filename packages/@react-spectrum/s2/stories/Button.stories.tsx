@@ -22,8 +22,8 @@ export const Example: Story = {
         <Button {...args}>Press me</Button>
         <Button {...args}><NewIcon /><Text>Test</Text></Button>
         <Button {...args}><NewIcon /></Button>
-        <Button {...args} css={style({maxWidth: 32})}>Very long button with wrapping text to see what happens</Button>
-        <Button {...args} css={style({maxWidth: 32})}>
+        <Button {...args} css={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</Button>
+        <Button {...args} css={style({maxWidth: 128})}>
           <NewIcon />
           <Text>Very long button with wrapping text to see what happens</Text>
         </Button>
@@ -33,7 +33,7 @@ export const Example: Story = {
       return (
         <div
           className={style({
-            padding: 8,
+            padding: 32,
             backgroundColor: {
               staticColor: {
                 black: 'yellow',
@@ -42,7 +42,7 @@ export const Example: Story = {
             },
             display: 'flex',
             flexDirection: 'column',
-            gap: 2
+            gap: 8
           })({staticColor: args.staticColor})}>
           {buttons}
         </div>

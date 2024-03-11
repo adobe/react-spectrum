@@ -10,7 +10,7 @@ import {
   Provider
 } from 'react-aria-components';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
-import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {StyleProps, centerPadding, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {SpectrumLabelableProps} from '@react-types/shared';
 import {useContext, Ref, forwardRef, useRef, useImperativeHandle} from 'react';
@@ -163,14 +163,15 @@ function TextAreaInput() {
       placeholder=" "
       className={style({
         paddingX: 0,
-        paddingY: '[calc((var(--field-height) - 1lh) / 2)]',
+        paddingY: centerPadding(),
+        minHeight: 'control',
         boxSizing: 'border-box',
         backgroundColor: 'transparent',
         color: '[inherit]',
         fontFamily: '[inherit]',
         fontSize: '[inherit]',
-        lineHeight: 100,
-        flex: 1,
+        lineHeight: 'ui',
+        flexGrow: 1,
         minWidth: 0,
         outlineStyle: 'none',
         borderStyle: 'none',

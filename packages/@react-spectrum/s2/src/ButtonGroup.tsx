@@ -31,10 +31,10 @@ const buttongroup = style<ButtonGroupStyleProps>({
   position: 'relative',
   gap: {
     size: {
-      S: 2,
-      M: 3,
-      L: 3,
-      XL: 3
+      S: 8,
+      M: 12,
+      L: 12,
+      XL: 12
     }
   },
   flexDirection: {

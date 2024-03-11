@@ -13,20 +13,17 @@ import {
 } from 'react-aria-components';
 import {box, iconStyles} from './Checkbox';
 import {TextContext, HeadingContext, HeaderContext, Text, ImageContext, KeyboardContext} from './Content';
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {style, baseColor, edgeToText} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {StyleProps, centerPadding, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {style, baseColor, edgeToText, fontRelative, size, space} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {mergeStyles} from '../style-macro/runtime';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {createContext, ReactNode, useContext, useRef} from 'react';
 import {IconContext} from './Icon';
-import CheckmarkIcon from '../ui-icons/S2_CheckmarkSize100.svg';
+import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from './wf-icons/ChevronRight';
-import LinkOutIcon from './wf-icons/LinkOut'; // need linkout icon, not in our icons package yet, also needs to be 20x20 or a ui icon?
+import LinkOutIcon from '../ui-icons/LinkOut';
 import {Divider} from './Divider';
-// viewbox on LinkOut is super weird just because i copied the icon from figma...
-// need to strip id's from icons
-
 
 export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'style' | 'className'>, StyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
@@ -39,8 +36,8 @@ let menuWrapper = style({
   overflow: 'hidden',
   borderRadius: 'lg',
   // extends the area so the overflow hidden doesn't clip too close
-  padding: 2,
-  margin: '-2'
+  padding: 8,
+  margin: -8
 });
 
 let menu = style({
@@ -48,23 +45,24 @@ let menu = style({
   display: 'grid',
   gridTemplateColumns: {
     size: {
-      S: [edgeToText(6), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(6)],
-      M: [edgeToText(8), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(8)],
-      L: [edgeToText(10), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(10)],
-      XL: [edgeToText(12), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(12)]
+      S: [edgeToText(24), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(24)],
+      M: [edgeToText(32), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(32)],
+      L: [edgeToText(40), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(40)],
+      XL: [edgeToText(48), 'auto', 'auto', '1fr', 'auto', 'auto', 'auto', edgeToText(48)]
     }
   },
   boxSizing: 'border-box',
   maxHeight: '[inherit]',
   overflow: 'auto',
-  padding: 2,
-  margin: '-2',
+  padding: 8,
+  margin: -8,
   fontFamily: 'sans',
   fontSize: 'control'
 });
 
 let section = style({
-  gridColumn: '1 / -1',
+  gridColumnStart: 1,
+  gridColumnEnd: -1,
   alignItems: 'center',
   display: 'grid',
   gridTemplateAreas: [
@@ -74,11 +72,13 @@ let section = style({
   gridTemplateColumns: 'subgrid'
 });
 
-let sectionHeader = style({
+let sectionHeader = style<{size?: 'S' | 'M' | 'L' | 'XL'}>({
   color: 'gray-800',
-  gridColumn: '2 / -2',
-  paddingTop: 1.5,
-  paddingBottom: 2
+  gridColumnStart: 2,
+  gridColumnEnd: -2,
+  boxSizing: 'border-box',
+  minHeight: 'control',
+  paddingY: centerPadding()
 });
 
 let sectionHeading = style({
@@ -92,7 +92,7 @@ let menuitem = style({
   borderRadius: 'control',
   '--labelPadding': {
     type: 'paddingTop',
-    value: '[calc((self(minHeight) - 1lh) / 2)]'
+    value: centerPadding()
   },
   paddingBottom: '--labelPadding',
   backgroundColor: { // TODO: revisit color when I have access to dev mode again
@@ -113,7 +113,8 @@ let menuitem = style({
     isFocused: 1
   },
   // each menu item should take up the entire width, the subgrid will handle within the item
-  gridColumn: '1 / -1',
+  gridColumnStart: 1,
+  gridColumnEnd: -1,
   display: 'grid',
   gridTemplateAreas: [
     '. checkmark icon label       value keyboard descriptor .',
@@ -126,7 +127,7 @@ let menuitem = style({
     ':has([slot=description])': 'auto auto'
   },
   rowGap: {
-    ':has([slot=description])': 'px'
+    ':has([slot=description])': space(1)
   },
   alignItems: 'baseline',
   minHeight: 'control',
@@ -150,8 +151,6 @@ let checkmark = style({
     value: '[currentColor]'
   },
   marginEnd: 'text-to-control',
-  // TODO: not sure the size is right, this is closer than control-sm though
-  size: '[calc(12 / 14 * 1em)]',
   aspectRatio: 'square'
 });
 
@@ -167,17 +166,18 @@ let icon = style({
   // reminder, size of WF is applied via font size
 });
 let image = style({
-  gridArea: 'icon / icon / span 2',
+  gridArea: 'icon',
+  gridRowEnd: 'span 2',
   marginEnd: 'text-to-visual',
-  marginTop: '[calc(6 / 14 * 1em)]', // made up, need feedback
+  marginTop: fontRelative(6), // made up, need feedback
   alignSelf: 'center',
   size: {
-    default: 10,
+    default: 40,
     size: {
-      S: 8,
-      M: 10,
-      L: 11,
-      XL: 12 // TODO: feedback, Why is it 50x50, that's on 12.25 so doesn't fit the grid at all
+      S: 32,
+      M: 40,
+      L: 44,
+      XL: 48 // TODO: feedback, Why is it 50x50, that's on 12.25 so doesn't fit the grid at all
     }
   },
   aspectRatio: 'square',
@@ -195,24 +195,24 @@ let description = style({
   gridArea: 'description',
   fontFamily: 'sans',
   fontSize: {
-    default: 'sm',
+    default: 'ui-sm',
     size: {
-      S: 'xs',
-      M: 'sm',
-      L: 'base',
-      XL: 'lg'
+      S: 'ui-xs',
+      M: 'ui-sm',
+      L: 'ui',
+      XL: 'ui-lg'
     }
   }
 });
 
 let value = style({
   gridArea: 'value',
-  marginStart: 2
+  marginStart: 8
 });
 
 let keyboard = style({
   gridArea: 'keyboard',
-  marginStart: 2,
+  marginStart: 8,
   color: {
     default: 'gray-600',
     isDisabled: 'disabled',
@@ -228,7 +228,7 @@ let keyboard = style({
 
 let descriptor = style({
   gridArea: 'descriptor',
-  marginStart: 2
+  marginStart: 8
 });
 
 let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
@@ -259,7 +259,7 @@ export function Menu<T extends object>(props: MenuProps<T>) {
             values={[
               [HeaderContext, {
                 slots: {
-                  header: {className: sectionHeader}
+                  header: {className: sectionHeader({size})}
                 }
               }],
             [HeadingContext, {className: sectionHeading}],
@@ -296,8 +296,9 @@ export function MenuSection<T extends object>(props: SectionProps<T>) {
             default: 'grid',
             ':last-child': 'none'
           },
-          gridColumn: '2 / -2',
-          marginY: 2.5 // height of the menu separator is 12px, and the divider is 2px
+          gridColumnStart: 2,
+          gridColumnEnd: -2,
+          marginY: size(10) // height of the menu separator is 12px, and the divider is 2px
         })} />
     </>
   );
@@ -339,14 +340,14 @@ export function MenuItem(props: MenuItemProps) {
                 [KeyboardContext, {className: keyboard({size, isDisabled: renderProps.isDisabled})}],
                 [ImageContext, {className: image({size})}]
               ]}>
-              {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon className={checkmark({...renderProps, size})} />}
+              {renderProps.selectionMode === 'single' && !isLink && !renderProps.hasSubmenu && <CheckmarkIcon size={({S: 'S', M: 'L', L: 'XL', XL: 'XXL'} as const)[size]} className={checkmark({...renderProps, size})} />}
               {renderProps.selectionMode === 'multiple' && !isLink && !renderProps.hasSubmenu && (
                 <div className={mergeStyles(checkbox, box(checkboxRenderProps))}>
-                  <CheckmarkIcon className={iconStyles(checkboxRenderProps)} />
+                  <CheckmarkIcon size={size} className={iconStyles} />
                 </div>
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
-              {isLink && <LinkOutIcon  slot="descriptor" css={descriptor} />}
+              {isLink && <LinkOutIcon size={size} className={descriptor} />}
               {renderProps.hasSubmenu && <ChevronRightIcon  slot="descriptor" css={descriptor} />}
             </Provider>
           </>

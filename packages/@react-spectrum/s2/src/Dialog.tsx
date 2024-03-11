@@ -23,34 +23,37 @@ const image = style({
 });
 
 const heading = style({
-  flex: 1,
+  flexGrow: 1,
   marginY: 0,
-  fontSize: '3xl',
+  fontSize: 'heading',
+  lineHeight: 'heading',
   color: 'heading'
 });
 
 const header = style({
-  fontSize: 'xl',
-  color: 'body'
+  fontSize: 'body-lg',
+  color: 'body',
+  lineHeight: 'body'
 });
 
 const content =  style({
-  flex: 1,
+  flexGrow: 1,
   overflowY: {
     default: 'auto',
     // Make the whole dialog scroll rather than only the content when the height it small.
     '@media (height < 400)': 'visible'
   },
-  fontSize: 'lg',
-  lineHeight: 100,
+  fontSize: 'body',
+  lineHeight: 'body',
   color: 'body',
   // TODO: adjust margin on mobile?
-  marginX: 8
+  marginX: 32
 });
 
 const footer = style({
-  flex: 1,
-  fontSize: 'lg',
+  flexGrow: 1,
+  fontSize: 'body',
+  lineHeight: 'body',
   color: 'body'
 });
 
@@ -134,7 +137,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
       className={(props.UNSAFE_className || '') + style({
         display: 'flex',
         flexDirection: 'column',
-        flex: 1,
+        flexGrow: 1,
         maxHeight: '[inherit]',
         boxSizing: 'border-box',
         outlineStyle: 'none',
@@ -163,27 +166,27 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
               // Wrapper that creates the margin for the dismiss button.
               display: 'flex',
               alignItems: 'start',
-              columnGap: 3,
-              marginStart: 8,
+              columnGap: 12,
+              marginStart: 32,
               marginEnd: {
-                default: 8,
-                isDismissable: 3
+                default: 32,
+                isDismissable: 12
               },
-              marginTop: 3
+              marginTop: 12
             })({isDismissable: props.isDismissable})}>
             <div
               className={style({
                 // Wrapper for heading, header, and button group.
                 // This swaps orientation from horizontal to vertical at small screen sizes.
                 display: 'flex',
-                flex: 1,
-                marginTop: 5, // 8 - 3 (handled above)
+                flexGrow: 1,
+                marginTop: 20, // 32 - 12 (handled above)
                 marginBottom: {
-                  default: 4,
+                  default: 16,
                   ':empty': 0
                 },
-                columnGap: 6,
-                rowGap: 2,
+                columnGap: 24,
+                rowGap: 8,
                 flexDirection: {
                   default: 'column',
                   sm: 'row'
@@ -206,7 +209,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
               </Provider>
             </div>
             {props.isDismissable &&
-              <CloseButton onPress={close} css={style({marginBottom: 3})} />
+              <CloseButton size="M" onPress={close} css={style({marginBottom: 12})} />
             }
           </div>
           {/* Main content */}
@@ -225,13 +228,13 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
           <div
             className={style({
               display: 'flex',
-              marginX: 8,
-              marginBottom: 8,
+              marginX: 32,
+              marginBottom: 32,
               marginTop: {
-                default: 8,
+                default: 32,
                 ':empty': 0
               },
-              gap: 6,
+              gap: 24,
               alignItems: 'center',
               flexWrap: 'wrap'
             })}>

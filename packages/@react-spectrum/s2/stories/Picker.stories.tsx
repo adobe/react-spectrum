@@ -23,8 +23,8 @@ export const Example = (args: any) => (
     className={style({
       display: 'flex',
       flexDirection: 'column',
-      gap: 2,
-      padding: 2,
+      gap: 8,
+      padding: 8,
       color: 'neutral',
       backgroundColor: {
         staticColor: {

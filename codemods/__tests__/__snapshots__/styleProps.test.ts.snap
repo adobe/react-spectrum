@@ -17,7 +17,7 @@ import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with 
   // TODO: check this spread for style props
   {...otherProps}
   css={style({
-    marginX: 4
+    marginX: 16
   })()}>Test</Button>"
 `;
 
@@ -53,7 +53,7 @@ exports[`Handles Flex 1`] = `
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: 4,
+    gap: 16,
     flexWrap: "wrap"
   })()}>Test</div>"
 `;
@@ -66,9 +66,9 @@ exports[`Handles Grid 1`] = `
     display: "grid",
     gridTemplateAreas: ["header  header", "sidebar content", "footer  footer"],
     gridTemplateColumns: ["1fr", "3fr"],
-    gridTemplateRows: [20, "auto", 20],
+    gridTemplateRows: [80, "auto", 80],
     height: "[480px]",
-    gap: 2
+    gap: 8
   })()}>
   Test
 </div>"
@@ -98,8 +98,8 @@ exports[`Handles UNSAFE_style 1`] = `
     },
 
     display: "flex",
-    gap: 4,
-    fontSize: "base",
+    gap: 16,
+    fontSize: "ui",
     fontWeight: "bold",
     gridTemplateAreas: ["foo bar", "baz qux"],
     transitionDuration: 160
@@ -120,7 +120,7 @@ exports[`Handles View 1`] = `
     borderWidth: 1,
     borderColor: "gray-400",
     borderRadius: "lg",
-    padding: 5,
+    padding: 20,
     backgroundColor: lightDark("blue-1000", "blue-900"),
     flex: 1
   })()}>
@@ -136,7 +136,7 @@ exports[`Handles View colorVersion={5} 1`] = `
     borderWidth: 1,
     borderColor: "gray-200",
     borderRadius: "lg",
-    padding: 5,
+    padding: 20,
     backgroundColor: lightDark("blue-1000", "blue-900")
   })()}>
   Test
@@ -151,7 +151,7 @@ exports[`Handles View colorVersion={6} 1`] = `
     borderWidth: 1,
     borderColor: "gray-200",
     borderRadius: "lg",
-    padding: 5,
+    padding: 20,
     backgroundColor: "blue-600"
   })()}>
   Test
@@ -164,8 +164,8 @@ import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with 
 
 <Button
   css={style({
-    marginX: 4,
-    marginY: 5,
+    marginX: 16,
+    marginY: 20,
     width: "full"
   })()}>Test</Button>"
 `;
@@ -176,8 +176,8 @@ import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with 
 
 <RSPButton
   css={style({
-    marginX: 4,
-    marginY: 5,
+    marginX: 16,
+    marginY: 20,
     width: "full"
   })()}>Test</RSPButton>"
 `;
@@ -188,7 +188,7 @@ import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with 
 
 <TextField label="Name" css={style({
   width: {
-    default: 40,
+    default: 160,
     lg: "[400px]"
   }
 })()} />"
@@ -200,7 +200,7 @@ import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with 
 
 <TextField label="Name" css={style({
   width: {
-    default: 40,
+    default: 160,
     lg: "[400px]"
   }
 })()} />"
@@ -211,7 +211,7 @@ exports[`Merges UNSAFE_className with macro className 1`] = `
 
 <div
   className={"hi" + style({
-    marginX: 4
+    marginX: 16
   })()}>
   Test
 </div>"

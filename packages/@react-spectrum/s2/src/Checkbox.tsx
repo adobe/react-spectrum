@@ -2,8 +2,8 @@ import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxRe
 import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
-import CheckmarkIcon from '../ui-icons/S2_CheckmarkSize100.svg';
-import DashIcon from '../ui-icons/S2_DashSize100.svg';
+import CheckmarkIcon from '../ui-icons/Checkmark';
+import DashIcon from '../ui-icons/Dash';
 import {useContext, useRef, forwardRef, createContext, ReactNode} from 'react';
 import {pressScale} from './pressScale';
 import {FormContext, useFormProps} from './Form';
@@ -89,13 +89,7 @@ export const box = style<RenderProps>({
   }
 });
 
-export const iconStyles = style<RenderProps>({
-  size: {
-    default: 2.5,
-    size: {
-      XL: 3
-    }
-  },
+export const iconStyles = style({
   '--iconPrimary': {
     type: 'color',
     value: {
@@ -133,10 +127,10 @@ function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLab
                 isEmphasized: isInCheckboxGroup ? ctx.isEmphasized : props.isEmphasized
               })}>
               {renderProps.isIndeterminate &&
-                <DashIcon className={iconStyles({...renderProps, size: props.size})} />
+                <DashIcon size={props.size || 'M'} className={iconStyles} />
               }
               {renderProps.isSelected && !renderProps.isIndeterminate &&
-                <CheckmarkIcon className={iconStyles({...renderProps, size: props.size})} />
+                <CheckmarkIcon size={props.size || 'M'} className={iconStyles} />
               }
             </div>
           </CenterBaseline>

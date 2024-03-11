@@ -53,10 +53,10 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
   display: 'inline-block',
   position: 'relative',
   boxSizing: 'border-box',
-  maxWidth: 80,
-  fontSize: 'base',
+  maxWidth: 320,
+  fontSize: 'ui',
   fontFamily: 'sans',
-  padding: 6,
+  padding: 24,
   borderRadius: 'lg',
   borderStyle: 'solid',
   borderWidth: 2,
@@ -143,7 +143,7 @@ const icon = style<InlineStylesProps>({
 
 const grid = style({
   display: 'grid',
-  columnGap: 6,
+  columnGap: 24,
   gridTemplateColumns: '1fr auto',
   gridTemplateRows: 'auto auto auto',
   width: 'full',
@@ -175,7 +175,9 @@ const heading = style<InlineStylesProps>({
       }
     }
   },
-  gridArea: 'heading'
+  gridArea: 'heading',
+  fontSize: 'ui',
+  lineHeight: 'ui'
 });
 
 const content = style<InlineStylesProps>({
@@ -191,7 +193,9 @@ const content = style<InlineStylesProps>({
       }
     }
   },
-  gridArea: 'content'
+  gridArea: 'content',
+  fontSize: 'body-sm',
+  lineHeight: 'body'
 });
 
 function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement>) {

@@ -1,12 +1,12 @@
 import {mergeStyles} from '../style-macro/runtime';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {size, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
 import {
   ProgressBar as AriaProgressBar,
   ProgressBarProps as AriaProgressBarProps
 } from 'react-aria-components';
 import {FieldLabel} from './Field';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {StyleProps, centerPadding, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 interface ProgressBarStyleProps {
   /**
@@ -49,17 +49,17 @@ const wrapper = style<ProgressBarStyleProps>({
     'bar bar'
   ],
   width: {
-    default: 48
+    default: 192
   },
-  minWidth: 12, // progress-bar-minimum-width
+  minWidth: 48, // progress-bar-minimum-width
   maxWidth: '[768px]', // progress-bar-maximum-width
   isolation: 'isolate',
-  height: 'control',
+  minHeight: 'control',
   '--field-gap': {
     type: 'rowGap',
-    value: '[calc((self(height) - 1lh) / 2 + .25rem)]'
+    value: centerPadding()
   },
-  columnGap: 3 // spacing-200
+  columnGap: 12 // spacing-200
 }, getAllowedOverrides());
 
 const labelStyles = style({
@@ -73,13 +73,14 @@ const valueStyles = style({
 const track = style<ProgressBarStyleProps>({
   gridArea: 'bar',
   overflow: 'hidden',
+  marginTop: 4,
   height: {
-    default: 1.5,
+    default: size(6),
     size: {
-      S: 1, // progress-bar-thickness-small
-      M: 1.5, // progress-bar-thickness-medium
-      L: 2, // progress-bar-thickness-large
-      XL: 2.5 // progress-bar-thickness-extra-large
+      S: 4, // progress-bar-thickness-small
+      M: size(6), // progress-bar-thickness-medium
+      L: 8, // progress-bar-thickness-large
+      XL: size(10) // progress-bar-thickness-extra-large
     }
   },
   borderRadius: 'full',
@@ -135,7 +136,7 @@ const indeterminateAnimation = style({
   animation: indeterminate,
   animationDuration: 1000,
   animationIterationCount: 'infinite',
-  animationTimingFunction: '[cubic-bezier(.45, 0, .40, 1)]',
+  animationTimingFunction: 'in-out',
   willChange: 'transform',
   position: 'relative'
 });
@@ -150,6 +151,7 @@ export function ProgressBar(props: ProgressBarProps) {
       {({percentage, valueText}) => (
         <>
           <FieldLabel size={props.size || 'M'} labelAlign="start" labelPosition="top" staticColor={props.staticColor} css={labelStyles}>{label}</FieldLabel>
+          {/* TODO: this cannot be a label because they will both receive context */}
           <FieldLabel size={props.size || 'M'} labelAlign="end" staticColor={props.staticColor} css={valueStyles}>{valueText}</FieldLabel>
           <div className={track({...props})}>
             <div

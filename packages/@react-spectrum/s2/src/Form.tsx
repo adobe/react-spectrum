@@ -42,7 +42,7 @@ function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
             side: ['[label] auto', '[field] 1fr']
           }
         },
-        rowGap: 6, // TODO: confirm
+        rowGap: 24, // TODO: confirm
         columnGap: 'text-to-control'
       }, getAllowedOverrides())({labelPosition}, props.css)}>
       <FormContext.Provider 

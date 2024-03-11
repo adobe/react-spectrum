@@ -22,8 +22,8 @@ export const Example: Story = {
         <LinkButton {...args}>Press me</LinkButton>
         <LinkButton {...args}><NewIcon /><Text>Test</Text></LinkButton>
         <LinkButton {...args}><NewIcon /></LinkButton>
-        <LinkButton {...args} css={style({maxWidth: 32})}>Very long button with wrapping text to see what happens</LinkButton>
-        <LinkButton {...args} css={style({maxWidth: 32})}>
+        <LinkButton {...args} css={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</LinkButton>
+        <LinkButton {...args} css={style({maxWidth: 128})}>
           <NewIcon />
           <Text>Very long button with wrapping text to see what happens</Text>
         </LinkButton>
@@ -42,7 +42,7 @@ export const Example: Story = {
             },
             display: 'flex',
             flexDirection: 'column',
-            gap: 2
+            gap: 8
           })({staticColor: args.staticColor})}>
           {buttons}
         </div>

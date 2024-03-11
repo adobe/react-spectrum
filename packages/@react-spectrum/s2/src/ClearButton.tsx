@@ -3,7 +3,7 @@ import {
   ButtonProps,
   ButtonRenderProps
 } from 'react-aria-components';
-import CrossIcon from '../ui-icons/S2_CrossSize100.svg';
+import CrossIcon from '../ui-icons/Cross';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
@@ -29,6 +29,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
         justifyContent: 'center',
         height: 'full',
         width: 'control',
+        flexShrink: 0,
         borderStyle: 'none',
         outlineStyle: 'none',
         backgroundColor: 'transparent',
@@ -39,17 +40,7 @@ function ClearButton(props: ClearButtonProps, ref: FocusableRef<HTMLButtonElemen
           value: 'currentColor'
         }
       })({...renderProps, size: props.size || 'M'})}>
-      <CrossIcon
-        className={style({
-          size: {
-            size: {
-              S: 2,
-              M: 2,
-              L: 2.5,
-              XL: 2.5 // ???
-            }
-          }
-        })({size: props.size})} />
+      <CrossIcon size={props.size || 'M'} />
     </Button>
   );
 }

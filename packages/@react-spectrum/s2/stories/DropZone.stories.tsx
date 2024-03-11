@@ -70,7 +70,7 @@ export const ExampleWithFileTrigger = (args: any) => {
             Or, select a file from your computer
           </Content>
           {/* TODO: Swap out with ButtonGroup */}
-          <div className={style({display: 'flex', gridArea: 'buttonGroup', alignSelf: 'start', gap: 2, marginTop: 4})} >
+          <div className={style({display: 'flex', gridArea: 'buttonGroup', alignSelf: 'start', gap: 8, marginTop: 16})} >
             <FileTrigger
               onSelect={() => setIsFilled(true)}>
               <Button variant="accent" >Browse files</Button>

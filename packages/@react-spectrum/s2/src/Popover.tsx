@@ -60,8 +60,12 @@ const slideLeftKeyframes = keyframes(`
 `);
 
 let popover = style<PopoverRenderProps & {isArrowShown: boolean}>({
-  backgroundColor: 'layer-2',
-  padding: 2,
+  '--popoverBackground': {
+    type: 'backgroundColor',
+    value: 'layer-2'
+  },
+  backgroundColor: '--popoverBackground',
+  padding: 8,
   borderRadius: 'lg',
   filter: 'elevated-light',
   borderStyle: {
@@ -73,22 +77,20 @@ let popover = style<PopoverRenderProps & {isArrowShown: boolean}>({
   translateY: {
     placement: {
       bottom: {
-        isArrowShown: 1.5 // TODO: not defined yet should this change with font size? need boolean support for 'hideArrow' prop
+        isArrowShown: 8 // TODO: not defined yet should this change with font size? need boolean support for 'hideArrow' prop
       },
       top: {
-        // @ts-ignore
-        isArrowShown: -1.5
+        isArrowShown: -8
       }
     }
   },
   translateX: {
     placement: {
       left: {
-        // @ts-ignore TODO: why is the type not working?
-        isArrowShown: -1.5
+        isArrowShown: -8
       },
       right: {
-        isArrowShown: 1.5
+        isArrowShown: 8
       }
     }
   },
@@ -130,7 +132,7 @@ let popover = style<PopoverRenderProps & {isArrowShown: boolean}>({
 
 let arrow = style({
   display: 'block',
-  fill: 'layer-2',
+  fill: '--popoverBackground',
   rotate: {
     default: 180,
     placement: {

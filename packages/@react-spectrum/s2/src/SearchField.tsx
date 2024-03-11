@@ -6,7 +6,7 @@ import {
 import {ClearButton} from './ClearButton';
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import SearchIcon from '../src/wf-icons/Search';
 import {Icon} from './Icon';
 import {raw} from '../style-macro/style-macro' with {type: 'macro'};
@@ -64,7 +64,7 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
         ...field(),
         '--iconMargin': {
           type: 'marginTop',
-          value: '[calc(-2 / 14 * 1em)]'
+          value: fontRelative(-2)
         },
         color: {
           default: 'neutral',

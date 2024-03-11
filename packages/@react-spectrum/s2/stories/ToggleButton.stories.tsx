@@ -24,7 +24,7 @@ export const Example: StoryFn<typeof ToggleButton> = (args) => {
     return (
       <div
         className={style({
-          padding: 8,
+          padding: 32,
           backgroundColor: {
             staticColor: {
               black: 'yellow',
@@ -33,7 +33,7 @@ export const Example: StoryFn<typeof ToggleButton> = (args) => {
           },
           display: 'flex',
           flexDirection: 'column',
-          gap: 2
+          gap: 8
         })({staticColor: args.staticColor})}>
         {buttons}
       </div>

@@ -14,8 +14,11 @@ function weirdColorToken(token: typeof tokens['accent-background-color-default']
   return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
 }
 
-function pxToRem(px: string) {
-  return parseFloat(px) / 16 + 'rem';
+function pxToRem(px: string | number) {
+  if (typeof px === 'string') {
+    px = parseFloat(px);
+  }
+  return px / 16 + 'rem';
 }
 
 function fontSizeToken(token: typeof tokens['font-size-100']) {
@@ -115,59 +118,120 @@ export function lightDark(light: keyof typeof color, dark: keyof typeof color): 
   return `[light-dark(${color[light]}, ${color[dark]})]`;
 }
 
-const baseSpacing = {
-  px: '1px',
-  0: '0px',
-  0.5: '0.125rem', // 2px - spacing-50
-  1: '0.25rem', // 4px - spacing-75
-  1.5: '0.375rem', // 6px
-  2: '0.5rem', // 8px - spacing-100
-  2.5: '0.625rem', // 10px
-  3: '0.75rem', // 12px - spacing-200
-  3.5: '0.875rem', // 14px
-  4: '1rem', // 16px - spacing-300
-  4.5: '1.125rem', // 18px
-  5: '1.25rem', // 20px
-  5.5: '1.375rem', // 22px
-  6: '1.5rem', // 24px - spacing-400
-  6.5: '1.625rem', // 26px
-  7: '1.75rem', // 28px
-  8: '2rem', // 32px - spacing-500
-  9: '2.25rem', // 36px
-  10: '2.5rem', // 40px - spacing-600
-  11: '2.75rem', // 44px
-  12: '3rem', // 48px - spacing-700
-  14: '3.5rem', // 56px
-  16: '4rem', // 64px - spacing-800
-  20: '5rem', // 80px - spacing-900
-  24: '6rem', // 96px - spacing-1000
-  28: '7rem',
-  32: '8rem',
-  36: '9rem',
-  40: '10rem',
-  44: '11rem',
-  48: '12rem',
-  52: '13rem',
-  56: '14rem',
-  60: '15rem',
-  64: '16rem',
-  72: '18rem',
-  80: '20rem',
-  96: '24rem'
-};
+function generateSpacing<K extends number[]>(px: K): {[P in K[number]]: string} {
+  let res: any = {};
+  for (let p of px) {
+    res[p] = pxToRem(p);
+  }
+  return res;
+}
+
+const baseSpacing = generateSpacing([
+  0,
+  // 2, // spacing-50 !! TODO: should we support this?
+  4, // spacing-75
+  8, // spacing-100
+  12, // spacing-200
+  16, // spacing-300
+  20,
+  24, // spacing-400
+  28,
+  32, // spacing-500
+  36,
+  40, // spacing-600
+  44,
+  48, // spacing-700
+  56,
+  // From here onward the values are mostly spaced by 1rem (16px)
+  64, // spacing-800
+  80, // spacing-900
+  96, // spacing-1000
+  // TODO: should these only be available as sizes rather than spacing?
+  112,
+  128,
+  144,
+  160,
+  176,
+  192,
+  208,
+  224,
+  240,
+  256,
+  288,
+  320,
+  384
+] as const);
+
+// This should match the above, but negative. There's no way to negate a number
+// type in typescript so this has to be done manually for now.
+const negativeSpacing = generateSpacing([
+  // -2, // spacing-50 !! TODO: should we support this?
+  -4, // spacing-75
+  -8, // spacing-100
+  -12, // spacing-200
+  -16, // spacing-300
+  -20,
+  -24, // spacing-400
+  -28,
+  -32, // spacing-500
+  -36,
+  -40, // spacing-600
+  -44,
+  -48, // spacing-700
+  -56,
+  // From here onward the values are mostly spaced by 1rem (16px)
+  -64, // spacing-800
+  -80, // spacing-900
+  -96, // spacing-1000
+  // TODO: should these only be available as sizes rather than spacing?
+  -112,
+  -128,
+  -144,
+  -160,
+  -176,
+  -192,
+  -208,
+  -224,
+  -240,
+  -256,
+  -288,
+  -320,
+  -384
+] as const);
+
+function arbitrary(ctx: MacroContext | void, value: string): `[${string}]` {
+  return ctx ? `[${value}]` : value as any;
+}
+
+export function fontRelative(this: MacroContext | void, base: number, baseFontSize = 14) {
+  return arbitrary(this, (base / baseFontSize) + 'em');
+}
+
+export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing) {
+  return `calc(${baseSpacing[height]} * 3 / 8)`;
+}
+
+export function space(this: MacroContext | void, px: number) {
+  return arbitrary(this, pxToRem(px));
+}
 
 const spacing = {
   ...baseSpacing,
 
   // font-size relative values
-  'text-to-control': (10 / 14) + 'em',
+  'text-to-control': fontRelative(10),
   'text-to-visual': {
-    default: (6 / 14) + 'em', // -> 5px, 5px, 6px, 7px, 8px
-    touch: (8 / 17) + 'em' // -> 6px, 7px, 8px, 9px, 10px, should be 7px, 7px, 8px, 9px, 11px
+    default: fontRelative(6), // -> 5px, 5px, 6px, 7px, 8px
+    touch: fontRelative(8, 17) // -> 6px, 7px, 8px, 9px, 10px, should be 7px, 7px, 8px, 9px, 11px
   },
+  // height relative values
   'edge-to-text': 'calc(self(height, self(minHeight)) * 3 / 8)',
   'pill': 'calc(self(height, self(minHeight)) / 2)'
 };
+
+export function size(this: MacroContext | void, px: number) {
+  return {default: arbitrary(this, pxToRem(px)), touch: arbitrary(this, pxToRem(px * 1.25))};
+}
 
 const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch: string}} =
   Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
@@ -177,21 +241,6 @@ const scaledSpacing: {[key in keyof typeof baseSpacing]: {default: string, touch
 const sizing = {
   ...scaledSpacing,
   auto: 'auto',
-  '1/2': '50%',
-  '1/3': '33.333333%',
-  '2/3': '66.666667%',
-  '1/4': '25%',
-  '2/4': '50%',
-  '3/4': '75%',
-  '1/5': '20%',
-  '2/5': '40%',
-  '3/5': '60%',
-  '4/5': '80%',
-  '1/6': '16.666667%',
-  '2/6': '33.333333%',
-  '3/6': '50%',
-  '4/6': '66.666667%',
-  '5/6': '83.333333%',
   full: '100%',
   screen: '100vh',
   min: 'min-content',
@@ -199,31 +248,25 @@ const sizing = {
   fit: 'fit-content',
 
   control: {
-    default: scaledSpacing[8],
+    default: size(32),
     size: {
-      XS: scaledSpacing[5],
-      S: scaledSpacing[6],
-      L: scaledSpacing[10],
-      XL: scaledSpacing[12]
+      XS: size(20),
+      S: size(24),
+      L: size(40),
+      XL: size(48)
     }
   },
   // With browser support for round() we could do this:
   // 'control-sm': `round(${16 / 14}em, 2px)`
   'control-sm': {
-    default: scaledSpacing[4],
+    default: size(16),
     size: {
-      S: scaledSpacing[3.5],
-      L: scaledSpacing[4.5],
-      XL: scaledSpacing[5]
+      S: size(14),
+      L: size(18),
+      XL: size(20)
     }
   }
 };
-
-// TODO: make the keys into numbers in typescript somehow?
-const negativeSpacing: {[Key in keyof typeof baseSpacing as `-${Key}`]: (typeof baseSpacing)[Key]} =
-  Object.fromEntries(Object.entries(baseSpacing).map(([k, v]) =>
-    [`-${k}`, `-${v}`]
-  )) as any;
 
 const margin = {
   ...spacing,
@@ -234,12 +277,12 @@ const margin = {
 const inset = {
   ...baseSpacing,
   auto: 'auto',
-  '1/2': '50%',
-  '1/3': '33.333333%',
-  '2/3': '66.666667%',
-  '1/4': '25%',
-  '2/4': '50%',
-  '3/4': '75%',
+  full: '100%'
+};
+
+const translate = {
+  ...baseSpacing,
+  ...negativeSpacing,
   full: '100%'
 };
 
@@ -258,8 +301,8 @@ const radius = {
   xl: pxToRem(tokens['corner-radius-extra-large-default'].value), // 16px
   full: '9999px',
   pill: 'calc(self(height, self(minHeight, 9999px)) / 2)',
-  control: 8 / 14 + 'em', // automatic based on font size (e.g. t-shirt size logarithmic scale)
-  'control-sm': 4 / 14 + 'em'
+  control: fontRelative(8), // automatic based on font size (e.g. t-shirt size logarithmic scale)
+  'control-sm': fontRelative(4)
 };
 
 type GridTrack = 'none' | 'subgrid' | (string & {}) | readonly GridTrackSize[];
@@ -277,30 +320,50 @@ let gridTrackSize = (value: GridTrackSize) => {
   return value in baseSpacing ? baseSpacing[value] : value;
 };
 
-// TODO
 const transitionProperty = {
-  default: 'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, scale, filter, backdrop-filter',
+  default: 'color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, translate, scale, rotate, filter, backdrop-filter',
   colors: 'color, background-color, border-color, text-decoration-color, fill, stroke',
   opacity: 'opacity',
   shadow: 'box-shadow',
-  transform: 'transform',
+  transform: 'transform, translate, scale, rotate',
   all: 'all',
   none: 'none'
 };
 
 // TODO
 const timingFunction = {
-  default: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  default: 'cubic-bezier(0.45, 0, 0.4, 1)',
   linear: 'linear',
-  in: 'cubic-bezier(0.4, 0, 1, 1)',
-  out: 'cubic-bezier(0, 0, 0.2, 1)',
-  'in-out': 'cubic-bezier(0.4, 0, 0.2, 1)'
+  in: 'cubic-bezier(0.5, 0, 1, 1)',
+  out: 'cubic-bezier(0, 0, 0.40, 1)',
+  'in-out': 'cubic-bezier(0.45, 0, 0.4, 1)'
 };
 
 // TODO: do these need tokens or are arbitrary values ok?
 let durationProperty = createArbitraryProperty((value: number | string, property) => ({[property]: typeof value === 'number' ? value + 'ms' : value}));
 
-const colorWithAlpha = createColorProperty(color);
+// const colorWithAlpha = createColorProperty(color);
+
+const fontWeightBase = {
+  light: '300',
+  // TODO: spectrum calls this "regular" but CSS calls it "normal". We also call other properties "default". What do we want to match?
+  normal: '400',
+  medium: '500',
+  bold: '700',
+  'extra-bold': '800',
+  black: '900'
+} as const;
+
+const i18nFonts = {
+  ':lang(ar)': 'myriad-arabic, ui-sans-serif, system-ui, sans-serif',
+  ':lang(he)': 'myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
+  ':lang(ja)': "adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif",
+  ':lang(ko)': "adobe-clean-han-korean, source-han-korean, 'Malgun Gothic', 'Apple Gothic', sans-serif",
+  ':lang(zh)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
+  // TODO: are these fallbacks supposed to be different than above?
+  ':lang(zh-hant)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
+  ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
+} as const;
 
 export const style = createTheme({
   properties: {
@@ -339,7 +402,9 @@ export const style = createTheme({
         // forcedColors: 'GrayText'
       },
       heading: colorToken(tokens['heading-color']),
-      body: colorToken(tokens['body-color'])
+      body: colorToken(tokens['body-color']),
+      detail: colorToken(tokens['detail-color']),
+      code: colorToken(tokens['code-color'])
     }),
     backgroundColor: createColorProperty({
       ...color,
@@ -430,9 +495,9 @@ export const style = createTheme({
         forcedColors: 'Highlight'
       }
     }),
-    textDecorationColor: colorWithAlpha,
-    accentColor: colorWithAlpha,
-    caretColor: colorWithAlpha,
+    // textDecorationColor: colorWithAlpha,
+    // accentColor: colorWithAlpha,
+    // caretColor: colorWithAlpha,
     fill: createColorProperty({
       none: 'none',
       currentColor: 'currentColor',
@@ -461,8 +526,6 @@ export const style = createTheme({
       cinnamon: weirdColorToken(tokens['cinnamon-visual-color']),
       brown: weirdColorToken(tokens['brown-visual-color']),
       silver: weirdColorToken(tokens['silver-visual-color']),
-      'layer-1': colorToken(tokens['background-layer-1-color']),
-      'layer-2': weirdColorToken(tokens['background-layer-2-color']),
       ...color
     }),
     stroke: createColorProperty({
@@ -492,13 +555,10 @@ export const style = createTheme({
       ...sizing,
       none: 'none'
     },
-    borderWidth,
     borderStartWidth: createMappedProperty(value => ({borderInlineStartWidth: value}), borderWidth),
     borderEndWidth: createMappedProperty(value => ({borderInlineEndWidth: value}), borderWidth),
     borderTopWidth: borderWidth,
     borderBottomWidth: borderWidth,
-    borderXWidth: createMappedProperty(value => ({borderInlineWidth: value}), borderWidth),
-    borderYWidth: createMappedProperty(value => ({borderBlockWidth: value}), borderWidth),
     borderStyle: ['solid', 'dashed', 'dotted', 'double', 'hidden', 'none'] as const,
     strokeWidth: {
       0: '0',
@@ -522,45 +582,14 @@ export const style = createTheme({
     scrollPaddingTop: baseSpacing,
     scrollPaddingBottom: baseSpacing,
     textIndent: baseSpacing,
-    translate: {
-      ...baseSpacing,
-      ...negativeSpacing,
-      '1/2': '50%',
-      '1/3': '33.333333%',
-      '2/3': '66.666667%',
-      '1/4': '25%',
-      '2/4': '50%',
-      '3/4': '75%',
-      full: '100%'
-    },
     translateX: createMappedProperty(value => ({
       '--translateX': value,
       translate: 'var(--translateX, 0) var(--translateY, 0)'
-    }), {
-      ...baseSpacing,
-      ...negativeSpacing,
-      '1/2': '50%',
-      '1/3': '33.333333%',
-      '2/3': '66.666667%',
-      '1/4': '25%',
-      '2/4': '50%',
-      '3/4': '75%',
-      full: '100%'
-    }),
+    }), translate),
     translateY: createMappedProperty(value => ({
       '--translateY': value,
       translate: 'var(--translateX, 0) var(--translateY, 0)'
-    }), {
-      ...baseSpacing,
-      ...negativeSpacing,
-      '1/2': '50%',
-      '1/3': '33.333333%',
-      '2/3': '66.666667%',
-      '1/4': '25%',
-      '2/4': '50%',
-      '3/4': '75%',
-      full: '100%'
-    }),
+    }), translate),
     rotate: createArbitraryProperty((value: number | `${number}deg` | `${number}rad` | `${number}grad` | `${number}turn`) => ({rotate: typeof value === 'number' ? `${value}deg` : value})),
     scale: createArbitraryProperty((value: number) => ({scale: value})),
     transform: createArbitraryProperty((value: string) => ({transform: value})),
@@ -581,26 +610,23 @@ export const style = createTheme({
     fontFamily: {
       sans: {
         default: 'adobe-clown, adobe-clean, ui-sans-serif, system-ui, sans-serif',
-        ':lang(ar)': 'myriad-arabic, ui-sans-serif, system-ui, sans-serif',
-        ':lang(he)': 'myriad-hebrew, ui-sans-serif, system-ui, sans-serif',
-        ':lang(ja)': "adobe-clean-han-japanese, 'Hiragino Kaku Gothic ProN', 'ヒラギノ角ゴ ProN W3', Osaka, YuGothic, 'Yu Gothic', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif",
-        ':lang(ko)': "adobe-clean-han-korean, source-han-korean, 'Malgun Gothic', 'Apple Gothic', sans-serif",
-        ':lang(zh)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Heiti TC Light', sans-serif",
-        // TODO: are these fallbacks supposed to be different than above?
-        ':lang(zh-hant)': "adobe-clean-han-traditional, source-han-traditional, 'MingLiu', 'Microsoft JhengHei UI', 'Microsoft JhengHei', 'Heiti TC Light', sans-serif",
-        ':lang(zh-Hans, zh-CN, zh-SG)': "adobe-clean-han-simplified-c, source-han-simplified-c, 'SimSun', 'Heiti SC Light', sans-serif"
+        ...i18nFonts
       },
-      serif: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif',
-      mono: 'ui-monospace, Menlo, Monaco, Consalas, "Courier New", monospace'
+      serif: {
+        default: 'adobe-clean-serif, "Source Serif", Georgia, serif',
+        ...i18nFonts
+      },
+      code: 'source-code-pro, "Source Code Pro", Monaco, monospace'
     },
     fontSize: {
-      xs: fontSizeToken(tokens['font-size-50']),
-      sm: fontSizeToken(tokens['font-size-75']),
-      base: fontSizeToken(tokens['font-size-100']),
-      lg: fontSizeToken(tokens['font-size-200']),
-      xl: fontSizeToken(tokens['font-size-300']),
-      '2xl': fontSizeToken(tokens['font-size-400']),
-      '3xl': fontSizeToken(tokens['font-size-500']),
+      // The default font size scale is for use within UI components.
+      'ui-xs': fontSizeToken(tokens['font-size-50']),
+      'ui-sm': fontSizeToken(tokens['font-size-75']),
+      ui: fontSizeToken(tokens['font-size-100']),
+      'ui-lg': fontSizeToken(tokens['font-size-200']),
+      'ui-xl': fontSizeToken(tokens['font-size-300']),
+      'ui-2xl': fontSizeToken(tokens['font-size-400']),
+      'ui-3xl': fontSizeToken(tokens['font-size-500']),
 
       control: {
         default: fontSizeToken(tokens['font-size-100']),
@@ -610,46 +636,69 @@ export const style = createTheme({
           L: fontSizeToken(tokens['font-size-200']),
           XL: fontSizeToken(tokens['font-size-300'])
         }
-      }
-      // '3xl': '1.875rem', //
-      // '4xl': '2.25rem',
-      // '5xl': '3rem',
-      // '6xl': '3.75rem',
-      // '7xl': '4.5rem',
-      // '8xl': '6rem',
-      // '9xl': '8rem'
-      // 50: tokens['font-size-50'].sets.desktop.value,
-      // 75: tokens['font-size-75'].sets.desktop.value,
-      // 100: tokens['font-size-100'].sets.desktop.value,
-      // 200: tokens['font-size-200'].sets.desktop.value,
-      // 300: tokens['font-size-300'].sets.desktop.value,
-      // 400: tokens['font-size-400'].sets.desktop.value,
-      // 500: tokens['font-size-500'].sets.desktop.value,
-      // 600: tokens['font-size-600'].sets.desktop.value,
-      // 700: tokens['font-size-700'].sets.desktop.value,
-      // 800: tokens['font-size-800'].sets.desktop.value,
-      // 900: tokens['font-size-900'].sets.desktop.value,
-      // 1000: tokens['font-size-1000'].sets.desktop.value,
-      // 1100: tokens['font-size-1100'].sets.desktop.value,
-      // 1200: tokens['font-size-1200'].sets.desktop.value,
-      // 1300: tokens['font-size-1300'].sets.desktop.value,
+      },
+
+      'heading-xs': fontSizeToken(tokens['heading-size-xs']),
+      'heading-sm': fontSizeToken(tokens['heading-size-s']),
+      heading: fontSizeToken(tokens['heading-size-m']),
+      'heading-lg': fontSizeToken(tokens['heading-size-l']),
+      'heading-xl': fontSizeToken(tokens['heading-size-xl']),
+      'heading-2xl': fontSizeToken(tokens['heading-size-xxl']),
+      'heading-3xl': fontSizeToken(tokens['heading-size-xxxl']),
+
+      // Body is for large blocks of text, e.g. paragraphs, not in UI components.
+      'body-xs': fontSizeToken(tokens['body-size-xs']),
+      'body-sm': fontSizeToken(tokens['body-size-s']),
+      body: fontSizeToken(tokens['body-size-m']),
+      'body-lg': fontSizeToken(tokens['body-size-l']),
+      'body-xl': fontSizeToken(tokens['body-size-xl']),
+      'body-2xl': fontSizeToken(tokens['body-size-xxl']),
+      'body-3xl': fontSizeToken(tokens['body-size-xxxl']),
+
+      'detail-sm': fontSizeToken(tokens['detail-size-s']),
+      detail: fontSizeToken(tokens['detail-size-m']),
+      'detail-lg': fontSizeToken(tokens['detail-size-l']),
+      'detail-xl': fontSizeToken(tokens['detail-size-xl']),
+
+      'code-xs': fontSizeToken(tokens['code-size-xs']),
+      'code-sm': fontSizeToken(tokens['code-size-s']),
+      code: fontSizeToken(tokens['code-size-m']),
+      'code-lg': fontSizeToken(tokens['code-size-l']),
+      'code-xl': fontSizeToken(tokens['code-size-xl'])
     },
     fontWeight: {
-      thin: '100',
-      extralight: '200',
-      light: '300',
-      normal: '400',
-      medium: '500',
-      semibold: '600',
-      bold: '700',
-      extrabold: '800',
-      black: '900'
+      ...fontWeightBase,
+      heading: {
+        default: fontWeightBase[tokens['heading-sans-serif-font-weight'].value as keyof typeof fontWeightBase],
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[tokens['heading-cjk-font-weight'].value as keyof typeof fontWeightBase]
+      },
+      detail: {
+        default: fontWeightBase[tokens['detail-sans-serif-font-weight'].value as keyof typeof fontWeightBase],
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[tokens['detail-cjk-font-weight'].value as keyof typeof fontWeightBase]
+      }
     },
-    fontStyle: ['normal', 'italic'] as const,
     lineHeight: {
-      // TODO: naming
-      100: tokens['line-height-100'].value,
-      200: tokens['line-height-200'].value
+      // See https://spectrum.corp.adobe.com/page/typography/#Line-height
+      ui: {
+        default: tokens['line-height-100'].value,
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': tokens['line-height-200'].value
+      },
+      heading: {
+        default: tokens['heading-line-height'].value,
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': tokens['heading-cjk-line-height'].value
+      },
+      body: {
+        default: tokens['body-line-height'].value,
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': tokens['body-cjk-line-height'].value
+      },
+      detail: {
+        default: tokens['detail-line-height'].value,
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': tokens['detail-cjk-line-height'].value
+      },
+      code: {
+        default: tokens['code-line-height'].value,
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': tokens['code-cjk-line-height'].value
+      }
     },
     listStyleType: ['none', 'dist', 'decimal'] as const,
     listStylePosition: ['inside', 'outside'] as const,
@@ -661,12 +710,6 @@ export const style = createTheme({
       textUnderlineOffset: value === 'underline' ? tokens['text-underline-gap'].value : undefined
     }), ['underline', 'overline', 'line-through', 'none'] as const),
     textOverflow: ['ellipsis', 'clip'] as const,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    truncate: createArbitraryProperty((_value: true) => ({
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
-    })),
     lineClamp: createArbitraryProperty((value: number) => ({
       overflow: 'hidden',
       display: '-webkit-box',
@@ -682,13 +725,6 @@ export const style = createTheme({
     // effects
     boxShadow: {
       'elevated-light': '0px 0px 3px 0px rgba(0, 0, 0, 0.12), 0px 3px 8px 0px rgba(0, 0, 0, 0.04), 0px 4px 16px 0px rgba(0, 0, 0, 0.08)',
-      sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-      default: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-      md: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-      lg: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-      xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-      '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
-      inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
       none: 'none'
     },
     filter: {
@@ -700,6 +736,8 @@ export const style = createTheme({
     borderBottomEndRadius: createMappedProperty(value => ({borderEndEndRadius: value}), radius),
     forcedColorAdjust: ['auto', 'none'] as const,
     colorScheme: ['light', 'dark', 'light dark'] as const,
+    backgroundImage: createArbitraryProperty((value: string, property) => ({[property]: value})),
+    // TODO: do we need separate x and y properties?
     backgroundPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
     backgroundSize: ['auto', 'cover', 'contain'] as const,
     backgroundAttachment: ['fixed', 'local', 'scroll'] as const,
@@ -714,19 +752,11 @@ export const style = createTheme({
     outlineOffset: borderWidth,
     outlineWidth: borderWidth,
 
-    transition: createMappedProperty(value => ({
-      transitionProperty: value,
-      transitionDuration: '150ms',
-      transitionTimingFunction: timingFunction.default
-    }), transitionProperty),
+    transition: createMappedProperty((value, property) => ({[property === 'transition' ? 'transitionProperty' : property]: value}), transitionProperty),
     transitionDelay: durationProperty,
     transitionDuration: durationProperty,
     transitionTimingFunction: timingFunction,
-    animation: createArbitraryProperty((value: string) => ({
-      animationName: value,
-      animationDuration: '150ms',
-      animationTimingFunction: timingFunction.default
-    })),
+    animation: createArbitraryProperty((value: string, property) => ({[property === 'animation' ? 'animationName' : property]: value})),
     animationDuration: durationProperty,
     animationDelay: durationProperty,
     animationDirection: ['normal', 'reverse', 'alternate', 'alternate-reverse'] as const,
@@ -744,13 +774,10 @@ export const style = createTheme({
     justifySelf: ['auto', 'start', 'end', 'center', 'stretch'] as const,
     flexDirection: ['row', 'column', 'row-reverse', 'column-reverse'] as const,
     flexWrap: ['wrap', 'wrap-reverse', 'nowrap'] as const,
-    flex: createArbitraryProperty((value: CSS.Property.Flex, property) => ({[property]: value})),
     flexShrink: createArbitraryProperty((value: CSS.Property.FlexShrink, property) => ({[property]: value})),
     flexGrow: createArbitraryProperty((value: CSS.Property.FlexGrow, property) => ({[property]: value})),
-    gridColumn: createArbitraryProperty((value: CSS.Property.GridColumn, property) => ({[property]: value})),
     gridColumnStart: createArbitraryProperty((value: CSS.Property.GridColumnStart, property) => ({[property]: value})),
     gridColumnEnd: createArbitraryProperty((value: CSS.Property.GridColumnEnd, property) => ({[property]: value})),
-    gridRow: createArbitraryProperty((value: CSS.Property.GridRow, property) => ({[property]: value})),
     gridRowStart: createArbitraryProperty((value: CSS.Property.GridRowStart, property) => ({[property]: value})),
     gridRowEnd: createArbitraryProperty((value: CSS.Property.GridRowEnd, property) => ({[property]: value})),
     gridAutoFlow: ['row', 'column', 'dense', 'row dense', 'column dense'] as const,
@@ -759,7 +786,6 @@ export const style = createTheme({
     gridTemplateColumns: createArbitraryProperty((value: GridTrack, property) => ({[property]: gridTrack(value)})),
     gridTemplateRows: createArbitraryProperty((value: GridTrack, property) => ({[property]: gridTrack(value)})),
     gridTemplateAreas: createArbitraryProperty((value: readonly string[], property) => ({[property]: value.map(v => `"${v}"`).join('')})),
-    gridArea: createArbitraryProperty((value: string, property) => ({[property]: value})),
     float: ['inline-start', 'inline-end', 'right', 'left', 'none'] as const,
     clear: ['inline-start', 'inline-end', 'left', 'right', 'both', 'none'] as const,
     contain: ['none', 'strict', 'content', 'size', 'inline-size', 'layout', 'style', 'paint'] as const,
@@ -781,6 +807,7 @@ export const style = createTheme({
       10: '10',
       11: '11',
       12: '12',
+      // TODO: what should these sizes be?
       '3xs': '16rem',
       '2xs': '18rem',
       xs: '20rem',
@@ -843,6 +870,7 @@ export const style = createTheme({
     borderBottomRadius: ['borderBottomStartRadius', 'borderBottomEndRadius'] as const,
     borderStartRadius: ['borderTopStartRadius', 'borderBottomStartRadius'] as const,
     borderEndRadius: ['borderTopEndRadius', 'borderBottomEndRadius'] as const,
+    translate: ['translateX', 'translateY'] as const,
     inset: ['top', 'bottom', 'left', 'right'] as const,
     insetX: ['insetStart', 'insetEnd'] as const,
     insetY: ['top', 'bottom'] as const,
@@ -852,7 +880,25 @@ export const style = createTheme({
     gap: ['rowGap', 'columnGap'] as const,
     size: ['width', 'height'] as const,
     overflow: ['overflowX', 'overflowY'] as const,
-    overscrollBehavior: ['overscrollBehaviorX', 'overscrollBehaviorY'] as const
+    overscrollBehavior: ['overscrollBehaviorX', 'overscrollBehaviorY'] as const,
+    gridArea: ['gridColumnStart', 'gridColumnEnd', 'gridRowStart', 'gridRowEnd'] as const,
+    transition: (value: keyof typeof transitionProperty) => ({
+      transition: value,
+      transitionDuration: 150,
+      transitionTimingFunction: 'default'
+    }),
+    animation: (value: string) => ({
+      animation: value,
+      animationDuration: 150,
+      animationTimingFunction: 'default'
+    }),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    truncate: (_value: true) => ({
+      overflowX: 'hidden',
+      overflowY: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap'
+    })
   },
   conditions: {
     forcedColors: '@media (forced-colors: active)',
@@ -873,7 +919,3 @@ export const style = createTheme({
     '2xl': '@media (min-width: 1536px)'
   }
 });
-
-export function edgeToText(this: MacroContext | void, height: keyof typeof baseSpacing) {
-  return `calc(${baseSpacing[height]} * 3 / 8)`;
-}

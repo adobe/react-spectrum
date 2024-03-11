@@ -9,7 +9,7 @@ import {ReactNode, forwardRef} from 'react';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
-import {UnsafeStyles} from './style-utils';
+import {UnsafeStyles, centerPadding} from './style-utils' with {type: 'macro'};
 
 export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style'>, UnsafeStyles {
   children: ReactNode
@@ -30,8 +30,9 @@ const slide = keyframes(`
 const tooltip = style<TooltipRenderProps>({
   justifyContent: 'center',
   alignItems: 'center',
-  maxWidth: 40,
-  minHeight: 6,
+  maxWidth: 160,
+  minHeight: 24,
+  boxSizing: 'border-box',
   color: {
     default: 'gray-25',
     forcedColors: 'ButtonText'
@@ -49,13 +50,10 @@ const tooltip = style<TooltipRenderProps>({
   borderRadius: 'control',
   fontFamily: 'sans',
   fontWeight: 'normal',
-  fontSize: 'sm',
+  fontSize: 'ui-sm',
   paddingX: 'edge-to-text',
-  '--labelPadding': {
-    type: 'paddingTop',
-    value: '[calc((self(minHeight) - 1lh) / 2)]'
-  },
-  margin: 2,
+  paddingY: centerPadding(),
+  margin: 8,
   animation: {
     isEntering: slide,
     isExiting: slide
@@ -77,8 +75,8 @@ const tooltip = style<TooltipRenderProps>({
       placement: {
         top: 0,
         bottom: 0,
-        left: 1,
-        right: '[-0.25rem]' // TODO update with negatives from Dialog PR
+        left: 4,
+        right: -4
       }
     }
   },
@@ -86,8 +84,8 @@ const tooltip = style<TooltipRenderProps>({
     type: 'translate',
     value: {
       placement: {
-        top: 1,
-        bottom: '[-0.25rem]', // TODO update with negatives from Dialog PR
+        top: 4,
+        bottom: -4,
         left: 0,
         right: -0
       }
@@ -109,7 +107,7 @@ const arrowStyles = style<TooltipRenderProps>({
   translate: {
     placement: {
       left: '[-25%]',
-      right: '1/4'
+      right: '[25%]'
     }
   }
 });
@@ -130,9 +128,7 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
               <path d="M4.29289 4.29289L0 0H10L5.70711 4.29289C5.31658 4.68342 4.68342 4.68342 4.29289 4.29289Z" />
             </svg>
           </OverlayArrow>
-          <div className={style({paddingY: '--labelPadding'})}>
-            {children}
-          </div>
+          {children}
         </>
       )}
     </AriaTooltip>

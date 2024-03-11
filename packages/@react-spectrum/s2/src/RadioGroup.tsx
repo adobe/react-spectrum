@@ -77,7 +77,7 @@ export function RadioGroup(props: RadioGroupProps) {
               flexWrap: 'wrap',
               // Spectrum uses a fixed spacing value for horizontal (column),
               // but the gap changes depending on t-shirt size in vertical (row).
-              columnGap: 4,
+              columnGap: 16,
               rowGap: '--field-gap'
             })({orientation})}>
             <FormContext.Provider value={{...formContext, size, isEmphasized}}>

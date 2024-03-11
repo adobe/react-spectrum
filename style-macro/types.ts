@@ -15,6 +15,8 @@ export type CSSProperties = CSS.Properties & {
 
 export type PropertyFunction<T extends Value> = (value: T, property: string) => PropertyValueDefinition<[CSSProperties, string]>;
 
+export type ShorthandProperty<T> = (value: T) => {[name: string]: Value};
+
 export interface Theme {
   properties: {
     [name: string]: PropertyValueMap | PropertyFunction<any> | string[]
@@ -23,7 +25,7 @@ export interface Theme {
     [name: string]: string
   },
   shorthands: {
-    [name: string]: string[]
+    [name: string]: string[] | ShorthandProperty<any>
   }
 }
 
@@ -38,12 +40,20 @@ type PropertyValue<T> =
 
 type PropertyValue2<T> = PropertyValue<T> | CustomProperty | `[${string}]`;
 type Merge<T> = T extends any ? T : never;
+type ShorthandValue<T extends Theme, P> = 
+  P extends string[]
+    ? PropertyValue2<T['properties'][P[0]]>
+    : P extends ShorthandProperty<infer V>
+      ? V
+      : never;
 
 // Pre-compute value types for all theme properties ahead of time.
 export type ThemeProperties<T extends Theme> = Merge<{
   [K in keyof T['properties'] | keyof T['shorthands']]: K extends keyof T['properties']
     ? Merge<PropertyValue2<T['properties'][K]>>
-    : Merge<PropertyValue2<T['properties'][T['shorthands'][K][0]]>>
+    : K extends keyof T['shorthands']
+      ? Merge<ShorthandValue<T, T['shorthands'][K]>>
+      : never
 }>;
 
 type Style<T extends ThemeProperties<Theme>, C extends string, R extends RenderProps<string>> =

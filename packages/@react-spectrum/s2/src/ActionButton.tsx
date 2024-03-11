@@ -1,5 +1,5 @@
 import {ButtonProps, ButtonRenderProps, Button as RACButton} from 'react-aria-components';
-import {baseColor, style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {baseColor, fontRelative, style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with { type: 'macro' };
 import {FocusableRef} from '@react-types/shared';
@@ -134,7 +134,7 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
   '--iconMargin': {
     type: 'marginTop',
     value: {
-      default: '[calc(-2 / 14 * 1em)]',
+      default: fontRelative(-2),
       ':has([slot=icon]:only-child)': 0
     }
   },

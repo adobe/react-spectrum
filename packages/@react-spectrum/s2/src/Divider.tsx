@@ -51,13 +51,15 @@ const divider = style<DividerSpectrumProps>({
   },
   borderStyle: 'none',
   borderRadius: 'full',
+  margin: 0,
   height: {
     orientation: {
       horizontal: {
-        default: 1,
+        // These should be px not rems, because we're emulating a border.
+        default: '[4px]',
         size: {
-          S: 'px',
-          M: .5
+          S: '[1px]',
+          M: '[2px]'
         }
       }
     }
@@ -65,10 +67,10 @@ const divider = style<DividerSpectrumProps>({
   width: {
     orientation: {
       vertical: {
-        default: 1,
+        default: '[4px]',
         size: {
-          S: 'px',
-          M: .5
+          S: '[1px]',
+          M: '[2px]'
         }
       }
     }

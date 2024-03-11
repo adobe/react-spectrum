@@ -210,13 +210,13 @@ function handleProperty(element: string, property: string, value: namedTypes.Obj
         }
         if (value.type === 'NumericLiteral') {
           switch (value.value) {
-            case 11: return 'xs';
-            case 12: return 'sm';
-            case 14: return 'base';
-            case 16: return 'lg';
-            case 18: return 'xl';
-            case 20: return '2xl';
-            case 22: return '3xl';
+            case 11: return 'ui-xs';
+            case 12: return 'ui-sm';
+            case 14: return 'ui';
+            case 16: return 'ui-lg';
+            case 18: return 'ui-xl';
+            case 20: return 'ui-2xl';
+            case 22: return 'ui-3xl';
             default: return `[${value.value / 16}rem]`;
           }
         } else if (value.type === 'StringLiteral') {
@@ -225,21 +225,21 @@ function handleProperty(element: string, property: string, value: namedTypes.Obj
             switch (m[1]) {
               case '25': return `[${10 / 16}rem]`;
               case '50': return 'xs';
-              case '75': return 'sm';
-              case '100': return 'base';
+              case '75': return 'ui-sm';
+              case '100': return 'ui';
               case '150': return `[${15 / 16}rem]`;
-              case '200': return 'lg';
-              case '300': return 'xl';
-              case '400': return '2xl';
-              case '500': return '3xl';
-              case '600': return `[${25 / 16}rem]`;
-              case '700': return `[${28 / 16}rem]`;
+              case '200': return 'ui-lg';
+              case '300': return 'ui-xl';
+              case '400': return 'body-xl';
+              case '500': return 'body-2xl';
+              case '600': return 'body-3xl';
+              case '700': return 'heading-lg';
               case '800': return `[${32 / 16}rem]`;
-              case '900': return `[${36 / 16}rem]`;
+              case '900': return 'heading-xl';
               case '1000': return `[${40 / 16}rem]`;
-              case '1100': return `[${45 / 16}rem]`;
+              case '1100': return 'heading-2xl';
               case '1200': return `[${50 / 16}rem]`;
-              case '1300': return `[${60 / 16}rem]`;
+              case '1300': return 'heading-3xl';
             }
           }
         }
@@ -252,20 +252,14 @@ function handleProperty(element: string, property: string, value: namedTypes.Obj
           let m = value.value.match(/^var\(--spectrum-global-font-weight-(.+)\)$/);
           if (m) {
             switch (m[1]) {
-              case 'thin':
               case 'light':
               case 'medium':
               case 'bold':
               case 'black':
+              case 'extra-bold':
                 return m[1];
-              case 'ultra-light':
-                return 'extralight';
               case 'regular':
                 return 'normal';
-              case 'semi-bold':
-                return 'semibold';
-              case 'extra-bold':
-                return 'extrabold';
             }
           } else {
             switch (value.value) {

@@ -1,4 +1,4 @@
-import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {size, style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 import {DOMRef} from '@react-types/shared';
 import {forwardRef} from 'react';
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
@@ -34,7 +34,7 @@ enum GenericAvatarSvg {
 export interface AvatarProps extends StyleProps {
   generic?: GenericAvatarSvg,
   isDisabled?: boolean,
-  size?: 4 | 4.5 | 5 | 5.5 | 6.5 | 7 | 8 | 9 | 10,
+  size?: 16 | 18 | 20 | 22 | 26 | 28 | 32 | 36 | 40,
   alt?: string,
   src?: string
 }
@@ -42,16 +42,17 @@ export interface AvatarProps extends StyleProps {
 const imageStyles = style({
   borderRadius: 'full',
   size: {
-    default: 5,
+    default: 20,
     size: {
-      '4': 4,
-      '4.5': 4.5,
-      '5.5': 5.5,
-      '6.5': 6.5,
-      '7': 7,
-      '8': 8,
-      '9': 9,
-      '10': 10
+      // TODO: do we need these sizes? Can we just have a default one and allow size overrides via the css prop?
+      16: 16,
+      18: size(18),
+      22: size(22),
+      26: size(26),
+      28: 28,
+      32: 32,
+      36: 36,
+      40: 40
     }
   },
   opacity: {

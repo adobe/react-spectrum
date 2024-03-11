@@ -1,4 +1,4 @@
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import {createContext, ForwardedRef, ReactElement, cloneElement, forwardRef} from 'react';
 import {ContextValue} from './Content';
@@ -21,7 +21,7 @@ function Icon(props: IconProps, ref: ForwardedRef<HTMLImageElement>) {
       {cloneElement(props.children, {
         className: style({
           fill: 'currentColor',
-          size: '[calc(20 / 14 * 1em)]'
+          size: fontRelative(20)
         })
       })}
     </CenterBaseline>

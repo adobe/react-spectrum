@@ -31,7 +31,7 @@ Example.args = {
 };
 
 export const LongLabel = (args: any) => (
-  <RadioGroup css={style({maxWidth: 32})} {...args}>
+  <RadioGroup css={style({maxWidth: 128})} {...args}>
     <Radio value="longLabel">Radio with very long label so we can see wrapping</Radio>
   </RadioGroup>
 );

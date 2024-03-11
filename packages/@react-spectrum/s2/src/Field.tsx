@@ -1,7 +1,7 @@
 import {Group, GroupProps, Input as RACInput, InputProps as RACInputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text} from 'react-aria-components';
-import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {baseColor, fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {StyleProps, UnsafeStyles, focusRing} from './style-utils' with {type: 'macro'};
-import AsteriskIcon from '../ui-icons/S2_AsteriskSize100.svg';
+import AsteriskIcon from '../ui-icons/Asterisk';
 import AlertIcon from './wf-icons/AlertTriangle';
 import {Icon} from './Icon';
 import {mergeStyles} from '../style-macro/runtime';
@@ -50,7 +50,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
           gridArea: 'label',
           fontFamily: 'sans',
           fontSize: 'control',
-          lineHeight: 100,
+          lineHeight: 'ui',
           cursor: 'default',
           color: {
             default: 'neutral-subdued',
@@ -88,20 +88,13 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
           &nbsp;
           {necessityIndicator === 'icon' &&
             <AsteriskIcon
+              size={size}
               className={style({
                 '--iconPrimary': {
                   type: 'fill',
                   value: 'currentColor'
-                },
-                size: {
-                  size: {
-                    S: 2,
-                    M: 2,
-                    L: 2.5,
-                    XL: 2.5
-                  }
                 }
-              })({size, isDisabled, isRequired})}
+              })}
               aria-label={includeNecessityIndicatorInAccessibilityName ? '(required)' : undefined} />
           }
           {necessityIndicator === 'label' &&
@@ -134,7 +127,7 @@ const fieldGroupStyles = style({
   alignItems: 'center',
   height: 'control',
   // TODO: this should actually stretch to fill the parent Field if that has a width defined.
-  width: 44,
+  width: 176,
   boxSizing: 'border-box',
   paddingX: 'edge-to-text',
   fontFamily: 'sans',
@@ -195,22 +188,23 @@ export function FieldGroup(props: FieldGroupProps) {
 export interface InputProps extends Omit<RACInputProps, 'className' | 'style'>, StyleProps {}
 
 function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
+  let {UNSAFE_className = '', UNSAFE_style, css, ...otherProps} = props;
   return (
     <RACInput
-      {...props}
+      {...otherProps}
       ref={ref}
-      style={props.UNSAFE_style}
-      className={props.UNSAFE_className + mergeStyles(style({
+      style={UNSAFE_style}
+      className={UNSAFE_className + mergeStyles(style({
         padding: 0,
         backgroundColor: 'transparent',
         color: '[inherit]',
         fontFamily: '[inherit]',
         fontSize: '[inherit]',
-        flex: 1,
+        flexGrow: 1,
         minWidth: 0,
         outlineStyle: 'none',
         borderStyle: 'none'
-      }), props.css)} />
+      }), css)} />
   );
 }
 
@@ -229,7 +223,7 @@ const helpTextStyles = style({
   gridArea: 'helptext',
   display: 'flex',
   alignItems: 'baseline',
-  lineHeight: 100,
+  lineHeight: 'ui',
   gap: 'text-to-visual',
   fontFamily: 'sans',
   fontSize: 'control',
@@ -284,7 +278,7 @@ export function FieldErrorIcon() {
         // TODO: add back color
         css={style({
           marginStart: 'text-to-visual',
-          marginEnd: '[calc(-2 / 14 * 1em)]' // ??
+          marginEnd: fontRelative(-2) // ??
         })} />
     </CenterBaseline>
   );

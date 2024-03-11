@@ -57,7 +57,6 @@ function ExampleDialog(args: any) {
           {args.showFooter && <Footer><Checkbox>Don't show this again</Checkbox></Footer>}
           {args.showButtons &&
             <ButtonGroup>
-              <Button onPress={close} variant="primary">Defer</Button>
               <Button onPress={close} variant="secondary">Cancel</Button>
               <Button onPress={close} variant="accent">Save</Button>
             </ButtonGroup>

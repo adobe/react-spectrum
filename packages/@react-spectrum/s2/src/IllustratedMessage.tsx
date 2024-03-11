@@ -62,17 +62,17 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
   gridTemplateRows: {
     orientation: {
       horizontal: {
-        default: ['min-content', 3, 'min-content', 1, 'min-content', 'min-content'],
+        default: ['min-content', 12, 'min-content', 4, 'min-content', 'min-content'],
         size: {
-          L: ['min-content', 2, 'min-content', 1, 'min-content', 'min-content']
+          L: ['min-content', 8, 'min-content', 4, 'min-content', 'min-content']
         }
       },
-      vertical: ['1fr', 1, '1fr']
+      vertical: ['1fr', 4, '1fr']
     }
   },
   gridTemplateColumns: {
     orientation: {
-      vertical: ['1fr', 3, 'auto']
+      vertical: ['1fr', 12, 'auto']
     }
   },
   justifyItems: {
@@ -92,9 +92,9 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
   gridArea: 'illustration',
   size: {
     size: { 
-      S: 24,
-      M: 24,
-      L: 40
+      S: 96,
+      M: 96,
+      L: 160
     }
   },
   alignSelf: 'center',
@@ -111,9 +111,9 @@ const heading = style<IllustratedMessageStyleProps>({
   color: 'heading',
   fontSize: {
     size: {
-      S: 'lg',
-      M: 'xl',
-      L: '3xl'
+      S: 'body',
+      M: 'body-xl',
+      L: 'body-2xl'
     }
   },
   alignSelf: 'end',
@@ -128,7 +128,7 @@ const content = style({
 
 const buttonGroup = style({
   gridArea: 'buttonGroup',
-  marginTop: 4
+  marginTop: 16
 });
 
 interface IllustratedMessageContextProps extends Omit<S2SpectrumIllustratedMessageProps, 'children'> {

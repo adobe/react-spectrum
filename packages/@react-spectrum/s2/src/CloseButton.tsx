@@ -1,7 +1,7 @@
 import {Button, ButtonProps} from 'react-aria-components';
 import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import CrossIcon from '../ui-icons/S2_CrossSize300.svg';
+import CrossIcon from '../ui-icons/Cross';
 import {pressScale} from './pressScale';
 import {forwardRef} from 'react';
 import {FocusableRef} from '@react-types/shared';
@@ -72,15 +72,7 @@ function CloseButton(props: CloseButtonProps, ref: FocusableRef<HTMLButtonElemen
       ref={domRef}
       style={pressScale(domRef, UNSAFE_style)}
       className={renderProps => UNSAFE_className + styles(renderProps, props.css)}>
-      <CrossIcon
-        className={style({
-          size: {
-            S: 2.5,
-            M: 3,
-            L: 3,
-            XL: 3.5
-          }
-        })({size: props.size || 'M'})} />
+      <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
     </Button>
   );
 }

@@ -12,8 +12,8 @@ import {
   SelectValue,
   ValidationResult
 } from 'react-aria-components';
-import ChevronIcon from '../ui-icons/S2_ChevronSize100.svg';
-import {StyleProps, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import ChevronIcon from '../ui-icons/Chevron';
+import {StyleProps, centerPadding, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {
   FieldLabel,
   HelpText
@@ -43,11 +43,11 @@ interface PickerButtonProps extends PickerStyleProps, ButtonRenderProps {}
 const selectWrapper = style<PickerSelectProps & SpectrumLabelableProps & {isInForm?: boolean}>({
   ...field(),
   width: {
-    default: 52,
+    default: 208,
     size: {
-      S: 44,
-      L: 56,
-      XL: 60
+      S: 176,
+      L: 224,
+      XL: 240
     },
     isQuiet: 'fit'
   }
@@ -79,7 +79,7 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
     isQuiet: 0
   },
   paddingBottom: {
-    isQuiet: '[calc((var(--field-height) - 1lh) / 2)]'
+    isQuiet: centerPadding()
   },
   backgroundColor: {
     default: baseColor('gray-100'),
@@ -95,7 +95,8 @@ const inputButton = style<PickerButtonProps | AriaSelectRenderProps>({
 
 const quietFocusLine = style({
   width: 'full',
-  height: 0.5,
+  // Use pixels since we are emulating a border.
+  height: '[2px]',
   position: 'absolute',
   bottom: 0,
   borderRadius: 'full',
@@ -106,21 +107,12 @@ const quietFocusLine = style({
 });
 
 const valueStyles = style({
-  flex: '1',
-  textOverflow: 'ellipsis',
-  overflow: 'hidden',
-  whiteSpace: 'nowrap'
+  flexGrow: 1,
+  truncate: true
 });
 
 const iconStyles = style({
   rotate: 90,
-  size: {
-    default: 2.5,
-    size: {
-      L: 3,
-      XL: 3.5
-    }
-  },
   '--iconPrimary': {
     type: 'fill',
     value: 'currentColor'
@@ -181,11 +173,8 @@ export function Picker<T extends object>(props: PickerProps<T>) {
             <SelectValue
               className={valueStyles} />
             <ChevronIcon
-              className={iconStyles({
-                isDisabled: isDisabled,
-                isQuiet: isQuiet,
-                size: size
-              })} />
+              size={size}
+              className={iconStyles} />
             {isFocusVisible && isQuiet && <span className={quietFocusLine} /> }
           </Button>
           <HelpText

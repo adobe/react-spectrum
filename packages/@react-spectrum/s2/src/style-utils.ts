@@ -11,10 +11,17 @@ export const focusRing = () => ({
   outlineOffset: 2
 } as const);
 
+export function centerPadding(minHeight: string = 'self(minHeight)'): `[${string}]` {
+  return `[calc((${minHeight} - self(borderTopWidth, 0px) - self(borderBottomWidth, 0px) - 1lh) / 2)]`;
+}
+
 export const field = () => ({
   display: 'grid',
-  gridColumn: {
-    isInForm: '1 / span 2'
+  gridColumnStart: {
+    isInForm: 1
+  },
+  gridColumnEnd: {
+    isInForm: 'span 2'
   },
   gridTemplateColumns: {
     default: ['auto', '1fr'],
@@ -41,7 +48,7 @@ export const field = () => ({
   },
   fontSize: 'control',
   alignItems: 'baseline',
-  lineHeight: 100,
+  lineHeight: 'ui',
   '--field-height': {
     type: 'height',
     value: 'control'
@@ -53,7 +60,7 @@ export const field = () => ({
   // Eventually this may be possible to do in pure CSS: https://github.com/w3c/csswg-drafts/issues/5813
   '--field-gap': {
     type: 'rowGap',
-    value: '[calc((var(--field-height) - 1lh) / 2)]'
+    value: centerPadding('var(--field-height)')
   },
   columnGap: 'text-to-control'
 } as const);
