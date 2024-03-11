@@ -123,7 +123,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
   let onKeyDown = (e: KeyboardEvent) => {
     // Prevent option + tab from doing anything since it doesn't move focus to the cells, only buttons/checkboxes
     if (e.altKey && e.key === 'Tab') {
-      e.preventDefault();
+      if (!delegate.getKeyAbove || !delegate.getKeyBelow) {
+        e.preventDefault();
+      }
     }
 
     // Keyboard events bubble through portals. Don't handle keyboard events
