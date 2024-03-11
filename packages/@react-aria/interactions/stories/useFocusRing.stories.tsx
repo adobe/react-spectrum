@@ -14,11 +14,13 @@ import {addWindowFocusTracking} from '../src';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Key} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
-import React, {useRef, useState} from 'react';
-import ReactDOM from 'react-dom';
+import React, {useEffect, useRef, useState} from 'react';
+import ReactDOM, {createPortal} from 'react-dom';
 import {SearchField} from '@react-spectrum/searchfield';
 import {useButton} from '@react-aria/button';
 import {useFocusRing} from '@react-aria/focus';
+import Frame from 'react-frame-component';
+import {Button} from 'react-aria-components';
 
 interface IColumn {
   name: string,
@@ -100,50 +102,34 @@ function SearchExample() {
   );
 }
 
-function Button() {
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+function MyButton(props) {
+  const buttonRef = props.btnRef;
 
   const {buttonProps} = useButton({}, buttonRef);
   const {focusProps, isFocusVisible, isFocused} = useFocusRing();
 
   return (
-    <button ref={buttonRef} {...mergeProps(buttonProps, focusProps)}>
+    <Button ref={buttonRef} {...mergeProps(buttonProps, focusProps)}>
       Focus Visible: {isFocusVisible ? 'true' : 'false'} <br />
       Focused: {isFocused ? 'true' : 'false'}
-    </button>
+    </Button>
   );
 }
 
-const IframeWrapper = ({children}) => {
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+const IFrameExample = (props) => {
+  let btnRef = useRef(null);
+  useEffect(() => {
+    return addWindowFocusTracking(btnRef.current);
+  }, []);
 
-  let onLoad = () => {
-    if (iframeRef.current) {
-      const main = document.createElement('main');
-      const iframeDocument = iframeRef.current.contentDocument;
-
-      if (iframeDocument) {
-        iframeDocument.body.innerHTML = '';
-        iframeDocument.body.appendChild(main);
-        ReactDOM.render(children, main);
-
-        return addWindowFocusTracking(iframeDocument.body);
-      }
-    }
-  };
-
-  return <iframe title="test" ref={iframeRef} onLoad={onLoad} />;
-};
-
-function IFrameExample() {
   return (
     <>
-      <Button />
-      <IframeWrapper>
-        <Button />
-        <Button />
-        <Button />
-      </IframeWrapper>
+      <MyButton />
+      <Frame {...props}>
+        <MyButton btnRef={btnRef} />
+        <MyButton />
+        <MyButton />
+      </Frame>
     </>
   );
-}
+};
