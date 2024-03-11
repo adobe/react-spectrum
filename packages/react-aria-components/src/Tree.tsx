@@ -331,16 +331,13 @@ export interface TreeItemContentProps extends Pick<RenderProps<TreeItemContentRe
 
 // TODO does this need ref or context? Its only used to shallowly render the Content node... If it was a more generic collection component then I could see an argument for it
 // having those
-function TreeItemContent(props: TreeItemContentProps) {
+export function TreeItemContent(props: TreeItemContentProps) {
   let ref = useRef(null);
   let shallow = useShallowRender('content', props, ref);
   if (shallow) {
     return shallow;
   }
 }
-
-const _TreeItemContent = /*#__PURE__*/ TreeItemContent;
-export {_TreeItemContent as TreeItemContent};
 
 function TreeRow<T>({item}: {item: Node<T>}) {
   let state = useContext(TreeStateContext)!;

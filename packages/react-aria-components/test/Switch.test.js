@@ -211,4 +211,22 @@ describe('Switch', () => {
     let {getByRole} = render(<Switch ref={ref}>Test</Switch>);
     expect(ref.current).toBe(getByRole('switch').closest('.react-aria-Switch'));
   });
+
+  it('should support input ref', () => {
+    let inputRef = React.createRef();
+    let {getByRole} = render(<Switch inputRef={inputRef}>Test</Switch>);
+    expect(inputRef.current).toBe(getByRole('switch'));
+  });
+
+  it('should support and merge input ref on context', () => {
+    let inputRef = React.createRef();
+    let contextInputRef = React.createRef();
+    let {getByRole} = render(
+      <SwitchContext.Provider value={{inputRef: contextInputRef}}>
+        <Switch inputRef={inputRef}>Test</Switch>
+      </SwitchContext.Provider>
+    );
+    expect(inputRef.current).toBe(getByRole('switch'));
+    expect(contextInputRef.current).toBe(getByRole('switch'));
+  });
 });
