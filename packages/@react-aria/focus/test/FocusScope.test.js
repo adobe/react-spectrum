@@ -22,6 +22,13 @@ import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
 
 
+function createShadowRoot() {
+  const div = document.createElement('div');
+  document.body.appendChild(div);
+  const shadowRoot = div.attachShadow({mode: 'open'});
+  return {shadowHost: div, shadowRoot};
+}
+
 describe('FocusScope', function () {
   let user;
 
@@ -313,6 +320,43 @@ describe('FocusScope', function () {
       });
 
       expect(document.activeElement).toBe(input2);
+    });
+
+    it('should contain focus within the shadow DOM scope', async function () {
+      const {shadowRoot} = createShadowRoot();
+      const FocusableComponent = () => (
+        <FocusScope contain>
+          <input data-testid="input1" />
+          <input data-testid="input2" />
+          <input data-testid="input3" />
+        </FocusScope>
+      );
+
+      // Use ReactDOM to render directly into the shadow root
+      ReactDOM.render(<FocusableComponent />, shadowRoot);
+
+      const input1 = shadowRoot.querySelector('[data-testid="input1"]');
+      const input2 = shadowRoot.querySelector('[data-testid="input2"]');
+      const input3 = shadowRoot.querySelector('[data-testid="input3"]');
+
+      // Simulate focusing the first input
+      act(() => {input1.focus();});
+      expect(document.activeElement).toBe(shadowRoot.host);
+      expect(shadowRoot.activeElement).toBe(input1);
+
+      // Simulate tabbing through inputs
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(input2);
+
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(input3);
+
+      // Simulate tabbing back to the first input
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(input1);
+
+      // Cleanup
+      document.body.removeChild(shadowRoot.host);
     });
   });
 

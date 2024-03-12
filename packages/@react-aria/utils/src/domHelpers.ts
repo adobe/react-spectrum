@@ -30,3 +30,12 @@ export const getRootNode = (el: Element | null | undefined): Document | ShadowRo
 
   return rootNode;
 };
+
+/**
+ * `getRootBody`: Retrieves a suitable "body" element for an element, accommodating both
+ * Shadow DOM and traditional DOM contexts. Returns `document.body` for elements in the
+ * light DOM or the root of the Shadow DOM for elements within a shadow DOM.
+ */
+export const getRootBody = (root: Document | ShadowRoot): HTMLElement | ShadowRoot => {
+  return root instanceof Document ? root.body : root;
+};
