@@ -107,7 +107,7 @@ function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef
 }
 
 interface TreeRowRenderProps extends TreeItemRenderProps {
-  hasLink?: boolean
+  isLink?: boolean
 }
 
 const treeRow = style<TreeRowRenderProps>({
@@ -123,7 +123,7 @@ const treeRow = style<TreeRowRenderProps>({
   outlineStyle: 'none',
   cursor: {
     default: 'default',
-    hasLink: 'pointer'
+    isLink: 'pointer'
   },
   // TODO: not sure where to get the equivalent colors here, for instance isHovered is spectrum 600 with 10% opacity but I don't think that exists in the theme
   backgroundColor: {
@@ -247,8 +247,7 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
       {...props}
       className={renderProps => treeRow({
         ...renderProps,
-        // TODO: for some reason this isn't applying the proper cursor even though it returns true...
-        hasLink: !!href
+        isLink: !!href
       })}>
       <TreeItemContent>
         {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
