@@ -29,13 +29,19 @@ export const Example: Story = {
       isOpen,
       onOpenChange,
       defaultOpen,
+      align,
+      direction,
+      shouldFlip,
       ...menuProps
     } = args;
     let triggerProps = {
       trigger,
       isOpen,
       onOpenChange,
-      defaultOpen
+      defaultOpen,
+      align,
+      direction,
+      shouldFlip
     };
     return (
       <MenuTrigger {...triggerProps}>
@@ -57,13 +63,19 @@ export const KeyboardShortcuts: Story = {
       isOpen,
       onOpenChange,
       defaultOpen,
+      align,
+      direction,
+      shouldFlip,
       ...menuProps
     } = args;
     let triggerProps = {
       trigger,
       isOpen,
       onOpenChange,
-      defaultOpen
+      defaultOpen,
+      align,
+      direction,
+      shouldFlip
     };
     return (
       <MenuTrigger {...triggerProps}>
@@ -85,13 +97,19 @@ export const PublishAndExport: Story = {
       isOpen,
       onOpenChange,
       defaultOpen,
+      align,
+      direction,
+      shouldFlip,
       ...menuProps
     } = args;
     let triggerProps = {
       trigger,
       isOpen,
       onOpenChange,
-      defaultOpen
+      defaultOpen,
+      align,
+      direction,
+      shouldFlip
     };
     return (
       <MenuTrigger {...triggerProps}>
@@ -183,13 +201,19 @@ export const BlendModes: Story = {
       isOpen,
       onOpenChange,
       defaultOpen,
+      align,
+      direction,
+      shouldFlip,
       ...menuProps
     } = args;
     let triggerProps = {
       trigger,
       isOpen,
       onOpenChange,
-      defaultOpen
+      defaultOpen,
+      align,
+      direction,
+      shouldFlip
     };
     return (
       <MenuTrigger {...triggerProps}>

@@ -17,7 +17,7 @@ interface ToggleButtonStyleProps {
   isEmphasized?: boolean
 }
 
-interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children'>, StyleProps, ActionButtonStyleProps {
+export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children'>, StyleProps, ActionButtonStyleProps {
   children?: ReactNode
 }
 

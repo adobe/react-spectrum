@@ -3,8 +3,8 @@ import {
   MenuItem as AriaMenuItem,
   MenuItemProps as AriaMenuItemProps,
   MenuProps as AriaMenuProps,
-  MenuTrigger,
-  MenuTriggerProps,
+  MenuTrigger as AriaMenuTrigger,
+  MenuTriggerProps as AriaMenuTriggerProps,
   Provider,
   composeRenderProps,
   Section as AriaSection,
@@ -24,9 +24,19 @@ import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from './wf-icons/ChevronRight';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {Divider} from './Divider';
+import {Placement} from 'react-aria';
+// viewbox on LinkOut is super weird just because i copied the icon from figma...
+// need to strip id's from icons
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'style' | 'className'>, StyleProps {
-  size?: 'S' | 'M' | 'L' | 'XL'
+export interface MenuTriggerProps extends AriaMenuTriggerProps {
+  align?: 'start' | 'end',
+  direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
+  shouldFlip?: boolean
+}
+
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className'>, StyleProps {
+  size?: 'S' | 'M' | 'L' | 'XL',
+  children?: ReactNode | ((item: T) => ReactNode) // until we export CollectionProps
 }
 
 // needed to round the corners of the scroll bar, it can't be popover because that hides the submenu as well
@@ -232,6 +242,7 @@ let descriptor = style({
 });
 
 let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
+let InternalMenuTriggerContext = createContext<MenuTriggerProps>({});
 
 export function Menu<T extends object>(props: MenuProps<T>) {
   let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
@@ -242,12 +253,29 @@ export function Menu<T extends object>(props: MenuProps<T>) {
     UNSAFE_className,
     css
   } = props;
+  let {align = 'start', direction = 'bottom', shouldFlip} = useContext(InternalMenuTriggerContext);
 
   // TODO: change offset/crossoffset based on size? scale?
   // actual values?
+  let initialPlacement: Placement;
+  switch (direction) {
+    case 'left':
+    case 'right':
+    case 'start':
+    case 'end':
+      initialPlacement = `${direction} ${align === 'end' ? 'bottom' : 'top'}` as Placement;
+      break;
+    case 'bottom':
+    case 'top':
+    default:
+      initialPlacement = `${direction} ${align}` as Placement;
+  }
+
   return (
-    <Popover 
+    <Popover
       hideArrow
+      placement={initialPlacement}
+      shouldFlip={shouldFlip}
       offset={isSubmenu ? -8 : 0}
       crossOffset={isSubmenu ? 4 : 0}
       UNSAFE_style={UNSAFE_style}
@@ -354,6 +382,19 @@ export function MenuItem(props: MenuItemProps) {
         );
       })}
     </AriaMenuItem>
+  );
+}
+
+function MenuTrigger(props: MenuTriggerProps) {
+  return (
+    <InternalMenuTriggerContext.Provider
+      value={{
+        align: props.align,
+        direction: props.direction,
+        shouldFlip: props.shouldFlip
+      }}>
+      <AriaMenuTrigger {...props} />
+    </InternalMenuTriggerContext.Provider>
   );
 }
 
