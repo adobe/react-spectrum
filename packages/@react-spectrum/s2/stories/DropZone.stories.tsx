@@ -10,6 +10,7 @@ import DropToUpload from '../spectrum-illustrations/dropToUpload.svg';
 import Cloud from '../spectrum-illustrations/Cloud.svg';
 import {Illustration} from '../src/Illustration';
 import {Heading, Content} from '../src/Content';
+import {ButtonGroup} from '../src/ButtonGroup';
 
 const meta: Meta<typeof DropZone> = {
   component: DropZone,
@@ -69,13 +70,12 @@ export const ExampleWithFileTrigger = (args: any) => {
           <Content>
             Or, select a file from your computer
           </Content>
-          {/* TODO: Swap out with ButtonGroup */}
-          <div className={style({display: 'flex', gridArea: 'buttonGroup', alignSelf: 'start', gap: 8, marginTop: 16})} >
+          <ButtonGroup>
             <FileTrigger
               onSelect={() => setIsFilled(true)}>
               <Button variant="accent" >Browse files</Button>
             </FileTrigger>
-          </div>
+          </ButtonGroup>
         </IllustratedMessage> 
       </DropZone>
     </>

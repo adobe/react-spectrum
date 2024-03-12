@@ -11,19 +11,19 @@
  */
 
 import {filterDOMProps} from '@react-aria/utils';
-import {forwardRef, useContext, createContext} from 'react';
-import {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';
+import {forwardRef, ReactNode, useContext, createContext} from 'react';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {IllustrationContext} from './Illustration';
 import {HeadingContext, Provider} from 'react-aria-components';
 import {ContentContext} from './Content';
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 import {ButtonGroupContext} from './ButtonGroup';
-import {CSSPropWithHeight, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {CSSPropWithHeight, getAllowedOverrides, UnsafeStyles} from './style-utils' with {type: 'macro'};
 
-interface S2SpectrumIllustratedMessageProps extends SpectrumIllustratedMessageProps, IllustratedMessageStyleProps {
-  css?: CSSPropWithHeight
+interface S2SpectrumIllustratedMessageProps extends DOMProps, UnsafeStyles, IllustratedMessageStyleProps {
+  css?: CSSPropWithHeight,
+  children: ReactNode
 }
 
 interface IllustratedMessageStyleProps {
