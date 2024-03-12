@@ -1,6 +1,7 @@
 import {Link} from '../src/Link';
 import type {Meta} from '@storybook/react';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof Link> = {
   component: Link,
@@ -11,37 +12,14 @@ const meta: Meta<typeof Link> = {
     href: 'https://www.imdb.com/title/tt6348138/',
     target: '_blank'
   },
-  tags: ['autodocs'],
-  decorators: [
-    (story, ctx) => {
-      if (ctx.args.staticColor) {
-        return (
-          <div
-            className={style({
-              padding: 32,
-              backgroundColor: {
-                staticColor: {
-                  black: 'yellow',
-                  white: 'blue'
-                }
-              },
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 8
-            })({staticColor: ctx.args.staticColor})}>
-            {story()}
-          </div>
-        );
-      }
-      return story();
-    }
-  ]
+  decorators: [StaticColorDecorator],
+  tags: ['autodocs']
 };
 
 export default meta;
 
 export const Inline = (args: any) => (
-  <p 
+  <p
     className={style({
       color: {
         default: 'body',

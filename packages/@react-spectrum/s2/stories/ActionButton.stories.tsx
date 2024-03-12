@@ -2,13 +2,14 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {Text} from 'react-aria-components';
 import NewIcon from '../src/wf-icons/New';
 import {ActionButton} from '../src/ActionButton';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
   parameters: {
     layout: 'centered'
   },
+  decorators: [StaticColorDecorator],
   tags: ['autodocs']
 };
 
@@ -17,31 +18,13 @@ export default meta;
 type Story = StoryObj<typeof ActionButton>;
 export const Example: Story = {
   render: (args) => {
-    let buttons = (<div style={{display: 'flex', gap: 8}}>
-      <ActionButton {...args}><NewIcon /></ActionButton>
-      <ActionButton {...args}>Press me</ActionButton>
-      <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>
-    </div>);
-    if (args.staticColor) {
-      return (
-        <div
-          className={style({
-            padding: 32,
-            backgroundColor: {
-              staticColor: {
-                black: 'yellow',
-                white: 'blue'
-              }
-            },
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8
-          })({staticColor: args.staticColor})}>
-          {buttons}
-        </div>
-      );
-    }
-    return buttons;
+    return (
+      <div style={{display: 'flex', gap: 8}}>
+        <ActionButton {...args}><NewIcon /></ActionButton>
+        <ActionButton {...args}>Press me</ActionButton>
+        <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>
+      </div>
+    );
   },
   parameters: {
     design: {

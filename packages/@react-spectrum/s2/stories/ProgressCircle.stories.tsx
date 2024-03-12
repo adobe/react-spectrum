@@ -1,6 +1,6 @@
 import {ProgressCircle} from '../src/ProgressCircle';
 import type {Meta, StoryObj} from '@storybook/react';
-import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof ProgressCircle> = {
   component: ProgressCircle,
@@ -11,6 +11,7 @@ const meta: Meta<typeof ProgressCircle> = {
       url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=13120%3A401&mode=dev'
     }
   },
+  decorators: [StaticColorDecorator],
   tags: ['autodocs']
 };
 
@@ -18,33 +19,7 @@ export default meta;
 type Story = StoryObj<typeof ProgressCircle>;
 
 export const Example: Story = {
-  render: (args) => {
-    let progressCircle = (
-      <ProgressCircle aria-label="Test Progress Circle" {...args} />
-    );
-
-    if (args.staticColor) {
-      return (
-        <div
-          className={style({
-            padding: 32,
-            backgroundColor: {
-              staticColor: {
-                black: {default: 'yellow-400', dark: 'yellow-1100'},
-                white: {default: 'blue-900', dark: 'blue-500'}
-              }
-            },
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8
-          })({staticColor: args.staticColor})}>
-          {progressCircle}
-        </div>
-      );
-    }
-
-    return progressCircle;
-  },
+  render: (args) => <ProgressCircle aria-label="Test Progress Circle" {...args} />,
   args: {
     staticColor: undefined,
     value: 80

@@ -1,19 +1,14 @@
 import {ProgressBar} from '../src/ProgressBar';
 
 import type {Meta} from '@storybook/react';
+import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof ProgressBar> = {
   component: ProgressBar,
   parameters: {
     layout: 'centered'
   },
-  decorators: [
-    (Story, {args}) => args.staticColor !== undefined ? (
-      <div style={{backgroundColor: args.staticColor === 'black' ? 'yellow' : 'navy', padding: '15px'}}>
-        <Story />
-      </div>
-    ) : <Story />
-  ],
+  decorators: [StaticColorDecorator],
   tags: ['autodocs']
 };
 

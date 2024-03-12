@@ -3,12 +3,14 @@ import {Text} from 'react-aria-components';
 import NewIcon from '../src/wf-icons/New';
 import {LinkButton} from '../src/Button';
 import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof LinkButton> = {
   component: LinkButton,
   parameters: {
     layout: 'centered'
   },
+  decorators: [StaticColorDecorator],
   tags: ['autodocs']
 };
 
@@ -17,7 +19,7 @@ export default meta;
 type Story = StoryObj<typeof LinkButton>;
 export const Example: Story = {
   render: (args) => {
-    let buttons = (
+    return (
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
         <LinkButton {...args}>Press me</LinkButton>
         <LinkButton {...args}><NewIcon /><Text>Test</Text></LinkButton>
@@ -29,26 +31,6 @@ export const Example: Story = {
         </LinkButton>
       </div>
     );
-    if (args.staticColor) {
-      return (
-        <div
-          className={style({
-            padding: 8,
-            backgroundColor: {
-              staticColor: {
-                black: 'yellow',
-                white: 'blue'
-              }
-            },
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8
-          })({staticColor: args.staticColor})}>
-          {buttons}
-        </div>
-      );
-    }
-    return buttons;
   },
   parameters: {
     design: {

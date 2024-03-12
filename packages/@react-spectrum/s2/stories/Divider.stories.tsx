@@ -1,15 +1,17 @@
 import {ActionButton} from '../src/ActionButton';
 import {Divider} from '../src/Divider';
 import NewIcon from '../src/wf-icons/New';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 
 import type {Meta} from '@storybook/react';
+import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof Divider> = {
   component: Divider,
   parameters: {
     layout: 'centered'
   },
+  decorators: [StaticColorDecorator],
   tags: ['autodocs']
 };
 
@@ -23,11 +25,11 @@ export const Example = {
         flexDirection: 'column',
         gap: 8,
         padding: 8,
-        color: 'neutral',
-        backgroundColor: {
+        color: {
           staticColor: {
-            black: 'yellow',
-            white: 'blue'
+            default: 'gray-900',
+            black: baseColor('transparent-black-800'),
+            white: baseColor('transparent-white-800')
           }
         }
       })({staticColor: args.staticColor})}>
