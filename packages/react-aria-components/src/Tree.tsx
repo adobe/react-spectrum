@@ -268,7 +268,11 @@ export {_Tree as Tree};
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
   // Whether the tree item is expanded.
-  isExpanded: boolean
+  isExpanded: boolean,
+  // TODO: api discussion, how do we feel about the below? This is so we can still style the row as grey when a child element within is focused
+  // Maybe should have this for the other collection item render props
+  // Whether the tree item's children have keyboard focus.
+  isFocusVisibleWithin: boolean
 }
 
 export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps {
@@ -353,6 +357,10 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
+  let {
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
   let {checkboxProps} = useGridListSelectionCheckbox(
     {key: item.key},
     state
@@ -367,8 +375,9 @@ function TreeRow<T>({item}: {item: Node<T>}) {
     hasChildRows,
     level,
     selectionMode: state.selectionManager.selectionMode,
-    selectionBehavior: state.selectionManager.selectionBehavior
-  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level]);
+    selectionBehavior: state.selectionManager.selectionBehavior,
+    isFocusVisibleWithin
+  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level, isFocusVisibleWithin]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -389,6 +398,11 @@ function TreeRow<T>({item}: {item: Node<T>}) {
     onPress: () => {
       if (!states.isDisabled) {
         state.toggleKey(item.key);
+
+        if (!isFocusVisible) {
+          state.selectionManager.setFocused(true);
+          state.selectionManager.setFocusedKey(item.key);
+        }
       }
     },
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
@@ -427,7 +441,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   return (
     <>
       <div
-        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps)}
+        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, focusWithinProps)}
         {...renderProps}
         ref={ref}
         // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?

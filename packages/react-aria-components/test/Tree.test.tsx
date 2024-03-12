@@ -25,7 +25,7 @@ let StaticTreeItem = (props) => {
       <TreeItemContent>
         {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
           <>
-            {(selectionMode === 'multiple' || props.href != null) && selectionBehavior === 'toggle' && (
+            {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
               <Checkbox slot="selection" />
             )}
             {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
@@ -95,7 +95,7 @@ let DynamicTreeItem = (props) => {
       <TreeItemContent>
         {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
           <>
-            {(selectionMode === 'multiple' || props.href != null) && selectionBehavior === 'toggle' && (
+            {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
               <Checkbox slot="selection" />
             )}
             {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}

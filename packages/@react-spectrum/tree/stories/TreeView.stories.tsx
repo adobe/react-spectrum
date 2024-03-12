@@ -44,7 +44,6 @@ export default {
 };
 
 // TODO: audit the package json
-// TODO add href story and onAction story for static and dynamic
 // TODO: This story crashes on save and story switch, not sure why or if only local...
 export const TreeExampleStatic = (args: SpectrumTreeViewProps<unknown>) => (
   <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>

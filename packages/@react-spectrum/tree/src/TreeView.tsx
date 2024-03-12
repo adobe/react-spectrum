@@ -106,7 +106,11 @@ function TreeView<T extends object>(props: SpectrumTreeViewProps<T>, ref: DOMRef
   );
 }
 
-const treeRow = style<TreeItemRenderProps>({
+interface TreeRowRenderProps extends TreeItemRenderProps {
+  hasLink?: boolean
+}
+
+const treeRow = style<TreeRowRenderProps>({
   position: 'relative',
   display: 'flex',
   height: 8,
@@ -117,11 +121,14 @@ const treeRow = style<TreeItemRenderProps>({
   lineHeight: 200,
   color: 'body',
   outlineStyle: 'none',
-
+  cursor: {
+    default: 'default',
+    hasLink: 'pointer'
+  },
   // TODO: not sure where to get the equivalent colors here, for instance isHovered is spectrum 600 with 10% opacity but I don't think that exists in the theme
   backgroundColor: {
     isHovered: '[var(--spectrum-table-row-background-color-hover)]',
-    isFocused: '[var(--spectrum-table-row-background-color-hover)]',
+    isFocusVisibleWithin: '[var(--spectrum-table-row-background-color-hover)]',
     isPressed: '[var(--spectrum-table-row-background-color-down)]',
     isSelected: '[var(--spectrum-table-row-background-color-selected)]'
   }
@@ -203,7 +210,8 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
   let {
     children,
     childItems,
-    hasChildItems
+    hasChildItems,
+    href
   } = props;
 
   let content;
@@ -238,12 +246,14 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
     <TreeItem
       {...props}
       className={renderProps => treeRow({
-        ...renderProps
+        ...renderProps,
+        // TODO: for some reason this isn't applying the proper cursor even though it returns true...
+        hasLink: !!href
       })}>
       <TreeItemContent>
         {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
           <div className={treeCellGrid()}>
-            {selectionMode === 'multiple' && selectionBehavior === 'toggle' && (
+            {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
               <Checkbox
                 isEmphasized
