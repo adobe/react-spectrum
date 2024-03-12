@@ -73,7 +73,9 @@ export const ModalInteractionOutsideExample = () => {
     button.style.zIndex = '200';
     document.body.appendChild(button);
 
-    return () => document.body.removeChild(button);
+    return () => {
+      document.body.removeChild(button);
+    };
   }, []);
 
   return (
@@ -137,7 +139,9 @@ export const ModalInteractionOutsideDefaultOverlayExample = () => {
     button.style.right = '0';
     button.style.zIndex = '200';
     document.body.appendChild(button);
-    return () => document.body.removeChild(button);
+    return () => {
+      document.body.removeChild(button);
+    };
   }, []);
 
   return (
