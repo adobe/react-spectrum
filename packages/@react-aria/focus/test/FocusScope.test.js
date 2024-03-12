@@ -321,43 +321,6 @@ describe('FocusScope', function () {
 
       expect(document.activeElement).toBe(input2);
     });
-
-    it('should contain focus within the shadow DOM scope', async function () {
-      const {shadowRoot} = createShadowRoot();
-      const FocusableComponent = () => (
-        <FocusScope contain>
-          <input data-testid="input1" />
-          <input data-testid="input2" />
-          <input data-testid="input3" />
-        </FocusScope>
-      );
-
-      // Use ReactDOM to render directly into the shadow root
-      ReactDOM.render(<FocusableComponent />, shadowRoot);
-
-      const input1 = shadowRoot.querySelector('[data-testid="input1"]');
-      const input2 = shadowRoot.querySelector('[data-testid="input2"]');
-      const input3 = shadowRoot.querySelector('[data-testid="input3"]');
-
-      // Simulate focusing the first input
-      act(() => {input1.focus();});
-      expect(document.activeElement).toBe(shadowRoot.host);
-      expect(shadowRoot.activeElement).toBe(input1);
-
-      // Simulate tabbing through inputs
-      await user.tab();
-      expect(shadowRoot.activeElement).toBe(input2);
-
-      await user.tab();
-      expect(shadowRoot.activeElement).toBe(input3);
-
-      // Simulate tabbing back to the first input
-      await user.tab();
-      expect(shadowRoot.activeElement).toBe(input1);
-
-      // Cleanup
-      document.body.removeChild(shadowRoot.host);
-    });
   });
 
   describe('focus restoration', function () {
@@ -1659,6 +1622,119 @@ describe('FocusScope', function () {
 
       expect(document.activeElement).not.toBe(document.body);
       expect(document.activeElement.textContent).toBe('Open Menu');
+    });
+  });
+
+  describe('FocusScope with Shadow DOM', function () {
+    it('should contain focus within the shadow DOM scope', async function () {
+      const {shadowRoot} = createShadowRoot();
+      const FocusableComponent = () => (
+        <FocusScope contain>
+          <input data-testid="input1" />
+          <input data-testid="input2" />
+          <input data-testid="input3" />
+        </FocusScope>
+      );
+
+      // Use ReactDOM to render directly into the shadow root
+      ReactDOM.render(<FocusableComponent />, shadowRoot);
+
+      const input1 = shadowRoot.querySelector('[data-testid="input1"]');
+      const input2 = shadowRoot.querySelector('[data-testid="input2"]');
+      const input3 = shadowRoot.querySelector('[data-testid="input3"]');
+
+      // Simulate focusing the first input
+      act(() => {input1.focus();});
+      expect(document.activeElement).toBe(shadowRoot.host);
+      expect(shadowRoot.activeElement).toBe(input1);
+
+      // Simulate tabbing through inputs
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(input2);
+
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(input3);
+
+      // Simulate tabbing back to the first input
+      await user.tab();
+      expect(shadowRoot.activeElement).toBe(input1);
+
+      // Cleanup
+      document.body.removeChild(shadowRoot.host);
+      ReactDOM.unmountComponentAtNode(shadowRoot);
+    });
+
+    it('should manage focus within nested shadow DOMs', async function () {
+      const {shadowRoot: parentShadowRoot} = createShadowRoot();
+      const nestedDiv = document.createElement('div');
+      parentShadowRoot.appendChild(nestedDiv);
+      const childShadowRoot = nestedDiv.attachShadow({mode: 'open'});
+
+      // Use ReactDOM to render into the nested shadow DOM
+      ReactDOM.render((
+        <FocusScope contain>
+          <input data-testid="input1" />
+          <input data-testid="input2" />
+        </FocusScope>
+      ), childShadowRoot);
+
+      const input1 = childShadowRoot.querySelector('[data-testid=input1]');
+      const input2 = childShadowRoot.querySelector('[data-testid=input2]');
+
+      act(() => {input1.focus();});
+      expect(childShadowRoot.activeElement).toBe(input1);
+
+      await user.tab();
+      expect(childShadowRoot.activeElement).toBe(input2);
+
+      // Cleanup
+      document.body.removeChild(parentShadowRoot.host);
+    });
+
+    /**
+     * document.body
+     * ├── div#outside-shadow (contains <FocusScope restoreFocus>)
+     * │   ├── input (focus can be restored here)
+     * │   └── shadow-root
+     * │       └── Your custom elements and focusable elements here
+     * └── Other elements
+     */
+    it('should restore focus to the element outside shadow DOM on unmount, with FocusScope outside as well', async () => {
+      const App = () => (
+        <>
+          <FocusScope restoreFocus>
+            <input data-testid="outside" />
+          </FocusScope>
+          <div id="shadow-host" />
+        </>
+      );
+
+      const {getByTestId} = render(<App />);
+      const shadowHost = document.getElementById('shadow-host');
+      const shadowRoot = shadowHost.attachShadow({mode: 'open'});
+
+      const FocusableComponent = () => (
+        <FocusScope restoreFocus>
+          <input data-testid="input1" />
+          <input data-testid="input2" />
+          <input data-testid="input3" />
+        </FocusScope>
+      );
+
+      ReactDOM.render(<FocusableComponent />, shadowRoot);
+
+      const input1 = shadowRoot.querySelector('[data-testid="input1"]');
+      act(() => { input1.focus(); });
+      expect(shadowRoot.activeElement).toBe(input1);
+
+      const externalInput = getByTestId('outside');
+      act(() => { externalInput.focus(); });
+      expect(document.activeElement).toBe(externalInput);
+
+      ReactDOM.unmountComponentAtNode(shadowRoot);
+      act(() => { jest.runAllTimers(); });
+
+      expect(document.activeElement).toBe(externalInput);
     });
   });
 });

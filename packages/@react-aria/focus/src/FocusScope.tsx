@@ -12,7 +12,7 @@
 
 import {FocusableElement} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
-import {getRootBody} from '@react-aria/utils/src/domHelpers';
+import {getDeepActiveElement, getRootBody} from '@react-aria/utils/src/domHelpers';
 import {getRootNode, useLayoutEffect} from '@react-aria/utils';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
@@ -369,7 +369,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain?: boolean) 
       }
       raf.current = requestAnimationFrame(() => {
         // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
-        if (ownerDocument.activeElement && shouldContainFocus(scopeRef) && !isElementInChildScope(ownerDocument.activeElement, scopeRef)) {
+        if (getDeepActiveElement && shouldContainFocus(scopeRef) && !isElementInChildScope(getDeepActiveElement(), scopeRef)) {
           activeScope = scopeRef;
           if (getRootBody(ownerDocument).contains(e.target)) {
             focusedNode.current = e.target;
@@ -544,7 +544,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean, contain?: boolean) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
   // eslint-disable-next-line no-restricted-globals
-  const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? getRootNode(scopeRef.current ? scopeRef.current[0] : undefined).activeElement as FocusableElement : null);
+  const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? getDeepActiveElement() as FocusableElement : null);
 
   // restoring scopes should all track if they are active regardless of contain, but contain already tracks it plus logic to contain the focus
   // restoring-non-containing scopes should only care if they become active so they can perform the restore
@@ -559,7 +559,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
       // If focusing an element in a child scope of the currently active scope, the child becomes active.
       // Moving out of the active scope to an ancestor is not allowed.
       if ((!activeScope || isAncestorScope(activeScope, scopeRef)) &&
-      isElementInScope(ownerDocument.activeElement, scopeRef.current)
+      isElementInScope(getDeepActiveElement(), scopeRef.current)
       ) {
         activeScope = scopeRef;
       }

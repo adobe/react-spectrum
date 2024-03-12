@@ -39,3 +39,11 @@ export const getRootNode = (el: Element | null | undefined): Document | ShadowRo
 export const getRootBody = (root: Document | ShadowRoot): HTMLElement | ShadowRoot => {
   return root instanceof Document ? root.body : root;
 };
+
+export const getDeepActiveElement = () => {
+  let activeElement = document.activeElement;
+  while (activeElement.shadowRoot && activeElement.shadowRoot.activeElement) {
+    activeElement = activeElement.shadowRoot.activeElement;
+  }
+  return activeElement;
+};
