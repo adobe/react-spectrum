@@ -3,11 +3,11 @@ import {DialogTrigger} from '../src/DialogTrigger'; // where do we want to impor
 import {Button} from '../src/Button';
 import NewIcon from '../src/wf-icons/New';
 import type {Meta, StoryObj} from '@storybook/react';
-import {Content, Heading} from '../src/Content';
+import {Content, Footer, Heading} from '../src/Content';
 import {TextField} from '../src/TextField';
 import {Form} from '../src/Form';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {Dialog} from '../src/Dialog';
+import {ButtonGroup} from '../src';
 // this Dialog has a lot of styles and conditional rendering, where do we actually want to get this from?
 // a different one for Popovers?
 // this is the current API for v3
@@ -25,9 +25,16 @@ type Story = StoryObj<typeof Popover>;
 
 export const Example: Story = {
   render: (args: any) => {
-    let {placement, hideArrow, shouldFlip, ...props} = args;
+    let {placement, hideArrow, shouldFlip, isOpen, onOpenChange, defaultOpen, ...props} = args;
     return (
-      <DialogTrigger type="popover" placement={placement} hideArrow={hideArrow} shouldFlip={shouldFlip}>
+      <DialogTrigger
+        type="popover"
+        placement={placement}
+        hideArrow={hideArrow}
+        shouldFlip={shouldFlip}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        defaultOpen={defaultOpen}>
         <Button aria-label="Help"><NewIcon /></Button>
         <Dialog {...props}>
           <Heading slot="title">Help</Heading>
@@ -35,9 +42,13 @@ export const Example: Story = {
             <Form>
               <TextField label="First Name" name="firstName" />
               <TextField label="Last Name" name="firstName" />
-              <Button type="submit" variant="primary" css={style({gridColumnStart: 'field', width: 'fit'})}>Submit</Button>
             </Form>
           </Content>
+          <Footer>
+            <ButtonGroup>
+              <Button type="submit" variant="primary">Submit</Button>
+            </ButtonGroup>
+          </Footer>
         </Dialog>
       </DialogTrigger>
     );

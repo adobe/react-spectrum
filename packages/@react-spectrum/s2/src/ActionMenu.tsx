@@ -37,11 +37,13 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
         <MoreIcon />
       </ActionButton>
       <Menu
-        children={props.children}
         items={props.items}
         disabledKeys={props.disabledKeys}
         onAction={props.onAction}
-        size={props.size} />
+        size={props.size}>
+        {/* @ts-ignore TODO: fix type, right now this component is the same as Menu */}
+        {props.children}
+      </Menu>
     </MenuTrigger>
   );
 }

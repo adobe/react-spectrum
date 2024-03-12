@@ -239,3 +239,25 @@ export const BlendModes: Story = {
     );
   }
 };
+
+interface IExampleItem {
+  id: string,
+  label: string
+}
+let items: IExampleItem[] = [
+  {id: 'cut', label: 'Cut'},
+  {id: 'copy', label: 'Copy'},
+  {id: 'paste', label: 'Paste'}
+];
+export const DynamicExample: Story = {
+  render: (args) => {
+    return (
+      <Menu {...args}>
+        {(item) => <MenuItem id={(item as IExampleItem).id}>{(item as IExampleItem).label}</MenuItem>}
+      </Menu>
+    );
+  },
+  args: {
+    items
+  }
+};

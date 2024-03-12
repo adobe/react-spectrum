@@ -18,7 +18,7 @@ import {style, baseColor, edgeToText, fontRelative, size, space} from '../style-
 import {mergeStyles} from '../style-macro/runtime';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
-import {createContext, ReactNode, useContext, useRef} from 'react';
+import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {IconContext} from './Icon';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from './wf-icons/ChevronRight';
@@ -36,7 +36,7 @@ export interface MenuTriggerProps extends AriaMenuTriggerProps {
 
 export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className'>, StyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
-  children?: ReactNode | ((item: T) => ReactNode) // until we export CollectionProps
+  children?: ReactNode | ((item: T) => ReactNode)
 }
 
 // needed to round the corners of the scroll bar, it can't be popover because that hides the submenu as well
@@ -46,8 +46,7 @@ let menuWrapper = style({
   overflow: 'hidden',
   borderRadius: 'lg',
   // extends the area so the overflow hidden doesn't clip too close
-  padding: 8,
-  margin: -8
+  padding: 8
 });
 
 let menu = style({
@@ -244,7 +243,7 @@ let descriptor = style({
 let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
 let InternalMenuTriggerContext = createContext<MenuTriggerProps>({});
 
-export function Menu<T extends object>(props: MenuProps<T>) {
+function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLElement>) {
   let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
   let {
     children,
@@ -273,6 +272,7 @@ export function Menu<T extends object>(props: MenuProps<T>) {
 
   return (
     <Popover
+      ref={ref}
       hideArrow
       placement={initialPlacement}
       shouldFlip={shouldFlip}
@@ -308,6 +308,9 @@ export function Menu<T extends object>(props: MenuProps<T>) {
     </Popover>
   );
 }
+
+let _Menu = forwardRef(Menu);
+export {_Menu as Menu};
 
 export function MenuSection<T extends object>(props: SectionProps<T>) {
   // remember, context doesn't work if it's around Section nor inside

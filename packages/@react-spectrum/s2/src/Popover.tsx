@@ -8,6 +8,7 @@ import {
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {Ref, forwardRef} from 'react';
 
 export interface PopoverProps extends Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition' | 'className' | 'style'>, StyleProps {
   hideArrow?: boolean
@@ -65,7 +66,6 @@ let popover = style<PopoverRenderProps & {isArrowShown: boolean}>({
     value: 'layer-2'
   },
   backgroundColor: '--popoverBackground',
-  padding: 8,
   borderRadius: 'lg',
   filter: 'elevated-light',
   borderStyle: {
@@ -144,7 +144,7 @@ let arrow = style({
   }
 });
 
-export function Popover(props: PopoverProps) {
+function Popover(props: PopoverProps, ref: Ref<HTMLElement>) {
   let {
     hideArrow = false,
     UNSAFE_className = '',
@@ -155,6 +155,7 @@ export function Popover(props: PopoverProps) {
   return (
     <AriaPopover
       {...props}
+      ref={ref}
       style={UNSAFE_style}
       className={(renderProps) => UNSAFE_className + popover({...renderProps, isArrowShown: !hideArrow}, css)}>
       {composeRenderProps(props.children, (children, renderProps) => (
@@ -172,3 +173,6 @@ export function Popover(props: PopoverProps) {
     </AriaPopover>
   );
 }
+
+let _Popover = forwardRef(Popover);
+export {_Popover as Popover};
