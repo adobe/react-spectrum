@@ -18,7 +18,7 @@ import React, {createContext, ReactElement, ReactNode, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import toastContainerStyles from './toastContainer.css';
 import {ToastState} from '@react-stately/toast';
-import {useFocusRing} from '@react-aria/focus';
+import {useFocusRing, FocusScope} from '@react-aria/focus';
 
 interface ToastContainerProps extends AriaToastRegionProps {
   children: ReactNode,
@@ -40,17 +40,19 @@ export function Toaster(props: ToastContainerProps): ReactElement {
   let contents = (
     <Provider UNSAFE_style={{background: 'transparent'}}>
       <ToasterContext.Provider value={isFocusVisible}>
-        <div
-          {...mergeProps(regionProps, focusProps)}
-          ref={ref}
-          data-position="bottom"
-          data-placement="center"
-          className={classNames(
-            toastContainerStyles,
-            'react-spectrum-ToastContainer'
-          )}>
-          {children}
-        </div>
+        <FocusScope restoreFocus>
+          <div
+            {...mergeProps(regionProps, focusProps)}
+            ref={ref}
+            data-position="bottom"
+            data-placement="center"
+            className={classNames(
+              toastContainerStyles,
+              'react-spectrum-ToastContainer'
+            )}>
+            {children}
+          </div>
+        </FocusScope>
       </ToasterContext.Provider>
     </Provider>
   );

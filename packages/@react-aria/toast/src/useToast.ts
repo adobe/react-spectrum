@@ -17,6 +17,7 @@ import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
 import {RefObject, useEffect, useRef} from 'react';
 import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
+import {useFocusManager} from '@react-aria/focus';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
@@ -46,6 +47,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     timeout,
     animation
   } = props.toast;
+  let focusManager = useFocusManager();
 
   useEffect(() => {
     if (!timer) {
@@ -87,6 +89,18 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   let descriptionId = useSlotId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
 
+  let onClosePress = (e) => {
+    state.close(key);
+    // Only move focus when there is another Toast. At this point,
+    // state.visibleToasts still includes Toast being removed.
+    if (state.visibleToasts.length > 1) {
+      let nextItemFocused = focusManager.focusNext();
+      if (!nextItemFocused || Object.keys(nextItemFocused).length === 0) {
+        focusManager.focusPrevious();
+      }
+    }
+  }
+
   return {
     toastProps: {
       role: 'alert',
@@ -105,7 +119,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     },
     closeButtonProps: {
       'aria-label': stringFormatter.format('close'),
-      onPress: () => state.close(key)
+      onPress: onClosePress
     }
   };
 }

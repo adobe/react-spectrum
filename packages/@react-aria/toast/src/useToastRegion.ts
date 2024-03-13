@@ -1,3 +1,4 @@
+import {announce} from '@react-aria/live-announcer';
 import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
 import {focusWithoutScrolling, mergeProps} from '@react-aria/utils';
 import {getInteractionModality, useFocusWithin, useHover} from '@react-aria/interactions';
@@ -42,6 +43,11 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
     onFocusWithin: (e) => {
       state.pauseAll();
       lastFocused.current = e.relatedTarget;
+      if (ref.current === document.activeElement) {
+        let count: number = state.visibleToasts.length || 0;
+        let announcement = stringFormatter.format('countAnnouncement', {count});
+        announce(announcement);
+      }
     },
     onBlurWithin: () => {
       state.resumeAll();
