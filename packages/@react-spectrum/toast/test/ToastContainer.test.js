@@ -247,10 +247,11 @@ describe('Toast Provider and Container', function () {
     triggerPress(closeButton);
     fireAnimationEnd(toast);
 
-    expect(document.activeElement).toBe(document.body);
-
     toast = getByRole('alert');
     closeButton = within(toast).getByRole('button');
+
+    expect(document.activeElement).toBe(closeButton);
+
     triggerPress(closeButton);
     fireAnimationEnd(toast);
 

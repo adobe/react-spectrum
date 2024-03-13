@@ -93,7 +93,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     state.close(key);
     // Only move focus when there is another Toast. At this point,
     // state.visibleToasts still includes Toast being removed.
-    if (state.visibleToasts.length > 1) {
+    if (state.visibleToasts?.length > 1) {
       let nextItemFocused = focusManager.focusNext();
       if (!nextItemFocused || Object.keys(nextItemFocused).length === 0) {
         focusManager.focusPrevious();
