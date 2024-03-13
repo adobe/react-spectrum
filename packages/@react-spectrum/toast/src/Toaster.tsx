@@ -19,7 +19,6 @@ import React, {createContext, ReactElement, ReactNode, useRef} from 'react';
 import ReactDOM from 'react-dom';
 import toastContainerStyles from './toastContainer.css';
 import {ToastState} from '@react-stately/toast';
-import {useFocusRing, FocusScope} from '@react-aria/focus';
 
 interface ToastContainerProps extends AriaToastRegionProps {
   children: ReactNode,
