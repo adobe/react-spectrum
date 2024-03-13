@@ -319,7 +319,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain?: boolean) 
         return;
       }
 
-      let focusedElement = ownerDocument.activeElement;
+      let focusedElement = getDeepActiveElement();
       let scope = scopeRef.current;
       if (!scope || !isElementInScope(focusedElement, scope)) {
         return;
@@ -368,8 +368,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain?: boolean) 
         cancelAnimationFrame(raf.current);
       }
       raf.current = requestAnimationFrame(() => {
-        // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
-        if (getDeepActiveElement && shouldContainFocus(scopeRef) && !isElementInChildScope(getDeepActiveElement(), scopeRef)) {
+        if (getDeepActiveElement() && shouldContainFocus(scopeRef) && !isElementInChildScope(getDeepActiveElement(), scopeRef)) {
           activeScope = scopeRef;
           if (getRootBody(ownerDocument).contains(e.target)) {
             focusedNode.current = e.target;
@@ -490,8 +489,7 @@ function useAutoFocus(scopeRef: RefObject<Element[]>, autoFocus?: boolean) {
   useEffect(() => {
     if (autoFocusRef.current) {
       activeScope = scopeRef;
-      const ownerDocument = getRootNode(scopeRef.current ? scopeRef.current[0] : undefined);
-      if (!isElementInScope(ownerDocument.activeElement, activeScope.current) && scopeRef.current) {
+      if (!isElementInScope(getDeepActiveElement(), activeScope.current) && scopeRef.current) {
         focusFirstInScope(scopeRef.current);
       }
     }
@@ -590,7 +588,8 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
         return;
       }
 
-      let focusedElement = ownerDocument.activeElement as FocusableElement;
+      let focusedElement = getDeepActiveElement() as FocusableElement;
+
       if (!isElementInScope(focusedElement, scopeRef.current)) {
         return;
       }
@@ -673,21 +672,33 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
       }
       let nodeToRestore = treeNode.nodeToRestore;
 
+      const activeElement = getDeepActiveElement();
+
       // if we already lost focus to the body and this was the active scope, then we should attempt to restore
       if (
         restoreFocus
         && nodeToRestore
         && (
           // eslint-disable-next-line react-hooks/exhaustive-deps
-          isElementInScope(ownerDocument.activeElement, scopeRef.current)
-          || (ownerDocument.activeElement === rootBody && shouldRestoreFocus(scopeRef))
+          isElementInScope(activeElement, scopeRef.current)
+          || (activeElement === rootBody && shouldRestoreFocus(scopeRef))
         )
       ) {
         // freeze the focusScopeTree so it persists after the raf, otherwise during unmount nodes are removed from it
         let clonedTree = focusScopeTree.clone();
         requestAnimationFrame(() => {
-          // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
-          if (ownerDocument.activeElement === rootBody) {
+          const activeElement = getDeepActiveElement();
+          let focusOutsideScope;
+
+          if (rootBody instanceof ShadowRoot) {
+            // In Shadow DOM, check if the active element is outside the shadow root. This includes the scenario where focus has moved to the shadow host.
+            focusOutsideScope = !rootBody.contains(activeElement) || activeElement === rootBody.host;
+          } else {
+            // In Light DOM, check if focus has moved to the body, indicating it's outside your component.
+            focusOutsideScope = activeElement === rootBody;
+          }
+
+          if (focusOutsideScope) {
             // look up the tree starting with our scope to find a nodeToRestore still in the DOM
             let treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {

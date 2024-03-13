@@ -21,14 +21,6 @@ import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
 
-
-function createShadowRoot() {
-  const div = document.createElement('div');
-  document.body.appendChild(div);
-  const shadowRoot = div.attachShadow({mode: 'open'});
-  return {shadowHost: div, shadowRoot};
-}
-
 describe('FocusScope', function () {
   let user;
 
@@ -1626,6 +1618,14 @@ describe('FocusScope', function () {
   });
 
   describe('FocusScope with Shadow DOM', function () {
+
+    function createShadowRoot() {
+      const div = document.createElement('div');
+      document.body.appendChild(div);
+      const shadowRoot = div.attachShadow({mode: 'open'});
+      return {shadowHost: div, shadowRoot};
+    }
+
     it('should contain focus within the shadow DOM scope', async function () {
       const {shadowRoot} = createShadowRoot();
       const FocusableComponent = () => (
