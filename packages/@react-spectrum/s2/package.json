@@ -44,7 +44,8 @@
     "build:icons": "node scripts/buildIcons.mjs",
     "postinstall": "patch-package && yarn build:icons",
     "build": "parcel build && rm -rf dist/page.js*",
-    "prepare": "husky"
+    "prepare": "husky",
+    "chromatic": "yarn chromatic --project-token=$RAINBOW_CHROMATIC_PROJECT_TOKEN"
   },
   "devDependencies": {
     "@adobe/spectrum-tokens": "^13.0.0-beta.18",
@@ -77,6 +78,7 @@
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
+    "chromatic": "^11.0.8",
     "colorjs.io": "^0.4.5",
     "eslint": "^8.38.0",
     "eslint-plugin-import": "^2.27.5",
