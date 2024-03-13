@@ -235,7 +235,7 @@ describe('Toast Provider and Container', function () {
     expect(document.activeElement).toBe(button);
   });
 
-  it('should move focus to body when a toast exits and there are more', () => {
+  it('should move focus to remaining toast close button when a toast exits and there are more', () => {
     let {getAllByRole, getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
