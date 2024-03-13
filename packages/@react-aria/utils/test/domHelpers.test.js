@@ -11,7 +11,8 @@
  */
 
 
-import {getOwnerWindow, getRootNode} from '../';
+import {act} from 'react-dom/test-utils';
+import {getDeepActiveElement, getOwnerWindow, getRootNode} from '../';
 import React, {createRef} from 'react';
 import {render} from '@react-spectrum/test-utils';
 
@@ -144,5 +145,76 @@ describe('getOwnerWindow', () => {
 
     // Teardown
     iframe.remove();
+  });
+});
+
+describe('getDeepActiveElement', () => {
+  it('returns the body as the active element by default', () => {
+    act(() => {document.body.focus();}); // Ensure the body is focused, clearing any specific active element
+    expect(getDeepActiveElement()).toBe(document.body);
+  });
+
+  it('returns the active element in the light DOM', () => {
+    const btn = document.createElement('button');
+    document.body.appendChild(btn);
+    act(() => {btn.focus();});
+    expect(getDeepActiveElement()).toBe(btn);
+    document.body.removeChild(btn);
+  });
+
+  it('returns the active element inside a shadow DOM', () => {
+    const div = document.createElement('div');
+    const shadowRoot = div.attachShadow({mode: 'open'});
+    const btnInShadow = document.createElement('button');
+
+    shadowRoot.appendChild(btnInShadow);
+    document.body.appendChild(div);
+
+    act(() => {btnInShadow.focus();});
+
+    expect(getDeepActiveElement()).toBe(btnInShadow);
+
+    document.body.removeChild(div);
+  });
+
+  it('returns the active element from within nested shadow DOMs', () => {
+    const outerHost = document.createElement('div');
+    const outerShadow = outerHost.attachShadow({mode: 'open'});
+    const innerHost = document.createElement('div');
+
+    outerShadow.appendChild(innerHost);
+
+    const innerShadow = innerHost.attachShadow({mode: 'open'});
+    const input = document.createElement('input');
+
+    innerShadow.appendChild(input);
+    document.body.appendChild(outerHost);
+
+    act(() => {input.focus();});
+
+    expect(getDeepActiveElement()).toBe(input);
+
+    document.body.removeChild(outerHost);
+  });
+
+  it('returns the active element in document after focusing an element in shadow DOM and then in document', () => {
+    const hostDiv = document.createElement('div');
+
+    document.body.appendChild(hostDiv);
+
+    const shadowRoot = hostDiv.attachShadow({mode: 'open'});
+    const shadowInput = document.createElement('input');
+    const bodyInput = document.createElement('input');
+
+    shadowRoot.appendChild(shadowInput);
+    document.body.appendChild(bodyInput);
+
+    act(() => {shadowInput.focus();});
+    act(() => {bodyInput.focus();});
+
+    expect(getDeepActiveElement()).toBe(bodyInput);
+
+    document.body.removeChild(hostDiv);
+    document.body.removeChild(bodyInput);
   });
 });
