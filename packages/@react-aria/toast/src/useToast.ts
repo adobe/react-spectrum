@@ -16,8 +16,8 @@ import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/s
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
 import {RefObject, useEffect, useRef} from 'react';
-import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {useFocusManager} from '@react-aria/focus';
+import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaToastProps<T> extends AriaLabelingProps {
@@ -89,7 +89,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   let descriptionId = useSlotId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
 
-  let onClosePress = (e) => {
+  let onClosePress = () => {
     state.close(key);
     // Only move focus when there is another Toast. At this point,
     // state.visibleToasts still includes Toast being removed.
@@ -99,7 +99,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
         focusManager.focusPrevious();
       }
     }
-  }
+  };
 
   return {
     toastProps: {
