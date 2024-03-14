@@ -118,6 +118,7 @@ export interface UnsafeStyles {
 }
 
 export interface StyleProps extends UnsafeStyles {
+  /** Spectrum-defined styles, returned by the `style()` macro. */
   css?: CSSProp
 }
 

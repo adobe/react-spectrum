@@ -23,7 +23,8 @@ const meta: Meta<typeof TagGroup> = {
     onRemove: {
       control: {type: 'boolean'}
     }
-  }
+  },
+  tags: ['autodocs']
 };
 
 export default meta;

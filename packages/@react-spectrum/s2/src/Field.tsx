@@ -215,7 +215,7 @@ interface HelpTextProps extends FieldErrorProps {
   size?: 'S' | 'M' | 'L' | 'XL',
   isDisabled?: boolean,
   isInvalid?: boolean, // TODO: export FieldErrorContext from RAC to get this.
-  description?: string,
+  description?: ReactNode,
   showErrorIcon?: boolean
 }
 

@@ -7,7 +7,9 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {StyleProps} from './style-utils';
 
 interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children'>, StyleProps, ActionButtonStyleProps {
+  /** The content to display in the button. */
   children?: ReactNode,
+  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean
 }
 
@@ -28,6 +30,10 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
   );
 }
 
+/**
+ * ToggleButtons allow users to toggle a selection on or off, for example
+ * switching between two states or modes.
+ */
 let _ToggleButton = forwardRef(ToggleButton);
 export {_ToggleButton as ToggleButton};
 

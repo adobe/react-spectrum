@@ -2,27 +2,28 @@ import {
   TextField as AriaTextField,
   TextFieldProps as AriaTextFieldProps,
   TextArea as AriaTextArea,
-  ValidationResult,
   composeRenderProps,
   TextAreaContext,
   useSlottedContext,
-  InputContext,
-  Provider
+  InputContext
 } from 'react-aria-components';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {StyleProps, centerPadding, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {SpectrumLabelableProps} from '@react-types/shared';
-import {useContext, Ref, forwardRef, useRef, useImperativeHandle} from 'react';
+import {SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
+import {useContext, Ref, forwardRef, useRef, useImperativeHandle, ReactNode} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {TextFieldRef} from '@react-types/textfield';
 import {createFocusableRef} from '@react-spectrum/utils';
 import {StyleString} from '../style-macro/types';
+import {mergeRefs} from '@react-aria/utils';
 
-export interface TextFieldProps extends Omit<AriaTextFieldProps, 'className' | 'style'>, StyleProps, SpectrumLabelableProps {
-  label?: string,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string),
+export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style'>, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps {
+  /**
+   * The size of the text field.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
@@ -36,10 +37,17 @@ function TextField(props: TextFieldProps, ref: Ref<TextFieldRef>) {
   );
 }
 
+/**
+ * TextFields are text inputs that allow users to input custom text entries
+ * with a keyboard. Various decorations can be displayed around the field to
+ * communicate the entry requirements.
+ */
 let _TextField = forwardRef(TextField);
 export {_TextField as TextField};
 
-function TextArea(props: TextFieldProps, ref: Ref<TextFieldRef>) {
+export interface TextAreaProps extends Omit<TextFieldProps, 'type' | 'pattern'> {}
+
+function TextArea(props: TextAreaProps, ref: Ref<TextFieldRef>) {
   return (
     <_TextFieldBase 
       {...props}
@@ -53,10 +61,15 @@ function TextArea(props: TextFieldProps, ref: Ref<TextFieldRef>) {
   );
 }
 
+/**
+ * TextAreas are multiline text inputs, useful for cases where users have
+ * a sizable amount of text to enter. They allow for all customizations that
+ * are available to text fields.
+ */
 let _TextArea = forwardRef(TextArea);
 export {_TextArea as TextArea};
 
-function TextFieldBase(props: TextFieldProps & {fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef>) {
+function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupCss?: StyleString}, ref: Ref<TextFieldRef>) {
   let inputRef = useRef<HTMLInputElement>(null);
   let domRef = useRef<HTMLDivElement>(null);
   let formContext = useContext(FormContext);
@@ -110,10 +123,13 @@ function TextFieldBase(props: TextFieldProps & {fieldGroupCss?: StyleString}, re
         </FieldLabel>
         {/* TODO: set GroupContext in RAC TextField */}
         <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size} css={fieldGroupCss}>
-          <Provider
-            values={[[InputContext, {ref: inputRef}]]}>
-            {children}
-          </Provider>
+          <InputContext.Consumer>
+            {ctx => (
+              <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>
+                {children}
+              </InputContext.Provider>
+            )}
+          </InputContext.Consumer>
           {isInvalid && <FieldErrorIcon />}
         </FieldGroup>
         <HelpText 
@@ -129,7 +145,6 @@ function TextFieldBase(props: TextFieldProps & {fieldGroupCss?: StyleString}, re
 }
 
 let _TextFieldBase = forwardRef(TextFieldBase);
-export {_TextFieldBase as TextFieldBase};
 
 function TextAreaInput() {
   // Force re-render when value changes so we update the height.

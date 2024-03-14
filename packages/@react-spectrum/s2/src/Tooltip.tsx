@@ -11,7 +11,8 @@ import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 import {UnsafeStyles, centerPadding} from './style-utils' with {type: 'macro'};
 
-export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style'>, UnsafeStyles {
+export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'UNSTABLE_portalContainer'>, UnsafeStyles {
+  /** The content of the tooltip. */
   children: ReactNode
 }
 
@@ -135,6 +136,9 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * Display container for Tooltip content. Has a directional arrow dependent on its placement.
+ */
 let _Tooltip = forwardRef(Tooltip);
 export {_Tooltip as Tooltip};
 

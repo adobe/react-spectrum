@@ -18,18 +18,28 @@ import {fontRelative, style} from '../style-macro/spectrum-theme' with { type: '
 import {pressScale} from './pressScale';
 import {createContext, useContext, useRef, forwardRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
+import {forwardRefType} from './types';
 
 // Get types from RSP and extend those?
 
 interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
+  /** The children of the tag. */
   children?: ReactNode
 }
 
-export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired'>, StyleProps {
-  label?: string,
-  description?: string,
+export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | 'style' | 'className'>, Pick<TagListProps<T>, 'items' | 'children' | 'renderEmptyState'>, Omit<SpectrumLabelableProps, 'isRequired' | 'necessityIndicator' | 'contextualHelp'>, StyleProps {
+  /** A description for the tag group. */
+  description?: ReactNode,
+  /**
+   * The size of the tag group.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L',
-  isEmphasized?: boolean
+  /** Whether the tags are displayed in an emphasized style. */
+  isEmphasized?: boolean,
+  /** Provides content to display when there are no items in the tag group. */
+  renderEmptyState?: () => ReactNode
 }
 
 const TagGroupContext = createContext<TagGroupProps<any>>({});
@@ -70,8 +80,7 @@ function TagGroup<T extends object>(
       <FieldLabel
         size={size}
         labelPosition={labelPosition}
-        labelAlign={labelAlign}
-        necessityIndicator={props.necessityIndicator}>
+        labelAlign={labelAlign}>
         {label}
       </FieldLabel>
       <div
@@ -110,7 +119,8 @@ function TagGroup<T extends object>(
   );
 }
 
-let _TagGroup = forwardRef(TagGroup);
+/** Tags allow users to categorize content. They can represent keywords or people, and are grouped to describe an item or a search request. */
+let _TagGroup = /*#__PURE__*/ (forwardRef as forwardRefType)(TagGroup);
 export {_TagGroup as TagGroup};
 
 const tagStyles = style({
