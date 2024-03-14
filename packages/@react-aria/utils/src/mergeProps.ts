@@ -64,7 +64,7 @@ export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersectio
         result[key] = clsx(a, b);
       } else if (key === 'id' && a && b) {
         result.id = mergeIds(a, b);
-      } else if (key === 'style' && a && b) {
+      } else if (key === 'style' && typeof a === 'object' &&  typeof b === 'object') {
         result.style = {...a, ...b};
       } else {
         // Override others
