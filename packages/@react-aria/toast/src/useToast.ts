@@ -109,7 +109,8 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
       'aria-describedby': props['aria-describedby'] || descriptionId,
       'aria-details': props['aria-details'],
       // Hide toasts that are animating out so VoiceOver doesn't announce them.
-      'aria-hidden': animation === 'exiting' ? 'true' : undefined
+      'aria-hidden': animation === 'exiting' ? 'true' : undefined,
+      tabIndex: 0
     },
     titleProps: {
       id: titleId
