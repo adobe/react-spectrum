@@ -116,7 +116,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
       outline: {
         default: 'transparent',
         isHovered: 'gray-100',
-        isPressed: 'gray-100'
+        isPressed: 'gray-100',
+        isFocusVisible: 'gray-100'
       }
     },
     staticColor: {
@@ -132,7 +133,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           outline: {
             default: 'transparent',
             isHovered: 'transparent-white-100',
-            isPressed: 'transparent-white-100'
+            isPressed: 'transparent-white-100',
+            isFocusVisible: 'transparent-white-100'
           }
         }
       },
@@ -148,7 +150,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
           outline: {
             default: 'transparent',
             isHovered: 'transparent-black-100',
-            isPressed: 'transparent-black-100'
+            isPressed: 'transparent-black-100',
+            isFocusVisible: 'transparent-black-100'
           }
         }
       }
@@ -175,7 +178,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         },
         isDisabled: 'disabled'
       },
-      outline: 'neutral'
+      outline: {
+        default: 'neutral',
+        isDisabled: 'disabled'
+      }
     },
     staticColor: {
       white: {
@@ -231,7 +237,7 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   let domRef = useFocusableRef(ref);
   let ctx = useContext(ButtonContext);
   props = mergeProps(ctx, props);
-  
+
   return (
     <RACButton
       {...props}
