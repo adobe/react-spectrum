@@ -235,7 +235,7 @@ describe('Toast Provider and Container', function () {
     expect(document.activeElement).toBe(button);
   });
 
-  it('should move focus to remaining toast close button when a toast exits and there are more', () => {
+  it('should move focus to remaining toast when a toast exits and there are more', () => {
     let {getAllByRole, getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
@@ -248,10 +248,9 @@ describe('Toast Provider and Container', function () {
     fireAnimationEnd(toast);
 
     toast = getByRole('alert');
+    expect(document.activeElement).toBe(toast);
+
     closeButton = within(toast).getByRole('button');
-
-    expect(document.activeElement).toBe(closeButton);
-
     triggerPress(closeButton);
     fireAnimationEnd(toast);
 
