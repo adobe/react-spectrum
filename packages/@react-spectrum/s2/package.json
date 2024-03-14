@@ -19,7 +19,8 @@
       "import": "./dist/import.mjs",
       "require": "./dist/main.js"
     },
-    "./page.css": "./dist/page.css"
+    "./page.css": "./dist/page.css",
+    "./style-macro/*": "./style-macro/*"
   },
   "targets": {
     "module": {},
