@@ -8,9 +8,17 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 export interface ProgressCircleStyleProps {
+  /**
+   * The size of the ProgressCircle.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L',
-  // TODO: not sure if black exists, not in the designs
+  /** The static color style to apply. Useful when the button appears over a color background. */
   staticColor?: 'black' | 'white',
+  /**
+   * Whether presentation is indeterminate when progress isn't known.
+   */
   isIndeterminate?: boolean
 
 }

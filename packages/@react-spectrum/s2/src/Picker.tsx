@@ -3,6 +3,7 @@ import {
   Button,
   ButtonRenderProps,
   ListBox,
+  ListBoxProps,
   ListBoxItem,
   ListBoxItemProps,
   Popover,
@@ -23,12 +24,17 @@ import React, {useContext, useRef} from 'react';
 import {SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
 
 export interface PickerStyleProps {
+  /**
+   * The size of the Picker.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /** Whether the picker should be displayed with a quiet style. */
   isQuiet?: boolean
 }
 
-export interface PickerProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>, PickerStyleProps, SpectrumLabelableProps, StyleProps, HelpTextProps {
-  items?: Iterable<T>,
+export interface PickerProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>, PickerStyleProps, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps, Pick<ListBoxProps<T>, 'items'> {
   children: React.ReactNode | ((item: T) => React.ReactNode)
 }
 

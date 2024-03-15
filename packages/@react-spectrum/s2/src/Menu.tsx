@@ -29,13 +29,31 @@ import {Placement} from 'react-aria';
 // need to strip id's from icons
 
 export interface MenuTriggerProps extends AriaMenuTriggerProps {
+  /**
+   * Alignment of the menu relative to the trigger.
+   * @default 'start'
+   */
   align?: 'start' | 'end',
+  /**
+   * Where the Menu opens relative to its trigger.
+   * @default 'bottom'
+   */
   direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
+  /**
+   * Whether the menu should automatically flip direction when space is limited.
+   * @default true
+   */
   shouldFlip?: boolean
 }
 
-export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className'>, StyleProps {
+export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style' | 'className' | 'dependencies'>, StyleProps {
+  /**
+   * The size of the Menu.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /** The contents of the collection. */
   children?: ReactNode | ((item: T) => ReactNode)
 }
 

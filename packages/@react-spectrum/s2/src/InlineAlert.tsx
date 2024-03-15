@@ -14,7 +14,7 @@ import AlertTriangle from './wf-icons/AlertTriangle';
 import CheckmarkCircle from './wf-icons/CheckmarkCircle';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
-import {CSSProp, UnsafeStyles, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import InfoCircle from './wf-icons/InfoCircle';
 import React, {ReactNode, useEffect, useRef} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -23,7 +23,7 @@ import {useFocusRing} from 'react-aria';
 import {Provider, HeadingContext} from 'react-aria-components';
 import {ContentContext} from './Content';
 
-export interface SpectrumInlineAlertProps extends DOMProps, UnsafeStyles, InlineStylesProps {
+export interface SpectrumInlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
   /**
    * The contents of the Inline Alert.
    */
@@ -31,8 +31,7 @@ export interface SpectrumInlineAlertProps extends DOMProps, UnsafeStyles, Inline
   /**
    * Whether to automatically focus the Inline Alert when it first renders.
    */
-  autoFocus?: boolean,
-  css?: CSSProp
+  autoFocus?: boolean
 }
 
 interface InlineStylesProps {

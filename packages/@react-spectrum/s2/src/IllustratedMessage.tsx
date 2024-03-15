@@ -21,14 +21,26 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {ButtonGroupContext} from './ButtonGroup';
 import {CSSPropWithHeight, getAllowedOverrides, UnsafeStyles} from './style-utils' with {type: 'macro'};
 
-interface S2SpectrumIllustratedMessageProps extends DOMProps, UnsafeStyles, IllustratedMessageStyleProps {
-  css?: CSSPropWithHeight,
-  children: ReactNode
+interface IllustratedMessageStyleProps {
+  /**
+   * The size of the IllustratedMessage.
+   *
+   * @default "M"
+   */
+  size?: 'S' | 'M' | 'L',
+  /**
+   * The direction that the IllustratedMessage should be laid out in.
+   *
+   * @default 'horizontal'
+   */
+  orientation?: 'horizontal' | 'vertical'
 }
 
-interface IllustratedMessageStyleProps {
-  size?: 'S' | 'M' | 'L',
-  orientation?: 'horizontal' | 'vertical'
+interface S2SpectrumIllustratedMessageProps extends DOMProps, UnsafeStyles, IllustratedMessageStyleProps {
+  /** Spectrum-defined styles, returned by the `style()` macro. */
+  css?: CSSPropWithHeight,
+  /** The content to display in the IllustratedMessage. */
+  children: ReactNode
 }
 
 const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: boolean}>({
@@ -91,7 +103,7 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
 const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolean, isDropTarget?: boolean}>({
   gridArea: 'illustration',
   size: {
-    size: { 
+    size: {
       S: 96,
       M: 96,
       L: 160
@@ -100,7 +112,7 @@ const illustration = style<IllustratedMessageStyleProps & {isInDropZone?: boolea
   alignSelf: 'center',
   color: {
     // TODO: ask design about what the color should be. Says gray-800 in the figma file, neutral in token spec, but different neutral in dropzone spec
-    default: 'gray-800', 
+    default: 'gray-800',
     isInDropZone: 'gray-500', // neutral doesn't seem to match the color in figma, opted for gray-500 instead
     isDropTarget: 'accent'
   }
@@ -163,7 +175,7 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
         orientation: props.orientation || 'horizontal'
       }, props.css)}
       ref={domRef}>
-      <Provider 
+      <Provider
         values={[
           [HeadingContext, {className: heading({orientation, size})}],
           [ContentContext, {className: content}],
