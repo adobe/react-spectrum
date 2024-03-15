@@ -11,6 +11,7 @@
  */
 
 import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
+import {createShadowRoot} from '@react-spectrum/test-utils/src/shadowDOM';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {DialogContainer} from '@react-spectrum/dialog';
 import {FocusScope, useFocusManager} from '../';
@@ -1618,14 +1619,6 @@ describe('FocusScope', function () {
   });
 
   describe('FocusScope with Shadow DOM', function () {
-
-    function createShadowRoot() {
-      const div = document.createElement('div');
-      document.body.appendChild(div);
-      const shadowRoot = div.attachShadow({mode: 'open'});
-      return {shadowHost: div, shadowRoot};
-    }
-
     it('should contain focus within the shadow DOM scope', async function () {
       const {shadowRoot} = createShadowRoot();
       const FocusableComponent = () => (

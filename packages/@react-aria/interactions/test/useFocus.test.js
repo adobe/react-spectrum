@@ -11,6 +11,7 @@
  */
 
 import {act, render, waitFor} from '@react-spectrum/test-utils';
+import {createShadowRoot} from '@react-spectrum/test-utils/src/shadowDOM';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {useFocus} from '../';
@@ -156,13 +157,6 @@ describe('useFocus', function () {
   });
 
   describe('useFocus with Shadow DOM', function () {
-    function createShadowRoot() {
-      const div = document.createElement('div');
-      document.body.appendChild(div);
-      const shadowRoot = div.attachShadow({mode: 'open'});
-      return {shadowHost: div, shadowRoot};
-    }
-
     it('handles focus events within shadow DOM', function () {
       const {shadowRoot, shadowHost} = createShadowRoot();
       const events = [];

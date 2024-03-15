@@ -12,6 +12,7 @@
 
 
 import {act, render} from '@react-spectrum/test-utils';
+import {createShadowRoot} from '@react-spectrum/test-utils/src/shadowDOM';
 import {focusSafely} from '../';
 import React from 'react';
 import * as ReactAriaUtils from '../../utils/index';
@@ -63,13 +64,6 @@ describe('focusSafely', () => {
   });
 
   describe('focusSafely with Shadow DOM', function () {
-    function createShadowRoot() {
-      const div = document.createElement('div');
-      document.body.appendChild(div);
-      const shadowRoot = div.attachShadow({mode: 'open'});
-      return {shadowHost: div, shadowRoot};
-    }
-
     const focusWithoutScrollingSpy = jest.spyOn(ReactAriaUtils, 'focusWithoutScrolling').mockImplementation(() => {});
 
     it("should not focus on the element if it's no longer connected within shadow DOM", async function () {

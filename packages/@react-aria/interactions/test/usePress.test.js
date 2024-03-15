@@ -12,6 +12,7 @@
 
 import {act, fireEvent, installMouseEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
+import {createShadowRoot} from '@react-spectrum/test-utils/src/shadowDOM';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
@@ -3307,13 +3308,6 @@ describe('usePress', function () {
     let cleanupShadowRoot;
     let events = [];
     let addEvent = (e) => events.push(e);
-
-    function createShadowRoot() {
-      const div = document.createElement('div');
-      document.body.appendChild(div);
-      const shadowRoot = div.attachShadow({mode: 'open'});
-      return {shadowHost: div, shadowRoot};
-    }
 
     function setupShadowDOMTest(extraProps = {}) {
       const {shadowRoot} = createShadowRoot();
