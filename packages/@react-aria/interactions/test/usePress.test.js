@@ -16,14 +16,14 @@ import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render as ReactDOMRender} from 'react-dom';
+import ReactDOM, {render as ReactDOMRender} from 'react-dom';
 import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
 function Example(props) {
   let {elementType: ElementType = 'div', style, draggable, ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
-  return <ElementType {...pressProps} style={style} tabIndex="0" draggable={draggable}>{ElementType !== 'input' ? 'test' : undefined}</ElementType>;
+  return <ElementType {...pressProps} style={style} tabIndex="0" draggable={draggable} id="testElement">{ElementType !== 'input' ? 'test' : undefined}</ElementType>;
 }
 
 function pointerEvent(type, opts) {
@@ -3299,6 +3299,642 @@ describe('usePress', function () {
           altKey: false
         }
       ]);
+    });
+  });
+
+  describe('FocusScope with Shadow DOM', function () {
+    installPointerEvent();
+    let cleanupShadowRoot;
+    let events = [];
+    let addEvent = (e) => events.push(e);
+
+    function createShadowRoot() {
+      const div = document.createElement('div');
+      document.body.appendChild(div);
+      const shadowRoot = div.attachShadow({mode: 'open'});
+      return {shadowHost: div, shadowRoot};
+    }
+
+    function setupShadowDOMTest(extraProps = {}) {
+      const {shadowRoot} = createShadowRoot();
+      cleanupShadowRoot = shadowRoot;
+      events = [];
+      addEvent = (e) => events.push(e);
+      const ExampleComponent = () => (
+        <Example
+          onPressStart={addEvent}
+          onPressEnd={addEvent}
+          onPressChange={pressed => addEvent({type: 'presschange', pressed})}
+          onPress={addEvent}
+          onPressUp={addEvent}
+          {...extraProps} />
+      );
+
+      // Use ReactDOM to render directly into the shadow root
+      ReactDOM.render(<ExampleComponent />, shadowRoot);
+
+      return shadowRoot;
+    }
+
+    beforeAll(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      act(() => {jest.runAllTimers();});
+      document.body.removeChild(cleanupShadowRoot.host);
+      ReactDOM.unmountComponentAtNode(cleanupShadowRoot);
+    });
+
+    it('should fire press events based on pointer events', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    it('should fire press change events when moving pointer outside target', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+
+      events = [];
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    it('should handle pointer cancel events', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointercancel', {pointerId: 1, pointerType: 'mouse'}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
+
+    it('should cancel press on dragstart', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, new MouseEvent('dragstart', {bubbles: true, cancelable: true, composed: true}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
+
+    it('should cancel press when moving outside and the shouldCancelOnPointerExit option is set', function () {
+      const shadowRoot = setupShadowDOMTest({shouldCancelOnPointerExit: true});
+
+      const el = shadowRoot.getElementById('testElement');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 100, clientY: 100}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        }
+      ]);
+    });
+
+    it('should handle modifier keys', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', shiftKey: true}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', ctrlKey: true, clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: true,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: true
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: true,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: true,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'presschange',
+          pressed: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: true,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    it('should only handle left clicks', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', button: 1}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', button: 1, clientX: 0, clientY: 0}));
+      expect(events).toEqual([]);
+    });
+
+    it('should not focus the target on click if preventFocusOnPress is true', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      expect(document.activeElement).not.toBe(el);
+    });
+
+    it('should focus the target on click by default', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+      expect(shadowRoot.activeElement).toBe(el);
+    });
+
+    it('should prevent default on pointerdown and mousedown by default', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(allowDefault).toBe(false);
+
+      allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+    it('should still prevent default when pressing on a non draggable + pressable item in a draggable container', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(allowDefault).toBe(false);
+
+      allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(false);
+    });
+
+    it('should not prevent default when pressing on a draggable item', function () {
+      const shadowRoot = setupShadowDOMTest({draggable: true});
+
+      const el = shadowRoot.getElementById('testElement');
+      let allowDefault = fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(allowDefault).toBe(true);
+
+      allowDefault = fireEvent.mouseDown(el);
+      expect(allowDefault).toBe(true);
+    });
+
+    it('should ignore virtual pointer events', function () {
+      const shadowRoot = setupShadowDOMTest({onPressChange: null});
+
+      const el = shadowRoot.getElementById('testElement');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([]);
+
+      fireEvent.click(el);
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    it('should not ignore virtual pointer events on android ', function () {
+      let uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+
+      const shadowRoot = setupShadowDOMTest({onPressChange: null});
+
+      const el = shadowRoot.getElementById('testElement');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', width: 0, height: 0, clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'mouse',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+
+      uaMock.mockRestore();
+    });
+
+    it('should detect Android TalkBack double tap', function () {
+      const shadowRoot = setupShadowDOMTest({onPressChange: null});
+
+      const el = shadowRoot.getElementById('testElement');
+      // Android TalkBack will occasionally fire a pointer down event with "width: 1, height: 1" instead of "width: 0, height: 0".
+      // Make sure we can still determine that this is a virtual event by checking the pressure, detail, and height/width.
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, width: 1, height: 1, pressure: 0, detail: 0, pointerType: 'mouse'}));
+      expect(events).toEqual([]);
+
+      // Virtual pointer event sets pointerType and onClick handles the rest
+      fireEvent.click(el, {pointerType: 'mouse', width: 1, height: 1, detail: 1});
+      expect(events).toEqual([
+        {
+          type: 'pressstart',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressup',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'pressend',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        },
+        {
+          type: 'press',
+          target: el,
+          pointerType: 'virtual',
+          ctrlKey: false,
+          metaKey: false,
+          shiftKey: false,
+          altKey: false
+        }
+      ]);
+    });
+
+    it('should not fire press events for disabled elements', function () {
+      const shadowRoot = setupShadowDOMTest({isDisabled: true});
+
+      const el = shadowRoot.getElementById('testElement');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0}));
+
+      expect(events).toEqual([]);
+    });
+
+    it('should fire press event when pointerup close to the target', function () {
+      let spy = jest.fn();
+      const shadowRoot = setupShadowDOMTest({onPress: spy});
+
+      const el = shadowRoot.getElementById('testElement');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse', clientX: 0, clientY: 0, width: 20, height: 20}));
+      fireEvent(el, pointerEvent('pointermove', {pointerId: 1, pointerType: 'mouse', clientX: 10, clientY: 10, width: 20, height: 20}));
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse', clientX: 10, clientY: 10, width: 20, height: 20}));
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should add/remove user-select: none to the element on pointer down/up', function () {
+      const shadowRoot = setupShadowDOMTest();
+
+      const el = shadowRoot.getElementById('testElement');
+      fireEvent(el, pointerEvent('pointerdown', {pointerId: 1, pointerType: 'mouse'}));
+      expect(el).toHaveStyle('user-select: none');
+      fireEvent(el, pointerEvent('pointerup', {pointerId: 1, pointerType: 'mouse'}));
+      expect(el).not.toHaveStyle('user-select: none');
     });
   });
 });
