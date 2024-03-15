@@ -3,10 +3,10 @@ import {
   Meter as AriaMeter,
   MeterProps as AriaMeterProps
 } from 'react-aria-components';
-
+import {ReactNode} from 'react';
 
 export interface MeterProps extends AriaMeterProps {
-  label?: string
+  label?: ReactNode
 }
 
 export function Meter({label, ...props}: MeterProps) {

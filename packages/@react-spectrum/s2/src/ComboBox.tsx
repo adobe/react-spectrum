@@ -9,17 +9,14 @@ import {
   ListBoxItem,
   ListBoxItemProps,
   Popover,
-  Text,
-  ValidationResult
+  Text
 } from 'react-aria-components';
-import React from 'react';
-
+import {HelpTextProps} from '@react-types/shared';
+import React, {ReactNode} from 'react';
 
 export interface ComboBoxProps<T extends object>
-  extends Omit<AriaComboBoxProps<T>, 'children'> {
-  label?: string,
-  description?: string | null,
-  errorMessage?: string | ((validation: ValidationResult) => string),
+  extends Omit<AriaComboBoxProps<T>, 'children'>, HelpTextProps {
+  label?: ReactNode,
   children: React.ReactNode | ((item: T) => React.ReactNode)
 }
 

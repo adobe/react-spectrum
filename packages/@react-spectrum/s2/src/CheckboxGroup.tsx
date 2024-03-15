@@ -1,24 +1,37 @@
 import {
   CheckboxGroup as AriaCheckboxGroup,
-  CheckboxGroupProps as AriaCheckboxGroupProps,
-  ValidationResult
+  CheckboxGroupProps as AriaCheckboxGroupProps
 } from 'react-aria-components';
 import {useContext, forwardRef, ReactNode} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {FieldLabel, HelpText} from './Field';
-import {SpectrumLabelableProps, Orientation, DOMRef} from '@react-types/shared';
+import {SpectrumLabelableProps, Orientation, DOMRef, HelpTextProps} from '@react-types/shared';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {CheckboxContext} from './Checkbox';
 
-export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps {
-  label?: string,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string),
+export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'className' | 'style' | 'children'>, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps {
+  /**
+   * The size of the Checkboxes in the CheckboxGroup.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The axis the checkboxes should align with.
+   *
+   * @default 'vertical'
+   */
   orientation?: Orientation,
+  /**
+   * The Checkboxes contained within the CheckboxGroup.
+   */
   children?: ReactNode,
+  /**
+   * By default, checkboxes are not emphasized (gray).
+   * The emphasized (blue) version provides visual prominence.
+   */
   isEmphasized?: boolean
 }
 
@@ -43,7 +56,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
 
   return (
-    <AriaCheckboxGroup 
+    <AriaCheckboxGroup
       {...groupProps}
       ref={domRef}
       style={UNSAFE_style}
@@ -69,7 +82,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
           necessityIndicator={necessityIndicator}>
           {label}
         </FieldLabel>
-        <div 
+        <div
           className={style({
             display: 'flex',
             flexDirection: {
@@ -80,7 +93,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
             },
             lineHeight: 'ui',
             rowGap: '--field-gap',
-            // Spectrum uses a fixed spacing value for horizontal, 
+            // Spectrum uses a fixed spacing value for horizontal,
             // but the gap changes depending on t-shirt size in vertical.
             columnGap: 16,
             flexWrap: 'wrap'
@@ -91,7 +104,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
             </CheckboxContext.Provider>
           </FormContext.Provider>
         </div>
-        <HelpText 
+        <HelpText
           size={size}
           isDisabled={isDisabled}
           isInvalid={isInvalid}
@@ -103,5 +116,8 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * A CheckboxGroup allows users to select one or more items from a list of choices.
+ */
 let _CheckboxGroup = forwardRef(CheckboxGroup);
 export {_CheckboxGroup as CheckboxGroup};

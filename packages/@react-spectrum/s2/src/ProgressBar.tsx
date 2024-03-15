@@ -7,6 +7,7 @@ import {
 } from 'react-aria-components';
 import {FieldLabel} from './Field';
 import {StyleProps, centerPadding, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {ReactNode} from 'react';
 
 interface ProgressBarStyleProps {
   /**
@@ -24,7 +25,7 @@ interface ProgressBarStyleProps {
 
 interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style'>, ProgressBarStyleProps, StyleProps {
   /** The content to display as the label. */
-  label?: string // TODO: string or ReactNode?
+  label?: ReactNode
 }
 
 // TODO:

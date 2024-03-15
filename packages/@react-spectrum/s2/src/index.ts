@@ -1,6 +1,6 @@
 export {ActionButton} from './ActionButton';
 export {Avatar} from './Avatar';
-export {Button} from './Button';
+export {Button, LinkButton} from './Button';
 export {ButtonGroup} from './ButtonGroup';
 export {Checkbox} from './Checkbox';
 export {CheckboxGroup} from './CheckboxGroup';

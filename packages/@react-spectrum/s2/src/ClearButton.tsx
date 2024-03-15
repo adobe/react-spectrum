@@ -10,6 +10,11 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {forwardRef} from 'react';
 
 interface ClearButtonStyleProps {
+  /**
+   * The size of the ClearButton.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 

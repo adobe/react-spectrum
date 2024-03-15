@@ -7,24 +7,45 @@ import {
   useResizeObserver
 } from '@react-spectrum/utils';
 import {ContextValue} from './Content';
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef} from '@react-types/shared';
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {ButtonContext} from './Button';
 
 interface ButtonGroupStyleProps {
+  /**
+   * The axis the ButtonGroup should align with. Setting this to 'vertical' will prevent
+   * any switching behaviors between 'vertical' and 'horizontal'.
+   *
+   * @default 'horizontal'
+   */
   orientation?: 'horizontal' | 'vertical',
+  /**
+   * The alignment of the Buttons within the ButtonGroup.
+   *
+   * @default 'start'
+   */
   align?: 'start' | 'end' | 'center',
-  hidden?: boolean,
+  /**
+   * The size of the Buttons within the ButtonGroup.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-interface ButtonGroupProps extends ButtonGroupStyleProps, SlotProps, StyleProps {
-  className?: string,
+interface ButtonGroupProps extends ButtonGroupStyleProps, SlotProps, StyleProps, DOMProps {
+  /** The Buttons contained within the ButtonGroup. */
   children: ReactNode,
+  /** Whether the Buttons in the ButtonGroup are all disabled. */
   isDisabled?: boolean
 }
 
-export const ButtonGroupContext = createContext<ContextValue<Omit<ButtonGroupProps, 'children'>, HTMLDivElement>>({});
+interface ButtonGroupContextValue extends Omit<ButtonGroupProps, 'children'> {
+  /** Whether the ButtonGroup shouldn't be rendered. */
+  hidden?: boolean
+}
+
+export const ButtonGroupContext = createContext<ContextValue<ButtonGroupContextValue, HTMLDivElement>>({});
 
 const buttongroup = style<ButtonGroupStyleProps>({
   display: 'inline-flex',
@@ -71,8 +92,13 @@ const buttongroup = style<ButtonGroupStyleProps>({
 function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   [props, domRef] = useContextProps(props, domRef, ButtonGroupContext);
-  let {size = 'M'} = props;
-  let {orientation = 'horizontal', align, children, isDisabled} = props;
+  let {
+    size = 'M',
+    orientation = 'horizontal',
+    align = 'start',
+    children,
+    isDisabled
+  } = props;
 
   let [hasOverflow, setHasOverflow] = useValueEffect(false);
 
@@ -117,7 +143,7 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   }, [domRef.current]);
   useResizeObserver({ref: parent, onResize: checkForOverflow});
 
-  if (props.hidden) {
+  if ((props as ButtonGroupContextValue).hidden) {
     return null;
   }
   return (
@@ -139,5 +165,8 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * ButtonGroup handles overflow for a grouping of buttons whose actions are related to each other.
+ */
 const _ButtonGroup = forwardRef(ButtonGroup);
 export {_ButtonGroup as ButtonGroup};

@@ -7,17 +7,27 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {ReactNode, forwardRef} from 'react';
 
 export interface ActionButtonStyleProps {
+  /**
+   * The size of the ActionButton.
+   *
+   * @default "M"
+   */
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
+  /** The static color style to apply. Useful when the ActionButton appears over a color background. */
   staticColor?: 'black' | 'white',
+  /** Whether the button should be displayed with a [quiet style](https://spectrum.adobe.com/page/action-button/#Quiet). */
   isQuiet?: boolean
 }
 
 interface ToggleButtonStyleProps {
+  /** Whether the ActionButton should be selected (controlled). */
   isSelected?: boolean,
+  /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */
   isEmphasized?: boolean
 }
 
 export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children'>, StyleProps, ActionButtonStyleProps {
+  /** The content to display in the ActionButton. */
   children?: ReactNode
 }
 
@@ -154,11 +164,15 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
       className={renderProps => (props.UNSAFE_className || '') + styles({
         ...renderProps,
         staticColor: props.staticColor,
-        size: props.size,
+        size: props.size || 'M',
         isQuiet: props.isQuiet
       }, props.css)} />
   );
 }
 
+/**
+ * ActionButtons allow users to perform an action.
+ * They’re used for similar, task-based options within a workflow, and are ideal for interfaces where buttons aren’t meant to draw a lot of attention.
+ */
 let _ActionButton = forwardRef(ActionButton);
 export {_ActionButton as ActionButton};

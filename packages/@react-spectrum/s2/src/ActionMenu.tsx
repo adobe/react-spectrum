@@ -48,5 +48,8 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
   );
 }
 
+/**
+ * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
+ */
 let _ActionMenu = forwardRef(ActionMenu);
 export {_ActionMenu as ActionMenu};

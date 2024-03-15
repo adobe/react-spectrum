@@ -9,8 +9,7 @@ import {
   Select as AriaSelect,
   SelectProps as AriaSelectProps,
   SelectRenderProps as AriaSelectRenderProps,
-  SelectValue,
-  ValidationResult
+  SelectValue
 } from 'react-aria-components';
 import ChevronIcon from '../ui-icons/Chevron';
 import {StyleProps, centerPadding, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
@@ -21,17 +20,14 @@ import {
 import {FormContext, useFormProps} from './Form';
 import {pressScale} from './pressScale';
 import React, {useContext, useRef} from 'react';
-import {SpectrumLabelableProps} from '@react-types/shared';
+import {SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
 
 export interface PickerStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL',
   isQuiet?: boolean
 }
 
-export interface PickerProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>, PickerStyleProps, SpectrumLabelableProps, StyleProps {
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string),
-  label?: string,
+export interface PickerProps<T extends object> extends Omit<AriaSelectProps<T>, 'children' | 'style' | 'className'>, PickerStyleProps, SpectrumLabelableProps, StyleProps, HelpTextProps {
   items?: Iterable<T>,
   children: React.ReactNode | ((item: T) => React.ReactNode)
 }

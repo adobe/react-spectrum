@@ -1,28 +1,47 @@
 import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext, Provider, Link, LinkProps} from 'react-aria-components';
+import {FocusableRef} from '@react-types/shared';
 import {style, baseColor, fontRelative} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {StyleProps, centerPadding, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {createContext, ReactNode, forwardRef, useContext} from 'react';
 import {pressScale} from './pressScale';
-import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {mergeProps} from 'react-aria';
 
 interface ButtonStyleProps {
+  /**
+   * The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button.
+   *
+   * @default "primary"
+   */
   variant?: 'primary' | 'secondary' | 'accent' | 'negative',
+  /**
+   * The background style of the Button.
+   *
+   * @default "fill"
+   */
   style?: 'fill' | 'outline',
+  /**
+   * The size of the Button.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /** The static color style to apply. Useful when the Button appears over a color background. */
   staticColor?: 'white' | 'black'
 }
 
 interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
+  /** The content to display in the Button. */
   children?: ReactNode
 }
 
 interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
+  /** The content to display in the Button. */
   children?: ReactNode
 }
 
 interface ButtonContextValue extends ButtonStyleProps, StyleProps {
+  /** Whether the Button is disabled. */
   isDisabled?: boolean
 }
 
@@ -260,6 +279,11 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   );
 }
 
+/**
+ * Buttons allow users to perform an action.
+ * They have multiple styles for various needs, and are ideal for calling attention to
+ * where a user needs to do something in order to move forward in a flow.
+ */
 let _Button = forwardRef(Button);
 export {_Button as Button};
 
@@ -290,5 +314,8 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
   );
 }
 
+/**
+ * A LinkButton combines the functionality of a link with the appearance of a button. Useful for allowing users to navigate to another page.
+ */
 let _LinkButton = forwardRef(LinkButton);
 export {_LinkButton as LinkButton};

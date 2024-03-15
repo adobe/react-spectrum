@@ -6,16 +6,14 @@ import {
   Text,
   TimeField as AriaTimeField,
   TimeFieldProps as AriaTimeFieldProps,
-  TimeValue,
-  ValidationResult
+  TimeValue
 } from 'react-aria-components';
-
+import {HelpTextProps} from '@react-types/shared';
+import {ReactNode} from 'react';
 
 export interface TimeFieldProps<T extends TimeValue>
-  extends AriaTimeFieldProps<T> {
-  label?: string,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string)
+  extends AriaTimeFieldProps<T>, HelpTextProps {
+  label?: ReactNode
 }
 
 export function TimeField<T extends TimeValue>(

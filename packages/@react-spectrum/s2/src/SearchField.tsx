@@ -1,7 +1,6 @@
 import {
   SearchField as AriaSearchField,
-  SearchFieldProps as AriaSearchFieldProps,
-  ValidationResult
+  SearchFieldProps as AriaSearchFieldProps
 } from 'react-aria-components';
 import {ClearButton} from './ClearButton';
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
@@ -12,14 +11,11 @@ import {Icon} from './Icon';
 import {raw} from '../style-macro/style-macro' with {type: 'macro'};
 import {useContext, forwardRef, Ref, useRef, useImperativeHandle} from 'react';
 import {FormContext, useFormProps} from './Form';
-import {SpectrumLabelableProps} from '@react-types/shared';
+import {SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
 import {TextFieldRef} from '@react-types/textfield';
 import {createFocusableRef} from '@react-spectrum/utils';
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style'>, StyleProps, SpectrumLabelableProps {
-  label?: string,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string),
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 

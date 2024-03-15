@@ -6,10 +6,10 @@ import {
   SliderThumb,
   SliderTrack
 } from 'react-aria-components';
-
+import {ReactNode} from 'react';
 
 export interface SliderProps<T> extends AriaSliderProps<T> {
-  label?: string,
+  label?: ReactNode,
   thumbLabels?: string[]
 }
 

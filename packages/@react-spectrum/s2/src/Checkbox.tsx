@@ -11,13 +11,20 @@ import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
 
 interface CheckboxStyleProps {
+  /**
+   * The size of the Checkbox.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /** Whether the Checkbox should be displayed with an emphasized style. */
   isEmphasized?: boolean
 }
 
 interface RenderProps extends CheckboxRenderProps, CheckboxStyleProps {}
 
 interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'style' | 'children'>, StyleProps, CheckboxStyleProps {
+  /** The label for the element. */
   children?: ReactNode
 }
 
@@ -106,7 +113,7 @@ function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLab
   [props, domRef] = useContextProps(props, domRef, CheckboxContext);
   props = useFormProps(props);
   let isInCheckboxGroup = !!useContext(CheckboxGroupStateContext);
-  let ctx = useContext(CheckboxContext) as CheckboxContextValue; 
+  let ctx = useContext(CheckboxContext) as CheckboxContextValue;
 
   return (
     <AriaCheckbox
@@ -141,5 +148,9 @@ function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLab
   );
 }
 
+/**
+ * Checkboxes allow users to select multiple items from a list of individual items,
+ * or to mark one individual item as selected.
+ */
 let _Checkbox = forwardRef(Checkbox);
 export {_Checkbox as Checkbox};

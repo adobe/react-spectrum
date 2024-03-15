@@ -1,20 +1,16 @@
 import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
-import {Orientation, SpectrumLabelableProps} from '@react-types/shared';
+import {Orientation, SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
 import {
   RadioGroup as AriaRadioGroup,
-  RadioGroupProps as AriaRadioGroupProps,
-  ValidationResult
+  RadioGroupProps as AriaRadioGroupProps
 } from 'react-aria-components';
 import React, {useContext} from 'react';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 
-export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps {
+export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   children?: React.ReactNode,
-  label?: string,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string),
   size?: 'S' | 'M' | 'L' | 'XL',
   orientation?: Orientation,
   isEmphasized?: boolean

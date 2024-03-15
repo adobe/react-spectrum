@@ -1,15 +1,11 @@
 import {Avatar} from '../src/Avatar';
+import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof Avatar> = {
   component: Avatar,
-  argTypes: {
-    size: {
-      options: [4, 4.5, 5, 5.5, 6.5, 7, 8, 9, 10],
-      control: 'radio'
-    }
-  },
+  argTypes: {},
   parameters: {
     layout: 'centered',
     design: {
@@ -31,5 +27,12 @@ export const Example = (args: any) => (
   <>
     <Avatar alt="default adobe" src={SRC_URL_1} {...args} />
     <Avatar alt="design provided" src={SRC_URL_2} {...args} />
+  </>
+);
+
+export const UserAppliedSize = (args: any) => (
+  <>
+    <Avatar alt="default adobe" src={SRC_URL_1} css={style({size: 40})} {...args} />
+    <Avatar alt="design provided" src={SRC_URL_2} css={style({size: 40})} {...args} />
   </>
 );

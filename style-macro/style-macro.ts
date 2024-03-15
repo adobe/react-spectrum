@@ -178,7 +178,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
           allowedOverridesSet.add(themePropertyMap.get(property as string)!);
         }
       }
-      
+
       js += `let matches = (overrides || '').match(/(?:^|\\s)(?:${[...allowedOverridesSet].join('|')})[^\\s]+/g) || [];\n`;
       js += 'rules += matches.join(\'\');\n';
       let loop = '';
@@ -186,7 +186,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         let themeProperty = themePropertyMap.get(property);
         if (themeProperty && allowedOverridesSet.has(themeProperty)) {
           js += `let $${themeProperty} = false;\n`;
-          loop += `  if (p.startsWith("${themeProperty}")) $${themeProperty} = true;\n`;
+          loop += `  if (/^\\s*${themeProperty}/.test(p)) $${themeProperty} = true;\n`;
         }
       }
       if (loop) {
@@ -208,7 +208,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         if (allowsOverrides) {
           // Omit the value if an override was passed in.
           js += `if (!$${themeProperty}) {\n`;
-        }  
+        }
         js += printJS(propertyRules) + '\n';
         if (allowsOverrides) {
           js += '}\n';

@@ -14,16 +14,14 @@ import {
   Label,
   Popover,
   RangeCalendar,
-  Text,
-  ValidationResult
+  Text
 } from 'react-aria-components';
-
+import {HelpTextProps} from '@react-types/shared';
+import {ReactNode} from 'react';
 
 export interface DateRangePickerProps<T extends DateValue>
-  extends AriaDateRangePickerProps<T> {
-  label?: string,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string)
+  extends AriaDateRangePickerProps<T>, HelpTextProps {
+  label?: ReactNode
 }
 
 export function DateRangePicker<T extends DateValue>(

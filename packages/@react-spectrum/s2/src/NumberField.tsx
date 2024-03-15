@@ -6,15 +6,14 @@ import {
   Label,
   NumberField as AriaNumberField,
   NumberFieldProps as AriaNumberFieldProps,
-  Text,
-  ValidationResult
+  Text
 } from 'react-aria-components';
+import {HelpTextProps} from '@react-types/shared';
+import {ReactNode} from 'react';
 
 
-export interface NumberFieldProps extends AriaNumberFieldProps {
-  label?: string,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string)
+export interface NumberFieldProps extends AriaNumberFieldProps, HelpTextProps {
+  label?: ReactNode
 }
 
 export function NumberField(

@@ -6,16 +6,15 @@ import {
   DateValue,
   FieldError,
   Label,
-  Text,
-  ValidationResult
+  Text
 } from 'react-aria-components';
+import {HelpTextProps} from '@react-types/shared';
+import {ReactNode} from 'react';
 
 
 export interface DateFieldProps<T extends DateValue>
-  extends AriaDateFieldProps<T> {
-  label?: string,
-  description?: string,
-  errorMessage?: string | ((validation: ValidationResult) => string)
+  extends AriaDateFieldProps<T>, HelpTextProps {
+  label?: ReactNode
 }
 
 export function DateField<T extends DateValue>(

@@ -8,7 +8,13 @@ import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
 
 interface CloseButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'children'>, StyleProps {
+  /**
+   * The size of the CloseButton.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /** The static color style to apply. Useful when the Button appears over a color background. */
   staticColor?: 'white' | 'black'
 }
 
