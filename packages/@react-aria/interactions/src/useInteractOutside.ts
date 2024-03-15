@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {getRootNode, useEffectEvent} from '@react-aria/utils';
+import {getOwnerDocument, useEffectEvent} from '@react-aria/utils';
 import {RefObject, useEffect, useRef} from 'react';
 
 export interface InteractOutsideProps {
@@ -59,8 +59,7 @@ export function useInteractOutside(props: InteractOutsideProps) {
     }
 
     const element = ref.current;
-    const documentObject = getRootNode(element);
-    const isShadowRoot = documentObject instanceof ShadowRoot;
+    const documentObject = getOwnerDocument(element);
 
     // Use pointer events if available. Otherwise, fall back to mouse and touch events.
     if (typeof PointerEvent !== 'undefined') {
@@ -75,19 +74,9 @@ export function useInteractOutside(props: InteractOutsideProps) {
       documentObject.addEventListener('pointerdown', onPointerDown, true);
       documentObject.addEventListener('pointerup', onPointerUp, true);
 
-      if (isShadowRoot) {
-        documentObject.ownerDocument.addEventListener('pointerdown', onPointerDown, true);
-        documentObject.ownerDocument.addEventListener('pointerup', onPointerUp, true);
-      }
-
       return () => {
         documentObject.removeEventListener('pointerdown', onPointerDown, true);
         documentObject.removeEventListener('pointerup', onPointerUp, true);
-
-        if (isShadowRoot) {
-          documentObject.ownerDocument.removeEventListener('pointerdown', onPointerDown, true);
-          documentObject.ownerDocument.removeEventListener('pointerup', onPointerUp, true);
-        }
       };
     } else {
       let onMouseUp = (e) => {
@@ -107,27 +96,12 @@ export function useInteractOutside(props: InteractOutsideProps) {
         state.isPointerDown = false;
       };
 
-      if (isShadowRoot) {
-        documentObject.ownerDocument.addEventListener('mousedown', onPointerDown, true);
-        documentObject.ownerDocument.addEventListener('mouseup', onMouseUp, true);
-        documentObject.ownerDocument.addEventListener('touchstart', onPointerDown, true);
-        documentObject.ownerDocument.addEventListener('touchend', onTouchEnd, true);
-      }
-
       documentObject.addEventListener('mousedown', onPointerDown, true);
       documentObject.addEventListener('mouseup', onMouseUp, true);
       documentObject.addEventListener('touchstart', onPointerDown, true);
       documentObject.addEventListener('touchend', onTouchEnd, true);
 
       return () => {
-
-        if (isShadowRoot) {
-          documentObject.ownerDocument.removeEventListener('mousedown', onPointerDown, true);
-          documentObject.ownerDocument.removeEventListener('mouseup', onMouseUp, true);
-          documentObject.ownerDocument.removeEventListener('touchstart', onPointerDown, true);
-          documentObject.ownerDocument.removeEventListener('touchend', onTouchEnd, true);
-        }
-
         documentObject.removeEventListener('mousedown', onPointerDown, true);
         documentObject.removeEventListener('mouseup', onMouseUp, true);
         documentObject.removeEventListener('touchstart', onPointerDown, true);
@@ -137,44 +111,29 @@ export function useInteractOutside(props: InteractOutsideProps) {
   }, [ref, isDisabled, onPointerDown, triggerInteractOutside]);
 }
 
-/**
- * Checks if an event is valid for triggering interact outside logic.
- *
- * This function determines the validity of an event based on several conditions:
- * - The event must be triggered by a left mouse click (button 0).
- * - The target of the event must be within the document.
- * - The target should not be within any element designated as a "top layer" (e.g., modals, overlays).
- * - The event target must not be contained within the specified reference element.
- *
- * For shadow DOM support, it uses event.composedPath() to accurately determine the event's target, ensuring
- * compatibility with events that originate from within shadow roots.
- *
- * @param {Event} event - The event to check.
- * @param {RefObject<Element>} ref - A React ref object pointing to the component's root element.
- * @returns {boolean} True if the event is valid and should trigger interact outside logic, false otherwise.
- */
 function isValidEvent(event, ref) {
   if (event.button > 0) {
     return false;
   }
+  if (event.target) {
+    // if the event target is no longer in the document, ignore
+    const ownerDocument = event.target.ownerDocument;
+    if (!ownerDocument || !ownerDocument.documentElement.contains(event.target)) {
+      return false;
+    }
+    // If the target is within a top layer element (e.g. toasts), ignore.
+    if (event.target.closest('[data-react-aria-top-layer]')) {
+      return false;
+    }
+  }
 
-  // Use composedPath to accurately get the event path, including shadow DOMs
-  const path = event.composedPath();
-  const target = path[0];
-
-  // Determine the root node for the event target and the component's ref
-  const refRoot = getRootNode(ref.current);
-  const targetRoot = getRootNode(target);
-
-  // Check for top layer elements (e.g., modals or overlays) and ignore events within them
-  if (target.closest('[data-react-aria-top-layer]')) {
+  if (!ref.current) {
     return false;
   }
 
-  // The event is considered outside if:
-  // 1. The target and ref are not in the same root (document or shadow root).
-  // 2. The ref does not contain the target.
-  return refRoot !== targetRoot || !ref.current.contains(target);
+  // When the event source is inside a Shadow DOM, event.target is just the shadow root.
+  // Using event.composedPath instead means we can get the actual element inside the shadow root.
+  // This only works if the shadow root is open, there is no way to detect if it is closed.
+  // If the event composed path contains the ref, interaction is inside.
+  return !event.composedPath().includes(ref.current);
 }
-
-
