@@ -2,7 +2,7 @@ import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macr
 import {clamp} from '@react-aria/utils';
 import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
 import {ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
-import React, {CSSProperties} from 'react';
+import {CSSProperties, forwardRef} from 'react';
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
@@ -507,5 +507,5 @@ function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>)
  * ProgressCircles show the progression of a system operation such as downloading, uploading, or processing, in a visual way.
  * They can represent determinate or indeterminate progress.
  */
-let _ProgressCircle = React.forwardRef(ProgressCircle);
+let _ProgressCircle = /*#__PURE__*/ forwardRef(ProgressCircle);
 export {_ProgressCircle as ProgressCircle};

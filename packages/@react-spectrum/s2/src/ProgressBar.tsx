@@ -7,7 +7,9 @@ import {
 } from 'react-aria-components';
 import {FieldLabel} from './Field';
 import {StyleProps, centerPadding, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {ReactNode} from 'react';
+import {ReactNode, forwardRef} from 'react';
+import {DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
 
 interface ProgressBarStyleProps {
   /**
@@ -143,11 +145,13 @@ const indeterminateAnimation = style({
   position: 'relative'
 });
 
-export function ProgressBar(props: ProgressBarProps) {
+function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
   let {label, size = 'M', staticColor, isIndeterminate, UNSAFE_style, UNSAFE_className = ''} = props;
+  let domRef = useDOMRef(ref);
   return (
     <AriaProgressBar
       {...props}
+      ref={domRef}
       style={UNSAFE_style}
       className={UNSAFE_className + wrapper({...props, size}, props.css)}>
       {({percentage, valueText}) => (
@@ -165,3 +169,11 @@ export function ProgressBar(props: ProgressBarProps) {
     </AriaProgressBar>
   );
 }
+
+/**
+ * ProgressBars show the progression of a system operation: downloading, uploading, processing, etc., in a visual way.
+ * They can represent either determinate or indeterminate progress.
+ */
+const _ProgressBar = /*#__PURE__*/ forwardRef(ProgressBar);
+export {_ProgressBar as ProgressBar};
+

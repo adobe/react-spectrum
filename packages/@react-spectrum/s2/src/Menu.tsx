@@ -25,6 +25,7 @@ import ChevronRightIcon from './wf-icons/ChevronRight';
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {Divider} from './Divider';
 import {Placement} from 'react-aria';
+import {forwardRefType} from './types';
 // viewbox on LinkOut is super weird just because i copied the icon from figma...
 // need to strip id's from icons
 
@@ -327,7 +328,10 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLEleme
   );
 }
 
-let _Menu = forwardRef(Menu);
+/**
+ * Menus display a list of actions or options that a user can choose.
+ */
+let _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
 export function MenuSection<T extends object>(props: SectionProps<T>) {
@@ -406,6 +410,10 @@ export function MenuItem(props: MenuItemProps) {
   );
 }
 
+/**
+ * The MenuTrigger serves as a wrapper around a Menu and its associated trigger,
+ * linking the Menu's open state with the trigger's press state.
+ */
 function MenuTrigger(props: MenuTriggerProps) {
   return (
     <InternalMenuTriggerContext.Provider

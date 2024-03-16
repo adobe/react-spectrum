@@ -16,7 +16,7 @@ import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import InfoCircle from './wf-icons/InfoCircle';
-import React, {ReactNode, useEffect, useRef} from 'react';
+import {ReactNode, forwardRef, useEffect, useRef} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {useFocusRing} from 'react-aria';
@@ -258,5 +258,5 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
  * Inline alerts display a non-modal message associated with objects in a view.
  * These are often used in form validation, providing a place to aggregate feedback related to multiple fields.
  */
-const _InlineAlert = React.forwardRef(InlineAlert);
+const _InlineAlert = /*#__PURE__*/ forwardRef(InlineAlert);
 export {_InlineAlert as InlineAlert};

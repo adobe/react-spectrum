@@ -188,5 +188,9 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
   );
 }
 
-let _IllustratedMessage = forwardRef(IllustratedMessage);
+/**
+ * An IllustratedMessage displays an illustration and a message, usually
+ * for an empty state or an error page.
+ */
+let _IllustratedMessage = /*#__PURE__*/ forwardRef(IllustratedMessage);
 export {_IllustratedMessage as IllustratedMessage};

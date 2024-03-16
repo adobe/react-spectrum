@@ -1,7 +1,9 @@
 import {LinkRenderProps, Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {ReactNode} from 'react';
+import {ReactNode, forwardRef} from 'react';
+import {DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
 
 interface LinkStyleProps {
   /**
@@ -66,12 +68,22 @@ const link = style<LinkRenderProps & LinkStyleProps>({
   }
 }, getAllowedOverrides());
 
-export function Link(props: LinkProps) {
+function Link(props: LinkProps, ref: DOMRef<HTMLAnchorElement>) {
   let {variant = 'primary', staticColor, isQuiet, isStandalone, UNSAFE_style, UNSAFE_className = '', css} = props;
+
+  let domRef = useDOMRef(ref);
   return (
     <RACLink
       {...props}
+      ref={domRef}
       style={UNSAFE_style}
       className={renderProps => UNSAFE_className + link({...renderProps, variant, staticColor, isQuiet, isStandalone}, css)} />
   );
 }
+
+/**
+ * Links allow users to navigate to a different location.
+ * They can be presented inline inside a paragraph or as standalone text.
+ */
+const _Link = /*#__PURE__*/ forwardRef(Link);
+export {_Link as Link};
