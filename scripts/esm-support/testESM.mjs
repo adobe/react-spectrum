@@ -10,6 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import * as Aria from 'react-aria';
-import * as Stately from 'react-stately';
-import * as RSP from '@adobe/react-spectrum';
+export * from 'react-aria';
+export * from 'react-stately';
+export * from '@adobe/react-spectrum';
