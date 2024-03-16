@@ -490,4 +490,48 @@ describe('RadioGroup', () => {
     expect(groupRef.current).toBe(getByRole('radiogroup'));
     expect(radioRef.current).toBe(getByRole('radio').closest('.react-aria-Radio'));
   });
+
+  it('should support focusable ref that respects roving tabindex', async () => {
+    let groupRef = React.createRef();
+    let onClick = () => {
+      act(() => groupRef.current?.focus());
+    };
+         
+    let {getByRole, getAllByRole} = render(
+      <>
+        <RadioGroup ref={groupRef}>
+          <Label>Test</Label>
+          <Radio value="a">A</Radio>
+          <Radio value="b">B</Radio>
+          <Radio value="c">C</Radio>
+        </RadioGroup>
+        <button onClick={onClick}>Focus radio group</button>
+      </>
+    );
+
+    let button = getByRole('button');
+    let radios = getAllByRole('radio');
+
+    expect(document.activeElement).toBe(document.body);
+    await user.click(button);          // should focus first item when none selected
+    expect(document.activeElement).toBe(radios[0]);
+
+    await user.click(radios[1]);       // select radio
+    await user.click(document.body);   // reset focus
+    expect(document.activeElement).toBe(document.body);
+    await user.click(button);          // should focus current selected
+    expect(document.activeElement).toBe(radios[1]);
+
+    await user.click(radios[2]);       // select radio
+    await user.click(document.body);   // reset focus
+    expect(document.activeElement).toBe(document.body);
+    await user.click(button);          // should focus current selected
+    expect(document.activeElement).toBe(radios[2]);
+
+    await user.click(radios[0]);       // select radio
+    await user.click(document.body);   // reset focus
+    expect(document.activeElement).toBe(document.body);
+    await user.click(button);          // should focus current selected
+    expect(document.activeElement).toBe(radios[0]);
+  });
 });
