@@ -5,11 +5,13 @@ import {
   MenuProps as AriaMenuProps,
   MenuTrigger as AriaMenuTrigger,
   MenuTriggerProps as AriaMenuTriggerProps,
+  Separator,
   Provider,
   composeRenderProps,
   Section as AriaSection,
   SectionProps,
-  SubmenuTrigger
+  SubmenuTrigger,
+  SeparatorProps
 } from 'react-aria-components';
 import {box, iconStyles} from './Checkbox';
 import {TextContext, HeadingContext, HeaderContext, Text, ImageContext, KeyboardContext} from './Content';
@@ -23,8 +25,8 @@ import {IconContext} from './Icon';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from './wf-icons/ChevronRight';
 import LinkOutIcon from '../ui-icons/LinkOut';
-import {Divider} from './Divider';
 import {Placement} from 'react-aria';
+import {divider} from './Divider';
 import {forwardRefType} from './types';
 // viewbox on LinkOut is super weird just because i copied the icon from figma...
 // need to strip id's from icons
@@ -334,6 +336,28 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLEleme
 let _Menu = /*#__PURE__*/ (forwardRef as forwardRefType)(Menu);
 export {_Menu as Menu};
 
+function Divider(props: SeparatorProps) {
+  return (
+    <Separator
+      {...props}
+      className={mergeStyles(
+        divider({
+          size: 'M',
+          orientation: 'horizontal',
+          staticColor: undefined
+        }), style({
+          display: {
+            default: 'grid',
+            ':last-child': 'none'
+          },
+          gridColumnStart: 2,
+          gridColumnEnd: -2,
+          marginY: size(5) // height of the menu separator is 12px, and the divider is 2px
+        })
+      )} />
+  );
+}
+
 export function MenuSection<T extends object>(props: SectionProps<T>) {
   // remember, context doesn't work if it's around Section nor inside
   return (
@@ -343,16 +367,7 @@ export function MenuSection<T extends object>(props: SectionProps<T>) {
         className={section}>
         {props.children}
       </AriaSection>
-      <Divider
-        UNSAFE_className={style({
-          display: {
-            default: 'grid',
-            ':last-child': 'none'
-          },
-          gridColumnStart: 2,
-          gridColumnEnd: -2,
-          marginY: size(10) // height of the menu separator is 12px, and the divider is 2px
-        })} />
+      <Divider />
     </>
   );
 }

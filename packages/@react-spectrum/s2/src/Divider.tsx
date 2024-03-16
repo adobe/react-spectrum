@@ -26,7 +26,7 @@ interface DividerSpectrumProps {
 // TODO: allow overriding height (only when orientation is vertical)??
 interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style'>, StyleProps {}
 
-const divider = style<DividerSpectrumProps>({
+export const divider = style<DividerSpectrumProps>({
   alignSelf: 'stretch',
   backgroundColor: {
     default: 'gray-200',
