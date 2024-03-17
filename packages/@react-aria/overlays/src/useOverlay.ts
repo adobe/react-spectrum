@@ -92,8 +92,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   };
 
   let onInteractOutsideStart = (e: PointerEvent) => {
-    const actualTarget = e.composedPath()[0] as Element;
-    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(actualTarget)) {
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
         e.preventDefault();
@@ -102,8 +101,7 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   };
 
   let onInteractOutside = (e: PointerEvent) => {
-    const actualTarget = e.composedPath()[0] as Element;
-    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(actualTarget)) {
+    if (!shouldCloseOnInteractOutside || shouldCloseOnInteractOutside(e.target as Element)) {
       if (visibleOverlays[visibleOverlays.length - 1] === ref) {
         e.stopPropagation();
         e.preventDefault();
@@ -147,9 +145,8 @@ export function useOverlay(props: AriaOverlayProps, ref: RefObject<Element>): Ov
   });
 
   let onPointerDownUnderlay = e => {
-    const actualTarget = e.composedPath()[0];
     // fixes a firefox issue that starts text selection https://bugzilla.mozilla.org/show_bug.cgi?id=1675846
-    if (actualTarget === e.currentTarget) {
+    if (e.target === e.currentTarget) {
       e.preventDefault();
     }
   };
