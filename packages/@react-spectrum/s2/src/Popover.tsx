@@ -152,6 +152,7 @@ function Popover(props: PopoverProps, ref: Ref<HTMLElement>) {
     css
   } = props;
 
+  // TODO: this still isn't the final popover 'tip', copying various ones out of the Figma files yields different results
   return (
     <AriaPopover
       {...props}
@@ -162,8 +163,8 @@ function Popover(props: PopoverProps, ref: Ref<HTMLElement>) {
         <>
           {!hideArrow && (
             <OverlayArrow>
-              <svg width={12} height={12} viewBox="0 0 12 12" className={arrow(renderProps)}>
-                <path d="M0 0 L6 6 L12 0" />
+              <svg width={16} height={8} viewBox="0 0 16 8" className={arrow(renderProps)}>
+                <path d="M0 0L6.93799 7.52588C7.07224 7.67448 7.23607 7.79362 7.41895 7.87524C7.60182 7.95687 7.79973 7.9993 8 8C8.19984 7.99882 8.39724 7.95606 8.57959 7.87427C8.76194 7.79248 8.9253 7.67336 9.05908 7.5249L16 0L0 0Z" />
               </svg>
             </OverlayArrow>
           )}

@@ -292,6 +292,9 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLEleme
     default:
       initialPlacement = `${direction} ${align}` as Placement;
   }
+  if (isSubmenu) {
+    initialPlacement = 'end top' as Placement;
+  }
 
   return (
     <Popover
@@ -299,8 +302,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLEleme
       hideArrow
       placement={initialPlacement}
       shouldFlip={shouldFlip}
-      offset={isSubmenu ? -8 : 0}
-      crossOffset={isSubmenu ? 4 : 0}
+      crossOffset={isSubmenu ? 6 : 0}
       UNSAFE_style={UNSAFE_style}
       UNSAFE_className={UNSAFE_className}
       css={css}>
