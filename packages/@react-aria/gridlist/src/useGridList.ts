@@ -16,14 +16,16 @@ import {
   DisabledBehavior,
   DOMAttributes,
   DOMProps,
+  Key,
   KeyboardDelegate,
   MultipleSelection
 } from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {Key, RefObject} from 'react';
 import {listMap} from './utils';
 import {ListState} from '@react-stately/list';
+import {RefObject} from 'react';
 import {useGridSelectionAnnouncement, useHighlightSelectionDescription} from '@react-aria/grid';
+import {useHasTabbableChild} from '@react-aria/focus';
 import {useSelectableList} from '@react-aria/selection';
 
 export interface GridListProps<T> extends CollectionBase<T>, MultipleSelection {
@@ -45,7 +47,20 @@ export interface AriaGridListOptions<T> extends Omit<AriaGridListProps<T>, 'chil
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+  /**
+   * Whether focus should wrap around when the end/start is reached.
+   * @default false
+   */
+  shouldFocusWrap?: boolean,
+  /**
+   * The behavior of links in the collection.
+   * - 'action': link behaves like onAction.
+   * - 'selection': link follows selection interactions (e.g. if URL drives selection).
+   * - 'override': links override all other interactions (link items are not selectable).
+   * @default 'action'
+   */
+  linkBehavior?: 'action' | 'selection' | 'override'
 }
 
 export interface GridListAria {
@@ -64,7 +79,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
   let {
     isVirtualized,
     keyboardDelegate,
-    onAction
+    onAction,
+    linkBehavior = 'action'
   } = props;
 
   if (!props['aria-label'] && !props['aria-labelledby']) {
@@ -78,15 +94,21 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
     ref,
     keyboardDelegate: keyboardDelegate,
     isVirtualized,
-    selectOnFocus: state.selectionManager.selectionBehavior === 'replace'
+    selectOnFocus: state.selectionManager.selectionBehavior === 'replace',
+    shouldFocusWrap: props.shouldFocusWrap,
+    linkBehavior
   });
 
-  let id = useId();
-  listMap.set(state, {id, onAction});
+  let id = useId(props.id);
+  listMap.set(state, {id, onAction, linkBehavior});
 
   let descriptionProps = useHighlightSelectionDescription({
     selectionManager: state.selectionManager,
     hasItemActions: !!onAction
+  });
+
+  let hasTabbableChild = useHasTabbableChild(ref, {
+    isDisabled: state.collection.size !== 0
   });
 
   let domProps = filterDOMProps(props, {labelable: true});
@@ -97,7 +119,8 @@ export function useGridList<T>(props: AriaGridListOptions<T>, state: ListState<T
       id,
       'aria-multiselectable': state.selectionManager.selectionMode === 'multiple' ? 'true' : undefined
     },
-    state.collection.size === 0 ? {} : listProps,
+    // If collection is empty, make sure the grid is tabbable unless there is a child tabbable element.
+    state.collection.size === 0 ? {tabIndex: hasTabbableChild ? -1 : 0} : listProps,
     descriptionProps
   );
 

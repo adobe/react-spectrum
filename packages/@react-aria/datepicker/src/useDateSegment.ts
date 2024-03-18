@@ -13,7 +13,7 @@
 import {CalendarDate, toCalendar} from '@internationalized/date';
 import {DateFieldState, DateSegment} from '@react-stately/datepicker';
 import {DOMAttributes} from '@react-types/shared';
-import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoView, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
+import {getScrollParent, isIOS, isMac, mergeProps, scrollIntoViewport, useEvent, useId, useLabels, useLayoutEffect} from '@react-aria/utils';
 import {hookData} from './useDateField';
 import {NumberParser} from '@internationalized/number';
 import React, {RefObject, useMemo, useRef} from 'react';
@@ -93,9 +93,13 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   let parser = useMemo(() => new NumberParser(locale, {maximumFractionDigits: 0}), [locale]);
 
   let backspace = () => {
+    if (segment.text === segment.placeholder) {
+      focusManager.focusPrevious();
+    }
     if (parser.isValidPartialNumber(segment.text) && !state.isReadOnly && !segment.isPlaceholder) {
       let newValue = segment.text.slice(0, -1);
       let parsed = parser.parse(newValue);
+      newValue = parsed === 0 ? '' : newValue;
       if (newValue.length === 0 || parsed === 0) {
         state.clearSegment(segment.type);
       } else {
@@ -258,7 +262,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
 
   let onFocus = () => {
     enteredKeys.current = '';
-    scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
+    scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
 
     // Collapse selection to start or Chrome won't fire input events.
     let selection = window.getSelection();
@@ -335,7 +339,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   // Only apply aria-describedby to the first segment, unless the field is invalid. This avoids it being
   // read every time the user navigates to a new segment.
   let firstSegment = useMemo(() => state.segments.find(s => s.isEditable), [state.segments]);
-  if (segment !== firstSegment && state.validationState !== 'invalid') {
+  if (segment !== firstSegment && !state.isInvalid) {
     ariaDescribedBy = undefined;
   }
 
@@ -346,7 +350,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
   // This is needed because VoiceOver on iOS does not announce groups.
   let name = segment.type === 'literal' ? '' : displayNames.of(segment.type);
   let labelProps = useLabels({
-    'aria-label': (ariaLabel ? ariaLabel + ' ' : '') + name,
+    'aria-label': `${name}${ariaLabel ? `, ${ariaLabel}` : ''}${ariaLabelledBy ? ', ' : ''}`,
     'aria-labelledby': ariaLabelledBy
   });
 
@@ -364,7 +368,7 @@ export function useDateSegment(segment: DateSegment, state: DateFieldState, ref:
     segmentProps: mergeProps(spinButtonProps, labelProps, {
       id,
       ...touchPropOverrides,
-      'aria-invalid': state.validationState === 'invalid' ? 'true' : undefined,
+      'aria-invalid': state.isInvalid ? 'true' : undefined,
       'aria-describedby': ariaDescribedBy,
       'aria-readonly': state.isReadOnly || !segment.isEditable ? 'true' : undefined,
       'data-placeholder': segment.isPlaceholder || undefined,

@@ -13,6 +13,7 @@
 export type {TableColumnResizeState, TableColumnResizeStateProps} from './useTableColumnResizeState';
 export type {TableState, CollectionBuilderContext, TableStateProps} from './useTableState';
 export type {TableHeaderProps, TableBodyProps, ColumnProps, RowProps, CellProps} from '@react-types/table';
+export type {TreeGridState, TreeGridStateProps} from './useTreeGridState';
 
 export {useTableColumnResizeState} from './useTableColumnResizeState';
 export {useTableState} from './useTableState';
@@ -22,4 +23,6 @@ export {Column} from './Column';
 export {Row} from './Row';
 export {Cell} from './Cell';
 export {Section} from '@react-stately/collections';
-export {TableCollection} from './TableCollection';
+export {TableCollection, buildHeaderRows} from './TableCollection';
+export {TableColumnLayout} from './TableColumnLayout';
+export {UNSTABLE_useTreeGridState} from './useTreeGridState';

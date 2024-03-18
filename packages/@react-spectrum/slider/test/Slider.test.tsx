@@ -10,15 +10,20 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, render} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {press, testKeypresses} from './utils';
 import {Provider} from '@adobe/react-spectrum';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {Slider} from '../';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 
 describe('Slider', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('supports aria-label', function () {
     let {getByRole} = render(<Slider aria-label="The Label" />);
 
@@ -65,7 +70,7 @@ describe('Slider', function () {
     expect(queryByRole('status')).toBeNull();
   });
 
-  it('supports disabled', function () {
+  it('supports disabled', async function () {
     let {getByRole, getAllByRole} = render(<div>
       <button>A</button>
       <Slider label="The Label" defaultValue={20} isDisabled />
@@ -76,13 +81,13 @@ describe('Slider', function () {
     let [buttonA, buttonB] = getAllByRole('button');
     expect(slider).toBeDisabled();
 
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonA);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
   });
 
-  it('can be focused', function () {
+  it('can be focused', async function () {
     let {getByRole, getAllByRole} = render(<div>
       <button>A</button>
       <Slider label="The Label" defaultValue={20} />
@@ -96,10 +101,10 @@ describe('Slider', function () {
     });
 
     expect(document.activeElement).toBe(slider);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(buttonB);
-    userEvent.tab({shift: true});
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(buttonA);
   });
 
@@ -118,12 +123,36 @@ describe('Slider', function () {
     expect(output).toHaveTextContent('40');
   });
 
+  it.each`
+  Name                            | props                                        | expected
+  ${'defaultValue minValue'}      | ${{defaultValue: 20, minValue: 50}}          | ${'50'}
+  ${'defaultValue maxValue'}      | ${{defaultValue: 20, maxValue: 10}}          | ${'10'}
+  ${'defaultValue minValue step'} | ${{defaultValue: 20, minValue: 50, step: 3}} | ${'50'}
+  ${'defaultValue maxValue step'} | ${{defaultValue: 20, maxValue: 10, step: 3}} | ${'9'}
+  ${'value minValue'}             | ${{value: 20, minValue: 50}}                 | ${'50'}
+  ${'value maxValue'}             | ${{value: 20, maxValue: 10}}                 | ${'10'}
+  ${'value minValue step'}        | ${{value: 20, minValue: 50, step: 3}}        | ${'50'}
+  ${'value maxValue step'}        | ${{value: 20, maxValue: 10, step: 3}}        | ${'9'}
+  `('clamps value & defaultValue to the allowed range $Name', function ({props, expected}) {
+    let {getByRole} = render(<Slider label="The Label" {...props} />);
+
+    let slider = getByRole('slider');
+    let output = getByRole('status');
+
+    expect(slider).toHaveProperty('value', expected);
+    expect(slider).toHaveAttribute('aria-valuetext', expected);
+    expect(output).toHaveTextContent(expected);
+  });
+
   it('can be controlled', function () {
-    let renders = [];
+    let setValues = [];
 
     function Test() {
-      let [value, setValue] = useState(50);
-      renders.push(value);
+      let [value, _setValue] = useState(50);
+      let setValue = useCallback((val) => {
+        setValues.push(val);
+        _setValue(val);
+      }, [_setValue]);
 
       return (<Slider label="The Label" value={value} onChange={setValue} />);
     }
@@ -141,7 +170,7 @@ describe('Slider', function () {
     expect(slider).toHaveAttribute('aria-valuetext', '55');
     expect(output).toHaveTextContent('55');
 
-    expect(renders).toStrictEqual([50, 55]);
+    expect(setValues).toStrictEqual([55]);
   });
 
   it('supports a custom getValueLabel', function () {
@@ -161,6 +190,38 @@ describe('Slider', function () {
     fireEvent.change(slider, {target: {value: '55'}});
     expect(output).toHaveTextContent('A55B');
     expect(slider).toHaveAttribute('aria-valuetext', '55');
+  });
+
+  it('supports form name', () => {
+    let {getByRole} = render(<Slider label="Value" value={10} name="cookies" />);
+    let input = getByRole('slider');
+    expect(input).toHaveAttribute('name', 'cookies');
+    expect(input).toHaveValue('10');
+  });
+
+  it('supports form reset', async () => {
+    function Test() {
+      let [value, setValue] = React.useState(10);
+      return (
+        <Provider theme={theme}>
+          <form>
+            <Slider label="Value" value={value} onChange={setValue} />
+            <input type="reset" data-testid="reset" />
+          </form>
+        </Provider>
+      );
+    }
+
+    let {getByTestId, getByRole} = render(<Test />);
+    let input = getByRole('slider');
+
+    expect(input).toHaveValue('10');
+    fireEvent.change(input, {target: {value: '55'}});
+    expect(input).toHaveValue('55');
+
+    let button = getByTestId('reset');
+    await user.click(button);
+    expect(input).toHaveValue('10');
   });
 
   describe('formatOptions', () => {

@@ -344,6 +344,12 @@ function processType(value) {
     }
     return `${name}<${value.typeParameters.map(processType).join(', ')}>`;
   }
+  if (value.type === 'template') {
+    return `\`${value.elements.map(element => element.type === 'string' ? element.value : `\${${processType(element)}}`).join('')}\``;
+  }
+  if (value.type === 'infer') {
+    return `infer ${value.value}`;
+  }
   if (value.type === 'typeOperator') {
     return `${value.operator} ${processType(value.value)}`;
   }
@@ -353,7 +359,7 @@ function processType(value) {
   if (value.type === 'parameter') {
     return processType(value.value);
   }
-  if (value.type === 'link') {
+  if (value.type === 'link' && value.id) {
     let name = value.id.substr(value.id.lastIndexOf(':') + 1);
     if (dependantOnLinks.has(currentlyProcessing)) {
       let foo = dependantOnLinks.get(currentlyProcessing);
@@ -381,7 +387,9 @@ ${value.exact ? '\\}' : '}'}`;
     return '{}';
   }
   if (value.type === 'alias') {
-    return processType(value.value);
+    return `type ${value.name} = {
+  ${processType(value.value)}
+}`;
   }
   if (value.type === 'array') {
     return `Array<${processType(value.elementType)}>`;
@@ -419,6 +427,7 @@ ${value.exact ? '\\}' : '}'}`;
   if (value.type === 'keyof') {
     return `keyof ${processType(value.keyof)}`;
   }
+
   console.log('unknown type', value);
 }
 

@@ -77,7 +77,7 @@ The `Modal` component uses an &lt;<TypeLink links={docs.links} type={docs.export
 import {Overlay, useModalOverlay} from '@react-aria/overlays';
 
 function Modal({state, children, ...props}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {modalProps, underlayProps} = useModalOverlay(props, state, ref);
 
   return (
@@ -168,10 +168,16 @@ The `Dialog` component is rendered within the `ModalOverlay` component. It is bu
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+import type {AriaDialogProps} from '@react-aria/dialog';
 import {useDialog} from '@react-aria/dialog';
 
-function Dialog({title, children, ...props}) {
-  let ref = React.useRef();
+interface DialogProps extends AriaDialogProps {
+  title?: React.ReactNode,
+  children: React.ReactNode
+}
+
+function Dialog({title, children, ...props}: DialogProps) {
+  let ref = React.useRef(null);
   let {dialogProps, titleProps} = useDialog(props, ref);
 
   return (

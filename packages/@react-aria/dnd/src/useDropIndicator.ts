@@ -12,9 +12,9 @@
 
 import * as DragManager from './DragManager';
 import {DroppableCollectionState} from '@react-stately/dnd';
-import {DropTarget} from '@react-types/shared';
+import {DropTarget, Key} from '@react-types/shared';
 import {getDroppableCollectionId} from './utils';
-import {HTMLAttributes, Key, RefObject} from 'react';
+import {HTMLAttributes, RefObject} from 'react';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useDroppableItem} from './useDroppableItem';
@@ -45,11 +45,11 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
   let {target} = props;
   let {collection} = state;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/dnd');
   let dragSession = DragManager.useDragSession();
   let {dropProps} = useDroppableItem(props, state, ref);
   let id = useId();
-  let getText = (key: Key) => collection.getItem(key)?.textValue;
+  let getText = (key: Key) => collection.getTextValue?.(key) ?? collection.getItem(key)?.textValue;
 
   let label = '';
   let labelledBy: string;
@@ -61,12 +61,19 @@ export function useDropIndicator(props: DropIndicatorProps, state: DroppableColl
       itemText: getText(target.key)
     });
   } else {
-    let before = target.dropPosition === 'before'
-      ? collection.getKeyBefore(target.key)
-      : target.key;
-    let after = target.dropPosition === 'after'
-      ? collection.getKeyAfter(target.key)
-      : target.key;
+    let before: Key | null;
+    let after: Key | null;
+    if (collection.getFirstKey() === target.key && target.dropPosition === 'before') {
+      before = null;
+    } else {
+      before = target.dropPosition === 'before' ? collection.getKeyBefore(target.key) : target.key;
+    }
+
+    if (collection.getLastKey() === target.key && target.dropPosition === 'after') {
+      after = null;
+    } else {
+      after = target.dropPosition === 'after' ? collection.getKeyAfter(target.key) : target.key;
+    }
 
     if (before && after) {
       label = stringFormatter.format('insertBetween', {

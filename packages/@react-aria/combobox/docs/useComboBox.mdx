@@ -62,7 +62,7 @@ A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.
 * Support for controlled and uncontrolled options, selection, input value, and open state
 * Support for custom filter functions
 * Async loading and infinite scrolling support
-* Support for virtualized scrolling for performance with long lists
+* Support for use with virtualized lists
 * Exposed to assistive technology as a `combobox` with ARIA
 * Labeling support for accessibility
 * Required and invalid states exposed to assistive technology via ARIA
@@ -74,7 +74,9 @@ A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.
 * Virtual focus management for combo box list box option navigation
 * Hides elements outside the input and list box from assistive technology while the list box is open in a portal
 * Custom localized announcements for option focusing, filtering, and selection using an ARIA live region to work around VoiceOver bugs
-* Support for description and error message help text linked to the input via ARIA
+* Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors
+
+Read our [blog post](../blog/building-a-combobox.html) for more details about the interactions and accessibility features implemented by `useComboBox`.
 
 ## Anatomy
 
@@ -229,21 +231,23 @@ See [usePopover](usePopover.html) for more examples of popovers.
   <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show code</summary>
 
 ```tsx example export=true render=false
+import type {AriaPopoverProps} from 'react-aria';
+import type {OverlayTriggerState} from 'react-stately';
 import {usePopover, Overlay, DismissButton} from '@react-aria/overlays';
 
-function Popover({children, state, ...props}) {
-  let ref = React.useRef();
-  let {popoverRef = ref} = props;
-  let {popoverProps} = usePopover({
-    ...props,
-    popoverRef
-  }, state);
+interface PopoverProps extends AriaPopoverProps {
+  children: React.ReactNode,
+  state: OverlayTriggerState
+}
+
+function Popover({children, state, ...props}: PopoverProps) {
+  let {popoverProps} = usePopover(props, state);
 
   return (
     <Overlay>
       <div
         {...popoverProps}
-        ref={popoverRef}
+        ref={props.popoverRef as React.RefObject<HTMLDivElement>}
         style={{
           ...popoverProps.style,
           background: 'lightgray',
@@ -272,7 +276,7 @@ user types in the ComboBox. They can also be shared with other components like a
 import {useListBox, useOption} from '@react-aria/listbox';
 
 function ListBox(props) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {listBoxRef = ref, state} = props;
   let {listBoxProps} = useListBox(props, state, listBoxRef);
 
@@ -299,7 +303,7 @@ function ListBox(props) {
 }
 
 function Option({item, state}) {
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {optionProps, isSelected, isFocused, isDisabled} = useOption({key: item.key}, state, ref);
 
   let backgroundColor;
@@ -428,7 +432,7 @@ function Example() {
     {id: 8, name: 'Agricultural'},
     {id: 9, name: 'Electrical'}
   ];
-  let [majorId, setMajorId] = React.useState();
+  let [majorId, setMajorId] = React.useState(null);
 
   return (
     <>
@@ -666,6 +670,10 @@ function AsyncLoadingExample() {
   );
 }
 ```
+
+### Links
+
+By default, interacting with an item in a ComboBox selects it and updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Interacting with link items navigates to the provided URL and does not update the selection or input value. See the [links](useListBox.html#links) section in the `useListBox` docs for details on how to support this.
 
 ## Internationalization
 

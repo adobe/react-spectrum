@@ -11,7 +11,15 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {classNames, SlotProvider, unwrapDOMRef, useDOMRef, useHasChild, useStyleProps} from '@react-spectrum/utils';
+import {
+  classNames,
+  SlotProvider,
+  unwrapDOMRef,
+  useDOMRef,
+  useHasChild,
+  useSlotProps,
+  useStyleProps
+} from '@react-spectrum/utils';
 import CrossLarge from '@spectrum-icons/ui/CrossLarge';
 import {DialogContext, DialogContextValue} from './context';
 import {DOMRef} from '@react-types/shared';
@@ -34,6 +42,7 @@ let sizeMap = {
 };
 
 function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
+  props = useSlotProps(props, 'dialog');
   let {
     type = 'modal',
     ...contextProps
@@ -45,13 +54,13 @@ function Dialog(props: SpectrumDialogProps, ref: DOMRef) {
     size,
     ...otherProps
   } = props;
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/dialog');
   let {styleProps} = useStyleProps(otherProps);
 
   size = type === 'popover' ? (size || 'S') : (size || 'L');
 
   let domRef = useDOMRef(ref);
-  let gridRef = useRef();
+  let gridRef = useRef(null);
   let sizeVariant = sizeMap[type] || sizeMap[size];
   let {dialogProps, titleProps} = useDialog(mergeProps(contextProps, props), domRef);
 

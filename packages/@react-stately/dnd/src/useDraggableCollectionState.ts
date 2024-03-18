@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DraggableCollectionEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Node} from '@react-types/shared';
-import {Key, RefObject, useRef, useState} from 'react';
+import {Collection, DraggableCollectionEndEvent, DraggableCollectionProps, DragItem, DragMoveEvent, DragPreviewRenderer, DragStartEvent, DropOperation, Key, Node} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
+import {RefObject, useRef, useState} from 'react';
 
 export interface DraggableCollectionStateOptions extends DraggableCollectionProps {
   /** A collection of items. */
@@ -98,10 +98,11 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
     preview,
     getAllowedDropOperations,
     startDrag(key, event) {
-      setDragging(true);
       let keys = getKeys(key);
       draggingKeys.current = keys;
       draggedKey.current = key;
+      selectionManager.setFocused(false);
+      setDragging(true);
       if (typeof onDragStart === 'function') {
         onDragStart({
           ...event,
@@ -130,9 +131,9 @@ export function useDraggableCollectionState(props: DraggableCollectionStateOptio
         });
       }
 
-      setDragging(false);
       draggingKeys.current = new Set();
       draggedKey.current = null;
+      setDragging(false);
     }
   };
 }

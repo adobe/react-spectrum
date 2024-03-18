@@ -1,6 +1,4 @@
 {
   "close": "Sulje",
-  "info": "Tiedot",
-  "negative": "Virhe",
-  "positive": "Onnistui"
+  "notifications": "Ilmoitukset"
 }

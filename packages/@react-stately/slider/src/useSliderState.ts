@@ -10,11 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {clamp, snapValueToStep} from '@react-aria/utils';
+import {clamp, snapValueToStep, useControlledState} from '@react-stately/utils';
 import {Orientation} from '@react-types/shared';
 import {SliderProps} from '@react-types/slider';
-import {useControlledState} from '@react-stately/utils';
-import {useMemo, useRef, useState} from 'react';
+import {useCallback, useMemo, useRef, useState} from 'react';
 
 export interface SliderState {
   /**
@@ -177,24 +176,38 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
     return Math.max(calcPageSize, step);
   }, [step, maxValue, minValue]);
 
-  let value = useMemo(() => convertValue(props.value), [props.value]);
-  let defaultValue = useMemo(() => convertValue(props.defaultValue) ?? [minValue], [props.defaultValue, minValue]);
+  let restrictValues = useCallback((values: number[]) => values?.map((val, idx) => {
+    let min = idx === 0 ? minValue : val[idx - 1];
+    let max = idx === values.length - 1 ? maxValue : val[idx + 1];
+    return snapValueToStep(val, min, max, step);
+  }), [minValue, maxValue, step]);
+
+  let value = useMemo(() => restrictValues(convertValue(props.value)), [props.value]);
+  let defaultValue = useMemo(() => restrictValues(convertValue(props.defaultValue) ?? [minValue]), [props.defaultValue, minValue]);
   let onChange = createOnChange(props.value, props.defaultValue, props.onChange);
   let onChangeEnd = createOnChange(props.value, props.defaultValue, props.onChangeEnd);
 
-  const [values, setValues] = useControlledState<number[]>(
+  const [values, setValuesState] = useControlledState<number[]>(
     value,
     defaultValue,
     onChange
   );
-  const [isDraggings, setDraggings] = useState<boolean[]>(new Array(values.length).fill(false));
+  const [isDraggings, setDraggingsState] = useState<boolean[]>(new Array(values.length).fill(false));
   const isEditablesRef = useRef<boolean[]>(new Array(values.length).fill(true));
   const [focusedIndex, setFocusedIndex] = useState<number | undefined>(undefined);
 
-  const valuesRef = useRef<number[]>(null);
-  valuesRef.current = values;
-  const isDraggingsRef = useRef<boolean[]>(null);
-  isDraggingsRef.current = isDraggings;
+  const valuesRef = useRef<number[]>(values);
+  const isDraggingsRef = useRef<boolean[]>(isDraggings);
+
+  let setValues = (values: number[]) => {
+    valuesRef.current = values;
+    setValuesState(values);
+  };
+
+  let setDraggings = (draggings: boolean[]) => {
+    isDraggingsRef.current = draggings;
+    setDraggingsState(draggings);
+  };
 
   function getValuePercent(value: number) {
     return (value - minValue) / (maxValue - minValue);
@@ -224,13 +237,16 @@ export function useSliderState<T extends number | number[]>(props: SliderStateOp
 
     // Round value to multiple of step, clamp value between min and max
     value = snapValueToStep(value, thisMin, thisMax, step);
-    valuesRef.current = replaceIndex(valuesRef.current, index, value);
-    setValues(valuesRef.current);
+    let newValues = replaceIndex(valuesRef.current, index, value);
+    setValues(newValues);
   }
 
   function updateDragging(index: number, dragging: boolean) {
     if (isDisabled || !isThumbEditable(index)) {
       return;
+    }
+    if (dragging) {
+      valuesRef.current = values;
     }
 
     const wasDragging = isDraggingsRef.current[index];

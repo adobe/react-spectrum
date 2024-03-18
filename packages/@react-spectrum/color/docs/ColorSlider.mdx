@@ -72,13 +72,24 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+ColorSlider supports the `name` prop for integration with HTML forms. The value will be submitted as a number between the minimum and maximum value for the displayed channel.
+
+```tsx example
+<ColorSlider
+  defaultValue="#7f0000"
+  channel="red"
+  name="red" />
+```
+
 ## Labeling
 
 The ColorSlider's channel name and value are shown above the ColorSlider by default. The label and value label can be hidden by providing
 `label={null}` and `showValueLabel={false}` to the ColorSlider, respectively. In addition, a custom label can be provided via the `label` prop.
 
 ```tsx example
-<Flex gap="size-300" wrap alignItems="flex-end">
+<Flex gap="size-300" wrap alignItems="end">
   <ColorSlider channel="saturation" defaultValue="hsl(0, 100%, 50%)" label={null} />
   <ColorSlider channel="lightness" defaultValue="hsl(0, 100%, 50%)" showValueLabel={false} />
 </Flex>

@@ -11,7 +11,7 @@
  */
 
 import {CancelablePromise, easeOut, tween} from './tween';
-import {Collection} from '@react-types/shared';
+import {Collection, Key} from '@react-types/shared';
 import {concatIterators, difference, isSetEqual} from './utils';
 import {
   InvalidationContext,
@@ -20,7 +20,6 @@ import {
   VirtualizerDelegate,
   VirtualizerOptions
 } from './types';
-import {Key} from 'react';
 import {Layout} from './Layout';
 import {LayoutInfo} from './LayoutInfo';
 import {OverscanManager} from './OverscanManager';
@@ -185,7 +184,8 @@ export class Virtualizer<T extends object, V, W> {
     this._visibleRect = rect;
 
     if (shouldInvalidate) {
-      this.relayout({
+      // We are already in a layout effect when this method is called, so relayoutNow is appropriate.
+      this.relayoutNow({
         offsetChanged: !rect.pointEquals(current),
         sizeChanged: !rect.sizeEquals(current)
       });
@@ -460,10 +460,6 @@ export class Virtualizer<T extends object, V, W> {
     }
 
     this._invalidationContext = context;
-    this._relayoutRaf = requestAnimationFrame(() => {
-      this._relayoutRaf = null;
-      this.relayoutNow();
-    });
   }
 
   /**
@@ -660,7 +656,18 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   getVisibleLayoutInfos() {
-    let rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();
+    let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
+
+    let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
+    let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
+
+    let rect;
+    if (isTestEnv && !(isClientWidthMocked && isClientHeightMocked)) {
+      rect = this._getContentRect();
+    } else {
+      rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();
+    }
+
     this._visibleLayoutInfos = this._getLayoutInfoMap(rect);
     return this._visibleLayoutInfos;
   }
@@ -814,14 +821,20 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   afterRender() {
+    if (this._transactionQueue.length > 0) {
+      this._processTransactionQueue();
+    } else if (this._invalidationContext) {
+      this.relayoutNow();
+    }
+
     if (this.shouldOverscan) {
       this._overscanManager.collectMetrics();
     }
   }
 
   private _flushVisibleViews() {
-    // CollectionVirtualizer deals with a flattened set of LayoutInfos, but they can represent heirarchy
-    // by referencing a parentKey. Just before rendering the visible views, we rebuild this heirarchy
+    // CollectionVirtualizer deals with a flattened set of LayoutInfos, but they can represent hierarchy
+    // by referencing a parentKey. Just before rendering the visible views, we rebuild this hierarchy
     // by creating a mapping of views by parent key and recursively calling the delegate's renderWrapper
     // method to build the final tree.
     let viewsByParentKey = new Map([[null, []]]);
@@ -1112,7 +1125,6 @@ export class Virtualizer<T extends object, V, W> {
     this._transactionQueue.push(this._nextTransaction);
     this._nextTransaction = null;
 
-    this._processTransactionQueue();
     return true;
   }
 

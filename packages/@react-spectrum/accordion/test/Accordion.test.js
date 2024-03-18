@@ -11,7 +11,7 @@
  */
 
 import {Accordion, Item} from '../src';
-import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -20,7 +20,7 @@ import userEvent from '@testing-library/user-event';
 let items = [
   {key: 'one', title: 'one title', children: 'one children'},
   {key: 'two', title: 'two title', children: 'two children'},
-  {key: 'three', title: 'three title', children: 'three children'}
+  {key: 'three', title: 'three title', children: <input type="text" />, hasChildItems: false}
 ];
 
 function renderComponent(props) {
@@ -28,7 +28,7 @@ function renderComponent(props) {
     <Provider theme={theme}>
       <Accordion {...props} defaultExpandedKeys={['one']} items={items}>
         {item => (
-          <Item key={item.key} title={item.title}>
+          <Item key={item.key} title={item.title} hasChildItems={item.hasChildItems}>
             {item.children}
           </Item>
         )}
@@ -38,6 +38,11 @@ function renderComponent(props) {
 }
 
 describe('Accordion', function () {
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   it('renders properly', function () {
     let tree = renderComponent();
     let accordionItems = tree.getAllByRole('heading');
@@ -58,14 +63,14 @@ describe('Accordion', function () {
     }
   });
 
-  it('toggle accordion on mouse click', function () {
+  it('toggle accordion on mouse click', async function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
-    userEvent.click(selectedItem);
+    await user.click(selectedItem);
     expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
-    userEvent.click(selectedItem);
+    await user.click(selectedItem);
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
   });
 
@@ -105,25 +110,38 @@ describe('Accordion', function () {
     expect(document.activeElement).toBe(secondItem);
   });
 
-  it('allows users to navigate accordion headers through the tab key', function () {
+  it('allows users to navigate accordion headers through the tab key', async function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let [firstItem, secondItem, thirdItem] = buttons;
     act(() => {firstItem.focus();});
     expect(document.activeElement).toBe(firstItem);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(secondItem);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(firstItem);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(secondItem);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).toBe(thirdItem);
-    userEvent.tab();
+    await user.tab();
     expect(document.activeElement).not.toBe(firstItem);
     expect(document.activeElement).not.toBe(secondItem);
     expect(document.activeElement).not.toBe(thirdItem);
-    userEvent.tab({shift: true});
+    await user.tab({shift: true});
     expect(document.activeElement).toBe(thirdItem);
+  });
+
+  it('allows users to type inside accordion items', async function () {
+    let tree = renderComponent();
+    let buttons = tree.getAllByRole('button');
+    let itemWithInputHeader = buttons[2];
+    act(() => itemWithInputHeader.click());
+
+    let [input] = tree.getAllByRole('textbox');
+    act(() => input.focus());
+
+    await user.type(input, 'Type example');
+    expect(input.value).toEqual('Type example');
   });
 });

@@ -1,0 +1,297 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/meter/docs/anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Status
+keywords: [meter, progressbar, aria]
+type: component
+---
+
+# Meter
+
+<PageDescription>{docs.exports.Meter.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['Meter']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/meter/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {Meter, Label} from 'react-aria-components';
+
+<Meter value={25}>
+  {({percentage, valueText}) => <>
+    <Label>Storage space</Label>
+    <span className="value">{valueText}</span>
+    <div className="bar">
+      <div className="fill" style={{width: percentage + '%'}} />
+    </div>
+  </>}
+</Meter>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-Meter {
+  --fill-color: forestgreen;
+
+  display: grid;
+  grid-template-areas: "label value"
+                       "bar bar";
+  grid-template-columns: 1fr auto;
+  gap: 4px;
+  width: 250px;
+  color: var(--text-color);
+
+  .value {
+    grid-area: value;
+  }
+
+  .bar {
+    grid-area: bar;
+    box-shadow: inset 0px 0px 0px 1px var(--border-color);
+    forced-color-adjust: none;
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .fill {
+    background: var(--fill-color);
+    height: 100%;
+  }
+}
+
+@media (forced-colors: active) {
+  .react-aria-Meter {
+    --fill-color: Highlight;
+  }
+}
+```
+
+</details>
+
+## Features
+
+The [&lt;meter&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meter)
+HTML element can be used to build a meter, however it is
+very difficult to style cross browser. `Meter` helps achieve accessible
+meters that can be styled as needed.
+
+* **Accessible** – Follows the [ARIA meter pattern](https://www.w3.org/WAI/ARIA/apg/patterns/meter/), with fallback to `progressbar` where unsupported. A nested label is automatically associated with the meter semantically.
+* **International** – The value is formatted as a percentage or custom format according to the user's locale.
+
+Note: Meters are similar to progress bars, but represent a quantity as opposed to progress over time.
+See [ProgressBar](ProgressBar.html) for more details about progress bars.
+
+## Anatomy
+
+<Anatomy />
+
+Meters consist of a track element showing the full value in a range,
+a fill element showing the current value, a label, and an optional value label. The track and bar elements
+represent the value visually, while a wrapper element represents the meter to
+assistive technology using the [meter](https://www.w3.org/WAI/ARIA/apg/patterns/meter/)
+ARIA role.
+
+```tsx
+import {Meter, Label} from 'react-aria-components';
+
+<Meter>
+  <Label />
+</Meter>
+```
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify the element to screen readers.
+
+### Composed components
+
+A `Meter` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
+  title="Label"
+  description="A label provides context for an element.">
+  <Label />
+</ExampleCard>
+
+</section>
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="meter" />
+
+## Reusable wrappers
+
+If you will use a Meter in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `Meter` and all of its children together into a single component which accepts a `label` prop that is passed to the right place.
+
+```tsx example export=true
+import type {MeterProps} from 'react-aria-components';
+
+interface MyMeterProps extends MeterProps {
+  label?: string
+}
+
+function MyMeter({label, ...props}: MyMeterProps) {
+  return (
+    <Meter {...props}>
+      {({percentage, valueText}) => <>
+        <Label>{label}</Label>
+        <span className="value">{valueText}</span>
+        <div className="bar">
+          <div className="fill" style={{width: percentage + '%'}} />
+        </div>
+      </>}
+    </Meter>
+  );
+}
+
+<MyMeter label="Storage space" value={80} />
+```
+
+## Value
+
+Meters are controlled with the `value` prop. By default, the `value` prop represents the current percentage of progress, as the minimum and maximum values default to 0 and 100, respectively.
+
+```tsx example
+<MyMeter
+  label="Storage space"
+  value={25} />
+```
+
+### Custom value scale
+
+A custom value scale can be used by setting the `minValue` and `maxValue` props.
+
+```tsx example
+<MyMeter
+  label="Widgets Used"
+  minValue={50}
+  maxValue={150}
+  value={100} />
+```
+
+## Labeling
+
+### Value formatting
+
+Values are formatted as a percentage by default, but this can be modified by using the `formatOptions` prop to specify a different format.
+`formatOptions` is compatible with the option parameter of [Intl.NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NumberFormat) and is applied based on the current locale.
+
+```tsx example
+<MyMeter
+  label="Currency"
+  formatOptions={{style: 'currency', currency: 'JPY'}}
+  value={60} />
+```
+
+### Custom value label
+
+The `valueLabel` prop allows the formatted value to be replaced with a custom string.
+
+```tsx example
+<MyMeter
+  label="Space used"
+  valueLabel="54 of 60GB"
+  value={90} />
+```
+
+## Props
+
+<PropTable component={docs.exports.Meter} links={docs.links} />
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-Meter {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<Meter className="my-meter">
+  {/* ... */}
+</Meter>
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Meter className={({percentage}) => percentage > 50 ? 'bg-green-400' : 'bg-yellow-100'}>
+  Item
+</Meter>
+```
+
+The selectors and render props for each component used in a `Meter` are documented below.
+
+### Meter
+
+A `Meter` can be targeted with the `.react-aria-Meter` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.MeterRenderProps.properties} />
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by adding a custom `className`.
+
+## Advanced customization
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['Meter']} docs={docs} />
+
+This example sets the `formatOptions` via context, which applies to all nested meters.
+
+```tsx example
+import {MeterContext} from 'react-aria-components';
+
+<MeterContext.Provider value={{formatOptions: {style: 'decimal'}}}>
+  <MyMeter label="Widgets" value={28.5} />
+  <MyMeter label="Cookies" value={68.75} />
+</MeterContext.Provider>
+```
+
+### Hooks
+
+If you need to customize things further, such as customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useMeter](useMeter.html) for more details.

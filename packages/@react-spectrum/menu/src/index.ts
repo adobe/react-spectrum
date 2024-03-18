@@ -13,8 +13,11 @@
 /// <reference types="css-module-types" />
 
 export {MenuTrigger} from './MenuTrigger';
+export {SubmenuTrigger} from './SubmenuTrigger';
 export {Menu} from './Menu';
 export {ActionMenu} from './ActionMenu';
+export {ContextualHelpTrigger} from './ContextualHelpTrigger';
 export {Item, Section} from '@react-stately/collections';
-export type {SpectrumMenuTriggerProps} from '@react-types/menu';
-export type {SpectrumActionMenuProps, SpectrumMenuProps} from '@react-types/menu';
+export type {SpectrumActionMenuProps, SpectrumMenuProps, SpectrumMenuTriggerProps} from '@react-types/menu';
+export type {SpectrumMenuDialogTriggerProps} from './ContextualHelpTrigger';
+export type {SpectrumSubmenuTriggerProps} from './SubmenuTrigger';

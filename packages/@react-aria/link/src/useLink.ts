@@ -12,8 +12,8 @@
 
 import {AriaLinkProps} from '@react-types/link';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {RefObject} from 'react';
+import {filterDOMProps, mergeProps, shouldClientNavigate, useRouter} from '@react-aria/utils';
+import React, {RefObject} from 'react';
 import {useFocusable} from '@react-aria/focus';
 import {usePress} from '@react-aria/interactions';
 
@@ -51,7 +51,7 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
     ...otherProps
   } = props;
 
-  let linkProps: DOMAttributes;
+  let linkProps: DOMAttributes = {};
   if (elementType !== 'a') {
     linkProps = {
       role: 'link',
@@ -60,8 +60,9 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
   }
   let {focusableProps} = useFocusable(props, ref);
   let {pressProps, isPressed} = usePress({onPress, onPressStart, onPressEnd, isDisabled, ref});
-  let domProps = filterDOMProps(otherProps, {labelable: true});
+  let domProps = filterDOMProps(otherProps, {labelable: true, isLink: elementType === 'a'});
   let interactionHandlers = mergeProps(focusableProps, pressProps);
+  let router = useRouter();
 
   return {
     isPressed, // Used to indicate press state for visual
@@ -69,11 +70,25 @@ export function useLink(props: AriaLinkOptions, ref: RefObject<FocusableElement>
       ...interactionHandlers,
       ...linkProps,
       'aria-disabled': isDisabled || undefined,
-      onClick: (e) => {
-        pressProps.onClick(e);
+      'aria-current': props['aria-current'],
+      onClick: (e: React.MouseEvent<HTMLAnchorElement>) => {
+        pressProps.onClick?.(e);
         if (deprecatedOnClick) {
           deprecatedOnClick(e);
           console.warn('onClick is deprecated, please use onPress');
+        }
+
+        // If a custom router is provided, prevent default and forward if this link should client navigate.
+        if (
+          !router.isNative &&
+          e.currentTarget instanceof HTMLAnchorElement &&
+          e.currentTarget.href &&
+          // If props are applied to a router Link component, it may have already prevented default.
+          !e.isDefaultPrevented() &&
+          shouldClientNavigate(e.currentTarget, e)
+        ) {
+          e.preventDefault();
+          router.open(e.currentTarget, e);
         }
       }
     })

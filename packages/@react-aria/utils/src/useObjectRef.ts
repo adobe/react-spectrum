@@ -10,37 +10,30 @@
  * governing permissions and limitations under the License.
  */
 
-import {MutableRefObject, useRef} from 'react';
-import {useLayoutEffect} from './';
+import {MutableRefObject, useMemo, useRef} from 'react';
 
 /**
  * Offers an object ref for a given callback ref or an object ref. Especially
  * helfpul when passing forwarded refs (created using `React.forwardRef`) to
- * React Aria Hooks.
+ * React Aria hooks.
  *
  * @param forwardedRef The original ref intended to be used.
  * @returns An object ref that updates the given ref.
  * @see https://reactjs.org/docs/forwarding-refs.html
  */
-export function useObjectRef<T>(forwardedRef?: ((instance: T | null) => void) | MutableRefObject<T | null> | null): MutableRefObject<T> {
-  const objRef = useRef<T>();
-
-  /**
-   * We're using `useLayoutEffect` here instead of `useEffect` because we want
-   * to make sure that the `ref` value is up to date before other places in the
-   * the execution cycle try to read it.
-   */
-  useLayoutEffect(() => {
-    if (!forwardedRef) {
-      return;
+export function useObjectRef<T>(forwardedRef?: ((instance: T | null) => void) | MutableRefObject<T | null> | null): MutableRefObject<T | null> {
+  const objRef: MutableRefObject<T | null> = useRef<T>(null);
+  return useMemo(() => ({
+    get current() {
+      return objRef.current;
+    },
+    set current(value) {
+      objRef.current = value;
+      if (typeof forwardedRef === 'function') {
+        forwardedRef(value);
+      } else if (forwardedRef) {
+        forwardedRef.current = value;
+      }
     }
-
-    if (typeof forwardedRef === 'function') {
-      forwardedRef(objRef.current);
-    } else {
-      forwardedRef.current = objRef.current;
-    }
-  }, [forwardedRef]);
-
-  return objRef;
+  }), [forwardedRef]);
 }

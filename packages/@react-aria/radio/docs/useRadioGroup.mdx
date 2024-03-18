@@ -55,7 +55,7 @@ radio groups that can be styled as needed.
 * Radio groups are exposed to assistive technology via ARIA
 * Each radio is built with a native HTML `<input>` element, which can be optionally visually
   hidden to allow custom styling
-* Full support for browser features like form autofill
+* Full support for browser features like form autofill and validation
 * Keyboard focus management and cross browser normalization
 * Group and radio labeling support for assistive technology
 
@@ -102,7 +102,7 @@ import {useRadioGroupState} from '@react-stately/radio';
 let RadioContext = React.createContext(null);
 
 function RadioGroup(props) {
-  let {children, label, description, errorMessage, validationState} = props;
+  let {children, label, description, errorMessage} = props;
   let state = useRadioGroupState(props);
   let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup(props, state);
 
@@ -113,7 +113,7 @@ function RadioGroup(props) {
         {children}
       </RadioContext.Provider>
       {description && <div {...descriptionProps} style={{fontSize: 12}}>{description}</div>}
-      {errorMessage && validationState === 'invalid' &&
+      {errorMessage && state.isInvalid &&
         <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{errorMessage}</div>
       }
     </div>
@@ -162,9 +162,9 @@ import {useFocusRing} from '@react-aria/focus';
 let RadioContext = React.createContext(null);
 
 function RadioGroup(props) {
-  let {children, label, description, errorMessage, validationState} = props;
+  let {children, label, description} = props;
   let state = useRadioGroupState(props);
-  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps} = useRadioGroup(props, state);
+  let {radioGroupProps, labelProps, descriptionProps, errorMessageProps, isInvalid, validationErrors} = useRadioGroup(props, state);
 
   return (
     <div {...radioGroupProps}>
@@ -173,8 +173,8 @@ function RadioGroup(props) {
         {children}
       </RadioContext.Provider>
       {description && <div {...descriptionProps} style={{fontSize: 12}}>{description}</div>}
-      {errorMessage && validationState === 'invalid' &&
-        <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{errorMessage}</div>
+      {isInvalid &&
+        <div {...errorMessageProps} style={{color: 'red', fontSize: 12}}>{validationErrors.join(' ')}</div>
       }
     </div>
   )
@@ -268,7 +268,7 @@ The `onChange` event is fired when the user selects a radio.
 
 ```tsx example
 function Example() {
-  let [selected, setSelected] = React.useState('');
+  let [selected, setSelected] = React.useState(null);
 
   return (
     <>
@@ -293,16 +293,23 @@ The `description` prop can be used to associate additional help text with a radi
 </RadioGroup>
 ```
 
-### Error message
+### Validation
 
-The `errorMessage` prop can be used to help the user fix a validation error. It should be combined with the `validationState` prop to
-semantically mark the radio group as invalid for assistive technologies.
+RadioGroup supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When a RadioGroup has the `validationBehavior="native"` prop, validation errors block form submission. To display validation errors, use the `validationErrors` and `errorMessageProps` returned by `useRadioGroup`. This allows you to render error messages from all of the above sources with consistent custom styles.
 
 ```tsx example
-<RadioGroup label="Favorite pet" errorMessage="Invalid pet selection." validationState="invalid">
-  <Radio value="dogs">Dogs</Radio>
-  <Radio value="cats">Cats</Radio>
-</RadioGroup>
+<form>
+  {/*- begin highlight -*/}
+  <RadioGroup label="Favorite pet" name="pet" isRequired validationBehavior="native">
+  {/*- end highlight -*/}
+    <Radio value="dogs">Dog</Radio>
+    <Radio value="cats">Cat</Radio>
+    <Radio value="dragon">Dragon</Radio>
+  </RadioGroup>
+  <input type="submit" style={{marginTop: 8}} />
+</form>
 ```
 
 ### Disabled

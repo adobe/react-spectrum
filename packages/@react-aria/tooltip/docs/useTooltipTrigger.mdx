@@ -106,7 +106,7 @@ function Tooltip({state, ...props}) {
 
 function TooltipButton(props) {
   let state = useTooltipTriggerState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
 
   // Get props for the trigger and its tooltip
   let {triggerProps, tooltipProps} = useTooltipTrigger(props, state, ref);
@@ -135,6 +135,14 @@ Tooltips appear after a short delay when hovering the trigger, or instantly when
 
 ```tsx example
 <TooltipButton tooltip="Save" delay={0}>💾</TooltipButton>
+```
+
+### Close Delay
+
+Tooltips disappear after a short delay when no longer hovering the trigger, or instantly when using keyboard focus. This delay can be adjusted for hover using the `closeDelay` prop.
+
+```tsx example
+<TooltipButton tooltip="Refresh" closeDelay={0}>🔄</TooltipButton>
 ```
 
 ### Trigger

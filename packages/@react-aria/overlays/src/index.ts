@@ -28,3 +28,4 @@ export type {DismissButtonProps} from './DismissButton';
 export type {AriaPopoverProps, PopoverAria} from './usePopover';
 export type {AriaModalOverlayProps, ModalOverlayAria} from './useModalOverlay';
 export type {OverlayProps} from './Overlay';
+export type {Placement, PlacementAxis, PositionProps} from '@react-types/overlays';

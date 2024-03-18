@@ -10,24 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {AriaTagProps, useTag} from '@react-aria/tag';
+import {classNames, ClearSlots, SlotProvider, useStyleProps} from '@react-spectrum/utils';
 import {ClearButton} from '@react-spectrum/button';
+import type {ListState} from '@react-stately/list';
 import {mergeProps} from '@react-aria/utils';
 import React, {useRef} from 'react';
-import {SpectrumTagProps} from '@react-types/tag';
 import styles from '@adobe/spectrum-css-temp/components/tags/vars.css';
 import {Text} from '@react-spectrum/text';
 import {useFocusRing} from '@react-aria/focus';
 import {useHover} from '@react-aria/interactions';
-import {useTag} from '@react-aria/tag';
+
+export interface SpectrumTagProps<T> extends AriaTagProps<T> {
+  state: ListState<T>
+}
 
 export function Tag<T>(props: SpectrumTagProps<T>) {
   const {
-    children,
-    allowsRemoving,
     item,
     state,
-    onRemove,
     ...otherProps
   } = props;
 
@@ -35,43 +36,40 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
   let {styleProps} = useStyleProps(otherProps);
   let {hoverProps, isHovered} = useHover({});
   let {isFocused, isFocusVisible, focusProps} = useFocusRing({within: true});
-  let tagRef = useRef();
-  let tagRowRef = useRef();
-  let {clearButtonProps, labelProps, tagProps, tagRowProps} = useTag({
+  let ref = useRef(null);
+  let {removeButtonProps, gridCellProps, rowProps, allowsRemoving} = useTag({
     ...props,
-    isFocused,
-    allowsRemoving,
-    item,
-    onRemove,
-    tagRef,
-    tagRowRef
-  }, state);
+    item
+  }, state, ref);
 
   return (
     <div
-      {...tagRowProps}
-      ref={tagRowRef}>
-      <div
-        {...mergeProps(tagProps, hoverProps, focusProps)}
-        className={classNames(
+      {...mergeProps(rowProps, hoverProps, focusProps)}
+      className={classNames(
           styles,
-          'spectrum-Tags-item',
-          {
-            'focus-ring': isFocusVisible,
-            'is-focused': isFocused,
-            'is-hovered': isHovered
-          },
+          'spectrum-Tag',
+        {
+          'focus-ring': isFocusVisible,
+          'is-focused': isFocused,
+          'is-hovered': isHovered,
+          'spectrum-Tag--removable': allowsRemoving
+        },
           styleProps.className
         )}
-        ref={tagRef}>
+      ref={ref}>
+      <div
+        className={classNames(styles, 'spectrum-Tag-cell')}
+        {...gridCellProps}>
         <SlotProvider
           slots={{
             icon: {UNSAFE_className: classNames(styles, 'spectrum-Tag-icon'), size: 'XS'},
-            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content', {'tags-removable': allowsRemoving}), ...labelProps}
+            text: {UNSAFE_className: classNames(styles, 'spectrum-Tag-content')},
+            avatar: {UNSAFE_className: classNames(styles, 'spectrum-Tag-avatar'), size: 'avatar-size-50'}
           }}>
-
-          {typeof children === 'string' ? <Text>{children}</Text> : children}
-          {allowsRemoving && <TagRemoveButton item={item} {...clearButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-action')} />}
+          {typeof item.rendered === 'string' ? <Text>{item.rendered}</Text> : item.rendered}
+          <ClearSlots>
+            {allowsRemoving && <TagRemoveButton item={item} {...removeButtonProps} UNSAFE_className={classNames(styles, 'spectrum-Tag-removeButton')} />}
+          </ClearSlots>
         </SlotProvider>
       </div>
     </div>
@@ -79,17 +77,11 @@ export function Tag<T>(props: SpectrumTagProps<T>) {
 }
 
 function TagRemoveButton(props) {
-  props = useSlotProps(props, 'tagRemoveButton');
   let {styleProps} = useStyleProps(props);
-  let clearBtnRef = useRef();
 
   return (
-    <span
-      {...styleProps}
-      ref={clearBtnRef}>
-      <ClearButton
-        preventFocus
-        {...props} />
+    <span {...styleProps}>
+      <ClearButton {...props} />
     </span>
   );
 }

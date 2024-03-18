@@ -10,13 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, LongPressEvent, PressEvent} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, Key, LongPressEvent, PressEvent} from '@react-types/shared';
 import {focusSafely} from '@react-aria/focus';
 import {isCtrlKeyPressed, isNonContiguousSelectionModifier} from './utils';
-import {Key, RefObject, useEffect, useRef} from 'react';
-import {mergeProps} from '@react-aria/utils';
+import {mergeProps, openLink, useRouter} from '@react-aria/utils';
 import {MultipleSelectionManager} from '@react-stately/selection';
 import {PressProps, useLongPress, usePress} from '@react-aria/interactions';
+import {RefObject, useEffect, useRef} from 'react';
 
 export interface SelectableItemOptions {
   /**
@@ -59,7 +59,16 @@ export interface SelectableItemOptions {
    * Handler that is called when a user performs an action on the item. The exact user event depends on
    * the collection's `selectionBehavior` prop and the interaction modality.
    */
-  onAction?: () => void
+  onAction?: () => void,
+  /**
+   * The behavior of links in the collection.
+   * - 'action': link behaves like onAction.
+   * - 'selection': link follows selection interactions (e.g. if URL drives selection).
+   * - 'override': links override all other interactions (link items are not selectable).
+   * - 'none': links are disabled for both selection and actions (e.g. handled elsewhere).
+   * @default 'action'
+   */
+  linkBehavior?: 'action' | 'selection' | 'override' | 'none'
 }
 
 export interface SelectableItemStates {
@@ -67,6 +76,8 @@ export interface SelectableItemStates {
   isPressed: boolean,
   /** Whether the item is currently selected. */
   isSelected: boolean,
+  /** Whether the item is currently focused. */
+  isFocused: boolean,
   /**
    * Whether the item is non-interactive, i.e. both selection and actions are disabled and the item may
    * not be focused. Dependent on `disabledKeys` and `disabledBehavior`.
@@ -101,13 +112,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     key,
     ref,
     shouldSelectOnPressUp,
-    isVirtualized,
     shouldUseVirtualFocus,
     focus,
     isDisabled,
     onAction,
-    allowsDifferentPressOrigin
+    allowsDifferentPressOrigin,
+    linkBehavior = 'action'
   } = options;
+  let router = useRouter();
 
   let onSelect = (e: PressEvent | LongPressEvent | PointerEvent) => {
     if (e.pointerType === 'keyboard' && isNonContiguousSelectionModifier(e)) {
@@ -115,6 +127,17 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     } else {
       if (manager.selectionMode === 'none') {
         return;
+      }
+
+      if (manager.isLink(key)) {
+        if (linkBehavior === 'selection') {
+          router.open(ref.current, e);
+          // Always set selected keys back to what they were so that select and combobox close.
+          manager.setSelectedKeys(manager.selectedKeys);
+          return;
+        } else if (linkBehavior === 'override' || linkBehavior === 'none') {
+          return;
+        }
       }
 
       if (manager.selectionMode === 'single') {
@@ -137,10 +160,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Focus the associated DOM node when this item becomes the focusedKey
   useEffect(() => {
     let isFocused = key === manager.focusedKey;
-    if (isFocused && manager.isFocused && !shouldUseVirtualFocus && document.activeElement !== ref.current) {
+    if (isFocused && manager.isFocused && !shouldUseVirtualFocus) {
       if (focus) {
         focus();
-      } else {
+      } else if (document.activeElement !== ref.current) {
         focusSafely(ref.current);
       }
     }
@@ -172,12 +195,14 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   // Clicking the checkbox enters selection mode, after which clicking anywhere on any row toggles selection for that row.
   // With highlight selection, onAction is secondary, and occurs on double click. Single click selects the row.
   // With touch, onAction occurs on single tap, and long press enters selection mode.
-  let allowsSelection = !isDisabled && manager.canSelectItem(key);
-  let allowsActions = onAction && !isDisabled;
+  let isLinkOverride = manager.isLink(key) && linkBehavior === 'override';
+  let hasLinkAction = manager.isLink(key) && linkBehavior !== 'selection' && linkBehavior !== 'none';
+  let allowsSelection = !isDisabled && manager.canSelectItem(key) && !isLinkOverride;
+  let allowsActions = (onAction || hasLinkAction) && !isDisabled;
   let hasPrimaryAction = allowsActions && (
     manager.selectionBehavior === 'replace'
       ? !allowsSelection
-      : manager.isEmpty
+      : !allowsSelection || manager.isEmpty
   );
   let hasSecondaryAction = allowsActions && allowsSelection && manager.selectionBehavior === 'replace';
   let hasAction = hasPrimaryAction || hasSecondaryAction;
@@ -186,6 +211,16 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
   let longPressEnabled = hasAction && allowsSelection;
   let longPressEnabledOnPressStart = useRef(false);
   let hadPrimaryActionOnPressStart = useRef(false);
+
+  let performAction = (e) => {
+    if (onAction) {
+      onAction();
+    }
+
+    if (hasLinkAction) {
+      router.open(ref.current, e);
+    }
+  };
 
   // By default, selection occurs on pointer down. This can be strange if selecting an
   // item causes the UI to disappear immediately (e.g. menus).
@@ -213,19 +248,19 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
             return;
           }
 
-          onAction();
-        } else if (e.pointerType !== 'keyboard') {
+          performAction(e);
+        } else if (e.pointerType !== 'keyboard' && allowsSelection) {
           onSelect(e);
         }
       };
     } else {
-      itemPressProps.onPressUp = (e) => {
-        if (e.pointerType !== 'keyboard') {
+      itemPressProps.onPressUp = hasPrimaryAction ? null : (e) => {
+        if (e.pointerType !== 'keyboard' && allowsSelection) {
           onSelect(e);
         }
       };
 
-      itemPressProps.onPress = hasPrimaryAction ? () => onAction() : null;
+      itemPressProps.onPress = hasPrimaryAction ? performAction : null;
     }
   } else {
     itemPressProps.onPressStart = (e) => {
@@ -237,8 +272,10 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
       // For keyboard, select on key down. If there is an action, the Space key selects on key down,
       // and the Enter key performs onAction on key up.
       if (
-        (e.pointerType === 'mouse' && !hasPrimaryAction) ||
-        (e.pointerType === 'keyboard' && (!onAction || isSelectionKey()))
+        allowsSelection && (
+          (e.pointerType === 'mouse' && !hasPrimaryAction) ||
+          (e.pointerType === 'keyboard' && (!allowsActions || isSelectionKey()))
+        )
       ) {
         onSelect(e);
       }
@@ -256,18 +293,15 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
         (e.pointerType === 'mouse' && hadPrimaryActionOnPressStart.current)
       ) {
         if (hasAction) {
-          onAction();
-        } else {
+          performAction(e);
+        } else if (allowsSelection) {
           onSelect(e);
         }
       }
     };
   }
 
-  if (!isVirtualized) {
-    itemProps['data-key'] = key;
-  }
-
+  itemProps['data-key'] = key;
   itemPressProps.preventFocusOnPress = shouldUseVirtualFocus;
   let {pressProps, isPressed} = usePress(itemPressProps);
 
@@ -276,7 +310,7 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     if (modality.current === 'mouse') {
       e.stopPropagation();
       e.preventDefault();
-      onAction();
+      performAction(e);
     }
   } : undefined;
 
@@ -303,15 +337,24 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
   };
 
+  // Prevent default on link clicks so that we control exactly
+  // when they open (to match selection behavior).
+  let onClick = manager.isLink(key) ? e => {
+    if (!(openLink as any).isOpening) {
+      e.preventDefault();
+    }
+  } : undefined;
+
   return {
     itemProps: mergeProps(
       itemProps,
       allowsSelection || hasPrimaryAction ? pressProps : {},
       longPressEnabled ? longPressProps : {},
-      {onDoubleClick, onDragStartCapture}
+      {onDoubleClick, onDragStartCapture, onClick}
     ),
     isPressed,
     isSelected: manager.isSelected(key),
+    isFocused: manager.isFocused && manager.focusedKey === key,
     isDisabled,
     allowsSelection,
     hasAction

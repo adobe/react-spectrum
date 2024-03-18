@@ -1,0 +1,86 @@
+{
+  "ar-AR": {
+    "actions": "أجراءات",
+    "selectAction": "اختر فعلا",
+    "addToQueue": "إضافة إلى قائمة الانتظار",
+    "addToCurrentWatchQueue": "أضف إلى قائمة انتظار المشاهدة الحالية.",
+    "addReview": "إضافة مراجعة",
+    "postAReviewForTheEpisode": "أضف مراجعة للحلقة.",
+    "subscribeToSeries": "اشترك في المسلسل",
+    "addSeriesToSubscription": "أضف سلسلة إلى قائمة الاشتراك الخاصة بك وسيتم إعلامك عند بث حلقة جديدة.",
+    "report": "تقرير",
+    "reportAnIssue": "الإبلاغ عن مشكلة / انتهاك."
+  },
+  "en-US": {
+    "actions": "Actions",
+    "selectAction": "Select action",
+    "addToQueue": "Add to queue",
+    "addToCurrentWatchQueue": "Add to current watch queue.",
+    "addReview": "Add review",
+    "postAReviewForTheEpisode": "Post a review for the episode.",
+    "subscribeToSeries": "Subscribe to series",
+    "addSeriesToSubscription": "Add series to your subscription list and be notified when a new episode airs.",
+    "report": "Report",
+    "reportAnIssue": "Report an issue/violation."
+  },
+  "he-IL": {
+    "actions": "פעולות",
+    "selectAction": "בחר פעולה",
+    "addToQueue": "הוסף לתור",
+    "addToCurrentWatchQueue": "הוסף לתור הצפייה הנוכחי.",
+    "addReview": "הוסף ביקורת",
+    "postAReviewForTheEpisode": "פרסם ביקורת על הפרק.",
+    "subscribeToSeries": "הירשמו לסדרות",
+    "addSeriesToSubscription": "הוסף סדרות לרשימת המנויים שלך וקבל הודעה כשפרק חדש ישודר.",
+    "report": "להגיש תלונה",
+    "reportAnIssue": "דווח על בעיה/הפרה."
+  },
+  "ja-JP": {
+    "actions": "行動",
+    "selectAction": "アクションの選択",
+    "addToQueue": "キューに追加する",
+    "addToCurrentWatchQueue": "現在の監視キューに追加します。",
+    "addReview": "レビューを追加",
+    "postAReviewForTheEpisode": "エピソードのレビューを投稿します。",
+    "subscribeToSeries": "シリーズを購読する",
+    "addSeriesToSubscription": "シリーズを購読リストに追加すると、新しいエピソードが放送されたときに通知が届きます。",
+    "report": "報告",
+    "reportAnIssue": "問題/違反を報告します。"
+  },
+  "ko-KR": {
+    "actions": "행위",
+    "selectAction": "작업 선택",
+    "addToQueue": "목록에 추가해",
+    "addToCurrentWatchQueue": "현재 시청 대기열에 추가합니다.",
+    "addReview": "리뷰 추가",
+    "postAReviewForTheEpisode": "에피소드에 대한 리뷰를 게시합니다.",
+    "subscribeToSeries": "시리즈 구독",
+    "addSeriesToSubscription": "구독 목록에 시리즈를 추가하고 새 에피소드가 방송될 때 알림을 받으세요.",
+    "report": "보고서",
+    "reportAnIssue": "문제/위반을 보고합니다."
+  },
+  "zh-CN": {
+    "actions": "动作",
+    "selectAction": "选择动作",
+    "addToQueue": "添加到队列",
+    "addToCurrentWatchQueue": "添加到当前观看队列。",
+    "addReview": "添加评论",
+    "postAReviewForTheEpisode": "发表对剧集的评论。",
+    "subscribeToSeries": "订阅系列",
+    "addSeriesToSubscription": "将系列添加到您的订阅列表，并在新剧集播出时收到通知。",
+    "report": "报告",
+    "reportAnIssue": "报告问题/违规行为。"
+  },
+  "zh-TW": {
+    "actions": "動作",
+    "selectAction": "選擇動作",
+    "addToQueue": "添加到隊列",
+    "addToCurrentWatchQueue": "添加到當前觀看隊列。",
+    "addReview": "添加評論",
+    "postAReviewForTheEpisode": "發表對劇集的評論。",
+    "subscribeToSeries": "訂閱系列",
+    "addSeriesToSubscription": "將系列添加到您的訂閱列表，並在新劇集播出時收到通知。",
+    "report": "報告",
+    "reportAnIssue": "報告問題/違規行為。"
+  }
+}

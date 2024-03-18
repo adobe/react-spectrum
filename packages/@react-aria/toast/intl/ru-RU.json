@@ -1,6 +1,4 @@
 {
   "close": "Закрыть",
-  "info": "Информация",
-  "negative": "Ошибка",
-  "positive": "Успешно"
+  "notifications": "Уведомления"
 }

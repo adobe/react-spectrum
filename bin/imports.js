@@ -26,7 +26,7 @@ module.exports = {
         return;
       }
 
-      let source = node.source.value.replace(/^[a-z]+:/, '');
+      let source = node.source.value.replace(/^[a-z-]+:/, '');
       if (source.startsWith('.') || Module.builtinModules.includes(source)) {
         return;
       }

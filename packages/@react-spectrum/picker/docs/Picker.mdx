@@ -20,9 +20,8 @@ import {Picker, Item, Section} from '@react-spectrum/picker';
 import Book from '@spectrum-icons/workflow/Book';
 import BulkEditUsers from '@spectrum-icons/workflow/BulkEditUsers';
 import Draw from '@spectrum-icons/workflow/Draw';
-import ColorPalette from '@spectrum-icons/workflow/ColorPalette';
-import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import {Text} from '@react-spectrum/text';
+import {Avatar} from "@react-spectrum/avatar";
 ```
 
 ---
@@ -71,7 +70,7 @@ function Example() {
     {id: 8, name: 'Turtle'},
     {id: 9, name: 'Wombat'}
   ];
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState(null);
 
   return (
     <>
@@ -121,6 +120,8 @@ Setting a selected option can be done by using the `defaultSelectedKey` or `sele
 Additionally see the `react-stately` [Selection docs](../react-stately/selection.html#selected-key-data-type) for caveats regarding selection prop typing.
 
 ```tsx example
+import type {Key} from '@adobe/react-spectrum';
+
 function Example() {
   let options = [
     {name: 'Koala'},
@@ -130,7 +131,7 @@ function Example() {
     {name: 'Bison'},
     {name: 'Skunk'}
   ];
-  let [animal, setAnimal] = React.useState("Bison");
+  let [animal, setAnimal] = React.useState<Key>("Bison");
 
   return (
     <Flex gap="size-150" wrap>
@@ -152,6 +153,41 @@ function Example() {
   );
 }
 ```
+
+### HTML forms
+
+Picker supports the `name` prop for integration with HTML forms. The `key` of the selected item will be submitted to the server.
+
+```tsx example
+<Picker
+  label="Favorite Animal"
+  ///- begin highlight -///
+  name="favoriteAnimalId"
+  ///- end highlight -///
+>
+  <Item key="panda">Panda</Item>
+  <Item key="cat">Cat</Item>
+  <Item key="dog">Dog</Item>
+</Picker>
+```
+
+## Links
+
+By default, interacting with an item in a Picker triggers `onSelectionChange`. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Link items in a `Picker` are not selectable.
+
+```tsx example
+<Picker label="Project">
+  <Item href="https://example.com/" target="_blank">Create new…</Item>
+  <Item>Proposal</Item>
+  <Item>Budget</Item>
+  <Item>Onboarding</Item>
+</Picker>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
 ## Sections
 Picker supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
 
@@ -208,7 +244,7 @@ The following example uses an `onSelectionChange` handler to update the selectio
 
 ```tsx example
 function StaticExample() {
-  let [frequency, setFrequency] = React.useState();
+  let [frequency, setFrequency] = React.useState(null);
 
   return (
     <>
@@ -227,7 +263,7 @@ When using Picker with dynamic items, selection works much the same way using `k
 
 ```tsx example
 function DynamicExample() {
-  let [animalId, setAnimalId] = React.useState();
+  let [animalId, setAnimalId] = React.useState(null);
   let options = [
     {id: 1, name: 'Aardvark'},
     {id: 2, name: 'Cat'},
@@ -252,7 +288,9 @@ function DynamicExample() {
 ```
 
 ## Complex items
-Items within Picker also allow for additional content used to better communicate options. Icons and descriptions can be added to the `children` of `Item` as shown in the example below. If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+Items within Picker also allow for additional content used to better communicate options. Icons, avatars, and descriptions can be added to the `children` of `Item` as shown in the example below.
+If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [accessibility](Avatar.html#accessibility) section for more information on how to label these elements.
 
 ```tsx example
 <Picker label="Options">
@@ -276,6 +314,29 @@ Items within Picker also allow for additional content used to better communicate
 </Picker>
 ```
 
+### With avatars
+
+```tsx example
+<Picker label="Select a user">
+  <Item textValue="User 1">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 1</Text>
+  </Item>
+  <Item textValue="User 2">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 2</Text>
+  </Item>
+  <Item textValue="User 3">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 3</Text>
+  </Item>
+  <Item textValue="User 4">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 4</Text>
+  </Item>
+</Picker>
+```
+
 ## Asynchronous loading
 
 Picker supports loading data asynchronously, and will display a progress circle when the `isLoading` prop is set.
@@ -287,8 +348,12 @@ See the docs for more information.
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Pokemon {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Pokemon>({
     async load({signal, cursor}) {
       // If no cursor is available, then we're loading the first page.
       // Otherwise, the cursor is the next URL to load, as returned from the previous page.
@@ -312,6 +377,35 @@ function AsyncLoadingExample() {
   );
 }
 ```
+
+## Validation
+
+Picker supports the `isRequired` prop to ensure the user selects an option, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically.
+
+```tsx example
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
+
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <Picker label="Favorite animal" name="animal" isRequired>
+  {/*- end highlight -*/}
+    <Item>Aardvark</Item>
+    <Item>Cat</Item>
+    <Item>Dog</Item>
+    <Item>Kangaroo</Item>
+    <Item>Panda</Item>
+    <Item>Snake</Item>
+  </Picker>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
+```
+
+By default, `Picker` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## Props
 
@@ -350,11 +444,11 @@ By default, the label is positioned above the Picker. The `labelPosition` prop c
 ### Help text
 [View guidelines](https://spectrum.adobe.com/page/picker/#Help-text-(description-and-error-message))
 
-Both a description and an error message can be supplied to a Picker. The description is always visible unless the `validationState` is “invalid” and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
+Both a description and an error message can be supplied to a Picker. The description is always visible unless `isInvalid` is true and an error message is provided. The error message can be used to help the user fix their input quickly and should be specific to the detected error. All strings should be localized.
 
 ```tsx example
 function Example() {
-    let [animalId, setAnimalId] = React.useState();
+    let [animalId, setAnimalId] = React.useState(null);
     let options = [
       {id: 1, name: 'Aardvark'},
       {id: 2, name: 'Cat'},
@@ -370,10 +464,10 @@ function Example() {
 
   return (
     <Picker
-      validationState={isValid ? 'valid' : 'invalid'}
+      isInvalid={!isValid}
       label="Favorite animal"
       description="Pick your favorite animal, you will be judged."
-      errorMessage={animalId === 2 ? 'The author of this example is a dog person.' : 'Oh god it\'s a snake! Choose anything else.'}
+      errorMessage={animalId === 2 ? 'The author of this example is a dog person.' : 'Oh no it\'s a snake! Choose anything else.'}
       items={options}
       selectedKey={animalId}
       onSelectionChange={selected => setAnimalId(selected)}>
@@ -449,15 +543,12 @@ The open state of the menu can be controlled via the `defaultOpen` and `isOpen` 
 ```tsx example
 function Example() {
   let [open, setOpen] = React.useState(false);
-  let [frequency, setFrequency] = React.useState("always");
 
   return (
     <Picker
       label="Frequency"
       isOpen={open}
-      selectedKey={frequency}
-      onOpenChange={setOpen}
-      onSelectionChange={selected => setFrequency(selected)}>
+      onOpenChange={setOpen}>
       <Item key="rarely">Rarely</Item>
       <Item key="sometimes">Sometimes</Item>
       <Item key="always">Always</Item>
@@ -465,3 +556,17 @@ function Example() {
   );
 }
 ```
+
+## Accessibility
+
+### False positives
+
+Picker may trigger a [known accessibility false positive](https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#picker)
+from automated accessibility testing tools. This is because we include a visually hidden select element alongside the Picker to specifically aid with browser form autocomplete
+and hide it from screen readers via `aria-hidden` since users don't need to interact with the hidden select. We manage focus internally
+so that focusing this hidden select will always shift focus to the Picker's trigger button element instead. Automated accessibility testing tools have no way of
+knowing that we manage the focus in this way and thus throw this false positive.
+
+To facilitate the suppression of this false positive, the `data-a11y-ignore="aria-hidden-focus"` data attribute is automatically applied to the
+problematic element and references the relevant `AXE` rule. Please use this data attribute to target the problematic element and exclude it
+from your automated accessibility tests as shown [here](../react-aria/accessibility.html#false-positives).

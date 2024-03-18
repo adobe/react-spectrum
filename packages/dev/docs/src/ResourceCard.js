@@ -19,7 +19,8 @@ export function ResourceCard(props) {
 
   let {
     type,
-    url
+    url,
+    style
   } = props;
 
   // set content for source type
@@ -53,10 +54,38 @@ export function ResourceCard(props) {
       title: 'View ARIA pattern',
       type
     };
+  } else if (type.toLowerCase() === 'storybook') {
+    cardContent = {
+      svg: <svg viewBox="0 0 52 64" style={{background: '#FF4785'}}>
+        <g fill="none" fillRule="evenodd" stroke="none" strokeWidth="1">
+          <g transform="translate(1.000000, 1.000000)">
+            <path id="S" fill="#FFF" fillRule="nonzero" d="M29.4029796,23.368648 C29.4029796,24.58142 37.6567008,24.00017 38.7646901,23.1482813 C38.7646901,14.8895929 34.2873503,10.5497821 26.0885852,10.5497821 C17.88982,10.5497821 13.2961856,14.9571143 13.2961856,21.5681161 C13.2961856,33.0822778 28.9959487,33.3026444 28.9959487,39.5830962 C28.9959487,41.3460299 28.1237396,42.3927719 26.2048797,42.3927719 C23.7045471,42.3927719 22.7160434,41.1289316 22.832338,36.8317805 C22.832338,35.8995698 13.2961856,35.6089448 13.0054493,36.8317805 C12.2651161,47.2453073 18.8201763,50.248968 26.3211742,50.248968 C33.5895831,50.248968 39.2880157,46.4144645 39.2880157,39.4729126 C39.2880157,27.132376 23.3556634,27.4629261 23.3556634,21.3477494 C23.3556634,18.8686237 25.2163761,18.5380737 26.3211742,18.5380737 C27.4841196,18.5380737 29.5774214,18.7409467 29.4029796,23.368648 Z" mask="url(#mask-2)" />
+            <path id="bookmark" fill="#FFF" fillRule="nonzero" d="M37.1272753,7.62078766 L37.4276823,0.591583333 L43.4674595,0.218291667 L43.7276576,7.37468316 C43.7367132,7.6313391 43.5338374,7.84666553 43.2745216,7.85562813 C43.1634862,7.85946584 43.0546693,7.82423279 42.9673936,7.75618537 L40.6382617,5.94019678 L37.880626,8.0105767 C37.6738999,8.16578288 37.3791917,8.12573637 37.2223772,7.92113026 C37.1563661,7.83500129 37.1227378,7.72879963 37.1272753,7.62078766 Z" mask="url(#mask-2)" />
+          </g>
+        </g>
+      </svg>,
+      title: 'Vanilla CSS',
+      type: 'Download ZIP'
+    };
+  } else if (type.toLowerCase() === 'tailwind') {
+    cardContent = {
+      svg: <svg fill="none" viewBox="-4 -4 62 41">
+        <g clipPath="url(#prefix__clip0)">
+          <path fill="#38bdf8" fillRule="evenodd" d="M27 0c-7.2 0-11.7 3.6-13.5 10.8 2.7-3.6 5.85-4.95 9.45-4.05 2.054.513 3.522 2.004 5.147 3.653C30.744 13.09 33.808 16.2 40.5 16.2c7.2 0 11.7-3.6 13.5-10.8-2.7 3.6-5.85 4.95-9.45 4.05-2.054-.513-3.522-2.004-5.147-3.653C36.756 3.11 33.692 0 27 0zM13.5 16.2C6.3 16.2 1.8 19.8 0 27c2.7-3.6 5.85-4.95 9.45-4.05 2.054.514 3.522 2.004 5.147 3.653C17.244 29.29 20.308 32.4 27 32.4c7.2 0 11.7-3.6 13.5-10.8-2.7 3.6-5.85 4.95-9.45 4.05-2.054-.513-3.522-2.004-5.147-3.653C23.256 19.31 20.192 16.2 13.5 16.2z" clipRule="evenodd" />
+        </g>
+        <defs>
+          <clipPath id="prefix__clip0">
+            <path fill="#fff" d="M0 0h54v32.4H0z" />
+          </clipPath>
+        </defs>
+      </svg>,
+      title: 'Tailwind CSS',
+      type: 'Download ZIP'
+    };
   }
 
   return (
-    <a href={url} rel="noreferrer" target="_blank" title={cardContent.title} className={styles['resourceCard']}>
+    <a href={url} rel="noreferrer" target="_blank" title={cardContent.title} className={styles['resourceCard']} data-hover={styles['is-hovered']} style={style}>
       <div>
         {cardContent.svg}
       </div>

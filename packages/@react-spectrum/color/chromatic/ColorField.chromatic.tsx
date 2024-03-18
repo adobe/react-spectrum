@@ -16,7 +16,7 @@ import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {generatePowerset} from '@react-spectrum/story-utils';
 import {Grid, repeat} from '@react-spectrum/layout';
 import {Heading} from '@react-spectrum/text';
-import {Meta, Story} from '@storybook/react';
+import {Meta, StoryFn} from '@storybook/react';
 import React from 'react';
 import {SpectrumColorFieldProps} from '@react-types/color';
 
@@ -70,7 +70,7 @@ const meta: Meta = {
 
 export default meta;
 
-const Template: Story<SpectrumColorFieldProps> = (args) => (
+const Template: StoryFn<SpectrumColorFieldProps> = (args) => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -82,7 +82,7 @@ const Template: Story<SpectrumColorFieldProps> = (args) => (
   </Grid>
 );
 
-const TemplateSmall: Story<SpectrumColorFieldProps> = (args) => (
+const TemplateSmall: StoryFn<SpectrumColorFieldProps> = (args) => (
   <Grid columns={repeat(2, '1fr')} autoFlow="row" gap="size-200">
     {combinations.map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -94,7 +94,7 @@ const TemplateSmall: Story<SpectrumColorFieldProps> = (args) => (
   </Grid>
 );
 
-const NoLabelTemplate: Story<SpectrumColorFieldProps> = (args) => (
+const NoLabelTemplate: StoryFn<SpectrumColorFieldProps> = (args) => (
   <Grid columns={repeat(3, '1fr')} autoFlow="row" gap="size-300">
     {combinations.filter(combo => combo.isRequired == null && combo.necessityIndicator == null).map(c => {
       let key = Object.keys(c).map(k => shortName(k, c[k])).join(' ');
@@ -106,30 +106,44 @@ const NoLabelTemplate: Story<SpectrumColorFieldProps> = (args) => (
   </Grid>
 );
 
-export const PropDefaults = Template.bind({});
-PropDefaults.storyName = 'default';
-PropDefaults.args = {};
+export const PropDefaults = {
+  render: Template,
+  name: 'default',
+  args: {}
+};
 
-export const PropDefaultValue = Template.bind({});
-PropDefaultValue.storyName = 'default value';
-PropDefaultValue.args = {...PropDefaults.args, defaultValue: '#abcdef'};
+export const PropDefaultValue = {
+  render: Template,
+  name: 'default value',
+  args: {...PropDefaults.args, defaultValue: '#abcdef'}
+};
 
-export const PropPlaceholder = Template.bind({});
-PropPlaceholder.storyName = 'placeholder';
-PropPlaceholder.args = {...PropDefaults.args, placeholder: 'Enter a hex color'};
+export const PropPlaceholder = {
+  render: Template,
+  name: 'placeholder',
+  args: {...PropDefaults.args, placeholder: 'Enter a hex color'}
+};
 
-export const PropAriaLabelled = NoLabelTemplate.bind({});
-PropAriaLabelled.storyName = 'aria-label';
-PropAriaLabelled.args = {'aria-label': 'Label'};
+export const PropAriaLabelled = {
+  render: NoLabelTemplate,
+  name: 'aria-label',
+  args: {'aria-label': 'Label'}
+};
 
-export const PropLabelEnd = Template.bind({});
-PropLabelEnd.storyName = 'label end';
-PropLabelEnd.args = {...PropDefaults.args, labelAlign: 'end', defaultValue: '#abcdef'};
+export const PropLabelEnd = {
+  render: Template,
+  name: 'label end',
+  args: {...PropDefaults.args, labelAlign: 'end', defaultValue: '#abcdef'}
+};
 
-export const PropLabelSide = TemplateSmall.bind({});
-PropLabelSide.storyName = 'label side';
-PropLabelSide.args = {...PropDefaults.args, labelPosition: 'side', defaultValue: '#abcdef'};
+export const PropLabelSide = {
+  render: TemplateSmall,
+  name: 'label side',
+  args: {...PropDefaults.args, labelPosition: 'side', defaultValue: '#abcdef'}
+};
 
-export const PropCustomWidth = Template.bind({});
-PropCustomWidth.storyName = 'custom width';
-PropCustomWidth.args = {...PropDefaults.args, width: 'size-3000'};
+export const PropCustomWidth = {
+  render: Template,
+  name: 'custom width',
+  args: {...PropDefaults.args, width: 'size-3000'}
+};

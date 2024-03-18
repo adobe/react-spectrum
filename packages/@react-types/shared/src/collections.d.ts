@@ -10,9 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, ReactElement, ReactNode} from 'react';
+import {Key} from '@react-types/shared';
+import {LinkDOMProps} from './dom';
+import {ReactElement, ReactNode} from 'react';
 
-export interface ItemProps<T> {
+export interface ItemProps<T> extends LinkDOMProps {
   /** Rendered contents of the item or child items. */
   children: ReactNode,
   /** Rendered contents of the item if `children` contains child items. */
@@ -62,11 +64,16 @@ export interface CollectionBase<T> {
   disabledKeys?: Iterable<Key>
 }
 
+export interface CollectionStateBase<T, C extends Collection<Node<T>> = Collection<Node<T>>> extends Partial<CollectionBase<T>> {
+  /** A pre-constructed collection to use instead of building one from items and children. */
+  collection?: C
+}
+
 export interface Expandable {
   /** The currently expanded keys in the collection (controlled). */
-  expandedKeys?: Iterable<Key>,
+  expandedKeys?:  'all' | Iterable<Key>,
   /** The initial expanded keys in the collection (uncontrolled). */
-  defaultExpandedKeys?: Iterable<Key>,
+  defaultExpandedKeys?: 'all' | Iterable<Key>,
   /** Handler that is called when items are expanded or collapsed. */
   onExpandedChange?: (keys: Set<Key>) => any
 }
@@ -128,10 +135,10 @@ export interface Collection<T> extends Iterable<T> {
   getKeys(): Iterable<Key>,
 
   /** Get an item by its key. */
-  getItem(key: Key): T,
+  getItem(key: Key): T | null,
 
   /** Get an item by the index of its key. */
-  at(idx: number): T,
+  at(idx: number): T | null,
 
   /** Get the key that comes before the given key in the collection. */
   getKeyBefore(key: Key): Key | null,
@@ -143,7 +150,13 @@ export interface Collection<T> extends Iterable<T> {
   getFirstKey(): Key | null,
 
   /** Get the last key in the collection. */
-  getLastKey(): Key | null
+  getLastKey(): Key | null,
+
+  /** Iterate over the child items of the given key. */
+  getChildren?(key: Key): Iterable<T>,
+
+  /** Returns a string representation of the item's contents. */
+  getTextValue?(key: Key): string
 }
 
 export interface Node<T> {
@@ -152,12 +165,15 @@ export interface Node<T> {
   /** A unique key for the node. */
   key: Key,
   /** The object value the node was created from. */
-  value: T,
-  /** The level of depth this node is at in the heirarchy. */
+  value: T | null,
+  /** The level of depth this node is at in the hierarchy. */
   level: number,
   /** Whether this item has children, even if not loaded yet. */
   hasChildNodes: boolean,
-  /** The loaded children of this node. */
+  /**
+   * The loaded children of this node.
+   * @deprecated Use `collection.getChildren(node.key)` instead.
+   */
   childNodes: Iterable<Node<T>>,
   /** The rendered contents of this node (e.g. JSX). */
   rendered: ReactNode,
@@ -170,11 +186,11 @@ export interface Node<T> {
   /** A function that should be called to wrap the rendered node. */
   wrapper?: (element: ReactElement) => ReactElement,
   /** The key of the parent node. */
-  parentKey?: Key,
+  parentKey?: Key | null,
   /** The key of the node before this node. */
-  prevKey?: Key,
+  prevKey?: Key | null,
   /** The key of the node after this node. */
-  nextKey?: Key,
+  nextKey?: Key | null,
   /** Additional properties specific to a particular node type. */
   props?: any,
   /** @private */

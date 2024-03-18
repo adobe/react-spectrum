@@ -1,0 +1,644 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/searchfield';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/searchfield/docs/anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import Input from '@react-spectrum/docs/pages/assets/component-illustrations/Input.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
+import {Keyboard} from '@react-spectrum/text';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Forms
+keywords: [searchbox, input, search, aria]
+type: component
+---
+
+# SearchField
+
+<PageDescription>{docs.exports.SearchField.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['SearchField']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/TR/wai-aria-1.2/#searchbox'}
+  ]} />
+
+## Example
+
+```tsx example
+import {SearchField, Label, Input, Button} from 'react-aria-components';
+
+<SearchField>
+  <Label>Search</Label>
+  <Input />
+  <Button>✕</Button>
+</SearchField>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css hidden
+@import './Button.mdx' layer(button);
+@import './Form.mdx' layer(form);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-SearchField {
+  display: grid;
+  grid-template-areas: "label label"
+                       "input button"
+                       "help  help";
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  width: fit-content;
+  color: var(--text-color);
+
+  .react-aria-Input {
+    grid-area: input;
+    padding: 0.286rem 1.714rem 0.286rem 0.286rem;
+    margin: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background: var(--field-background);
+    font-size: 1.143rem;
+    color: var(--field-text-color);
+
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
+      -webkit-appearance: none;
+    }
+
+    &[data-focused] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
+    }
+  }
+
+  .react-aria-Button {
+    grid-area: button;
+    width: 1.143rem;
+    height: 1.143rem;
+    border-radius: 1.143rem;
+    margin-left: -1.429rem;
+    font-size: 0.857rem;
+    line-height: 0.857rem;
+    vertical-align: middle;
+    text-align: center;
+    background: var(--gray-500);
+    color: var(--gray-50);
+    border: none;
+    padding: 0;
+
+    &[data-pressed] {
+      background: var(--gray-600);
+    }
+  }
+
+  &[data-empty] button {
+    display: none;
+  }
+}
+```
+
+</details>
+
+## Features
+
+Search fields can be built with `<input type="search">`, but these can be hard to
+style consistently cross browser. `SearchField` helps achieve accessible
+search fields that can be styled as needed.
+
+* **Clearable** – A custom clear button can be shown to allow the input to be easily reset.
+* **Accessible** – Uses a native `<input type="search">` element, with support for the <Keyboard>Enter</Keyboard> and <Keyboard>Escape</Keyboard> keys to submit and clear the field, respectively. Label, description, and error message elements are automatically associated with the field.
+* **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors.
+
+## Anatomy
+
+<Anatomy />
+
+Search fields consist of an input element, a label, and an optional clear button.
+`SearchField` automatically manages the labeling and relationships between the elements,
+and handles keyboard events. Users can press the <Keyboard>Escape</Keyboard> key to clear the search field, or
+the <Keyboard>Enter</Keyboard> key to trigger the `onSubmit` event.
+
+`SearchField` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
+
+```tsx
+import {SearchField, Label, Input, Button, Text, FieldError} from 'react-aria-components';
+
+<SearchField>
+  <Label />
+  <Input />
+  <Button />
+  <Text slot="description" />
+  <FieldError />
+</SearchField>
+```
+
+If there is no visual label, an `aria-label` or `aria-labelledby` prop must be passed instead
+to identify the element to screen readers.
+
+### Concepts
+
+`SearchField` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
+</ExampleCard>
+
+</section>
+
+### Composed components
+
+A `SearchField` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
+  title="Label"
+  description="A label provides context for an input element.">
+  <Label />
+</ExampleCard>
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input"
+  title="Input"
+  description="An input allows a user to enter a plain text value with a keyboard.">
+  <Input />
+</ExampleCard>
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+</section>
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="searchfield" />
+
+## Reusable wrappers
+
+If you will use a SearchField in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `SearchField` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation).
+
+```tsx example export=true
+import type {SearchFieldProps, ValidationResult} from 'react-aria-components';
+import {Text, FieldError} from 'react-aria-components';
+
+interface MySearchFieldProps extends SearchFieldProps {
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
+}
+
+function MySearchField({label, description, errorMessage, ...props}: MySearchFieldProps) {
+  return (
+    <SearchField {...props}>
+      <Label>{label}</Label>
+      <Input />
+      <Button>✕</Button>
+      {description && <Text slot="description">{description}</Text>}
+      <FieldError>{errorMessage}</FieldError>
+    </SearchField>
+  );
+}
+
+<MySearchField label="Search" />
+```
+
+## Value
+
+### Default value
+
+A SearchField's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultValue` prop.
+
+```tsx example
+<MySearchField
+  label="Search"
+  defaultValue="Puppies" />
+```
+
+### Controlled value
+
+The `value` prop can be used to make the value controlled. The `onChange` event is fired when the user edits the text, and receives the new value.
+
+```tsx example
+function Example() {
+  let [text, setText] = React.useState('');
+
+  return (
+    <>
+      <MySearchField label="Search" onChange={setText} />
+      <p>Mirrored text: {text}</p>
+    </>
+  );
+}
+```
+
+### HTML forms
+
+SearchField supports the `name` prop for integration with HTML forms. In addition, attributes such as `type`, `pattern`, `inputMode`, and others are passed through to the underlying `<input>` element.
+
+```tsx example
+<MySearchField label="Email" name="email" type="email" />
+```
+
+## Events
+
+The most commonly used handlers for events in SearchField are the:
+- `onChange` prop which is triggered whenever the value is edited by the user.
+- `onSubmit` prop which is triggered whenever the value is submitted by the user (e.g. by pressing <Keyboard>Enter</Keyboard>).
+- `onClear` prop which is triggered whenever the value is cleared by the user (e.g. by pressing clear button or <Keyboard>Escape</Keyboard> key).
+
+The example below uses `onChange`, `onSubmit`, and `onClear` to update two separate elements with the text entered into the SearchField.
+
+```tsx example
+function Example() {
+  let [currentText, setCurrentText] = React.useState('');
+  let [submittedText, setSubmittedText] = React.useState('');
+
+  return (
+    <div>
+      <MySearchField
+        onClear={() => setCurrentText('')}
+        onChange={setCurrentText}
+        onSubmit={setSubmittedText}
+        label="Your text"
+        value={currentText}
+      />
+      <p>Mirrored text: {currentText}</p>
+      <p>Submitted text: {submittedText}</p>
+    </div>
+  );
+}
+```
+
+## Validation
+
+SearchField supports HTML constraint validation props such as `isRequired`, `minLength`, and `pattern`, as well as custom validation functions, realtime validation, and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+To display validation errors, add a `<FieldError>` element as a child of the SearchField. This allows you to render error messages from all of the above sources with consistent custom styles.
+
+```tsx example
+import {Form, FieldError} from 'react-aria-components';
+
+<Form>
+  {/*- begin highlight -*/}
+  <SearchField name="search" isRequired>
+  {/*- end highlight -*/}
+    <Label>Search</Label>
+    <Input />
+    <Button>✕</Button>
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+  </SearchField>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-SearchField {
+  .react-aria-Input{
+    &[data-invalid] {
+      border-color: var(--invalid-color);
+    }
+  }
+
+  .react-aria-FieldError {
+    grid-area: help;
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+```
+
+</details>
+
+By default, `FieldError` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
+### Description
+
+The `description` slot can be used to associate additional help text with a search field.
+
+```tsx example
+<SearchField>
+  <Label>Email</Label>
+  <Input />
+  <Button>✕</Button>
+  {/*- begin highlight -*/}
+  <Text slot="description">Enter an email for us to contact you about your order.</Text>
+  {/*- end highlight -*/}
+</SearchField>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-SearchField {
+  [slot=description] {
+    grid-area: help;
+    font-size: 12px;
+  }
+}
+```
+
+</details>
+
+## Disabled
+
+A SearchField can be disabled using the `isDisabled` prop.
+
+```tsx example
+<MySearchField label="Email" isDisabled />
+```
+
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-SearchField {
+  .react-aria-Input {
+    &[data-disabled] {
+      border-color: var(--border-color-disabled);
+      color: var(--text-color-disabled);
+    }
+  }
+}
+```
+
+</details>
+
+### Read only
+
+The `isReadOnly` boolean prop makes the SearchField's text content immutable. Unlike `isDisabled`, the SearchField remains focusable
+and the contents can still be copied. See [the MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/readonly) for more information.
+
+```tsx example
+<MySearchField label="Email" defaultValue="abc@adobe.com" isReadOnly />
+```
+
+## Props
+
+### SearchField
+
+<PropTable component={docs.exports.SearchField} links={docs.links} />
+
+### Label
+
+A `<Label>` accepts all HTML attributes.
+
+### Input
+
+An `<Input>` accepts all HTML attributes.
+
+### Button
+
+A `<Button>` accepts its contents as `children`. Other props such as `onPress` and `isDisabled` will be set by the `SearchField`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Button} links={docs.links} />
+
+</details>
+
+### Text
+
+`<Text>` accepts all HTML attributes.
+
+### FieldError
+
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.FieldError} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-SearchField {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<SearchField className="my-searchfield">
+  {/* ... */}
+</SearchField>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+input[data-hovered] {
+  /* ... */
+}
+
+input[data-disabled] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<Button className={({isPressed}) => isPressed ? 'bg-gray-700' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render the clear button only when the input is non-empty.
+
+```jsx
+<SearchField>
+  {({state}) => (
+    <>
+      <Label>Search</Label>
+      <Input />
+      {state.value !== '' && <Button>✕</Button>}
+    </>
+  )}
+</SearchField>
+```
+
+The states, selectors, and render props for each component used in a `SearchField` are documented below.
+
+### SearchField
+
+A `SearchField` can be targeted with the `.react-aria-SearchField` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.SearchFieldRenderProps.properties} />
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
+
+### Input
+
+An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.InputRenderProps.properties} />
+
+### Button
+
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ButtonRenderProps.properties} />
+
+### Text
+
+The help text elements within a `SearchField` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
+### FieldError
+
+A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, or by overriding with a custom `className`. It supports the following render props:
+
+<StateTable properties={docs.exports.FieldErrorRenderProps.properties} />
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within a `SearchField`, such as `Label` or `Input`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+
+```tsx
+function MyInput(props) {
+  return <Input {...props} className="my-input" />
+}
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['SearchField']} docs={docs} />
+
+This example shows a `FieldGroup` component that renders a group of search fields with a title. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child search fields via the `SearchFieldContext` provider.
+
+```tsx example
+import {SearchFieldContext} from 'react-aria-components';
+
+interface FieldGroupProps {
+  title?: string,
+  children?: React.ReactNode,
+  isDisabled?: boolean
+}
+
+function FieldGroup({title, children, isDisabled}: FieldGroupProps) {
+  return (
+    <fieldset>
+      <legend>{title}</legend>
+      {/*- begin highlight -*/}
+      <SearchFieldContext.Provider value={{isDisabled}}>
+      {/*- end highlight -*/}
+        {children}
+      </SearchFieldContext.Provider>
+    </fieldset>
+  );
+}
+
+<FieldGroup title="Filters" isDisabled>
+  <MySearchField label="Name" defaultValue="Devon" />
+  <MySearchField label="Email" defaultValue="devon@example.com" />
+</FieldGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+}
+```
+
+</details>
+
+### Custom children
+
+SearchField passes props to its child components, such as the label and input, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Input', 'Button', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by SearchField.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `SearchField`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<SearchField>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  <Input />
+</SearchField>
+```
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state or customizing DOM structure, you can drop down to the lower level Hook-based API. See [useSearchField](useSearchField.html) for more details.

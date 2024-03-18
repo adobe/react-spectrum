@@ -13,16 +13,15 @@
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
-import {classNames, useStyleProps} from '@react-spectrum/utils';
+import {classNames, useFocusableRef, useStyleProps} from '@react-spectrum/utils';
+import {createLandmarkController, useLandmark} from '../';
 import {Flex} from '@react-spectrum/layout';
 import {Link} from '@react-spectrum/link';
-import {Meta, Story} from '@storybook/react';
-import React, {useRef} from 'react';
+import {Meta} from '@storybook/react';
+import React, {SyntheticEvent, useEffect, useMemo, useRef} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import styles from './index.css';
 import {TextField} from '@react-spectrum/textfield';
-import {useLandmark} from '../';
-
 
 interface StoryProps {}
 
@@ -33,43 +32,43 @@ const meta: Meta<StoryProps> = {
 
 export default meta;
 
-const Template = (): Story<StoryProps> => (props) => <Example {...props} />;
-const NestedTemplate = (): Story<StoryProps> => (props) => <NestedExample {...props} />;
-const TableTemplate = (): Story<StoryProps> => (props) => <TableExample {...props} />;
-const ApplicationTemplate = (): Story<StoryProps> => (props) => <ApplicationExample {...props} />;
-const DuplicateRolesWithLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesWithLabelsExample {...props} />;
-const DuplicateRolesWithNoLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesNoLabelExample {...props} />;
-const DuplicateRolesWithSameLabelsTemplate = (): Story<StoryProps> => (props) => <DuplicateRolesWithSameLabelsExample {...props} />;
-const OneWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <OneWithNoFocusableChildrenExample {...props} />;
-const AllWithNoFocusableChildrenExampleTemplate = (): Story<StoryProps> => (props) => <AllWithNoFocusableChildrenExample {...props} />;
+const Template = (props) => <Example {...props} />;
+const NestedTemplate = (props) => <NestedExample {...props} />;
+const TableTemplate = (props) => <TableExample {...props} />;
+const ApplicationTemplate = (props) => <ApplicationExample {...props} />;
+const DuplicateRolesWithLabelsTemplate = (props) => <DuplicateRolesWithLabelsExample {...props} />;
+const DuplicateRolesWithNoLabelsTemplate = (props) => <DuplicateRolesNoLabelExample {...props} />;
+const DuplicateRolesWithSameLabelsTemplate = (props) => <DuplicateRolesWithSameLabelsExample {...props} />;
+const OneWithNoFocusableChildrenExampleTemplate = (props) => <OneWithNoFocusableChildrenExample {...props} />;
+const AllWithNoFocusableChildrenExampleTemplate = (props) => <AllWithNoFocusableChildrenExample {...props} />;
 
 function Main(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
   return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</main>;
 }
 
 function Navigation(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
   return <nav aria-label="Rainbow lookout"  ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</nav>;
 }
 
 function Region(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'region'}, ref);
   return <article aria-label="The greens" ref={ref} {...props} {...landmarkProps} {...styleProps}>{props.children}</article>;
 }
 
 function Search(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {styleProps} = useStyleProps(props);
   let {landmarkProps} = useLandmark({...props, role: 'search'}, ref);
   return (
-    <form aria-label="Magic seeing eye" ref={ref} {...props} {...landmarkProps} {...styleProps}>
+    <form aria-label="Magic seeing eye" ref={ref} {...props} {...landmarkProps} {...styleProps} className={classNames(styles, 'landmark')}>
       <SearchField label="Search" />
     </form>
   );
@@ -220,6 +219,7 @@ function NestedExample() {
   );
 }
 
+// TODO: known accessiblity failure https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#tableview
 function TableExample() {
   return (
     <div>
@@ -313,29 +313,187 @@ function ApplicationExample() {
   );
 }
 
-export const FlatLandmarks = Template().bind({});
-FlatLandmarks.args = {};
+function IframeExample() {
+  let controller = useMemo(() => createLandmarkController(), []);
+  useEffect(() => () => controller.dispose(), [controller]);
+  let onLoad = (e: SyntheticEvent) => {
+    let iframe = e.target as HTMLIFrameElement;
+    let window = iframe.contentWindow;
+    let document = window?.document;
+    if (!window || !document) {
+      return;
+    }
 
-export const NestedLandmarks = NestedTemplate().bind({});
-NestedLandmarks.args = {};
+    let prevFocusedElement: HTMLElement | null = null;
+    window.addEventListener('react-aria-landmark-navigation', ((e: CustomEvent) => {
+      e.preventDefault();
+      if (!window || !document) {
+        return;
+      }
+      let el = document.activeElement as HTMLElement;
+      if (el !== document.body) {
+        prevFocusedElement = el;
+      }
 
-export const TableLandmark = TableTemplate().bind({});
-TableLandmark.args = {};
+      // Prevent focus scope from stealing focus back when we move focus to the iframe.
+      document.body.setAttribute('data-react-aria-top-layer', 'true');
 
-export const ApplicationWithLandmarks = ApplicationTemplate().bind({});
-ApplicationWithLandmarks.args = {};
+      window.parent.postMessage({
+        type: 'landmark-navigation',
+        direction: e.detail.direction
+      });
 
-export const DuplicateRolesWithLabels = DuplicateRolesWithLabelsTemplate().bind({});
-DuplicateRolesWithLabels.args = {};
+      setTimeout(() => {
+        document?.body.removeAttribute('data-react-aria-top-layer');
+      }, 100);
+    }) as EventListener);
 
-export const DuplicateRolesWithNoLabels = DuplicateRolesWithNoLabelsTemplate().bind({});
-DuplicateRolesWithNoLabels.args = {};
+    // When the iframe is re-focused, restore focus back inside where it was before.
+    window.addEventListener('focus', () => {
+      if (prevFocusedElement) {
+        prevFocusedElement.focus();
+        prevFocusedElement = null;
+      }
+    });
 
-export const DuplicateRolesWithSameLabels = DuplicateRolesWithSameLabelsTemplate().bind({});
-DuplicateRolesWithSameLabels.args = {};
+    // Move focus to first or last landmark when we receive a message from the parent page.
+    window.addEventListener('message', e => {
+      if (e.data.type === 'landmark-navigation') {
+        // (Can't use LandmarkController in this example because we need the controller instance inside the iframe)
+        document?.body.dispatchEvent(new KeyboardEvent('keydown', {key: 'F6', shiftKey: e.data.direction === 'backward', bubbles: true}));
+      }
+    });
+  };
 
-export const OneWithNoFocusableChildren = OneWithNoFocusableChildrenExampleTemplate().bind({});
-OneWithNoFocusableChildren.args = {};
+  let ref = useRef<HTMLIFrameElement>(null);
+  useEffect(() => {
+    let onMessage = (e: MessageEvent) => {
+      let iframe = ref.current;
+      if (e.data.type === 'landmark-navigation') {
+        // Move focus to the iframe so that when focus is restored there, and we can redirect it back inside (below).
+        iframe?.focus();
 
-export const AllWithNoFocusableChildren = AllWithNoFocusableChildrenExampleTemplate().bind({});
-AllWithNoFocusableChildren.args = {};
+        // Now re-dispatch the keyboard event so landmark navigation outside the iframe picks it up.
+        controller.navigate(e.data.direction);
+      }
+    };
+
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+  }, [controller]);
+
+  let {landmarkProps} = useLandmark({
+    role: 'main',
+    focus(direction) {
+      // when iframe landmark receives focus via landmark navigation, go to first/last landmark inside iframe.
+      ref.current?.contentWindow?.postMessage({
+        type: 'landmark-navigation',
+        direction
+      });
+    }
+  }, ref);
+
+  return (
+    <div className={classNames(styles, 'application')}>
+      <Region UNSAFE_className={classNames(styles, 'globalnav')}>
+        <Flex justifyContent="space-between">
+          <Link><a href="//react-spectrum.com">React Spectrum</a></Link>
+          <Search />
+        </Flex>
+      </Region>
+      <Navigation UNSAFE_className={classNames(styles, 'navigation')} aria-label="Site Nav">
+        <ActionGroup orientation="vertical">
+          <Item>One</Item>
+          <Item>Two</Item>
+          <Item>Three</Item>
+        </ActionGroup>
+      </Navigation>
+      <iframe
+        ref={ref}
+        {...landmarkProps}
+        title="iframe"
+        style={{width: '100%', height: '100%'}}
+        src="iframe.html?providerSwitcher-express=false&providerSwitcher-toastPosition=bottom&providerSwitcher-locale=&providerSwitcher-theme=&providerSwitcher-scale=&args=&id=landmark--application-with-landmarks&viewMode=story"
+        onLoad={onLoad}
+        tabIndex={-1} />
+    </div>
+  );
+}
+
+export const FlatLandmarks = {
+  render: Template
+};
+
+export const NestedLandmarks = {
+  render: NestedTemplate
+};
+
+export const TableLandmark = {
+  render: TableTemplate,
+  parameters: {
+    a11y: {
+      config: {
+        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
+        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
+      }
+    }
+  }
+};
+
+export const ApplicationWithLandmarks = {
+  render: ApplicationTemplate,
+  parameters: {
+    a11y: {
+      config: {
+        // Fails due to TableView's known issue, ignoring here since it isn't pertinent to the story
+        rules: [{id: 'aria-required-children', selector: '*:not([role="grid"])'}]
+      }
+    }
+  }
+};
+
+export const DuplicateRolesWithLabels = {
+  render: DuplicateRolesWithLabelsTemplate
+};
+
+export const DuplicateRolesWithNoLabels = {
+  render: DuplicateRolesWithNoLabelsTemplate,
+  parameters: {
+    a11y: {
+      config: {
+        rules: [{id: 'landmark-unique', enabled: false}]
+      }
+    }
+  }
+};
+
+export const DuplicateRolesWithSameLabels = {
+  render: DuplicateRolesWithSameLabelsTemplate,
+  parameters: {
+    a11y: {
+      config: {
+        rules: [{id: 'landmark-unique', enabled: false}]
+      }
+    }
+  }
+};
+
+export const OneWithNoFocusableChildren = {
+  render: OneWithNoFocusableChildrenExampleTemplate
+};
+
+export const AllWithNoFocusableChildren = {
+  render: AllWithNoFocusableChildrenExampleTemplate
+};
+
+export const IframeExampleStory = {
+  render: IframeExample,
+  parameters: {
+    a11y: {
+      config: {
+        rules: [{id: 'aria-allowed-role', enabled: false}]
+      }
+    }
+  },
+  name: 'iframe example'
+};

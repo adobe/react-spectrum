@@ -12,7 +12,7 @@
 
 export {I18nProvider, useLocale} from './context';
 export {useMessageFormatter} from './useMessageFormatter';
-export {useLocalizedStringFormatter} from './useLocalizedStringFormatter';
+export {useLocalizedStringFormatter, useLocalizedStringDictionary} from './useLocalizedStringFormatter';
 export {useListFormatter} from './useListFormatter';
 export {useDateFormatter} from './useDateFormatter';
 export {useNumberFormatter} from './useNumberFormatter';
@@ -20,6 +20,7 @@ export {useCollator} from './useCollator';
 export {useFilter} from './useFilter';
 
 export type {FormatMessage} from './useMessageFormatter';
+export type {LocalizedStringFormatter} from '@internationalized/string';
 export type {I18nProviderProps} from './context';
 export type {Locale} from './useDefaultLocale';
 export type {LocalizedStrings} from '@internationalized/message';

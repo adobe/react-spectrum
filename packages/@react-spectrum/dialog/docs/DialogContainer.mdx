@@ -16,7 +16,7 @@ import {Keyboard} from '@react-spectrum/text';
 import packageData from '@react-spectrum/dialog/package.json';
 
 ```jsx import
-import {Content, Footer, Header} from '@react-spectrum/view';
+import {Content} from '@react-spectrum/view';
 import {Form} from '@react-spectrum/form';
 import {Heading, Text} from '@react-spectrum/text';
 import {TextField} from '@react-spectrum/textfield';
@@ -93,7 +93,7 @@ open dialog back to `null`. In addition, the user can close the dialog using the
 import {useDialogContainer} from '@react-spectrum/dialog';
 
 function Example() {
-  let [dialog, setDialog] = React.useState();
+  let [dialog, setDialog] = React.useState(null);
 
   return (
     <>

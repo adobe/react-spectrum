@@ -22,6 +22,8 @@ export interface AriaTableCellProps {
   node: GridNode<unknown>,
   /** Whether the cell is contained in a virtual scroller. */
   isVirtualized?: boolean,
+  /** Whether selection should occur on press up instead of press down. */
+  shouldSelectOnPressUp?: boolean,
   /**
    * Handler that is called when a user performs an action on the cell.
    * Please use onCellAction at the collection level instead.

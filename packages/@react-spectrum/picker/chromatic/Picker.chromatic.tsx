@@ -13,17 +13,17 @@
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {Avatar} from '@react-spectrum/avatar';
 import {Content} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
-import {Heading} from '@react-spectrum/text';
+import {Heading, Text} from '@react-spectrum/text';
 import {Item, Picker, Section} from '../';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {SpectrumPickerProps} from '@react-types/select';
-import {Text} from '@react-spectrum/text';
 
 const meta: Meta<SpectrumPickerProps<object>> = {
   title: 'Picker',
@@ -39,7 +39,7 @@ const meta: Meta<SpectrumPickerProps<object>> = {
 export default meta;
 
 
-const Template = <T extends object>(): Story<SpectrumPickerProps<T>> => (args) => (
+const Template = (args: SpectrumPickerProps<object>) => (
   <Picker {...args}>
     <Section title="Animals">
       <Item key="Aardvark">Aardvark</Item>
@@ -54,7 +54,7 @@ const Template = <T extends object>(): Story<SpectrumPickerProps<T>> => (args) =
   </Picker>
 );
 
-const ComplexItemsTemplate = <T extends object>(): Story<SpectrumPickerProps<T>> => (args) => (
+const ComplexItemsTemplate = (args: SpectrumPickerProps<object>) => (
   <Picker {...args}>
     <Section title="Section 1">
       <Item textValue="Copy">
@@ -84,54 +84,74 @@ const ComplexItemsTemplate = <T extends object>(): Story<SpectrumPickerProps<T>>
         <AlignRight />
         <Text>Floof</Text>
       </Item>
+      <Item textValue="User">
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+        <Text>User</Text>
+      </Item>
     </Section>
   </Picker>
 );
+export const Default = {
+  render: Template,
+  args: {label: 'Pick your favorite', isOpen: true}
+};
 
-export const Default = Template().bind({});
-Default.args = {label: 'Pick your favorite', isOpen: true};
+export const Disabled = {
+  render: Template,
+  args: {...Default.args, isDisabled: true}
+};
 
-// should probably fix this one
-export const Disabled = Template().bind({});
-Disabled.args = {...Default.args, isDisabled: true};
+export const LabelAlignEnd = {
+  render: Template,
+  args: {...Default.args, labelAlign: 'end'}
+};
 
-export const LabelAlignEnd = Template().bind({});
-LabelAlignEnd.args = {...Default.args, labelAlign: 'end'};
+export const LabelPositionSide = {
+  render: Template,
+  args: {...Default.args, labelPosition: 'side'}
+};
 
-export const LabelPositionSide = Template().bind({});
-LabelPositionSide.args = {...Default.args, labelPosition: 'side'};
+export const ValidationStateInvalid = {
+  render: Template,
+  args: {...Default.args, isInvalid: true}
+};
 
-export const ValidationStateInvalid = Template().bind({});
-ValidationStateInvalid.args = {...Default.args, validationState: 'invalid'};
-
-export const ValidationStateValid = Template().bind({});
-ValidationStateValid.args = {...Default.args, validationState: 'valid'};
-
-export const ComplexItems = ComplexItemsTemplate().bind({});
-ComplexItems.args = {...Default.args};
-ComplexItems.parameters = {
-  chromaticProvider: {
-    express: false
+export const ComplexItems = {
+  render: ComplexItemsTemplate,
+  args: {...Default.args},
+  parameters: {
+    chromaticProvider: {
+      express: false
+    }
   }
 };
 
-export const ComplexItemsExpress = ComplexItemsTemplate().bind({});
-ComplexItemsExpress.args = {...Default.args};
-ComplexItemsExpress.parameters = {
-  chromaticProvider: {
-    express: true
+export const ComplexItemsExpress = {
+  render: ComplexItemsTemplate,
+  args: {...Default.args},
+  parameters: {
+    chromaticProvider: {
+      express: true
+    }
   }
 };
 
 let contextualHelp = (
   <ContextualHelp>
     <Heading>What is a segment?</Heading>
-    <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+    <Content>
+      Segments identify who your visitors are, what devices and services they use, where they
+      navigated from, and much more.
+    </Content>
   </ContextualHelp>
 );
 
-export const _ContextualHelp = Template().bind({});
-_ContextualHelp.args = {...Default.args, contextualHelp};
+export const _ContextualHelp = {
+  render: Template,
+  args: {...Default.args, contextualHelp}
+};
 
-export const ContextualHelpSideLabel = Template().bind({});
-ContextualHelpSideLabel.args = {...Default.args, contextualHelp, labelPosition: 'side'};
+export const ContextualHelpSideLabel = {
+  render: Template,
+  args: {...Default.args, contextualHelp, labelPosition: 'side'}
+};

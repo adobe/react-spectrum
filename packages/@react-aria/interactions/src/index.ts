@@ -11,12 +11,13 @@
  */
 
 export {Pressable} from './Pressable';
-export {PressResponder} from './PressResponder';
+export {PressResponder, ClearPressResponder} from './PressResponder';
 export {useFocus} from './useFocus';
 export {
   isFocusVisible,
   getInteractionModality,
   setInteractionModality,
+  addWindowFocusTracking,
   useInteractionModality,
   useFocusVisible,
   useFocusVisibleListener
@@ -37,7 +38,7 @@ export type {HoverProps, HoverResult} from './useHover';
 export type {InteractOutsideProps} from './useInteractOutside';
 export type {KeyboardProps, KeyboardResult} from './useKeyboard';
 export type {PressProps, PressHookProps, PressResult} from './usePress';
-export type {MoveEvents} from '@react-types/shared';
+export type {PressEvent, PressEvents, MoveStartEvent, MoveMoveEvent, MoveEndEvent, MoveEvents, HoverEvent, HoverEvents, FocusEvents, KeyboardEvents} from '@react-types/shared';
 export type {MoveResult} from './useMove';
 export type {LongPressProps, LongPressResult} from './useLongPress';
 export type {ScrollWheelProps} from './useScrollWheel';

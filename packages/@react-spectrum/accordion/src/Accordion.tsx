@@ -57,7 +57,7 @@ function AccordionItem<T>(props: AccordionItemProps<T>) {
   let ref = useRef<HTMLButtonElement>(null);
   let {state, item} = props;
   let {buttonProps, regionProps} = useAccordionItem<T>(props, state, ref);
-  let isOpen = state.expandedKeys.has(item.key);
+  let isOpen = state.expandedKeys === 'all' || state.expandedKeys.has(item.key);
   let isDisabled = state.disabledKeys.has(item.key);
   let {isHovered, hoverProps} = useHover({isDisabled});
   let {direction} = useLocale();

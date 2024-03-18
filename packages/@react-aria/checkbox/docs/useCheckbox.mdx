@@ -84,7 +84,7 @@ import {useToggleState} from '@react-stately/toggle';
 function Checkbox(props) {
   let {children} = props;
   let state = useToggleState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {inputProps} = useCheckbox(props, state, ref);
 
   return (
@@ -115,10 +115,11 @@ with a keyboard, not with a mouse or touch.
 ```tsx example export=true
 import {VisuallyHidden} from '@react-aria/visually-hidden';
 import {useFocusRing} from '@react-aria/focus';
+import {mergeProps} from '@react-aria/utils';
 
 function Checkbox(props) {
   let state = useToggleState(props);
-  let ref = React.useRef();
+  let ref = React.useRef(null);
   let {inputProps} = useCheckbox(props, state, ref);
   let {isFocusVisible, focusProps} = useFocusRing();
   let isSelected = state.isSelected && !props.isIndeterminate;
@@ -126,7 +127,7 @@ function Checkbox(props) {
   return (
     <label style={{display: 'flex', alignItems: 'center', opacity: props.isDisabled ? 0.4 : 1}}>
       <VisuallyHidden>
-        <input {...inputProps} {...focusProps} ref={ref} />
+        <input {...mergeProps(inputProps, focusProps)} ref={ref} />
       </VisuallyHidden>
       <svg
         width={24}

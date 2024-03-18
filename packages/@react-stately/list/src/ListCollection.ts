@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-types/shared';
-import {Key} from 'react';
+import {Collection, Key, Node} from '@react-types/shared';
 
 export class ListCollection<T> implements Collection<Node<T>> {
   private keyMap: Map<Key, Node<T>> = new Map();
@@ -98,5 +97,10 @@ export class ListCollection<T> implements Collection<Node<T>> {
   at(idx: number) {
     const keys = [...this.getKeys()];
     return this.getItem(keys[idx]);
+  }
+
+  getChildren(key: Key): Iterable<Node<T>> {
+    let node = this.keyMap.get(key);
+    return node?.childNodes || [];
   }
 }

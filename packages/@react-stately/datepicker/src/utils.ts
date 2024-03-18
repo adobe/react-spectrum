@@ -10,15 +10,114 @@
  * governing permissions and limitations under the License.
  */
 
-import {Calendar, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
+import {Calendar, DateFormatter, now, Time, toCalendar, toCalendarDate, toCalendarDateTime} from '@internationalized/date';
 import {DatePickerProps, DateValue, Granularity, TimeValue} from '@react-types/datepicker';
-import {useRef} from 'react';
+// @ts-ignore
+import i18nMessages from '../intl/*.json';
+import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';
+import {mergeValidation, VALID_VALIDITY_STATE} from '@react-stately/form';
+import {RangeValue, ValidationResult} from '@react-types/shared';
+import {useState} from 'react';
 
-export function isInvalid(value: DateValue, minValue: DateValue, maxValue: DateValue) {
-  return value != null && (
-    (minValue != null && value.compare(minValue) < 0) ||
-    (maxValue != null && value.compare(maxValue) > 0)
+const dictionary = new LocalizedStringDictionary(i18nMessages);
+
+function getLocale() {
+  // Match browser language setting here, NOT react-aria's I18nProvider, so that we match other browser-provided
+  // validation messages, which to not respect our provider's language.
+  // @ts-ignore
+  return (typeof navigator !== 'undefined' && (navigator.language || navigator.userLanguage)) || 'en-US';
+}
+
+export function getValidationResult(
+  value: DateValue,
+  minValue: DateValue,
+  maxValue: DateValue,
+  isDateUnavailable: (v: DateValue) => boolean,
+  options: FormatterOptions
+): ValidationResult {
+  let rangeOverflow = value != null && maxValue != null && value.compare(maxValue) > 0;
+  let rangeUnderflow = value != null && minValue != null && value.compare(minValue) < 0;
+  let isUnavailable = (value != null && isDateUnavailable?.(value)) || false;
+  let isInvalid = rangeOverflow || rangeUnderflow || isUnavailable;
+  let errors = [];
+
+  if (isInvalid) {
+    let locale = getLocale();
+    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/datepicker') || dictionary;
+    let formatter = new LocalizedStringFormatter(locale, strings);
+    let dateFormatter = new DateFormatter(locale, getFormatOptions({}, options));
+    let timeZone = dateFormatter.resolvedOptions().timeZone;
+
+    if (rangeUnderflow) {
+      errors.push(formatter.format('rangeUnderflow', {minValue: dateFormatter.format(minValue.toDate(timeZone))}));
+    }
+
+    if (rangeOverflow) {
+      errors.push(formatter.format('rangeOverflow', {maxValue: dateFormatter.format(maxValue.toDate(timeZone))}));
+    }
+
+    if (isUnavailable) {
+      errors.push(formatter.format('unavailableDate'));
+    }
+  }
+
+  return {
+    isInvalid,
+    validationErrors: errors,
+    validationDetails: {
+      badInput: isUnavailable,
+      customError: false,
+      patternMismatch: false,
+      rangeOverflow,
+      rangeUnderflow,
+      stepMismatch: false,
+      tooLong: false,
+      tooShort: false,
+      typeMismatch: false,
+      valueMissing: false,
+      valid: !isInvalid
+    }
+  };
+}
+
+export function getRangeValidationResult(
+  value: RangeValue<DateValue>,
+  minValue: DateValue,
+  maxValue: DateValue,
+  isDateUnavailable: (v: DateValue) => boolean,
+  options: FormatterOptions
+) {
+  let startValidation = getValidationResult(
+    value?.start,
+    minValue,
+    maxValue,
+    isDateUnavailable,
+    options
   );
+
+  let endValidation = getValidationResult(
+    value?.end,
+    minValue,
+    maxValue,
+    isDateUnavailable,
+    options
+  );
+
+  let result = mergeValidation(startValidation, endValidation);
+  if (value.end != null && value.start != null && value.end.compare(value.start) < 0) {
+    result = mergeValidation(result, {
+      isInvalid: true,
+      validationErrors: [dictionary.getStringForLocale('rangeReversed', getLocale())],
+      validationDetails: {
+        ...VALID_VALIDITY_STATE,
+        rangeUnderflow: true,
+        rangeOverflow: true,
+        valid: false
+      }
+    });
+  }
+
+  return result;
 }
 
 export type FieldOptions = Pick<Intl.DateTimeFormatOptions, 'year' | 'month' | 'day' | 'hour' | 'minute' | 'second'>;
@@ -28,7 +127,8 @@ interface FormatterOptions {
   granularity?: DatePickerProps<any>['granularity'],
   maxGranularity?: 'year' | 'month' | DatePickerProps<any>['granularity'],
   hourCycle?: 12 | 24,
-  showEra?: boolean
+  showEra?: boolean,
+  shouldForceLeadingZeros?: boolean
 }
 
 const DEFAULT_FIELD_OPTIONS: FieldOptions = {
@@ -40,11 +140,21 @@ const DEFAULT_FIELD_OPTIONS: FieldOptions = {
   second: '2-digit'
 };
 
+const TWO_DIGIT_FIELD_OPTIONS: FieldOptions = {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit'
+};
+
 export function getFormatOptions(
   fieldOptions: FieldOptions,
   options: FormatterOptions
 ): Intl.DateTimeFormatOptions {
-  fieldOptions = {...DEFAULT_FIELD_OPTIONS, ...fieldOptions};
+  let defaultFieldOptions = options.shouldForceLeadingZeros ? TWO_DIGIT_FIELD_OPTIONS : DEFAULT_FIELD_OPTIONS;
+  fieldOptions = {...defaultFieldOptions, ...fieldOptions};
   let granularity = options.granularity || 'minute';
   let keys = Object.keys(fieldOptions);
   let startIdx = keys.indexOf(options.maxGranularity ?? 'year');
@@ -130,19 +240,25 @@ export function createPlaceholderDate(placeholderValue: DateValue, granularity: 
 
 export function useDefaultProps(v: DateValue, granularity: Granularity): [Granularity, string] {
   // Compute default granularity and time zone from the value. If the value becomes null, keep the last values.
-  let lastValue = useRef(v);
-  if (v) {
-    lastValue.current = v;
-  }
-
-  v = lastValue.current;
   let defaultTimeZone = (v && 'timeZone' in v ? v.timeZone : undefined);
-  granularity = granularity || (v && 'minute' in v ? 'minute' : 'day');
+  let defaultGranularity: Granularity = (v && 'minute' in v ? 'minute' : 'day');
 
   // props.granularity must actually exist in the value if one is provided.
-  if (v && !(granularity in v)) {
+  if (v && granularity && !(granularity in v)) {
     throw new Error('Invalid granularity ' + granularity + ' for value ' + v.toString());
   }
 
-  return [granularity, defaultTimeZone];
+  let [lastValue, setLastValue] = useState<[Granularity, string]>([defaultGranularity, defaultTimeZone]);
+
+  // If the granularity or time zone changed, update the last value.
+  if (v && (lastValue[0] !== defaultGranularity || lastValue[1] !== defaultTimeZone)) {
+    setLastValue([defaultGranularity, defaultTimeZone]);
+  }
+
+  if (!granularity) {
+    granularity = v ? defaultGranularity : lastValue[0];
+  }
+
+  let timeZone = v ? defaultTimeZone : lastValue[1];
+  return [granularity, timeZone];
 }

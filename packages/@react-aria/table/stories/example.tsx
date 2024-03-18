@@ -11,10 +11,9 @@
  */
 
 import {mergeProps} from '@react-aria/utils';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {useCheckbox} from '@react-aria/checkbox';
 import {useFocusRing} from '@react-aria/focus';
-import {useRef} from 'react';
 import {useTable, useTableCell, useTableColumnHeader, useTableHeaderRow, useTableRow, useTableRowGroup, useTableSelectAllCheckbox, useTableSelectionCheckbox} from '@react-aria/table';
 import {useTableState} from '@react-stately/table';
 import {useToggleState} from '@react-stately/toggle';
@@ -50,7 +49,7 @@ export function Table(props) {
       <TableRowGroup type="thead" style={{borderBottom: '2px solid gray', display: 'block'}}>
         {collection.headerRows.map(headerRow => (
           <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
-            {[...headerRow.childNodes].map(column =>
+            {[...state.collection.getChildren(headerRow.key)].map(column =>
               column.props.isSelectionCell
                 ? <TableSelectAllCell key={column.key} column={column} state={state} />
                 : <TableColumnHeader key={column.key} column={column} state={state} />
@@ -59,9 +58,9 @@ export function Table(props) {
         ))}
       </TableRowGroup>
       <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
-        {[...collection.body.childNodes].map(row => (
+        {[...collection].map(row => (
           <TableRow key={row.key} item={row} state={state}>
-            {[...row.childNodes].map(cell =>
+            {[...state.collection.getChildren(row.key)].map(cell =>
               cell.props.isSelectionCell
                 ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
                 : <TableCell key={cell.key} cell={cell} state={state} />

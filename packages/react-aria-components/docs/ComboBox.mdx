@@ -1,0 +1,1474 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import statelyDocs from 'docs:@react-stately/combobox';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from './ComboBoxAnatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import Input from '@react-spectrum/docs/pages/assets/component-illustrations/Input.svg';
+import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
+import ListBox from '@react-spectrum/docs/pages/assets/component-illustrations/ListBox.svg';
+import Collections from '@react-spectrum/docs/pages/assets/component-illustrations/Collections.svg';
+import Selection from '@react-spectrum/docs/pages/assets/component-illustrations/Selection.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Pickers
+keywords: [combobox, autocomplete, autosuggest, typeahead, search, aria]
+type: component
+---
+
+# ComboBox
+
+<PageDescription>{docs.exports.ComboBox.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['ComboBox']}
+  sourceData={[
+    {type: 'W3C', url: 'https://www.w3.org/WAI/ARIA/apg/patterns/combobox/'}
+  ]} />
+
+## Example
+
+```tsx example
+import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem} from 'react-aria-components';
+
+<ComboBox>
+  <Label>Favorite Animal</Label>
+  <div>
+    <Input />
+    <Button>▼</Button>
+  </div>
+  <Popover>
+    <ListBox>
+      <ListBoxItem>Aardvark</ListBoxItem>
+      <ListBoxItem>Cat</ListBoxItem>
+      <ListBoxItem>Dog</ListBoxItem>
+      <ListBoxItem>Kangaroo</ListBoxItem>
+      <ListBoxItem>Panda</ListBoxItem>
+      <ListBoxItem>Snake</ListBoxItem>
+    </ListBox>
+  </Popover>
+</ComboBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Checkbox.mdx' layer(checkbox);
+@import './ListBox.mdx' layer(listbox);
+@import './Popover.mdx' layer(popover);
+@import './Form.mdx' layer(form);
+@import './Button.mdx' layer(button);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-ComboBox {
+  color: var(--text-color);
+
+  .react-aria-Input {
+    margin: 0;
+    font-size: 1.072rem;
+    background: var(--field-background);
+    color: var(--field-text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.286rem 2rem 0.286rem 0.571rem;
+    vertical-align: middle;
+
+    &[data-focused] {
+      outline: none;
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: -1px;
+    }
+  }
+
+  .react-aria-Button {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    forced-color-adjust: none;
+    border-radius: 4px;
+    border: none;
+    margin-left: -1.714rem;
+    width: 1.429rem;
+    height: 1.429rem;
+    padding: 0;
+    font-size: 0.857rem;
+    cursor: default;
+
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
+  }
+}
+
+.react-aria-Popover[data-trigger=ComboBox] {
+  width: var(--trigger-width);
+
+  .react-aria-ListBox {
+    display: block;
+    width: unset;
+    max-height: inherit;
+    min-height: unset;
+    border: none;
+
+    .react-aria-Header {
+      padding-left: 1.571rem;
+    }
+  }
+
+  .react-aria-ListBoxItem {
+    padding: 0.286rem 0.571rem 0.286rem 1.571rem;
+
+    &[data-focus-visible] {
+      outline: none;
+    }
+
+    &[data-selected] {
+      font-weight: 600;
+      background: unset;
+      color: var(--text-color);
+
+      &::before {
+        content: '✓';
+        content: '✓' / '';
+        alt: ' ';
+        position: absolute;
+        top: 4px;
+        left: 4px;
+      }
+    }
+
+    &[data-focused],
+    &[data-pressed] {
+      background: var(--highlight-background);
+      color: var(--highlight-foreground);
+    }
+  }
+}
+```
+
+</details>
+
+## Features
+
+A combo box can be built using the [&lt;datalist&gt;](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) HTML element, but this is very limited in functionality and difficult to style. `ComboBox` helps achieve accessible combo box and autocomplete components that can be styled as needed.
+
+* **Flexible** – Support for selecting pre-defined values, custom values, controlled and uncontrolled state, custom filter functions, async loading, disabled items, validation, and multiple menu trigger options.
+* **Keyboard navigation** – ComboBox can be opened and navigated using the arrow keys, along with page up/down, home/end, etc. The list of options is filtered while typing into the input, and items can be selected with the enter key.
+* **Accessible** – Follows the [ARIA combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/), with support for items and sections, and slots for label and description elements within each item. Custom localized announcements are included for option focusing, filtering, and selection using an ARIA live region to ensure announcements are clear and consistent.
+* **Validation** – Support for native HTML constraint validation with customizable UI, custom validation functions, realtime validation, and server-side validation errors.
+* **Styleable** – Items include builtin states for styling, such as hover, press, focus, selected, and disabled.
+
+Read our [blog post](../blog/building-a-combobox.html) for more details about the interactions and accessibility features implemented by `ComboBox`.
+
+## Anatomy
+
+<Anatomy />
+
+A combo box consists of a label, an input which displays the current value, a listbox displayed in a popover, and an optional button
+used to toggle the popover open state. Users can type within the input to filter the available options
+within the list box. The list box popover may be opened by a variety of input field interactions specified
+by the `menuTrigger` prop provided to `ComboBox`, or by clicking or touching the button.
+
+`ComboBox` also supports optional description and error message elements, which can be used
+to provide more context about the field, and any validation messages. These are linked with the
+input via the `aria-describedby` attribute.
+
+```tsx
+import {ComboBox, Label, Input, Button, Popover, ListBox, ListBoxItem, Section, Header, Text, FieldError} from 'react-aria-components';
+
+<ComboBox>
+  <Label />
+  <Input />
+  <Button />
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <ListBox>
+      <ListBoxItem>
+        <Text slot="label" />
+        <Text slot="description" />
+      </ListBoxItem>
+      <Section>
+        <Header />
+        <ListBoxItem />
+      </Section>
+    </ListBox>
+  </Popover>
+</ComboBox>
+```
+
+If the combo box does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to
+identify it to assistive technology.
+
+### Concepts
+
+`ComboBox` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="collections.html"
+  title="Collections"
+  description="Defining collections of items, async loading, and updating items over time.">
+  <Collections />
+</ExampleCard>
+
+<ExampleCard
+  url="selection.html"
+  title="Selection"
+  description="Interactions and data structures to represent selection.">
+  <Selection />
+</ExampleCard>
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
+</ExampleCard>
+
+</section>
+
+### Composed components
+
+A `ComboBox` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
+  title="Label"
+  description="A label provides context for an input element.">
+  <Label />
+</ExampleCard>
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input"
+  title="Input"
+  description="An input allows a user to enter a plain text value with a keyboard.">
+  <Input />
+</ExampleCard>
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+<ExampleCard
+  url="Popover.html"
+  title="Popover"
+  description="A popover displays content in context with a trigger element.">
+  <Popover />
+</ExampleCard>
+
+<ExampleCard
+  url="ListBox.html"
+  title="ListBox"
+  description="A listbox allows a user to select one or more options from a list.">
+  <ListBox />
+</ExampleCard>
+
+</section>
+
+## Examples
+
+<ExampleList tag="combobox" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="combobox" />
+
+## Reusable wrappers
+
+If you will use a ComboBox in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `ComboBox` and all of its children together into a single component which accepts a `label` prop and `children`, which are passed through to the right places. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation). The `Item` component is also wrapped to apply class names based on the current state, as described in the [styling](#styling) section.
+
+```tsx example export=true
+import type {ComboBoxProps, ListBoxItemProps, ValidationResult} from 'react-aria-components';
+import {Text, FieldError} from 'react-aria-components';
+
+interface MyComboBoxProps<T extends object> extends Omit<ComboBoxProps<T>, 'children'> {
+  label?: string,
+  description?: string | null,
+  errorMessage?: string | ((validation: ValidationResult) => string),
+  children: React.ReactNode | ((item: T) => React.ReactNode)
+}
+
+function MyComboBox<T extends object>({label, description, errorMessage, children, ...props}: MyComboBoxProps<T>) {
+  return (
+    <ComboBox {...props}>
+      <Label>{label}</Label>
+      <div className="my-combobox-container">
+        <Input />
+        <Button>▼</Button>
+      </div>
+      {description && <Text slot="description">{description}</Text>}
+      <FieldError>{errorMessage}</FieldError>
+      <Popover>
+        <ListBox>
+          {children}
+        </ListBox>
+      </Popover>
+    </ComboBox>
+  );
+}
+
+function MyItem(props: ListBoxItemProps) {
+  return <ListBoxItem {...props} className={({isFocused, isSelected}) => `my-item ${isFocused ? 'focused' : ''} ${isSelected ? 'selected' : ''}`} />
+}
+
+<MyComboBox label="Ice cream flavor">
+  <MyItem>Chocolate</MyItem>
+  <MyItem>Mint</MyItem>
+  <MyItem>Strawberry</MyItem>
+  <MyItem>Vanilla</MyItem>
+</MyComboBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.my-item {
+  margin: 2px;
+  padding: 4px 8px 4px 22px;
+  border-radius: 6px;
+  outline: none;
+  cursor: default;
+  color: var(--text-color);
+  font-size: 1.072rem;
+  position: relative;
+
+  &.selected {
+    font-weight: 600;
+    background: none;
+
+    &::before {
+      content: '✓';
+      content: '✓' / '';
+      alt: ' ';
+      position: absolute;
+      top: 4px;
+      left: 4px;
+    }
+  }
+
+  &.focused {
+    background: #e70073;
+    color: white;
+  }
+}
+
+@media (forced-colors: active) {
+  .my-item.focused {
+    background: Highlight;
+    color: HighlightText;
+  }
+}
+```
+
+</details>
+
+## Content
+
+ComboBox follows the [Collection Components API](collections.html), accepting both static and dynamic collections.
+The examples above show static collections, which can be used when the full list of options is known ahead of time. Dynamic collections,
+as shown below, can be used when the options come from an external data source such as an API call, or update over time.
+
+As seen below, an iterable list of options is passed to the ComboBox using the `defaultItems` prop. Each item accepts an `id` prop, which
+is passed to the `onSelectionChange` handler to identify the selected item. Alternatively, if the item objects contain an `id` property,
+as shown in the example below, then this is used automatically and an `id` prop is not required.
+
+```tsx example
+import type {Key} from 'react-aria-components';
+
+function Example() {
+  let options = [
+    {id: 1, name: 'Aerospace'},
+    {id: 2, name: 'Mechanical'},
+    {id: 3, name: 'Civil'},
+    {id: 4, name: 'Biomedical'},
+    {id: 5, name: 'Nuclear'},
+    {id: 6, name: 'Industrial'},
+    {id: 7, name: 'Chemical'},
+    {id: 8, name: 'Agricultural'},
+    {id: 9, name: 'Electrical'}
+  ];
+  let [majorId, setMajorId] = React.useState<Key | null>(null);
+
+  return (
+    <>
+      <MyComboBox defaultItems={options} onSelectionChange={setMajorId}>
+        {(item) => <ListBoxItem>{item.name}</ListBoxItem>}
+      </MyComboBox>
+      <p>Selected topic id: {majorId}</p>
+    </>
+  );
+}
+```
+
+## Value
+
+A ComboBox's `value` is empty by default, but an initial, uncontrolled, value can be provided using the `defaultInputValue` prop.
+Alternatively, a controlled value can be provided using the `inputValue` prop. Note that the input value of the ComboBox does not affect
+the ComboBox's selected option.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, name: 'Adobe Photoshop'},
+    {id: 2, name: 'Adobe XD'},
+    {id: 3, name: 'Adobe InDesign'},
+    {id: 4, name: 'Adobe AfterEffects'},
+    {id: 5, name: 'Adobe Illustrator'},
+    {id: 6, name: 'Adobe Lightroom'},
+    {id: 7, name: 'Adobe Premiere Pro'},
+    {id: 8, name: 'Adobe Fresco'},
+    {id: 9, name: 'Adobe Dreamweaver'}
+  ];
+  let [value, setValue] = React.useState('Adobe XD');
+
+  return (
+    <div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
+      <MyComboBox
+        label="Adobe product (Uncontrolled)"
+        defaultItems={options}
+        /*- begin highlight -*/
+        defaultInputValue="Adobe XD">
+        {/*- end highlight -*/}
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </MyComboBox>
+
+      <MyComboBox
+        label="Pick an Adobe product (Controlled)"
+        defaultItems={options}
+        /*- begin highlight -*/
+        inputValue={value}
+        onInputChange={setValue}>
+        {/*- end highlight -*/}
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </MyComboBox>
+    </div>
+  );
+}
+```
+
+### Custom values
+
+By default, `ComboBox` doesn't allow users to specify a value that doesn't exist in the list of options and will revert the input value to
+the current selected value on blur. By specifying `allowsCustomValue`, this behavior is suppressed and the user is free to enter
+any value within the field.
+
+```tsx example
+<MyComboBox label="Favorite Animal" allowsCustomValue>
+  <ListBoxItem id="red panda">Red Panda</ListBoxItem>
+  <ListBoxItem id="cat">Cat</ListBoxItem>
+  <ListBoxItem id="dog">Dog</ListBoxItem>
+  <ListBoxItem id="aardvark">Aardvark</ListBoxItem>
+  <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+  <ListBoxItem id="snake">Snake</ListBoxItem>
+</MyComboBox>
+```
+
+### HTML forms
+
+ComboBox supports the `name` prop for integration with HTML forms. By default, the `id` of the selected item will be submitted to the server. If the `formValue` prop is set to `"text"` or the `allowsCustomValue` prop is true, the text in the input field will be submitted instead.
+
+```tsx example
+<div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
+  <MyComboBox
+    label="Favorite Animal"
+    ///- begin highlight -///
+    name="favoriteAnimalId"
+    ///- end highlight -///
+  >
+    <ListBoxItem id="panda">Panda</ListBoxItem>
+    <ListBoxItem id="cat">Cat</ListBoxItem>
+    <ListBoxItem id="dog">Dog</ListBoxItem>
+  </MyComboBox>
+  <MyComboBox
+    label="Ice cream flavor"
+    ///- begin highlight -///
+    name="iceCream"
+    formValue="text"
+    allowsCustomValue
+    ///- end highlight -///
+  >
+    <ListBoxItem>Chocolate</ListBoxItem>
+    <ListBoxItem>Mint</ListBoxItem>
+    <ListBoxItem>Strawberry</ListBoxItem>
+    <ListBoxItem>Vanilla</ListBoxItem>
+  </MyComboBox>
+</div>
+```
+
+## Selection
+Setting a selected option can be done by using the `defaultSelectedKey` or `selectedKey` prop. The selected key corresponds to the `id` of an item. See [Events](#events) for more details on selection events.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, name: 'Adobe Photoshop'},
+    {id: 2, name: 'Adobe XD'},
+    {id: 3, name: 'Adobe InDesign'},
+    {id: 4, name: 'Adobe AfterEffects'},
+    {id: 5, name: 'Adobe Illustrator'},
+    {id: 6, name: 'Adobe Lightroom'},
+    {id: 7, name: 'Adobe Premiere Pro'},
+    {id: 8, name: 'Adobe Fresco'},
+    {id: 9, name: 'Adobe Dreamweaver'}
+  ];
+  let [productId, setProductId] = React.useState<Key>(9);
+
+  return (
+    <div style={{display: 'flex', gap: 16, flexWrap: 'wrap'}}>
+      <MyComboBox
+        label="Pick an Adobe product (uncontrolled)"
+        defaultItems={options}
+        /*- begin highlight -*/
+        defaultSelectedKey={9}
+        /*- end highlight -*/
+      >
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </MyComboBox>
+
+      <MyComboBox
+        label="Pick an Adobe product (controlled)"
+        defaultItems={options}
+        /*- begin highlight -*/
+        selectedKey={productId}
+        onSelectionChange={selected => setProductId(selected)}
+        /*- end highlight -*/
+      >
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </MyComboBox>
+    </div>
+  );
+}
+```
+
+## Links
+
+By default, interacting with an item in a ComboBox selects it and updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<ListBoxItem>` component. Interacting with link items navigates to the provided URL and does not update the selection or input value.
+
+```tsx example
+<MyComboBox label="Tech company websites">
+  <ListBoxItem href="https://adobe.com/" target="_blank">Adobe</ListBoxItem>
+  <ListBoxItem href="https://apple.com/" target="_blank">Apple</ListBoxItem>
+  <ListBoxItem href="https://google.com/" target="_blank">Google</ListBoxItem>
+  <ListBoxItem href="https://microsoft.com/" target="_blank">Microsoft</ListBoxItem>
+</MyComboBox>
+```
+
+```css hidden
+.react-aria-ListBoxItem[href] {
+  text-decoration: none;
+  cursor: pointer;
+}
+```
+
+### Client side routing
+
+The `<ListBoxItem>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Aria components that support links, this works via the <TypeLink links={docs.links} type={docs.exports.RouterProvider} /> component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
+
+## Sections
+
+ComboBox supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. A `<Header>` element may also be included to label the section.
+
+### Static items
+
+```tsx example
+import {Section, Header} from 'react-aria-components';
+
+<MyComboBox label="Preferred fruit or vegetable">
+  <Section>
+    <Header>Fruit</Header>
+    <ListBoxItem id="Apple">Apple</ListBoxItem>
+    <ListBoxItem id="Banana">Banana</ListBoxItem>
+    <ListBoxItem id="Orange">Orange</ListBoxItem>
+    <ListBoxItem id="Honeydew">Honeydew</ListBoxItem>
+    <ListBoxItem id="Grapes">Grapes</ListBoxItem>
+    <ListBoxItem id="Watermelon">Watermelon</ListBoxItem>
+    <ListBoxItem id="Cantaloupe">Cantaloupe</ListBoxItem>
+    <ListBoxItem id="Pear">Pear</ListBoxItem>
+  </Section>
+  <Section>
+    <Header>Vegetable</Header>
+    <ListBoxItem id="Cabbage">Cabbage</ListBoxItem>
+    <ListBoxItem id="Broccoli">Broccoli</ListBoxItem>
+    <ListBoxItem id="Carrots">Carrots</ListBoxItem>
+    <ListBoxItem id="Lettuce">Lettuce</ListBoxItem>
+    <ListBoxItem id="Spinach">Spinach</ListBoxItem>
+    <ListBoxItem id="Bok Choy">Bok Choy</ListBoxItem>
+    <ListBoxItem id="Cauliflower">Cauliflower</ListBoxItem>
+    <ListBoxItem id="Potatoes">Potatoes</ListBoxItem>
+  </Section>
+</MyComboBox>
+```
+
+### Dynamic items
+
+Sections used with dynamic items are populated from a hierarchical data structure. Please note that `Section` takes an array of data using the `items` prop only. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
+
+```tsx example
+import {Collection} from 'react-aria-components';
+
+function Example() {
+  let options = [
+    {name: 'Fruit', children: [
+      {name: 'Apple'},
+      {name: 'Banana'},
+      {name: 'Orange'},
+      {name: 'Honeydew'},
+      {name: 'Grapes'},
+      {name: 'Watermelon'},
+      {name: 'Cantaloupe'},
+      {name: 'Pear'}
+    ]},
+    {name: 'Vegetable', children: [
+      {name: 'Cabbage'},
+      {name: 'Broccoli'},
+      {name: 'Carrots'},
+      {name: 'Lettuce'},
+      {name: 'Spinach'},
+      {name: 'Bok Choy'},
+      {name: 'Cauliflower'},
+      {name: 'Potatoes'}
+    ]}
+  ];
+
+  return (
+    <MyComboBox label="Preferred fruit or vegetable" defaultItems={options}>
+      {section => (
+        <Section id={section.name}>
+          <Header>{section.name}</Header>
+          <Collection items={section.children}>
+            {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+          </Collection>
+        </Section>
+      )}
+    </MyComboBox>
+  );
+}
+```
+
+## Text slots
+
+By default, items in a ComboBox are labeled by their text contents for accessibility. ListBoxItems also support the "label" and "description" slots to separate primary and secondary content, which improves screen reader announcements and can also be used for styling purposes.
+
+**Note**: The ARIA spec prohibits listbox items from including interactive content such as buttons, checkboxes, etc.
+
+```tsx example
+import {Text} from 'react-aria-components';
+
+<MyComboBox label="Select action">
+  <ListBoxItem textValue="Add to queue">
+    <Text slot="label">Add to queue</Text>
+    <Text slot="description">Add to current watch queue.</Text>
+  </ListBoxItem>
+  <ListBoxItem textValue="Add review">
+    <Text slot="label">Add review</Text>
+    <Text slot="description">Post a review for the episode.</Text>
+  </ListBoxItem>
+  <ListBoxItem textValue="Subscribe to series">
+    <Text slot="label">Subscribe to series</Text>
+    <Text slot="description">Add series to your subscription list and be notified when a new episode airs.</Text>
+  </ListBoxItem>
+  <ListBoxItem textValue="Report">
+    <Text slot="label">Report</Text>
+    <Text slot="description">Report an issue/violation.</Text>
+  </ListBoxItem>
+</MyComboBox>
+```
+
+## Events
+
+ComboBox supports selection via mouse, keyboard, and touch. You can handle all of these via the `onSelectionChange`
+prop. ComboBox will pass the selected `id` to the `onSelectionChange` handler.
+Additionally, ComboBox accepts an `onInputChange` prop which is triggered whenever the value is edited by the user, whether through typing or option
+selection.
+
+The example below uses `onSelectionChange` and `onInputChange` to update the selection and input value stored in React state.
+
+```tsx example
+function Example() {
+  let options = [
+    {id: 1, name: 'Aerospace'},
+    {id: 2, name: 'Mechanical'},
+    {id: 3, name: 'Civil'},
+    {id: 4, name: 'Biomedical'},
+    {id: 5, name: 'Nuclear'},
+    {id: 6, name: 'Industrial'},
+    {id: 7, name: 'Chemical'},
+    {id: 8, name: 'Agricultural'},
+    {id: 9, name: 'Electrical'}
+  ];
+
+  let [value, setValue] = React.useState('');
+  let [majorId, setMajorId] = React.useState('');
+
+  let onSelectionChange = (id) => {
+    setMajorId(id);
+  };
+
+  let onInputChange = (value) => {
+    setValue(value)
+  };
+
+  return (
+    <>
+      <p>Current selected major id: {majorId}</p>
+      <p>Current input text: {value}</p>
+      <MyComboBox
+        label="Pick a engineering major"
+        defaultItems={options}
+        selectedKey={majorId}
+        /*- begin highlight -*/
+        onSelectionChange={onSelectionChange}
+        onInputChange={onInputChange}
+        /*- end highlight -*/
+      >
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </MyComboBox>
+    </>
+  );
+}
+```
+
+### Custom filtering
+
+By default, `ComboBox` uses a "contains" function from [useFilter](useFilter.html) to filter the list of options. This can be overridden using the `defaultFilter` prop, or by using the `items` prop to control the filtered list. When `items` is provided rather than `defaultItems`, `ComboBox` does no filtering of its own.
+
+The following example makes the `inputValue` controlled, and updates the filtered list that is passed to the `items`
+prop when the input changes value.
+
+```tsx example
+import {useFilter} from '@react-aria/i18n';
+
+function Example() {
+  let options = [
+    {id: 1, email: 'fake@email.com'},
+    {id: 2, email: 'anotherfake@email.com'},
+    {id: 3, email: 'bob@email.com'},
+    {id: 4, email: 'joe@email.com'},
+    {id: 5, email: 'yourEmail@email.com'},
+    {id: 6, email: 'valid@email.com'},
+    {id: 7, email: 'spam@email.com'},
+    {id: 8, email: 'newsletter@email.com'},
+    {id: 9, email: 'subscribe@email.com'}
+  ];
+
+  let {startsWith} = useFilter({sensitivity: 'base'});
+  let [filterValue, setFilterValue] = React.useState('');
+  let filteredItems = React.useMemo(
+    () => options.filter((item) => startsWith(item.email, filterValue)),
+    [options, filterValue]
+  );
+
+  return (
+    <MyComboBox
+      label="To:"
+      /*- begin highlight -*/
+      items={filteredItems}
+      inputValue={filterValue}
+      onInputChange={setFilterValue}
+      /*- end highlight -*/
+      allowsCustomValue>
+      {(item) => <ListBoxItem>{item.email}</ListBoxItem>}
+    </MyComboBox>
+  );
+}
+```
+
+### Fully controlled
+
+When a ComboBox has multiple controlled properties (e.g.`inputValue`, `selectedKey`, `items`), it is important to note that an update to one of these properties will
+not automatically update the others. Each interaction done in the ComboBox will only trigger its associated event handler. For example, typing in the field will only
+trigger `onInputChange` whereas selecting an item from the ComboBox menu will only trigger `onSelectionChange` so it is your responsibility to update the other
+controlled properties accordingly. Note that you should provide an `onSelectionChange` handler for a ComboBox with controlled input value and open state. This way, you can properly
+control the menu's open state when the user selects an option or blurs from the field.
+
+The below example demonstrates how you would construct the same example above in a completely controlled fashion.
+
+```tsx example
+function ControlledComboBox() {
+  let options = [
+    {id: 1, name: 'Aerospace'},
+    {id: 2, name: 'Mechanical'},
+    {id: 3, name: 'Civil'},
+    {id: 4, name: 'Biomedical'},
+    {id: 5, name: 'Nuclear'},
+    {id: 6, name: 'Industrial'},
+    {id: 7, name: 'Chemical'},
+    {id: 8, name: 'Agricultural'},
+    {id: 9, name: 'Electrical'}
+  ];
+
+  let [fieldState, setFieldState] = React.useState({
+    selectedKey: null,
+    inputValue: ''
+  });
+
+  let onSelectionChange = (id: Key) => {
+    setFieldState({
+      inputValue: options.find(o => o.id === id)?.name ?? '',
+      selectedKey: id
+    });
+  };
+
+  let onInputChange = (value: string) => {
+    setFieldState(prevState => ({
+      inputValue: value,
+      selectedKey: value === '' ? null : prevState.selectedKey
+    }));
+  };
+
+  return (
+     <>
+      <p>Current selected major id: {fieldState.selectedKey}</p>
+      <p>Current input text: {fieldState.inputValue}</p>
+       <MyComboBox
+        label="Pick a engineering major"
+        defaultItems={options}
+        selectedKey={fieldState.selectedKey}
+        inputValue={fieldState.inputValue}
+        onSelectionChange={onSelectionChange}
+        onInputChange={onInputChange}>
+        {item => <ListBoxItem>{item.name}</ListBoxItem>}
+      </MyComboBox>
+     </>
+  );
+}
+```
+
+## Menu trigger behavior
+
+`ComboBox` supports three different `menuTrigger` prop values:
+
+* `input` (default): ComboBox menu opens when the user edits the input text.
+* `focus`: ComboBox menu opens when the user focuses the ComboBox input.
+* `manual`: ComboBox menu only opens when the user presses the trigger button or uses the arrow keys.
+
+The example below has `menuTrigger` set to `focus`.
+
+```tsx example
+<MyComboBox label="Favorite Animal" menuTrigger="focus">
+  <ListBoxItem id="red panda">Red Panda</ListBoxItem>
+  <ListBoxItem id="cat">Cat</ListBoxItem>
+  <ListBoxItem id="dog">Dog</ListBoxItem>
+  <ListBoxItem id="aardvark">Aardvark</ListBoxItem>
+  <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+  <ListBoxItem id="snake">Snake</ListBoxItem>
+</MyComboBox>
+```
+
+## Asynchronous loading
+
+This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to handle asynchronous loading
+and filtering of data from a server. You may additionally want to display a spinner to indicate the loading
+state to the user, or support features like infinite scroll to load more data. See
+[this CodeSandbox](https://codesandbox.io/s/dreamy-burnell-3i2jy?file=/src/Autocomplete.tsx) for an example
+of a ComboBox supporting those features.
+
+```tsx example
+import {useAsyncList} from '@react-stately/data';
+
+interface Character {
+  name: string
+}
+
+function AsyncLoadingExample() {
+  let list = useAsyncList<Character>({
+    async load({signal, filterText}) {
+      let res = await fetch(
+        `https://swapi.py4e.com/api/people/?search=${filterText}`,
+        {signal}
+      );
+      let json = await res.json();
+
+      return {
+        items: json.results
+      };
+    }
+  });
+
+  return (
+    <MyComboBox
+      label="Star Wars Character Lookup"
+      items={list.items}
+      inputValue={list.filterText}
+      onInputChange={list.setFilterText}>
+      {(item) => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+    </MyComboBox>
+  );
+}
+```
+
+## Disabled
+
+A `ComboBox` can be fully disabled using the isDisabled prop.
+
+```tsx example
+<MyComboBox label="Favorite Animal" isDisabled>
+  <ListBoxItem id="red panda">Panda</ListBoxItem>
+  <ListBoxItem id="cat">Cat</ListBoxItem>
+  <ListBoxItem id="dog">Dog</ListBoxItem>
+</MyComboBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ComboBox {
+  .react-aria-Input {
+    &[data-disabled] {
+      border-color: var(--border-color-disabled);
+    }
+  }
+
+  .react-aria-Button {
+    &[data-disabled] {
+      background: var(--border-color-disabled);
+    }
+  }
+}
+```
+
+</details>
+
+### Disabled options
+
+You can disable specific options by providing an array of keys to `ComboBox`
+via the `disabledKeys` prop. This will prevent options with matching keys from being pressable and
+receiving keyboard focus as shown in the example below. Note that you are responsible for the styling of disabled options.
+
+```tsx example
+<MyComboBox label="Favorite Animal" disabledKeys={['cat', 'kangaroo']}>
+  <ListBoxItem id="red panda">Red Panda</ListBoxItem>
+  <ListBoxItem id="cat">Cat</ListBoxItem>
+  <ListBoxItem id="dog">Dog</ListBoxItem>
+  <ListBoxItem id="aardvark">Aardvark</ListBoxItem>
+  <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+  <ListBoxItem id="snake">Snake</ListBoxItem>
+</MyComboBox>
+```
+
+## Validation
+
+ComboBox supports the `isRequired` prop to ensure the user enters a value, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+To display validation errors, add a `<FieldError>` element as a child of the ComboBox. This allows you to render error messages from all of the above sources with consistent custom styles.
+
+```tsx example
+import {Form, FieldError} from 'react-aria-components';
+
+<Form>
+  {/*- begin highlight -*/}
+  <ComboBox name="animal" isRequired>
+  {/*- end highlight -*/}
+    <Label>Favorite Animal</Label>
+    <div>
+      <Input />
+      <Button>▼</Button>
+    </div>
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+    <Popover>
+      <ListBox>
+        <ListBoxItem>Aardvark</ListBoxItem>
+        <ListBoxItem>Cat</ListBoxItem>
+        <ListBoxItem>Dog</ListBoxItem>
+        <ListBoxItem>Kangaroo</ListBoxItem>
+        <ListBoxItem>Panda</ListBoxItem>
+        <ListBoxItem>Snake</ListBoxItem>
+      </ListBox>
+    </Popover>
+  </ComboBox>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ComboBox {
+  .react-aria-Input {
+    &[data-invalid]:not([data-focused]) {
+      border-color: var(--invalid-color);
+    }
+  }
+
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+```
+
+</details>
+
+By default, `FieldError` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
+### Description
+
+The `description` slot can be used to associate additional help text with a ComboBox.
+
+```tsx example
+<ComboBox>
+  <Label>Favorite Animal</Label>
+  <div>
+    <Input />
+    <Button>▼</Button>
+  </div>
+  {/*- begin highlight -*/}
+  <Text slot="description">Please select an animal.</Text>
+  {/*- end highlight -*/}
+  <Popover>
+    <ListBox>
+      <ListBoxItem>Aardvark</ListBoxItem>
+      <ListBoxItem>Cat</ListBoxItem>
+      <ListBoxItem>Dog</ListBoxItem>
+      <ListBoxItem>Kangaroo</ListBoxItem>
+      <ListBoxItem>Panda</ListBoxItem>
+      <ListBoxItem>Snake</ListBoxItem>
+    </ListBox>
+  </Popover>
+</ComboBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-ComboBox {
+  [slot=description] {
+    font-size: 12px;
+  }
+}
+```
+
+</details>
+
+## Props
+
+### ComboBox
+
+<PropTable component={docs.exports.ComboBox} links={docs.links} />
+
+### Label
+
+A `<Label>` accepts all props supported by the `<label>` HTML element.
+
+### Input
+
+An `<Input>` accepts all props supported by the `<input>` HTML element.
+
+### Button
+
+A `<Button>` accepts its contents as `children`. Other props such as `onPress` and `isDisabled` will be set by the `ComboBox`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Button} links={docs.links} />
+
+</details>
+
+### Popover
+
+A `<Popover>` is a container to hold the `<ListBox>` suggestions for a ComboBox. By default, it has a `placement` of `bottom start` within a `<ComboBox>`, but this and other positioning properties may be customized.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Popover} links={docs.links} />
+
+</details>
+
+### ListBox
+
+Within a `<ComboBox>`, most `<ListBox>` props are set automatically. The `<ListBox>` defines the options to display in a ComboBox.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.ListBox} links={docs.links} />
+
+</details>
+
+### Section
+
+A `<Section>` defines the child items for a section within a `<ListBox>`. It may also contain an optional `<Header>` element. If there is no header, then an `aria-label` must be provided to identify the section to assistive technologies.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Section} links={docs.links} />
+
+</details>
+
+### Header
+
+A `<Header>` defines the title for a `<Section>`. It accepts all DOM attributes.
+
+### ListBoxItem
+
+A `<ListBoxItem>` defines a single option within a `<ListBox>`. If the `children` are not plain text, then the `textValue` prop must also be set to a plain text representation, which will be used for autocomplete in the ComboBox.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.ListBoxItem} links={docs.links} />
+
+</details>
+
+### FieldError
+
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.FieldError} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-ComboBox {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<ComboBox className="my-combobox">
+  {/* ... */}
+</ComboBox>
+```
+
+In addition, some components support multiple UI states (e.g. pressed, hovered, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-ListBoxItem[data-selected] {
+  /* ... */
+}
+
+.react-aria-ListBoxItem[data-focused] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<ListBoxItem className={({isSelected}) => isSelected ? 'bg-blue-400' : 'bg-gray-100'}>
+  Item
+</ListBoxItem>
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render a checkmark icon when an item is selected.
+
+```jsx
+<ListBoxItem>
+  {({isSelected}) => (
+    <>
+      {isSelected && <CheckmarkIcon />}
+      Item
+    </>
+  )}
+</ListBoxItem>
+```
+
+The states and selectors for each component used in a `ComboBox` are documented below.
+
+### ComboBox
+
+A `ComboBox` can be targeted with the `.react-aria-ComboBox` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ComboBoxRenderProps.properties} />
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
+
+### Input
+
+An `Input` can be targeted with the `.react-aria-Input` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.InputRenderProps.properties} />
+
+### Button
+
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.ButtonRenderProps.properties} />
+
+### Popover
+
+The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the ComboBox in the DOM. It supports the following states and render props:
+
+<StateTable properties={docs.exports.PopoverRenderProps.properties} />
+
+Within a ComboBox, the popover will have the `data-trigger="ComboBox"` attribute, which can be used to define combobox-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the combobox.
+
+```css render=false
+.react-aria-Popover[data-trigger=ComboBox] {
+  width: var(--trigger-width);
+}
+```
+
+### ListBox
+
+A [ListBox](ListBox.html) can be targeted with the `.react-aria-ListBox` CSS selector, or by overriding with a custom `className`.
+
+### Section
+
+A `Section` can be targeted with the `.react-aria-Section` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+
+### Header
+
+A `Header` within a `Section` can be targeted with the `.react-aria-Header` CSS selector, or by overriding with a custom `className`. See [sections](#sections) for examples.
+
+### ListBoxItem
+
+A `ListBoxItem` can be targeted with the `.react-aria-ListBoxItem` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.ListBoxItemRenderProps.properties} />
+
+Items also support two slots: a label, and a description. When provided using the `<Text>` element, the item will have `aria-labelledby` and `aria-describedby` attributes pointing to these slots, improving screen reader announcement. See [complex items](#complex-items) for an example.
+
+Note that items may not contain interactive children such as buttons, as screen readers will not be able to access them.
+
+### Text
+
+The help text elements within a `ComboBox` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
+### FieldError
+
+A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, or by overriding with a custom `className`. It supports the following render props:
+
+<StateTable properties={docs.exports.FieldErrorRenderProps.properties} />
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within a `ComboBox`, such as `Input` or `ListBox`, in many cases you can create a wrapper
+component. This lets you customize the props passed to the component.
+
+```tsx
+function MyListBox(props) {
+  return <ListBox {...props} className="my-listbox" />
+}
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['ComboBox']} docs={docs} />
+
+This example shows a `FieldGroup` component that renders a group of filters with a title. The entire group can be marked as disabled via the `isDisabled` prop, which is passed to all child selects via the `ComboBoxContext` provider.
+
+```tsx example
+import {ComboBoxContext} from 'react-aria-components';
+
+interface FieldGroupProps {
+  title?: string,
+  children?: React.ReactNode,
+  isDisabled?: boolean
+}
+
+function FieldGroup({title, children, isDisabled}: FieldGroupProps) {
+  return (
+    <fieldset>
+      <legend>{title}</legend>
+      {/*- begin highlight -*/}
+      <ComboBoxContext.Provider value={{isDisabled}}>
+      {/*- end highlight -*/}
+        {children}
+      </ComboBoxContext.Provider>
+    </fieldset>
+  );
+}
+
+<FieldGroup title="Filters" isDisabled>
+  <MyComboBox label="Status" defaultSelectedKey="published">
+    <ListBoxItem id="draft">Draft</ListBoxItem>
+    <ListBoxItem id="published">Published</ListBoxItem>
+    <ListBoxItem id="deleted">Deleted</ListBoxItem>
+  </MyComboBox>
+  <MyComboBox label="Author" defaultSelectedKey="emma">
+    <ListBoxItem id="john">John</ListBoxItem>
+    <ListBoxItem id="emma">Emma</ListBoxItem>
+    <ListBoxItem id="tim">Tim</ListBoxItem>
+  </MyComboBox>
+</FieldGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+}
+```
+
+</details>
+
+### Custom children
+
+ComboBox passes props to its child components, such as the label and input, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Button', 'Input', 'Popover', 'ListBox', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by ComboBox.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `ComboBox`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<ComboBox>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  {/* ... */}
+</ComboBox>
+```
+
+### State
+
+ComboBox provides an <TypeLink links={statelyDocs.links} type={statelyDocs.exports.ComboBoxState} /> object to its children via `ComboBoxStateContext`. This can be used to access and manipulate the combo box's state.
+
+This example shows a `ComboBoxClearButton` component that can be placed within a `ComboBox` to allow the user to clear the selected value.
+
+```tsx example
+import {ComboBoxStateContext} from 'react-aria-components';
+
+function ComboBoxClearButton() {
+  /*- begin highlight -*/
+  let state = React.useContext(ComboBoxStateContext);
+  /*- end highlight -*/
+  return (
+    <Button
+      // Don't inherit default Button behavior from ComboBox.
+      slot={null}
+      className="clear-button"
+      aria-label="Clear"
+      onPress={() => state?.setSelectedKey(null)}>
+      ✕
+    </Button>
+  );
+}
+
+<ComboBox defaultSelectedKey="cat">
+  <Label>Favorite Animal</Label>
+  <div>
+    <Input />
+    {/*- begin highlight -*/}
+    <ComboBoxClearButton />
+    {/*- end highlight -*/}
+    <Button>▼</Button>
+  </div>
+  <Popover>
+    <ListBox>
+      <ListBoxItem id="cat">Cat</ListBoxItem>
+      <ListBoxItem id="dog">Dog</ListBoxItem>
+      <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+    </ListBox>
+  </Popover>
+</ComboBox>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.clear-button {
+  width: 1.143rem;
+  height: 1.143rem;
+  border-radius: 1.143rem;
+  margin-left: -3.143rem;
+  font-size: 0.857rem;
+  line-height: 0.857rem;
+  vertical-align: middle;
+  text-align: center;
+  background: gray;
+  color: white;
+  border: none;
+  padding: 0;
+  outline: none;
+
+  &[data-pressed] {
+    background: dimgray;
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  + .react-aria-Button {
+    margin-left: 4px;
+  }
+}
+```
+
+</details>
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useComboBox](useComboBox.html) for more details.

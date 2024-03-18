@@ -1,3 +1,5 @@
 {
-  "moreActions": "Flere handlinger"
+  "backButton": "Vend tilbage til {prevMenuButton}",
+  "moreActions": "Flere handlinger",
+  "unavailable": "Ikke tilgængelig, udvid for detaljer"
 }

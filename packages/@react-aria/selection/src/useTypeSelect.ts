@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, KeyboardDelegate} from '@react-types/shared';
-import {Key, KeyboardEvent, useRef} from 'react';
+import {DOMAttributes, Key, KeyboardDelegate} from '@react-types/shared';
+import {KeyboardEvent, useRef} from 'react';
 import {MultipleSelectionManager} from '@react-stately/selection';
 
 /**
@@ -53,7 +53,7 @@ export function useTypeSelect(options: AriaTypeSelectOptions): TypeSelectAria {
 
   let onKeyDown = (e: KeyboardEvent) => {
     let character = getStringForKey(e.key);
-    if (!character || e.ctrlKey || e.metaKey) {
+    if (!character || e.ctrlKey || e.metaKey || !e.currentTarget.contains(e.target as HTMLElement)) {
       return;
     }
 

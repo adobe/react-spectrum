@@ -10,9 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, DragTypes, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Node} from '@react-types/shared';
-import {Key, useCallback, useRef, useState} from 'react';
+import {Collection, DragTypes, DropOperation, DroppableCollectionProps, DropTarget, ItemDropTarget, Key, Node} from '@react-types/shared';
 import {MultipleSelectionManager} from '@react-stately/selection';
+import {useCallback, useRef, useState} from 'react';
 
 interface DropOperationEvent {
   target: DropTarget,

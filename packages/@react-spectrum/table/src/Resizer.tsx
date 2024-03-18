@@ -1,88 +1,117 @@
 /* eslint-disable jsx-a11y/role-supports-aria-props */
 import {classNames} from '@react-spectrum/utils';
+import {ColumnSize} from '@react-types/table';
+// @ts-ignore
+import eCursor from 'bundle-text:./cursors/Cur_MoveToRight_9_9.svg';
+// @ts-ignore
+import ewCursor from 'bundle-text:./cursors/Cur_MoveHorizontal_9_9.svg';
 import {FocusRing} from '@react-aria/focus';
 import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {MoveMoveEvent} from '@react-types/shared';
-import React, {RefObject, useRef} from 'react';
+import {isWebKit, mergeProps} from '@react-aria/utils';
+import {Key} from '@react-types/shared';
+import React, {RefObject, useEffect, useState} from 'react';
+import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
-import {TableColumnResizeState} from '@react-stately/table';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useTableColumnResize} from '@react-aria/table';
-import {useTableContext} from './TableView';
-import {VisuallyHidden} from '@react-aria/visually-hidden';
+import {useTableContext, useVirtualizerContext} from './TableViewBase';
+// @ts-ignore
+import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
+
+function getCursor(svg: string, fallback: string) {
+  // WebKit renders SVG cursors blurry on 2x screens: https://bugs.webkit.org/show_bug.cgi?id=160657
+  // To work around this, we generate two SVGs at different sizes and use image-set to pick between them.
+  // Only do this in WebKit to avoid Firefox rendering the cursor at twice the size.
+  if (isWebKit()) {
+    return `image-set(url("data:image/svg+xml,${encodeURIComponent(svg)}") 1x, url("data:image/svg+xml,${encodeURIComponent(svg.replace('width="32" height="32"', 'width="64" height="64"'))}") 2x) 8 8, ${fallback}`;
+  } else {
+    return `url("data:image/svg+xml,${encodeURIComponent(svg)}") 8 8, ${fallback}`;
+  }
+}
 
 interface ResizerProps<T> {
   column: GridNode<T>,
   showResizer: boolean,
   triggerRef: RefObject<HTMLDivElement>,
-  onMoveResizer: (e: MoveMoveEvent) => void
+  onResizeStart: (widths: Map<Key, ColumnSize>) => void,
+  onResize: (widths: Map<Key, ColumnSize>) => void,
+  onResizeEnd: (widths: Map<Key, ColumnSize>) => void
 }
+
+const CURSORS = {
+  ew: getCursor(ewCursor, 'ew-resize'),
+  w: getCursor(wCursor, 'w-resize'),
+  e: getCursor(eCursor, 'e-resize')
+};
 
 function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
   let {column, showResizer} = props;
-  let {state, columnState, isEmpty} = useTableContext();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let {isEmpty, layout, onFocusedResizer} = useTableContext();
+  // Virtualizer re-renders, but these components are all cached
+  // in order to get around that and cause a rerender here, we use context
+  // but we don't actually need any value, they are available on the layout object
+  useVirtualizerContext();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/table');
   let {direction} = useLocale();
-  const stateRef = useRef<TableColumnResizeState<T>>(null);
-  stateRef.current = columnState;
 
-  let {inputProps, resizerProps} = useTableColumnResize({
-    ...props,
-    label: stringFormatter.format('columnResizer'),
-    isDisabled: isEmpty,
-    onMove: (e) => {
-      document.body.classList.remove(classNames(styles, 'resize-ew'));
-      document.body.classList.remove(classNames(styles, 'resize-e'));
-      document.body.classList.remove(classNames(styles, 'resize-w'));
-      if (stateRef.current.getColumnMinWidth(column.key) >= stateRef.current.getColumnWidth(column.key)) {
-        document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-w') : classNames(styles, 'resize-e'));
-      } else if (stateRef.current.getColumnMaxWidth(column.key) <= stateRef.current.getColumnWidth(column.key)) {
-        document.body.classList.add(direction === 'rtl' ? classNames(styles, 'resize-e') : classNames(styles, 'resize-w'));
-      } else {
-        document.body.classList.add(classNames(styles, 'resize-ew'));
+  let [isPointerDown, setIsPointerDown] = useState(false);
+  useEffect(() => {
+    let setDown = (e) => {
+      if (e.pointerType === 'mouse') {
+        setIsPointerDown(true);
       }
-      props.onMoveResizer(e);
-    },
-    onMoveEnd: () => {
-      document.body.classList.remove(classNames(styles, 'resize-ew'));
-      document.body.classList.remove(classNames(styles, 'resize-e'));
-      document.body.classList.remove(classNames(styles, 'resize-w'));
-    }
-  }, state, columnState, ref);
+    };
+    let setUp = (e) => {
+      if (e.pointerType === 'mouse') {
+        setIsPointerDown(false);
+      }
+    };
+    document.addEventListener('pointerdown', setDown, {capture: true});
+    document.addEventListener('pointerup', setUp, {capture: true});
+    return () => {
+      document.removeEventListener('pointerdown', setDown, {capture: true});
+      document.removeEventListener('pointerup', setUp, {capture: true});
+    };
+  }, []);
+
+  let {inputProps, resizerProps} = useTableColumnResize<unknown>(
+    mergeProps(props, {
+      'aria-label': stringFormatter.format('columnResizer'),
+      isDisabled: isEmpty
+    }), layout, ref);
+
+  let isEResizable = layout.getColumnMinWidth(column.key) >= layout.getColumnWidth(column.key);
+  let isWResizable = layout.getColumnMaxWidth(column.key) <= layout.getColumnWidth(column.key);
+  let isResizing = layout.resizingColumn === column.key;
+  let cursor = '';
+  if (isEResizable) {
+    cursor = direction === 'rtl' ? CURSORS.w : CURSORS.e;
+  } else if (isWResizable) {
+    cursor = direction === 'rtl' ? CURSORS.e : CURSORS.w;
+  } else {
+    cursor = CURSORS.ew;
+  }
 
   let style = {
-    cursor: undefined,
+    ...resizerProps.style,
     height: '100%',
     display: showResizer ? undefined : 'none',
-    touchAction: 'none'
+    cursor
   };
-  let isEResizable = columnState.getColumnMinWidth(column.key) >= columnState.getColumnWidth(column.key);
-  let isWResizable = columnState.getColumnMaxWidth(column.key) <= columnState.getColumnWidth(column.key);
 
   return (
     <>
       <FocusRing within focusRingClass={classNames(styles, 'focus-ring')}>
         <div
+          {...resizerProps}
           role="presentation"
           style={style}
-          className={classNames(
-            styles,
-            'spectrum-Table-columnResizer',
-            {
-              'spectrum-Table-columnResizer--ewresize': !(isEResizable && isWResizable),
-              'spectrum-Table-columnResizer--eresize': direction === 'rtl' ? isWResizable : isEResizable,
-              'spectrum-Table-columnResizer--wresize': direction === 'rtl' ? isEResizable : isWResizable
-            }
-          )}
-          {...resizerProps}>
-          <VisuallyHidden>
-            <input
-              ref={ref}
-              type="range"
-              {...inputProps} />
-          </VisuallyHidden>
+          className={classNames(styles, 'spectrum-Table-columnResizer')}>
+          <input
+            ref={ref}
+            {...mergeProps(inputProps, {onFocus: onFocusedResizer})} />
         </div>
       </FocusRing>
       {/* Placeholder so that the title doesn't intersect with space reserved by the resizer when it appears. */}
@@ -90,8 +119,16 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
         aria-hidden
         role="presentation"
         className={classNames(styles, 'spectrum-Table-columnResizerPlaceholder')} />
+      <CursorOverlay show={isResizing && isPointerDown}>
+        <div style={{position: 'fixed', top: 0, left: 0, bottom: 0, right: 0, cursor}} />
+      </CursorOverlay>
     </>
   );
+}
+
+function CursorOverlay(props) {
+  let {show, children} = props;
+  return show ? ReactDOM.createPortal(children, document.body) : null;
 }
 
 const _Resizer = React.forwardRef(Resizer);

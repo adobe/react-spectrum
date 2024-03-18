@@ -11,7 +11,7 @@
  */
 
 import {Link} from '../';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import React from 'react';
 import {SpectrumLinkProps} from '@react-types/link';
 
@@ -22,22 +22,23 @@ const meta: Meta<SpectrumLinkProps> = {
 
 export default meta;
 
+const Template = (args) => <Link {...args}>This is a React Spectrum Link</Link>;
 
-const Template = (): Story<SpectrumLinkProps> => (args) => (
-  <Link {...args}>
-    This is a React Spectrum Link
-  </Link>
-);
+export const Default = {
+  render: Template
+};
 
+export const Secondary = {
+  render: Template,
+  args: {variant: 'secondary'}
+};
 
-export const Default = Template().bind({});
-Default.args = {};
+export const Quiet = {
+  render: Template,
+  args: {isQuiet: true}
+};
 
-export const Secondary = Template().bind({});
-Secondary.args = {variant: 'secondary'};
-
-export const Quiet = Template().bind({});
-Quiet.args = {isQuiet: true};
-
-export const QuietSecondary = Template().bind({});
-QuietSecondary.args = {...Secondary.args, ...Quiet.args};
+export const QuietSecondary = {
+  render: Template,
+  args: {...Secondary.args, ...Quiet.args}
+};

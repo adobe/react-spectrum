@@ -4,6 +4,7 @@
   "columnSize": "{value} pikseliä",
   "descending": "laskeva",
   "descendingSort": "lajiteltu sarakkeen {columnName} mukaan laskevassa järjestyksessä",
+  "resizerDescription": "Aloita koon muutos painamalla Enter-näppäintä",
   "select": "Valitse",
   "selectAll": "Valitse kaikki",
   "sortable": "lajiteltava sarake"

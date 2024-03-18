@@ -88,6 +88,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+ColorArea supports the `xName` and `yName` props for integration with HTML forms. The values will be submitted as numbers between the minimum and maximum value for the corresponding channel in the X and Y direction.
+
+```tsx example
+<ColorArea xName="red" yName="green" />
+```
+
 ## Labeling
 
 By default, ColorArea uses an `aria-label` for the localized string "Color Picker",
@@ -106,7 +114,7 @@ import {ColorArea} from '@react-spectrum/color';
 import {Flex} from '@react-spectrum/layout';
 import {Label} from '@react-spectrum/label';
 
-<Flex gap="size-300" wrap alignItems="flex-end">
+<Flex gap="size-300" wrap alignItems="end">
   <ColorArea
     aria-label="Background color"
     defaultValue="hsl(0, 100%, 50%)"
@@ -178,7 +186,7 @@ function Example() {
 
 ## Creating a color picker
 
-To build a fully functional color picker, combine a ColorArea, which adjusts two channels of a color value stored in state, with a separate control, like a [ColorSlider](ColorSlider.html) or [ColorWheel](useColorWheel.html), for
+To build a fully functional color picker, combine a ColorArea, which adjusts two channels of a color value stored in state, with a separate control, like a [ColorSlider](ColorSlider.html) or [ColorWheel](ColorWheel.html), for
 adjusting the value of the third channel within the color space for the color value stored in state.
 The current color space for a color can be returned using the `color.getColorSpace` method.
 An array of channel names for a color can be returned using the `color.getColorChannels` method.
@@ -230,10 +238,10 @@ import {View} from '@react-spectrum/view';
 
 function Example() {
   let [color, setColor] = React.useState(parseColor('hsla(0, 100%, 50%, 0.5)'));
-  let [hueChannel, saturationChannel, lightnessChannel] = color.getColorChannels();
+  let [, saturationChannel, lightnessChannel] = color.getColorChannels();
   return (
     <fieldset style={{border: 0}}>
-      <legend>{color.getColorSpace().toUpperCase()}A Example</legend>
+      <legend>HSLA Example</legend>
       <Flex
         direction="column">
         <View
@@ -258,7 +266,7 @@ function Example() {
             size="size-2400" />
         </View>
         <ColorSlider channel="alpha" value={color} onChange={setColor} />
-        <p>Current value: {color.toString(`${color.getColorSpace()}a`)}</p>
+        <p>Current value: {color.toString('hsla')}</p>
       </Flex>
     </fieldset>
   );
@@ -278,10 +286,10 @@ import {View} from '@react-spectrum/view';
 
 function Example() {
   let [color, setColor] = React.useState(parseColor('hsba(0, 100%, 50%, 0.5)'));
-  let [hueChannel, saturationChannel, brightnessChannel] = color.getColorChannels();
+  let [, saturationChannel, brightnessChannel] = color.getColorChannels();
   return (
     <fieldset style={{border: 0}}>
-      <legend>{color.getColorSpace().toUpperCase()}A Example</legend>
+      <legend>HSBA Example</legend>
       <Flex
         direction="column">
         <View
@@ -306,7 +314,7 @@ function Example() {
             size="size-2400" />
         </View>
         <ColorSlider channel="alpha" value={color} onChange={setColor} />
-        <p>Current value: {color.toString(`${color.getColorSpace()}a`)}</p>
+        <p>Current value: {color.toString('hsba')}</p>
       </Flex>
     </fieldset>
   );

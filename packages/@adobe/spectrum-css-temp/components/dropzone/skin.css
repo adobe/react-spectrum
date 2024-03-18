@@ -11,29 +11,45 @@ governing permissions and limitations under the License.
 */
 
 .spectrum-Dropzone {
+  --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: var(--spectrum-global-color-blue-500);
+}
+
+.spectrum-Dropzone {
   border-color: var(--spectrum-dropzone-border-color);
 
-  &.is-dragged {
+  &[data-focus-visible]{
+    border-color: var(--spectrum-dropzone-border-color-selected-hover);
+  }
+
+  &[data-drop-target] {
+    border-style: solid;
     border-color: var(--spectrum-dropzone-border-color-selected-hover);
     background-color: var(--spectrum-dropzone-background-color-selected-hover);
 
-    .spectrum-IllustratedMessage-illustration {
-      color: var(--spectrum-global-color-blue-400);
+    .spectrum-Dropzone-illustratedMessage {
+      svg {
+        color: var(--spectrum-dropzone-illustratedmessage-illustration-color-key-focus);
+      }
     }
-  }
 
-  &:focus:not(.is-dragged) {
-    border-color: var(--spectrum-dropzone-border-color);
-    .spectrum-IllustratedMessage-illustration {
-      color: var(--spectrum-global-color-static-gray-500);
-    }
     &.focus-ring {
       border-color: var(--spectrum-dropzone-border-color-selected-hover);
     }
-    &.is-dragged.focus-ring {
-      .spectrum-IllustratedMessage-illustration {
-        color: var(--spectrum-global-color-blue-400);
-      }
+  }
+
+  &[data-drop-target] {
+    .spectrum-Dropzone-backdrop {
+      background-color: var(--spectrum-dropzone-background-color-selected-hover);
     }
+  }
+}
+
+@media (forced-colors: active) {
+  .spectrum-Dropzone {
+    --spectrum-dropzone-border-color: CanvasText;
+    --spectrum-dropzone-border-color-selected-hover: Highlight;
+    --spectrum-dropzone-background-color-selected-hover: Canvas;
+    --spectrum-dropzone-banner-border-color: CanvasText;
+    --spectrum-dropzone-illustratedmessage-illustration-color-key-focus: Highlight;
   }
 }

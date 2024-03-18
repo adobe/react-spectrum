@@ -16,22 +16,18 @@ import {GridNode} from '@react-types/grid';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {isAndroid, mergeProps, useDescription} from '@react-aria/utils';
-import {RefObject} from 'react';
+import {RefObject, useEffect} from 'react';
 import {TableState} from '@react-stately/table';
 import {useFocusable} from '@react-aria/focus';
 import {useGridCell} from '@react-aria/grid';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {usePress} from '@react-aria/interactions';
 
-export interface AriaTableColumnHeaderProps {
+export interface AriaTableColumnHeaderProps<T> {
   /** An object representing the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader). Contains all the relevant information that makes up the column header. */
-  node: GridNode<unknown>,
+  node: GridNode<T>,
   /** Whether the [column header](https://www.w3.org/TR/wai-aria-1.1/#columnheader) is contained in a virtual scroller. */
-  isVirtualized?: boolean,
-  /** Whether the column has a menu in the header, this changes interactions with the header.
-   * @private
-  */
-  hasMenu?: boolean
+  isVirtualized?: boolean
 }
 
 export interface TableColumnHeaderAria {
@@ -45,11 +41,11 @@ export interface TableColumnHeaderAria {
  * @param state - State of the table, as returned by `useTableState`.
  * @param ref - The ref attached to the column header element.
  */
-export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state: TableState<T>, ref: RefObject<FocusableElement>): TableColumnHeaderAria {
+export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps<T>, state: TableState<T>, ref: RefObject<FocusableElement>): TableColumnHeaderAria {
   let {node} = props;
   let allowsSorting = node.props.allowsSorting;
-  // the selection cell column header needs to focus the checkbox within it but the other columns should focus the cell so that focus doesn't land on the resizer
-  let {gridCellProps} = useGridCell({...props, focusMode: node.props.isSelectionCell || props.hasMenu || node.props.allowsSorting ? 'child' : 'cell'}, state, ref);
+  // if there are no focusable children, the column header will focus the cell
+  let {gridCellProps} = useGridCell({...props, focusMode: 'child'}, state, ref);
 
   let isSelectionCellDisabled = node.props.isSelectionCell && state.selectionManager.selectionMode === 'single';
 
@@ -64,10 +60,6 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state
   // Needed to pick up the focusable context, enabling things like Tooltips for example
   let {focusableProps} = useFocusable({}, ref);
 
-  if (props.hasMenu) {
-    pressProps = {};
-  }
-
   let ariaSort: DOMAttributes['aria-sort'] = null;
   let isSortedColumn = state.sortDescriptor?.column === node.key;
   let sortDirection = state.sortDescriptor?.direction;
@@ -76,7 +68,7 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state
     ariaSort = isSortedColumn ? sortDirection : 'none';
   }
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let sortDescription;
   if (allowsSorting) {
     sortDescription = `${stringFormatter.format('sortable')}`;
@@ -88,6 +80,13 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state
 
   let descriptionProps = useDescription(sortDescription);
 
+  let shouldDisableFocus = state.collection.size === 0;
+  useEffect(() => {
+    if (shouldDisableFocus && state.selectionManager.focusedKey === node.key) {
+      state.selectionManager.setFocusedKey(null);
+    }
+  }, [shouldDisableFocus, state.selectionManager, node.key]);
+
   return {
     columnHeaderProps: {
       ...mergeProps(
@@ -95,8 +94,8 @@ export function useTableColumnHeader<T>(props: AriaTableColumnHeaderProps, state
         pressProps,
         focusableProps,
         descriptionProps,
-        // If the table is empty, make all column headers untabbable or programatically focusable
-        state.collection.size === 0 && {tabIndex: null}
+        // If the table is empty, make all column headers untabbable
+        shouldDisableFocus && {tabIndex: -1}
       ),
       role: 'columnheader',
       id: getColumnHeaderId(state, node.key),

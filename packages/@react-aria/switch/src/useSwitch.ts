@@ -11,13 +11,23 @@
  */
 
 import {AriaSwitchProps} from '@react-types/switch';
-import {InputHTMLAttributes, RefObject} from 'react';
+import {InputHTMLAttributes, LabelHTMLAttributes, RefObject} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 import {useToggle} from '@react-aria/toggle';
 
 export interface SwitchAria {
+  /** Props for the label wrapper element. */
+  labelProps: LabelHTMLAttributes<HTMLLabelElement>,
   /** Props for the input element. */
-  inputProps: InputHTMLAttributes<HTMLInputElement>
+  inputProps: InputHTMLAttributes<HTMLInputElement>,
+  /** Whether the switch is selected. */
+  isSelected: boolean,
+  /** Whether the switch is in a pressed state. */
+  isPressed: boolean,
+  /** Whether the switch is disabled. */
+  isDisabled: boolean,
+  /** Whether the switch is read only. */
+  isReadOnly: boolean
 }
 
 /**
@@ -28,14 +38,18 @@ export interface SwitchAria {
  * @param ref - Ref to the HTML input element.
  */
 export function useSwitch(props: AriaSwitchProps, state: ToggleState, ref: RefObject<HTMLInputElement>): SwitchAria {
-  let {inputProps} = useToggle(props, state, ref);
-  let {isSelected} = state;
+  let {labelProps, inputProps, isSelected, isPressed, isDisabled, isReadOnly} = useToggle(props, state, ref);
 
   return {
+    labelProps,
     inputProps: {
       ...inputProps,
       role: 'switch',
       checked: isSelected
-    }
+    },
+    isSelected,
+    isPressed,
+    isDisabled,
+    isReadOnly
   };
 }

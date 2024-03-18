@@ -77,6 +77,14 @@ function Example() {
 }
 ```
 
+### HTML forms
+
+ColorWheel supports the `name` prop for integration with HTML forms. The value will be submitted as a number between 0 and 360 degrees.
+
+```tsx example
+<ColorWheel name="hue" />
+```
+
 ## Labeling
 
 By default, a localized string for the "hue" channel name is used as the `aria-label` for the ColorWheel. When a custom `aria-label` or `aria-labelledby`

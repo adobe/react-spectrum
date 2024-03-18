@@ -15,19 +15,20 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent} from '@react-types/shared';
-import {chain, isAppleDevice, mergeProps, useLabels} from '@react-aria/utils';
+import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent, ValidationResult} from '@react-types/shared';
+import {chain, isAppleDevice, mergeProps, useLabels, useRouter} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
-import {getItemCount} from '@react-stately/collections';
+import {getChildNodes, getItemCount} from '@react-stately/collections';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {ListKeyboardDelegate, useSelectableCollection} from '@react-aria/selection';
+import {privateValidationStateProp} from '@react-stately/form';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useMenuTrigger} from '@react-aria/menu';
 import {useTextField} from '@react-aria/textfield';
 
-export interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
+export interface AriaComboBoxOptions<T> extends Omit<AriaComboBoxProps<T>, 'children'> {
   /** The ref for the input element. */
   inputRef: RefObject<HTMLInputElement>,
   /** The ref for the list box popover. */
@@ -40,7 +41,7 @@ export interface AriaComboBoxOptions<T> extends AriaComboBoxProps<T> {
   keyboardDelegate?: KeyboardDelegate
 }
 
-export interface ComboBoxAria<T> {
+export interface ComboBoxAria<T> extends ValidationResult {
   /** Props for the label element. */
   labelProps: DOMAttributes,
   /** Props for the combo box input element. */
@@ -74,7 +75,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     isDisabled
   } = props;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/combobox');
   let {menuTriggerProps, menuProps} = useMenuTrigger<T>(
     {
       type: 'listbox',
@@ -106,6 +107,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     isVirtualized: true
   });
 
+  let router = useRouter();
+
   // For textfield specific keydown operations
   let onKeyDown = (e: BaseEvent<KeyboardEvent<any>>) => {
     switch (e.key) {
@@ -116,7 +119,19 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
           e.preventDefault();
         }
 
-        state.commit();
+        // If the focused item is a link, trigger opening it. Items that are links are not selectable.
+        if (state.isOpen && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
+          if (e.key === 'Enter') {
+            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
+            if (item instanceof HTMLAnchorElement) {
+              router.open(item, e);
+            }
+          }
+
+          state.close();
+        } else {
+          state.commit();
+        }
         break;
       case 'Escape':
         if (
@@ -141,9 +156,11 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     }
   };
 
-  let onBlur = (e: FocusEvent) => {
-    // Ignore blur if focused moved to the button or into the popover.
-    if (e.relatedTarget === buttonRef?.current || popoverRef.current?.contains(e.relatedTarget)) {
+  let onBlur = (e: FocusEvent<HTMLInputElement>) => {
+    let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
+    let blurIntoPopover = popoverRef.current?.contains(e.relatedTarget);
+    // Ignore blur if focused moved to the button(if exists) or into the popover.
+    if (blurFromButton || blurIntoPopover) {
       return;
     }
 
@@ -154,7 +171,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     state.setFocused(false);
   };
 
-  let onFocus = (e: FocusEvent) => {
+  let onFocus = (e: FocusEvent<HTMLInputElement>) => {
     if (state.isFocused) {
       return;
     }
@@ -166,14 +183,17 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     state.setFocused(true);
   };
 
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, inputProps, descriptionProps, errorMessageProps} = useTextField({
     ...props,
     onChange: state.setInputValue,
-    onKeyDown: !isReadOnly && chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown),
+    onKeyDown: !isReadOnly ? chain(state.isOpen && collectionProps.onKeyDown, onKeyDown, props.onKeyDown) : props.onKeyDown,
     onBlur,
     value: state.inputValue,
     onFocus,
-    autoComplete: 'off'
+    autoComplete: 'off',
+    validate: undefined,
+    [privateValidationStateProp]: state
   }, inputRef);
 
   // Press handlers for the ComboBox button
@@ -252,7 +272,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       let announcement = stringFormatter.format('focusAnnouncement', {
         isGroupChange: section && sectionKey !== lastSection.current,
         groupTitle: sectionTitle,
-        groupCount: section ? [...section.childNodes].length : 0,
+        groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
         optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
         isSelected
       });
@@ -330,9 +350,13 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       autoFocus: state.focusStrategy,
       shouldUseVirtualFocus: true,
       shouldSelectOnPressUp: true,
-      shouldFocusOnHover: true
+      shouldFocusOnHover: true,
+      linkBehavior: 'selection' as const
     }),
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

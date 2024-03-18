@@ -18,8 +18,9 @@ import {
   useStyleProps
 } from '@react-spectrum/utils';
 import clsx from 'clsx';
+import {Context} from './context';
 import {DOMRef} from '@react-types/shared';
-import {filterDOMProps} from '@react-aria/utils';
+import {filterDOMProps, RouterProvider} from '@react-aria/utils';
 import {I18nProvider, useLocale} from '@react-aria/i18n';
 import {ModalProvider, useModalProvider} from '@react-aria/overlays';
 import {ProviderContext, ProviderProps} from '@react-types/provider';
@@ -29,9 +30,6 @@ import typographyStyles from '@adobe/spectrum-css-temp/components/typography/ind
 import {useColorScheme, useScale} from './mediaQueries';
 // @ts-ignore
 import {version} from '../package.json';
-
-const Context = React.createContext<ProviderContext | null>(null);
-Context.displayName = 'ProviderContext';
 
 const DEFAULT_BREAKPOINTS = {S: 640, M: 768, L: 1024, XL: 1280, XXL: 1536};
 
@@ -66,6 +64,7 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
     isRequired,
     isReadOnly,
     validationState,
+    router,
     ...otherProps
   } = props;
 
@@ -101,6 +100,10 @@ function Provider(props: ProviderProps, ref: DOMRef<HTMLDivElement>) {
         {contents}
       </ProviderWrapper>
     );
+  }
+
+  if (router) {
+    contents = <RouterProvider {...router}>{contents}</RouterProvider>;
   }
 
   return (

@@ -12,12 +12,14 @@
 
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
+import {getLastItem} from '@react-stately/collections';
 import {getRowId, listMap} from './utils';
+import {getScrollParent, getSyntheticLinkProps, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
+import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
-import {mergeProps, useSlotId} from '@react-aria/utils';
-import {KeyboardEvent as ReactKeyboardEvent, RefObject} from 'react';
 import {SelectableItemStates, useSelectableItem} from '@react-aria/selection';
+import type {TreeState} from '@react-stately/tree';
 import {useLocale} from '@react-aria/i18n';
 
 export interface AriaGridListItemOptions {
@@ -38,13 +40,24 @@ export interface GridListItemAria extends SelectableItemStates {
   descriptionProps: DOMAttributes
 }
 
+const EXPANSION_KEYS = {
+  'expand': {
+    ltr: 'ArrowRight',
+    rtl: 'ArrowLeft'
+  },
+  'collapse': {
+    ltr: 'ArrowLeft',
+    rtl: 'ArrowRight'
+  }
+};
+
 /**
  * Provides the behavior and accessibility implementation for a row in a grid list.
  * @param props - Props for the row.
  * @param state - State of the parent list, as returned by `useListState`.
  * @param ref - The ref attached to the row element.
  */
-export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T>, ref: RefObject<FocusableElement>): GridListItemAria {
+export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListState<T> | TreeState<T>, ref: RefObject<FocusableElement>): GridListItemAria {
   // Copied from useGridCell + some modifications to make it not so grid specific
   let {
     node,
@@ -53,15 +66,44 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   } = props;
 
   let {direction} = useLocale();
-  let {onAction} = listMap.get(state);
+  let {onAction, linkBehavior} = listMap.get(state);
   let descriptionId = useSlotId();
+
+  // We need to track the key of the item at the time it was last focused so that we force
+  // focus to go to the item when the DOM node is reused for a different item in a virtualizer.
+  let keyWhenFocused = useRef(null);
   let focus = () => {
     // Don't shift focus to the row if the active element is a element within the row already
     // (e.g. clicking on a row button)
-    if (!ref.current.contains(document.activeElement)) {
+    if (
+      (keyWhenFocused.current != null && node.key !== keyWhenFocused.current) ||
+      !ref.current?.contains(document.activeElement)
+    ) {
       focusSafely(ref.current);
     }
   };
+
+  let treeGridRowProps: HTMLAttributes<HTMLElement> = {};
+  let hasChildRows;
+  let hasLink = state.selectionManager.isLink(node.key);
+  if (node != null && 'expandedKeys' in state) {
+    // TODO: ideally node.hasChildNodes would be a way to tell if a row has child nodes, but the row's contents make it so that value is always
+    // true...
+    hasChildRows = [...state.collection.getChildren(node.key)].length > 1;
+    if (onAction == null && !hasLink && state.selectionManager.selectionMode === 'none' && hasChildRows) {
+      onAction = () => state.toggleKey(node.key);
+    }
+
+    let isExpanded = hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined;
+    treeGridRowProps = {
+      'aria-expanded': isExpanded,
+      'aria-level': node.level + 1,
+      'aria-posinset': node?.index + 1,
+      'aria-setsize': node.level > 0 ?
+        (getLastItem(state.collection.getChildren(node?.parentKey))).index + 1 :
+        [...state.collection].filter(row => row.level === 0).at(-1).index + 1
+    };
+  }
 
   let {itemProps, ...itemStates} = useSelectableItem({
     selectionManager: state.selectionManager,
@@ -70,7 +112,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     isVirtualized,
     shouldSelectOnPressUp,
     onAction: onAction ? () => onAction(node.key) : undefined,
-    focus
+    focus,
+    linkBehavior
   });
 
   let onKeyDown = (e: ReactKeyboardEvent) => {
@@ -80,6 +123,18 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
 
     let walker = getFocusableTreeWalker(ref.current);
     walker.currentNode = document.activeElement;
+
+    if ('expandedKeys' in state && document.activeElement === ref.current) {
+      if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+        state.toggleKey(node.key);
+        e.stopPropagation();
+        return;
+      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
+        state.toggleKey(node.key);
+        e.stopPropagation();
+        return;
+      }
+    }
 
     switch (e.key) {
       case 'ArrowLeft': {
@@ -92,17 +147,20 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           // If there is no next focusable child, then return focus back to the row
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'rtl') {
             focusSafely(ref.current);
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
+              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
@@ -117,16 +175,19 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
           e.preventDefault();
           e.stopPropagation();
           focusSafely(focusable);
+          scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           e.preventDefault();
           e.stopPropagation();
           if (direction === 'ltr') {
             focusSafely(ref.current);
+            scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
           } else {
             walker.currentNode = ref.current;
             let lastElement = last(walker);
             if (lastElement) {
               focusSafely(lastElement);
+              scrollIntoViewport(lastElement, {containingElement: getScrollParent(ref.current)});
             }
           }
         }
@@ -149,6 +210,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
   };
 
   let onFocus = (e) => {
+    keyWhenFocused.current = node.key;
     if (e.target !== ref.current) {
       // useSelectableItem only handles setting the focused key when
       // the focused element is the row itself. We also want to
@@ -163,7 +225,8 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     }
   };
 
-  let rowProps: DOMAttributes = mergeProps(itemProps, {
+  let linkProps = itemStates.hasAction ? getSyntheticLinkProps(node.props) : {};
+  let rowProps: DOMAttributes = mergeProps(itemProps, linkProps, {
     role: 'row',
     onKeyDownCapture: onKeyDown,
     onFocus,
@@ -183,8 +246,9 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     'aria-colindex': 1
   };
 
+  // TODO: should isExpanded and hasChildRows be a item state that gets returned by the hook?
   return {
-    rowProps,
+    rowProps: {...mergeProps(rowProps, treeGridRowProps)},
     gridCellProps,
     descriptionProps: {
       id: descriptionId

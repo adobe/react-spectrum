@@ -29,7 +29,7 @@ const GROUPS = {
     'padding', 'paddingTop', 'paddingLeft', 'paddingRight', 'paddingBottom', 'paddingStart', 'paddingEnd', 'paddingX', 'paddingY'
   ],
   Sizing: [
-    'width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight'
+    'width', 'minWidth', 'maxWidth', 'height', 'minHeight', 'maxHeight', 'defaultWidth'
   ],
   Background: [
     'background', 'backgroundColor', 'backgroundImage', 'backgroundSize', 'backgroundPosition', 'backgroundRepeat',
@@ -81,14 +81,14 @@ export function PropTable({component, links, style}) {
   return (
     <div style={style}>
       <TypeContext.Provider value={links}>
-        <InterfaceType properties={ungrouped} showRequired showDefault isComponent />
-        {Object.keys(groups).map(group => (
-          <details>
+        <InterfaceType properties={ungrouped} showRequired isComponent name={component.name} />
+        {Object.keys(groups).map((group, i) => (
+          <details key={i}>
             <summary className={typographyStyles['spectrum-Heading4']}>
               <ChevronRight size="S" />
               {group}
             </summary>
-            <InterfaceType properties={groups[group]} showRequired showDefault isComponent />
+            <InterfaceType properties={groups[group]} showRequired isComponent name={component.name} />
           </details>
         ))}
       </TypeContext.Provider>
@@ -117,6 +117,10 @@ function groupProps(props) {
       }
 
       if (props[propName]) {
+        if (propName === 'id' && props[propName].value.type !== 'string') {
+          continue;
+        }
+
         groupProps[propName] = props[propName];
         delete props[propName];
       }

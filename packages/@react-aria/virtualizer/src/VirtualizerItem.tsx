@@ -11,29 +11,30 @@
  */
 
 import {Direction} from '@react-types/shared';
-import {LayoutInfo, ReusableView} from '@react-stately/virtualizer';
-import React, {CSSProperties, useRef} from 'react';
+import {LayoutInfo} from '@react-stately/virtualizer';
+import React, {CSSProperties, ReactNode, useRef} from 'react';
 import {useLocale} from '@react-aria/i18n';
-import {useVirtualizerItem} from './useVirtualizerItem';
+import {useVirtualizerItem, VirtualizerItemOptions} from './useVirtualizerItem';
 
-interface VirtualizerItemProps<T extends object, V> {
-  reusableView: ReusableView<T, V>,
-  parent?: ReusableView<T, V>,
-  className?: string
+interface VirtualizerItemProps extends Omit<VirtualizerItemOptions, 'ref'> {
+  parent?: LayoutInfo,
+  className?: string,
+  children: ReactNode
 }
 
-export function VirtualizerItem<T extends object, V>(props: VirtualizerItemProps<T, V>) {
-  let {className, reusableView, parent} = props;
+export function VirtualizerItem(props: VirtualizerItemProps) {
+  let {className, layoutInfo, virtualizer, parent, children} = props;
   let {direction} = useLocale();
   let ref = useRef();
   useVirtualizerItem({
-    reusableView,
+    layoutInfo,
+    virtualizer,
     ref
   });
 
   return (
-    <div role="presentation" ref={ref} className={className} style={layoutInfoToStyle(reusableView.layoutInfo, direction, parent && parent.layoutInfo)}>
-      {reusableView.rendered}
+    <div role="presentation" ref={ref} className={className} style={layoutInfoToStyle(layoutInfo, direction, parent)}>
+      {children}
     </div>
   );
 }
@@ -55,21 +56,34 @@ export function layoutInfoToStyle(layoutInfo: LayoutInfo, dir: Direction, parent
     }
   }
 
-  let style: CSSProperties = {
-    position: layoutInfo.isSticky ? 'sticky' : 'absolute',
-    overflow: layoutInfo.allowOverflow ? 'visible' : 'hidden',
+  let rectStyles = {
     top: layoutInfo.rect.y - (parent ? parent.rect.y : 0),
     [xProperty]: layoutInfo.rect.x - (parent ? parent.rect.x : 0),
+    width: layoutInfo.rect.width,
+    height: layoutInfo.rect.height
+  };
+
+  // Get rid of any non finite values since they aren't valid css values
+  Object.entries(rectStyles).forEach(([key, value]) => {
+    if (!Number.isFinite(value)) {
+      rectStyles[key] = undefined;
+    }
+  });
+
+  let style: CSSProperties = {
+    position: layoutInfo.isSticky ? 'sticky' : 'absolute',
+    // Sticky elements are positioned in normal document flow. Display inline-block so that they don't push other sticky columns onto the following rows.
+    display: layoutInfo.isSticky ? 'inline-block' : undefined,
+    overflow: layoutInfo.allowOverflow ? 'visible' : 'hidden',
     transition: 'all',
     WebkitTransition: 'all',
     WebkitTransitionDuration: 'inherit',
     transitionDuration: 'inherit',
-    width: layoutInfo.rect.width,
-    height: layoutInfo.rect.height,
     opacity: layoutInfo.opacity,
     zIndex: layoutInfo.zIndex,
     transform: layoutInfo.transform,
-    contain: 'size layout style'
+    contain: 'size layout style',
+    ...rectStyles
   };
 
   cache.set(layoutInfo, style);

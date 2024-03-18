@@ -24,6 +24,7 @@
   --hljs-title-color: var(--spectrum-global-color-indigo-700);
   --hljs-comment-color: var(--spectrum-global-color-gray-700);
   --mark-background: rgba(20,115,230,0.1);
+  --mark-border: var(--spectrum-global-color-blue-400);
 }
 
 .spectrum.dark {
@@ -210,10 +211,23 @@
   display: block;
   position: relative;
   background: var(--mark-background);
-  border-left: 2px solid var(--spectrum-global-color-blue-400);
+  border-left: 2px solid var(--mark-border);
   margin: 0 calc(var(--code-padding) * -1);
   padding: 0 var(--code-padding) 0 calc(var(--code-padding) - 2px);
   color: inherit;
   --hljs-comment-color: var(--spectrum-gray-800);
   --hljs-string-color: var(--spectrum-green-1000);
+}
+
+@media (forced-colors: active) {
+  :global(.source) mark {
+    forced-color-adjust: none;
+    background: Mark;
+    color: MarkText;
+    border-left: none;
+
+    * {
+      color: inherit;
+    }
+  }
 }

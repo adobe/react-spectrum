@@ -13,7 +13,7 @@
 jest.mock('@react-aria/live-announcer');
 import {announce} from '@react-aria/live-announcer';
 import {Cell, Column, Row, TableBody, TableHeader, useTableState} from '@react-stately/table';
-import {installPointerEvent, render} from '@react-spectrum/test-utils';
+import {pointerMap, render} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {
   TableCell,
@@ -59,7 +59,7 @@ function Table(props) {
       <TableRowGroup type="thead" style={{borderBottom: '2px solid gray', display: 'block'}}>
         {collection.headerRows.map(headerRow => (
           <TableHeaderRow key={headerRow.key} item={headerRow} state={state}>
-            {[...headerRow.childNodes].map(column =>
+            {[...state.collection.getChildren(headerRow.key)].map(column =>
               column.props.isSelectionCell
                 ? <TableSelectAllCell key={column.key} column={column} state={state} />
                 : <TableColumnHeader key={column.key} column={column} state={state} />
@@ -68,9 +68,9 @@ function Table(props) {
         ))}
       </TableRowGroup>
       <TableRowGroup ref={bodyRef} type="tbody" style={{display: 'block', overflow: 'auto', maxHeight: '200px'}}>
-        {[...collection.body.childNodes].map(row => (
+        {[...collection].map(row => (
           <TableRow key={row.key} item={row} state={state} onAction={onAction}>
-            {[...row.childNodes].map(cell =>
+            {[...state.collection.getChildren(row.key)].map(cell =>
               cell.props.isSelectionCell
                 ? <TableCheckboxCell key={cell.key} cell={cell} state={state} />
                 : <TableCell key={cell.key} cell={cell} state={state} />
@@ -93,10 +93,13 @@ let getCell = (tree, text) => {
 };
 
 describe('useTable', () => {
-  describe('actions on rows', () => {
-    installPointerEvent();
+  let user;
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
 
-    it('calls onAction', () => {
+  describe('actions on rows', () => {
+    it('calls onAction', async () => {
       let onAction = jest.fn();
       let tree = render(
         <Table
@@ -121,15 +124,13 @@ describe('useTable', () => {
         </Table>
       );
 
-      // @ts-ignore
-      userEvent.click(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
+      await user.click(getCell(tree, 'Squirtle'));
       expect(mockAnnounce).toHaveBeenLastCalledWith('Squirtle selected.');
       expect(mockAnnounce).toHaveBeenCalledTimes(1);
       expect(onAction).not.toHaveBeenCalled();
 
       mockAnnounce.mockReset();
-      // @ts-ignore
-      userEvent.dblClick(getCell(tree, 'Squirtle'), {pointerType: 'mouse'});
+      await user.dblClick(getCell(tree, 'Squirtle'));
       expect(mockAnnounce).not.toHaveBeenCalled();
       expect(onAction).toHaveBeenCalledTimes(1);
       expect(onAction).toHaveBeenCalledWith(2);

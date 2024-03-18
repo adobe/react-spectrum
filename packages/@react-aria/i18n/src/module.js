@@ -2,5 +2,5 @@
 // that we want to avoid. If it is built into the same file as the rest of the package,
 // it deopts tree shaking in Parcel even when unused. Instead, it is split into a separate
 // file and re-exported here, which allows tree shaking to work properly.
-export * from './real-module.mjs';
-export * from './useMessageFormatter.module.mjs';
+export * from './real-module.js';
+export * from './useMessageFormatter.module.js';

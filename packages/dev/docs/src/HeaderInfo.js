@@ -85,7 +85,7 @@ export function HeaderInfo(props) {
       </table>
       <Flex wrap gap="size-200">
         {sourceData.map((source) => (
-          <ResourceCard type={source.type} url={source.url} />
+          <ResourceCard key={source.url} type={source.type} url={source.url} />
         ))}
         <ResourceCard type="GitHub" url={`https://github.com/adobe/react-spectrum/tree/main/packages/${encodeURI(packageData.name)}`} />
         <ResourceCard type="NPM" url={`https://www.npmjs.com/package/${encodeURI(packageData.name)}`} />

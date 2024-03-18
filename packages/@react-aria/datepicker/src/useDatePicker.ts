@@ -16,10 +16,11 @@ import {AriaDialogProps} from '@react-types/dialog';
 import {CalendarProps} from '@react-types/calendar';
 import {createFocusManager} from '@react-aria/focus';
 import {DatePickerState} from '@react-stately/datepicker';
-import {DOMAttributes, KeyboardEvent} from '@react-types/shared';
+import {DOMAttributes, GroupDOMAttributes, KeyboardEvent, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useDescription, useId} from '@react-aria/utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
+import {privateValidationStateProp} from '@react-stately/form';
 import {RefObject, useMemo} from 'react';
 import {roleSymbol} from './useDateField';
 import {useDatePickerGroup} from './useDatePickerGroup';
@@ -27,11 +28,11 @@ import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
-export interface DatePickerAria {
+export interface DatePickerAria extends ValidationResult {
   /** Props for the date picker's visible label element, if any. */
   labelProps: DOMAttributes,
   /** Props for the grouping element containing the date field and button. */
-  groupProps: DOMAttributes,
+  groupProps: GroupDOMAttributes,
   /** Props for the date field. */
   fieldProps: AriaDatePickerProps<DateValue>,
   /** Props for the popover trigger button. */
@@ -53,11 +54,15 @@ export interface DatePickerAria {
 export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>, state: DatePickerState, ref: RefObject<Element>): DatePickerAria {
   let buttonId = useId();
   let dialogId = useId();
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let fieldId = useId();
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/datepicker');
 
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
-    labelElementType: 'span'
+    labelElementType: 'span',
+    isInvalid,
+    errorMessage: props.errorMessage || validationErrors
   });
 
   let groupProps = useDatePickerGroup(state, ref);
@@ -82,7 +87,7 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
 
   return {
     groupProps: mergeProps(domProps, groupProps, fieldProps, descProps, focusWithinProps, {
-      role: 'group',
+      role: 'group' as const,
       'aria-disabled': props.isDisabled || null,
       'aria-labelledby': labelledBy,
       'aria-describedby': ariaDescribedBy,
@@ -113,21 +118,24 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
     },
     fieldProps: {
       ...fieldProps,
+      id: fieldId,
       [roleSymbol]: 'presentation',
       'aria-describedby': ariaDescribedBy,
       value: state.value,
       onChange: state.setValue,
-      minValue: props.minValue,
-      maxValue: props.maxValue,
       placeholderValue: props.placeholderValue,
       hideTimeZone: props.hideTimeZone,
       hourCycle: props.hourCycle,
+      shouldForceLeadingZeros: props.shouldForceLeadingZeros,
       granularity: props.granularity,
       isDisabled: props.isDisabled,
       isReadOnly: props.isReadOnly,
       isRequired: props.isRequired,
-      validationState: state.validationState,
-      autoFocus: props.autoFocus
+      validationBehavior: props.validationBehavior,
+      // DatePicker owns the validation state for the date field.
+      [privateValidationStateProp]: state,
+      autoFocus: props.autoFocus,
+      name: props.name
     },
     descriptionProps,
     errorMessageProps,
@@ -136,13 +144,15 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       id: buttonId,
       'aria-haspopup': 'dialog',
       'aria-label': stringFormatter.format('calendar'),
-      'aria-labelledby': `${labelledBy} ${buttonId}`,
+      'aria-labelledby': `${buttonId} ${labelledBy}`,
       'aria-describedby': ariaDescribedBy,
+      'aria-expanded': state.isOpen,
+      isDisabled: props.isDisabled || props.isReadOnly,
       onPress: () => state.setOpen(true)
     },
     dialogProps: {
       id: dialogId,
-      'aria-labelledby': `${labelledBy} ${buttonId}`
+      'aria-labelledby': `${buttonId} ${labelledBy}`
     },
     calendarProps: {
       autoFocus: true,
@@ -154,8 +164,11 @@ export function useDatePicker<T extends DateValue>(props: AriaDatePickerProps<T>
       isReadOnly: props.isReadOnly,
       isDateUnavailable: props.isDateUnavailable,
       defaultFocusedValue: state.dateValue ? undefined : props.placeholderValue,
-      validationState: state.validationState,
-      errorMessage: props.errorMessage
-    }
+      isInvalid: state.isInvalid,
+      errorMessage: typeof props.errorMessage === 'function' ? props.errorMessage(state.displayValidation) : (props.errorMessage || state.displayValidation.validationErrors.join(' '))
+    },
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

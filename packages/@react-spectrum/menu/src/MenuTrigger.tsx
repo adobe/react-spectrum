@@ -26,7 +26,7 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
   let triggerRef = useRef<HTMLElement>();
   let domRef = useDOMRef(ref);
   let menuTriggerRef = domRef || triggerRef;
-  let menuRef = useRef<HTMLUListElement>();
+  let menuRef = useRef<HTMLDivElement>();
   let {
     children,
     align = 'start',
@@ -66,20 +66,22 @@ function MenuTrigger(props: SpectrumMenuTriggerProps, ref: DOMRef<HTMLElement>) 
       width: '100%',
       maxHeight: 'inherit'
     } : undefined,
-    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile})
+    UNSAFE_className: classNames(styles, {'spectrum-Menu-popover': !isMobile}),
+    state
   };
 
   // On small screen devices, the menu is rendered in a tray, otherwise a popover.
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray state={state}>
+      <Tray state={state} isFixedHeight>
         {menu}
       </Tray>
     );
   } else {
     overlay = (
       <Popover
+        UNSAFE_style={{clipPath: 'unset', overflow: 'visible', filter: 'unset', borderWidth: '0px'}}
         state={state}
         triggerRef={menuTriggerRef}
         scrollRef={menuRef}

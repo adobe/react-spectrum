@@ -26,7 +26,7 @@ export function PostListing({type}) {
 
   return (
     <>
-      {blogPages.map(page => <BlogPost {...page} />)}
+      {blogPages.map(page => <BlogPost key={page.name} {...page} />)}
     </>
   );
 }

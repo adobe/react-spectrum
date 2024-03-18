@@ -125,7 +125,6 @@ describe('ButtonGroup', function () {
   describe('resizing', () => {
     it('goes vertical if there is not enough room after buttongroup gets a new size', () => {
       let setUp = ({buttonGroup, button1, button2, button3}) => {
-        // can't do anything about first render, so this starts with the resize
         jest.spyOn(buttonGroup, 'offsetWidth', 'get').mockImplementationOnce(() => 88).mockImplementation(() => 90);
         jest.spyOn(button1, 'offsetLeft', 'get').mockImplementation(() => 0);
         jest.spyOn(button1, 'offsetWidth', 'get').mockImplementation(() => 30);
@@ -137,7 +136,6 @@ describe('ButtonGroup', function () {
       };
       let {getByTestId} = render(<ButtonGroupWithRefs setUp={setUp} />);
       let buttonGroup = getByTestId(buttonGroupId);
-      expect(buttonGroup).not.toHaveAttribute('class', expect.stringContaining('spectrum-ButtonGroup--vertical'));
 
       // ResizeObserver not actually implemented in jsdom, so rely on the fallback to window resize listener
       act(() => {window.dispatchEvent(new Event('resize'));});

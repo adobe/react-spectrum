@@ -16,8 +16,8 @@ export {useDateField, useTimeField} from './useDateField';
 export {useDateRangePicker} from './useDateRangePicker';
 export {useDisplayNames} from './useDisplayNames';
 
-export type {AriaDatePickerProps, AriaDateRangePickerProps} from '@react-types/datepicker';
-export type {AriaDateFieldProps, DateFieldAria} from './useDateField';
+export type {AriaDateFieldProps, AriaDatePickerProps, AriaDateRangePickerProps, DateRange, DateValue, TimeValue} from '@react-types/datepicker';
+export type {AriaDateFieldOptions, DateFieldAria} from './useDateField';
 export type {DatePickerAria} from './useDatePicker';
 export type {DateRangePickerAria} from './useDateRangePicker';
 export type {DateSegmentAria} from './useDateSegment';

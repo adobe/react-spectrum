@@ -1,13 +1,13 @@
 {
   "name": "@react-spectrum/theme-default",
-  "version": "3.4.0",
+  "version": "3.5.8",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
-  "module": "dist/module.mjs",
+  "module": "dist/module.js",
   "exports": {
     "types": "./dist/types.d.ts",
-    "import": "./dist/module.mjs",
+    "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
   "types": "dist/types.d.ts",
@@ -36,8 +36,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/provider": "^3.5.5",
-    "@swc/helpers": "^0.4.14"
+    "@react-types/provider": "^3.7.2",
+    "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"

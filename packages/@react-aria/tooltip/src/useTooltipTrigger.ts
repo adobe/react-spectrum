@@ -10,20 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
-import {getInteractionModality, HoverProps, isFocusVisible, PressProps, usePress} from '@react-aria/interactions';
+import {DOMAttributes, FocusableElement} from '@react-types/shared';
+import {getInteractionModality, isFocusVisible, useHover} from '@react-aria/interactions';
 import {mergeProps, useId} from '@react-aria/utils';
 import {RefObject, useEffect, useRef} from 'react';
 import {TooltipTriggerProps} from '@react-types/tooltip';
 import {TooltipTriggerState} from '@react-stately/tooltip';
 import {useFocusable} from '@react-aria/focus';
-import {useHover} from '@react-aria/interactions';
 
 export interface TooltipTriggerAria {
   /**
    * Props for the trigger element.
    */
-  triggerProps: DOMAttributes & PressProps & HoverProps & FocusEvents,
+  triggerProps: DOMAttributes,
 
   /**
    * Props for the overlay container element.
@@ -64,6 +63,7 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
         // Escape after clicking something can give it keyboard focus
         // dismiss tooltip on esc key press
         if (e.key === 'Escape') {
+          e.stopPropagation();
           state.close(true);
         }
       }
@@ -129,8 +129,6 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
     onHoverEnd
   });
 
-  let {pressProps} = usePress({onPressStart});
-
   let {focusableProps} = useFocusable({
     isDisabled,
     onFocus,
@@ -140,7 +138,10 @@ export function useTooltipTrigger(props: TooltipTriggerProps, state: TooltipTrig
   return {
     triggerProps: {
       'aria-describedby': state.isOpen ? tooltipId : undefined,
-      ...mergeProps(focusableProps, hoverProps, pressProps)
+      ...mergeProps(focusableProps, hoverProps, {
+        onPointerDown: onPressStart,
+        onKeyDown: onPressStart
+      })
     },
     tooltipProps: {
       id: tooltipId

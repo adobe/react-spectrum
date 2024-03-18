@@ -11,16 +11,16 @@
  */
 
 import {AriaRadioGroupProps} from '@react-types/radio';
-import {DOMAttributes} from '@react-types/shared';
+import {DOMAttributes, ValidationResult} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
 import {getFocusableTreeWalker} from '@react-aria/focus';
-import {radioGroupDescriptionIds, radioGroupErrorMessageIds, radioGroupNames} from './utils';
+import {radioGroupData} from './utils';
 import {RadioGroupState} from '@react-stately/radio';
 import {useField} from '@react-aria/label';
 import {useFocusWithin} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
 
-export interface RadioGroupAria {
+export interface RadioGroupAria extends ValidationResult {
   /** Props for the radio group wrapper element. */
   radioGroupProps: DOMAttributes,
   /** Props for the radio group's visible label (if any). */
@@ -40,22 +40,23 @@ export interface RadioGroupAria {
 export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState): RadioGroupAria {
   let {
     name,
-    validationState,
     isReadOnly,
     isRequired,
     isDisabled,
-    orientation = 'vertical'
+    orientation = 'vertical',
+    validationBehavior = 'aria'
   } = props;
   let {direction} = useLocale();
 
+  let {isInvalid, validationErrors, validationDetails} = state.displayValidation;
   let {labelProps, fieldProps, descriptionProps, errorMessageProps} = useField({
     ...props,
     // Radio group is not an HTML input element so it
     // shouldn't be labeled by a <label> element.
-    labelElementType: 'span'
+    labelElementType: 'span',
+    isInvalid: state.isInvalid,
+    errorMessage: props.errorMessage || validationErrors
   });
-  radioGroupDescriptionIds.set(state, descriptionProps.id);
-  radioGroupErrorMessageIds.set(state, errorMessageProps.id);
 
   let domProps = filterDOMProps(props, {labelable: true});
 
@@ -63,11 +64,14 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   // there is no selection. This allows tabbing into the group from either
   // direction to go to the first or last radio.
   let {focusWithinProps} = useFocusWithin({
-    onBlurWithin() {
+    onBlurWithin(e) {
+      props.onBlur?.(e);
       if (!state.selectedValue) {
         state.setLastFocusedValue(null);
       }
-    }
+    },
+    onFocusWithin: props.onFocus,
+    onFocusWithinChange: props.onFocusChange
   });
 
   let onKeyDown = (e) => {
@@ -120,14 +124,19 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
   };
 
   let groupName = useId(name);
-  radioGroupNames.set(state, groupName);
+  radioGroupData.set(state, {
+    name: groupName,
+    descriptionId: descriptionProps.id,
+    errorMessageId: errorMessageProps.id,
+    validationBehavior
+  });
 
   return {
     radioGroupProps: mergeProps(domProps, {
       // https://www.w3.org/TR/wai-aria-1.2/#radiogroup
       role: 'radiogroup',
       onKeyDown,
-      'aria-invalid': validationState === 'invalid' || undefined,
+      'aria-invalid': state.isInvalid || undefined,
       'aria-errormessage': props['aria-errormessage'],
       'aria-readonly': isReadOnly || undefined,
       'aria-required': isRequired || undefined,
@@ -138,6 +147,9 @@ export function useRadioGroup(props: AriaRadioGroupProps, state: RadioGroupState
     }),
     labelProps,
     descriptionProps,
-    errorMessageProps
+    errorMessageProps,
+    isInvalid,
+    validationErrors,
+    validationDetails
   };
 }

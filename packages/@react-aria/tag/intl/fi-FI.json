@@ -1,3 +1,4 @@
 {
-  "remove": "Poista"
+  "removeButtonLabel": "Poista",
+  "removeDescription": "Poista tunniste painamalla Poista-painiketta."
 }

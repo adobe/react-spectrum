@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {Key, useMemo, useState} from 'react';
-import {Selection} from '@react-types/shared';
+import {Key, Selection} from '@react-types/shared';
+import {useMemo, useState} from 'react';
 
 export interface ListOptions<T> {
   /** Initial items in the list. */
@@ -285,7 +285,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
 
         // Find indices of keys to move. Sort them so that the order in the list is retained.
         let keyArray = Array.isArray(keys) ? keys : [...keys];
-        let indices = keyArray.map(key => state.items.findIndex(item => getKey(item) === key)).sort();
+        let indices = keyArray.map(key => state.items.findIndex(item => getKey(item) === key)).sort((a, b) => a - b);
         return move(state, indices, toIndex);
       });
     },
@@ -297,7 +297,7 @@ export function createListActions<T, C>(opts: CreateListOptions<T, C>, dispatch:
         }
 
         let keyArray = Array.isArray(keys) ? keys : [...keys];
-        let indices = keyArray.map(key => state.items.findIndex(item => getKey(item) === key)).sort();
+        let indices = keyArray.map(key => state.items.findIndex(item => getKey(item) === key)).sort((a, b) => a - b);
         return move(state, indices, toIndex + 1);
       });
     },

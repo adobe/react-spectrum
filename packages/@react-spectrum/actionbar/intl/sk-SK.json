@@ -2,6 +2,6 @@
   "actions": "Akcie",
   "actionsAvailable": "Dostupné akcie.",
   "clearSelection": "Vymazať výber",
-  "selected": "{count, plural, =0 {Žiadne vybraté položky} other {Počet vybratých položiek: #}}",
+  "selected": "Vybrané položky: {count}",
   "selectedAll": "Všetky vybraté položky"
 }

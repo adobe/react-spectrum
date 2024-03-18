@@ -12,4 +12,4 @@
 
 export {TagGroup} from './TagGroup';
 export {Item} from '@react-stately/collections';
-export type {SpectrumTagGroupProps} from '@react-types/tag';
+export type {SpectrumTagGroupProps} from './TagGroup';

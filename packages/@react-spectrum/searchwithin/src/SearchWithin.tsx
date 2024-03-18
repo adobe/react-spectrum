@@ -19,9 +19,8 @@ import React, {useCallback, useRef, useState} from 'react';
 import {SpectrumSearchWithinProps} from '@react-types/searchwithin';
 import styles from '@adobe/spectrum-css-temp/components/searchwithin/vars.css';
 import {useFormProps} from '@react-spectrum/form';
-import {useId} from '@react-aria/utils';
+import {useId, useLayoutEffect} from '@react-aria/utils';
 import {useLabel} from '@react-aria/label';
-import {useLayoutEffect} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useProvider, useProviderProps} from '@react-spectrum/provider';
 import {VisuallyHidden} from '@react-aria/visually-hidden';
@@ -29,7 +28,7 @@ import {VisuallyHidden} from '@react-aria/visually-hidden';
 function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLElement>) {
   props = useProviderProps(props);
   props = useFormProps(props);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/searchwithin');
   let {styleProps} = useStyleProps(props);
   let {
     children,
@@ -51,17 +50,17 @@ function SearchWithin(props: SpectrumSearchWithinProps, ref: FocusableRef<HTMLEl
   let pickerId = useId();
 
   let domRef = useFocusableRef(ref);
-  let groupRef = useRef<HTMLDivElement>();
+  let groupRef = useRef<HTMLDivElement>(null);
 
   // Measure the width of the field to inform the width of the menu.
-  let [menuWidth, setMenuWidth] = useState(null);
+  let [menuWidth, setMenuWidth] = useState<number | null>(null);
   let {scale} = useProvider();
 
   let onResize = useCallback(() => {
     let shouldUseGroup = !!label;
     let width = shouldUseGroup ? groupRef.current?.offsetWidth : domRef.current?.offsetWidth;
 
-    if (!isNaN(width)) {
+    if (width && !isNaN(width)) {
       setMenuWidth(width);
     }
   }, [groupRef, domRef, setMenuWidth, label]);

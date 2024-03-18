@@ -11,17 +11,17 @@
  */
 
 import {
-  Collection,
-  DisabledBehavior,
+  Collection, DisabledBehavior,
   FocusStrategy,
   Selection as ISelection,
+  Key,
   LongPressEvent,
   Node,
   PressEvent,
   SelectionBehavior,
   SelectionMode
 } from '@react-types/shared';
-import {Key} from 'react';
+import {compareNodeOrder, getChildNodes, getFirstItem} from '@react-stately/collections';
 import {MultipleSelectionManager, MultipleSelectionState} from './types';
 import {Selection} from './Selection';
 
@@ -102,7 +102,7 @@ export class SelectionManager implements MultipleSelectionManager {
   /**
    * Sets the focused key.
    */
-  setFocusedKey(key: Key, childFocusStrategy?: FocusStrategy) {
+  setFocusedKey(key: Key | null, childFocusStrategy?: FocusStrategy) {
     if (key == null || this.collection.getItem(key)) {
       this.state.setFocusedKey(key, childFocusStrategy);
     }
@@ -172,7 +172,7 @@ export class SelectionManager implements MultipleSelectionManager {
     let first: Node<unknown> | null = null;
     for (let key of this.state.selectedKeys) {
       let item = this.collection.getItem(key);
-      if (!first || item?.index < first.index) {
+      if (!first || (item && compareNodeOrder(this.collection, item, first) < 0)) {
         first = item;
       }
     }
@@ -184,7 +184,7 @@ export class SelectionManager implements MultipleSelectionManager {
     let last: Node<unknown> | null = null;
     for (let key of this.state.selectedKeys) {
       let item = this.collection.getItem(key);
-      if (!last || item?.index > last.index) {
+      if (!last || (item && compareNodeOrder(this.collection, item, last) > 0)) {
         last = item;
       }
     }
@@ -242,7 +242,7 @@ export class SelectionManager implements MultipleSelectionManager {
     let fromItem = this.collection.getItem(from);
     let toItem = this.collection.getItem(to);
     if (fromItem && toItem) {
-      if (fromItem.index <= toItem.index) {
+      if (compareNodeOrder(this.collection, fromItem, toItem) <= 0) {
         return this.getKeyRangeInternal(from, to);
       }
 
@@ -385,7 +385,7 @@ export class SelectionManager implements MultipleSelectionManager {
 
           // Add child keys. If cell selection is allowed, then include item children too.
           if (item.hasChildNodes && (this.allowsCellSelection || item.type !== 'item')) {
-            addKeys([...item.childNodes][0].key);
+            addKeys(getFirstItem(getChildNodes(item, this.collection)).key);
           }
         }
 
@@ -401,7 +401,7 @@ export class SelectionManager implements MultipleSelectionManager {
    * Selects all items in the collection.
    */
   selectAll() {
-    if (this.selectionMode === 'multiple') {
+    if (!this.isSelectAll && this.selectionMode === 'multiple') {
       this.state.setSelectedKeys('all');
     }
   }
@@ -489,5 +489,9 @@ export class SelectionManager implements MultipleSelectionManager {
 
   isDisabled(key: Key) {
     return this.state.disabledKeys.has(key) && this.state.disabledBehavior === 'all';
+  }
+
+  isLink(key: Key) {
+    return !!this.collection.getItem(key)?.props?.href;
   }
 }

@@ -364,10 +364,11 @@ function cycleValue(value: number, amount: number, min: number, max: number, rou
 
 export function addZoned(dateTime: ZonedDateTime, duration: DateTimeDuration): ZonedDateTime {
   let ms: number;
-  if ((duration.years != null && duration.years !== 0) || (duration.months != null && duration.months !== 0) || (duration.days != null && duration.days !== 0)) {
+  if ((duration.years != null && duration.years !== 0) || (duration.months != null && duration.months !== 0) || (duration.weeks != null && duration.weeks !== 0) || (duration.days != null && duration.days !== 0)) {
     let res = add(toCalendarDateTime(dateTime), {
       years: duration.years,
       months: duration.months,
+      weeks: duration.weeks,
       days: duration.days
     });
 
@@ -421,7 +422,7 @@ export function cycleZoned(dateTime: ZonedDateTime, field: DateField | TimeField
 
       let maxDate = toCalendar(setTime(plainDateTime, {hour: max}), new GregorianCalendar());
       let maxAbsolute = [toAbsolute(maxDate, dateTime.timeZone, 'earlier'), toAbsolute(maxDate, dateTime.timeZone, 'later')]
-        .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === maxDate.day).pop();
+        .filter(ms => fromAbsolute(ms, dateTime.timeZone).day === maxDate.day).pop()!;
 
       // Since hours may repeat, we need to operate on the absolute time in milliseconds.
       // This is done in hours from the Unix epoch so that cycleValue works correctly,

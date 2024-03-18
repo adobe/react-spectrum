@@ -19,7 +19,7 @@ import {GridCollection, useGridState} from '@react-stately/grid';
 import intlMessages from '../intl/*.json';
 import {mergeProps} from '@react-aria/utils';
 import {ProgressCircle} from '@react-spectrum/progress';
-import React, {ReactElement, useCallback, useMemo, useRef} from 'react';
+import React, {ReactElement, ReactNode, useCallback, useMemo, useRef} from 'react';
 import {ReusableView} from '@react-stately/virtualizer';
 import {SpectrumCardViewProps} from '@react-types/card';
 import styles from '@adobe/spectrum-css-temp/components/card/vars.css';
@@ -47,7 +47,7 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
   let cardViewLayout = useMemo(() => typeof layout === 'function' ? new layout({collator, cardOrientation, scale}) : layout, [layout, collator, cardOrientation, scale]);
   let layoutType = cardViewLayout.layoutType;
 
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/card');
   let {direction} = useLocale();
   let {collection} = useListState(props);
 
@@ -88,12 +88,15 @@ function CardView<T extends object>(props: SpectrumCardViewProps<T>, ref: DOMRef
     keyboardDelegate: cardViewLayout
   }, state, domRef);
 
-  type View = ReusableView<Node<T>, unknown>;
+  type View = ReusableView<Node<T>, ReactNode>;
   let renderWrapper = (parent: View, reusableView: View) => (
     <VirtualizerItem
       key={reusableView.key}
-      reusableView={reusableView}
-      parent={parent} />
+      layoutInfo={reusableView.layoutInfo}
+      virtualizer={reusableView.virtualizer}
+      parent={parent?.layoutInfo}>
+      {reusableView.rendered}
+    </VirtualizerItem>
   );
 
   let focusedKey = state.selectionManager.focusedKey;

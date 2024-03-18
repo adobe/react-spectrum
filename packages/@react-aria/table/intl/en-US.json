@@ -6,5 +6,6 @@
   "descending": "descending",
   "ascendingSort": "sorted by column {columnName} in ascending order",
   "descendingSort": "sorted by column {columnName} in descending order",
-  "columnSize": "{value} pixels"
+  "columnSize": "{value} pixels",
+  "resizerDescription": "Press Enter to start resizing"
 }

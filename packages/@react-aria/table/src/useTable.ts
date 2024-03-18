@@ -20,9 +20,9 @@ import {mergeProps, useDescription, useId, useUpdateEffect} from '@react-aria/ut
 import {Node} from '@react-types/shared';
 import {RefObject, useMemo} from 'react';
 import {TableKeyboardDelegate} from './TableKeyboardDelegate';
-import {TableState} from '@react-stately/table';
-import {useCollator, useLocale} from '@react-aria/i18n';
-import {useLocalizedStringFormatter} from '@react-aria/i18n';
+import {tableNestedRows} from '@react-stately/flags';
+import {TableState, TreeGridState} from '@react-stately/table';
+import {useCollator, useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
 
 export interface AriaTableProps<T> extends GridProps {
   /** The layout object for the table. Computes what content is visible and how to position and style them. */
@@ -37,7 +37,7 @@ export interface AriaTableProps<T> extends GridProps {
  * @param state - State for the table, as returned by `useTableState`.
  * @param ref - The ref attached to the table element.
  */
-export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref: RefObject<HTMLElement>): GridAria {
+export function useTable<T>(props: AriaTableProps<T>, state: TableState<T> | TreeGridState<T>, ref: RefObject<HTMLElement>): GridAria {
   let {
     keyboardDelegate,
     isVirtualized,
@@ -48,52 +48,22 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
   // When virtualized, the layout object will be passed in as a prop and override this.
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let {direction} = useLocale();
+  let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new TableKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: state.disabledKeys,
+    disabledKeys: disabledBehavior === 'selection' ? new Set() : state.disabledKeys,
     ref,
     direction,
     collator,
     layout
-  }), [keyboardDelegate, state.collection, state.disabledKeys, ref, direction, collator, layout]);
+  }), [keyboardDelegate, state.collection, state.disabledKeys, disabledBehavior, ref, direction, collator, layout]);
   let id = useId(props.id);
   gridIds.set(state, id);
 
   let {gridProps} = useGrid({
     ...props,
     id,
-    keyboardDelegate: delegate,
-    getRowText(key): string {
-      let added = state.collection.getItem(key);
-      if (!added) {
-        return '';
-      }
-
-      // If the row has a textValue, use that.
-      if (added.textValue != null) {
-        return added.textValue;
-      }
-
-      // Otherwise combine the text of each of the row header columns.
-      let rowHeaderColumnKeys = state.collection.rowHeaderColumnKeys;
-      if (rowHeaderColumnKeys) {
-        let text = [];
-        for (let cell of added.childNodes) {
-          let column = state.collection.columns[cell.index];
-          if (rowHeaderColumnKeys.has(column.key) && cell.textValue) {
-            text.push(cell.textValue);
-          }
-
-          if (text.length === rowHeaderColumnKeys.size) {
-            break;
-          }
-        }
-
-        return text.join(' ');
-      }
-
-      return '';
-    }
+    keyboardDelegate: delegate
   }, state, ref);
 
   // Override to include header rows
@@ -101,8 +71,12 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
     gridProps['aria-rowcount'] = state.collection.size + state.collection.headerRows.length;
   }
 
+  if (tableNestedRows() && 'expandedKeys' in state) {
+    gridProps.role = 'treegrid';
+  }
+
   let {column, direction: sortDirection} = state.sortDescriptor || {};
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/table');
   let sortDescription = useMemo(() => {
     let columnName = state.collection.columns.find(c => c.key === column)?.textValue;
     return sortDirection && column ? stringFormatter.format(`${sortDirection}Sort`, {columnName}) : undefined;
@@ -120,8 +94,6 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T>, ref:
     gridProps: mergeProps(
       gridProps,
       descriptionProps,
-      // If table is empty, make sure the table is tabbable
-      state.collection.size === 0 && {tabIndex: 0},
       {
         // merge sort description with long press information
         'aria-describedby': [descriptionProps['aria-describedby'], gridProps['aria-describedby']].filter(Boolean).join(' ')

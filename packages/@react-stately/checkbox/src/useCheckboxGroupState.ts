@@ -11,10 +11,12 @@
  */
 
 import {CheckboxGroupProps} from '@react-types/checkbox';
+import {FormValidationState, mergeValidation, useFormValidationState} from '@react-stately/form';
 import {useControlledState} from '@react-stately/utils';
-import {ValidationState} from '@react-types/shared';
+import {useRef} from 'react';
+import {ValidationResult, ValidationState} from '@react-types/shared';
 
-export interface CheckboxGroupState {
+export interface CheckboxGroupState extends FormValidationState {
   /** Current selected values. */
   readonly value: readonly string[],
 
@@ -23,6 +25,21 @@ export interface CheckboxGroupState {
 
   /** Whether the checkbox group is read only. */
   readonly isReadOnly: boolean,
+
+  /**
+   * The current validation state of the checkbox group.
+   * @deprecated Use `isInvalid` instead.
+   */
+  readonly validationState: ValidationState | null,
+
+  /** Whether the checkbox group is invalid. */
+  readonly isInvalid: boolean,
+
+  /**
+   * Whether the checkboxes in the group are required.
+   * This changes to false once at least one item is selected.
+   */
+  readonly isRequired: boolean,
 
   /** Returns whether the given value is selected. */
   isSelected(value: string): boolean,
@@ -39,8 +56,8 @@ export interface CheckboxGroupState {
   /** Toggles a value in the set of selected values. */
   toggleValue(value: string): void,
 
-  /** The current validation state of the checkbox group. */
-  validationState: ValidationState
+  /** Sets whether one of the checkboxes is invalid. */
+  setInvalid(value: string, validation: ValidationResult): void
 }
 
 /**
@@ -49,8 +66,17 @@ export interface CheckboxGroupState {
  */
 export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxGroupState {
   let [selectedValues, setValue] = useControlledState(props.value, props.defaultValue || [], props.onChange);
+  let isRequired = !!props.isRequired && selectedValues.length === 0;
 
+  let invalidValues = useRef(new Map<string, ValidationResult>());
+  let validation = useFormValidationState({
+    ...props,
+    value: selectedValues
+  });
+
+  let isInvalid = validation.displayValidation.isInvalid;
   const state: CheckboxGroupState = {
+    ...validation,
     value: selectedValues,
     setValue(value) {
       if (props.isReadOnly || props.isDisabled) {
@@ -90,7 +116,20 @@ export function useCheckboxGroupState(props: CheckboxGroupProps = {}): CheckboxG
         setValue(selectedValues.concat(value));
       }
     },
-    validationState: props.validationState
+    setInvalid(value, v) {
+      let s = new Map(invalidValues.current);
+      if (v.isInvalid) {
+        s.set(value, v);
+      } else {
+        s.delete(value);
+      }
+
+      invalidValues.current = s;
+      validation.updateValidation(mergeValidation(...s.values()));
+    },
+    validationState: props.validationState ?? (isInvalid ? 'invalid' : null),
+    isInvalid,
+    isRequired
   };
 
   return state;

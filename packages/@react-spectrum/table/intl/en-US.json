@@ -4,5 +4,8 @@
   "sortAscending": "Sort Ascending",
   "sortDescending": "Sort Descending",
   "resizeColumn": "Resize column",
-  "columnResizer": "Column resizer"
+  "columnResizer": "Column resizer",
+  "drag": "Drag",
+  "expand": "Expand",
+  "collapse": "Collapse"
 }

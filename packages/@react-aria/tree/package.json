@@ -3,12 +3,11 @@
   "version": "3.0.0-alpha.1",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
-  "private": true,
   "main": "dist/main.js",
-  "module": "dist/module.mjs",
+  "module": "dist/module.js",
   "exports": {
     "types": "./dist/types.d.ts",
-    "import": "./dist/module.mjs",
+    "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
   "types": "dist/types.d.ts",
@@ -23,11 +22,15 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/tree": "^3.1.0",
-    "@swc/helpers": "^0.4.14"
+    "@react-aria/gridlist": "^3.7.3",
+    "@react-aria/selection": "^3.17.3",
+    "@react-stately/tree": "^3.7.5",
+    "@react-types/shared": "^3.22.0",
+    "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
+    "react": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0-rc.1 || ^18.0.0"
   },
   "publishConfig": {
     "access": "public"

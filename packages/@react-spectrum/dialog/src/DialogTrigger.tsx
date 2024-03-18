@@ -14,9 +14,9 @@ import {DialogContext} from './context';
 import {Modal, Popover, Tray} from '@react-spectrum/overlays';
 import {OverlayTriggerState, useOverlayTriggerState} from '@react-stately/overlays';
 import {PressResponder} from '@react-aria/interactions';
-import React, {Fragment, ReactElement, useEffect, useRef} from 'react';
+import React, {Fragment, JSX, ReactElement, useEffect, useRef} from 'react';
 import {SpectrumDialogClose, SpectrumDialogProps, SpectrumDialogTriggerProps} from '@react-types/dialog';
-import {useMediaQuery} from '@react-spectrum/utils';
+import {useIsMobileDevice} from '@react-spectrum/utils';
 import {useOverlayTrigger} from '@react-aria/overlays';
 
 function DialogTrigger(props: SpectrumDialogTriggerProps) {
@@ -37,8 +37,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
   let [trigger, content] = children as [ReactElement, SpectrumDialogClose];
 
   // On small devices, show a modal or tray instead of a popover.
-  // TODO: DNA variable?
-  let isMobile = useMediaQuery('(max-width: 700px)');
+  let isMobile = useIsMobileDevice();
   if (isMobile) {
     // handle cases where desktop popovers need a close button for the mobile modal view
     if (type !== 'modal' && mobileType === 'modal') {
@@ -50,7 +49,10 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
 
   let state = useOverlayTriggerState(props);
   let wasOpen = useRef(false);
-  wasOpen.current = state.isOpen;
+  useEffect(() => {
+    wasOpen.current = state.isOpen;
+  }, [state.isOpen]);
+
   let isExiting = useRef(false);
   let onExiting = () => isExiting.current = true;
   let onExited = () => isExiting.current = false;
@@ -117,6 +119,7 @@ function DialogTrigger(props: SpectrumDialogTriggerProps) {
 
 // Support DialogTrigger inside components using CollectionBuilder.
 DialogTrigger.getCollectionNode = function* (props: SpectrumDialogTriggerProps) {
+  // @ts-ignore - seems like types are wrong. Function children work fine.
   let [trigger] = React.Children.toArray(props.children);
   let [, content] = props.children as [ReactElement, SpectrumDialogClose];
   yield {
@@ -141,7 +144,7 @@ let _DialogTrigger = DialogTrigger as (props: SpectrumDialogTriggerProps) => JSX
 export {_DialogTrigger as DialogTrigger};
 
 function PopoverTrigger({state, targetRef, trigger, content, hideArrow, ...props}) {
-  let triggerRef = useRef<HTMLElement>();
+  let triggerRef = useRef<HTMLElement>(null);
   let {triggerProps, overlayProps} = useOverlayTrigger({type: 'dialog'}, state, triggerRef);
 
   let triggerPropsWithRef = {
@@ -176,7 +179,7 @@ interface SpectrumDialogTriggerBase {
   isDismissable?: boolean,
   dialogProps?: SpectrumDialogProps | {},
   triggerProps?: any,
-  overlay: ReactElement,
+  overlay?: ReactElement,
   trigger: ReactElement
 }
 

@@ -83,6 +83,18 @@ The slider value can be formatted by using the `formatOptions` prop.
   defaultValue={{start: 75, end: 100}} />
 ```
 
+### HTML forms
+
+RangeSlider supports the `startName` and `endName` props for integration with HTML forms.
+
+```tsx example
+<RangeSlider
+  label="Range"
+  defaultValue={{start: 12, end: 36}}
+  startName="start"
+  endName="end" />
+```
+
 ## Labeling
 Value labels are shown above the Slider by default, but they can also be moved to the side or hidden as needed.
 The label text should be in sentence case.

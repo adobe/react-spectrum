@@ -10,77 +10,97 @@
  * governing permissions and limitations under the License.
  */
 
-import {ButtonHTMLAttributes, KeyboardEvent} from 'react';
-import {DOMAttributes} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useId} from '@react-aria/utils';
-import {GridState} from '@react-stately/grid';
+import {AriaButtonProps} from '@react-types/button';
+import {DOMAttributes, FocusableElement, Node} from '@react-types/shared';
+import {filterDOMProps, getSyntheticLinkProps, mergeProps, useDescription, useId} from '@react-aria/utils';
+import {hookData} from './useTagGroup';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {TagProps} from '@react-types/tag';
-import {useGridCell, useGridRow} from '@react-aria/grid';
+import {KeyboardEvent, RefObject} from 'react';
+import type {ListState} from '@react-stately/list';
+import {SelectableItemStates} from '@react-aria/selection';
+import {useGridListItem} from '@react-aria/gridlist';
+import {useInteractionModality} from '@react-aria/interactions';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
 
-export interface TagAria {
-  labelProps: DOMAttributes,
-  tagProps: DOMAttributes,
-  tagRowProps: DOMAttributes,
-  clearButtonProps: ButtonHTMLAttributes<HTMLButtonElement>
+export interface TagAria extends Omit<SelectableItemStates, 'hasAction'> {
+  /** Props for the tag row element. */
+  rowProps: DOMAttributes,
+  /** Props for the tag cell element. */
+  gridCellProps: DOMAttributes,
+  /** Props for the tag remove button. */
+  removeButtonProps: AriaButtonProps,
+  /** Whether the tag can be removed. */
+  allowsRemoving: boolean
 }
 
-export function useTag(props: TagProps<any>, state: GridState<any, any>): TagAria {
-  let {isFocused} = props;
-  const {
-    allowsRemoving,
-    onRemove,
-    item,
-    tagRef,
-    tagRowRef
-  } = props;
-  const stringFormatter = useLocalizedStringFormatter(intlMessages);
-  const removeString = stringFormatter.format('remove');
-  const labelId = useId();
-  const buttonId = useId();
+export interface AriaTagProps<T> {
+  /** An object representing the tag. Contains all the relevant information that makes up the tag. */
+  item: Node<T>
+}
 
-  let {rowProps} = useGridRow({
+/**
+ * Provides the behavior and accessibility implementation for a tag component.
+ * @param props - Props to be applied to the tag.
+ * @param state - State for the tag group, as returned by `useListState`.
+ * @param ref - A ref to a DOM element for the tag.
+ */
+export function useTag<T>(props: AriaTagProps<T>, state: ListState<T>, ref: RefObject<FocusableElement>): TagAria {
+  let {item} = props;
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/tag');
+  let buttonId = useId();
+
+  let {onRemove} = hookData.get(state) || {};
+  let {rowProps, gridCellProps, ...states} = useGridListItem({
     node: item
-  }, state, tagRowRef);
-  // Don't want the row to be focusable or accessible via keyboard
+  }, state, ref);
+
+  // We want the group to handle keyboard navigation between tags.
+  delete rowProps.onKeyDownCapture;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let {tabIndex, ...otherRowProps} = rowProps;
+  let {descriptionProps: _, ...stateWithoutDescription} = states;
 
-  let {gridCellProps} = useGridCell({
-    node: [...item.childNodes][0],
-    focusMode: 'cell'
-  }, state, tagRef);
-
-  function onKeyDown(e: KeyboardEvent) {
-    if (e.key === 'Delete' || e.key === 'Backspace' || e.key === ' ') {
-      onRemove(item.childNodes[0].key);
+  let onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
       e.preventDefault();
+      if (state.selectionManager.isSelected(item.key)) {
+        onRemove?.(new Set(state.selectionManager.selectedKeys));
+      } else {
+        onRemove?.(new Set([item.key]));
+      }
     }
-  }
-  const pressProps = {
-    onPress: () => onRemove?.(item.childNodes[0].key)
   };
 
-  isFocused = isFocused || state.selectionManager.focusedKey === item.childNodes[0].key;
-  let domProps = filterDOMProps(props);
+  let modality = useInteractionModality();
+  if (modality === 'virtual' &&  (typeof window !== 'undefined' && 'ontouchstart' in window)) {
+    modality = 'pointer';
+  }
+  let description = onRemove && (modality === 'keyboard' || modality === 'virtual') ? stringFormatter.format('removeDescription') : '';
+  let descProps = useDescription(description);
+
+  let isFocused = item.key === state.selectionManager.focusedKey;
+  // @ts-ignore - data attributes are ok but TS doesn't know about them.
+  let domProps = filterDOMProps(item.props);
+  let linkProps = getSyntheticLinkProps(item.props);
   return {
-    clearButtonProps: mergeProps(pressProps, {
-      'aria-label': removeString,
-      'aria-labelledby': `${buttonId} ${labelId}`,
-      id: buttonId
-    }),
-    labelProps: {
-      id: labelId
+    removeButtonProps: {
+      'aria-label': stringFormatter.format('removeButtonLabel'),
+      'aria-labelledby': `${buttonId} ${rowProps.id}`,
+      id: buttonId,
+      onPress: () => onRemove ? onRemove(new Set([item.key])) : null,
+      excludeFromTabOrder: true
     },
-    tagRowProps: otherRowProps,
-    tagProps: mergeProps(domProps, gridCellProps, {
+    rowProps: mergeProps(rowProps, domProps, linkProps, {
+      tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1,
+      onKeyDown: onRemove ? onKeyDown : undefined,
+      'aria-describedby': descProps['aria-describedby']
+    }),
+    gridCellProps: mergeProps(gridCellProps, {
       'aria-errormessage': props['aria-errormessage'],
-      'aria-label': props['aria-label'],
-      onKeyDown: allowsRemoving ? onKeyDown : null,
-      tabIndex: (isFocused || state.selectionManager.focusedKey == null) ? 0 : -1
-    })
+      'aria-label': props['aria-label']
+    }),
+    ...stateWithoutDescription,
+    allowsRemoving: !!onRemove
   };
 }

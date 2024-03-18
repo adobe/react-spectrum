@@ -17,6 +17,14 @@ import packageData from '@react-spectrum/autocomplete/package.json';
 ```jsx import
 import {SearchAutocomplete, Section, Item} from '@react-spectrum/autocomplete';
 import {useFilter} from '@react-aria/i18n';
+import Email from '@spectrum-icons/workflow/Email';
+import Document from '@spectrum-icons/workflow/Document';
+import WebPages from '@spectrum-icons/workflow/WebPages';
+import SocialNetwork from '@spectrum-icons/workflow/SocialNetwork';
+import ShoppingCart from '@spectrum-icons/workflow/ShoppingCart';
+import Folder from '@spectrum-icons/workflow/Folder';
+import {Text} from '@react-spectrum/text';
+import {Avatar} from "@react-spectrum/avatar";
 ```
 
 ---
@@ -129,6 +137,22 @@ the `id` of the labeling element instead.
 In order to internationalize a SearchAutocomplete, a localized string should be passed to the `label` or `aria-label` prop.
 When the `necessityIndicator` prop is set to `"label"`, a localized string will be provided for `"(required)"` or `"(optional)"` automatically.
 
+## Links
+
+By default, interacting with an item in a SearchAutocomplete updates the input value. Alternatively, items may be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component. Interacting with link items navigates to the provided URL and does not update the input value.
+
+```tsx example
+<SearchAutocomplete label="Tech company websites">
+  <Item href="https://adobe.com/" target="_blank">Adobe</Item>
+  <Item href="https://apple.com/" target="_blank">Apple</Item>
+  <Item href="https://google.com/" target="_blank">Google</Item>
+  <Item href="https://microsoft.com/" target="_blank">Microsoft</Item>
+</SearchAutocomplete>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Sections
 SearchAutocomplete supports sections in order to group options. Sections can be used by wrapping groups of items in a `Section` element. Each `Section` takes a `title` and `key` prop.
@@ -199,6 +223,73 @@ function Example() {
 }
 ```
 
+## Complex items
+Items within SearchAutocomplete also allow for additional content used to better communicate options. Icons, avatars, and descriptions can be added to the `children` of `Item` as shown in the example below.
+If a description is added, the prop `slot="description"` must be used to distinguish the different `<Text>` elements.
+See Icon's [labeling](workflow-icons.html#labeling) section and Avatar's [accessibility](Avatar.html#accessibility) section for more information on how to label these elements.
+
+```tsx example
+<SearchAutocomplete label="Search apps">
+  <Section title="Productivity">
+    <Item textValue="Mail">
+      <Email size="S" />
+      <Text>Mail</Text>
+      <Text slot="description">Send and recieve emails</Text>
+    </Item>
+    <Item textValue="File Explorer">
+      <Folder size="S" />
+      <Text>File Explorer</Text>
+      <Text slot="description">Navigate directories and open files</Text>
+    </Item>
+    <Item textValue="Document Editor">
+      <Document size="S" />
+      <Text>Document Editor</Text>
+      <Text slot="description">Edit documents</Text>
+    </Item>
+  </Section>
+  <Section title="Internet">
+    <Item textValue="Web Browser">
+      <WebPages size="S" />
+      <Text>Web Browser</Text>
+      <Text slot="description">Browse the internet</Text>
+    </Item>
+    <Item textValue="Social Media">
+      <SocialNetwork size="S" />
+      <Text>Social Media</Text>
+      <Text slot="description">Connect with friends</Text>
+    </Item>
+    <Item textValue="Shopping">
+      <ShoppingCart size="S" />
+      <Text>Shopping</Text>
+      <Text slot="description">Shop online</Text>
+    </Item>
+  </Section>
+</SearchAutocomplete>
+```
+
+### With avatars
+
+```tsx example
+<SearchAutocomplete label="Search users">
+  <Item textValue="User 1">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 1</Text>
+  </Item>
+  <Item textValue="User 2">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 2</Text>
+  </Item>
+  <Item textValue="User 3">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 3</Text>
+  </Item>
+  <Item textValue="User 4">
+    <Avatar src="https://i.imgur.com/kJOwAdv.png" />
+    <Text>User 4</Text>
+  </Item>
+</SearchAutocomplete>
+```
+
 ## Asynchronous loading
 
 SearchAutocomplete supports loading data asynchronously, and will display a progress circle reflecting the current load state,
@@ -209,8 +300,12 @@ This example uses the [useAsyncList](../react-stately/useAsyncList.html) hook to
 ```tsx example
 import {useAsyncList} from '@react-stately/data';
 
+interface Character {
+  name: string
+}
+
 function AsyncLoadingExample() {
-  let list = useAsyncList({
+  let list = useAsyncList<Character>({
     async load({signal, cursor, filterText}) {
       if (cursor) {
         cursor = cursor.replace(/^http:\/\//i, 'https://');
@@ -246,40 +341,33 @@ function AsyncLoadingExample() {
 ```
 
 ## Validation
-SearchAutocomplete can display a validation state to communicate to the user whether the current value is valid or invalid.
-Implement your own validation logic in your app and pass either `"valid"` or `"invalid"` to the SearchAutocomplete via the `validationState` prop.
 
-The example below illustrates how one would validate if the user has entered a valid email into the SearchAutocomplete.
+SearchAutocomplete supports the `isRequired` prop to ensure the user enters a value, as well as custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+When the [Form](Form.html) component has the `validationBehavior="native"` prop, validation errors block form submission and are displayed as help text automatically. Errors are displayed when the user blurs the search field or submits the form.
+
 ```tsx example
-function Example() {
-  let [value, setValue] = React.useState('me@email.com');
-  let isValid = React.useMemo(() => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value), [value]);
+import {Form, ButtonGroup, Button} from '@adobe/react-spectrum';
 
-  let options = [
-    {id: 1, email: 'fake@email.com'},
-    {id: 2, email: 'anotherfake@email.com'},
-    {id: 3, email: 'bob@email.com'},
-    {id: 4, email: 'joe@email.com'},
-    {id: 5, email: 'yourEmail@email.com'},
-    {id: 6, email: 'valid@email.com'},
-    {id: 7, email: 'spam@email.com'},
-    {id: 8, email: 'newsletter@email.com'},
-    {id: 9, email: 'subscribe@email.com'}
-  ];
-
-  return (
-    <SearchAutocomplete
-      width="size-3000"
-      label="Search Email Addresses"
-      validationState={isValid ? 'valid' : 'invalid'}
-      defaultItems={options}
-      inputValue={value}
-      onInputChange={setValue}>
-      {item => <Item>{item.email}</Item>}
-    </SearchAutocomplete>
-  );
-}
+<Form validationBehavior="native" maxWidth="size-3000">
+  {/*- begin highlight -*/}
+  <SearchAutocomplete label="Favorite animal" name="animal" isRequired>
+  {/*- end highlight -*/}
+    <Item>Aardvark</Item>
+    <Item>Cat</Item>
+    <Item>Dog</Item>
+    <Item>Kangaroo</Item>
+    <Item>Panda</Item>
+    <Item>Snake</Item>
+  </SearchAutocomplete>
+  <ButtonGroup>
+    <Button type="submit" variant="primary">Submit</Button>
+    <Button type="reset" variant="secondary">Reset</Button>
+  </ButtonGroup>
+</Form>
 ```
+
+By default, `SearchAutocomplete` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
 
 ## Custom Filtering
 By default, SearchAutocomplete uses a string "contains" filtering strategy when deciding what items to display in the dropdown menu. This filtering strategy can be overwritten

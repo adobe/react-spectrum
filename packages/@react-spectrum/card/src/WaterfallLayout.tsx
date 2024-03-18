@@ -11,9 +11,9 @@
  */
 
 import {BaseLayout, BaseLayoutOptions} from './BaseLayout';
+import {getChildNodes, getFirstItem} from '@react-stately/collections';
 import {InvalidationContext, LayoutInfo, Rect, Size} from '@react-stately/virtualizer';
-import {Key} from 'react';
-import {KeyboardDelegate, Node} from '@react-types/shared';
+import {Key, KeyboardDelegate, Node} from '@react-types/shared';
 
 export interface WaterfallLayoutOptions extends BaseLayoutOptions {
   /**
@@ -207,7 +207,8 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
 
-    return this.collection.getItem(key)?.childNodes[0]?.key;
+    let item = this.collection.getItem(key);
+    return getFirstItem(getChildNodes(item, this.collection))?.key;
   }
 
   getClosestLeft(key: Key) {
@@ -221,7 +222,8 @@ export class WaterfallLayout<T> extends BaseLayout<T> implements KeyboardDelegat
       key = this._findClosest(layoutInfo.rect, rect)?.key;
     }
 
-    return this.collection.getItem(key)?.childNodes[0]?.key;
+    let item = this.collection.getItem(key);
+    return getFirstItem(getChildNodes(item, this.collection))?.key;
   }
 
   getKeyRightOf(key: Key) {

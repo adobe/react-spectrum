@@ -10,8 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {ToggleStateProps} from '@react-types/checkbox';
+import {ToggleStateOptions} from '@react-types/checkbox';
 import {useControlledState} from '@react-stately/utils';
+
+export type {ToggleStateOptions};
 
 export interface ToggleState {
   /** Whether the toggle is selected. */
@@ -27,7 +29,7 @@ export interface ToggleState {
 /**
  * Provides state management for toggle components like checkboxes and switches.
  */
-export function useToggleState(props: ToggleStateProps = {}): ToggleState {
+export function useToggleState(props: ToggleStateOptions = {}): ToggleState {
   let {isReadOnly} = props;
 
   // have to provide an empty function so useControlledState doesn't throw a fit

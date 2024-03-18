@@ -15,17 +15,31 @@ governing permissions and limitations under the License.
   --spectrum-selectlist-divider-color: var(--spectrum-global-color-gray-300);
 }
 
+.spectrum-Menu-wrapper,
+.spectrum-Menu-subdialog {
+  border-color: var(--spectrum-popover-border-color);
+  background-color: var(--spectrum-popover-background-color);
+  filter: drop-shadow(0 var(--spectrum-popover-shadow-offset-y) var(--spectrum-popover-shadow-blur) var(--spectrum-popover-shadow-color));
+  /* explicitly adding this webkit prefix may fix the bug where the drop-shadow remains dirty */
+  /* https://stackoverflow.com/questions/56478925/safari-drop-shadow-filter-remains-visible-even-with-hidden-element */
+  -webkit-filter: drop-shadow(0 var(--spectrum-popover-shadow-offset-y) var(--spectrum-popover-shadow-blur) var(--spectrum-popover-shadow-color));
+  will-change: filter;
+}
 
 .spectrum-Menu {
   --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
   background-color: var(--spectrum-selectlist-background-color);
 }
 
+.spectrum-Submenu-headingWrapper {
+  --spectrum-heading-subtitle3-text-color: var(--spectrum-global-color-gray-900);
+}
+
 .spectrum-Menu-item {
   background-color: var(--spectrum-selectlist-option-background-color);
   color: var(--spectrum-selectlist-option-text-color);
 
-  &:focus-ring,
+  &:focus-visible,
   &.is-focused {
     background-color: var(--spectrum-selectlist-option-background-color-key-focus);
     color: var(--spectrum-selectlist-option-text-color-key-focus);
@@ -52,6 +66,9 @@ governing permissions and limitations under the License.
   }
 
   &.is-disabled {
+    .spectrum-Menu-description {
+      color: var(--spectrum-selectlist-option-text-color-disabled);
+    }
     background-color: var(--spectrum-selectlist-option-background-color-disabled);
     background-image: none;
     color: var(--spectrum-selectlist-option-text-color-disabled);
@@ -70,6 +87,19 @@ governing permissions and limitations under the License.
 .spectrum-Menu-description {
   color: var(--spectrum-global-color-gray-700);
 }
+
+.spectrum-Submenu-popover {
+  filter: unset;
+  -webkit-filter: unset;
+  transition: opacity var(--spectrum-global-animation-duration-100) ease-in-out,
+              visibility 0ms linear var(--spectrum-global-animation-duration-100);
+  transform: none;
+}
+
+.spectrum-Submenu-heading {
+  color: var(--spectrum-heading-subtitle3-text-color);
+}
+
 @media (forced-colors: active) {
   .spectrum-Menu-divider {
     background-color: CanvasText;
@@ -100,7 +130,7 @@ governing permissions and limitations under the License.
     &:focus,
     &.is-highlighted,
     &.is-open,
-    &:focus-ring,
+    &:focus-visible,
     &.is-focused {
       &.is-selected {
         .spectrum-Menu-checkmark {

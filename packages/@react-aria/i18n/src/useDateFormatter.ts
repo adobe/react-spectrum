@@ -11,8 +11,9 @@
  */
 
 import {DateFormatter} from '@internationalized/date';
+import {useDeepMemo} from '@react-aria/utils';
 import {useLocale} from './context';
-import {useMemo, useRef} from 'react';
+import {useMemo} from 'react';
 
 export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
   calendar?: string
@@ -25,13 +26,7 @@ export interface DateFormatterOptions extends Intl.DateTimeFormatOptions {
  */
 export function useDateFormatter(options?: DateFormatterOptions): DateFormatter {
   // Reuse last options object if it is shallowly equal, which allows the useMemo result to also be reused.
-  let lastOptions = useRef(null);
-  if (options && lastOptions.current && isEqual(options, lastOptions.current)) {
-    options = lastOptions.current;
-  }
-
-  lastOptions.current = options;
-
+  options = useDeepMemo(options ?? {}, isEqual);
   let {locale} = useLocale();
   return useMemo(() => new DateFormatter(locale, options), [locale, options]);
 }

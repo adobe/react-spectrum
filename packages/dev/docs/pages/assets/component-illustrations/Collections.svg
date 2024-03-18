@@ -1,0 +1,18 @@
+<svg style="background:var(--anatomy-gray-100); padding: calc((152px - 108px) / 2) 10px" height="108" viewBox="0 0 231 108">
+  <g id="Group_156665" data-name="Group 156665" transform="translate(-1347 -1745)">
+    <g id="Rectangle_84" data-name="Rectangle 84" transform="translate(1347 1803)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+      <rect width="231" height="50" rx="6" stroke="none"/>
+      <rect x="0.5" y="0.5" width="230" height="49" rx="5.5" fill="none"/>
+    </g>
+    <rect id="Rectangle_142246" data-name="Rectangle 142246" width="167" height="17" rx="3" transform="translate(1399 1811)" fill="var(--anatomy-gray-200)"/>
+    <rect id="Rectangle_142248" data-name="Rectangle 142248" width="32" height="32" rx="4" transform="translate(1359 1812)" fill="var(--anatomy-gray-200)"/>
+    <rect id="Rectangle_142249" data-name="Rectangle 142249" width="167" height="11" rx="3" transform="translate(1399 1834)" fill="var(--anatomy-gray-200)"/>
+    <g id="Rectangle_142250" data-name="Rectangle 142250" transform="translate(1347 1745)" fill="var(--anatomy-gray-50)" stroke="var(--anatomy-gray-400)" stroke-width="1">
+      <rect width="231" height="50" rx="6" stroke="none"/>
+      <rect x="0.5" y="0.5" width="230" height="49" rx="5.5" fill="none"/>
+    </g>
+    <rect id="Rectangle_142251" data-name="Rectangle 142251" width="167" height="17" rx="3" transform="translate(1399 1753)" fill="var(--anatomy-gray-200)"/>
+    <rect id="Rectangle_142252" data-name="Rectangle 142252" width="32" height="32" rx="4" transform="translate(1359 1754)" fill="var(--anatomy-gray-200)"/>
+    <rect id="Rectangle_142253" data-name="Rectangle 142253" width="167" height="11" rx="3" transform="translate(1399 1776)" fill="var(--anatomy-gray-200)"/>
+  </g>
+</svg>

@@ -10,32 +10,33 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
 import {Button} from '@react-spectrum/button';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
 import {Checkbox} from '@react-spectrum/checkbox';
+import {createLandmarkController, useLandmark} from '../';
 import {Provider} from '@react-spectrum/provider';
-import React, {useRef} from 'react';
+import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
-import {useLandmark} from '../';
+import {useFocusableRef} from '@react-spectrum/utils';
 import userEvent from '@testing-library/user-event';
 
 function Main(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
   return <main ref={ref} {...landmarkProps}>{props.children}</main>;
 }
 
 function Navigation(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {landmarkProps} = useLandmark({...props, role: 'navigation'}, ref);
   return <nav ref={ref} {...landmarkProps}>{props.children}</nav>;
 }
 
 function Region(props) {
-  let ref = useRef();
+  let ref = useFocusableRef(null);
   let {landmarkProps} = useLandmark({...props, role: 'region'}, ref);
   return <article ref={ref} {...landmarkProps}>{props.children}</article>;
 }
@@ -44,7 +45,7 @@ function Region(props) {
 function toggleBrowserTabs() {
   // this describes Chrome behaviour only, for other browsers visibilitychange fires after all focus events.
   // leave tab
-  const lastActiveElement = document.activeElement;
+  const lastActiveElement = document.activeElement!;
   fireEvent(lastActiveElement, new Event('blur'));
   fireEvent(window, new Event('blur'));
   Object.defineProperty(document, 'visibilityState', {
@@ -72,8 +73,10 @@ function toggleBrowserWindow() {
 
 describe('LandmarkManager', function () {
   let offsetWidth, offsetHeight;
+  let user;
 
   beforeAll(function () {
+    user = userEvent.setup({delay: null, pointerMap});
     offsetWidth = jest.spyOn(window.HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(() => 1000);
     offsetHeight = jest.spyOn(window.HTMLElement.prototype, 'clientHeight', 'get').mockImplementation(() => 1000);
     jest.useFakeTimers();
@@ -88,7 +91,7 @@ describe('LandmarkManager', function () {
     act(() => {jest.runAllTimers();});
   });
 
-  it('can tab into a landmark region', function () {
+  it('can tab into a landmark region', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -108,8 +111,8 @@ describe('LandmarkManager', function () {
     expect(navigation).toBeInTheDocument();
     expect(main).toBeInTheDocument();
 
-    userEvent.tab();
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    await user.tab();
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
   });
 
   it('can F6 to a landmark region', function () {
@@ -130,13 +133,13 @@ describe('LandmarkManager', function () {
     let navigation = tree.getByRole('navigation');
     let main = tree.getByRole('main');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(navigation);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
   });
 
   it('can F6 to a landmark region when there is only one landmark', function () {
@@ -149,9 +152,9 @@ describe('LandmarkManager', function () {
     );
     let main = tree.getByRole('main');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
   });
 
   it('can F6 to a nested landmark region that is first', function () {
@@ -169,29 +172,29 @@ describe('LandmarkManager', function () {
     let main = tree.getByRole('main');
     let region = tree.getByRole('region');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(region);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(region);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(region);
   });
 
   it('can F6 to a nested landmark region that is last', function () {
@@ -209,29 +212,29 @@ describe('LandmarkManager', function () {
     let main = tree.getByRole('main');
     let region = tree.getByRole('region');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(region);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(region);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(region);
   });
 
   it('goes in dom order with two nested landmarks', function () {
@@ -256,36 +259,36 @@ describe('LandmarkManager', function () {
     let region1 = tree.getAllByRole('region')[0];
     let region2 = tree.getAllByRole('region')[1];
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(region1);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(region1);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(region2);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(region2);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(region2);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(region2);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(region1);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(region1);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(main);
   });
 
-  it('can F6 to the next landmark region', function () {
+  it('can F6 to the next landmark region', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -302,16 +305,16 @@ describe('LandmarkManager', function () {
     );
     let main = tree.getByRole('main');
 
-    userEvent.tab();
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    await user.tab();
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
   });
 
 
-  it('landmark navigation forward wraps', function () {
+  it('landmark navigation forward wraps', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -328,19 +331,19 @@ describe('LandmarkManager', function () {
     );
     let main = tree.getByRole('main');
 
-    userEvent.tab();
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    await user.tab();
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
   });
 
-  it('can shift+tab into a landmark region', function () {
+  it('can shift+tab into a landmark region', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -356,11 +359,11 @@ describe('LandmarkManager', function () {
       </div>
     );
 
-    userEvent.tab({shift: true});
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+    await user.tab({shift: true});
+    expect(document.activeElement!).toBe(tree.getByRole('textbox'));
 
-    userEvent.tab({shift: true});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[2]);
+    await user.tab({shift: true});
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[2]);
   });
 
   it('can shift+F6 to a landmark region', function () {
@@ -381,16 +384,16 @@ describe('LandmarkManager', function () {
     let navigation = tree.getByRole('navigation');
     let main = tree.getByRole('main');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(navigation);
   });
 
-  it('can shift+F6 to the previous landmark region', function () {
+  it('can shift+F6 to the previous landmark region', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -406,18 +409,18 @@ describe('LandmarkManager', function () {
       </div>
     );
 
-    userEvent.tab();
-    userEvent.tab();
-    userEvent.tab();
-    userEvent.tab();
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement!).toBe(tree.getByRole('textbox'));
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[2]);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[2]);
   });
 
-  it('landmark navigation backward wraps', function () {
+  it('landmark navigation backward wraps', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -434,15 +437,15 @@ describe('LandmarkManager', function () {
     );
     let main = tree.getByRole('main');
 
-    userEvent.tab();
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+    await user.tab();
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(main);
   });
 
-  it('F6 should focus the last focused element in a landmark region', function () {
+  it('F6 should focus the last focused element in a landmark region', async function () {
     let tree = render(
       <div>
         <Navigation>
@@ -458,18 +461,18 @@ describe('LandmarkManager', function () {
       </div>
     );
 
-    userEvent.tab();
-    userEvent.tab();
-    userEvent.tab();
-    userEvent.tab();
-    expect(document.activeElement).toBe(tree.getByRole('textbox'));
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    await user.tab();
+    expect(document.activeElement!).toBe(tree.getByRole('textbox'));
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(tree.getAllByRole('link')[2]);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[2]);
   });
 
-  it('components that already handle focus management, should handle focus themselves', function () {
+  it('components that already handle focus management, should handle focus themselves', async function () {
     let tree = render(
       <Provider theme={theme}>
         <div>
@@ -515,27 +518,27 @@ describe('LandmarkManager', function () {
     let rows = within(table).getAllByRole('row');
     let cells = within(rows[1]).getAllByRole('gridcell');
 
-    userEvent.tab();
-    expect(document.activeElement).toBe(buttons[0]);
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    expect(document.activeElement).toBe(buttons[1]);
+    await user.tab();
+    expect(document.activeElement!).toBe(buttons[0]);
+    fireEvent.keyDown(document.activeElement!, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement!, {key: 'ArrowRight'});
+    expect(document.activeElement!).toBe(buttons[1]);
 
-    userEvent.tab();
-    expect(document.activeElement).toBe(rows[1]);
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
-    fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
-    expect(document.activeElement).toBe(cells[0]);
+    await user.tab();
+    expect(document.activeElement!).toBe(rows[1]);
+    fireEvent.keyDown(document.activeElement!, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement!, {key: 'ArrowRight'});
+    fireEvent.keyDown(document.activeElement!, {key: 'ArrowRight'});
+    fireEvent.keyUp(document.activeElement!, {key: 'ArrowRight'});
+    expect(document.activeElement!).toBe(cells[0]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(buttons[1]);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(buttons[1]);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(cells[0]);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(cells[0]);
   });
 
   it('Should allow 2+ landmarks with same role if they are labelled.', function () {
@@ -627,7 +630,7 @@ describe('LandmarkManager', function () {
 
   it('Should not navigate to a landmark that has been removed from the DOM', function () {
 
-    function Container({children = null}) {
+    function Container(props) {
       return (
         <div>
           <Navigation>
@@ -637,7 +640,7 @@ describe('LandmarkManager', function () {
               <li><a href="/contact">Contact</a></li>
             </ul>
           </Navigation>
-          {children}
+          {props.children}
           <Main>
             <TextField label="Last Name" />
           </Main>
@@ -657,29 +660,29 @@ describe('LandmarkManager', function () {
     let region = tree.getByRole('region');
     let main = tree.getByRole('main');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(navigation);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(region);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
 
 
     tree.rerender(<Container />);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', shiftKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', shiftKey: true});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(navigation);
   });
 
   it('Should navigate to a landmark that has been added to the DOM', function () {
 
-    function Container({children = null}) {
+    function Container(props) {
       return (
         <div>
           <Navigation>
@@ -692,7 +695,7 @@ describe('LandmarkManager', function () {
           <Main>
             <TextField label="Last Name" />
           </Main>
-          {children}
+          {props.children}
         </div>
       );
     }
@@ -701,13 +704,13 @@ describe('LandmarkManager', function () {
     let navigation = tree.getByRole('navigation');
     let main = tree.getByRole('main');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(navigation);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
 
     tree.rerender(
       <Container>
@@ -719,14 +722,14 @@ describe('LandmarkManager', function () {
 
     let region = tree.getByRole('region');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(region);
   });
 
   it('Should navigate to a landmark that has been added as a child to an existing landmark.', function () {
 
-    function Container({children = null}) {
+    function Container(props) {
       return (
         <div>
           <Navigation>
@@ -738,7 +741,7 @@ describe('LandmarkManager', function () {
           </Navigation>
           <Main>
             <TextField label="Last Name" />
-            {children}
+            {props.children}
           </Main>
         </div>
       );
@@ -756,17 +759,17 @@ describe('LandmarkManager', function () {
     let navigation = tree.getByRole('navigation');
     let region = tree.getByRole('region');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(navigation);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(region);
   });
 
   it('Should navigate to a landmark that has been added as a parent to an existing landmark.', function () {
@@ -799,9 +802,9 @@ describe('LandmarkManager', function () {
 
     let main = tree.getByRole('main');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
   });
 
   it('can alt+F6 to main landmark', function () {
@@ -825,21 +828,21 @@ describe('LandmarkManager', function () {
     let navigation = tree.getByRole('navigation');
     let main = tree.getByRole('main');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(navigation);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', altKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', altKey: true});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', altKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', altKey: true});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', altKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', altKey: true});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', altKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', altKey: true});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(navigation);
   });
 
   it('alt+F6 does nothing if no main landmark', function () {
@@ -859,13 +862,13 @@ describe('LandmarkManager', function () {
       );
     let navigation = tree.getByRole('navigation');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(navigation);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', altKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', altKey: true});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', altKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', altKey: true});
+    expect(document.activeElement!).toBe(navigation);
   });
 
   it('can alt+F6 to main landmark if main is the only landmark', function () {
@@ -878,17 +881,17 @@ describe('LandmarkManager', function () {
       );
     let main = tree.getByRole('main');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', altKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', altKey: true});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', altKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', altKey: true});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6', altKey: true});
-    fireEvent.keyUp(document.activeElement, {key: 'F6', altKey: true});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', altKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', altKey: true});
+    expect(document.activeElement!).toBe(main);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(main);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
   });
 
   it('landmark has tabIndex="-1" when focused', function () {
@@ -911,14 +914,14 @@ describe('LandmarkManager', function () {
     expect(navigation).not.toHaveAttribute('tabIndex');
     expect(main).not.toHaveAttribute('tabIndex');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(navigation);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(navigation);
     expect(navigation).toHaveAttribute('tabIndex', '-1');
     expect(main).not.toHaveAttribute('tabIndex');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
     expect(main).toHaveAttribute('tabIndex', '-1');
     expect(navigation).not.toHaveAttribute('tabIndex');
   });
@@ -943,7 +946,7 @@ describe('LandmarkManager', function () {
     fireEvent.mouseDown(navigation);
     fireEvent.mouseUp(navigation);
 
-    expect(document.activeElement).toBe(document.body);
+    expect(document.activeElement!).toBe(document.body);
   });
 
   it('focuses the landmark again after toggling browser tabs', function () {
@@ -963,14 +966,14 @@ describe('LandmarkManager', function () {
     );
     let nav = getByRole('navigation');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
     expect(nav).toHaveAttribute('tabIndex', '-1');
-    expect(document.activeElement).toBe(nav);
+    expect(document.activeElement!).toBe(nav);
 
     toggleBrowserTabs();
 
-    expect(document.activeElement).toBe(nav);
+    expect(document.activeElement!).toBe(nav);
     expect(nav).toHaveAttribute('tabIndex', '-1');
   });
 
@@ -991,18 +994,18 @@ describe('LandmarkManager', function () {
     );
     let nav = getByRole('navigation');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
     expect(nav).toHaveAttribute('tabIndex', '-1');
-    expect(document.activeElement).toBe(nav);
+    expect(document.activeElement!).toBe(nav);
 
     toggleBrowserWindow();
 
-    expect(document.activeElement).toBe(nav);
+    expect(document.activeElement!).toBe(nav);
     expect(nav).toHaveAttribute('tabIndex', '-1');
   });
 
-  it('loses the tabIndex=-1 if something else is focused', function () {
+  it('loses the tabIndex=-1 if something else is focused', async function () {
     let {getByRole, getAllByRole} = render(
       <div>
         <Navigation>
@@ -1019,14 +1022,14 @@ describe('LandmarkManager', function () {
     );
     let nav = getByRole('navigation');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
     expect(nav).toHaveAttribute('tabIndex', '-1');
-    expect(document.activeElement).toBe(nav);
+    expect(document.activeElement!).toBe(nav);
 
-    userEvent.tab();
+    await user.tab();
 
-    expect(document.activeElement).toBe(getAllByRole('link')[0]);
+    expect(document.activeElement!).toBe(getAllByRole('link')[0]);
     expect(nav).not.toHaveAttribute('tabIndex');
   });
 
@@ -1053,9 +1056,9 @@ describe('LandmarkManager', function () {
     act(() => {
       button.focus();
     });
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
-    expect(document.activeElement).toBe(nav);
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(nav);
 
     expect(onKeyDown).not.toHaveBeenCalled();
 
@@ -1069,8 +1072,8 @@ describe('LandmarkManager', function () {
     act(() => {
       button.focus();
     });
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
 
     expect(onKeyDown).toHaveBeenCalled();
   });
@@ -1140,8 +1143,8 @@ describe('LandmarkManager', function () {
     );
     let nav = getByRole('navigation');
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
     expect(nav).toHaveAttribute('tabIndex', '-1');
     expect(document.activeElement).toBe(nav);
 
@@ -1149,11 +1152,309 @@ describe('LandmarkManager', function () {
       (document.activeElement as HTMLElement).blur();
     });
     expect(nav).not.toHaveAttribute('tabIndex', '-1');
-    expect(document.activeElement).toBe(document.body);
+    expect(document.activeElement!).toBe(document.body);
 
-    fireEvent.keyDown(document.activeElement, {key: 'F6'});
-    fireEvent.keyUp(document.activeElement, {key: 'F6'});
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
     expect(nav).toHaveAttribute('tabIndex', '-1');
-    expect(document.activeElement).toBe(nav);
+    expect(document.activeElement!).toBe(nav);
+  });
+
+  it('landmark navigation fires custom event when wrapping forward', async function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+    let main = tree.getByRole('main');
+
+    let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
+    window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+
+    await user.tab();
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
+
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
+
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+
+    expect(document.activeElement!).toBe(main);
+
+    expect(onLandmarkNavigation).toHaveBeenCalledTimes(1);
+    expect(onLandmarkNavigation.mock.calls[0][0].detail).toEqual({
+      direction: 'forward'
+    });
+
+    window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+  });
+
+  it('landmark navigation fires custom event when wrapping backward', async function () {
+    let tree = render(
+      <div>
+        <Navigation>
+          <ul>
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+          </ul>
+        </Navigation>
+        <Main>
+          <TextField label="First Name" />
+        </Main>
+      </div>
+    );
+
+    let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
+    window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+
+    await user.tab();
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
+
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(tree.getAllByRole('link')[0]);
+
+    expect(onLandmarkNavigation).toHaveBeenCalledTimes(1);
+    expect(onLandmarkNavigation.mock.calls[0][0].detail).toEqual({
+      direction: 'backward'
+    });
+
+    window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+  });
+
+  it('skips over aria-hidden landmarks', function () {
+    let tree = render(
+      <div>
+        <Main>
+          <div aria-hidden="true">
+            <Region aria-label="Region 1">
+              <Checkbox>Checkbox label 1</Checkbox>
+            </Region>
+          </div>
+
+          <TextField label="First Name" />
+
+          <Region aria-label="Region 2">
+            <Checkbox>Checkbox label 2</Checkbox>
+          </Region>
+
+          <TextField label="Last Name" />
+        </Main>
+      </div>
+    );
+    let main = tree.getByRole('main');
+    let region2 = tree.getAllByRole('region')[0];
+
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
+
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(region2);
+
+    fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+    expect(document.activeElement!).toBe(main);
+
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(region2);
+
+    fireEvent.keyDown(document.activeElement!, {key: 'F6', shiftKey: true});
+    fireEvent.keyUp(document.activeElement!, {key: 'F6', shiftKey: true});
+    expect(document.activeElement!).toBe(main);
+  });
+
+  describe('LandmarkController', function () {
+    it('should ensure keyboard listeners are active', function () {
+      let onLandmarkNavigation = jest.fn().mockImplementation(e => e.preventDefault());
+      window.addEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+
+      fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+      fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+      expect(onLandmarkNavigation).not.toHaveBeenCalled();
+
+      let controller = createLandmarkController();
+
+      fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+      fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+      expect(onLandmarkNavigation).toHaveBeenCalledTimes(1);
+
+      controller.dispose();
+      onLandmarkNavigation.mockReset();
+
+      fireEvent.keyDown(document.activeElement!, {key: 'F6'});
+      fireEvent.keyUp(document.activeElement!, {key: 'F6'});
+      expect(onLandmarkNavigation).not.toHaveBeenCalled();
+
+      window.removeEventListener('react-aria-landmark-navigation', onLandmarkNavigation);
+    });
+
+    it('should navigate forward', async function () {
+      let tree = render(
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      await user.tab();
+      expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+      let controller = createLandmarkController();
+
+      act(() => {controller.focusNext();});
+      expect(document.activeElement).toBe(tree.getByRole('main'));
+
+      act(() => {controller.navigate('forward');});
+      expect(document.activeElement).toBe(tree.getAllByRole('link')[0]);
+
+      controller.dispose();
+    });
+
+    it('should navigate backward', function () {
+      let tree = render(
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      act(() => tree.getByRole('textbox').focus());
+
+      let controller = createLandmarkController();
+
+      act(() => {controller.focusPrevious();});
+      expect(document.activeElement).toBe(tree.getByRole('navigation'));
+
+      act(() => {controller.navigate('backward');});
+      expect(document.activeElement).toBe(tree.getByRole('textbox'));
+
+      controller.dispose();
+    });
+
+    it('should focus main', function () {
+      let tree = render(
+        <div>
+          <Navigation>
+            <ul>
+              <li><a href="/home">Home</a></li>
+              <li><a href="/about">About</a></li>
+              <li><a href="/contact">Contact</a></li>
+            </ul>
+          </Navigation>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      act(() => tree.getByRole('textbox').focus());
+
+      let controller = createLandmarkController();
+
+      act(() => {controller.focusMain();});
+      expect(document.activeElement).toBe(tree.getByRole('main'));
+
+      controller.dispose();
+    });
+  });
+
+  describe('singleton', function () {
+    it('should store the landmark manager on the document', function () {
+      // ensure a manager exists.
+      let controller = createLandmarkController();
+      let manager = document[Symbol.for('react-aria-landmark-manager')];
+      expect(manager).toBeDefined();
+      expect(typeof manager.version).toBe('number');
+      expect(typeof manager.createLandmarkController).toBe('function');
+      expect(typeof manager.registerLandmark).toBe('function');
+      controller.dispose();
+    });
+
+    it('should replace the singleton with a new version', function () {
+      let tree = render(
+        <div>
+          <Main>
+            <TextField label="First Name" />
+          </Main>
+        </div>
+      );
+
+      let controller = createLandmarkController();
+      let newController = {
+        navigate: jest.fn(),
+        focusNext: jest.fn(),
+        focusPrevious: jest.fn(),
+        focusMain: jest.fn(),
+        dispose: jest.fn()
+      };
+
+      let manager = document[Symbol.for('react-aria-landmark-manager')];
+      let unregister = jest.fn();
+      let testLandmarkManager = {
+        version: manager.version + 1,
+        createLandmarkController: jest.fn().mockReturnValue(newController),
+        registerLandmark: jest.fn().mockReturnValue(unregister)
+      };
+
+      document[Symbol.for('react-aria-landmark-manager')] = testLandmarkManager;
+      act(() => {
+        document.dispatchEvent(new CustomEvent('react-aria-landmark-manager-change'));
+      });
+
+      expect(testLandmarkManager.registerLandmark).toHaveBeenCalledTimes(1);
+      expect(testLandmarkManager.createLandmarkController).toHaveBeenCalledTimes(1);
+
+      // Controller should now proxy to the new version.
+      controller.navigate('forward');
+      expect(newController.navigate).toHaveBeenCalledTimes(1);
+      expect(newController.navigate).toHaveBeenCalledWith('forward', undefined);
+
+      controller.focusNext();
+      expect(newController.focusNext).toHaveBeenCalledTimes(1);
+
+      controller.focusPrevious();
+      expect(newController.focusNext).toHaveBeenCalledTimes(1);
+
+      controller.focusMain();
+      expect(newController.focusMain).toHaveBeenCalledTimes(1);
+
+      controller.dispose();
+      expect(newController.dispose).toHaveBeenCalledTimes(1);
+
+      // Component should now point to the new manager.
+      tree.unmount();
+      expect(unregister).toHaveBeenCalledTimes(1);
+    });
   });
 });

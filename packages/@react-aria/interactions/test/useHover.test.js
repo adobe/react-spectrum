@@ -37,7 +37,7 @@ function pointerEvent(type, opts) {
 
 describe('useHover', function () {
   beforeAll(() => {
-    jest.useFakeTimers('legacy');
+    jest.useFakeTimers();
   });
 
   it('does not handle hover events if disabled', function () {
@@ -530,10 +530,7 @@ describe('useHover', function () {
     }
 
     beforeAll(() => {
-      jest.useFakeTimers('legacy');
-    });
-    afterAll(() => {
-      jest.useRealTimers();
+      jest.useFakeTimers();
     });
 
     let matchMedia;

@@ -11,7 +11,7 @@
  */
 
 import {PartialNode} from './types';
-import React, {ReactElement} from 'react';
+import React, {JSX, ReactElement} from 'react';
 import {SectionProps} from '@react-types/shared';
 
 function Section<T>(props: SectionProps<T>): ReactElement { // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -31,7 +31,7 @@ Section.getCollectionNode = function* getCollectionNode<T>(props: SectionProps<T
         if (!items) {
           throw new Error('props.children was a function but props.items is missing');
         }
-    
+
         for (let item of items) {
           yield {
             type: 'item',

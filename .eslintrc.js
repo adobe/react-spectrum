@@ -28,10 +28,10 @@ module.exports = {
       sourceType: 'module'
     },
     rules: {
-      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'etc', 'i.e']}],
+      'jsdoc/require-description-complete-sentence': [ERROR, {abbreviations: ['e.g', 'i.e']}],
       'jsdoc/check-alignment': ERROR,
       'jsdoc/check-indentation': ERROR,
-      'jsdoc/check-tag-names': ERROR,
+      'jsdoc/check-tag-names': [ERROR, {definedTags: ['selector', 'note']}],
       // enable this rule to see literally everything missing jsdocs, this rule needs some refinement but is good as a sanity check.
       // 'jsdoc/require-jsdoc': [ERROR, {contexts:['TSInterfaceDeclaration TSPropertySignature', 'TSInterfaceDeclaration TSMethodSignature']}],
       'jsdoc/require-description': [ERROR, {exemptedBy: ['deprecated'], checkConstructors: false}],
@@ -51,8 +51,9 @@ module.exports = {
       }]
     }
   }, {
-    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**'],
+    files: ['**/test/**', '**/stories/**', '**/docs/**', '**/chromatic/**', '**/__tests__/**'],
     rules: {
+      'rsp-rules/no-react-key': [ERROR],
       'rsp-rules/act-events-test': ERROR,
       'rsp-rules/no-getByRole-toThrow': ERROR,
       'rulesdir/imports': OFF,
@@ -64,6 +65,37 @@ module.exports = {
     rules: {
       'jsdoc/require-jsdoc': OFF,
       'jsdoc/require-description': OFF
+    }
+  }, {
+    files: ['packages/@react-aria/focus/src/**/*.ts', 'packages/@react-aria/focus/src/**/*.tsx'],
+    rules: {
+      'no-restricted-globals': [
+        ERROR,
+        {
+          'name': 'window',
+          'message': 'Use getOwnerWindow from @react-aria/utils instead.'
+        },
+        {
+          'name': 'document',
+          'message': 'Use getOwnerDocument from @react-aria/utils instead.'
+        }
+      ]
+    }
+  },
+  {
+    files: ['packages/@react-aria/interactions/src/**/*.ts', 'packages/@react-aria/interactions/src/**/*.tsx'],
+    rules: {
+      'no-restricted-globals': [
+        WARN,
+        {
+          'name': 'window',
+          'message': 'Use getOwnerWindow from @react-aria/utils instead.'
+        },
+        {
+          'name': 'document',
+          'message': 'Use getOwnerDocument from @react-aria/utils instead.'
+        }
+      ]
     }
   }],
   env: {
@@ -118,12 +150,11 @@ module.exports = {
     'no-unused-vars': [ERROR, {args: 'none', vars: 'all', varsIgnorePattern: '[rR]eact'}],
     'space-in-parens': [ERROR, 'never'],
     'space-unary-ops': [ERROR, {words: true, nonwords: false}],
-    'spaced-comment': [ERROR, 'always', {exceptions: ['*'], markers: ['/']}],
+    'spaced-comment': [ERROR, 'always', {exceptions: ['*', '#__PURE__'], markers: ['/']}],
     'max-depth': [WARN, 4],
     'radix': [ERROR, 'always'],
     'react/jsx-uses-react': WARN,
     'eol-last': ERROR,
-    'arrow-body-style': [ERROR, 'as-needed'],
     'arrow-spacing': ERROR,
     'space-before-blocks': [ERROR, 'always'],
     'space-infix-ops': ERROR,
@@ -132,6 +163,7 @@ module.exports = {
     'no-nested-ternary': ERROR,
     'no-multiple-empty-lines': ERROR,
     'no-unneeded-ternary': ERROR,
+    'no-duplicate-imports': ERROR,
 
     // Below are rules that are needed for linter functionality when using React
     'react/display-name': OFF,
@@ -167,9 +199,11 @@ module.exports = {
     'react-hooks/exhaustive-deps': WARN,
 
     // custom rules
-    'rulesdir/sort-imports': [ERROR],
+    'rsp-rules/no-react-key': [ERROR],
+    'rsp-rules/sort-imports': [ERROR],
     'rulesdir/imports': [ERROR],
     'rulesdir/useLayoutEffectRule': [ERROR],
+    'rulesdir/pure-render': [ERROR],
 
     // jsx-a11y rules
     'jsx-a11y/accessible-emoji': ERROR,

@@ -13,12 +13,11 @@
 import {CalendarDate, isEqualDay, isSameDay, isToday} from '@internationalized/date';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
 import {DOMAttributes} from '@react-types/shared';
-import {focusWithoutScrolling, getScrollParent, scrollIntoView, useDescription} from '@react-aria/utils';
+import {focusWithoutScrolling, getScrollParent, mergeProps, scrollIntoViewport, useDeepMemo, useDescription} from '@react-aria/utils';
 import {getEraFormat, hookData} from './utils';
 import {getInteractionModality, usePress} from '@react-aria/interactions';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {mergeProps} from '@react-aria/utils';
 import {RefObject, useEffect, useMemo, useRef} from 'react';
 import {useDateFormatter, useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -76,7 +75,7 @@ export interface CalendarCellAria {
 export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarState | RangeCalendarState, ref: RefObject<HTMLElement>): CalendarCellAria {
   let {date, isDisabled} = props;
   let {errorMessageId, selectedDateDescription} = hookData.get(state);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
   let dateFormatter = useDateFormatter({
     weekday: 'long',
     day: 'numeric',
@@ -90,7 +89,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
   isDisabled = isDisabled || state.isCellDisabled(date);
   let isUnavailable = state.isCellUnavailable(date);
   let isSelectable = !isDisabled && !isUnavailable;
-  let isInvalid = state.validationState === 'invalid' && (
+  let isInvalid = state.isValueInvalid && (
     'highlightedRange' in state
       ? !state.anchorDate && state.highlightedRange && date.compare(state.highlightedRange.start) >= 0 && date.compare(state.highlightedRange.end) <= 0
       : state.value && isSameDay(state.value, date)
@@ -102,13 +101,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
   // For performance, reuse the same date object as before if the new date prop is the same.
   // This allows subsequent useMemo results to be reused.
-  let lastDate = useRef(null);
-  if (lastDate.current && isEqualDay(date, lastDate.current)) {
-    date = lastDate.current;
-  }
-
-  lastDate.current = date;
-
+  date = useDeepMemo<CalendarDate>(date, isEqualDay);
   let nativeDate = useMemo(() => date.toDate(state.timeZone), [date, state.timeZone]);
 
   // aria-label should be localize Day of week, Month, Day and Year without Time.
@@ -172,7 +165,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     // again to trigger onPressStart. Cancel presses immediately when the pointer exits.
     shouldCancelOnPointerExit: 'anchorDate' in state && !!state.anchorDate,
     preventFocusOnPress: true,
-    isDisabled: !isSelectable,
+    isDisabled: !isSelectable || state.isReadOnly,
     onPressStart(e) {
       if (state.isReadOnly) {
         state.setFocusedDate(date);
@@ -288,10 +281,13 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
 
       // Scroll into view if navigating with a keyboard, otherwise
       // try not to shift the view under the user's mouse/finger.
-      // Only scroll the direct scroll parent, not the whole page, so
-      // we don't scroll to the bottom when opening date picker popover.
-      if (getInteractionModality() !== 'pointer') {
-        scrollIntoView(getScrollParent(ref.current) as HTMLElement, ref.current);
+      // If in a overlay, scrollIntoViewport will only cause scrolling
+      // up to the overlay scroll body to prevent overlay shifting.
+      // Also only scroll into view if the cell actually got focused.
+      // There are some cases where the cell might be disabled or inside,
+      // an inert container and we don't want to scroll then.
+      if (getInteractionModality() !== 'pointer' && document.activeElement === ref.current) {
+        scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
       }
     }
   }, [isFocused, ref]);
@@ -302,7 +298,7 @@ export function useCalendarCell(props: AriaCalendarCellProps, state: CalendarSta
     calendar: date.calendar.identifier
   });
 
-  let formattedDate = useMemo(() => cellDateFormatter.format(nativeDate), [cellDateFormatter, nativeDate]);
+  let formattedDate = useMemo(() => cellDateFormatter.formatToParts(nativeDate).find(part => part.type === 'day').value, [cellDateFormatter, nativeDate]);
 
   return {
     cellProps: {

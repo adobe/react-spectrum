@@ -128,6 +128,10 @@ export function dimensionValue(value: DimensionValue) {
     return value + 'px';
   }
 
+  if (!value) {
+    return undefined;
+  }
+
   if (UNIT_RE.test(value)) {
     return value;
   }
@@ -154,10 +158,18 @@ function colorValue(value: ColorValue, type: ColorType = 'default', version = 5)
 }
 
 function backgroundColorValue(value: BackgroundColorValue, version = 5) {
+  if (!value) {
+    return undefined;
+  }
+
   return `var(--spectrum-alias-background-color-${value}, ${colorValue(value as ColorValue, 'background', version)})`;
 }
 
 function borderColorValue(value: BorderColorValue, version = 5) {
+  if (!value)  {
+    return undefined;
+  }
+
   if (value === 'default') {
     return 'var(--spectrum-alias-border-color)';
   }
@@ -165,11 +177,17 @@ function borderColorValue(value: BorderColorValue, version = 5) {
   return `var(--spectrum-alias-border-color-${value}, ${colorValue(value as ColorValue, 'border', version)})`;
 }
 
-function borderSizeValue(value: BorderSizeValue) {
-  return `var(--spectrum-alias-border-size-${value})`;
+function borderSizeValue(value?: BorderSizeValue | null) {
+  return value && value !== 'none'
+    ? `var(--spectrum-alias-border-size-${value})`
+    : '0';
 }
 
 function borderRadiusValue(value: BorderRadiusValue) {
+  if (!value) {
+    return undefined;
+  }
+
   return `var(--spectrum-alias-border-radius-${value})`;
 }
 

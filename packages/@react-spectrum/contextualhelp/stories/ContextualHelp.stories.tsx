@@ -25,7 +25,6 @@ export default {
     },
     placement: {
       control: 'select',
-      defaultValue: 'bottom',
       options: [
         'bottom', 'bottom left', 'bottom right', 'bottom start', 'bottom end',
         'top', 'top left', 'top right', 'top start', 'top end',
@@ -42,25 +41,21 @@ export default {
     },
     offset: {
       control: 'number',
-      defaultValue: 0,
       min: -500,
       max: 500
     },
     crossOffset: {
       control: 'number',
-      defaultValue: 0,
       min: -500,
       max: 500
     },
     containerPadding: {
       control: 'number',
-      defaultValue: 0,
       min: -500,
       max: 500
     },
     shouldFlip: {
-      control: 'boolean',
-      defaultValue: true
+      control: 'boolean'
     },
     children: {
       table: {disable: true}

@@ -1,3 +1,4 @@
-{
-  "remove": "Remove"
+{  
+  "removeDescription": "Press Delete to remove tag.",
+  "removeButtonLabel": "Remove"
 }

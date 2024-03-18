@@ -16,23 +16,25 @@ import {Content, Header} from '@react-spectrum/view';
 import {ContextualHelp} from '@react-spectrum/contextualhelp';
 import {Form} from '../';
 import {Item, Picker} from '@react-spectrum/picker';
-import MatchMediaMock from 'jest-matchmedia-mock';
+import {pointerMap, render, triggerPress} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
-import {render, triggerPress} from '@react-spectrum/test-utils';
 import {TextField} from '@react-spectrum/textfield';
 import {theme} from '@react-spectrum/theme-default';
 import userEvent from '@testing-library/user-event';
 import {within} from '@testing-library/dom';
 
 describe('Form', function () {
-  let matchMedia;
+  let user;
+
   beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
     jest.useFakeTimers();
+    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 700);
   });
 
-  beforeEach(() => {
-    matchMedia = new MatchMediaMock();
+  afterAll(() => {
+    jest.clearAllMocks();
   });
 
   it('should render a form', () => {
@@ -89,7 +91,7 @@ describe('Form', function () {
     expect(label).toHaveTextContent('A text field ​(optional)');
   });
 
-  it('supports form attributes', () => {
+  it('supports form attributes', async () => {
     let onSubmit = jest.fn().mockImplementation(e => e.preventDefault());
     let {getByLabelText, getByRole} = render(
       <Provider theme={theme}>
@@ -113,7 +115,7 @@ describe('Form', function () {
     expect(form).toHaveAttribute('encType', 'text/plain');
     expect(form).toHaveAttribute('autoComplete', 'on');
     let submit = getByLabelText('Submit');
-    userEvent.click(submit);
+    await user.click(submit);
     expect(onSubmit).toHaveBeenCalled();
   });
 
@@ -198,9 +200,7 @@ describe('Form', function () {
       expect(form.elements['picker'].value).toEqual('one');
     });
 
-    it('contextual help should not be disabled nor should its dismiss button be disabled', () => {
-      matchMedia.useMediaQuery('(max-width: 700px)');
-
+    it('contextual help should not be disabled nor should its dismiss button be disabled', async () => {
       let {getByRole, getByLabelText} = render(
         <Provider theme={theme}>
           <Form aria-label="Test" isDisabled>
@@ -226,7 +226,7 @@ describe('Form', function () {
       triggerPress(button);
 
       let dialog = getByRole('dialog');
-      userEvent.tab();
+      await user.tab();
 
       let dismissButton = within(dialog).getByRole('button');
       expect(document.activeElement).toBe(dismissButton);

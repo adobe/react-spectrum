@@ -48,7 +48,7 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     visibleMonths = 1
   } = props;
   let {styleProps} = useStyleProps(props);
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/calendar');
   let {direction} = useLocale();
   let currentMonth = state.visibleRange.start;
   let monthDateFormatter = useDateFormatter({
@@ -136,12 +136,12 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
           onClick={() => state.focusNextPage()}
           tabIndex={-1} />
       </VisuallyHidden>
-      {state.validationState === 'invalid' &&
+      {state.isValueInvalid &&
         <HelpText
           showErrorIcon
           errorMessage={props.errorMessage || stringFormatter.format('invalidSelection', {selectedCount: 'highlightedRange' in state ? 2 : 1})}
           errorMessageProps={errorMessageProps}
-          validationState="invalid"
+          isInvalid
           // Intentionally a global class name so it can be targeted in DatePicker CSS...
           UNSAFE_className="spectrum-Calendar-helpText" />
       }

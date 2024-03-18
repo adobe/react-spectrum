@@ -45,7 +45,7 @@ export function List<T extends object>(props: ListProps<T>) {
   });
 
   return (
-    <ul ref={ref} {...listProps} >
+    <ul ref={ref} {...listProps} role="listbox" aria-label={props['aria-label'] ?? 'test listbox'}>
       {[...state.collection].map((item) => (
         <ListItem key={item.key} item={item} state={state} />
       ))}

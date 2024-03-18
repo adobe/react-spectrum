@@ -12,16 +12,15 @@
 
 import {announce} from '@react-aria/live-announcer';
 import {AriaButtonProps} from '@react-types/button';
-import {AriaLabelingProps, DOMAttributes} from '@react-types/shared';
+import {AriaLabelingProps, DOMAttributes, DOMProps} from '@react-types/shared';
 import {CalendarPropsBase} from '@react-types/calendar';
 import {CalendarState, RangeCalendarState} from '@react-stately/calendar';
-import {DOMProps} from '@react-types/shared';
 import {filterDOMProps, mergeProps, useLabels, useSlotId, useUpdateEffect} from '@react-aria/utils';
 import {hookData, useSelectedDateDescription, useVisibleRangeDescription} from './utils';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
-import {useRef} from 'react';
+import {useState} from 'react';
 
 export interface CalendarAria {
   /** Props for the calendar grouping element. */
@@ -37,7 +36,7 @@ export interface CalendarAria {
 }
 
 export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabelingProps, state: CalendarState | RangeCalendarState): CalendarAria {
-  let stringFormatter = useLocalizedStringFormatter(intlMessages);
+  let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/calendar');
   let domProps = filterDOMProps(props);
 
   let title = useVisibleRangeDescription(state.visibleRange.start, state.visibleRange.end, state.timeZone, false);
@@ -60,7 +59,7 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabeli
     // handle an update to the caption that describes the currently selected range, to announce the new value
   }, [selectedDateDescription]);
 
-  let errorMessageId = useSlotId([Boolean(props.errorMessage), props.validationState]);
+  let errorMessageId = useSlotId([Boolean(props.errorMessage), props.isInvalid, props.validationState]);
 
   // Pass the label to the child grid elements.
   hookData.set(state, {
@@ -71,17 +70,17 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabeli
   });
 
   // If the next or previous buttons become disabled while they are focused, move focus to the calendar body.
-  let nextFocused = useRef(false);
+  let [nextFocused, setNextFocused] = useState(false);
   let nextDisabled = props.isDisabled || state.isNextVisibleRangeInvalid();
-  if (nextDisabled && nextFocused.current) {
-    nextFocused.current = false;
+  if (nextDisabled && nextFocused) {
+    setNextFocused(false);
     state.setFocused(true);
   }
 
-  let previousFocused = useRef(false);
+  let [previousFocused, setPreviousFocused] = useState(false);
   let previousDisabled = props.isDisabled || state.isPreviousVisibleRangeInvalid();
-  if (previousDisabled && previousFocused.current) {
-    previousFocused.current = false;
+  if (previousDisabled && previousFocused) {
+    setPreviousFocused(false);
     state.setFocused(true);
   }
 
@@ -93,22 +92,20 @@ export function useCalendarBase(props: CalendarPropsBase & DOMProps & AriaLabeli
 
   return {
     calendarProps: mergeProps(domProps, labelProps, {
-      role: 'group',
+      role: 'application',
       'aria-describedby': props['aria-describedby'] || undefined
     }),
     nextButtonProps: {
       onPress: () => state.focusNextPage(),
       'aria-label': stringFormatter.format('next'),
       isDisabled: nextDisabled,
-      onFocus: () => nextFocused.current = true,
-      onBlur: () => nextFocused.current = false
+      onFocusChange: setNextFocused
     },
     prevButtonProps: {
       onPress: () => state.focusPreviousPage(),
       'aria-label': stringFormatter.format('previous'),
       isDisabled: previousDisabled,
-      onFocus: () => previousFocused.current = true,
-      onBlur: () => previousFocused.current = false
+      onFocusChange: setPreviousFocused
     },
     errorMessageProps: {
       id: errorMessageId

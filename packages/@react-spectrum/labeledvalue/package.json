@@ -1,13 +1,13 @@
 {
   "name": "@react-spectrum/labeledvalue",
-  "version": "3.0.1",
+  "version": "3.1.12",
   "description": "Spectrum UI components in React",
   "license": "Apache-2.0",
   "main": "dist/main.js",
-  "module": "dist/module.mjs",
+  "module": "dist/module.js",
   "exports": {
     "types": "./dist/types.d.ts",
-    "import": "./dist/module.mjs",
+    "import": "./dist/import.mjs",
     "require": "./dist/main.js"
   },
   "types": "dist/types.d.ts",
@@ -36,13 +36,13 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/date": "^3.0.1",
-    "@react-aria/i18n": "^3.6.2",
-    "@react-aria/utils": "^3.14.1",
-    "@react-spectrum/label": "^3.9.0",
-    "@react-spectrum/utils": "^3.8.0",
-    "@react-types/shared": "^3.16.0",
-    "@swc/helpers": "^0.4.14"
+    "@internationalized/date": "^3.5.2",
+    "@react-aria/i18n": "^3.10.2",
+    "@react-aria/utils": "^3.23.2",
+    "@react-spectrum/label": "^3.16.4",
+    "@react-spectrum/utils": "^3.11.5",
+    "@react-types/shared": "^3.22.1",
+    "@swc/helpers": "^0.5.0"
   },
   "devDependencies": {
     "@adobe/spectrum-css-temp": "3.0.0-alpha.1"

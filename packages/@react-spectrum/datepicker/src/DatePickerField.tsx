@@ -41,7 +41,8 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
     createCalendar
   });
 
-  let {fieldProps} = useDateField(props, state, ref);
+  let inputRef = useRef();
+  let {fieldProps, inputProps} = useDateField({...props, inputRef}, state, ref);
 
   return (
     <div {...fieldProps} data-testid={props['data-testid']} className={classNames(datepickerStyles, 'react-spectrum-Datepicker-segments', inputClassName)} ref={ref}>
@@ -54,6 +55,7 @@ export function DatePickerField<T extends DateValue>(props: DatePickerFieldProps
           isReadOnly={isReadOnly}
           isRequired={isRequired} />)
       )}
+      <input {...inputProps} ref={inputRef} />
     </div>
   );
 }

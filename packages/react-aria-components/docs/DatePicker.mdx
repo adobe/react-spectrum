@@ -1,0 +1,1196 @@
+{/* Copyright 2020 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import i18nDocs from 'docs:@internationalized/date';
+import statelyDocs from 'docs:@react-stately/datepicker';
+import {PropTable, HeaderInfo, TypeLink, PageDescription, StateTable, ContextTable} from '@react-spectrum/docs';
+import styles from '@react-spectrum/docs/src/docs.css';
+import packageData from 'react-aria-components/package.json';
+import Anatomy from '@react-aria/datepicker/docs/datepicker-anatomy.svg';
+import ChevronRight from '@spectrum-icons/workflow/ChevronRight';
+import {Divider} from '@react-spectrum/divider';
+import {ExampleCard} from '@react-spectrum/docs/src/ExampleCard';
+import {ExampleList} from '@react-spectrum/docs/src/ExampleList';
+import Button from '@react-spectrum/docs/pages/assets/component-illustrations/ActionButton.svg';
+import Label from '@react-spectrum/docs/pages/assets/component-illustrations/Label.svg';
+import Popover from '@react-spectrum/docs/pages/assets/component-illustrations/Popover.svg';
+import DateField from '@react-spectrum/docs/pages/assets/component-illustrations/DateField.svg';
+import Calendar from '@react-spectrum/docs/pages/assets/component-illustrations/Calendar.svg';
+import Dialog from '@react-spectrum/docs/pages/assets/component-illustrations/Dialog.svg';
+import Form from '@react-spectrum/docs/pages/assets/component-illustrations/Form.svg';
+import InternationalizedDate from '@react-spectrum/docs/pages/assets/component-illustrations/InternationalizedDate.svg';
+import {StarterKits} from '@react-spectrum/docs/src/StarterKits';
+
+---
+category: Date and Time
+keywords: [input, form, field, date, time]
+type: component
+---
+
+# DatePicker
+
+<PageDescription>{docs.exports.DatePicker.description}</PageDescription>
+
+<HeaderInfo
+  packageData={packageData}
+  componentNames={['DatePicker']} />
+
+## Example
+
+```tsx example
+import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, CalendarCell, Button, Heading, DateInput, DateSegment} from 'react-aria-components';
+
+<DatePicker>
+  <Label>Date</Label>
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button>▼</Button>
+  </Group>
+  <Popover>
+    <Dialog>
+      <Calendar>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </Calendar>
+    </Dialog>
+  </Popover>
+</DatePicker>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+```css hidden
+@import './Button.mdx' layer(button);
+@import './Popover.mdx' layer(popover);
+@import './Dialog.mdx' layer(dialog);
+@import './DateField.mdx' layer(datefield);
+@import './Calendar.mdx' layer(calendar);
+@import './Form.mdx' layer(form);
+```
+
+```css
+@import "@react-aria/example-theme";
+
+.react-aria-DatePicker {
+  color: var(--text-color);
+
+  .react-aria-Group {
+    display: flex;
+    width: fit-content;
+    align-items: center;
+  }
+
+  .react-aria-Button {
+    background: var(--highlight-background);
+    color: var(--highlight-foreground);
+    border: 2px solid var(--field-background);
+    forced-color-adjust: none;
+    border-radius: 4px;
+    border: none;
+    margin-left: -1.929rem;
+    width: 1.429rem;
+    height: 1.429rem;
+    padding: 0;
+    font-size: 0.857rem;
+    box-sizing: content-box;
+
+    &[data-pressed] {
+      box-shadow: none;
+      background: var(--highlight-background);
+    }
+
+    &[data-focus-visible] {
+      outline: 2px solid var(--focus-ring-color);
+      outline-offset: 2px;
+    }
+  }
+
+  .react-aria-DateInput {
+    padding: 4px 2.5rem 4px 8px;
+  }
+}
+
+.react-aria-Popover[data-trigger=DatePicker] {
+  max-width: unset;
+}
+```
+
+</details>
+
+## Features
+
+A date picker can be built using `<input type="date">`, but this is very limited in functionality, lacking in internationalization capabilities, inconsistent between browsers, and difficult to style. `DatePicker` helps achieve accessible and international date and time pickers that can be styled as needed.
+
+* **Dates and times** – Support for dates and times with configurable granularity.
+* **International** – Support for 13 calendar systems used around the world, including Gregorian, Buddhist, Islamic, Persian, and more. Locale-specific formatting, number systems, hour cycles, and right-to-left support are available as well.
+* **Time zone aware** – Dates and times can optionally include a time zone. All modifications follow time zone rules such as daylight saving time.
+* **Accessible** – Each date and time unit is displayed as an individually focusable and editable segment, which allows users an easy way to edit dates using the keyboard, in any date format and locale. Users can also open a calendar popover to select dates in a standard month grid. Localized screen reader messages are included to announce when the selection and visible date range change.
+* **Touch friendly** – Date segments are editable using an easy to use numeric keypad, and all interactions are accessible using touch-based screen readers.
+* **Validation** – Integrates with HTML forms, supporting required, minimum and maximum values, unavailable dates, custom validation functions, realtime validation, and server-side validation errors.
+* **Customizable** – As with all of React Aria, the DOM structure and styling of all elements can be fully customized.
+
+Read our [blog post](../blog/date-and-time-pickers-for-all.html) for more details about the internationalization, accessibility, and user experience features implemented by `DatePicker`.
+
+## Anatomy
+
+<Anatomy />
+
+A date picker consists of a label, and group containing a [date field](DateField.html) and a button. Clicking the button opens a popup containing a [calendar](Calendar.html). The date field includes segments representing each unit of a date and time (e.g. years, months, days, etc.), each of which is individually focusable and editable using the keyboard. The calendar popup offers a more visual way of choosing a date.
+
+`DatePicker` also supports optional description and error message elements, which can be used to provide more context about the field, and any validation messages. These are linked with the input via the `aria-describedby` attribute.
+
+```tsx
+import {DatePicker, Label, Group, Popover, Dialog, Calendar, CalendarGrid, CalendarGridHeader, CalendarHeaderCell, CalendarGridBody, CalendarCell, Button, Heading, DateInput, DateSegment, Text, FieldError} from 'react-aria-components';
+
+<DatePicker>
+  <Label />
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button />
+  </Group>
+  <Text slot="description" />
+  <FieldError />
+  <Popover>
+    <Dialog>
+      <Calendar>
+        <Button slot="previous" />
+        <Heading />
+        <Button slot="next" />
+        <CalendarGrid>
+          <CalendarGridHeader>
+            {day => <CalendarHeaderCell />}
+          </CalendarGridHeader>
+          <CalendarGridBody>
+            {date => <CalendarCell date={date} />}
+          </CalendarGridBody>
+        </CalendarGrid>
+        <Text slot="errorMessage" />
+      </Calendar>
+    </Dialog>
+  </Popover>
+</DatePicker>
+```
+
+If the date picker does not have a visible label, an `aria-label` or `aria-labelledby` prop must be passed instead to identify it to assistive technology.
+
+Note that most of this anatomy is shared with [DateRangePicker](DateRangePicker.html), so you can reuse many components between them if you have both.
+
+### Concepts
+
+`DatePicker` makes use of the following concepts:
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="../internationalized/date/index.html"
+  title="@internationalized/date"
+  description="Represent and manipulate dates and times in a locale-aware manner.">
+  <InternationalizedDate />
+</ExampleCard>
+
+<ExampleCard
+  url="forms.html"
+  title="Forms"
+  description="Validating and submitting form data, and integrating with form libraries.">
+  <Form />
+</ExampleCard>
+
+</section>
+
+### Composed components
+
+A `DatePicker` uses the following components, which may also be used standalone or reused in other components.
+
+<section className={styles.cardGroup} data-size="small">
+
+<ExampleCard
+  url="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/label"
+  title="Label"
+  description="A label provides context for an input element.">
+  <Label />
+</ExampleCard>
+
+<ExampleCard
+  url="DateField.html"
+  title="DateField"
+  description="A date field allows a user to enter and edit date values using a keyboard.">
+  <DateField />
+</ExampleCard>
+
+<ExampleCard
+  url="Button.html"
+  title="Button"
+  description="A button allows a user to perform an action.">
+  <Button />
+</ExampleCard>
+
+<ExampleCard
+  url="Popover.html"
+  title="Popover"
+  description="A popover displays content in context with a trigger element.">
+  <Popover />
+</ExampleCard>
+
+<ExampleCard
+  url="Dialog.html"
+  title="Dialog"
+  description="A dialog is an overlay shown above other content in an application.">
+  <Dialog />
+</ExampleCard>
+
+<ExampleCard
+  url="Calendar.html"
+  title="Calendar"
+  description="A calendar allows a user to select a single date from a date grid.">
+  <Calendar />
+</ExampleCard>
+
+</section>
+
+## Examples
+
+<ExampleList tag="datepicker" />
+
+## Starter kits
+
+To help kick-start your project, we offer starter kits that include example implementations of all React Aria components with various styling solutions. All components are fully styled, including support for dark mode, high contrast mode, and all UI states. Each starter comes with a pre-configured [Storybook](https://storybook.js.org/) that you can experiment with, or use as a starting point for your own component library.
+
+<StarterKits component="datepicker" />
+
+## Reusable wrappers
+
+If you will use a DatePicker in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
+
+This example wraps `DatePicker` and all of its children together into a single component which accepts a `label` prop, which is passed to the right place. It also shows how to use the `description` slot to render [help text](#description), and `FieldError` component to render [validation errors](#validation).
+
+```tsx example export=true
+import type {DatePickerProps, DateValue, ValidationResult} from 'react-aria-components';
+import {Text, FieldError} from 'react-aria-components';
+
+interface MyDatePickerProps<T extends DateValue> extends DatePickerProps<T> {
+  label?: string,
+  description?: string,
+  errorMessage?: string | ((validation: ValidationResult) => string)
+}
+
+function MyDatePicker<T extends DateValue>({label, description, errorMessage, ...props}: MyDatePickerProps<T>) {
+  return (
+    <DatePicker {...props}>
+      <Label>{label}</Label>
+      <Group>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+        <Button>▼</Button>
+      </Group>
+      {description && <Text slot="description">{description}</Text>}
+      <FieldError>{errorMessage}</FieldError>
+      <Popover>
+        <Dialog>
+          <Calendar>
+            <header>
+              <Button slot="previous">◀</Button>
+              <Heading />
+              <Button slot="next">▶</Button>
+            </header>
+            <CalendarGrid>
+              {date => <CalendarCell date={date} />}
+            </CalendarGrid>
+          </Calendar>
+        </Dialog>
+      </Popover>
+    </DatePicker>
+
+  );
+}
+
+<MyDatePicker label="Event date" />
+```
+
+## Value
+
+A `DatePicker` displays a placeholder by default. An initial, uncontrolled value can be provided to the `DatePicker` using the `defaultValue` prop. Alternatively, a controlled value can be provided using the `value` prop.
+
+Date values are provided using objects in the [@internationalized/date](../internationalized/date/) package. This library handles correct international date manipulation across calendars, time zones, and other localization concerns. `DatePicker` supports values of the following types:
+
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDate} /> – a date without any time components. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDate} /> function. Use this type to represent dates where the time is not important, such as a birthday or an all day calendar event.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.CalendarDateTime} /> – a date with a time, but not in any specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseDateTime} /> function. Use this type to represent times that occur at the same local time regardless of the time zone, such as the time of New Years Eve fireworks which always occur at midnight. Most times are better stored as a `ZonedDateTime`.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> – a date with a time in a specific time zone. May be parsed from a string representation using the <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} />, <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} />, or <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> functions. Use this type to represent an exact moment in time at a particular location on Earth.
+
+```tsx example
+import {parseDate} from '@internationalized/date';
+
+function Example() {
+  let [value, setValue] = React.useState(parseDate('2020-02-03'));
+
+  return (
+    <>
+      <MyDatePicker
+        label="Date (uncontrolled)"
+        defaultValue={parseDate('2020-02-03')} />
+      <MyDatePicker
+        label="Date (controlled)"
+        value={value}
+        onChange={setValue} />
+    </>
+  );
+}
+```
+
+
+### Time zones
+
+`DatePicker` is time zone aware when a <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> object is provided as the value. In this case, the time zone abbreviation is displayed, and time zone concerns such as daylight saving time are taken into account when the value is manipulated.
+
+In most cases, your data will come from and be sent to a server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string. [@internationalized/date](../internationalized/date/) includes functions for parsing strings in multiple formats into <TypeLink links={i18nDocs.links} type={i18nDocs.exports.ZonedDateTime} /> objects. Which format you use will depend on what information you need to store.
+
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseZonedDateTime} /> – This function parses a date with an explicit time zone and optional UTC offset attached (e.g. `"2021-11-07T00:45[America/Los_Angeles]"` or `"2021-11-07T00:45-07:00[America/Los_Angeles]"`). This format preserves the maximum amount of information. If the exact local time and time zone that a user selected is important, use this format. Storing the time zone and offset that was selected rather than converting to UTC ensures that the local time is correct regardless of daylight saving rule changes (e.g. if a locale abolishes DST). Examples where this applies include calendar events, reminders, and other times that occur in a particular location.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsolute} /> – This function parses an absolute date and time that occurs at the same instant at all locations on Earth. It can be represented in UTC (e.g. `"2021-11-07T07:45:00Z"`), or stored with a particular offset (e.g. `"2021-11-07T07:45:00-07:00"`). A time zone identifier, e.g. `America/Los_Angeles`, must be passed, and the result will be converted into that time zone. Absolute times are the best way to represent events that occurred in the past, or future events where an exact time is needed, regardless of time zone.
+* <TypeLink links={i18nDocs.links} type={i18nDocs.exports.parseAbsoluteToLocal} /> – This function parses an absolute date and time into the current user's local time zone. It is a shortcut for `parseAbsolute`, and accepts the same formats.
+
+```tsx example
+import {parseZonedDateTime} from '@internationalized/date';
+
+<MyDatePicker
+  label="Event date"
+  defaultValue={parseZonedDateTime('2022-11-07T00:45[America/Los_Angeles]')} />
+```
+
+`DatePicker` displays times in the time zone included in the `ZonedDateTime` object. The above example is always displayed in Pacific Standard Time because the `America/Los_Angeles` time zone identifier is provided. [@internationalized/date](../internationalized/date/) includes functions for converting dates between time zones, or parsing a date directly into a specific time zone or the user's local time zone, as shown below.
+
+```tsx example
+import {parseAbsoluteToLocal} from '@internationalized/date';
+
+<MyDatePicker
+  label="Event date"
+  defaultValue={parseAbsoluteToLocal('2021-11-07T07:45:00Z')}
+/>
+```
+
+### Granularity
+
+The `granularity` prop allows you to control the smallest unit that is displayed by `DatePicker`. By default, `CalendarDate` values are displayed with `"day"` granularity (year, month, and day), and `CalendarDateTime` and `ZonedDateTime` values are displayed with `"minute"` granularity. More granular time values can be displayed by setting the `granularity` prop to `"second"`.
+
+In addition, when a value with a time is provided but you wish to only display the date, you can set the granularity to `"day"`. This has no effect on the actual value (it still has a time component), only on what fields are displayed. In the following example, two DatePickers are synchronized with the same value, but display different granularities.
+
+```tsx example
+function Example() {
+  let [date, setDate] = React.useState(parseAbsoluteToLocal('2021-04-07T18:45:22Z'));
+
+  return (
+    <>
+      <MyDatePicker
+        label="Date and time"
+        /*- begin highlight -*/
+        granularity="second"
+        /*- end highlight -*/
+        value={date}
+        onChange={setDate} />
+      <MyDatePicker
+        label="Date"
+        /*- begin highlight -*/
+        granularity="day"
+        /*- end highlight -*/
+        value={date}
+        onChange={setDate} />
+    </>
+  );
+}
+```
+
+If no `value` or `defaultValue` prop is passed, then the `granularity` prop also affects which type of value is emitted from the `onChange` event. Note that by default, time values will not have a time zone because none was supplied. You can override this by setting the `placeholderValue` prop explicitly. Values emitted from `onChange` will use the time zone of the placeholder value.
+
+```tsx example
+import {now} from '@internationalized/date';
+
+<MyDatePicker
+  label="Event date"
+  granularity="second" />
+<MyDatePicker
+  label="Event date"
+  placeholderValue={now('America/New_York')}
+  granularity="second" />
+```
+
+### International calendars
+
+`DatePicker` supports selecting dates in many calendar systems used around the world, including Gregorian, Hebrew, Indian, Islamic, Buddhist, and more. Dates are automatically displayed in the appropriate calendar system for the user's locale. The calendar system can be overridden using the [Unicode calendar locale extension](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Locale/calendar#adding_a_calendar_in_the_locale_string), passed to the [I18nProvider](I18nProvider.html) component.
+
+Selected dates passed to `onChange` always use the same calendar system as the `value` or `defaultValue` prop. If no `value` or `defaultValue` is provided, then dates passed to `onChange` are always in the Gregorian calendar since this is the most commonly used. This means that even though the user selects dates in their local calendar system, applications are able to deal with dates from all users consistently.
+
+The below example displays a `DatePicker` in the Hindi language, using the Indian calendar. Dates emitted from `onChange` are in the Gregorian calendar.
+
+```tsx example
+import {I18nProvider} from '@react-aria/i18n';
+
+function Example() {
+  let [date, setDate] = React.useState<DateValue | null>(null);
+  return (
+    /*- begin highlight -*/
+    <I18nProvider locale="hi-IN-u-ca-indian">
+    {/*- end highlight -*/}
+      <MyDatePicker label="Date" value={date} onChange={setDate} />
+      <p>Selected date: {date?.toString()}</p>
+    </I18nProvider>
+  );
+}
+```
+
+### HTML forms
+
+DatePicker supports the `name` prop for integration with HTML forms. The value will be submitted to the server as an [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) formatted string according to the granularity of the value. For example, if the date picker allows selecting only a date then a string such as `"2023-02-03"` will be submitted, and if it allows selecting a time then a string such as `"2023-02-03T08:45:00"` will be submitted. See the [Value](#value) section above for more details about the supported value types.
+
+```tsx example
+<MyDatePicker label="Birth date" name="birthday" />
+```
+
+## Events
+
+`DatePicker` accepts an `onChange` prop which is triggered whenever the date is edited by the user. The example below uses `onChange` to update a separate element with a formatted version of the date in the user's locale and local time zone. This is done by converting the date to a native JavaScript `Date` object to pass to the formatter.
+
+```tsx example
+import {getLocalTimeZone} from '@internationalized/date';
+import {useDateFormatter} from '@react-aria/i18n';
+
+function Example() {
+  let [date, setDate] = React.useState(parseDate('1985-07-03'));
+  let formatter = useDateFormatter({dateStyle: 'full'});
+
+  return (
+    <>
+      <MyDatePicker label="Birth date" value={date} onChange={setDate} />
+      <p>Selected date: {date ? formatter.format(date.toDate(getLocalTimeZone())) : '--'}</p>
+    </>
+  );
+}
+```
+
+## Validation
+
+DatePicker supports the `isRequired` prop to ensure the user enters a value, as well as minimum and maximum values, and custom client and server-side validation. It can also be integrated with other form libraries. See the [Forms](forms.html) guide to learn more.
+
+To display validation errors, add a `<FieldError>` element as a child of the DatePicker. This allows you to render error messages from all of the above sources with consistent custom styles.
+
+```tsx example
+import {Form, FieldError} from 'react-aria-components';
+
+<Form>
+  {/*- begin highlight -*/}
+  <DatePicker name="date" isRequired>
+  {/*- end highlight -*/}
+    <Label>Appointment date</Label>
+    <Group>
+      <DateInput>
+        {segment => <DateSegment segment={segment} />}
+      </DateInput>
+      <Button>▼</Button>
+    </Group>
+    {/*- begin highlight -*/}
+    <FieldError />
+    {/*- end highlight -*/}
+    <Popover>
+      <Dialog>
+        <Calendar>
+          <header>
+            <Button slot="previous">◀</Button>
+            <Heading />
+            <Button slot="next">▶</Button>
+          </header>
+          <CalendarGrid>
+            {date => <CalendarCell date={date} />}
+          </CalendarGrid>
+        </Calendar>
+      </Dialog>
+    </Popover>
+  </DatePicker>
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-DatePicker {
+  &[data-invalid] {
+    .react-aria-DateInput:after {
+      content: '🚫' / '';
+      content: '🚫';
+      alt: ' ';
+      flex: 1;
+      text-align: end;
+    }
+  }
+
+  .react-aria-FieldError {
+    font-size: 12px;
+    color: var(--invalid-color);
+  }
+}
+  ```
+
+</details>
+
+By default, `FieldError` displays default validation messages provided by the browser. See [Customizing error messages](forms.html#customizing-error-messages) in the Forms guide to learn how to provide your own custom errors.
+
+### Minimum and maximum values
+
+The `minValue` and `maxValue` props can also be used to ensure the value is within a specific range. This example only accepts dates after today.
+
+```tsx example
+import {today} from '@internationalized/date';
+
+<Form>
+  <MyDatePicker
+    label="Appointment date"
+    /*- begin highlight -*/
+    minValue={today(getLocalTimeZone())}
+    /*- end highlight -*/
+    defaultValue={parseDate('2022-02-03')} />
+  <Button type="submit">Submit</Button>
+</Form>
+```
+
+### Unavailable dates
+
+`DatePicker` supports marking certain dates as _unavailable_. These dates remain focusable with the keyboard in the calendar so that navigation is consistent, but cannot be selected by the user. When an unavailable date is entered into the date field, it is marked as invalid. The `isDateUnavailable` prop accepts a callback that is called to evaluate whether each visible date is unavailable.
+
+This example includes multiple unavailable date ranges, e.g. dates when no appointments are available. In addition, all weekends are unavailable. The `minValue` prop is also used to prevent selecting dates before today.
+
+```tsx example
+import {today, isWeekend} from '@internationalized/date';
+import {useLocale} from '@react-aria/i18n';
+
+function Example() {
+  let now = today(getLocalTimeZone());
+  let disabledRanges = [
+    [now, now.add({days: 5})],
+    [now.add({days: 14}), now.add({days: 16})],
+    [now.add({days: 23}), now.add({days: 24})],
+  ];
+
+  let {locale} = useLocale();
+  let isDateUnavailable = (date: DateValue) => isWeekend(date, locale) || disabledRanges.some((interval) => date.compare(interval[0]) >= 0 && date.compare(interval[1]) <= 0);
+
+  return (
+    <MyDatePicker
+      label="Appointment date"
+      minValue={today(getLocalTimeZone())}
+      /*- begin highlight -*/
+      isDateUnavailable={isDateUnavailable}
+      /*- end highlight -*/
+    />
+  );
+}
+```
+
+### Custom validation
+
+The `validate` function can be used to perform custom validation logic. It receives the current date value, and should return a string or array of strings representing one or more error messages if the value is invalid.
+
+This example validates that the selected date is a weekday and not a weekend according to the current locale.
+
+```tsx example
+import {isWeekend} from '@internationalized/date';
+import {useLocale} from 'react-aria';
+
+function Example() {
+  let {locale} = useLocale();
+
+  return (
+    <Form>
+      <MyDatePicker
+        label="Appointment date"
+        /*- begin highlight -*/
+        validate={date => date && isWeekend(date, locale) ? 'We are closed on weekends.' : null}
+        /*- end highlight -*/
+        defaultValue={parseDate('2023-10-28')} />
+      <Button type="submit">Submit</Button>
+    </Form>
+  );
+}
+```
+
+### Description
+
+The `description` slot can be used to associate additional help text with a date picker.
+
+```tsx example
+<DatePicker granularity="hour">
+  <Label>Appointment time</Label>
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    <Button>▼</Button>
+  </Group>
+  {/*- begin highlight -*/}
+  <Text slot="description">Please select a weekday between 9 AM and 5 PM.</Text>
+  {/*- end highlight -*/}
+  <Popover>
+    <Dialog>
+      <Calendar>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </Calendar>
+    </Dialog>
+  </Popover>
+</DatePicker>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.react-aria-DatePicker {
+  [slot=description] {
+    font-size: 12px;
+  }
+}
+```
+
+</details>
+
+## Format options
+
+### Placeholder value
+
+When no value is set, a placeholder is shown. The format of the placeholder is influenced by the `granularity` and `placeholderValue` props. `placeholderValue` also controls the default values of each segment when the user first interacts with them, e.g. using the up and down arrow keys, as well as the default month shown in the calendar popover. By default, the `placeholderValue` is the current date at midnight, but you can set it to a more appropriate value if needed.
+
+```tsx example
+import {CalendarDate} from '@internationalized/date';
+
+<MyDatePicker label="Birth date" placeholderValue={new CalendarDate(1980, 1, 1)} />
+```
+
+### Hide time zone
+
+When a `ZonedDateTime` object is provided as the value to `DatePicker`, the time zone abbreviation is displayed by default. However, if this is displayed elsewhere or implicit based on the usecase, it can be hidden using the `hideTimeZone` option.
+
+```tsx example
+<MyDatePicker
+  label="Appointment time"
+  defaultValue={parseZonedDateTime('2022-11-07T10:45[America/Los_Angeles]')}
+  hideTimeZone />
+```
+
+### Hour cycle
+
+By default, `DatePicker` displays times in either 12 or 24 hour hour format depending on the user's locale. However, this can be overridden using the `hourCycle` prop if needed for a specific usecase. This example forces `DatePicker` to use 24-hour time, regardless of the locale.
+
+```tsx example
+<MyDatePicker
+  label="Appointment time"
+  granularity="minute"
+  hourCycle={24} />
+```
+
+## Props
+
+### DatePicker
+
+<PropTable component={docs.exports.DatePicker} links={docs.links} />
+
+### Label
+
+A `<Label>` accepts all HTML attributes.
+
+### Group
+
+A `<Group>` accepts all HTML attributes.
+
+### DateInput
+
+The `<DateInput>` component renders a group of date segments. It accepts a function as its `children`, which is called to render a `<DateSegment>` for each segment.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.DateInput} links={docs.links} />
+
+</details>
+
+### DateSegment
+
+The `<DateSegment>` component renders an individual segment.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.DateSegment} links={docs.links} />
+
+</details>
+
+### Button
+
+A `<Button>` accepts its contents as `children`. Other props such as `onPress` and `isDisabled` will be set by the `DatePicker` or `Calendar`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Button} links={docs.links} />
+
+</details>
+
+### FieldError
+
+A `<FieldError>` displays validation errors.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.FieldError} links={docs.links} />
+
+</details>
+
+### Popover
+
+A `<Popover>` is an overlay to hold the `<Calendar>`, positioned relative to the `<Group>`. By default, it has a `placement` of `bottom start` within a `<DatePicker>`, but this and other positioning properties may be customized.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Popover} links={docs.links} />
+
+</details>
+
+### Dialog
+
+A `<Dialog>` is placed within a `<Popover>` to hold the `<Calendar>` for a DatePicker.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Dialog} links={docs.links} />
+
+</details>
+
+### Calendar
+
+A `<Calendar>` accepts one or more month grids as children, along with previous and next buttons to navigate forward and backward.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.Calendar} links={docs.links} />
+
+</details>
+
+### CalendarGrid
+
+A `<CalendarGrid>` renders an individual month within a `<Calendar>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date. This renders a default `<CalendarGridHeader>`, which displays the weekday names in the column headers. This can be customized by providing a `<CalendarGridHeader>` and `<CalendarGridBody>` as children instead of a function.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGrid} links={docs.links} />
+
+</details>
+
+### CalendarGridHeader
+
+A `<CalendarGridHeader>` renders the header within a `<CalendarGrid>`, displaying a list of weekday names. It accepts a function as its `children`, which is called with a day name abbreviation to render a `<CalendarHeaderCell>` for each column header.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGridHeader} links={docs.links} />
+
+</details>
+
+### CalendarHeaderCell
+
+A `<CalendarHeaderCell>` renders a column header within a `<CalendarGridHeader>`. It typically displays a weekday name.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarHeaderCell} links={docs.links} />
+
+</details>
+
+### CalendarGridBody
+
+A `<CalendarGridBody>` renders the body within a `<CalendarGrid>`. It accepts a function as its `children`, which is called to render a `<CalendarCell>` for each date.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarGridBody} links={docs.links} />
+
+</details>
+
+### CalendarCell
+
+A `<CalendarCell>` renders an individual date within a `<CalendarGrid>`.
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show props</summary>
+
+<PropTable component={docs.exports.CalendarCell} links={docs.links} />
+
+</details>
+
+## Styling
+
+React Aria components can be styled in many ways, including using CSS classes, inline styles, utility classes (e.g. Tailwind), CSS-in-JS (e.g. Styled Components), etc. By default, all components include a builtin `className` attribute which can be targeted using CSS selectors. These follow the `react-aria-ComponentName` naming convention.
+
+```css
+.react-aria-DatePicker {
+  /* ... */
+}
+```
+
+A custom `className` can also be specified on any component. This overrides the default `className` provided by React Aria with your own.
+
+```jsx
+<DateInput className="my-date-input">
+  {/* ... */}
+</DateInput>
+```
+
+In addition, some components support multiple UI states (e.g. focused, placeholder, readonly, etc.). React Aria components expose states using data attributes, which you can target in CSS selectors. For example:
+
+```css
+.react-aria-DateSegment[data-placeholder] {
+  /* ... */
+}
+
+.react-aria-DateSegment[data-readonly] {
+  /* ... */
+}
+```
+
+The `className` and `style` props also accept functions which receive states for styling. This lets you dynamically determine the classes or styles to apply, which is useful when using utility CSS libraries like [Tailwind](https://tailwindcss.com/).
+
+```jsx
+<DateSegment className={({isPlaceholder}) => isPlaceholder ? 'bg-gray-300' : 'bg-gray-600'} />
+```
+
+Render props may also be used as children to alter what elements are rendered based on the current state. For example, you could render the placeholder as a separate element to always reserve space for it.
+
+```jsx
+<DateSegment>
+  {({text, placeholder, isPlaceholder}) => (
+    <>
+      <span style={{visibility: isPlaceholder ? 'visible' : 'hidden'}}>{placeholder}</span>
+      {isPlaceholder ? '' : text}
+    </>
+  )}
+</DateSegment>
+```
+
+The states, selectors, and render props for each component used in a `DatePicker` are documented below.
+
+### DatePicker
+
+A `DatePicker` can be targeted with the `.react-aria-DatePicker` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.DatePickerRenderProps.properties} />
+
+### Label
+
+A `Label` can be targeted with the `.react-aria-Label` CSS selector, or by overriding with a custom `className`.
+
+### Group
+
+A `Group` can be targeted with the `.react-aria-Group` selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.GroupRenderProps.properties} />
+
+### DateInput
+
+A `DateInput` can be targeted with the `.react-aria-DateInput` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.DateInputRenderProps.properties} />
+
+### DateSegment
+
+A `DateSegment` can be targeted with the `.react-aria-DateSegment` CSS selector, or by overriding with a custom `className`. It supports the following states and render props:
+
+<StateTable properties={docs.exports.DateSegmentRenderProps.properties} />
+
+### Button
+
+A [Button](Button.html) can be targeted with the `.react-aria-Button` CSS selector, or by overriding with a custom `className`. The next and previous buttons within a calendar can be targeted specifically with the `[slot=previous]` and `[slot=next]` selectors. Buttons support the following states:
+
+<StateTable properties={docs.exports.ButtonRenderProps.properties} />
+
+### FieldError
+
+A `FieldError` can be targeted with the `.react-aria-FieldError` CSS selector, or by overriding with a custom `className`. It supports the following render props:
+
+<StateTable properties={docs.exports.FieldErrorRenderProps.properties} />
+
+### Popover
+
+The [Popover](Popover.html) component can be targeted with the `.react-aria-Popover` CSS selector, or by overriding with a custom `className`. Note that it renders in a [React Portal](https://reactjs.org/docs/portals.html), so it will not appear as a descendant of the DatePicker in the DOM. It supports the following states and render props:
+
+<StateTable properties={docs.exports.PopoverRenderProps.properties} />
+
+Within a DatePicker, the popover will have the `data-trigger="DatePicker"` attribute, which can be used to define date picker-specific styles. In addition, the `--trigger-width` CSS custom property will be set on the popover, which you can use to make the popover match the width of the input group.
+
+```css render=false
+.react-aria-Popover[data-trigger=DatePicker] {
+  width: var(--trigger-width);
+}
+```
+
+### Dialog
+
+A [Dialog](Dialog.html) can be targeted with the `.react-aria-Dialog` CSS selector, or by overriding with a custom `className`.
+
+### Calendar
+
+A [Calendar](Calendar.html) can be targeted with the `.react-aria-Calendar` CSS selector, or by overriding with a custom `className`.
+
+### CalendarGrid
+
+A `CalendarGrid` can be targeted with the `.react-aria-CalendarGrid` CSS selector, or by overriding with a custom `className`. When a function is provided as children, a default `<CalendarGridHeader>` and `<CalendarGridBody>` are rendered. If you need to customize the styling of the header cells, you can render them yourself. See the [Calendar](Calendar.html#calendargrid-1) docs for an example.
+
+### CalendarGridHeader
+
+A `CalendarGridHeader` can be targeted with the `.react-aria-CalendarGridHeader` CSS selector, or by overriding with a custom `className`.
+
+### CalendarHeaderCell
+
+A `CalendarHeaderCell` can be targeted with the `.react-aria-CalendarHeaderCell` CSS selector, or by overriding with a custom `className`.
+
+### CalendarGridBody
+
+A `CalendarGridBody` can be targeted with the `.react-aria-CalendarGridBody` CSS selector, or by overriding with a custom `className`.
+
+### CalendarCell
+
+A `CalendarCell` can be targeted with the `.react-aria-CalendarCell` CSS selector, or by overriding with a custom `className`. It supports the following states:
+
+<StateTable properties={docs.exports.CalendarCellRenderProps.properties} />
+
+### Text
+
+The help text elements within a `DatePicker` can be targeted with the `[slot=description]` and `[slot=errorMessage]` CSS selectors, or by adding a custom `className`.
+
+## Advanced customization
+
+### Composition
+
+If you need to customize one of the components within a `DatePicker`, such as `Label` or `DateSegment`, in many cases you can create a wrapper component. This lets you customize the props passed to the component.
+
+```tsx
+function MyDateSegment(props) {
+  return <MyDateSegment {...props} className="my-date-segment" />
+}
+```
+
+### Contexts
+
+All React Aria Components export a corresponding context that can be used to send props to them from a parent element. This enables you to build your own compositional APIs similar to those found in React Aria Components itself. You can send any prop or ref via context that you could pass to the corresponding component. The local props and ref on the component are merged with the ones passed via context, with the local props taking precedence (following the rules documented in [mergeProps](mergeProps.html)).
+
+<ContextTable components={['DatePicker']} docs={docs} />
+
+This example shows a `FieldGroup` component that renders a group of date pickers with a title and optional error message. It uses the [useId](useId.html) hook to generate a unique id for the error message. All of the child DatePickers are marked invalid and associated with the error message via the `aria-describedby` attribute passed to the `DatePickerContext` provider.
+
+```tsx example
+import {DatePickerContext} from 'react-aria-components';
+import {useId} from 'react-aria';
+
+interface FieldGroupProps {
+  title?: string,
+  children?: React.ReactNode,
+  errorMessage?: string
+}
+
+function FieldGroup({title, children, errorMessage}: FieldGroupProps) {
+  let errorId = useId();
+  return (
+    <fieldset>
+      <legend>{title}</legend>
+      {/*- begin highlight -*/}
+      <DatePickerContext.Provider value={{
+        isInvalid: !!errorMessage,
+        'aria-describedby': errorMessage ? errorId : undefined
+      }}>
+      {/*- end highlight -*/}
+        {children}
+      </DatePickerContext.Provider>
+      {errorMessage && <small id={errorId} className="invalid">{errorMessage}</small>}
+    </fieldset>
+  );
+}
+
+<FieldGroup title="Dates" errorMessage="Tickets must go on sale before event.">
+  <MyDatePicker label="Event date" defaultValue={parseDate('2023-07-12')} />
+  <MyDatePicker label="Ticket sale date" defaultValue={parseDate('2023-08-03')} />
+</FieldGroup>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+fieldset {
+  padding: 1.5em;
+  width: fit-content;
+}
+
+.invalid {
+  color: var(--invalid-color);
+  margin-top: 1em;
+  display: block;
+}
+```
+
+</details>
+
+### Custom children
+
+DatePicker passes props to its child components, such as the label and popover, via their associated contexts. These contexts are exported so you can also consume them in your own custom components. This enables you to reuse existing components from your app or component library together with React Aria Components.
+
+<ContextTable components={['Label', 'Group', 'Button', 'Popover', 'Dialog', 'Calendar', 'Text']} docs={docs} />
+
+This example consumes from `LabelContext` in an existing styled label component to make it compatible with React Aria Components. The <TypeLink links={docs.links} type={docs.exports.useContextProps} /> hook merges the local props and ref with the ones provided via context by DatePicker.
+
+```tsx
+import type {LabelProps} from 'react-aria-components';
+import {LabelContext, useContextProps} from 'react-aria-components';
+
+const MyCustomLabel = React.forwardRef((props: LabelProps, ref: React.ForwardedRef<HTMLLabelElement>) => {
+  // Merge the local props and ref with the ones provided via context.
+  ///- begin highlight -///
+  [props, ref] = useContextProps(props, ref, LabelContext);
+  ///- end highlight -///
+
+  // ... your existing Label component
+  return <label {...props} ref={ref} />;
+});
+```
+
+Now you can use `MyCustomLabel` within a `DatePicker`, in place of the builtin React Aria Components `Label`.
+
+```tsx
+<DatePicker>
+  {/*- begin highlight -*/}
+  <MyCustomLabel>Name</MyCustomLabel>
+  {/*- end highlight -*/}
+  {/* ... */}
+</DatePicker>
+```
+
+### State
+
+DatePicker provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.DatePickerState} /> object to its children via `DatePickerStateContext`. This can be used to access and manipulate the date picker's state.
+
+This example shows a `DatePickerClearButton` component that can be placed within a `DatePicker` to allow the user to clear the selected value.
+
+```tsx example
+import {DatePickerStateContext} from 'react-aria-components';
+
+function DatePickerClearButton() {
+  /*- begin highlight -*/
+  let state = React.useContext(DatePickerStateContext)!;
+  /*- end highlight -*/
+  return (
+    <Button
+      // Don't inherit default Button behavior from DatePicker.
+      slot={null}
+      className="clear-button"
+      aria-label="Clear"
+      onPress={() => state.setValue(null)}>
+      ✕
+    </Button>
+  );
+}
+
+<DatePicker defaultValue={today(getLocalTimeZone())}>
+  <Label>Date</Label>
+  <Group>
+    <DateInput>
+      {segment => <DateSegment segment={segment} />}
+    </DateInput>
+    {/*- begin highlight -*/}
+    <DatePickerClearButton />
+    {/*- end highlight -*/}
+    <Button>▼</Button>
+  </Group>
+  <Popover>
+    <Dialog>
+      <Calendar>
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          {date => <CalendarCell date={date} />}
+        </CalendarGrid>
+      </Calendar>
+    </Dialog>
+  </Popover>
+</DatePicker>
+```
+
+<details>
+  <summary style={{fontWeight: 'bold'}}><ChevronRight size="S" /> Show CSS</summary>
+
+```css
+.clear-button {
+  width: 1.143rem;
+  height: 1.143rem;
+  border-radius: 1.143rem;
+  margin-left: -3.4rem;
+  font-size: 0.857rem;
+  line-height: 0.857rem;
+  vertical-align: middle;
+  text-align: center;
+  background: gray;
+  color: white;
+  border: none;
+  padding: 0;
+  outline: none;
+
+  &[data-pressed] {
+    background: dimgray;
+  }
+
+  &[data-focus-visible] {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  + .react-aria-Button {
+    margin-left: 4px;
+  }
+}
+```
+
+</details>
+
+### Hooks
+
+If you need to customize things even further, such as accessing internal state, intercepting events, or customizing the DOM structure, you can drop down to the lower level Hook-based API. See [useDatePicker](useDatePicker.html) for more details.

@@ -44,10 +44,16 @@ export interface PressEvent {
   /** Whether the meta keyboard modifier was held during the press event. */
   metaKey: boolean,
   /** Whether the alt keyboard modifier was held during the press event. */
-  altKey: boolean
+  altKey: boolean,
+  /**
+   * By default, press events stop propagation to parent elements.
+   * In cases where a handler decides not to handle a specific event,
+   * it can call `continuePropagation()` to allow a parent to handle it.
+   */
+  continuePropagation(): void
 }
 
-export interface LongPressEvent extends Omit<PressEvent, 'type'> {
+export interface LongPressEvent extends Omit<PressEvent, 'type' | 'continuePropagation'> {
   /** The type of long press event being fired. */
   type: 'longpressstart' | 'longpressend' | 'longpress'
 }
@@ -68,11 +74,11 @@ export interface KeyboardEvents {
   onKeyUp?: (e: KeyboardEvent) => void
 }
 
-export interface FocusEvents {
+export interface FocusEvents<Target = Element> {
   /** Handler that is called when the element receives focus. */
-  onFocus?: (e: FocusEvent) => void,
+  onFocus?: (e: FocusEvent<Target>) => void,
   /** Handler that is called when the element loses focus. */
-  onBlur?: (e: FocusEvent) => void,
+  onBlur?: (e: FocusEvent<Target>) => void,
   /** Handler that is called when the element's focus status changes. */
   onFocusChange?: (isFocused: boolean) => void
 }
@@ -105,7 +111,7 @@ export interface PressEvents {
   onPressUp?: (e: PressEvent) => void
 }
 
-export interface FocusableProps extends FocusEvents, KeyboardEvents {
+export interface FocusableProps<Target = Element> extends FocusEvents<Target>, KeyboardEvents {
   /** Whether the element should receive focus on render. */
   autoFocus?: boolean
 }

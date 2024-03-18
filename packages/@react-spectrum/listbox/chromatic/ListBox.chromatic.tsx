@@ -13,13 +13,14 @@
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
+import {Avatar} from '@react-spectrum/avatar';
 import Blower from '@spectrum-icons/workflow/Blower';
 import Book from '@spectrum-icons/workflow/Book';
 import Copy from '@spectrum-icons/workflow/Copy';
 import Cut from '@spectrum-icons/workflow/Cut';
 import {Item, ListBox, Section} from '../';
 import {Label} from '@react-spectrum/label';
-import {Meta, Story} from '@storybook/react';
+import {Meta} from '@storybook/react';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React from 'react';
 import {SpectrumListBoxProps} from '@react-types/listbox';
@@ -90,13 +91,13 @@ const meta: Meta<SpectrumListBoxProps<object>> = {
 
 export default meta;
 
-const Template = (): Story<SpectrumListBoxProps<object>> => (args) => (
+const Template = (args: SpectrumListBoxProps<object>) => (
   <ListBox {...args} flexGrow={1} items={flatOptions}>
     {(item) => <Item key={item.name}>{item.name}</Item>}
   </ListBox>
 );
 
-const TemplateWithSections = (): Story<SpectrumListBoxProps<object>> => (args) => (
+const TemplateWithSections = (args: SpectrumListBoxProps<object>) => (
   <ListBox {...args} flexGrow={1} items={withSection}>
     {item => (
       <Section key={item.name} items={item.children} title={item.name}>
@@ -106,7 +107,7 @@ const TemplateWithSections = (): Story<SpectrumListBoxProps<object>> => (args) =
   </ListBox>
 );
 
-const TemplateNoTitle = (): Story<SpectrumListBoxProps<object>> => (args) => (
+const TemplateNoTitle = (args: SpectrumListBoxProps<object>) => (
   <ListBox {...args} flexGrow={1} items={withSection}>
     {item => (
       <Section key={item.name} items={item.children}>
@@ -126,7 +127,7 @@ let customOption = (item) => {
   );
 };
 
-const TemplateComplex = (): Story<SpectrumListBoxProps<object>> => (args) => (
+const TemplateComplex = (args: SpectrumListBoxProps<object>) => (
   <ListBox {...args} flexGrow={1} items={hardModeProgrammatic}>
     {item => (
       <Section key={item.name} items={item.children} title={item.name}>
@@ -136,18 +137,42 @@ const TemplateComplex = (): Story<SpectrumListBoxProps<object>> => (args) => (
   </ListBox>
 );
 
-export const Default = Template().bind({});
-Default.storyName = 'flat list with selection';
-Default.args = {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'};
+const TemplateAvatars = (args: SpectrumListBoxProps<object>) => (
+  <ListBox {...args} flexGrow={1} items={flatOptions}>
+    {(item) => (
+      <Item key={item.name}>
+        <Avatar src="https://i.imgur.com/kJOwAdv.png" alt="default Adobe avatar" />
+        <Text>{item.name}</Text>
+      </Item>
+    )}
+  </ListBox>
+);
 
-export const Sections = TemplateWithSections().bind({});
-Sections.storyName = 'with sections';
-Sections.args = {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'};
+export const Default = {
+  render: Template,
+  name: 'flat list with selection',
+  args: {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'}
+};
 
-export const SectionsNoTitle = TemplateNoTitle().bind({});
-SectionsNoTitle.storyName = 'sections without titles';
-SectionsNoTitle.args = {selectedKeys: ['Snake', 'Aardvark'],  disabledKeys: ['Ross'], selectionMode: 'multiple'};
+export const Sections = {
+  render: TemplateWithSections,
+  name: 'with sections',
+  args: {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'}
+};
 
-export const ComplexItems = TemplateComplex().bind({});
-ComplexItems.storyName = 'complex items';
-ComplexItems.args = {selectedKeys: ['Puppy', 'Cut'],  disabledKeys: ['Paste'], selectionMode: 'multiple'};
+export const SectionsNoTitle = {
+  render: TemplateNoTitle,
+  name: 'sections without titles',
+  args: {selectedKeys: ['Snake', 'Aardvark'], disabledKeys: ['Ross'], selectionMode: 'multiple'}
+};
+
+export const ComplexItems = {
+  render: TemplateComplex,
+  name: 'complex items',
+  args: {selectedKeys: ['Puppy', 'Cut'], disabledKeys: ['Paste'], selectionMode: 'multiple'}
+};
+
+export const WithAvatar = {
+  render: TemplateAvatars,
+  name: 'with avatar'
+};

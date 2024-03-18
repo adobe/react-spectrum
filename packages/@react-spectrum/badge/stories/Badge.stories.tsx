@@ -37,17 +37,17 @@ export const Default: BadgeStory = {
 };
 
 export const WithIcon: BadgeStory = {
-  args: {children: <><CheckmarkCircle /><Text>Licensed</Text></>, variant: 'positive'},
+  args: {children: <><CheckmarkCircle aria-label="Done" /><Text>Licensed</Text></>, variant: 'positive'},
   name: 'With icon'
 };
 
 export const WithIconReverseOrder: BadgeStory = {
-  args: {children: <><Text>Licensed</Text><CheckmarkCircle /></>, variant: 'positive'},
+  args: {children: <><Text>Licensed</Text><CheckmarkCircle aria-label="Done" /></>, variant: 'positive'},
   name: 'With icon, order reversed'
 };
 
 export const IconOnly: BadgeStory = {
-  args: {children: <CheckmarkCircle />, variant: 'positive', 'aria-label': 'Licensed'},
+  args: {children: <CheckmarkCircle aria-label="Licensed" />, variant: 'positive'},
   name: 'Icon only'
 };
 

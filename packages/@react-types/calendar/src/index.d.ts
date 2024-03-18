@@ -49,15 +49,25 @@ export interface CalendarPropsBase {
   defaultFocusedValue?: DateValue,
   /** Handler that is called when the focused date changes. */
   onFocusChange?: (date: CalendarDate) => void,
-  /** Whether the current selection is valid or invalid according to application logic. */
+  /**
+   * Whether the current selection is valid or invalid according to application logic.
+   * @deprecated Use `isInvalid` instead.
+   */
   validationState?: ValidationState,
+  /** Whether the current selection is invalid according to application logic. */
+  isInvalid?: boolean,
   /** An error message to display when the selected value is invalid. */
-  errorMessage?: ReactNode
+  errorMessage?: ReactNode,
+  /**
+   * Controls the behavior of paging. Pagination either works by advancing the visible page by visibleDuration (default) or one unit of visibleDuration.
+   * @default visible
+   */
+  pageBehavior?: PageBehavior
 }
 
 export type DateRange = RangeValue<DateValue>;
-export interface CalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<T, MappedDateValue<T>> {}
-export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<RangeValue<T>, RangeValue<MappedDateValue<T>>> {
+export interface CalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<T | null, MappedDateValue<T>> {}
+export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBase, ValueBase<RangeValue<T> | null, RangeValue<MappedDateValue<T>>> {
   /**
    * When combined with `isDateUnavailable`, determines whether non-contiguous ranges,
    * i.e. ranges containing unavailable dates, may be selected.
@@ -68,6 +78,8 @@ export interface RangeCalendarProps<T extends DateValue> extends CalendarPropsBa
 export interface AriaCalendarProps<T extends DateValue> extends CalendarProps<T>, DOMProps, AriaLabelingProps {}
 
 export interface AriaRangeCalendarProps<T extends DateValue> extends RangeCalendarProps<T>, DOMProps, AriaLabelingProps {}
+
+export type PageBehavior = 'single' | 'visible';
 
 export interface SpectrumCalendarProps<T extends DateValue> extends AriaCalendarProps<T>, StyleProps {
   /**

@@ -15,25 +15,26 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {DOMAttributes, FocusEvents} from '@react-types/shared';
+import {DOMAttributes, FocusableElement, FocusEvents} from '@react-types/shared';
 import {FocusEvent, useCallback} from 'react';
+import {getOwnerDocument} from '@react-aria/utils';
 import {useSyntheticBlurEvent} from './utils';
 
-export interface FocusProps extends FocusEvents {
+export interface FocusProps<Target = FocusableElement> extends FocusEvents<Target> {
   /** Whether the focus events should be disabled. */
   isDisabled?: boolean
 }
 
-export interface FocusResult {
+export interface FocusResult<Target = FocusableElement> {
   /** Props to spread onto the target element. */
-  focusProps: DOMAttributes
+  focusProps: DOMAttributes<Target>
 }
 
 /**
  * Handles focus events for the immediate target.
  * Focus events on child elements will be ignored.
  */
-export function useFocus(props: FocusProps): FocusResult {
+export function useFocus<Target extends FocusableElement = FocusableElement>(props: FocusProps<Target>): FocusResult<Target> {
   let {
     isDisabled,
     onFocus: onFocusProp,
@@ -41,7 +42,7 @@ export function useFocus(props: FocusProps): FocusResult {
     onFocusChange
   } = props;
 
-  const onBlur: FocusProps['onBlur'] = useCallback((e: FocusEvent) => {
+  const onBlur: FocusProps<Target>['onBlur'] = useCallback((e: FocusEvent<Target>) => {
     if (e.target === e.currentTarget) {
       if (onBlurProp) {
         onBlurProp(e);
@@ -56,10 +57,15 @@ export function useFocus(props: FocusProps): FocusResult {
   }, [onBlurProp, onFocusChange]);
 
 
-  const onSyntheticFocus = useSyntheticBlurEvent(onBlur);
+  const onSyntheticFocus = useSyntheticBlurEvent<Target>(onBlur);
 
-  const onFocus: FocusProps['onFocus'] = useCallback((e: FocusEvent) => {
-    if (e.target === e.currentTarget) {
+  const onFocus: FocusProps<Target>['onFocus'] = useCallback((e: FocusEvent<Target>) => {
+    // Double check that document.activeElement actually matches e.target in case a previously chained
+    // focus handler already moved focus somewhere else.
+
+    const ownerDocument = getOwnerDocument(e.target);
+
+    if (e.target === e.currentTarget && ownerDocument.activeElement === e.target) {
       if (onFocusProp) {
         onFocusProp(e);
       }
@@ -75,7 +81,7 @@ export function useFocus(props: FocusProps): FocusResult {
   return {
     focusProps: {
       onFocus: (!isDisabled && (onFocusProp || onFocusChange || onBlurProp)) ? onFocus : undefined,
-      onBlur: (!isDisabled && (onBlurProp || onFocusChange)) ? onBlur : null
+      onBlur: (!isDisabled && (onBlurProp || onFocusChange)) ? onBlur : undefined
     }
   };
 }

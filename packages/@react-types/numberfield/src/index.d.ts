@@ -15,8 +15,8 @@ import {
   DOMProps,
   FocusableProps,
   HelpTextProps,
-  InputBase, LabelableProps,
-  RangeInputBase, SpectrumLabelableProps,
+  InputBase, InputDOMProps, LabelableProps,
+  RangeInputBase, SpectrumFieldValidation, SpectrumLabelableProps,
   StyleProps,
   TextInputBase,
   TextInputDOMEvents,
@@ -24,7 +24,7 @@ import {
   ValueBase
 } from '@react-types/shared';
 
-export interface NumberFieldProps extends InputBase, Validation, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
+export interface NumberFieldProps extends InputBase, Validation<number>, FocusableProps, TextInputBase, ValueBase<number>, RangeInputBase<number>, LabelableProps, HelpTextProps {
   /**
    * Formatting options for the value displayed in the number field.
    * This also affects what characters are allowed to be typed by the user.
@@ -36,10 +36,14 @@ export interface AriaNumberFieldProps extends NumberFieldProps, DOMProps, AriaLa
   /** A custom aria-label for the decrement button. If not provided, the localized string "Decrement" is used. */
   decrementAriaLabel?: string,
   /** A custom aria-label for the increment button. If not provided, the localized string "Increment" is used. */
-  incrementAriaLabel?: string
+  incrementAriaLabel?: string,
+  /**
+   * Enables or disables changing the value with scroll.
+   */
+  isWheelDisabled?: boolean
 }
 
-export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder'>, StyleProps, SpectrumLabelableProps {
+export interface SpectrumNumberFieldProps extends Omit<AriaNumberFieldProps, 'placeholder' | 'isInvalid' | 'validationState'>, SpectrumFieldValidation<number>, InputDOMProps, StyleProps, SpectrumLabelableProps {
   /** Whether the numberfield should be displayed with a quiet style. */
   isQuiet?: boolean,
   /** Whether to hide the increment and decrement buttons. */

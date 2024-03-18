@@ -10,14 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, triggerPress, waitFor, within} from '@react-spectrum/test-utils';
 import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '../';
 import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
-import MatchMediaMock from 'jest-matchmedia-mock';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
@@ -26,20 +25,20 @@ import userEvent from '@testing-library/user-event';
 
 
 describe('DialogTrigger', function () {
-  let matchMedia;
+  let warnMock;
+  let windowSpy;
+  let user;
+
   beforeAll(() => {
-    jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
-    jest.useFakeTimers('legacy');
-  });
-  afterAll(() => {
-    jest.clearAllMocks();
-    jest.useRealTimers();
+    user = userEvent.setup({delay: null, pointerMap});
+    jest.useFakeTimers();
   });
 
   beforeEach(() => {
-    matchMedia = new MatchMediaMock();
-    // this needs to be a setTimeout so that the dialog can be removed from the dom before the callback is invoked
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(cb => setTimeout(() => cb(), 0));
+    windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
+    if (process.env.STRICT_MODE) {
+      warnMock = jest.spyOn(global.console, 'warn').mockImplementation();
+    }
   });
 
   afterEach(() => {
@@ -53,8 +52,11 @@ describe('DialogTrigger', function () {
       });
     }
 
-    matchMedia.clear();
-    window.requestAnimationFrame.mockRestore();
+    if (process.env.STRICT_MODE && warnMock.mock.calls.length > 0) {
+      expect(warnMock).toHaveBeenCalledTimes(1);
+      expect(warnMock).toHaveBeenCalledWith('A DialogTrigger unmounted while open. This is likely due to being placed within a trigger that unmounts or inside a conditional. Consider using a DialogContainer instead.');
+      warnMock.mockRestore();
+    }
   });
 
   it('should trigger a modal by default', function () {
@@ -177,7 +179,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a modal instead of a popover on mobile', function () {
-    matchMedia.useMediaQuery('(max-width: 700px)');
+    windowSpy.mockImplementation(() => 700);
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover">
@@ -204,7 +206,7 @@ describe('DialogTrigger', function () {
   });
 
   it('should trigger a tray instead of a popover on mobile if mobileType="tray"', function () {
-    matchMedia.useMediaQuery('(max-width: 700px)');
+    windowSpy.mockImplementation(() => 700);
     let {getByRole, queryByRole, getByTestId} = render(
       <Provider theme={theme}>
         <DialogTrigger type="popover" mobileType="tray">
@@ -278,7 +280,7 @@ describe('DialogTrigger', function () {
     let button = getByRole('button');
     act(() => {button.focus();});
     fireEvent.focusIn(button);
-    userEvent.click(button);
+    await user.click(button);
 
     act(() => {
       jest.runAllTimers();
@@ -686,7 +688,7 @@ describe('DialogTrigger', function () {
   });
 
   it('mobile type modals should be closable by clicking outside the modal', async function () {
-    matchMedia.useMediaQuery('(max-width: 700px)');
+    windowSpy.mockImplementation(() => 700);
     function Test({defaultOpen, onOpenChange}) {
       return (
         <Provider theme={theme}>
@@ -903,7 +905,7 @@ describe('DialogTrigger', function () {
 
     expect(document.activeElement).toBe(innerInput);
 
-    userEvent.click(document.body);
+    await user.click(document.body);
 
     act(() => {
       jest.runAllTimers();
@@ -970,7 +972,7 @@ describe('DialogTrigger', function () {
 
     let innerInput = getByLabelText('inner input');
     expect(getByLabelText('inner input')).toBeVisible();
-    userEvent.click(innerInput);
+    await user.click(innerInput);
 
     expect(document.activeElement).toBe(innerInput);
   });
@@ -1009,15 +1011,14 @@ describe('DialogTrigger', function () {
       expect(outerDialog).toBeVisible();
     }); // wait for animation
     let innerButton = getByTestId('innerButton');
-    // Focus manually - userEvent.tab is buggy when starting from an element with tabIndex="-1"
-    act(() => innerButton.focus());
+    await user.tab();
     fireEvent.keyDown(document.activeElement, {key: 'Enter'});
     fireEvent.keyUp(document.activeElement, {key: 'Enter'});
 
     act(() => {
       jest.runAllTimers();
     });
-    userEvent.tab();
+    await user.tab();
     act(() => {
       jest.runAllTimers();
     });

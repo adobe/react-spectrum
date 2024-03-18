@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Node} from '@react-types/shared';
-import {Key} from 'react';
+import {Collection, Key, Node} from '@react-types/shared';
 
 export class TreeCollection<T> implements Collection<Node<T>> {
   private keyMap: Map<Key, Node<T>> = new Map();
@@ -19,14 +18,14 @@ export class TreeCollection<T> implements Collection<Node<T>> {
   private firstKey: Key;
   private lastKey: Key;
 
-  constructor(nodes: Iterable<Node<T>>, {expandedKeys}: {expandedKeys?: Set<Key>} = {}) {
+  constructor(nodes: Iterable<Node<T>>, {expandedKeys}: {expandedKeys?: 'all' | Set<Key>} = {}) {
     this.iterable = nodes;
     expandedKeys = expandedKeys || new Set();
 
     let visit = (node: Node<T>) => {
       this.keyMap.set(node.key, node);
 
-      if (node.childNodes && (node.type === 'section' || expandedKeys.has(node.key))) {
+      if (node.childNodes && (node.type === 'section' || (expandedKeys === 'all' || expandedKeys.has(node.key)))) {
         for (let child of node.childNodes) {
           visit(child);
         }

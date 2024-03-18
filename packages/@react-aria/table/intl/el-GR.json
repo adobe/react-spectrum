@@ -4,6 +4,7 @@
   "columnSize": "{value} pixel",
   "descending": "φθίνουσα",
   "descendingSort": "διαλογή ανά στήλη {columnName} σε φθίνουσα σειρά",
+  "resizerDescription": "Πατήστε Enter για έναρξη της αλλαγής μεγέθους",
   "select": "Επιλογή",
   "selectAll": "Επιλογή όλων",
   "sortable": "Στήλη διαλογής"

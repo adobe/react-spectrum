@@ -4,6 +4,7 @@
   "columnSize": "{value} píxeles",
   "descending": "de bajada",
   "descendingSort": "ordenado por columna {columnName} en orden de bajada",
+  "resizerDescription": "Pulse Intro para empezar a redimensionar",
   "select": "Seleccionar",
   "selectAll": "Seleccionar todos",
   "sortable": "columna ordenable"

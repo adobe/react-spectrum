@@ -43,6 +43,10 @@ module.exports = new Namer({
         );
       }
 
+      if (parts[1] === 'react-aria-components') {
+        return path.join('react-aria', ...parts.slice(3, -1), basename);
+      }
+
       // For @namespace package files, urls will be /${namespace}/PageName.html
       return path.join(
         parts[1].replace(/^@/, ''),

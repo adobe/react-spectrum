@@ -19,7 +19,8 @@ interface TooltipContextProps extends StyleProps {
   state?: TooltipTriggerState,
   ref?: RefObject<HTMLDivElement>,
   placement?: PlacementAxis,
-  arrowProps?: HTMLAttributes<HTMLElement>
+  arrowProps?: HTMLAttributes<HTMLElement>,
+  arrowRef?: RefObject<HTMLElement>
 }
 
 export const TooltipContext = React.createContext<TooltipContextProps>({});

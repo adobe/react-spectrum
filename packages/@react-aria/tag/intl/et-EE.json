@@ -1,3 +1,4 @@
 {
-  "remove": "Eemalda"
+  "removeButtonLabel": "Eemalda",
+  "removeDescription": "Sildi eemaldamiseks vajutage kustutusklahvi Delete."
 }

@@ -66,7 +66,7 @@ function Example() {
     {id: 2, label: 'Trendy'},
     {id: 3, label: 'March 2020 Assets'}
   ];
-  let [folderId, setFolderId] = React.useState();
+  let [folderId, setFolderId] = React.useState(null);
   return (
     <div>
       <Breadcrumbs onAction={(a) => setFolderId(a)}>
@@ -77,6 +77,22 @@ function Example() {
   );
 }
 ```
+
+## Links
+
+By default, interacting with an item in Breadcrumbs triggers `onAction`. Items may also be links to another page or website. This can be achieved by passing the `href` prop to the `<Item>` component.
+
+```tsx example
+<Breadcrumbs>
+  <Item href="/">Home</Item>
+  <Item href="/react-spectrum/">React Spectrum</Item>
+  <Item href="/react-spectrum/Breadcrumbs.html">Breadcrumbs</Item>
+</Breadcrumbs>
+```
+
+### Client side routing
+
+The `<Item>` component works with frameworks and client side routers like [Next.js](https://nextjs.org/) and [React Router](https://reactrouter.com/en/main). As with other React Spectrum components that support links, this works via the [Provider](Provider.html) component at the root of your app. See the [client side routing guide](routing.html) to learn how to set this up.
 
 ## Props
 

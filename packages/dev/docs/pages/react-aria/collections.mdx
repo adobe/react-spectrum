@@ -1,0 +1,315 @@
+{/* Copyright 2023 Adobe. All rights reserved.
+This file is licensed to you under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License. You may obtain a copy
+of the License at http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software distributed under
+the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+OF ANY KIND, either express or implied. See the License for the specific language
+governing permissions and limitations under the License. */}
+
+import {Layout} from '@react-spectrum/docs';
+export default Layout;
+
+import docs from 'docs:react-aria-components';
+import dataDocs from 'docs:@react-stately/data';
+import {HeaderInfo, PropTable, TypeLink} from '@react-spectrum/docs';
+
+---
+category: Guides
+keywords: [static collection, dynamic collection, async loading, infinite loading, sections, hierarchy, state]
+order: 1.5
+---
+
+# Collections
+
+Many components display a collection of items, and provide functionality such as keyboard
+navigation, selection, and more. React Aria has a consistent, compositional API to define the items
+displayed in these components.
+
+## Introduction
+
+Many React Aria components display a collection of items of some kind. For example, lists, menus, selects,
+tables, trees, and grids. These collections can usually be navigated with the keyboard using arrow keys, and
+many have some form of selection. Many support loading data asynchronously, updating that data over time,
+virtualized scrolling for performance with large collections, and more.
+
+React Aria implements a JSX-based API for defining collections. This is an intuitive way to provide
+items with rich contents and various options as props. Building hierarchical
+collections, e.g. sections, or a tree of items is also very natural in JSX. React Aria provides a
+consistent API across many types of collection components that is easy to learn, performant with large
+collections, and extensible for advanced features.
+
+## Static collections
+
+A **static collection** is a collection that does not change over time (e.g. hard coded). This is common for
+components like action menus where the items are built into the application rather than representing user data.
+
+```tsx
+<Menu>
+  <MenuItem>Open</MenuItem>
+  <MenuItem>Edit</MenuItem>
+  <MenuItem>Delete</MenuItem>
+</Menu>
+```
+
+### Sections
+
+Sections or groups of items can be constructed by wrapping the items in a `<Section>` element. A `<Header>` can also be
+rendered within a `<Section>` to provide a section title.
+
+```tsx
+<Menu>
+  <Section>
+    <Header>Styles</Header>
+    <MenuItem>Bold</MenuItem>
+    <MenuItem>Underline</MenuItem>
+  </Section>
+  <Section>
+    <Header>Align</Header>
+    <MenuItem>Left</MenuItem>
+    <MenuItem>Middle</MenuItem>
+    <MenuItem>Right</MenuItem>
+  </Section>
+</Menu>
+```
+
+## Dynamic collections
+
+Static collections are great when the items never change, but how about dynamic data? A **dynamic collection**
+is a collection that is based on data, for example from an API. In addition, it may change over time as
+items are added, updated, or removed from the collection by a user.
+
+React Aria implements a JSX-based interface for dynamic collections, which maps over your data and
+applies a function for each item to render it. The following example shows how a collection can be
+rendered based on dynamic data, stored in React state.
+
+```tsx
+let [animals, setAnimals] = useState([
+  {id: 1, name: 'Aardvark'},
+  {id: 2, name: 'Kangaroo'},
+  {id: 3, name: 'Snake'}
+]);
+
+<ListBox items={animals}>
+  {item => <ListBoxItem>{item.name}</ListBoxItem>}
+</ListBox>
+```
+
+As you can see, the items are passed to the `items` prop of the top-level component, which iterates over each
+item and calls the function passed as children to the component. The item object is passed to the function, which
+returns a `<ListBoxItem>`.
+
+### Unique ids
+
+All items in a collection must have a unique id, which is used to determine what items in the collection changed
+when updates occur. By default, React Aria looks for an `id` property on each item object, which is often returned
+from a database. You can also specify a custom id on each item element using the `id` prop. For example, if all animals in the
+example had a unique `name` property, then each item's `id` could be set to `item.name` to use it as the unique id.
+
+```tsx
+let [animals, setAnimals] = useState([
+  {name: 'Aardvark'},
+  {name: 'Kangaroo'},
+  {name: 'Snake'}
+]);
+
+<ListBox items={animals}>
+  {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+</ListBox>
+```
+
+### Why not array map?
+
+You may be wondering why we didn't use `animals.map` in this example.
+In fact, this works just fine, but it's less performant, and you must remember to provide both a React `key` and an `id` prop.
+
+```tsx
+let [animals, setAnimals] = useState([
+  {name: 'Aardvark'},
+  {name: 'Kangaroo'},
+  {name: 'Snake'}
+]);
+
+<ListBox>
+  {animals.map(item =>
+    <ListBoxItem key={item.name} id={item.name}>{item.name}</ListBoxItem>
+  )}
+</ListBox>
+```
+
+Using the `items` prop and providing a render function allows React Aria to automatically cache the results
+of rendering each item and avoid re-rendering all items in the collection when only one of them changes. This
+has big performance benefits for large collections.
+
+### Updating data
+
+When you need to update the data to add, remove, or change an item, you can do so using a standard React state update.
+
+**Important**: all items passed to a collection component must be immutable. Changing a property on an item, or calling
+`array.push()` or other mutating methods will not work as expected.
+
+The <TypeLink links={dataDocs.links} type={dataDocs.exports.useListData} /> hook can be used to manage the
+data and state for a list of items, and update it over time. It will also handle removing items from the selection
+state when they are removed from the list. See the [useListData](../react-stately/useListData.html) docs for more details.
+
+The following example shows how you might append a new item to the list.
+
+```tsx
+import {useListData} from '@react-stately/data';
+
+let list = useListData({
+  initialItems: [
+    {name: 'Aardvark'},
+    {name: 'Kangaroo'},
+    {name: 'Snake'}
+  ],
+  initialSelectedKeys: ['Kangaroo'],
+  getKey: item => item.name
+});
+
+function addAnimal(name) {
+  list.append({name});
+}
+
+<ListBox items={list.items}>
+  {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+</ListBox>
+```
+
+Note that `useListData` is a convenience hook, not a requirement. You can use any state management library to manage collection items.
+
+### Sections
+
+Sections can be built by returning a `<Section>` instead of an item from the top-level item renderer. Sections
+also support an `items` prop and a render function for their children. If the section also has a header,
+the <TypeLink links={docs.links} type={docs.exports.Collection} /> component can be used to render the child items.
+
+```tsx
+let [sections, setSections] = useState([
+  {
+    name: 'People',
+    items: [
+      {name: 'David'},
+      {name: 'Same'},
+      {name: 'Jane'}
+    ]
+  },
+  {
+    name: 'Animals',
+    items: [
+      {name: 'Aardvark'},
+      {name: 'Kangaroo'},
+      {name: 'Snake'}
+    ]
+  }
+]);
+
+<ListBox items={sections}>
+  {section =>
+    <Section id={section.name}>
+      <Header>{section.name}</Header>
+      <Collection items={section.children}>
+        {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      </Collection>
+    </Section>
+  }
+</ListBox>
+```
+
+When updating nested data, be sure that all parent items change accordingly. Items are immutable,
+so don't use mutating methods like push, or replace a property on a parent item. Instead, copy
+the items that changed as needed.
+
+#### useTreeData
+
+The <TypeLink links={dataDocs.links} type={dataDocs.exports.useTreeData} /> hook can be used to
+manage data and state for a tree of items. This is similar to `useListData`, but with support for
+hierarchical data. Like `useListData`, `useTreeData` will also handle automatically
+removing items from the selection when they are removed from the list.
+See the [useTreeData](../react-stately/useTreeData.html) docs for more details.
+
+```tsx
+import {useTreeData} from '@react-stately/data';
+
+let tree = useTreeData({
+  initialItems: [
+    {
+      name: 'People',
+      items: [
+        {name: 'David'},
+        {name: 'Sam'},
+        {name: 'Jane'}
+      ]
+    },
+    {
+      name: 'Animals',
+      items: [
+        {name: 'Aardvark'},
+        {name: 'Kangaroo'},
+        {name: 'Snake'}
+      ]
+    }
+  ],
+  getKey: item => item.name,
+  getChildren: item => item.items
+});
+
+function addPerson(name) {
+  tree.append('People', {name});
+}
+
+<ListBox items={tree.items}>
+  {node =>
+    <Section id={section.name} items={node.children}>
+      <Header>{section.name}</Header>
+      <Collection items={section.children}>
+        {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+      </Collection>
+    </Section>
+  }
+</ListBox>
+```
+
+Note that `useTreeData` is a utility hook, not a requirement. You can use any state management library to manage collection items.
+
+
+## Asynchronous loading
+
+The <TypeLink links={dataDocs.links} type={dataDocs.exports.useAsyncList} /> hook can be
+used to manage async data loading from an API. Pass a `load` function to `useAsyncList`, which returns the items
+to render. You can use whatever data fetching library you want, or the built-in
+[fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) API. See the [useAsyncList](../react-stately/useAsyncList.html) docs for more details.
+
+This example fetches a list of Pokemon from an API and displays them in a Select.
+
+```tsx
+import {useAsyncList} from '@react-stately/data';
+
+let list = useAsyncList({
+  async load({signal}) {
+    let res = await fetch('https://pokeapi.co/api/v2/pokemon', {signal});
+    let json = await res.json();
+    return {items: json.results};
+  }
+});
+
+<Select>
+  <Label>Pick a Pokemon</Label>
+  <Button>
+    <SelectValue />
+  </Button>
+  <Popover>
+    <ListBox items={list.items}>
+      {item => <ListBoxItem id={item.name}>{item.name}</ListBoxItem>}
+    </ListBox>
+  </Popover>
+</Select>
+```
+
+Note that `useAsyncList` is a convenience hook, not a requirement. You can use any state management or data loading
+library to manage collection items.
+
+## Hooks
+
+If you're using React Aria and React Stately hooks rather than components, the collection API is slightly different.
+See the [React Stately collections](../react-stately/collections.html) documentation for more details.

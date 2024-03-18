@@ -10,19 +10,25 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
 import {defaultTheme} from '@adobe/react-spectrum';
 import {DialogContainer} from '@react-spectrum/dialog';
 import {FocusScope, useFocusManager} from '../';
 import {focusScopeTree} from '../src/FocusScope';
 import {Provider} from '@react-spectrum/provider';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import {Example as StorybookExample} from '../stories/FocusScope.stories';
 import userEvent from '@testing-library/user-event';
 
 
 describe('FocusScope', function () {
+  let user;
+
+  beforeAll(() => {
+    user = userEvent.setup({delay: null, pointerMap});
+  });
+
   beforeEach(() => {
     jest.useFakeTimers();
   });
@@ -32,7 +38,7 @@ describe('FocusScope', function () {
   });
 
   describe('focus containment', function () {
-    it('should contain focus within the scope', function () {
+    it('should contain focus within the scope', async function () {
       let {getByTestId} = render(
         <FocusScope contain>
           <input data-testid="input1" />
@@ -48,26 +54,26 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input1);
     });
 
-    it('should work with nested elements', function () {
+    it('should work with nested elements', async function () {
       let {getByTestId} = render(
         <FocusScope contain>
           <input data-testid="input1" />
@@ -87,26 +93,26 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input1);
     });
 
-    it('should skip non-tabbable elements', function () {
+    it('should skip non-tabbable elements', async function () {
       let {getByTestId} = render(
         <FocusScope contain>
           <input data-testid="input1" />
@@ -129,22 +135,22 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input1);
     });
 
@@ -166,7 +172,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input1);
     });
 
-    it('should work with multiple focus scopes', function () {
+    it('should work with multiple focus scopes', async function () {
       let {getByTestId} = render(
         <div>
           <FocusScope contain>
@@ -196,29 +202,29 @@ describe('FocusScope', function () {
       act(() => {input1.focus();});
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input2);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(input1);
 
       act(() => {input4.focus();});
       expect(document.activeElement).toBe(input1);
     });
 
-    it('should restore focus to the last focused element in the scope when re-entering the browser', function () {
+    it('should restore focus to the last focused element in the scope when re-entering the browser', async function () {
       let {getByTestId} = render(
         <div>
           <input data-testid="outside" />
@@ -238,7 +244,7 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      await user.tab();
       fireEvent.focusIn(input2);
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(input2);
@@ -252,7 +258,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input2);
     });
 
-    it('should restore focus to the last focused element in the scope on focus out', function () {
+    it('should restore focus to the last focused element in the scope on focus out', async function () {
       let {getByTestId} = render(
         <div>
           <FocusScope contain>
@@ -269,7 +275,7 @@ describe('FocusScope', function () {
       fireEvent.focusIn(input1); // jsdom doesn't fire this automatically
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab();
+      await user.tab();
       fireEvent.focusIn(input2);
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(input2);
@@ -281,7 +287,8 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input2);
     });
 
-    it('uses document.activeElement instead of e.relatedTarget on blur to determine if focus is still in scope', function () {
+    // This test setup is a bit contrived to just purely simulate the blur/focus events that would happen in a case like this
+    it('focus properly moves into child iframe on click', function () {
       let {getByTestId} = render(
         <div>
           <FocusScope contain>
@@ -374,7 +381,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(outside);
     });
 
-    it('should move focus after the previously focused node when tabbing away from a scope with autoFocus', function () {
+    it('should move focus after the previously focused node when tabbing away from a scope with autoFocus', async function () {
       function Test({show}) {
         return (
           <div>
@@ -402,11 +409,11 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       expect(document.activeElement).toBe(input3);
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
 
-    it('should move focus before the previously focused node when tabbing away from a scope with Shift+Tab', function () {
+    it('should move focus before the previously focused node when tabbing away from a scope with Shift+Tab', async function () {
       function Test({show}) {
         return (
           <div>
@@ -434,7 +441,7 @@ describe('FocusScope', function () {
       let input1 = getByTestId('input1');
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(getByTestId('before'));
     });
 
@@ -471,7 +478,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(outside);
     });
 
-    it('should move focus to the element after the previously focused node on Tab', function () {
+    it('should move focus to the element after the previously focused node on Tab', async function () {
       function Test({show}) {
         return (
           <div>
@@ -502,11 +509,11 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       act(() => {input3.focus();});
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
 
-    it('should move focus to the previous element after the previously focused node on Shift+Tab', function () {
+    it('should move focus to the previous element after the previously focused node on Shift+Tab', async function () {
       function Test({show}) {
         return (
           <div>
@@ -534,11 +541,11 @@ describe('FocusScope', function () {
       let input1 = getByTestId('input1');
       expect(document.activeElement).toBe(input1);
 
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(getByTestId('before'));
     });
 
-    it('should skip over elements within the scope when moving focus to the next element', function () {
+    it('should skip over elements within the scope when moving focus to the next element', async function () {
       function Test({show}) {
         return (
           <div>
@@ -569,11 +576,11 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       act(() => {input3.focus();});
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
 
-    it('should not handle tabbing if the focus scope does not restore focus', function () {
+    it('should not handle tabbing if the focus scope does not restore focus', async function () {
       function Test({show}) {
         return (
           <div>
@@ -605,7 +612,7 @@ describe('FocusScope', function () {
       let input3 = getByTestId('input3');
       act(() => {input3.focus();});
 
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(getByTestId('after'));
     });
 
@@ -692,6 +699,70 @@ describe('FocusScope', function () {
         expect(item2).not.toBeInTheDocument();
         await waitFor(() => expect(document.activeElement).toBe(focusable));
       });
+    });
+
+    it('should not not restore focus when active element is outside the scope', async function () {
+      function Test() {
+        const [display, setDisplay] = useState(false);
+        useEffect(() => {
+          let handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+              setDisplay(false);
+            }
+          };
+          document.body.addEventListener('keyup', handleKeyDown);
+          return () => {
+            document.body.removeEventListener('keyup', handleKeyDown);
+          };
+        }, []);
+
+        return (
+          <div>
+            <button
+              data-testid="button1"
+              type="button"
+              onClick={() => setDisplay((state) => !state)}>
+              {display ? 'Close dialog' : 'Open dialog'}
+            </button>
+            <button
+              data-testid="button2"
+              type="button"
+              onClick={() => setDisplay((state) => !state)}>
+              {display ? 'Close dialog' : 'Open dialog'}
+            </button>{' '}
+            {display && (
+              <FocusScope restoreFocus>
+                <input data-testid="input1" />
+              </FocusScope>
+            )}
+          </div>
+        );
+      }
+
+      let {getByTestId} = render(<Test />);
+      let button1 = getByTestId('button1');
+      let button2 = getByTestId('button2');
+      await user.click(button1);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(button1);
+      let input1 = getByTestId('input1');
+      expect(input1).toBeVisible();
+
+      await user.click(button2);
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(button2);
+      expect(input1).not.toBeInTheDocument();
+
+      await user.click(button1);
+      act(() => {jest.runAllTimers();});
+      input1 = getByTestId('input1');
+      expect(input1).toBeVisible();
+      await user.tab();
+      fireEvent.keyDown(document.activeElement, {key: 'Escape'});
+      fireEvent.keyUp(document.activeElement, {key: 'Escape'});
+      act(() => {jest.runAllTimers();});
+      expect(document.activeElement).toBe(button2);
+      expect(input1).not.toBeInTheDocument();
     });
   });
 
@@ -1144,7 +1215,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(input3);
     });
 
-    it('should lock tab navigation inside direct child focus scope', function () {
+    it('should lock tab navigation inside direct child focus scope', async function () {
       function Test() {
         return (
           <div>
@@ -1170,21 +1241,21 @@ describe('FocusScope', function () {
 
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child1);
-      userEvent.tab();
+      await user.tab();
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child2);
-      userEvent.tab();
+      await user.tab();
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child3);
-      userEvent.tab();
+      await user.tab();
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child1);
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       act(() => {jest.runAllTimers();});
       expect(document.activeElement).toBe(child3);
     });
 
-    it('should lock tab navigation inside nested child focus scope', function () {
+    it('should lock tab navigation inside nested child focus scope', async function () {
       function Test() {
         return (
           <div>
@@ -1213,17 +1284,17 @@ describe('FocusScope', function () {
       let child3 = getByTestId('child3');
 
       expect(document.activeElement).toBe(child1);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child2);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child3);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child1);
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(child3);
     });
 
-    it('should not lock tab navigation inside a nested focus scope without contain', function () {
+    it('should not lock tab navigation inside a nested focus scope without contain', async function () {
       function Test() {
         return (
           <div>
@@ -1251,19 +1322,19 @@ describe('FocusScope', function () {
       let child3 = getByTestId('child3');
 
       expect(document.activeElement).toBe(parent);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child1);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child2);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child3);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(parent);
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(child3);
     });
 
-    it('should not lock tab navigation inside a nested focus scope with restore and not contain', function () {
+    it('should not lock tab navigation inside a nested focus scope with restore and not contain', async function () {
       function Test() {
         return (
           <div>
@@ -1291,19 +1362,19 @@ describe('FocusScope', function () {
       let child3 = getByTestId('child3');
 
       expect(document.activeElement).toBe(parent);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child1);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child2);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child3);
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(parent);
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(child3);
     });
 
-    it('should restore to the correct scope on unmount', function () {
+    it('should restore to the correct scope on unmount', async function () {
       function Test({show1, show2, show3}) {
         return (
           <div>
@@ -1340,7 +1411,7 @@ describe('FocusScope', function () {
 
       // Can move into a child, but not out.
       let child1 = getByTestId('child1');
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child1);
 
       act(() => parent.focus());
@@ -1350,7 +1421,7 @@ describe('FocusScope', function () {
       expect(document.activeElement).toBe(child1);
 
       let child2 = getByTestId('child2');
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child2);
 
       act(() => child1.focus());
@@ -1362,7 +1433,7 @@ describe('FocusScope', function () {
       rerender(<Test show1 show2 show3 />);
 
       let child3 = getByTestId('child3');
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(child3);
 
       rerender(<Test show1 />);
@@ -1442,7 +1513,7 @@ describe('FocusScope', function () {
   });
 
   describe('scope child of document.body', function () {
-    it('should navigate in and out of scope in DOM order when the nodeToRestore is the document.body', function () {
+    it('should navigate in and out of scope in DOM order when the nodeToRestore is the document.body', async function () {
       function Test() {
         return (
           <div>
@@ -1461,15 +1532,15 @@ describe('FocusScope', function () {
       let afterScope = getByTestId('afterScope');
 
       act(() => {inScope.focus();});
-      userEvent.tab();
+      await user.tab();
       expect(document.activeElement).toBe(afterScope);
       act(() => {inScope.focus();});
-      userEvent.tab({shift: true});
+      await user.tab({shift: true});
       expect(document.activeElement).toBe(beforeScope);
     });
   });
   describe('node to restore edge cases', () => {
-    it('tracks node to restore if the node to restore was removed in another part of the tree', () => {
+    it('tracks node to restore if the node to restore was removed in another part of the tree', async () => {
       function Test() {
         let [showMenu, setShowMenu] = useState(false);
         let [showDialog, setShowDialog] = useState(false);
@@ -1507,8 +1578,8 @@ describe('FocusScope', function () {
       act(() => {
         jest.runAllTimers();
       });
-      userEvent.tab();
-      userEvent.tab();
+      await user.tab();
+      await user.tab();
       expect(document.activeElement.textContent).toBe('Open Menu');
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
@@ -1521,6 +1592,12 @@ describe('FocusScope', function () {
 
       fireEvent.keyDown(document.activeElement, {key: 'Enter'});
       fireEvent.keyUp(document.activeElement, {key: 'Enter'});
+
+      // Needed for onBlur raf in useFocusContainment
+      act(() => {
+        jest.runAllTimers();
+      });
+      // Needed for useRestoreFocus layout cleanup raf
       act(() => {
         jest.runAllTimers();
       });
@@ -1539,5 +1616,28 @@ describe('FocusScope', function () {
       expect(document.activeElement).not.toBe(document.body);
       expect(document.activeElement.textContent).toBe('Open Menu');
     });
+  });
+});
+
+describe('Unmounting cleanup', () => {
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+  afterAll(() => {
+    jest.runAllTimers();
+  });
+
+  // this test will fail in the 'afterAll' if there are any rafs left over
+  it('should not leak request animation frames',  () => {
+    let tree = render(
+      <FocusScope restoreFocus contain>
+        <button>Focus me</button>
+        <button>Then Focus me</button>
+      </FocusScope>
+    );
+    let buttons = tree.getAllByRole('button');
+    act(() => buttons[0].focus());
+    act(() => buttons[1].focus());
+    act(() => buttons[1].blur());
   });
 });

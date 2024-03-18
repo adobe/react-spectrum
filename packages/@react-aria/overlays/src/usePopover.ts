@@ -16,7 +16,7 @@ import {DOMAttributes} from '@react-types/shared';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {OverlayTriggerState} from '@react-stately/overlays';
 import {PlacementAxis} from '@react-types/overlays';
-import {RefObject, useState} from 'react';
+import {RefObject} from 'react';
 import {useOverlay} from './useOverlay';
 import {usePreventScroll} from './usePreventScroll';
 
@@ -46,7 +46,14 @@ export interface AriaPopoverProps extends Omit<AriaPositionProps, 'isOpen' | 'on
    *
    * @default false
    */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean,
+  /**
+   * When user interacts with the argument element outside of the popover ref,
+   * return true if onClose should be called. This gives you a chance to filter
+   * out interaction with elements that should not dismiss the popover.
+   * By default, onClose will always be called on interaction outside the popover ref.
+   */
+  shouldCloseOnInteractOutside?: (element: Element) => boolean
 }
 
 export interface PopoverAria {
@@ -70,6 +77,7 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     popoverRef,
     isNonModal,
     isKeyboardDismissDisabled,
+    shouldCloseOnInteractOutside,
     ...otherProps
   } = props;
 
@@ -79,7 +87,8 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
       onClose: state.close,
       shouldCloseOnBlur: true,
       isDismissable: !isNonModal,
-      isKeyboardDismissDisabled
+      isKeyboardDismissDisabled,
+      shouldCloseOnInteractOutside
     },
     popoverRef
   );
@@ -89,21 +98,11 @@ export function usePopover(props: AriaPopoverProps, state: OverlayTriggerState):
     targetRef: triggerRef,
     overlayRef: popoverRef,
     isOpen: state.isOpen,
-    onClose: null
+    onClose: isNonModal ? state.close : null
   });
 
-  // Delay preventing scroll until popover is positioned to avoid extra scroll padding.
-  // This requires a layout effect so that positioning has been committed to the DOM
-  // by the time usePreventScroll measures the element.
-  let [isPositioned, setPositioned] = useState(false);
-  useLayoutEffect(() => {
-    if (!isNonModal && placement) {
-      setPositioned(true);
-    }
-  }, [isNonModal, placement]);
-
   usePreventScroll({
-    isDisabled: isNonModal || !isPositioned
+    isDisabled: isNonModal || !state.isOpen
   });
 
   useLayoutEffect(() => {

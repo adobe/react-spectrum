@@ -30,7 +30,13 @@ export interface AriaCalendarGridProps {
    * Defaults to the last visible date in the calendar.
    * Override this to display multiple date grids in a calendar.
    */
-  endDate?: CalendarDate
+  endDate?: CalendarDate,
+  /**
+   * The style of weekday names to display in the calendar grid header,
+   * e.g. single letter, abbreviation, or full day name.
+   * @default "narrow"
+   */
+  weekdayStyle?: 'narrow' | 'short' | 'long'
 }
 
 export interface CalendarGridAria {
@@ -128,7 +134,7 @@ export function useCalendarGrid(props: AriaCalendarGridProps, state: CalendarSta
     'aria-labelledby': ariaLabelledBy
   });
 
-  let dayFormatter = useDateFormatter({weekday: 'narrow', timeZone: state.timeZone});
+  let dayFormatter = useDateFormatter({weekday: props.weekdayStyle || 'narrow', timeZone: state.timeZone});
   let {locale} = useLocale();
   let weekDays = useMemo(() => {
     let weekStart = startOfWeek(today(state.timeZone), locale);

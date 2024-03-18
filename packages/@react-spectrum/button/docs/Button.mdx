@@ -84,6 +84,30 @@ function Example() {
 }
 ```
 
+## Pending
+
+Buttons can indicate that a quick progress task is taking place (e.g., saving settings on a server). After a 1 second delay, an indeterminate spinner will be displayed in place of the button label and icon. You can trigger this behavior with the `isPending` prop. Button events are disabled while `isPending` is true.
+
+```tsx example
+function Example() {
+  let [isLoading, setIsLoading] = React.useState(false);
+
+  let handlePress = () => {
+    // Trigger button pending state
+    setIsLoading(true);
+
+    setTimeout(() => {
+      // Cancel button pending state
+      setIsLoading(false);
+    }, 3000);
+  };
+
+  return (
+    <Button variant="primary" isPending={isLoading} onPress={handlePress}>Click me!</Button>
+  );
+}
+```
+
 ## Props
 
 <PropTable component={docs.exports.Button} links={docs.links} />

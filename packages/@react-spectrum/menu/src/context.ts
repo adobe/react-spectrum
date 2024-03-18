@@ -10,19 +10,54 @@
  * governing permissions and limitations under the License.
  */
 
-import {FocusStrategy} from '@react-types/shared';
-import React, {HTMLAttributes, MutableRefObject, useContext} from 'react';
+import {DOMProps, FocusStrategy, HoverEvents, KeyboardEvents, PressEvents} from '@react-types/shared';
+import React, {HTMLAttributes, MutableRefObject, RefObject, useContext} from 'react';
+import {RootMenuTriggerState} from '@react-stately/menu';
+import {TreeState} from '@react-stately/tree';
 
-export interface MenuContextValue extends HTMLAttributes<HTMLElement> {
+export interface MenuContextValue extends Omit<HTMLAttributes<HTMLElement>, 'autoFocus' | 'onKeyDown'>, Pick<KeyboardEvents, 'onKeyDown'> {
   onClose?: () => void,
   closeOnSelect?: boolean,
   shouldFocusWrap?: boolean,
   autoFocus?: boolean | FocusStrategy,
-  ref?: MutableRefObject<HTMLUListElement>
+  ref?: MutableRefObject<HTMLDivElement>,
+  state?: RootMenuTriggerState,
+  onBackButtonPress?: () => void,
+  submenuLevel?: number
 }
 
 export const MenuContext = React.createContext<MenuContextValue>({});
 
 export function useMenuContext(): MenuContextValue {
   return useContext(MenuContext);
+}
+
+export interface SubmenuTriggerContextValue extends DOMProps, Pick<PressEvents, 'onPressStart' | 'onPress'>, Pick<HoverEvents, 'onHoverChange'>, Pick<KeyboardEvents, 'onKeyDown'> {
+  isUnavailable?: boolean,
+  triggerRef?: MutableRefObject<HTMLElement>,
+  'aria-expanded'?: boolean | 'true' | 'false',
+  'aria-controls'?: string,
+  'aria-haspopup'?: 'dialog' | 'menu',
+  isOpen?: boolean
+}
+
+export const SubmenuTriggerContext = React.createContext<SubmenuTriggerContextValue | undefined>(undefined);
+
+export function useSubmenuTriggerContext(): SubmenuTriggerContextValue {
+  return useContext(SubmenuTriggerContext);
+}
+
+export interface MenuStateContextValue<T> {
+  state?: TreeState<T>,
+  popoverContainer?: HTMLElement,
+  trayContainerRef?: RefObject<HTMLElement>,
+  menu?: RefObject<HTMLDivElement>,
+  submenu?: RefObject<HTMLDivElement>,
+  rootMenuTriggerState?: RootMenuTriggerState
+}
+
+export const MenuStateContext = React.createContext<MenuStateContextValue<any>>(undefined);
+
+export function useMenuStateContext<T>(): MenuStateContextValue<T> {
+  return useContext(MenuStateContext);
 }

@@ -11,8 +11,8 @@
  */
 
 import {FocusScope} from '../';
-import {Meta, Story} from '@storybook/react';
-import React, {ReactNode, useState} from 'react';
+import {Meta} from '@storybook/react';
+import React, {JSX, ReactNode, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 
 const dialogsRoot = 'dialogsRoot';
@@ -34,16 +34,16 @@ const meta: Meta<StoryProps> = {
 
 export default meta;
 
-const Template = (): Story<StoryProps> => ({isPortaled, contain = true}) => <Example isPortaled={isPortaled} contain={contain} />;
+const Template = ({isPortaled, contain = true}) => <Example isPortaled={isPortaled} contain={contain} />;
 
-function MaybePortal({children, isPortaled}: { children: ReactNode, isPortaled: boolean}) {
+function MaybePortal({children, isPortaled}: {children: ReactNode, isPortaled: boolean}) {
   if (!isPortaled) {
     return <>{children}</>;
   }
 
   return ReactDOM.createPortal(
     <>{children}</>,
-    document.getElementById(dialogsRoot)
+    document.getElementById(dialogsRoot)!
   );
 }
 
@@ -94,12 +94,11 @@ export function Example({isPortaled, contain}: StoryProps) {
 
   return (
     <div>
-      <input />
-
+      <input aria-label="input before" />
       <button type="button" onClick={() => setOpen(true)}>
         Open dialog
       </button>
-      <input />
+      <input aria-label="input after" />
       {open && <NestedDialog onClose={() => setOpen(false)} isPortaled={isPortaled} contain={contain} />}
 
       <div id={dialogsRoot} />
@@ -136,7 +135,7 @@ function FocusableFirstInScopeExample() {
       </>
     );
   }
-  const contents = [];
+  const contents: JSX.Element[] = [];
   for (let i = 0; i < 3; i++) {
     contents.push(DialogContent(i));
   }
@@ -149,18 +148,129 @@ function FocusableFirstInScopeExample() {
   );
 }
 
-export const KeyboardNavigation = Template().bind({});
-KeyboardNavigation.args = {isPortaled: false};
+function IgnoreRestoreFocusExample() {
+  const [display, setDisplay] = useState(false);
+  useEffect(() => {
+    let handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setDisplay(false);
+      }
+    };
+    document.body.addEventListener('keyup', handleKeyDown);
+    return () => {
+      document.body.removeEventListener('keyup', handleKeyDown);
+    };
+  }, []);
 
-export const KeyboardNavigationInsidePortal = Template().bind({});
-KeyboardNavigationInsidePortal.args = {isPortaled: true};
+  return (
+    <div>
+      <button type="button" onClick={() => setDisplay(state => !state)}>
+        {display ? 'Close dialog 1' : 'Open dialog 1'}
+      </button>
+      <button type="button" onClick={() => setDisplay(state => !state)}>
+        {display ? 'Close dialog 2' : 'Open dialog 2'}
+      </button>
+      {display &&
+        <FocusScope restoreFocus>
+          <div role="dialog">
+            <input  />
+            <input  />
+            <input  />
+          </div>
+        </FocusScope>
+      }
+    </div>
+  );
+}
 
-export const KeyboardNavigationNoContain = Template().bind({});
-KeyboardNavigationNoContain.args = {isPortaled: false, contain: false};
+export const KeyboardNavigation = {
+  render: Template,
+  args: {isPortaled: false}
+};
 
-export const KeyboardNavigationInsidePortalNoContain = Template().bind({});
-KeyboardNavigationInsidePortalNoContain.args = {isPortaled: true, contain: false};
+export const KeyboardNavigationInsidePortal = {
+  render: Template,
+  args: {isPortaled: true}
+};
 
-const FocusableFirstInScopeTemplate = (): Story<StoryProps> => () => <FocusableFirstInScopeExample />;
+export const KeyboardNavigationNoContain = {
+  render: Template,
+  args: {isPortaled: false, contain: false}
+};
 
-export const FocusableFirstInScope = FocusableFirstInScopeTemplate().bind({});
+export const KeyboardNavigationInsidePortalNoContain = {
+  render: Template,
+  args: {isPortaled: true, contain: false}
+};
+
+export const IgnoreRestoreFocus = {
+  render: () => <IgnoreRestoreFocusExample />
+};
+
+export const FocusableFirstInScope = {
+  render: () => <FocusableFirstInScopeExample />
+};
+
+
+function FocusableInputFormExample(args) {
+  let [isOpen, setOpen] = React.useState(false);
+  let {contain, restoreFocus, autoFocus} = args;
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Open</button>
+      {isOpen && (
+        <>
+          <div style={{display: 'flex', flexDirection: 'column', marginBottom: '10px'}}>
+            <FocusScope contain={contain} restoreFocus={restoreFocus} autoFocus={autoFocus}>
+              <label htmlFor="first-input">First Input</label>
+              <input id="first-input" />
+              <label htmlFor="second-input">Second Input</label>
+              <input id="second-input" />
+            </FocusScope>
+          </div>
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            <label htmlFor="third-input">Third Input</label>
+            <input id="third-input" />
+          </div>
+          <button onClick={() => setOpen(false)}>Close</button>
+        </>
+      )}
+    </>
+  );
+}
+
+export const FocusableInputForm = {
+  name: 'FocusableInputForm',
+  render: (args) => <FocusableInputFormExample {...args} />,
+  args: {
+    contain: true,
+    restoreFocus: true,
+    autoFocus: true
+  },
+  argTypes: {
+    contain: {
+      control: 'boolean'
+    },
+    restoreFocus: {
+      control: 'boolean'
+    },
+    autoFocus: {
+      control: 'boolean'
+    }
+  },
+  parameters: {
+    description: {
+      data: `
+1. Open OS keyboard settings
+2. Add Chinese Pinyin - Simplified
+3. Go to the third input
+4. Type "ni", a set of suggestions should appear
+5. Press Tab 3x and see how it shows different suggestions
+6. Go to the first input
+7. Repeat steps 4&5
+8. See how it leaves the suggestions and jumps to the form button
+`
+    }
+  }
+};

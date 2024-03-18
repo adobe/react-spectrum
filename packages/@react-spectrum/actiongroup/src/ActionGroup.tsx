@@ -11,7 +11,7 @@
  */
 
 import {ActionButton} from '@react-spectrum/button';
-import {AriaLabelingProps, DOMProps, DOMRef, Node, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, DOMProps, DOMRef, Key, Node, StyleProps} from '@react-types/shared';
 import buttonStyles from '@adobe/spectrum-css-temp/components/button/vars.css';
 import ChevronDownMedium from '@spectrum-icons/ui/ChevronDownMedium';
 import {
@@ -28,15 +28,14 @@ import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
 import {ListState, useListState} from '@react-stately/list';
 import More from '@spectrum-icons/workflow/More';
 import {PressResponder, useHover} from '@react-aria/interactions';
-import {Provider} from '@react-spectrum/provider';
-import React, {forwardRef, Key, ReactElement, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
+import {Provider, useProviderProps} from '@react-spectrum/provider';
+import React, {forwardRef, ReactElement, ReactNode, useCallback, useMemo, useRef, useState} from 'react';
 import {SpectrumActionGroupProps} from '@react-types/actiongroup';
 import styles from '@adobe/spectrum-css-temp/components/actiongroup/vars.css';
 import {Text} from '@react-spectrum/text';
 import {Tooltip, TooltipTrigger} from '@react-spectrum/tooltip';
-import {useActionGroup} from '@react-aria/actiongroup';
-import {useActionGroupItem} from '@react-aria/actiongroup';
-import {useProviderProps} from '@react-spectrum/provider';
+import {useActionGroup, useActionGroupItem} from '@react-aria/actiongroup';
+
 
 function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: DOMRef<HTMLDivElement>) {
   props = useProviderProps(props);
@@ -87,7 +86,8 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
     let computeVisibleItems = (visibleItems: number) => {
       if (domRef.current && wrapperRef.current) {
         let listItems = Array.from(domRef.current.children) as HTMLLIElement[];
-        let containerSize = orientation === 'horizontal' ? wrapperRef.current.offsetWidth : wrapperRef.current.offsetHeight;
+        let containerSize = orientation === 'horizontal' ? wrapperRef.current.getBoundingClientRect().width : wrapperRef.current.getBoundingClientRect().height;
+
         let isShowingMenu = visibleItems < state.collection.size;
         let calculatedSize = 0;
         let newVisibleItems = 0;
@@ -105,7 +105,7 @@ function ActionGroup<T extends object>(props: SpectrumActionGroupProps<T>, ref: 
           calculatedSize += orientation === 'horizontal'
             ? outerWidth(item, i === 0, i === listItems.length - 1)
             : outerHeight(item, i === 0, i === listItems.length - 1);
-          if (calculatedSize <= containerSize) {
+          if (Math.round(calculatedSize) <= Math.round(containerSize)) {
             newVisibleItems++;
           } else {
             break;
@@ -308,6 +308,9 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
             text: {
               id: hideButtonText ? textId : null,
               isHidden: hideButtonText
+            },
+            icon: {
+              UNSAFE_className: hideButtonText ? classNames(styles, 'spectrum-ActionGroup-itemIcon') : null
             }
           }}>
           <ActionButton
@@ -474,7 +477,7 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
         disallowEmptySelection={state.selectionManager.disallowEmptySelection}
         onSelectionChange={(keys) => state.selectionManager.setSelectedKeys(keys)}
         onAction={onAction}>
-        {node => <Item textValue={node.textValue}>{node.rendered}</Item>}
+        {node => <Item textValue={node.textValue} {...filterDOMProps(node.props)}>{node.rendered}</Item>}
       </Menu>
     </MenuTrigger>
   );
@@ -482,13 +485,13 @@ function ActionGroupMenu<T>({state, isDisabled, isEmphasized, staticColor, items
 
 function outerWidth(element: HTMLElement, ignoreLeftMargin: boolean, ignoreRightMargin: boolean) {
   let style = window.getComputedStyle(element);
-  return element.offsetWidth + (ignoreLeftMargin ? 0 : toNumber(style.marginLeft)) + (ignoreRightMargin ? 0 : toNumber(style.marginRight));
+  return element.getBoundingClientRect().width + (ignoreLeftMargin ? 0 : toNumber(style.marginLeft)) + (ignoreRightMargin ? 0 : toNumber(style.marginRight));
 }
 
 
 function outerHeight(element: HTMLElement, ignoreTopMargin: boolean, ignoreBottomMargin: boolean) {
   let style = window.getComputedStyle(element);
-  return element.offsetHeight + (ignoreTopMargin ? 0 : toNumber(style.marginTop)) + (ignoreBottomMargin ? 0 : toNumber(style.marginBottom));
+  return element.getBoundingClientRect().height + (ignoreTopMargin ? 0 : toNumber(style.marginTop)) + (ignoreBottomMargin ? 0 : toNumber(style.marginBottom));
 }
 
 function toNumber(value: string) {
