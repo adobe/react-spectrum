@@ -28,7 +28,7 @@ export const getRootNode = (el: Element | null | undefined): Document | ShadowRo
     return document;
   }
 
-  return rootNode;
+  return rootNode as ShadowRoot;
 };
 
 /**
