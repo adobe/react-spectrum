@@ -368,7 +368,8 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain?: boolean) 
         cancelAnimationFrame(raf.current);
       }
       raf.current = requestAnimationFrame(() => {
-        if (getDeepActiveElement() && (shouldContainFocus(scopeRef) && !isElementInChildScope(getDeepActiveElement(), scopeRef))) {
+        const activeElement = getDeepActiveElement() || ownerDocument.activeElement;
+        if (activeElement && (shouldContainFocus(scopeRef) && !isElementInChildScope(activeElement, scopeRef))) {
           activeScope = scopeRef;
           if (getRootBody(ownerDocument).contains(e.target)) {
             focusedNode.current = e.target;
