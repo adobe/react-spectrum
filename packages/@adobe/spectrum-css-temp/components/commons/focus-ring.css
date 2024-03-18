@@ -45,3 +45,14 @@
     }
   }
 }
+
+@media (forced-colors: active) {
+  .spectrum-FocusRing,
+  .spectrum-FocusRing-ring,
+  .spectrum-FocusRing--quiet {
+    --spectrum-high-contrast-focus-ring-color: xvar(--spectrum-high-contrast-focus-ring-color, Highlight);
+    &:after {
+      forced-color-adjust: none;
+    }
+  }
+}
