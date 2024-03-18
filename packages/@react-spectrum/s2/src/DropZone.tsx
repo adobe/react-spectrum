@@ -3,10 +3,10 @@ import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {ReactNode, forwardRef, createContext} from 'react';
 import {IllustratedMessageContext} from './IllustratedMessage';
 import {CSSPropWithHeight, UnsafeStyles, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {DOMRef} from '@react-types/shared';
+import {DOMProps, DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 
-interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled'>, UnsafeStyles {
+interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled'>, UnsafeStyles, DOMProps {
   css?: CSSPropWithHeight,
   /** The content to display in the drop zone. */
   children?: ReactNode,
@@ -83,5 +83,8 @@ function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
-let _DropZone = forwardRef(DropZone);
+/**
+ * A drop zone is an area into which one or multiple objects can be dragged and dropped.
+ */
+let _DropZone = /*#__PURE__*/ forwardRef(DropZone);
 export {_DropZone as DropZone};

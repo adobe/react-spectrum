@@ -20,11 +20,12 @@ interface DividerSpectrumProps {
    * @default 'horizontal'
    */
   orientation?: 'horizontal' | 'vertical',
+  /** The static color style to apply. Useful when the Divider appears over a color background. */
   staticColor?: 'white' | 'black'
 }
 
 // TODO: allow overriding height (only when orientation is vertical)??
-interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style'>, StyleProps {}
+interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'elementType'>, StyleProps {}
 
 export const divider = style<DividerSpectrumProps>({
   alignSelf: 'stretch',
@@ -56,10 +57,10 @@ export const divider = style<DividerSpectrumProps>({
     orientation: {
       horizontal: {
         // These should be px not rems, because we're emulating a border.
-        default: '[4px]',
+        default: '[2px]',
         size: {
           S: '[1px]',
-          M: '[2px]'
+          L: '[4px]'
         }
       }
     }
@@ -67,12 +68,24 @@ export const divider = style<DividerSpectrumProps>({
   width: {
     orientation: {
       vertical: {
-        default: '[4px]',
+        default: '[2px]',
         size: {
           S: '[1px]',
-          M: '[2px]'
+          L: '[4px]'
         }
       }
+    }
+  },
+  minWidth: {
+    default: '[200px]',
+    orientation: {
+      vertical: undefined
+    }
+  },
+  minHeight: {
+    default: undefined,
+    orientation: {
+      vertical: '[200px]'
     }
   }
 }, getAllowedOverrides());
@@ -93,5 +106,9 @@ function Divider(props: DividerProps, ref: DOMRef) {
   );
 }
 
-let _Divider = forwardRef(Divider);
+/**
+ * Dividers bring clarity to a layout by grouping and dividing content in close proximity.
+ * They can also be used to establish rhythm and hierarchy.
+ */
+let _Divider = /*#__PURE__*/ forwardRef(Divider);
 export {_Divider as Divider};

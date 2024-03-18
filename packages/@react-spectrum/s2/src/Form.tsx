@@ -6,8 +6,14 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 
 interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'contextualHelp'> {
+  /**
+   * Size of the Form elements.
+   * @default 'M'
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /** Whether the Form elements are disabled. */
   isDisabled?: boolean,
+  /** Whether the Form elements are rendered with their emphasized style. */
   isEmphasized?: boolean
 }
 
@@ -26,7 +32,16 @@ export function useFormProps<T extends FormStyleProps>(props: T): T {
 }
 
 function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
-  let {labelPosition = 'top', labelAlign, necessityIndicator, isRequired, isDisabled, isEmphasized, size, ...formProps} = props;
+  let {
+    labelPosition = 'top',
+    labelAlign,
+    necessityIndicator,
+    isRequired,
+    isDisabled,
+    isEmphasized,
+    size = 'M',
+    ...formProps
+  } = props;
   let domRef = useDOMRef(ref);
 
   return (
@@ -61,5 +76,8 @@ function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
   );
 }
 
-let _Form = forwardRef(Form);
+/**
+ * Forms allow users to enter data that can be submitted while providing alignment and styling for form fields.
+ */
+let _Form = /*#__PURE__*/ forwardRef(Form);
 export {_Form as Form};
