@@ -15,12 +15,20 @@ import {FormValidationContext} from 'react-stately';
 import React, {createContext, ForwardedRef, forwardRef} from 'react';
 import {FormProps as SharedFormProps} from '@react-types/form';
 
-export interface FormProps extends SharedFormProps, DOMProps {}
+export interface FormProps extends SharedFormProps, DOMProps {
+  /**
+   * Whether to use native HTML form validation to prevent form submission
+   * when a field value is missing or invalid, or mark fields as required
+   * or invalid via ARIA.
+   * @default 'native'
+   */
+  validationBehavior?: 'aria' | 'native'
+}
 
 export const FormValidationBehaviorContext = createContext<FormProps['validationBehavior'] | null>(null);
 
 function Form(props: FormProps, ref: ForwardedRef<HTMLFormElement>) {
-  let {validationErrors, validationBehavior, children, className, ...domProps} = props;
+  let {validationErrors, validationBehavior = 'native', children, className, ...domProps} = props;
   return (
     <form noValidate={validationBehavior !== 'native'} {...domProps} ref={ref} className={className || 'react-aria-Form'}>
       <FormValidationBehaviorContext.Provider value={validationBehavior}>

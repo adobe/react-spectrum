@@ -64,14 +64,7 @@ export interface FormProps extends AriaLabelingProps {
   /**
    * An ARIA role override to apply to the form element.
    */
-  role?: 'search' | 'presentation',
-  /**
-   * Whether to use native HTML form validation to prevent form submission
-   * when a field value is missing or invalid, or mark fields as required
-   * or invalid via ARIA.
-   * @default 'aria'
-   */
-  validationBehavior?: 'aria' | 'native'
+  role?: 'search' | 'presentation'
 }
 
 export interface SpectrumFormProps extends FormProps, DOMProps, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp' | 'label'> {
@@ -91,5 +84,12 @@ export interface SpectrumFormProps extends FormProps, DOMProps, StyleProps, Omit
    * Whether the Form elements should display their "valid" or "invalid" visual styling.
    * @default 'valid'
    */
-  validationState?: ValidationState
+  validationState?: ValidationState,
+  /**
+   * Whether to use native HTML form validation to prevent form submission
+   * when a field value is missing or invalid, or mark fields as required
+   * or invalid via ARIA.
+   * @default 'aria'
+   */
+  validationBehavior?: 'aria' | 'native'
 }
