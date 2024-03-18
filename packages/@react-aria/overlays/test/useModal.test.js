@@ -183,8 +183,8 @@ describe('useModal', function () {
       expect.extend({
         toHaveBeenNthCalledWithError(received, index, arg) {
           return {
-            pass: received.mock.calls[index - 1][0].toString().includes(arg),
-            message: () => `expected ${received.mock.calls[0][0]} to include ${arg}`
+            pass: received.mock.calls[index - 1].some(a => a.toString().includes(arg)),
+            message: () => `expected console.error to include ${arg}`
           };
         }
       });
