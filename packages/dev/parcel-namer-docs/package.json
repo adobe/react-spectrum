@@ -4,9 +4,9 @@
   "private": true,
   "main": "DocsNamer.js",
   "engines": {
-    "parcel": "2.0.0-canary.1532"
+    "parcel": "2.0.0-canary.1535"
   },
   "dependencies": {
-    "@parcel/plugin": "2.0.0-canary.1534"
+    "@parcel/plugin": "2.0.0-canary.1537"
   }
 }
