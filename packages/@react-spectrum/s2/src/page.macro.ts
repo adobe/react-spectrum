@@ -16,22 +16,24 @@ export function generatePageStyles(this: MacroContext | void) {
       color-scheme: light dark;
       background: ${colorToken(tokens['background-base-color'])};
       -webkit-tap-highlight-color: rgba(0,0,0,0); /* Prevent tap highlights */
-    
+
       &[data-theme=light] {
         color-scheme: light;
       }
-    
+
       &[data-theme=dark] {
         color-scheme: dark;
       }
-    
+
       &[data-background=layer-1] {
         background: ${colorToken(tokens['background-layer-1-color'])};
       }
-    
+
       &[data-background=layer-2] {
         background: ${weirdColorToken(tokens['background-layer-2-color'])};
       }
+
+      --iconPrimary: ${colorToken(tokens['gray-800'])};
     }`
   });
 }

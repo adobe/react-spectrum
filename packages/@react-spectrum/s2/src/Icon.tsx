@@ -1,32 +1,16 @@
-import {fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {CenterBaseline} from './CenterBaseline';
-import {createContext, ForwardedRef, ReactElement, cloneElement, forwardRef} from 'react';
-import {ContextValue} from './Content';
-import {SlotProps, useContextProps} from 'react-aria-components';
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {ReactNode, createContext} from 'react';
+import {ContextValue, SlotProps} from 'react-aria-components';
+import {StyleProps, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {StyleString} from '../style-macro/types';
+import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 
-interface IconProps extends StyleProps, SlotProps {
-  children: ReactElement
+export interface IconProps extends StyleProps, SlotProps, AriaLabelingProps, DOMProps {
+  'aria-hidden'?: boolean | 'false' | 'true'
 }
 
-export const IconContext = createContext<ContextValue<Partial<IconProps>, HTMLImageElement>>({});
-export interface IconPropsWithoutChildren extends Omit<IconProps, 'children'> {}
-
-const styles = style({marginStart: '--iconMargin', flexShrink: 0}, getAllowedOverrides());
-
-function Icon(props: IconProps, ref: ForwardedRef<HTMLImageElement>) {
-  [props, ref] = useContextProps(props, ref, IconContext);
-  return (
-    <CenterBaseline slot="icon" style={props.UNSAFE_style} className={props.UNSAFE_className + styles(null, props.css)}>
-      {cloneElement(props.children, {
-        className: style({
-          fill: 'currentColor',
-          size: fontRelative(20)
-        })
-      })}
-    </CenterBaseline>
-  );
+export interface IconContextValue extends UnsafeStyles, SlotProps {
+  css?: StyleString,
+  render?: (icon: ReactNode) => ReactNode
 }
 
-const _Icon = forwardRef(Icon);
-export {_Icon as Icon};
+export const IconContext = createContext<ContextValue<IconContextValue, SVGElement>>({});

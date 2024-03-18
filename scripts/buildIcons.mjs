@@ -20,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const PACKAGES = {
-  workflow: path.join(__dirname, '..', 's2wf-icons', 'assets', 'react')
+  workflow: path.join(__dirname, '..', 's2wf-icons', 'assets', 'svg')
 };
 
 (async function () {

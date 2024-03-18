@@ -11,7 +11,6 @@ export {DialogContainer, useDialogContainer} from './DialogContainer';
 export {Divider} from './Divider';
 export {DropZone} from './DropZone';
 export {Form} from './Form';
-export {Icon} from './Icon';
 export {IllustratedMessage} from './IllustratedMessage';
 export {Illustration} from './Illustration';
 export {InlineAlert} from './InlineAlert';

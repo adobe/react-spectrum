@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/react';
-import {Text} from 'react-aria-components';
+import {Text} from '../src/Content';
 import NewIcon from '../src/wf-icons/New';
 import {ActionButton} from '../src/ActionButton';
 import {StaticColorDecorator} from './utils';
@@ -23,6 +23,7 @@ export const Example: Story = {
         <ActionButton {...args}><NewIcon /></ActionButton>
         <ActionButton {...args}>Press me</ActionButton>
         <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>
+        <ActionButton {...args}><Text>Press me</Text><NewIcon /></ActionButton>
       </div>
     );
   },

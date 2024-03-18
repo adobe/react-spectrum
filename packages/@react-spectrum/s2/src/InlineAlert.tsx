@@ -22,6 +22,7 @@ import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {useFocusRing} from 'react-aria';
 import {Provider, HeadingContext} from 'react-aria-components';
 import {ContentContext} from './Content';
+import {IconContext} from './Icon';
 
 export interface SpectrumInlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
   /**
@@ -117,26 +118,37 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
 
 const icon = style<InlineStylesProps>({
   gridArea: 'icon',
-  fill: {
-    default: {
-      variant: {
-        informative: 'informative',
-        positive: 'positive',
-        notice: 'notice',
-        negative: 'negative'
-      }
-    },
-    style: {
-      boldFill: {
-        variant: {
-          informative: 'white',
-          positive: 'white',
-          notice: 'black',
-          negative: 'white'
+  size: 20,
+  '--iconPrimary': {
+    type: 'fill',
+    value: {
+      style: {
+        border: {
+          variant: {
+            informative: 'informative',
+            positive: 'positive',
+            notice: 'notice',
+            negative: 'negative',
+            neutral: 'neutral'
+          }
+        },
+        subtleFill: {
+          variant: {
+            informative: 'informative',
+            positive: 'positive',
+            notice: 'notice',
+            negative: 'negative',
+            neutral: 'neutral'
+          }
+        },
+        boldFill: {
+          default: 'white',
+          variant: {
+            notice: 'black'
+          }
         }
       }
-    },
-    forcedColors: 'ButtonText'
+    }
   }
 });
 
@@ -149,7 +161,19 @@ const grid = style({
   gridTemplateAreas: [
     'heading icon',
     'content content'
-  ]
+  ],
+  color: {
+    style: {
+      border: 'gray-900',
+      subtleFill: 'gray-900',
+      boldFill: {
+        default: 'white',
+        variant: {
+          notice: 'black'
+        }
+      }
+    }
+  }
 });
 
 let ICONS = {
@@ -162,7 +186,7 @@ let ICONS = {
 
 const heading = style<InlineStylesProps>({
   marginTop: 0,
-  color: {
+  color: { // if i remove this, it throws an error that heading isn't a function, yet not calling it a ts error
     style: {
       border: 'gray-900',
       subtleFill: 'gray-900',
@@ -180,9 +204,10 @@ const heading = style<InlineStylesProps>({
 });
 
 const content = style<InlineStylesProps>({
+  gridArea: 'content',
   color: {
     style: {
-      border: 'gray-900',
+      border: 'gray-800',
       subtleFill: 'gray-800',
       boldFill: {
         default: 'white',
@@ -192,7 +217,6 @@ const content = style<InlineStylesProps>({
       }
     }
   },
-  gridArea: 'content',
   fontSize: 'body-sm',
   lineHeight: 'body'
 });
@@ -238,15 +262,14 @@ function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement
         isFocusVisible
       }, props.css)}>
       <div
-        className={grid}>
+        className={grid(props)}>
         <Provider
           values={[
             [HeadingContext, {className: heading({variant, style: styleFill})}],
-            [ContentContext, {className: content({variant, style: styleFill})}]
+            [ContentContext, {className: content({variant, style: styleFill})}],
+            [IconContext, {css: icon({variant, style: styleFill})}]
           ]}>
-          {Icon && <Icon
-            UNSAFE_className={icon(props)}
-            aria-label={iconAlt} />}
+          {Icon && <Icon aria-label={iconAlt} />}
           {children}
         </Provider>
       </div>

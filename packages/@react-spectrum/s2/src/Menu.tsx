@@ -23,9 +23,10 @@ import {pressScale} from './pressScale';
 import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {IconContext} from './Icon';
 import CheckmarkIcon from '../ui-icons/Checkmark';
-import ChevronRightIcon from './wf-icons/ChevronRight';
+import ChevronRightIcon from '../ui-icons/Chevron'; // chevron right removed??
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {Placement} from 'react-aria';
+import {centerBaseline} from './CenterBaseline';
 import {divider} from './Divider';
 import {forwardRefType} from './types';
 // viewbox on LinkOut is super weird just because i copied the icon from figma...
@@ -191,6 +192,7 @@ let checkbox = style({
 
 let icon = style({
   gridArea: 'icon',
+  size: fontRelative(20),
   marginEnd: 'text-to-visual' // TODO: once i have access to figma again
   // too small default icon size is wrong, it's like the icons are 1 tshirt size bigger than the rest of the component? check again after typography changes
   // reminder, size of WF is applied via font size
@@ -394,8 +396,8 @@ export function MenuItem(props: MenuItemProps) {
               values={[
                 [IconContext, {
                   slots: {
-                    icon: {css: icon},
-                    descriptor: {css: descriptor} // TODO: remove once we have default?
+                    icon: {render: centerBaseline({slot: 'icon', className: icon})}, // fix className to css?
+                    descriptor: {render: centerBaseline({slot: 'descriptor', className: descriptor})} // TODO: remove once we have default?
                   }
                 }],
                 [TextContext, {
@@ -416,7 +418,7 @@ export function MenuItem(props: MenuItemProps) {
               )}
               {typeof children === 'string' ? <Text slot="label">{children}</Text> : children}
               {isLink && <LinkOutIcon size={size} className={descriptor} />}
-              {renderProps.hasSubmenu && <ChevronRightIcon  slot="descriptor" css={descriptor} />}
+              {renderProps.hasSubmenu && <div slot="descriptor" className={descriptor}><ChevronRightIcon size={size} /></div>}
             </Provider>
           </>
         );

@@ -23,6 +23,7 @@ export const Example: Story = {
       <div style={{display: 'flex', flexDirection: 'column', alignItems: 'start', gap: 8}}>
         <Button {...args}>Press me</Button>
         <Button {...args}><NewIcon /><Text>Test</Text></Button>
+        <Button {...args}><Text>Test</Text><NewIcon /></Button>
         <Button {...args}><NewIcon /></Button>
         <Button {...args} css={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</Button>
         <Button {...args} css={style({maxWidth: 128})}>

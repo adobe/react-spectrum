@@ -17,3 +17,7 @@ export function CenterBaseline(props: CenterBaselineProps) {
 }
 
 export const centerBaselineBefore = raw('&::before { content: "\u00a0"; width: 0; visibility: hidden }');
+
+export function centerBaseline(props: Omit<CenterBaselineProps, 'children'> = {}): (icon: ReactNode) => ReactNode {
+  return (icon: ReactNode) => <CenterBaseline {...props}>{icon}</CenterBaseline>;
+}

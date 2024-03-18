@@ -5,6 +5,8 @@ import {StyleProps, centerPadding, focusRing, getAllowedOverrides} from './style
 import {createContext, ReactNode, forwardRef, useContext} from 'react';
 import {pressScale} from './pressScale';
 import {useFocusableRef} from '@react-spectrum/utils';
+import {IconContext} from './Icon';
+import {centerBaseline} from './CenterBaseline';
 import {mergeProps} from 'react-aria';
 
 interface ButtonStyleProps {
@@ -241,6 +243,10 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
       }
     }
   },
+  '--iconPrimary': {
+    type: 'color',
+    value: '[currentColor]'
+  },
   outlineColor: {
     default: 'focus-ring',
     staticColor: {
@@ -271,7 +277,11 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
       }, props.css)}>
       <Provider
         values={[
-          [TextContext, {className: style({paddingY: '--labelPadding'})}]
+          [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
+          [IconContext, {
+            render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+            css: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+          }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
       </Provider>
@@ -306,7 +316,11 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
       }, props.css)}>
       <Provider
         values={[
-          [TextContext, {className: style({paddingY: '--labelPadding'})}]
+          [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
+          [IconContext, {
+            render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+            css: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+          }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
       </Provider>

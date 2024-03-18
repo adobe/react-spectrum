@@ -18,6 +18,9 @@ import {fontRelative, style} from '../style-macro/spectrum-theme' with { type: '
 import {pressScale} from './pressScale';
 import {createContext, useContext, useRef, forwardRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
+import {Text} from './Content';
+import {IconContext} from './Icon';
+import {centerBaseline} from './CenterBaseline';
 import {forwardRefType} from './types';
 
 // Get types from RSP and extend those?
@@ -203,7 +206,16 @@ export function Tag({children, ...props}: TagProps) {
               forcedColorAdjust: 'none',
               backgroundColor: 'transparent'
             })}>
-            {children}
+            <Provider
+              values={[
+                [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
+                [IconContext, {
+                  render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+                  css: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+                }]
+              ]}>
+              {typeof children === 'string' ? <Text>{children}</Text> : children}
+            </Provider>
           </div>
           {allowsRemoving && (
             <ClearButton

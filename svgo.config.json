@@ -4,7 +4,10 @@
       "name": "preset-default",
       "params": {
         "overrides": {
-          "removeViewBox": false
+          "removeViewBox": false,
+          "removeAttrs": {
+            "attrs": "(id|data.*)"
+          }
         }
       }
     }

@@ -1,19 +1,21 @@
 import {
   SearchField as AriaSearchField,
-  SearchFieldProps as AriaSearchFieldProps
+  SearchFieldProps as AriaSearchFieldProps,
+  Provider
 } from 'react-aria-components';
 import {ClearButton} from './ClearButton';
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import SearchIcon from '../src/wf-icons/Search';
-import {Icon} from './Icon';
 import {raw} from '../style-macro/style-macro' with {type: 'macro'};
 import {useContext, forwardRef, Ref, useRef, useImperativeHandle} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
 import {TextFieldRef} from '@react-types/textfield';
 import {createFocusableRef} from '@react-spectrum/utils';
+import {IconContext} from './Icon';
+import {centerBaseline} from './CenterBaseline';
 
 export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
   size?: 'S' | 'M' | 'L' | 'XL'
@@ -92,9 +94,24 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
             paddingStart: 'pill',
             paddingEnd: 0
           })}>
-          <Icon css={style({marginEnd: 'text-to-visual'})}>
+          <Provider
+            values={[
+              [IconContext, {
+                render: centerBaseline({
+                  slot: 'icon',
+                  className: style({
+                    flexShrink: 0,
+                    marginEnd: 'text-to-visual'
+                  })
+                }),
+                css: style({
+                  size: fontRelative(20),
+                  marginStart: '--iconMargin'
+                })
+              }]
+            ]}>
             <SearchIcon />
-          </Icon>
+          </Provider>
           <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
           {!isEmpty && <ClearButton size={props.size} isDisabled={isDisabled} />}
         </FieldGroup>

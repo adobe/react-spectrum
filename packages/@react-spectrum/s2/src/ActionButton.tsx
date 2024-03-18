@@ -1,10 +1,13 @@
-import {ButtonProps, ButtonRenderProps, Button as RACButton} from 'react-aria-components';
+import {ButtonProps, ButtonRenderProps, Provider, Button as RACButton} from 'react-aria-components';
 import {baseColor, fontRelative, style} from '../style-macro/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with { type: 'macro' };
 import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {ReactNode, forwardRef} from 'react';
+import {TextContext, Text} from './Content';
+import {IconContext} from './Icon';
+import {centerBaseline} from './CenterBaseline';
 
 export interface ActionButtonStyleProps {
   /**
@@ -126,6 +129,10 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
       }
     }
   },
+  '--iconPrimary': {
+    type: 'color',
+    value: '[currentColor]'
+  },
   outlineColor: {
     default: 'focus-ring',
     staticColor: {
@@ -166,7 +173,18 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
         staticColor: props.staticColor,
         size: props.size || 'M',
         isQuiet: props.isQuiet
-      }, props.css)} />
+      }, props.css)}>
+      <Provider
+        values={[
+            [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
+          [IconContext, {
+            render: centerBaseline({slot: 'icon', className: style({order: 0})}),
+            css: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+          }]
+        ]}>
+        {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
+      </Provider>
+    </RACButton>
   );
 }
 

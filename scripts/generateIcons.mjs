@@ -15,6 +15,8 @@ import fs from 'fs-extra';
 import { fileURLToPath } from 'url';
 import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
+import {optimize} from 'svgo';
+import { transform } from '@svgr/core';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -34,50 +36,109 @@ function writeToFile(filepath, data) {
 export function generateIcons(iconDir, outputDir, nameRegex, template) {
   fs.ensureDirSync(outputDir);
   fs.readdir(iconDir, (err, items) => {
-    let ignoreList = ['index.js', 'util.js'];
+    // bad icons have inline style tags and css
+    let badIcons = ['S2_Icon_ProjectCreate_20_N.svg', 'S2_Icon_Projects_20_N.svg', 'S2_Icon_ProjectsAddInto_20_N.svg'];
+    let ignoreList = ['index.js', 'util.js', ...badIcons];
     // get all icon files
-    let iconFiles = items.filter(item => !!item.endsWith('.js')).filter(item => !ignoreList.includes(item));
+    let iconFiles = items.filter(item => !!item.endsWith('.svg')).filter(item => !ignoreList.includes(item));
 
     // generate all icon files
     iconFiles.forEach(icon => {
       fs.readFile(path.resolve(iconDir, icon), 'utf8', (err, contents) => {
-        let iconFileName = icon.replace('.js', '');
-        let newFile = template(iconFileName);
+        let iconFileName = icon.replace('.svg', '');
+        let optimized = transform.sync(
+          contents,
+          {
+            jsxRuntime: 'automatic',
+            svgoConfig: {
+              plugins: [
+                {
+                  name: "preset-default",
+                  params: {
+                    overrides: {
+                      removeViewBox: false
+                      // inlineStyles: { // works, but fails lint, revisit if the three icons are needed?
+                      //   onlyMatchedOnce: false,
+                      //   removeMatchedSelectors: true
+                      // }
+                    }
+                  },
+                  removeAttrs: {
+                    attrs: ['id', 'data.*'] // data attribute removal not working
+                  }
+                }
+              ]
+            },
+            typescript: true,
+            dimensions: false,
+            plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx']
+          })
+          .replace('export default SvgComponent;', '');
+          // will need to use svgr's templating to add ref support if we want that https://github.com/facebook/create-react-app/pull/5457
+        let newFile = template(iconFileName, optimized);
 
-        let filepath = `${outputDir}/${iconFileName.replace('s2Icon', '').replace('20N', '')}.tsx`;
+        let filepath = `${outputDir}/${iconFileName.replace('S2_Icon_', '').replace(/_\d+\d+_N/, '')}.tsx`;
         writeToFile(filepath, newFile);
       });
     });
-
-    // // generate index barrel
-    // let indexFile = iconFiles.map(icon => {
-    //   let iconName = icon.substring(0, icon.length - 3);
-    //   return `export * as ${isNaN(Number(iconName[0])) ? iconName : `_${iconName}`} from './${iconName}';\n`;
-    // }).join('');
-
-    // let indexFilepath = `${outputDir}/index.ts`;
-    // writeToFile(indexFilepath, indexFile);
   });
 }
 
 let exportNameRegex = /exports\.(?<name>.*?) = .*?;/;
 
-function template(iconName) {
-  let importName = iconName.replace('s2Icon', '').replace('20N', '');
+function template(iconName, svg) {
+  let importName = iconName.replace('S2_Icon_', '').replace(/_\d+\d+_N/, '');
   let iconRename = importName;
   if (/^[0-9]/.test(importName)) {
     iconRename = '_' + importName;
   }
   return (
-`import IconComponent from '../../s2wf-icons/assets/react/${iconName}.js';
-import {Icon, IconPropsWithoutChildren} from '../Icon';
+`
+import {IconProps, IconContext, IconContextValue} from '../Icon';
+import {SVGProps, useRef} from 'react';
+import {useContextProps} from 'react-aria-components';
 
-export default function ${iconRename}(props: IconPropsWithoutChildren) {
-  return <Icon {...props}><IconComponent /></Icon>;
+${svg.replace('import type { SVGProps } from "react";', '')}
+
+export default function ${iconRename}(props: IconProps) {
+  let ref = useRef<SVGElement>(null);
+  let ctx;
+  [ctx, ref] = useContextProps({slot: props.slot} as IconContextValue, ref, IconContext);
+  let {render, css} = ctx;
+  let {
+    UNSAFE_className,
+    UNSAFE_style,
+    slot,
+    'aria-label': ariaLabel,
+    'aria-hidden': ariaHidden,
+    ...otherProps
+  } = props;
+
+  if (!ariaHidden) {
+    ariaHidden = undefined;
+  }
+
+  let propsToPass = {
+    ...otherProps,
+    focusable: false,
+    'aria-label': ariaLabel,
+    'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
+    role: 'img',
+    'data-slot': slot,
+    className: (UNSAFE_className ?? '') + ' ' + (css ?? ''),
+    style: UNSAFE_style
+  };
+
+  if (render) {
+    return render(<SvgComponent {...propsToPass} />);
+  }
+
+  return <SvgComponent {...propsToPass} />;
 }
+
 `
   );
 }
 
-generateIcons(path.dirname(require.resolve('../s2wf-icons/assets/react/s2Icon3D20N')), path.join(__dirname, '..', 'src', 'wf-icons'), exportNameRegex, template);
+generateIcons(path.dirname(require.resolve('../s2wf-icons/assets/svg/S2_Icon_3D_20_N.svg')), path.join(__dirname, '..', 'src', 'wf-icons'), exportNameRegex, template);
 

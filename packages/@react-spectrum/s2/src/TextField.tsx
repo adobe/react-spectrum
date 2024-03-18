@@ -29,7 +29,7 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
 
 function TextField(props: TextFieldProps, ref: Ref<TextFieldRef>) {
   return (
-    <_TextFieldBase 
+    <_TextFieldBase
       {...props}
       ref={ref}>
       <Input />
@@ -49,7 +49,7 @@ export interface TextAreaProps extends Omit<TextFieldProps, 'type' | 'pattern'> 
 
 function TextArea(props: TextAreaProps, ref: Ref<TextFieldRef>) {
   return (
-    <_TextFieldBase 
+    <_TextFieldBase
       {...props}
       ref={ref}
       fieldGroupCss={style({
@@ -102,7 +102,7 @@ function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupC
 
 
   return (
-    <AriaTextField 
+    <AriaTextField
       {...textFieldProps}
       ref={domRef}
       style={UNSAFE_style}
@@ -130,9 +130,9 @@ function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupC
               </InputContext.Provider>
             )}
           </InputContext.Consumer>
-          {isInvalid && <FieldErrorIcon />}
+          {isInvalid && <FieldErrorIcon isDisabled={isDisabled} />}
         </FieldGroup>
-        <HelpText 
+        <HelpText
           size={props.size}
           isDisabled={isDisabled}
           isInvalid={isInvalid}

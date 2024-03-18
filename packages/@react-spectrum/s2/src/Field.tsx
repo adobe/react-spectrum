@@ -1,11 +1,11 @@
-import {Group, GroupProps, Input as RACInput, InputProps as RACInputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text} from 'react-aria-components';
+import {Group, GroupProps, Input as RACInput, InputProps as RACInputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text, Provider} from 'react-aria-components';
 import {baseColor, fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {StyleProps, UnsafeStyles, focusRing} from './style-utils' with {type: 'macro'};
 import AsteriskIcon from '../ui-icons/Asterisk';
 import AlertIcon from './wf-icons/AlertTriangle';
-import {Icon} from './Icon';
+import {IconContext} from './Icon';
 import {mergeStyles} from '../style-macro/runtime';
-import {CenterBaseline, centerBaselineBefore} from './CenterBaseline';
+import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
 import {NecessityIndicator, Alignment, DOMRef} from '@react-types/shared';
 import {forwardRef, ForwardedRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -232,6 +232,10 @@ const helpTextStyles = style({
     isInvalid: 'negative',
     isDisabled: 'disabled'
   },
+  '--iconPrimary': {
+    type: 'color',
+    value: '[currentColor]'
+  },
   contain: 'inline-size',
   paddingTop: '--field-gap',
   cursor: {
@@ -261,9 +265,9 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
       className={renderProps => helpTextStyles({...renderProps, size: props.size || 'M', isDisabled: props.isDisabled})}>
       {composeRenderProps(props.children, (children, {validationErrors}) => (<>
         {props.showErrorIcon &&
-          <Icon>
-            <AlertIcon UNSAFE_style={{fill: 'currentColor'}} />
-          </Icon>
+          <CenterBaseline>
+            <AlertIcon />
+          </CenterBaseline>
         }
         <span>{children || validationErrors.join(' ')}</span>
       </>))}
@@ -271,15 +275,30 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
   );
 }
 
-export function FieldErrorIcon() {
+export function FieldErrorIcon(props: {isDisabled?: boolean}) {
   return (
-    <CenterBaseline>
-      <AlertIcon
-        // TODO: add back color
-        css={style({
-          marginStart: 'text-to-visual',
-          marginEnd: fontRelative(-2) // ??
-        })} />
-    </CenterBaseline>
+    <Provider
+      values={[
+        [IconContext, {
+          render: centerBaseline({
+            slot: 'icon',
+            className: style({
+              order: 0,
+              flexShrink: 0,
+              '--iconPrimary': {
+                type: 'fill',
+                value: 'negative'
+              }
+            })}),
+          css: style({
+            size: fontRelative(20),
+            marginStart: 'text-to-visual',
+            marginEnd: fontRelative(-2),
+            flexShrink: 0
+          })
+        }]
+      ]}>
+      {!props.isDisabled && <AlertIcon />}
+    </Provider>
   );
 }
