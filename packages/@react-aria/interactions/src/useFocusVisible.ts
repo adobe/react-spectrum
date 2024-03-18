@@ -210,15 +210,17 @@ const tearDownWindowFocusTracking = (element, loadListener?: () => void) => {
  * @returns A function to remove the event listeners and cleanup the state.
  */
 export function addWindowFocusTracking(element?: HTMLElement | null): () => void {
-  const documentObject = getRootNode(element);
+  const rootNode = getRootNode(element);
   let loadListener;
-  if (documentObject.readyState !== 'loading') {
+
+   // Shadow root doesn't have a readyState, so we can assume it's ready in case of there is a shadow root.
+  if (rootNode instanceof ShadowRoot || (rootNode.readyState !== 'loading')) {
     setupGlobalFocusEvents(element);
   } else {
     loadListener = () => {
       setupGlobalFocusEvents(element);
     };
-    documentObject.addEventListener('DOMContentLoaded', loadListener);
+    rootNode.addEventListener('DOMContentLoaded', loadListener);
   }
 
   return () => tearDownWindowFocusTracking(element, loadListener);

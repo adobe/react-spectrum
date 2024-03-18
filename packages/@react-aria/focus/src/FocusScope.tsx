@@ -730,10 +730,10 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
  * Create a [TreeWalker]{@link https://developer.mozilla.org/en-US/docs/Web/API/TreeWalker}
  * that matches all focusable/tabbable elements.
  */
-export function getFocusableTreeWalker(root: Element, opts?: FocusManagerOptions, scope?: Element[]) {
+export function getFocusableTreeWalker(root: Element | ShadowRoot, opts?: FocusManagerOptions, scope?: Element[]) {
   let selector = opts?.tabbable ? TABBABLE_ELEMENT_SELECTOR : FOCUSABLE_ELEMENT_SELECTOR;
   // Adjusted to directly handle root being a Document or ShadowRoot
-  let doc = root instanceof Document || root instanceof ShadowRoot ? root : getRootNode(root);
+  let doc = root instanceof ShadowRoot ? root :  getRootNode(root);
   let effectiveDocument = doc instanceof ShadowRoot ? doc.ownerDocument : doc;
   let walker = effectiveDocument.createTreeWalker(
     root || doc,
