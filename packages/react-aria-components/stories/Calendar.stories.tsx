@@ -19,7 +19,7 @@ export default {
 
 function Footer() {
   const state = useContext(CalendarStateContext);
-  const {setValue} = state;
+  const setValue = state?.setValue;
   
   return (
     <div>
@@ -28,7 +28,7 @@ function Footer() {
         className="reset-button"
         onPress={() => {
           // reset value 
-          setValue(null);
+          setValue?.(null);
         }}>
         Reset value
       </Button>
