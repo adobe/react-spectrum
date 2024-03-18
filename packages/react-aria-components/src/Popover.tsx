@@ -12,13 +12,13 @@
 
 import {AriaPopoverProps, DismissButton, Overlay, PlacementAxis, PositionProps, usePopover} from 'react-aria';
 import {ContextValue, forwardRefType, HiddenContext, RenderProps, SlotProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
-import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {filterDOMProps, mergeProps, useLayoutEffect} from '@react-aria/utils';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, OverlayTriggerState, useOverlayTriggerState} from 'react-stately';
 import {OverlayTriggerStateContext} from './Dialog';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useContext, useRef, useState} from 'react';
 
-export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'offset'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
+export interface PopoverProps extends Omit<PositionProps, 'isOpen'>, Omit<AriaPopoverProps, 'popoverRef' | 'triggerRef' | 'offset' | 'arrowSize'>, OverlayTriggerProps, RenderProps<PopoverRenderProps>, SlotProps {
   /**
    * The name of the component that triggered the popover. This is reflected on the element
    * as the `data-trigger` attribute, and can be used to provide specific
@@ -130,9 +130,20 @@ interface PopoverInnerProps extends AriaPopoverProps, RenderProps<PopoverRenderP
 }
 
 function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: PopoverInnerProps) {
+  // Calculate the arrow size internally (and remove props.arrowSize from PopoverProps)
+  // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
+  let arrowRef = useRef<HTMLDivElement>(null);
+  let [arrowWidth, setArrowWidth] = useState(0);
+  useLayoutEffect(() => {
+    if (arrowRef.current && state.isOpen) {
+      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
+    }
+  }, [state.isOpen, arrowRef]);
+  
   let {popoverProps, underlayProps, arrowProps, placement} = usePopover({
     ...props,
-    offset: props.offset ?? 8
+    offset: props.offset ?? 8,
+    arrowSize: arrowWidth
   }, state);
 
   let ref = props.popoverRef as RefObject<HTMLDivElement>;
@@ -164,7 +175,7 @@ function PopoverInner({state, isExiting, UNSTABLE_portalContainer, ...props}: Po
         data-entering={isEntering || undefined}
         data-exiting={isExiting || undefined}>
         {!props.isNonModal && <DismissButton onDismiss={state.close} />}
-        <OverlayArrowContext.Provider value={{...arrowProps, placement}}>
+        <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
           {renderProps.children}
         </OverlayArrowContext.Provider>
         <DismissButton onDismiss={state.close} />
