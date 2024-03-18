@@ -62,7 +62,7 @@ export const ModalExample = () => (
 );
 
 export const ModalInteractionOutsideExample = () => {
-  
+
   useEffect(() => {
     let button = document.createElement('button');
     button.id = 'test-button';
@@ -72,8 +72,12 @@ export const ModalInteractionOutsideExample = () => {
     button.style.right = '0';
     button.style.zIndex = '200';
     document.body.appendChild(button);
+
+    return () => {
+      document.body.removeChild(button);
+    };
   }, []);
-  
+
   return (
     <DialogTrigger>
       <Button>Open modal</Button>
@@ -125,7 +129,7 @@ export const ModalInteractionOutsideExample = () => {
 };
 
 export const ModalInteractionOutsideDefaultOverlayExample = () => {
-  
+
   useEffect(() => {
     let button = document.createElement('button');
     button.id = 'test-button';
@@ -135,8 +139,11 @@ export const ModalInteractionOutsideDefaultOverlayExample = () => {
     button.style.right = '0';
     button.style.zIndex = '200';
     document.body.appendChild(button);
+    return () => {
+      document.body.removeChild(button);
+    };
   }, []);
-  
+
   return (
     <DialogTrigger>
       <Button>Open modal</Button>
