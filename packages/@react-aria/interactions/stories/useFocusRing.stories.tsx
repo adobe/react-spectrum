@@ -18,6 +18,8 @@ import {Key} from '@react-types/shared';
 import React, {useEffect, useRef, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
 import {useFocusRing} from '@react-aria/focus';
+import {useButton} from '@react-aria/button';
+import {mergeProps} from '@react-aria/utils';
 
 interface IColumn {
   name: string,
@@ -103,12 +105,13 @@ function MyButton(props) {
   const buttonRef = props.btnRef;
 
   const {focusProps, isFocusVisible, isFocused} = useFocusRing();
+  let {buttonProps} = useButton(props, buttonRef);
 
   return (
-    <Button ref={buttonRef} {...focusProps}>
+    <button ref={buttonRef} {...mergeProps(focusProps, buttonProps)}>
       Focus Visible: {isFocusVisible ? 'true' : 'false'} <br />
       Focused: {isFocused ? 'true' : 'false'}
-    </Button>
+    </button>
   );
 }
 
