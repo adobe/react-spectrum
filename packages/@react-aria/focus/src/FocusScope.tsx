@@ -368,7 +368,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain?: boolean) 
         cancelAnimationFrame(raf.current);
       }
       raf.current = requestAnimationFrame(() => {
-        if (getDeepActiveElement() && shouldContainFocus(scopeRef) && !isElementInChildScope(getDeepActiveElement(), scopeRef)) {
+        if (getDeepActiveElement() && (shouldContainFocus(scopeRef) && !isElementInChildScope(getDeepActiveElement(), scopeRef))) {
           activeScope = scopeRef;
           if (getRootBody(ownerDocument).contains(e.target)) {
             focusedNode.current = e.target;
@@ -641,12 +641,12 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
     };
 
     if (!contain) {
-      ownerDocument.addEventListener('keydown', onKeyDown, true);
+      ownerDocument.addEventListener('keydown', onKeyDown as EventListener, true);
     }
 
     return () => {
       if (!contain) {
-        ownerDocument.removeEventListener('keydown', onKeyDown, true);
+        ownerDocument.removeEventListener('keydown', onKeyDown as EventListener, true);
       }
     };
   }, [scopeRef, restoreFocus, contain]);
