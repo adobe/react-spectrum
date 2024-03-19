@@ -101,7 +101,11 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
                   slot: 'icon',
                   className: style({
                     flexShrink: 0,
-                    marginEnd: 'text-to-visual'
+                    marginEnd: 'text-to-visual',
+                    '--iconPrimary': {
+                      type: 'fill',
+                      value: 'currentColor'
+                    }
                   })
                 }),
                 css: style({

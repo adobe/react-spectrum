@@ -251,10 +251,32 @@ let items: IExampleItem[] = [
 ];
 export const DynamicExample: Story = {
   render: (args) => {
+    let {
+      trigger,
+      isOpen,
+      onOpenChange,
+      defaultOpen,
+      align,
+      direction,
+      shouldFlip,
+      ...menuProps
+    } = args;
+    let triggerProps = {
+      trigger,
+      isOpen,
+      onOpenChange,
+      defaultOpen,
+      align,
+      direction,
+      shouldFlip
+    };
     return (
-      <Menu {...args}>
-        {(item) => <MenuItem id={(item as IExampleItem).id}>{(item as IExampleItem).label}</MenuItem>}
-      </Menu>
+      <MenuTrigger {...triggerProps}>
+        <Button aria-label="Help"><NewIcon /></Button>
+        <Menu {...menuProps}>
+          {(item) => <MenuItem id={(item as IExampleItem).id}>{(item as IExampleItem).label}</MenuItem>}
+        </Menu>
+      </MenuTrigger>
     );
   },
   args: {

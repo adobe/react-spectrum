@@ -178,8 +178,8 @@ let checkmark = style({
   gridArea: 'checkmark',
   color: 'accent',
   '--iconPrimary': {
-    type: 'color',
-    value: '[currentColor]'
+    type: 'fill',
+    value: 'currentColor'
   },
   marginEnd: 'text-to-control',
   aspectRatio: 'square'
@@ -191,12 +191,20 @@ let checkbox = style({
 });
 
 let icon = style({
-  gridArea: 'icon',
   size: fontRelative(20),
-  marginEnd: 'text-to-visual' // TODO: once i have access to figma again
   // too small default icon size is wrong, it's like the icons are 1 tshirt size bigger than the rest of the component? check again after typography changes
   // reminder, size of WF is applied via font size
+  marginEnd: 'text-to-visual',
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
 });
+
+let iconCenterWrapper = style({
+  gridArea: 'icon'
+});
+
 let image = style({
   gridArea: 'icon',
   gridRowEnd: 'span 2',
@@ -398,7 +406,7 @@ export function MenuItem(props: MenuItemProps) {
               values={[
                 [IconContext, {
                   slots: {
-                    icon: {render: centerBaseline({slot: 'icon', className: icon})}, // fix className to css?
+                    icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), css: icon}, // fix className to css?
                     descriptor: {render: centerBaseline({slot: 'descriptor', className: descriptor})} // TODO: remove once we have default?
                   }
                 }],
