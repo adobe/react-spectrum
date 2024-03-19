@@ -167,7 +167,7 @@ describe('useFocus', function () {
           onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />
       );
 
-      act(() => ReactDOM.render(<ExampleComponent />, shadowRoot));
+      ReactDOM.render(<ExampleComponent />, shadowRoot);
 
       const el = shadowRoot.querySelector('[data-testid="example"]');
 
@@ -198,7 +198,7 @@ describe('useFocus', function () {
           onFocusChange={isFocused => events.push({type: 'focuschange', isFocused})} />
       );
 
-      act(() => ReactDOM.render(<ExampleComponent />, shadowRoot));
+      ReactDOM.render(<ExampleComponent />, shadowRoot);
       const el = shadowRoot.querySelector('[data-testid="example"]');
 
       act(() => {el.focus();});
@@ -226,7 +226,7 @@ describe('useFocus', function () {
         </div>
       );
 
-      act(() => ReactDOM.render(<WrapperComponent />, shadowRoot));
+      ReactDOM.render(<WrapperComponent />, shadowRoot);
       const el = shadowRoot.querySelector('[data-testid="example"]');
 
       act(() => {el.focus();});
@@ -242,35 +242,35 @@ describe('useFocus', function () {
       document.body.removeChild(shadowHost);
     });
 
-    // it('events bubble by default', function () {
-    //   const {shadowRoot, shadowHost} = createShadowRoot();
-    //   const onWrapperFocus = jest.fn();
-    //   const onWrapperBlur = jest.fn();
-    //   const onInnerFocus = jest.fn();
-    //   const onInnerBlur = jest.fn();
-    //
-    //   const WrapperComponent = () => (
-    //     <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
-    //       <Example
-    //         onFocus={onInnerFocus}
-    //         onBlur={onInnerBlur} />
-    //     </div>
-    //   );
-    //
-    //   act(() => ReactDOM.render(<WrapperComponent />, shadowRoot));
-    //   const el = shadowRoot.querySelector('[data-testid="example"]');
-    //
-    //   act(() => {el.focus();});
-    //   act(() => {el.blur();});
-    //
-    //   expect(onInnerFocus).toHaveBeenCalledTimes(1);
-    //   expect(onInnerBlur).toHaveBeenCalledTimes(1);
-    //   expect(onWrapperFocus).toHaveBeenCalledTimes(1);
-    //   expect(onWrapperBlur).toHaveBeenCalledTimes(1);
-    //
-    //   // Cleanup
-    //   ReactDOM.unmountComponentAtNode(shadowRoot);
-    //   document.body.removeChild(shadowHost);
-    // });
+    it('events bubble by default', function () {
+      const {shadowRoot, shadowHost} = createShadowRoot();
+      const onWrapperFocus = jest.fn();
+      const onWrapperBlur = jest.fn();
+      const onInnerFocus = jest.fn();
+      const onInnerBlur = jest.fn();
+
+      const WrapperComponent = () => (
+        <div onFocus={onWrapperFocus} onBlur={onWrapperBlur}>
+          <Example
+            onFocus={onInnerFocus}
+            onBlur={onInnerBlur} />
+        </div>
+      );
+
+      ReactDOM.render(<WrapperComponent />, shadowRoot);
+      const el = shadowRoot.querySelector('[data-testid="example"]');
+
+      act(() => {el.focus();});
+      act(() => {el.blur();});
+
+      expect(onInnerFocus).toHaveBeenCalledTimes(1);
+      expect(onInnerBlur).toHaveBeenCalledTimes(1);
+      expect(onWrapperFocus).toHaveBeenCalledTimes(1);
+      expect(onWrapperBlur).toHaveBeenCalledTimes(1);
+
+      // Cleanup
+      ReactDOM.unmountComponentAtNode(shadowRoot);
+      document.body.removeChild(shadowHost);
+    });
   });
 });
