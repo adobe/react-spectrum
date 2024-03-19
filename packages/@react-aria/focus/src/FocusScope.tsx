@@ -12,8 +12,7 @@
 
 import {FocusableElement} from '@react-types/shared';
 import {focusSafely} from './focusSafely';
-import {getDeepActiveElement, getRootBody} from '@react-aria/utils/src/domHelpers';
-import {getRootNode, useLayoutEffect} from '@react-aria/utils';
+import {getOwnerDocument, getRootBody, getRootNode, useLayoutEffect} from '@react-aria/utils';
 import {isElementVisible} from './isElementVisible';
 import React, {ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 
@@ -55,7 +54,7 @@ export interface FocusManager {
   focusPrevious(opts?: FocusManagerOptions): FocusableElement | null,
   /** Moves focus to the first focusable or tabbable element in the focus scope. */
   focusFirst(opts?: FocusManagerOptions): FocusableElement | null,
-    /** Moves focus to the last focusable or tabbable element in the focus scope. */
+  /** Moves focus to the last focusable or tabbable element in the focus scope. */
   focusLast(opts?: FocusManagerOptions): FocusableElement | null
 }
 
@@ -134,6 +133,7 @@ export function FocusScope(props: FocusScopeProps) {
   // This needs to be an effect so that activeScope is updated after the FocusScope tree is complete.
   // It cannot be a useLayoutEffect because the parent of this node hasn't been attached in the tree yet.
   useEffect(() => {
+    // eslint-disable-next-line no-undef
     const activeElement = getRootNode(scopeRef.current ? scopeRef.current[0] : undefined).activeElement;
     let scope: TreeNode | null = null;
 
@@ -319,7 +319,7 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain?: boolean) 
         return;
       }
 
-      let focusedElement = getDeepActiveElement();
+      let focusedElement = ownerDocument.activeElement;
       let scope = scopeRef.current;
       if (!scope || !isElementInScope(focusedElement, scope)) {
         return;
@@ -368,8 +368,8 @@ function useFocusContainment(scopeRef: RefObject<Element[]>, contain?: boolean) 
         cancelAnimationFrame(raf.current);
       }
       raf.current = requestAnimationFrame(() => {
-        const activeElement = getDeepActiveElement() || ownerDocument.activeElement;
-        if (activeElement && (shouldContainFocus(scopeRef) && !isElementInChildScope(activeElement, scopeRef))) {
+        // Use document.activeElement instead of e.relatedTarget so we can tell if user clicked into iframe
+        if (ownerDocument.activeElement && shouldContainFocus(scopeRef) && !isElementInChildScope(ownerDocument.activeElement, scopeRef)) {
           activeScope = scopeRef;
           if (getRootBody(ownerDocument).contains(e.target)) {
             focusedNode.current = e.target;
@@ -490,7 +490,8 @@ function useAutoFocus(scopeRef: RefObject<Element[]>, autoFocus?: boolean) {
   useEffect(() => {
     if (autoFocusRef.current) {
       activeScope = scopeRef;
-      if (!isElementInScope(getDeepActiveElement(), activeScope.current) && scopeRef.current) {
+      const ownerDocument = getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined);
+      if (!isElementInScope(ownerDocument.activeElement, activeScope.current) && scopeRef.current) {
         focusFirstInScope(scopeRef.current);
       }
     }
@@ -543,7 +544,7 @@ function shouldRestoreFocus(scopeRef: ScopeRef) {
 function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean, contain?: boolean) {
   // create a ref during render instead of useLayoutEffect so the active element is saved before a child with autoFocus=true mounts.
   // eslint-disable-next-line no-restricted-globals
-  const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? getDeepActiveElement() as FocusableElement : null);
+  const nodeToRestoreRef = useRef(typeof document !== 'undefined' ? getOwnerDocument(scopeRef.current ? scopeRef.current[0] : undefined).activeElement as FocusableElement : null);
 
   // restoring scopes should all track if they are active regardless of contain, but contain already tracks it plus logic to contain the focus
   // restoring-non-containing scopes should only care if they become active so they can perform the restore
@@ -558,7 +559,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
       // If focusing an element in a child scope of the currently active scope, the child becomes active.
       // Moving out of the active scope to an ancestor is not allowed.
       if ((!activeScope || isAncestorScope(activeScope, scopeRef)) &&
-      isElementInScope(getDeepActiveElement(), scopeRef.current)
+        isElementInScope(ownerDocument.activeElement, scopeRef.current)
       ) {
         activeScope = scopeRef;
       }
@@ -570,7 +571,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
       ownerDocument.removeEventListener('focusin', onFocus, false);
       scope?.forEach(element => element.removeEventListener('focusin', onFocus, false));
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scopeRef, contain]);
 
   useLayoutEffect(() => {
@@ -589,8 +590,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
         return;
       }
 
-      let focusedElement = getDeepActiveElement() as FocusableElement;
-
+      let focusedElement = ownerDocument.activeElement as FocusableElement;
       if (!isElementInScope(focusedElement, scopeRef.current)) {
         return;
       }
@@ -629,9 +629,9 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
         if (nextElement) {
           focusElement(nextElement, true);
         } else {
-           // If there is no next element and the nodeToRestore isn't within a FocusScope (i.e. we are leaving the top level focus scope)
-           // then move focus to the body.
-           // Otherwise restore focus to the nodeToRestore (e.g menu within a popover -> tabbing to close the menu should move focus to menu trigger)
+          // If there is no next element and the nodeToRestore isn't within a FocusScope (i.e. we are leaving the top level focus scope)
+          // then move focus to the body.
+          // Otherwise restore focus to the nodeToRestore (e.g menu within a popover -> tabbing to close the menu should move focus to menu trigger)
           if (!isElementInAnyScope(nodeToRestore)) {
             focusedElement.blur();
           } else {
@@ -673,33 +673,21 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
       }
       let nodeToRestore = treeNode.nodeToRestore;
 
-      const activeElement = getDeepActiveElement();
-
       // if we already lost focus to the body and this was the active scope, then we should attempt to restore
       if (
         restoreFocus
         && nodeToRestore
         && (
           // eslint-disable-next-line react-hooks/exhaustive-deps
-          isElementInScope(activeElement, scopeRef.current)
-          || (activeElement === rootBody && shouldRestoreFocus(scopeRef))
+          isElementInScope(ownerDocument.activeElement, scopeRef.current)
+          || (ownerDocument.activeElement === rootBody && shouldRestoreFocus(scopeRef))
         )
       ) {
         // freeze the focusScopeTree so it persists after the raf, otherwise during unmount nodes are removed from it
         let clonedTree = focusScopeTree.clone();
         requestAnimationFrame(() => {
-          const activeElement = getDeepActiveElement();
-          let focusOutsideScope;
-
-          if (rootBody instanceof ShadowRoot) {
-            // In Shadow DOM, check if the active element is outside the shadow root. This includes the scenario where focus has moved to the shadow host.
-            focusOutsideScope = !rootBody.contains(activeElement) || activeElement === rootBody.host;
-          } else {
-            // In Light DOM, check if focus has moved to the body, indicating it's outside your component.
-            focusOutsideScope = activeElement === rootBody;
-          }
-
-          if (focusOutsideScope) {
+          // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
+          if (ownerDocument.activeElement === ownerDocument.body) {
             // look up the tree starting with our scope to find a nodeToRestore still in the DOM
             let treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {
