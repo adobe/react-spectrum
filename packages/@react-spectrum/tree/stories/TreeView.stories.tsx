@@ -23,9 +23,8 @@ import {Link} from '@react-spectrum/link';
 import React from 'react';
 import {SpectrumTreeViewProps, TreeView, TreeViewItem} from '../src';
 
-
 export default {
-  title: 'Tree',
+  title: 'TreeView',
   excludeStories: [
     'renderEmptyState'
   ],

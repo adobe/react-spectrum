@@ -67,7 +67,10 @@ const tree = style<Pick<TreeRenderProps, 'isEmpty'>>({
   boxSizing: 'border-box',
   borderXWidth: 0,
   borderStyle: 'solid',
-  borderColor: 'transparent',
+  borderColor: {
+    default: 'transparent',
+    forcedColors: 'Background'
+  },
   justifyContent: {
     isEmpty: 'center'
   },
@@ -113,7 +116,7 @@ interface TreeRowRenderProps extends TreeItemRenderProps {
 const treeRow = style<TreeRowRenderProps>({
   position: 'relative',
   display: 'flex',
-  height: 8,
+  height: 10,
   width: 'full',
   boxSizing: 'border-box',
   fontSize: 'base',
@@ -163,7 +166,10 @@ const treeIcon = style({
 const treeContent = style<Pick<TreeItemContentRenderProps, 'isDisabled'>>({
   gridArea: 'content',
   color: {
-    isDisabled: 'gray-400'
+    isDisabled: {
+      default: 'gray-400',
+      forcedColors: 'GrayText'
+    }
   },
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
@@ -202,6 +208,13 @@ const treeRowOutline = style({
     isSelected: {
       default: '[inset 1px 0 0 0 var(--spectrum-alias-focus-color), inset -1px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -1px 0 0 var(--spectrum-alias-focus-color), inset 0 1px 0 0 var(--spectrum-alias-focus-color)]',
       isFocusVisible: '[inset 2px 0 0 0 var(--spectrum-alias-focus-color), inset -2px 0 0 0 var(--spectrum-alias-focus-color), inset 0 -2px 0 0 var(--spectrum-alias-focus-color), inset 0 2px 0 0 var(--spectrum-alias-focus-color)]'
+    },
+    forcedColors: {
+      isFocusVisible: '[inset 2px 0 0 0 Highlight, inset -2px 0 0 0 Highlight, inset 0 -2px 0 0 Highlight, inset 0 2px 0 0 Highlight]',
+      isSelected: {
+        default: '[inset 1px 0 0 0 Highlight, inset -1px 0 0 0 Highlight, inset 0 -1px 0 0 Highlight, inset 0 1px 0 0 Highlight]',
+        isFocusVisible: '[inset 2px 0 0 0 Highlight, inset -2px 0 0 0 Highlight, inset 0 -2px 0 0 Highlight, inset 0 2px 0 0 Highlight]'
+      }
     }
   }
 });
@@ -292,13 +305,13 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
 
 interface ExpandableRowChevronProps {
   isExpanded?: boolean,
-  isDisabled?: boolean
+  isDisabled?: boolean,
+  isRTL?: boolean
 }
 
 const expandButton = style<ExpandableRowChevronProps>({
   gridArea: 'expand-button',
   height: 'full',
-  // TODO: check this one, might not need it
   aspectRatio: 'square',
   display: 'flex',
   flexWrap: 'wrap',
@@ -306,11 +319,16 @@ const expandButton = style<ExpandableRowChevronProps>({
   justifyContent: 'center',
   outlineStyle: 'none',
   color: {
-    isDisabled: 'gray-400'
+    isDisabled: {
+      default: 'gray-400',
+      forcedColors: 'GrayText'
+    }
   },
   transform: {
-    // TODO: need RTL
-    isExpanded: 'rotate(90deg)'
+    isExpanded: {
+      default: 'rotate(90deg)',
+      isRTL: 'rotate(-90deg)'
+    }
   }
 });
 
@@ -319,7 +337,6 @@ function ExpandableRowChevronMacros(props: ExpandableRowChevronProps) {
   let [fullProps, ref] = useContextProps({...props, slot: 'chevron'}, expandButtonRef, ButtonContext);
   let {isExpanded, isDisabled} = fullProps;
   let {direction} = useLocale();
-
 
   // Will need to keep the chevron as a button for iOS VO at all times since VO doesn't focus the cell. Also keep as button if cellAction is defined by the user in the future
   let {buttonProps} = useButton({
@@ -333,7 +350,7 @@ function ExpandableRowChevronMacros(props: ExpandableRowChevronProps) {
       ref={ref}
       // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
       tabIndex={isAndroid() ? -1 : undefined}
-      className={expandButton({isExpanded, isDisabled})}>
+      className={expandButton({isExpanded, isDisabled, isRTL: direction === 'rtl'})}>
       {direction === 'ltr' ? <ChevronRightMedium /> : <ChevronLeftMedium />}
     </span>
   );
