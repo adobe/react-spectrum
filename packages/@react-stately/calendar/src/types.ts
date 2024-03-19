@@ -101,14 +101,14 @@ interface CalendarStateBase {
 
 export interface CalendarState extends CalendarStateBase {
   /** The currently selected date. */
-  readonly value: CalendarDate,
+  readonly value: CalendarDate | null,
   /** Sets the currently selected date. */
   setValue(value: CalendarDate): void
 }
 
 export interface RangeCalendarState extends CalendarStateBase {
   /** The currently selected date range. */
-  readonly value: RangeValue<DateValue>,
+  readonly value: RangeValue<DateValue> | null,
   /** Sets the currently selected date range. */
   setValue(value: RangeValue<DateValue>): void,
   /** Highlights the given date during selection, e.g. by hovering or dragging. */

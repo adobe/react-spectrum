@@ -59,8 +59,8 @@ export function CalendarBase<T extends CalendarState | RangeCalendarState>(props
     timeZone: state.timeZone
   });
 
-  let titles = [];
-  let calendars = [];
+  let titles: React.JSX.Element[] = [];
+  let calendars: React.JSX.Element[] = [];
   for (let i = 0; i < visibleMonths; i++) {
     let d = currentMonth.add({months: i});
     titles.push(

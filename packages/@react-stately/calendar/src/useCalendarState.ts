@@ -27,13 +27,16 @@ import {
   toCalendarDate,
   today
 } from '@internationalized/date';
-import {CalendarProps, DateValue} from '@react-types/calendar';
+import {CalendarProps, DateValue, MappedDateValue} from '@react-types/calendar';
 import {CalendarState} from './types';
 import {useControlledState} from '@react-stately/utils';
 import {useMemo, useState} from 'react';
 import {ValidationState} from '@react-types/shared';
 
-export interface CalendarStateOptions<T extends DateValue = DateValue> extends CalendarProps<T> {
+// how to actually solve this?
+type Something = DateValue | null
+
+export interface CalendarStateOptions<T extends Something = Something> extends CalendarProps<T> {
   /** The locale to display and edit the value according to. */
   locale: string,
   /**
@@ -51,12 +54,11 @@ export interface CalendarStateOptions<T extends DateValue = DateValue> extends C
   /** Determines how to align the initial selection relative to the visible date range. */
   selectionAlignment?: 'start' | 'center' | 'end'
 }
-
 /**
  * Provides state management for a calendar component.
  * A calendar displays one or more date grids and allows users to select a single date.
  */
-export function useCalendarState<T extends DateValue = DateValue>(props: CalendarStateOptions<T>): CalendarState {
+export function useCalendarState<T extends Something = Something>(props: CalendarStateOptions<T>): CalendarState {
   let defaultFormatter = useMemo(() => new DateFormatter(props.locale), [props.locale]);
   let resolvedOptions = useMemo(() => defaultFormatter.resolvedOptions(), [defaultFormatter]);
   let {
@@ -71,7 +73,7 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   } = props;
   let calendar = useMemo(() => createCalendar(resolvedOptions.calendar), [createCalendar, resolvedOptions.calendar]);
 
-  let [value, setControlledValue] = useControlledState<DateValue>(props.value, props.defaultValue, props.onChange);
+  let [value, setControlledValue] = useControlledState<Something, MappedDateValue<T>>(props.value, props.defaultValue ?? null, props.onChange);
   let calendarDateValue = useMemo(() => value ? toCalendar(toCalendarDate(value), calendar) : null, [value, calendar]);
   let timeZone = useMemo(() => value && 'timeZone' in value ? value.timeZone : resolvedOptions.timeZone, [value, resolvedOptions.timeZone]);
   let focusedCalendarDate = useMemo(() => (
@@ -137,22 +139,23 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   }
 
   function setValue(newValue: CalendarDate) {
+    let localValue: CalendarDate | undefined = newValue;
     if (!props.isDisabled && !props.isReadOnly) {
-      newValue = constrainValue(newValue, minValue, maxValue);
-      newValue = previousAvailableDate(newValue, startDate, isDateUnavailable);
-      if (!newValue) {
+      localValue = constrainValue(newValue, minValue, maxValue);
+      localValue = previousAvailableDate(newValue, startDate, isDateUnavailable);
+      if (!localValue) {
         return;
       }
 
       // The display calendar should not have any effect on the emitted value.
       // Emit dates in the same calendar as the original value, if any, otherwise gregorian.
-      newValue = toCalendar(newValue, value?.calendar || new GregorianCalendar());
+      localValue = toCalendar(localValue, value?.calendar || new GregorianCalendar());
 
       // Preserve time if the input value had one.
       if (value && 'hour' in value) {
-        setControlledValue(value.set(newValue));
+        setControlledValue(value.set(localValue));
       } else {
-        setControlledValue(newValue);
+        setControlledValue(localValue);
       }
     }
   }
@@ -180,8 +183,8 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
   }, [pageBehavior, visibleDuration]);
 
   return {
-    isDisabled: props.isDisabled,
-    isReadOnly: props.isReadOnly,
+    isDisabled: props.isDisabled ?? false,
+    isReadOnly: props.isReadOnly ?? false,
     value: calendarDateValue,
     setValue,
     visibleRange: {
@@ -304,25 +307,25 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
       return isFocused && focusedDate && isSameDay(date, focusedDate);
     },
     isCellDisabled(date) {
-      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || this.isInvalid(date, minValue, maxValue);
+      return props.isDisabled || date.compare(startDate) < 0 || date.compare(endDate) > 0 || this.isInvalid(date);
     },
     isCellUnavailable(date) {
-      return props.isDateUnavailable && props.isDateUnavailable(date);
+      return props.isDateUnavailable ? props.isDateUnavailable(date) : false;
     },
     isPreviousVisibleRangeInvalid() {
       let prev = startDate.subtract({days: 1});
-      return isSameDay(prev, startDate) || this.isInvalid(prev, minValue, maxValue);
+      return isSameDay(prev, startDate) || this.isInvalid(prev);
     },
     isNextVisibleRangeInvalid() {
       // Adding may return the same date if we reached the end of time
       // according to the calendar system (e.g. 9999-12-31).
       let next = endDate.add({days: 1});
-      return isSameDay(next, endDate) || this.isInvalid(next, minValue, maxValue);
+      return isSameDay(next, endDate) || this.isInvalid(next);
     },
     getDatesInWeek(weekIndex, from = startDate) {
       // let date = startOfWeek(from, locale);
       let date = from.add({weeks: weekIndex});
-      let dates = [];
+      let dates: (CalendarDate | null)[] = [];
 
       date = startOfWeek(date, locale);
 

@@ -21,7 +21,7 @@ import {
 } from '@internationalized/date';
 import {DateValue} from '@react-types/calendar';
 
-export function isInvalid(date: DateValue, minValue: DateValue, maxValue: DateValue) {
+export function isInvalid(date: DateValue, minValue?: DateValue, maxValue?: DateValue) {
   return (minValue != null && date.compare(minValue) < 0) ||
     (maxValue != null && date.compare(maxValue) > 0);
 }
@@ -56,13 +56,13 @@ export function alignStart(date: CalendarDate, duration: DateDuration, locale: s
 export function alignEnd(date: CalendarDate, duration: DateDuration, locale: string, minValue?: DateValue, maxValue?: DateValue) {
   let d = {...duration};
   // subtract 1 from the smallest unit
-  if (duration.days) {
+  if (duration.days && d.days) {
     d.days--;
-  } else if (duration.weeks) {
+  } else if (duration.weeks && d.weeks) {
     d.weeks--;
-  } else if (duration.months) {
+  } else if (duration.months && d.months) {
     d.months--;
-  } else if (duration.years) {
+  } else if (duration.years && d.years) {
     d.years--;
   }
 
@@ -75,38 +75,50 @@ export function constrainStart(
   aligned: CalendarDate,
   duration: DateDuration,
   locale: string,
-  minValue: DateValue,
-  maxValue: DateValue) {
+  minValue?: DateValue,
+  maxValue?: DateValue) {
   if (minValue && date.compare(minValue) >= 0) {
-    aligned = maxDate(
+    let newDate = maxDate(
       aligned,
       alignStart(toCalendarDate(minValue), duration, locale)
     );
+    if (newDate) {
+      aligned = newDate;
+    }
   }
 
   if (maxValue && date.compare(maxValue) <= 0) {
-    aligned = minDate(
+    let newDate = minDate(
       aligned,
       alignEnd(toCalendarDate(maxValue), duration, locale)
     );
+    if (newDate) {
+      aligned = newDate;
+    }
   }
 
   return aligned;
 }
 
-export function constrainValue(date: CalendarDate, minValue: DateValue, maxValue: DateValue) {
+export function constrainValue(date: CalendarDate, minValue?: DateValue, maxValue?: DateValue) {
   if (minValue) {
-    date = maxDate(date, toCalendarDate(minValue));
+    let newDate = maxDate(date, toCalendarDate(minValue));
+    if (newDate) {
+      date = newDate;
+    }
   }
 
   if (maxValue) {
-    date = minDate(date, toCalendarDate(maxValue));
+    let newDate = minDate(date, toCalendarDate(maxValue));
+    if (newDate) {
+      date = newDate;
+    }
   }
 
   return date;
 }
 
-export function previousAvailableDate(date: CalendarDate, minValue: DateValue, isDateUnavailable: (date: CalendarDate) => boolean) {
+export function previousAvailableDate(date: CalendarDate, minValue: DateValue, isDateUnavailable?: (date: CalendarDate) => boolean): CalendarDate | undefined {
   if (!isDateUnavailable) {
     return date;
   }
