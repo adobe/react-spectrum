@@ -1,6 +1,4 @@
-import {ActionButton} from '../src/ActionButton';
 import {Divider} from '../src/Divider';
-import NewIcon from '../src/wf-icons/New';
 import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 
 import type {Meta} from '@storybook/react';
@@ -22,9 +20,16 @@ export const Example = {
     <section
       className={style({
         display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        padding: 8,
+        alignItems: 'center',
+        rowGap: 12,
+        columnGap: 12,
+        flexDirection: {
+          default: 'column',
+          orientation: {
+            'vertical': 'row'
+          }
+        },
+        fontFamily: 'sans',
         color: {
           staticColor: {
             default: 'gray-900',
@@ -32,14 +37,10 @@ export const Example = {
             white: baseColor('transparent-white-800')
           }
         }
-      })({staticColor: args.staticColor})}>
-      <h1>Buttons</h1>
+      })({staticColor: args.staticColor, orientation: args.orientation})}>
+      <p>Some text</p>
       <Divider {...args} />
-      <section style={{display: 'flex', gap: '5px'}}>
-        <ActionButton aria-label="fake button, new icon, no action" size="M" staticColor={args.staticColor}><NewIcon /></ActionButton>
-        <Divider {...args} />
-        <ActionButton aria-label="fake button, new icon, no action" size="M" staticColor={args.staticColor}><NewIcon /></ActionButton>
-      </section>
+      <p>Some text</p>
     </section>
   ),
   parameters: {

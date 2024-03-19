@@ -75,18 +75,6 @@ export const divider = style<DividerSpectrumProps>({
         }
       }
     }
-  },
-  minWidth: {
-    default: '[200px]',
-    orientation: {
-      vertical: undefined
-    }
-  },
-  minHeight: {
-    default: undefined,
-    orientation: {
-      vertical: '[200px]'
-    }
   }
 }, getAllowedOverrides());
 
