@@ -157,7 +157,7 @@ describe('useFocus', function () {
   });
 
   describe('useFocus with Shadow DOM', function () {
-    it('handles focus events within shadow DOM', function () {
+    it('handles focus events', function () {
       const {shadowRoot, shadowHost} = createShadowRoot();
       const events = [];
       const ExampleComponent = () => (
@@ -187,7 +187,7 @@ describe('useFocus', function () {
       document.body.removeChild(shadowHost);
     });
 
-    it('does not handle focus events if disabled within shadow DOM', function () {
+    it('does not handle focus events if disabled', function () {
       const {shadowRoot, shadowHost} = createShadowRoot();
       const events = [];
       const ExampleComponent = () => (
@@ -211,7 +211,7 @@ describe('useFocus', function () {
       document.body.removeChild(shadowHost);
     });
 
-    it('events do not bubble when stopPropagation is called within shadow DOM', function () {
+    it('events do not bubble when stopPropagation is called', function () {
       const {shadowRoot, shadowHost} = createShadowRoot();
       const onWrapperFocus = jest.fn();
       const onWrapperBlur = jest.fn();
@@ -242,7 +242,7 @@ describe('useFocus', function () {
       document.body.removeChild(shadowHost);
     });
 
-    it('events bubble by default within shadow DOM', function () {
+    it('events bubble by default', function () {
       const {shadowRoot, shadowHost} = createShadowRoot();
       const onWrapperFocus = jest.fn();
       const onWrapperBlur = jest.fn();
