@@ -20,6 +20,10 @@ export function mod(amount: number, numerator: number): number {
   return amount - numerator * Math.floor(amount / numerator);
 }
 
+export function div(a: number, b: number) {
+  return ~~(a / b);
+}
+
 export function copy(date: CalendarDate): Mutable<CalendarDate> {
   if (date.era) {
     return new CalendarDate(date.calendar, date.era, date.year, date.month, date.day);
