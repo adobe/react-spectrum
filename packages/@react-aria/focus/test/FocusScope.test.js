@@ -1750,7 +1750,7 @@ describe('FocusScope', function () {
         </FocusScope>
       );
 
-      await act(() => ReactDOM.render(<FocusableComponent />, shadowRoot));
+      ReactDOM.render(<FocusableComponent />, shadowRoot);
 
       const input1 = shadowRoot.querySelector('[data-testid="input1"]');
       const input2 = shadowRoot.querySelector('[data-testid="input2"]');

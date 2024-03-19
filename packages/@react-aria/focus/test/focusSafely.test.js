@@ -71,7 +71,7 @@ describe('focusSafely', () => {
       setInteractionModality('virtual');
 
       const Example = () => <button>Button</button>;
-      act(() => ReactDOM.render(<Example />, shadowRoot));
+      ReactDOM.render(<Example />, shadowRoot);
 
       const button = shadowRoot.querySelector('button');
 
@@ -94,7 +94,7 @@ describe('focusSafely', () => {
       setInteractionModality('virtual');
 
       const Example = () => <button>Button</button>;
-      act(() => ReactDOM.render(<Example />, shadowRoot));
+      ReactDOM.render(<Example />, shadowRoot);
 
       const button = shadowRoot.querySelector('button');
 
