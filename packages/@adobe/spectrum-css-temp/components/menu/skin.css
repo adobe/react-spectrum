@@ -138,7 +138,7 @@ governing permissions and limitations under the License.
 
 .spectrum-TraySubmenu-enter {
   animation-name: slideInFromRight;
-  animation-duration: var(--spectrum-global-animation-duration-600);
+  animation-duration: var(--spectrum-global-animation-duration-400);
   animation-fill-mode: forwards;
   animation-timing-function: var(--spectrum-global-animation-ease-out);
   &:dir(rtl) {
@@ -148,7 +148,7 @@ governing permissions and limitations under the License.
 
 .spectrum-TraySubmenu-exit {
   animation-name: slideOutToRight;
-  animation-duration: var(--spectrum-global-animation-duration-600);
+  animation-duration: var(--spectrum-global-animation-duration-400);
   animation-fill-mode: forwards;
   animation-timing-function: var(--spectrum-global-animation-ease-in);
   &:dir(rtl) {
