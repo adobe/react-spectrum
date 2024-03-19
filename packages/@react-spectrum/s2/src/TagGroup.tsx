@@ -181,6 +181,10 @@ const tagStyles = style({
     value: {
       default: fontRelative(-2)
     }
+  },
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
   }
 });
 

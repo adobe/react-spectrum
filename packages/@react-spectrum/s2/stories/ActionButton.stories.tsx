@@ -19,7 +19,7 @@ type Story = StoryObj<typeof ActionButton>;
 export const Example: Story = {
   render: (args) => {
     return (
-      <div style={{display: 'flex', gap: 8}}>
+      <div style={{display: 'flex', gap: 8, justifyContent: 'center', resize: 'horizontal', overflow: 'auto'}}>
         <ActionButton {...args}><NewIcon /></ActionButton>
         <ActionButton {...args}>Press me</ActionButton>
         <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>

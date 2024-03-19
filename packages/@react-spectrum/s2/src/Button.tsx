@@ -64,6 +64,9 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   fontSize: 'control',
   userSelect: 'none',
   minHeight: 'control',
+  minWidth: {
+    ':has([slot=icon]:only-child)': 'control'
+  },
   borderRadius: 'pill',
   boxSizing: 'border-box',
   width: 'fit',

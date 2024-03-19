@@ -42,6 +42,9 @@ const dropzone = style<DropZoneRenderProps>({
 
 const banner = style<DropZoneRenderProps>({
   position: 'absolute',
+  left: 0,
+  right: 0,
+  marginX: 'auto',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -70,7 +73,7 @@ function DropZone(props: DropZoneProps, ref: DOMRef<HTMLDivElement>) {
           <IllustratedMessageContext.Provider value={{isInDropZone: true, isDropTarget: renderProps.isDropTarget}}>
             {props.children}
           </IllustratedMessageContext.Provider>
-          {(renderProps.isDropTarget && props.isFilled) && 
+          {(renderProps.isDropTarget && props.isFilled) &&
             <div className={banner(renderProps)}>
               <span>
                 {props.replaceMessage ? props.replaceMessage : 'Drop file to replace'}
