@@ -687,7 +687,7 @@ function useRestoreFocus(scopeRef: RefObject<Element[]>, restoreFocus?: boolean,
         let clonedTree = focusScopeTree.clone();
         requestAnimationFrame(() => {
           // Only restore focus if we've lost focus to the body, the alternative is that focus has been purposefully moved elsewhere
-          if (ownerDocument.activeElement === ownerDocument.body) {
+          if (ownerDocument.activeElement === rootBody) {
             // look up the tree starting with our scope to find a nodeToRestore still in the DOM
             let treeNode = clonedTree.getTreeNode(scopeRef);
             while (treeNode) {

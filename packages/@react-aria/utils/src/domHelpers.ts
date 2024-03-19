@@ -32,13 +32,22 @@ export const getRootNode = (el: Element | null | undefined): Document | ShadowRo
 };
 
 /**
- * `getRootBody`: Retrieves a suitable "body" element for an element, accommodating both
- * Shadow DOM and traditional DOM contexts. Returns `document.body` for elements in the
- * light DOM or the root of the Shadow DOM for elements within a shadow DOM.
+ * Retrieves a reference to the most appropriate "body" element for a given DOM context,
+ * accommodating both traditional DOM and Shadow DOM environments. When used with a Shadow DOM,
+ * it returns the body of the document to which the shadow root belongs, as shadow root is a document fragment,
+ * meaning that it doesn't have a body. When used with a regular document, it simply returns the document's body.
+ *
+ * @param {Document | ShadowRoot} root - The root document or shadow root from which to find the body.
+ * @returns {HTMLElement} - The "body" element of the document, or the document's body associated with the shadow root.
  */
-export const getRootBody = (root: Document | ShadowRoot): HTMLElement | ShadowRoot => {
-  return root instanceof Document ? root.body : root;
+export const getRootBody = (root: Document | ShadowRoot): HTMLElement => {
+  if (root instanceof ShadowRoot) {
+    return root.ownerDocument?.body;
+  } else {
+    return root.body;
+  }
 };
+
 
 export const getDeepActiveElement = () => {
   let activeElement = document.activeElement;
