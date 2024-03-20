@@ -32,8 +32,6 @@ export function generatePageStyles(this: MacroContext | void) {
       &[data-background=layer-2] {
         background: ${weirdColorToken(tokens['background-layer-2-color'])};
       }
-
-      --iconPrimary: ${colorToken(tokens['gray-800'])};
     }`
   });
 }

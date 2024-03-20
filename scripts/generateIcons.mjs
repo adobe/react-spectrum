@@ -69,8 +69,10 @@ export function generateIcons(iconDir, outputDir, nameRegex, template) {
                 }
               ]
             },
+            replaceAttrValues: {
+              'var(--iconPrimary, #222)': 'var(--iconPrimary, var(--iconPrimaryFallback, #222))'
+            },
             typescript: true,
-            dimensions: false,
             plugins: ['@svgr/plugin-svgo', '@svgr/plugin-jsx']
           })
           .replace('export default SvgComponent;', '');
@@ -97,8 +99,17 @@ function template(iconName, svg) {
 import {IconProps, IconContext, IconContextValue} from '../Icon';
 import {SVGProps, useRef} from 'react';
 import {useContextProps} from 'react-aria-components';
+import {style} from '../../style-macro/spectrum-theme' with {type: 'macro'};
+import {mergeStyles} from '../../style-macro/runtime';
 
 ${svg.replace('import type { SVGProps } from "react";', '')}
+
+const iconStyles = style({
+  '--iconPrimaryFallback': {
+    type: 'fill',
+    value: 'gray-800'
+  }
+});
 
 export default function ${iconRename}(props: IconProps) {
   let ref = useRef<SVGElement>(null);
@@ -125,7 +136,7 @@ export default function ${iconRename}(props: IconProps) {
     'aria-hidden': (ariaLabel ? (ariaHidden || undefined) : true),
     role: 'img',
     'data-slot': slot,
-    className: (UNSAFE_className ?? '') + ' ' + (css ?? ''),
+    className: (UNSAFE_className ?? '') + ' ' + mergeStyles(iconStyles, css),
     style: UNSAFE_style
   };
 

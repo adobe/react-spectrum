@@ -118,7 +118,6 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
 
 const icon = style<InlineStylesProps>({
   gridArea: 'icon',
-  size: 20,
   '--iconPrimary': {
     type: 'fill',
     value: {
