@@ -2,7 +2,7 @@ import {Group, GroupProps, Input as RACInput, InputProps as RACInputProps, Label
 import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, UnsafeStyles, focusRing} from './style-utils' with {type: 'macro'};
 import AsteriskIcon from '../ui-icons/Asterisk';
-import AlertIcon from './wf-icons/AlertTriangle';
+import AlertIcon from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
 import {IconContext} from './Icon';
 import {mergeStyles} from '../style/runtime';
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
@@ -233,7 +233,7 @@ const helpTextStyles = style({
     isDisabled: 'disabled'
   },
   '--iconPrimary': {
-    type: 'color',
+    type: 'fill',
     value: '[currentColor]'
   },
   contain: 'inline-size',

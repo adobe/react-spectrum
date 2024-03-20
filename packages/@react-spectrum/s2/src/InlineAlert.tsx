@@ -10,12 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import AlertTriangle from './wf-icons/AlertTriangle';
-import CheckmarkCircle from './wf-icons/CheckmarkCircle';
+import AlertTriangle from '../s2wf-icons/assets/svg/S2_Icon_AlertTriangle_20_N.svg';
+import CheckmarkCircle from '../s2wf-icons/assets/svg/S2_Icon_CheckmarkCircle_20_N.svg';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import InfoCircle from './wf-icons/InfoCircle';
+import InfoCircle from '../s2wf-icons/assets/svg/S2_Icon_InfoCircle_20_N.svg';
 import {ReactNode, forwardRef, useEffect, useRef} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};

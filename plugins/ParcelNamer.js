@@ -8,6 +8,6 @@ module.exports = new Namer({
     }
     let mainAsset = bundle.getMainEntry();
     let ext = '.' + (bundle.type === 'js' && bundle.env.outputFormat === 'esmodule' ? 'mjs' : bundle.type);
-    return path.basename(mainAsset.filePath, path.extname(mainAsset.filePath)) + ext;
+    return path.basename(mainAsset.filePath, path.extname(mainAsset.filePath)).replace(/^S2_Icon_(.*?)_\d+(?:x\d+)?_N$/, '$1') + ext;
   }
 });

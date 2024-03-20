@@ -98,7 +98,7 @@ export const box = style<RenderProps>({
 
 export const iconStyles = style({
   '--iconPrimary': {
-    type: 'color',
+    type: 'fill',
     value: {
       default: 'gray-25',
       forcedColors: 'HighlightText'

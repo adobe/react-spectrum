@@ -1,5 +1,5 @@
 import type {Meta, StoryObj} from '@storybook/react';
-import NewIcon from '../src/wf-icons/New';
+import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
 import {LinkButton, Text} from '../src';
 import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {StaticColorDecorator} from './utils';

@@ -1,6 +1,6 @@
 import type {Meta, StoryObj} from '@storybook/react';
 import {ActionButton, Text} from '../src';
-import NewIcon from '../src/wf-icons/New';
+import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
 import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof ActionButton> = {

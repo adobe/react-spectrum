@@ -248,7 +248,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     }
   },
   '--iconPrimary': {
-    type: 'color',
+    type: 'fill',
     value: '[currentColor]'
   },
   outlineColor: {

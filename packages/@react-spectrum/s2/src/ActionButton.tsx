@@ -130,7 +130,7 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
     }
   },
   '--iconPrimary': {
-    type: 'color',
+    type: 'fill',
     value: '[currentColor]'
   },
   outlineColor: {

@@ -45,6 +45,7 @@ export type {DialogTriggerProps} from './DialogTrigger';
 export type {DividerProps} from './Divider';
 export type {DropZoneProps} from './DropZone';
 export type {FormProps} from './Form';
+export type {IconProps} from './Icon';
 export type {InlineAlertProps} from './InlineAlert';
 export type {LinkProps} from './Link';
 export type {MenuTriggerProps, MenuProps, MenuItemProps, MenuSectionProps} from './Menu';

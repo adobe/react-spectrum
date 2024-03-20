@@ -7,7 +7,7 @@ import {ClearButton} from './ClearButton';
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
-import SearchIcon from '../src/wf-icons/Search';
+import SearchIcon from '../s2wf-icons/assets/svg/S2_Icon_Search_20_N.svg';
 import {raw} from '../style/style-macro' with {type: 'macro'};
 import {useContext, forwardRef, Ref, useRef, useImperativeHandle} from 'react';
 import {FormContext, useFormProps} from './Form';

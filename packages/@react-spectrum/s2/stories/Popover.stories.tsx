@@ -1,6 +1,6 @@
 import {Popover} from '../src/Popover';
 import {DialogTrigger, Button, Content, Footer, Heading, TextField, Form, Dialog, ButtonGroup} from '../src';
-import NewIcon from '../src/wf-icons/New';
+import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
 import type {Meta, StoryObj} from '@storybook/react';
 // this Dialog has a lot of styles and conditional rendering, where do we actually want to get this from?
 // a different one for Popovers?

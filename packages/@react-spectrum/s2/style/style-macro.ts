@@ -347,7 +347,8 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // 3. Value. The index in the theme, or a hash for arbitrary values.
     let prelude = '.';
     if (property.startsWith('--')) {
-      prelude += generateArbitraryValueSelector(property, true) + '-';
+      // Include both custom property name and theme property in case the same var is reused between multiple theme properties.
+      prelude += generateArbitraryValueSelector(property, true) + '_' + themePropertyMap.get(themeProperty) + '-';
     } else {
       prelude += themePropertyMap.get(themeProperty);
     }

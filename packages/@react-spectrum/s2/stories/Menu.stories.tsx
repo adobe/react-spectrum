@@ -1,13 +1,13 @@
 import {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger, Button, Header, Heading, Text, Image, Keyboard} from '../src';
 import {CombinedMenu} from '../src/Menu';
-import ImgIcon from '../src/wf-icons/Image';
-import NewIcon from '../src/wf-icons/New';
-import CopyIcon from '../src/wf-icons/Copy';
-import CommentTextIcon from '../src/wf-icons/CommentText';
-import ClockPendingIcon from '../src/wf-icons/ClockPending';
-import CommunityIcon from '../src/wf-icons/Community';
-import DeviceTabletIcon from '../src/wf-icons/DeviceTablet';
-import DeviceDesktopIcon from '../src/wf-icons/DeviceDesktop';
+import ImgIcon from '../s2wf-icons/assets/svg/S2_Icon_Image_20_N.svg';
+import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
+import CopyIcon from '../s2wf-icons/assets/svg/S2_Icon_Copy_20_N.svg';
+import CommentTextIcon from '../s2wf-icons/assets/svg/S2_Icon_CommentText_20_N.svg';
+import ClockPendingIcon from '../s2wf-icons/assets/svg/S2_Icon_ClockPending_20_N.svg';
+import CommunityIcon from '../s2wf-icons/assets/svg/S2_Icon_Community_20_N.svg';
+import DeviceTabletIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceTablet_20_N.svg';
+import DeviceDesktopIcon from '../s2wf-icons/assets/svg/S2_Icon_DeviceDesktop_20_N.svg';
 
 import type {Meta, StoryObj} from '@storybook/react';
 
@@ -120,13 +120,13 @@ export const PublishAndExport: Story = {
               <Text slot="section-description">Social media, other formats</Text>
             </Header>
             <MenuItem id={'quick-export'}>
-              <ImgIcon slot="icon" />
+              <ImgIcon />
               <Text slot="label">Quick Export</Text>
               <Text slot="description">Share a low-res snapshot. Long long long long long long long long long long long long long description.</Text>
             </MenuItem>
             <SubmenuTrigger>
               <MenuItem>
-                <CopyIcon slot="icon" />
+                <CopyIcon />
                 <Text slot="label">Open a copy</Text>
                 <Text slot="description">Illustrator for iPad or desktop</Text>
               </MenuItem>
@@ -136,11 +136,11 @@ export const PublishAndExport: Story = {
                     <Heading>Open a copy in</Heading>
                   </Header>
                   <MenuItem>
-                    <DeviceTabletIcon slot="icon" />
+                    <DeviceTabletIcon />
                     <Text slot="label">Illustrator for iPad</Text>
                   </MenuItem>
                   <MenuItem>
-                    <DeviceDesktopIcon slot="icon" />
+                    <DeviceDesktopIcon />
                     <Text slot="label">Illustrator for desktop</Text>
                   </MenuItem>
                 </MenuSection>
@@ -153,16 +153,16 @@ export const PublishAndExport: Story = {
               <Text slot="section-description">Menu section description</Text>
             </Header>
             <MenuItem href="https://adobe.com/" target="_blank">
-              <CommentTextIcon slot="icon" />
+              <CommentTextIcon />
               <Text slot="label">Share link</Text>
               <Text slot="description">Enable comments and downloads</Text>
             </MenuItem>
             <MenuItem>
-              <ClockPendingIcon slot="icon" />
+              <ClockPendingIcon />
               <Text slot="label">Preview Timelapse</Text>
             </MenuItem>
             <MenuItem id="livestream">
-              <CommunityIcon slot="icon" />
+              <CommunityIcon />
               <Text slot="label">Livestream</Text>
               <Text slot="description">Start streaming</Text>
             </MenuItem>

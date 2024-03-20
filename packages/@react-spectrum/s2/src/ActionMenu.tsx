@@ -4,7 +4,7 @@ import {StyleProps} from './style-utils' with { type: 'macro' };
 import {FocusableRef, DOMProps, AriaLabelingProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRef} from 'react';
-import MoreIcon from './wf-icons/More';
+import MoreIcon from '../s2wf-icons/assets/svg/S2_Icon_More_20_N.svg';
 import {forwardRefType} from './types';
 
 export interface ActionMenuProps<T> extends

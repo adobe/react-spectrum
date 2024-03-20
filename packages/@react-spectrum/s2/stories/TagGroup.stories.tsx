@@ -1,6 +1,6 @@
 import {Tag, TagGroup, Text, Link} from '../src';
 import {action} from '@storybook/addon-actions';
-import NewIcon from '../src/wf-icons/New';
+import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof TagGroup> = {
