@@ -1619,6 +1619,20 @@ describe('FocusScope', function () {
   });
 
   describe('FocusScope with Shadow DOM', function () {
+    let user;
+
+    beforeAll(() => {
+      user = userEvent.setup({delay: null, pointerMap});
+    });
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+    afterEach(() => {
+      // make sure to clean up any raf's that may be running to restore focus on unmount
+      act(() => {jest.runAllTimers();});
+    });
+
     it('should contain focus within the shadow DOM scope', async function () {
       const {shadowRoot} = createShadowRoot();
       const FocusableComponent = () => (
@@ -1736,11 +1750,6 @@ describe('FocusScope', function () {
      */
     it('should autofocus and lock tab navigation inside shadow DOM', async function () {
       const {shadowRoot, shadowHost} = createShadowRoot();
-      let user;
-
-      act(() => {
-        user = userEvent.setup({delay: null, pointerMap});
-      });
 
       const FocusableComponent = () => (
         <FocusScope contain>
