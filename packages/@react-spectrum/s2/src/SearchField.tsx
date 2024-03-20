@@ -18,6 +18,11 @@ import {IconContext} from './Icon';
 import {centerBaseline} from './CenterBaseline';
 
 export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+  /**
+   * The size of the SearchField.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
@@ -131,5 +136,8 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
   );
 }
 
-let _SearchField = forwardRef(SearchField);
+/**
+ * A SearchField is a text field designed for searches.
+ */
+let _SearchField = /*#__PURE__*/ forwardRef(SearchField);
 export {_SearchField as SearchField};

@@ -13,7 +13,15 @@ import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
 
 interface SwitchStyleProps {
+  /**
+   * The size of the Switch.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * Whether the Switch should be displayed with an emphasized style.
+   */
   isEmphasized?: boolean
 }
 
@@ -159,5 +167,9 @@ function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
   );
 }
 
-let _Switch = forwardRef(Switch);
+/**
+ * Switches allow users to turn an individual option on or off.
+ * They are usually used to activate or deactivate a specific setting.
+ */
+let _Switch = /*#__PURE__*/ forwardRef(Switch);
 export {_Switch as Switch};

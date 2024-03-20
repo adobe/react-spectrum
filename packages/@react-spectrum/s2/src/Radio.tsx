@@ -1,5 +1,8 @@
+import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
-import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {forwardRef, ReactNode, useContext, useRef} from 'react';
+import {FocusableRef} from '@react-types/shared';
+import {focusRing, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {pressScale} from './pressScale';
 import {
@@ -7,19 +10,31 @@ import {
   RadioProps as AriaRadioProps,
   RadioRenderProps
 } from 'react-aria-components';
-import {ReactNode, useContext, useRef} from 'react';
-import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {useFocusableRef} from '@react-spectrum/utils';
 
-export interface RadioStyleProps {
+interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children'>, StyleProps {
+  /**
+   * The label for the element.
+   */
+  children?: ReactNode
+}
+
+interface ContextProps {
+  /**
+   * The size of the Radio.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * Whether the Radio within a RadioGroup should be displayed with an emphasized style.
+   */
   isEmphasized?: boolean
 }
 
-interface RenderProps extends RadioRenderProps, RadioStyleProps {}
+interface RadioContextProps extends RadioProps, ContextProps {}
 
-interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children'>, StyleProps, RadioStyleProps {
-  children?: ReactNode
-}
+interface RenderProps extends RadioRenderProps, ContextProps {}
 
 const wrapper = style({
   display: 'flex',
@@ -75,16 +90,22 @@ const circle = style<RenderProps>({
   }
 });
 
-export function Radio(props: RadioProps) {
+function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
   let {children, UNSAFE_className = '', UNSAFE_style} = props;
   let circleRef = useRef(null);
+  let domRef = useFocusableRef(ref);
   let isInForm = !!useContext(FormContext);
-  props = useFormProps(props);
+  let {
+    size = 'M',
+    ...allProps
+  } = useFormProps<RadioContextProps>(props);
+
   return (
     <AriaRadio
-      {...props}
+      {...allProps}
+      ref={domRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.css)}>
+      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size}, allProps.css)}>
       {renderProps => (
         <>
           <CenterBaseline>
@@ -93,9 +114,9 @@ export function Radio(props: RadioProps) {
               style={pressScale(circleRef)(renderProps)}
               className={circle({
                 ...renderProps,
-                isEmphasized: props.isEmphasized,
+                isEmphasized: allProps.isEmphasized,
                 isSelected: renderProps.isSelected,
-                size: props.size || 'M'
+                size
               })} />
           </CenterBaseline>
           {children}
@@ -104,3 +125,10 @@ export function Radio(props: RadioProps) {
     </AriaRadio>
   );
 }
+
+/**
+ * Radio buttons allow users to select a single option from a list of mutually exclusive options.
+ * All possible options are exposed up front for users to compare.
+ */
+let _Radio = /*#__PURE__*/ forwardRef(Radio);
+export {_Radio as Radio};

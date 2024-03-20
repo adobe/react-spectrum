@@ -12,21 +12,25 @@ interface StatusLightStyleProps {
    * When status lights have a semantic meaning, they should use the variant for semantic colors.
    */
   variant: 'informative' | 'neutral' | 'positive' | 'notice' | 'negative' | 'celery' | 'chartreuse' | 'cyan' | 'fuchsia' | 'purple' | 'magenta' | 'indigo' | 'seafoam' | 'yellow' | 'pink' | 'turquoise' | 'cinnamon' | 'brown' | 'silver',
-  /** The size of the status light. */
+  /**
+   * The size of the StatusLight.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
 export interface StatusLightProps extends StatusLightStyleProps, DOMProps, AriaLabelingProps, StyleProps {
-  /** The content to display as the label. */
+  /**
+   * The content to display as the label.
+   */
   children?: ReactNode,
   /**
    * An accessibility role for the status light. Should be set when the status
    * can change at runtime, and no more than one status light will update simultaneously.
    * For cases where multiple statuses can change at the same time, use a Toast instead.
    */
-  role?: 'status',
-  // TODO temp until css prop
-  className?: string
+  role?: 'status'
 }
 
 const wrapper = style<StatusLightStyleProps>({
@@ -111,5 +115,5 @@ function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
  * Status lights are used to color code categories and labels commonly found in data visualization.
  * When status lights have a semantic meaning, they should use semantic variant colors.
  */
-let _StatusLight = forwardRef(StatusLight);
+let _StatusLight = /*#__PURE__*/ forwardRef(StatusLight);
 export {_StatusLight as StatusLight};

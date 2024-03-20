@@ -1,24 +1,43 @@
-import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
+import {DOMRef, HelpTextProps, Orientation, SpectrumLabelableProps} from '@react-types/shared';
+import {field, getAllowedOverrides, StyleProps} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
-import {Orientation, SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
 import {
   RadioGroup as AriaRadioGroup,
   RadioGroupProps as AriaRadioGroupProps
 } from 'react-aria-components';
-import React, {useContext} from 'react';
+import React, {forwardRef, ReactNode, useContext} from 'react';
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
-  children?: React.ReactNode,
+  /**
+   * The Radios contained within the RadioGroup.
+   */
+  children?: ReactNode,
+  /**
+   * The size of the RadioGroup.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'XL',
+  /**
+   * The axis the radio elements should align with.
+   *
+   * @default "vertical"
+   */
   orientation?: Orientation,
+  /**
+   * Whether the RadioGroup should be displayed with an emphasized style.
+   */
   isEmphasized?: boolean
 }
 
-export function RadioGroup(props: RadioGroupProps) {
+function RadioGroup(props: RadioGroupProps, ref: DOMRef<HTMLDivElement>) {
   let formContext = useContext(FormContext);
   props = useFormProps(props);
+  let domRef = useDOMRef(ref);
+
   let {
     label,
     description,
@@ -34,9 +53,11 @@ export function RadioGroup(props: RadioGroupProps) {
     UNSAFE_style,
     ...groupProps
   } = props;
+
   return (
     <AriaRadioGroup
       {...groupProps}
+      ref={domRef}
       style={UNSAFE_style}
       className={UNSAFE_className + style({
         ...field(),
@@ -46,7 +67,7 @@ export function RadioGroup(props: RadioGroupProps) {
           value: '[calc(var(--field-height) - 1lh)]'
         }
       }, getAllowedOverrides())({
-        size: props.size,
+        size,
         labelPosition,
         isInForm: !!formContext
       }, props.css)}>
@@ -92,3 +113,10 @@ export function RadioGroup(props: RadioGroupProps) {
     </AriaRadioGroup>
   );
 }
+
+/**
+ * Radio groups allow users to select a single option from a list of mutually exclusive options.
+ * All possible options are exposed up front for users to compare.
+ */
+let _RadioGroup = /*#__PURE__*/ forwardRef(RadioGroup);
+export {_RadioGroup as RadioGroup};
