@@ -1697,6 +1697,8 @@ describe('FocusScope with Shadow DOM', function () {
 
     // Cleanup
     document.body.removeChild(parentShadowRoot.host);
+    ReactDOM.unmountComponentAtNode(childShadowRoot);
+    ReactDOM.unmountComponentAtNode(parentShadowRoot);
   });
 
   /**
@@ -1784,6 +1786,7 @@ describe('FocusScope with Shadow DOM', function () {
 
     // Cleanup
     document.body.removeChild(shadowHost);
+    ReactDOM.unmountComponentAtNode(shadowRoot);
   });
 });
 
