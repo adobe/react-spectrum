@@ -235,7 +235,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
                 // Wrapper for heading, header, and button group.
                 // This swaps orientation from horizontal to vertical at small screen sizes.
                   display: 'flex',
-                  flex: 1,
+                  flexGrow: 1,
                   marginTop: {
                     default: 20, // 8 - 3 (handled above)?? moved to 32-12?
                     type: {
