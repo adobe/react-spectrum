@@ -118,6 +118,23 @@ function Dialog(props: DialogProps, ref: DOMRef) {
 let _Dialog = forwardRef(Dialog);
 export {_Dialog as Dialog};
 
+const dialogInner = style<DialogContextValue>({
+  display: 'flex',
+  flexDirection: 'column',
+  flexGrow: 1,
+  maxHeight: '[inherit]',
+  boxSizing: 'border-box',
+  outlineStyle: 'none',
+  fontFamily: 'sans',
+  borderRadius: {
+    default: 'lg',
+    type: {
+      fullscreenTakeover: 'none'
+    }
+  },
+  overflow: 'auto'
+});
+
 function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefObject<HTMLElement>}) {
   // The button group in fullscreen dialogs usually goes at the top, but
   // when the window is small, it moves to the bottom. We could do this in
@@ -142,166 +159,145 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
       {...props}
       ref={props.dialogRef}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + style({
-        display: 'flex',
-        flexDirection: 'column',
-        flexGrow: 1,
-        maxHeight: '[inherit]',
-        boxSizing: 'border-box',
-        outlineStyle: 'none',
-        fontFamily: 'sans',
-        borderRadius: 'lg',
-        overflow: 'hidden'
-      })}>
+      className={(props.UNSAFE_className || '') + dialogInner({type: props.type})}>
       {composeRenderProps(props.children, (children, {close}) =>
           // Render the children multiple times inside the wrappers we need to implement the layout.
           // Each instance hides certain children so that they are all rendered in the correct locations.
-          // If we don't care about the rounded corners when scroll bars are visible, we can remove the extra wrapper
-          (
+          (<>
+            {/* Hero image */}
+            <Provider
+              values={[
+              [ImageContext, {className: image}],
+              [HeadingContext, {hidden: true}],
+              [HeaderContext, {hidden: true}],
+              [ContentContext, {hidden: true}],
+              [FooterContext, {hidden: true}],
+              [ButtonGroupContext, {hidden: true}]
+              ]}>
+              {children}
+            </Provider>
+            {/* Top header: heading, header, dismiss button, and button group (in fullscreen dialogs). */}
             <div
-              role="presentation"
               className={style({
+              // Wrapper that creates the margin for the dismiss button.
                 display: 'flex',
-                flexDirection: 'column',
-                flex: 1,
-                maxHeight: '[inherit]',
-                boxSizing: 'border-box',
-                overflow: 'auto'
-              })}>
-              {/* Hero image */}
-              <Provider
-                values={[
-                [ImageContext, {className: image}],
-                [HeadingContext, {hidden: true}],
-                [HeaderContext, {hidden: true}],
-                [ContentContext, {hidden: true}],
-                [FooterContext, {hidden: true}],
-                [ButtonGroupContext, {hidden: true}]
-                ]}>
-                {children}
-              </Provider>
-              {/* Top header: heading, header, dismiss button, and button group (in fullscreen dialogs). */}
-              <div
-                className={style({
-                // Wrapper that creates the margin for the dismiss button.
-                  display: 'flex',
-                  alignItems: 'start',
-                  columnGap: 12,
-                  marginStart: {
-                    default: 32,
-                    type: {
-                      popover: 8
-                    }
-                  },
-                  marginEnd: {
-                    default: 32,
-                    isDismissable: 12,
-                    type: {
-                      popover: 8 // don't need to worry about dismissable case?
-                    }
-                  },
-                  marginTop: {
-                    default: 12,
-                    type: {
-                      popover: 8
-                    }
+                alignItems: 'start',
+                columnGap: 12,
+                marginStart: {
+                  default: 32,
+                  type: {
+                    popover: 8
                   }
-                })({isDismissable: props.isDismissable, type: props.type})}>
-                <div
-                  className={style({
-                  // Wrapper for heading, header, and button group.
-                  // This swaps orientation from horizontal to vertical at small screen sizes.
-                    display: 'flex',
-                    flex: 1,
-                    marginTop: {
-                      default: 20, // 8 - 3 (handled above)?? moved to 32-12?
-                      type: {
-                        popover: 8
-                      }
-                    },
-                    marginBottom: {
-                      default: 16,
-                      type: {
-                        popover: 8
-                      },
-                      ':empty': 0
-                    },
-                    columnGap: 24,
-                    rowGap: 8,
-                    flexDirection: {
-                      default: 'column',
-                      sm: 'row'
-                    },
-                    alignItems: {
-                      default: 'start',
-                      sm: 'center'
-                    }
-                  })({type: props.type})}>
-                  <Provider
-                    values={[
-                    [ImageContext, {hidden: true}],
-                    [HeadingContext, {className: heading}],
-                    [HeaderContext, {className: header}],
-                    [ContentContext, {hidden: true}],
-                    [FooterContext, {hidden: true}],
-                    [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'top'}]
-                    ]}>
-                    {children}
-                  </Provider>
-                </div>
-                {props.isDismissable &&
-                <CloseButton onPress={close} css={style({marginBottom: 12})} />
-              }
-              </div>
-              {/* Main content */}
-              <Provider
-                values={[
-                [ImageContext, {hidden: true}],
-                [HeadingContext, {hidden: true}],
-                [HeaderContext, {hidden: true}],
-                [ContentContext, {className: content({type: props.type})}],
-                [FooterContext, {hidden: true}],
-                [ButtonGroupContext, {hidden: true}]
-                ]}>
-                {children}
-              </Provider>
-              {/* Footer and button group */}
+                },
+                marginEnd: {
+                  default: 32,
+                  isDismissable: 12,
+                  type: {
+                    popover: 8 // don't need to worry about dismissable case?
+                  }
+                },
+                marginTop: {
+                  default: 12,
+                  type: {
+                    popover: 8
+                  }
+                }
+              })({isDismissable: props.isDismissable, type: props.type})}>
               <div
                 className={style({
+                // Wrapper for heading, header, and button group.
+                // This swaps orientation from horizontal to vertical at small screen sizes.
                   display: 'flex',
-                  marginX: {
-                    default: 32,
+                  flex: 1,
+                  marginTop: {
+                    default: 20, // 8 - 3 (handled above)?? moved to 32-12?
                     type: {
                       popover: 8
                     }
                   },
                   marginBottom: {
-                    default: 32,
+                    default: 16,
                     type: {
                       popover: 8
-                    }
-                  },
-                  marginTop: {
-                    default: 32,
+                    },
                     ':empty': 0
                   },
-                  gap: 24,
-                  alignItems: 'center',
-                  flexWrap: 'wrap'
+                  columnGap: 24,
+                  rowGap: 8,
+                  flexDirection: {
+                    default: 'column',
+                    sm: 'row'
+                  },
+                  alignItems: {
+                    default: 'start',
+                    sm: 'center'
+                  }
                 })({type: props.type})}>
                 <Provider
                   values={[
                   [ImageContext, {hidden: true}],
-                  [HeadingContext, {hidden: true}],
-                  [HeaderContext, {hidden: true}],
+                  [HeadingContext, {className: heading}],
+                  [HeaderContext, {className: header}],
                   [ContentContext, {hidden: true}],
-                  [FooterContext, {className: footer}],
-                  [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'bottom', css: buttonGroup, align: 'end'}]
+                  [FooterContext, {hidden: true}],
+                  [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'top'}]
                   ]}>
                   {children}
                 </Provider>
               </div>
-            </div>)
+              {props.isDismissable &&
+              <CloseButton onPress={close} css={style({marginBottom: 12})} />
+            }
+            </div>
+            {/* Main content */}
+            <Provider
+              values={[
+              [ImageContext, {hidden: true}],
+              [HeadingContext, {hidden: true}],
+              [HeaderContext, {hidden: true}],
+              [ContentContext, {className: content({type: props.type})}],
+              [FooterContext, {hidden: true}],
+              [ButtonGroupContext, {hidden: true}]
+              ]}>
+              {children}
+            </Provider>
+            {/* Footer and button group */}
+            <div
+              className={style({
+                display: 'flex',
+                marginX: {
+                  default: 32,
+                  type: {
+                    popover: 8
+                  }
+                },
+                marginBottom: {
+                  default: 32,
+                  type: {
+                    popover: 8
+                  }
+                },
+                marginTop: {
+                  default: 32,
+                  ':empty': 0
+                },
+                gap: 24,
+                alignItems: 'center',
+                flexWrap: 'wrap'
+              })({type: props.type})}>
+              <Provider
+                values={[
+                [ImageContext, {hidden: true}],
+                [HeadingContext, {hidden: true}],
+                [HeaderContext, {hidden: true}],
+                [ContentContext, {hidden: true}],
+                [FooterContext, {className: footer}],
+                [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'bottom', css: buttonGroup, align: 'end'}]
+                ]}>
+                {children}
+              </Provider>
+            </div>
+          </>)
         )}
     </RACDialog>
   );

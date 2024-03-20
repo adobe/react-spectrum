@@ -123,7 +123,7 @@ export const PublishAndExport: Story = {
             <MenuItem id={'quick-export'}>
               <ImgIcon slot="icon" />
               <Text slot="label">Quick Export</Text>
-              <Text slot="description">Share a low-res snapshot</Text>
+              <Text slot="description">Share a low-res snapshot. Long long long long long long long long long long long long long description.</Text>
             </MenuItem>
             <SubmenuTrigger>
               <MenuItem>

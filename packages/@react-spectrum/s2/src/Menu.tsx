@@ -61,16 +61,6 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-// needed to round the corners of the scroll bar, it can't be popover because that hides the submenu as well
-// and it can't be the menu itself because it's the part that scrolls
-let menuWrapper = style({
-  maxHeight: '[inherit]',
-  overflow: 'hidden',
-  borderRadius: 'lg',
-  // extends the area so the overflow hidden doesn't clip too close
-  padding: 8
-});
-
 let menu = style({
   outlineStyle: 'none',
   display: 'grid',
@@ -84,9 +74,9 @@ let menu = style({
   },
   boxSizing: 'border-box',
   maxHeight: '[inherit]',
+  maxWidth: 320,
   overflow: 'auto',
   padding: 8,
-  margin: -8,
   fontFamily: 'sans',
   fontSize: 'control'
 });
@@ -314,30 +304,28 @@ function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLEleme
       UNSAFE_style={UNSAFE_style}
       UNSAFE_className={UNSAFE_className}
       css={css}>
-      <div role="presentation" className={menuWrapper}>
-        <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
-          <Provider
-            values={[
-              [HeaderContext, {
-                slots: {
-                  header: {className: sectionHeader({size})}
-                }
-              }],
-            [HeadingContext, {className: sectionHeading}],
-              [TextContext, {
-                slots: {
-                  'section-description': {className: description({size})}
-                }
-              }]
-            ]}>
-            <AriaMenu
-              {...props}
-              className={menu({size})}>
-              {children}
-            </AriaMenu>
-          </Provider>
-        </InternalMenuContext.Provider>
-      </div>
+      <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
+        <Provider
+          values={[
+            [HeaderContext, {
+              slots: {
+                header: {className: sectionHeader({size})}
+              }
+            }],
+          [HeadingContext, {className: sectionHeading}],
+            [TextContext, {
+              slots: {
+                'section-description': {className: description({size})}
+              }
+            }]
+          ]}>
+          <AriaMenu
+            {...props}
+            className={menu({size})}>
+            {children}
+          </AriaMenu>
+        </Provider>
+      </InternalMenuContext.Provider>
     </Popover>
   );
 }
