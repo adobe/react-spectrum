@@ -12,7 +12,15 @@ import {StyleProps} from './style-utils';
 
 // TODO: what style overrides should be allowed?
 export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
+  /** 
+   * Whether the Dialog is dismissable.
+   */
   isDismissable?: boolean,
+  /**
+   * The size of the Dialog.
+   *
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L'
 }
 
@@ -70,22 +78,37 @@ const buttonGroup = style({
   maxWidth: 'full'
 });
 
-interface DialogContextValue extends Pick<AriaPopoverProps, 'placement' | 'shouldFlip'> {
-  type?: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+interface DialogContextValue extends Pick<AriaPopoverProps, 'placement' | 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
+  /**
+   * The type of Dialog that should be rendered.
+   */
+  type?: 'modal' | 'popover' | 'fullscreen' | 'fullscreenTakeover', // TODO: add tray back in
+  /**
+   * Whether a modal type Dialog should be dismissable.
+   */
   isDismissable?: boolean,
-  hideArrow?: boolean
+  /**
+   * Whether a popover type Dialog's arrow should be hidden.
+   */
+  hideArrow?: boolean,
+  /**
+   * Whether pressing the escape key to close the dialog should be disabled.
+   */
+  isKeyboardDismissDisabled?: boolean
 }
 
 export const DialogContext = createContext<DialogContextValue>({
   type: 'modal',
   isDismissable: false,
   hideArrow: false,
-  shouldFlip: true
+  shouldFlip: true,
+  isKeyboardDismissDisabled: false
 });
 
 function Dialog(props: DialogProps, ref: DOMRef) {
   let ctx = useContext(DialogContext);
   let isDismissable = ctx.isDismissable || props.isDismissable;
+  let isKeyboardDismissDisabled = ctx.isKeyboardDismissDisabled;
   let domRef = useDOMRef(ref);
 
   switch (ctx.type) {
@@ -94,7 +117,7 @@ function Dialog(props: DialogProps, ref: DOMRef) {
     case 'fullscreenTakeover': {
       let size = ctx.type === 'modal' ? props.size : ctx.type;
       return (
-        <Modal size={size} isDismissable={isDismissable}>
+        <Modal size={size} isDismissable={isDismissable} isKeyboardDismissDisabled={isKeyboardDismissDisabled}>
           <DialogInner {...props} {...ctx} dialogRef={domRef} isDismissable={isDismissable} />
         </Modal>
       );
@@ -102,7 +125,7 @@ function Dialog(props: DialogProps, ref: DOMRef) {
     case 'popover':
       // get hideArrow from dialog instead?
       return (
-        <Popover hideArrow={ctx.hideArrow} placement={ctx.placement} shouldFlip={ctx.shouldFlip}>
+        <Popover hideArrow={ctx.hideArrow} placement={ctx.placement} shouldFlip={ctx.shouldFlip} containerPadding={ctx.containerPadding} offset={ctx.offset} crossOffset={ctx.crossOffset}>
           <DialogInner {...props} {...ctx} dialogRef={domRef} isDismissable={isDismissable} />
         </Popover>
       );
@@ -115,6 +138,10 @@ function Dialog(props: DialogProps, ref: DOMRef) {
   }
 }
 
+/**
+ * Dialogs are windows containing contextual information, tasks, or workflows that appear over the user interface.
+ * Depending on the kind of Dialog, further interactions may be blocked until the Dialog is acknowledged.
+ */
 let _Dialog = forwardRef(Dialog);
 export {_Dialog as Dialog};
 

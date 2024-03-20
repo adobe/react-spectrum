@@ -6,6 +6,11 @@ import {useDOMRef} from '@react-spectrum/utils';
 import {forwardRef} from 'react';
 
 interface ModalProps extends ModalOverlayProps {
+  /**
+   * The size of the Modal.
+   * 
+   * @default "M"
+   */
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
 }
 
@@ -128,6 +133,9 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+/**
+ * A modal is an overlay element which blocks interaction with elements outside it.
+ */
 let _Modal = forwardRef(Modal);
 export {_Modal as Modal};
 

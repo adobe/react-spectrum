@@ -8,9 +8,16 @@ import {
 import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
 import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {Ref, forwardRef} from 'react';
+import {forwardRef} from 'react';
+import {DOMRef} from '@react-types/shared';
+import {useDOMRef} from '@react-spectrum/utils';
 
 export interface PopoverProps extends Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition' | 'className' | 'style'>, StyleProps {
+  /**
+   * Whether a popover's arrow should be hidden.
+   * 
+   * @default false
+   */
   hideArrow?: boolean
 }
 
@@ -144,19 +151,20 @@ let arrow = style({
   }
 });
 
-function Popover(props: PopoverProps, ref: Ref<HTMLElement>) {
+function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   let {
     hideArrow = false,
     UNSAFE_className = '',
     UNSAFE_style,
     css
   } = props;
+  let domRef = useDOMRef(ref);
 
   // TODO: this still isn't the final popover 'tip', copying various ones out of the Figma files yields different results
   return (
     <AriaPopover
       {...props}
-      ref={ref}
+      ref={domRef}
       style={UNSAFE_style}
       className={(renderProps) => UNSAFE_className + popover({...renderProps, isArrowShown: !hideArrow}, css)}>
       {composeRenderProps(props.children, (children, renderProps) => (
@@ -175,5 +183,8 @@ function Popover(props: PopoverProps, ref: Ref<HTMLElement>) {
   );
 }
 
+/**
+ * A popover is an overlay element positioned relative to a trigger.
+ */
 let _Popover = forwardRef(Popover);
 export {_Popover as Popover};

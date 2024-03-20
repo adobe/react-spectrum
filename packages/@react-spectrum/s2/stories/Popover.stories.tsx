@@ -25,7 +25,7 @@ type Story = StoryObj<typeof Popover>;
 
 export const Example: Story = {
   render: (args: any) => {
-    let {placement, hideArrow, shouldFlip, isOpen, onOpenChange, defaultOpen, ...props} = args;
+    let {placement, hideArrow, shouldFlip, isOpen, onOpenChange, defaultOpen, containerPadding, offset, crossOffset, ...props} = args;
     return (
       <DialogTrigger
         type="popover"
@@ -34,7 +34,10 @@ export const Example: Story = {
         shouldFlip={shouldFlip}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
-        defaultOpen={defaultOpen}>
+        defaultOpen={defaultOpen}
+        containerPadding={containerPadding}
+        offset={offset}
+        crossOffset={crossOffset}>
         <Button aria-label="Help"><NewIcon /></Button>
         <Dialog {...props}>
           <Heading slot="title">Help</Heading>

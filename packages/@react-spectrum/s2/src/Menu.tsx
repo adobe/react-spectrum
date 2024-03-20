@@ -20,12 +20,13 @@ import {style, baseColor, edgeToText, fontRelative, size, space} from '../style-
 import {mergeStyles} from '../style-macro/runtime';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
-import {createContext, ForwardedRef, forwardRef, ReactNode, useContext, useRef} from 'react';
+import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
 import {IconContext} from './Icon';
 import CheckmarkIcon from '../ui-icons/Checkmark';
 import ChevronRightIcon from '../ui-icons/Chevron'; // chevron right removed??
 import LinkOutIcon from '../ui-icons/LinkOut';
 import {Placement} from 'react-aria';
+import {DOMRef} from '@react-types/shared';
 import {centerBaseline} from './CenterBaseline';
 import {divider} from './Divider';
 import {forwardRefType} from './types';
@@ -35,16 +36,19 @@ import {forwardRefType} from './types';
 export interface MenuTriggerProps extends AriaMenuTriggerProps {
   /**
    * Alignment of the menu relative to the trigger.
+   * 
    * @default 'start'
    */
   align?: 'start' | 'end',
   /**
    * Where the Menu opens relative to its trigger.
+   * 
    * @default 'bottom'
    */
   direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
   /**
    * Whether the menu should automatically flip direction when space is limited.
+   * 
    * @default true
    */
   shouldFlip?: boolean
@@ -57,7 +61,9 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
    * @default "M"
    */
   size?: 'S' | 'M' | 'L' | 'XL',
-  /** The contents of the collection. */
+  /**
+   * The contents of the collection.
+   */
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
@@ -264,7 +270,7 @@ let descriptor = style({
 let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
 let InternalMenuTriggerContext = createContext<MenuTriggerProps>({});
 
-function Menu<T extends object>(props: MenuProps<T>, ref: ForwardedRef<HTMLElement>) {
+function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>) {
   let {isSubmenu, size: ctxSize} = useContext(InternalMenuContext);
   let {
     children,
@@ -373,6 +379,9 @@ export function MenuSection<T extends object>(props: SectionProps<T>) {
 }
 
 interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className'>, StyleProps {
+  /**
+   * The contents of the item.
+   */
   children: ReactNode
 }
 

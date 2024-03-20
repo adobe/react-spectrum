@@ -53,7 +53,13 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
 }
 
 export interface DialogContainerValue {
-  type: 'modal' | 'popover' | 'tray' | 'fullscreen' | 'fullscreenTakeover',
+  /**
+   * The type of container the dialog is rendered in.
+   */
+  type: 'modal' | 'popover' | 'fullscreen' | 'fullscreenTakeover', // TODO: add tray back in
+  /**
+   * A handler to programmatically dismiss the dialog.
+   */
   dismiss(): void
 }
 

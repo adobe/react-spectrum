@@ -1,17 +1,17 @@
 import {ActionButton, ActionButtonProps} from './ActionButton';
 import {Menu, MenuProps, MenuTrigger, MenuTriggerProps} from './Menu';
 import {StyleProps} from './style-utils' with { type: 'macro' };
-import {FocusableRef} from '@react-types/shared';
+import {FocusableRef, DOMProps, AriaLabelingProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRef} from 'react';
 import MoreIcon from './wf-icons/More';
+import {forwardRefType} from './types';
 
 interface ActionMenuProps<T> extends
   Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
   Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction' | 'size'>,
-  Omit<ActionButtonProps, 'children' | 'size' | 'staticColor'>,
-  StyleProps {
-  // keep static color?
+  Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus'>,
+  StyleProps, DOMProps, AriaLabelingProps {
   }
 
 function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableRef<HTMLButtonElement>) {
@@ -51,5 +51,5 @@ function ActionMenu<T extends object>(props: ActionMenuProps<T>, ref: FocusableR
 /**
  * ActionMenu combines an ActionButton with a Menu for simple "more actions" use cases.
  */
-let _ActionMenu = forwardRef(ActionMenu);
+let _ActionMenu = /*#__PURE__*/(forwardRef as forwardRefType)(ActionMenu);
 export {_ActionMenu as ActionMenu};
