@@ -1,7 +1,7 @@
 import {ReactNode, createContext} from 'react';
 import {ContextValue, SlotProps} from 'react-aria-components';
 import {UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {StyleString} from '../style-macro/types';
+import {StyleString} from '../style/types';
 import {AriaLabelingProps, DOMProps} from '@react-types/shared';
 
 export interface IconProps extends UnsafeStyles, SlotProps, AriaLabelingProps, DOMProps {

@@ -1,6 +1,6 @@
 import type {Meta} from '@storybook/react';
-import {Checkbox} from '../src/Checkbox';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {Checkbox} from '../src';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof Checkbox> = {
   component: Checkbox,

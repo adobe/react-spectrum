@@ -1,4 +1,4 @@
-import {ProgressCircle} from '../src/ProgressCircle';
+import {ProgressCircle} from '../src';
 import type {Meta, StoryObj} from '@storybook/react';
 import {StaticColorDecorator} from './utils';
 

@@ -11,7 +11,7 @@ UNSAFE_className="hi">
 
 exports[`Adds a comment when a spread is used 1`] = `
 "import { Button } from "@react-spectrum/rainbow";
-import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+import { style } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <Button
   // TODO: check this spread for style props
@@ -46,7 +46,7 @@ exports[`Converts UNSAFE_className to className on View 1`] = `
 `;
 
 exports[`Handles Flex 1`] = `
-"import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+"import { style } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <div
   className={style({
@@ -59,7 +59,7 @@ exports[`Handles Flex 1`] = `
 `;
 
 exports[`Handles Grid 1`] = `
-"import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+"import { style } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <div
   className={style({
@@ -75,7 +75,7 @@ exports[`Handles Grid 1`] = `
 `;
 
 exports[`Handles UNSAFE_style 1`] = `
-"import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+"import { style } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <div
   className={style({
@@ -113,7 +113,7 @@ exports[`Handles UNSAFE_style 1`] = `
 `;
 
 exports[`Handles View 1`] = `
-"import { style, lightDark } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+"import { style, lightDark } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <div
   className={style({
@@ -129,7 +129,7 @@ exports[`Handles View 1`] = `
 `;
 
 exports[`Handles View colorVersion={5} 1`] = `
-"import { style, lightDark } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+"import { style, lightDark } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <div
   className={style({
@@ -144,7 +144,7 @@ exports[`Handles View colorVersion={5} 1`] = `
 `;
 
 exports[`Handles View colorVersion={6} 1`] = `
-"import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+"import { style } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <div
   className={style({
@@ -160,7 +160,7 @@ exports[`Handles View colorVersion={6} 1`] = `
 
 exports[`Handles dimensions 1`] = `
 "import { Button } from "@react-spectrum/rainbow";
-import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+import { style } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <Button
   css={style({
@@ -172,7 +172,7 @@ import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with 
 
 exports[`Handles renamed components 1`] = `
 "import { Button as RSPButton } from "@react-spectrum/rainbow";
-import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+import { style } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <RSPButton
   css={style({
@@ -184,7 +184,7 @@ import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with 
 
 exports[`Handles responsive style props 1`] = `
 "import { TextField } from "@react-spectrum/rainbow";
-import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+import { style } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <TextField label="Name" css={style({
   width: {
@@ -196,7 +196,7 @@ import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with 
 
 exports[`Handles responsive style props 2`] = `
 "import { TextField } from "@react-spectrum/rainbow";
-import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+import { style } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <TextField label="Name" css={style({
   width: {
@@ -207,7 +207,7 @@ import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with 
 `;
 
 exports[`Merges UNSAFE_className with macro className 1`] = `
-"import { style } from "@react-spectrum/rainbow/style-macro/spectrum-theme" with { type: "macro" };
+"import { style } from "@react-spectrum/rainbow/style" with { type: "macro" };
 
 <div
   className={"hi" + style({

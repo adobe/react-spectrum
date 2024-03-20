@@ -5,16 +5,16 @@ import {
   TagList,
   TagListProps,
   TagProps as AriaTagProps,
+  TextContext,
   composeRenderProps,
-  Provider,
-  TextContext
+  Provider
 } from 'react-aria-components';
 import {StyleProps, field, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {FieldLabel, HelpText} from './Field';
 import {FormContext, useFormProps} from './Form';
 import {SpectrumLabelableProps, DOMRef} from '@react-types/shared';
 import {ClearButton} from './ClearButton';
-import {fontRelative, style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
 import {createContext, useContext, useRef, forwardRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -25,7 +25,7 @@ import {forwardRefType} from './types';
 
 // Get types from RSP and extend those?
 
-interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
+export interface TagProps extends Omit<AriaTagProps, 'children' | 'style' | 'className'> {
   /** The children of the tag. */
   children?: ReactNode
 }
@@ -97,8 +97,8 @@ function TagGroup<T extends object>(
         <FormContext.Provider value={{...formContext, size}}>
           <Provider
             values={[
-                [TextContext, undefined],
-                [TagGroupContext, {size, isEmphasized}]
+              [TextContext, undefined],
+              [TagGroupContext, {size, isEmphasized}]
             ]}>
             <TagList
               items={items}

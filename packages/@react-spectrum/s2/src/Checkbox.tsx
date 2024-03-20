@@ -1,5 +1,5 @@
 import {Checkbox as AriaCheckbox, CheckboxProps as AriaCheckboxProps, CheckboxRenderProps, ContextValue, useContextProps, CheckboxGroupStateContext} from 'react-aria-components';
-import {style, baseColor} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style, baseColor} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import CheckmarkIcon from '../ui-icons/Checkmark';
@@ -23,7 +23,7 @@ interface CheckboxStyleProps {
 
 interface RenderProps extends CheckboxRenderProps, CheckboxStyleProps {}
 
-interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'style' | 'children'>, StyleProps, CheckboxStyleProps {
+export interface CheckboxProps extends Omit<AriaCheckboxProps, 'className' | 'style' | 'children'>, StyleProps, CheckboxStyleProps {
   /** The label for the element. */
   children?: ReactNode
 }

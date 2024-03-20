@@ -9,13 +9,13 @@ import {
 } from 'react-aria-components';
 import {FieldErrorIcon, FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {StyleProps, centerPadding, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';
 import {useContext, Ref, forwardRef, useRef, useImperativeHandle, ReactNode} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {TextFieldRef} from '@react-types/textfield';
 import {createFocusableRef} from '@react-spectrum/utils';
-import {StyleString} from '../style-macro/types';
+import {StyleString} from '../style/types';
 import {mergeRefs} from '@react-aria/utils';
 
 export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'className' | 'style'>, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps {

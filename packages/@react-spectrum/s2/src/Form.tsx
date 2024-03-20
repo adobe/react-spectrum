@@ -1,5 +1,5 @@
 import {Form as RACForm, FormProps as RACFormProps} from 'react-aria-components';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {createContext, useContext, forwardRef, ReactNode} from 'react';
 import {SpectrumLabelableProps, DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
@@ -17,7 +17,7 @@ interface FormStyleProps extends Omit<SpectrumLabelableProps, 'label' | 'context
   isEmphasized?: boolean
 }
 
-interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'children'>, StyleProps {
+export interface FormProps extends FormStyleProps, Omit<RACFormProps, 'className' | 'style' | 'children'>, StyleProps {
   children?: ReactNode
 }
 

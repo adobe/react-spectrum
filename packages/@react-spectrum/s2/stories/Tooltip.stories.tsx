@@ -1,7 +1,6 @@
-import {Tooltip} from '../src/Tooltip';
-import {Button, TooltipTrigger} from 'react-aria-components';
-
+import {Tooltip, TooltipTrigger, Button} from '../src';
 import type {Meta} from '@storybook/react';
+import NewIcon from '../src/wf-icons/New';
 
 const meta: Meta<typeof Tooltip> = {
   component: Tooltip,
@@ -19,14 +18,14 @@ export default meta;
 
 export const Example = (args: any) => (
   <TooltipTrigger>
-    <Button><span role="img" aria-label="">💾</span></Button>
-    <Tooltip {...args}>Save</Tooltip>
+    <Button aria-label="New"><NewIcon /></Button>
+    <Tooltip {...args}>New</Tooltip>
   </TooltipTrigger>
 );
 
 export const LongLabel = (args: any) => (
   <TooltipTrigger>
-    <Button><span role="img" aria-label="">💾</span></Button>
+    <Button aria-label="New"><NewIcon /></Button>
     <Tooltip {...args}>Checkbox with very long label so we can see wrapping</Tooltip>
   </TooltipTrigger>
 );

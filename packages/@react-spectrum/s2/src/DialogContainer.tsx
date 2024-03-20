@@ -3,12 +3,14 @@ import {SpectrumDialogContainerProps} from '@react-types/dialog';
 import {DialogContext} from './Dialog';
 import {ModalContext, useSlottedContext} from 'react-aria-components';
 
+export interface DialogContainerProps extends SpectrumDialogContainerProps {}
+
 /**
  * A DialogContainer accepts a single Dialog as a child, and manages showing and hiding
  * it in a modal. Useful in cases where there is no trigger element
  * or when the trigger unmounts while the dialog is open.
  */
-export function DialogContainer(props: SpectrumDialogContainerProps) {
+export function DialogContainer(props: DialogContainerProps) {
   let {
     children,
     type = 'modal',

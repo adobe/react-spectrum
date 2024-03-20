@@ -1,9 +1,6 @@
-import {Tag, TagGroup} from '../src/TagGroup';
+import {Tag, TagGroup, Text, Link} from '../src';
 import {action} from '@storybook/addon-actions';
 import NewIcon from '../src/wf-icons/New';
-import {Text} from 'react-aria-components';
-import {Link} from '../src/Link';
-
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof TagGroup> = {

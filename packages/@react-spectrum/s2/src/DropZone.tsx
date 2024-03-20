@@ -1,12 +1,12 @@
 import {DropZoneRenderProps, DropZone as RACDropZone, DropZoneProps as RACDropZoneProps} from 'react-aria-components';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ReactNode, forwardRef, createContext} from 'react';
 import {IllustratedMessageContext} from './IllustratedMessage';
 import {CSSPropWithHeight, UnsafeStyles, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 
-interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled'>, UnsafeStyles, DOMProps {
+export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled'>, UnsafeStyles, DOMProps {
   css?: CSSPropWithHeight,
   /** The content to display in the drop zone. */
   children?: ReactNode,

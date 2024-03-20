@@ -6,7 +6,7 @@ import {useContext, forwardRef, ReactNode} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {FieldLabel, HelpText} from './Field';
 import {SpectrumLabelableProps, Orientation, DOMRef, HelpTextProps} from '@react-types/shared';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 import {CheckboxContext} from './Checkbox';

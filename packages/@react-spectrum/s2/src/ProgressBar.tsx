@@ -1,6 +1,6 @@
-import {mergeStyles} from '../style-macro/runtime';
-import {size, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
+import {mergeStyles} from '../style/runtime';
+import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
+import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {
   ProgressBar as AriaProgressBar,
   ProgressBarProps as AriaProgressBarProps
@@ -26,7 +26,7 @@ interface ProgressBarStyleProps {
   staticColor?: 'white' | 'black'
 }
 
-interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style'>, ProgressBarStyleProps, StyleProps {
+export interface ProgressBarProps extends Omit<AriaProgressBarProps, 'children' | 'className' | 'style'>, ProgressBarStyleProps, StyleProps {
   /** The content to display as the label. */
   label?: ReactNode
 }

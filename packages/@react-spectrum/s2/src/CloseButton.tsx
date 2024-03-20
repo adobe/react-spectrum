@@ -1,5 +1,5 @@
 import {Button, ButtonProps} from 'react-aria-components';
-import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import CrossIcon from '../ui-icons/Cross';
 import {pressScale} from './pressScale';

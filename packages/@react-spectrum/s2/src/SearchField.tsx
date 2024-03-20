@@ -6,9 +6,9 @@ import {
 import {ClearButton} from './ClearButton';
 import {FieldGroup, FieldLabel, HelpText, Input} from './Field';
 import {StyleProps, field, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import SearchIcon from '../src/wf-icons/Search';
-import {raw} from '../style-macro/style-macro' with {type: 'macro'};
+import {raw} from '../style/style-macro' with {type: 'macro'};
 import {useContext, forwardRef, Ref, useRef, useImperativeHandle} from 'react';
 import {FormContext, useFormProps} from './Form';
 import {SpectrumLabelableProps, HelpTextProps} from '@react-types/shared';

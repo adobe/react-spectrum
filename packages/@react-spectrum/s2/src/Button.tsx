@@ -1,6 +1,6 @@
-import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Text, TextContext, Provider, Link, LinkProps} from 'react-aria-components';
+import {ButtonRenderProps, Button as RACButton, ButtonProps as RACButtonProps, Provider, Link, LinkProps} from 'react-aria-components';
 import {FocusableRef} from '@react-types/shared';
-import {style, baseColor, fontRelative} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style, baseColor, fontRelative} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, centerPadding, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {createContext, ReactNode, forwardRef, useContext} from 'react';
 import {pressScale} from './pressScale';
@@ -8,6 +8,7 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {IconContext} from './Icon';
 import {centerBaseline} from './CenterBaseline';
 import {mergeProps} from 'react-aria';
+import {Text, TextContext} from './Content';
 
 interface ButtonStyleProps {
   /**
@@ -32,12 +33,12 @@ interface ButtonStyleProps {
   staticColor?: 'white' | 'black'
 }
 
-interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
+export interface ButtonProps extends Omit<RACButtonProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children?: ReactNode
 }
 
-interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
+export interface LinkButtonProps extends Omit<LinkProps, 'className' | 'style' | 'children'>, StyleProps, ButtonStyleProps {
   /** The content to display in the Button. */
   children?: ReactNode
 }

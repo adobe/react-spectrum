@@ -1,9 +1,6 @@
-import {Form} from 'react-aria-components';
-import {TextArea, TextField} from '../src/TextField';
-
+import {TextArea, TextField, Form, Button} from '../src';
 import type {Meta} from '@storybook/react';
-import {Button} from '../src/Button';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof TextField> = {
   component: TextField,

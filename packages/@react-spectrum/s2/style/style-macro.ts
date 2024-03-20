@@ -2,7 +2,7 @@ import type {Value, CSSValue, CSSProperties, PropertyFunction, PropertyValueMap,
 
 export function createArbitraryProperty<T extends Value>(fn: (value: T, property: string) => CSSProperties): PropertyFunction<T> {
   return (value, property) => {
-    let selector = Array.isArray(value) ? value.map(v => generateArbitraryValueSelector(String(v))).join('') : generateArbitraryValueSelector(String(value));
+    let selector = Array.isArray(value) ? generateArbitraryValueSelector(value.map(v => String(v)).join('')) : generateArbitraryValueSelector(String(value));
     return {default: [fn(value, property), selector]};
   };
 }
@@ -71,7 +71,7 @@ function createValueLookup(values: Array<CSSValue>, atStart = false) {
 
 function parseArbitraryValue(value: any) {
   if (typeof value === 'string' && value.startsWith('--')) {
-    return [`var(${value})`, value];
+    return [`var(${value})`, generateArbitraryValueSelector(value)];
   } else if (typeof value === 'string' && value[0] === '[' && value[value.length - 1] === ']') {
     let s = generateArbitraryValueSelector(value.slice(1, -1));
     return [value.slice(1, -1), s];

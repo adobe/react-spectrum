@@ -4,7 +4,7 @@ import {
   SwitchRenderProps
 } from 'react-aria-components';
 import {useContext, useRef, forwardRef, ReactNode} from 'react';
-import {baseColor, fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {FormContext, useFormProps} from './Form';
 import {CenterBaseline} from './CenterBaseline';
 import {pressScale} from './pressScale';

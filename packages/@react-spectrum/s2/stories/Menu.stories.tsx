@@ -1,5 +1,5 @@
-import {MenuItem, MenuTrigger, Menu, MenuSection, CombinedMenu, SubmenuTrigger} from '../src/Menu'; // should MenuTrigger just come from RAC?
-import {Button} from '../src/Button';
+import {MenuItem, MenuTrigger, Menu, MenuSection, SubmenuTrigger, Button, Header, Heading, Text, Image, Keyboard} from '../src';
+import {CombinedMenu} from '../src/Menu';
 import ImgIcon from '../src/wf-icons/Image';
 import NewIcon from '../src/wf-icons/New';
 import CopyIcon from '../src/wf-icons/Copy';
@@ -8,7 +8,6 @@ import ClockPendingIcon from '../src/wf-icons/ClockPending';
 import CommunityIcon from '../src/wf-icons/Community';
 import DeviceTabletIcon from '../src/wf-icons/DeviceTablet';
 import DeviceDesktopIcon from '../src/wf-icons/DeviceDesktop';
-import {Header, Heading, Text, Image, Keyboard} from '../src/Content';
 
 import type {Meta, StoryObj} from '@storybook/react';
 

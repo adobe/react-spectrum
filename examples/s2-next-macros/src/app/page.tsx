@@ -36,7 +36,7 @@ import Cloud from '../../../../spectrum-illustrations/Cloud.svg';
 import {Draggable} from "./Draggable";
 import DropToUpload from '../../../../spectrum-illustrations/dropToUpload.svg';
 import NewIcon from '../../../../src/wf-icons/New';
-import {style} from '@react-spectrum/rainbow/style-macro/spectrum-theme' with { type: 'macro' };
+import {style} from '@react-spectrum/rainbow/style' with { type: 'macro' };
 import {TooltipTrigger} from 'react-aria-components';
 import {useState} from 'react';
 
@@ -188,7 +188,7 @@ export default function Home() {
         <Divider size="L" />
         <Draggable />
         <DropZone
-          className={style({width: '[320px]', height: '[280px]'})}
+          css={style({width: '[320px]', height: '[280px]'})}
           isFilled={isFilled}
           onDrop={() => setIsFilled(true)}>
           <IllustratedMessage>

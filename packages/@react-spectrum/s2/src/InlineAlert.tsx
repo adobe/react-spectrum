@@ -18,13 +18,13 @@ import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {t
 import InfoCircle from './wf-icons/InfoCircle';
 import {ReactNode, forwardRef, useEffect, useRef} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useFocusRing} from 'react-aria';
 import {Provider, HeadingContext} from 'react-aria-components';
 import {ContentContext} from './Content';
 import {IconContext} from './Icon';
 
-export interface SpectrumInlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
+export interface InlineAlertProps extends DOMProps, StyleProps, InlineStylesProps {
   /**
    * The contents of the Inline Alert.
    */
@@ -220,7 +220,7 @@ const content = style<InlineStylesProps>({
   lineHeight: 'body'
 });
 
-function InlineAlert(props: SpectrumInlineAlertProps, ref: DOMRef<HTMLDivElement>) {
+function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     variant = 'neutral',

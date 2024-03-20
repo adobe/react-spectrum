@@ -1,5 +1,4 @@
-import {MenuItem} from '../src/Menu'; // should MenuTrigger just come from RAC?
-import {ActionMenu} from '../src/ActionMenu';
+import {ActionMenu, MenuItem} from '../src';
 
 import type {Meta, StoryObj} from '@storybook/react';
 

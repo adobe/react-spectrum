@@ -1,6 +1,6 @@
-import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {clamp} from '@react-aria/utils';
-import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
+import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {ProgressBar as RACProgressBar, ProgressBarProps as RACProgressBarProps} from 'react-aria-components';
 import {CSSProperties, forwardRef} from 'react';
 import {DOMRef} from '@react-types/shared';
@@ -432,7 +432,8 @@ const fillSubMask2Indeterminate = style({
   animation: fillMask2Frames,
   ...commonFillSubMaskIndeterminate
 });
-interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className'>, ProgressCircleStyleProps, StyleProps {}
+
+export interface ProgressCircleProps extends Omit<RACProgressBarProps, 'children' | 'style' | 'valueLabel' | 'formatOptions' | 'label' | 'className'>, ProgressCircleStyleProps, StyleProps {}
 
 function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>) {
   let {

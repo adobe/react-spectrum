@@ -1,15 +1,15 @@
 import {Group, GroupProps, Input as RACInput, InputProps as RACInputProps, Label, LabelProps, FieldErrorProps, FieldError, composeRenderProps, Text, Provider} from 'react-aria-components';
-import {baseColor, fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {baseColor, fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, UnsafeStyles, focusRing} from './style-utils' with {type: 'macro'};
 import AsteriskIcon from '../ui-icons/Asterisk';
 import AlertIcon from './wf-icons/AlertTriangle';
 import {IconContext} from './Icon';
-import {mergeStyles} from '../style-macro/runtime';
+import {mergeStyles} from '../style/runtime';
 import {CenterBaseline, centerBaseline, centerBaselineBefore} from './CenterBaseline';
 import {NecessityIndicator, Alignment, DOMRef} from '@react-types/shared';
 import {forwardRef, ForwardedRef, ReactNode} from 'react';
 import {useDOMRef} from '@react-spectrum/utils';
-import {StyleString} from '../style-macro/types';
+import {StyleString} from '../style/types';
 
 interface FieldLabelProps extends Omit<LabelProps, 'className' | 'style' | 'children'>, StyleProps {
   isDisabled?: boolean,

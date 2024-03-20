@@ -1,0 +1,5 @@
+{
+  "types": "./dist/types.d.ts",
+  "module": "./dist/module.js",
+  "main": "./dist/main.js"
+}

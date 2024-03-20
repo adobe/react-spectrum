@@ -12,7 +12,7 @@
 
 import {filterDOMProps} from '@react-aria/utils';
 import {forwardRef, ReactNode, useContext, createContext} from 'react';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {IllustrationContext} from './Illustration';
 import {HeadingContext, Provider} from 'react-aria-components';
 import {ContentContext} from './Content';

@@ -1,4 +1,4 @@
-import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {CenterBaseline} from './CenterBaseline';
 import {forwardRef, ReactNode, useContext, useRef} from 'react';
 import {FocusableRef} from '@react-types/shared';
@@ -12,7 +12,7 @@ import {
 } from 'react-aria-components';
 import {useFocusableRef} from '@react-spectrum/utils';
 
-interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children'>, StyleProps {
+export interface RadioProps extends Omit<AriaRadioProps, 'className' | 'style' | 'children'>, StyleProps {
   /**
    * The label for the element.
    */

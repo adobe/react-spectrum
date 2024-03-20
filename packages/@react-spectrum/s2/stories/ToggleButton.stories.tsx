@@ -1,7 +1,6 @@
-import {ToggleButton} from '../src/ToggleButton';
+import {ToggleButton, Text} from '../src';
 import type {Meta, StoryFn} from '@storybook/react';
 import NewIcon from '../src/wf-icons/New';
-import {Text} from 'react-aria-components';
 import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof ToggleButton> = {

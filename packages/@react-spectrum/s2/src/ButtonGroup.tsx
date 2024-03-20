@@ -1,5 +1,5 @@
 import {Provider, SlotProps, useContextProps} from 'react-aria-components';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ReactNode, useRef, useCallback, forwardRef, createContext} from 'react';
 import {useLayoutEffect, useValueEffect} from '@react-aria/utils';
 import {
@@ -33,7 +33,7 @@ interface ButtonGroupStyleProps {
   size?: 'S' | 'M' | 'L' | 'XL'
 }
 
-interface ButtonGroupProps extends ButtonGroupStyleProps, SlotProps, StyleProps, DOMProps {
+export interface ButtonGroupProps extends ButtonGroupStyleProps, SlotProps, StyleProps, DOMProps {
   /** The Buttons contained within the ButtonGroup. */
   children: ReactNode,
   /** Whether the Buttons in the ButtonGroup are all disabled. */

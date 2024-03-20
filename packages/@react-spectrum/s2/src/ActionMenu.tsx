@@ -7,7 +7,7 @@ import {forwardRef} from 'react';
 import MoreIcon from './wf-icons/More';
 import {forwardRefType} from './types';
 
-interface ActionMenuProps<T> extends
+export interface ActionMenuProps<T> extends
   Pick<MenuTriggerProps, 'isOpen' | 'defaultOpen' | 'onOpenChange' | 'align' | 'direction' | 'shouldFlip'>,
   Pick<MenuProps<T>, 'children' | 'items' | 'disabledKeys' | 'onAction' | 'size'>,
   Pick<ActionButtonProps, 'isDisabled' | 'isQuiet' | 'autoFocus'>,

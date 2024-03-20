@@ -1,10 +1,6 @@
 import type {Meta} from '@storybook/react';
-import {IllustratedMessage} from '../src/IllustratedMessage';
-import {Button} from '../src/Button';
-import {Illustration} from '../src/Illustration';
+import {IllustratedMessage, Button, Illustration, Heading, Content, ButtonGroup} from '../src';
 import Cloud from '../spectrum-illustrations/Cloud.svg';
-import {Heading, Content} from '../src/Content';
-import {ButtonGroup} from '../src/ButtonGroup';
 
 const meta: Meta<typeof IllustratedMessage> = {
   component: IllustratedMessage,

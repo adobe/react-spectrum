@@ -1,17 +1,9 @@
 import {createColorProperty, createMappedProperty, createTheme, createArbitraryProperty} from './style-macro';
 import type * as CSS from 'csstype';
-import tokens from '@adobe/spectrum-tokens/dist/json/variables.json';
+import {getToken, colorToken, weirdColorToken, colorScale, simpleColorScale, fontSizeToken} from './tokens' with {type: 'macro'};
 
 interface MacroContext {
   addAsset(asset: {type: string, content: string}): void
-}
-
-function colorToken(token: typeof tokens['gray-25']) {
-  return `light-dark(${token.sets.light.value}, ${token.sets.dark.value})`;
-}
-
-function weirdColorToken(token: typeof tokens['accent-background-color-default']) {
-  return `light-dark(${token.sets.light.sets.light.value}, ${token.sets.dark.sets.dark.value})`;
 }
 
 function pxToRem(px: string | number) {
@@ -19,37 +11,6 @@ function pxToRem(px: string | number) {
     px = parseFloat(px);
   }
   return px / 16 + 'rem';
-}
-
-function fontSizeToken(token: typeof tokens['font-size-100']) {
-  return {
-    default: pxToRem(token.sets.desktop.value),
-    touch: pxToRem(token.sets.mobile.value)
-  };
-}
-
-type ReplaceColor<S extends string> = S extends `${infer S}-color-${infer N}` ? `${S}-${N}` : S;
-
-function colorScale<S extends string>(scale: S): Record<ReplaceColor<Extract<keyof typeof tokens, `${S}-${number}`>>, ReturnType<typeof colorToken>> {
-  let res: any = {};
-  let re = new RegExp(`^${scale}-\\d+$`);
-  for (let token in tokens) {
-    if (re.test(token)) {
-      res[token.replace('-color', '')] = colorToken((tokens as any)[token]);
-    }
-  }
-  return res;
-}
-
-function simpleColorScale<S extends string>(scale: S): Record<Extract<keyof typeof tokens, `${S}-${number}`>, string> {
-  let res: any = {};
-  let re = new RegExp(`^${scale}-\\d+$`);
-  for (let token in tokens) {
-    if (re.test(token)) {
-      res[token] = (tokens as any)[token].value;
-    }
-  }
-  return res;
 }
 
 const color = {
@@ -288,17 +249,17 @@ const translate = {
 
 const borderWidth = {
   0: '0px',
-  1: tokens['border-width-100'].value,
-  2: tokens['border-width-200'].value,
-  4: tokens['border-width-400'].value
+  1: getToken('border-width-100'),
+  2: getToken('border-width-200'),
+  4: getToken('border-width-400')
 };
 
 const radius = {
-  none: tokens['corner-radius-none'].value, // 0px
-  sm: pxToRem(tokens['corner-radius-small-default'].value), // 4px
-  default: pxToRem(tokens['corner-radius-medium-default'].value), // 8px
-  lg: pxToRem(tokens['corner-radius-large-default'].value), // 10px
-  xl: pxToRem(tokens['corner-radius-extra-large-default'].value), // 16px
+  none: getToken('corner-radius-none'), // 0px
+  sm: pxToRem(getToken('corner-radius-small-default')), // 4px
+  default: pxToRem(getToken('corner-radius-medium-default')), // 8px
+  lg: pxToRem(getToken('corner-radius-large-default')), // 10px
+  xl: pxToRem(getToken('corner-radius-extra-large-default')), // 16px
   full: '9999px',
   pill: 'calc(self(height, self(minHeight, 9999px)) / 2)',
   control: fontRelative(8), // automatic based on font size (e.g. t-shirt size logarithmic scale)
@@ -371,127 +332,127 @@ export const style = createTheme({
     color: createColorProperty({
       ...color,
       accent: {
-        default: colorToken(tokens['accent-content-color-default']),
-        isHovered: colorToken(tokens['accent-content-color-hover']),
-        isFocusVisible: colorToken(tokens['accent-content-color-key-focus']),
-        isPressed: colorToken(tokens['accent-content-color-down'])
-        // isSelected: colorToken(tokens['accent-content-color-selected']), // same as pressed
+        default: colorToken('accent-content-color-default'),
+        isHovered: colorToken('accent-content-color-hover'),
+        isFocusVisible: colorToken('accent-content-color-key-focus'),
+        isPressed: colorToken('accent-content-color-down')
+        // isSelected: colorToken('accent-content-color-selected'), // same as pressed
       },
       neutral: {
-        default: colorToken(tokens['neutral-content-color-default']),
-        isHovered: colorToken(tokens['neutral-content-color-hover']),
-        isFocusVisible: colorToken(tokens['neutral-content-color-key-focus']),
-        isPressed: colorToken(tokens['neutral-content-color-down'])
-        // isSelected: colorToken(tokens['neutral-subdued-content-color-selected']),
+        default: colorToken('neutral-content-color-default'),
+        isHovered: colorToken('neutral-content-color-hover'),
+        isFocusVisible: colorToken('neutral-content-color-key-focus'),
+        isPressed: colorToken('neutral-content-color-down')
+        // isSelected: colorToken('neutral-subdued-content-color-selected'),
       },
       'neutral-subdued': {
-        default: colorToken(tokens['neutral-subdued-content-color-default']),
-        isHovered: colorToken(tokens['neutral-subdued-content-color-hover']),
-        isFocusVisible: colorToken(tokens['neutral-subdued-content-color-key-focus']),
-        isPressed: colorToken(tokens['neutral-subdued-content-color-down'])
-        // isSelected: colorToken(tokens['neutral-subdued-content-color-selected']),
+        default: colorToken('neutral-subdued-content-color-default'),
+        isHovered: colorToken('neutral-subdued-content-color-hover'),
+        isFocusVisible: colorToken('neutral-subdued-content-color-key-focus'),
+        isPressed: colorToken('neutral-subdued-content-color-down')
+        // isSelected: colorToken('neutral-subdued-content-color-selected'),
       },
       negative: {
-        default: colorToken(tokens['negative-content-color-default']),
-        isHovered: colorToken(tokens['negative-content-color-hover']),
-        isFocusVisible: colorToken(tokens['negative-content-color-key-focus']),
-        isPressed: colorToken(tokens['negative-content-color-down'])
+        default: colorToken('negative-content-color-default'),
+        isHovered: colorToken('negative-content-color-hover'),
+        isFocusVisible: colorToken('negative-content-color-key-focus'),
+        isPressed: colorToken('negative-content-color-down')
       },
       disabled: {
-        default: colorToken(tokens['disabled-content-color'])
+        default: colorToken('disabled-content-color')
         // forcedColors: 'GrayText'
       },
-      heading: colorToken(tokens['heading-color']),
-      body: colorToken(tokens['body-color']),
-      detail: colorToken(tokens['detail-color']),
-      code: colorToken(tokens['code-color'])
+      heading: colorToken('heading-color'),
+      body: colorToken('body-color'),
+      detail: colorToken('detail-color'),
+      code: colorToken('code-color')
     }),
     backgroundColor: createColorProperty({
       ...color,
       accent: {
-        default: weirdColorToken(tokens['accent-background-color-default']),
-        isHovered: weirdColorToken(tokens['accent-background-color-hover']),
-        isFocusVisible: weirdColorToken(tokens['accent-background-color-key-focus']),
-        isPressed: weirdColorToken(tokens['accent-background-color-down'])
+        default: weirdColorToken('accent-background-color-default'),
+        isHovered: weirdColorToken('accent-background-color-hover'),
+        isFocusVisible: weirdColorToken('accent-background-color-key-focus'),
+        isPressed: weirdColorToken('accent-background-color-down')
       },
       neutral: {
-        default: colorToken(tokens['neutral-background-color-default']),
-        isHovered: colorToken(tokens['neutral-background-color-hover']),
-        isFocusVisible: colorToken(tokens['neutral-background-color-key-focus']),
-        isPressed: colorToken(tokens['neutral-background-color-down'])
+        default: colorToken('neutral-background-color-default'),
+        isHovered: colorToken('neutral-background-color-hover'),
+        isFocusVisible: colorToken('neutral-background-color-key-focus'),
+        isPressed: colorToken('neutral-background-color-down')
       },
       'neutral-subdued': {
-        default: weirdColorToken(tokens['neutral-subdued-background-color-default']),
-        isHovered: weirdColorToken(tokens['neutral-subdued-background-color-hover']),
-        isFocusVisible: weirdColorToken(tokens['neutral-subdued-background-color-key-focus']),
-        isPressed: weirdColorToken(tokens['neutral-subdued-background-color-down'])
+        default: weirdColorToken('neutral-subdued-background-color-default'),
+        isHovered: weirdColorToken('neutral-subdued-background-color-hover'),
+        isFocusVisible: weirdColorToken('neutral-subdued-background-color-key-focus'),
+        isPressed: weirdColorToken('neutral-subdued-background-color-down')
       },
       negative: {
-        default: weirdColorToken(tokens['negative-background-color-default']),
-        isHovered: weirdColorToken(tokens['negative-background-color-hover']),
-        isFocusVisible: weirdColorToken(tokens['negative-background-color-key-focus']),
-        isPressed: weirdColorToken(tokens['negative-background-color-down'])
+        default: weirdColorToken('negative-background-color-default'),
+        isHovered: weirdColorToken('negative-background-color-hover'),
+        isFocusVisible: weirdColorToken('negative-background-color-key-focus'),
+        isPressed: weirdColorToken('negative-background-color-down')
       },
       'negative-subdued': {
-        default: colorToken(tokens['negative-subdued-background-color-default']),
-        isHovered: colorToken(tokens['negative-subdued-background-color-hover']),
-        isFocusVisible: colorToken(tokens['negative-subdued-background-color-key-focus']),
-        isPressed: colorToken(tokens['negative-subdued-background-color-down'])
+        default: colorToken('negative-subdued-background-color-default'),
+        isHovered: colorToken('negative-subdued-background-color-hover'),
+        isFocusVisible: colorToken('negative-subdued-background-color-key-focus'),
+        isPressed: colorToken('negative-subdued-background-color-down')
       },
       informative: {
-        default: weirdColorToken(tokens['informative-background-color-default']),
-        isHovered: weirdColorToken(tokens['informative-background-color-hover']),
-        isFocusVisible: weirdColorToken(tokens['informative-background-color-key-focus']),
-        isPressed: weirdColorToken(tokens['informative-background-color-down'])
+        default: weirdColorToken('informative-background-color-default'),
+        isHovered: weirdColorToken('informative-background-color-hover'),
+        isFocusVisible: weirdColorToken('informative-background-color-key-focus'),
+        isPressed: weirdColorToken('informative-background-color-down')
       },
       positive: {
-        default: weirdColorToken(tokens['positive-background-color-default']),
-        isHovered: weirdColorToken(tokens['positive-background-color-hover']),
-        isFocusVisible: weirdColorToken(tokens['positive-background-color-key-focus']),
-        isPressed: weirdColorToken(tokens['positive-background-color-down'])
+        default: weirdColorToken('positive-background-color-default'),
+        isHovered: weirdColorToken('positive-background-color-hover'),
+        isFocusVisible: weirdColorToken('positive-background-color-key-focus'),
+        isPressed: weirdColorToken('positive-background-color-down')
       },
-      notice: weirdColorToken(tokens['notice-background-color-default']),
-      gray: weirdColorToken(tokens['gray-background-color-default']),
-      red: weirdColorToken(tokens['red-background-color-default']),
-      orange: weirdColorToken(tokens['orange-background-color-default']),
-      yellow: weirdColorToken(tokens['yellow-background-color-default']),
-      chartreuse: weirdColorToken(tokens['chartreuse-background-color-default']),
-      celery: weirdColorToken(tokens['celery-background-color-default']),
-      green: weirdColorToken(tokens['green-background-color-default']),
-      seafoam: weirdColorToken(tokens['seafoam-background-color-default']),
-      cyan: weirdColorToken(tokens['cyan-background-color-default']),
-      blue: weirdColorToken(tokens['blue-background-color-default']),
-      indigo: weirdColorToken(tokens['indigo-background-color-default']),
-      purple: weirdColorToken(tokens['purple-background-color-default']),
-      fuchsia: weirdColorToken(tokens['fuchsia-background-color-default']),
-      magenta: weirdColorToken(tokens['magenta-background-color-default']),
-      pink: weirdColorToken(tokens['pink-background-color-default']),
-      turquoise: weirdColorToken(tokens['turquoise-background-color-default']),
-      cinnamon: weirdColorToken(tokens['cinnamon-background-color-default']),
-      brown: weirdColorToken(tokens['brown-background-color-default']),
-      silver: weirdColorToken(tokens['silver-background-color-default']),
-      disabled: colorToken(tokens['disabled-background-color']),
-      base: colorToken(tokens['background-base-color']),
-      'layer-1': colorToken(tokens['background-layer-1-color']),
-      'layer-2': weirdColorToken(tokens['background-layer-2-color']),
-      pasteboard: weirdColorToken(tokens['background-pasteboard-color'])
+      notice: weirdColorToken('notice-background-color-default'),
+      gray: weirdColorToken('gray-background-color-default'),
+      red: weirdColorToken('red-background-color-default'),
+      orange: weirdColorToken('orange-background-color-default'),
+      yellow: weirdColorToken('yellow-background-color-default'),
+      chartreuse: weirdColorToken('chartreuse-background-color-default'),
+      celery: weirdColorToken('celery-background-color-default'),
+      green: weirdColorToken('green-background-color-default'),
+      seafoam: weirdColorToken('seafoam-background-color-default'),
+      cyan: weirdColorToken('cyan-background-color-default'),
+      blue: weirdColorToken('blue-background-color-default'),
+      indigo: weirdColorToken('indigo-background-color-default'),
+      purple: weirdColorToken('purple-background-color-default'),
+      fuchsia: weirdColorToken('fuchsia-background-color-default'),
+      magenta: weirdColorToken('magenta-background-color-default'),
+      pink: weirdColorToken('pink-background-color-default'),
+      turquoise: weirdColorToken('turquoise-background-color-default'),
+      cinnamon: weirdColorToken('cinnamon-background-color-default'),
+      brown: weirdColorToken('brown-background-color-default'),
+      silver: weirdColorToken('silver-background-color-default'),
+      disabled: colorToken('disabled-background-color'),
+      base: colorToken('background-base-color'),
+      'layer-1': colorToken('background-layer-1-color'),
+      'layer-2': weirdColorToken('background-layer-2-color'),
+      pasteboard: weirdColorToken('background-pasteboard-color')
     }),
     borderColor: createColorProperty({
       ...color,
       negative: {
-        default: colorToken(tokens['negative-border-color-default']),
-        isHovered: colorToken(tokens['negative-border-color-hover']),
-        isFocusVisible: colorToken(tokens['negative-border-color-key-focus']),
-        isPressed: colorToken(tokens['negative-border-color-down'])
+        default: colorToken('negative-border-color-default'),
+        isHovered: colorToken('negative-border-color-hover'),
+        isFocusVisible: colorToken('negative-border-color-key-focus'),
+        isPressed: colorToken('negative-border-color-down')
       },
-      disabled: colorToken(tokens['disabled-border-color'])
+      disabled: colorToken('disabled-border-color')
         // forcedColors: 'GrayText'
 
     }),
     outlineColor: createColorProperty({
       ...color,
       'focus-ring': {
-        default: colorToken(tokens['focus-indicator-color']),
+        default: colorToken('focus-indicator-color'),
         forcedColors: 'Highlight'
       }
     }),
@@ -501,31 +462,31 @@ export const style = createTheme({
     fill: createColorProperty({
       none: 'none',
       currentColor: 'currentColor',
-      accent: weirdColorToken(tokens['accent-visual-color']),
-      neutral: weirdColorToken(tokens['neutral-visual-color']),
-      negative: weirdColorToken(tokens['negative-visual-color']),
-      informative: weirdColorToken(tokens['informative-visual-color']),
-      positive: weirdColorToken(tokens['positive-visual-color']),
-      notice: weirdColorToken(tokens['notice-visual-color']),
-      gray: weirdColorToken(tokens['gray-visual-color']),
-      red: weirdColorToken(tokens['red-visual-color']),
-      orange: weirdColorToken(tokens['orange-visual-color']),
-      yellow: weirdColorToken(tokens['yellow-visual-color']),
-      chartreuse: weirdColorToken(tokens['chartreuse-visual-color']),
-      celery: weirdColorToken(tokens['celery-visual-color']),
-      green: weirdColorToken(tokens['green-visual-color']),
-      seafoam: weirdColorToken(tokens['seafoam-visual-color']),
-      cyan: weirdColorToken(tokens['cyan-visual-color']),
-      blue: weirdColorToken(tokens['blue-visual-color']),
-      indigo: weirdColorToken(tokens['indigo-visual-color']),
-      purple: weirdColorToken(tokens['purple-visual-color']),
-      fuchsia: weirdColorToken(tokens['fuchsia-visual-color']),
-      magenta: weirdColorToken(tokens['magenta-visual-color']),
-      pink: weirdColorToken(tokens['pink-visual-color']),
-      turquoise: weirdColorToken(tokens['turquoise-visual-color']),
-      cinnamon: weirdColorToken(tokens['cinnamon-visual-color']),
-      brown: weirdColorToken(tokens['brown-visual-color']),
-      silver: weirdColorToken(tokens['silver-visual-color']),
+      accent: weirdColorToken('accent-visual-color'),
+      neutral: weirdColorToken('neutral-visual-color'),
+      negative: weirdColorToken('negative-visual-color'),
+      informative: weirdColorToken('informative-visual-color'),
+      positive: weirdColorToken('positive-visual-color'),
+      notice: weirdColorToken('notice-visual-color'),
+      gray: weirdColorToken('gray-visual-color'),
+      red: weirdColorToken('red-visual-color'),
+      orange: weirdColorToken('orange-visual-color'),
+      yellow: weirdColorToken('yellow-visual-color'),
+      chartreuse: weirdColorToken('chartreuse-visual-color'),
+      celery: weirdColorToken('celery-visual-color'),
+      green: weirdColorToken('green-visual-color'),
+      seafoam: weirdColorToken('seafoam-visual-color'),
+      cyan: weirdColorToken('cyan-visual-color'),
+      blue: weirdColorToken('blue-visual-color'),
+      indigo: weirdColorToken('indigo-visual-color'),
+      purple: weirdColorToken('purple-visual-color'),
+      fuchsia: weirdColorToken('fuchsia-visual-color'),
+      magenta: weirdColorToken('magenta-visual-color'),
+      pink: weirdColorToken('pink-visual-color'),
+      turquoise: weirdColorToken('turquoise-visual-color'),
+      cinnamon: weirdColorToken('cinnamon-visual-color'),
+      brown: weirdColorToken('brown-visual-color'),
+      silver: weirdColorToken('silver-visual-color'),
       ...color
     }),
     stroke: createColorProperty({
@@ -620,84 +581,84 @@ export const style = createTheme({
     },
     fontSize: {
       // The default font size scale is for use within UI components.
-      'ui-xs': fontSizeToken(tokens['font-size-50']),
-      'ui-sm': fontSizeToken(tokens['font-size-75']),
-      ui: fontSizeToken(tokens['font-size-100']),
-      'ui-lg': fontSizeToken(tokens['font-size-200']),
-      'ui-xl': fontSizeToken(tokens['font-size-300']),
-      'ui-2xl': fontSizeToken(tokens['font-size-400']),
-      'ui-3xl': fontSizeToken(tokens['font-size-500']),
+      'ui-xs': fontSizeToken('font-size-50'),
+      'ui-sm': fontSizeToken('font-size-75'),
+      ui: fontSizeToken('font-size-100'),
+      'ui-lg': fontSizeToken('font-size-200'),
+      'ui-xl': fontSizeToken('font-size-300'),
+      'ui-2xl': fontSizeToken('font-size-400'),
+      'ui-3xl': fontSizeToken('font-size-500'),
 
       control: {
-        default: fontSizeToken(tokens['font-size-100']),
+        default: fontSizeToken('font-size-100'),
         size: {
-          XS: fontSizeToken(tokens['font-size-50']),
-          S: fontSizeToken(tokens['font-size-75']),
-          L: fontSizeToken(tokens['font-size-200']),
-          XL: fontSizeToken(tokens['font-size-300'])
+          XS: fontSizeToken('font-size-50'),
+          S: fontSizeToken('font-size-75'),
+          L: fontSizeToken('font-size-200'),
+          XL: fontSizeToken('font-size-300')
         }
       },
 
-      'heading-xs': fontSizeToken(tokens['heading-size-xs']),
-      'heading-sm': fontSizeToken(tokens['heading-size-s']),
-      heading: fontSizeToken(tokens['heading-size-m']),
-      'heading-lg': fontSizeToken(tokens['heading-size-l']),
-      'heading-xl': fontSizeToken(tokens['heading-size-xl']),
-      'heading-2xl': fontSizeToken(tokens['heading-size-xxl']),
-      'heading-3xl': fontSizeToken(tokens['heading-size-xxxl']),
+      'heading-xs': fontSizeToken('heading-size-xs'),
+      'heading-sm': fontSizeToken('heading-size-s'),
+      heading: fontSizeToken('heading-size-m'),
+      'heading-lg': fontSizeToken('heading-size-l'),
+      'heading-xl': fontSizeToken('heading-size-xl'),
+      'heading-2xl': fontSizeToken('heading-size-xxl'),
+      'heading-3xl': fontSizeToken('heading-size-xxxl'),
 
       // Body is for large blocks of text, e.g. paragraphs, not in UI components.
-      'body-xs': fontSizeToken(tokens['body-size-xs']),
-      'body-sm': fontSizeToken(tokens['body-size-s']),
-      body: fontSizeToken(tokens['body-size-m']),
-      'body-lg': fontSizeToken(tokens['body-size-l']),
-      'body-xl': fontSizeToken(tokens['body-size-xl']),
-      'body-2xl': fontSizeToken(tokens['body-size-xxl']),
-      'body-3xl': fontSizeToken(tokens['body-size-xxxl']),
+      'body-xs': fontSizeToken('body-size-xs'),
+      'body-sm': fontSizeToken('body-size-s'),
+      body: fontSizeToken('body-size-m'),
+      'body-lg': fontSizeToken('body-size-l'),
+      'body-xl': fontSizeToken('body-size-xl'),
+      'body-2xl': fontSizeToken('body-size-xxl'),
+      'body-3xl': fontSizeToken('body-size-xxxl'),
 
-      'detail-sm': fontSizeToken(tokens['detail-size-s']),
-      detail: fontSizeToken(tokens['detail-size-m']),
-      'detail-lg': fontSizeToken(tokens['detail-size-l']),
-      'detail-xl': fontSizeToken(tokens['detail-size-xl']),
+      'detail-sm': fontSizeToken('detail-size-s'),
+      detail: fontSizeToken('detail-size-m'),
+      'detail-lg': fontSizeToken('detail-size-l'),
+      'detail-xl': fontSizeToken('detail-size-xl'),
 
-      'code-xs': fontSizeToken(tokens['code-size-xs']),
-      'code-sm': fontSizeToken(tokens['code-size-s']),
-      code: fontSizeToken(tokens['code-size-m']),
-      'code-lg': fontSizeToken(tokens['code-size-l']),
-      'code-xl': fontSizeToken(tokens['code-size-xl'])
+      'code-xs': fontSizeToken('code-size-xs'),
+      'code-sm': fontSizeToken('code-size-s'),
+      code: fontSizeToken('code-size-m'),
+      'code-lg': fontSizeToken('code-size-l'),
+      'code-xl': fontSizeToken('code-size-xl')
     },
     fontWeight: {
       ...fontWeightBase,
       heading: {
-        default: fontWeightBase[tokens['heading-sans-serif-font-weight'].value as keyof typeof fontWeightBase],
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[tokens['heading-cjk-font-weight'].value as keyof typeof fontWeightBase]
+        default: fontWeightBase[getToken('heading-sans-serif-font-weight') as keyof typeof fontWeightBase],
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('heading-cjk-font-weight') as keyof typeof fontWeightBase]
       },
       detail: {
-        default: fontWeightBase[tokens['detail-sans-serif-font-weight'].value as keyof typeof fontWeightBase],
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[tokens['detail-cjk-font-weight'].value as keyof typeof fontWeightBase]
+        default: fontWeightBase[getToken('detail-sans-serif-font-weight') as keyof typeof fontWeightBase],
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': fontWeightBase[getToken('detail-cjk-font-weight') as keyof typeof fontWeightBase]
       }
     },
     lineHeight: {
       // See https://spectrum.corp.adobe.com/page/typography/#Line-height
       ui: {
-        default: tokens['line-height-100'].value,
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': tokens['line-height-200'].value
+        default: getToken('line-height-100'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('line-height-200')
       },
       heading: {
-        default: tokens['heading-line-height'].value,
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': tokens['heading-cjk-line-height'].value
+        default: getToken('heading-line-height'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('heading-cjk-line-height')
       },
       body: {
-        default: tokens['body-line-height'].value,
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': tokens['body-cjk-line-height'].value
+        default: getToken('body-line-height'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('body-cjk-line-height')
       },
       detail: {
-        default: tokens['detail-line-height'].value,
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': tokens['detail-cjk-line-height'].value
+        default: getToken('detail-line-height'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('detail-cjk-line-height')
       },
       code: {
-        default: tokens['code-line-height'].value,
-        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': tokens['code-cjk-line-height'].value
+        default: getToken('code-line-height'),
+        ':lang(ja, ko, zh, zh-Hant, zh-Hans)': getToken('code-cjk-line-height')
       }
     },
     listStyleType: ['none', 'dist', 'decimal'] as const,
@@ -706,8 +667,8 @@ export const style = createTheme({
     textAlign: ['start', 'center', 'end', 'justify'] as const,
     verticalAlign: ['baseline', 'top', 'middle', 'bottom', 'text-top', 'text-bottom', 'sub', 'super'] as const,
     textDecoration: createMappedProperty((value) => ({
-      textDecoration: value === 'none' ? 'none' : `${value} ${tokens['text-underline-thickness'].value}`,
-      textUnderlineOffset: value === 'underline' ? tokens['text-underline-gap'].value : undefined
+      textDecoration: value === 'none' ? 'none' : `${value} ${getToken('text-underline-thickness')}`,
+      textUnderlineOffset: value === 'underline' ? getToken('text-underline-gap') : undefined
     }), ['underline', 'overline', 'line-through', 'none'] as const),
     textOverflow: ['ellipsis', 'clip'] as const,
     lineClamp: createArbitraryProperty((value: number) => ({

@@ -1,5 +1,5 @@
 import {Dialog as RACDialog, DialogProps as RACDialogProps, Provider, composeRenderProps, PopoverProps as AriaPopoverProps} from 'react-aria-components';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {ContentContext, FooterContext, HeaderContext, HeadingContext, ImageContext} from './Content';
 import {ButtonGroupContext} from './ButtonGroup';
 import {CloseButton} from './CloseButton';

@@ -1,5 +1,5 @@
 import {CSSProperties, ReactNode} from 'react';
-import {raw} from '../style-macro/style-macro' with {type: 'macro'};
+import {raw} from '../style/style-macro' with {type: 'macro'};
 
 interface CenterBaselineProps {
   style?: CSSProperties,

@@ -1,8 +1,6 @@
-import {InlineAlert} from '../src/InlineAlert'; 
+import {InlineAlert, Button, Heading, Content} from '../src'; 
 import type {Meta} from '@storybook/react';
 import {useState} from 'react';
-import {Button} from '../src/Button';
-import {Heading, Content} from '../src/Content';
 
 const meta: Meta<typeof InlineAlert> = {
   component: InlineAlert,

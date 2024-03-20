@@ -1,5 +1,5 @@
 import {ButtonProps, ButtonRenderProps, Button as RACButton, Text, TextContext, Provider} from 'react-aria-components';
-import {baseColor, fontRelative, style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {baseColor, fontRelative, style} from '../style/spectrum-theme' with { type: 'macro' };
 import {pressScale} from './pressScale';
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with { type: 'macro' };
 import {FocusableRef} from '@react-types/shared';

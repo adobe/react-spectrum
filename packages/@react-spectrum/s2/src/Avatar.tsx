@@ -1,4 +1,4 @@
-import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {DOMRef, DOMProps} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import React, {forwardRef} from 'react';

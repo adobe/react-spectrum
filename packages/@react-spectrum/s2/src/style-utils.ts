@@ -1,4 +1,4 @@
-import {StyleString} from '../style-macro/types';
+import {StyleString} from '../style/types';
 import {CSSProperties} from 'react';
 
 export const focusRing = () => ({

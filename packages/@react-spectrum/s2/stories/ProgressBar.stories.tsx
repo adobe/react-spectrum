@@ -1,5 +1,4 @@
-import {ProgressBar} from '../src/ProgressBar';
-
+import {ProgressBar} from '../src';
 import type {Meta} from '@storybook/react';
 import {StaticColorDecorator} from './utils';
 

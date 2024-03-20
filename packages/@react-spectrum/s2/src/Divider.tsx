@@ -1,6 +1,6 @@
 import {forwardRef} from 'react';
 import {Separator as RACSeparator, SeparatorProps as RACSeparatorProps} from 'react-aria-components';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
@@ -25,7 +25,7 @@ interface DividerSpectrumProps {
 }
 
 // TODO: allow overriding height (only when orientation is vertical)??
-interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'elementType'>, StyleProps {}
+export interface DividerProps extends DividerSpectrumProps, Omit<RACSeparatorProps, 'className' | 'style' | 'elementType'>, StyleProps {}
 
 export const divider = style<DividerSpectrumProps>({
   alignSelf: 'stretch',

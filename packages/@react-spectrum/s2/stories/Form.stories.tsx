@@ -1,15 +1,6 @@
-import {Form} from '../src/Form';
-
+import {Form, TextArea, TextField, Button, Checkbox, SearchField, CheckboxGroup, Switch, Radio, RadioGroup} from '../src';
 import type {Meta} from '@storybook/react';
-import {TextArea, TextField} from '../src/TextField';
-import {Button} from '../src/Button';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {Checkbox} from '../src/Checkbox';
-import {SearchField} from '../src/SearchField';
-import {CheckboxGroup} from '../src/CheckboxGroup';
-import {Switch} from '../src/Switch';
-import {Radio} from '../src/Radio';
-import {RadioGroup} from '../src/RadioGroup';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof Form> = {
   component: Form,

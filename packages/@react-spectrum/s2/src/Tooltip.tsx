@@ -1,4 +1,4 @@
-import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
+import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {
   OverlayArrow,
   Tooltip as AriaTooltip,
@@ -6,7 +6,7 @@ import {
   TooltipRenderProps
 } from 'react-aria-components';
 import {ReactNode, forwardRef} from 'react';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 import {UnsafeStyles, centerPadding} from './style-utils' with {type: 'macro'};
@@ -71,7 +71,7 @@ const tooltip = style<TooltipRenderProps>({
     isExiting: 'in'
   },
   '--originX': {
-    type: 'translate',
+    type: 'marginTop',
     value: {
       placement: {
         top: 0,
@@ -82,7 +82,7 @@ const tooltip = style<TooltipRenderProps>({
     }
   },
   '--originY': {
-    type: 'translate',
+    type: 'marginTop',
     value: {
       placement: {
         top: 4,

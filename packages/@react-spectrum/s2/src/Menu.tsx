@@ -16,8 +16,8 @@ import {
 import {box, iconStyles} from './Checkbox';
 import {TextContext, HeadingContext, HeaderContext, Text, ImageContext, KeyboardContext} from './Content';
 import {StyleProps, centerPadding, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {style, baseColor, edgeToText, fontRelative, size, space} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {mergeStyles} from '../style-macro/runtime';
+import {style, baseColor, edgeToText, fontRelative, size, space} from '../style/spectrum-theme' with {type: 'macro'};
+import {mergeStyles} from '../style/runtime';
 import {Popover} from './Popover';
 import {pressScale} from './pressScale';
 import {createContext, forwardRef, ReactNode, useContext, useRef} from 'react';
@@ -364,7 +364,8 @@ function Divider(props: SeparatorProps) {
   );
 }
 
-export function MenuSection<T extends object>(props: SectionProps<T>) {
+export interface MenuSectionProps<T extends object> extends SectionProps<T> {}
+export function MenuSection<T extends object>(props: MenuSectionProps<T>) {
   // remember, context doesn't work if it's around Section nor inside
   return (
     <>
@@ -378,7 +379,7 @@ export function MenuSection<T extends object>(props: SectionProps<T>) {
   );
 }
 
-interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className'>, StyleProps {
+export interface MenuItemProps extends Omit<AriaMenuItemProps, 'children' | 'style' | 'className'>, StyleProps {
   /**
    * The contents of the item.
    */

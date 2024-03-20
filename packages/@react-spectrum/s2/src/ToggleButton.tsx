@@ -7,10 +7,10 @@ import {useFocusableRef} from '@react-spectrum/utils';
 import {StyleProps} from './style-utils';
 import {TextContext, Text} from './Content';
 import {IconContext} from './Icon';
-import {fontRelative, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {fontRelative, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {centerBaseline} from './CenterBaseline';
 
-interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children'>, StyleProps, ActionButtonStyleProps {
+export interface ToggleButtonProps extends Omit<RACToggleButtonProps, 'className' | 'style' | 'children'>, StyleProps, ActionButtonStyleProps {
   /** The content to display in the button. */
   children?: ReactNode,
   /** Whether the button should be displayed with an [emphasized style](https://spectrum.adobe.com/page/action-button/#Emphasis). */

@@ -1,6 +1,6 @@
 import {Modal as RACModal, ModalOverlay, ModalOverlayProps} from 'react-aria-components';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 import {forwardRef} from 'react';

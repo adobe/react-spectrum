@@ -5,8 +5,8 @@ import {
   composeRenderProps,
   PopoverRenderProps
 } from 'react-aria-components';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
-import {keyframes} from '../style-macro/style-macro' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
+import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {forwardRef} from 'react';
 import {DOMRef} from '@react-types/shared';

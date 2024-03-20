@@ -1,5 +1,5 @@
-import {Divider} from '../src/Divider';
-import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {Divider} from '../src';
+import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 
 import type {Meta} from '@storybook/react';
 import {StaticColorDecorator} from './utils';

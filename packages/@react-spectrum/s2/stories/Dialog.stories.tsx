@@ -1,11 +1,5 @@
 import type {Meta} from '@storybook/react';
-import {Dialog} from '../src/Dialog';
-import {ButtonGroup} from '../src/ButtonGroup';
-import {Content, Footer, Heading, Header, Image} from '../src/Content';
-import {Button} from '../src/Button';
-import {Checkbox} from '../src/Checkbox';
-import {DialogTrigger} from '../src/DialogTrigger';
-import {DialogContainer} from '../src/DialogContainer';
+import {Dialog, DialogTrigger, DialogContainer, Button, ButtonGroup, Checkbox, Content, Footer, Heading, Header, Image} from '../src';
 import {useState} from 'react';
 
 const meta: Meta<typeof Dialog> = {

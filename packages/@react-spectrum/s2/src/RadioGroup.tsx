@@ -7,7 +7,7 @@ import {
   RadioGroupProps as AriaRadioGroupProps
 } from 'react-aria-components';
 import React, {forwardRef, ReactNode, useContext} from 'react';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {

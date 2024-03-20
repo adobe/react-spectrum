@@ -1,4 +1,4 @@
-import {baseColor, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {baseColor, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {
   Button,
   ButtonRenderProps,

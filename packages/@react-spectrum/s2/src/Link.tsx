@@ -1,5 +1,5 @@
 import {LinkRenderProps, Link as RACLink, LinkProps as RACLinkProps} from 'react-aria-components';
-import {style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {StyleProps, focusRing, getAllowedOverrides} from './style-utils' with {type: 'macro'};
 import {ReactNode, forwardRef} from 'react';
 import {DOMRef} from '@react-types/shared';
@@ -19,7 +19,7 @@ interface LinkStyleProps {
   isQuiet?: boolean
 }
 
-interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className' | 'style' | 'children'>, StyleProps, LinkStyleProps {
+export interface LinkProps extends Omit<RACLinkProps, 'isDisabled' | 'className' | 'style' | 'children'>, StyleProps, LinkStyleProps {
   children?: ReactNode
 }
 

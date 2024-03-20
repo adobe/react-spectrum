@@ -1,5 +1,5 @@
 import {ReactNode, forwardRef} from 'react';
-import {size, style} from '../style-macro/spectrum-theme' with {type: 'macro'};
+import {size, style} from '../style/spectrum-theme' with {type: 'macro'};
 import {filterDOMProps} from '@react-aria/utils';
 import {AriaLabelingProps, DOMProps, DOMRef} from '@react-types/shared';
 import {CenterBaseline} from './CenterBaseline';

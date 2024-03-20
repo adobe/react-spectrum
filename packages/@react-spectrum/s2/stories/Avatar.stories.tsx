@@ -1,6 +1,5 @@
-import {Avatar} from '../src/Avatar';
-import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
-
+import {Avatar} from '../src';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import type {Meta} from '@storybook/react';
 
 const meta: Meta<typeof Avatar> = {

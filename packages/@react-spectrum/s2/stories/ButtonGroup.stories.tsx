@@ -1,9 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/react';
-import {Text} from 'react-aria-components';
 import NewIcon from '../src/wf-icons/New';
-import {ButtonGroup} from '../src/ButtonGroup';
-import {Button} from '../src/Button';
-import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {Button, ButtonGroup, Text} from '../src';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof ButtonGroup> = {
   component: ButtonGroup,

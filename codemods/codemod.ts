@@ -100,7 +100,7 @@ export default function transformer(file: FileInfo, api: API) {
     }
     let macroImport = j.importDeclaration(
       specifiers,
-      j.literal('@react-spectrum/rainbow/style-macro/spectrum-theme')
+      j.literal('@react-spectrum/rainbow/style')
     );
 
     macroImport.assertions = [j.importAttribute(

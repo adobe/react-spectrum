@@ -1,16 +1,10 @@
 import type {Meta} from '@storybook/react';
-import {DropZone} from '../src/DropZone';
-import {FileTrigger} from 'react-aria-components';
+import {Button, ButtonGroup, DropZone, FileTrigger, Illustration, IllustratedMessage, Heading, Content} from '../src';
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
-import {IllustratedMessage} from '../src/IllustratedMessage';
 import React, {useState} from 'react';
-import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
-import {Button} from '../src/Button';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import DropToUpload from '../spectrum-illustrations/dropToUpload.svg';
 import Cloud from '../spectrum-illustrations/Cloud.svg';
-import {Illustration} from '../src/Illustration';
-import {Heading, Content} from '../src/Content';
-import {ButtonGroup} from '../src/ButtonGroup';
 
 const meta: Meta<typeof DropZone> = {
   component: DropZone,

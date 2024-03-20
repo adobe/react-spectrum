@@ -1,13 +1,7 @@
 import {Popover} from '../src/Popover';
-import {DialogTrigger} from '../src/DialogTrigger'; // where do we want to import this from?
-import {Button} from '../src/Button';
+import {DialogTrigger, Button, Content, Footer, Heading, TextField, Form, Dialog, ButtonGroup} from '../src';
 import NewIcon from '../src/wf-icons/New';
 import type {Meta, StoryObj} from '@storybook/react';
-import {Content, Footer, Heading} from '../src/Content';
-import {TextField} from '../src/TextField';
-import {Form} from '../src/Form';
-import {Dialog} from '../src/Dialog';
-import {ButtonGroup} from '../src';
 // this Dialog has a lot of styles and conditional rendering, where do we actually want to get this from?
 // a different one for Popovers?
 // this is the current API for v3

@@ -1,8 +1,7 @@
 import type {Meta, StoryObj} from '@storybook/react';
-import {Text} from 'react-aria-components';
 import NewIcon from '../src/wf-icons/New';
-import {LinkButton} from '../src/Button';
-import {style} from '../style-macro/spectrum-theme' with { type: 'macro' };
+import {LinkButton, Text} from '../src';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 import {StaticColorDecorator} from './utils';
 
 const meta: Meta<typeof LinkButton> = {
