@@ -14,9 +14,10 @@ import {AriaCheckboxProps} from '@react-types/checkbox';
 import {InputHTMLAttributes, LabelHTMLAttributes, RefObject, useEffect} from 'react';
 import {ToggleState} from '@react-stately/toggle';
 import {useFormValidation} from '@react-aria/form';
-import {useFormValidationState} from '@react-stately/form';
+import {useFormValidationState, privateValidationStateProp} from '@react-stately/form';
 import {useToggle} from '@react-aria/toggle';
 import {ValidationResult} from '@react-types/shared';
+import {chain} from '@react-aria/utils';
 
 export interface CheckboxAria extends ValidationResult {
   /** Props for the label wrapper element. */
@@ -60,9 +61,25 @@ export function useCheckbox(props: AriaCheckboxProps, state: ToggleState, inputR
       inputRef.current.indeterminate = !!isIndeterminate;
     }
   });
+  
+  // Reset validation state on label click for checkbox with a hidden input.
+  let dispatch = () => {
+    let {[privateValidationStateProp]: groupValidationState} = props;
+
+    let {realtimeValidation, commitValidation} = groupValidationState
+    ? groupValidationState
+    : validationState;
+  
+    if (realtimeValidation.isInvalid) {
+      commitValidation();
+    }
+  };
 
   return {
-    labelProps,
+    labelProps: {
+      ...labelProps,
+      onClick: chain(dispatch, labelProps.onClick)
+    },
     inputProps: {
       ...inputProps,
       checked: isSelected,
