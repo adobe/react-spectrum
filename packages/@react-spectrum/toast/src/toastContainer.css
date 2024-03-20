@@ -72,6 +72,9 @@
   --spectrum-focus-ring-gap: var(--spectrum-alias-focus-ring-gap);
   --spectrum-focus-ring-size: var(--spectrum-alias-focus-ring-size);
 
+  position: relative;
+  outline: none;
+
   &[data-animation=entering] {
     animation: slide-in 300ms;
   }
@@ -79,6 +82,23 @@
   &[data-animation=exiting] {
     animation: fade-out 300ms forwards;
   }
+}
+.spectrum-Toast-list {
+  display: contents;
+  list-style-type: none;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+  padding-inline-start: 0;
+}
+
+.spectrum-Toast-listitem {
+  display: inline-block;
+}
+
+.spectrum-Toast-contentWrapper {
+  display: contents;
 }
 
 @keyframes slide-in {

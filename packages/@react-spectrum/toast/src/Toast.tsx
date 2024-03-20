@@ -19,11 +19,12 @@ import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import React, {useContext} from 'react';
+import React from 'react';
 import styles from '@adobe/spectrum-css-temp/components/toast/vars.css';
 import SuccessMedium from '@spectrum-icons/ui/SuccessMedium';
 import toastContainerStyles from './toastContainer.css';
-import {ToasterContext} from './Toaster';
+import {useFocusRing} from '@react-aria/focus';
+import {useId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 import {useToast} from '@react-aria/toast';
 
@@ -66,6 +67,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
   let {
     closeButtonProps,
+    contentProps,
     titleProps,
     toastProps
   } = useToast(props, state, domRef);
@@ -74,7 +76,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/toast');
   let iconLabel = variant && variant !== 'neutral' ? stringFormatter.format(variant) : null;
   let Icon = ICONS[variant];
-  let isFocusVisible = useContext(ToasterContext);
+  let {isFocusVisible, focusProps} = useFocusRing();
 
   const handleAction = () => {
     if (onAction) {
@@ -86,10 +88,16 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
     }
   };
 
+  const iconId = useId();
+  if (Icon) {
+    toastProps['aria-labelledby'] = `${iconId} ${titleProps.id}`;
+  }
+
   return (
     <div
       {...styleProps}
       {...toastProps}
+      {...focusProps}
       ref={domRef}
       className={classNames(styles,
         'spectrum-Toast',
@@ -98,7 +106,7 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
         classNames(
           toastContainerStyles,
           'spectrum-Toast',
-          {'focus-ring': props.toast.key === state.visibleToasts[0]?.key && isFocusVisible}
+          {'focus-ring': isFocusVisible}
         )
       )}
       style={{
@@ -111,24 +119,27 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
           state.remove(key);
         }
       }}>
-      {Icon &&
-        <Icon
-          aria-label={iconLabel}
-          UNSAFE_className={classNames(styles, 'spectrum-Toast-typeIcon')} />
-      }
-      <div className={classNames(styles, 'spectrum-Toast-body')}>
-        <div className={classNames(styles, 'spectrum-Toast-content')} {...titleProps}>{children}</div>
-        {actionLabel &&
-          <Button
-            onPress={handleAction}
-            UNSAFE_className={classNames(styles, 'spectrum-Button')}
-            variant="secondary"
-            staticColor="white">
-            {actionLabel}
-          </Button>
+      <div {...contentProps} className={classNames(toastContainerStyles, 'spectrum-Toast-contentWrapper')}>
+        {Icon &&
+          <Icon
+            id={iconId}
+            aria-label={iconLabel}
+            UNSAFE_className={classNames(styles, 'spectrum-Toast-typeIcon')} />
         }
+        <div className={classNames(styles, 'spectrum-Toast-body')} role="presentation">
+          <div className={classNames(styles, 'spectrum-Toast-content')} role="presentation" {...titleProps}>{children}</div>
+          {actionLabel &&
+            <Button
+              onPress={handleAction}
+              UNSAFE_className={classNames(styles, 'spectrum-Button')}
+              variant="secondary"
+              staticColor="white">
+              {actionLabel}
+            </Button>
+          }
+        </div>
       </div>
-      <div className={classNames(styles, 'spectrum-Toast-buttons')}>
+      <div className={classNames(styles, 'spectrum-Toast-buttons')} role="presentation">
         <ClearButton {...closeButtonProps} variant="overBackground">
           <CrossMedium />
         </ClearButton>

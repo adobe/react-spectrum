@@ -26,8 +26,10 @@ export interface AriaToastProps<T> extends AriaLabelingProps {
 }
 
 export interface ToastAria {
-  /** Props for the toast container element. */
+  /** Props for the toast container, non-modal dialog element. */
   toastProps: DOMAttributes,
+  /** Props for the toast content alert message. */
+  contentProps: DOMAttributes,
   /** Props for the toast title element. */
   titleProps: DOMAttributes,
   /** Props for the toast description element, if any. */
@@ -94,16 +96,18 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     // Only move focus when there is another Toast. At this point,
     // state.visibleToasts still includes Toast being removed.
     if (state.visibleToasts?.length > 1) {
-      let nextItemFocused = focusManager.focusNext();
+      const from = document.activeElement?.closest('[role="alertdialog"]') || document.activeElement;
+      const accept = (node:Element) => node.getAttribute('role') === 'alertdialog';
+      let nextItemFocused = focusManager.focusNext({from, accept});
       if (!nextItemFocused || Object.keys(nextItemFocused).length === 0) {
-        focusManager.focusPrevious();
+        focusManager.focusPrevious({from, accept});
       }
     }
   };
 
   return {
     toastProps: {
-      role: 'alert',
+      role: 'alertdialog',
       'aria-label': props['aria-label'],
       'aria-labelledby': props['aria-labelledby'] || titleId,
       'aria-describedby': props['aria-describedby'] || descriptionId,
@@ -111,6 +115,11 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
       // Hide toasts that are animating out so VoiceOver doesn't announce them.
       'aria-hidden': animation === 'exiting' ? 'true' : undefined,
       tabIndex: 0
+    },
+    contentProps: {
+      role: 'alert',
+      'aria-atomic': 'true',
+      'aria-relevant': 'additions'
     },
     titleProps: {
       id: titleId
