@@ -1751,43 +1751,43 @@ describe('FocusScope with Shadow DOM', function () {
    * Test case: https://github.com/adobe/react-spectrum/issues/1472
    * sandbox example: https://codesandbox.io/p/sandbox/vigilant-hofstadter-3wf4i?file=%2Fsrc%2Findex.js%3A28%2C30
    */
-  // it('should autofocus and lock tab navigation inside shadow DOM', async function () {
-  //   const {shadowRoot, shadowHost} = createShadowRoot();
-  //
-  //   const FocusableComponent = () => (
-  //     <FocusScope contain>
-  //       <input data-testid="input1" />
-  //       <input data-testid="input2" />
-  //       <button data-testid="button">Button</button>
-  //     </FocusScope>
-  //   );
-  //
-  //   ReactDOM.render(<FocusableComponent />, shadowRoot);
-  //
-  //   const input1 = shadowRoot.querySelector('[data-testid="input1"]');
-  //   const input2 = shadowRoot.querySelector('[data-testid="input2"]');
-  //   const button = shadowRoot.querySelector('[data-testid="button"]');
-  //
-  //   // Simulate focusing the first input and tab through the elements
-  //   await act(() => input1.focus());
-  //   expect(shadowRoot.activeElement).toBe(input1);
-  //
-  //   // Hit TAB key
-  //   await user.tab();
-  //   expect(shadowRoot.activeElement).toBe(input2);
-  //
-  //   // Hit TAB key
-  //   await user.tab();
-  //   expect(shadowRoot.activeElement).toBe(button);
-  //
-  //   // Simulate tab again to check if focus loops back to the first input
-  //   await user.tab();
-  //   expect(shadowRoot.activeElement).toBe(input1);
-  //
-  //   // Cleanup
-  //   document.body.removeChild(shadowHost);
-  //   ReactDOM.unmountComponentAtNode(shadowRoot);
-  // });
+  it('should autofocus and lock tab navigation inside shadow DOM', async function () {
+    const {shadowRoot, shadowHost} = createShadowRoot();
+
+    const FocusableComponent = () => (
+      <FocusScope contain>
+        <input data-testid="input1" />
+        <input data-testid="input2" />
+        <button data-testid="button">Button</button>
+      </FocusScope>
+    );
+
+    ReactDOM.render(<FocusableComponent />, shadowRoot);
+
+    const input1 = shadowRoot.querySelector('[data-testid="input1"]');
+    const input2 = shadowRoot.querySelector('[data-testid="input2"]');
+    const button = shadowRoot.querySelector('[data-testid="button"]');
+
+    // Simulate focusing the first input and tab through the elements
+    act(() => {input1.focus();});
+    expect(shadowRoot.activeElement).toBe(input1);
+
+    // Hit TAB key
+    await user.tab();
+    expect(shadowRoot.activeElement).toBe(input2);
+
+    // Hit TAB key
+    await user.tab();
+    expect(shadowRoot.activeElement).toBe(button);
+
+    // Simulate tab again to check if focus loops back to the first input
+    await user.tab();
+    expect(shadowRoot.activeElement).toBe(input1);
+
+    // Cleanup
+    document.body.removeChild(shadowHost);
+    ReactDOM.unmountComponentAtNode(shadowRoot);
+  });
 });
 
 describe('Unmounting cleanup', () => {
