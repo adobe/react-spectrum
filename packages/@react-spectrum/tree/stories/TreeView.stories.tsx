@@ -12,6 +12,8 @@
 
 import {action} from '@storybook/addon-actions';
 import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import {ActionMenu} from '@react-spectrum/menu';
+import Add from '@spectrum-icons/workflow/Add';
 import {Content} from '@react-spectrum/view';
 import Delete from '@spectrum-icons/workflow/Delete';
 import Edit from '@spectrum-icons/workflow/Edit';
@@ -292,3 +294,26 @@ export const EmptyTree = {
   },
   name: 'Empty Tree'
 };
+
+export const WithActionMenu = (args: SpectrumTreeViewProps<unknown>) => (
+  <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
+    <TreeView {...args} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+      {(item) => (
+        <TreeViewItem childItems={item.childItems} textValue={item.name}>
+          <Text>{item.name}</Text>
+          {item.icon}
+          <ActionMenu onAction={action('actionMenuAction')}>
+            <Item key="add">
+              <Add />
+              <Text>Add</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionMenu>
+        </TreeViewItem>
+      )}
+    </TreeView>
+  </div>
+);

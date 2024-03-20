@@ -142,10 +142,10 @@ const treeCellGrid = style({
   width: 'full',
   alignItems: 'center',
   // TODO: needed to use spectrum var since gridTemplateColumns uses baseSizing and not scaled sizing
-  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 'var(--spectrum-global-dimension-size-400)', 'minmax(0, auto)', '1fr', 'minmax(0, auto)'],
+  gridTemplateColumns: ['minmax(0, auto)', 'minmax(0, auto)', 'minmax(0, auto)', 'var(--spectrum-global-dimension-size-500)', 'minmax(0, auto)', '1fr', 'minmax(0, auto)', 'auto'],
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
-    'drag-handle checkbox level-padding expand-button icon content actions'
+    'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
   ]
 });
 
@@ -161,7 +161,6 @@ const treeIcon = style({
   gridArea: 'icon',
   marginEnd: 2
 });
-
 
 const treeContent = style<Pick<TreeItemContentRenderProps, 'isDisabled'>>({
   gridArea: 'content',
@@ -183,6 +182,12 @@ const treeActions = style({
   /* TODO: I made this one up, confirm desired behavior. These paddings are to make sure the action group has enough padding for the focus ring */
   marginStart: .5,
   marginEnd: 1
+});
+
+const treeActionMenu = style({
+  gridArea: 'actionmenu',
+  marginEnd: 2,
+  width: 8
 });
 
 const treeRowOutline = style({
@@ -288,9 +293,8 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
                   buttonLabelBehavior: 'hide',
                   isDisabled,
                   overflowMode: 'collapse'
-                }
-                // TODO handle action menu the same way as in ListView. Should it support a action menu?
-                // actionMenu: {UNSAFE_className: styles['react-spectrum-ListViewItem-actionmenu'], isQuiet: true}
+                },
+                actionMenu: {UNSAFE_className: treeActionMenu(), isQuiet: true}
               }}>
               {content}
             </SlotProvider>
