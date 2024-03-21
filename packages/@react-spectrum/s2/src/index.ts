@@ -28,9 +28,9 @@ export {Switch} from './Switch';
 export {TagGroup, Tag} from './TagGroup';
 export {TextArea, TextField} from './TextField';
 export {ToggleButton} from './ToggleButton';
-export {Tooltip} from './Tooltip';
+export {Tooltip, TooltipTrigger} from './Tooltip';
 
-export {FileTrigger, TooltipTrigger} from 'react-aria-components';
+export {FileTrigger} from 'react-aria-components';
 
 export type {ActionButtonProps} from './ActionButton';
 export type {ActionMenuProps} from './ActionMenu';

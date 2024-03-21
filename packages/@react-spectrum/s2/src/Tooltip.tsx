@@ -1,19 +1,32 @@
+import {centerPadding, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {DOMRef} from '@react-types/shared';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {
   OverlayArrow,
   Tooltip as AriaTooltip,
   TooltipProps as AriaTooltipProps,
-  TooltipRenderProps
+  TooltipRenderProps,
+  TooltipTrigger as AriaTooltipTrigger,
+  TooltipTriggerComponentProps as AriaTooltipTriggerComponentProps
 } from 'react-aria-components';
-import {ReactNode, forwardRef} from 'react';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
-import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
-import {UnsafeStyles, centerPadding} from './style-utils' with {type: 'macro'};
 
-export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'UNSTABLE_portalContainer'>, UnsafeStyles {
+export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay'>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
   /** The content of the tooltip. */
-  children: ReactNode
+  children?: ReactNode,
+  /**
+   * The placement of the element with respect to its anchor element.
+   *
+   * @default 'top'
+   */
+  placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom'
+}
+
+export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer'>, UnsafeStyles {
+  /** The content of the tooltip. */
+  children?: ReactNode
 }
 
 const slide = keyframes(`
@@ -113,12 +126,27 @@ const arrowStyles = style<TooltipRenderProps>({
   }
 });
 
+let InternalTooltipTriggerContext = createContext<TooltipTriggerProps>({});
+
 function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
   let {children, UNSAFE_style, UNSAFE_className = ''} = props;
   let domRef = useDOMRef(ref);
+  let {
+    containerPadding,
+    crossOffset,
+    offset,
+    placement = 'top',
+    shouldFlip
+  } = useContext(InternalTooltipTriggerContext);
+
   return (
     <AriaTooltip
       {...props}
+      containerPadding={containerPadding}
+      crossOffset={crossOffset}
+      offset={offset}
+      placement={placement}
+      shouldFlip={shouldFlip}
       ref={domRef}
       style={UNSAFE_style}
       className={renderProps => UNSAFE_className + tooltip({...renderProps})}>
@@ -136,9 +164,51 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
   );
 }
 
+function TooltipTrigger(props: TooltipTriggerProps) {
+  let {
+    containerPadding,
+    crossOffset,
+    offset,
+    placement,
+    shouldFlip,
+    ...triggerProps
+  } = props;
+
+  return (
+    <AriaTooltipTrigger {...triggerProps}>
+      <InternalTooltipTriggerContext.Provider
+        value={{
+          containerPadding: containerPadding,
+          crossOffset: crossOffset,
+          offset: offset,
+          placement: placement,
+          shouldFlip: shouldFlip
+        }}>
+        {props.children}
+      </InternalTooltipTriggerContext.Provider>
+    </AriaTooltipTrigger>
+  );
+}
+
+/**
+ * TooltipTrigger wraps around a trigger element and a Tooltip. It handles opening and closing
+ * the Tooltip when the user hovers over or focuses the trigger, and positioning the Tooltip
+ * relative to the trigger.
+ */
+let _TooltipTrigger = forwardRef(TooltipTrigger);
+export {_TooltipTrigger as TooltipTrigger};
+
+
 /**
  * Display container for Tooltip content. Has a directional arrow dependent on its placement.
  */
 let _Tooltip = forwardRef(Tooltip);
 export {_Tooltip as Tooltip};
 
+
+// This is purely so that storybook generates the types for both Menu and MenuTrigger
+interface ICombined extends Omit<TooltipProps, 'placement'>, TooltipTriggerProps {}
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function CombinedTooltip(props: ICombined) {
+  return <div />;
+}
