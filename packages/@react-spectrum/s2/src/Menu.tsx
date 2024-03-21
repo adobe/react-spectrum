@@ -36,19 +36,19 @@ import {forwardRefType} from './types';
 export interface MenuTriggerProps extends AriaMenuTriggerProps {
   /**
    * Alignment of the menu relative to the trigger.
-   * 
+   *
    * @default 'start'
    */
   align?: 'start' | 'end',
   /**
    * Where the Menu opens relative to its trigger.
-   * 
+   *
    * @default 'bottom'
    */
   direction?: 'bottom' | 'top' | 'left' | 'right' | 'start' | 'end',
   /**
    * Whether the menu should automatically flip direction when space is limited.
-   * 
+   *
    * @default true
    */
   shouldFlip?: boolean
@@ -264,7 +264,11 @@ let keyboard = style({
 
 let descriptor = style({
   gridArea: 'descriptor',
-  marginStart: 8
+  marginStart: 8,
+  '--iconPrimary': {
+    type: 'fill',
+    value: 'currentColor'
+  }
 });
 
 let InternalMenuContext = createContext<{size: 'S' | 'M' | 'L' | 'XL', isSubmenu: boolean}>({size: 'M', isSubmenu: false});
@@ -313,15 +317,11 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
       <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
         <Provider
           values={[
-            [HeaderContext, {
-              slots: {
-                header: {className: sectionHeader({size})}
-              }
-            }],
-          [HeadingContext, {className: sectionHeading}],
+            [HeaderContext, {className: sectionHeader({size})}],
+            [HeadingContext, {className: sectionHeading}],
             [TextContext, {
               slots: {
-                'section-description': {className: description({size})}
+                'description': {className: description({size})}
               }
             }]
           ]}>
@@ -390,9 +390,11 @@ export function MenuItem(props: MenuItemProps) {
   let ref = useRef(null);
   let isLink = props.href != null;
   let {size} = useContext(InternalMenuContext);
+  let textValue = props.textValue || (typeof props.children === 'string' ? props.children : undefined);
   return (
     <AriaMenuItem
       {...props}
+      textValue={textValue}
       ref={ref}
       style={pressScale(ref, props.UNSAFE_style)}
       className={renderProps => (props.UNSAFE_className || '') + menuitem({...renderProps, isFocused: (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused, size, isLink}, props.css)}>

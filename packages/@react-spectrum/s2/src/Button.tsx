@@ -249,7 +249,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   },
   '--iconPrimary': {
     type: 'fill',
-    value: '[currentColor]'
+    value: 'currentColor'
   },
   outlineColor: {
     default: 'focus-ring',

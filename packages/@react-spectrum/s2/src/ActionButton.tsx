@@ -131,7 +131,7 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
   },
   '--iconPrimary': {
     type: 'fill',
-    value: '[currentColor]'
+    value: 'currentColor'
   },
   outlineColor: {
     default: 'focus-ring',

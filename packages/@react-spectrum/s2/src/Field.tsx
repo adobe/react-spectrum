@@ -234,7 +234,7 @@ const helpTextStyles = style({
   },
   '--iconPrimary': {
     type: 'fill',
-    value: '[currentColor]'
+    value: 'currentColor'
   },
   contain: 'inline-size',
   paddingTop: '--field-gap',

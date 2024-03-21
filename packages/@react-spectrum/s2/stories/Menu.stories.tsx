@@ -44,7 +44,7 @@ export const Example: Story = {
     };
     return (
       <MenuTrigger {...triggerProps}>
-        <Button aria-label="Help"><NewIcon /></Button>
+        <Button aria-label="Actions for selected text"><NewIcon /></Button>
         <Menu {...menuProps}>
           <MenuItem>Cut</MenuItem>
           <MenuItem>Copy</MenuItem>
@@ -80,9 +80,9 @@ export const KeyboardShortcuts: Story = {
       <MenuTrigger {...triggerProps}>
         <Button aria-label="Help"><NewIcon /></Button>
         <Menu {...menuProps} disabledKeys={['copy']}>
-          <MenuItem id="cut"><Text slot="label">Cut</Text><Keyboard>⌘ Cmd + X</Keyboard></MenuItem>
-          <MenuItem id="copy"><Text slot="label">Copy</Text><Keyboard>⌘ Cmd + C</Keyboard></MenuItem>
-          <MenuItem id="paste"><Text slot="label">Paste</Text><Keyboard>⌘ Cmd + V</Keyboard></MenuItem>
+          <MenuItem id="cut" textValue="Cut"><Text slot="label">Cut</Text><Keyboard>⌘ Cmd + X</Keyboard></MenuItem>
+          <MenuItem id="copy" textValue="Copy"><Text slot="label">Copy</Text><Keyboard>⌘ Cmd + C</Keyboard></MenuItem>
+          <MenuItem id="paste" textValue="Paste"><Text slot="label">Paste</Text><Keyboard>⌘ Cmd + V</Keyboard></MenuItem>
         </Menu>
       </MenuTrigger>
     );
@@ -112,34 +112,34 @@ export const PublishAndExport: Story = {
     };
     return (
       <MenuTrigger {...triggerProps}>
-        <Button aria-label="Help"><NewIcon /></Button>
+        <Button aria-label="Share menu"><NewIcon /></Button>
         <Menu {...menuProps}>
           <MenuSection>
-            <Header slot="header">
+            <Header>
               <Heading>Publish and export</Heading>
-              <Text slot="section-description">Social media, other formats</Text>
+              <Text slot="description">Social media, other formats</Text>
             </Header>
-            <MenuItem id={'quick-export'}>
+            <MenuItem id="quick-export" textValue="quick export">
               <ImgIcon />
               <Text slot="label">Quick Export</Text>
-              <Text slot="description">Share a low-res snapshot. Long long long long long long long long long long long long long description.</Text>
+              <Text slot="description">Share a low-res snapshot.</Text>
             </MenuItem>
             <SubmenuTrigger>
-              <MenuItem>
+              <MenuItem id="open-in" textValue="open a copy">
                 <CopyIcon />
                 <Text slot="label">Open a copy</Text>
                 <Text slot="description">Illustrator for iPad or desktop</Text>
               </MenuItem>
               <Menu selectionMode="single">
                 <MenuSection>
-                  <Header slot="header">
+                  <Header>
                     <Heading>Open a copy in</Heading>
                   </Header>
-                  <MenuItem>
+                  <MenuItem id="ipad" textValue="illustrator for ipad">
                     <DeviceTabletIcon />
                     <Text slot="label">Illustrator for iPad</Text>
                   </MenuItem>
-                  <MenuItem>
+                  <MenuItem id="desktop" textValue="illustrator for desktop">
                     <DeviceDesktopIcon />
                     <Text slot="label">Illustrator for desktop</Text>
                   </MenuItem>
@@ -148,20 +148,20 @@ export const PublishAndExport: Story = {
             </SubmenuTrigger>
           </MenuSection>
           <MenuSection>
-            <Header slot="header">
+            <Header>
               <Heading>Menu section header</Heading>
-              <Text slot="section-description">Menu section description</Text>
+              <Text slot="description">Menu section description</Text>
             </Header>
-            <MenuItem href="https://adobe.com/" target="_blank">
+            <MenuItem id="share" href="https://adobe.com/" target="_blank" textValue="share link">
               <CommentTextIcon />
               <Text slot="label">Share link</Text>
               <Text slot="description">Enable comments and downloads</Text>
             </MenuItem>
-            <MenuItem>
+            <MenuItem id="preview" textValue="preview timelapse">
               <ClockPendingIcon />
               <Text slot="label">Preview Timelapse</Text>
             </MenuItem>
-            <MenuItem id="livestream">
+            <MenuItem id="livestream" textValue="start streaming">
               <CommunityIcon />
               <Text slot="label">Livestream</Text>
               <Text slot="description">Start streaming</Text>
@@ -216,20 +216,20 @@ export const BlendModes: Story = {
     };
     return (
       <MenuTrigger {...triggerProps}>
-        <Button aria-label="Help"><NewIcon /></Button>
+        <Button aria-label="Choose blend mode"><NewIcon /></Button>
         <Menu {...menuProps}>
-          <MenuItem>
-            <Image src={normalUrl.href} />
+          <MenuItem id="normal" textValue="normal">
+            <Image src={normalUrl.href} alt="normal hot airballoon photo" />
             <Text slot="label">Normal</Text>
             <Text slot="description">No effect applied.</Text>
           </MenuItem>
-          <MenuItem>
-            <Image src={multiplyUrl.href} />
+          <MenuItem id="multiply" textValue="multiply">
+            <Image src={multiplyUrl.href} alt="hot airballoon photo blend mode multiply" />
             <Text slot="label">Multiply</Text>
             <Text slot="description"><div style={{maxWidth: '150px'}}>Add contrast, detail, and darken shadows.</div></Text>
           </MenuItem>
-          <MenuItem>
-            <Image src={screenUrl.href} />
+          <MenuItem id="screen" textValue="screen">
+            <Image src={screenUrl.href} alt="hot airballoon photo blend mode screen" />
             <Text slot="label">Screen</Text>
             <Text slot="description">Reduce contrast and brighten details.</Text>
           </MenuItem>
@@ -271,9 +271,9 @@ export const DynamicExample: Story = {
     };
     return (
       <MenuTrigger {...triggerProps}>
-        <Button aria-label="Help"><NewIcon /></Button>
+        <Button aria-label="Action for selected text"><NewIcon /></Button>
         <Menu {...menuProps}>
-          {(item) => <MenuItem id={(item as IExampleItem).id}>{(item as IExampleItem).label}</MenuItem>}
+          {(item) => <MenuItem>{(item as IExampleItem).label}</MenuItem>}
         </Menu>
       </MenuTrigger>
     );
