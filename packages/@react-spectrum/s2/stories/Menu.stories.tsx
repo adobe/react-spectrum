@@ -241,12 +241,18 @@ export const BlendModes: Story = {
 
 interface IExampleItem {
   id: string,
-  label: string
+  label: string,
+  children?: IExampleItem[]
 }
 let items: IExampleItem[] = [
-  {id: 'cut', label: 'Cut'},
-  {id: 'copy', label: 'Copy'},
-  {id: 'paste', label: 'Paste'}
+  {id: 'view', label: 'View', children: [
+    {id: 'grid', label: 'Grid'},
+    {id: 'rulers', label: 'Rulers'},
+    {id: 'tasks', label: 'Contextual task bar'},
+    {id: 'snap', label: 'Snap'}
+  ]},
+  {id: 'export', label: 'Export as...'},
+  {id: 'import', label: 'Import...'}
 ];
 export const DynamicExample: Story = {
   render: (args) => {
@@ -271,9 +277,21 @@ export const DynamicExample: Story = {
     };
     return (
       <MenuTrigger {...triggerProps}>
-        <Button aria-label="Action for selected text"><NewIcon /></Button>
+        <Button aria-label="Actions"><NewIcon /></Button>
         <Menu {...menuProps}>
-          {(item) => <MenuItem>{(item as IExampleItem).label}</MenuItem>}
+          {function renderItem(arg) {
+            let item = arg as IExampleItem;
+            if (item.children) {
+              return (
+                <SubmenuTrigger>
+                  <MenuItem>{item.label}</MenuItem>
+                  <Menu items={item.children} selectionMode="multiple">{renderItem}</Menu>
+                </SubmenuTrigger>
+              );
+            } else {
+              return <MenuItem>{item.label}</MenuItem>;
+            }
+          }}
         </Menu>
       </MenuTrigger>
     );
