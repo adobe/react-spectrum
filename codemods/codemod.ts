@@ -100,7 +100,7 @@ export default function transformer(file: FileInfo, api: API) {
     }
     let macroImport = j.importDeclaration(
       specifiers,
-      j.literal('@react-spectrum/rainbow/style')
+      j.literal('@react/experimental-s2/style')
     );
 
     macroImport.assertions = [j.importAttribute(
@@ -124,7 +124,7 @@ export default function transformer(file: FileInfo, api: API) {
     if (importSpecifiers.length) {
       let importDecl = j.importDeclaration(
         importSpecifiers,
-        j.literal('@react-spectrum/rainbow')
+        j.literal('@react/experimental-s2')
       );
       
       imports.paths().at(0)!.insertAfter(importDecl);

@@ -31,16 +31,16 @@ import {
   TextField,
   ToggleButton,
   Tooltip
-} from "@react-spectrum/rainbow";
+} from "@react/experimental-s2";
 import Cloud from '../../../../spectrum-illustrations/Cloud.svg';
 import {Draggable} from "./Draggable";
 import DropToUpload from '../../../../spectrum-illustrations/dropToUpload.svg';
-import NewIcon from '@react-spectrum/rainbow/icons/New';
-import {style} from '@react-spectrum/rainbow/style' with { type: 'macro' };
+import NewIcon from '@react/experimental-s2/icons/New';
+import {style} from '@react/experimental-s2/style' with { type: 'macro' };
 import {TooltipTrigger} from 'react-aria-components';
 import {useState} from 'react';
 
-import "@react-spectrum/rainbow/page.css";
+import "@react/experimental-s2/page.css";
 
 export default function Home() {
   let [isOpen, setOpen] = useState(false);

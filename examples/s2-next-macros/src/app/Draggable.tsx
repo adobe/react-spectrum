@@ -1,6 +1,6 @@
 import {FocusRing, mergeProps, useButton, useClipboard, useDrag} from 'react-aria';
 import React from 'react';
-import {style} from '@react-spectrum/rainbow/style' with { type: 'macro' };
+import {style} from '@react/experimental-s2/style' with { type: 'macro' };
 
 export function Draggable() {
   let {dragProps} = useDrag({

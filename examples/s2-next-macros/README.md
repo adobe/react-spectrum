@@ -3,7 +3,7 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 ### Pre start
 
 
-You'll need to build Rainbow (@react-spectrum/rainbow") for the link this app uses to work.
+You'll need to build S2 (`@react/experimental-s2`) for the link this app uses to work.
 
 ```bash
 yarn build
@@ -56,12 +56,12 @@ In the page.tsx file this is done inline via the className prop to create three 
 Please include the page level CSS in the root of your application to configure and support the light and dark themes.
 
 ```
-import "@react-spectrum/rainbow/page.css";
+import "@react/experimental-s2/page.css";
 ```
 
-## Rainbow
+## S2
 
-This app currently exists within the rainbow repo as an example app and links to the built version directly via package.json. The spectrum-theme is also accessed via this link.
+This app currently exists within the S2 repo as an example app and links to the built version directly via package.json. The spectrum-theme is also accessed via this link.
 
 ## Learn More
 

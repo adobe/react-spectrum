@@ -321,7 +321,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       if (prelude.startsWith(':')) {
         return [{
           prelude: `@layer ${generateName(priority, true)}`,
-          body: rules.map(rule => ({prelude: rule.prelude, body: [{...rule, prelude: '&' + prelude}], condition: ''})),
+          body: rules.map(rule => nestRule(rule, prelude)),
           condition: ''
         }];
       }
@@ -402,6 +402,22 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     } else {
       throw new Error('Unknown property ' + themeProperty);
     }
+  }
+}
+
+function nestRule(rule: Rule, prelude: string): Rule {
+  if (Array.isArray(rule.body)) {
+    return {
+      prelude: rule.prelude,
+      body: rule.body.map(r => nestRule(r, prelude)),
+      condition: rule.condition
+    };
+  } else {
+    return {
+      prelude: rule.prelude,
+      body: [{...rule, prelude: '&' + prelude}],
+      condition: ''
+    };
   }
 }
 

@@ -1,18 +1,17 @@
 {
-  "name": "@react-spectrum/rainbow",
-  "private": true,
-  "version": "4.0.0",
+  "name": "@react/experimental-s2",
+  "version": "0.0.0-alpha.0",
   "description": "Spectrum 2 UI components in React",
   "repository": {
     "type": "git",
-    "url": "https://git.corp.com/react/rainbow"
+    "url": "https://git.corp.com/react/experimental-s2"
   },
-  "main": "dist/main.js",
+  "main": "dist/main.cjs",
   "module": "dist/module.mjs",
   "types": "dist/types.d.ts",
-  "page": "dist/page.js",
+  "page": "dist/page.cjs",
   "style-module": "style/dist/module.mjs",
-  "style-main": "style/dist/main.js",
+  "style-main": "style/dist/main.cjs",
   "style-types": "style/dist/types.d.ts",
   "source": "src/index.ts",
   "exports": {
@@ -20,20 +19,20 @@
       "types": "./dist/types.d.ts",
       "module": "./dist/module.mjs",
       "import": "./dist/module.mjs",
-      "require": "./dist/main.js"
+      "require": "./dist/main.cjs"
     },
     "./page.css": "./page.css",
     "./style": {
       "types": "./style/dist/types.d.ts",
       "module": "./style/dist/module.mjs",
       "import": "./style/dist/module.mjs",
-      "require": "./style/dist/main.js"
+      "require": "./style/dist/main.cjs"
     },
     "./icons/*": {
       "types": "./icon.d.ts",
       "module": "./icons/*.mjs",
       "import": "./icons/*.mjs",
-      "require": "./icons/*.js"
+      "require": "./icons/*.cjs"
     }
   },
   "targets": {
@@ -91,10 +90,12 @@
     "storybook": "storybook dev -p 6006",
     "lint": "concurrently \"yarn check-types\" \"eslint --ext .js,.jsx,.ts,.tsx .\"",
     "postinstall": "patch-package",
-    "build": "parcel build && rm -rf dist/page.js* && mv dist/page*.css page.css",
+    "build": "parcel build && rm -rf dist/page.cjs* && mv dist/page*.css page.css",
     "clean-build": "rm -rf dist style/dist page.css icons .parcel-cache",
     "prepare": "husky",
-    "chromatic": "yarn chromatic --project-token=$RAINBOW_CHROMATIC_PROJECT_TOKEN"
+    "chromatic": "yarn chromatic --project-token=$RAINBOW_CHROMATIC_PROJECT_TOKEN",
+    "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
+    "postpack": "git checkout -- package.json"
   },
   "devDependencies": {
     "@adobe/spectrum-tokens": "^13.0.0-beta.18",
