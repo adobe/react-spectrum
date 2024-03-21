@@ -15,7 +15,7 @@ import {useDOMRef} from '@react-spectrum/utils';
 export interface PopoverProps extends Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition' | 'className' | 'style'>, StyleProps {
   /**
    * Whether a popover's arrow should be hidden.
-   * 
+   *
    * @default false
    */
   hideArrow?: boolean
@@ -147,6 +147,12 @@ let arrow = style({
       bottom: 180,
       left: -90,
       right: 90
+    }
+  },
+  translateX: {
+    placement: {
+      left: -4,
+      right: 4
     }
   }
 });
