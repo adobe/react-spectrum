@@ -276,10 +276,14 @@ const ComboBoxInput = React.forwardRef(function ComboBoxInput(props: ComboBoxInp
     }
 
     lastInputValue.current = inputValue;
+  }, [isLoading, showLoading, inputValue]);
+
+  useEffect(() => {
     return () => {
       clearTimeout(timeout.current);
+      timeout.current = null;
     };
-  }, [isLoading, showLoading, inputValue]);
+  }, []);
 
   return (
     <FocusRing
