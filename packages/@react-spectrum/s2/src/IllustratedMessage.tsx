@@ -31,7 +31,7 @@ interface IllustratedMessageStyleProps {
   /**
    * The direction that the IllustratedMessage should be laid out in.
    *
-   * @default 'horizontal'
+   * @default 'vertical'
    */
   orientation?: 'horizontal' | 'vertical'
 }
@@ -49,13 +49,13 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
   fontSize: 'control',
   maxWidth: {
     orientation: {
-      horizontal: '[380px]',
-      vertical: '[33rem]' // ask design about max width for vertical because doesn't look great when L
+      vertical: '[380px]',
+      horizontal: '[33rem]' // ask design about max width for horizontal because doesn't look great when L
     }
   },
   gridTemplateAreas: {
     orientation: {
-      horizontal: [
+      vertical: [
         '   .  illustration .   ',
         '   .       .       .   ',
         'heading heading heading',
@@ -63,7 +63,7 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
         'content content content',
         '   .  buttonGroup  .   '
       ],
-      vertical: [
+      horizontal: [
         'illustration . heading',
         'illustration .    .   ',
         'illustration . content',
@@ -73,29 +73,29 @@ const illustratedMessage = style<IllustratedMessageStyleProps & {isInDropZone?: 
   },
   gridTemplateRows: {
     orientation: {
-      horizontal: {
+      vertical: {
         default: ['min-content', 12, 'min-content', 4, 'min-content', 'min-content'],
         size: {
           L: ['min-content', 8, 'min-content', 4, 'min-content', 'min-content']
         }
       },
-      vertical: ['1fr', 4, '1fr']
+      horizontal: ['1fr', 4, '1fr']
     }
   },
   gridTemplateColumns: {
     orientation: {
-      vertical: ['1fr', 12, 'auto']
+      horizontal: ['1fr', 12, 'auto']
     }
   },
   justifyItems: {
     orientation: {
-      horizontal: 'center',
-      vertical: 'start'
+      vertical: 'center',
+      horizontal: 'start'
     }
   },
   textAlign: {
     orientation: {
-      horizontal: 'center'
+      vertical: 'center'
     }
   }
 }, getAllowedOverrides({height: true}));
@@ -172,7 +172,7 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
       style={UNSAFE_style}
       className={UNSAFE_className + illustratedMessage({
         size: props.size || 'M',
-        orientation: props.orientation || 'horizontal'
+        orientation: props.orientation || 'vertical'
       }, props.css)}
       ref={domRef}>
       <Provider
