@@ -1,4 +1,4 @@
-import {ActionButton, Button, Tooltip, TooltipTrigger} from '../src';
+import {ActionButton, Button, Provider, Tooltip, TooltipTrigger} from '../src';
 import {CombinedTooltip} from '../src/Tooltip';
 import Crop from '../s2wf-icons/assets/svg/S2_Icon_Crop_20_N.svg';
 import LassoSelect from '../s2wf-icons/assets/svg/S2_Icon_LassoSelect_20_N.svg';
@@ -102,3 +102,9 @@ export const LongLabel = (args: any) => {
     </TooltipTrigger>
   );
 };
+
+export const ColorScheme = (args: any) => (
+  <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
+    <Example {...args} />
+  </Provider>
+);

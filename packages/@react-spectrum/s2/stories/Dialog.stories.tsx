@@ -1,6 +1,7 @@
 import type {Meta} from '@storybook/react';
-import {Dialog, DialogTrigger, DialogContainer, Button, ButtonGroup, Checkbox, Content, Footer, Heading, Header, Image} from '../src';
+import {Dialog, DialogTrigger, DialogContainer, Button, ButtonGroup, Checkbox, Content, Footer, Heading, Header, Image, Provider} from '../src';
 import {useState} from 'react';
+import {style} from '../style/spectrum-theme' with {type: 'macro'};
 
 const meta: Meta<typeof Dialog> = {
   component: Dialog as any,
@@ -81,3 +82,11 @@ export function DialogContainerExample(props: any) {
 }
 
 DialogContainerExample.args = DialogTriggerExample.args;
+
+export const ColorScheme = (args: any) => (
+  <Provider colorScheme="dark" background="base" styles={style({padding: 48})}>
+    <DialogTriggerExample {...args} />
+  </Provider>
+);
+
+ColorScheme.args = DialogTriggerExample.args;

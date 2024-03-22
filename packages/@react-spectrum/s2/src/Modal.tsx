@@ -1,9 +1,11 @@
-import {Modal as RACModal, ModalOverlay, ModalOverlayProps} from 'react-aria-components';
+import {Modal as RACModal, ModalOverlay, ModalOverlayProps, useLocale} from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
+import {colorScheme} from './style-utils' with {type: 'macro'};
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
-import {forwardRef} from 'react';
+import {MutableRefObject, forwardRef, useCallback, useContext} from 'react';
+import {ColorSchemeContext} from './Provider';
 
 interface ModalProps extends ModalOverlayProps {
   /**
@@ -36,36 +38,50 @@ const fadeAndSlide = keyframes(`
   }
 `);
 
+const modalOverlayStyles = style({
+  ...colorScheme(),
+  position: 'fixed',
+  inset: 0,
+  isolation: 'isolate',
+  backgroundColor: 'transparent-black-500',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  animation: {
+    isEntering: fade,
+    isExiting: fade
+  },
+  animationDuration: {
+    isEntering: 250,
+    isExiting: 130
+  },
+  animationDirection: {
+    isEntering: 'normal',
+    isExiting: 'reverse'
+  }
+});
+
 function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
   let domRef = useDOMRef(ref);
+  let colorScheme = useContext(ColorSchemeContext);
+  let {locale, direction} = useLocale();
+
+  // TODO: should we pass through lang and dir props in RAC?
+  let modalRef = useCallback((el: HTMLDivElement) => {
+    (domRef as MutableRefObject<HTMLDivElement>).current = el;
+    if (el) {
+      el.lang = locale;
+      el.dir = direction;
+    }
+  }, [locale, direction, domRef]);
   
   return (
     <ModalOverlay
       {...props}
-      className={style({
-        position: 'fixed',
-        inset: 0,
-        isolation: 'isolate',
-        backgroundColor: 'transparent-black-500',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        animation: {
-          isEntering: fade,
-          isExiting: fade
-        },
-        animationDuration: {
-          isEntering: 250,
-          isExiting: 130
-        },
-        animationDirection: {
-          isEntering: 'normal',
-          isExiting: 'reverse'
-        }
-      })}>
+      className={renderProps => modalOverlayStyles({...renderProps, colorScheme})}>
       <RACModal
         {...props}
-        ref={domRef}
+        ref={modalRef}
         className={renderProps => style({
           display: 'flex',
           flexDirection: 'column',

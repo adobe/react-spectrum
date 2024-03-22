@@ -66,6 +66,16 @@ export const field = () => ({
   disableTapHighlight: true
 } as const);
 
+export const colorScheme = () => ({
+  colorScheme: {
+    default: 'light dark',
+    colorScheme: {
+      light: 'light',
+      dark: 'dark'
+    }
+  }
+} as const);
+
 const allowedOverrides = [
   'margin',
   'marginStart',

@@ -1,5 +1,5 @@
-import {centerPadding, UnsafeStyles} from './style-utils' with {type: 'macro'};
-import {createContext, forwardRef, ReactNode, useContext} from 'react';
+import {centerPadding, colorScheme, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {createContext, forwardRef, MutableRefObject, ReactNode, useCallback, useContext} from 'react';
 import {DOMRef} from '@react-types/shared';
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
 import {
@@ -8,10 +8,13 @@ import {
   TooltipProps as AriaTooltipProps,
   TooltipRenderProps,
   TooltipTrigger as AriaTooltipTrigger,
-  TooltipTriggerComponentProps as AriaTooltipTriggerComponentProps
+  TooltipTriggerComponentProps as AriaTooltipTriggerComponentProps,
+  useLocale
 } from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {useDOMRef} from '@react-spectrum/utils';
+import {ColorScheme} from '@react-types/provider';
+import {ColorSchemeContext} from './Provider';
 
 export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentProps, 'children' | 'closeDelay'>, Pick<AriaTooltipProps, 'shouldFlip' | 'containerPadding' | 'offset' | 'crossOffset'> {
   /** The content of the tooltip. */
@@ -41,7 +44,8 @@ const slide = keyframes(`
   }
 `);
 
-const tooltip = style<TooltipRenderProps>({
+const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | null}>({
+  ...colorScheme(),
   justifyContent: 'center',
   alignItems: 'center',
   maxWidth: 160,
@@ -138,6 +142,17 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
     placement = 'top',
     shouldFlip
   } = useContext(InternalTooltipTriggerContext);
+  let colorScheme = useContext(ColorSchemeContext);
+  let {locale, direction} = useLocale();
+
+  // TODO: should we pass through lang and dir props in RAC?
+  let tooltipRef = useCallback((el: HTMLDivElement) => {
+    (domRef as MutableRefObject<HTMLDivElement>).current = el;
+    if (el) {
+      el.lang = locale;
+      el.dir = direction;
+    }
+  }, [locale, direction, domRef]);
 
   return (
     <AriaTooltip
@@ -147,9 +162,9 @@ function Tooltip(props: TooltipProps, ref: DOMRef<HTMLDivElement>) {
       offset={offset}
       placement={placement}
       shouldFlip={shouldFlip}
-      ref={domRef}
+      ref={tooltipRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + tooltip({...renderProps})}>
+      className={renderProps => UNSAFE_className + tooltip({...renderProps, colorScheme})}>
       {renderProps => (
         <>
           <OverlayArrow>

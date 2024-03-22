@@ -3,14 +3,17 @@ import {
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
   composeRenderProps,
-  PopoverRenderProps
+  PopoverRenderProps,
+  useLocale
 } from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
 import {keyframes} from '../style/style-macro' with {type: 'macro'};
-import {StyleProps, getAllowedOverrides} from './style-utils' with {type: 'macro'};
-import {forwardRef} from 'react';
+import {StyleProps, getAllowedOverrides, colorScheme} from './style-utils' with {type: 'macro'};
+import {MutableRefObject, forwardRef, useCallback, useContext} from 'react';
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
+import {ColorScheme} from '@react-types/provider';
+import {ColorSchemeContext} from './Provider';
 
 export interface PopoverProps extends Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition' | 'className' | 'style'>, StyleProps {
   /**
@@ -67,7 +70,8 @@ const slideLeftKeyframes = keyframes(`
   }
 `);
 
-let popover = style<PopoverRenderProps & {isArrowShown: boolean}>({
+let popover = style<PopoverRenderProps & {isArrowShown: boolean, colorScheme: ColorScheme | null}>({
+  ...colorScheme(),
   '--popoverBackground': {
     type: 'backgroundColor',
     value: 'layer-2'
@@ -165,14 +169,25 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     styles
   } = props;
   let domRef = useDOMRef(ref);
+  let colorScheme = useContext(ColorSchemeContext);
+  let {locale, direction} = useLocale();
+
+  // TODO: should we pass through lang and dir props in RAC?
+  let popoverRef = useCallback((el: HTMLDivElement) => {
+    (domRef as MutableRefObject<HTMLDivElement>).current = el;
+    if (el) {
+      el.lang = locale;
+      el.dir = direction;
+    }
+  }, [locale, direction, domRef]);
 
   // TODO: this still isn't the final popover 'tip', copying various ones out of the Figma files yields different results
   return (
     <AriaPopover
       {...props}
-      ref={domRef}
+      ref={popoverRef}
       style={UNSAFE_style}
-      className={(renderProps) => UNSAFE_className + popover({...renderProps, isArrowShown: !hideArrow}, styles)}>
+      className={(renderProps) => UNSAFE_className + popover({...renderProps, isArrowShown: !hideArrow, colorScheme}, styles)}>
       {composeRenderProps(props.children, (children, renderProps) => (
         <>
           {!hideArrow && (
