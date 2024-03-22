@@ -7,6 +7,7 @@ import {DOMProps, DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 
 export interface DropZoneProps extends Omit<RACDropZoneProps, 'className' | 'style' | 'children' | 'isDisabled'>, UnsafeStyles, DOMProps {
+  /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StylesPropWithHeight,
   /** The content to display in the drop zone. */
   children?: ReactNode,
