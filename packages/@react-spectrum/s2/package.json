@@ -93,7 +93,7 @@
     "build": "parcel build && rm -rf dist/page.cjs* && mv dist/page*.css page.css",
     "clean-build": "rm -rf dist style/dist page.css icons .parcel-cache",
     "prepare": "husky",
-    "chromatic": "yarn chromatic --project-token=$RAINBOW_CHROMATIC_PROJECT_TOKEN",
+    "chromatic": "chromatic --project-token=$RAINBOW_CHROMATIC_PROJECT_TOKEN",
     "storybook-docs": "storybook dev --docs",
     "build-storybook-docs": "storybook build --docs",
     "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
