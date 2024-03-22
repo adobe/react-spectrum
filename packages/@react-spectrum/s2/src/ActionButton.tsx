@@ -157,7 +157,8 @@ export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleB
   },
   aspectRatio: {
     ':has([slot=icon]:only-child)': 'square'
-  }
+  },
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {

@@ -45,7 +45,8 @@ const wrapper = style<StatusLightStyleProps>({
     variant: {
       neutral: 'gray-600'
     }
-  }
+  },
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 const light = style<StatusLightStyleProps>({
@@ -93,7 +94,7 @@ function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
   if (!role && (props['aria-label'] || props['aria-labelledby'])) {
     console.warn('A labelled StatusLight must have a role.');
   }
-  
+
   return (
     <div
       {...filterDOMProps(props, {labelable: !!role})}

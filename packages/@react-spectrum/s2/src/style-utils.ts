@@ -62,7 +62,8 @@ export const field = () => ({
     type: 'rowGap',
     value: centerPadding('var(--field-height)')
   },
-  columnGap: 'text-to-control'
+  columnGap: 'text-to-control',
+  disableTapHighlight: true
 } as const);
 
 const allowedOverrides = [
@@ -82,8 +83,8 @@ const allowedOverrides = [
   'flexBasis',
   'justifySelf',
   'alignSelf',
-  'order', 
-  'gridArea', 
+  'order',
+  'gridArea',
   'gridRow',
   'gridRowStart',
   'gridRowEnd',

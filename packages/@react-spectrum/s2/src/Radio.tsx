@@ -52,7 +52,8 @@ const wrapper = style({
   },
   gridColumnStart: {
     isInForm: 'field'
-  }
+  },
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 const circle = style<RenderProps>({

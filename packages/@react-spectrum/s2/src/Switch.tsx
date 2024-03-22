@@ -48,7 +48,8 @@ const wrapper = style({
   },
   gridColumnStart: {
     isInForm: 'field'
-  }
+  },
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 const track = style<RenderProps>({
@@ -148,7 +149,7 @@ function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
       {renderProps => (
         <>
           <CenterBaseline>
-            <div 
+            <div
               className={track({
                 ...renderProps,
                 size: props.size || 'M',

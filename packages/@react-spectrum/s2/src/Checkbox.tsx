@@ -49,7 +49,8 @@ const wrapper = style({
   },
   gridColumnStart: {
     isInForm: 'field'
-  }
+  },
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 export const box = style<RenderProps>({

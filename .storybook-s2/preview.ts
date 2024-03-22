@@ -5,8 +5,8 @@ import { store } from 'storybook-dark-mode/dist/esm/Tool';
 import { addons } from '@storybook/preview-api';
 
 const channel = addons.getChannel();
-document.documentElement.dataset.theme = store().current === 'dark' ? 'dark' : 'light';
-channel.on(DARK_MODE_EVENT_NAME, isDark => document.documentElement.dataset.theme = isDark ? 'dark' : 'light');
+document.documentElement.dataset.colorScheme = store().current === 'dark' ? 'dark' : 'light';
+channel.on(DARK_MODE_EVENT_NAME, isDark => document.documentElement.dataset.colorScheme = isDark ? 'dark' : 'light');
 
 /** @type { import('@storybook/react').Preview } */
 const preview = {

@@ -808,7 +808,11 @@ export const style = createTheme({
     objectFit: ['contain', 'cover', 'fill', 'none', 'scale-down'] as const,
     objectPosition: ['bottom', 'center', 'left', 'left bottom', 'left top', 'right', 'right bottom', 'right top', 'top'] as const,
     willChange: ['auto', 'scroll-position', 'contents', 'transform'] as const,
-    zIndex: createArbitraryProperty((value: number) => ({zIndex: value}))
+    zIndex: createArbitraryProperty((value: number) => ({zIndex: value})),
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    disableTapHighlight: createArbitraryProperty((_value: true) => ({
+      '-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
+    }))
   },
   shorthands: {
     padding: ['paddingTop', 'paddingBottom', 'paddingStart', 'paddingEnd'] as const,

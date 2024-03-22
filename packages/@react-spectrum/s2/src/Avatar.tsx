@@ -14,7 +14,8 @@ export interface AvatarProps extends StyleProps, DOMProps {
 
 const imageStyles = style({
   borderRadius: 'full',
-  size: 20
+  size: 20,
+  disableTapHighlight: true
 }, getAllowedOverrides({height: true}));
 
 function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
@@ -33,7 +34,7 @@ function Avatar(props: AvatarProps, ref: DOMRef<HTMLImageElement>) {
       {...domProps}
       ref={domRef}
       alt={alt}
-      style={UNSAFE_style}
+      style={{...UNSAFE_style}}
       className={UNSAFE_className + imageStyles(null, props.css)}
       src={src} />
   );

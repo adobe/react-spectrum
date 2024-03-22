@@ -259,7 +259,8 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     },
     forcedColors: 'Highlight'
   },
-  forcedColorAdjust: 'none'
+  forcedColorAdjust: 'none',
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {

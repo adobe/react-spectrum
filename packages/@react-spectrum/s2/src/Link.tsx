@@ -65,7 +65,8 @@ const link = style<LinkRenderProps & LinkStyleProps>({
       black: 'black'
     },
     forcedColors: 'Highlight'
-  }
+  },
+  disableTapHighlight: true
 }, getAllowedOverrides());
 
 function Link(props: LinkProps, ref: DOMRef<HTMLAnchorElement>) {

@@ -15,13 +15,12 @@ export function generatePageStyles(this: MacroContext | void) {
     content: `html {
       color-scheme: light dark;
       background: ${colorToken(tokens['background-base-color'])};
-      -webkit-tap-highlight-color: rgba(0,0,0,0); /* Prevent tap highlights */
 
-      &[data-theme=light] {
+      &[data-color-scheme=light] {
         color-scheme: light;
       }
 
-      &[data-theme=dark] {
+      &[data-color-scheme=dark] {
         color-scheme: dark;
       }
 
