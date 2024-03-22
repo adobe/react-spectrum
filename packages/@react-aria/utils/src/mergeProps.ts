@@ -28,7 +28,7 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 
 /**
  * Merges multiple props objects together. Event handlers are chained,
- * classNames are combined, and ids are deduplicated - different ids
+ * classNames are combined, styles are combined, and ids are deduplicated - different ids
  * will trigger a side-effect and re-render components hooked up with `useId`.
  * For all other props, the last prop object overrides all previous ones.
  * @param args - Multiple sets of props to merge together.
@@ -64,8 +64,10 @@ export function mergeProps<T extends PropsArg[]>(...args: T): UnionToIntersectio
         result[key] = clsx(a, b);
       } else if (key === 'id' && a && b) {
         result.id = mergeIds(a, b);
-        // Override others
+      } else if (key === 'style' && typeof a === 'object' &&  typeof b === 'object') {
+        result.style = {...a, ...b};
       } else {
+        // Override others
         result[key] = b !== undefined ? b : a;
       }
     }
