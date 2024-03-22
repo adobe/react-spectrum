@@ -570,7 +570,7 @@ export const style = createTheme({
     // text
     fontFamily: {
       sans: {
-        default: 'adobe-clown, adobe-clean, ui-sans-serif, system-ui, sans-serif',
+        default: 'Adobe Colin VF, adobe-clean, ui-sans-serif, system-ui, sans-serif',
         ...i18nFonts
       },
       serif: {
