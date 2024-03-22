@@ -79,6 +79,11 @@ governing permissions and limitations under the License.
     margin-inline-end: var(--spectrum-breadcrumb-button-gap);
   }
 
+  /* first breadcrumb should not have left padding */
+  &:first-of-type > .spectrum-Breadcrumbs-itemLink {
+    padding-left: 0;
+  }
+
   /* last breadcrumb should truncate with an ellipsis */
   &:last-child {
     overflow: hidden;
@@ -120,7 +125,6 @@ governing permissions and limitations under the License.
     }
   }
 }
-
 
 .spectrum-Breadcrumbs-item.is-dragged .spectrum-Breadcrumbs-itemLink:before,
 .spectrum-Breadcrumbs-itemLink:focus-visible:before {
