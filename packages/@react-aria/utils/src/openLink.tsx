@@ -16,16 +16,19 @@ import {LinkDOMProps} from '@react-types/shared';
 import React, {createContext, ReactNode, useContext, useMemo} from 'react';
 
 interface Router {
+  basePath?: string,
   isNative: boolean,
   open: (target: Element, modifiers: Modifiers) => void
 }
 
 const RouterContext = createContext<Router>({
+  basePath: undefined,
   isNative: true,
   open: openSyntheticLink
 });
 
 interface RouterProviderProps {
+  basePath?: string,
   navigate: (path: string) => void,
   children: ReactNode
 }
@@ -35,20 +38,22 @@ interface RouterProviderProps {
  * and provides it to all nested React Aria links to enable client side navigation.
  */
 export function RouterProvider(props: RouterProviderProps) {
-  let {children, navigate} = props;
+  let {basePath, children, navigate} = props;
 
   let ctx = useMemo(() => ({
+    basePath,
     isNative: false,
     open: (target: Element, modifiers: Modifiers) => {
       getSyntheticLink(target, link => {
         if (shouldClientNavigate(link, modifiers)) {
-          navigate(link.pathname + link.search + link.hash);
+          const pathname = basePath ? link.pathname.replace(basePath, '') : link.pathname;
+          navigate(pathname + link.search + link.hash);
         } else {
           openLink(link, modifiers);
         }
       });
     }
-  }), [navigate]);
+  }), [basePath, navigate]);
 
   return (
     <RouterContext.Provider value={ctx}>
@@ -151,4 +156,9 @@ export function getSyntheticLinkProps(props: LinkDOMProps) {
     'data-ping': props.ping,
     'data-referrer-policy': props.referrerPolicy
   };
+}
+
+export function withBasePath<T>(router: Router, props: T): T {
+  const {href} = (props as {href?: string});
+  return router.basePath && href ? {...props, href: router.basePath + href} : props;
 }
