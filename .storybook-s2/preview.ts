@@ -16,7 +16,18 @@ const preview = {
       matchers: {},
     },
     docs: {
-      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? themes.dark : themes.light
+      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? themes.dark : themes.light,
+      source: {
+        transform: (code: string) => {
+          // Replace any <_ with <
+          code = code.replace(/<\s?_/g, '<');
+          // Replace any </_ with </
+          code = code.replace(/<\/\s?_/g, '</');
+          // Remove any className prop
+          code = code.replace(/\s+className=".*"/g, '');
+          return code;
+        }
+      }
     }
   },
 };

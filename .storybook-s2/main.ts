@@ -15,7 +15,10 @@ import type { StorybookConfig } from "@storybook/types";
 // ]);
 
 const config: StorybookConfig = {
-  stories: ["../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  stories: [
+    '../docs/**/*.@(md|mdx)',
+    "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
+  ],
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",

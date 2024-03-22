@@ -5,7 +5,10 @@ import {useState} from 'react';
 const meta: Meta<typeof Dialog> = {
   component: Dialog as any,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    docs: {
+      controls: {exclude: ['showHero', 'showHeading', 'showHeader', 'showFooter', 'showButtons', 'paragraphs', 'title']}
+    }
   },
   argTypes: {
     // @ts-ignore
@@ -13,7 +16,8 @@ const meta: Meta<typeof Dialog> = {
       control: 'radio',
       options: ['modal', 'fullscreen', 'fullscreenTakeover']
     }
-  }
+  },
+  tags: ['autodocs']
 };
 
 export default meta;

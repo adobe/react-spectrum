@@ -5,8 +5,7 @@ const meta: Meta<typeof NewIcon> = {
   component: NewIcon,
   parameters: {
     layout: 'centered'
-  },
-  tags: ['autodocs']
+  }
 };
 
 export default meta;
