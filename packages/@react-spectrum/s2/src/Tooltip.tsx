@@ -24,7 +24,7 @@ export interface TooltipTriggerProps extends Omit<AriaTooltipTriggerComponentPro
   placement?: 'start' | 'end' | 'right' | 'left' | 'top' | 'bottom'
 }
 
-export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer'>, UnsafeStyles {
+export interface TooltipProps extends Omit<AriaTooltipProps, 'children' | 'className' | 'style' | 'triggerRef' | 'UNSTABLE_portalContainer' | 'isEntering' | 'isExiting' | 'placement' | 'containerPadding' |  'offset' | 'crossOffset' |  'shouldFlip' | 'arrowBoundaryOffset' | 'isOpen' | 'defaultOpen' | 'onOpenChange'>, UnsafeStyles {
   /** The content of the tooltip. */
   children?: ReactNode
 }
