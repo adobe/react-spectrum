@@ -152,7 +152,7 @@ export function Picker<T extends object>(props: PickerProps<T>) {
         isQuiet: isQuiet,
         labelPosition,
         size: size
-      }, props.css)}>
+      }, props.styles)}>
       {({isDisabled, isFocusVisible}) => (
         <>
           <FieldLabel

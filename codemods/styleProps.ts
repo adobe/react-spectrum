@@ -614,7 +614,7 @@ export function transformStyleProps(j: API['jscodeshift'], path: ASTPath<namedTy
     } else {
       path.get('openingElement').get('attributes').push(
         j.jsxAttribute(
-          j.jsxIdentifier(isDOMElement ? 'className' : 'css'),
+          j.jsxIdentifier(isDOMElement ? 'className' : 'styles'),
           j.jsxExpressionContainer(macroCall)
         )
       );

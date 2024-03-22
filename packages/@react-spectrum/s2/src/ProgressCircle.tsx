@@ -480,7 +480,7 @@ function ProgressCircle(props: ProgressCircleProps, ref: DOMRef<HTMLDivElement>)
       className={renderProps => UNSAFE_className + wrapper({
         ...renderProps,
         size
-      }, props.css)}>
+      }, props.styles)}>
       <div dir="ltr">
         <div className={track({size, staticColor})} />
         <div className={isIndeterminate ? fillsWrapperIndeterminate : fillsWrapper}>

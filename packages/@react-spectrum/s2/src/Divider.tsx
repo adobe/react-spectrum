@@ -90,7 +90,7 @@ function Divider(props: DividerProps, ref: DOMRef) {
         size: props.size || 'M',
         orientation: props.orientation || 'horizontal',
         staticColor: props.staticColor
-      }, props.css)} />
+      }, props.styles)} />
   );
 }
 

@@ -65,7 +65,7 @@ export default function ${iconRename}(props: IconProps) {
   let ctx;
   // TODO: remove this default once we release RAC and use DEFAULT_SLOT.
   [ctx, ref] = useContextProps({slot: props.slot || 'icon'} as IconContextValue, ref, IconContext);
-  let {render, css} = ctx;
+  let {render, styles} = ctx;
   let {
     UNSAFE_className,
     UNSAFE_style,
@@ -87,7 +87,7 @@ export default function ${iconRename}(props: IconProps) {
       aria-hidden={ariaLabel ? (ariaHidden || undefined) : true}
       role="img"
       data-slot={slot}
-      className={(UNSAFE_className ?? '') + ' ' + (css || '')}
+      className={(UNSAFE_className ?? '') + ' ' + (styles || '')}
       style={UNSAFE_style} />
   );
 

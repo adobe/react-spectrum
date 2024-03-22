@@ -145,7 +145,7 @@ function Switch(props: SwitchProps, ref: FocusableRef<HTMLLabelElement>) {
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.css)}>
+      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.styles)}>
       {renderProps => (
         <>
           <CenterBaseline>

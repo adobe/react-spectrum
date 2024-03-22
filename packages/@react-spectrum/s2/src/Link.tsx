@@ -70,7 +70,7 @@ const link = style<LinkRenderProps & LinkStyleProps>({
 }, getAllowedOverrides());
 
 function Link(props: LinkProps, ref: DOMRef<HTMLAnchorElement>) {
-  let {variant = 'primary', staticColor, isQuiet, isStandalone, UNSAFE_style, UNSAFE_className = '', css} = props;
+  let {variant = 'primary', staticColor, isQuiet, isStandalone, UNSAFE_style, UNSAFE_className = '', styles} = props;
 
   let domRef = useDOMRef(ref);
   return (
@@ -78,7 +78,7 @@ function Link(props: LinkProps, ref: DOMRef<HTMLAnchorElement>) {
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + link({...renderProps, variant, staticColor, isQuiet, isStandalone}, css)} />
+      className={renderProps => UNSAFE_className + link({...renderProps, variant, staticColor, isQuiet, isStandalone}, styles)} />
   );
 }
 

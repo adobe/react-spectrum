@@ -16,7 +16,7 @@ import { style } from "@react/experimental-s2/style" with { type: "macro" };
 <Button
   // TODO: check this spread for style props
   {...otherProps}
-  css={style({
+  styles={style({
     marginX: 16
   })()}>Test</Button>"
 `;
@@ -163,7 +163,7 @@ exports[`Handles dimensions 1`] = `
 import { style } from "@react/experimental-s2/style" with { type: "macro" };
 
 <Button
-  css={style({
+  styles={style({
     marginX: 16,
     marginY: 20,
     width: "full"
@@ -175,7 +175,7 @@ exports[`Handles renamed components 1`] = `
 import { style } from "@react/experimental-s2/style" with { type: "macro" };
 
 <RSPButton
-  css={style({
+  styles={style({
     marginX: 16,
     marginY: 20,
     width: "full"
@@ -186,7 +186,7 @@ exports[`Handles responsive style props 1`] = `
 "import { TextField } from "@react/experimental-s2";
 import { style } from "@react/experimental-s2/style" with { type: "macro" };
 
-<TextField label="Name" css={style({
+<TextField label="Name" styles={style({
   width: {
     default: 160,
     lg: "[400px]"
@@ -198,7 +198,7 @@ exports[`Handles responsive style props 2`] = `
 "import { TextField } from "@react/experimental-s2";
 import { style } from "@react/experimental-s2/style" with { type: "macro" };
 
-<TextField label="Name" css={style({
+<TextField label="Name" styles={style({
   width: {
     default: 160,
     lg: "[400px]"

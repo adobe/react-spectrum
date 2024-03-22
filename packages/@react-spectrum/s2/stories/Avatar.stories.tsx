@@ -31,7 +31,7 @@ export const Example = (args: any) => (
 
 export const UserAppliedSize = (args: any) => (
   <>
-    <Avatar alt="default adobe" src={SRC_URL_1} css={style({size: 40})} {...args} />
-    <Avatar alt="design provided" src={SRC_URL_2} css={style({size: 40})} {...args} />
+    <Avatar alt="default adobe" src={SRC_URL_1} styles={style({size: 40})} {...args} />
+    <Avatar alt="design provided" src={SRC_URL_2} styles={style({size: 40})} {...args} />
   </>
 );

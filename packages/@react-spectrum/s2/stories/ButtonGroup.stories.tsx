@@ -21,8 +21,8 @@ export const Example: Story = {
         <Button>Press me</Button>
         <Button variant="accent"><NewIcon /><Text>Test</Text></Button>
         <Button><NewIcon /></Button>
-        <Button variant="negative" css={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</Button>
-        <Button variant="secondary" css={style({maxWidth: 128})}>
+        <Button variant="negative" styles={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</Button>
+        <Button variant="secondary" styles={style({maxWidth: 128})}>
           <NewIcon />
           <Text>Very long button with wrapping text to see what happens</Text>
         </Button>

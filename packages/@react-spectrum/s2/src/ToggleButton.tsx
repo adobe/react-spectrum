@@ -1,7 +1,7 @@
 import {Provider, ToggleButton as RACToggleButton, ToggleButtonProps as RACToggleButtonProps} from 'react-aria-components';
 import {pressScale} from './pressScale';
 import {ReactNode, forwardRef} from 'react';
-import {ActionButtonStyleProps, styles} from './ActionButton';
+import {ActionButtonStyleProps, btnStyles} from './ActionButton';
 import {FocusableRef} from '@react-types/shared';
 import {useFocusableRef} from '@react-spectrum/utils';
 import {StyleProps} from './style-utils';
@@ -24,19 +24,19 @@ function ToggleButton(props: ToggleButtonProps, ref: FocusableRef<HTMLButtonElem
       {...props}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + styles({
+      className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
         staticColor: props.staticColor,
         size: props.size,
         isQuiet: props.isQuiet,
         isEmphasized: props.isEmphasized
-      }, props.css)}>
+      }, props.styles)}>
       <Provider
         values={[
           [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', className: style({order: 0})}),
-            css: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

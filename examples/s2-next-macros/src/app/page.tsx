@@ -188,7 +188,7 @@ export default function Home() {
         <Divider size="L" />
         <Draggable />
         <DropZone
-          css={style({width: '[320px]', height: '[280px]'})}
+          styles={style({width: '[320px]', height: '[280px]'})}
           isFilled={isFilled}
           onDrop={() => setIsFilled(true)}>
           <IllustratedMessage>

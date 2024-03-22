@@ -45,7 +45,7 @@ function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
   let domRef = useDOMRef(ref);
 
   return (
-    <RACForm 
+    <RACForm
       {...formProps}
       ref={domRef}
       style={props.UNSAFE_style}
@@ -59,8 +59,8 @@ function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
         },
         rowGap: 24, // TODO: confirm
         columnGap: 'text-to-control'
-      }, getAllowedOverrides())({labelPosition}, props.css)}>
-      <FormContext.Provider 
+      }, getAllowedOverrides())({labelPosition}, props.styles)}>
+      <FormContext.Provider
         value={{
           labelPosition,
           labelAlign,

@@ -80,7 +80,7 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
         size: props.size,
         labelPosition,
         isInForm: !!formContext
-      }, props.css)}>
+      }, props.styles)}>
       {({isDisabled, isInvalid, isEmpty}) => (<>
         {label && <FieldLabel
           isDisabled={isDisabled}
@@ -94,7 +94,7 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
         <FieldGroup
           isDisabled={isDisabled}
           size={props.size}
-          css={style({
+          styles={style({
             borderRadius: 'full',
             paddingStart: 'pill',
             paddingEnd: 0
@@ -113,7 +113,7 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
                     }
                   })
                 }),
-                css: style({
+                styles: style({
                   size: fontRelative(20),
                   marginStart: '--iconMargin'
                 })

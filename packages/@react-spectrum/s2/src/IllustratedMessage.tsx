@@ -19,7 +19,7 @@ import {ContentContext} from './Content';
 import {DOMProps, DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
 import {ButtonGroupContext} from './ButtonGroup';
-import {CSSPropWithHeight, getAllowedOverrides, UnsafeStyles} from './style-utils' with {type: 'macro'};
+import {StylesPropWithHeight, getAllowedOverrides, UnsafeStyles} from './style-utils' with {type: 'macro'};
 
 interface IllustratedMessageStyleProps {
   /**
@@ -38,7 +38,7 @@ interface IllustratedMessageStyleProps {
 
 interface S2SpectrumIllustratedMessageProps extends DOMProps, UnsafeStyles, IllustratedMessageStyleProps {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  css?: CSSPropWithHeight,
+  styles?: StylesPropWithHeight,
   /** The content to display in the IllustratedMessage. */
   children: ReactNode
 }
@@ -173,14 +173,14 @@ function IllustratedMessage(props: S2SpectrumIllustratedMessageProps, ref: DOMRe
       className={UNSAFE_className + illustratedMessage({
         size: props.size || 'M',
         orientation: props.orientation || 'vertical'
-      }, props.css)}
+      }, props.styles)}
       ref={domRef}>
       <Provider
         values={[
           [HeadingContext, {className: heading({orientation, size})}],
           [ContentContext, {className: content}],
           [IllustrationContext, {className: illustration({orientation, size, isInDropZone, isDropTarget})}],
-          [ButtonGroupContext, {css: buttonGroup}]
+          [ButtonGroupContext, {styles: buttonGroup}]
         ]}>
         {children}
       </Provider>

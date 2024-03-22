@@ -259,14 +259,14 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
         variant,
         style: styleFill,
         isFocusVisible
-      }, props.css)}>
+      }, props.styles)}>
       <div
         className={grid(props)}>
         <Provider
           values={[
             [HeadingContext, {className: heading({variant, style: styleFill})}],
             [ContentContext, {className: content({variant, style: styleFill})}],
-            [IconContext, {css: icon({variant, style: styleFill})}]
+            [IconContext, {styles: icon({variant, style: styleFill})}]
           ]}>
           {Icon && <Icon aria-label={iconAlt} />}
           {children}

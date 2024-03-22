@@ -12,7 +12,7 @@ import {StyleProps} from './style-utils';
 
 // TODO: what style overrides should be allowed?
 export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
-  /** 
+  /**
    * Whether the Dialog is dismissable.
    */
   isDismissable?: boolean,
@@ -273,7 +273,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
                 </Provider>
               </div>
               {props.isDismissable &&
-              <CloseButton onPress={close} css={style({marginBottom: 12})} />
+              <CloseButton onPress={close} styles={style({marginBottom: 12})} />
             }
             </div>
             {/* Main content */}
@@ -319,7 +319,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
                 [HeaderContext, {hidden: true}],
                 [ContentContext, {hidden: true}],
                 [FooterContext, {className: footer}],
-                [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'bottom', css: buttonGroup, align: 'end'}]
+                [ButtonGroupContext, {hidden: buttonGroupPlacement !== 'bottom', styles: buttonGroup, align: 'end'}]
                 ]}>
                 {children}
               </Provider>

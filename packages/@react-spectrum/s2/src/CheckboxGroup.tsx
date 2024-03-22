@@ -71,7 +71,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
         size: props.size,
         labelPosition,
         isInForm: !!formContext
-      }, props.css)}>
+      }, props.styles)}>
       {({isDisabled, isInvalid}) => (<>
         <FieldLabel
           isDisabled={isDisabled}

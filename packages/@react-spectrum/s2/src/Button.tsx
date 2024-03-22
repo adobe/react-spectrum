@@ -279,13 +279,13 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
         style: props.style || 'fill',
         size: props.size || 'M',
         staticColor: props.staticColor
-      }, props.css)}>
+      }, props.styles)}>
       <Provider
         values={[
           [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', className: style({order: 0})}),
-            css: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}
@@ -318,13 +318,13 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
         style: props.style || 'fill',
         size: props.size || 'M',
         staticColor: props.staticColor
-      }, props.css)}>
+      }, props.styles)}>
       <Provider
         values={[
           [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', className: style({order: 0})}),
-            css: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

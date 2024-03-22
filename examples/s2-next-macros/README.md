@@ -20,7 +20,7 @@ yarn dev
 
 Open [http://localhost:3456](http://localhost:3456) with your browser to see the result.
 
-style-macro and React Spectrum - Spectrum 2 have been added to `src/app/page.tsx` to show an example of many of the Spectrum 2 styled components. This file does client side rendering. The page auto-updates as you edit the file. 
+style-macro and React Spectrum - Spectrum 2 have been added to `src/app/page.tsx` to show an example of many of the Spectrum 2 styled components. This file does client side rendering. The page auto-updates as you edit the file.
 
 The layout.tsx was kept from the default install and the globals.css was updated with some application specific CSS, like setting height, margin, padding, and centering content. All other files were deleted.
 
@@ -43,7 +43,7 @@ const nextConfig = {
 export default nextConfig;
 ```
 
-To use the spectrum-theme via macros, pass your styles object to the style() macro and set the result as a new function. This new function or style() should be used within a className prop to style your html elements. Use the css prop on React Spectrum components.
+To use the spectrum-theme via macros, pass your styles object to the style() macro and set the result as a new function. This new function or style() should be used within a className prop to style your html elements. Use the styles prop on React Spectrum components.
 
 In the page.tsx file this is done inline via the className prop to create three columns of components, the buttons and dialogs, the form elements, and inline alerts. The following is the outer wrapper for these columns with CSS defined via Styles.
 

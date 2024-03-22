@@ -81,7 +81,7 @@ function FieldLabel(props: FieldLabelProps, ref: DOMRef<HTMLLabelElement>) {
               top: '--field-gap'
             }
           }
-        })({labelAlign, labelPosition, isDisabled, size, staticColor}), props.css)}>
+        })({labelAlign, labelPosition, isDisabled, size, staticColor}), props.styles)}>
       {props.children}
       {(isRequired || necessityIndicator === 'label') && (
         <span className={style({whiteSpace: 'nowrap'})}>
@@ -117,7 +117,7 @@ export {_FieldLabel as FieldLabel};
 interface FieldGroupProps extends Omit<GroupProps, 'className' | 'style' | 'children'>, UnsafeStyles {
   size?: 'S' | 'M' | 'L' | 'XL',
   children?: ReactNode,
-  css?: StyleString
+  styles?: StyleString
 }
 
 const fieldGroupStyles = style({
@@ -180,7 +180,7 @@ export function FieldGroup(props: FieldGroupProps) {
       style={props.UNSAFE_style}
       className={renderProps => (props.UNSAFE_className || '') + ' ' + centerBaselineBefore + mergeStyles(
         fieldGroupStyles({...renderProps, size: props.size || 'M'}),
-        props.css
+        props.styles
       )} />
   );
 }
@@ -188,7 +188,7 @@ export function FieldGroup(props: FieldGroupProps) {
 export interface InputProps extends Omit<RACInputProps, 'className' | 'style'>, StyleProps {}
 
 function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
-  let {UNSAFE_className = '', UNSAFE_style, css, ...otherProps} = props;
+  let {UNSAFE_className = '', UNSAFE_style, styles, ...otherProps} = props;
   return (
     <RACInput
       {...otherProps}
@@ -204,7 +204,7 @@ function Input(props: InputProps, ref: ForwardedRef<HTMLInputElement>) {
         minWidth: 0,
         outlineStyle: 'none',
         borderStyle: 'none'
-      }), css)} />
+      }), styles)} />
   );
 }
 
@@ -295,7 +295,7 @@ export function FieldErrorIcon(props: {isDisabled?: boolean}) {
                 value: 'negative'
               }
             })}),
-          css: style({
+          styles: style({
             size: fontRelative(20),
             marginStart: 'text-to-visual',
             marginEnd: fontRelative(-2),

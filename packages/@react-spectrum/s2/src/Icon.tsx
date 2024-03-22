@@ -9,7 +9,7 @@ export interface IconProps extends UnsafeStyles, SlotProps, AriaLabelingProps, D
 }
 
 export interface IconContextValue extends UnsafeStyles, SlotProps {
-  css?: StyleString,
+  styles?: StyleString,
   render?: (icon: ReactNode) => ReactNode
 }
 

@@ -77,7 +77,7 @@ function CloseButton(props: CloseButtonProps, ref: FocusableRef<HTMLButtonElemen
       {...props}
       ref={domRef}
       style={pressScale(domRef, UNSAFE_style)}
-      className={renderProps => UNSAFE_className + styles(renderProps, props.css)}>
+      className={renderProps => UNSAFE_className + styles(renderProps, props.styles)}>
       <CrossIcon size={({S: 'L', M: 'XL', L: 'XXL', XL: 'XXXL'} as const)[props.size || 'M']} />
     </Button>
   );

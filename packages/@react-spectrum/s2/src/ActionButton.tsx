@@ -34,7 +34,7 @@ export interface ActionButtonProps extends Omit<ButtonProps, 'className' | 'styl
 }
 
 // These styles handle both ActionButton and ToggleButton
-export const styles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps>({
+export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & ToggleButtonStyleProps>({
   ...focusRing(),
   display: 'flex',
   alignItems: 'center',
@@ -169,18 +169,18 @@ function ActionButton(props: ActionButtonProps, ref: FocusableRef<HTMLButtonElem
       {...props}
       ref={domRef}
       style={pressScale(domRef, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + styles({
+      className={renderProps => (props.UNSAFE_className || '') + btnStyles({
         ...renderProps,
         staticColor: props.staticColor,
         size: props.size || 'M',
         isQuiet: props.isQuiet
-      }, props.css)}>
+      }, props.styles)}>
       <Provider
         values={[
           [TextContext, {className: style({paddingY: '--labelPadding', order: 1, truncate: true})}],
           [IconContext, {
             render: centerBaseline({slot: 'icon', className: style({order: 0})}),
-            css: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+            styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
           }]
         ]}>
         {typeof props.children === 'string' ? <Text>{props.children}</Text> : props.children}

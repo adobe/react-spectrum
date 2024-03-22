@@ -70,7 +70,7 @@ function RadioGroup(props: RadioGroupProps, ref: DOMRef<HTMLDivElement>) {
         size,
         labelPosition,
         isInForm: !!formContext
-      }, props.css)}>
+      }, props.styles)}>
       {({isDisabled, isInvalid}) => (
         <>
           <FieldLabel

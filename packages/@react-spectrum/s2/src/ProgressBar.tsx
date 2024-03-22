@@ -153,12 +153,12 @@ function ProgressBar(props: ProgressBarProps, ref: DOMRef<HTMLDivElement>) {
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={UNSAFE_className + wrapper({...props, size}, props.css)}>
+      className={UNSAFE_className + wrapper({...props, size}, props.styles)}>
       {({percentage, valueText}) => (
         <>
-          <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor} css={labelStyles}>{label}</FieldLabel>
+          <FieldLabel size={size} labelAlign="start" labelPosition="top" staticColor={staticColor} styles={labelStyles}>{label}</FieldLabel>
           {/* TODO: this cannot be a label because they will both receive context */}
-          <FieldLabel size={size} labelAlign="end" staticColor={staticColor} css={valueStyles}>{valueText}</FieldLabel>
+          <FieldLabel size={size} labelAlign="end" staticColor={staticColor} styles={valueStyles}>{valueText}</FieldLabel>
           <div className={track({...props})}>
             <div
               className={mergeStyles(fill({...props, staticColor}), (isIndeterminate ? indeterminateAnimation : null))}

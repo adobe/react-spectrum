@@ -106,7 +106,7 @@ function Radio(props: RadioProps, ref: FocusableRef<HTMLLabelElement>) {
       {...allProps}
       ref={domRef}
       style={UNSAFE_style}
-      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size}, allProps.css)}>
+      className={renderProps => UNSAFE_className + wrapper({...renderProps, isInForm, size}, allProps.styles)}>
       {renderProps => (
         <>
           <CenterBaseline>

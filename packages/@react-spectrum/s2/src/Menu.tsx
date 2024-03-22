@@ -281,7 +281,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
     size = ctxSize,
     UNSAFE_style,
     UNSAFE_className,
-    css
+    styles
   } = props;
   let {align = 'start', direction = 'bottom', shouldFlip} = useContext(InternalMenuTriggerContext);
 
@@ -317,7 +317,7 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
       crossOffset={isSubmenu ? -8 : 0}
       UNSAFE_style={UNSAFE_style}
       UNSAFE_className={UNSAFE_className}
-      css={css}>
+      styles={styles}>
       <InternalMenuContext.Provider value={{size, isSubmenu: true}}>
         <Provider
           values={[
@@ -401,7 +401,7 @@ export function MenuItem(props: MenuItemProps) {
       textValue={textValue}
       ref={ref}
       style={pressScale(ref, props.UNSAFE_style)}
-      className={renderProps => (props.UNSAFE_className || '') + menuitem({...renderProps, isFocused: (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused, size, isLink}, props.css)}>
+      className={renderProps => (props.UNSAFE_className || '') + menuitem({...renderProps, isFocused: (renderProps.hasSubmenu && renderProps.isOpen) || renderProps.isFocused, size, isLink}, props.styles)}>
       {composeRenderProps(props.children, (children, renderProps) => {
         let checkboxRenderProps = {...renderProps, size, isFocused: false, isFocusVisible: false, isIndeterminate: false, isReadOnly: false, isInvalid: false, isRequired: false};
         return (
@@ -410,7 +410,7 @@ export function MenuItem(props: MenuItemProps) {
               values={[
                 [IconContext, {
                   slots: {
-                    icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), css: icon}, // fix className to css?
+                    icon: {render: centerBaseline({slot: 'icon', className: iconCenterWrapper}), styles: icon}, // fix className to css?
                     descriptor: {render: centerBaseline({slot: 'descriptor', className: descriptor})} // TODO: remove once we have default?
                   }
                 }],

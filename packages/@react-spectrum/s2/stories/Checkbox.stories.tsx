@@ -14,4 +14,4 @@ export default meta;
 
 export const Example = (args: any) => (<Checkbox {...args}>Unsubscribe</Checkbox>);
 
-export const LongLabel = (args: any) => (<Checkbox {...args} css={style({maxWidth: 128})}>Checkbox with very long label so we can see wrapping</Checkbox>);
+export const LongLabel = (args: any) => (<Checkbox {...args} styles={style({maxWidth: 128})}>Checkbox with very long label so we can see wrapping</Checkbox>);

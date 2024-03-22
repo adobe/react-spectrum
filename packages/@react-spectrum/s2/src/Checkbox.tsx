@@ -121,7 +121,7 @@ function Checkbox({children, ...props}: CheckboxProps, ref: FocusableRef<HTMLLab
       {...props}
       ref={domRef}
       style={props.UNSAFE_style}
-      className={renderProps => (props.UNSAFE_className || '') + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.css)}>
+      className={renderProps => (props.UNSAFE_className || '') + wrapper({...renderProps, isInForm, size: props.size || 'M'}, props.styles)}>
       {renderProps => (
         <>
           <CenterBaseline>

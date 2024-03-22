@@ -110,7 +110,7 @@ function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupC
         size: props.size,
         labelPosition,
         isInForm: !!formContext
-      }, props.css)}>
+      }, props.styles)}>
       {composeRenderProps(props.children, (children, {isDisabled, isInvalid}) => (<>
         <FieldLabel
           isDisabled={isDisabled}
@@ -122,7 +122,7 @@ function TextFieldBase(props: TextFieldProps & {children: ReactNode, fieldGroupC
           {label}
         </FieldLabel>
         {/* TODO: set GroupContext in RAC TextField */}
-        <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size} css={fieldGroupCss}>
+        <FieldGroup role="presentation" isDisabled={isDisabled} isInvalid={isInvalid} size={props.size} styles={fieldGroupCss}>
           <InputContext.Consumer>
             {ctx => (
               <InputContext.Provider value={{...ctx, ref: mergeRefs((ctx as any)?.ref, inputRef)}}>

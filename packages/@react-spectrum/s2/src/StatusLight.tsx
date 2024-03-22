@@ -84,7 +84,7 @@ const light = style<StatusLightStyleProps>({
 });
 
 function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
-  let {children, size = 'M', variant, role, UNSAFE_className = '', UNSAFE_style, css} = props;
+  let {children, size = 'M', variant, role, UNSAFE_className = '', UNSAFE_style, styles} = props;
   let domRef = useDOMRef(ref);
 
   if (!children && !props['aria-label']) {
@@ -101,7 +101,7 @@ function StatusLight(props: StatusLightProps, ref: DOMRef<HTMLDivElement>) {
       ref={domRef}
       role={role}
       style={UNSAFE_style}
-      className={UNSAFE_className + wrapper({size, variant}, css)}>
+      className={UNSAFE_className + wrapper({size, variant}, styles)}>
       <CenterBaseline>
         <svg className={light({size, variant})} aria-hidden="true">
           <circle r="50%" cx="50%" cy="50%" />

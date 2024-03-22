@@ -162,7 +162,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     hideArrow = false,
     UNSAFE_className = '',
     UNSAFE_style,
-    css
+    styles
   } = props;
   let domRef = useDOMRef(ref);
 
@@ -172,7 +172,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
       {...props}
       ref={domRef}
       style={UNSAFE_style}
-      className={(renderProps) => UNSAFE_className + popover({...renderProps, isArrowShown: !hideArrow}, css)}>
+      className={(renderProps) => UNSAFE_className + popover({...renderProps, isArrowShown: !hideArrow}, styles)}>
       {composeRenderProps(props.children, (children, renderProps) => (
         <>
           {!hideArrow && (

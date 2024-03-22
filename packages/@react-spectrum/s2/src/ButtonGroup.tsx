@@ -154,10 +154,10 @@ function ButtonGroup(props: ButtonGroupProps, ref: DOMRef<HTMLDivElement>) {
         align,
         orientation: orientation === 'vertical' || hasOverflow ? 'vertical' : 'horizontal',
         size
-      }, props.css)}>
+      }, props.styles)}>
       <Provider
         values={[
-          [ButtonContext, {css: style({flexShrink: 0}), size, isDisabled}]
+          [ButtonContext, {styles: style({flexShrink: 0}), size, isDisabled}]
         ]}>
         {children}
       </Provider>

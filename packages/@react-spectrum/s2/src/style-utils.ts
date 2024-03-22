@@ -109,18 +109,18 @@ const heightProperties = [
   'maxHeight'
 ] as const;
 
-export type CSSProp = StyleString<(typeof allowedOverrides)[number]>;
-export type CSSPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof heightProperties)[number]>;
+export type StylesProp = StyleString<(typeof allowedOverrides)[number]>;
+export type StylesPropWithHeight = StyleString<(typeof allowedOverrides)[number] | (typeof heightProperties)[number]>;
 export interface UnsafeStyles {
-  /** Sets the CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. Only use as a **last resort**. Use the `style` macro via the `css` prop instead. */
+  /** Sets the CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */
   UNSAFE_className?: string,
-  /** Sets inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. Only use as a **last resort**. Use the `style` macro via the `css` prop instead. */
+  /** Sets inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. Only use as a **last resort**. Use the `style` macro via the `styles` prop instead. */
   UNSAFE_style?: CSSProperties
 }
 
 export interface StyleProps extends UnsafeStyles {
   /** Spectrum-defined styles, returned by the `style()` macro. */
-  css?: CSSProp
+  styles?: StylesProp
 }
 
 export function getAllowedOverrides({height = false} = {}) {

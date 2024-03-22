@@ -79,7 +79,7 @@ function TagGroup<T extends object>(
         size: props.size,
         labelPosition: labelPosition,
         isInForm: !!formContext
-      }, props.css)}>
+      }, props.styles)}>
       <FieldLabel
         size={size}
         labelPosition={labelPosition}
@@ -215,7 +215,7 @@ export function Tag({children, ...props}: TagProps) {
                 [TextContext, {className: style({paddingY: '--labelPadding', order: 1})}],
                 [IconContext, {
                   render: centerBaseline({slot: 'icon', className: style({order: 0})}),
-                  css: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
+                  styles: style({size: fontRelative(20), marginStart: '--iconMargin', flexShrink: 0})
                 }]
               ]}>
               {typeof children === 'string' ? <Text>{children}</Text> : children}

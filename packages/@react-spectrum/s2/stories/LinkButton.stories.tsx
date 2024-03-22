@@ -23,8 +23,8 @@ export const Example: Story = {
         <LinkButton {...args}>Press me</LinkButton>
         <LinkButton {...args}><NewIcon /><Text>Test</Text></LinkButton>
         <LinkButton {...args}><NewIcon /></LinkButton>
-        <LinkButton {...args} css={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</LinkButton>
-        <LinkButton {...args} css={style({maxWidth: 128})}>
+        <LinkButton {...args} styles={style({maxWidth: 128})}>Very long button with wrapping text to see what happens</LinkButton>
+        <LinkButton {...args} styles={style({maxWidth: 128})}>
           <NewIcon />
           <Text>Very long button with wrapping text to see what happens</Text>
         </LinkButton>
