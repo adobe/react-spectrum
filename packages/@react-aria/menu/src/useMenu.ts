@@ -13,9 +13,9 @@
 import {AriaMenuProps} from '@react-types/menu';
 import {DOMAttributes, Key, KeyboardDelegate, KeyboardEvents} from '@react-types/shared';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
+import {KeyboardEventHandler, useSelectableList} from '@react-aria/selection';
 import {RefObject} from 'react';
 import {TreeState} from '@react-stately/tree';
-import {useSelectableList} from '@react-aria/selection';
 
 export interface MenuAria {
   /** Props for the menu element. */
@@ -30,7 +30,12 @@ export interface AriaMenuOptions<T> extends Omit<AriaMenuProps<T>, 'children'>, 
    * An optional keyboard delegate implementation for type to select,
    * to override the default.
    */
-  keyboardDelegate?: KeyboardDelegate
+  keyboardDelegate?: KeyboardDelegate,
+
+  /**
+   * An optional keyboard event handler to override default keyboard actions.
+   */
+  keyboardEventHandler?: KeyboardEventHandler
 }
 
 interface MenuData {

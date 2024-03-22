@@ -79,4 +79,5 @@ export type {AriaTagGroupProps, AriaTagProps, TagAria, TagGroupAria} from '@reac
 export type {AriaTextFieldOptions, AriaTextFieldProps, TextFieldAria} from '@react-aria/textfield';
 export type {AriaTooltipProps, TooltipAria, TooltipTriggerAria, TooltipTriggerProps} from '@react-aria/tooltip';
 export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually-hidden';
+export type {KeyboardEventHandler, KeyboardAction} from '@react-aria/selection';
 export type {Key, Orientation} from '@react-types/shared';

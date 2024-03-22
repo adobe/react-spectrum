@@ -57,6 +57,57 @@ ListBoxExample.story = {
   }
 };
 
+export const ListBoxCustomKeyboardHandler = (args) => (
+  <ListBox className={styles.menu} {...args} aria-label="test listbox">
+    <MyListBoxItem>Foo</MyListBoxItem>
+    <MyListBoxItem>Bar</MyListBoxItem>
+    <MyListBoxItem>Baz</MyListBoxItem>
+    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+  </ListBox>
+);
+
+ListBoxCustomKeyboardHandler.story = {
+  args: {
+    keyboardEventHandler: (e: React.KeyboardEvent) => {
+      switch (e.key) {
+        case 'j': {
+          if (e.ctrlKey) {
+            return 'nav-down';
+          }
+        }
+        case 'k': {
+          if (e.ctrlKey) {
+            return 'nav-up';
+          }
+        }
+      }
+      return null;
+    },
+    selectionMode: 'single',
+    selectionBehavior: 'toggle',
+    shouldFocusOnHover: false
+  },
+  argTypes: {
+    selectionMode: {
+      control: {
+        type: 'radio',
+        options: ['none', 'single', 'multiple']
+      }
+    },
+    selectionBehavior: {
+      control: {
+        type: 'radio',
+        options: ['toggle', 'replace']
+      }
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Hover styles should have higher specificity than focus style for testing purposes. Hover style should not be applied on keyboard focus even if shouldFocusOnHover is true'
+    }
+  }
+};
+
 // Known accessibility false positive: https://github.com/adobe/react-spectrum/wiki/Known-accessibility-false-positives#listbox
 // also has a aXe landmark error, not sure what it means
 export const ListBoxSections = () => (
