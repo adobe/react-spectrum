@@ -45,7 +45,7 @@ interface InlineStylesProps {
    * The visual style of the Inline Alert.
    * @default border
    */
-  style?: 'border' | 'subtleFill' | 'boldFill'
+  treatment?: 'border' | 'subtleFill' | 'boldFill'
 }
 
 const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
@@ -61,7 +61,7 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
   borderStyle: 'solid',
   borderWidth: 2,
   borderColor: {
-    style: {
+    treatment: {
       border: {
         variant: {
           informative: 'informative-800',
@@ -78,35 +78,35 @@ const inlineAlert = style<InlineStylesProps & {isFocusVisible?: boolean}>({
   backgroundColor: {
     variant: {
       informative: {
-        style: {
+        treatment: {
           border: 'gray-25',
           subtleFill: 'informative-200',
           boldFill: 'informative'
         }
       },
       positive: {
-        style: {
+        treatment: {
           border: 'gray-25',
           subtleFill: 'positive-200',
           boldFill: 'positive'
         }
       },
       notice: {
-        style: {
+        treatment: {
           border: 'gray-25',
           subtleFill: 'notice-200',
           boldFill: 'notice'
         }
       },
       negative: {
-        style: {
+        treatment: {
           border: 'gray-25',
           subtleFill: 'negative-200',
           boldFill: 'negative'
         }
       },
       neutral: {
-        style: {
+        treatment: {
           border: 'gray-25',
           subtleFill: 'gray-100',
           boldFill: 'neutral-subdued'
@@ -121,7 +121,7 @@ const icon = style<InlineStylesProps>({
   '--iconPrimary': {
     type: 'fill',
     value: {
-      style: {
+      treatment: {
         border: {
           variant: {
             informative: 'informative',
@@ -162,7 +162,7 @@ const grid = style({
     'content content'
   ],
   color: {
-    style: {
+    treatment: {
       border: 'gray-900',
       subtleFill: 'gray-900',
       boldFill: {
@@ -186,7 +186,7 @@ let ICONS = {
 const heading = style<InlineStylesProps>({
   marginTop: 0,
   color: { // if i remove this, it throws an error that heading isn't a function, yet not calling it a ts error
-    style: {
+    treatment: {
       border: 'gray-900',
       subtleFill: 'gray-900',
       boldFill: {
@@ -205,7 +205,7 @@ const heading = style<InlineStylesProps>({
 const content = style<InlineStylesProps>({
   gridArea: 'content',
   color: {
-    style: {
+    treatment: {
       border: 'gray-800',
       subtleFill: 'gray-800',
       boldFill: {
@@ -224,7 +224,7 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
   let {
     children,
     variant = 'neutral',
-    style: styleFill = 'border',
+    treatment = 'border',
     autoFocus
   } = props;
 
@@ -257,16 +257,16 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
       style={props.UNSAFE_style}
       className={(props.UNSAFE_className || '') + inlineAlert({
         variant,
-        style: styleFill,
+        treatment,
         isFocusVisible
       }, props.styles)}>
       <div
         className={grid(props)}>
         <Provider
           values={[
-            [HeadingContext, {className: heading({variant, style: styleFill})}],
-            [ContentContext, {className: content({variant, style: styleFill})}],
-            [IconContext, {styles: icon({variant, style: styleFill})}]
+            [HeadingContext, {className: heading({variant, treatment})}],
+            [ContentContext, {className: content({variant, treatment})}],
+            [IconContext, {css: icon({variant, treatment})}]
           ]}>
           {Icon && <Icon aria-label={iconAlt} />}
           {children}
