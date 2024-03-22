@@ -63,7 +63,7 @@ interface DropHooks {
   ListDropTargetDelegate: typeof ListDropTargetDelegate
 }
 
-export type DragAndDropHooks = DragHooks & DropHooks;
+export type DragAndDropHooks = DragHooks & DropHooks
 
 export interface DragAndDrop {
   /** Drag and drop hooks for the collection element.  */
@@ -88,7 +88,9 @@ export interface DragAndDropOptions extends Omit<DraggableCollectionProps, 'prev
    */
   renderDropIndicator?: (target: DropTarget) => JSX.Element,
   /** A custom delegate object that provides drop targets for pointer coordinates within the collection. */
-  dropTargetDelegate?: DropTargetDelegate
+  dropTargetDelegate?: DropTargetDelegate,
+  /** Whether the drag and drop events should be disabled. */
+  isDisabled?: boolean
 }
 
 /**
@@ -106,12 +108,12 @@ export function useDragAndDrop(options: DragAndDropOptions): DragAndDrop {
       renderDragPreview,
       renderDropIndicator,
       dropTargetDelegate
-     } = options;
+    } = options;
 
     let isDraggable = !!getItems;
     let isDroppable = !!(onDrop || onInsert || onItemDrop || onReorder || onRootDrop);
 
-    let hooks = {} as DragHooks & DropHooks;
+    let hooks = {} as DragAndDropHooks;
     if (isDraggable) {
       hooks.useDraggableCollectionState = function useDraggableCollectionStateOverride(props: DraggableCollectionStateOpts) {
         return useDraggableCollectionState({...props, ...options} as DraggableCollectionStateOptions);
