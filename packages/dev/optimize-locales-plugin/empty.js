@@ -1,1 +1,2 @@
-export default {};
+const removedLocale = undefined;
+export default removedLocale;
