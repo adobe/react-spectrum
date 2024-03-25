@@ -136,15 +136,17 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   });
 
   useImperativeHandle<HTMLDivElement|null, HTMLDivElement|null>(ref, () => {
-    if (domRef.current) {
-      domRef.current.focus = () => {
-        if (domRef.current) {
-          let walker = getFocusableTreeWalker(domRef.current, {tabbable: true});
-          (walker.firstChild() as HTMLElement).focus();
-        }
+    const radioGroup = domRef.current;
+    if (radioGroup) {
+      radioGroup.focus = () => {
+        let walker = getFocusableTreeWalker(radioGroup, {
+          tabbable: true, 
+          accept: (node) => node.getAttribute('type') === 'radio'
+        });
+        (walker.firstChild() as HTMLElement).focus();
       };
     }
-    return domRef.current;
+    return radioGroup;
   });
 
   return (
