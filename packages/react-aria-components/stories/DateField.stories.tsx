@@ -10,21 +10,58 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import clsx from 'clsx';
-import {DateField, DateInput, DateSegment, Label} from 'react-aria-components';
-import {parseAbsoluteToLocal} from '@internationalized/date';
+import {DateField, DateInput, DateSegment, FieldError, Label} from 'react-aria-components';
+import {fromAbsolute, getLocalTimeZone, parseAbsoluteToLocal} from '@internationalized/date';
 import React from 'react';
 import styles from '../example/index.css';
 
 export default {
-  title: 'React Aria Components'
+  title: 'React Aria Components',
+  argTypes: {
+    onChange: {
+      table: {
+        disable: true
+      }
+    },
+    granularity: {
+      control: 'select',
+      options: ['day', 'hour', 'minute', 'second']
+    },
+    minValue: {
+      control: 'date'
+    },
+    maxValue: {
+      control: 'date'
+    },
+    isRequired: {
+      control: 'boolean'
+    },
+    isInvalid: {
+      control: 'boolean'
+    },
+    validationBehavior: {
+      control: 'select',
+      options: ['native', 'aria']
+    }
+  },
+  args: {
+    onChange: action('OnChange')
+  }
 };
 
-export const DateFieldExample = () => (
-  <DateField data-testid="date-field-example" defaultValue={parseAbsoluteToLocal('2024-01-01T01:01:00Z')}>
+export const DateFieldExample = (props) => (
+  <DateField
+    {...props}
+    minValue={props.minValue ? fromAbsolute(props.minValue, getLocalTimeZone()) : undefined}
+    maxValue={props.maxValue ? fromAbsolute(props.maxValue, getLocalTimeZone()) : undefined}
+    data-testid="date-field-example"
+    defaultValue={parseAbsoluteToLocal('2024-01-01T01:01:00Z')}>
     <Label style={{display: 'block'}}>Date</Label>
     <DateInput className={styles.field} data-testid2="date-input">
       {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}
     </DateInput>
+    <FieldError style={{display: 'block'}} />
   </DateField>
 );
