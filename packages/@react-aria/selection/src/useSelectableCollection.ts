@@ -254,8 +254,9 @@ export function useSelectableCollection(options: AriaSelectableCollectionOptions
         }
         break;
       case 'Escape':
-        e.preventDefault();
-        if (!disallowEmptySelection) {
+        if (!disallowEmptySelection && manager.selectedKeys.size !== 0) {
+          e.stopPropagation();
+          e.preventDefault();
           manager.clearSelection();
         }
         break;
