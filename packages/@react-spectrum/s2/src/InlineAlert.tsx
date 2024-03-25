@@ -266,7 +266,7 @@ function InlineAlert(props: InlineAlertProps, ref: DOMRef<HTMLDivElement>) {
           values={[
             [HeadingContext, {className: heading({variant, treatment})}],
             [ContentContext, {className: content({variant, treatment})}],
-            [IconContext, {css: icon({variant, treatment})}]
+            [IconContext, {styles: icon({variant, treatment})}]
           ]}>
           {Icon && <Icon aria-label={iconAlt} />}
           {children}
