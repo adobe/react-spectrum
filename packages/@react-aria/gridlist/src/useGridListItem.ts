@@ -94,7 +94,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
       onAction = () => state.toggleKey(node.key);
     }
 
-    let isExpanded = hasChildRows ? state.expandedKeys === 'all' || state.expandedKeys.has(node.key) : undefined;
+    let isExpanded = hasChildRows ? state.expandedKeys.has(node.key) : undefined;
     treeGridRowProps = {
       'aria-expanded': isExpanded,
       'aria-level': node.level + 1,
@@ -125,11 +125,11 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     walker.currentNode = document.activeElement;
 
     if ('expandedKeys' in state && document.activeElement === ref.current) {
-      if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys !== 'all' && !state.expandedKeys.has(node.key)) {
+      if ((e.key === EXPANSION_KEYS['expand'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && !state.expandedKeys.has(node.key)) {
         state.toggleKey(node.key);
         e.stopPropagation();
         return;
-      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && (state.expandedKeys === 'all' || state.expandedKeys.has(node.key))) {
+      } else if ((e.key === EXPANSION_KEYS['collapse'][direction]) && state.selectionManager.focusedKey === node.key && hasChildRows && state.expandedKeys.has(node.key)) {
         state.toggleKey(node.key);
         e.stopPropagation();
         return;

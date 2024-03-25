@@ -41,7 +41,7 @@ let StaticTreeItem = (props) => {
 };
 
 let StaticTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys="all" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <Tree defaultExpandedKeys={new Set(['projects', 'projects-1'])} aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
     <StaticTreeItem id="projects" textValue="Projects" title="Projects" {...rowProps}>
       <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1" {...rowProps}>
@@ -117,7 +117,7 @@ let DynamicTreeItem = (props) => {
 };
 
 let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys="all" aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <Tree defaultExpandedKeys={new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])} aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     {(item: any) => (
       <DynamicTreeItem childItems={item.childItems} textValue={item.name} {...rowProps}>
         {item.name}
@@ -884,7 +884,7 @@ describe('Tree', () => {
       });
 
       it('should not expand/collapse if disabledBehavior is "all" and the row is disabled', async () => {
-        let {getAllByRole, rerender} = render(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'all', expandedKeys: 'all'}} />);
+        let {getAllByRole, rerender} = render(<DynamicTree treeProps={{disabledKeys: ['projects'], disabledBehavior: 'all', expandedKeys: new Set(['projects', 'project-2', 'project-5', 'reports', 'reports-1', 'reports-1A', 'reports-1AB'])}} />);
         let rows = getAllByRole('row');
         expect(rows).toHaveLength(20);
 

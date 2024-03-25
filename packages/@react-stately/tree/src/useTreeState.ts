@@ -29,13 +29,13 @@ export interface TreeState<T> {
   readonly disabledKeys: Set<Key>,
 
   /** A set of keys for items that are expanded. */
-  readonly expandedKeys: 'all' | Set<Key>,
+  readonly expandedKeys: Set<Key>,
 
   /** Toggles the expanded state for an item by its key. */
   toggleKey(key: Key): void,
 
   /** Replaces the set of expanded keys. */
-  setExpandedKeys(keys: 'all' | Set<Key>): void,
+  setExpandedKeys(keys: Set<Key>): void,
 
   /** A selection manager to read and update multiple selection state. */
   readonly selectionManager: SelectionManager
@@ -47,14 +47,12 @@ export interface TreeState<T> {
  */
 export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T> {
   let {
-    expandedKeys: propExpandedKeys,
-    defaultExpandedKeys: propDefaultExpandedKeys,
     onExpandedChange
   } = props;
 
   let [expandedKeys, setExpandedKeys] = useControlledState(
-    propExpandedKeys ? convertExpanded(propExpandedKeys) : undefined,
-    propDefaultExpandedKeys ? convertExpanded(propDefaultExpandedKeys) : new Set(),
+    props.expandedKeys ? new Set(props.expandedKeys) : undefined,
+    props.defaultExpandedKeys ? new Set(props.defaultExpandedKeys) : new Set(),
     onExpandedChange
   );
 
@@ -74,7 +72,7 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
   }, [tree, selectionState.focusedKey]);
 
   let onToggle = (key: Key) => {
-    setExpandedKeys(toggleKey(expandedKeys, key, tree));
+    setExpandedKeys(toggleKey(expandedKeys, key));
   };
 
   return {
@@ -87,32 +85,13 @@ export function useTreeState<T extends object>(props: TreeProps<T>): TreeState<T
   };
 }
 
-function toggleKey<T>(currentExpandedKeys: 'all' | Set<Key>, key: Key, collection: Collection<Node<T>>): Set<Key> {
-  let updatedExpandedKeys: Set<Key>;
-  if (currentExpandedKeys === 'all') {
-    // TODO: would be nice if the collection row information differentiated between childNodes vs childItems
-    // so we didn't have to keep iterating through info, perhaps make the user pass a prop to TreeItem for childItems/hasChildRows even in the static case?
-    updatedExpandedKeys = new Set([...collection].filter(row => {
-      return row.props.childItems || [...collection.getChildren(row.key)].filter(child => child.type === 'item').length > 0;
-    }).map(row => row.key));
-    updatedExpandedKeys.delete(key);
+function toggleKey(set: Set<Key>, key: Key): Set<Key> {
+  let res = new Set(set);
+  if (res.has(key)) {
+    res.delete(key);
   } else {
-    updatedExpandedKeys = new Set(currentExpandedKeys);
-    if (updatedExpandedKeys.has(key)) {
-      updatedExpandedKeys.delete(key);
-    } else {
-      updatedExpandedKeys.add(key);
-    }
-  }
-  return updatedExpandedKeys;
-}
-
-function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
-  if (!expanded) {
-    return new Set<Key>();
+    res.add(key);
   }
 
-  return expanded === 'all'
-    ? 'all'
-    : new Set(expanded);
+  return res;
 }
