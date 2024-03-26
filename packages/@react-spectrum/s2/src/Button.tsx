@@ -22,7 +22,7 @@ interface ButtonStyleProps {
    *
    * @default 'fill'
    */
-  treatment?: 'fill' | 'outline',
+  fillStyle?: 'fill' | 'outline',
   /**
    * The size of the Button.
    *
@@ -83,7 +83,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
   transition: 'default',
   borderStyle: 'solid',
   borderWidth: {
-    treatment: {
+    fillStyle: {
       fill: 0,
       outline: 2
     }
@@ -128,7 +128,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     }
   },
   backgroundColor: {
-    treatment: {
+    fillStyle: {
       fill: {
         variant: {
           primary: 'neutral',
@@ -147,7 +147,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     },
     staticColor: {
       white: {
-        treatment: {
+        fillStyle: {
           fill: {
             variant: {
               primary: baseColor('transparent-white-800'),
@@ -164,7 +164,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         }
       },
       black: {
-        treatment: {
+        fillStyle: {
           fill: {
             variant: {
               primary: baseColor('transparent-black-800'),
@@ -182,7 +182,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
       }
     },
     forcedColors: {
-      treatment: {
+      fillStyle: {
         fill: {
           default: 'ButtonText',
           isHovered: 'Highlight',
@@ -193,7 +193,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     }
   },
   color: {
-    treatment: {
+    fillStyle: {
       fill: {
         variant: {
           primary: 'gray-25',
@@ -210,7 +210,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
     },
     staticColor: {
       white: {
-        treatment: {
+        fillStyle: {
           fill: {
             variant: {
               primary: 'black',
@@ -222,7 +222,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
         isDisabled: 'transparent-white-400'
       },
       black: {
-        treatment: {
+        fillStyle: {
           fill: {
             variant: {
               primary: 'white',
@@ -235,7 +235,7 @@ const button = style<ButtonRenderProps & ButtonStyleProps>({
       }
     },
     forcedColors: {
-      treatment: {
+      fillStyle: {
         fill: {
           default: 'ButtonFace',
           isDisabled: 'HighlightText'
@@ -276,7 +276,7 @@ function Button(props: ButtonProps, ref: FocusableRef<HTMLButtonElement>) {
       className={renderProps => (props.UNSAFE_className || '') + button({
         ...renderProps,
         variant: props.variant || 'primary',
-        treatment: props.treatment || 'fill',
+        fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
         staticColor: props.staticColor
       }, props.styles)}>
@@ -315,7 +315,7 @@ function LinkButton(props: LinkButtonProps, ref: FocusableRef<HTMLAnchorElement>
       className={renderProps => (props.UNSAFE_className || '') + button({
         ...renderProps,
         variant: props.variant || 'primary',
-        treatment: props.treatment || 'fill',
+        fillStyle: props.fillStyle || 'fill',
         size: props.size || 'M',
         staticColor: props.staticColor
       }, props.styles)}>
