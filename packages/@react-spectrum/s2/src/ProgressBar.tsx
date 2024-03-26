@@ -15,7 +15,7 @@ interface ProgressBarStyleProps {
   /**
    * The size of the ProgressBar.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**

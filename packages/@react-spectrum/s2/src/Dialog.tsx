@@ -11,7 +11,7 @@ import {DOMRef} from '@react-types/shared';
 import {StyleProps} from './style-utils';
 
 // TODO: what style overrides should be allowed?
-export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>, StyleProps {
+export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style' | 'role'>, StyleProps {
   /**
    * Whether the Dialog is dismissable.
    */
@@ -19,7 +19,7 @@ export interface DialogProps extends Omit<RACDialogProps, 'className' | 'style'>
   /**
    * The size of the Dialog.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L'
 }

@@ -14,7 +14,7 @@ interface CheckboxStyleProps {
   /**
    * The size of the Checkbox.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /** Whether the Checkbox should be displayed with an emphasized style. */

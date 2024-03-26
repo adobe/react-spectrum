@@ -5,7 +5,7 @@ export interface DialogTriggerProps extends AriaDialogTriggerProps, Pick<AriaPop
   /**
    * The type of Dialog that should be rendered. 
    * 
-   * @default "modal"
+   * @default 'modal'
    */
   type?: 'modal' | 'popover' | 'fullscreen' | 'fullscreenTakeover', // TODO: add tray back in
   /**

@@ -11,7 +11,7 @@ interface CloseButtonProps extends Omit<ButtonProps, 'className' | 'style' | 'ch
   /**
    * The size of the CloseButton.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /** The static color style to apply. Useful when the Button appears over a color background. */

@@ -58,7 +58,7 @@ export interface MenuProps<T> extends Omit<AriaMenuProps<T>, 'children' | 'style
   /**
    * The size of the Menu.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**

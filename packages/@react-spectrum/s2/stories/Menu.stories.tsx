@@ -15,7 +15,8 @@ const meta: Meta<typeof CombinedMenu> = {
   component: CombinedMenu,
   parameters: {
     layout: 'centered'
-  }
+  },
+  tags: ['autodocs']
 };
 
 export default meta;
@@ -44,11 +45,18 @@ export const Example: Story = {
     };
     return (
       <MenuTrigger {...triggerProps}>
-        <Button aria-label="Actions for selected text"><NewIcon /></Button>
+        <Button aria-label="Actions for selected resource"><NewIcon /></Button>
         <Menu {...menuProps}>
-          <MenuItem>Cut</MenuItem>
-          <MenuItem>Copy</MenuItem>
-          <MenuItem>Paste</MenuItem>
+          <MenuItem>Favorite</MenuItem>
+          <MenuItem>Edit</MenuItem>
+          <MenuItem>Delete</MenuItem>
+          <SubmenuTrigger>
+            <MenuItem>Share</MenuItem>
+            <Menu>
+              <MenuItem>SMS</MenuItem>
+              <MenuItem>Email</MenuItem>
+            </Menu>
+          </SubmenuTrigger>
         </Menu>
       </MenuTrigger>
     );

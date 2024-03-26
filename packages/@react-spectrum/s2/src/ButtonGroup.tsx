@@ -28,7 +28,7 @@ interface ButtonGroupStyleProps {
   /**
    * The size of the Buttons within the ButtonGroup.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }

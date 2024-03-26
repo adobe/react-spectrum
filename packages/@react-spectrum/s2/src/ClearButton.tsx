@@ -13,7 +13,7 @@ interface ClearButtonStyleProps {
   /**
    * The size of the ClearButton.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }

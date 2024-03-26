@@ -22,7 +22,7 @@ export interface TextFieldProps extends Omit<AriaTextFieldProps, 'children' | 'c
   /**
    * The size of the text field.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }

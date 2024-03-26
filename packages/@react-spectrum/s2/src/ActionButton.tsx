@@ -12,7 +12,7 @@ export interface ActionButtonStyleProps {
   /**
    * The size of the ActionButton.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'XS' | 'S' | 'M' | 'L' | 'XL',
   /** The static color style to apply. Useful when the ActionButton appears over a color background. */

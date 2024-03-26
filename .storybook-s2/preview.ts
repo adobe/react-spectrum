@@ -18,6 +18,7 @@ const preview = {
     docs: {
       theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? themes.dark : themes.light,
       source: {
+        // code: null, // Will disable code button, and show "No code available"
         transform: (code: string) => {
           // Replace any <_ with <
           code = code.replace(/<\s?_/g, '<');
@@ -25,6 +26,10 @@ const preview = {
           code = code.replace(/<\/\s?_/g, '</');
           // Remove any className prop
           code = code.replace(/\s+className=".*"/g, '');
+          // Remove any styles prop
+          code = code.replace(/\s+styles=".*"/g, '');
+          // Remove any on* prop
+          code = code.replace(/\s+on[A-Z].*={.*}/g, '');
           return code;
         }
       }

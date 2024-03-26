@@ -25,7 +25,7 @@ interface IllustratedMessageStyleProps {
   /**
    * The size of the IllustratedMessage.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L',
   /**

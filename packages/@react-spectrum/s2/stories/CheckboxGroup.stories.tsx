@@ -1,5 +1,5 @@
 import {CheckboxGroup, Checkbox} from '../src';
-import type {Meta} from '@storybook/react';
+import type {Meta, StoryObj} from '@storybook/react';
 
 const meta: Meta<typeof CheckboxGroup> = {
   component: CheckboxGroup,
@@ -11,27 +11,40 @@ const meta: Meta<typeof CheckboxGroup> = {
 
 export default meta;
 
-export const Example = (args: any) => (
-  <CheckboxGroup {...args}>
-    <Checkbox value="soccer">Soccer</Checkbox>
-    <Checkbox value="baseball">Baseball</Checkbox>
-    <Checkbox value="basketball">Basketball</Checkbox>
-  </CheckboxGroup>
-);
+type Story = StoryObj<typeof CheckboxGroup>;
 
-
-export const CheckboxGroupOverridesIsEmphasized = (args: any) => (
-  <CheckboxGroup {...args}>
-    <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
-    <Checkbox value="baseball">Baseball</Checkbox>
-    <Checkbox value="basketball">Basketball</Checkbox>
-  </CheckboxGroup>
-);
-
-Example.args = {
-  label: 'Favorite sports'
+export const Example: Story = {
+  render(args) {
+    return (
+      <CheckboxGroup {...args}>
+        <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+    );
+  },
+  args: {
+    label: 'Favorite sports'
+  }
 };
 
-CheckboxGroupOverridesIsEmphasized.args = {
-  label: 'Favorite sports'
+export const CheckboxGroupOverridesIsEmphasized: Story = {
+  render(args) {
+    return (
+      <CheckboxGroup {...args}>
+        <Checkbox isEmphasized value="soccer">Soccer</Checkbox>
+        <Checkbox value="baseball">Baseball</Checkbox>
+        <Checkbox value="basketball">Basketball</Checkbox>
+      </CheckboxGroup>
+    );
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
+  },
+  args: {
+    label: 'Favorite sports'
+  }
 };
+

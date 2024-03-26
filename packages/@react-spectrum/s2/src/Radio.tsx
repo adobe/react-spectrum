@@ -23,7 +23,7 @@ interface ContextProps {
   /**
    * The size of the Radio.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**

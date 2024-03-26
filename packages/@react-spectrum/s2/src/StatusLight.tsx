@@ -15,7 +15,7 @@ interface StatusLightStyleProps {
   /**
    * The size of the StatusLight.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }

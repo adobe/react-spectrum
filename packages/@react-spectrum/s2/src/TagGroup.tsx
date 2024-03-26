@@ -36,7 +36,7 @@ export interface TagGroupProps<T> extends Omit<AriaTagGroupProps, 'children' | '
   /**
    * The size of the tag group.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L',
   /** Whether the tags are displayed in an emphasized style. */

@@ -27,7 +27,7 @@ export interface PickerStyleProps {
   /**
    * The size of the Picker.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /** Whether the picker should be displayed with a quiet style. */

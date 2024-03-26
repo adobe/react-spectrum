@@ -11,7 +11,7 @@ export interface ProgressCircleStyleProps {
   /**
    * The size of the ProgressCircle.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L',
   /** The static color style to apply. Useful when the button appears over a color background. */

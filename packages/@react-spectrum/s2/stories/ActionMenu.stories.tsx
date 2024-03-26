@@ -6,7 +6,8 @@ const meta: Meta<typeof ActionMenu> = {
   component: ActionMenu,
   parameters: {
     layout: 'centered'
-  }
+  },
+  tags: ['autodocs']
 };
 
 export default meta;

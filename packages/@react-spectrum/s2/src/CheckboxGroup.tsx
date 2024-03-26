@@ -15,7 +15,7 @@ export interface CheckboxGroupProps extends Omit<AriaCheckboxGroupProps, 'classN
   /**
    * The size of the Checkboxes in the CheckboxGroup.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**

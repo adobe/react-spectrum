@@ -14,19 +14,19 @@ interface ButtonStyleProps {
   /**
    * The [visual style](https://spectrum.adobe.com/page/button/#Options) of the button.
    *
-   * @default "primary"
+   * @default 'primary'
    */
   variant?: 'primary' | 'secondary' | 'accent' | 'negative',
   /**
    * The background style of the Button.
    *
-   * @default "fill"
+   * @default 'fill'
    */
   treatment?: 'fill' | 'outline',
   /**
    * The size of the Button.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /** The static color style to apply. Useful when the Button appears over a color background. */

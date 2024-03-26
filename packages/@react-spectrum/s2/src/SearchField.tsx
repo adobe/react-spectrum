@@ -21,7 +21,7 @@ export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className'
   /**
    * The size of the SearchField.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL'
 }

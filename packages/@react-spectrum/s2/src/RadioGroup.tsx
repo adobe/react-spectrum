@@ -18,13 +18,13 @@ export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'className' |
   /**
    * The size of the RadioGroup.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**
    * The axis the radio elements should align with.
    *
-   * @default "vertical"
+   * @default 'vertical'
    */
   orientation?: Orientation,
   /**

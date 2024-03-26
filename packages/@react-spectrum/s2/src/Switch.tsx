@@ -16,7 +16,7 @@ interface SwitchStyleProps {
   /**
    * The size of the Switch.
    *
-   * @default "M"
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'XL',
   /**

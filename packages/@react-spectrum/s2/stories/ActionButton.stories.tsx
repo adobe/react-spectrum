@@ -2,11 +2,16 @@ import type {Meta, StoryObj} from '@storybook/react';
 import {ActionButton, Text} from '../src';
 import NewIcon from '../s2wf-icons/assets/svg/S2_Icon_New_20_N.svg';
 import {StaticColorDecorator} from './utils';
+import {style} from '../style/spectrum-theme' with { type: 'macro' };
 
 const meta: Meta<typeof ActionButton> = {
   component: ActionButton,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    design: {
+      type: 'figma',
+      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=707-2774&t=iiwXqxruSpzhT0fe-0'
+    }
   },
   decorators: [StaticColorDecorator],
   tags: ['autodocs']
@@ -18,7 +23,20 @@ type Story = StoryObj<typeof ActionButton>;
 export const Example: Story = {
   render: (args) => {
     return (
-      <div style={{display: 'flex', gap: 8, justifyContent: 'center', resize: 'horizontal', overflow: 'auto'}}>
+      <div style={{display: 'flex', gap: 8, padding: 8, justifyContent: 'center', overflow: 'auto'}}>
+        <ActionButton {...args}><NewIcon /></ActionButton>
+        <ActionButton {...args}>Press me</ActionButton>
+        <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>
+        <ActionButton {...args}><Text>Press me</Text><NewIcon /></ActionButton>
+      </div>
+    );
+  }
+};
+
+export const ResizingExample: Story = {
+  render: (args) => {
+    return (
+      <div className={style({display: 'flex', gap: 8, justifyContent: 'center', resize: 'horizontal', overflow: 'auto'})}>
         <ActionButton {...args}><NewIcon /></ActionButton>
         <ActionButton {...args}>Press me</ActionButton>
         <ActionButton {...args}><NewIcon /><Text>Press me</Text></ActionButton>
@@ -27,9 +45,8 @@ export const Example: Story = {
     );
   },
   parameters: {
-    design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/Mngz9H7WZLbrCvGQf3GnsY/S2-%2F-Desktop?node-id=707-2774&t=iiwXqxruSpzhT0fe-0'
+    docs: {
+      disable: true
     }
   }
 };
@@ -141,5 +158,10 @@ export const Fonts: Story = {
         </div>
       </div>
     );
+  },
+  parameters: {
+    docs: {
+      disable: true
+    }
   }
 };

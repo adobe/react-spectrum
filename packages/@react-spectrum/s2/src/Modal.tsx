@@ -10,8 +10,8 @@ import {ColorSchemeContext} from './Provider';
 interface ModalProps extends ModalOverlayProps {
   /**
    * The size of the Modal.
-   *
-   * @default "M"
+   * 
+   * @default 'M'
    */
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
 }
