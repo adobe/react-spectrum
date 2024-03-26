@@ -31,7 +31,7 @@ const config: StorybookConfig = {
   framework: {
     name: "storybook-react-parcel",
     options: {},
-  },
+  }
   // typescript: {
   //   reactDocgen: 'react-docgen-typescript',
   //   reactDocgenTypescriptOptions: {
