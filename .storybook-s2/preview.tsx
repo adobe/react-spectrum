@@ -5,6 +5,7 @@ import { store } from 'storybook-dark-mode/dist/esm/Tool';
 import { addons } from '@storybook/preview-api';
 import { DocsContainer } from '@storybook/addon-docs';
 import React, { useEffect, useState } from 'react';
+import './global.css';
 
 const channel = addons.getChannel();
 document.documentElement.dataset.colorScheme = store().current === 'dark' ? 'dark' : 'light';
