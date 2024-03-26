@@ -115,7 +115,7 @@ export const PopoverArrowBoundaryOffsetExample = {
         max: 100
       }
     }
-  }, 
+  },
   render: ({topLeft, topRight, leftTop, leftBotton, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
     return (
       <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -125,6 +125,7 @@ export const PopoverArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Top left</Button>
               <Popover
                 placement="top left"
+                shouldFlip={false}
                 arrowBoundaryOffset={topLeft}
                 style={{
                   background: 'Canvas',
@@ -136,7 +137,7 @@ export const PopoverArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow style={{display: 'flex'}}>
                   <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
-                    <path d="M0 0,L6 6,L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 <Dialog style={{outline: 'none'}}>
@@ -150,6 +151,7 @@ export const PopoverArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Top right</Button>
               <Popover
                 placement="top right"
+                shouldFlip={false}
                 arrowBoundaryOffset={topRight}
                 style={{
                   background: 'Canvas',
@@ -161,7 +163,7 @@ export const PopoverArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow style={{display: 'flex'}}>
                   <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block'}}>
-                    <path d="M0 0,L6 6,L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 <Dialog style={{outline: 'none'}}>
@@ -177,6 +179,7 @@ export const PopoverArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Left top</Button>
               <Popover
                 placement="left top"
+                shouldFlip={false}
                 arrowBoundaryOffset={leftTop}
                 style={{
                   background: 'Canvas',
@@ -188,7 +191,7 @@ export const PopoverArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow style={{display: 'flex'}}>
                   <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(-90deg)'}}>
-                    <path d="M0 0,L6 6,L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 <Dialog style={{outline: 'none'}}>
@@ -202,6 +205,7 @@ export const PopoverArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Left bottom</Button>
               <Popover
                 placement="left bottom"
+                shouldFlip={false}
                 arrowBoundaryOffset={leftBotton}
                 style={{
                   background: 'Canvas',
@@ -213,7 +217,7 @@ export const PopoverArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow style={{display: 'flex'}}>
                   <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(-90deg)'}}>
-                    <path d="M0 0,L6 6,L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 <Dialog style={{outline: 'none'}}>
@@ -229,6 +233,7 @@ export const PopoverArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Right top</Button>
               <Popover
                 placement="right top"
+                shouldFlip={false}
                 arrowBoundaryOffset={rightTop}
                 style={{
                   background: 'Canvas',
@@ -240,7 +245,7 @@ export const PopoverArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow style={{display: 'flex'}}>
                   <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(90deg)'}}>
-                    <path d="M0 0,L6 6,L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 <Dialog style={{outline: 'none'}}>
@@ -254,6 +259,7 @@ export const PopoverArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Right bottom</Button>
               <Popover
                 placement="right bottom"
+                shouldFlip={false}
                 arrowBoundaryOffset={rightBottom}
                 style={{
                   background: 'Canvas',
@@ -265,7 +271,7 @@ export const PopoverArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow style={{display: 'flex'}}>
                   <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(90deg)'}}>
-                    <path d="M0 0,L6 6,L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 <Dialog style={{outline: 'none'}}>
@@ -281,6 +287,7 @@ export const PopoverArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Bottom left</Button>
               <Popover
                 placement="bottom left"
+                shouldFlip={false}
                 arrowBoundaryOffset={bottomLeft}
                 style={{
                   background: 'Canvas',
@@ -292,7 +299,7 @@ export const PopoverArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow style={{display: 'flex'}}>
                   <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(180deg)'}}>
-                    <path d="M0 0,L6 6,L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 <Dialog style={{outline: 'none'}}>
@@ -306,6 +313,7 @@ export const PopoverArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Bottom right</Button>
               <Popover
                 placement="bottom right"
+                shouldFlip={false}
                 arrowBoundaryOffset={bottomRight}
                 style={{
                   background: 'Canvas',
@@ -317,7 +325,7 @@ export const PopoverArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow style={{display: 'flex'}}>
                   <svg width="12" height="12" viewBox="0 0 12 12" style={{display: 'block', transform: 'rotate(180deg)'}}>
-                    <path d="M0 0,L6 6,L12 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L6 6L12 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 <Dialog style={{outline: 'none'}}>
