@@ -11,7 +11,9 @@
  */
 
 import {Button, FieldError, Form, Input, Label, TextField} from 'react-aria-components';
+import {classNames} from '@react-spectrum/utils';
 import React from 'react';
+import styles from '../example/index.css';
 
 export default {
   title: 'React Aria Components'
@@ -26,13 +28,13 @@ export const TextfieldExample = () => {
   );
 };
 
-export const FormExample = (args) => {
+export const TextFieldSubmitExample = (args) => {
   return (
     <Form>
-      <TextField name="email" type="email" isRequired {...args}>
+      <TextField className={classNames(styles, 'textfieldExample')} name="email" type="email" isRequired {...args}>
         <Label>Email</Label>
         <Input />
-        <FieldError />
+        <FieldError className={classNames(styles, 'errorMessage')} />
       </TextField>
       <Button type="submit">Submit</Button>
       <Button type="reset">Reset</Button>
@@ -40,12 +42,17 @@ export const FormExample = (args) => {
   );
 };
 
-FormExample.story = {
+TextFieldSubmitExample.story = {
   argTypes: {
     isInvalid: {
       control: {
         type: 'boolean'
       }
+    }
+  },
+  parameters: {
+    description: {
+      data: 'Non controlled isInvalid should render the default error message (aka just hit submit and see that it appears). Controlled isInvalid=true should not render the error message div (aka no padding should appear between the input and the buttons).'
     }
   }
 };
