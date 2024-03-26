@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Input, Label, TextField} from 'react-aria-components';
+import {Button, FieldError, Form, Input, Label, TextField} from 'react-aria-components';
 import React from 'react';
 
 export default {
@@ -24,4 +24,28 @@ export const TextfieldExample = () => {
       <Input />
     </TextField>
   );
+};
+
+export const FormExample = (args) => {
+  return (
+    <Form>
+      <TextField name="email" type="email" isRequired {...args}>
+        <Label>Email</Label>
+        <Input />
+        <FieldError />
+      </TextField>
+      <Button type="submit">Submit</Button>
+      <Button type="reset">Reset</Button>
+    </Form>
+  );
+};
+
+FormExample.story = {
+  argTypes: {
+    isInvalid: {
+      control: {
+        type: 'boolean'
+      }
+    }
+  }
 };
