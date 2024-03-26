@@ -16,7 +16,7 @@ import type { StorybookConfig } from "@storybook/types";
 
 const config: StorybookConfig = {
   stories: [
-    '../docs/**/*.@(md|mdx)',
+    './Intro.mdx',
     "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
   addons: [
