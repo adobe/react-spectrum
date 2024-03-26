@@ -197,7 +197,9 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
               </svg>
             </OverlayArrow>
           )}
-          {children}
+          <div className={style({overflow: 'auto', maxHeight: '[inherit]', boxSizing: 'border-box', padding: 8})}>
+            {children}
+          </div>
         </>
       ))}
     </AriaPopover>

@@ -10,7 +10,7 @@ import {ColorSchemeContext} from './Provider';
 interface ModalProps extends ModalOverlayProps {
   /**
    * The size of the Modal.
-   * 
+   *
    * @default "M"
    */
   size?: 'S' | 'M' | 'L' | 'fullscreen' | 'fullscreenTakeover'
@@ -74,7 +74,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
       el.dir = direction;
     }
   }, [locale, direction, domRef]);
-  
+
   return (
     <ModalOverlay
       {...props}
@@ -122,7 +122,7 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
             }
           },
           backgroundColor: 'layer-2',
-          overflow: 'hidden',
+          overflow: 'auto',
           animation: {
             isEntering: fadeAndSlide,
             isExiting: fade
@@ -154,4 +154,3 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
  */
 let _Modal = forwardRef(Modal);
 export {_Modal as Modal};
-

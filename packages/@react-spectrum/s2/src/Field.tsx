@@ -248,10 +248,6 @@ export function HelpText(props: HelpTextProps & {descriptionRef?: DOMRef<HTMLDiv
   let domDescriptionRef = useDOMRef(props.descriptionRef || null);
   let domErrorRef = useDOMRef(props.errorRef || null);
 
-  if (props.isInvalid && !props.description) {
-    return null;
-  }
-
   if (!props.isInvalid && props.description) {
     return (
       <Text

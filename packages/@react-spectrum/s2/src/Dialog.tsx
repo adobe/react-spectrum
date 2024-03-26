@@ -158,8 +158,7 @@ const dialogInner = style<DialogContextValue>({
     type: {
       fullscreenTakeover: 'none'
     }
-  },
-  overflow: 'auto'
+  }
 });
 
 function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefObject<HTMLElement>}) {
@@ -292,19 +291,19 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
             <div
               className={style({
                 display: 'flex',
-                marginX: {
+                paddingX: {
                   default: 32,
                   type: {
                     popover: 8
                   }
                 },
-                marginBottom: {
+                paddingBottom: {
                   default: 32,
                   type: {
                     popover: 8
                   }
                 },
-                marginTop: {
+                paddingTop: {
                   default: 32,
                   ':empty': 0
                 },
