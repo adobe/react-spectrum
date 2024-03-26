@@ -84,6 +84,7 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
         </FieldLabel>
         <div
           className={style({
+            gridArea: 'input',
             display: 'flex',
             flexDirection: {
               orientation: {

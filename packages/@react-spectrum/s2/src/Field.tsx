@@ -127,7 +127,14 @@ const fieldGroupStyles = style({
   alignItems: 'center',
   height: 'control',
   // TODO: this should actually stretch to fill the parent Field if that has a width defined.
-  width: 176,
+  width: {
+    default: 208,
+    size: {
+      S: 192,
+      L: 224,
+      XL: 240
+    }
+  },
   boxSizing: 'border-box',
   paddingX: 'edge-to-text',
   fontFamily: 'sans',

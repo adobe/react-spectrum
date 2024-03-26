@@ -84,6 +84,7 @@ function RadioGroup(props: RadioGroupProps, ref: DOMRef<HTMLDivElement>) {
           </FieldLabel>
           <div
             className={style({
+              gridArea: 'input',
               display: 'flex',
               flexDirection: {
                 orientation: {

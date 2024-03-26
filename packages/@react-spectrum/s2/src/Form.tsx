@@ -57,9 +57,18 @@ function Form(props: FormProps, ref: DOMRef<HTMLFormElement>) {
             side: ['[label] auto', '[field] 1fr']
           }
         },
-        rowGap: 24, // TODO: confirm
+        // TODO: confirm when we have tokens
+        rowGap: {
+          size: {
+            XS: 16,
+            S: 20,
+            M: 24,
+            L: 32,
+            XL: 40
+          }
+        },
         columnGap: 'text-to-control'
-      }, getAllowedOverrides())({labelPosition}, props.styles)}>
+      }, getAllowedOverrides())({labelPosition, size}, props.styles)}>
       <FormContext.Provider
         value={{
           labelPosition,

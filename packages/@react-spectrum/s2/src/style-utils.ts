@@ -24,7 +24,12 @@ export const field = () => ({
     isInForm: 'span 2'
   },
   gridTemplateColumns: {
-    default: ['auto', '1fr'],
+    default: {
+      labelPosition: {
+        top: ['1fr'],
+        side: ['auto', '1fr']
+      }
+    },
     isInForm: 'subgrid'
   },
   gridTemplateRows: {
@@ -36,9 +41,9 @@ export const field = () => ({
   gridTemplateAreas: {
     labelPosition: {
       top: [
-        'label label',
-        'input input',
-        'helptext helptext'
+        'label',
+        'input',
+        'helptext'
       ],
       side: [
         'label input',
@@ -62,7 +67,7 @@ export const field = () => ({
     type: 'rowGap',
     value: centerPadding('var(--field-height)')
   },
-  columnGap: 'text-to-control',
+  columnGap: 12,
   disableTapHighlight: true
 } as const);
 
