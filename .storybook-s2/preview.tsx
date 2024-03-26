@@ -3,6 +3,8 @@ import {themes} from '@storybook/theming';
 import { DARK_MODE_EVENT_NAME } from 'storybook-dark-mode';
 import { store } from 'storybook-dark-mode/dist/esm/Tool';
 import { addons } from '@storybook/preview-api';
+import { DocsContainer } from '@storybook/addon-docs';
+import React, { useEffect, useState } from 'react';
 
 const channel = addons.getChannel();
 document.documentElement.dataset.colorScheme = store().current === 'dark' ? 'dark' : 'light';
@@ -16,7 +18,14 @@ const preview = {
       matchers: {},
     },
     docs: {
-      theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? themes.dark : themes.light,
+      container: (props) => {
+        let [dark, setDark] = useState(store().current === 'dark');
+        useEffect(() => {
+          channel.on(DARK_MODE_EVENT_NAME, setDark);
+          return () => channel.removeListener(DARK_MODE_EVENT_NAME, setDark);
+        }, []);
+        return <DocsContainer {...props} theme={dark ? themes.dark : themes.light} />;
+      },
       source: {
         // code: null, // Will disable code button, and show "No code available"
         transform: (code: string) => {
