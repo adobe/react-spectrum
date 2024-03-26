@@ -10,7 +10,8 @@ import {
   composeRenderProps,
   Section as AriaSection,
   SectionProps,
-  SubmenuTrigger,
+  SubmenuTrigger as AriaSubmenuTrigger,
+  SubmenuTriggerProps as AriaSubmenuTriggerProps,
   SeparatorProps
 } from 'react-aria-components';
 import {box, iconStyles} from './Checkbox';
@@ -457,6 +458,10 @@ function MenuTrigger(props: MenuTriggerProps) {
     </InternalMenuTriggerContext.Provider>
   );
 }
+
+interface SubmenuTriggerProps extends Omit<AriaSubmenuTriggerProps, 'delay'> {}
+
+const SubmenuTrigger = AriaSubmenuTrigger as (props: SubmenuTriggerProps) => JSX.Element | null;
 
 export {MenuTrigger, SubmenuTrigger};
 
