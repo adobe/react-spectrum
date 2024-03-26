@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="700" height="335" viewBox="0 0 700 335">
+  <defs>
+    <clipPath id="clip-Custom_Size_1">
+      <rect width="700" height="335"/>
+    </clipPath>
+  </defs>
+  <g id="Custom_Size_1" data-name="Custom Size – 1" clip-path="url(#clip-Custom_Size_1)">
+    <g id="Group_2" data-name="Group 2" transform="translate(-22.432 4)">
+      <g id="Adobe_Corporate_logo" transform="translate(64.432 13.489)">
+        <g id="Group_1" data-name="Group 1">
+          <path id="Path_1" data-name="Path 1" d="M72.474,0H0V173.324Zm0,0" fill="#fa0c00"/>
+          <path id="Path_2" data-name="Path 2" d="M10.215,0h72.38V173.324Zm0,0" transform="translate(113.251)" fill="#fa0c00"/>
+          <path id="Path_3" data-name="Path 3" d="M37.165,5.285,83.294,114.728H53.029L39.243,79.884H5.484Zm0,0" transform="translate(60.805 58.596)" fill="#fa0c00"/>
+        </g>
+      </g>
+      <text id="React_Spectrum" data-name="React
+Spectrum" transform="translate(313 74)" font-size="90" font-family="AdobeClean-Bold, Adobe Clean" font-weight="700"><tspan x="0" y="0">React</tspan><tspan x="0" y="113">Spectrum</tspan></text>
+    </g>
+    <text id="Spectrum_2_Preview" data-name="Spectrum 2 Preview" transform="translate(42 302)" font-size="82" font-family="AdobeClean-SemiLightIt, Adobe Clean" font-weight="300" font-style="italic"><tspan x="0" y="0">Spectrum 2 Preview</tspan></text>
+  </g>
+</svg>
