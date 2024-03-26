@@ -57,7 +57,6 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
     }
   }));
 
-
   return (
     <AriaSearchField
       {...searchFieldProps}
@@ -122,7 +121,7 @@ function SearchField(props: SearchFieldProps, ref: Ref<TextFieldRef>) {
             <SearchIcon />
           </Provider>
           <Input ref={inputRef} UNSAFE_className={raw('&::-webkit-search-cancel-button { display: none }')} />
-          {!isEmpty && <ClearButton size={props.size} isDisabled={isDisabled} />}
+          {!isEmpty && !searchFieldProps.isReadOnly && <ClearButton size={props.size} />}
         </FieldGroup>
         <HelpText
           size={props.size}
