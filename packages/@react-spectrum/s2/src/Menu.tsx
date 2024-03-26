@@ -459,7 +459,7 @@ function MenuTrigger(props: MenuTriggerProps) {
   );
 }
 
-interface SubmenuTriggerProps extends Omit<AriaSubmenuTriggerProps, 'delay'> {}
+export interface SubmenuTriggerProps extends Omit<AriaSubmenuTriggerProps, 'delay'> {}
 
 const SubmenuTrigger = AriaSubmenuTrigger as (props: SubmenuTriggerProps) => JSX.Element | null;
 

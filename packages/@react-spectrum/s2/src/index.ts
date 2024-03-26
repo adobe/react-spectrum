@@ -48,7 +48,7 @@ export type {FormProps} from './Form';
 export type {IconProps} from './Icon';
 export type {InlineAlertProps} from './InlineAlert';
 export type {LinkProps} from './Link';
-export type {MenuTriggerProps, MenuProps, MenuItemProps, MenuSectionProps} from './Menu';
+export type {MenuTriggerProps, MenuProps, MenuItemProps, MenuSectionProps, SubmenuTriggerProps} from './Menu';
 export type {ProgressBarProps} from './ProgressBar';
 export type {ProgressCircleProps} from './ProgressCircle';
 export type {ProviderProps} from './Provider';
