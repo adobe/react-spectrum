@@ -14,7 +14,7 @@ import AlertMedium from '@spectrum-icons/ui/AlertMedium';
 import {Button, ClearButton} from '@react-spectrum/button';
 import {classNames, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import CrossMedium from '@spectrum-icons/ui/CrossMedium';
-import {DOMRef} from '@react-types/shared';
+import {DOMRef, PressEvent} from '@react-types/shared';
 import InfoMedium from '@spectrum-icons/ui/InfoMedium';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
@@ -78,13 +78,13 @@ function Toast(props: SpectrumToastProps, ref: DOMRef<HTMLDivElement>) {
   let Icon = ICONS[variant];
   let {isFocusVisible, focusProps} = useFocusRing();
 
-  const handleAction = () => {
+  const handleAction = (evt: PressEvent) => {
     if (onAction) {
       onAction();
     }
 
     if (shouldCloseOnAction) {
-      state.close(key);
+      closeButtonProps.onPress(evt);
     }
   };
 

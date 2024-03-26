@@ -39,14 +39,19 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   });
 
   let lastFocused = useRef(null);
+  let timeoutId:ReturnType<typeof setTimeout>;
   let {focusWithinProps} = useFocusWithin({
     onFocusWithin: (e) => {
       state.pauseAll();
       lastFocused.current = e.relatedTarget;
-      if (ref.current === document.activeElement) {
+      if (ref.current?.contains(document.activeElement)) {
         let count: number = state.visibleToasts.length || 0;
         let announcement = stringFormatter.format('countAnnouncement', {count});
-        announce(announcement);
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+          timeoutId = undefined;
+        }
+        timeoutId = setTimeout(() => announce(announcement, 'polite'), 750);
       }
     },
     onBlurWithin: () => {

@@ -48,7 +48,8 @@ export function Toaster(props: ToastContainerProps): ReactElement {
             data-placement="center"
             className={classNames(
               toastContainerStyles,
-              'react-spectrum-ToastContainer'
+              'react-spectrum-ToastContainer',
+              {'focus-ring': isFocusVisible}
             )}>
             {children}
           </div>

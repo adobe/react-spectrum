@@ -15,7 +15,7 @@ import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/s
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import {RefObject, useEffect, useRef} from 'react';
+import {RefObject, useEffect, useRef, useState} from 'react';
 import {useFocusManager} from '@react-aria/focus';
 import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
@@ -78,14 +78,23 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     };
   }, [ref, state.visibleToasts]);
 
+  const [isBusy, setIsBusy] = useState(true);
+
   // eslint-disable-next-line
   useEffect(() => {
+    let timeoutId:ReturnType<typeof setTimeout>;
+    if (isBusy) {
+      timeoutId = setTimeout(() => setIsBusy(false), 300);
+    }
     return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
       if (focusOnUnmount.current) {
         focusOnUnmount.current.focus();
       }
     };
-  }, [ref]);
+  }, [ref, isBusy]);
 
   let titleId = useId();
   let descriptionId = useSlotId();
@@ -119,7 +128,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     contentProps: {
       role: 'alert',
       'aria-atomic': 'true',
-      'aria-relevant': 'additions'
+      'aria-busy': isBusy ?? undefined
     },
     titleProps: {
       id: titleId

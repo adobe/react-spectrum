@@ -120,7 +120,7 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
                 state={state} />
             </li>
           ))}
-        </ol >
+        </ol>
       </Toaster>
     );
   }

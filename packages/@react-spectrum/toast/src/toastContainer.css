@@ -13,6 +13,11 @@
 @import "../../../@adobe/spectrum-css-temp/components/commons/focus-ring.css";
 
 .react-spectrum-ToastContainer {
+  composes: spectrum-FocusRing;
+  --spectrum-focus-ring-border-radius: var(--spectrum-toast-border-radius);
+  --spectrum-focus-ring-gap: var(--spectrum-alias-focus-ring-gap);
+  --spectrum-focus-ring-size: var(--spectrum-alias-focus-ring-size);
+
   position: fixed;
   inset-inline-start: 0;
   inset-inline-end: 0;
@@ -21,6 +26,7 @@
   pointer-events: none;
   outline: none;
   margin-block-end: 8px;
+  margin-inline: 8px;
 
   .spectrum-Toast {
     margin: 8px;
@@ -98,7 +104,7 @@
 }
 
 .spectrum-Toast-contentWrapper {
-  display: contents;
+  display: inline-flex;
 }
 
 @keyframes slide-in {
