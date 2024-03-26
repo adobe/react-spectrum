@@ -122,7 +122,7 @@ const arrowStyles = style<TooltipRenderProps>({
       right: '90deg'
     }
   },
-  translate: {
+  translateX: {
     placement: {
       left: '[-25%]',
       right: '[25%]'
