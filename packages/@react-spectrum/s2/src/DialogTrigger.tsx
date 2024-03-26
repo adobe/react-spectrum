@@ -12,7 +12,7 @@ export interface DialogTriggerProps extends AriaDialogTriggerProps, Pick<AriaPop
    * Whether a popover type Dialog's arrow should be hidden.
    */
   hideArrow?: boolean,
-  /** 
+  /**
    * Whether the Dialog is dismissable.
    */
   isDismissable?: boolean

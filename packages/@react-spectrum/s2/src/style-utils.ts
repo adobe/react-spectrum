@@ -73,8 +73,8 @@ export const field = () => ({
 
 export const colorScheme = () => ({
   colorScheme: {
-    default: 'light dark',
     colorScheme: {
+      'light dark': 'light dark',
       light: 'light',
       dark: 'dark'
     }

@@ -3,7 +3,6 @@ import {
   Popover as AriaPopover,
   PopoverProps as AriaPopoverProps,
   composeRenderProps,
-  PopoverRenderProps,
   useLocale
 } from 'react-aria-components';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -12,7 +11,6 @@ import {StyleProps, getAllowedOverrides, colorScheme} from './style-utils' with 
 import {MutableRefObject, forwardRef, useCallback, useContext} from 'react';
 import {DOMRef} from '@react-types/shared';
 import {useDOMRef} from '@react-spectrum/utils';
-import {ColorScheme} from '@react-types/provider';
 import {ColorSchemeContext} from './Provider';
 
 export interface PopoverProps extends Omit<AriaPopoverProps, 'arrowSize' | 'isNonModal' | 'arrowBoundaryOffset' | 'isKeyboardDismissDisabled' | 'shouldCloseOnInteractOutside' | 'shouldUpdatePosition' | 'className' | 'style'>, StyleProps {
@@ -21,7 +19,8 @@ export interface PopoverProps extends Omit<AriaPopoverProps, 'arrowSize' | 'isNo
    *
    * @default false
    */
-  hideArrow?: boolean
+  hideArrow?: boolean,
+  size?: 'S' | 'M' | 'L'
 }
 
 const fadeKeyframes = keyframes(`
@@ -70,7 +69,7 @@ const slideLeftKeyframes = keyframes(`
   }
 `);
 
-let popover = style<PopoverRenderProps & {isArrowShown: boolean, colorScheme: ColorScheme | null}>({
+let popover = style({
   ...colorScheme(),
   '--popoverBackground': {
     type: 'backgroundColor',
@@ -84,6 +83,14 @@ let popover = style<PopoverRenderProps & {isArrowShown: boolean, colorScheme: Co
   },
   borderColor: {
     forcedColors: 'ButtonBorder'
+  },
+  width: {
+    size: {
+      // Copied from Figma, not sure if correct.
+      S: '[21rem]',
+      M: '[26rem]',
+      L: '[36rem]'
+    }
   },
   translateY: {
     placement: {
@@ -166,7 +173,8 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
     hideArrow = false,
     UNSAFE_className = '',
     UNSAFE_style,
-    styles
+    styles,
+    size
   } = props;
   let domRef = useDOMRef(ref);
   let colorScheme = useContext(ColorSchemeContext);
@@ -182,12 +190,13 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
   }, [locale, direction, domRef]);
 
   // TODO: this still isn't the final popover 'tip', copying various ones out of the Figma files yields different results
+  // containerPadding not working as expected
   return (
     <AriaPopover
       {...props}
       ref={popoverRef}
       style={UNSAFE_style}
-      className={(renderProps) => UNSAFE_className + popover({...renderProps, isArrowShown: !hideArrow, colorScheme}, styles)}>
+      className={(renderProps) => UNSAFE_className + popover({...renderProps, size, isArrowShown: !hideArrow, colorScheme}, styles)}>
       {composeRenderProps(props.children, (children, renderProps) => (
         <>
           {!hideArrow && (
@@ -197,9 +206,7 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
               </svg>
             </OverlayArrow>
           )}
-          <div className={style({overflow: 'auto', maxHeight: '[inherit]', boxSizing: 'border-box', padding: 8})}>
-            {children}
-          </div>
+          {children}
         </>
       ))}
     </AriaPopover>

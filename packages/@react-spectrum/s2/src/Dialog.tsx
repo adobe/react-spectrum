@@ -59,10 +59,7 @@ const content =  style({
   color: 'body',
   // TODO: adjust margin on mobile?
   marginX: {
-    default: 32,
-    type: {
-      popover: 8
-    }
+    default: 32
   }
 });
 
@@ -125,7 +122,7 @@ function Dialog(props: DialogProps, ref: DOMRef) {
     case 'popover':
       // get hideArrow from dialog instead?
       return (
-        <Popover hideArrow={ctx.hideArrow} placement={ctx.placement} shouldFlip={ctx.shouldFlip} containerPadding={ctx.containerPadding} offset={ctx.offset} crossOffset={ctx.crossOffset}>
+        <Popover size={props.size || 'M'} hideArrow={ctx.hideArrow} placement={ctx.placement} shouldFlip={ctx.shouldFlip} containerPadding={ctx.containerPadding} offset={ctx.offset} crossOffset={ctx.crossOffset}>
           <DialogInner {...props} {...ctx} dialogRef={domRef} isDismissable={isDismissable} />
         </Popover>
       );
@@ -145,7 +142,7 @@ function Dialog(props: DialogProps, ref: DOMRef) {
 let _Dialog = forwardRef(Dialog);
 export {_Dialog as Dialog};
 
-const dialogInner = style<DialogContextValue>({
+const dialogInner = style({
   display: 'flex',
   flexDirection: 'column',
   flexGrow: 1,
@@ -153,12 +150,8 @@ const dialogInner = style<DialogContextValue>({
   boxSizing: 'border-box',
   outlineStyle: 'none',
   fontFamily: 'sans',
-  borderRadius: {
-    default: 'lg',
-    type: {
-      fullscreenTakeover: 'none'
-    }
-  }
+  borderRadius: '[inherit]',
+  overflow: 'auto'
 });
 
 function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefObject<HTMLElement>}) {
@@ -185,7 +178,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
       {...props}
       ref={props.dialogRef}
       style={props.UNSAFE_style}
-      className={(props.UNSAFE_className || '') + dialogInner({type: props.type})}>
+      className={(props.UNSAFE_className || '') + dialogInner}>
       {composeRenderProps(props.children, (children, {close}) =>
           // Render the children multiple times inside the wrappers we need to implement the layout.
           // Each instance hides certain children so that they are all rendered in the correct locations.
@@ -205,47 +198,33 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
             {/* Top header: heading, header, dismiss button, and button group (in fullscreen dialogs). */}
             <div
               className={style({
-              // Wrapper that creates the margin for the dismiss button.
+                // Wrapper that creates the margin for the dismiss button.
                 display: 'flex',
                 alignItems: 'start',
                 columnGap: 12,
                 marginStart: {
-                  default: 32,
-                  type: {
-                    popover: 8
-                  }
+                  default: 32
                 },
                 marginEnd: {
                   default: 32,
-                  isDismissable: 12,
-                  type: {
-                    popover: 8 // don't need to worry about dismissable case?
-                  }
+                  isDismissable: 12
                 },
                 marginTop: {
-                  default: 12,
-                  type: {
-                    popover: 8
-                  }
+                  default: 12 // margin to dismiss button
                 }
               })({isDismissable: props.isDismissable, type: props.type})}>
               <div
                 className={style({
-                // Wrapper for heading, header, and button group.
-                // This swaps orientation from horizontal to vertical at small screen sizes.
+                  // Wrapper for heading, header, and button group.
+                  // This swaps orientation from horizontal to vertical at small screen sizes.
                   display: 'flex',
                   flexGrow: 1,
                   marginTop: {
-                    default: 20, // 8 - 3 (handled above)?? moved to 32-12?
-                    type: {
-                      popover: 8
-                    }
+                    default: 20, // 32 - 12 (handled above)
+                    ':empty': 0
                   },
                   marginBottom: {
                     default: 16,
-                    type: {
-                      popover: 8
-                    },
                     ':empty': 0
                   },
                   columnGap: 24,
@@ -258,7 +237,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
                     default: 'start',
                     sm: 'center'
                   }
-                })({type: props.type})}>
+                })}>
                 <Provider
                   values={[
                   [ImageContext, {hidden: true}],
@@ -292,16 +271,10 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
               className={style({
                 display: 'flex',
                 paddingX: {
-                  default: 32,
-                  type: {
-                    popover: 8
-                  }
+                  default: 32
                 },
                 paddingBottom: {
-                  default: 32,
-                  type: {
-                    popover: 8
-                  }
+                  default: 32
                 },
                 paddingTop: {
                   default: 32,
@@ -310,7 +283,7 @@ function DialogInner(props: DialogProps & DialogContextValue & {dialogRef: RefOb
                 gap: 24,
                 alignItems: 'center',
                 flexWrap: 'wrap'
-              })({type: props.type})}>
+              })}>
               <Provider
                 values={[
                 [ImageContext, {hidden: true}],

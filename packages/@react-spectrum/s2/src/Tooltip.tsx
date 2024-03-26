@@ -44,7 +44,7 @@ const slide = keyframes(`
   }
 `);
 
-const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | null}>({
+const tooltip = style<TooltipRenderProps & {colorScheme: ColorScheme | 'light dark' | null}>({
   ...colorScheme(),
   justifyContent: 'center',
   alignItems: 'center',

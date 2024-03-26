@@ -15,7 +15,7 @@ const meta: Meta<typeof Dialog> = {
     // @ts-ignore
     type: {
       control: 'radio',
-      options: ['modal', 'fullscreen', 'fullscreenTakeover']
+      options: ['popover', 'modal', 'fullscreen', 'fullscreenTakeover']
     }
   },
   tags: ['autodocs']
@@ -24,7 +24,7 @@ const meta: Meta<typeof Dialog> = {
 export default meta;
 
 export const Example = (args: any) => (
-  <DialogTrigger>
+  <DialogTrigger {...args}>
     <Button variant="primary">Open dialog</Button>
     <Dialog {...args}>
       {({close}) => (

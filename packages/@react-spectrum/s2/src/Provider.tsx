@@ -1,5 +1,5 @@
 import {I18nProvider, RouterProvider, useLocale} from 'react-aria-components';
-import {ReactNode, createContext} from 'react';
+import {ReactNode, createContext, useContext} from 'react';
 import type {ColorScheme, Router} from '@react-types/provider';
 import {StyleString} from '../style/types';
 import {style} from '../style/spectrum-theme' with {type: 'macro'};
@@ -28,19 +28,21 @@ export interface ProviderProps extends UnsafeStyles {
   background?: 'base' | 'layer-1' | 'layer-2',
   /** Spectrum-defined styles, returned by the `style()` macro. */
   styles?: StyleString,
-  /** 
+  /**
    * The DOM element to render.
    * @default div
    */
   elementType?: keyof JSX.IntrinsicElements
 }
 
-export const ColorSchemeContext = createContext<ColorScheme | null>(null);
+export const ColorSchemeContext = createContext<ColorScheme | 'light dark' | null>(null);
 
 export function Provider(props: ProviderProps) {
   let result = <ProviderInner {...props} />;
-  if (props.colorScheme) {
-    result = <ColorSchemeContext.Provider value={props.colorScheme}>{result}</ColorSchemeContext.Provider>;
+  let parentColorScheme = useContext(ColorSchemeContext);
+  let colorScheme = props.colorScheme || parentColorScheme || 'light dark';
+  if (colorScheme !== parentColorScheme) {
+    result = <ColorSchemeContext.Provider value={colorScheme}>{result}</ColorSchemeContext.Provider>;
   }
 
   if (props.locale) {
@@ -50,7 +52,7 @@ export function Provider(props: ProviderProps) {
   if (props.router) {
     result = <RouterProvider {...props.router}>{result}</RouterProvider>;
   }
-  
+
   return result;
 }
 
@@ -77,7 +79,7 @@ function ProviderInner(props: ProviderProps) {
   } = props;
   let {locale, direction} = useLocale();
   return (
-    <Element 
+    <Element
       lang={locale}
       dir={direction}
       style={UNSAFE_style}

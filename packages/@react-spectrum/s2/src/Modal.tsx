@@ -122,7 +122,6 @@ function Modal(props: ModalProps, ref: DOMRef<HTMLDivElement>) {
             }
           },
           backgroundColor: 'layer-2',
-          overflow: 'auto',
           animation: {
             isEntering: fadeAndSlide,
             isExiting: fade
