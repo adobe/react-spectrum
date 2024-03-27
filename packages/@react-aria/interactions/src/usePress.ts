@@ -15,7 +15,7 @@
 // NOTICE file in the root directory of this source tree.
 // See https://github.com/facebook/react/tree/cc7c1aece46a6b69b41958d731e0fd27c94bfc6c/packages/react-interactions
 
-import {chain, focusWithoutScrolling, getOwnerDocument, getOwnerWindow, isMac, isVirtualClick, isVirtualPointerEvent, mergeProps, openLink, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
+import {chain, focusWithoutScrolling, getOwnerWindow, getRootNode, isMac, isVirtualClick, isVirtualPointerEvent, mergeProps, openLink, useEffectEvent, useGlobalListeners, useSyncRef} from '@react-aria/utils';
 import {disableTextSelection, restoreTextSelection} from './textSelection';
 import {DOMAttributes, FocusableElement, PressEvent as IPressEvent, PointerType, PressEvents} from '@react-types/shared';
 import {PressResponderContext} from './context';
@@ -279,7 +279,7 @@ export function usePress(props: PressHookProps): PressResult {
               }
             };
 
-            addGlobalListener(getOwnerDocument(e.currentTarget), 'keyup', chain(pressUp, onKeyUp), true);
+            addGlobalListener(getRootNode(e.currentTarget), 'keyup', chain(pressUp, onKeyUp), true);
           }
 
           if (shouldStopPropagation) {
@@ -409,9 +409,9 @@ export function usePress(props: PressHookProps): PressResult {
 
           shouldStopPropagation = triggerPressStart(e, state.pointerType);
 
-          addGlobalListener(getOwnerDocument(e.currentTarget), 'pointermove', onPointerMove, false);
-          addGlobalListener(getOwnerDocument(e.currentTarget), 'pointerup', onPointerUp, false);
-          addGlobalListener(getOwnerDocument(e.currentTarget), 'pointercancel', onPointerCancel, false);
+          addGlobalListener(getRootNode(e.currentTarget), 'pointermove', onPointerMove, false);
+          addGlobalListener(getRootNode(e.currentTarget), 'pointerup', onPointerUp, false);
+          addGlobalListener(getRootNode(e.currentTarget), 'pointercancel', onPointerCancel, false);
         }
 
         if (shouldStopPropagation) {
@@ -533,7 +533,7 @@ export function usePress(props: PressHookProps): PressResult {
           e.stopPropagation();
         }
 
-        addGlobalListener(getOwnerDocument(e.currentTarget), 'mouseup', onMouseUp, false);
+        addGlobalListener(getRootNode(e.currentTarget), 'mouseup', onMouseUp, false);
       };
 
       pressProps.onMouseEnter = (e) => {

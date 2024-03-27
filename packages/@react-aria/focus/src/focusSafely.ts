@@ -11,7 +11,7 @@
  */
 
 import {FocusableElement} from '@react-types/shared';
-import {focusWithoutScrolling, getOwnerDocument, runAfterTransition} from '@react-aria/utils';
+import {focusWithoutScrolling, getRootNode, runAfterTransition} from '@react-aria/utils';
 import {getInteractionModality} from '@react-aria/interactions';
 
 /**
@@ -24,7 +24,7 @@ export function focusSafely(element: FocusableElement) {
   // the page before shifting focus. This avoids issues with VoiceOver on iOS
   // causing the page to scroll when moving focus if the element is transitioning
   // from off the screen.
-  const ownerDocument = getOwnerDocument(element);
+  const ownerDocument = getRootNode(element);
   if (getInteractionModality() === 'virtual') {
     let lastFocusedElement = ownerDocument.activeElement;
     runAfterTransition(() => {
