@@ -180,7 +180,7 @@ export const PublishAndExport: Story = {
     );
   },
   args: {
-    selectionMode: 'multiple',
+    selectionMode: 'none',
     selectedKeys: ['quick-export'],
     disabledKeys: ['livestream']
   }
