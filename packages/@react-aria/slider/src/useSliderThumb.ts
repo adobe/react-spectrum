@@ -237,10 +237,10 @@ export function useSliderThumb(
     inputProps: mergeProps(focusableProps, fieldProps, {
       type: 'range',
       tabIndex: !isDisabled ? 0 : undefined,
-      min: state.getThumbMinValue(index),
-      max: state.getThumbMaxValue(index),
+      min: isNaN(state.getThumbMinValue(index)) ? '' : state.getThumbMinValue(index),
+      max: isNaN(state.getThumbMaxValue(index)) ? '' : state.getThumbMaxValue(index),
       step: state.step,
-      value: value,
+      value: isNaN(value) ? '' : value,
       name,
       disabled: isDisabled,
       'aria-orientation': orientation,
