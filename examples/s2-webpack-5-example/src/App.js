@@ -9,7 +9,7 @@ export const App = () => {
   return (
     <main>
       <Button 
-        css={style({
+        styles={style({
           marginStart: 16
         })}
       >

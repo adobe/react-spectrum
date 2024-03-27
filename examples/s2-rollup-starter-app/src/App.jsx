@@ -80,8 +80,8 @@ function App() {
           <Divider size="S" />
           <Button>Click me</Button>
           <Button size="S" variant="negative">Click me</Button>
-          <Button size="L" variant="secondary" style="outline">Click me</Button>
-          <Button size="XL" variant="accent" style="outline" isDisabled>Click me</Button>
+          <Button size="L" variant="secondary" fillStyle="outline">Click me</Button>
+          <Button size="XL" variant="accent" fillStyle="outline" isDisabled>Click me</Button>
           <Divider size="M" />
           <ToggleButton size="XS" isEmphasized>Click and press me</ToggleButton>
           <ToggleButton size="XL" isQuiet>Click and press me</ToggleButton>
@@ -140,7 +140,7 @@ function App() {
             }
           </DialogContainer>
           <Divider size="L" />
-          <TagGroup css={style({maxWidth: 160})} label="Ice cream flavor" selectionMode="multiple" disabledKeys={new Set(['mint'])}>
+          <TagGroup styles={style({maxWidth: 160})} label="Ice cream flavor" selectionMode="multiple" disabledKeys={new Set(['mint'])}>
             <Tag id="chocolate" textValue="chocolate"><NewIcon /><Text>Chocolate</Text></Tag>
             <Tag id="mint">Mint</Tag>
             <Tag id="strawberry">Strawberry</Tag>
@@ -207,7 +207,7 @@ function App() {
           <Divider size="L" />
           <Draggable />
           <DropZone
-            css={style({width: '[320px]', height: '[280px]'})}
+            styles={style({width: '[320px]', height: '[280px]'})}
             isFilled={isFilled}
             onDrop={() => setIsFilled(true)}>
             <IllustratedMessage>
@@ -223,31 +223,31 @@ function App() {
             </IllustratedMessage>
           </DropZone>
           <Divider size="L" />
-          <InlineAlert style="border" variant="informative">
+          <InlineAlert fillStyle="border" variant="informative">
             <Heading>Payment Information</Heading>
             <Content>
               There was an error processing your payment. Please check that your card information is correct, then try again.
             </Content>
           </InlineAlert>
-          <InlineAlert style="subtleFill" variant="positive">
+          <InlineAlert fillStyle="subtleFill" variant="positive">
             <Heading>Payment Information</Heading>
             <Content>
               There was an error processing your payment. Please check that your card information is correct, then try again.
             </Content>
           </InlineAlert>
-          <InlineAlert style="boldFill" variant="notice">
+          <InlineAlert fillStyle="boldFill" variant="notice">
             <Heading>Payment Information</Heading>
             <Content>
               There was an error processing your payment. Please check that your card information is correct, then try again.
             </Content>
           </InlineAlert>
-          <InlineAlert style="border" variant="negative">
+          <InlineAlert fillStyle="border" variant="negative">
             <Heading>Payment Information</Heading>
             <Content>
               There was an error processing your payment. Please check that your card information is correct, then try again.
             </Content>
           </InlineAlert>
-          <InlineAlert style="subtleFill" variant="neutral">
+          <InlineAlert fillStyle="subtleFill" variant="neutral">
             <Heading>Payment Information</Heading>
             <Content>
               There was an error processing your payment. Please check that your card information is correct, then try again.
