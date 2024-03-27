@@ -15,7 +15,8 @@ import {AriaLabelingProps, DOMAttributes, FocusableElement} from '@react-types/s
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {QueuedToast, ToastState} from '@react-stately/toast';
-import {RefObject, useEffect, useRef} from 'react';
+import {RefObject, useEffect, useRef, useState} from 'react';
+import {useFocusManager} from '@react-aria/focus';
 import {useId, useLayoutEffect, useSlotId} from '@react-aria/utils';
 import {useLocalizedStringFormatter} from '@react-aria/i18n';
 
@@ -25,8 +26,10 @@ export interface AriaToastProps<T> extends AriaLabelingProps {
 }
 
 export interface ToastAria {
-  /** Props for the toast container element. */
+  /** Props for the toast container, non-modal dialog element. */
   toastProps: DOMAttributes,
+  /** Props for the toast content alert message. */
+  contentProps: DOMAttributes,
   /** Props for the toast title element. */
   titleProps: DOMAttributes,
   /** Props for the toast description element, if any. */
@@ -46,6 +49,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     timeout,
     animation
   } = props.toast;
+  let focusManager = useFocusManager();
 
   useEffect(() => {
     if (!timer) {
@@ -66,36 +70,65 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   useLayoutEffect(() => {
     let container = ref.current.closest('[role=region]') as HTMLElement;
     return () => {
-      if (container && container.contains(document.activeElement)) {
+      if (container && container.contains(document.activeElement) && state.visibleToasts.filter(t => t.animation !== 'exiting').length < 1) {
         // Focus must be delayed for focus ring to appear, but we can't wait
         // until useEffect cleanup to check if focus was inside the container.
         focusOnUnmount.current = container;
       }
     };
-  }, [ref]);
+  }, [ref, state.visibleToasts]);
+
+  const [isBusy, setIsBusy] = useState(true);
 
   // eslint-disable-next-line
   useEffect(() => {
+    let timeoutId:ReturnType<typeof setTimeout>;
+    if (isBusy) {
+      timeoutId = setTimeout(() => setIsBusy(false), 300);
+    }
     return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
       if (focusOnUnmount.current) {
         focusOnUnmount.current.focus();
       }
     };
-  }, [ref]);
+  }, [ref, isBusy]);
 
   let titleId = useId();
   let descriptionId = useSlotId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/toast');
 
+  let onClosePress = () => {
+    state.close(key);
+    // Only move focus when there is another Toast. At this point,
+    // state.visibleToasts still includes Toast being removed.
+    if (state.visibleToasts?.length > 1) {
+      const from = document.activeElement?.closest('[role="alertdialog"]') || document.activeElement;
+      const accept = (node:Element) => node.getAttribute('role') === 'alertdialog';
+      let nextItemFocused = focusManager.focusNext({from, accept});
+      if (!nextItemFocused || Object.keys(nextItemFocused).length === 0) {
+        focusManager.focusPrevious({from, accept});
+      }
+    }
+  };
+
   return {
     toastProps: {
-      role: 'alert',
+      role: 'alertdialog',
       'aria-label': props['aria-label'],
       'aria-labelledby': props['aria-labelledby'] || titleId,
       'aria-describedby': props['aria-describedby'] || descriptionId,
       'aria-details': props['aria-details'],
       // Hide toasts that are animating out so VoiceOver doesn't announce them.
-      'aria-hidden': animation === 'exiting' ? 'true' : undefined
+      'aria-hidden': animation === 'exiting' ? 'true' : undefined,
+      tabIndex: 0
+    },
+    contentProps: {
+      role: 'alert',
+      'aria-atomic': 'true',
+      'aria-busy': isBusy ?? undefined
     },
     titleProps: {
       id: titleId
@@ -105,7 +138,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     },
     closeButtonProps: {
       'aria-label': stringFormatter.format('close'),
-      onPress: () => state.close(key)
+      onPress: onClosePress
     }
   };
 }

@@ -43,13 +43,13 @@ function ToastRegion() {
 function Toast(props) {
   let state = useContext(ToastContext);
   let ref = useRef(null);
-  let {toastProps, titleProps, closeButtonProps} = useToast(props, state, ref);
+  let {toastProps, contentProps, titleProps, closeButtonProps} = useToast(props, state, ref);
   let buttonRef = useRef();
   let {buttonProps} = useButton(closeButtonProps, buttonRef);
 
   return (
     <div {...toastProps} ref={ref} style={{margin: 20, display: 'flex', gap: 5}}>
-      <div {...titleProps}>{props.toast.content}</div>
+      <div {...contentProps} {...titleProps}>{props.toast.content}</div>
       <button {...buttonProps} ref={buttonRef}>x</button>
     </div>
   );
