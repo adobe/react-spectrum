@@ -1,6 +1,6 @@
-# Webpack 5 example
+# Parcel example
 
-This is a [Webpack](https://webpack.js.org/) project with a minimal React configuration.
+This is a [Parcel](https://parceljs.org/) project with a minimal React configuration.
 
 ## Getting Started
 
@@ -11,26 +11,13 @@ yarn install
 yarn dev
 ```
 
-Open [http://localhost:8080](http://localhost:8080) with your browser to see the result.
+Open [http://localhost:1234](http://localhost:1234) with your browser to see the result.
 
 style-macro and React Spectrum - Spectrum 2 have been added to `src/App.js` to show an example of a Spectrum 2 styled component. This file does client side rendering. The page auto-updates as you edit the file.
 
-## Macros config
+## Macros
 
-Edit the webpack.config.js to add an import for the plugin and add a webpack config that adds the webpack version of the macros plugin. An empty config file would be updated to look like the following.
-
-```
-const macros = require("unplugin-parcel-macros");
-
-module.exports = {
-  // ...
-  plugins: [
-    // ...
-    macros.webpack(),
-    // ...
-  ],
-};
-```
+Macros work out-of-the-box with Parcel, as of [v2.12.0](https://parceljs.org/blog/v2-12-0/#macros)
 
 To use the spectrum-theme via macros, pass your styles object to the style() macro and set the result as a new function. This new function or style() should be used within a `className` prop to style your html elements. Use the `styles` prop on React Spectrum components.
 

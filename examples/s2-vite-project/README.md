@@ -1,30 +1,56 @@
-# React + TypeScript + Vite
+# Vite example
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a [Vite](https://vitejs.dev/) project bootstrapped with [`create-vite`](https://github.com/vitejs/vite/tree/main/packages/create-vite).
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+First, run the development server:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+yarn install
+yarn dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Open [http://localhost:5173](http://localhost:5173) with your browser to see the result.
+
+style-macro and React Spectrum - Spectrum 2 have been added to `src/App.tsx` to show an example of a Spectrum 2 styled component. This file does client side rendering. The page auto-updates as you edit the file.
+
+## Macros config
+
+Edit the vite.config.ts to add an import for the plugin and add a vite config that adds the vite version of the macros plugin. An empty config file would be updated to look like the following.
+
+```
+import { defineConfig } from 'vite'
+import macrosPlugin from 'unplugin-parcel-macros';
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    // ...
+    macros.vite()
+    // ..
+  ],
+})
+```
+
+To use the spectrum-theme via macros, pass your styles object to the style() macro and set the result as a new function. This new function or style() should be used within a `className` prop to style your html elements. Use the `styles` prop on React Spectrum components.
+
+```jsx
+<div className={style({marginStart: 16})}>
+  Hello Spectrum 2!
+</div>
+```
+
+```jsx
+<Button styles={style({marginStart: 16})}>
+  Hello Spectrum 2!
+</Button>
+```
+
+## Application setup
+
+Please include the page level CSS in the root of your application to configure and support the light and dark themes.
+
+```
+import "@react/experimental-s2/page.css";
+```

@@ -1,35 +1,76 @@
-# rollup-starter-app
+# Rollup example
 
-This repo contains a bare-bones example of how to create an application using Rollup, including importing a module from `node_modules` and converting it from CommonJS.
+This is a [Rollup](https://rollupjs.org/) project bootstrapped with the [`rollup-starter-app`](https://github.com/rollup/rollup-starter-app) project template.
 
-*See also https://github.com/rollup/rollup-starter-lib*
+## Getting Started
 
-
-## Getting started
-
-Clone this repository and install its dependencies:
+First, run the development server:
 
 ```bash
-git clone https://github.com/rollup/rollup-starter-app
-cd rollup-starter-app
-npm install
-
-# or
-npx degit "rollup/rollup-starter-app" my-app
-cd my-app
-npm install
+yarn install
+yarn dev
 ```
 
-The `public/index.html` file contains a `<script src='bundle.js'>` tag, which means we need to create `public/bundle.js`. The `rollup.config.js` file tells Rollup how to create this bundle, starting with `src/main.js` and including all its dependencies, including [date-fns](https://date-fns.org).
+Open [http://localhost:5678](http://localhost:5678) with your browser to see the result.
 
-`npm run build` builds the application to `public/bundle.js`, along with a sourcemap file for debugging.
+style-macro and React Spectrum - Spectrum 2 have been added to `src/App.jsx` to show an example of a Spectrum 2 styled component. This file does client side rendering. The page auto-updates as you edit the file.
 
-`npm start` launches a server, using [serve](https://github.com/zeit/serve). Navigate to [localhost:3000](http://localhost:3000).
+## Macros config
 
-`npm run watch` will continually rebuild the application as your source files change.
+Edit the rollup.config.js to add an import for the plugin and add a rollup config that adds the rollup version of the macros plugin. An empty config file would be updated to look like the following.
 
-`npm run dev` will run `npm start` and `npm run watch` in parallel.
+```
+import macrosPlugin from 'unplugin-parcel-macros';
 
-## License
+export default {
+  input: 'src/main.js',
+  output: {
+    file: 'public/bundle.js',
+    format: 'iife', // immediately-invoked function expression — suitable for <script> tags
+    sourcemap: true
+  },
+  plugins: [
+    nodeResolve({
+      extensions: ['.js', '.jsx', '.mjs']
+    }), // from https://www.codeguage.com/blog/setup-rollup-for-react
+    macros.rollup(), // added for style macros, has to be before babel
+    babel({
+      babelHelpers: 'bundled',
+      presets: ['@babel/preset-react'],
+      extensions: ['.js', '.jsx']
+    }), // from https://www.codeguage.com/blog/setup-rollup-for-react
+    commonjs(), // converts date-fns to ES modules
+    replace({
+      preventAssignment: false,
+      'process.env.NODE_ENV': '"development"'
+    }), // from https://www.codeguage.com/blog/setup-rollup-for-react
+    css({
+      output: 'bundle.css'
+    }), // added to bundle React Spectrum's Spectrum 2 css
+    reactSvg(), // added for illustration svg's
+    production && terser() // minify, but only in production
+  ]
+};
+```
 
-[MIT](LICENSE).
+To use the spectrum-theme via macros, pass your styles object to the style() macro and set the result as a new function. This new function or style() should be used within a `className` prop to style your html elements. Use the `styles` prop on React Spectrum components.
+
+```jsx
+<div className={style({marginStart: 16})}>
+  Hello Spectrum 2!
+</div>
+```
+
+```jsx
+<Button styles={style({marginStart: 16})}>
+  Hello Spectrum 2!
+</Button>
+```
+
+## Application setup
+
+Please include the page level CSS in the root of your application to configure and support the light and dark themes.
+
+```
+import "@react/experimental-s2/page.css";
+```

@@ -1,21 +1,20 @@
-import React from 'react';
-import { Button, Text } from '@react/experimental-s2';
-import '@react/experimental-s2/page.css';
-import {style} from '@react/experimental-s2/style' with {type: 'macro'};
-import GlobeGrid from '@react/experimental-s2/icons/GlobeGrid';
+import "@react/experimental-s2/page.css";
+import { style } from "@react/experimental-s2/style" with { type: "macro" };
+import { Button } from "@react/experimental-s2";
+import React from "react";
 
-
-export const App = () => {
+function App() {
   return (
     <main>
-      <Button 
+      <Button
         styles={style({
-          marginStart: 16
+          marginStart: 16,
         })}
       >
-        <GlobeGrid />
-        <Text>Hello World</Text>
+        Hello Spectrum 2!
       </Button>
     </main>
   );
-};
+}
+
+export default App;
