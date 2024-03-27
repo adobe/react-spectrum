@@ -98,7 +98,8 @@
     "storybook-docs": "storybook dev --docs",
     "build-storybook-docs": "storybook build --docs",
     "prepack": "npm pkg delete scripts devDependencies resolutions alias targets",
-    "postpack": "git checkout -- package.json"
+    "postpack": "git checkout -- package.json",
+    "api-diff": "npm pkg set apiCheck=dist/api.json && npm pkg set targets.apiCheck.context=browser && parcel build --target apiCheck --config .parcelrc-api && node scripts/api-diff.js --skip-style-props --skip-same && npm pkg delete apiCheck && npm pkg delete targets.apiCheck"
   },
   "devDependencies": {
     "@adobe/spectrum-tokens": "^13.0.0-beta.18",
