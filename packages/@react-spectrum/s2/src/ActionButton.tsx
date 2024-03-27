@@ -45,7 +45,7 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
   fontSize: 'control',
   userSelect: 'none',
   height: 'control',
-  minWidth: 32,
+  minWidth: 'control',
   transition: 'default',
   forcedColorAdjust: 'none',
   backgroundColor: {
@@ -154,9 +154,6 @@ export const btnStyles = style<ButtonRenderProps & ActionButtonStyleProps & Togg
       default: fontRelative(-2),
       ':has([slot=icon]:only-child)': 0
     }
-  },
-  aspectRatio: {
-    ':has([slot=icon]:only-child)': 'square'
   },
   disableTapHighlight: true
 }, getAllowedOverrides());
