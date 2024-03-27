@@ -186,7 +186,6 @@ const treeActions = style({
 
 const treeActionMenu = style({
   gridArea: 'actionmenu',
-  marginEnd: 2,
   width: 8
 });
 
@@ -284,6 +283,9 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
               slots={{
                 text: {UNSAFE_className: treeContent({isDisabled})},
                 // Need to do inline since the macros don't override spectrum class styles
+                // TODO: there is an issue here where these icon props are making into the action menu's icon....
+                // We can't add a wrapping ClearSlot around ActionMenu cuz ListView passes stuff to the 'actionMenu' slot nor can we wrap ClearSlots around the
+                // icon in ActionMenu because ActionButton passes stuff via the icon slot
                 icon: {UNSAFE_className: treeIcon(), UNSAFE_style: {color: isDisabled && 'var(--spectrum-alias-icon-color-disabled)'}, size: 'S'},
                 actionButton: {UNSAFE_className: treeActions(), isQuiet: true},
                 actionGroup: {
@@ -294,7 +296,7 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
                   isDisabled,
                   overflowMode: 'collapse'
                 },
-                actionMenu: {UNSAFE_className: treeActionMenu(), isQuiet: true}
+                actionMenu: {UNSAFE_className: treeActionMenu(), UNSAFE_style: {marginInlineEnd: '.5rem'}, isQuiet: true}
               }}>
               {content}
             </SlotProvider>
