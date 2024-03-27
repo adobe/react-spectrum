@@ -16,13 +16,14 @@ import {CollectionDocumentContext, useCollectionDocument} from './Collection';
 import {ContextValue, forwardRefType, Hidden, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {FormValidationBehaviorContext} from './Form';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {LabelContext} from './Label';
 import {ListBoxContext, ListStateContext} from './ListBox';
 import {OverlayTriggerStateContext} from './Dialog';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, RefObject, useCallback, useMemo, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, RefObject, useCallback, useContext, useMemo, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface ComboBoxRenderProps {
@@ -113,6 +114,8 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     formValue = 'text';
   }
 
+  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let {contains} = useFilter({sensitivity: 'base'});
   let state = useComboBoxState({
     defaultFilter: props.defaultFilter || contains,
@@ -121,7 +124,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     items: props.items,
     children: undefined,
     collection,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   });
 
   let buttonRef = useRef<HTMLButtonElement>(null);
@@ -145,7 +148,7 @@ function ComboBoxInner<T extends object>({props, collection, comboBoxRef: ref}: 
     listBoxRef,
     popoverRef,
     name: formValue === 'text' ? name : undefined,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   }, state);
 
   // Make menu width match input + button

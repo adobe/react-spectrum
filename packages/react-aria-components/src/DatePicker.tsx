@@ -18,10 +18,11 @@ import {DatePickerState, DatePickerStateOptions, DateRangePickerState, DateRange
 import {DialogContext, OverlayTriggerStateContext} from './Dialog';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, useResizeObserver} from '@react-aria/utils';
+import {FormValidationBehaviorContext} from './Form';
 import {GroupContext} from './Group';
 import {LabelContext} from './Label';
 import {PopoverContext} from './Popover';
-import React, {createContext, ForwardedRef, forwardRef, useCallback, useRef, useState} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useCallback, useContext, useRef, useState} from 'react';
 import {TextContext} from './Text';
 
 export interface DatePickerRenderProps {
@@ -72,9 +73,11 @@ export const DateRangePickerStateContext = createContext<DateRangePickerState | 
 
 function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DatePickerContext);
+  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useDatePickerState({
     ...props,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   });
 
   let groupRef = useRef<HTMLDivElement>(null);
@@ -92,7 +95,7 @@ function DatePicker<T extends DateValue>(props: DatePickerProps<T>, ref: Forward
   } = useDatePicker({
     ...removeDataAttributes(props),
     label,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   }, state, groupRef);
 
   // Allows calendar width to match input group
@@ -173,9 +176,11 @@ export {_DatePicker as DatePicker};
 
 function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, DateRangePickerContext);
+  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let state = useDateRangePickerState({
     ...props,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   });
 
   let groupRef = useRef<HTMLDivElement>(null);
@@ -194,7 +199,7 @@ function DateRangePicker<T extends DateValue>(props: DateRangePickerProps<T>, re
   } = useDateRangePicker({
     ...removeDataAttributes(props),
     label,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   }, state, groupRef);
 
   // Allows calendar width to match input group
