@@ -40,9 +40,13 @@ const FieldErrorInner = forwardRef((props: FieldErrorProps, ref: ForwardedRef<HT
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-FieldError',
-    defaultChildren: validation.validationErrors.join(' '),
+    defaultChildren: validation.validationErrors.length === 0 ? undefined : validation.validationErrors.join(' '),
     values: validation
   });
+
+  if (renderProps.children == null) {
+    return null;
+  }
 
   return <Text slot="errorMessage" {...renderProps} ref={ref} />;
 });
