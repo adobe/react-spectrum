@@ -62,7 +62,7 @@ export class PersianCalendar implements Calendar {
     }
 
     let yDay = jd - persianToJulianDay(year, 1, 1) + 1;
-    let month = yDay <= 186 ? Math.ceil(yDay / 31) : Math.ceil((yDay - 6) / 31);
+    let month = yDay <= 186 ? Math.ceil(yDay / 31) : Math.ceil((yDay - 6) / 30);
     let day = jd - persianToJulianDay(year, month, 1) + 1;
 
     return new CalendarDate(this, year, month, day);
