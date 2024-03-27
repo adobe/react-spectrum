@@ -961,4 +961,46 @@ describe('TooltipTrigger', function () {
       expect(queryByRole('tooltip')).toBeNull();
     });
   });
+
+  describe('portalContainer', () => {
+    function InfoTooltip(props) {
+      return (
+        <TooltipTrigger UNSTABLE_portalContainer={props.container}>
+          <ActionButton aria-label="trigger" />
+          <Tooltip>
+            <div data-testid="content">hello</div>
+          </Tooltip>
+        </TooltipTrigger>
+      );
+    }
+    function App() {
+      let [container, setContainer] = React.useState();
+      return (
+        <>
+          <InfoTooltip container={container} />
+          <div ref={setContainer} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the tooltip in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <App />
+        </Provider>
+      );
+
+      let button = getByRole('button');
+      act(() => {
+        button.focus();
+      });
+
+      expect(getByTestId('content').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
+    });
+  });
 });

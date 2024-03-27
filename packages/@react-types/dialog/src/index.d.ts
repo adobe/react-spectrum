@@ -35,7 +35,13 @@ export interface SpectrumDialogTriggerProps extends OverlayTriggerProps, Positio
   /** Whether a modal type Dialog should be dismissable. */
   isDismissable?: boolean,
   /** Whether pressing the escape key to close the dialog should be disabled. */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean,
+  /**
+   * The container element in which the dialogs' overlay portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: Element
 }
 
 export interface SpectrumDialogContainerProps {
@@ -51,7 +57,13 @@ export interface SpectrumDialogContainerProps {
   /** Whether the Dialog is dismissable. See the [Dialog docs](Dialog.html#dismissable-dialogs) for more details. */
   isDismissable?: boolean,
   /** Whether pressing the escape key to close the dialog should be disabled. */
-  isKeyboardDismissDisabled?: boolean
+  isKeyboardDismissDisabled?: boolean,
+  /**
+   * The container element in which the dialogs' overlay portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: Element
 }
 
 export interface AriaDialogProps extends DOMProps, AriaLabelingProps {

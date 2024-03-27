@@ -30,7 +30,14 @@ export interface ActionBarProps<T> {
   onAction?: (key: Key) => void
 }
 
-export interface SpectrumActionBarProps<T> extends ActionBarProps<T>, DOMProps, StyleProps {}
+export interface SpectrumActionBarProps<T> extends ActionBarProps<T>, DOMProps, StyleProps {
+  /**
+   * The container element in which the collapsed action menu's overlay or tray portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: HTMLElement
+}
 
 interface ActionBarContainerProps {
   /** The contents of the ActionBarContainer. Should include a ActionBar and the renderable content it is associated with. */

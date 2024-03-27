@@ -56,7 +56,8 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
     validationBehavior,
     name,
     formValue = 'text',
-    allowsCustomValue
+    allowsCustomValue,
+    UNSTABLE_portalContainer
   } = props;
   if (allowsCustomValue) {
     formValue = 'text';
@@ -145,7 +146,7 @@ export const MobileComboBox = React.forwardRef(function MobileComboBox<T extends
         </ComboBoxButton>
       </Field>
       <input {...inputProps} ref={inputRef} />
-      <Tray state={state} isFixedHeight {...overlayProps}>
+      <Tray state={state} isFixedHeight {...overlayProps} container={UNSTABLE_portalContainer}>
         <ComboBoxTray
           {...props}
           onClose={state.close}

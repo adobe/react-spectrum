@@ -58,7 +58,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
     labelPosition = 'top' as LabelPosition,
     menuWidth,
     name,
-    autoFocus
+    autoFocus,
+    UNSTABLE_portalContainer
   } = props;
 
   let state = useSelectState(props);
@@ -125,7 +126,7 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
   let overlay;
   if (isMobile) {
     overlay = (
-      <Tray state={state}>
+      <Tray state={state} container={UNSTABLE_portalContainer}>
         {listbox}
       </Tray>
     );
@@ -149,7 +150,8 @@ function Picker<T extends object>(props: SpectrumPickerProps<T>, ref: DOMRef<HTM
         hideArrow
         state={state}
         triggerRef={unwrappedTriggerRef}
-        scrollRef={listboxRef}>
+        scrollRef={listboxRef}
+        container={UNSTABLE_portalContainer}>
         {listbox}
       </Popover>
     );

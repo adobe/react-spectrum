@@ -38,7 +38,8 @@ function ActionMenu<T extends object>(props: SpectrumActionMenuProps<T>, ref: Fo
       onOpenChange={props.onOpenChange}
       align={props.align}
       direction={props.direction}
-      shouldFlip={props.shouldFlip}>
+      shouldFlip={props.shouldFlip}
+      UNSTABLE_portalContainer={props.UNSTABLE_portalContainer}>
       <ActionButton
         ref={ref}
         {...props}

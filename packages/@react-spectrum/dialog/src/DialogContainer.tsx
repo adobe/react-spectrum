@@ -27,7 +27,8 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
     type = 'modal',
     onDismiss,
     isDismissable,
-    isKeyboardDismissDisabled
+    isKeyboardDismissDisabled,
+    UNSTABLE_portalContainer
   } = props;
 
   let childArray = React.Children.toArray(children);
@@ -67,6 +68,7 @@ export function DialogContainer(props: SpectrumDialogContainerProps) {
 
   return (
     <Modal
+      container={UNSTABLE_portalContainer}
       state={state}
       type={type}
       isDismissable={isDismissable}

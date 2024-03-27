@@ -81,7 +81,13 @@ export interface SpectrumTableProps<T> extends TableProps<T>, SpectrumSelectionP
    * @version alpha
    * @private
    */
-  UNSTABLE_onExpandedChange?: (keys: Set<Key>) => any
+  UNSTABLE_onExpandedChange?: (keys: Set<Key>) => any,
+  /**
+   * The container element in which the column header menu's overlay or tray portal will be placed. This may have unknown behavior depending on where it is portal-ed to.
+   * Make sure to test in mobile and desktop environments.
+   * @default document.body
+   */
+  UNSTABLE_portalContainer?: HTMLElement
 }
 
 function TableViewWrapper<T extends object>(props: SpectrumTableProps<T>, ref: DOMRef<HTMLDivElement>) {
