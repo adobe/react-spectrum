@@ -29,7 +29,7 @@ export const Example = (args: any) => (
     <Dialog {...args}>
       {({close}) => (
         <>
-          <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />
+          {args.type !== 'popover' && <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />}
           <Heading slot="title">Dialog title</Heading>
           <Header>Header</Header>
           <Content>
