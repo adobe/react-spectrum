@@ -40,6 +40,12 @@ const preview = {
           code = code.replace(/\s+styles=".*"/g, '');
           // Remove any on* prop
           code = code.replace(/\s+on[A-Z].*={.*}/g, '');
+          // Replace components like <{one letter} /> with <Icon />
+          code = code.replace(/<([a-z])\s?\/>/g, '<Icon />');
+          // Replace <No Display Name /> with <Cloud />
+          code = code.replace(/<No\sDisplay\sName\s\/>/g, '<Cloud />');
+          // Move any lines with just a > to the previous line
+          code = code.replace(/\n\s*>/g, '>');
           return code;
         }
       }
