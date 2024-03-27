@@ -267,23 +267,27 @@ export {_Tree as Tree};
 
 // TODO: readd the rest of the render props when tree supports them
 export interface TreeItemRenderProps extends Omit<ItemRenderProps, 'allowsDragging' | 'isDragging' | 'isDropTarget'> {
-  // Whether the tree row is expanded.
-  isExpanded: boolean
+  // Whether the tree item is expanded.
+  isExpanded: boolean,
+  // TODO: api discussion, how do we feel about the below? This is so we can still style the row as grey when a child element within is focused
+  // Maybe should have this for the other collection item render props
+  // Whether the tree item's children have keyboard focus.
+  isFocusVisibleWithin: boolean
 }
 
 export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRenderProps>, LinkDOMProps {
-  /** The unique id of the tree row. */
+  /** The unique id of the tree item. */
   id?: Key,
-  /** The object value that this tree row represents. When using dynamic collections, this is set automatically. */
+  /** The object value that this tree item represents. When using dynamic collections, this is set automatically. */
   value?: T,
-  /** A string representation of the tree row's contents, used for features like typeahead. */
+  /** A string representation of the tree item's contents, used for features like typeahead. */
   textValue: string,
-  /** An accessibility label for this tree row. */
+  /** An accessibility label for this tree item. */
   'aria-label'?: string,
-  /** A list of child tree row objects used when dynamically rendering the tree row children. */
+  /** A list of child tree row objects used when dynamically rendering the tree item children. */
   childItems?: Iterable<T>,
   // TODO: made this required since the user needs to pass Content at least
-  /** The content of the tree row along with any nested children. Supports static items or a function for dynamic rendering. */
+  /** The content of the tree item along with any nested children. Supports static items or a function for dynamic rendering. */
   children: ReactNode | ((item: T) => ReactElement)
 }
 
@@ -353,6 +357,10 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   });
 
   let {isFocusVisible, focusProps} = useFocusRing();
+  let {
+    isFocusVisible: isFocusVisibleWithin,
+    focusProps: focusWithinProps
+  } = useFocusRing({within: true});
   let {checkboxProps} = useGridListSelectionCheckbox(
     {key: item.key},
     state
@@ -367,8 +375,9 @@ function TreeRow<T>({item}: {item: Node<T>}) {
     hasChildRows,
     level,
     selectionMode: state.selectionManager.selectionMode,
-    selectionBehavior: state.selectionManager.selectionBehavior
-  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level]);
+    selectionBehavior: state.selectionManager.selectionBehavior,
+    isFocusVisibleWithin
+  }), [states, isHovered, isFocusVisible, state.selectionManager, isExpanded, hasChildRows, level, isFocusVisibleWithin]);
 
   let renderProps = useRenderProps({
     ...props,
@@ -389,6 +398,11 @@ function TreeRow<T>({item}: {item: Node<T>}) {
     onPress: () => {
       if (!states.isDisabled) {
         state.toggleKey(item.key);
+
+        if (!isFocusVisible) {
+          state.selectionManager.setFocused(true);
+          state.selectionManager.setFocusedKey(item.key);
+        }
       }
     },
     'aria-label': isExpanded ? stringFormatter.format('collapse') : stringFormatter.format('expand'),
@@ -427,7 +441,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   return (
     <>
       <div
-        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps)}
+        {...mergeProps(filterDOMProps(props as any), rowProps, focusProps, hoverProps, focusWithinProps)}
         {...renderProps}
         ref={ref}
         // TODO: missing selectionBehavior, hasAction and allowsSelection data attribute equivalents (available in renderProps). Do we want those?

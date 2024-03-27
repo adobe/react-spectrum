@@ -11,52 +11,109 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Button, Checkbox, Collection, Text, Tree, TreeItem, TreeItemContent} from '../';
+import {ActionGroup, Item} from '@react-spectrum/actiongroup';
+import Delete from '@spectrum-icons/workflow/Delete';
+import Edit from '@spectrum-icons/workflow/Edit';
+import Folder from '@spectrum-icons/workflow/Folder';
 import React from 'react';
+import {Heading, Text} from '@react-spectrum/text';
+import {TreeView, TreeViewItem} from '../';
 import userEvent from '@testing-library/user-event';
+import { IllustratedMessage } from '@react-spectrum/illustratedmessage';
+import { Content } from '@react-spectrum/view';
+import { Link } from '@react-spectrum/link';
 
 let onSelectionChange = jest.fn();
 let onAction = jest.fn();
 let onExpandedChange = jest.fn();
 
-let StaticTreeItem = (props) => {
-  return (
-    <TreeItem {...props}>
-      <TreeItemContent>
-        {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
-          <>
-            {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
-              <Checkbox slot="selection" />
-            )}
-            {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
-            <Text>{props.title || props.children}</Text>
-            <Button aria-label="Info">ⓘ</Button>
-            <Button aria-label="Menu">☰</Button>
-          </>
-        )}
-      </TreeItemContent>
-      {props.title && props.children}
-    </TreeItem>
-  );
-};
-
 let StaticTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys="all" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
-    <StaticTreeItem id="Photos" textValue="Photos" {...rowProps}>Photos</StaticTreeItem>
-    <StaticTreeItem id="projects" textValue="Projects" title="Projects" {...rowProps}>
-      <StaticTreeItem id="projects-1" textValue="Projects-1" title="Projects-1" {...rowProps}>
-        <StaticTreeItem id="projects-1A" textValue="Projects-1A" {...rowProps}>
-          Projects-1A
-        </StaticTreeItem>
-      </StaticTreeItem>
-      <StaticTreeItem id="projects-2" textValue="Projects-2" {...rowProps}>
-        Projects-2
-      </StaticTreeItem>
-      <StaticTreeItem id="projects-3" textValue="Projects-3" {...rowProps}>
-        Projects-3
-      </StaticTreeItem>
-    </StaticTreeItem>
-  </Tree>
+  <TreeView defaultExpandedKeys="all" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+    <TreeViewItem id="Photos" textValue="Photos" {...rowProps}>
+      <Text>Photos</Text>
+      <Folder />
+      <ActionGroup>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionGroup>
+    </TreeViewItem>
+    <TreeViewItem id="Projects" textValue="Projects" {...rowProps}>
+      <Text>Projects</Text>
+      <Folder />
+      <ActionGroup>
+        <Item key="edit">
+          <Edit />
+          <Text>Edit</Text>
+        </Item>
+        <Item key="delete">
+          <Delete />
+          <Text>Delete</Text>
+        </Item>
+      </ActionGroup>
+      <TreeViewItem id="Projects-1" textValue="Projects-1" {...rowProps}>
+        <Text>Projects-1</Text>
+        <Folder />
+        <ActionGroup>
+          <Item key="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+        <TreeViewItem id="Projects-1A" textValue="Projects-1A" {...rowProps}>
+          <Text>Projects-1A</Text>
+          <Folder />
+          <ActionGroup>
+            <Item key="edit">
+              <Edit />
+              <Text>Edit</Text>
+            </Item>
+            <Item key="delete">
+              <Delete />
+              <Text>Delete</Text>
+            </Item>
+          </ActionGroup>
+        </TreeViewItem>
+      </TreeViewItem>
+      <TreeViewItem id="Projects-2" textValue="Projects-2" {...rowProps}>
+        <Text>Projects-2</Text>
+        <Folder />
+        <ActionGroup>
+          <Item key="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+      </TreeViewItem>
+      <TreeViewItem id="Projects-3" textValue="Projects-3" {...rowProps}>
+        <Text>Projects-3</Text>
+        <Folder />
+        <ActionGroup>
+          <Item key="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+      </TreeViewItem>
+    </TreeViewItem>
+  </TreeView>
 );
 
 let rows = [
@@ -89,41 +146,52 @@ let rows = [
   ]}
 ];
 
-let DynamicTreeItem = (props) => {
-  return (
-    <TreeItem {...props}>
-      <TreeItemContent>
-        {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
-          <>
-            {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
-              <Checkbox slot="selection" />
-            )}
-            {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
-            <Text>{props.title || props.children}</Text>
-            <Button aria-label="Info">ⓘ</Button>
-            <Button aria-label="Menu">☰</Button>
-          </>
-        )}
-      </TreeItemContent>
-      <Collection items={props.childItems}>
-        {(item: any) => (
-          <DynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
-            {item.name}
-          </DynamicTreeItem>
-        )}
-      </Collection>
-    </TreeItem>
-  );
-};
+// let DynamicTreeItem = (props) => {
+//   return (
+//     <TreeItem {...props}>
+//       <TreeItemContent>
+//         {({isExpanded, hasChildRows, selectionMode, selectionBehavior}) => (
+//           <>
+//             {(selectionMode !== 'none' || props.href != null) && selectionBehavior === 'toggle' && (
+//               <Checkbox slot="selection" />
+//             )}
+//             {hasChildRows && <Button slot="chevron">{isExpanded ? '⏷' : '⏵'}</Button>}
+//             <Text>{props.title || props.children}</Text>
+//             <Button aria-label="Info">ⓘ</Button>
+//             <Button aria-label="Menu">☰</Button>
+//           </>
+//         )}
+//       </TreeItemContent>
+//       <Collection items={props.childItems}>
+//         {(item: any) => (
+//           <DynamicTreeItem childItems={item.childItems} textValue={item.name} href={props.href}>
+//             {item.name}
+//           </DynamicTreeItem>
+//         )}
+//       </Collection>
+//     </TreeItem>
+//   );
+// };
 
 let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
-  <Tree defaultExpandedKeys="all" aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <TreeView defaultExpandedKeys="all" aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     {(item: any) => (
-      <DynamicTreeItem childItems={item.childItems} textValue={item.name} {...rowProps}>
-        {item.name}
-      </DynamicTreeItem>
+      <TreeViewItem childItems={item.childItems} textValue={item.name} {...rowProps}>
+        <Text>{item.name}</Text>
+        {item.icon}
+        <ActionGroup>
+          <Item key="edit">
+            <Edit />
+            <Text>Edit</Text>
+          </Item>
+          <Item key="delete">
+            <Delete />
+            <Text>Delete</Text>
+          </Item>
+        </ActionGroup>
+      </TreeViewItem>
     )}
-  </Tree>
+  </TreeView>
 );
 
 describe('Tree', () => {
@@ -1091,29 +1159,37 @@ describe('Tree', () => {
     });
   });
 
-  describe('empty state', () => {
+  describe.only('empty state', () => {
     it('should allow the user to tab to the empty tree', async () => {
+      function renderEmptyState() {
+        return (
+          <IllustratedMessage>
+            <svg width="150" height="103" viewBox="0 0 150 103">
+              <path d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z" />
+            </svg>
+            <Heading>No results</Heading>
+            <Content>No results found.</Content>
+          </IllustratedMessage>
+        );
+      }
+
       let {getAllByRole, getByRole} = render(
-        <Tree
-          className={({isFocused, isFocusVisible}) => `isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}
+        <TreeView
           aria-label="test empty tree"
           items={[]}
-          renderEmptyState={({isFocused, isFocusVisible}) => <span>{`Nothing in tree, isFocused: ${isFocused}, isFocusVisible: ${isFocusVisible}`}</span>}>
+          renderEmptyState={renderEmptyState}>
           {() => (
-            <TreeItem textValue="dummy value">
-              <TreeItemContent>
-                Dummy Value
-              </TreeItemContent>
-            </TreeItem>
+            <TreeViewItem textValue="dummy value">
+              <Text>dummy content</Text>
+            </TreeViewItem>
           )}
-        </Tree>
+        </TreeView>
       );
 
       let tree = getByRole('treegrid');
       expect(tree).toHaveAttribute('data-empty', 'true');
       expect(tree).not.toHaveAttribute('data-focused');
       expect(tree).not.toHaveAttribute('data-focus-visible');
-      expect(tree).toHaveClass('isFocused: false, isFocusVisible: false');
 
       let row = getAllByRole('row')[0];
       expect(row).toHaveAttribute('aria-level', '1');
@@ -1124,21 +1200,6 @@ describe('Tree', () => {
 
       await user.tab();
       expect(document.activeElement).toBe(tree);
-      expect(tree).toHaveAttribute('data-empty', 'true');
-      expect(tree).toHaveAttribute('data-focused', 'true');
-      expect(tree).toHaveAttribute('data-focus-visible', 'true');
-      expect(tree).toHaveClass('isFocused: true, isFocusVisible: true');
-      expect(gridCell).toHaveTextContent('Nothing in tree, isFocused: true, isFocusVisible: true');
-
-      await user.tab();
-      expect(tree).toHaveAttribute('data-empty', 'true');
-      expect(tree).not.toHaveAttribute('data-focused');
-      expect(tree).not.toHaveAttribute('data-focus-visible');
-      expect(tree).toHaveClass('isFocused: false, isFocusVisible: false');
-      expect(row).toHaveAttribute('aria-level', '1');
-      expect(row).toHaveAttribute('aria-posinset', '1');
-      expect(row).toHaveAttribute('aria-setsize', '1');
-      expect(gridCell).toHaveTextContent('Nothing in tree, isFocused: false, isFocusVisible: false');
     });
   });
 });

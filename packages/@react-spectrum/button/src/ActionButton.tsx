@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {classNames, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
+import {classNames, ClearSlots, SlotProvider, useFocusableRef, useSlotProps, useStyleProps} from '@react-spectrum/utils';
 import CornerTriangle from '@spectrum-icons/ui/CornerTriangle';
 import {FocusableRef} from '@react-types/shared';
 import {FocusRing} from '@react-aria/focus';
@@ -26,6 +26,8 @@ import {useProviderProps} from '@react-spectrum/provider';
 function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLButtonElement>) {
   props = useProviderProps(props);
   props = useSlotProps(props, 'actionButton');
+  let textProps = useSlotProps({UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')}, 'text');
+
   let {
     isQuiet,
     isDisabled,
@@ -34,6 +36,8 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
     autoFocus,
     // @ts-ignore (private)
     holdAffordance,
+    // @ts-ignore (private)
+    hideButtonText,
     ...otherProps
   } = props;
 
@@ -68,20 +72,28 @@ function ActionButton(props: SpectrumActionButtonProps, ref: FocusableRef<HTMLBu
         {holdAffordance &&
           <CornerTriangle UNSAFE_className={classNames(styles, 'spectrum-ActionButton-hold')} />
         }
-        <SlotProvider
-          slots={{
-            icon: {
-              size: 'S',
-              UNSAFE_className: classNames(styles, 'spectrum-Icon')
-            },
-            text: {
-              UNSAFE_className: classNames(styles, 'spectrum-ActionButton-label')
-            }
-          }}>
-          {typeof children === 'string' || isTextOnly
-            ? <Text>{children}</Text>
-            : children}
-        </SlotProvider>
+        <ClearSlots>
+          <SlotProvider
+            slots={{
+              icon: {
+                size: 'S',
+                UNSAFE_className: classNames(
+                  styles,
+                  'spectrum-Icon',
+                  {
+                    'spectrum-ActionGroup-itemIcon': hideButtonText
+                  }
+                )
+              },
+              text: {
+                ...textProps
+              }
+            }}>
+            {typeof children === 'string' || isTextOnly
+              ? <Text>{children}</Text>
+              : children}
+          </SlotProvider>
+        </ClearSlots>
       </button>
     </FocusRing>
   );

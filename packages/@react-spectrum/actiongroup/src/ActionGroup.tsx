@@ -308,13 +308,12 @@ function ActionGroupItem<T>({item, state, isDisabled, isEmphasized, staticColor,
             text: {
               id: hideButtonText ? textId : null,
               isHidden: hideButtonText
-            },
-            icon: {
-              UNSAFE_className: hideButtonText ? classNames(styles, 'spectrum-ActionGroup-itemIcon') : null
             }
           }}>
           <ActionButton
             ref={ref}
+            // @ts-ignore (private)
+            hideButtonText={hideButtonText}
             UNSAFE_className={
               classNames(
                 styles,

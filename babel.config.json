@@ -4,7 +4,8 @@
     "@babel/preset-react",
     ["@babel/preset-env",
       {
-        "loose": true
+        "loose": true,
+        "shippedProposals": true
       }
     ]
   ],
