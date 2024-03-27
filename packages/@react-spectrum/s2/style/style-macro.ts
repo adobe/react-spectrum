@@ -199,6 +199,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
     // Generate JS and CSS for each rule.
     let isStatic = !(hasConditions || allowedOverrides);
     let className = '';
+    let rulesByLayer = new Map<string, string[]>();
     for (let [property, propertyRules] of rules) {
       if (isStatic) {
         className += getStaticClassName(propertyRules);
@@ -215,8 +216,14 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         }
       }
       for (let rule of propertyRules) {
-        css += printRule(rule) + '\n\n';
+        printRule(rule, rulesByLayer);
       }
+    }
+
+    for (let [layer, rules] of rulesByLayer) {
+      css += `@layer ${layer} {\n`;
+      css += rules.join('\n\n');
+      css += '}\n\n';
     }
 
     if (typeof this?.addAsset === 'function') {
@@ -275,7 +282,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
         // The @layer order in the generated CSS will ensure that it overrides classes applied by runtime conditions.
         let isCSSCondition = condition in theme.conditions || /^[@:]/.test(condition);
         if (!wasCSSCondition && isCSSCondition && rules.length) {
-          rules = [{prelude: '', condition: '', body: rules}];
+          rules = [{prelude: '', condition: '', layer: '', body: rules}];
         }
         wasCSSCondition = isCSSCondition;
 
@@ -312,7 +319,7 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
   function compileCondition(conditions: Set<string>, condition: string, priority: number, rules: Rule[]): Rule[] {
     if (condition === 'default' || conditions.has(condition)) {
-      return [{prelude: '', condition: '', body: rules}];
+      return [{prelude: '', condition: '', layer: '', body: rules}];
     }
 
     if (condition in theme.conditions || /^[@:]/.test(condition)) {
@@ -320,7 +327,8 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       let prelude = theme.conditions[condition] || condition;
       if (prelude.startsWith(':')) {
         return [{
-          prelude: `@layer ${generateName(priority, true)}`,
+          prelude: '',
+          layer: generateName(priority, true),
           body: rules.map(rule => nestRule(rule, prelude)),
           condition: ''
         }];
@@ -330,14 +338,15 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
       return [{
         // Top level layer is based on the priority of the rule, not the condition.
         // Also group in a sub-layer based on the condition so that lightningcss can more effectively deduplicate rules.
-        prelude: `@layer ${generateName(priority, true)}.${themeConditionMap.get(condition) || generateArbitraryValueSelector(condition, true)}`,
-        body: [{prelude, body: rules, condition: ''}],
+        layer: `${generateName(priority, true)}.${themeConditionMap.get(condition) || generateArbitraryValueSelector(condition, true)}`,
+        prelude,
+        body: rules,
         condition: ''
       }];
     }
 
     hasConditions = true;
-    return [{prelude: '', condition, body: rules}];
+    return [{prelude: '', layer: '', condition, body: rules}];
   }
 
   function compileRule(property: string, themeProperty: string, value: Value, priority: number, conditions: Set<string>, skipConditions: Set<string>): [number, Rule[]] {
@@ -385,17 +394,10 @@ export function createTheme<T extends Theme>(theme: T): StyleFunction<ThemePrope
 
         let rules: Rule[] = [{
           condition: '',
+          layer: '',
           prelude: selector + p,
           body
         }];
-
-        if (conditions.size === 0) {
-          rules = [{
-            prelude: '@layer a',
-            body: rules,
-            condition: ''
-          }];
-        }
 
         return [0, rules];
       });
@@ -409,12 +411,14 @@ function nestRule(rule: Rule, prelude: string): Rule {
   if (Array.isArray(rule.body)) {
     return {
       prelude: rule.prelude,
+      layer: rule.layer,
       body: rule.body.map(r => nestRule(r, prelude)),
       condition: rule.condition
     };
   } else {
     return {
       prelude: rule.prelude,
+      layer: rule.layer,
       body: [{...rule, prelude: '&' + prelude}],
       condition: ''
     };
@@ -430,6 +434,7 @@ function kebab(property: string) {
 
 interface Rule {
   prelude: string,
+  layer: string,
   condition: string,
   body: string | Rule[]
 }
@@ -476,14 +481,38 @@ function hash(v: string) {
   return hash;
 }
 
-function printRule(rule: Rule, indent = ''): string {
-  if (!rule.prelude && typeof rule.body !== 'string') {
-    return rule.body.map(b => printRule(b, indent)).join('\n\n');
+function printRule(rule: Rule, rulesByLayer: Map<string, string[]>, preludes: string[] = [], layer = 'a') {
+  if (rule.prelude) {
+    preludes.push(rule.prelude);
   }
 
-  return `${indent}${rule.prelude} {
-${typeof rule.body === 'string' ? indent + '  ' + rule.body : rule.body.map(b => printRule(b, indent + '  ')).join('\n\n')}
-${indent}}`;
+  if (typeof rule.body === 'string') {
+    // Nest rule in our stack of preludes (e.g. media queries/selectors).
+    let content = '  ';
+    preludes.forEach((p, i) => {
+      content += `${p} {\n${' '.repeat((i + 2) * 2)}`;
+    });
+    content += rule.body + '\n';
+    preludes.map((_, i) => {
+      content += `${' '.repeat((preludes.length - i) * 2)}}\n`;
+    });
+
+    // Group rule into the appropriate layer.
+    let rules = rulesByLayer.get(rule.layer || layer);
+    if (!rules) {
+      rules = [];
+      rulesByLayer.set(rule.layer || layer, rules);
+    }
+    rules.push(content);
+  } else {
+    for (let b of rule.body) {
+      printRule(b, rulesByLayer, preludes, rule.layer || layer);
+    }
+  }
+
+  if (rule.prelude) {
+    preludes.pop();
+  }
 }
 
 function printJS(rules: Rule[], indent = ''): string {
