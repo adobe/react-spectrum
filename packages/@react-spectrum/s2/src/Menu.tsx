@@ -314,8 +314,8 @@ function Menu<T extends object>(props: MenuProps<T>, ref: DOMRef<HTMLDivElement>
       // For submenus, the offset from the edge of the popover should be 10px.
       // Subtract 8px for the padding around the parent menu.
       offset={isSubmenu ? -2 : 8}
-      // Offset by padding so that the first item in a submenu lines up with the parent menu item.
-      crossOffset={isSubmenu ? -8 : 0}
+      // Offset by padding + border so that the first item in a submenu lines up with the parent menu item.
+      crossOffset={isSubmenu ? -9 : 0}
       UNSAFE_style={UNSAFE_style}
       UNSAFE_className={UNSAFE_className}
       styles={styles}>
