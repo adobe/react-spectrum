@@ -30,7 +30,7 @@ export const Example = (args: any) => (
       {({close}) => (
         <>
           <Image slot="hero" src="https://i.imgur.com/Z7AzH2c.png" alt="Sky over roof" />
-          <Heading slot="title">{args.title}</Heading>
+          <Heading slot="title">Dialog title</Heading>
           <Header>Header</Header>
           <Content>
             {[...Array(args.paragraphs)].map((_, i) =>
@@ -47,6 +47,7 @@ export const Example = (args: any) => (
     </Dialog>
   </DialogTrigger>
 );
+
 Example.parameters = {
   docs: {
     source: {
@@ -92,6 +93,7 @@ DialogTriggerExample.args = {
   paragraphs: 1,
   title: 'Dialog title'
 };
+
 DialogTriggerExample.parameters = {
   docs: {
     disable: true
