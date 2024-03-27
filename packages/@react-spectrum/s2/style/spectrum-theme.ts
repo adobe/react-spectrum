@@ -685,11 +685,14 @@ export const style = createTheme({
 
     // effects
     boxShadow: {
-      'elevated-light': '0px 0px 3px 0px rgba(0, 0, 0, 0.12), 0px 3px 8px 0px rgba(0, 0, 0, 0.04), 0px 4px 16px 0px rgba(0, 0, 0, 0.08)',
+      emphasized: '0px 1px 6px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.36))',
+      elevated: '0px 2px 8px light-dark(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.48))',
       none: 'none'
     },
     filter: {
-      'elevated-light': 'drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.12)) drop-shadow(0px 3px 8px rgba(0, 0, 0, 0.04)) drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.08))'
+      emphasized: 'drop-shadow(0px 1px 6px light-dark(rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.36)))',
+      elevated: 'drop-shadow(0px 2px 8px light-dark(rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.48)))',
+      none: 'none'
     },
     borderTopStartRadius: createMappedProperty(value => ({borderStartStartRadius: value}), radius),
     borderTopEndRadius: createMappedProperty(value => ({borderStartEndRadius: value}), radius),

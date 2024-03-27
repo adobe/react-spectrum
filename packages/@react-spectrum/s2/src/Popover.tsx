@@ -77,11 +77,19 @@ let popover = style({
   },
   backgroundColor: '--popoverBackground',
   borderRadius: 'lg',
-  filter: 'elevated-light',
-  borderStyle: {
-    forcedColors: 'solid'
+  filter: {
+    isArrowShown: 'elevated'
   },
+  // Use box-shadow instead of filter when an arrow is not shown.
+  // This fixes the shadow stacking problem with submenus.
+  boxShadow: {
+    default: 'elevated',
+    isArrowShown: 'none'
+  },
+  borderStyle: 'solid',
+  borderWidth: 1,
   borderColor: {
+    default: 'gray-200',
     forcedColors: 'ButtonBorder'
   },
   width: {
@@ -165,6 +173,11 @@ let arrow = style({
       left: -4,
       right: 4
     }
+  },
+  strokeWidth: 1,
+  stroke: {
+    default: 'gray-200',
+    forcedColors: 'ButtonBorder'
   }
 });
 
@@ -201,8 +214,8 @@ function Popover(props: PopoverProps, ref: DOMRef<HTMLDivElement>) {
         <>
           {!hideArrow && (
             <OverlayArrow>
-              <svg width={16} height={8} viewBox="0 0 16 8" className={arrow(renderProps)}>
-                <path d="M0 0L6.93799 7.52588C7.07224 7.67448 7.23607 7.79362 7.41895 7.87524C7.60182 7.95687 7.79973 7.9993 8 8C8.19984 7.99882 8.39724 7.95606 8.57959 7.87427C8.76194 7.79248 8.9253 7.67336 9.05908 7.5249L16 0L0 0Z" />
+              <svg width={18} height={9} viewBox="0 0 18 10" className={arrow(renderProps)}>
+                <path transform="translate(0 -1)" d="M1 1L7.93799 8.52588C8.07224 8.67448 8.23607 8.79362 8.41895 8.87524C8.60182 8.95687 8.79973 8.9993 9 9C9.19984 8.99882 9.39724 8.95606 9.57959 8.87427C9.76193 8.79248 9.9253 8.67336 10.0591 8.5249L17 1" />
               </svg>
             </OverlayArrow>
           )}
