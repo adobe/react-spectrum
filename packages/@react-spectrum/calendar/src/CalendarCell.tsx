@@ -27,7 +27,7 @@ interface CalendarCellProps extends AriaCalendarCellProps {
 }
 
 export function CalendarCell({state, currentMonth, ...props}: CalendarCellProps) {
-  let ref = useRef<HTMLElement>();
+  let ref = useRef<HTMLElement>(null);
   let {
     cellProps,
     buttonProps,

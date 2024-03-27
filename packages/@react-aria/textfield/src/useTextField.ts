@@ -81,7 +81,7 @@ export interface AriaTextFieldOptions<T extends TextFieldIntrinsicElements> exte
    */
   inputElementType?: T,
   /**
-   * Controls whether inputted text is automatically capitalized and, if so, in what manner. 
+   * Controls whether inputted text is automatically capitalized and, if so, in what manner.
    * See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autocapitalize).
    */
   autoCapitalize?: 'off' | 'none' | 'on' | 'sentences' | 'words' | 'characters'
@@ -166,7 +166,7 @@ export function useTextField<T extends TextFieldIntrinsicElements = DefaultEleme
     labelProps,
     inputProps: mergeProps(
       domProps,
-      inputElementType === 'input' && inputOnlyProps,
+      inputElementType === 'input' ? inputOnlyProps : undefined,
       {
         disabled: isDisabled,
         readOnly: isReadOnly,
