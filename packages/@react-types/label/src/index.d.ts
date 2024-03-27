@@ -11,7 +11,7 @@
  */
 
 import {Alignment, DOMProps, LabelPosition, NecessityIndicator, SpectrumFieldValidation, SpectrumHelpTextProps, StyleProps, Validation, ValidationResult} from '@react-types/shared';
-import {ElementType, HTMLAttributes, ReactElement, ReactNode} from 'react';
+import {ElementType, HTMLAttributes, LabelHTMLAttributes, ReactElement, ReactNode} from 'react';
 
 export interface LabelProps {
   children?: ReactNode,
@@ -34,7 +34,7 @@ export interface SpectrumFieldProps extends SpectrumLabelPropsBase, SpectrumHelp
   children: ReactElement,
   label?: ReactNode,
   contextualHelp?: ReactNode,
-  labelProps?: HTMLAttributes<HTMLElement>,
+  labelProps?: LabelHTMLAttributes<HTMLLabelElement>,
   descriptionProps?: HTMLAttributes<HTMLElement>,
   errorMessageProps?: HTMLAttributes<HTMLElement>,
   wrapperClassName?: string,
