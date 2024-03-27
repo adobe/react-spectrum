@@ -109,7 +109,8 @@ function CheckboxGroup(props: CheckboxGroupProps, ref: DOMRef<HTMLDivElement>) {
           size={size}
           isDisabled={isDisabled}
           isInvalid={isInvalid}
-          description={description}>
+          description={description}
+          showErrorIcon>
           {errorMessage}
         </HelpText>
       </>)}

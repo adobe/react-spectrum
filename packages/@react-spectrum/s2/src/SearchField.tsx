@@ -17,7 +17,7 @@ import {createFocusableRef} from '@react-spectrum/utils';
 import {IconContext} from './Icon';
 import {centerBaseline} from './CenterBaseline';
 
-export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children'>, StyleProps, SpectrumLabelableProps, HelpTextProps {
+export interface SearchFieldProps extends Omit<AriaSearchFieldProps, 'className' | 'style' | 'children'>, StyleProps, Omit<SpectrumLabelableProps, 'contextualHelp'>, HelpTextProps {
   /**
    * The size of the SearchField.
    *
