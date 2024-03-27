@@ -43,8 +43,20 @@ const preview = {
           return code;
         }
       }
+    },
+    darkMode: {
+      light: {
+        ...themes.light,
+        brandTitle: 'React Spectrum - Spectrum 2 Preview',
+        brandImage: new URL('raw:logo.svg', import.meta.url).toString()
+      },
+      dark: {
+        ...themes.dark,
+        brandTitle: 'React Spectrum - Spectrum 2 Preview',
+        brandImage: new URL('raw:logo-dark.svg', import.meta.url).toString()
+      }
     }
-  },
+  }
 };
 
 export const parameters = {

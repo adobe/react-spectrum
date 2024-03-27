@@ -5,6 +5,7 @@
     "{src,stories}/*.{js,mjs,jsm,jsx,es6,cjs,ts,tsx}": ["../parcel-transformer-react-docgen-typescript/ReactDocgenTSTransformer.ts", "..."],
     "s2wf-icons/assets/svg/*.svg": ["../plugins/IconTransformer.js"],
     "*.svg": ["@parcel/transformer-svg-react"],
-    "*.{md,mdx}": ["parcel-transformer-mdx"]
+    "*.{md,mdx}": ["parcel-transformer-mdx"],
+    "raw:*": ["@parcel/transformer-raw"]
   }
 }
