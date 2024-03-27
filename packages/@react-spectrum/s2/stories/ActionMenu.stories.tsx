@@ -45,3 +45,22 @@ export const DynamicExample: Story = {
     items
   }
 };
+
+DynamicExample.parameters = {
+  docs: {
+    source: {
+      transform: () => {
+        return `
+let items = [
+  {id: 'cut', label: 'Cut'},
+  {id: 'copy', label: 'Copy'},
+  {id: 'paste', label: 'Paste'}
+];
+
+<ActionMenu items={items}>
+  {(item) => <MenuItem id={item.id>{item.label}</MenuItem>}
+</ActionMenu>`;
+      }
+    }
+  }
+};
