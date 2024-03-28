@@ -137,7 +137,8 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       collection,
       collator,
       ref: listBoxRef,
-      disabledKeys: disabledBehavior === 'selection' ? new Set<Key>() : disabledKeys,
+      disabledKeys,
+      disabledBehavior,
       layout,
       orientation,
       direction
