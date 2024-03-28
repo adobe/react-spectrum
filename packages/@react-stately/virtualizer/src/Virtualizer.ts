@@ -656,7 +656,18 @@ export class Virtualizer<T extends object, V, W> {
   }
 
   getVisibleLayoutInfos() {
-    let rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();
+    let isTestEnv = process.env.NODE_ENV === 'test' && !process.env.VIRT_ON;
+
+    let isClientWidthMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientWidth');
+    let isClientHeightMocked = Object.getOwnPropertyNames(window.HTMLElement.prototype).includes('clientHeight');
+
+    let rect;
+    if (isTestEnv && !(isClientWidthMocked && isClientHeightMocked)) {
+      rect = this._getContentRect();
+    } else {
+      rect = this.shouldOverscan ? this._overscanManager.getOverscannedRect() : this.getVisibleRect();
+    }
+
     this._visibleLayoutInfos = this._getLayoutInfoMap(rect);
     return this._visibleLayoutInfos;
   }

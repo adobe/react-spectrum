@@ -258,4 +258,35 @@ describe('DateField', () => {
     expect(getDescription()).not.toContain('Constraints not satisfied');
     expect(group).not.toHaveAttribute('data-invalid');
   });
+
+  it('should focus previous segment when backspacing on an empty date segment', async () => {
+    let {getAllByRole} = render(
+      <DateField defaultValue={new CalendarDate(2024, 12, 31)}>
+        <Label>Birth date</Label>
+        <DateInput>
+          {segment => <DateSegment segment={segment} />}
+        </DateInput>
+      </DateField>
+    );
+  
+    let segments = getAllByRole('spinbutton');
+    await user.click(segments[2]);
+    expect(document.activeElement).toBe(segments[2]);
+
+    // Press backspace to delete '2024'
+    for (let i = 0; i < 4; i++) {
+      await user.keyboard('{backspace}');
+    }
+    expect(document.activeElement).toBe(segments[2]);
+    await user.keyboard('{backspace}');
+    expect(document.activeElement).toBe(segments[1]);
+
+    // Press backspace to delete '31'
+    for (let i = 0; i < 2; i++) {
+      await user.keyboard('{backspace}');
+    }
+    expect(document.activeElement).toBe(segments[1]);
+    await user.keyboard('{backspace}');
+    expect(document.activeElement).toBe(segments[0]);
+  });
 });

@@ -3,6 +3,57 @@ html {
   font-family: system-ui;
 }
 
+.tree {
+  display: block;
+  margin: 4px 0 0 0;
+  border: 1px solid gray;
+  background:white;
+  width: 300px;
+  height: 300px;
+  overflow: auto;
+}
+
+.tree-item {
+  padding: 4px 5px;
+  outline: none;
+  cursor: default;
+  color: black;
+  background: transparent;
+  display: flex;
+
+  .content-wrapper {
+    display: flex;
+    gap: 2px;
+  }
+
+  .button,
+  [slot=chevron] {
+    background-color: transparent;
+    border: none;
+    color: black;
+  }
+
+  [slot=chevron] {
+    width: 20px;
+    height: 20px;
+  }
+
+  &.focus-visible {
+    outline: 2px solid purple;
+    outline-offset: -2px;
+  }
+
+  &.hovered.hovered {
+    background: lightsalmon;
+    color: white;
+  }
+
+  &.selected {
+    background: lightseagreen;
+    color: white;
+  }
+}
+
 .menu {
   display: block;
   min-width: 150px;

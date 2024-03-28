@@ -162,6 +162,21 @@ describe('MenuTrigger', function () {
     verifyMenuToggle(Component, props, {}, (button) => triggerPress(button));
   });
 
+  it.each`
+    Name             | Component      | props
+    ${'MenuTrigger'} | ${MenuTrigger} | ${{onOpenChange}}
+  `('$Name will not close the menu when mousing over the trigger again without lifting press', function ({Component, props}) {
+    let tree = renderComponent(Component, props, {});
+    let triggerButton = tree.getByRole('button');
+    fireEvent.mouseEnter(triggerButton);
+    fireEvent.mouseDown(triggerButton, {detail: 1});
+    fireEvent.mouseLeave(triggerButton);
+    fireEvent.mouseEnter(triggerButton);
+    fireEvent.mouseUp(triggerButton, {detail: 1});
+
+    expect(onOpenChange).toBeCalledTimes(1);
+  });
+
   // Enter and Space keypress tests are ommitted since useMenuTrigger doesn't have space and enter cases in it's key down
   // since usePress handles those cases
 

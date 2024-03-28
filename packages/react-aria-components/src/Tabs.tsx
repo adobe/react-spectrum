@@ -295,6 +295,7 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
       ref={ref}
       data-selected={isSelected || undefined}
       data-disabled={isDisabled || undefined}
+      data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined} />

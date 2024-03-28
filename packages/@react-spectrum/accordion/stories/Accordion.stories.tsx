@@ -68,6 +68,24 @@ export const ControlledExpandedKeys: AccordionStory = {
   name: 'controlled ExpandedKeys'
 };
 
+export const WithInput: AccordionStory = {
+  args: {...Default.args, defaultExpandedKeys: ['step1']},
+  render: (args) => (
+    <Accordion {...args} >
+      <Item key="step1" title="Shipping" hasChildItems={false}>
+        <input type="text" />
+      </Item>
+      <Item key="step2" title="Billing" hasChildItems={false}>
+        <input type="text" />
+      </Item>
+      <Item key="step3" title="Payment" hasChildItems={false}>
+        <input type="text" />
+      </Item>
+    </Accordion>
+  ),
+  name: 'With input'
+};
+
 
 function ControlledAccordion<T>(props: SpectrumAccordionProps<T>) {
   let [openKeys, setOpenKeys] = useState<Set<Key>>(new Set(['files']));

@@ -78,6 +78,7 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
     isEntering,
     isExiting,
     UNSTABLE_portalContainer,
+    shouldCloseOnInteractOutside,
     ...otherProps
   } = props;
 
@@ -90,7 +91,8 @@ function Modal(props: ModalOverlayProps, ref: ForwardedRef<HTMLDivElement>) {
       onOpenChange={onOpenChange}
       isEntering={isEntering}
       isExiting={isExiting}
-      UNSTABLE_portalContainer={UNSTABLE_portalContainer}>
+      UNSTABLE_portalContainer={UNSTABLE_portalContainer}
+      shouldCloseOnInteractOutside={shouldCloseOnInteractOutside}>
       <ModalContent {...otherProps} modalRef={ref}>
         {children}
       </ModalContent>
