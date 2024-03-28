@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,7 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-/// <reference types="css-module-types" />
+import React from 'react';
+import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 
-export * from '@react-aria/test-utils';
-export * from './testSetup';
+export default {
+  title: 'S1 Style Macro'
+};
+
+export function Example() {
+  return (
+    <div className={style({backgroundColor: 'orange-500', color: 'black', fontSize: 'lg', paddingX: 8, paddingY: 4, borderRadius: 'default'})()}>
+      Test
+    </div>
+  );
+}

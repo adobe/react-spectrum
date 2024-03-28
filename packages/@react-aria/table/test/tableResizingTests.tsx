@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, installPointerEvent} from '@react-spectrum/test-utils-internal';
+import {act, installPointerEvent} from '@react-spectrum/test-utils';
 
 import React from 'react';
 

@@ -17,7 +17,7 @@ import Add from '@spectrum-icons/workflow/Add';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {ColumnSize} from '@react-types/table';
 import {ControllingResize} from '../stories/ControllingResize';
-import {fireEvent, installPointerEvent, pointerMap, simulateDesktop} from '@react-spectrum/test-utils-internal';
+import {fireEvent, installPointerEvent, pointerMap, triggerTouch} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Key} from '@react-types/shared';
 import {Provider} from '@react-spectrum/provider';
@@ -705,7 +705,7 @@ describe('TableViewSizing', function () {
       installPointerEvent();
 
       it('dragging the resizer works - desktop', () => {
-        simulateDesktop();
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
@@ -857,9 +857,9 @@ describe('TableViewSizing', function () {
     describe('touch', () => {
       installPointerEvent();
 
-      it('dragging the resizer works - desktop', async () => {
+      it('dragging the resizer works - desktop', () => {
         setInteractionModality('pointer');
-        simulateDesktop();
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
@@ -878,7 +878,7 @@ describe('TableViewSizing', function () {
           </TableView>
         );
 
-        await user.pointer({target: document.body, keys: '[TouchA]'});
+        triggerTouch(document.body);
         act(() => {jest.runAllTimers();});
 
         expect(tree.queryByRole('slider')).toBeNull();
@@ -894,12 +894,12 @@ describe('TableViewSizing', function () {
         let header = tree.getAllByRole('columnheader')[0];
         let resizableHeader = within(header).getByRole('button');
 
-        await user.pointer({target: resizableHeader, keys: '[TouchA]'});
+        triggerTouch(resizableHeader);
         act(() => {jest.runAllTimers();});
 
         let resizeMenuItem = tree.getAllByRole('menuitem')[0];
 
-        await user.pointer({target: resizeMenuItem, keys: '[TouchA]'});
+        triggerTouch(resizeMenuItem);
         act(() => {jest.runAllTimers();});
 
         expect(tree.getByRole('slider')).toBeVisible();
@@ -1030,7 +1030,7 @@ describe('TableViewSizing', function () {
 
     describe('keyboard', () => {
       it('arrow keys the resizer works - desktop', async () => {
-        simulateDesktop();
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
@@ -1218,7 +1218,7 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via Enter', async () => {
-        simulateDesktop();
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
@@ -1268,7 +1268,7 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via Tab', async () => {
-        simulateDesktop();
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>
@@ -1318,7 +1318,7 @@ describe('TableViewSizing', function () {
         expect(tree.queryByRole('slider')).toBeNull();
       });
       it('can exit resize via shift Tab', async () => {
-        simulateDesktop();
+        jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
         let onResizeEnd = jest.fn();
         let tree = render(
           <TableView aria-label="Table" onResizeEnd={onResizeEnd}>

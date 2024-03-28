@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render as render_, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render as render_, within} from '@react-spectrum/test-utils';
 import {Button} from '@react-spectrum/button';
 import {CalendarDate, CalendarDateTime, ZonedDateTime} from '@internationalized/date';
 import {DateField} from '../';
@@ -317,7 +317,8 @@ describe('DateField', function () {
       expect(onKeyDownSpy).not.toHaveBeenCalled();
       expect(onKeyUpSpy).toHaveBeenCalledTimes(1);
 
-      await user.keyboard('{ArrowRight}');
+      fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
+      fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
       expect(segments[1]).toHaveFocus();
       expect(onKeyDownSpy).toHaveBeenCalledTimes(1);
       expect(onKeyUpSpy).toHaveBeenCalledTimes(2);
@@ -348,17 +349,18 @@ describe('DateField', function () {
         );
       }
 
-      let {getByTestId, getByRole} = render(<Test />);
+      let {getByTestId, getByRole, getAllByRole} = render(<Test />);
       let group = getByRole('group');
       let input = document.querySelector('input[name=date]');
+      let segments = getAllByRole('spinbutton');
 
       let getDescription = () => group.getAttribute('aria-describedby').split(' ').map(d => document.getElementById(d).textContent).join(' ');
       expect(getDescription()).toBe('Selected Date: February 3, 2020');
 
       expect(input).toHaveValue('2020-02-03');
       expect(input).toHaveAttribute('name', 'date');
-      await user.tab();
-      await user.keyboard('{ArrowUp}');
+      fireEvent.keyDown(segments[0], {key: 'ArrowUp'});
+      fireEvent.keyUp(segments[0], {key: 'ArrowUp'});
       expect(getDescription()).toBe('Selected Date: March 3, 2020');
       expect(input).toHaveValue('2020-03-03');
 

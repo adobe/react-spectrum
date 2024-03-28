@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Item} from '@react-stately/collections';
-import {pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import React from 'react';
 import {useButton} from '@react-aria/button';
 import {useListState} from '@react-stately/list';
@@ -96,15 +96,17 @@ describe('useTagGroup', function () {
     expect(tags[3]).toHaveAttribute('aria-selected', 'true');
     expect(tags[4]).toHaveAttribute('aria-selected', 'false');
 
-    await user.keyboard('{Backspace}');
+    fireEvent.keyDown(tags[3], {key: 'Backspace'});
+    fireEvent.keyUp(tags[3], {key: 'Backspace'});
+
     expect(onRemove).toHaveBeenCalledTimes(1);
     expect(onRemove).toHaveBeenLastCalledWith(new Set(['parking', 'pool']));
 
-    await user.click(tags[0]);
-    await user.keyboard('{Backspace}');
+    fireEvent.keyDown(tags[0], {key: 'Backspace'});
+    fireEvent.keyUp(tags[0], {key: 'Backspace'});
 
     expect(onRemove).toHaveBeenCalledTimes(2);
-    expect(onRemove).toHaveBeenLastCalledWith(new Set(['laundry', 'parking', 'pool']));
+    expect(onRemove).toHaveBeenLastCalledWith(new Set(['laundry']));
 
     let button = within(tags[3]).getByRole('button');
     await user.click(button);

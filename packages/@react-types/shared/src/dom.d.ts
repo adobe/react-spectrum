@@ -182,6 +182,8 @@ export type RouterOptions = RouterConfig extends {routerOptions: infer O} ? O : 
 export interface LinkDOMProps {
   /** A URL to link to. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#href). */
   href?: Href,
+  /** Hints at the human language of the linked URL. See[MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#hreflang). */
+  hrefLang?: string,
   /** The target window for the link. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/a#target). */
   target?: HTMLAttributeAnchorTarget,
   /** The relationship between the linked resource and the current page. See [MDN](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel). */

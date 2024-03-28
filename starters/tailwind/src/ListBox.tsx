@@ -62,7 +62,14 @@ export const dropdownItemStyles = tv({
     isFocused: {
       true: 'bg-blue-600 text-white forced-colors:bg-[Highlight] forced-colors:text-[HighlightText]'
     }
-  }
+  },
+  compoundVariants: [
+    {
+      isFocused: false,
+      isOpen: true,
+      className: 'bg-gray-100 dark:bg-zinc-700/60'
+    }
+  ]
 });
 
 export function DropdownItem(props: ListBoxItemProps) {

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import React from 'react';
 import {Tab, TabList, TabPanel, Tabs} from '../';
 import {TabsExample} from '../stories/Tabs.stories';
@@ -141,6 +141,7 @@ describe('Tabs', () => {
     await user.tab();
     expect(document.activeElement).toBe(tab);
     expect(tab).toHaveAttribute('data-focus-visible', 'true');
+    expect(tab).toHaveAttribute('data-focused', 'true');
     expect(tab).toHaveClass('focus');
 
     await user.tab();

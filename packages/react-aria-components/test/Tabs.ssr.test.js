@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {screen, testSSR} from '@react-spectrum/test-utils-internal';
+import {screen, testSSR} from '@react-spectrum/test-utils';
 
 describe('Tabs SSR', function () {
   it('should render without errors', async function () {

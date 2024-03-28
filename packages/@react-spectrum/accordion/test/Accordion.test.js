@@ -11,7 +11,7 @@
  */
 
 import {Accordion, Item} from '../src';
-import {act, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -20,7 +20,7 @@ import userEvent from '@testing-library/user-event';
 let items = [
   {key: 'one', title: 'one title', children: 'one children'},
   {key: 'two', title: 'two title', children: 'two children'},
-  {key: 'three', title: 'three title', children: 'three children'}
+  {key: 'three', title: 'three title', children: <input type="text" />, hasChildItems: false}
 ];
 
 function renderComponent(props) {
@@ -28,7 +28,7 @@ function renderComponent(props) {
     <Provider theme={theme}>
       <Accordion {...props} defaultExpandedKeys={['one']} items={items}>
         {item => (
-          <Item key={item.key} title={item.title}>
+          <Item key={item.key} title={item.title} hasChildItems={item.hasChildItems}>
             {item.children}
           </Item>
         )}
@@ -74,7 +74,7 @@ describe('Accordion', function () {
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
   });
 
-  it('allows users to open and close accordion item with enter / space key', async function () {
+  it('allows users to open and close accordion item with enter / space key', function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let selectedItem = buttons[0];
@@ -82,29 +82,31 @@ describe('Accordion', function () {
     act(() => {selectedItem.focus();});
     expect(document.activeElement).toBe(selectedItem);
 
-    await user.keyboard('{Enter}');
+    fireEvent.keyDown(selectedItem, {key: 'Enter'});
+    fireEvent.keyUp(selectedItem, {key: 'Enter'});
     expect(selectedItem).toHaveAttribute('aria-expanded', 'false');
 
-    await user.keyboard('{Enter}');
+    fireEvent.keyDown(selectedItem, {key: 'Enter'});
+    fireEvent.keyUp(selectedItem, {key: 'Enter'});
     expect(selectedItem).toHaveAttribute('aria-expanded', 'true');
   });
 
-  it('allows users to naviagte accordion headers through arrow keys', async function () {
+  it('allows users to naviagte accordion headers through arrow keys', function () {
     let tree = renderComponent();
     let buttons = tree.getAllByRole('button');
     let [firstItem, secondItem, thirdItem] = buttons;
     act(() => {firstItem.focus();});
 
     expect(document.activeElement).toBe(firstItem);
-    await user.keyboard('{ArrowUp}');
+    fireEvent.keyDown(firstItem, {key: 'ArrowUp'});
     expect(document.activeElement).toBe(firstItem);
-    await user.keyboard('{ArrowDown}');
+    fireEvent.keyDown(firstItem, {key: 'ArrowDown'});
     expect(document.activeElement).toBe(secondItem);
-    await user.keyboard('{ArrowDown}');
+    fireEvent.keyDown(secondItem, {key: 'ArrowDown'});
     expect(document.activeElement).toBe(thirdItem);
-    await user.keyboard('{ArrowDown}');
+    fireEvent.keyDown(thirdItem, {key: 'ArrowDown'});
     expect(document.activeElement).toBe(thirdItem);
-    await user.keyboard('{ArrowUp}');
+    fireEvent.keyDown(thirdItem, {key: 'ArrowUp'});
     expect(document.activeElement).toBe(secondItem);
   });
 
@@ -128,5 +130,18 @@ describe('Accordion', function () {
     expect(document.activeElement).not.toBe(thirdItem);
     await user.tab({shift: true});
     expect(document.activeElement).toBe(thirdItem);
+  });
+
+  it('allows users to type inside accordion items', async function () {
+    let tree = renderComponent();
+    let buttons = tree.getAllByRole('button');
+    let itemWithInputHeader = buttons[2];
+    act(() => itemWithInputHeader.click());
+
+    let [input] = tree.getAllByRole('textbox');
+    act(() => input.focus());
+
+    await user.type(input, 'Type example');
+    expect(input.value).toEqual('Type example');
   });
 });

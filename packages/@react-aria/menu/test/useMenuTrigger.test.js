@@ -11,7 +11,7 @@
  */
 
 import React from 'react';
-import {renderHook} from '@react-spectrum/test-utils-internal';
+import {renderHook} from '@react-spectrum/test-utils';
 import {useMenuTrigger} from '../';
 
 describe('useMenuTrigger', function () {
@@ -28,9 +28,9 @@ describe('useMenuTrigger', function () {
   beforeEach(() => {
     state.isOpen = false;
     state.setOpen = setOpen;
-    state.toggle = (focusStrategy) => {
+    state.open = (focusStrategy) => {
       state.setFocusStrategy(focusStrategy);
-      state.setOpen(!state.isOpen);
+      state.setOpen(true);
     };
     state.focusStrategy = 'first';
     state.setFocusStrategy = setFocusStrategy;

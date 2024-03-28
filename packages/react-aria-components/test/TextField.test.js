@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render} from '@react-spectrum/test-utils-internal';
+import {act, pointerMap, render} from '@react-spectrum/test-utils';
 import {FieldError, Input, Label, Text, TextArea, TextField, TextFieldContext} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -108,6 +108,30 @@ describe('TextField', () => {
       await user.tab();
       expect(input).not.toHaveAttribute('data-focus-visible');
       expect(input).not.toHaveClass('focus');
+    });
+
+    it('should support read-only state', async () => {
+      let {getByRole, rerender} = render(
+        <TestTextField input={component} />
+      );
+
+      let input = getByRole('textbox');
+      
+      expect(input.closest('.react-aria-TextField')).not.toHaveAttribute('data-readonly');
+      rerender(<TestTextField input={component} isReadOnly />);
+      expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-readonly');
+    });
+
+    it('should support required state', async () => {
+      let {getByRole, rerender} = render(
+        <TestTextField input={component} />
+      );
+
+      let input = getByRole('textbox');
+      
+      expect(input.closest('.react-aria-TextField')).not.toHaveAttribute('data-required');
+      rerender(<TestTextField input={component} isRequired />);
+      expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-required');
     });
 
     it('should render data- attributes only on the outer element', () => {

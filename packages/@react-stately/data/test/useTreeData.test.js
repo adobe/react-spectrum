@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {actHook as act, renderHook} from '@react-spectrum/test-utils-internal';
+import {actHook as act, renderHook} from '@react-spectrum/test-utils';
 import React from 'react';
 import {useTreeData} from '../src/useTreeData';
 
@@ -640,6 +640,30 @@ describe('useTreeData', function () {
     let initialResult = result.current;
 
     act(() => {
+      result.current.move('Eli', null, 1);
+    });
+
+    expect(result.current.items).not.toEqual(initialResult.items);
+    expect(result.current.items).toHaveLength(initialResult.items.length);
+    expect(result.current.items[0]).toEqual(initialResult.items[0]);
+    expect(result.current.items[1].children).toEqual(initialResult.items[2].children);
+    expect(result.current.items[1].key).toEqual(initialResult.items[2].key);
+    expect(result.current.items[1].parentKey).toEqual(null);
+    expect(result.current.items[1].value).toEqual(initialResult.items[2].value);
+    expect(result.current.items[2]).toEqual(initialResult.items[1]);
+  });
+
+  it('should move an item multiple times within the root', function () {
+    const initialItems = [...initial, {name: 'Emily'}, {name: 'Eli'}];
+
+    let {result} = renderHook(() =>
+      useTreeData({initialItems, getChildren, getKey})
+    );
+    let initialResult = result.current;
+
+    act(() => {
+      result.current.move('Eli', null, 2);
+      result.current.move('Eli', null, 3);
       result.current.move('Eli', null, 1);
     });
 

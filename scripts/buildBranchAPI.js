@@ -104,8 +104,6 @@ async function build() {
   // does it in a different format
   fs.copySync(path.join(__dirname, '..', 'packages', 'dev'), path.join(dir, 'packages', 'dev'));
   fs.copySync(path.join(__dirname, '..', '.parcelrc'), path.join(dir, '.parcelrc'));
-  // Delete test-utils from copied packages since we don't expose anything from there
-  fs.removeSync(path.join(dir, 'packages', 'dev', 'test-utils'));
 
   // Only copy babel patch over
   let patches = fs.readdirSync(path.join(srcDir, 'patches'));
