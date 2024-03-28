@@ -1634,17 +1634,19 @@ describe('Picker', function () {
     });
 
     it('move selection on Arrow-Left/Right', async function () {
-      let {getByRole} = render(
+      let {getByRole, getByTestId} = render(
         <Provider theme={theme}>
           <Picker label="Test" onSelectionChange={onSelectionChange}>
             <Item key="one">One</Item>
             <Item key="two">Two</Item>
             <Item key="three">Three</Item>
           </Picker>
+          <div tabIndex={-1} data-testid="after" />
         </Provider>
       );
 
       let picker = getByRole('button');
+      let after = getByTestId('after');
       await user.tab();
       expect(picker).toHaveTextContent('Select an option…');
       await user.keyboard('{ArrowLeft}');
@@ -1654,26 +1656,50 @@ describe('Picker', function () {
       expect(picker).toHaveTextContent('One');
 
       await user.keyboard('{ArrowLeft}');
+      act(() => jest.runAllTimers());
       expect(picker).toHaveTextContent('One');
 
       await user.keyboard('{ArrowRight}');
+      act(() => jest.runAllTimers());
       expect(picker).toHaveTextContent('Two');
       expect(onSelectionChange).toHaveBeenCalledTimes(2);
 
       await user.keyboard('{ArrowRight}');
+      act(() => jest.runAllTimers());
       expect(picker).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
 
       await user.keyboard('{ArrowRight}');
+      act(() => jest.runAllTimers());
       expect(picker).toHaveTextContent('Three');
       expect(onSelectionChange).toHaveBeenCalledTimes(3);
 
       await user.keyboard('{ArrowLeft}');
+      act(() => jest.runAllTimers());
       expect(picker).toHaveTextContent('Two');
       expect(onSelectionChange).toHaveBeenCalledTimes(4);
 
       await user.keyboard('{ArrowLeft}');
+      act(() => jest.runAllTimers());
       expect(picker).toHaveTextContent('One');
+      expect(onSelectionChange).toHaveBeenCalledTimes(5);
+
+
+      await user.keyboard('{ArrowLeft}');
+      act(() => {
+        after.focus();
+        jest.runAllTimers();
+      });
+      expect(picker).toHaveTextContent('One', 'Picker value should not change if focus has moved elsewhere after ArrowLeft.');
+      expect(onSelectionChange).toHaveBeenCalledTimes(5);
+
+      act(() => picker.focus());
+      await user.keyboard('{ArrowRight}');
+      act(() => {
+        after.focus();
+        jest.runAllTimers();
+      });
+      expect(picker).toHaveTextContent('One', 'Picker value should not change if focus has moved elsewhere after ArrowRight.');
       expect(onSelectionChange).toHaveBeenCalledTimes(5);
     });
   });

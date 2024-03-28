@@ -31,6 +31,7 @@ import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Key, LoadingState} from '@react-types/shared';
 import {Link} from '@react-spectrum/link';
 import NoSearchResults from '@spectrum-icons/illustrations/NoSearchResults';
+import {Picker} from '@react-spectrum/picker';
 import {Radio, RadioGroup} from '@react-spectrum/radio';
 import React, {useCallback, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
@@ -448,6 +449,17 @@ export const FocusableCells: TableStory = {
           <Row>
             <Cell><Switch aria-label="Foo" /></Cell>
             <Cell><Link><a href="https://yahoo.com" target="_blank">Yahoo</a></Link></Cell>
+            <Cell>Three</Cell>
+          </Row>
+          <Row>
+            <Cell><Switch aria-label="Foo" /></Cell>
+            <Cell>
+              <Picker aria-label="Search engine" placeholder="Search with:" width={'100%'} isQuiet>
+                <Item key="Yahoo">Yahoo</Item>
+                <Item key="Google">Google</Item>
+                <Item key="DuckDuckGo">DuckDuckGo</Item>
+              </Picker>
+            </Cell>
             <Cell>Three</Cell>
           </Row>
         </TableBody>
@@ -927,7 +939,7 @@ function AsyncLoadingExample(props) {
       let url = new URL('https://www.reddit.com/r/upliftingnews.json');
       if (cursor) {
         url.searchParams.append('after', cursor);
-      }      
+      }
       let res = await fetch(url.toString(), {signal});
       let json = await res.json();
       return {items: json.data.children, cursor: json.data.after};
@@ -1076,14 +1088,14 @@ function AsyncLoadingExampleQuarryTest(props) {
       return {
         items: items.slice().sort((a, b) => {
           let cmp = a[sortDescriptor.column] < b[sortDescriptor.column] ? -1 : 1;
-    
+
           if (sortDescriptor.direction === 'descending') {
             cmp *= -1;
           }
-    
+
           return cmp;
         })
-        
+
       };
     }
   });
