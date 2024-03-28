@@ -11,7 +11,18 @@
  */
 
 import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {DropIndicator, Header, ListBox, ListBoxContext, ListBoxItem, Section, Text, useDragAndDrop} from '../';
+import {
+  Button, Dialog,
+  DialogTrigger,
+  DropIndicator,
+  Header, Heading,
+  ListBox,
+  ListBoxContext,
+  ListBoxItem, Modal,
+  Section,
+  Text,
+  useDragAndDrop
+} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -665,6 +676,51 @@ describe('ListBox', () => {
 
       keyPress('Escape');
       act(() => jest.runAllTimers());
+    });
+  });
+
+  describe('inside modals', () => {
+    it('should clear selection on first Escape, then allow the modal to close on the second Escape', async () => {
+      let onOpenChange = jest.fn();
+      let {getAllByRole, getByRole} = render(
+        <DialogTrigger onOpenChange={onOpenChange}>
+          <Button>Open Dialog</Button>
+          <Modal>
+            <Dialog>
+              <form>
+                <Heading slot="title">Sign up</Heading>
+                <ListBox aria-label="Test" selectionMode="multiple">
+                  <ListBoxItem id="cat">Cat</ListBoxItem>
+                  <ListBoxItem id="dog">Dog</ListBoxItem>
+                  <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+                </ListBox>
+              </form>
+            </Dialog>
+          </Modal>
+        </DialogTrigger>
+      );
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button'));
+      await user.keyboard('{Enter}');
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+
+      let options = getAllByRole('option');
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+      await user.keyboard('{Enter}');
+
+      expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+      keyPress('Escape');
+
+      expect(options[0]).toBeInTheDocument();
+      expect(options[0]).toHaveAttribute('aria-selected', 'false');
+
+      keyPress('Escape');
+      expect(options[0]).not.toBeInTheDocument();
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
     });
   });
 
