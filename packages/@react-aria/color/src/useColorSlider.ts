@@ -103,6 +103,12 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
 
   let forcedColorAdjustNoneStyle = {forcedColorAdjust: 'none'};
 
+  if (channel === 'hue') {
+    inputProps['aria-valuetext'] += `, ${state.value.getHueName(locale)}`;
+  } else if (channel !== 'alpha') {
+    inputProps['aria-valuetext'] += `, ${state.value.getColorName(locale)}`;
+  }
+
   return {
     trackProps: {
       ...mergeProps(groupProps, trackProps),

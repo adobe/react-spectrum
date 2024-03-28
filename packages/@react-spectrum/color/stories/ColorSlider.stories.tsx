@@ -92,8 +92,8 @@ export const ContextualHelpStory: ColorSliderStory = {
     channel: 'hue',
     contextualHelp: (
       <ContextualHelp>
-        <Heading>What is a segment?</Heading>
-        <Content>Segments identify who your visitors are, what devices and services they use, where they navigated from, and much more.</Content>
+        <Heading>What is Hue?</Heading>
+        <Content>Hue is a degree on the color wheel from 0 to 360. 0 (or 360) is red, 120 is green, 240 is blue.</Content>
       </ContextualHelp>
     )
   },
