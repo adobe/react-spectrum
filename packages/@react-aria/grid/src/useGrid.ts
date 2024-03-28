@@ -86,7 +86,8 @@ export function useGrid<T>(props: GridProps, state: GridState<T, GridCollection<
   let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new GridKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: disabledBehavior === 'selection' ? new Set() : state.disabledKeys,
+    disabledKeys: state.disabledKeys,
+    disabledBehavior,
     ref,
     direction,
     collator,

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {gridMap} from './utils';
@@ -52,14 +53,15 @@ export function useGridRow<T, C extends GridCollection<T>, S extends GridState<T
     onAction
   } = props;
 
-  let {actions: {onRowAction}} = gridMap.get(state);
+  let {actions} = gridMap.get(state);
+  let onRowAction = actions.onRowAction ? () => actions.onRowAction(node.key) : onAction;
   let {itemProps, ...states} = useSelectableItem({
     selectionManager: state.selectionManager,
     key: node.key,
     ref,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction: onRowAction ? () => onRowAction(node.key) : onAction,
+    onAction: onRowAction || node?.props?.onAction ? chain(node?.props?.onAction, onRowAction) : undefined,
     isDisabled: state.collection.size === 0
   });
 

@@ -282,7 +282,11 @@ export interface MenuItemProps<T = object> extends RenderProps<MenuItemRenderPro
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string,
   /** An accessibility label for this item. */
-  'aria-label'?: string
+  'aria-label'?: string,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /** Handler that is called when the item is selected. */
+  onAction?: () => void
 }
 
 function MenuItem<T extends object>(props: MenuItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {

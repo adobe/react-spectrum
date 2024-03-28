@@ -44,7 +44,9 @@ export interface TabListRenderProps {
 
 export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps {
   /** The unique id of the tab. */
-  id?: Key
+  id?: Key,
+  /** Whether the tab is disabled. */
+  isDisabled?: boolean
 }
 
 export interface TabRenderProps {

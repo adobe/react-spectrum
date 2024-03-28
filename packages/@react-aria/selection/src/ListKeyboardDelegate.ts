@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Collection, Direction, Key, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
+import {Collection, Direction, DisabledBehavior, Key, KeyboardDelegate, Node, Orientation} from '@react-types/shared';
 import {isScrollable} from '@react-aria/utils';
 import {RefObject} from 'react';
 
@@ -21,12 +21,14 @@ interface ListKeyboardDelegateOptions<T> {
   layout?: 'stack' | 'grid',
   orientation?: Orientation,
   direction?: Direction,
-  disabledKeys?: Set<Key>
+  disabledKeys?: Set<Key>,
+  disabledBehavior?: DisabledBehavior
 }
 
 export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   private collection: Collection<Node<T>>;
   private disabledKeys: Set<Key>;
+  private disabledBehavior: DisabledBehavior;
   private ref: RefObject<HTMLElement>;
   private collator: Intl.Collator | undefined;
   private layout: 'stack' | 'grid';
@@ -42,6 +44,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.ref = opts.ref;
       this.collator = opts.collator;
       this.disabledKeys = opts.disabledKeys || new Set();
+      this.disabledBehavior = opts.disabledBehavior || 'all';
       this.orientation = opts.orientation;
       this.direction = opts.direction;
       this.layout = opts.layout || 'stack';
@@ -52,6 +55,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
       this.collator = args[3];
       this.layout = 'stack';
       this.orientation = 'vertical';
+      this.disabledBehavior = 'all';
     }
 
     // If this is a vertical stack, remove the left/right methods completely
@@ -62,11 +66,15 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     }
   }
 
+  private isDisabled(item: Node<unknown>) {
+    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
+  }
+
   getNextKey(key: Key) {
     key = this.collection.getKeyAfter(key);
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item.type === 'item' && !this.isDisabled(item)) {
         return key;
       }
 
@@ -80,7 +88,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     key = this.collection.getKeyBefore(key);
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item.type === 'item' && !this.isDisabled(item)) {
         return key;
       }
 
@@ -170,7 +178,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let key = this.collection.getFirstKey();
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item?.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item?.type === 'item' && !this.isDisabled(item)) {
         return key;
       }
 
@@ -184,7 +192,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
     let key = this.collection.getLastKey();
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (item.type === 'item' && !this.disabledKeys.has(key)) {
+      if (item.type === 'item' && !this.isDisabled(item)) {
         return key;
       }
 

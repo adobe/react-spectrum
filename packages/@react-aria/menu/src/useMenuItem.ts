@@ -120,15 +120,25 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   } = props;
 
   let isTrigger = !!hasPopup;
-  let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
+  let isDisabled = props.isDisabled ?? state.selectionManager.isDisabled(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
   let data = menuData.get(state);
+  let item = state.collection.getItem(key);
   let onClose = props.onClose || data.onClose;
-  let onAction = isTrigger ? () => {} : props.onAction || data.onAction;
   let router = useRouter();
   let performAction = (e: PressEvent) => {
-    if (onAction) {
-      onAction(key);
+    if (isTrigger) {
+      return;
+    }
+
+    if (item?.props?.onAction) {
+      item.props.onAction();
+    }
+
+    if (props.onAction) {
+      props.onAction(key);
+    } else if (data.onAction) {
+      data.onAction(key);
     }
 
     if (e.target instanceof HTMLAnchorElement) {
@@ -164,7 +174,6 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     ariaProps['aria-checked'] = isSelected;
   }
 
-  let item = state.collection.getItem(key);
   if (isVirtualized) {
     ariaProps['aria-posinset'] = item?.index;
     ariaProps['aria-setsize'] = getItemCount(state.collection);

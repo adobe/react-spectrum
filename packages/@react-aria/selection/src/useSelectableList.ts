@@ -55,7 +55,13 @@ export function useSelectableList(props: AriaSelectableListOptions): SelectableL
   let collator = useCollator({usage: 'search', sensitivity: 'base'});
   let disabledBehavior = selectionManager.disabledBehavior;
   let delegate = useMemo(() => (
-    keyboardDelegate || new ListKeyboardDelegate(collection, disabledBehavior === 'selection' ? new Set() : disabledKeys, ref, collator)
+    keyboardDelegate || new ListKeyboardDelegate({
+      collection,
+      disabledKeys,
+      disabledBehavior,
+      ref,
+      collator
+    })
   ), [keyboardDelegate, collection, disabledKeys, ref, collator, disabledBehavior]);
 
   let {collectionProps} = useSelectableCollection({

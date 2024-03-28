@@ -211,6 +211,37 @@ describe('GridList', () => {
     expect(within(row).getByRole('checkbox')).toBeDisabled();
   });
 
+  it('should support isDisabled prop on items', async () => {
+    let {getAllByRole} = render(
+      <GridList aria-label="Test">
+        <GridListItem id="cat">Cat</GridListItem>
+        <GridListItem id="dog" isDisabled>Dog</GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+    let items = getAllByRole('row');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <GridList aria-label="Test">
+        <GridListItem id="cat" onAction={onAction}>Cat</GridListItem>
+        <GridListItem id="dog">Dog</GridListItem>
+        <GridListItem id="kangaroo">Kangaroo</GridListItem>
+      </GridList>
+    );
+    let items = getAllByRole('row');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support empty state', () => {
     render(
       <GridList aria-label="Test" renderEmptyState={() => 'No results'}>

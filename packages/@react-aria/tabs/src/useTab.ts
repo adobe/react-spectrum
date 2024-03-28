@@ -43,7 +43,7 @@ export function useTab<T>(
 
   let isSelected = key === selectedKey;
 
-  let isDisabled = propsDisabled || state.isDisabled || state.disabledKeys.has(key);
+  let isDisabled = propsDisabled || state.isDisabled || state.selectionManager.isDisabled(key);
   let {itemProps, isPressed} = useSelectableItem({
     selectionManager: manager,
     key,

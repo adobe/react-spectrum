@@ -408,6 +408,37 @@ describe('ListBox', () => {
     expect(option).toHaveClass('disabled');
   });
 
+  it('should support isDisabled prop on items', async () => {
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test">
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog" isDisabled>Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test">
+        <ListBoxItem id="cat" onAction={onAction}>Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support empty state', () => {
     let {getByRole} = render(
       <ListBox aria-label="Test" renderEmptyState={() => 'No results'}>

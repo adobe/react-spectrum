@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {Direction, Key, KeyboardDelegate, Node} from '@react-types/shared';
+import {Direction, DisabledBehavior, Key, KeyboardDelegate, Node} from '@react-types/shared';
 import {getChildNodes, getFirstItem, getLastItem, getNthItem} from '@react-stately/collections';
 import {GridCollection} from '@react-types/grid';
 import {Layout, Rect} from '@react-stately/virtualizer';
@@ -19,6 +19,7 @@ import {RefObject} from 'react';
 export interface GridKeyboardDelegateOptions<T, C> {
   collection: C,
   disabledKeys: Set<Key>,
+  disabledBehavior?: DisabledBehavior,
   ref?: RefObject<HTMLElement>,
   direction: Direction,
   collator?: Intl.Collator,
@@ -29,6 +30,7 @@ export interface GridKeyboardDelegateOptions<T, C> {
 export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements KeyboardDelegate {
   collection: C;
   protected disabledKeys: Set<Key>;
+  protected disabledBehavior: DisabledBehavior;
   protected ref: RefObject<HTMLElement>;
   protected direction: Direction;
   protected collator: Intl.Collator;
@@ -38,6 +40,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
   constructor(options: GridKeyboardDelegateOptions<T, C>) {
     this.collection = options.collection;
     this.disabledKeys = options.disabledKeys;
+    this.disabledBehavior = options.disabledBehavior || 'all';
     this.ref = options.ref;
     this.direction = options.direction;
     this.collator = options.collator;
@@ -53,6 +56,10 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
     return node.type === 'row' || node.type === 'item';
   }
 
+  private isDisabled(item: Node<unknown>) {
+    return this.disabledBehavior === 'all' && (item.props?.isDisabled || this.disabledKeys.has(item.key));
+  }
+
   protected findPreviousKey(fromKey?: Key, pred?: (item: Node<T>) => boolean) {
     let key = fromKey != null
       ? this.collection.getKeyBefore(fromKey)
@@ -60,7 +67,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (!this.disabledKeys.has(key) && (!pred || pred(item))) {
+      if (!this.isDisabled(item) && (!pred || pred(item))) {
         return key;
       }
 
@@ -75,7 +82,7 @@ export class GridKeyboardDelegate<T, C extends GridCollection<T>> implements Key
 
     while (key != null) {
       let item = this.collection.getItem(key);
-      if (!this.disabledKeys.has(key) && (!pred || pred(item))) {
+      if (!this.isDisabled(item) && (!pred || pred(item))) {
         return key;
       }
 

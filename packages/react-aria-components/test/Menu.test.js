@@ -271,6 +271,37 @@ describe('Menu', () => {
     expect(menuitem).toHaveClass('disabled');
   });
 
+  it('should support isDisabled prop on items', async () => {
+    let {getAllByRole} = render(
+      <Menu aria-label="Test">
+        <MenuItem id="cat">Cat</MenuItem>
+        <MenuItem id="dog" isDisabled>Dog</MenuItem>
+        <MenuItem id="kangaroo">Kangaroo</MenuItem>
+      </Menu>
+    );
+    let items = getAllByRole('menuitem');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <Menu aria-label="Test">
+        <MenuItem id="cat" onAction={onAction}>Cat</MenuItem>
+        <MenuItem id="dog">Dog</MenuItem>
+        <MenuItem id="kangaroo">Kangaroo</MenuItem>
+      </Menu>
+    );
+    let items = getAllByRole('menuitem');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support menu trigger', async () => {
     let onAction = jest.fn();
     let {getByRole, getAllByRole} = render(
