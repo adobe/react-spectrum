@@ -114,7 +114,7 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
       res = this.layoutInfos.get(key);
     }
 
-    return res;
+    return res!;
   }
 
   getVisibleLayoutInfos(rect: Rect) {
@@ -271,40 +271,21 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
         return this.buildSection(node, x, y);
       case 'item':
         return this.buildItem(node, x, y);
+      case 'header':
+        return this.buildHeader(node, x, y);
     }
   }
 
   buildSection(node: Node<T>, x: number, y: number): LayoutNode {
     let width = this.virtualizer.visibleRect.width;
-    let rectHeight = this.headingHeight;
-    let isEstimated = false;
-
-    // If no explicit height is available, use an estimated height.
-    if (rectHeight == null) {
-      // If a previous version of this layout info exists, reuse its height.
-      // Mark as estimated if the size of the overall collection view changed,
-      // or the content of the item changed.
-      let previousLayoutNode = this.layoutNodes.get(node.key);
-      if (previousLayoutNode && previousLayoutNode.header) {
-        let curNode = this.collection.getItem(node.key);
-        let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
-        rectHeight = previousLayoutNode.header.rect.height;
-        isEstimated = width !== this.lastWidth || curNode !== lastNode || previousLayoutNode.header.estimatedSize;
-      } else {
-        rectHeight = (node.rendered ? this.estimatedHeadingHeight : 0);
-        isEstimated = true;
-      }
+    let header = null;
+    if (node.rendered) {
+      let headerNode = this.buildHeader(node, x, y);
+      header = headerNode.layoutInfo;
+      header.key += ':header';
+      header.parentKey = node.key;
+      y += header.rect.height;
     }
-
-    if (rectHeight == null) {
-      rectHeight = DEFAULT_HEIGHT;
-    }
-
-    let headerRect = new Rect(0, y, width, rectHeight);
-    let header = new LayoutInfo('header', node.key + ':header', headerRect);
-    header.estimatedSize = isEstimated;
-    header.parentKey = node.key;
-    y += header.rect.height;
 
     let rect = new Rect(0, y, width, 0);
     let layoutInfo = new LayoutInfo(node.type, node.key, rect);
@@ -340,6 +321,43 @@ export class ListLayout<T> extends Layout<Node<T>> implements KeyboardDelegate, 
       layoutInfo,
       children,
       validRect: layoutInfo.rect.intersection(this.validRect)
+    };
+  }
+
+  buildHeader(node: Node<T>, x: number, y: number): LayoutNode {
+    let width = this.virtualizer.visibleRect.width;
+    let rectHeight = this.headingHeight;
+    let isEstimated = false;
+
+    // If no explicit height is available, use an estimated height.
+    if (rectHeight == null) {
+      // If a previous version of this layout info exists, reuse its height.
+      // Mark as estimated if the size of the overall collection view changed,
+      // or the content of the item changed.
+      let previousLayoutNode = this.layoutNodes.get(node.key);
+      let previousLayoutInfo = previousLayoutNode?.header || previousLayoutNode?.layoutInfo;
+      if (previousLayoutInfo) {
+        let curNode = this.collection.getItem(node.key);
+        let lastNode = this.lastCollection ? this.lastCollection.getItem(node.key) : null;
+        rectHeight = previousLayoutInfo.rect.height;
+        isEstimated = width !== this.lastWidth || curNode !== lastNode || previousLayoutInfo.estimatedSize;
+      } else {
+        rectHeight = (node.rendered ? this.estimatedHeadingHeight : 0);
+        isEstimated = true;
+      }
+    }
+
+    if (rectHeight == null) {
+      rectHeight = DEFAULT_HEIGHT;
+    }
+
+    let headerRect = new Rect(0, y, width, rectHeight);
+    let header = new LayoutInfo('header', node.key, headerRect);
+    header.estimatedSize = isEstimated;
+    return {
+      layoutInfo: header,
+      children: [],
+      validRect: header.rect.intersection(this.validRect)
     };
   }
 

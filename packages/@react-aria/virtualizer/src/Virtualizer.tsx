@@ -14,7 +14,7 @@ import {Collection, Key} from '@react-types/shared';
 import {getInteractionModality} from '@react-aria/interactions';
 import {Layout, Rect, ReusableView, useVirtualizerState, VirtualizerState} from '@react-stately/virtualizer';
 import {mergeProps, useLayoutEffect} from '@react-aria/utils';
-import React, {FocusEvent, HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
+import React, {createContext, FocusEvent, HTMLAttributes, ReactElement, ReactNode, RefObject, useCallback, useEffect, useMemo, useRef} from 'react';
 import {ScrollView} from './ScrollView';
 import {VirtualizerItem} from './VirtualizerItem';
 
@@ -38,6 +38,8 @@ interface VirtualizerProps<T extends object, V> extends Omit<HTMLAttributes<HTML
   scrollToItem?: (key: Key) => void,
   autoFocus?: boolean
 }
+
+export const VirtualizerContext = createContext<VirtualizerState<any, any, any> | null>(null);
 
 function Virtualizer<T extends object, V extends ReactNode>(props: VirtualizerProps<T, V>, ref: RefObject<HTMLDivElement>) {
   let {
@@ -90,7 +92,9 @@ function Virtualizer<T extends object, V extends ReactNode>(props: VirtualizerPr
       onScrollEnd={state.endScrolling}
       sizeToFit={sizeToFit}
       scrollDirection={scrollDirection}>
-      {state.visibleViews}
+      <VirtualizerContext.Provider value={state}>
+        {state.visibleViews}
+      </VirtualizerContext.Provider>
     </ScrollView>
   );
 }
