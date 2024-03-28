@@ -12,10 +12,10 @@
 
 import {addWindowFocusTracking} from '../src';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
+import Frame from 'react-frame-component';
 import {Key} from '@react-types/shared';
 import {mergeProps} from '@react-aria/utils';
 import React, {useEffect, useRef, useState} from 'react';
-import ReactDOM from 'react-dom';
 import {SearchField} from '@react-spectrum/searchfield';
 import {useButton} from '@react-aria/button';
 import {useFocusRing} from '@react-aria/focus';
@@ -100,50 +100,34 @@ function SearchExample() {
   );
 }
 
-function Button() {
-  const buttonRef = useRef<HTMLButtonElement | null>(null);
+function MyButton(props) {
+  const buttonRef = props.btnRef;
 
-  const {buttonProps} = useButton({}, buttonRef);
   const {focusProps, isFocusVisible, isFocused} = useFocusRing();
+  let {buttonProps} = useButton(props, buttonRef);
 
   return (
-    <button ref={buttonRef} {...mergeProps(buttonProps, focusProps)}>
+    <button ref={buttonRef} {...mergeProps(focusProps, buttonProps)}>
       Focus Visible: {isFocusVisible ? 'true' : 'false'} <br />
       Focused: {isFocused ? 'true' : 'false'}
     </button>
   );
 }
 
-const IframeWrapper = ({children}) => {
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
-
+const IFrameExample = (props) => {
+  let btnRef = useRef(null);
   useEffect(() => {
-    if (iframeRef.current) {
-      const main = document.createElement('main');
-      const iframeDocument = iframeRef.current.contentDocument;
+    return addWindowFocusTracking(btnRef.current);
+  }, []);
 
-      if (iframeDocument) {
-        iframeDocument.body.innerHTML = '';
-        iframeDocument.body.appendChild(main);
-        ReactDOM.render(children, main);
-
-        return addWindowFocusTracking(iframeDocument.body);
-      }
-    }
-  }, [children]);
-
-  return <iframe title="test" ref={iframeRef} />;
-};
-
-function IFrameExample() {
   return (
     <>
-      <Button />
-      <IframeWrapper>
-        <Button />
-        <Button />
-        <Button />
-      </IframeWrapper>
+      <MyButton />
+      <Frame {...props}>
+        <MyButton btnRef={btnRef} />
+        <MyButton />
+        <MyButton />
+      </Frame>
     </>
   );
-}
+};
