@@ -28,6 +28,12 @@ export const DifferentContainer = {
   name: 'different container'
 };
 
+export const BadContainer = {
+  render: () => <BadApp />,
+  name: 'bad container',
+  parameters: {description: {data: 'this story should crash'}}
+};
+
 function App(props) {
   let [showModal, setShowModal] = useState(false);
   return (
@@ -62,5 +68,53 @@ function Example(props) {
       <Modal container={container}>{props.children}</Modal>
       }
     </OverlayProvider>
+  );
+}
+
+function ModalDOM2(props) {
+  let {modalProps} = useModal();
+  return <div data-testid={props.modalId || 'modal'} {...modalProps}>{props.children}</div>;
+}
+
+function Modal2(props) {
+  return (
+    <OverlayContainer portalContainer={props.container} data-testid={props.providerId || 'modal-provider'}>
+      <ModalDOM2 modalId={props.modalId}>{props.children}</ModalDOM2>
+    </OverlayContainer>
+  );
+}
+
+function Example2(props) {
+  return (
+    <OverlayProvider data-testid="root-provider">
+      <>
+        This is the root provider.
+        {props.children}
+      </>
+    </OverlayProvider>
+  );
+}
+
+function BadApp() {
+  let [show1, setShow1] = useState(false);
+  let [show2, setShow2] = useState(false);
+  return (
+    <div id="alternateContainer" data-testid="alternate-container">
+      <ActionButton onPress={() => setShow1(prev => !prev)}>Toggle 1</ActionButton>
+      {show1 && (
+        <Example2>
+          <div id="nestedContainer" />
+          <ActionButton onPress={() => setShow2(prev => !prev)}>Toggle 2</ActionButton>
+          {show2 && (
+            <Modal2
+              container={document.getElementById('nestedContainer')}
+              providerId="inner-modal-provider"
+              modalId="inner-modal">
+              Inner
+            </Modal2>
+          )}
+        </Example2>
+      )}
+    </div>
   );
 }

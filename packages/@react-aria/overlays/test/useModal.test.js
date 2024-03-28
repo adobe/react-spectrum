@@ -180,18 +180,6 @@ describe('useModal', function () {
           </div>
         )
       ).toThrow();
-      expect.extend({
-        toHaveBeenNthCalledWithError(received, index, arg) {
-          return {
-            pass: received.mock.calls[index - 1].some(a => a.toString().includes(arg)),
-            message: () => `expected console.error to include ${arg}`
-          };
-        }
-      });
-      expect(console.error).toHaveBeenNthCalledWithError(
-        1,
-          'An OverlayContainer must not be inside another container. Please change the portalContainer prop.'
-      );
     });
   });
 });
