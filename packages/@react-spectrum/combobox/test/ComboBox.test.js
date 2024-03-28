@@ -5941,10 +5941,11 @@ describe('ComboBox', function () {
 
     it('supports RouterProvider', async () => {
       let navigate = jest.fn();
+      let useHref = href => href.startsWith('http') ? href : '/base' + href;
       let tree = render(
-        <Provider theme={theme} router={{navigate}}>
+        <Provider theme={theme} router={{navigate, useHref}}>
           <ComboBox label="ComboBox with links">
-            <Item href="/one">One</Item>
+            <Item href="/one" routerOptions={{foo: 'bar'}}>One</Item>
             <Item href="https://adobe.com">Two</Item>
           </ComboBox>
         </Provider>
@@ -5959,13 +5960,14 @@ describe('ComboBox', function () {
 
       let listbox = tree.getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
+      expect(items[0]).toHaveAttribute('href', '/base/one');
       triggerPress(items[0]);
 
       act(() => {
         jest.runAllTimers();
       });
 
-      expect(navigate).toHaveBeenCalledWith('/one');
+      expect(navigate).toHaveBeenCalledWith('/one', {foo: 'bar'});
       expect(combobox).toHaveValue('');
       expect(listbox).not.toBeInTheDocument();
 

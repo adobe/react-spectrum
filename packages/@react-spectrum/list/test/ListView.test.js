@@ -1633,7 +1633,7 @@ describe('ListView', function () {
         let {getAllByRole} = render(
           <Provider theme={theme} router={{navigate}}>
             <ListView aria-label="listview">
-              <Item href="/one">One</Item>
+              <Item href="/one" routerOptions={{foo: 'bar'}}>One</Item>
               <Item href="https://adobe.com">Two</Item>
             </ListView>
           </Provider>
@@ -1641,7 +1641,7 @@ describe('ListView', function () {
 
         let items = getAllByRole('row');
         trigger(items[0]);
-        expect(navigate).toHaveBeenCalledWith('/one');
+        expect(navigate).toHaveBeenCalledWith('/one', {foo: 'bar'});
 
         navigate.mockReset();
         let onClick = mockClickDefault();

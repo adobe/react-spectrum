@@ -131,7 +131,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
 
       if (manager.isLink(key)) {
         if (linkBehavior === 'selection') {
-          router.open(ref.current, e);
+          let itemProps = manager.getItemProps(key);
+          router.open(ref.current, e, itemProps.href, itemProps.routerOptions);
           // Always set selected keys back to what they were so that select and combobox close.
           manager.setSelectedKeys(manager.selectedKeys);
           return;
@@ -218,7 +219,8 @@ export function useSelectableItem(options: SelectableItemOptions): SelectableIte
     }
 
     if (hasLinkAction) {
-      router.open(ref.current, e);
+      let itemProps = manager.getItemProps(key);
+      router.open(ref.current, e, itemProps.href, itemProps.routerOptions);
     }
   };
 

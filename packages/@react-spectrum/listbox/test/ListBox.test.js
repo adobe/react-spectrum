@@ -1014,18 +1014,20 @@ describe('ListBox', function () {
 
       it('works with RouterProvider', async () => {
         let navigate = jest.fn();
+        let useHref = href => href.startsWith('http') ? href : '/base' + href;
         let {getAllByRole} = render(
-          <Provider theme={theme} router={{navigate}}>
+          <Provider theme={theme} router={{navigate, useHref}}>
             <ListBox aria-label="listbox">
-              <Item href="/one">One</Item>
+              <Item href="/one" routerOptions={{foo: 'bar'}}>One</Item>
               <Item href="https://adobe.com">Two</Item>
             </ListBox>
           </Provider>
         );
 
         let items = getAllByRole('option');
+        expect(items[0]).toHaveAttribute('href', '/base/one');
         trigger(items[0]);
-        expect(navigate).toHaveBeenCalledWith('/one');
+        expect(navigate).toHaveBeenCalledWith('/one', {foo: 'bar'});
 
         navigate.mockReset();
         let onClick = mockClickDefault();

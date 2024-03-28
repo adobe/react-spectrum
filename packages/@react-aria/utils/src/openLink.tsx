@@ -11,22 +11,25 @@
  */
 
 import {focusWithoutScrolling, isMac, isWebKit} from './index';
+import {Href, LinkDOMProps, RouterOptions} from '@react-types/shared';
 import {isFirefox, isIPad} from './platform';
-import {LinkDOMProps} from '@react-types/shared';
 import React, {createContext, ReactNode, useContext, useMemo} from 'react';
 
 interface Router {
   isNative: boolean,
-  open: (target: Element, modifiers: Modifiers) => void
+  open: (target: Element, modifiers: Modifiers, href: Href, routerOptions: RouterOptions | undefined) => void,
+  useHref: (href: Href) => string
 }
 
 const RouterContext = createContext<Router>({
   isNative: true,
-  open: openSyntheticLink
+  open: openSyntheticLink,
+  useHref: (href) => href
 });
 
 interface RouterProviderProps {
-  navigate: (path: string) => void,
+  navigate: (path: Href, routerOptions: RouterOptions | undefined) => void,
+  useHref?: (href: Href) => string,
   children: ReactNode
 }
 
@@ -35,20 +38,21 @@ interface RouterProviderProps {
  * and provides it to all nested React Aria links to enable client side navigation.
  */
 export function RouterProvider(props: RouterProviderProps) {
-  let {children, navigate} = props;
+  let {children, navigate, useHref} = props;
 
   let ctx = useMemo(() => ({
     isNative: false,
-    open: (target: Element, modifiers: Modifiers) => {
+    open: (target: Element, modifiers: Modifiers, href: Href, routerOptions: RouterOptions | undefined) => {
       getSyntheticLink(target, link => {
         if (shouldClientNavigate(link, modifiers)) {
-          navigate(link.pathname + link.search + link.hash);
+          navigate(href, routerOptions);
         } else {
           openLink(link, modifiers);
         }
       });
-    }
-  }), [navigate]);
+    },
+    useHref: useHref || ((href) => href)
+  }), [navigate, useHref]);
 
   return (
     <RouterContext.Provider value={ctx}>
@@ -150,5 +154,17 @@ export function getSyntheticLinkProps(props: LinkDOMProps) {
     'data-download': props.download,
     'data-ping': props.ping,
     'data-referrer-policy': props.referrerPolicy
+  };
+}
+
+export function useLinkProps(props: LinkDOMProps) {
+  let router = useRouter();
+  return {
+    href: props?.href ? router.useHref(props?.href) : undefined,
+    target: props?.target,
+    rel: props?.rel,
+    download: props?.download,
+    ping: props?.ping,
+    referrerPolicy: props?.referrerPolicy
   };
 }

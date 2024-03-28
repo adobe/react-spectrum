@@ -1,5 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
-import {DatePicker} from '@adobe/react-spectrum';
+import {ActionMenu, DatePicker, Item} from '@adobe/react-spectrum';
 
 export const meta: MetaFunction = () => {
   return [
@@ -13,6 +13,9 @@ export default function Index() {
     <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
       <h1>Welcome to Remix</h1>
       <DatePicker label="Date" />
+      <ActionMenu>
+        <Item href="/foo" routerOptions={{replace: true}}>Link to foo</Item>
+      </ActionMenu>
     </div>
   );
 }

@@ -494,4 +494,8 @@ export class SelectionManager implements MultipleSelectionManager {
   isLink(key: Key) {
     return !!this.collection.getItem(key)?.props?.href;
   }
+
+  getItemProps(key: Key) {
+    return this.collection.getItem(key)?.props;
+  }
 }

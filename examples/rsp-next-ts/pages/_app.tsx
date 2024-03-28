@@ -14,7 +14,13 @@ import Moon from "@spectrum-icons/workflow/Moon";
 import Light from "@spectrum-icons/workflow/Light";
 import { ToastContainer } from "@react-spectrum/toast";
 import {enableTableNestedRows} from '@react-stately/flags';
-import {useRouter} from 'next/router';
+import {useRouter, type NextRouter} from 'next/router';
+
+declare module '@adobe/react-spectrum' {
+  interface RouterConfig {
+    routerOptions: NonNullable<Parameters<NextRouter['push']>[2]>
+  }
+}
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [theme, setTheme] = useState<ColorScheme>("light");
@@ -25,7 +31,14 @@ function MyApp({ Component, pageProps }: AppProps) {
   enableTableNestedRows();
 
   return (
-    <Provider theme={lightTheme} colorScheme={theme} router={{navigate: router.push}} locale="en">
+    <Provider 
+      theme={lightTheme}
+      colorScheme={theme}
+      router={{
+        navigate: (href, opts) => router.push(href, undefined, opts),
+        useHref: (href: string) => router.basePath + href
+      }}
+      locale="en">
       <Grid
         areas={["header", "content"]}
         columns={["1fr"]}

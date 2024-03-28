@@ -149,9 +149,15 @@ describe('Link', function () {
 
   it('supports RouterProvider', () => {
     let navigate = jest.fn();
-    let {getByRole} = render(<Provider theme={theme} router={{navigate}}><Link href="/foo">Click me</Link></Provider>);
+    let useHref = href => '/base' + href;
+    let {getByRole} = render(
+      <Provider theme={theme} router={{navigate, useHref}}>
+        <Link href="/foo" routerOptions={{foo: 'bar'}}>Click me</Link>
+      </Provider>
+    );
     let link = getByRole('link');
+    expect(link).toHaveAttribute('href', '/base/foo');
     triggerPress(link);
-    expect(navigate).toHaveBeenCalledWith('/foo');
+    expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'bar'});
   });
 });
