@@ -10,12 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import {Button, Calendar, CalendarCell, CalendarGrid, Heading, RangeCalendar} from 'react-aria-components';
-import React from 'react';
+import {Button, Calendar, CalendarCell, CalendarGrid, CalendarStateContext, Heading, RangeCalendar} from 'react-aria-components';
+import React, {useContext} from 'react';
 
 export default {
   title: 'React Aria Components'
 };
+
+function Footer() {
+  const state = useContext(CalendarStateContext);
+  const setValue = state?.setValue;
+  
+  return (
+    <div>
+      <Button 
+        slot={null} 
+        className="reset-button"
+        onPress={() => {
+          // reset value 
+          setValue?.(null);
+        }}>
+        Reset value
+      </Button>
+    </div>
+  );
+}
 
 export const CalendarExample = () => (
   <Calendar style={{width: 220}}>
@@ -27,6 +46,20 @@ export const CalendarExample = () => (
     <CalendarGrid style={{width: '100%'}}>
       {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
     </CalendarGrid>
+  </Calendar>
+);
+
+export const CalendarResetValue = () => (
+  <Calendar style={{width: 220}}>
+    <div style={{display: 'flex', alignItems: 'center'}}>
+      <Button slot="previous">&lt;</Button>
+      <Heading style={{flex: 1, textAlign: 'center'}} />
+      <Button slot="next">&gt;</Button>
+    </div>
+    <CalendarGrid style={{width: '100%'}}>
+      {date => <CalendarCell date={date} style={({isSelected, isOutsideMonth}) => ({display: isOutsideMonth ? 'none' : '', textAlign: 'center', cursor: 'default', background: isSelected ? 'blue' : ''})} />}
+    </CalendarGrid>
+    <Footer />
   </Calendar>
 );
 
