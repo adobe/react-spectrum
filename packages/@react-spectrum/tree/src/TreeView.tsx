@@ -335,7 +335,8 @@ const expandButton = style<ExpandableRowChevronProps>({
       default: 'rotate(90deg)',
       isRTL: 'rotate(-90deg)'
     }
-  }
+  },
+  transition: '[transform ease var(--spectrum-global-animation-duration-100)]'
 });
 
 function ExpandableRowChevronMacros(props: ExpandableRowChevronProps) {
