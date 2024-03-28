@@ -25,7 +25,7 @@ export const getRootNode = (el: Element | null | undefined): Document | ShadowRo
   // In such cases, rootNode could either be the actual Document or a ShadowRoot,
   // but for disconnected nodes, we want to ensure consistency by returning the Document.
   if (rootNode instanceof Document || !(el.isConnected)) {
-    return document;
+    return el?.ownerDocument ?? document;
   }
 
   return rootNode as ShadowRoot;
