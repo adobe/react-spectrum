@@ -152,9 +152,28 @@ export function useListData<T>(options: ListOptions<T>): ListData<T> {
     filterText: initialFilterText
   });
 
+  const filterItems = (items: T[], filterText: string): T[] => {
+    return items.reduce((acc: T[], item: any) => {
+      if (item.children) {
+        if (filter(item, filterText)) {
+          acc.push(item);
+        } else {
+          const children = filterItems(item.children, filterText);
+          if (children.length > 0) {
+            acc.push({...item, children});
+          }
+        }
+      } else if (filter(item, filterText)) {
+        acc.push(item);
+      }
+      return acc;
+    }, []);
+  };
+
   let filteredItems = useMemo(
-    () => filter ? state.items.filter(item => filter(item, state.filterText)) : state.items,
-    [state.items, state.filterText, filter]);
+    () => (filter ? filterItems(state.items, state.filterText) : state.items),
+    [state.items, state.filterText, filter]
+  );
 
   return {
     ...state,

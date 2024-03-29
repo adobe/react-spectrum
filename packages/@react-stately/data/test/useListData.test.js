@@ -34,6 +34,24 @@ const many = [
   {name: 'Eleven'}
 ];
 
+const grouped = [
+  {
+    name: 'One',
+    children: [
+      {name: 'One - Child 1'},
+      {name: 'One - Child 2'}
+    ]
+  },
+  {name: 'Two'},
+  {
+    name: 'Three',
+    children: [
+      {name: 'Three - Child 1'}
+    ]
+  }
+];
+
+
 let getKey = (item) => item.name;
 let filter = (item, text) => item.name.includes(text);
 
@@ -800,5 +818,12 @@ describe('useListData', function () {
 
     expect(result.current.items).toHaveLength(1);
     expect(result.current.items[0]).toEqual({name: 'David'});
+  });
+
+  it('should support filtering nested items', function () {
+    let {result} = renderHook(() => useListData({initialItems: grouped, getKey, filter, initialFilterText: 'Three - Child 1'}));
+
+    expect(result.current.items).toHaveLength(1);
+    expect(result.current.items[0]).toEqual(grouped[2]);
   });
 });
