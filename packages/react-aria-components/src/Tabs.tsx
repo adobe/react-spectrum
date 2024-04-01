@@ -44,7 +44,9 @@ export interface TabListRenderProps {
 
 export interface TabProps extends RenderProps<TabRenderProps>, AriaLabelingProps, LinkDOMProps {
   /** The unique id of the tab. */
-  id?: Key
+  id?: Key,
+  /** Whether the tab is disabled. */
+  isDisabled?: boolean
 }
 
 export interface TabRenderProps {
@@ -293,6 +295,7 @@ function TabInner({item, state}: {item: Node<object>, state: TabListState<object
       ref={ref}
       data-selected={isSelected || undefined}
       data-disabled={isDisabled || undefined}
+      data-focused={isFocused || undefined}
       data-focus-visible={isFocusVisible || undefined}
       data-pressed={isPressed || undefined}
       data-hovered={isHovered || undefined} />

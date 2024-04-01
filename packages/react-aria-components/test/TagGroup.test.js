@@ -11,7 +11,7 @@
  */
 
 import {Button, Label, Tag, TagGroup, TagList, Text} from '../';
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
+import {fireEvent, mockClickDefault, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -215,6 +215,26 @@ describe('TagGroup', () => {
     expect(row).toHaveClass('disabled');
   });
 
+  it('should support isDisabled prop on items', async () => {
+    let {getAllByRole} = render(
+      <TagGroup data-testid="group">
+        <Label>Test</Label>
+        <TagList>
+          <RemovableTag id="cat">Cat</RemovableTag>
+          <RemovableTag id="dog" isDisabled>Dog</RemovableTag>
+          <RemovableTag id="kangaroo">Kangaroo</RemovableTag>
+        </TagList>
+      </TagGroup>
+    );
+    let items = getAllByRole('row');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
   it('should support removing items', async () => {
     let onRemove = jest.fn();
     let {getAllByRole} = renderTagGroup({onRemove}, {}, {className: ({allowsRemoving}) => allowsRemoving ? 'removable' : ''});
@@ -275,8 +295,7 @@ describe('TagGroup', () => {
         expect(items[1]).toHaveAttribute('data-href', 'https://adobe.com');
         expect(items[2]).not.toHaveAttribute('data-href');
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick);
+        let onClick = mockClickDefault();
 
         await trigger(items[1]);
         expect(onSelectionChange).not.toHaveBeenCalled();

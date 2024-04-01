@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button, Cell, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop} from 'react-aria-components';
+import {Button, Cell, Checkbox, CheckboxProps, Column, ColumnProps, ColumnResizer, Dialog, DialogTrigger, Heading, Menu, MenuTrigger, Modal, ModalOverlay, Popover, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop} from 'react-aria-components';
 import {isTextDropItem} from 'react-aria';
 import {MyMenuItem} from './utils';
 import React from 'react';
@@ -225,5 +225,170 @@ const MyColumn = (props: ColumnProps) => {
         </div>
       )}
     </Column>
+  );
+};
+
+interface FileItem {
+  id: string,
+  name: string,
+  type: string
+}
+
+interface DndTableProps {
+  initialItems: FileItem[],
+  'aria-label': string,
+  isDisabled?: boolean
+}
+
+const DndTable = (props: DndTableProps) => {
+  let list = useListData({
+    initialItems: props.initialItems
+  });
+
+  let {dragAndDropHooks} = useDragAndDrop({
+    isDisabled: props.isDisabled,
+    // Provide drag data in a custom format as well as plain text.
+    getItems(keys) {
+      return [...keys].map((key) => {
+        let item = list.getItem(key);
+        return {
+          'custom-app-type': JSON.stringify(item),
+          'text/plain': item.name
+        };
+      });
+    },
+
+    // Accept drops with the custom format.
+    acceptedDragTypes: ['custom-app-type'],
+
+    // Ensure items are always moved rather than copied.
+    getDropOperation: () => 'move',
+
+    // Handle drops between items from other lists.
+    async onInsert(e) {
+      let processedItems = await Promise.all(
+          e.items
+            .filter(isTextDropItem)
+            .map(async item => JSON.parse(await item.getText('custom-app-type')))
+        );
+      if (e.target.dropPosition === 'before') {
+        list.insertBefore(e.target.key, ...processedItems);
+      } else if (e.target.dropPosition === 'after') {
+        list.insertAfter(e.target.key, ...processedItems);
+      }
+    },
+
+    // Handle drops on the collection when empty.
+    async onRootDrop(e) {
+      let processedItems = await Promise.all(
+          e.items
+            .filter(isTextDropItem)
+            .map(async item => JSON.parse(await item.getText('custom-app-type')))
+        );
+      list.append(...processedItems);
+    },
+
+    // Handle reordering items within the same list.
+    onReorder(e) {
+      if (e.target.dropPosition === 'before') {
+        list.moveBefore(e.target.key, e.keys);
+      } else if (e.target.dropPosition === 'after') {
+        list.moveAfter(e.target.key, e.keys);
+      }
+    },
+
+    // Remove the items from the source list on drop
+    // if they were moved to a different list.
+    onDragEnd(e) {
+      if (e.dropOperation === 'move' && !e.isInternal) {
+        list.remove(...e.keys);
+      }
+    }
+  });
+
+  return (
+    <Table
+      aria-label={props['aria-label']}
+      selectionMode="multiple"
+      selectedKeys={list.selectedKeys}
+      onSelectionChange={list.setSelectedKeys}
+      dragAndDropHooks={dragAndDropHooks}>
+      <TableHeader>
+        <Column />
+        <Column><MyCheckbox slot="selection" /></Column>
+        <Column>ID</Column>
+        <Column isRowHeader>Name</Column>
+        <Column>Type</Column>
+      </TableHeader>
+      <TableBody items={list.items} renderEmptyState={() => 'Drop items here'}>
+        {item => (
+          <Row>
+            <Cell><Button slot="drag">≡</Button></Cell>
+            <Cell><MyCheckbox slot="selection" /></Cell>
+            <Cell>{item.id}</Cell>
+            <Cell>{item.name}</Cell>
+            <Cell>{item.type}</Cell>
+          </Row>
+          )}
+      </TableBody>
+    </Table>
+  );
+};
+
+type DndTableExampleProps = {
+  isDisabledFirstTable?: boolean,
+  isDisabledSecondTable?: boolean
+}
+
+export const DndTableExample = (props: DndTableExampleProps) => {
+  return (
+    <div style={{display: 'flex', gap: 12, flexWrap: 'wrap'}}>
+      <DndTable
+        initialItems={[
+        {id: '1', type: 'file', name: 'Adobe Photoshop'},
+        {id: '2', type: 'file', name: 'Adobe XD'},
+        {id: '3', type: 'folder', name: 'Documents'},
+        {id: '4', type: 'file', name: 'Adobe InDesign'},
+        {id: '5', type: 'folder', name: 'Utilities'},
+        {id: '6', type: 'file', name: 'Adobe AfterEffects'}
+        ]}
+        aria-label="First Table" 
+        isDisabled={props.isDisabledFirstTable} />
+      <DndTable
+        initialItems={[
+        {id: '7', type: 'folder', name: 'Pictures'},
+        {id: '8', type: 'file', name: 'Adobe Fresco'},
+        {id: '9', type: 'folder', name: 'Apps'},
+        {id: '10', type: 'file', name: 'Adobe Illustrator'},
+        {id: '11', type: 'file', name: 'Adobe Lightroom'},
+        {id: '12', type: 'file', name: 'Adobe Dreamweaver'}
+        ]}
+        aria-label="Second Table" 
+        isDisabled={props.isDisabledSecondTable} />
+    </div>
+  );
+};
+
+DndTableExample.args = {
+  isDisabledFirstTable: false,
+  isDisabledSecondTable: false
+};
+
+const MyCheckbox = ({children, ...props}: CheckboxProps) => {
+  return (
+    <Checkbox {...props}>
+      {({isIndeterminate}) => (
+        <>
+          <div className="checkbox">
+            <svg viewBox="0 0 18 18" aria-hidden="true">
+              {isIndeterminate
+                ? <rect x={1} y={7.5} width={15} height={3} />
+                : <polyline points="1 9 7 14 15 4" />}
+            </svg>
+          </div>
+          {children}
+        </>
+      )}
+    </Checkbox>
   );
 };

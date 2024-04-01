@@ -110,13 +110,15 @@ describe('Checkbox', () => {
     expect(document.activeElement).toBe(checkbox);
     expect(onBlur).not.toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(1);
+    expect(onFocusChange).toHaveBeenCalledTimes(1);  // triggered by onFocus
+    expect(onFocusChange).toHaveBeenLastCalledWith(true);
 
     await user.tab();
     expect(document.activeElement).toBe(button);
     expect(onBlur).toHaveBeenCalled();
     expect(onFocus).toHaveBeenCalledTimes(1);
-    expect(onFocusChange).toHaveBeenCalledTimes(2);
+    expect(onFocusChange).toHaveBeenCalledTimes(2);  // triggered by onBlur
+    expect(onFocusChange).toHaveBeenLastCalledWith(false);
   });
 
   it('should support press state', () => {
@@ -222,5 +224,23 @@ describe('Checkbox', () => {
     let ref = React.createRef();
     let {getByRole} = render(<Checkbox ref={ref}>Test</Checkbox>);
     expect(ref.current).toBe(getByRole('checkbox').closest('.react-aria-Checkbox'));
+  });
+
+  it('should support input ref', () => {
+    let inputRef = React.createRef();
+    let {getByRole} = render(<Checkbox inputRef={inputRef}>Test</Checkbox>);
+    expect(inputRef.current).toBe(getByRole('checkbox'));
+  });
+
+  it('should support and merge input ref on context', () => {
+    let inputRef = React.createRef();
+    let contextInputRef = React.createRef();
+    let {getByRole} = render(
+      <CheckboxContext.Provider value={{inputRef: contextInputRef}}>
+        <Checkbox inputRef={inputRef}>Test</Checkbox>
+      </CheckboxContext.Provider>
+    );
+    expect(inputRef.current).toBe(getByRole('checkbox'));
+    expect(contextInputRef.current).toBe(getByRole('checkbox'));
   });
 });

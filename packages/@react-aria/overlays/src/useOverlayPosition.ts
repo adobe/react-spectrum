@@ -143,6 +143,12 @@ export function useOverlayPosition(props: AriaPositionProps): PositionAria {
       return;
     }
 
+    // Always reset the overlay's previous max height if not defined by the user so that we can compensate for
+    // RAC collections populating after a second render and properly set a correct max height + positioning when it populates.
+    if (!maxHeight && overlayRef.current) {
+      (overlayRef.current as HTMLElement).style.maxHeight = 'none';
+    }
+
     let position = calculatePosition({
       placement: translateRTL(placement, direction),
       overlayNode: overlayRef.current,

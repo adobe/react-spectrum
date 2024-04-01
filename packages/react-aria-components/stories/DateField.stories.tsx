@@ -12,6 +12,7 @@
 
 import clsx from 'clsx';
 import {DateField, DateInput, DateSegment, Label} from 'react-aria-components';
+import {parseAbsoluteToLocal} from '@internationalized/date';
 import React from 'react';
 import styles from '../example/index.css';
 
@@ -20,7 +21,7 @@ export default {
 };
 
 export const DateFieldExample = () => (
-  <DateField data-testid="date-field-example">
+  <DateField data-testid="date-field-example" defaultValue={parseAbsoluteToLocal('2024-01-01T01:01:00Z')}>
     <Label style={{display: 'block'}}>Date</Label>
     <DateInput className={styles.field} data-testid2="date-input">
       {segment => <DateSegment segment={segment} className={clsx(styles.segment, {[styles.placeholder]: segment.isPlaceholder})} />}

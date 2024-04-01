@@ -10,7 +10,9 @@
  * governing permissions and limitations under the License.
  */
 
-'use client';
+// Mark as a client only package. This will cause a build time error if you try 
+// to import it from a React Server Component in a framework like Next.js.
+import 'client-only';
 
 export {ActionGroup} from '@react-spectrum/actiongroup';
 export {Badge} from '@react-spectrum/badge';
@@ -104,7 +106,7 @@ export type {HeadingProps, KeyboardProps, TextProps} from '@react-spectrum/text'
 export type {SpectrumTableProps, SpectrumColumnProps, TableHeaderProps, TableBodyProps, RowProps, CellProps} from '@react-spectrum/table';
 export type {SpectrumTabListProps, SpectrumTabPanelsProps, SpectrumTabsProps} from '@react-spectrum/tabs';
 export type {SpectrumTagGroupProps} from '@react-spectrum/tag';
-export type {SpectrumTextFieldProps} from '@react-spectrum/textfield';
+export type {SpectrumTextFieldProps, SpectrumTextAreaProps} from '@react-spectrum/textfield';
 export type {SpectrumTooltipProps, SpectrumTooltipTriggerProps} from '@react-spectrum/tooltip';
 export type {ContentProps, FooterProps, HeaderProps, ViewProps} from '@react-spectrum/view';
 export type {SpectrumWellProps} from '@react-spectrum/well';
@@ -113,4 +115,4 @@ export type {VisuallyHiddenAria, VisuallyHiddenProps} from '@react-aria/visually
 export type {DateFormatter, DateFormatterOptions, Filter, FormatMessage, Locale, LocalizedStrings} from '@react-aria/i18n';
 export type {SSRProviderProps} from '@react-aria/ssr';
 export type {DirectoryDropItem, DragAndDropHooks, DragAndDropOptions, DraggableCollectionEndEvent, DraggableCollectionMoveEvent, DraggableCollectionStartEvent, DragPreviewRenderer, DragTypes, DropItem, DropOperation, DroppableCollectionDropEvent, DroppableCollectionEnterEvent, DroppableCollectionExitEvent, DroppableCollectionInsertDropEvent, DroppableCollectionMoveEvent, DroppableCollectionOnItemDropEvent, DroppableCollectionReorderEvent, DroppableCollectionRootDropEvent, DropPosition, DropTarget, FileDropItem, ItemDropTarget, RootDropTarget, TextDropItem} from '@react-spectrum/dnd';
-export type {Key, Selection} from '@react-types/shared';
+export type {Key, Selection, ItemProps, SectionProps} from '@react-types/shared';

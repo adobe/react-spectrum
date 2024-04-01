@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+import {action} from '@storybook/addon-actions';
 import {Header, ListBox, ListBoxItem, ListBoxProps, Section, Separator, Text, useDragAndDrop} from 'react-aria-components';
 import {MyListBoxItem} from './utils';
 import React from 'react';
@@ -176,3 +177,13 @@ ListBoxDnd.story = {
     }
   }
 };
+
+export const ListBoxHover = () => (
+  <ListBox className={styles.menu} aria-label="test listbox" onAction={action('onAction')} >
+    <MyListBoxItem onHoverStart={action('onHoverStart')} onHoverChange={action('onHoverChange')} onHoverEnd={action('onHoverEnd')}>Hover</MyListBoxItem>
+    <MyListBoxItem>Bar</MyListBoxItem>
+    <MyListBoxItem>Baz</MyListBoxItem>
+    <MyListBoxItem href="http://google.com">Google</MyListBoxItem>
+  </ListBox>
+);
+

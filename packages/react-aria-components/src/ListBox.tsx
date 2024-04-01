@@ -17,7 +17,7 @@ import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContex
 import {DraggableCollectionState, DroppableCollectionState, ListState, Node, Orientation, SelectionBehavior, useListState} from 'react-stately';
 import {filterDOMProps, mergeRefs, useObjectRef} from '@react-aria/utils';
 import {Header} from './Header';
-import {Key, LinkDOMProps} from '@react-types/shared';
+import {HoverEvents, Key, LinkDOMProps} from '@react-types/shared';
 import React, {createContext, ForwardedRef, forwardRef, JSX, ReactNode, RefObject, useContext, useEffect, useMemo, useRef} from 'react';
 import {Separator, SeparatorContext} from './Separator';
 import {TextContext} from './Text';
@@ -137,7 +137,8 @@ function ListBoxInner<T>({state, props, listBoxRef}: ListBoxInnerProps<T>) {
       collection,
       collator,
       ref: listBoxRef,
-      disabledKeys: disabledBehavior === 'selection' ? new Set<Key>() : disabledKeys,
+      disabledKeys,
+      disabledBehavior,
       layout,
       orientation,
       direction
@@ -332,7 +333,7 @@ function SectionHeader({item, headingProps, headingRef}) {
 
 export interface ListBoxItemRenderProps extends ItemRenderProps {}
 
-export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, LinkDOMProps {
+export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRenderProps>, LinkDOMProps, HoverEvents {
   /** The unique id of the item. */
   id?: Key,
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
@@ -340,7 +341,14 @@ export interface ListBoxItemProps<T = object> extends RenderProps<ListBoxItemRen
   /** A string representation of the item's contents, used for features like typeahead. */
   textValue?: string,
   /** An accessibility label for this item. */
-  'aria-label'?: string
+  'aria-label'?: string,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 function ListBoxItem<T extends object>(props: ListBoxItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
@@ -368,7 +376,10 @@ function Option<T>({item}: OptionProps<T>) {
   );
 
   let {hoverProps, isHovered} = useHover({
-    isDisabled: !states.allowsSelection && !states.hasAction
+    isDisabled: !states.allowsSelection && !states.hasAction,
+    onHoverStart: item.props.onHoverStart,
+    onHoverChange: item.props.onHoverChange,
+    onHoverEnd: item.props.onHoverEnd
   });
 
   let draggableItem: DraggableItemResult | null = null;

@@ -14,7 +14,7 @@ import {ButtonContext} from './Button';
 import {CheckboxContext} from './Checkbox';
 import {Collection, DraggableCollectionState, DroppableCollectionState, ListState, Node, SelectionBehavior, useListState} from 'react-stately';
 import {CollectionProps, ItemRenderProps, useCachedChildren, useCollection, useSSRCollectionNode} from './Collection';
-import {ContextValue, defaultSlot, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, DEFAULT_SLOT, forwardRefType, Provider, RenderProps, ScrollableProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {DragAndDropContext, DragAndDropHooks, DropIndicator, DropIndicatorContext, DropIndicatorProps} from './useDragAndDrop';
 import {filterDOMProps, useObjectRef} from '@react-aria/utils';
 import {Key, LinkDOMProps} from '@react-types/shared';
@@ -142,11 +142,12 @@ function GridListInner<T extends object>({props, collection, gridListRef: ref}: 
       selectionManager
     });
 
-    let keyboardDelegate = new ListKeyboardDelegate(
+    let keyboardDelegate = new ListKeyboardDelegate({
       collection,
-      selectionManager.disabledBehavior === 'selection' ? new Set() : selectionManager.disabledKeys,
+      disabledKeys: selectionManager.disabledKeys,
+      disabledBehavior: selectionManager.disabledBehavior,
       ref
-    );
+    });
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref);
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
@@ -228,7 +229,14 @@ export interface GridListItemProps<T = object> extends RenderProps<GridListItemR
   /** The object value that this item represents. When using dynamic collections, this is set automatically. */
   value?: T,
   /** A string representation of the item's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Whether the item is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the item. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 function GridListItem<T extends object>(props: GridListItemProps<T>, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
@@ -348,7 +356,7 @@ function GridListRow({item}) {
               }],
               [ButtonContext, {
                 slots: {
-                  [defaultSlot]: {},
+                  [DEFAULT_SLOT]: {},
                   drag: {
                     ...draggableItem?.dragButtonProps,
                     ref: dragButtonRef,

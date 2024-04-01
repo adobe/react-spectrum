@@ -50,7 +50,7 @@ export function useAccordionItem<T>(props: AccordionItemAriaProps<T>, state: Tre
     isDisabled,
     onPress: () => state.toggleKey(item.key)
   }), ref);
-  let isExpanded = state.expandedKeys.has(item.key);
+  let isExpanded = state.expandedKeys === 'all' || state.expandedKeys.has(item.key);
   return {
     buttonProps: {
       ...buttonProps,
@@ -70,6 +70,7 @@ export function useAccordion<T>(props: AriaAccordionProps<T>, state: TreeState<T
     ...props,
     ...state,
     allowsTabNavigation: true,
+    disallowTypeAhead: true,
     ref
   });
   return {

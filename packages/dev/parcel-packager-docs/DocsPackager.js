@@ -140,13 +140,11 @@ module.exports = new Packager({
         }
 
         if (t && t.type === 'identifier' && t.name === 'Pick' && application) {
-          if (application[0]?.type === 'application') {
-            // this condition was necessary to prevent an unwanted side-effect for other types.
-            // For example, if you go to http://localhost:1234/react-aria/useTextField.html#anatomy
-            // and click the link 'TextFieldIntrinsicElements', the popover won't show 'Pick' anymore if it is processed by `pick()` function here.
-            // i.e., `keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>` becomes `keyof <IntrinsicHTMLElements, 'input' | 'textarea'>`
-            return pick(application[0], application[1], nodes);
-          }
+          // NOTE: `pick()` as well as `omit()` above incur some side effects:
+          // For example, if you go to http://localhost:1234/react-aria/useTextField.html#anatomy
+          // and click the link 'TextFieldIntrinsicElements', the popover will show 'any' instead of 'Pick' if it is processed by `pick()` function here.
+          // i.e., `keyof Pick<IntrinsicHTMLElements, 'input' | 'textarea'>` becomes `keyof any<IntrinsicHTMLElements, 'input' | 'textarea'>`
+          return pick(application[0], application[1], nodes);
         }
 
         if (t && t.type === 'identifier' && params && params[t.name]) {

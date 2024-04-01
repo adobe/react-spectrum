@@ -110,6 +110,30 @@ describe('TextField', () => {
       expect(input).not.toHaveClass('focus');
     });
 
+    it('should support read-only state', async () => {
+      let {getByRole, rerender} = render(
+        <TestTextField input={component} />
+      );
+
+      let input = getByRole('textbox');
+
+      expect(input.closest('.react-aria-TextField')).not.toHaveAttribute('data-readonly');
+      rerender(<TestTextField input={component} isReadOnly />);
+      expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-readonly');
+    });
+
+    it('should support required state', async () => {
+      let {getByRole, rerender} = render(
+        <TestTextField input={component} />
+      );
+
+      let input = getByRole('textbox');
+
+      expect(input.closest('.react-aria-TextField')).not.toHaveAttribute('data-required');
+      rerender(<TestTextField input={component} isRequired />);
+      expect(input.closest('.react-aria-TextField')).toHaveAttribute('data-required');
+    });
+
     it('should render data- attributes only on the outer element', () => {
       let {getAllByTestId} = render(<TestTextField input={component} />);
       let outerEl = getAllByTestId('text-field-test');
@@ -150,6 +174,24 @@ describe('TextField', () => {
       await user.tab();
       expect(input).not.toHaveAttribute('aria-describedby');
       expect(input.closest('.react-aria-TextField')).not.toHaveAttribute('data-invalid');
+    });
+
+    it('should not render the field error div if no error is provided and isInvalid is true', async () => {
+      let Component = component;
+      let {getByRole} = render(
+        <form data-testid="form">
+          <TextField isRequired isInvalid>
+            <Label>Test</Label>
+            <Component />
+            <FieldError />
+          </TextField>
+        </form>
+      );
+
+      let input = getByRole('textbox');
+      expect(input).toHaveAttribute('aria-invalid');
+      expect(input).toHaveAttribute('data-invalid');
+      expect(input).not.toHaveAttribute('aria-describedby');
     });
 
     it('supports customizing validation errors', async () => {

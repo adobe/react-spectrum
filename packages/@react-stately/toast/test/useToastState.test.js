@@ -58,8 +58,8 @@ describe('useToastState', () => {
 
     act(() => {result.current.add(secondToast.content, secondToast.props);});
     expect(result.current.visibleToasts.length).toBe(2);
-    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
-    expect(result.current.visibleToasts[1].content).toBe(secondToast.content);
+    expect(result.current.visibleToasts[0].content).toBe(secondToast.content);
+    expect(result.current.visibleToasts[1].content).toBe(newValue[0].content);
   });
 
   it('should close a toast', () => {
@@ -91,11 +91,11 @@ describe('useToastState', () => {
 
     act(() => {result.current.add('Second Toast');});
     expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
+    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
 
     act(() => {result.current.close(result.current.visibleToasts[0].key);});
     expect(result.current.visibleToasts.length).toBe(1);
-    expect(result.current.visibleToasts[0].content).toBe('Second Toast');
+    expect(result.current.visibleToasts[0].content).toBe(newValue[0].content);
     expect(result.current.visibleToasts[0].animation).toBe('queued');
   });
 

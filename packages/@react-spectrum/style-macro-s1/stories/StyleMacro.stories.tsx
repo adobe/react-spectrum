@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,21 +10,17 @@
  * governing permissions and limitations under the License.
  */
 
-const {Optimizer} = require('@parcel/plugin');
-const {blobToString} = require('@parcel/utils');
+import React from 'react';
+import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 
-module.exports = new Optimizer({
-  async optimize({bundle, contents, map}) {
-    if (!/@react-spectrum|react-aria-components/.test(bundle.target.distDir)) {
-      return {contents, map};
-    }
+export default {
+  title: 'S1 Style Macro'
+};
 
-    map?.offsetLines(2, 0);
-    return {
-      contents: `"use client";
-
-${await blobToString(contents)}`,
-      map
-    };
-  }
-});
+export function Example() {
+  return (
+    <div className={style({backgroundColor: 'orange-500', color: 'black', fontSize: 'lg', paddingX: 8, paddingY: 4, borderRadius: 'default'})()}>
+      Test
+    </div>
+  );
+}
