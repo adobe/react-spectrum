@@ -193,7 +193,9 @@ export interface TagProps extends RenderProps<TagRenderProps>, LinkDOMProps {
    * A string representation of the tags's contents, used for accessibility.
    * Required if children is not a plain text string.
    */
-  textValue?: string
+  textValue?: string,
+  /** Whether the tag is disabled. */
+  isDisabled?: boolean
 }
 
 function Tag(props: TagProps, ref: ForwardedRef<HTMLDivElement>): JSX.Element | null {
