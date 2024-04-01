@@ -268,6 +268,11 @@ describe('Tabs', () => {
   });
 
   it('should support shouldForceMount', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
+
     let {getAllByRole} = renderTabs({}, {}, {}, {shouldForceMount: true});
     let tabpanels = document.querySelectorAll('.react-aria-TabPanel');
     expect(tabpanels).toHaveLength(3);
@@ -281,6 +286,7 @@ describe('Tabs', () => {
     expect(tabpanels[0]).toHaveAttribute('inert');
     expect(tabpanels[1]).not.toHaveAttribute('inert');
     expect(tabpanels[2]).toHaveAttribute('inert');
+    console.error = consoleError;
   });
 
   it('should support keyboardActivation=manual', () => {
