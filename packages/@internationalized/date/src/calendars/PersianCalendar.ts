@@ -17,30 +17,23 @@ import {AnyCalendarDate, Calendar} from '../types';
 import {CalendarDate} from '../CalendarDate';
 import {mod} from '../utils';
 
-const PERSIAN_EPOCH = 1948321; // 622/03/19 Julian C.E.
+const PERSIAN_EPOCH = 1948320;
 
-function isLeapYear(year: number): boolean {
-  let y0 = year > 0 ? year - 474 : year - 473;
-  let y1 = mod(y0, 2820) + 474;
-
-  return mod((y1 + 38) * 31, 128) < 31;
-}
-
-function persianToJulianDay(year: number, month: number, day: number): number {
-  let y0 = year > 0 ? year - 474 : year - 473;
-  let y1 = mod(y0, 2820) + 474;
-  let offset = month <= 7 ? 31 * (month - 1) : 30 * (month - 1) + 6;
-
-  return (
-    PERSIAN_EPOCH -
-    1 +
-    1029983 * Math.floor(y0 / 2820) +
-    365 * (y1 - 1) +
-    Math.floor((31 * y1 - 5) / 128) +
-    offset +
-    day
-  );
-}
+// Number of days from the start of the year to the start of each month.
+const MONTH_START = [
+  0, // Farvardin
+  31, // Ordibehesht
+  62, // Khordad
+  93, // Tir
+  124, // Mordad
+  155, // Shahrivar
+  186, // Mehr
+  216, // Aban
+  246, // Azar
+  276, // Dey
+  306, // Bahman
+  336  // Esfand
+];
 
 /**
  * The Persian calendar is the main calendar used in Iran and Afghanistan. It has 12 months
@@ -52,24 +45,22 @@ export class PersianCalendar implements Calendar {
   identifier = 'persian';
 
   fromJulianDay(jd: number): CalendarDate {
-    let d0 = jd - persianToJulianDay(475, 1, 1);
-    let n2820 = Math.floor(d0 / 1029983);
-    let d1 = mod(d0, 1029983);
-    let y2820 = d1 === 1029982 ? 2820 : Math.floor((128 * d1 + 46878) / 46751);
-    let year = 474 + 2820 * n2820 + y2820;
-    if (year <= 0) {
-      year--;
-    }
-
-    let yDay = jd - persianToJulianDay(year, 1, 1) + 1;
-    let month = yDay <= 186 ? Math.ceil(yDay / 31) : Math.ceil((yDay - 6) / 31);
-    let day = jd - persianToJulianDay(year, month, 1) + 1;
-
-    return new CalendarDate(this, year, month, day);
+    let daysSinceEpoch = jd - PERSIAN_EPOCH;
+    let year = 1 + Math.floor((33 * daysSinceEpoch + 3) / 12053);
+    let farvardin1 = 365 * (year - 1) + Math.floor((8 * year + 21) / 33);
+    let dayOfYear = daysSinceEpoch - farvardin1;
+    let month = dayOfYear < 216
+      ? Math.floor(dayOfYear / 31)
+      : Math.floor((dayOfYear - 6) / 30);
+    let day = dayOfYear - MONTH_START[month] + 1;
+    return new CalendarDate(this, year, month + 1, day);
   }
 
   toJulianDay(date: AnyCalendarDate): number {
-    return persianToJulianDay(date.year, date.month, date.day);
+    let jd = PERSIAN_EPOCH - 1 + 365 * (date.year - 1) + Math.floor((8 * date.year + 21) / 33);
+    jd += MONTH_START[date.month - 1];
+    jd += date.day;
+    return jd;
   }
 
   getMonthsInYear(): number {
@@ -85,7 +76,8 @@ export class PersianCalendar implements Calendar {
       return 30;
     }
 
-    return isLeapYear(date.year) ? 30 : 29;
+    let isLeapYear = mod(25 * date.year + 11, 33) < 8;
+    return isLeapYear ? 30 : 29;
   }
 
   getEras() {
