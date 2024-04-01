@@ -11,18 +11,19 @@
  */
 
 import {AriaLabelingProps, FocusableElement} from '@react-types/shared';
+import {AriaPositionProps, mergeProps, OverlayContainer, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
 import {ContextValue, forwardRefType, Provider, RenderProps, useContextProps, useEnterAnimation, useExitAnimation, useRenderProps} from './utils';
 import {FocusableProvider} from '@react-aria/focus';
-import {mergeProps, OverlayContainer, PlacementAxis, PositionProps, useOverlayPosition, useTooltip, useTooltipTrigger} from 'react-aria';
 import {OverlayArrowContext} from './OverlayArrow';
 import {OverlayTriggerProps, TooltipTriggerProps, TooltipTriggerState, useTooltipTriggerState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, ReactNode, RefObject, useContext, useRef, useState} from 'react';
+import {useLayoutEffect} from '@react-aria/utils';
 
 export interface TooltipTriggerComponentProps extends TooltipTriggerProps {
   children: ReactNode
 }
 
-export interface TooltipProps extends PositionProps, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps> {
+export interface TooltipProps extends PositionProps, Pick<AriaPositionProps, 'arrowBoundaryOffset'>, OverlayTriggerProps, AriaLabelingProps, RenderProps<TooltipRenderProps> {
   /**
    * The ref for the element which the tooltip positions itself with respect to.
    *
@@ -118,13 +119,25 @@ export {_Tooltip as Tooltip};
 function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: RefObject<HTMLDivElement>}) {
   let state = useContext(TooltipTriggerStateContext)!;
 
+  // Calculate the arrow size internally
+  // Referenced from: packages/@react-spectrum/tooltip/src/TooltipTrigger.tsx
+  let arrowRef = useRef<HTMLDivElement>(null);
+  let [arrowWidth, setArrowWidth] = useState(0);
+  useLayoutEffect(() => {
+    if (arrowRef.current && state.isOpen) {
+      setArrowWidth(arrowRef.current.getBoundingClientRect().width);
+    }
+  }, [state.isOpen, arrowRef]);
+
   let {overlayProps, arrowProps, placement} = useOverlayPosition({
     placement: props.placement || 'top',
     targetRef: props.triggerRef!,
     overlayRef: props.tooltipRef,
     offset: props.offset,
     crossOffset: props.crossOffset,
-    isOpen: state.isOpen
+    isOpen: state.isOpen,
+    arrowSize: arrowWidth,
+    arrowBoundaryOffset: props.arrowBoundaryOffset
   });
 
   let isEntering = useEnterAnimation(props.tooltipRef, !!placement) || props.isEntering || false;
@@ -151,7 +164,7 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
       data-placement={placement}
       data-entering={isEntering || undefined}
       data-exiting={props.isExiting || undefined}>
-      <OverlayArrowContext.Provider value={{...arrowProps, placement}}>
+      <OverlayArrowContext.Provider value={{...arrowProps, placement, ref: arrowRef}}>
         {renderProps.children}
       </OverlayArrowContext.Provider>
     </div>
