@@ -346,11 +346,12 @@ function Table(props: TableProps, ref: ForwardedRef<HTMLTableElement>) {
       selectionManager
     });
 
-    let keyboardDelegate = new ListKeyboardDelegate(
+    let keyboardDelegate = new ListKeyboardDelegate({
       collection,
-      selectionManager.disabledBehavior === 'selection' ? new Set() : selectionManager.disabledKeys,
+      disabledKeys: selectionManager.disabledKeys,
+      disabledBehavior: selectionManager.disabledBehavior,
       ref
-    );
+    });
     let dropTargetDelegate = dragAndDropHooks.dropTargetDelegate || new dragAndDropHooks.ListDropTargetDelegate(collection, ref);
     droppableCollection = dragAndDropHooks.useDroppableCollection!({
       keyboardDelegate,
@@ -600,7 +601,14 @@ export interface RowProps<T> extends StyleRenderProps<RowRenderProps>, LinkDOMPr
   /** Values that should invalidate the cell cache when using dynamic collections. */
   dependencies?: any[],
   /** A string representation of the row's contents, used for features like typeahead. */
-  textValue?: string
+  textValue?: string,
+  /** Whether the row is disabled. */
+  isDisabled?: boolean,
+  /**
+   * Handler that is called when a user performs an action on the row. The exact user event depends on
+   * the collection's `selectionBehavior` prop and the interaction modality.
+   */
+  onAction?: () => void
 }
 
 function Row<T extends object>(props: RowProps<T>, ref: ForwardedRef<HTMLTableRowElement>): JSX.Element | null {
