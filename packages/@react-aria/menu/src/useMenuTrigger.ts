@@ -114,7 +114,7 @@ export function useMenuTrigger<T>(props: AriaMenuTriggerProps, state: MenuTrigge
       if (e.pointerType !== 'touch' && e.pointerType !== 'keyboard' && !isDisabled) {
         // If opened with a screen reader, auto focus the first item.
         // Otherwise, the menu itself will be focused.
-        state.toggle(e.pointerType === 'virtual' ? 'first' : null);
+        state.open(e.pointerType === 'virtual' ? 'first' : null);
       }
     },
     onPress(e) {
