@@ -51,7 +51,8 @@ export function useTable<T>(props: AriaTableProps<T>, state: TableState<T> | Tre
   let disabledBehavior = state.selectionManager.disabledBehavior;
   let delegate = useMemo(() => keyboardDelegate || new TableKeyboardDelegate({
     collection: state.collection,
-    disabledKeys: disabledBehavior === 'selection' ? new Set() : state.disabledKeys,
+    disabledKeys: state.disabledKeys,
+    disabledBehavior,
     ref,
     direction,
     collator,
