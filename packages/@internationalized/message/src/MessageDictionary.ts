@@ -26,7 +26,10 @@ export class MessageDictionary {
 
   constructor(messages: LocalizedStrings, defaultLocale: string = 'en-US') {
     // Clone messages so we don't modify the original object.
-    this.messages = {...messages};
+    // Filter out entries with falsy values which may have been caused by applying optimize-locales-plugin.
+    this.messages = Object.fromEntries(
+      Object.entries(messages).filter(([, v]) => v)
+    );
     this.defaultLocale = defaultLocale;
   }
 
