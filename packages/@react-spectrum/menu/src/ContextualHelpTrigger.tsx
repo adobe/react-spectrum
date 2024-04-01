@@ -104,7 +104,7 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
       if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
         parentMenuRef.current.focus();
       }
-    }, 300); // Matches transition duration
+    }, 220); // Matches transition duration
   };
   let [offset, setOffset] = useState(0);
   useLayoutEffect(() => {
