@@ -31,7 +31,7 @@ export const TooltipExample = () => (
       }}>
       <OverlayArrow style={{transform: 'translateX(-50%)'}}>
         <svg width="8" height="8" style={{display: 'block'}}>
-          <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+          <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
         </svg>
       </OverlayArrow>
       I am a tooltip
@@ -105,7 +105,7 @@ export const TooltipArrowBoundaryOffsetExample = {
         max: 100
       }
     }
-  }, 
+  },
   render: ({topLeft, topRight, leftTop, leftBotton, rightTop, rightBottom, bottomLeft, bottomRight}: any) => {
     return (
       <div style={{display: 'flex', flexDirection: 'column'}}>
@@ -126,7 +126,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Top left
@@ -149,7 +149,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Top right
@@ -174,7 +174,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(-90deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Left top
@@ -197,7 +197,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(-90deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Left bottom
@@ -222,7 +222,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(90deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Right top
@@ -245,7 +245,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(90deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Right bottom
@@ -270,7 +270,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(180deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Bottom left
@@ -293,7 +293,7 @@ export const TooltipArrowBoundaryOffsetExample = {
                 }}>
                 <OverlayArrow>
                   <svg width="8" height="8" style={{display: 'block', transform: 'rotate(180deg)'}}>
-                    <path d="M0 0,L4 4,L8 0" fill="white" strokeWidth={1} stroke="gray" />
+                    <path d="M0 0L4 4L8 0" fill="white" strokeWidth={1} stroke="gray" />
                   </svg>
                 </OverlayArrow>
                 Bottom right

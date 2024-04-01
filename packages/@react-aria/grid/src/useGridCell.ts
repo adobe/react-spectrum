@@ -124,9 +124,9 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           focusable = null;
         }
 
+        e.preventDefault();
+        e.stopPropagation();
         if (focusable) {
-          e.preventDefault();
-          e.stopPropagation();
           focusSafely(focusable);
           scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
@@ -137,11 +137,15 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           // child, depending on the focus mode.
           let prev = keyboardDelegate.getKeyLeftOf(node.key);
           if (prev !== node.key) {
+            // We prevent the capturing event from reaching children of the cell, e.g. pickers.
+            // We want arrow keys to navigate to the next cell instead. We need to re-dispatch 
+            // the event from a higher parent so it still bubbles and gets handled by useSelectableCollection.
+            ref.current.parentElement.dispatchEvent(
+              new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+            );
             break;
           }
 
-          e.preventDefault();
-          e.stopPropagation();
           if (focusMode === 'cell' && direction === 'rtl') {
             focusSafely(ref.current);
             scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
@@ -167,19 +171,23 @@ export function useGridCell<T, C extends GridCollection<T>>(props: GridCellProps
           focusable = null;
         }
 
+        e.preventDefault();
+        e.stopPropagation();
         if (focusable) {
-          e.preventDefault();
-          e.stopPropagation();
           focusSafely(focusable);
           scrollIntoViewport(focusable, {containingElement: getScrollParent(ref.current)});
         } else {
           let next = keyboardDelegate.getKeyRightOf(node.key);
           if (next !== node.key) {
+            // We prevent the capturing event from reaching children of the cell, e.g. pickers.
+            // We want arrow keys to navigate to the next cell instead. We need to re-dispatch 
+            // the event from a higher parent so it still bubbles and gets handled by useSelectableCollection.
+            ref.current.parentElement.dispatchEvent(
+              new KeyboardEvent(e.nativeEvent.type, e.nativeEvent)
+            );
             break;
           }
 
-          e.preventDefault();
-          e.stopPropagation();
           if (focusMode === 'cell' && direction === 'ltr') {
             focusSafely(ref.current);
             scrollIntoViewport(ref.current, {containingElement: getScrollParent(ref.current)});
