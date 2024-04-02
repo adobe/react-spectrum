@@ -38,15 +38,15 @@ const grouped = [
   {
     name: 'One',
     children: [
-      {name: 'One - Child 1'},
-      {name: 'One - Child 2'}
+      {name: 'Child 1'},
+      {name: 'Child 2'}
     ]
   },
-  {name: 'Two'},
+  {name: 'Two', children: [{name: 'Child 0'}]},
   {
     name: 'Three',
     children: [
-      {name: 'Three - Child 1'}
+      {name: 'Child 1'}
     ]
   }
 ];
@@ -820,10 +820,12 @@ describe('useListData', function () {
     expect(result.current.items[0]).toEqual({name: 'David'});
   });
 
-  it('should support filtering nested items', function () {
-    let {result} = renderHook(() => useListData({initialItems: grouped, getKey, filter, initialFilterText: 'Three - Child 1'}));
+  it('should support filtering items across sections', function () {
+    let {result} = renderHook(() => useListData({initialItems: grouped, getKey, filter, initialFilterText: 'Child 1'}));
 
-    expect(result.current.items).toHaveLength(1);
-    expect(result.current.items[0]).toEqual(grouped[2]);
+    expect(result.current.items).toEqual([
+      {name: 'One', children: [{name: 'Child 1'}]},
+      {name: 'Three', children: [{name: 'Child 1'}]}
+    ]);
   });
 });
