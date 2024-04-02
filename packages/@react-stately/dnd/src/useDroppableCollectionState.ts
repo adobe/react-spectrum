@@ -26,7 +26,9 @@ export interface DroppableCollectionStateOptions extends Omit<DroppableCollectio
   /** A collection of items. */
   collection: Collection<Node<unknown>>,
   /** An interface for reading and updating multiple selection state. */
-  selectionManager: MultipleSelectionManager
+  selectionManager: MultipleSelectionManager,
+  /** Whether the drop events should be disabled. */
+  isDisabled?: boolean
 }
 
 export interface DroppableCollectionState {
@@ -36,6 +38,8 @@ export interface DroppableCollectionState {
   selectionManager: MultipleSelectionManager,
   /** The current drop target. */
   target: DropTarget | null,
+  /** Whether drop events are disabled. */
+  isDisabled?: boolean,
   /** Sets the current drop target. */
   setTarget(target: DropTarget): void,
   /** Returns whether the given target is equivalent to the current drop target. */
@@ -50,6 +54,7 @@ export interface DroppableCollectionState {
 export function useDroppableCollectionState(props: DroppableCollectionStateOptions): DroppableCollectionState  {
   let {
     acceptedDragTypes = 'all',
+    isDisabled,
     onInsert,
     onRootDrop,
     onItemDrop,
@@ -75,6 +80,10 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
   };
 
   let defaultGetDropOperation = useCallback((e: DropOperationEvent) => {
+    if (isDisabled) {
+      return 'cancel';
+    }
+
     let {
       target,
       types,
@@ -101,11 +110,12 @@ export function useDroppableCollectionState(props: DroppableCollectionStateOptio
     }
 
     return 'cancel';
-  }, [acceptedDragTypes, getDropOperation, onInsert, onRootDrop, onItemDrop, shouldAcceptItemDrop, onReorder, onDrop]);
+  }, [isDisabled, acceptedDragTypes, getDropOperation, onInsert, onRootDrop, onItemDrop, shouldAcceptItemDrop, onReorder, onDrop]);
 
   return {
     collection,
     selectionManager,
+    isDisabled,
     target,
     setTarget(newTarget) {
       if (this.isDropTarget(newTarget)) {
