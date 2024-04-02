@@ -43,6 +43,8 @@ function isStyleVisible(element: Element) {
 function isAttributeVisible(element: Element, childElement?: Element) {
   return (
     !element.hasAttribute('hidden') &&
+    // Ignore HiddenSelect when tree walking.
+    !(element.hasAttribute('data-a11y-ignore') && element.getAttribute('aria-hidden') === 'true') &&
     (element.nodeName === 'DETAILS' &&
       childElement &&
       childElement.nodeName !== 'SUMMARY'
