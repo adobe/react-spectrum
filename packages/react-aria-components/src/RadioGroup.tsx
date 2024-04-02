@@ -14,10 +14,9 @@ import {AriaRadioGroupProps, AriaRadioProps, HoverEvents, Orientation, useFocusR
 import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps, mergeProps} from '@react-aria/utils';
-import {getFocusableTreeWalker} from '@react-aria/focus';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, useImperativeHandle, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
@@ -109,7 +108,6 @@ export const RadioGroupStateContext = createContext<RadioGroupState | null>(null
 
 function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, RadioGroupContext);
-  let domRef = useRef<HTMLDivElement>(null);
   let state = useRadioGroupState({
     ...props,
     validationBehavior: props.validationBehavior ?? 'native'
@@ -135,25 +133,11 @@ function RadioGroup(props: RadioGroupProps, ref: ForwardedRef<HTMLDivElement>) {
     defaultClassName: 'react-aria-RadioGroup'
   });
 
-  useImperativeHandle<HTMLDivElement|null, HTMLDivElement|null>(ref, () => {
-    const radioGroup = domRef.current;
-    if (radioGroup) {
-      radioGroup.focus = () => {
-        let walker = getFocusableTreeWalker(radioGroup, {
-          tabbable: true, 
-          accept: (node) => node.getAttribute('type') === 'radio'
-        });
-        (walker.firstChild() as HTMLElement).focus();
-      };
-    }
-    return radioGroup;
-  });
-
   return (
     <div
       {...radioGroupProps}
       {...renderProps}
-      ref={domRef}
+      ref={ref}
       slot={props.slot || undefined}
       data-orientation={props.orientation || 'vertical'}
       data-invalid={state.isInvalid || undefined}
