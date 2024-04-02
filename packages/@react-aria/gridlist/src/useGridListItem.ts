@@ -10,11 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain, getScrollParent, getSyntheticLinkProps, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Node as RSNode} from '@react-types/shared';
 import {focusSafely, getFocusableTreeWalker} from '@react-aria/focus';
 import {getLastItem} from '@react-stately/collections';
 import {getRowId, listMap} from './utils';
-import {getScrollParent, getSyntheticLinkProps, mergeProps, scrollIntoViewport, useSlotId} from '@react-aria/utils';
 import {HTMLAttributes, KeyboardEvent as ReactKeyboardEvent, RefObject, useRef} from 'react';
 import {isFocusVisible} from '@react-aria/interactions';
 import type {ListState} from '@react-stately/list';
@@ -111,7 +111,7 @@ export function useGridListItem<T>(props: AriaGridListItemOptions, state: ListSt
     ref,
     isVirtualized,
     shouldSelectOnPressUp,
-    onAction: onAction ? () => onAction(node.key) : undefined,
+    onAction: onAction || node.props?.onAction ? chain(node.props?.onAction, onAction ? () => onAction(node.key) : undefined) : undefined,
     focus,
     linkBehavior
   });

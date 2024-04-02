@@ -25,6 +25,7 @@ import {Divider} from '@react-spectrum/divider';
 import {enableTableNestedRows} from '@react-stately/flags';
 import {getFocusableTreeWalker} from '@react-aria/focus';
 import {Heading} from '@react-spectrum/text';
+import {Item, Picker} from '@react-spectrum/picker';
 import {Link} from '@react-spectrum/link';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
@@ -1499,6 +1500,31 @@ export let tableTests = () => {
         </>
       );
 
+      let renderWithPicker = () => render(
+        <>
+          <TableView aria-label="Table">
+            <TableHeader>
+              <Column>Foo</Column>
+              <Column>Bar</Column>
+              <Column>baz</Column>
+            </TableHeader>
+            <TableBody>
+              <Row>
+                <Cell textValue="Foo 1"><Switch aria-label="Foo 1" /></Cell>
+                <Cell textValue="Search engine">
+                  <Picker aria-label="Search engine" placeholder="Search with:" width={'100%'} isQuiet>
+                    <Item key="Yahoo">Yahoo</Item>
+                    <Item key="Google">Google</Item>
+                    <Item key="DuckDuckGo">DuckDuckGo</Item>
+                  </Picker>
+                </Cell>
+                <Cell>Baz 1</Cell>
+              </Row>
+            </TableBody>
+          </TableView>
+        </>
+      );
+
       it('should retain focus on the pressed child', async function () {
         let tree = renderFocusable();
         let switchToPress = tree.getAllByRole('switch')[2];
@@ -1627,6 +1653,19 @@ export let tableTests = () => {
         fireEvent.keyUp(after, {key: 'Tab'});
 
         expect(document.activeElement).toBe(baz1);
+      });
+
+      it('should not trap focus when navigating through a cell with a picker using the arrow keys', function () {
+        let tree = renderWithPicker();
+        focusCell(tree, 'Baz 1');
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(tree.getByRole('button'));
+        moveFocus('ArrowLeft');
+        expect(document.activeElement).toBe(tree.getByRole('switch'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getByRole('button'));
+        moveFocus('ArrowRight');
+        expect(document.activeElement).toBe(tree.getAllByRole('gridcell')[1]);
       });
 
       it('should move focus after the table when tabbing', async function () {
