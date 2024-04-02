@@ -142,12 +142,21 @@ export function TrayHeaderWrapper(props) {
     }
   }, [hasOpenSubmenu, isMobile]);
 
+  let timeoutRef = useRef(null);
   let handleBackButtonPress = () => {
     setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       onBackButtonPress();
     }, 220); // Matches transition duration
   };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <>
