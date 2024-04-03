@@ -85,9 +85,12 @@ function TextField(props: TextFieldProps, ref: ForwardedRef<HTMLDivElement>) {
     defaultClassName: 'react-aria-TextField'
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <div
-      {...filterDOMProps(props)}
+      {...DOMProps}
       {...renderProps}
       ref={ref}
       slot={props.slot || undefined}
