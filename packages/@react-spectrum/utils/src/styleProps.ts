@@ -63,6 +63,10 @@ export const baseStyleProps: StyleHandlers = {
   gridRowStart: ['gridRowStart', passthroughStyle]
 };
 
+export const tableCellStyleProps: StyleHandlers = {
+  backgroundColor: ['backgroundColor', backgroundColorValue],
+};
+
 export const viewStyleProps: StyleHandlers = {
   ...baseStyleProps,
   backgroundColor: ['backgroundColor', backgroundColorValue],

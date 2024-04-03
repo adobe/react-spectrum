@@ -21,6 +21,7 @@ import {
   useDOMRef,
   useFocusableRef,
   useStyleProps,
+  tableCellStyleProps,
   useUnwrapDOMRef
 } from '@react-spectrum/utils';
 import {ColumnSize, SpectrumColumnProps} from '@react-types/table';
@@ -1326,6 +1327,7 @@ function TableCell({cell}) {
   let isRowExpandable = false;
   let showExpandCollapseButton = false;
   let levelOffset = 0;
+  let {styleProps} = useStyleProps(cell.props, tableCellStyleProps);
 
   if ('expandedKeys' in state) {
     isRowExpandable = state.keyMap.get(cell.parentKey)?.props.UNSTABLE_childItems?.length > 0 || state.keyMap.get(cell.parentKey)?.props?.children?.length > state.userColumnCount;
@@ -1334,13 +1336,17 @@ function TableCell({cell}) {
     levelOffset = (cell.level - 2) * LEVEL_OFFSET_WIDTH[scale] + (!showExpandCollapseButton ? LEVEL_OFFSET_WIDTH[scale] * 2 : 0);
   }
 
+  if (isExpandableTable && isFirstRowHeaderCell) {
+    styleProps.style.paddingInlineStart = levelOffset;
+  }
+
   return (
     <FocusRing focusRingClass={classNames(styles, 'focus-ring')}>
       <div
         {...otherGridCellProps}
         aria-labelledby={id}
         ref={ref}
-        style={isExpandableTable && isFirstRowHeaderCell ? {paddingInlineStart: levelOffset} : {}}
+        {...styleProps}
         className={
           classNames(
             styles,

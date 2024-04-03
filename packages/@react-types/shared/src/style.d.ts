@@ -261,3 +261,14 @@ export interface GridStyleProps extends BoxAlignmentStyleProps, StyleProps {
   /** Defines the default `justifySelf` for all items in the grid. See [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/justify-items). */
   justifyItems?: Responsive<'auto' | 'normal' | 'start' | 'end' | 'center' | 'left' | 'right' | 'stretch' | 'self-start' | 'self-end' | 'baseline' | 'first baseline' | 'last baseline' | 'safe center' | 'unsafe center' | 'legacy right' | 'legacy left' | 'legacy center'>
 }
+
+export interface TableCellStyleProps<C extends ColorVersion> {
+  /**
+   * The Spectrum color token version number.
+   * @default 5
+   */
+  colorVersion?: C,
+
+  /** The background color of the cell. */
+  backgroundColor?: Responsive<BackgroundColor[C]>,
+}

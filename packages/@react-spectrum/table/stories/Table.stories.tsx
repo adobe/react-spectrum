@@ -171,6 +171,36 @@ let items = [
   {test: 'Test 2', foo: 'Foo 8', bar: 'Bar 2', yay: 'Yay 2', baz: 'Baz 2'}
 ];
 
+export const StaticWithColoredCell: TableStore = {
+  args: {
+    'aria-label': 'TableView with static contents',
+    width: 300,
+    height: 200
+  },
+  render: (args) => (
+    <TableView {...args}>
+      <TableHeader>
+        <Column key="foo">Foo</Column>
+        <Column key="bar">Bar</Column>
+        <Column key="baz">Baz</Column>
+      </TableHeader>
+      <TableBody>
+        <Row>
+          <Cell>One</Cell>
+          <Cell>Two</Cell>
+          <Cell>Three</Cell>
+        </Row>
+        <Row>
+          <Cell colorVersion="6" backgroundColor="celery-200">One</Cell>
+          <Cell colorVersion="6" backgroundColor="red-200">Two</Cell>
+          <Cell colorVersion="6" backgroundColor="blue-200">Three</Cell>
+        </Row>
+      </TableBody>
+    </TableView>
+  ),
+  name: 'static with colored cells'
+};
+
 export const Dynamic: TableStory = {
   args: {
     'aria-label': 'TableView with static contents',

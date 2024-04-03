@@ -20,6 +20,7 @@ export {createDOMRef, createFocusableRef, useDOMRef, useFocusableRef, unwrapDOMR
 export {
   baseStyleProps,
   viewStyleProps,
+  tableCellStyleProps,
   dimensionValue,
   responsiveDimensionValue,
   convertStyleProps,

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {AriaLabelingProps, AsyncLoadable, DOMProps, Key, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps} from '@react-types/shared';
+import {AriaLabelingProps, AsyncLoadable, DOMProps, Key, LinkDOMProps, LoadingState, MultipleSelection, Sortable, SpectrumSelectionProps, StyleProps, TableCellStyleProps} from '@react-types/shared';
 import {GridCollection, GridNode} from '@react-types/grid';
 import {JSX, ReactElement, ReactNode} from 'react';
 
@@ -149,7 +149,7 @@ export interface RowProps<T> extends LinkDOMProps {
   textValue?: string // ???
 }
 
-export interface CellProps {
+export interface CellProps<C extends ColorVersion> extends TableCellStyleProps<C> {
   /** The contents of the cell. */
   children: ReactNode,
   /** A string representation of the cell's contents, used for features like typeahead. */
