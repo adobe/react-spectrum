@@ -10,10 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {render as ReactDOMRender} from 'react-dom';
 import {useInteractOutside} from '../';
+
+const REACT_VERSION = React.version;
 
 function Example(props) {
   let ref = useRef();
@@ -212,6 +214,7 @@ describe('useInteractOutside (iframes)', function () {
   let iframe;
   let iframeRoot;
   let iframeDocument;
+  let reactMajor = parseInt(REACT_VERSION.split('.')[0], 10);
   beforeEach(() => {
     iframe = document.createElement('iframe');
     window.document.body.appendChild(iframe);
@@ -226,7 +229,17 @@ describe('useInteractOutside (iframes)', function () {
 
   const IframeExample = (props) => {
     React.useEffect(() => {
-      ReactDOMRender(<Example {...props} />, iframeRoot);
+      if (reactMajor >= 18) {
+        import('react-dom/client').then(exports => {
+          const {createRoot} = exports;
+          const root = createRoot(iframeRoot);
+          act(() => {
+            root.render(<Example {...props} />);
+          });
+        });
+      } else {
+        ReactDOMRender(<Example {...props} />, iframeRoot);
+      }
     }, [props]);
 
     return null;
