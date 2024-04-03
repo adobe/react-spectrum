@@ -17,7 +17,7 @@ import {filterDOMProps, mergeProps, mergeRefs, useObjectRef} from '@react-aria/u
 import {FormValidationBehaviorContext} from './Form';
 import {LabelContext} from './Label';
 import {RadioGroupState, useRadioGroupState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, useContext, useRef, MutableRefObject} from 'react';
+import React, {createContext, ForwardedRef, MutableRefObject, forwardRef, useContext} from 'react';
 import {TextContext} from './Text';
 
 export interface RadioGroupProps extends Omit<AriaRadioGroupProps, 'children' | 'label' | 'description' | 'errorMessage' | 'validationState' | 'validationBehavior'>, RACValidation, RenderProps<RadioGroupRenderProps>, SlotProps {}
