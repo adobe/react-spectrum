@@ -215,12 +215,20 @@ describe('useInteractOutside (iframes)', function () {
   let iframeRoot;
   let iframeDocument;
   const reactMajor = parseInt(REACT_VERSION.split('.')[0], 10);
+  let root;
   beforeEach(() => {
     iframe = document.createElement('iframe');
     window.document.body.appendChild(iframe);
     iframeDocument = iframe.contentWindow.document;
     iframeRoot = iframeDocument.createElement('div');
     iframeDocument.body.appendChild(iframeRoot);
+
+    if (reactMajor >= 18) {
+      import('react-dom/client').then(exports => {
+        const {createRoot} = exports;
+        root = createRoot(iframeRoot);
+      });
+    }
   });
 
   afterEach(() => {
@@ -229,17 +237,16 @@ describe('useInteractOutside (iframes)', function () {
 
   const IframeExample = (props) => {
     React.useEffect(() => {
-      if (reactMajor >= 18) {
-        import('react-dom/client').then(exports => {
-          const {createRoot} = exports;
-          const root = createRoot(iframeRoot);
-          act(() => {
+      async function renderIframe() {
+        if (reactMajor >= 19) {
+          await act(() => {
             root.render(<Example {...props} />);
           });
-        });
-      } else {
-        ReactDOMRender(<Example {...props} />, iframeRoot);
+        } else {
+          ReactDOMRender(<Example {...props} />, iframeRoot);
+        }
       }
+      renderIframe();
     }, [props]);
 
     return null;
