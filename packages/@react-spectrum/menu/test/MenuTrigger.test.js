@@ -26,6 +26,7 @@ import {
 import {Dialog} from '@react-spectrum/dialog';
 import {Heading, Text} from '@react-spectrum/text';
 import {Link} from '@react-spectrum/link';
+import {PortalProvider} from '@react-aria/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -70,6 +71,7 @@ describe('MenuTrigger', function () {
   let onSelect = jest.fn();
   let onSelectionChange = jest.fn();
   let user;
+  let windowSpy;
 
   beforeAll(function () {
     user = userEvent.setup({delay: null, pointerMap});
@@ -78,6 +80,10 @@ describe('MenuTrigger', function () {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
     jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
     jest.useFakeTimers();
+  });
+
+  beforeEach(() => {
+    windowSpy = jest.spyOn(window.screen, 'width', 'get').mockImplementation(() => 1024);
   });
 
   afterEach(() => {
@@ -1238,6 +1244,58 @@ describe('MenuTrigger', function () {
         let triggerButton = tree.getByRole('button');
         expect(document.activeElement).toBe(triggerButton);
       });
+    });
+  });
+
+  describe('portalContainer', () => {
+    function InfoMenu(props) {
+      return (
+        <Provider theme={theme}>
+          <PortalProvider container={props.container}>
+            <MenuTrigger>
+              <ActionButton aria-label="trigger" />
+              <Menu>
+                <Item key="1">One</Item>
+                <Item key="">Two</Item>
+                <Item key="3">Three</Item>
+              </Menu>
+            </MenuTrigger>
+          </PortalProvider>
+        </Provider>
+      );
+    }
+
+    function App() {
+      let container = React.useRef(null);
+      return (
+        <>
+          <InfoMenu container={container} />
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+
+    it('should render the menu in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <App />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('menu').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+
+    it('should render the menu tray in the portal container', async () => {
+      windowSpy.mockImplementation(() => 700);
+      let {getByRole, getByTestId} = render(
+        <App />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('menu').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
     });
   });
 });

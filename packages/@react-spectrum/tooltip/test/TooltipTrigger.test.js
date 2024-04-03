@@ -12,6 +12,7 @@
 
 import {act, fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
+import {PortalProvider} from '@react-aria/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {theme} from '@react-spectrum/theme-default';
@@ -959,6 +960,50 @@ describe('TooltipTrigger', function () {
       fireEvent.mouseEnter(button);
       fireEvent.mouseMove(button);
       expect(queryByRole('tooltip')).toBeNull();
+    });
+  });
+
+  describe('portalContainer', () => {
+    function InfoTooltip(props) {
+      return (
+        <PortalProvider container={props.container}>
+          <TooltipTrigger>
+            <ActionButton aria-label="trigger" />
+            <Tooltip>
+              <div data-testid="content">hello</div>
+            </Tooltip>
+          </TooltipTrigger>
+        </PortalProvider>
+      );
+    }
+    function App() {
+      let container = React.useRef(null);
+      return (
+        <>
+          <InfoTooltip container={container} />
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+    it('should render the tooltip in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <Provider theme={theme}>
+          <App />
+        </Provider>
+      );
+
+      let button = getByRole('button');
+      act(() => {
+        button.focus();
+      });
+
+      expect(getByTestId('content').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+      act(() => {
+        button.blur();
+      });
+      act(() => {
+        jest.advanceTimersByTime(CLOSE_TIME);
+      });
     });
   });
 });

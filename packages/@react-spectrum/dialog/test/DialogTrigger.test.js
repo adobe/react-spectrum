@@ -17,6 +17,7 @@ import {Content} from '@react-spectrum/view';
 import {Dialog, DialogTrigger} from '../';
 import {Heading} from '@react-spectrum/text';
 import {Item, Menu, MenuTrigger} from '@react-spectrum/menu';
+import {PortalProvider} from '@react-aria/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React from 'react';
 import {TextField} from '@react-spectrum/textfield';
@@ -1026,4 +1027,61 @@ describe('DialogTrigger', function () {
     expect(document.activeElement).toBe(innerButton);
   });
 
+  describe('portalContainer', () => {
+    function InfoDialog(props) {
+      let {container} = props;
+      return (
+        <Provider theme={theme}>
+          <PortalProvider container={container}>
+            <DialogTrigger type={props.type}>
+              <ActionButton>Trigger</ActionButton>
+              <Dialog>contents</Dialog>
+            </DialogTrigger>
+          </PortalProvider>
+        </Provider>
+      );
+    }
+    function App(props) {
+      let container = React.useRef(null);
+      return (
+        <>
+          <InfoDialog type={props.type} container={container} />
+          <div ref={container} data-testid="custom-container" />
+        </>
+      );
+    }
+
+    it('should render the dialog in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <App />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+
+    it('should render the tray in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <App type="tray" />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+
+    it('should render the popover in the portal container', async () => {
+      let {getByRole, getByTestId} = render(
+        <App type="popover" />
+      );
+
+      let button = getByRole('button');
+      await user.click(button);
+
+      expect(getByRole('dialog').closest('[data-testid="custom-container"]')).toBe(getByTestId('custom-container'));
+    });
+  });
 });

@@ -11,7 +11,7 @@
  */
 
 import {action} from '@storybook/addon-actions';
-import {Button} from '@react-spectrum/button';
+import {ActionButton, Button} from '@react-spectrum/button';
 import {ButtonGroup} from '@react-spectrum/buttongroup';
 import {Checkbox} from '@react-spectrum/checkbox';
 import {Content} from '@react-spectrum/view';
@@ -22,6 +22,7 @@ import {Heading} from '@react-spectrum/text';
 import React, {SyntheticEvent, useEffect, useMemo, useRef, useState} from 'react';
 import {SpectrumToastOptions} from '../src/ToastContainer';
 import {ToastContainer, ToastQueue} from '../';
+import {PortalProvider} from '@react-aria/overlays';
 
 export default {
   title: 'Toast',
@@ -332,4 +333,30 @@ function MainLandmark(props) {
   let ref = useRef();
   let {landmarkProps} = useLandmark({...props, role: 'main'}, ref);
   return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} style={{padding: 40, background: 'white'}}>{props.children}</main>;
+}
+
+export const withFullscreen = () => <FullscreenApp />;
+
+function FullscreenApp(props) {
+  let ref = useRef(null);
+  let [isFullscreen, setFullscreen] = useState(false);
+  let fullscreenPress = () => {
+    if (!isFullscreen) {
+      let fullscreenPromise = ref.current.requestFullscreen();
+      fullscreenPromise.then(() => setFullscreen(true));
+    }
+  };
+  return (
+    <div ref={ref} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'white'}}>
+      <PortalProvider container={ref}>
+        <RenderProvider {...props} />
+        {!isFullscreen && <ActionButton onPress={fullscreenPress}>Enter fullscreen</ActionButton>}
+        {isFullscreen && <ToastContainer />}
+      </PortalProvider>
+    </div>
+  );
+}
+
+FullscreenApp.parameters = {
+  disableToastContainer: true
 }
