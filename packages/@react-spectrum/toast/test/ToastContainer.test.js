@@ -68,6 +68,8 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alert')).toBeNull();
     triggerPress(button);
 
+    act(() => jest.advanceTimersByTime(100));
+
     let region = getByRole('region');
     expect(region).toHaveAttribute('aria-label', 'Notifications');
 
@@ -90,6 +92,7 @@ describe('Toast Provider and Container', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => jest.advanceTimersByTime(100));
     let toast = getByRole('alertdialog');
     let alert = within(toast).getByRole('alert');
     let icon = within(alert).getByRole('img');
@@ -174,6 +177,7 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alertdialog')).toBeNull();
     triggerPress(button);
 
+    act(() => jest.advanceTimersByTime(100));
     let toast = getByRole('alertdialog');
     let alert = within(toast).getByRole('alert');
     expect(toast).toBeVisible();
@@ -196,6 +200,7 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alertdialog')).toBeNull();
     triggerPress(button);
 
+    act(() => jest.advanceTimersByTime(100));
     let toast = getByRole('alertdialog');
     let alert = within(toast).getByRole('alert');
     expect(toast).toBeVisible();
@@ -294,6 +299,7 @@ describe('Toast Provider and Container', function () {
 
     triggerPress(button);
 
+    act(() => jest.advanceTimersByTime(100));
     let toast = getByRole('alertdialog');
     let alert = within(toast).getByRole('alert');
     expect(toast).toBeVisible();
@@ -317,6 +323,7 @@ describe('Toast Provider and Container', function () {
     let button = getByRole('button');
     triggerPress(button);
 
+    act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
 
@@ -327,6 +334,7 @@ describe('Toast Provider and Container', function () {
       </Provider>
     );
 
+    act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
 
@@ -337,6 +345,7 @@ describe('Toast Provider and Container', function () {
       </Provider>
     );
 
+    act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
 
@@ -348,6 +357,7 @@ describe('Toast Provider and Container', function () {
       </Provider>
     );
 
+    act(() => jest.advanceTimersByTime(100));
     expect(getAllByRole('region')).toHaveLength(1);
     expect(getAllByRole('alert')).toHaveLength(1);
   });

@@ -109,8 +109,10 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
     return (
       <Toaster state={state} {...props}>
         <ol reversed className={classNames(toastContainerStyles, 'spectrum-Toast-list')}>
-          {state.visibleToasts.map((toast) => (
+          {state.visibleToasts.map((toast, index) => (
             <li
+              aria-posinset={state.visibleToasts.length - index}
+              aria-setsize={state.visibleToasts.length}
               key={`${toast.key}-listitem`}
               aria-hidden={toast.animation === 'exiting' ? 'true' : undefined}
               className={classNames(toastContainerStyles, 'spectrum-Toast-listitem')}>

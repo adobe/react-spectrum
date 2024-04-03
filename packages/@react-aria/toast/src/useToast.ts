@@ -78,20 +78,26 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     };
   }, [ref, state.visibleToasts]);
 
-  const [isBusy, setIsBusy] = useState(true);
-
-  // eslint-disable-next-line
   useEffect(() => {
+    return () => {
+      if (focusOnUnmount.current) {
+        focusOnUnmount.current.focus();
+      }
+    };
+  }, [ref]);
+
+  // To improve screen reader announcement of the toast,
+  // we use aria-hidden="true" to hide the toast content
+  // briefly while it is animating in.
+  const [isBusy, setIsBusy] = useState(true);
+  useLayoutEffect(() => {
     let timeoutId:ReturnType<typeof setTimeout>;
-    if (isBusy) {
-      timeoutId = setTimeout(() => setIsBusy(false), 300);
+    if (isBusy && ref.current) {
+      timeoutId = setTimeout(() => setIsBusy(false), 50);
     }
     return () => {
       if (timeoutId) {
         clearTimeout(timeoutId);
-      }
-      if (focusOnUnmount.current) {
-        focusOnUnmount.current.focus();
       }
     };
   }, [ref, isBusy]);
@@ -128,7 +134,7 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
     contentProps: {
       role: 'alert',
       'aria-atomic': 'true',
-      'aria-busy': isBusy ?? undefined
+      'aria-hidden': isBusy ?? undefined
     },
     titleProps: {
       id: titleId

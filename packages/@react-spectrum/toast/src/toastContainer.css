@@ -90,7 +90,9 @@
   }
 }
 .spectrum-Toast-list {
-  display: contents;
+  display: inherit;
+  flex-direction: inherit;
+  align-items: inherit;
   list-style-type: none;
   margin-block-start: 0;
   margin-block-end: 0;
