@@ -137,7 +137,8 @@ function TooltipInner(props: TooltipProps & {isExiting: boolean, tooltipRef: Ref
     crossOffset: props.crossOffset,
     isOpen: state.isOpen,
     arrowSize: arrowWidth,
-    arrowBoundaryOffset: props.arrowBoundaryOffset
+    arrowBoundaryOffset: props.arrowBoundaryOffset,
+    shouldFlip: props.shouldFlip
   });
 
   let isEntering = useEnterAnimation(props.tooltipRef, !!placement) || props.isEntering || false;
