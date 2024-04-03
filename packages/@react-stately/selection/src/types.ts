@@ -105,5 +105,7 @@ export interface MultipleSelectionManager extends FocusState {
   /** Sets the selection behavior for the collection. */
   setSelectionBehavior(selectionBehavior: SelectionBehavior): void,
   /** Returns whether the given key is a hyperlink. */
-  isLink(key: Key): boolean
+  isLink(key: Key): boolean,
+  /** Returns the props for the given item. */
+  getItemProps(key: Key): any
 }
