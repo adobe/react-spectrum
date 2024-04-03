@@ -15,12 +15,13 @@ import {ButtonContext} from './Button';
 import {ContextValue, forwardRefType, Provider, RACValidation, removeDataAttributes, RenderProps, SlotProps, useContextProps, useRenderProps, useSlot} from './utils';
 import {FieldErrorContext} from './FieldError';
 import {filterDOMProps} from '@react-aria/utils';
+import {FormValidationBehaviorContext} from './Form';
 import {GroupContext} from './Group';
 import {InputContext} from './Input';
 import {InputDOMProps} from '@react-types/shared';
 import {LabelContext} from './Label';
 import {NumberFieldState, useNumberFieldState} from 'react-stately';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, useContext, useRef} from 'react';
 import {TextContext} from './Text';
 
 export interface NumberFieldRenderProps {
@@ -47,11 +48,13 @@ export const NumberFieldStateContext = createContext<NumberFieldState | null>(nu
 
 function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>) {
   [props, ref] = useContextProps(props, ref, NumberFieldContext);
+  let formValidationBehavior = useContext(FormValidationBehaviorContext);
+  let validationBehavior = props.validationBehavior ?? formValidationBehavior ?? 'native';
   let {locale} = useLocale();
   let state = useNumberFieldState({
     ...props,
     locale,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   });
 
   let inputRef = useRef<HTMLInputElement>(null);
@@ -68,7 +71,7 @@ function NumberField(props: NumberFieldProps, ref: ForwardedRef<HTMLDivElement>)
   } = useNumberField({
     ...removeDataAttributes(props),
     label,
-    validationBehavior: props.validationBehavior ?? 'native'
+    validationBehavior
   }, state, inputRef);
 
   let renderProps = useRenderProps({
