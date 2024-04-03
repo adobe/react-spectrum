@@ -20,6 +20,8 @@ import {render as ReactDOMRender} from 'react-dom';
 import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
 
+const REACT_VERSION = React.version;
+
 function Example(props) {
   let {elementType: ElementType = 'div', style, draggable, ...otherProps} = props;
   let {pressProps} = usePress(otherProps);
@@ -3008,6 +3010,7 @@ describe('usePress', function () {
   describe('Owner document and window', () => {
     let iframe;
     let iframeRoot;
+    const reactMajor = parseInt(REACT_VERSION.split('.')[0], 10);
     beforeEach(() => {
       iframe = document.createElement('iframe');
       window.document.body.appendChild(iframe);
@@ -3021,9 +3024,17 @@ describe('usePress', function () {
 
     const IframeExample = (props) => {
       React.useEffect(() => {
-        ReactDOMRender(<Example
-          {...props}
-          data-testid="example" />, iframeRoot);
+        if (reactMajor >= 18) {
+          import('react-dom/client').then(exports => {
+            const {createRoot} = exports;
+            const root = createRoot(iframeRoot);
+            act(() => {
+              root.render(<Example {...props} data-testid="example" />);
+            });
+          });
+        } else {
+          ReactDOMRender(<Example {...props} data-testid="example" />, iframeRoot);
+        }
       }, [props]);
 
       return null;

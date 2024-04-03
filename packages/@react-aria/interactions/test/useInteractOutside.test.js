@@ -214,7 +214,7 @@ describe('useInteractOutside (iframes)', function () {
   let iframe;
   let iframeRoot;
   let iframeDocument;
-  let reactMajor = parseInt(REACT_VERSION.split('.')[0], 10);
+  const reactMajor = parseInt(REACT_VERSION.split('.')[0], 10);
   beforeEach(() => {
     iframe = document.createElement('iframe');
     window.document.body.appendChild(iframe);
