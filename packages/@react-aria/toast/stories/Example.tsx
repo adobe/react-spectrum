@@ -49,7 +49,9 @@ function Toast(props) {
 
   return (
     <div {...toastProps} ref={ref} style={{margin: 20, display: 'flex', gap: 5}}>
-      <div {...contentProps} {...titleProps}>{props.toast.content}</div>
+      <div {...contentProps}>
+        <div {...titleProps}>{props.toast.content}</div>
+      </div>
       <button {...buttonProps} ref={buttonRef}>x</button>
     </div>
   );
