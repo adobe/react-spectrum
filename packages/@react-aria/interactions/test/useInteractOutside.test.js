@@ -223,7 +223,7 @@ describe('useInteractOutside (iframes)', function () {
     iframeRoot = iframeDocument.createElement('div');
     iframeDocument.body.appendChild(iframeRoot);
 
-    if (reactMajor >= 18) {
+    if (reactMajor >= 19) {
       import('react-dom/client').then(exports => {
         const {createRoot} = exports;
         root = createRoot(iframeRoot);

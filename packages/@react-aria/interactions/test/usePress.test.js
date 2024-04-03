@@ -3024,7 +3024,7 @@ describe('usePress', function () {
 
     const IframeExample = (props) => {
       React.useEffect(() => {
-        if (reactMajor >= 18) {
+        if (reactMajor >= 19) {
           import('react-dom/client').then(exports => {
             const {createRoot} = exports;
             const root = createRoot(iframeRoot);
