@@ -1,22 +1,31 @@
 
+import { dirname, join } from "path";
 module.exports = {
-  core: {
-    builder: "storybook-builder-parcel",
-  },
   stories: ['../packages/**/stories/*.stories.{js,jsx,ts,tsx}'],
+
   addons: [
-    '@storybook/addon-actions',
-    '@storybook/addon-a11y',
-    '@storybook/addon-controls',
-    'storybook-dark-mode',
-    './custom-addons/provider/register',
-    './custom-addons/descriptions/register',
-    './custom-addons/theme/register',
-    './custom-addons/strictmode/register',
-    './custom-addons/scrolling/register'
+    getAbsolutePath("@storybook/addon-actions"),
+    getAbsolutePath("@storybook/addon-a11y"),
+    getAbsolutePath("@storybook/addon-controls"),
+    getAbsolutePath("storybook-dark-mode"),
+    "./custom-addons/provider/register",
+    "./custom-addons/descriptions/register",
+    "./custom-addons/theme/register",
+    "./custom-addons/strictmode/register",
+    "./custom-addons/scrolling/register"
   ],
+
   typescript: {
     check: false,
     reactDocgen: false
+  },
+
+  framework: {
+    name: "storybook-react-parcel",
+    options: {},
   }
 };
+
+function getAbsolutePath(value) {
+  return dirname(require.resolve(join(value, "package.json")));
+}

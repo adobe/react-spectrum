@@ -16,6 +16,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import userEvent from '@testing-library/user-event';
 
+const REACT_VERSION = React.version;
+const reactMajor = parseInt(REACT_VERSION.split('.')[0], 10);
+let root;
+
 describe('FocusScope', function () {
   let iframe;
   let iframeRoot;
@@ -24,21 +28,37 @@ describe('FocusScope', function () {
 
   const IframeExample = ({children}) => {
     React.useEffect(() => {
-      ReactDOM.render(<>{children}</>, iframeRoot);
+      function renderIframe() {
+        if (reactMajor >= 19) {
+          root.render(<>{children}</>);
+        } else {
+          ReactDOM.render(<>{children}</>, iframeRoot);
+        }
+      }
+      renderIframe();
     }, [children]);
 
     return null;
   };
 
-  beforeEach(() => {
+  beforeAll(() => {
     jest.useFakeTimers();
+  });
 
+  beforeEach(async () => {
     // Iframe setup
     iframe = document.createElement('iframe');
     window.document.body.appendChild(iframe);
     const iframeDocument = iframe.contentWindow.document;
     iframeRoot = iframeDocument.createElement('div');
     iframeDocument.body.appendChild(iframeRoot);
+
+    if (reactMajor >= 19) {
+      await act(async () => {
+        let {createRoot} = await import('react-dom/client');
+        root = createRoot(iframeRoot);
+      });
+    }
   });
 
   afterEach(() => {

@@ -65,10 +65,16 @@ export function Link(props: SpectrumLinkProps) {
   } else {
     // Backward compatibility.
     let wrappedChild = getWrappedElement(children);
+    let wrappedChildRef;
+    if (React.version.startsWith('19')) {
+      wrappedChildRef = wrappedChild.props.ref;
+    } else {
+      wrappedChildRef = wrappedChild.ref;
+    }
     link = React.cloneElement(wrappedChild, {
       ...mergeProps(wrappedChild.props, domProps),
       // @ts-ignore https://github.com/facebook/react/issues/8873
-      ref: wrappedChild.ref ? mergeRefs(ref, wrappedChild.ref) : ref
+      ref: wrappedChildRef ? mergeRefs(ref, wrappedChildRef) : ref
     });
   }
 
