@@ -10,12 +10,10 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, installPointerEvent, REACT_MAJOR_VERSION, render, waitFor} from '@react-spectrum/test-utils';
 import React, {useRef} from 'react';
 import {render as ReactDOMRender} from 'react-dom';
 import {useInteractOutside} from '../';
-
-const REACT_VERSION = React.version;
 
 function Example(props) {
   let ref = useRef();
@@ -212,22 +210,19 @@ describe('useInteractOutside', function () {
 
 describe('useInteractOutside (iframes)', function () {
   let iframe;
-  let iframeRoot;
+  let iframeDomNode;
   let iframeDocument;
-  const reactMajor = parseInt(REACT_VERSION.split('.')[0], 10);
-  let root;
-  beforeEach(() => {
+  let iframeRoot;
+  beforeEach(async () => {
     iframe = document.createElement('iframe');
     window.document.body.appendChild(iframe);
     iframeDocument = iframe.contentWindow.document;
-    iframeRoot = iframeDocument.createElement('div');
-    iframeDocument.body.appendChild(iframeRoot);
+    iframeDomNode = iframeDocument.createElement('div');
+    iframeDocument.body.appendChild(iframeDomNode);
 
-    if (reactMajor >= 19) {
-      import('react-dom/client').then(exports => {
-        const {createRoot} = exports;
-        root = createRoot(iframeRoot);
-      });
+    if (REACT_MAJOR_VERSION >= 19) {
+      let {createRoot} = await import('react-dom/client');
+      iframeRoot = createRoot(iframeDomNode);
     }
   });
 
@@ -238,12 +233,12 @@ describe('useInteractOutside (iframes)', function () {
   const IframeExample = (props) => {
     React.useEffect(() => {
       async function renderIframe() {
-        if (reactMajor >= 19) {
+        if (REACT_MAJOR_VERSION >= 19) {
           await act(() => {
-            root.render(<Example {...props} />);
+            iframeRoot.render(<Example {...props} />);
           });
         } else {
-          ReactDOMRender(<Example {...props} />, iframeRoot);
+          ReactDOMRender(<Example {...props} />, iframeDomNode);
         }
       }
       renderIframe();

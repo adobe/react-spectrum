@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, installMouseEvent, installPointerEvent, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, installMouseEvent, installPointerEvent, REACT_MAJOR_VERSION, render, waitFor} from '@react-spectrum/test-utils';
 import {ActionButton} from '@react-spectrum/button';
 import {Dialog, DialogTrigger} from '@react-spectrum/dialog';
 import MatchMediaMock from 'jest-matchmedia-mock';
@@ -19,8 +19,6 @@ import React from 'react';
 import {render as ReactDOMRender} from 'react-dom';
 import {theme} from '@react-spectrum/theme-default';
 import {usePress} from '../';
-
-const REACT_VERSION = React.version;
 
 function Example(props) {
   let {elementType: ElementType = 'div', style, draggable, ...otherProps} = props;
@@ -3009,13 +3007,18 @@ describe('usePress', function () {
 
   describe('Owner document and window', () => {
     let iframe;
+    let iframeDomNode;
     let iframeRoot;
-    const reactMajor = parseInt(REACT_VERSION.split('.')[0], 10);
-    beforeEach(() => {
+    beforeEach(async () => {
       iframe = document.createElement('iframe');
       window.document.body.appendChild(iframe);
-      iframeRoot = iframe.contentWindow.document.createElement('div');
-      iframe.contentWindow.document.body.appendChild(iframeRoot);
+      iframeDomNode = iframe.contentWindow.document.createElement('div');
+      iframe.contentWindow.document.body.appendChild(iframeDomNode);
+
+      if (REACT_MAJOR_VERSION >= 19) {
+        let {createRoot} = await import('react-dom/client');
+        iframeRoot = createRoot(iframeDomNode);
+      }
     });
 
     afterEach(() => {
@@ -3024,13 +3027,9 @@ describe('usePress', function () {
 
     const IframeExample = (props) => {
       React.useEffect(() => {
-        if (reactMajor >= 19) {
-          import('react-dom/client').then(exports => {
-            const {createRoot} = exports;
-            const root = createRoot(iframeRoot);
-            act(() => {
-              root.render(<Example {...props} data-testid="example" />);
-            });
+        if (REACT_MAJOR_VERSION >= 19) {
+          act(() => {
+            iframeRoot.render(<Example {...props} data-testid="example" />);
           });
         } else {
           ReactDOMRender(<Example {...props} data-testid="example" />, iframeRoot);
