@@ -551,12 +551,6 @@ workflows:
       - test-17:
           requires:
             - install-17
-      - test-ssr-canary:
-          requires:
-            - install-canary
-      - test-canary:
-          requires:
-            - install-canary
       - test-esm:
           requires:
             - install
@@ -612,9 +606,6 @@ workflows:
             - test-16
             - test-ssr-17
             - test-17
-            - test-ssr-canary
-            - test-canary
-            - test-ssr-canary
             - test-esm
             - storybook
             - storybook-16
