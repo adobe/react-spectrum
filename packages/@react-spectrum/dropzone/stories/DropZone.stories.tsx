@@ -19,7 +19,7 @@ import {Draggable} from '@react-aria/dnd/stories/dnd.stories';
 import {DropEvent, FileDropItem, TextDropItem, useDrag} from 'react-aria';
 import {DropZone} from '../';
 import File from '@spectrum-icons/illustrations/File';
-import {FileTrigger, Text} from 'react-aria-components';
+import {FileTrigger} from 'react-aria-components';
 import {Heading} from '@react-spectrum/text';
 import {IllustratedMessage} from '@react-spectrum/illustratedmessage';
 import {Meta} from '@storybook/react';

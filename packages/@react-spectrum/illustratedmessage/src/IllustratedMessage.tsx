@@ -37,7 +37,7 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
   let contentClassName = classNames(styles, 'spectrum-IllustratedMessage-description');
 
   let slots = {
-    heading: {UNSAFE_className: headingClassName, id: ctx.headingId},
+    heading: {UNSAFE_className: headingClassName, id: ctx?.headingId},
     content: {UNSAFE_className: contentClassName}
   };
 
