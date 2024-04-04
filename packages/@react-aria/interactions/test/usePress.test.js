@@ -3030,7 +3030,7 @@ describe('usePress', function () {
         if (REACT_MAJOR_VERSION >= 18) {
           iframeRoot.render(<Example {...props} data-testid="example" />);
         } else {
-          ReactDOMRender(<Example {...props} data-testid="example" />, iframeRoot);
+          ReactDOMRender(<Example {...props} data-testid="example" />, iframeDomNode);
         }
       }, [props]);
 
