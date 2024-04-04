@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents} from '@react-types/shared';
-import {filterDOMProps, mergeProps, useRouter, useSlotId} from '@react-aria/utils';
+import {DOMAttributes, DOMProps, FocusableElement, FocusEvents, HoverEvents, Key, KeyboardEvents, PressEvent, PressEvents, RouterOptions} from '@react-types/shared';
+import {filterDOMProps, mergeProps, useLinkProps, useRouter, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
 import {isFocusVisible, useFocus, useHover, useKeyboard, usePress} from '@react-aria/interactions';
 import {menuData} from './useMenu';
@@ -142,7 +142,7 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
     }
 
     if (e.target instanceof HTMLAnchorElement) {
-      router.open(e.target, e);
+      router.open(e.target, e, item.props.href, item.props.routerOptions as RouterOptions);
     }
   };
 
@@ -269,13 +269,14 @@ export function useMenuItem<T>(props: AriaMenuItemProps, state: TreeState<T>, re
   });
 
   let {focusProps} = useFocus({onBlur, onFocus, onFocusChange});
-  let domProps = filterDOMProps(item.props, {isLink: !!item?.props?.href});
+  let domProps = filterDOMProps(item.props);
   delete domProps.id;
+  let linkProps = useLinkProps(item.props);
 
   return {
     menuItemProps: {
       ...ariaProps,
-      ...mergeProps(domProps, isTrigger ? {onFocus: itemProps.onFocus} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
+      ...mergeProps(domProps, linkProps, isTrigger ? {onFocus: itemProps.onFocus} : itemProps, pressProps, hoverProps, keyboardProps, focusProps),
       tabIndex: itemProps.tabIndex != null ? -1 : undefined
     },
     labelProps: {

@@ -226,5 +226,17 @@ describe('TextField', () => {
       await user.tab();
       expect(input).not.toHaveAttribute('aria-describedby');
     });
+
+    it('should render the id attribute only on the input element', async () => {
+      let {getAllByTestId, getByRole} = render(
+        <TestTextField id="name" input={component} />
+      );
+      let outerEl = getAllByTestId('text-field-test');
+      let input = getByRole('textbox');
+
+      expect(outerEl).toHaveLength(1);
+      expect(outerEl[0]).not.toHaveAttribute('id');
+      expect(input).toHaveAttribute('id', 'name');
+    });
   });
 });
