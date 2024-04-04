@@ -3028,9 +3028,7 @@ describe('usePress', function () {
     const IframeExample = (props) => {
       React.useEffect(() => {
         if (REACT_MAJOR_VERSION >= 18) {
-          act(() => {
-            iframeRoot.render(<Example {...props} data-testid="example" />);
-          });
+          iframeRoot.render(<Example {...props} data-testid="example" />);
         } else {
           ReactDOMRender(<Example {...props} data-testid="example" />, iframeRoot);
         }
