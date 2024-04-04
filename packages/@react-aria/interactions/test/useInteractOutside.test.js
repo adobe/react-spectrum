@@ -220,7 +220,7 @@ describe('useInteractOutside (iframes)', function () {
     iframeDomNode = iframeDocument.createElement('div');
     iframeDocument.body.appendChild(iframeDomNode);
 
-    if (REACT_MAJOR_VERSION >= 19) {
+    if (REACT_MAJOR_VERSION >= 18) {
       let {createRoot} = await import('react-dom/client');
       iframeRoot = createRoot(iframeDomNode);
     }

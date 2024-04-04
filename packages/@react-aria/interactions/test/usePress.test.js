@@ -3015,7 +3015,7 @@ describe('usePress', function () {
       iframeDomNode = iframe.contentWindow.document.createElement('div');
       iframe.contentWindow.document.body.appendChild(iframeDomNode);
 
-      if (REACT_MAJOR_VERSION >= 19) {
+      if (REACT_MAJOR_VERSION >= 18) {
         let {createRoot} = await import('react-dom/client');
         iframeRoot = createRoot(iframeDomNode);
       }
