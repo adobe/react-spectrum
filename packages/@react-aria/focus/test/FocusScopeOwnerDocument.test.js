@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, waitFor} from '@react-spectrum/test-utils';
+import {act, fireEvent, pointerMap, REACT_MAJOR_VERSION, render, waitFor} from '@react-spectrum/test-utils';
 import {FocusScope, useFocusManager} from '../';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -18,27 +18,43 @@ import userEvent from '@testing-library/user-event';
 
 describe('FocusScope', function () {
   let iframe;
+  let iframeDomNode;
   let iframeRoot;
 
   let user;
 
   const IframeExample = ({children}) => {
     React.useEffect(() => {
-      ReactDOM.render(<>{children}</>, iframeRoot);
+      function renderIframe() {
+        if (REACT_MAJOR_VERSION >= 18) {
+          iframeRoot.render(<>{children}</>);
+        } else {
+          ReactDOM.render(<>{children}</>, iframeDomNode);
+        }
+      }
+      renderIframe();
     }, [children]);
-
     return null;
   };
 
-  beforeEach(() => {
+  beforeAll(() => {
     jest.useFakeTimers();
+  });
 
+  beforeEach(async () => {
     // Iframe setup
     iframe = document.createElement('iframe');
     window.document.body.appendChild(iframe);
     const iframeDocument = iframe.contentWindow.document;
-    iframeRoot = iframeDocument.createElement('div');
-    iframeDocument.body.appendChild(iframeRoot);
+    iframeDomNode = iframeDocument.createElement('div');
+    iframeDocument.body.appendChild(iframeDomNode);
+
+    if (REACT_MAJOR_VERSION >= 18) {
+      await act(async () => {
+        let {createRoot} = await import('react-dom/client');
+        iframeRoot = createRoot(iframeDomNode);
+      });
+    }
   });
 
   afterEach(() => {
