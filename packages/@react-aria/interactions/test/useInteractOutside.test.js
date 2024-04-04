@@ -232,11 +232,9 @@ describe('useInteractOutside (iframes)', function () {
 
   const IframeExample = (props) => {
     React.useEffect(() => {
-      async function renderIframe() {
+      function renderIframe() {
         if (REACT_MAJOR_VERSION >= 19) {
-          await act(() => {
-            iframeRoot.render(<Example {...props} />);
-          });
+          iframeRoot.render(<Example {...props} />);
         } else {
           ReactDOMRender(<Example {...props} />, iframeDomNode);
         }
