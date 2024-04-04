@@ -13,6 +13,7 @@
 import {AriaLabelingProps, DOMProps, DOMRef, StyleProps} from '@react-types/shared';
 import {classNames, SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DropZoneProps, DropZone as RACDropZone} from 'react-aria-components';
+import {IllustratedMessageContext} from '@react-spectrum/illustratedmessage/src/IllustratedMessage';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
 import {mergeProps, useId} from '@react-aria/utils';
@@ -41,13 +42,15 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let {styleProps} = useStyleProps(props);
   let domRef = useDOMRef(ref);
   let messageId = useId();
+  let headingId = useId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/dropzone');
+  let ariaLabelledby = isFilled ? headingId + messageId : headingId;
 
   return (
     <RACDropZone
       {...mergeProps(filterProps(otherProps))}
       {...styleProps as Omit<React.HTMLAttributes<HTMLElement>, 'onDrop'>}
-      aria-labelledby={isFilled && messageId}
+      aria-labelledby={ariaLabelledby}
       className={
       classNames(
         styles,
@@ -63,7 +66,9 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
             'spectrum-Dropzone-illustratedMessage'
             )}
         }}>
-        {children}
+        <IllustratedMessageContext.Provider value={{headingId: headingId}}>
+          {children}
+        </IllustratedMessageContext.Provider>
       </SlotProvider>
       <div className={classNames(styles, 'spectrum-Dropzone-backdrop')} />
       <div

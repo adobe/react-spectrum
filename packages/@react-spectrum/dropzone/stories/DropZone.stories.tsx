@@ -125,9 +125,7 @@ function Example(props) {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              Drag a file here
-            </Text>
+            Drag a file here
           </Heading>
           <Content>
             <FileTrigger
@@ -194,9 +192,7 @@ function DropZoneWithDraggable(props) {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              Drag and Drop here
-            </Text>
+            Drag and Drop here
           </Heading>
         </IllustratedMessage>
         {filledSrc}
@@ -233,9 +229,7 @@ function DropZoneWithButton(props) {
         <IllustratedMessage>
           <Upload />
           <Heading>
-            <Text slot="label">
-              Drag and Drop here
-            </Text>
+            Drag and Drop here
           </Heading>
           <Content>
             <FileTrigger
