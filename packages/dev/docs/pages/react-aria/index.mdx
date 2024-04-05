@@ -190,7 +190,7 @@ ReactDOM.createRoot(document.getElementById('example-app')).render(<ExampleApp /
           {/* Use render props to customize children based on state. */}
           {({ isSelected }) => <>
             <img alt="" src={item.avatar} />
-            <span className="... font-normal group-selected:font-semibold">{item.name}</span></span>
+            <span className="... font-normal group-selected:font-semibold">{item.name}</span>
             {isSelected &&
               <CheckIcon />
             }
