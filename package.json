@@ -76,6 +76,7 @@
     "@parcel/optimizer-data-url": "^2.12.0",
     "@parcel/optimizer-terser": "^2.12.0",
     "@parcel/packager-ts": "^2.12.0",
+    "@parcel/reporter-cli": "^2.12.0",
     "@parcel/resolver-glob": "^2.12.0",
     "@parcel/transformer-inline": "^2.12.0",
     "@parcel/transformer-inline-string": "^2.12.0",
@@ -203,9 +204,7 @@
     "postcss-import": "15.1.0",
     "react-refresh": "0.9.0",
     "remark-parse": "10.0.1",
-    "browserslist": "4.23.0",
-    "parcel-resolver-storybook/@parcel/node-resolver-core": "3.3.0",
-    "parcel-resolver-storybook/@parcel/plugin": "2.12.0"
+    "browserslist": "4.23.0"
   },
   "@parcel/transformer-css": {
     "cssModules": {

@@ -1,4 +1,4 @@
-import {addons, makeDecorator} from '@storybook/addons';
+import {addons, makeDecorator} from '@storybook/preview-api';
 import {getQueryParams} from '@storybook/client-api';
 import React, {StrictMode, useEffect, useState} from 'react';
 

@@ -4,10 +4,10 @@ module.exports = {
   stories: ['../packages/**/stories/*.stories.{js,jsx,ts,tsx}'],
 
   addons: [
-    getAbsolutePath("@storybook/addon-actions"),
-    getAbsolutePath("@storybook/addon-a11y"),
-    getAbsolutePath("@storybook/addon-controls"),
-    getAbsolutePath("storybook-dark-mode"),
+    "@storybook/addon-actions",
+    "@storybook/addon-a11y",
+    "@storybook/addon-controls",
+    "storybook-dark-mode",
     "./custom-addons/provider/register",
     "./custom-addons/descriptions/register",
     "./custom-addons/theme/register",
@@ -25,7 +25,3 @@ module.exports = {
     options: {},
   }
 };
-
-function getAbsolutePath(value) {
-  return dirname(require.resolve(join(value, "package.json")));
-}

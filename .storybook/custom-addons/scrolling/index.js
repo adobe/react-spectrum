@@ -1,4 +1,4 @@
-import {addons, makeDecorator} from '@storybook/addons';
+import {addons} from '@storybook/preview-api';
 import clsx from 'clsx';
 import {getQueryParams} from '@storybook/client-api';
 import React, {useEffect, useState} from 'react';
