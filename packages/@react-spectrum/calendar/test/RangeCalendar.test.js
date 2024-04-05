@@ -693,7 +693,7 @@ describe('RangeCalendar', () => {
         expect(end).toEqual(new CalendarDate(2019, 6, 20));
       });
 
-      it('allow touch-scroll thought calendar by onto a day and then finalize selection', async () => {
+      it('selection isn\'t prematurely finalized when touching a day cell to scroll through the calendar', async () => {
         let onChange = jest.fn();
 
         let {getAllByLabelText, getByText} = render(
@@ -730,7 +730,7 @@ describe('RangeCalendar', () => {
         });
       });
 
-      it('allow touch-scroll thought calendar by onto a disabled day and then finalize selection', async () => {
+      it('selection isn\'t prematurely finalized when touching a disabled day cell to scroll through the calendar', async () => {
         let onChange = jest.fn();
 
         let {getAllByLabelText, getByText} = render(
@@ -767,7 +767,7 @@ describe('RangeCalendar', () => {
         });
       });
 
-      it('allow touch-scroll thought calendar by onto a weekday and then finalize selection', async () => {
+      it('selection isn\'t prematurely finalized when touching a weekday header to scroll through the calendar', async () => {
         let onChange = jest.fn();
 
         let {getAllByLabelText, getByText} = render(
@@ -804,7 +804,7 @@ describe('RangeCalendar', () => {
         });
       });
 
-      it('allow touch-scroll thought calendar by onto a heading and then finalize selection', async () => {
+      it('selection isn\'t prematurely finalized when touching the header to scroll through the calendar', async () => {
         let onChange = jest.fn();
 
         let {getAllByLabelText, getByText, getByRole} = render(
