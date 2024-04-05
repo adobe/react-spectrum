@@ -203,7 +203,6 @@ describe('Tree', () => {
     return newTree;
   };
 
-  // TODO write tests for hasChildItems prop on a row, aria-label on row
   it('should support DOM props', () => {
     let {getByRole, getAllByRole} = render(<StaticTree treeProps={{'data-testid': 'test-tree'}} rowProps={{'data-testid': 'test-row'}} />);
     let tree = getByRole('treegrid');
@@ -414,6 +413,39 @@ describe('Tree', () => {
     expect(row2).not.toHaveAttribute('data-selected');
     expect(onSelectionChange).toHaveBeenCalledTimes(2);
     expect(new Set(onSelectionChange.mock.calls[1][0])).toEqual(new Set(['Projects']));
+  });
+
+  it('should render a chevron for an expandable row marked with hasChildRows', () => {
+    let {getAllByRole} = render(
+      <TreeView aria-label="test tree">
+        <TreeViewItem textValue="Test" hasChildItems>
+          <Text>Test</Text>
+        </TreeViewItem>
+      </TreeView>
+    );
+    let rows = getAllByRole('row');
+    let chevron = within(rows[0]).getAllByRole('button')[0];
+    expect(rows).toHaveLength(1);
+
+    expect(rows[0]).toHaveAttribute('aria-label', 'Test');
+    // Until the row gets children, don't mark it with the aria/data attributes.
+    expect(rows[0]).not.toHaveAttribute('aria-expanded');
+    expect(rows[0]).toHaveAttribute('data-has-child-rows', 'false');
+    expect(chevron).toBeTruthy();
+  });
+
+  it('should apply a user aria-label to the tree row if provided', () => {
+    let {getAllByRole} = render(
+      <TreeView aria-label="test tree">
+        <TreeViewItem textValue="Test" aria-label="test row">
+          <Text>Test</Text>
+        </TreeViewItem>
+      </TreeView>
+    );
+    let rows = getAllByRole('row');
+    expect(rows).toHaveLength(1);
+
+    expect(rows[0]).toHaveAttribute('aria-label', 'Test');
   });
 
   describe('general interactions', () => {
@@ -937,8 +969,7 @@ describe('Tree', () => {
         // Since selection is enabled, we need to click the chevron even for disabled rows since it is still regarded as the primary action
         let chevron = within(rows[0]).getAllByRole('button')[0];
         await trigger(chevron, 'ArrowLeft');
-        // TODO: reenable this when we make it so the chevron button isn't focusable via click/keyboard nav
-        // expect(document.activeElement).toBe(rows[0]);
+        expect(document.activeElement).toBe(rows[0]);
         expect(rows[0]).toHaveAttribute('aria-expanded', 'false');
         expect(rows[0]).toHaveAttribute('data-expanded', 'false');
         expect(onExpandedChange).toHaveBeenCalledTimes(1);

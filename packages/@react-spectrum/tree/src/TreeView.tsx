@@ -38,7 +38,6 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>,
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-// TODO: write tests for all of these props to make sure things are propagating
 export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value'> {
   /** Rendered contents of the tree item or child items. */
   children: ReactNode,
@@ -277,14 +276,14 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
                 slot="selection" />
             )}
             <div style={{gridArea: 'level-padding', marginInlineEnd: `calc(${level - 1} * var(--spectrum-global-dimension-size-200))`}} />
+            {/* TODO: revisit when we do async loading, at the moment hasChildItems will only cause the chevron to be rendered, no aria/data attributes indicating the row's expandability are added */}
             {(hasChildRows || hasChildItems) && <ExpandableRowChevronMacros isDisabled={isDisabled} isExpanded={isExpanded} />}
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: treeContent({isDisabled})},
                 // Need to do inline since the macros don't override spectrum class styles
-                // TODO: there is an issue here where these icon props are making into the action menu's icon....
-                // We can't add a wrapping ClearSlot around ActionMenu cuz ListView passes stuff to the 'actionMenu' slot nor can we wrap ClearSlots around the
-                // icon in ActionMenu because ActionButton passes stuff via the icon slot
+                // Note there is also an issue here where these icon props are making into the action menu's icon. Resolved by 8ab0ffb276ff437a65b365c9a3be0323a1b24656
+                // but could crop up later for other components
                 icon: {UNSAFE_className: treeIcon(), UNSAFE_style: {color: isDisabled && 'var(--spectrum-alias-icon-color-disabled)'}, size: 'S'},
                 actionButton: {UNSAFE_className: treeActions(), isQuiet: true},
                 actionGroup: {
