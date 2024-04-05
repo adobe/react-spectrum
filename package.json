@@ -160,6 +160,7 @@
     "react": "^18.0.0",
     "react-axe": "^3.0.2",
     "react-dom": "^18.0.0",
+    "react-frame-component": "^5.0.0",
     "react-test-renderer": "^16.9.0",
     "recast": "^0.20",
     "recursive-readdir": "^2.2.2",
@@ -187,7 +188,7 @@
     "postcss-import": "15.1.0",
     "react-refresh": "0.9.0",
     "remark-parse": "10.0.1",
-    "browserslist": "4.20.3"
+    "browserslist": "4.23.0"
   },
   "@parcel/transformer-css": {
     "cssModules": {

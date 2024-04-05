@@ -30,7 +30,10 @@ export class LocalizedStringDictionary<K extends string = string, T extends Loca
 
   constructor(messages: LocalizedStrings<K, T>, defaultLocale: string = 'en-US') {
     // Clone messages so we don't modify the original object.
-    this.strings = {...messages};
+    // Filter out entries with falsy values which may have been caused by applying optimize-locales-plugin.
+    this.strings = Object.fromEntries(
+      Object.entries(messages).filter(([, v]) => v)
+    );
     this.defaultLocale = defaultLocale;
   }
 
