@@ -4824,7 +4824,7 @@ export let tableTests = () => {
                 <Column>Baz</Column>
               </TableHeader>
               <TableBody>
-                <Row href="/one">
+                <Row href="/one" routerOptions={{foo: 'bar'}}>
                   <Cell>Foo 1</Cell>
                   <Cell>Bar 1</Cell>
                   <Cell>Baz 1</Cell>
@@ -4841,7 +4841,7 @@ export let tableTests = () => {
 
         let items = getAllByRole('row').slice(1);
         await trigger(items[0]);
-        expect(navigate).toHaveBeenCalledWith('/one');
+        expect(navigate).toHaveBeenCalledWith('/one', {foo: 'bar'});
 
         navigate.mockReset();
         let onClick = mockClickDefault();
