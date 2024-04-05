@@ -88,8 +88,8 @@
       </g>
       <path id="Cursor_1-4" data-name="Cursor 1" d="M-1011.242-363.473-1013.8-361v-11.2l8.2,8.2h-3.694l2.265,5.4-1.844.774Z" transform="translate(1701.8 516.241)" fill="var(--anatomy-gray-400)"/>
     </g>
-    <text id="Θtop" transform="translate(210.6 26.867)" fill="var(--anatomy-gray-800)" font-size="27" font-family="Adobe Clean"><tspan x="0" y="0">Θ</tspan><tspan y="0" font-size="15.749" baseline-shift="-8.999099846546754">top</tspan></text>
-    <text id="Θbottom" transform="translate(364.599 26.867)" fill="var(--anatomy-gray-800)" font-size="27" font-family="Adobe Clean"><tspan x="0" y="0">Θ</tspan><tspan y="0" font-size="15.749" baseline-shift="-8.999099846546754">bottom</tspan></text>
-    <text id="Θpointer" transform="translate(532.6 26.867)" fill="var(--anatomy-gray-800)" font-size="27" font-family="Adobe Clean"><tspan x="0" y="0">Θ</tspan><tspan y="0" font-size="15.749" baseline-shift="-8.999099846546754">pointer</tspan></text>
+    <text id="Θtop" transform="translate(210.6 26.867)" fill="var(--anatomy-gray-800)" font-size="27" font-family="Adobe-Clean"><tspan x="0" y="0">Θ</tspan><tspan y="0" font-size="15.749" baseline-shift="-8.999099846546754">top</tspan></text>
+    <text id="Θbottom" transform="translate(364.599 26.867)" fill="var(--anatomy-gray-800)" font-size="27" font-family="Adobe-Clean"><tspan x="0" y="0">Θ</tspan><tspan y="0" font-size="15.749" baseline-shift="-8.999099846546754">bottom</tspan></text>
+    <text id="Θpointer" transform="translate(532.6 26.867)" fill="var(--anatomy-gray-800)" font-size="27" font-family="Adobe-Clean"><tspan x="0" y="0">Θ</tspan><tspan y="0" font-size="15.749" baseline-shift="-8.999099846546754">pointer</tspan></text>
   </g>
 </svg>

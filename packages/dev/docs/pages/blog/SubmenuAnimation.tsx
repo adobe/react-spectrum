@@ -213,7 +213,7 @@ export function SubmenuAnimation() {
             </g>
             <text
               fill="var(--anatomy-gray-800)"
-              fontFamily="AdobeClean-Regular, Adobe Clean"
+              fontFamily="Adobe-Clean"
               fontSize={14}
               transform="translate(313 42)">
               <tspan x={0} y={0}>
@@ -224,7 +224,7 @@ export function SubmenuAnimation() {
           <text
             fill="var(--anatomy-gray-800)"
             data-name="Option 3"
-            fontFamily="AdobeClean-Regular, Adobe Clean"
+            fontFamily="Adobe-Clean"
             fontSize={20}
             transform="translate(296 190)">
             <tspan x={0} y={0}>
@@ -235,7 +235,7 @@ export function SubmenuAnimation() {
             ref={option2Ref}
             fill="var(--anatomy-gray-800)"
             data-name="Option 2"
-            fontFamily="AdobeClean-Regular, Adobe Clean"
+            fontFamily="Adobe-Clean"
             fontSize={20}
             transform="translate(296 142)">
             <tspan x={0} y={0}>
@@ -246,7 +246,7 @@ export function SubmenuAnimation() {
             ref={option1Ref}
             fill="var(--anatomy-gray-800)"
             data-name="Option 1"
-            fontFamily="AdobeClean-Regular, Adobe Clean"
+            fontFamily="Adobe-Clean"
             fontSize={20}
             transform="translate(296 94)">
             <tspan x={0} y={0}>
@@ -312,7 +312,7 @@ export function SubmenuAnimation() {
                 ref={submenuOptionRef}
                 fill="var(--anatomy-gray-800)"
                 data-name="Submenu Option 3"
-                fontFamily="AdobeClean-Regular, Adobe Clean"
+                fontFamily="Adobe-Clean"
                 fontSize={20}
                 transform="translate(502 238)">
                 <tspan x={0} y={0}>
@@ -322,7 +322,7 @@ export function SubmenuAnimation() {
               <text
                 fill="var(--anatomy-gray-800)"
                 data-name="Submenu Option 4"
-                fontFamily="AdobeClean-Regular, Adobe Clean"
+                fontFamily="Adobe-Clean"
                 fontSize={20}
                 transform="translate(502 286)">
                 <tspan x={0} y={0}>
@@ -332,7 +332,7 @@ export function SubmenuAnimation() {
               <text
                 fill="var(--anatomy-gray-800)"
                 data-name="Submenu Option 2"
-                fontFamily="AdobeClean-Regular, Adobe Clean"
+                fontFamily="Adobe-Clean"
                 fontSize={20}
                 transform="translate(501 190)">
                 <tspan x={0} y={0}>
@@ -342,7 +342,7 @@ export function SubmenuAnimation() {
               <text
                 fill="var(--anatomy-gray-800)"
                 data-name="Submenu Option 1"
-                fontFamily="AdobeClean-Regular, Adobe Clean"
+                fontFamily="Adobe-Clean"
                 fontSize={20}
                 transform="translate(502 142)">
                 <tspan x={0} y={0}>
