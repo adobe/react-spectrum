@@ -17,3 +17,11 @@ export function triggerTouch(element, opts = {}) {
   fireEvent.pointerDown(element, {pointerType: 'touch', ...opts});
   fireEvent.pointerUp(element, {pointerType: 'touch', ...opts});
 }
+
+// Mocks and prevents the next click's default operation
+export function mockClickDefault(opts = {}) {
+  let onClick = jest.fn().mockImplementation(e => e.preventDefault());
+  window.addEventListener('click', onClick, opts);
+
+  return onClick;
+}

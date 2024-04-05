@@ -202,73 +202,6 @@ describe('Toast Provider and Container', function () {
     expect(queryByRole('alert')).toBeNull();
   });
 
-  it('prioritizes toasts based on variant', async () => {
-    function ToastPriorites(props = {}) {
-      return (
-        <div>
-          <Button
-            onPress={() => ToastQueue.info('Info', props)}
-            variant="primary">
-            Info
-          </Button>
-          <Button
-            onPress={() => ToastQueue.negative('Error', props)}
-            variant="primary">
-            Error
-          </Button>
-        </div>
-      );
-    }
-
-    let {getByRole, getAllByRole, queryByRole} = renderComponent(<ToastPriorites />);
-    let buttons = getAllByRole('button');
-
-    // show info toast first. error toast should supersede it.
-
-    expect(queryByRole('alert')).toBeNull();
-    await user.click(buttons[0]);
-
-    let alert = getByRole('alert');
-    expect(alert).toBeVisible();
-    expect(alert).toHaveTextContent('Info');
-
-    await user.click(buttons[1]);
-    fireAnimationEnd(alert);
-
-    alert = getByRole('alert');
-    expect(alert).toHaveTextContent('Error');
-
-    await user.click(within(alert).getByRole('button'));
-    fireAnimationEnd(alert);
-
-    alert = getByRole('alert');
-    expect(alert).toHaveTextContent('Info');
-
-    await user.click(within(alert).getByRole('button'));
-    fireAnimationEnd(alert);
-    expect(queryByRole('alert')).toBeNull();
-
-    // again, but with error toast first.
-
-    await user.click(buttons[1]);
-    alert = getByRole('alert');
-    expect(alert).toHaveTextContent('Error');
-
-    await user.click(buttons[0]);
-    alert = getByRole('alert');
-    expect(alert).toHaveTextContent('Error');
-
-    await user.click(within(alert).getByRole('button'));
-    fireAnimationEnd(alert);
-
-    alert = getByRole('alert');
-    expect(alert).toHaveTextContent('Info');
-
-    await user.click(within(alert).getByRole('button'));
-    fireAnimationEnd(alert);
-    expect(queryByRole('alert')).toBeNull();
-  });
-
   it('can focus toast region using F6', async () => {
     let {getByRole} = renderComponent(<RenderToastButton timeout={5000} />);
     let button = getByRole('button');
@@ -303,13 +236,13 @@ describe('Toast Provider and Container', function () {
   });
 
   it('should move focus to container when a toast exits and there are more', async () => {
-    let {getByRole, queryByRole} = renderComponent(<RenderToastButton />);
+    let {getAllByRole, getByRole, queryByRole} = renderComponent(<RenderToastButton />);
     let button = getByRole('button');
 
     await user.click(button);
     await user.click(button);
 
-    let toast = getByRole('alert');
+    let toast = getAllByRole('alert')[0];
     let closeButton = within(toast).getByRole('button');
     await user.click(closeButton);
     fireAnimationEnd(toast);

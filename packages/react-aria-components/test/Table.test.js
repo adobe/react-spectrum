@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
 import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator, ResizableTableContainer, Row, Table, TableBody, TableHeader, useDragAndDrop, useTableOptions} from '../';
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
@@ -121,6 +121,15 @@ let DraggableTable = (props) => {
   });
 
   return <TestTable tableProps={{dragAndDropHooks}} />;
+};
+
+let DraggableTableWithSelection = (props) => {
+  let {dragAndDropHooks} = useDragAndDrop({
+    getItems: (keys) => [...keys].map((key) => ({'text/plain': key})),
+    ...props
+  });
+
+  return <TestTable tableProps={{dragAndDropHooks, selectionMode: 'multiple'}} />;
 };
 
 let columns = [
@@ -488,6 +497,70 @@ describe('Table', () => {
     expect(document.activeElement).toBe(rows[3]);
   });
 
+  it('should support isDisabled prop on rows', async () => {
+    let {getAllByRole} = render(
+      <Table aria-label="Table" selectionMode="multiple" disabledBehavior="all">
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow isDisabled>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+          <MyRow>
+            <Cell>Foo 3</Cell>
+            <Cell>Bar 3</Cell>
+            <Cell>Baz 3</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+    let items = getAllByRole('row');
+    expect(items[2]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[1]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[3]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <Table aria-label="Table" selectionMode="multiple" disabledBehavior="all">
+        <MyTableHeader>
+          <Column isRowHeader>Foo</Column>
+          <Column>Bar</Column>
+          <Column>Baz</Column>
+        </MyTableHeader>
+        <TableBody>
+          <MyRow onAction={onAction}>
+            <Cell>Foo 1</Cell>
+            <Cell>Bar 1</Cell>
+            <Cell>Baz 1</Cell>
+          </MyRow>
+          <MyRow>
+            <Cell>Foo 2</Cell>
+            <Cell>Bar 2</Cell>
+            <Cell>Baz 2</Cell>
+          </MyRow>
+        </TableBody>
+      </Table>
+    );
+    let items = getAllByRole('row');
+    await user.click(items[1]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support sorting', () => {
     let {getAllByRole} = renderTable({
       tableProps: {sortDescriptor: {column: 'name', direction: 'ascending'}, onSortChange: jest.fn()},
@@ -781,6 +854,47 @@ describe('Table', () => {
 
       expect(onRootDrop).toHaveBeenCalledTimes(1);
     });
+
+    it('should support disabled drag and drop', async () => {
+      let {queryAllByRole, getByRole, getAllByRole} = render(
+        <DraggableTable isDisabled />
+      );
+
+      let buttons = queryAllByRole('button');
+      buttons.forEach(button => {
+        expect(button).toBeDisabled();
+      });
+
+      let table = getByRole('grid');
+      expect(table).not.toHaveAttribute('data-allows-dragging', 'true');
+      expect(table).not.toHaveAttribute('draggable', 'true');
+
+      let rows = getAllByRole('row');
+      rows.forEach(row => {
+        expect(row).not.toHaveAttribute('draggable', 'true');
+      });
+    });
+
+    it('should allow selection even when drag and drop is disabled', async () => {
+      let {getAllByRole} = render(
+        <DraggableTableWithSelection isDisabled />
+    );
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).not.toBeChecked();
+      }
+
+      let checkbox = getAllByRole('checkbox')[0];
+      expect(checkbox).toHaveAttribute('aria-label', 'Select All');
+
+      await user.click(checkbox);
+
+      for (let row of getAllByRole('row')) {
+        let checkbox = within(row).getByRole('checkbox');
+        expect(checkbox).toBeChecked();
+      }
+    });
   });
 
   describe('column resizing', () => {
@@ -942,8 +1056,7 @@ describe('Table', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -979,8 +1092,7 @@ describe('Table', () => {
           expect(item).toHaveAttribute('data-href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -989,10 +1101,8 @@ describe('Table', () => {
         await user.click(within(items[0]).getByRole('checkbox'));
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         await trigger(items[1], ' ');
-        expect(onClick).not.toHaveBeenCalled();
+        expect(onClick).toHaveBeenCalledTimes(1);
         expect(items[1]).toHaveAttribute('aria-selected', 'true');
       });
 
@@ -1024,9 +1134,7 @@ describe('Table', () => {
           expect(item.tagName).not.toBe('A');
           expect(item).toHaveAttribute('data-href');
         }
-
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault({once: true});
         if (type === 'mouse') {
           await user.click(items[0]);
         } else {
@@ -1036,8 +1144,6 @@ describe('Table', () => {
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {

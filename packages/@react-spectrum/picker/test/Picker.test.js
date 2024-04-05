@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, simulateDesktop, within} from '@react-spectrum/test-utils-internal';
+import {act, fireEvent, mockClickDefault, pointerMap, render, simulateDesktop, within} from '@react-spectrum/test-utils-internal';
 import AlignCenter from '@spectrum-icons/workflow/AlignCenter';
 import AlignLeft from '@spectrum-icons/workflow/AlignLeft';
 import AlignRight from '@spectrum-icons/workflow/AlignRight';
@@ -2514,10 +2514,11 @@ describe('Picker', function () {
 
     it('works with RouterProvider', async () => {
       let navigate = jest.fn();
+      let useHref = href => '/base' + href;
       let tree = render(
-        <Provider theme={theme} router={{navigate}}>
+        <Provider theme={theme} router={{navigate, useHref}}>
           <Picker label="Picker with links">
-            <Item href="/one">One</Item>
+            <Item href="/one" routerOptions={{foo: 'bar'}}>One</Item>
             <Item href="https://adobe.com">Two</Item>
           </Picker>
         </Provider>
@@ -2531,11 +2532,10 @@ describe('Picker', function () {
 
       let listbox = tree.getByRole('listbox');
       let items = within(listbox).getAllByRole('option');
-      let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-      window.addEventListener('click', onClick);
+      expect(items[0]).toHaveAttribute('href', '/base/one');
+      mockClickDefault();
       await user.click(items[0]);
-      expect(navigate).toHaveBeenCalledWith('/one');
-      window.removeEventListener('click', onClick);
+      expect(navigate).toHaveBeenCalledWith('/one', {foo: 'bar'});
     });
   });
 });

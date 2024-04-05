@@ -490,4 +490,32 @@ describe('RadioGroup', () => {
     expect(groupRef.current).toBe(getByRole('radiogroup'));
     expect(radioRef.current).toBe(getByRole('radio').closest('.react-aria-Radio'));
   });
+
+  it('should support input ref', () => {
+    let inputRef = React.createRef();
+    let {getByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <Radio inputRef={inputRef} value="a">A</Radio>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+    expect(inputRef.current).toBe(radio);
+  });
+
+  it('should support and merge input ref on context', () => {
+    let inputRef = React.createRef();
+    let contextInputRef = React.createRef();
+    let {getByRole} = render(
+      <RadioGroup>
+        <Label>Test</Label>
+        <RadioContext.Provider value={{inputRef: contextInputRef}}>
+          <Radio inputRef={inputRef} value="a">A</Radio>
+        </RadioContext.Provider>
+      </RadioGroup>
+    );
+    let radio = getByRole('radio');
+    expect(inputRef.current).toBe(radio);
+    expect(contextInputRef.current).toBe(radio);
+  });
 });

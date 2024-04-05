@@ -225,4 +225,22 @@ describe('Checkbox', () => {
     let {getByRole} = render(<Checkbox ref={ref}>Test</Checkbox>);
     expect(ref.current).toBe(getByRole('checkbox').closest('.react-aria-Checkbox'));
   });
+
+  it('should support input ref', () => {
+    let inputRef = React.createRef();
+    let {getByRole} = render(<Checkbox inputRef={inputRef}>Test</Checkbox>);
+    expect(inputRef.current).toBe(getByRole('checkbox'));
+  });
+
+  it('should support and merge input ref on context', () => {
+    let inputRef = React.createRef();
+    let contextInputRef = React.createRef();
+    let {getByRole} = render(
+      <CheckboxContext.Provider value={{inputRef: contextInputRef}}>
+        <Checkbox inputRef={inputRef}>Test</Checkbox>
+      </CheckboxContext.Provider>
+    );
+    expect(inputRef.current).toBe(getByRole('checkbox'));
+    expect(contextInputRef.current).toBe(getByRole('checkbox'));
+  });
 });

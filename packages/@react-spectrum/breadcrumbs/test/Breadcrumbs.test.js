@@ -446,21 +446,23 @@ describe('Breadcrumbs', function () {
 
   it('should support RouterProvider', async () => {
     let navigate = jest.fn();
+    let useHref = href => '/base' + href;
     let {getByRole, getAllByRole} = render(
-      <Provider theme={theme} router={{navigate}}>
+      <Provider theme={theme} router={{navigate, useHref}}>
         <Breadcrumbs>
-          <Item href="/">Example.com</Item>
-          <Item href="/foo">Foo</Item>
-          <Item href="/foo/bar">Bar</Item>
-          <Item href="/foo/bar/baz">Baz</Item>
-          <Item href="/foo/bar/baz/qux">Qux</Item>
+          <Item href="/" routerOptions={{foo: 'bar'}}>Example.com</Item>
+          <Item href="/foo" routerOptions={{foo: 'foo'}}>Foo</Item>
+          <Item href="/foo/bar" routerOptions={{foo: 'bar'}}>Bar</Item>
+          <Item href="/foo/bar/baz" routerOptions={{foo: 'bar'}}>Baz</Item>
+          <Item href="/foo/bar/baz/qux" routerOptions={{foo: 'bar'}}>Qux</Item>
         </Breadcrumbs>
       </Provider>
     );
 
     let links = getAllByRole('link');
+    expect(links[0]).toHaveAttribute('href', '/base/foo/bar');
     await user.click(links[0]);
-    expect(navigate).toHaveBeenCalledWith('/foo/bar');
+    expect(navigate).toHaveBeenCalledWith('/foo/bar', {foo: 'bar'});
     navigate.mockReset();
 
     let menuButton = getByRole('button');
@@ -469,7 +471,8 @@ describe('Breadcrumbs', function () {
 
     let menu = getByRole('menu');
     let items = within(menu).getAllByRole('menuitemradio');
+    expect(items[1]).toHaveAttribute('href', '/base/foo');
     await user.click(items[1]);
-    expect(navigate).toHaveBeenCalledWith('/foo');
+    expect(navigate).toHaveBeenCalledWith('/foo', {foo: 'foo'});
   });
 });

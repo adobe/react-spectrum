@@ -10,10 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+import {addWindowFocusTracking} from '../src';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '@react-spectrum/table';
+import Frame from 'react-frame-component';
 import {Key} from '@react-types/shared';
-import React, {useState} from 'react';
+import {mergeProps} from '@react-aria/utils';
+import React, {useEffect, useRef, useState} from 'react';
 import {SearchField} from '@react-spectrum/searchfield';
+import {useButton} from '@react-aria/button';
+import {useFocusRing} from '@react-aria/focus';
 
 interface IColumn {
   name: string,
@@ -59,6 +64,11 @@ export const SearchTableview = {
   }
 };
 
+export const IFrame = {
+  render: () => <IFrameExample />,
+  name: 'focus state in dynamic iframe'
+};
+
 function SearchExample() {
   const [items, setItems] = useState(manyRows);
 
@@ -89,3 +99,35 @@ function SearchExample() {
     </div>
   );
 }
+
+function MyButton(props) {
+  const buttonRef = props.btnRef;
+
+  const {focusProps, isFocusVisible, isFocused} = useFocusRing();
+  let {buttonProps} = useButton(props, buttonRef);
+
+  return (
+    <button ref={buttonRef} {...mergeProps(focusProps, buttonProps)}>
+      Focus Visible: {isFocusVisible ? 'true' : 'false'} <br />
+      Focused: {isFocused ? 'true' : 'false'}
+    </button>
+  );
+}
+
+const IFrameExample = (props) => {
+  let btnRef = useRef(null);
+  useEffect(() => {
+    return addWindowFocusTracking(btnRef.current);
+  }, []);
+
+  return (
+    <>
+      <MyButton />
+      <Frame {...props}>
+        <MyButton btnRef={btnRef} />
+        <MyButton />
+        <MyButton />
+      </Frame>
+    </>
+  );
+};

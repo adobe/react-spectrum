@@ -22,6 +22,7 @@ import userEvent from '@testing-library/user-event';
 let cellFormatter = new Intl.DateTimeFormat('en-US', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
 
 describe('RangeCalendar', () => {
+  /** @type {ReturnType<typeof userEvent['setup']>} */
   let user;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
@@ -684,6 +685,154 @@ describe('RangeCalendar', () => {
         let {start, end} = onChange.mock.calls[0][0];
         expect(start).toEqual(new CalendarDate(2019, 6, 15));
         expect(end).toEqual(new CalendarDate(2019, 6, 20));
+      });
+
+      it('selection isn\'t prematurely finalized when touching a day cell to scroll through the calendar', async () => {
+        let onChange = jest.fn();
+
+        let {getAllByLabelText, getByText} = render(
+          <RangeCalendar
+            defaultValue={{
+              start: new CalendarDate(2019, 6, 15),
+              end: new CalendarDate(2019, 6, 20)
+            }}
+            onChange={onChange} />
+        );
+
+        // start a range selection
+        await user.click(getByText('23'));
+        let selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('23');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('23');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        // scroll through the calendar
+        // simulate touch scroll by touch-move on a day
+        let dayEl = getByText('10');
+        fireEvent.pointerDown(dayEl, {pointerType: 'touch'});
+        fireEvent.pointerCancel(dayEl, {pointerType: 'touch'});
+
+        // finalize selection
+        await user.click(getByText('25'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('23');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('25');
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith({
+          start: new CalendarDate(2019, 6, 23),
+          end: new CalendarDate(2019, 6, 25)
+        });
+      });
+
+      it('selection isn\'t prematurely finalized when touching a disabled day cell to scroll through the calendar', async () => {
+        let onChange = jest.fn();
+
+        let {getAllByLabelText, getByText} = render(
+          <RangeCalendar
+            defaultValue={{
+              start: new CalendarDate(2019, 6, 15),
+              end: new CalendarDate(2019, 6, 20)
+            }}
+            onChange={onChange} />
+        );
+
+        // start a range selection
+        await user.click(getByText('23'));
+        let selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('23');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('23');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        // scroll through the calendar
+        // simulate touch scroll by touch-move on a disabled day (May 31)
+        let disabledDayEl = getByText('31');
+        fireEvent.pointerDown(disabledDayEl, {pointerType: 'touch'});
+        fireEvent.pointerCancel(disabledDayEl, {pointerType: 'touch'});
+
+        // finalize selection
+        await user.click(getByText('25'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('23');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('25');
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith({
+          start: new CalendarDate(2019, 6, 23),
+          end: new CalendarDate(2019, 6, 25)
+        });
+      });
+
+      it('selection isn\'t prematurely finalized when touching a weekday header to scroll through the calendar', async () => {
+        let onChange = jest.fn();
+
+        let {getAllByLabelText, getByText} = render(
+          <RangeCalendar
+            defaultValue={{
+              start: new CalendarDate(2019, 6, 15),
+              end: new CalendarDate(2019, 6, 20)
+            }}
+            onChange={onChange} />
+        );
+
+        // start a range selection
+        await user.click(getByText('23'));
+        let selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('23');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('23');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        // scroll through the calendar
+        // simulate touch scroll by touch-move on a weekday
+        let weekdayEl = getByText('M');
+        fireEvent.pointerDown(weekdayEl, {pointerType: 'touch'});
+        fireEvent.pointerCancel(weekdayEl, {pointerType: 'touch'});
+
+        // finalize selection
+        await user.click(getByText('25'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('23');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('25');
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith({
+          start: new CalendarDate(2019, 6, 23),
+          end: new CalendarDate(2019, 6, 25)
+        });
+      });
+
+      it('selection isn\'t prematurely finalized when touching the header to scroll through the calendar', async () => {
+        let onChange = jest.fn();
+
+        let {getAllByLabelText, getByText, getByRole} = render(
+          <RangeCalendar
+            defaultValue={{
+              start: new CalendarDate(2019, 6, 15),
+              end: new CalendarDate(2019, 6, 20)
+            }}
+            onChange={onChange} />
+        );
+
+        // start a range selection
+        await user.click(getByText('23'));
+        let selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('23');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('23');
+        expect(onChange).toHaveBeenCalledTimes(0);
+
+        // scroll through the calendar
+        // simulate touch scroll by touch-move on heading
+        let headingEl = getByRole('heading');
+        fireEvent.pointerDown(headingEl, {pointerType: 'touch'});
+        fireEvent.pointerCancel(headingEl, {pointerType: 'touch'});
+
+        // finalize selection
+        await user.click(getByText('25'));
+        selectedDates = getAllByLabelText('selected', {exact: false});
+        expect(selectedDates[0].textContent).toBe('23');
+        expect(selectedDates[selectedDates.length - 1].textContent).toBe('25');
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith({
+          start: new CalendarDate(2019, 6, 23),
+          end: new CalendarDate(2019, 6, 25)
+        });
       });
     });
 

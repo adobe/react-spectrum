@@ -10,8 +10,19 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
-import {DropIndicator, Header, ListBox, ListBoxContext, ListBoxItem, Section, Text, useDragAndDrop} from '../';
+import {act, fireEvent, mockClickDefault, pointerMap, render, within} from '@react-spectrum/test-utils-internal';
+import {
+  Button, Dialog,
+  DialogTrigger,
+  DropIndicator,
+  Header, Heading,
+  ListBox,
+  ListBoxContext,
+  ListBoxItem, Modal,
+  Section,
+  Text,
+  useDragAndDrop
+} from '../';
 import React, {useState} from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -397,6 +408,37 @@ describe('ListBox', () => {
     expect(option).toHaveClass('disabled');
   });
 
+  it('should support isDisabled prop on items', async () => {
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test">
+        <ListBoxItem id="cat">Cat</ListBoxItem>
+        <ListBoxItem id="dog" isDisabled>Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowDown}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
+  it('should support onAction on items', async () => {
+    let onAction = jest.fn();
+    let {getAllByRole} = render(
+      <ListBox aria-label="Test">
+        <ListBoxItem id="cat" onAction={onAction}>Cat</ListBoxItem>
+        <ListBoxItem id="dog">Dog</ListBoxItem>
+        <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+      </ListBox>
+    );
+    let items = getAllByRole('option');
+    await user.click(items[0]);
+    expect(onAction).toHaveBeenCalled();
+  });
+
   it('should support empty state', () => {
     let {getByRole} = render(
       <ListBox aria-label="Test" renderEmptyState={() => 'No results'}>
@@ -668,6 +710,51 @@ describe('ListBox', () => {
     });
   });
 
+  describe('inside modals', () => {
+    it('should clear selection on first Escape, then allow the modal to close on the second Escape', async () => {
+      let onOpenChange = jest.fn();
+      let {getAllByRole, getByRole} = render(
+        <DialogTrigger onOpenChange={onOpenChange}>
+          <Button>Open Dialog</Button>
+          <Modal>
+            <Dialog>
+              <form>
+                <Heading slot="title">Sign up</Heading>
+                <ListBox aria-label="Test" selectionMode="multiple">
+                  <ListBoxItem id="cat">Cat</ListBoxItem>
+                  <ListBoxItem id="dog">Dog</ListBoxItem>
+                  <ListBoxItem id="kangaroo">Kangaroo</ListBoxItem>
+                </ListBox>
+              </form>
+            </Dialog>
+          </Modal>
+        </DialogTrigger>
+      );
+      await user.tab();
+      expect(document.activeElement).toBe(getByRole('button'));
+      await user.keyboard('{Enter}');
+      expect(onOpenChange).toHaveBeenCalledTimes(1);
+
+      let options = getAllByRole('option');
+
+      await user.tab();
+      expect(document.activeElement).toBe(options[0]);
+      await user.keyboard('{Enter}');
+
+      expect(options[0]).toHaveAttribute('aria-selected', 'true');
+
+      keyPress('Escape');
+
+      expect(options[0]).toBeInTheDocument();
+      expect(options[0]).toHaveAttribute('aria-selected', 'false');
+
+      keyPress('Escape');
+      expect(options[0]).not.toBeInTheDocument();
+      expect(onOpenChange).toHaveBeenCalledTimes(2);
+      expect(onOpenChange).toHaveBeenCalledWith(false);
+    });
+  });
+
   describe('links', function () {
     describe.each(['mouse', 'keyboard'])('%s', (type) => {
       let trigger = async (item) => {
@@ -693,8 +780,7 @@ describe('ListBox', () => {
           expect(item).toHaveAttribute('href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
@@ -715,20 +801,17 @@ describe('ListBox', () => {
           expect(item).toHaveAttribute('href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         await trigger(items[0]);
         expect(onClick).toHaveBeenCalledTimes(1);
         expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
         expect(onClick.mock.calls[0][0].target.href).toBe('https://google.com/');
         expect(items[0]).not.toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         await trigger(items[1]);
-        expect(onClick).toHaveBeenCalledTimes(1);
-        expect(onClick.mock.calls[0][0].target).toBeInstanceOf(HTMLAnchorElement);
-        expect(onClick.mock.calls[0][0].target.href).toBe('https://adobe.com/');
+        expect(onClick).toHaveBeenCalledTimes(2);
+        expect(onClick.mock.calls[1][0].target).toBeInstanceOf(HTMLAnchorElement);
+        expect(onClick.mock.calls[1][0].target.href).toBe('https://adobe.com/');
         expect(items[1]).not.toHaveAttribute('aria-selected', 'true');
       });
 
@@ -746,8 +829,7 @@ describe('ListBox', () => {
           expect(item).toHaveAttribute('href');
         }
 
-        let onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
+        let onClick = mockClickDefault();
         if (type === 'mouse') {
           await user.click(items[0]);
         } else {
@@ -757,8 +839,6 @@ describe('ListBox', () => {
         expect(onClick).not.toHaveBeenCalled();
         expect(items[0]).toHaveAttribute('aria-selected', 'true');
 
-        onClick = jest.fn().mockImplementation(e => e.preventDefault());
-        window.addEventListener('click', onClick, {once: true});
         if (type === 'mouse') {
           await user.dblClick(items[0], {pointerType: 'mouse'});
         } else {
