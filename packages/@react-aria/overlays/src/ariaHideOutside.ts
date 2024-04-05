@@ -15,6 +15,44 @@
 let refCountMap = new WeakMap<Element, number>();
 let observerStack = [];
 
+function isInShadowDOM(node) {
+  return node.getRootNode() instanceof ShadowRoot;
+}
+
+// Function to find the shadow root, if any, in the targets
+function findShadowRoot(targets) {
+  return targets.find(target => isInShadowDOM(target))?.getRootNode();
+}
+
+function hideSiblings(node, hide) {
+  let parent = node.parentNode;
+  let sibling = parent.firstChild;
+  while (sibling) {
+    if (sibling !== node && sibling instanceof Element) {
+      hide(sibling);
+    }
+    sibling = sibling.nextSibling;
+  }
+}
+
+function hideOuterSiblings(node, shadowRoot, visibleNodes, hide) {
+  if (node === document.body || visibleNodes.has(node)) {
+    return;
+  }
+
+  // Hide siblings of the node unless it's a shadow root host
+  if (!(node instanceof ShadowRoot) && node.parentNode) {
+    hideSiblings(node, hide);
+  }
+
+  // If the node has a shadow root, recursively call this function on its host
+  if (node instanceof ShadowRoot && node.host) {
+    hideOuterSiblings(node.host, shadowRoot, visibleNodes, hide);
+  } else if (node.parentNode) {
+    hideOuterSiblings(node.parentNode, shadowRoot, visibleNodes, hide);
+  }
+}
+
 /**
  * Hides all elements in the DOM outside the given targets from screen readers using aria-hidden,
  * and returns a function to revert these changes. In addition, changes to the DOM are watched
@@ -26,6 +64,19 @@ let observerStack = [];
 export function ariaHideOutside(targets: Element[], root = document.body) {
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
+
+  // Use a shadowRoot if one of the targets is part of it
+  const shadowRoot = findShadowRoot(targets);
+  const inShadowDOM = !!shadowRoot;
+
+  // Include all ancestors of the shadow root host in visibleNodes
+  if (inShadowDOM) {
+    let node = shadowRoot.host;
+    while (node) {
+      visibleNodes.add(node);
+      node = node.parentNode || node.host;
+    }
+  }
 
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.
@@ -93,13 +144,53 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     refCountMap.set(node, refCount + 1);
   };
 
+  // New code to handle nested shadow roots
+  if (shadowRoot) {
+    hideOuterSiblings(shadowRoot, shadowRoot, visibleNodes, hide);
+  }
+
+  // If the targets are within a shadow DOM, we need to also hide elements in the light DOM
+  if (inShadowDOM) {
+    let hostElement = shadowRoot.host;
+    let sibling = hostElement.parentNode.firstChild;
+    while (sibling) {
+      if (sibling !== hostElement && sibling instanceof Element && !visibleNodes.has(sibling)) {
+        hide(sibling);
+      }
+      sibling = sibling.nextSibling;
+    }
+  }
+
   // If there is already a MutationObserver listening from a previous call,
   // disconnect it so the new on takes over.
   if (observerStack.length) {
     observerStack[observerStack.length - 1].disconnect();
   }
 
-  walk(root);
+  // If the targets are within a shadow DOM, we need to also hide elements in the light DOM
+  if (inShadowDOM) {
+    let outerWalker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_ELEMENT,
+      {
+        acceptNode: function (node) {
+          // Accept nodes that are not ancestors of the shadow host
+          // and not within the shadow DOM itself
+          if (visibleNodes.has(node) || isInShadowDOM(node)) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          return NodeFilter.FILTER_ACCEPT;
+        }
+      }
+    );
+
+    let node;
+    while ((node = outerWalker.nextNode())) {
+      hide(node);
+    }
+  }
+
+  walk(inShadowDOM ? shadowRoot : root);
 
   let observer = new MutationObserver(changes => {
     for (let change of changes) {
@@ -131,7 +222,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     }
   });
 
-  observer.observe(root, {childList: true, subtree: true});
+  observer.observe(inShadowDOM ? shadowRoot : root, {childList: true, subtree: true});
 
   let observerWrapper = {
     observe() {

@@ -12,6 +12,7 @@
 
 import {ariaHideOutside} from '../src';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import {render, waitFor} from '@react-spectrum/test-utils';
 
 describe('ariaHideOutside', function () {
@@ -384,4 +385,239 @@ describe('ariaHideOutside', function () {
     expect(rows[1]).not.toHaveAttribute('aria-hidden', 'true');
     expect(cells[1]).not.toHaveAttribute('aria-hidden', 'true');
   });
+
+  function isEffectivelyHidden(element) {
+    while (element && element.getAttribute) {
+      const ariaHidden = element.getAttribute('aria-hidden');
+      if (ariaHidden === 'true') {
+        return true;
+      } else if (ariaHidden === 'false') {
+        return false;
+      }
+      const rootNode = element.getRootNode ? element.getRootNode() : document;
+      element = element.parentNode || (rootNode !== document ? rootNode.host : null);
+    }
+    return false;
+  }
+
+  describe('ariaHideOutside with Shadow DOM', () => {
+    it('should not apply aria-hidden to direct parents of the shadow root', () => {
+      const div1 = document.createElement('div');
+      div1.id = 'parent1';
+      const div2 = document.createElement('div');
+      div2.id = 'parent2';
+      div1.appendChild(div2);
+      document.body.appendChild(div1);
+
+      const shadowRoot = div2.attachShadow({mode: 'open'});
+      const ExampleModal = () => (
+        <>
+          <div id="modal" role="dialog">Modal Content</div>
+        </>
+      );
+      ReactDOM.render(<ExampleModal />, shadowRoot);
+
+      ariaHideOutside([shadowRoot.getElementById('modal')], shadowRoot);
+
+      expect(isEffectivelyHidden(document.getElementById('parent1'))).toBeFalsy();
+      expect(isEffectivelyHidden(document.getElementById('parent2'))).toBeFalsy();
+      expect(isEffectivelyHidden(document.body)).toBeFalsy();
+
+      expect(isEffectivelyHidden(shadowRoot.getElementById('modal'))).toBeFalsy();
+    });
+
+    it('should correctly apply aria-hidden based on shadow DOM structure', () => {
+      const div1 = document.createElement('div');
+      div1.id = 'parent1';
+      const div2 = document.createElement('div');
+      div2.id = 'parent2';
+      div1.appendChild(div2);
+      document.body.appendChild(div1);
+
+      const shadowRoot = div2.attachShadow({mode: 'open'});
+      shadowRoot.innerHTML = '<div id="modal" role="dialog">Modal Content</div>';
+
+      shadowRoot.innerHTML += '<div id="insideContent">Inside Shadow Content</div>';
+
+      const outsideContent = document.createElement('div');
+      outsideContent.id = 'outsideContent';
+      outsideContent.textContent = 'Outside Content';
+      document.body.appendChild(outsideContent);
+
+      ariaHideOutside([shadowRoot.getElementById('modal')], shadowRoot);
+
+      expect(isEffectivelyHidden(div1)).toBeFalsy();
+      expect(isEffectivelyHidden(div2)).toBeFalsy();
+
+      expect(isEffectivelyHidden(shadowRoot.querySelector('#insideContent'))).toBe(true);
+
+      expect(isEffectivelyHidden(shadowRoot.querySelector('#modal'))).toBeFalsy();
+
+      expect(isEffectivelyHidden(outsideContent)).toBe(true);
+
+      expect(isEffectivelyHidden(document.body)).toBeFalsy();
+    });
+
+    it('should hide non-direct parent elements like header when modal is in Shadow DOM', () => {
+      const header = document.createElement('header');
+      header.id = 'header';
+      document.body.appendChild(header);
+
+      const div1 = document.createElement('div');
+      div1.id = 'parent1';
+      const div2 = document.createElement('div');
+      div2.id = 'parent2';
+      div1.appendChild(div2);
+      document.body.appendChild(div1);
+
+      const shadowRoot = div2.attachShadow({mode: 'open'});
+      const modal = document.createElement('div');
+      modal.id = 'modal';
+      modal.setAttribute('role', 'dialog');
+      modal.textContent = 'Modal Content';
+      shadowRoot.appendChild(modal);
+
+      ariaHideOutside([modal]);
+
+      expect(isEffectivelyHidden(header)).toBe(true);
+
+      expect(isEffectivelyHidden(div1)).toBe(false);
+      expect(isEffectivelyHidden(div2)).toBe(false);
+
+      expect(isEffectivelyHidden(modal)).toBe(false);
+
+      document.body.removeChild(header);
+      document.body.removeChild(div1);
+    });
+
+    it('should handle a modal inside nested Shadow DOM structures and hide sibling content in the outer shadow root', () => {
+      const outerDiv = document.createElement('div');
+      document.body.appendChild(outerDiv);
+      const outerShadowRoot = outerDiv.attachShadow({mode: 'open'});
+      const innerDiv = document.createElement('div');
+      outerShadowRoot.appendChild(innerDiv);
+      const innerShadowRoot = innerDiv.attachShadow({mode: 'open'});
+
+      const modal = document.createElement('div');
+      modal.setAttribute('role', 'dialog');
+      modal.textContent = 'Modal Content';
+      innerShadowRoot.appendChild(modal);
+
+      const outsideContent = document.createElement('div');
+      outsideContent.textContent = 'Outside Content';
+      document.body.appendChild(outsideContent);
+
+      const siblingContent = document.createElement('div');
+      siblingContent.textContent = 'Sibling Content';
+      outerShadowRoot.appendChild(siblingContent);
+
+      ariaHideOutside([modal], innerShadowRoot);
+
+      expect(isEffectivelyHidden(modal)).toBe(false);
+
+      expect(isEffectivelyHidden(outsideContent)).toBe(true);
+
+      expect(isEffectivelyHidden(siblingContent)).toBe(true);
+
+      document.body.removeChild(outerDiv);
+      document.body.removeChild(outsideContent);
+    });
+
+    it('should handle a modal inside deeply nested Shadow DOM structures', async () => {
+      // Create a deep nested shadow DOM structure
+      const createNestedShadowRoot = (depth, currentDepth = 0) => {
+        const div = document.createElement('div');
+        if (currentDepth < depth) {
+          const shadowRoot = div.attachShadow({mode: 'open'});
+          shadowRoot.appendChild(createNestedShadowRoot(depth, currentDepth + 1));
+        } else {
+          div.innerHTML = '<div id="modal" role="dialog">Modal Content</div>';
+        }
+        return div;
+      };
+
+      const nestedShadowRootContainer = createNestedShadowRoot(3); // Adjust the depth as needed
+      document.body.appendChild(nestedShadowRootContainer);
+
+      // Get the deepest shadow root
+      const getDeepestShadowRoot = (node) => {
+        while (node.shadowRoot) {
+          node = node.shadowRoot.childNodes[0];
+        }
+        return node;
+      };
+
+      const deepestElement = getDeepestShadowRoot(nestedShadowRootContainer);
+      const modal = deepestElement.querySelector('#modal');
+
+      // Apply ariaHideOutside
+      ariaHideOutside([modal]);
+
+      // Check visibility
+      expect(modal.getAttribute('aria-hidden')).toBeNull();
+      expect(isEffectivelyHidden(modal)).toBeFalsy();
+
+      // Add checks for other elements as needed to ensure correct `aria-hidden` application
+    });
+
+    // it('should correctly apply aria-hidden when the modal is in the outer shadow root and an inner shadow root does not contain the modal', async () => {
+    //   // Setup outer shadow root with modal
+    //   const outerDiv = document.createElement('div');
+    //   const outerShadowRoot = outerDiv.attachShadow({ mode: 'open' });
+    //   const modal = document.createElement('div');
+    //   modal.id = 'modal';
+    //   modal.setAttribute('role', 'dialog');
+    //   modal.textContent = 'Modal Content';
+    //   outerShadowRoot.appendChild(modal);
+    //
+    //   // Setup inner shadow root without modal
+    //   const innerDiv = document.createElement('div');
+    //   const innerShadowRoot = innerDiv.attachShadow({ mode: 'open' });
+    //   innerShadowRoot.innerHTML = '<div id="innerContent">Inner Shadow Content</div>';
+    //   outerShadowRoot.appendChild(innerDiv);
+    //
+    //   document.body.appendChild(outerDiv);
+    //
+    //   // Apply ariaHideOutside targeting the modal in the outer shadow root
+    //   ariaHideOutside([modal]);
+    //
+    //   // Expectations
+    //   expect(isEffectivelyHidden(modal)).toBeFalsy();
+    //   expect(isEffectivelyHidden(innerShadowRoot.querySelector('#innerContent'))).toBe(true);
+    // });
+
+    it('should handle dynamic content added to the shadow DOM after ariaHideOutside is applied', async () => {
+      // This test checks if the MutationObserver logic within ariaHideOutside correctly handles new elements added to the shadow DOM
+      const div1 = document.createElement('div');
+      div1.id = 'parent1';
+      document.body.appendChild(div1);
+
+      const shadowRoot = div1.attachShadow({mode: 'open'});
+      let ExampleDynamicContent = ({showExtraContent}) => (
+        <>
+          <div id="modal" role="dialog">Modal Content</div>
+          {showExtraContent && <div id="extraContent">Extra Content</div>}
+        </>
+      );
+
+      ReactDOM.render(<ExampleDynamicContent showExtraContent={false} />, shadowRoot);
+
+      // Apply ariaHideOutside
+      ariaHideOutside([shadowRoot.getElementById('modal')]);
+
+      // Dynamically update the content inside the Shadow DOM
+      ReactDOM.render(<ExampleDynamicContent showExtraContent />, shadowRoot);
+
+      // Ideally, use a utility function to wait for the MutationObserver callback to run, then check expectations
+      await waitForMutationObserver();
+
+      // Expectations
+      expect(shadowRoot.getElementById('extraContent').getAttribute('aria-hidden')).toBe('true');
+    });
+  });
+
+  function waitForMutationObserver() {
+    return new Promise(resolve => setTimeout(resolve, 0));
+  }
+
 });
