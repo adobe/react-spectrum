@@ -38,10 +38,8 @@ export interface SpectrumTreeViewProps<T> extends Omit<AriaTreeGridListProps<T>,
   children?: ReactNode | ((item: T) => ReactNode)
 }
 
-// TODO: I removed title since tree rows can have action buttons and stuff unlike other instances of items that use title (aka Sections and Columns) that typically don't have
-// any other content that their internal text content
 // TODO: write tests for all of these props to make sure things are propagating
-export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value' | 'selectionBehavior'> {
+export interface SpectrumTreeViewItemProps extends Omit<TreeItemProps, 'className' | 'style' | 'value'> {
   /** Rendered contents of the tree item or child items. */
   children: ReactNode,
   /** Whether this item has children, even if not loaded yet. */
@@ -260,6 +258,7 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
   }
 
   return (
+    // TODO right now all the tree rows have the various data attributes applied on their dom nodes, should they? Doesn't feel very useful
     <TreeItem
       {...props}
       className={renderProps => treeRow({

@@ -222,7 +222,8 @@ describe('Tree', () => {
     expect(rowNoChild).toHaveAttribute('data-rac');
 
     let rowWithChildren = rows[1];
-    expect(rowWithChildren).toHaveAttribute('aria-label', 'Projects');
+    // Row has action since it is expandable but not selectable.
+    expect(rowWithChildren).toHaveAttribute('aria-label', 'Projects, row has action');
     expect(rowWithChildren).toHaveAttribute('aria-expanded', 'true');
     expect(rowWithChildren).toHaveAttribute('data-expanded', 'true');
     expect(rowWithChildren).toHaveAttribute('aria-level', '1');
@@ -233,7 +234,7 @@ describe('Tree', () => {
     expect(rowWithChildren).toHaveAttribute('data-rac');
 
     let level2ChildRow = rows[2];
-    expect(level2ChildRow).toHaveAttribute('aria-label', 'Projects-1');
+    expect(level2ChildRow).toHaveAttribute('aria-label', 'Projects-1, row has action');
     expect(level2ChildRow).toHaveAttribute('aria-expanded', 'true');
     expect(level2ChildRow).toHaveAttribute('data-expanded', 'true');
     expect(level2ChildRow).toHaveAttribute('aria-level', '2');
@@ -277,6 +278,15 @@ describe('Tree', () => {
     expect(level2ChildRow3).toHaveAttribute('data-rac');
   });
 
+  it('should not label an expandable row as having an action if it supports selection', () => {
+    let {getAllByRole} = render(<StaticTree treeProps={{selectionMode: 'single'}} />);
+
+    let rows = getAllByRole('row');
+    expect(rows[1]).toHaveAttribute('aria-label', 'Projects');
+    expect(rows[1]).toHaveAttribute('data-has-child-rows', 'true');
+    expect(rows[1]).toHaveAttribute('aria-selected', 'false');
+  });
+
   it('should support dynamic trees', () => {
     let {getByRole, getAllByRole} = render(<DynamicTree />);
     let tree = getByRole('treegrid');
@@ -286,28 +296,28 @@ describe('Tree', () => {
     expect(rows).toHaveLength(20);
 
     // Check the rough structure to make sure dynamic rows are rendering as expected (just checks the expandable rows and their attributes)
-    expect(rows[0]).toHaveAttribute('aria-label', 'Projects');
+    expect(rows[0]).toHaveAttribute('aria-label', 'Projects, row has action');
     expect(rows[0]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[0]).toHaveAttribute('aria-level', '1');
     expect(rows[0]).toHaveAttribute('aria-posinset', '1');
     expect(rows[0]).toHaveAttribute('aria-setsize', '2');
     expect(rows[0]).toHaveAttribute('data-has-child-rows', 'true');
 
-    expect(rows[2]).toHaveAttribute('aria-label', 'Project 2');
+    expect(rows[2]).toHaveAttribute('aria-label', 'Project 2, row has action');
     expect(rows[2]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[2]).toHaveAttribute('aria-level', '2');
     expect(rows[2]).toHaveAttribute('aria-posinset', '2');
     expect(rows[2]).toHaveAttribute('aria-setsize', '5');
     expect(rows[2]).toHaveAttribute('data-has-child-rows', 'true');
 
-    expect(rows[8]).toHaveAttribute('aria-label', 'Project 5');
+    expect(rows[8]).toHaveAttribute('aria-label', 'Project 5, row has action');
     expect(rows[8]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[8]).toHaveAttribute('aria-level', '2');
     expect(rows[8]).toHaveAttribute('aria-posinset', '5');
     expect(rows[8]).toHaveAttribute('aria-setsize', '5');
     expect(rows[8]).toHaveAttribute('data-has-child-rows', 'true');
 
-    expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+    expect(rows[12]).toHaveAttribute('aria-label', 'Reports, row has action');
     expect(rows[12]).toHaveAttribute('aria-expanded', 'true');
     expect(rows[12]).toHaveAttribute('aria-level', '1');
     expect(rows[12]).toHaveAttribute('aria-posinset', '2');
@@ -685,6 +695,8 @@ describe('Tree', () => {
         await user.keyboard('{ArrowRight}');
         expect(document.activeElement).toBe(checkbox);
         await user.keyboard('{ArrowRight}');
+        // TODO: At the moment it doesn't skip the chevron button, we still need to figure out a way to make a button
+        // keyboard skippable
         expect(document.activeElement).toBe(buttons[0]);
         await user.keyboard('{ArrowRight}');
         expect(document.activeElement).toBe(buttons[1]);
@@ -731,7 +743,7 @@ describe('Tree', () => {
         expect(queryByText('Reports 1ABC')).toBeFalsy();
         await user.keyboard('Reports 1ABC');
         expect(document.activeElement).toBe(rows[12]);
-        expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+        expect(rows[12]).toHaveAttribute('aria-label', 'Reports, row has action');
       });
 
       it('should navigate between visible rows when using Arrow Up/Down', async () => {
@@ -751,10 +763,10 @@ describe('Tree', () => {
         expect(rows).toHaveLength(9);
         await user.keyboard('{ArrowDown}');
         expect(document.activeElement).toBe(rows[1]);
-        expect(rows[1]).toHaveAttribute('aria-label', 'Reports');
+        expect(rows[1]).toHaveAttribute('aria-label', 'Reports, row has action');
         await user.keyboard('{ArrowUp}');
         expect(document.activeElement).toBe(rows[0]);
-        expect(rows[0]).toHaveAttribute('aria-label', 'Projects');
+        expect(rows[0]).toHaveAttribute('aria-label', 'Projects, row has action');
       });
 
       it('should navigate between visible rows when using Home/End', async () => {
@@ -776,7 +788,7 @@ describe('Tree', () => {
         await user.keyboard('{Home}');
         await user.keyboard('{End}');
         expect(document.activeElement).toBe(rows[12]);
-        expect(rows[12]).toHaveAttribute('aria-label', 'Reports');
+        expect(rows[12]).toHaveAttribute('aria-label', 'Reports, row has action');
       });
     });
   });

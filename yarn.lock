@@ -9401,7 +9401,7 @@ browserify-zlib@^0.2.0:
   dependencies:
     pako "~1.0.5"
 
-browserslist@4.23.0, browserslist@^1.7.6, browserslist@^4.12.0, browserslist@^4.16.6, browserslist@^4.20.3, browserslist@^4.21.9, browserslist@^4.6.6:
+browserslist@4.23.0, browserslist@^1.7.6, browserslist@^4.12.0, browserslist@^4.16.6, browserslist@^4.20.3, browserslist@^4.21.9, browserslist@^4.22.2, browserslist@^4.23.0, browserslist@^4.6.6:
   version "4.23.0"
   resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.23.0.tgz#8f3acc2bbe73af7213399430890f86c63a5674ab"
   integrity sha512-QW8HiM1shhT2GuzkvklfjcKDiWFXHOeFCIA/huJPwHsslwcydgk7X+z2zXpEijP98UCY7HbubZt5J2Zgvf0CaQ==
