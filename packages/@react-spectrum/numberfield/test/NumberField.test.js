@@ -417,6 +417,16 @@ describe('NumberField', function () {
     expect(onChangeSpy).toHaveBeenCalledWith(0);
   });
 
+  it('does not lose precision', async () => {
+    let {textField} = renderNumberField({minValue: 0.1, maxValue: 24, step: 0.1, onChange: onChangeSpy});
+
+    act(() => {textField.focus();});
+    await user.keyboard('24');
+    await user.tab();
+
+    expect(textField).toHaveAttribute('value', '24');
+  });
+
   it.each`
     Name
     ${'NumberField'}
