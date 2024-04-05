@@ -44,7 +44,7 @@ function DropZone(props: SpectrumDropZoneProps, ref: DOMRef<HTMLDivElement>) {
   let messageId = useId();
   let headingId = useId();
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-spectrum/dropzone');
-  let ariaLabelledby = isFilled ? headingId + messageId : headingId;
+  let ariaLabelledby = isFilled ? `${headingId} ${messageId}` : headingId;
 
   return (
     <RACDropZone
