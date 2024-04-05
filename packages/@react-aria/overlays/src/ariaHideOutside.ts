@@ -176,6 +176,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
         acceptNode: function (node) {
           // Accept nodes that are not ancestors of the shadow host
           // and not within the shadow DOM itself
+          // @ts-expect-error
           if (visibleNodes.has(node) || isInShadowDOM(node)) {
             return NodeFilter.FILTER_REJECT;
           }
