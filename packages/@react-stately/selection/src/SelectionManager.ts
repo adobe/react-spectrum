@@ -480,7 +480,7 @@ export class SelectionManager implements MultipleSelectionManager {
     }
 
     let item = this.collection.getItem(key);
-    if (!item || (item.type === 'cell' && !this.allowsCellSelection)) {
+    if (!item || item?.props?.isDisabled || (item.type === 'cell' && !this.allowsCellSelection)) {
       return false;
     }
 
@@ -488,10 +488,14 @@ export class SelectionManager implements MultipleSelectionManager {
   }
 
   isDisabled(key: Key) {
-    return this.state.disabledKeys.has(key) && this.state.disabledBehavior === 'all';
+    return this.state.disabledBehavior === 'all' && (this.state.disabledKeys.has(key) || !!this.collection.getItem(key)?.props?.isDisabled);
   }
 
   isLink(key: Key) {
     return !!this.collection.getItem(key)?.props?.href;
+  }
+
+  getItemProps(key: Key) {
+    return this.collection.getItem(key)?.props;
   }
 }

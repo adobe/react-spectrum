@@ -92,7 +92,7 @@ for (let pkg of packagePaths) {
     }
   }
 
-  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme')) {
+  if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme') && !pkg.includes('@react-spectrum/style-macro-s1')) {
     softAssert(json.main, `${pkg} did not have "main"`);
     softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
     softAssert(json.module, `${pkg} did not have "module"`);
@@ -148,7 +148,7 @@ for (let pkg of packagePaths) {
     softAssert(fs.existsSync(path.join(pkg, '..', 'src', 'index.ts')), `${pkg} is missing a src/index.ts`);
   }
 
-  if (!pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme')) {
+  if (!pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme') && !pkg.includes('@react-spectrum/style-macro-s1')) {
     softAssert(json.types, `${pkg} did not have "types"`);
     softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
   }
