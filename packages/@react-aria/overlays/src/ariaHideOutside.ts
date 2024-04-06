@@ -20,37 +20,8 @@ function isInShadowDOM(node) {
 }
 
 // Function to find the shadow root, if any, in the targets
-function findShadowRoot(targets) {
-  return targets.find(target => isInShadowDOM(target))?.getRootNode();
-}
-
-function hideSiblings(node, hide) {
-  let parent = node.parentNode;
-  let sibling = parent.firstChild;
-  while (sibling) {
-    if (sibling !== node && sibling instanceof Element) {
-      hide(sibling);
-    }
-    sibling = sibling.nextSibling;
-  }
-}
-
-function hideOuterSiblings(node, shadowRoot, visibleNodes, hide) {
-  if (node === document.body || visibleNodes.has(node)) {
-    return;
-  }
-
-  // Hide siblings of the node unless it's a shadow root host
-  if (!(node instanceof ShadowRoot) && node.parentNode) {
-    hideSiblings(node, hide);
-  }
-
-  // If the node has a shadow root, recursively call this function on its host
-  if (node instanceof ShadowRoot && node.host) {
-    hideOuterSiblings(node.host, shadowRoot, visibleNodes, hide);
-  } else if (node.parentNode) {
-    hideOuterSiblings(node.parentNode, shadowRoot, visibleNodes, hide);
-  }
+function findShadowRoots(targets) {
+  return targets.filter(target => isInShadowDOM(target))?.map(target => target.getRootNode());
 }
 
 /**
@@ -64,19 +35,21 @@ function hideOuterSiblings(node, shadowRoot, visibleNodes, hide) {
 export function ariaHideOutside(targets: Element[], root = document.body) {
   let visibleNodes = new Set<Element>(targets);
   let hiddenNodes = new Set<Element>();
+  const shadowRoots = findShadowRoots(targets);
 
-  // Use a shadowRoot if one of the targets is part of it
-  const shadowRoot = findShadowRoot(targets);
-  const inShadowDOM = !!shadowRoot;
-
-  // Include all ancestors of the shadow root host in visibleNodes
-  if (inShadowDOM) {
-    let node = shadowRoot.host;
-    while (node) {
-      visibleNodes.add(node);
-      node = node.parentNode || node.host;
+  // Add all ancestors of each target to the set of visible nodes to ensure they are not hidden
+  targets.forEach(target => {
+    let current = target;
+    while (current && current !== document.body) {
+      visibleNodes.add(current);
+      if (current.getRootNode() instanceof ShadowRoot) {
+        // If within a shadow DOM, add the host element
+        current = (current.getRootNode() as ShadowRoot).host;
+      } else {
+        current = current.parentNode as Element;
+      }
     }
-  }
+  });
 
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.
@@ -144,22 +117,33 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     refCountMap.set(node, refCount + 1);
   };
 
-  // New code to handle nested shadow roots
-  if (shadowRoot) {
-    hideOuterSiblings(shadowRoot, shadowRoot, visibleNodes, hide);
-  }
-
-  // If the targets are within a shadow DOM, we need to also hide elements in the light DOM
-  if (inShadowDOM) {
-    let hostElement = shadowRoot.host;
-    let sibling = hostElement.parentNode.firstChild;
-    while (sibling) {
-      if (sibling !== hostElement && sibling instanceof Element && !visibleNodes.has(sibling)) {
-        hide(sibling);
-      }
-      sibling = sibling.nextSibling;
+  // Function to hide an element's siblings
+  const hideSiblings = (element: Element) => {
+    let parentNode = element.parentNode;
+    if (parentNode) {
+      parentNode.childNodes.forEach(sibling => {
+        if (sibling !== element && sibling instanceof Element && !visibleNodes.has(sibling) && !hiddenNodes.has(sibling)) {
+          hide(sibling);
+        }
+      });
     }
-  }
+  };
+
+  // Main function to process each target element
+  targets.forEach(target => {
+    let current = target;
+    // Process up to and including the body element
+    while (current && current !== document.body) {
+      hideSiblings(current);
+      // Move to the host element if current is within a shadow DOM
+      if (current.getRootNode() instanceof ShadowRoot) {
+        current = (current.getRootNode() as ShadowRoot).host;
+      } else {
+        // Otherwise, just move to the parent node
+        current = current.parentNode as Element;
+      }
+    }
+  });
 
   // If there is already a MutationObserver listening from a previous call,
   // disconnect it so the new on takes over.
@@ -167,31 +151,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     observerStack[observerStack.length - 1].disconnect();
   }
 
-  // If the targets are within a shadow DOM, we need to also hide elements in the light DOM
-  if (inShadowDOM) {
-    let outerWalker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_ELEMENT,
-      {
-        acceptNode: function (node) {
-          // Accept nodes that are not ancestors of the shadow host
-          // and not within the shadow DOM itself
-          // @ts-expect-error
-          if (visibleNodes.has(node) || isInShadowDOM(node)) {
-            return NodeFilter.FILTER_REJECT;
-          }
-          return NodeFilter.FILTER_ACCEPT;
-        }
-      }
-    );
-
-    let node;
-    while ((node = outerWalker.nextNode())) {
-      hide(node);
-    }
-  }
-
-  walk(inShadowDOM ? shadowRoot : root);
+  walk(root);
 
   let observer = new MutationObserver(changes => {
     for (let change of changes) {
@@ -223,7 +183,13 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     }
   });
 
-  observer.observe(inShadowDOM ? shadowRoot : root, {childList: true, subtree: true});
+  if (shadowRoots) {
+    shadowRoots.forEach(shadowRoot => {
+      observer.observe(shadowRoot, {childList: true, subtree: true});
+    });
+  } else {
+    observer.observe(root, {childList: true, subtree: true});
+  }
 
   let observerWrapper = {
     observe() {
@@ -238,6 +204,11 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
 
   return () => {
     observer.disconnect();
+
+    // Function to revert the aria-hidden attribute
+    hiddenNodes.forEach(node => {
+      node.removeAttribute('aria-hidden');
+    });
 
     for (let node of hiddenNodes) {
       let count = refCountMap.get(node);

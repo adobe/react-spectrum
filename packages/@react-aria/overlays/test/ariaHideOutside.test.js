@@ -560,31 +560,32 @@ describe('ariaHideOutside', function () {
       // Add checks for other elements as needed to ensure correct `aria-hidden` application
     });
 
-    // it('should correctly apply aria-hidden when the modal is in the outer shadow root and an inner shadow root does not contain the modal', async () => {
-    //   // Setup outer shadow root with modal
-    //   const outerDiv = document.createElement('div');
-    //   const outerShadowRoot = outerDiv.attachShadow({ mode: 'open' });
-    //   const modal = document.createElement('div');
-    //   modal.id = 'modal';
-    //   modal.setAttribute('role', 'dialog');
-    //   modal.textContent = 'Modal Content';
-    //   outerShadowRoot.appendChild(modal);
-    //
-    //   // Setup inner shadow root without modal
-    //   const innerDiv = document.createElement('div');
-    //   const innerShadowRoot = innerDiv.attachShadow({ mode: 'open' });
-    //   innerShadowRoot.innerHTML = '<div id="innerContent">Inner Shadow Content</div>';
-    //   outerShadowRoot.appendChild(innerDiv);
-    //
-    //   document.body.appendChild(outerDiv);
-    //
-    //   // Apply ariaHideOutside targeting the modal in the outer shadow root
-    //   ariaHideOutside([modal]);
-    //
-    //   // Expectations
-    //   expect(isEffectivelyHidden(modal)).toBeFalsy();
-    //   expect(isEffectivelyHidden(innerShadowRoot.querySelector('#innerContent'))).toBe(true);
-    // });
+    it('should correctly apply aria-hidden when the modal is in the outer shadow root and an inner shadow root does not contain the modal', async () => {
+      // Setup outer shadow root with modal
+      const outerDiv = document.createElement('div');
+      const outerShadowRoot = outerDiv.attachShadow({ mode: 'open' });
+      const modal = document.createElement('div');
+      modal.id = 'modal';
+      modal.setAttribute('role', 'dialog');
+      modal.textContent = 'Modal Content';
+      outerShadowRoot.appendChild(modal);
+
+      // Setup inner shadow root without modal
+      const innerDiv = document.createElement('div');
+      const innerShadowRoot = innerDiv.attachShadow({ mode: 'open' });
+      innerShadowRoot.innerHTML = '<div id="innerContent">Inner Shadow Content</div>';
+      outerShadowRoot.appendChild(innerDiv);
+
+      document.body.appendChild(outerDiv);
+
+      // Apply ariaHideOutside targeting the modal in the outer shadow root
+      ariaHideOutside([modal]);
+
+      // Expectations
+      expect(isEffectivelyHidden(modal)).toBeFalsy();
+      console.log(innerShadowRoot.querySelector('#innerContent'));
+      expect(isEffectivelyHidden(innerShadowRoot.querySelector('#innerContent'))).toBe(true);
+    });
 
     it('should handle dynamic content added to the shadow DOM after ariaHideOutside is applied', async () => {
       // This test checks if the MutationObserver logic within ariaHideOutside correctly handles new elements added to the shadow DOM
