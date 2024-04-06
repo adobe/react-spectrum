@@ -182,6 +182,28 @@ describe('Tabs', () => {
     expect(tab).toHaveClass('disabled');
   });
 
+  it('should support isDisabled prop on tab', async () => {
+    let {getAllByRole} = render(
+      <Tabs>
+        <TabList aria-label="Test">
+          <Tab id="a">A</Tab>
+          <Tab id="b" isDisabled>B</Tab>
+          <Tab id="c">C</Tab>
+        </TabList>
+        <TabPanel id="a">A</TabPanel>
+        <TabPanel id="b">B</TabPanel>
+        <TabPanel id="c">C</TabPanel>
+      </Tabs>
+    );
+    let items = getAllByRole('tab');
+    expect(items[1]).toHaveAttribute('aria-disabled', 'true');
+
+    await user.tab();
+    expect(document.activeElement).toBe(items[0]);
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(items[2]);
+  });
+
   it('should support selected state', async () => {
     let onSelectionChange = jest.fn();
     let {getAllByRole} = renderTabs({onSelectionChange}, {}, {className: ({isSelected}) => isSelected ? 'selected' : ''});
@@ -268,6 +290,11 @@ describe('Tabs', () => {
   });
 
   it('should support shouldForceMount', async () => {
+    // Mock console.error for React Canary "Received the string `true` for the boolean attribute `inert`." warning
+    // In current React 18 version (18.1.0), the opposite error is thrown where it expects a non-boolean value for the same `inert` attribute
+    const consoleError = console.error;
+    console.error = jest.fn();
+
     let {getAllByRole} = renderTabs({}, {}, {}, {shouldForceMount: true});
     let tabpanels = document.querySelectorAll('.react-aria-TabPanel');
     expect(tabpanels).toHaveLength(3);
@@ -281,6 +308,7 @@ describe('Tabs', () => {
     expect(tabpanels[0]).toHaveAttribute('inert');
     expect(tabpanels[1]).not.toHaveAttribute('inert');
     expect(tabpanels[2]).toHaveAttribute('inert');
+    console.error = consoleError;
   });
 
   it('should support keyboardActivation=manual', () => {

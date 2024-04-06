@@ -15,7 +15,7 @@ import {AriaButtonProps} from '@react-types/button';
 import {AriaComboBoxProps} from '@react-types/combobox';
 import {ariaHideOutside} from '@react-aria/overlays';
 import {AriaListBoxOptions, getItemId, listData} from '@react-aria/listbox';
-import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent, ValidationResult} from '@react-types/shared';
+import {BaseEvent, DOMAttributes, KeyboardDelegate, PressEvent, RouterOptions, ValidationResult} from '@react-types/shared';
 import {chain, isAppleDevice, mergeProps, useLabels, useRouter} from '@react-aria/utils';
 import {ComboBoxState} from '@react-stately/combobox';
 import {FocusEvent, InputHTMLAttributes, KeyboardEvent, RefObject, TouchEvent, useEffect, useMemo, useRef} from 'react';
@@ -124,7 +124,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
           if (e.key === 'Enter') {
             let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
             if (item instanceof HTMLAnchorElement) {
-              router.open(item, e);
+              let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+              router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
             }
           }
 
@@ -157,8 +158,10 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   };
 
   let onBlur = (e: FocusEvent<HTMLInputElement>) => {
-    // Ignore blur if focused moved to the button or into the popover.
-    if (e.relatedTarget === buttonRef?.current || popoverRef.current?.contains(e.relatedTarget)) {
+    let blurFromButton = buttonRef?.current && buttonRef.current === e.relatedTarget;
+    let blurIntoPopover = popoverRef.current?.contains(e.relatedTarget);
+    // Ignore blur if focused moved to the button(if exists) or into the popover.
+    if (blurFromButton || blurIntoPopover) {
       return;
     }
 
