@@ -126,7 +126,7 @@ let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
   </Tree>
 );
 
-describe.skip('Tree', () => {
+describe('Tree', () => {
   let user;
 
   beforeAll(() => {
