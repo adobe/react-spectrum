@@ -1161,26 +1161,26 @@ describe('useDroppableCollection', () => {
       expect(document.getElementById(dropIndicator.getAttribute('aria-describedby'))).toHaveTextContent('Click to drop.');
     });
 
-    // it('should hide items that do not accept the drop', () => {
-    //   let tree = render(<>
-    //     <Draggable />
-    //     <DroppableGridExample />
-    //   </>);
-    //
-    //   let draggable = tree.getByText('Drag me');
-    //   let grid = tree.getByRole('grid');
-    //   let cells = within(grid).getAllByRole('gridcell');
-    //   expect(cells).toHaveLength(3);
-    //
-    //   fireEvent.focus(draggable);
-    //   fireEvent.click(draggable);
-    //   act(() => jest.runAllTimers());
-    //
-    //   cells = within(grid).getAllByRole('gridcell', {hidden: true});
-    //   expect(cells).toHaveLength(8);
-    //
-    //   expect(cells[4]).toHaveTextContent('Two');
-    //   expect(cells[4]).toHaveAttribute('aria-hidden', 'true');
-    // });
+    it('should hide items that do not accept the drop', () => {
+      let tree = render(<>
+        <Draggable />
+        <DroppableGridExample />
+      </>);
+
+      let draggable = tree.getByText('Drag me');
+      let grid = tree.getByRole('grid');
+      let cells = within(grid).getAllByRole('gridcell');
+      expect(cells).toHaveLength(3);
+
+      fireEvent.focus(draggable);
+      fireEvent.click(draggable);
+      act(() => jest.runAllTimers());
+
+      cells = within(grid).getAllByRole('gridcell', {hidden: true});
+      expect(cells).toHaveLength(8);
+
+      expect(cells[4]).toHaveTextContent('Two');
+      expect(cells[4]).toHaveAttribute('aria-hidden', 'true');
+    });
   });
 });
