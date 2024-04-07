@@ -86,7 +86,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   );
 
   // Set listbox id so it can be used when calling getItemId later
-  listData.set(state, {id: menuProps.id});
+  listData.set(state, {id: menuProps.id || ''});
 
   // By default, a KeyboardDelegate is provided which uses the DOM to query layout information (e.g. for page up/page down).
   // When virtualized, the layout object will be passed in as a prop and override this.
@@ -122,7 +122,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
         // If the focused item is a link, trigger opening it. Items that are links are not selectable.
         if (state.isOpen && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
           if (e.key === 'Enter') {
-            let item = listBoxRef.current.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
+            let item = listBoxRef.current?.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
             if (item instanceof HTMLAnchorElement) {
               router.open(item, e);
             }
@@ -200,14 +200,14 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
   let onPress = (e: PressEvent) => {
     if (e.pointerType === 'touch') {
       // Focus the input field in case it isn't focused yet
-      inputRef.current.focus();
+      inputRef.current?.focus();
       state.toggle(null, 'manual');
     }
   };
 
   let onPressStart = (e: PressEvent) => {
     if (e.pointerType !== 'touch') {
-      inputRef.current.focus();
+      inputRef.current?.focus();
       state.toggle((e.pointerType === 'keyboard' || e.pointerType === 'virtual') ? 'first' : null, 'manual');
     }
   };
@@ -234,7 +234,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
     // Sometimes VoiceOver on iOS fires two touchend events in quick succession. Ignore the second one.
     if (e.timeStamp - lastEventTime.current < 500) {
       e.preventDefault();
-      inputRef.current.focus();
+      inputRef.current?.focus();
       return;
     }
 
@@ -246,7 +246,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
     if (touch.clientX === centerX && touch.clientY === centerY) {
       e.preventDefault();
-      inputRef.current.focus();
+      inputRef.current?.focus();
       state.toggle(null, 'manual');
 
       lastEventTime.current = e.timeStamp;
@@ -270,7 +270,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
       let sectionTitle = section?.['aria-label'] || (typeof section?.rendered === 'string' ? section.rendered : '') || '';
 
       let announcement = stringFormatter.format('focusAnnouncement', {
-        isGroupChange: section && sectionKey !== lastSection.current,
+        isGroupChange: Boolean(section && sectionKey !== lastSection.current),
         groupTitle: sectionTitle,
         groupCount: section ? [...getChildNodes(section, state.collection)].length : 0,
         optionText: focusedItem['aria-label'] || focusedItem.textValue || '',
@@ -319,7 +319,7 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
 
   useEffect(() => {
     if (state.isOpen) {
-      return ariaHideOutside([inputRef.current, popoverRef.current]);
+      return ariaHideOutside([inputRef.current, popoverRef.current] as Element[]);
     }
   }, [state.isOpen, inputRef, popoverRef]);
 
