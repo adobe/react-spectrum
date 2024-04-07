@@ -115,6 +115,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Top left</Button>
               <Tooltip
                 placement="top left"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={topLeft}
                 style={{
@@ -138,6 +139,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Top right</Button>
               <Tooltip
                 placement="top right"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={topRight}
                 style={{
@@ -163,6 +165,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Left top</Button>
               <Tooltip
                 placement="left top"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={leftTop}
                 style={{
@@ -186,6 +189,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Left bottom</Button>
               <Tooltip
                 placement="left bottom"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={leftBotton}
                 style={{
@@ -211,6 +215,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Right top</Button>
               <Tooltip
                 placement="right top"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={rightTop}
                 style={{
@@ -234,6 +239,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Right bottom</Button>
               <Tooltip
                 placement="right bottom"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={rightBottom}
                 style={{
@@ -259,6 +265,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Bottom left</Button>
               <Tooltip
                 placement="bottom left"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={bottomLeft}
                 style={{
@@ -282,6 +289,7 @@ export const TooltipArrowBoundaryOffsetExample = {
               <Button style={{width: 200, height: 100}}>Bottom right</Button>
               <Tooltip
                 placement="bottom right"
+                shouldFlip={false}
                 offset={7}
                 arrowBoundaryOffset={bottomRight}
                 style={{

@@ -20,7 +20,7 @@ import intlMessages from '../intl/*.json';
 import {MenuContext, MenuStateContext, useMenuStateContext} from './context';
 import {MenuItem} from './MenuItem';
 import {MenuSection} from './MenuSection';
-import {mergeProps, useSlotId, useSyncRef} from '@react-aria/utils';
+import {mergeProps, useLayoutEffect, useSlotId, useSyncRef} from '@react-aria/utils';
 import React, {ReactElement, useContext, useEffect, useRef, useState} from 'react';
 import {SpectrumMenuProps} from '@react-types/menu';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
@@ -70,7 +70,6 @@ function Menu<T extends object>(props: SpectrumMenuProps<T>, ref: DOMRef<HTMLDiv
     isDisabled: isSubmenu || !hasOpenSubmenu
   });
 
-  // TODO: add slide transition
   return (
     <MenuStateContext.Provider value={{popoverContainer, trayContainerRef, menu: domRef, submenu: submenuRef, rootMenuTriggerState, state}}>
       <div style={{height: hasOpenSubmenu ? '100%' : undefined}} ref={trayContainerRef} />
@@ -136,6 +135,29 @@ export function TrayHeaderWrapper(props) {
   let isMobile = useIsMobileDevice();
   let {direction} = useLocale();
 
+  let [traySubmenuAnimation, setTraySubmenuAnimation] = useState('');
+  useLayoutEffect(() => {
+    if (!hasOpenSubmenu) {
+      setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
+    }
+  }, [hasOpenSubmenu, isMobile]);
+
+  let timeoutRef = useRef(null);
+  let handleBackButtonPress = () => {
+    setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
+    timeoutRef.current = setTimeout(() => {
+      onBackButtonPress();
+    }, 220); // Matches transition duration
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <>
       <div
@@ -149,17 +171,18 @@ export function TrayHeaderWrapper(props) {
             'spectrum-Menu-wrapper',
             {
               'spectrum-Menu-wrapper--isMobile': isMobile,
-              'is-expanded': hasOpenSubmenu
+              'is-expanded': hasOpenSubmenu,
+              [traySubmenuAnimation]: isMobile
             }
           )
         }>
-        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper')} onKeyDown={wrapperKeyDown}>
+        <div role="presentation" className={classNames(styles, 'spectrum-Submenu-wrapper', {'spectrum-Submenu-wrapper--isMobile': isMobile})} onKeyDown={wrapperKeyDown}>
           {isMobile && isSubmenu && !hasOpenSubmenu && (
             <div className={classNames(styles, 'spectrum-Submenu-headingWrapper')}>
               <ActionButton
                 aria-label={backButtonLabel}
                 isQuiet
-                onPress={onBackButtonPress}>
+                onPress={handleBackButtonPress}>
                 {/* We don't have a ArrowLeftSmall so make due with ArrowDownSmall and transforms */}
                 {direction === 'rtl' ? <ArrowDownSmall UNSAFE_style={{rotate: '270deg'}} /> : <ArrowDownSmall UNSAFE_style={{rotate: '90deg'}} />}
               </ActionButton>
