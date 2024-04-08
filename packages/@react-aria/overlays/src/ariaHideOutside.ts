@@ -35,19 +35,21 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
   let refCountMap = new WeakMap<Element, number>();
   const shadowRoots = findShadowRoots(targets);
 
-  // Add all ancestors of each target to the set of visible nodes to ensure they are not hidden
-  targets.forEach(target => {
-    let current = target;
-    while (current && current !== document.body) {
-      visibleNodes.add(current);
-      if (current.getRootNode() instanceof ShadowRoot) {
-        // If within a shadow DOM, add the host element
-        current = (current.getRootNode() as ShadowRoot).host;
-      } else {
-        current = current.parentNode as Element;
+  if (shadowRoots.length > 0) {
+   // Add all ancestors of each target to the set of visible nodes to ensure they are not hidden
+    targets.forEach(target => {
+      let current = target;
+      while (current && current !== document.body) {
+        visibleNodes.add(current);
+        if (current.getRootNode() instanceof ShadowRoot) {
+           // If within a shadow DOM, add the host element
+          current = (current.getRootNode() as ShadowRoot).host;
+        } else {
+          current = current.parentNode as Element;
+        }
       }
-    }
-  });
+    });
+  }
 
   let walk = (root: Element) => {
     // Keep live announcer and top layer elements (e.g. toasts) visible.
@@ -127,21 +129,23 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     }
   };
 
-  // Main function to process each target element
-  targets.forEach(target => {
-    let current = target;
-    // Process up to and including the body element
-    while (current && current !== document.body) {
-      hideSiblings(current);
-      // Move to the host element if current is within a shadow DOM
-      if (current.getRootNode() instanceof ShadowRoot) {
-        current = (current.getRootNode() as ShadowRoot).host;
-      } else {
-        // Otherwise, just move to the parent node
-        current = current.parentNode as Element;
+  if (shadowRoots.length > 0) {
+    // Main function to process each target element
+    targets.forEach(target => {
+      let current = target;
+      // Process up to and including the body element
+      while (current && current !== document.body) {
+        hideSiblings(current);
+        // Move to the host element if current is within a shadow DOM
+        if (current.getRootNode() instanceof ShadowRoot) {
+          current = (current.getRootNode() as ShadowRoot).host;
+        } else {
+          // Otherwise, just move to the parent node
+          current = current.parentNode as Element;
+        }
       }
-    }
-  });
+    });
+  }
 
   // If there is already a MutationObserver listening from a previous call,
   // disconnect it so the new on takes over.
@@ -181,7 +185,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
     }
   });
 
-  if (shadowRoots) {
+  if (shadowRoots.length > 0) {
     shadowRoots.forEach(shadowRoot => {
       observer.observe(shadowRoot, {childList: true, subtree: true});
     });
@@ -203,7 +207,7 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
   return () => {
     observer.disconnect();
 
-    if (shadowRoots) {
+    if (shadowRoots.length > 0) {
       shadowRoots.forEach(() => {
         observer.disconnect();
       });
