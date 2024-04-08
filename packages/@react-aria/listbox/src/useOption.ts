@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {chain, filterDOMProps, isMac, isWebKit, mergeProps, useLinkProps, useSlotId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key} from '@react-types/shared';
-import {filterDOMProps, isMac, isWebKit, mergeProps, useSlotId} from '@react-aria/utils';
 import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
 import {isFocusVisible, useHover} from '@react-aria/interactions';
@@ -93,7 +93,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
 
   let data = listData.get(state);
 
-  let isDisabled = props.isDisabled ?? state.disabledKeys.has(key);
+  let isDisabled = props.isDisabled ?? state.selectionManager.isDisabled(key);
   let isSelected = props.isSelected ?? state.selectionManager.isSelected(key);
   let shouldSelectOnPressUp = props.shouldSelectOnPressUp ?? data?.shouldSelectOnPressUp;
   let shouldFocusOnHover = props.shouldFocusOnHover ?? data?.shouldFocusOnHover;
@@ -125,6 +125,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     optionProps['aria-setsize'] = getItemCount(state.collection);
   }
 
+  let onAction = data?.onAction ? () => data?.onAction?.(key) : undefined;
   let {itemProps, isPressed, isFocused, hasAction, allowsSelection} = useSelectableItem({
     selectionManager: state.selectionManager,
     key,
@@ -134,7 +135,7 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     isVirtualized,
     shouldUseVirtualFocus,
     isDisabled,
-    onAction: data?.onAction ? () => data?.onAction?.(key) : undefined,
+    onAction: onAction || item?.props?.onAction ? chain(item?.props?.onAction, onAction) : undefined,
     linkBehavior: data?.linkBehavior
   });
 
@@ -148,13 +149,14 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     }
   });
 
-  let domProps = filterDOMProps(item?.props, {isLink: !!item?.props?.href});
+  let domProps = filterDOMProps(item?.props);
   delete domProps.id;
+  let linkProps = useLinkProps(item?.props);
 
   return {
     optionProps: {
       ...optionProps,
-      ...mergeProps(domProps, itemProps, hoverProps),
+      ...mergeProps(domProps, itemProps, hoverProps, linkProps),
       id: getItemId(state, key)
     },
     labelProps: {
