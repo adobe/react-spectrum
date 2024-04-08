@@ -103,6 +103,10 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
   let hide = (node: Element) => {
     let refCount = refCountMap.get(node) ?? 0;
 
+    if (!(node instanceof Element)) {
+      return;
+    }
+
     // If already aria-hidden, and the ref count is zero, then this element
     // was already hidden and there's nothing for us to do.
     if (node.getAttribute('aria-hidden') === 'true' && refCount === 0) {
@@ -121,8 +125,8 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
   const hideSiblings = (element: Element) => {
     let parentNode = element.parentNode;
     if (parentNode) {
-      parentNode.childNodes.forEach(sibling => {
-        if (sibling !== element && !visibleNodes.has(sibling) && !hiddenNodes.has(sibling) && sibling instanceof Element) {
+      parentNode.childNodes.forEach((sibling:  Element) => {
+        if (sibling !== element && !visibleNodes.has(sibling) && !hiddenNodes.has(sibling)) {
           hide(sibling);
         }
       });
@@ -130,15 +134,13 @@ export function ariaHideOutside(targets: Element[], root = document.body) {
   };
 
   if (shadowRoots.length > 0) {
-    // Main function to process each target element
     targets.forEach(target => {
       let current = target;
       // Process up to and including the body element
       while (current && current !== document.body) {
         hideSiblings(current);
-        // Move to the host element if current is within a shadow DOM
-        if (current.getRootNode() instanceof ShadowRoot) {
-          current = (current.getRootNode() as ShadowRoot).host;
+        if (current.parentNode instanceof ShadowRoot) {
+          current = current.parentNode.host;
         } else {
           // Otherwise, just move to the parent node
           current = current.parentNode as Element;

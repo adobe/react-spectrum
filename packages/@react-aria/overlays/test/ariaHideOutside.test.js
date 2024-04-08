@@ -603,8 +603,8 @@ describe('ariaHideOutside', function () {
         <div id="C2"></div>
       </div>
       <div id="P2">
-        <div id="C3" shadow-host></div>
-        <div id="C4" shadow-host></div>
+        <div id="C3"></div>
+        <div id="C4"></div>
       </div>
     `;
 
