@@ -74,4 +74,12 @@ describe('<HiddenSelect />', () => {
 
     expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-a11y-ignore', 'aria-hidden-focus');
   });
+
+  it('should always add a data attribute data-hidden-select-ignore', () => {
+    render(
+      <HiddenSelectExample items={makeItems(5)} />
+    );
+
+    expect(screen.getByTestId('hidden-select-container')).toHaveAttribute('data-hidden-select-ignore');
+  });
 });

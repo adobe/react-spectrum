@@ -88,6 +88,7 @@ export function useHiddenSelect<T>(props: AriaHiddenSelectOptions, state: Select
     containerProps: {
       ...visuallyHiddenProps,
       'aria-hidden': true,
+      ['data-hidden-select-ignore']: true,
       ['data-a11y-ignore']: 'aria-hidden-focus'
     },
     inputProps: {

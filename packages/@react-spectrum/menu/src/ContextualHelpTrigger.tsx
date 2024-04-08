@@ -16,7 +16,7 @@ import {getInteractionModality} from '@react-aria/interactions';
 import helpStyles from '@adobe/spectrum-css-temp/components/contextualhelp/vars.css';
 import {ItemProps, Key} from '@react-types/shared';
 import {Popover} from '@react-spectrum/overlays';
-import React, {JSX, ReactElement, useRef, useState} from 'react';
+import React, {JSX, ReactElement, useEffect, useRef, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/menu/vars.css';
 import {SubmenuTriggerContext, useMenuStateContext} from './context';
@@ -55,6 +55,12 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
     isDisabled: !isUnavailable
   }, submenuTriggerState, triggerRef);
   let isMobile = useIsMobileDevice();
+  let [traySubmenuAnimation, setTraySubmenuAnimation] = useState('');
+  useEffect(() => {
+    if (submenuTriggerState.isOpen) {
+      setTraySubmenuAnimation('spectrum-TraySubmenu-enter');
+    }
+  }, [submenuTriggerState.isOpen]);
   let slots = {};
   if (isUnavailable) {
     slots = {
@@ -68,7 +74,8 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
           classNames(
             styles,
             {
-              'spectrum-Menu-subdialog': !isMobile
+              'spectrum-Menu-subdialog': !isMobile,
+              [traySubmenuAnimation]: isMobile
             }
           )
         )
@@ -91,10 +98,13 @@ function ContextualHelpTrigger(props: InternalMenuDialogTriggerProps): ReactElem
   let overlay;
   let tray;
   let onBackButtonPress = () => {
-    submenuTriggerState.close();
-    if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
-      parentMenuRef.current.focus();
-    }
+    setTraySubmenuAnimation('spectrum-TraySubmenu-exit');
+    setTimeout(() => {
+      submenuTriggerState.close();
+      if (parentMenuRef.current && !parentMenuRef.current.contains(document.activeElement)) {
+        parentMenuRef.current.focus();
+      }
+    }, 220); // Matches transition duration
   };
   let [offset, setOffset] = useState(0);
   useLayoutEffect(() => {
