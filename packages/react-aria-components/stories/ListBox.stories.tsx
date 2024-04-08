@@ -187,3 +187,39 @@ export const ListBoxHover = () => (
   </ListBox>
 );
 
+export const ListBoxGrid = (args) => (
+  <ListBox
+    {...args}
+    className={styles.menu} 
+    aria-label="test listbox"
+    style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, 1fr)',
+      gridAutoRows: 'minmax(50px, auto)'
+    }}>
+    <MyListBoxItem style={{gridColumn: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,1</MyListBoxItem>
+    <MyListBoxItem style={{gridColumn: 2, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,2</MyListBoxItem>
+    <MyListBoxItem style={{gridColumn: 3, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,3</MyListBoxItem>
+    <MyListBoxItem style={{gridColumn: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,1</MyListBoxItem>
+    <MyListBoxItem style={{gridColumn: 2, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,2</MyListBoxItem>
+    <MyListBoxItem style={{gridColumn: 3, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,3</MyListBoxItem>
+    <MyListBoxItem style={{gridColumn: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,1</MyListBoxItem>
+    <MyListBoxItem style={{gridColumn: 2, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,2</MyListBoxItem>
+    <MyListBoxItem style={{gridColumn: 3, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,3</MyListBoxItem>
+  </ListBox>
+);
+
+ListBoxGrid.story = {
+  args: {
+    layout: 'grid',
+    orientation: 'vertical'
+  },
+  argTypes: {
+    orientation: {
+      control: {
+        type: 'radio',
+        options: ['vertical', 'horizontal']
+      }
+    }
+  }
+};

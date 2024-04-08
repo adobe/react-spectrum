@@ -527,6 +527,98 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(options[1]);
   });
 
+  it('should not throw TypeError at boundaries of grid layout', async () => {
+    /**
+     * The following ListBox is roughly in this shape:
+     * 
+     * -------------------
+     * | 1,1 | 1,2 | 1,3 |
+     * -------------------
+     * | 2,1 | 2,2 | 2,3 |
+     * -------------------
+     * | 3,1 | 3,2 | 3,3 |
+     * -------------------
+     */
+    let {getAllByRole, rerender} = render(
+      <ListBox layout="grid" aria-label="Test">
+        <ListBoxItem>1,1</ListBoxItem>
+        <ListBoxItem>1,2</ListBoxItem>
+        <ListBoxItem>1,3</ListBoxItem>
+        <ListBoxItem>2,1</ListBoxItem>
+        <ListBoxItem>2,2</ListBoxItem>
+        <ListBoxItem>2,3</ListBoxItem>
+        <ListBoxItem>3,1</ListBoxItem>
+        <ListBoxItem>3,2</ListBoxItem>
+        <ListBoxItem>3,3</ListBoxItem>
+      </ListBox>);
+    let options = getAllByRole('option');
+
+    jest.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function () {
+      if (this.getAttribute('role') === 'listbox') {
+        return {top: 0, left: 0, bottom: 200, right: 300, width: 300, height: 200};
+      } else {
+        let index = [...this.parentElement.children].indexOf(this);
+        return {top: Math.floor(index / 3) * 40, left: (index % 3) * 100, bottom: Math.floor(index / 3) * 40 + 40, right: (index % 3) * 100 + 100, width: 100, height: 40};
+      }
+    });
+
+    await user.tab();
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowDown');
+    expect(document.activeElement).toBe(options[3]);  // 2,1
+
+    keyPress('ArrowDown');
+    expect(document.activeElement).toBe(options[6]);  // 3,1
+
+    keyPress('ArrowDown');  // shouldn't throw
+    expect(document.activeElement).toBe(options[6]);  // 3,1
+
+    keyPress('ArrowUp');
+    expect(document.activeElement).toBe(options[3]);  // 2,1
+
+    keyPress('ArrowUp');
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowUp');  // shouldn't throw
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    // horizontal
+    rerender(
+      <ListBox layout="grid" orientation="horizontal" aria-label="Test">
+        <ListBoxItem>1,1</ListBoxItem>
+        <ListBoxItem>1,2</ListBoxItem>
+        <ListBoxItem>1,3</ListBoxItem>
+        <ListBoxItem>2,1</ListBoxItem>
+        <ListBoxItem>2,2</ListBoxItem>
+        <ListBoxItem>2,3</ListBoxItem>
+        <ListBoxItem>3,1</ListBoxItem>
+        <ListBoxItem>3,2</ListBoxItem>
+        <ListBoxItem>3,3</ListBoxItem>
+      </ListBox>
+    );
+
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+    
+    keyPress('ArrowRight');
+    expect(document.activeElement).toBe(options[1]);  // 1,2
+
+    keyPress('ArrowRight');
+    expect(document.activeElement).toBe(options[2]);  // 1,3
+
+    keyPress('ArrowRight');  // shouldn't throw
+    expect(document.activeElement).toBe(options[2]);  // 1,3
+
+    keyPress('ArrowLeft');
+    expect(document.activeElement).toBe(options[1]);  // 1,2
+
+    keyPress('ArrowLeft');
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+
+    keyPress('ArrowLeft');  // shouldn't throw
+    expect(document.activeElement).toBe(options[0]);  // 1,1
+  });
+
   it('should support onScroll', () => {
     let onScroll = jest.fn();
     let {getByRole} = renderListbox({onScroll});
