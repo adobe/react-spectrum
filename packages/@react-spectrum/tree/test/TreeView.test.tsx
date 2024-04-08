@@ -29,7 +29,7 @@ let onAction = jest.fn();
 let onExpandedChange = jest.fn();
 
 let StaticTree = ({treeProps = {}, rowProps = {}}) => (
-  <TreeView defaultExpandedKeys="all" aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <TreeView defaultExpandedKeys={new Set(['Projects', 'Projects-1'])} aria-label="test tree" onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     <TreeViewItem id="Photos" textValue="Photos" {...rowProps}>
       <Text>Photos</Text>
       <Folder />
@@ -148,7 +148,7 @@ let rows = [
 ];
 
 let DynamicTree = ({treeProps = {}, rowProps = {}}) => (
-  <TreeView defaultExpandedKeys="all" aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
+  <TreeView defaultExpandedKeys={new Set(['Projects', 'Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB'])} aria-label="test dynamic tree" items={rows} onExpandedChange={onExpandedChange} onSelectionChange={onSelectionChange} {...treeProps}>
     {(item: any) => (
       <TreeViewItem childItems={item.childItems} textValue={item.name} {...rowProps}>
         <Text>{item.name}</Text>
@@ -920,7 +920,7 @@ describe('Tree', () => {
       });
 
       it('should not expand/collapse if disabledBehavior is "all" and the row is disabled', async () => {
-        let tree = render(<DynamicTree treeProps={{disabledKeys: ['Projects'], disabledBehavior: 'all', expandedKeys: 'all'}} />);
+        let tree = render(<DynamicTree treeProps={{disabledKeys: ['Projects'], disabledBehavior: 'all', expandedKeys: new Set(['Projects', 'Project-2', 'Project-5', 'Reports', 'Reports-1', 'Reports-1A', 'Reports-1AB'])}} />);
         let rows = tree.getAllByRole('row');
         expect(rows).toHaveLength(20);
 

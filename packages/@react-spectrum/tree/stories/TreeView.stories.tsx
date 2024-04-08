@@ -201,7 +201,7 @@ let rows = [
 
 export const TreeExampleDynamic = (args: SpectrumTreeViewProps<unknown>) => (
   <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-    <TreeView defaultExpandedKeys="all" disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
+    <TreeView disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')} {...args}>
       {(item: any) => (
         <TreeViewItem childItems={item.childItems} textValue={item.name}>
           <Text>{item.name}</Text>
@@ -240,7 +240,7 @@ export const WithActions = {
 
 export const WithLinks = (args: SpectrumTreeViewProps<unknown>) => (
   <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-    <TreeView {...args} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <TreeView {...args} disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
         <TreeViewItem href="https://adobe.com/" childItems={item.childItems} textValue={item.name}>
           <Text>{item.name}</Text>
@@ -296,7 +296,7 @@ export const EmptyTree = {
 
 export const WithActionMenu = (args: SpectrumTreeViewProps<unknown>) => (
   <div style={{width: '300px', resize: 'both', height: '90vh', overflow: 'auto'}}>
-    <TreeView {...args} defaultExpandedKeys="all" disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
+    <TreeView {...args} disabledKeys={['reports-1AB']} aria-label="test dynamic tree" items={rows} onExpandedChange={action('onExpandedChange')} onSelectionChange={action('onSelectionChange')}>
       {(item) => (
         <TreeViewItem childItems={item.childItems} textValue={item.name}>
           <Text>{item.name}</Text>

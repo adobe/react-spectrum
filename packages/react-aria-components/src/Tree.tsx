@@ -284,10 +284,10 @@ export interface TreeItemProps<T = object> extends StyleRenderProps<TreeItemRend
   textValue: string,
   /** An accessibility label for this tree item. */
   'aria-label'?: string,
-  /** A list of child tree row objects used when dynamically rendering the tree item children. */
+  /** A list of child tree item objects used when dynamically rendering the tree item children. */
   childItems?: Iterable<T>,
   // TODO: made this required since the user needs to pass Content at least
-  /** The content of the tree row along with any nested children. Supports static nested tree rows or use of a Collection to dynamically render nested tree rows. */
+  /** The content of the tree item along with any nested children. Supports static nested tree items or use of a Collection to dynamically render nested tree items. */
   children: ReactNode
 }
 
@@ -321,12 +321,14 @@ const _TreeItem = /*#__PURE__*/ (forwardRef as forwardRefType)(TreeItem);
 export {_TreeItem as TreeItem};
 
 export interface TreeItemContentRenderProps extends ItemRenderProps {
-  // Whether the tree row is expanded.
+  // Whether the tree item is expanded.
   isExpanded: boolean,
-  // Whether the tree row has child rows.
+  // Whether the tree item has child rows.
   hasChildRows: boolean,
-  // What level the tree row has within the tree.
-  level: number
+  // What level the tree item has within the tree.
+  level: number,
+  // Whether the tree item's children have keyboard focus.
+  isFocusVisibleWithin: boolean
 }
 
 // The TreeItemContent is the one that accepts RenderProps because we would get much more complicated logic in TreeItem otherwise since we'd
@@ -416,7 +418,7 @@ function TreeRow<T>({item}: {item: Node<T>}) {
   let expandButtonRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (hasChildRows && !expandButtonRef.current) {
-      console.warn('Expandable tree rows must contain a expand button so screen reader users can expand/collapse the row.');
+      console.warn('Expandable tree items must contain a expand button so screen reader users can expand/collapse the item.');
     }
   // eslint-disable-next-line
   }, []);
@@ -507,7 +509,7 @@ function convertExpanded(expanded: 'all' | Iterable<Key>): 'all' | Set<Key> {
     : new Set(expanded);
 }
 interface TreeGridCollectionOptions {
-  expandedKeys: 'all' | Set<Key>
+  expandedKeys: Set<Key>
 }
 
 interface FlattenedTree<T> {
@@ -538,7 +540,7 @@ function flattenTree<T>(collection: TreeCollection<T>, opts: TreeGridCollectionO
         keyMap.set(node.key, node as NodeValue<T>);
       }
 
-      if (node.level === 0 || (expandedKeys === 'all' && node.type === 'item') || (expandedKeys !== 'all' && parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
+      if (node.level === 0 || (parentKey != null && expandedKeys.has(parentKey) && flattenedRows.find(row => row.key === parentKey))) {
         // Grab the modified node from the key map so our flattened list and modified key map point to the same nodes
         flattenedRows.push(keyMap.get(node.key) || node);
       }
