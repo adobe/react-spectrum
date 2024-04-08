@@ -20,7 +20,6 @@
   padding-inline-start: var(--spectrum-selectlist-option-padding);
   font-size: var(--spectrum-selectlist-option-text-size);
   font-weight: var(--spectrum-selectlist-option-text-font-weight);
-  font-style: italic;
 }
 
 /* override .spectrum-InputGroup */
