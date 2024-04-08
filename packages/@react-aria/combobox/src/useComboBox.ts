@@ -123,8 +123,8 @@ export function useComboBox<T>(props: AriaComboBoxOptions<T>, state: ComboBoxSta
         if (state.isOpen && state.selectionManager.focusedKey != null && state.selectionManager.isLink(state.selectionManager.focusedKey)) {
           if (e.key === 'Enter') {
             let item = listBoxRef.current?.querySelector(`[data-key="${CSS.escape(state.selectionManager.focusedKey.toString())}"]`);
-            if (item instanceof HTMLAnchorElement) {
-              let collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+            const collectionItem = state.collection.getItem(state.selectionManager.focusedKey);
+            if (item instanceof HTMLAnchorElement && collectionItem) {
               router.open(item, e, collectionItem.props.href, collectionItem.props.routerOptions as RouterOptions);
             }
           }
