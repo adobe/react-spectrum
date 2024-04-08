@@ -285,7 +285,7 @@ describe('Calendar', () => {
     expect(headers.map(h => h.textContent)).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
   });
 
-  it('should support setting "null" for method setValue', () => {
+  it('should support setting "null" for method setValue', async () => {
 
     const Footer = () => {
       const state = useContext(CalendarStateContext);
@@ -293,8 +293,8 @@ describe('Calendar', () => {
 
       return (
         <div>
-          <Button 
-            slot={null} 
+          <Button
+            slot={null}
             className="reset-button"
             onPress={() => setValue(null)}>
             Reset value
@@ -331,14 +331,14 @@ describe('Calendar', () => {
     let cell = within(grid).getAllByRole('button')[7];
     expect(cell).toBeInTheDocument();
 
-    fireEvent.click(cell);
+    await user.click(cell);
     expect(cell).toHaveAttribute('data-selected', 'true');
     expect(cell).toHaveClass('selected');
 
     const resetButton = grid.querySelector('.reset-button');
     expect(resetButton).toBeInTheDocument();
 
-    fireEvent.click(resetButton);
+    await user.click(resetButton);
     expect(cell).not.toHaveAttribute('data-selected');
     expect(cell).not.toHaveClass('selected');
   });

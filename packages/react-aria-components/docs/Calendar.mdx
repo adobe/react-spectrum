@@ -829,7 +829,7 @@ Now you can use `MyCustomHeading` within a `Calendar`, in place of the builtin R
 
 Calendar provides a <TypeLink links={statelyDocs.links} type={statelyDocs.exports.CalendarState} /> object to its children via `CalendarStateContext`. This can be used to access and manipulate the calendar's state.
 
-This example shows a `CalendarValue` component that can be placed within a `Calendar` to display the currently selected date as a formatted string. 
+This example shows a `CalendarValue` component that can be placed within a `Calendar` to display the currently selected date as a formatted string.
 
 ```tsx example
 import {CalendarStateContext} from 'react-aria-components';
@@ -861,7 +861,7 @@ function CalendarValue() {
 
 #### Reset value
 
-This example shows the `Footer` component, which is placed inside the `Calendar`. In this component, we use `CalendarStateContext` to get the `setValue` method from the `CalendarState` object. Next, by clicking on the button, we set the `setValue` to `null` to reset the `Calendar` `value`.
+This example shows a custom `Footer` component that can be placed inside the `Calendar.` In this component, we use `CalendarStateContext` to get the `setValue` method from the `CalendarState` object. Next, by clicking on the button, we set the `setValue` to `null` to reset the `Calendar` `value`.
 
 ```tsx example
 import {useContext} from 'react';
@@ -872,11 +872,11 @@ function Footer() {
   {/*- begin highlight -*/}
   const { setValue } = state;
   {/*- end highlight -*/}
-  
+
   return (
     <div>
-      <Button 
-        slot={null} 
+      <Button
+        slot={null}
         className="reset-button"
         onPress={() => {
           // reset value
