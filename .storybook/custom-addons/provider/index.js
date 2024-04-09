@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {addons} from '@storybook/preview-api';
 import {makeDecorator} from '@storybook/preview-api';
-import {getQueryParams} from '@storybook/client-api';
+import {getQueryParams} from '@storybook/preview-api';
 import {Provider} from '@react-spectrum/provider';
 import {expressThemes, themes, defaultTheme} from '../../constants';
 

@@ -27,7 +27,7 @@ import {Link} from '@react-spectrum/link';
 import Paste from '@spectrum-icons/workflow/Paste';
 import React, {useState} from 'react';
 import {ToggleButton} from '@adobe/react-spectrum';
-import {TranslateMenu} from './../chromatic/MenuTriggerLanguages.chromatic';
+import {TranslateMenu} from './../chromatic/MenuTriggerLanguages.stories';
 
 let iconMap = {
   AlignCenter,

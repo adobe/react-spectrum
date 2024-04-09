@@ -4,7 +4,7 @@ module.exports = {
     name: "storybook-react-parcel",
     options: {},
   },
-  stories: ['../packages/**/chromatic/**/*.chromatic.{js,jsx,ts,tsx}'],
+  stories: ['../packages/**/chromatic/**/*.stories.@(js|jsx|ts|tsx)'],
   addons: process.env.NODE_ENV === 'production' ? [] : [
     '@storybook/addon-actions',
     '@storybook/addon-a11y'

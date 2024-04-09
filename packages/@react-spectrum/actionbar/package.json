@@ -43,6 +43,7 @@
     "@react-aria/utils": "^3.23.2",
     "@react-spectrum/actiongroup": "^3.10.3",
     "@react-spectrum/button": "^3.16.2",
+    "@react-spectrum/layout": "^3.6.3",
     "@react-spectrum/overlays": "^5.5.5",
     "@react-spectrum/text": "^3.5.3",
     "@react-spectrum/utils": "^3.11.5",

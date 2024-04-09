@@ -45,6 +45,7 @@
     "@react-aria/visually-hidden": "^3.8.10",
     "@react-spectrum/button": "^3.16.2",
     "@react-spectrum/label": "^3.16.4",
+    "@react-spectrum/layout": "^3.6.3",
     "@react-spectrum/utils": "^3.11.5",
     "@react-stately/calendar": "^3.4.4",
     "@react-types/button": "^3.9.2",

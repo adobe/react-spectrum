@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "@react-aria/utils": "^3.23.2",
+    "@react-spectrum/layout": "^3.6.3",
     "@react-spectrum/utils": "^3.11.5",
     "@react-types/avatar": "^3.0.5",
     "@react-types/shared": "^3.22.1",

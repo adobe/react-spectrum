@@ -41,6 +41,7 @@
     "@react-aria/i18n": "^3.10.2",
     "@react-aria/interactions": "^3.21.1",
     "@react-aria/utils": "^3.23.2",
+    "@react-spectrum/layout": "^3.6.3",
     "@react-spectrum/progress": "^3.7.5",
     "@react-spectrum/text": "^3.5.3",
     "@react-spectrum/utils": "^3.11.5",
