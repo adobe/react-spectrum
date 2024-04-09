@@ -72,7 +72,9 @@ function ProviderFieldSetter({api}) {
     });
   };
   useEffect(() => {
+    console.log('registers useEffect time to listen')
     let storySwapped = () => {
+      console.log('story swapped emitted')
       channel.emit('provider/updated', values);
     };
     channel.on('rsp/ready-for-update', storySwapped);
