@@ -19,7 +19,7 @@ import {DOMRef, Expandable, Key, SelectionBehavior, SpectrumSelectionProps, Styl
 import {isAndroid} from '@react-aria/utils';
 import React, {createContext, isValidElement, ReactElement, ReactNode, useContext, useRef} from 'react';
 import {SlotProvider, useDOMRef, useStyleProps} from '@react-spectrum/utils';
-import {style} from '@react-spectrum/style-macro-s1' assert {type: 'macro'};
+import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
 import {Text} from '@react-spectrum/text';
 import {useButton} from '@react-aria/button';
 import {useLocale} from '@react-aria/i18n';
