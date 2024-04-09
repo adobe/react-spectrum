@@ -11,9 +11,9 @@
  */
 
 import {act, fireEvent, pointerMap, render, within} from '@react-spectrum/test-utils';
-import {Button, Calendar, CalendarCell, CalendarContext, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, Heading} from 'react-aria-components';
+import {Button, Calendar, CalendarCell, CalendarContext, CalendarGrid, CalendarGridBody, CalendarGridHeader, CalendarHeaderCell, CalendarStateContext, Heading} from 'react-aria-components';
 import {CalendarDate, getLocalTimeZone, startOfMonth, startOfWeek, today} from '@internationalized/date';
-import React from 'react';
+import React, {useContext} from 'react';
 import userEvent from '@testing-library/user-event';
 
 let TestCalendar = ({calendarProps, gridProps, cellProps}) => (
@@ -283,5 +283,63 @@ describe('Calendar', () => {
     let {getAllByRole} = renderCalendar({}, {weekdayStyle: 'short'});
     let headers = getAllByRole('columnheader', {hidden: true});
     expect(headers.map(h => h.textContent)).toEqual(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']);
+  });
+
+  it('should support setting "null" for method setValue', async () => {
+
+    const Footer = () => {
+      const state = useContext(CalendarStateContext);
+      const {setValue} = state;
+
+      return (
+        <div>
+          <Button
+            slot={null}
+            className="reset-button"
+            onPress={() => setValue(null)}>
+            Reset value
+          </Button>
+        </div>
+      );
+    };
+
+    let {getByRole} = render(
+      <Calendar aria-label="Appointment date" className="grid">
+        <header>
+          <Button slot="previous">◀</Button>
+          <Heading />
+          <Button slot="next">▶</Button>
+        </header>
+        <CalendarGrid>
+          <CalendarGridHeader className="grid-header">
+            {(day) => (
+              <CalendarHeaderCell className="header-cell">
+                {day}
+              </CalendarHeaderCell>
+            )}
+          </CalendarGridHeader>
+          <CalendarGridBody className="grid-body">
+            {(date) => <CalendarCell date={date} className={({isSelected}) => isSelected ? 'selected' : ''} />}
+          </CalendarGridBody>
+        </CalendarGrid>
+        <Footer />
+      </Calendar>
+    );
+    let grid = getByRole('application');
+    expect(grid).toHaveAttribute('class', 'grid');
+
+    let cell = within(grid).getAllByRole('button')[7];
+    expect(cell).toBeInTheDocument();
+
+    await user.click(cell);
+    expect(cell).toHaveAttribute('data-selected', 'true');
+    expect(cell).toHaveClass('selected');
+
+    const resetButton = grid.querySelector('.reset-button');
+    expect(resetButton).toBeInTheDocument();
+
+    await user.click(resetButton);
+    expect(cell).not.toHaveAttribute('data-selected');
+    expect(cell).not.toHaveClass('selected');
   });
 });
