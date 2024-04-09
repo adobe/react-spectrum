@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import {chain, filterDOMProps, isMac, isWebKit, mergeProps, useSlotId} from '@react-aria/utils';
+import {chain, filterDOMProps, isMac, isWebKit, mergeProps, useLinkProps, useSlotId} from '@react-aria/utils';
 import {DOMAttributes, FocusableElement, Key} from '@react-types/shared';
 import {getItemCount} from '@react-stately/collections';
 import {getItemId, listData} from './utils';
@@ -149,13 +149,14 @@ export function useOption<T>(props: AriaOptionProps, state: ListState<T>, ref: R
     }
   });
 
-  let domProps = filterDOMProps(item?.props, {isLink: !!item?.props?.href});
+  let domProps = filterDOMProps(item?.props);
   delete domProps.id;
+  let linkProps = useLinkProps(item?.props);
 
   return {
     optionProps: {
       ...optionProps,
-      ...mergeProps(domProps, itemProps, hoverProps),
+      ...mergeProps(domProps, itemProps, hoverProps, linkProps),
       id: getItemId(state, key)
     },
     labelProps: {

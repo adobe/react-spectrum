@@ -136,8 +136,12 @@ export function useCalendarState<T extends DateValue = DateValue>(props: Calenda
     setFocusedDate(date);
   }
 
-  function setValue(newValue: CalendarDate) {
+  function setValue(newValue: CalendarDate | null) {
     if (!props.isDisabled && !props.isReadOnly) {
+      if (newValue === null) {
+        setControlledValue(null);
+        return;
+      }
       newValue = constrainValue(newValue, minValue, maxValue);
       newValue = previousAvailableDate(newValue, startDate, isDateUnavailable);
       if (!newValue) {
