@@ -19694,6 +19694,13 @@ react-dom@^18.0.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
+react-dom@^19.0.0-canary-4c12339ce-20240408:
+  version "19.0.0-canary-4c12339ce-20240408"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-19.0.0-canary-4c12339ce-20240408.tgz#86e23459210ed40500b2424e4c3a218782bfbf7f"
+  integrity sha512-dMttAQ6IA63sUCCw+ZBE4QBO87PGjEcgNhNTYGHmw15ONqeUKQ8XmGEUKBOTmux7CIV9gdmKr3BGUFdGeT5ERA==
+  dependencies:
+    scheduler "0.25.0-canary-4c12339ce-20240408"
+
 react-element-to-jsx-string@^15.0.0:
   version "15.0.0"
   resolved "https://registry.yarnpkg.com/react-element-to-jsx-string/-/react-element-to-jsx-string-15.0.0.tgz#1cafd5b6ad41946ffc8755e254da3fc752a01ac6"
@@ -19807,6 +19814,11 @@ react@^18.0.0:
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
   dependencies:
     loose-envify "^1.1.0"
+
+react@^19.0.0-canary-4c12339ce-20240408:
+  version "19.0.0-canary-4c12339ce-20240408"
+  resolved "https://registry.yarnpkg.com/react/-/react-19.0.0-canary-4c12339ce-20240408.tgz#21bb23e15848af30655039a0d5496ccea3ea3c36"
+  integrity sha512-QdQl76CTAmYrwjxq6fZRDWw2/MHPNxkYQ1xZVir2MbK/wxK62vFAPGr2j/AXs36ADVUq+tUGx4XNmdgnfL4f1Q==
 
 read-cache@^1.0.0:
   version "1.0.0"
@@ -20669,6 +20681,11 @@ saxes@^6.0.0:
   integrity sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==
   dependencies:
     xmlchars "^2.2.0"
+
+scheduler@0.25.0-canary-4c12339ce-20240408:
+  version "0.25.0-canary-4c12339ce-20240408"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.25.0-canary-4c12339ce-20240408.tgz#313e246cf1991e5f38aba45a738e844a1ae2bff6"
+  integrity sha512-XGG/Y5q5jeJy+rKp963+nlz81H/eDEMDmwem8QFHkuufjW/IEhM9ha6PO76m9qA6Qr59HVjlTGJ6D1bH1lemeQ==
 
 scheduler@^0.16.2:
   version "0.16.2"

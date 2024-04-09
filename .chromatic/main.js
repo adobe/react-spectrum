@@ -1,7 +1,8 @@
 
 module.exports = {
-  core: {
-    builder: "storybook-builder-parcel",
+  framework: {
+    name: "storybook-react-parcel",
+    options: {},
   },
   stories: ['../packages/**/chromatic/**/*.chromatic.{js,jsx,ts,tsx}'],
   addons: process.env.NODE_ENV === 'production' ? [] : [

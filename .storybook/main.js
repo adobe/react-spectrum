@@ -1,5 +1,4 @@
 
-import { dirname, join } from "path";
 module.exports = {
   stories: ['../packages/**/stories/*.stories.{js,jsx,ts,tsx}'],
 

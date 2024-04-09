@@ -25,10 +25,8 @@ function ProviderUpdater(props) {
   let theme = (expressValue ? expressThemes : themes)[themeValue || 'light'] || defaultTheme;
   let colorScheme = themeValue && themeValue.replace(/est$/, '');
   useEffect(() => {
-    console.log('use effect running?')
     let channel = addons.getChannel();
     let providerUpdate = (event) => {
-      console.log('provider/updated channel called?')
       setLocale(event.locale);
       setTheme(event.theme === 'Auto' ? undefined : event.theme);
       setScale(event.scale === 'Auto' ? undefined : event.scale);
@@ -64,7 +62,6 @@ export const withProviderSwitcher = makeDecorator({
   name: 'withProviderSwitcher',
   parameterName: 'providerSwitcher',
   wrapper: (getStory, context, {options, parameters}) => {
-    console.log('render wrapper?')
     options = {...options, ...parameters};
     return (
       <ProviderUpdater options={options} context={context}>
