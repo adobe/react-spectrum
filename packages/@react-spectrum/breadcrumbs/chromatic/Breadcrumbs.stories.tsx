@@ -13,12 +13,10 @@
 import {Breadcrumbs, Item} from '../';
 import {Meta} from '@storybook/react';
 import React from 'react';
-import {SpectrumBreadcrumbsProps} from '@react-types/breadcrumbs';
 
-const meta: Meta<SpectrumBreadcrumbsProps<object>> = {
+const meta: Meta<typeof Breadcrumbs> = {
   title: 'Breadcrumbs',
-  component: Breadcrumbs,
-  excludeStories: ['Template']
+  component: Breadcrumbs
 };
 
 export default meta;

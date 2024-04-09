@@ -29,4 +29,4 @@ export default meta;
 export {
   Default,
   Mobile
-} from './Submenu.chromatic';
+} from './Submenu.stories';
