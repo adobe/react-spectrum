@@ -17,6 +17,7 @@ import {focusWithoutScrolling, mergeProps, useFormReset, useGlobalListeners, use
 import React, {ChangeEvent, InputHTMLAttributes, RefObject, useCallback, useRef} from 'react';
 import {useKeyboard, useMove} from '@react-aria/interactions';
 import {useLocale} from '@react-aria/i18n';
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export interface AriaColorWheelOptions extends AriaColorWheelProps {
   /** The outer radius of the color wheel. */
@@ -263,6 +264,15 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
     forcedColorAdjust: 'none'
   };
 
+  let {visuallyHiddenProps} = useVisuallyHidden({
+    style: {
+      opacity: '0.0001',
+      width: '100%',
+      height: '100%',
+      pointerEvents: 'none'
+    }
+  });
+
   return {
     trackProps: {
       ...trackInteractions,
@@ -317,7 +327,8 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         name,
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
           state.setHue(parseFloat(e.target.value));
-        }
+        },
+        style: visuallyHiddenProps.style
       }
     )
   };

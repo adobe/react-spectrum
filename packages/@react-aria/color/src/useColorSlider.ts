@@ -17,6 +17,7 @@ import {InputHTMLAttributes, RefObject} from 'react';
 import {mergeProps} from '@react-aria/utils';
 import {useLocale} from '@react-aria/i18n';
 import {useSlider, useSliderThumb} from '@react-aria/slider';
+import {useVisuallyHidden} from '@react-aria/visually-hidden';
 
 export interface AriaColorSliderOptions extends AriaColorSliderProps {
   /** A ref for the track element. */
@@ -74,8 +75,11 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
       to = 'left';
     }
     switch (channel) {
-      case 'hue':
-        return `linear-gradient(to ${to}, rgb(255, 0, 0) 0%, rgb(255, 255, 0) 17%, rgb(0, 255, 0) 33%, rgb(0, 255, 255) 50%, rgb(0, 0, 255) 67%, rgb(255, 0, 255) 83%, rgb(255, 0, 0) 100%)`;
+      case 'hue': {
+        // return `linear-gradient(to ${to}, rgb(255, 0, 0) 0%, rgb(255, 255, 0) 17%, rgb(0, 255, 0) 33%, rgb(0, 255, 255) 50%, rgb(0, 0, 255) 67%, rgb(255, 0, 255) 83%, rgb(255, 0, 0) 100%)`;
+        let stops = [0, 60, 120, 180, 240, 300, 360].map(hue => value.withChannelValue('hue', hue).toString('css')).join(', ');
+        return `linear-gradient(to ${to}, ${stops})`;
+      }
       case 'lightness': {
         // We have to add an extra color stop in the middle so that the hue shows up at all.
         // Otherwise it will always just be black to white.
@@ -109,6 +113,15 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
     inputProps['aria-valuetext'] += `, ${value.getColorName(locale)}`;
   }
 
+  let {visuallyHiddenProps} = useVisuallyHidden({
+    style: {
+      opacity: '0.0001',
+      width: '100%',
+      height: '100%',
+      pointerEvents: 'none'
+    }
+  });
+
   return {
     trackProps: {
       ...mergeProps(groupProps, trackProps),
@@ -118,7 +131,13 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
         background: generateBackground()
       }
     },
-    inputProps,
+    inputProps: {
+      ...inputProps,
+      style: {
+        ...inputProps.style,
+        ...visuallyHiddenProps.style
+      }
+    },
     thumbProps: {
       ...thumbProps,
       style: {
