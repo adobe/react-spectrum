@@ -501,7 +501,7 @@ describe('ListBox', () => {
   it('should not throw TypeError at boundaries of vertical grid layout when keyboard navigating (up/down)', async () => {
     /**
      * The following ListBox is roughly in this shape:
-     * 
+     *
      * -------------------
      * | 1,1 | 1,2 | 1,3 |
      * -------------------
@@ -587,13 +587,13 @@ describe('ListBox', () => {
   it('should not throw TypeError at boundaries of horizontal grid layout when keyboard navigating (left/right)', async () => {
     /**
      * The following ListBox is roughly in this shape:
-     * 
+     *
      * -------------------
-     * | 1,1 | 1,2 | 1,3 |
+     * | 1,1 | 2,1 | 3,1 |
      * -------------------
-     * | 2,1 | 2,2 | 2,3 |
+     * | 1,2 | 2,2 | 3,2 |
      * -------------------
-     * | 3,1 | 3,2 | 3,3 |
+     * | 1,3 | 3,2 | 3,3 |
      * -------------------
      */
     let {getAllByRole} = render(
@@ -615,7 +615,7 @@ describe('ListBox', () => {
         return {top: 0, left: 0, bottom: 200, right: 300, width: 300, height: 200};
       } else {
         let index = [...this.parentElement.children].indexOf(this);
-        return {top: Math.floor(index / 3) * 40, left: (index % 3) * 100, bottom: Math.floor(index / 3) * 40 + 40, right: (index % 3) * 100 + 100, width: 100, height: 40};
+        return {top: (index % 3) * 40, left: Math.floor(index / 3) * 100, bottom: (index % 3) * 40 + 40, right: Math.floor(index / 3) * 100 + 100, width: 100, height: 40};
       }
     });
 
@@ -623,16 +623,16 @@ describe('ListBox', () => {
     expect(document.activeElement).toBe(options[0]);  // 1,1
 
     keyPress('ArrowRight');
-    expect(document.activeElement).toBe(options[1]);  // 1,2
+    expect(document.activeElement).toBe(options[3]);  // 2,1
 
     keyPress('ArrowRight');  // the end reached
-    expect(document.activeElement).toBe(options[2]);  // 1,3
+    expect(document.activeElement).toBe(options[6]);  // 3,1
 
     keyPress('ArrowRight');  // shouldn't throw when pressed one more time at the boundary.
-    expect(document.activeElement).toBe(options[2]);  // 1,3
+    expect(document.activeElement).toBe(options[6]);  // 3,1
 
     keyPress('ArrowLeft');
-    expect(document.activeElement).toBe(options[1]);  // 1,2
+    expect(document.activeElement).toBe(options[3]);  // 2,1
 
     keyPress('ArrowLeft');  // the end reached
     expect(document.activeElement).toBe(options[0]);  // 1,1
