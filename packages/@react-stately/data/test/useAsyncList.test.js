@@ -40,8 +40,8 @@ describe('useAsyncList', () => {
     jest.useFakeTimers();
   });
 
-  afterEach(() => {
-    act(() => jest.runAllTimers());
+  afterEach(async () => {
+    await act(async () => jest.runAllTimers());
   });
 
   it('should call load function on init', async () => {
