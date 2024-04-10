@@ -166,9 +166,7 @@ Mobile.play = async ({canvasElement}) => {
   let body = canvasElement.ownerDocument.body;
   let menu = await within(body).getByRole('menu');
   let menuItems = within(menu).getAllByRole('menuitem');
-  // TODO: need to use keyboard since userEvent click doesn't seem to open the menu
   await userEvent.click(menuItems[0]);
-  await userEvent.keyboard('[Enter]');
   await within(body).findByText('Baseline');
 };
 
