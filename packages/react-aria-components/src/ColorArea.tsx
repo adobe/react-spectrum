@@ -43,6 +43,7 @@ function ColorArea(props: ColorAreaProps, ref: ForwardedRef<HTMLDivElement>) {
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-ColorArea',
+    defaultStyle: colorAreaProps.style,
     values: {
       state,
       isDisabled: props.isDisabled || false
@@ -54,10 +55,6 @@ function ColorArea(props: ColorAreaProps, ref: ForwardedRef<HTMLDivElement>) {
       ref={ref}
       {...colorAreaProps}
       {...renderProps}
-      style={{
-        ...colorAreaProps.style,
-        ...renderProps.style
-      }}
       data-disabled={props.isDisabled || undefined}>
       <Provider
         values={[

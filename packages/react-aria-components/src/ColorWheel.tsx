@@ -34,7 +34,10 @@ function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {
       state,
       isDisabled: props.isDisabled || false
     },
-    defaultClassName: 'react-aria-ColorWheel'
+    defaultClassName: 'react-aria-ColorWheel',
+    defaultStyle: {
+      position: 'relative'
+    }
   });
 
   let DOMProps = filterDOMProps(props);
@@ -44,10 +47,6 @@ function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {
     <div 
       {...renderProps}
       ref={ref}
-      style={{
-        position: 'relative',
-        ...renderProps.style
-      }}
       data-disabled={props.isDisabled || undefined}>
       <div {...trackProps} />
       <Provider

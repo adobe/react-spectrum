@@ -65,6 +65,7 @@ function ColorThumb(props: ColorThumbProps, ref: ForwardedRef<HTMLDivElement>) {
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-ColorThumb',
+    defaultStyle: thumbProps.style,
     values: {
       color: state.getDisplayColor(),
       isHovered,
@@ -77,13 +78,9 @@ function ColorThumb(props: ColorThumbProps, ref: ForwardedRef<HTMLDivElement>) {
 
   return (
     <div
-      {...renderProps}
       {...mergeProps(thumbProps, hoverProps)}
+      {...renderProps}
       ref={ref}
-      style={{
-        ...thumbProps.style,
-        ...renderProps.style
-      }}
       data-hovered={isHovered || undefined}
       data-dragging={state.isDragging || undefined}
       data-focused={isFocused || undefined}
