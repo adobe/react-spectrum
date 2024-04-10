@@ -68,7 +68,7 @@ describe('ColorArea', () => {
         expect(xSlider).toHaveAttribute('min', '0');
         expect(xSlider).toHaveAttribute('max', '255');
         expect(xSlider).toHaveAttribute('step', '1');
-        expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0, Blue: 255, light vivid magenta');
+        expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0, Blue: 255, light vibrant magenta');
         expect(xSlider).not.toHaveAttribute('tabindex', '0');
 
         expect(ySlider).toHaveAttribute('type', 'range');
@@ -76,7 +76,7 @@ describe('ColorArea', () => {
         expect(ySlider).toHaveAttribute('min', '0');
         expect(ySlider).toHaveAttribute('max', '255');
         expect(ySlider).toHaveAttribute('step', '1');
-        expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255, Blue: 255, light vivid magenta');
+        expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255, Blue: 255, light vibrant magenta');
         expect(ySlider).toHaveAttribute('tabindex', '-1');
         expect(ySlider).toHaveAttribute('aria-hidden', 'true');
       });
@@ -494,22 +494,22 @@ describe('ColorArea', () => {
       await user.tab();
       expect(document.activeElement).toBe(xSlider);
       // focusing into ColorArea, value text for each slider will include name and value for each channel
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0, Blue: 255, light vivid magenta');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255, Blue: 255, light vivid magenta');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 255, Green: 0, Blue: 255, light vibrant magenta');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 255, Blue: 255, light vibrant magenta');
       pressKey(xSlider, {key: 'ArrowLeft'});
       // following a keyboard event that changes a value, value text for each slider will include only the name and value for that channel.
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, light vivid magenta');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, light vivid magenta');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, light vibrant magenta');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, light vibrant magenta');
       await user.tab();
       expect(document.activeElement).toBe(buttonB);
       // focusing out of ColorArea, value text for each slider will include name and value for each channel
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0, Blue: 255, light vivid magenta');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254, Blue: 255, light vivid magenta');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0, Blue: 255, light vibrant magenta');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254, Blue: 255, light vibrant magenta');
       await user.tab({shift: true});
       expect(document.activeElement).toBe(xSlider);
       // focusing back into ColorArea, value text for each slider will include name and value for each channel
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0, Blue: 255, light vivid magenta');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254, Blue: 255, light vivid magenta');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Red: 254, Green: 0, Blue: 255, light vibrant magenta');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 0, Red: 254, Blue: 255, light vibrant magenta');
     });
   });
   describe('full implementation controlled', () => {
@@ -525,7 +525,7 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('min', '0');
       expect(xSlider).toHaveAttribute('max', '255');
       expect(xSlider).toHaveAttribute('step', '1');
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 255, Red: 0, very light vivid cyan');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Blue: 255, Green: 255, Red: 0, very light vibrant cyan');
       expect(xSlider).not.toHaveAttribute('tabindex');
       expect(xSlider).not.toHaveAttribute('aria-hidden');
 
@@ -534,7 +534,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '255');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Blue: 255, Red: 0, very light vivid cyan');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Green: 255, Blue: 255, Red: 0, very light vibrant cyan');
       expect(ySlider).toHaveAttribute('tabindex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 
@@ -545,7 +545,7 @@ describe('ColorArea', () => {
       expect(zSlider).toHaveAttribute('min', '0');
       expect(zSlider).toHaveAttribute('max', '255');
       expect(zSlider).toHaveAttribute('step', '1');
-      expect(zSlider).toHaveAttribute('aria-valuetext', '0, very light vivid cyan');
+      expect(zSlider).toHaveAttribute('aria-valuetext', '0, very light vibrant cyan');
     });
     it('sets input props hsb', () => {
       let {getAllByRole, getByLabelText} = render(<XSaturationYBrightness {...XSaturationYBrightness.args} />);
@@ -559,7 +559,7 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('min', '0');
       expect(xSlider).toHaveAttribute('max', '100');
       expect(xSlider).toHaveAttribute('step', '1');
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Brightness: 100%, Hue: 0°, vivid red');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Brightness: 100%, Hue: 0°, vibrant red');
       expect(xSlider).not.toHaveAttribute('tabindex');
       expect(xSlider).not.toHaveAttribute('aria-hidden');
 
@@ -568,7 +568,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '100');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Brightness: 100%, Saturation: 100%, Hue: 0°, vivid red');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Brightness: 100%, Saturation: 100%, Hue: 0°, vibrant red');
       expect(ySlider).toHaveAttribute('tabindex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 
@@ -593,7 +593,7 @@ describe('ColorArea', () => {
       expect(xSlider).toHaveAttribute('min', '0');
       expect(xSlider).toHaveAttribute('max', '100');
       expect(xSlider).toHaveAttribute('step', '1');
-      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Lightness: 50%, Hue: 0°, vivid red');
+      expect(xSlider).toHaveAttribute('aria-valuetext', 'Saturation: 100%, Lightness: 50%, Hue: 0°, vibrant red');
       expect(xSlider).not.toHaveAttribute('tabindex');
       expect(xSlider).not.toHaveAttribute('aria-hidden');
 
@@ -602,7 +602,7 @@ describe('ColorArea', () => {
       expect(ySlider).toHaveAttribute('min', '0');
       expect(ySlider).toHaveAttribute('max', '100');
       expect(ySlider).toHaveAttribute('step', '1');
-      expect(ySlider).toHaveAttribute('aria-valuetext', 'Lightness: 50%, Saturation: 100%, Hue: 0°, vivid red');
+      expect(ySlider).toHaveAttribute('aria-valuetext', 'Lightness: 50%, Saturation: 100%, Hue: 0°, vibrant red');
       expect(ySlider).toHaveAttribute('tabIndex', '-1');
       expect(ySlider).toHaveAttribute('aria-hidden', 'true');
 

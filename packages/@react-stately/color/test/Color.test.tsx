@@ -283,15 +283,15 @@ describe('Color', function () {
       color = parseColor('hsl(30, 39%, 25%)');
       expect(color.getColorName('en-US')).toBe('dark grayish brown');
       color = parseColor('hsl(30, 100%, 50%)');
-      expect(color.getColorName('en-US')).toBe('vivid orange');
+      expect(color.getColorName('en-US')).toBe('vibrant orange');
       color = parseColor('hsl(30, 100%, 80%)');
       expect(color.getColorName('en-US')).toBe('light pale orange');
       color = parseColor('hsb(200, 60%, 62%)');
       expect(color.getColorName('en-US')).toBe('grayish cyan blue');
       color = parseColor('hsb(0, 100%, 100%)');
-      expect(color.getColorName('en-US')).toBe('vivid red');
+      expect(color.getColorName('en-US')).toBe('vibrant red');
       color = parseColor('hsba(0, 100%, 100%, 0.2)');
-      expect(color.getColorName('en-US')).toBe('80% transparent vivid red');
+      expect(color.getColorName('en-US')).toBe('80% transparent vibrant red');
     });
   });
 });

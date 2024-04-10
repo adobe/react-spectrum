@@ -127,11 +127,11 @@ abstract class Color implements IColor {
         chroma = 'grayish';
       }
     } else if (c >= 0.15) {
-      chroma = 'vivid';
+      chroma = 'vibrant';
     }
     
     if (l < 0.3) {
-      lightness = 'very_dark';
+      lightness = 'very dark';
     } else if (l < MAX_DARK_LIGHTNESS) {
       lightness = 'dark';
     } else if (l < 0.7) {
@@ -139,7 +139,7 @@ abstract class Color implements IColor {
     } else if (l < 0.85) {
       lightness = 'light';
     } else {
-      lightness = 'very_light';
+      lightness = 'very light';
     }
 
     if (chroma) {
