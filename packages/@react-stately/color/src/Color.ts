@@ -232,7 +232,7 @@ class RGBColor extends Color {
     return colors.length < 3 ? undefined : new RGBColor(colors[0], colors[1], colors[2], colors[3] ?? 1);
   }
 
-  toString(format: ColorFormat | 'css') {
+  toString(format: ColorFormat | 'css' = 'css') {
     switch (format) {
       case 'hex':
         return '#' + (this.red.toString(16).padStart(2, '0') + this.green.toString(16).padStart(2, '0') + this.blue.toString(16).padStart(2, '0')).toUpperCase();
@@ -416,7 +416,7 @@ class HSBColor extends Color {
     }
   }
 
-  toString(format: ColorFormat | 'css') {
+  toString(format: ColorFormat | 'css' = 'css') {
     switch (format) {
       case 'css':
         return this.toHSL().toString('css');
@@ -558,7 +558,7 @@ class HSLColor extends Color {
     }
   }
 
-  toString(format: ColorFormat | 'css') {
+  toString(format: ColorFormat | 'css' = 'css') {
     switch (format) {
       case 'hex':
         return this.toRGB().toString('hex');

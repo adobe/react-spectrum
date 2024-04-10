@@ -37,7 +37,6 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
 
   let {
     colorAreaProps,
-    gradientProps,
     xInputProps,
     yInputProps,
     thumbProps
@@ -59,13 +58,12 @@ function ColorArea(props: SpectrumColorAreaProps, ref: FocusableRef<HTMLDivEleme
       }
       ref={containerRef}
       style={{
-        ...colorAreaProps.style,
+        ...(isDisabled ? {} : colorAreaProps.style),
         ...styleProps.style,
         // Workaround around https://github.com/adobe/spectrum-css/issues/1032
         width: size,
         height: size
       }}>
-      <div {...gradientProps} className={classNames(styles, 'spectrum-ColorArea-gradient')} />
       <ColorThumb
         value={state.getDisplayColor()}
         isFocused={isFocusVisible}

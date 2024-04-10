@@ -113,7 +113,6 @@ function ColorArea(props) {
 
   let {
     colorAreaProps,
-    gradientProps,
     xInputProps,
     yInputProps,
     thumbProps
@@ -130,18 +129,9 @@ function ColorArea(props) {
         width: SIZE,
         height: SIZE,
         borderRadius: BORDER_RADIUS,
+        background: isDisabled ? 'rgb(142, 142, 142)' : colorAreaProps.style.background,
         opacity: isDisabled ? 0.3 : undefined
       }}>
-      <div
-        {...gradientProps}
-        style={{
-        backgroundColor: isDisabled ? 'rgb(142, 142, 142)' : undefined,
-        ...gradientProps.style,
-        borderRadius: BORDER_RADIUS,
-        height: SIZE,
-        width: SIZE,
-      }}
-         />
       <div
         {...thumbProps}
         style={{

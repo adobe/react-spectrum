@@ -57,7 +57,7 @@ export interface Color {
   /** Converts the color to the given color format, and returns a new Color object. */
   toFormat(format: ColorFormat): Color,
   /** Converts the color to a string in the given format. */
-  toString(format: ColorFormat | 'css'): string,
+  toString(format?: ColorFormat | 'css'): string,
   /** Returns a duplicate of the color value. */
   clone(): Color,
   /** Converts the color to hex, and returns an integer representation. */
