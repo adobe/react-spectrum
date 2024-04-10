@@ -165,7 +165,7 @@ jobs:
           command: |
             shopt -s globstar
             TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            yarn test ${TESTFILES} --runInBand
+            yarn test ${TESTFILES}
 
       - run:
           command: |
@@ -224,7 +224,7 @@ jobs:
           command: |
             shopt -s globstar
             TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            JEST_JUNIT_OUTPUT_NAME="junit-16.xml" yarn test ${TESTFILES} --runInBand
+            JEST_JUNIT_OUTPUT_NAME="junit-16.xml" yarn test ${TESTFILES}
 
       - run:
           command: cp junit-16.xml ~/junit/
@@ -248,7 +248,7 @@ jobs:
           command: |
             shopt -s globstar
             TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test ${TESTFILES} --runInBand
+            JEST_JUNIT_OUTPUT_NAME="junit-17.xml" yarn test ${TESTFILES}
 
       - run:
           command: cp junit-17.xml ~/junit/
@@ -272,7 +272,7 @@ jobs:
           command: |
             shopt -s globstar
             TESTFILES=$(circleci tests glob "packages/**/*.test.[tj]{s,sx}" | circleci tests split --split-by=timings)
-            JEST_JUNIT_OUTPUT_NAME="junit-canary.xml" yarn test ${TESTFILES} --runInBand
+            JEST_JUNIT_OUTPUT_NAME="junit-canary.xml" yarn test ${TESTFILES}
 
       - run:
           command: cp junit-canary.xml ~/junit/
