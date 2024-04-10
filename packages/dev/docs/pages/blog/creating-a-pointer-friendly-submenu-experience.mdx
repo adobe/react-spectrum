@@ -1,4 +1,4 @@
-{/* Copyright 2020 Adobe. All rights reserved.
+{/* Copyright 2024 Adobe. All rights reserved.
 This file is licensed to you under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy
 of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -85,10 +85,10 @@ In order to predict the user’s intent, we also need to know the pointer's spee
 
 We could check the pointer’s speed continuously and use the above knowledge to predict the user’s intent.
 
-Alternatively, we could simply use a **timeout**, where if the pointer hasn’t moved after a certain amount of time and is no longer over the submenu's parent menu item, we assume they are no longer intending to go to the submenu.
-Since users with motor impairments may take more time to move their pointer, we should lean towards using a larger timeout value.
+Alternatively, we could simply use a **timeout**; if the pointer hasn’t moved after a certain amount of time and is no longer over the submenu's parent menu item, we assume they are no longer intending to go to the submenu. This timeout can be reset after each pointer movement.
+Speed is about movement over time, so we use the timeout to detect if there is no movement over some specific time.   Since users with motor impairments may take more time to move their pointer to the destination, we should lean towards using a larger timeout value.
 
-Although the timeout solution is simpler than tracking the pointer’s speed, we found that it still resulted in a good user experience, so we proceeded with this approach.
+Although the timeout solution is simpler than tracking the pointer’s speed, we found that it resulted in a good user experience, so we proceeded with this approach.
 
 ## Fault Tolerance
 
@@ -101,7 +101,9 @@ Since our users are human, we want to build in some fault tolerance, but not so 
 We can introduce a few performance optimizations:
 
 * **Throttle**: Most devices refresh their screens 60 times per second. This means that we don't need to do these measurements more frequently than every 16 ms (1 second / 60 = 16.66 ms). We can also experiment with doing checks even less frequently while still maintaining a good user experience. For instance, lowering the sample rate may provide more accurate predictions for users who experience tremors.
-* **Avoid unnecessary work**: We don’t need to track pointer movement if a submenu isn’t open, and we can stop tracking pointer movement once the pointer reaches the submenu. We can also check the pointer’s delta x before calculating any angle values. If the pointer is moving in the opposite direction of the submenu, there's no need to calculate and compare angles. We can also check our pointer event's [pointerType](https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/pointerType) property and ignore the event if it is type 'pen' or 'touch'.
+* **Track movements only when necessary**: We can start tracking pointer movements when the submenu opens and stop tracking when the submenu closes, or the pointer reaches the submenu. 
+* **Calculate angles only when necessary**: If the pointer is moving in the opposite direction of the submenu, there's no need to calculate and compare angles. We can check this by comparing the pointer’s delta x to the submenu’s closest edge's x.
+* **Check the pointer event type**: We can check the pointer event's [pointerType](https://developer.mozilla.org/en-US/docs/Web/API/PointerEvent/pointerType) property and ignore the event if it is type 'pen' or 'touch'.
 
 ## Alternatives
 
@@ -114,4 +116,4 @@ Let's compare our approach to a few other methods:
 
 ## Conclusion
 
-We hope this post has been helpful in understanding how we approached the problem of predicting user intent when using submenus. We are excited to see how you use submenus in your own projects. You can see this feature in action in the [React Spectrum Menu](https://react-spectrum.adobe.com/react-spectrum/Menu.html#submenus) and [React Aria Menu](https://react-spectrum.adobe.com/react-aria/Menu.html#submenus).
+We hope this post has been helpful in understanding how we approached building a good submenu experience for mouse users. We are excited to see how you use submenus in your own projects. You can see this feature in action in the [React Spectrum Menu](https://react-spectrum.adobe.com/react-spectrum/Menu.html#submenus) and [React Aria Menu](https://react-spectrum.adobe.com/react-aria/Menu.html#submenus).
