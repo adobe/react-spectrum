@@ -193,19 +193,21 @@ export const ListBoxGrid = (args) => (
     className={styles.menu} 
     aria-label="test listbox"
     style={{
+      width: 300,
+      height: 300,
       display: 'grid',
-      gridTemplateColumns: 'repeat(3, 1fr)',
-      gridAutoRows: 'minmax(50px, auto)'
+      gridTemplate: 'repeat(3, 1fr) / repeat(3, 1fr)',
+      gridAutoFlow: args.orientation === 'vertical' ? 'row' : 'column'
     }}>
-    <MyListBoxItem style={{gridColumn: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,1</MyListBoxItem>
-    <MyListBoxItem style={{gridColumn: 2, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,2</MyListBoxItem>
-    <MyListBoxItem style={{gridColumn: 3, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,3</MyListBoxItem>
-    <MyListBoxItem style={{gridColumn: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,1</MyListBoxItem>
-    <MyListBoxItem style={{gridColumn: 2, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,2</MyListBoxItem>
-    <MyListBoxItem style={{gridColumn: 3, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,3</MyListBoxItem>
-    <MyListBoxItem style={{gridColumn: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,1</MyListBoxItem>
-    <MyListBoxItem style={{gridColumn: 2, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,2</MyListBoxItem>
-    <MyListBoxItem style={{gridColumn: 3, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,3</MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,1</MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,2</MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>1,3</MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,1</MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,2</MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>2,3</MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,1</MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,2</MyListBoxItem>
+    <MyListBoxItem style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>3,3</MyListBoxItem>
   </ListBox>
 );
 
