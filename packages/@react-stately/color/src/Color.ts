@@ -12,38 +12,12 @@
 
 import {clamp, toFixedNumber} from '@react-stately/utils';
 import {ColorAxes, ColorChannel, ColorChannelRange, ColorFormat, Color as IColor} from '@react-types/color';
-import deltaE from 'delta-e';
 // @ts-ignore
 import intlMessages from '../intl/*.json';
-import {LocalizedStringDictionary} from '@internationalized/string';
+import {LocalizedStringDictionary, LocalizedStringFormatter} from '@internationalized/string';
 import {NumberFormatter} from '@internationalized/number';
 
 let dictionary = new LocalizedStringDictionary(intlMessages);
-
-function toXYZ(color:Color): {x: number, y: number, z: number} {
-  let rgb = color.toFormat('rgb'),
-    r = rgb.getChannelValue('red') / 255,
-    g = rgb.getChannelValue('green')  / 255,
-    b = rgb.getChannelValue('blue') / 255;
-  r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
-  g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
-  b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
-  const x = (0.4124 * r + 0.3576 * g + 0.1805 * b) * 100 / 95.047,
-    y = 0.2126 * r + 0.7152 * g + 0.0722 * b,
-    z = (0.0193 * r + 0.1192 * g + 0.9505 * b) * 100 / 108.883;
-  return {x, y, z};
-}
-
-function toLAB(color:Color): {L: number, A: number, B: number} {
-  let {x, y, z} = toXYZ(color);
-  const fx = x > 0.008856 ? Math.pow(x, 1 / 3) : 7.787 * x + 0.1379,
-    fy = y > 0.008856 ? Math.pow(y, 1 / 3) : 7.787 * y + 0.1379,
-    fz = z > 0.008856 ? Math.pow(z, 1 / 3) : 7.787 * z + 0.1379,
-    L = (116 * fy - 16) / 100.00,
-    A = (500 * (fx - fy) + 0x80) / 0xFF,
-    B = (200 * (fy - fz) + 0x80) / 0xFF;
-  return {L, A, B};
-}
 
 /** Parses a color from a string value. Throws an error if the string could not be parsed. */
 export function parseColor(value: string): IColor {
@@ -62,6 +36,25 @@ export function normalizeColor(v: string | IColor) {
     return v;
   }
 }
+
+// Lightness threshold between orange and brown.
+const ORANGE_LIGHTNESS_THRESHOLD = 0.68;
+// The maximum lightness considered to be "dark".
+const MAX_DARK_LIGHTNESS = 0.55;
+// The chroma threshold between gray and color.
+const GRAY_THRESHOLD = 0.001;
+const OKLCH_HUES: [number, string][] = [
+  [0, 'pink'],
+  [15, 'red'],
+  [48, 'orange'],
+  [94, 'yellow'],
+  [124, 'green'],
+  [180, 'cyan'],
+  [264, 'blue'],
+  [284, 'purple'],
+  [320, 'magenta'],
+  [349, 'pink']
+];
 
 abstract class Color implements IColor {
   abstract toFormat(format: ColorFormat): IColor;
@@ -106,80 +99,109 @@ abstract class Color implements IColor {
 
     return {xChannel: xCh, yChannel: yCh, zChannel: zCh};
   }
+
   abstract getColorChannels(): [ColorChannel, ColorChannel, ColorChannel]
 
-  getDeltaE(color:Color) {
-    return deltaE.getDeltaE00(toLAB(this), toLAB(color));
-  }
+  getColorName(locale: string): string {
+    // Convert to oklch color space, which has perceptually uniform lightness across all hues.
+    let [l, c, h] = toOKLCH(this);
 
-  getColorName(locale:string): string {
-    let name = undefined;
-    let hsl = this.toFormat('hsl');
-    let hue = hsl.getChannelValue('hue');
-    let saturation = hsl.getChannelValue('saturation');
-    let lightness = hsl.getChannelValue('lightness');
-
-    switch (lightness) {
-      case 0:
-        return dictionary.getStringForLocale('black', locale);
-      case 100:
-        return dictionary.getStringForLocale('white', locale);
-      default:
-        if (saturation === 0) {
-          return `${dictionary.getStringForLocale('gray', locale)} ${new NumberFormatter(locale, {style: 'percent'}).format(Math.round(lightness) / 100)}`;
-        }
+    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/color') || dictionary;
+    if (l > 0.999) {
+      return strings.getStringForLocale('white', locale);
     }
 
-    // get closest hue name
-    let hueName = this.getHueName(locale) || '';
-
-    // get closest bang color name from HSL
-    let deltaE = Infinity;
-    let d = Infinity;
-    for (const [prefix, [saturation, lightness]] of PREFIXES) {
-      d = this.getDeltaE(parseColor(`hsl(${hue}, ${saturation}%, ${lightness}%)`));
-      if (d <= HUE_STEP * 0.02 && d < deltaE) {
-        deltaE = d;
-        name = `${saturation === 100 && lightness === 50 ? '' : dictionary.getStringForLocale(prefix, locale)} ${hueName}`.trim();
-      }
+    if (l < 0.001) {
+      return strings.getStringForLocale('black', locale);
     }
 
-    // check for closer bang color outlier
-    for (const [key, value] of BANG_COLOR_OUTLIERS) {
-      if (value === this.toString('hex')) {
-        name = dictionary.getStringForLocale(key, locale);
+    let hue: string;
+    [hue, l] = this.getOklchHue(l, c, h, locale);
+
+    let lightness = '';
+    let chroma = '';
+    if (c <= 0.1 && c >= GRAY_THRESHOLD) {
+      if (l >= 0.7) {
+        chroma = 'pale';
       } else {
-        d = this.getDeltaE(parseColor(value));
-        if (d <= HUE_STEP * 0.013 && d < deltaE) {
-          deltaE = d;
-          name = dictionary.getStringForLocale(key, locale);
-        }
+        chroma = 'grayish';
       }
+    } else if (c >= 0.15) {
+      chroma = 'vivid';
+    }
+    
+    if (l < 0.3) {
+      lightness = 'very_dark';
+    } else if (l < MAX_DARK_LIGHTNESS) {
+      lightness = 'dark';
+    } else if (l < 0.7) {
+      // none
+    } else if (l < 0.85) {
+      lightness = 'light';
+    } else {
+      lightness = 'very_light';
     }
 
-    // check for exact match of css color name
-    for (const [key, value] of CSS_COLOR_NAMES) {
-      if (value === this.toString('hex')) {
-        name = dictionary.getStringForLocale(key, locale);
-      }
+    if (chroma) {
+      chroma = strings.getStringForLocale(chroma, locale);
     }
 
-    return name;
+    if (lightness) {
+      lightness = strings.getStringForLocale(lightness, locale);
+    }
+
+    let alpha = this.getChannelValue('alpha');
+    let formatter = new LocalizedStringFormatter(locale, strings);
+    let transparency = '';
+    if (alpha < 1) {
+      let percent = new NumberFormatter(locale, {style: 'percent'}).format(1 - alpha);
+      transparency = formatter.format('transparency', {percent});
+    }
+    
+    return formatter.format('colorName', {
+      lightness,
+      chroma,
+      hue,
+      transparency
+    }).replace(/\s+/g, ' ').trim();
   }
 
-  getHueName(locale:string): string {
-    let hue = this.toFormat('hsl').getChannelValue('hue');
-    let name = undefined;
-    let range = HUE_STEP / 2;
-    if (hue > 360 - range) {
-      hue -= 360;
+  private getOklchHue(l: number, c: number, h: number, locale: string): [string, number] {
+    let strings = LocalizedStringDictionary.getGlobalDictionaryForPackage('@react-stately/color') || dictionary;
+    if (c < GRAY_THRESHOLD) {
+      return [strings.getStringForLocale('gray', locale), l];
     }
-    for (const [key, value] of HUES) {
-      if (Math.abs(value - hue) < range) {
-        name = dictionary.getStringForLocale(key, locale);
-        break;
+
+    for (let i = 0; i < OKLCH_HUES.length; i++) {
+      let [hue, hueName] = OKLCH_HUES[i];
+      let [nextHue, nextHueName] = OKLCH_HUES[i + 1] || [360, 'pink'];
+      if (h >= hue && h < nextHue) {
+        // Split orange hue into brown/orange depending on lightness.
+        if (hueName === 'orange') {
+          if (l < ORANGE_LIGHTNESS_THRESHOLD) {
+            hueName = 'brown';
+          } else {
+            // Adjust lightness.
+            l = (l - ORANGE_LIGHTNESS_THRESHOLD) + MAX_DARK_LIGHTNESS;
+          }
+        }
+
+        // If the hue is at least halfway to the next hue, add the next hue name as well.
+        if (h > hue + (nextHue - hue) / 2 && hueName !== nextHueName) {
+          hueName = `${hueName} ${nextHueName}`;
+        }
+
+        let name = strings.getStringForLocale(hueName, locale).toLocaleLowerCase(locale);
+        return [name, l];
       }
     }
+
+    throw new Error('Unexpected hue');
+  }
+
+  getHueName(locale: string): string {
+    let [l, c, h] = toOKLCH(this);
+    let [name] = this.getOklchHue(l, c, h, locale);
     return name;
   }
 }
@@ -190,11 +212,6 @@ class RGBColor extends Color {
   }
 
   static parse(value: string) {
-    // matching named css colors
-    if (CSS_COLOR_NAMES.has(value)) {
-      return RGBColor.parse(CSS_COLOR_NAMES.get(value));
-    }
-
     let colors = [];
     // matching #rgb, #rgba, #rrggbb, #rrggbbaa
     if (/^#[\da-f]+$/i.test(value) && [4, 5, 7, 9].includes(value.length)) {
@@ -658,277 +675,80 @@ class HSLColor extends Color {
   }
 }
 
-const HUES = new Map([
-  ['red', 0],
-  ['scarlet', 7.5],
-  ['vermilion', 15],
-  ['tangelo', 22.5],
-  ['orange', 30],
-  ['gamboge', 37.5],
-  ['amber', 45],
-  ['gold', 52.5],
-  ['yellow', 60],
-  ['apple_green', 67.5],
-  ['lime_green', 75],
-  ['spring_bud', 82.5],
-  ['chartreuse_green', 90],
-  ['pistachio', 97.5],
-  ['harlequin', 105],
-  ['sap_green', 112.5],
-  ['green', 120],
-  ['emerald_green', 127.5],
-  ['malachite_green', 135],
-  ['sea_green', 142.5],
-  ['spring_green', 150],
-  ['aquamarine', 157.5],
-  ['turquoise', 165],
-  ['opal', 172.5],
-  ['cyan', 180],
-  ['arctic_blue', 187.5],
-  ['cerulean', 195],
-  ['cornflower_blue', 202.5],
-  ['azure', 210],
-  ['cobalt_blue', 217.5],
-  ['sapphire_blue', 225],
-  ['phthalo_blue', 232.5],
-  ['blue', 240],
-  ['persian_blue', 247.5],
-  ['indigo', 255],
-  ['blue_violet', 262.5],
-  ['violet', 270],
-  ['purple', 277.5],
-  ['mulberry', 285],
-  ['heliotrope', 292.5],
-  ['magenta', 300],
-  ['orchid', 307.5],
-  ['fuchsia', 315],
-  ['cerise', 322.5],
-  ['rose', 330],
-  ['raspberry', 337.5],
-  ['crimson', 345],
-  ['amaranth', 352.5]
-]);
+// https://www.w3.org/TR/css-color-4/#color-conversion-code
+function toOKLCH(color: Color) {
+  let rgb = color.toFormat('rgb');
+  let red = rgb.getChannelValue('red') / 255;
+  let green = rgb.getChannelValue('green') / 255;
+  let blue = rgb.getChannelValue('blue') / 255;
+  [red, green, blue] = lin_sRGB(red, green, blue);
+  let [x, y, z] = lin_sRGB_to_XYZ(red, green, blue);
+  let [l, a, b] = XYZ_to_OKLab(x, y, z);
+  return OKLab_to_OKLCH(l, a, b);
+}
 
-const HUE_STEP = 360 / HUES.size;
+function OKLab_to_OKLCH(l: number, a: number, b: number): [number, number, number] {
+  var hue = Math.atan2(b, a) * 180 / Math.PI;
+  return [
+    l,
+    Math.sqrt(a ** 2 + b ** 2), // Chroma
+    hue >= 0 ? hue : hue + 360 // Hue, in degrees [0 to 360)
+  ];
+}
 
-const PREFIXES = new Map([
-  ['very_pale', [100, 94.31372549019608]],
-  ['pale', [100, 88.0392156862745]],
-  ['pale_light_grayish', [49.4736842105263, 81.37254901960785]],
-  ['very_light', [100, 80.98039215686275]],
-  ['light', [65.71428571428571, 72.54901960784314]],
-  ['light_brilliant', [100, 69.80392156862744]],
-  ['brilliant', [75.75757575757575, 61.1764705882353]],
-  ['grayish', [19.81566820276498, 57.45098039215686]],
-  ['luminous_vivid', [100, 50]],
-  ['moderate', [38.84297520661157, 47.45098039215686]],
-  ['vivid', [100, 45.294117647058826]],
-  ['strong', [100, 32.94117647058823]],
-  ['dark_grayish', [14.838709677419345, 30.3921568627451]],
-  ['dark', [39.06249999999999, 25.098039215686274]],
-  ['deep', [100, 17.45098039215686]],
-  ['very_dark', [26.08695652173913, 9.019607843137255]],
-  ['very_deep', [100, 5.686274509803922]]
-]);
+function lin_sRGB(r: number, g: number, b: number): [number, number, number] {
+  // convert an array of sRGB values
+  // where in-gamut values are in the range [0 - 1]
+  // to linear light (un-companded) form.
+  // https://en.wikipedia.org/wiki/SRGB
+  // Extended transfer function:
+  // for negative values,  linear portion is extended on reflection of axis,
+  // then reflected power function is used.
+  return [lin_sRGB_component(r), lin_sRGB_component(g), lin_sRGB_component(b)];
+}
 
-const BANG_COLOR_OUTLIERS = new Map([
-  ['pinkish_white', '#FFF6F6'],
-  ['very_pale_pink', '#FFE2E2'],
-  ['pale_pink', '#FFC2C2'],
-  ['light_pink', '#FF9E9E'],
-  ['pinkish_gray', '#E7DADA'],
-  ['pale_grayish_pink', '#E7B8B8'],
-  ['pink', '#E78B8B'],
-  ['reddish_gray', '#A89C9C'],
-  ['reddish_brownish_gray', '#595353'],
-  ['dark_grayish_reddish_brown', '#594242'],
-  ['reddish_brown', '#592727'],
-  ['deep_reddish_brown', '#590000'],
-  ['reddish_brownish_black', '#1D1A1A'],
-  ['very_reddish_brown', '#1D1111'],
-  ['very_deep_reddish_brown', '#1D0000'],
-  ['pale_light_grayish_brown', '#E7D0B8'],
-  ['grayish_brown', '#A8937D'],
-  ['dark_grayish_brown', '#594E42'],
-  ['brown', '#594027'],
-  ['deep_brown', '#592D00'],
-  ['very_brown', '#1D1711'],
-  ['very_deep_brown', '#1D0E00'],
-  ['yellowish_white', '#FFFFF6'],
-  ['light_yellowish_gray', '#E7E7DA'],
-  ['pale_light_grayish_olive', '#E7E7B8'],
-  ['yellowish_gray', '#A8A89C'],
-  ['grayish_olive', '#A8A87D'],
-  ['moderate_olive', '#A8A84A'],
-  ['strong_olive', '#A8A800'],
-  ['dark_olivish_gray', '#595953'],
-  ['dark_grayish_olive', '#595942'],
-  ['dark_olive', '#595927'],
-  ['deep_olive', '#595900'],
-  ['yellowish_black', '#1D1D1A'],
-  ['very_dark_olive', '#1D1D11'],
-  ['very_deep_olive', '#1D1D00'],
-  ['greenish_white', '#F6FFF6'],
-  ['light_greenish_gray', '#DAE7DA'],
-  ['greenish_gray', '#9CA89C'],
-  ['dark_greenish_gray', '#535953'],
-  ['greenish_black', '#1A1D1A'],
-  ['cyanish_white', '#F6FFFF'],
-  ['light_cyanish_gray', '#DAE7E7'],
-  ['cyanish_gray', '#9CA8A8'],
-  ['dark_cyanish_gray', '#535959'],
-  ['cyanish_black', '#1A1D1D'],
-  ['bluish_white', '#F6F6FF'],
-  ['light_bluish_gray', '#DADAE7'],
-  ['bluish_gray', '#9C9CA8'],
-  ['dark_bluish_gray', '#535359'],
-  ['bluish_black', '#1A1A1D'],
-  ['magentaish_white', '#FFF6FF'],
-  ['light_magentaish_gray', '#E7DAE7'],
-  ['magentaish_gray', '#A89CA8'],
-  ['dark_magentaish_gray', '#595359'],
-  ['magentaish_black', '#1D1A1D']
-]);
+function lin_sRGB_component(val: number) {
+  let sign = val < 0 ? -1 : 1;
+  let abs = Math.abs(val);
 
-const CSS_COLOR_NAMES = new Map([
-  ['aliceblue', '#F0F8FF'],
-  ['antiquewhite', '#FAEBD7'],
-  ['aqua', '#00FFFF'],
-  ['aquamarine', '#7FFFD4'],
-  ['azure', '#F0FFFF'],
-  ['beige', '#F5F5DC'],
-  ['bisque', '#FFE4C4'],
-  ['black', '#000000'],
-  ['blanchedalmond', '#FFEBCD'],
-  ['blue', '#0000FF'],
-  ['blueviolet', '#8A2BE2'],
-  ['brown', '#A52A2A'],
-  ['burlywood', '#DEB887'],
-  ['cadetblue', '#5F9EA0'],
-  ['chartreuse', '#7FFF00'],
-  ['chocolate', '#D2691E'],
-  ['coral', '#FF7F50'],
-  ['cornflowerblue', '#6495ED'],
-  ['cornsilk', '#FFF8DC'],
-  ['crimson', '#DC143C'],
-  ['cyan', '#00FFFF'],
-  ['darkblue', '#00008B'],
-  ['darkcyan', '#008B8B'],
-  ['darkgoldenrod', '#B8860B'],
-  ['darkgray', '#A9A9A9'],
-  ['darkgreen', '#006400'],
-  ['darkkhaki', '#BDB76B'],
-  ['darkmagenta', '#8B008B'],
-  ['darkolivegreen', '#556B2F'],
-  ['darkorange', '#FF8C00'],
-  ['darkorchid', '#9932CC'],
-  ['darkred', '#8B0000'],
-  ['darksalmon', '#E9967A'],
-  ['darkseagreen', '#8FBC8F'],
-  ['darkslateblue', '#483D8B'],
-  ['darkslategray', '#2F4F4F'],
-  ['darkturquoise', '#00CED1'],
-  ['darkviolet', '#9400D3'],
-  ['deeppink', '#FF1493'],
-  ['deepskyblue', '#00BFFF'],
-  ['dimgray', '#696969'],
-  ['dodgerblue', '#1E90FF'],
-  ['firebrick', '#B22222'],
-  ['floralwhite', '#FFFAF0'],
-  ['forestgreen', '#228B22'],
-  ['gainsboro', '#DCDCDC'],
-  ['ghostwhite', '#F8F8FF'],
-  ['gold', '#FFD700'],
-  ['goldenrod', '#DAA520'],
-  ['gray', '#808080'],
-  ['green', '#008000'],
-  ['greenyellow', '#ADFF2F'],
-  ['honeydew', '#F0FFF0'],
-  ['hotpink', '#FF69B4'],
-  ['indianred', '#CD5C5C'],
-  ['indigo', '#4B0082'],
-  ['ivory', '#FFFFF0'],
-  ['khaki', '#F0E68C'],
-  ['lavender', '#E6E6FA'],
-  ['lavenderblush', '#FFF0F5'],
-  ['lawngreen', '#7CFC00'],
-  ['lemonchiffon', '#FFFACD'],
-  ['lightblue', '#ADD8E6'],
-  ['lightcoral', '#F08080'],
-  ['lightcyan', '#E0FFFF'],
-  ['lightgoldenrodyellow', '#FAFAD2'],
-  ['lightgreen', '#D3D3D3'],
-  ['lightgray', '#90EE90'],
-  ['lightpink', '#FFB6C1'],
-  ['lightsalmon', '#FFA07A'],
-  ['lightseagreen', '#20B2AA'],
-  ['lightskyblue', '#87CEFA'],
-  ['lightslategray', '#778899'],
-  ['lightsteelblue', '#B0C4DE'],
-  ['lightyellow', '#FFFFE0'],
-  ['lime', '#00FF00'],
-  ['limegreen', '#32CD32'],
-  ['linen', '#FAF0E6'],
-  ['magenta', '#FF00FF'],
-  ['maroon', '#800000'],
-  ['mediumaquamarine', '#66CDAA'],
-  ['mediumblue', '#0000CD'],
-  ['mediumorchid', '#BA55D3'],
-  ['mediumpurple', '#9370D8'],
-  ['mediumseagreen', '#3CB371'],
-  ['mediumslateblue', '#7B68EE'],
-  ['mediumspringgreen', '#00FA9A'],
-  ['mediumturquoise', '#48D1CC'],
-  ['mediumvioletred', '#C71585'],
-  ['midnightblue', '#191970'],
-  ['mintcream', '#F5FFFA'],
-  ['mistyrose', '#FFE4E1'],
-  ['moccasin', '#FFE4B5'],
-  ['navajowhite', '#FFDEAD'],
-  ['navy', '#000080'],
-  ['oldlace', '#FDF5E6'],
-  ['olive', '#808000'],
-  ['olivedrab', '#6B8E23'],
-  ['orange', '#FFA500'],
-  ['orangered', '#FF4500'],
-  ['orchid', '#DA70D6'],
-  ['palegoldenrod', '#EEE8AA'],
-  ['palegreen', '#98FB98'],
-  ['paleturquoise', '#AFEEEE'],
-  ['palevioletred', '#D87093'],
-  ['papayawhip', '#FFEFD5'],
-  ['peachpuff', '#FFDAB9'],
-  ['peru', '#CD853F'],
-  ['pink', '#FFC0CB'],
-  ['plum', '#DDA0DD'],
-  ['powderblue', '#B0E0E6'],
-  ['purple', '#800080'],
-  ['rebeccapurple', '#663399'],
-  ['red', '#FF0000'],
-  ['rosybrown', '#BC8F8F'],
-  ['royalblue', '#4169E1'],
-  ['saddlebrown', '#8B4513'],
-  ['salmon', '#FA8072'],
-  ['sandybrown', '#F4A460'],
-  ['seagreen', '#2E8B57'],
-  ['seashell', '#FFF5EE'],
-  ['sienna', '#A0522D'],
-  ['silver', '#C0C0C0'],
-  ['skyblue', '#87CEEB'],
-  ['slateblue', '#6A5ACD'],
-  ['slategray', '#708090'],
-  ['snow', '#FFFAFA'],
-  ['springgreen', '#00FF7F'],
-  ['steelblue', '#4682B4'],
-  ['tan', '#D2B48C'],
-  ['teal', '#008080'],
-  ['thistle', '#D8BFD8'],
-  ['tomato', '#FF6347'],
-  ['turquoise', '#40E0D0'],
-  ['violet', '#EE82EE'],
-  ['wheat', '#F5DEB3'],
-  ['white', '#FFFFFF'],
-  ['whitesmoke', '#F5F5F5'],
-  ['yellow', '#FFFF00'],
-  ['yellowgreen', '#9ACD32']
-]);
+  if (abs <= 0.04045) {
+    return val / 12.92;
+  }
+
+  return sign * (Math.pow((abs + 0.055) / 1.055, 2.4));
+}
+
+function lin_sRGB_to_XYZ(r: number, g: number, b: number) {
+  // convert an array of linear-light sRGB values to CIE XYZ
+  // using sRGB's own white, D65 (no chromatic adaptation)
+  const M = [
+    506752 / 1228815, 87881 / 245763,  12673 / 70218,
+    87098 / 409605,   175762 / 245763, 12673 / 175545,
+    7918 / 409605,    87881 / 737289,  1001167 / 1053270
+  ];
+  return multiplyMatrix(M, r, g, b);
+}
+
+function XYZ_to_OKLab(x: number, y: number, z: number) {
+  // Given XYZ relative to D65, convert to OKLab
+  const XYZtoLMS = [
+    0.8190224379967030, 0.3619062600528904, -0.1288737815209879,
+    0.0329836539323885, 0.9292868615863434,  0.0361446663506424,
+    0.0481771893596242, 0.2642395317527308,  0.6335478284694309
+  ];
+  const LMStoOKLab = [
+    0.2104542683093140,  0.7936177747023054, -0.0040720430116193,
+    1.9779985324311684, -2.4285922420485799,  0.4505937096174110,
+    0.0259040424655478,  0.7827717124575296, -0.8086757549230774
+  ];
+
+  let [a, b, c] = multiplyMatrix(XYZtoLMS, x, y, z);
+  return multiplyMatrix(LMStoOKLab, Math.cbrt(a), Math.cbrt(b), Math.cbrt(c));
+}
+
+function multiplyMatrix(m: number[], x: number, y: number, z: number): [number, number, number] {
+  let a = m[0] * x + m[1] * y + m[2] * z;
+  let b = m[3] * x + m[4] * y + m[5] * z;
+  let c = m[6] * x + m[7] * y + m[8] * z;
+  return [a, b, c];
+}

@@ -131,6 +131,7 @@ function ColorAreaExample(props: SpectrumColorAreaProps) {
             }
             isDisabled={isDisabled}
             width="size-1200" />
+          <div style={{width: '100px', height: '2lh'}}>{color.getColorName(locale)}</div>
         </Flex>
       </Flex>
     </div>

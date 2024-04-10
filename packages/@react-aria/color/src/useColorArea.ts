@@ -350,19 +350,20 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
 
   let isMobile = isIOS() || isAndroid();
 
+  let value = state.getDisplayColor();
   const getAriaValueTextForChannel = useCallback((channel:ColorChannel) => {
     const isAfterInput = valueChangedViaInputChangeEvent || valueChangedViaKeyboard;
     return `${
       isAfterInput ?
-      stringFormatter.format('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)})
+      stringFormatter.format('colorNameAndValue', {name: value.getChannelName(channel, locale), value: value.formatChannelValue(channel, locale)})
       :
       [
-        stringFormatter.format('colorNameAndValue', {name: state.value.getChannelName(channel, locale), value: state.value.formatChannelValue(channel, locale)}),
-        stringFormatter.format('colorNameAndValue', {name: state.value.getChannelName(channel === yChannel ? xChannel : yChannel, locale), value: state.value.formatChannelValue(channel === yChannel ? xChannel : yChannel, locale)}),
-        stringFormatter.format('colorNameAndValue', {name: state.value.getChannelName(zChannel, locale), value: state.value.formatChannelValue(zChannel, locale)})
+        stringFormatter.format('colorNameAndValue', {name: value.getChannelName(channel, locale), value: value.formatChannelValue(channel, locale)}),
+        stringFormatter.format('colorNameAndValue', {name: value.getChannelName(channel === yChannel ? xChannel : yChannel, locale), value: value.formatChannelValue(channel === yChannel ? xChannel : yChannel, locale)}),
+        stringFormatter.format('colorNameAndValue', {name: value.getChannelName(zChannel, locale), value: value.formatChannelValue(zChannel, locale)})
       ].join(', ')
-    }, ${state.value.getColorName(locale)}`;
-  }, [locale, state.value, stringFormatter, valueChangedViaInputChangeEvent, valueChangedViaKeyboard, xChannel, yChannel, zChannel]);
+    }, ${value.getColorName(locale)}`;
+  }, [locale, value, stringFormatter, valueChangedViaInputChangeEvent, valueChangedViaKeyboard, xChannel, yChannel, zChannel]);
 
   let colorPickerLabel = stringFormatter.format('colorPicker');
 

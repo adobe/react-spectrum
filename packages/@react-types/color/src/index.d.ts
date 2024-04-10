@@ -98,11 +98,6 @@ export interface Color {
    */
   getColorChannels(): [ColorChannel, ColorChannel, ColorChannel],
   /**
-   * Returns the difference between the color and a given color using the CIE2000 color difference algorithm,
-   * http://en.wikipedia.org/wiki/Color_difference#CIEDE2000.
-   */
-  getDeltaE(color:Color): number,
-  /**
    * Returns a localized name for the color, for use in visual or accessibility labels.
    */
   getColorName(locale: string): string,
