@@ -203,7 +203,7 @@ export class ListKeyboardDelegate<T> implements KeyboardDelegate {
   }
 
   private getItem(key: Key): HTMLElement {
-    return this.ref.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`);
+    return key !== null ? this.ref.current.querySelector(`[data-key="${CSS.escape(key.toString())}"]`) : null;
   }
 
   getKeyPageAbove(key: Key) {
