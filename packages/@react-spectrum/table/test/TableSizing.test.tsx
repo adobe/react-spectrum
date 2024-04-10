@@ -10,8 +10,6 @@
  * governing permissions and limitations under the License.
  */
 
-import {PortalProvider} from '@react-aria/overlays';
-
 jest.mock('@react-aria/live-announcer');
 import {act, render as renderComponent, within} from '@testing-library/react';
 import {ActionButton} from '@react-spectrum/button';
@@ -22,6 +20,7 @@ import {ControllingResize} from '../stories/ControllingResize';
 import {fireEvent, installPointerEvent, pointerMap, triggerTouch} from '@react-spectrum/test-utils';
 import {HidingColumns} from '../stories/HidingColumns';
 import {Key} from '@react-types/shared';
+import {PortalProvider} from '@react-aria/overlays';
 import {Provider} from '@react-spectrum/provider';
 import React, {useRef} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
