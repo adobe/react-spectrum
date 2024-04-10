@@ -1168,4 +1168,52 @@ describe('Tree', () => {
       expect(document.activeElement).toBe(tree);
     });
   });
+
+  describe('android talkback', () => {
+    let uaMock;
+    beforeAll(() => {
+      uaMock = jest.spyOn(navigator, 'userAgent', 'get').mockImplementation(() => 'Android');
+    });
+
+    afterAll(() => {
+      uaMock.mockRestore();
+    });
+
+    it('should add a tab index to the chevron if the row isnt completely disabled', () => {
+      let tree = render(
+        <TreeView aria-label="test tree" selectionMode="multiple">
+          <TreeViewItem id="Test" textValue="Test" hasChildItems>
+            <Text>Test</Text>
+          </TreeViewItem>
+        </TreeView>
+      );
+      let rows = tree.getAllByRole('row');
+      let chevron = within(rows[0]).getAllByRole('button')[0];
+      expect(chevron).toHaveAttribute('tabIndex', '-1');
+
+      rerender(
+        tree,
+        <TreeView aria-label="test tree" selectionMode="multiple" disabledKeys={['Test']}>
+          <TreeViewItem id="Test" textValue="Test" hasChildItems>
+            <Text>Test</Text>
+          </TreeViewItem>
+        </TreeView>
+      );
+      rows = tree.getAllByRole('row');
+      chevron = within(rows[0]).getAllByRole('button')[0];
+      expect(chevron).toHaveAttribute('tabIndex', '-1');
+
+      rerender(
+        tree,
+        <TreeView aria-label="test tree" selectionMode="multiple" disabledBehavior="all" disabledKeys={['Test']}>
+          <TreeViewItem id="Test" textValue="Test" hasChildItems>
+            <Text>Test</Text>
+          </TreeViewItem>
+        </TreeView>
+      );
+      rows = tree.getAllByRole('row');
+      chevron = within(rows[0]).getAllByRole('button')[0];
+      expect(chevron).not.toHaveAttribute('tabIndex');
+    });
+  });
 });

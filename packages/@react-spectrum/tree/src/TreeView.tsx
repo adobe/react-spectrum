@@ -347,7 +347,7 @@ function ExpandableRowChevronMacros(props: ExpandableRowChevronProps) {
       {...buttonProps}
       ref={ref}
       // Override tabindex so that grid keyboard nav skips over it. Needs -1 so android talkback can actually "focus" it
-      tabIndex={isAndroid() ? -1 : undefined}
+      tabIndex={isAndroid() && !isDisabled ? -1 : undefined}
       className={expandButton({isExpanded, isDisabled, isRTL: direction === 'rtl'})}>
       {direction === 'ltr' ? <ChevronRightMedium /> : <ChevronLeftMedium />}
     </span>
