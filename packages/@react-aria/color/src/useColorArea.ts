@@ -30,9 +30,9 @@ export interface ColorAreaAria {
   /** Props for the thumb element. */
   thumbProps: DOMAttributes,
   /** Props for the visually hidden horizontal range input element. */
-  xInputProps: InputHTMLAttributes<HTMLInputElement> & {orient?: 'horizontal'},
+  xInputProps: InputHTMLAttributes<HTMLInputElement>,
   /** Props for the visually hidden vertical range input element. */
-  yInputProps: InputHTMLAttributes<HTMLInputElement> & {orient?: 'vertical'}
+  yInputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
 export interface AriaColorAreaOptions extends AriaColorAreaProps {
@@ -433,7 +433,6 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       'aria-roledescription': ariaRoleDescription,
       'aria-valuetext': getAriaValueTextForChannel(xChannel),
       'aria-orientation': 'horizontal',
-      orient: 'horizontal',
       disabled: isDisabled,
       value: state.value.getChannelValue(xChannel),
       name: xName,
@@ -450,11 +449,6 @@ export function useColorArea(props: AriaColorAreaOptions, state: ColorAreaState)
       ...yInputLabellingProps,
       ...visuallyHiddenProps,
       ...yInputFocusProps,
-      style: {
-        ...visuallyHiddenProps.style,
-        WebkitAppearance: 'slider-vertical'
-      },
-      orient: 'vertical',
       type: 'range',
       min: state.value.getChannelRange(yChannel).minValue,
       max: state.value.getChannelRange(yChannel).maxValue,
