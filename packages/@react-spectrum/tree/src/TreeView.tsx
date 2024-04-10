@@ -143,7 +143,13 @@ const treeCellGrid = style({
   gridTemplateRows: '1fr',
   gridTemplateAreas: [
     'drag-handle checkbox level-padding expand-button icon content actions actionmenu'
-  ]
+  ],
+  color: {
+    isDisabled: {
+      default: 'gray-400',
+      forcedColors: 'GrayText'
+    }
+  },
 });
 
 // TODO: These styles lose against the spectrum class names, so I've did unsafe for the ones that get overridden
@@ -161,12 +167,6 @@ const treeIcon = style({
 
 const treeContent = style<Pick<TreeItemContentRenderProps, 'isDisabled'>>({
   gridArea: 'content',
-  color: {
-    isDisabled: {
-      default: 'gray-400',
-      forcedColors: 'GrayText'
-    }
-  },
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
   overflow: 'hidden'
@@ -266,7 +266,7 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
       })}>
       <TreeItemContent>
         {({isExpanded, hasChildRows, level, selectionMode, selectionBehavior, isDisabled, isSelected, isFocusVisible}) => (
-          <div className={treeCellGrid()}>
+          <div className={treeCellGrid({isDisabled})}>
             {selectionMode !== 'none' && selectionBehavior === 'toggle' && (
               // TODO: add transition?
               <Checkbox
@@ -281,10 +281,9 @@ export const TreeViewItem = (props: SpectrumTreeViewItemProps) => {
             <SlotProvider
               slots={{
                 text: {UNSAFE_className: treeContent({isDisabled})},
-                // Need to do inline since the macros don't override spectrum class styles
                 // Note there is also an issue here where these icon props are making into the action menu's icon. Resolved by 8ab0ffb276ff437a65b365c9a3be0323a1b24656
                 // but could crop up later for other components
-                icon: {UNSAFE_className: treeIcon(), UNSAFE_style: {color: isDisabled && 'var(--spectrum-alias-icon-color-disabled)'}, size: 'S'},
+                icon: {UNSAFE_className: treeIcon(), size: 'S'},
                 actionButton: {UNSAFE_className: treeActions(), isQuiet: true},
                 actionGroup: {
                   UNSAFE_className: treeActions(),
@@ -322,12 +321,6 @@ const expandButton = style<ExpandableRowChevronProps>({
   alignContent: 'center',
   justifyContent: 'center',
   outlineStyle: 'none',
-  color: {
-    isDisabled: {
-      default: 'gray-400',
-      forcedColors: 'GrayText'
-    }
-  },
   transform: {
     isExpanded: {
       default: 'rotate(90deg)',
