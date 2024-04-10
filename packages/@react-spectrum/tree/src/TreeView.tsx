@@ -149,7 +149,7 @@ const treeCellGrid = style({
       default: 'gray-400',
       forcedColors: 'GrayText'
     }
-  },
+  }
 });
 
 // TODO: These styles lose against the spectrum class names, so I've did unsafe for the ones that get overridden
