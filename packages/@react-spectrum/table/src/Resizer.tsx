@@ -15,11 +15,11 @@ import React, {RefObject, useEffect, useState} from 'react';
 import ReactDOM from 'react-dom';
 import styles from '@adobe/spectrum-css-temp/components/table/vars.css';
 import {useLocale, useLocalizedStringFormatter} from '@react-aria/i18n';
+import {usePortalContext} from '@react-aria/overlays';
 import {useTableColumnResize} from '@react-aria/table';
 import {useTableContext, useVirtualizerContext} from './TableViewBase';
 // @ts-ignore
 import wCursor from 'bundle-text:./cursors/Cur_MoveToLeft_9_9.svg';
-import {usePortalContext} from '@react-aria/overlays';
 
 function getCursor(svg: string, fallback: string) {
   // WebKit renders SVG cursors blurry on 2x screens: https://bugs.webkit.org/show_bug.cgi?id=160657
@@ -129,8 +129,8 @@ function Resizer<T>(props: ResizerProps<T>, ref: RefObject<HTMLInputElement>) {
 
 function CursorOverlay(props) {
   let {show, children} = props;
-  let {container} = usePortalContext();
-  return show ? ReactDOM.createPortal(children, container ?? document.body) : null;
+  let {getContainer} = usePortalContext();
+  return show ? ReactDOM.createPortal(children, getContainer?.() ?? document.body) : null;
 }
 
 const _Resizer = React.forwardRef(Resizer);

@@ -10,16 +10,16 @@
  * governing permissions and limitations under the License.
  */
 
-import React, {createContext, ReactNode, Ref, useContext} from 'react';
+import React, {createContext, ReactNode, useContext} from 'react';
 
 export interface PortalProviderProps {
-  container?: Ref<HTMLElement>
+  getContainer?: () => HTMLElement
 }
 
 export const PortalContext = createContext<PortalProviderProps>({});
 
 export function PortalProvider(props: PortalProviderProps & {children: ReactNode}) {
-  return <PortalContext.Provider value={{container: props.container}}>{props.children}</PortalContext.Provider>;
+  return <PortalContext.Provider value={{getContainer: props.getContainer}}>{props.children}</PortalContext.Provider>;
 }
 
 export function usePortalContext() {

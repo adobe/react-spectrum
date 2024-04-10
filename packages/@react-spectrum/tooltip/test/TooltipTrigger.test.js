@@ -966,7 +966,7 @@ describe('TooltipTrigger', function () {
   describe('portalContainer', () => {
     function InfoTooltip(props) {
       return (
-        <PortalProvider container={props.container}>
+        <PortalProvider getContainer={() => props.container.current}>
           <TooltipTrigger>
             <ActionButton aria-label="trigger" />
             <Tooltip>

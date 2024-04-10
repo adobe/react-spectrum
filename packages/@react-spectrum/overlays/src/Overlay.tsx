@@ -32,8 +32,8 @@ function Overlay(props: OverlayProps, ref: DOMRef<HTMLDivElement>) {
     nodeRef
   } = props;
 
-  let {container: ctxContainer} = usePortalContext();
-  container = container || ctxContainer?.current;
+  let {getContainer} = usePortalContext();
+  container = container || getContainer?.();
 
   let [exited, setExited] = useState(!isOpen);
 

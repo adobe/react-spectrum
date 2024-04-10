@@ -1050,7 +1050,7 @@ describe('TableViewSizing', function () {
       let Example = (props) => {
         let container = useRef(null);
         return (
-          <PortalProvider container={container}>
+          <PortalProvider getContainer={() => container.current}>
             <TableView aria-label="Table" onResizeEnd={props.onResizeEnd}>
               <TableHeader>
                 <Column allowsResizing key="foo">Foo</Column>

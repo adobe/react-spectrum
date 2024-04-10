@@ -37,8 +37,7 @@ export function Toaster(props: ToastContainerProps): ReactElement {
   let ref = useRef();
   let {regionProps} = useToastRegion(props, state, ref);
   let {focusProps, isFocusVisible} = useFocusRing();
-  let {container} = usePortalContext();
-  console.log('container:', container?.current);
+  let {getContainer} = usePortalContext();
 
   let contents = (
     <Provider UNSAFE_style={{background: 'transparent'}}>
@@ -58,5 +57,5 @@ export function Toaster(props: ToastContainerProps): ReactElement {
     </Provider>
   );
 
-  return ReactDOM.createPortal(contents, container?.current ?? document.body);
+  return ReactDOM.createPortal(contents, getContainer?.() ?? document.body);
 }

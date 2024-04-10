@@ -1251,7 +1251,7 @@ describe('MenuTrigger', function () {
     function InfoMenu(props) {
       return (
         <Provider theme={theme}>
-          <PortalProvider container={props.container}>
+          <PortalProvider getContainer={() => props.container.current}>
             <MenuTrigger>
               <ActionButton aria-label="trigger" />
               <Menu>

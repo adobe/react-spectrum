@@ -247,7 +247,7 @@ describe('DialogContainer', function () {
       return (
         <Provider theme={theme}>
           <ActionButton onPress={() => setOpen(true)}>Open dialog</ActionButton>
-          <PortalProvider container={container}>
+          <PortalProvider getContainer={() => container.current}>
             <DialogContainer onDismiss={() => setOpen(false)} {...props}>
               {isOpen &&
                 <ExampleDialog {...props} />

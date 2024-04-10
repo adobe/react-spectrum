@@ -1032,7 +1032,7 @@ describe('DialogTrigger', function () {
       let {container} = props;
       return (
         <Provider theme={theme}>
-          <PortalProvider container={container}>
+          <PortalProvider getContainer={() => container.current}>
             <DialogTrigger type={props.type}>
               <ActionButton>Trigger</ActionButton>
               <Dialog>contents</Dialog>
