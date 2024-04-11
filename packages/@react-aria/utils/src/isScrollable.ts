@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Adobe. All rights reserved.
+ * Copyright 2024 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -10,18 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
-import {isScrollable} from './isScrollable';
+export function isScrollable(node: Element, checkForOverflow?: boolean): boolean {
+  let style = window.getComputedStyle(node);
+  let isScrollable = /(auto|scroll)/.test(style.overflow + style.overflowX + style.overflowY);
 
-export function getScrollParent(node: Element, checkForOverflow?: boolean): Element {
-  let scrollableNode: Element | null = node;
-  if (isScrollable(scrollableNode, checkForOverflow)) {
-    scrollableNode = scrollableNode.parentElement;
+  if (isScrollable && checkForOverflow) {
+    isScrollable = node.scrollHeight !== node.clientHeight || node.scrollWidth !== node.clientWidth;
   }
 
-  while (scrollableNode && !isScrollable(scrollableNode, checkForOverflow)) {
-    scrollableNode = scrollableNode.parentElement;
-  }
-
-  return scrollableNode || document.scrollingElement || document.documentElement;
+  return isScrollable;
 }
-
