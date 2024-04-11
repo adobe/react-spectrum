@@ -62,10 +62,9 @@ function DropZone(props: DropZoneProps, ref: ForwardedRef<HTMLDivElement>) {
   let stringFormatter = useLocalizedStringFormatter(intlMessages, 'react-aria-components');
 
   let textId = useSlotId();
-  let dropzoneId = useSlotId();
   let ariaLabel = props['aria-label'] || stringFormatter.format('dropzoneLabel');
   let messageId = props['aria-labelledby'];
-  let ariaLabelledby = [dropzoneId, textId, messageId].filter(Boolean).join(' ');
+  let ariaLabelledby = [textId, messageId].filter(Boolean).join(' ');
   let labelProps = useLabels({'aria-label': ariaLabel, 'aria-labelledby': ariaLabelledby});
 
 
