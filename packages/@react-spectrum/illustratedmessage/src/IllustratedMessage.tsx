@@ -14,15 +14,9 @@ import {classNames, ClearSlots, SlotProvider, useSlotProps, useStyleProps} from 
 import {DOMRef} from '@react-types/shared';
 import {filterDOMProps} from '@react-aria/utils';
 import {Flex} from '@react-spectrum/layout';
-import React, {createContext, forwardRef, useContext} from 'react';
+import React, {forwardRef} from 'react';
 import {SpectrumIllustratedMessageProps} from '@react-types/illustratedmessage';
 import styles from '@adobe/spectrum-css-temp/components/illustratedmessage/vars.css';
-
-interface IllustratedMessageContextProps extends Omit<SpectrumIllustratedMessageProps, 'children'>{
-  headingId?: string
-}
-
-export const IllustratedMessageContext = createContext<IllustratedMessageContextProps | null>(null);
 
 function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<HTMLDivElement>) {
   props = useSlotProps(props, 'illustration');
@@ -31,13 +25,12 @@ function IllustratedMessage(props: SpectrumIllustratedMessageProps, ref: DOMRef<
     ...otherProps
   } = props;
 
-  let ctx = useContext(IllustratedMessageContext);
   let {styleProps} = useStyleProps(otherProps);
   let headingClassName = classNames(styles, 'spectrum-IllustratedMessage-heading');
   let contentClassName = classNames(styles, 'spectrum-IllustratedMessage-description');
 
   let slots = {
-    heading: {UNSAFE_className: headingClassName, id: ctx?.headingId},
+    heading: {UNSAFE_className: headingClassName},
     content: {UNSAFE_className: contentClassName}
   };
 
