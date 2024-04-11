@@ -19,7 +19,7 @@ export function getScrollParents(node: Element, checkForOverflow?: boolean): Ele
     if (isScrollable(node, checkForOverflow)) {
       scrollParents.push(node);
     }
-    node = node.parentElement;
+    node = node.parentElement as Element;
   }
 
   return scrollParents;
