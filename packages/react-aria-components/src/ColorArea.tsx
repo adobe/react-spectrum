@@ -1,6 +1,7 @@
 import {AriaColorAreaProps} from '@react-types/color';
 import {ColorAreaState, useColorAreaState} from '@react-stately/color';
 import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {filterDOMProps} from '@react-aria/utils';
 import {InternalColorThumbContext} from './ColorThumb';
 import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
 import {useColorArea} from '@react-aria/color';
@@ -50,11 +51,16 @@ function ColorArea(props: ColorAreaProps, ref: ForwardedRef<HTMLDivElement>) {
     }
   });
 
+  let DOMProps = filterDOMProps(props);
+  delete DOMProps.id;
+
   return (
     <div
       ref={ref}
       {...colorAreaProps}
+      {...DOMProps}
       {...renderProps}
+      slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}>
       <Provider
         values={[

@@ -1,4 +1,5 @@
 import {Color} from '@react-types/color';
+import {filterDOMProps} from '@react-aria/utils';
 import {HoverEvents} from '@react-types/shared';
 import {mergeProps} from 'react-aria';
 import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, InputHTMLAttributes, RefObject, useContext} from 'react';
@@ -76,9 +77,12 @@ function ColorThumb(props: ColorThumbProps, ref: ForwardedRef<HTMLDivElement>) {
     }
   });
 
+  let DOMProps = filterDOMProps(props as any);
+  delete DOMProps.id;
+
   return (
     <div
-      {...mergeProps(thumbProps, hoverProps)}
+      {...mergeProps(thumbProps, hoverProps, DOMProps)}
       {...renderProps}
       ref={ref}
       data-hovered={isHovered || undefined}

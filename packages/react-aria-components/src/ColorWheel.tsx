@@ -44,9 +44,11 @@ function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {
   delete DOMProps.id;
 
   return (
-    <div 
+    <div
+      {...DOMProps}
       {...renderProps}
       ref={ref}
+      slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}>
       <div {...trackProps} />
       <Provider
