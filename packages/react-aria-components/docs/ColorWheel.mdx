@@ -123,9 +123,11 @@ If you will use a ColorWheel in multiple places in your app, you can wrap all of
 ```tsx example export=true
 import type {ColorWheelProps} from 'react-aria-components';
 
-function MyColorWheel(props: ColorWheelProps) {
+interface MyColorWheelProps extends Omit<ColorWheelProps, 'outerRadius' | 'innerRadius'> {}
+
+function MyColorWheel(props: MyColorWheelProps) {
   return (
-    <ColorWheel outerRadius={100} innerRadius={74} {...props}>
+    <ColorWheel {...props} outerRadius={100} innerRadius={74}>
       <ColorWheelTrack />
       <ColorThumb />
     </ColorWheel>
@@ -391,7 +393,7 @@ ColorWheel provides a <TypeLink links={statelyDocs.links} type={statelyDocs.expo
 This example shows a `HueField` component that can be placed within a `ColorWheel` to allow the user to enter a number and update the hue.
 
 ```tsx example
-import {ColorWheelStateContext, NumberField, Input, useSlottedContext, useLocale} from 'react-aria-components';
+import {ColorWheelStateContext, NumberField, Input, useLocale} from 'react-aria-components';
 
 function HueField() {
   /*- begin highlight -*/
