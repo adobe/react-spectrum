@@ -175,7 +175,7 @@ To help kick-start your project, we offer starter kits that include example impl
 
 If you will use a ColorSlider in multiple places in your app, you can wrap all of the pieces into a reusable component. This way, the DOM structure, styling code, and other logic are defined in a single place and reused everywhere to ensure consistency.
 
-This example wraps `ColorSlider` and all of its children together into a single component which accepts an optional `label` prop, which is passed to the right place.
+This example wraps `ColorSlider` and all of its children together into a single component which accepts an optional `label` prop, which is passed to the right place. It also shows how to use the `defaultStyle` [render prop](styling.html#render-props) to add a checkerboard pattern behind partially transparent gradients.
 
 ```tsx example export=true
 import type {ColorSliderProps} from 'react-aria-components';
@@ -189,17 +189,18 @@ function MyColorSlider({label, ...props}: MyColorSliderProps) {
     <ColorSlider {...props}>
       <Label>{label}</Label>
       <SliderOutput />
-      <SliderTrack style={({defaultStyle}) => ({
-        background: `${defaultStyle.background}, 
-          repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`
-      })}>
+      <SliderTrack 
+        style={({defaultStyle}) => ({
+          background: `${defaultStyle.background},
+            repeating-conic-gradient(#CCC 0% 25%, white 0% 50%) 50% / 16px 16px`
+        })}>
         <ColorThumb />
       </SliderTrack>
     </ColorSlider>
   );
 }
 
-<MyColorSlider label="Red Value" defaultValue="#888" channel="red" />
+<MyColorSlider label="Red Opacity" defaultValue="#f00" channel="alpha" />
 ```
 
 ## Value
