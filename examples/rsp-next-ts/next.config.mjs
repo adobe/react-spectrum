@@ -1,5 +1,5 @@
 import localesPlugin from '@react-aria/optimize-locales-plugin';
-import glob from 'glob';
+import {glob} from 'glob';
 
 export default {
   transpilePackages: [

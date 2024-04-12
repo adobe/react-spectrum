@@ -1,3 +1,5 @@
+const glob = require('glob');
+
 const withTM = require("next-transpile-modules")([
   '@adobe/react-spectrum',
   '@react-spectrum/*',
