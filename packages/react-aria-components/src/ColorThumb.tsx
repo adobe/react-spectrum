@@ -59,7 +59,7 @@ export interface ColorThumbRenderProps {
 export interface ColorThumbProps extends HoverEvents, RenderProps<ColorThumbRenderProps> {}
 
 function ColorThumb(props: ColorThumbProps, ref: ForwardedRef<HTMLDivElement>) {
-  let {state, thumbProps, inputXRef, inputYRef, xInputProps, yInputProps, isDisabled} = useContext(InternalColorThumbContext)!;
+  let {state, thumbProps, inputXRef, inputYRef, xInputProps, yInputProps, isDisabled = false} = useContext(InternalColorThumbContext)!;
   let {focusProps, isFocused, isFocusVisible} = useFocusRing();
   let {hoverProps, isHovered} = useHover(props);
 

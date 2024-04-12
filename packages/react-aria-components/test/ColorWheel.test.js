@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+import {ColorThumb, ColorWheel, ColorWheelContext} from '../';
 import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
-import {ColorWheel, ColorWheelContext, ColorThumb} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -53,7 +53,7 @@ describe('ColorWheel', () => {
     let {getByTestId} = render(
       <ColorWheel isDisabled defaultValue="hsl(0, 100%, 50%)" outerRadius={100} innerRadius={80}>
         {({isDisabled}) => (
-          <div className={`${isDisabled ? 'disabled': ''}`} data-testid="wrapper">
+          <div className={`${isDisabled ? 'disabled' : ''}`} data-testid="wrapper">
             <ColorThumb />
           </div>
         )}

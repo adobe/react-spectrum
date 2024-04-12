@@ -11,7 +11,7 @@
  */
 
 import {act, pointerMap, render} from '@react-spectrum/test-utils';
-import {FieldError, Input, Label, ColorField, ColorFieldContext, Text} from '../';
+import {ColorField, ColorFieldContext, FieldError, Input, Label, Text} from '../';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 

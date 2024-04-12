@@ -79,14 +79,14 @@ export interface ScrollableProps<T extends Element> {
 
 export interface StyleRenderProps<T> {
   /** The CSS [className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className) for the element. A function may be provided to compute the class based on component state. */
-  className?: string | ((values: T & {defaultClassName: string | null}) => string),
+  className?: string | ((values: T & {defaultClassName: string | undefined}) => string),
   /** The inline [style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) for the element. A function may be provided to compute the style based on component state. */
-  style?: CSSProperties | ((values: T & {defaultStyle: CSSProperties | null}) => CSSProperties)
+  style?: CSSProperties | ((values: T & {defaultStyle: CSSProperties}) => CSSProperties)
 }
 
 export interface RenderProps<T> extends StyleRenderProps<T> {
   /** The children of the component. A function may be provided to alter the children based on component state. */
-  children?: ReactNode | ((values: T & {defaultChildren: ReactNode | null}) => ReactNode)
+  children?: ReactNode | ((values: T & {defaultChildren: ReactNode | undefined}) => ReactNode)
 }
 
 interface RenderPropsHookOptions<T> extends RenderProps<T>, SharedDOMProps, AriaLabelingProps {
@@ -101,9 +101,9 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
     className,
     style,
     children,
-    defaultClassName = null,
-    defaultChildren = null,
-    defaultStyle = null,
+    defaultClassName = undefined,
+    defaultChildren = undefined,
+    defaultStyle,
     values
   } = props;
 
@@ -119,7 +119,7 @@ export function useRenderProps<T>(props: RenderPropsHookOptions<T>) {
     }
 
     if (typeof style === 'function') {
-      computedStyle = style({...values, defaultStyle});
+      computedStyle = style({...values, defaultStyle: defaultStyle || {}});
     } else {
       computedStyle = style;
     }

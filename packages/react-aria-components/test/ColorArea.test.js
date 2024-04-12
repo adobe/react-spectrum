@@ -10,8 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import {ColorArea, ColorAreaContext, ColorThumb} from '../';
+import {fireEvent, pointerMap, render} from '@react-spectrum/test-utils';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
@@ -114,7 +114,6 @@ describe('ColorArea', () => {
     let hoverEndThumbSpy = jest.fn();
     let {getByRole} = renderColorArea({}, {className: ({isHovered}) => `thumb ${isHovered ? 'hovered' : ''}`, onHoverStart: hoverStartThumbSpy, onHoverChange: hoverChangeThumbSpy, onHoverEnd: hoverEndThumbSpy});
     let thumb = getByRole('slider').closest('.thumb');
-    let track = getByRole('slider').closest('.track');
 
     expect(thumb).not.toHaveAttribute('data-hovered');
     expect(thumb).not.toHaveClass('hovered');
