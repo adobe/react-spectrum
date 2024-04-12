@@ -335,28 +335,36 @@ function MainLandmark(props) {
   return <main aria-label="Danni's unicorn corral" ref={ref} {...props} {...landmarkProps} style={{padding: 40, background: 'white'}}>{props.children}</main>;
 }
 
-export const withFullscreen = () => <FullscreenApp />;
+export const withFullscreen = {
+  render: () => <FullscreenApp />,
+  parameters: {
+    disableToastContainer: true
+  }
+};
 
 function FullscreenApp(props) {
   let ref = useRef(null);
   let [isFullscreen, setFullscreen] = useState(false);
   let fullscreenPress = () => {
     if (!isFullscreen) {
-      let fullscreenPromise = ref.current.requestFullscreen();
-      fullscreenPromise.then(() => setFullscreen(true));
+      ref.current.requestFullscreen();
     }
   };
+  useEffect(() => {
+    let onFullscreenChange = () => {
+      setFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, []);
   return (
     <div ref={ref} style={{position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', backgroundColor: 'white'}}>
       <PortalProvider getContainer={() => ref.current}>
         <RenderProvider {...props} />
         <ActionButton onPress={fullscreenPress}>Enter fullscreen</ActionButton>
-        {isFullscreen && <ToastContainer />}
+        {isFullscreen && <ToastContainer key="miniapp" />}
       </PortalProvider>
+      {!isFullscreen && <ToastContainer key="app" />}
     </div>
   );
 }
-
-FullscreenApp.parameters = {
-  disableToastContainer: true
-};
