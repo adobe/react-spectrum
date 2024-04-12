@@ -118,7 +118,7 @@ export function useColorAreaGradient({direction, state, zChannel, xChannel, yCha
           position: 'absolute',
           left: `${x * 100}%`,
           top: `${y * 100}%`,
-          transform: 'translate(0%, 0%)',
+          transform: 'translate(-50%, -50%)',
           touchAction: 'none',
           ...forcedColorAdjustNoneStyle
         }

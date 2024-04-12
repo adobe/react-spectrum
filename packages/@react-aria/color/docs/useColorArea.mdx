@@ -142,7 +142,6 @@ function ColorArea(props) {
           boxShadow: '0 0 0 1px black, inset 0 0 0 1px black',
           boxSizing: 'border-box',
           height: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE,
-          transform: 'translate(-50%, -50%)',
           width: isFocusVisible ? FOCUSED_THUMB_SIZE + 4 : THUMB_SIZE
         }}>
         <input ref={inputXRef} {...xInputProps} {...focusProps} />
