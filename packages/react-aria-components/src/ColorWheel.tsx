@@ -1,9 +1,9 @@
 import {AriaColorWheelOptions, useColorWheel} from '@react-aria/color';
 import {ColorWheelState, useColorWheelState} from '@react-stately/color';
-import {ContextValue, Provider, RenderProps, SlotProps, useContextProps, useRenderProps} from './utils';
+import {ContextValue, Provider, RenderProps, SlotProps, StyleRenderProps, useContextProps, useRenderProps} from './utils';
 import {filterDOMProps} from '@react-aria/utils';
 import {InternalColorThumbContext} from './ColorThumb';
-import React, {createContext, ForwardedRef, forwardRef, useRef} from 'react';
+import React, {createContext, ForwardedRef, forwardRef, HTMLAttributes, useContext, useRef} from 'react';
 
 export interface ColorWheelRenderProps {
   /**
@@ -12,7 +12,7 @@ export interface ColorWheelRenderProps {
    */
   isDisabled: boolean,
   /**
-   * State of the color slider.
+   * State of the color color wheel.
    */
   state: ColorWheelState
 }
@@ -36,7 +36,9 @@ function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {
     },
     defaultClassName: 'react-aria-ColorWheel',
     defaultStyle: {
-      position: 'relative'
+      position: 'relative',
+      width: props.outerRadius * 2,
+      height: props.outerRadius * 2
     }
   });
 
@@ -50,10 +52,10 @@ function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {
       ref={ref}
       slot={props.slot || undefined}
       data-disabled={props.isDisabled || undefined}>
-      <div {...trackProps} />
       <Provider
         values={[
           [ColorWheelStateContext, state],
+          [ColorWheelTrackContext, trackProps],
           [InternalColorThumbContext, {state, thumbProps, inputXRef: inputRef, xInputProps: inputProps, isDisabled: props.isDisabled}]
         ]}>
         {renderProps.children}
@@ -67,3 +69,37 @@ function ColorWheel(props: ColorWheelProps, ref: ForwardedRef<HTMLDivElement>) {
  */
 const _ColorWheel = forwardRef(ColorWheel);
 export {_ColorWheel as ColorWheel};
+
+export interface ColorWheelTrackRenderProps extends ColorWheelRenderProps {}
+export interface ColorWheelTrackProps extends StyleRenderProps<ColorWheelTrackRenderProps> {}
+interface ColorWheelTrackContextValue extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'className' | 'style'>, ColorWheelTrackProps {}
+
+export const ColorWheelTrackContext = createContext<ContextValue<ColorWheelTrackContextValue, HTMLDivElement>>(null);
+
+function ColorWheelTrack(props: ColorWheelTrackProps, ref: ForwardedRef<HTMLDivElement>) {
+  [props, ref] = useContextProps(props, ref, ColorWheelTrackContext);
+  let state = useContext(ColorWheelStateContext)!;
+
+  let renderProps = useRenderProps({
+    ...props,
+    defaultClassName: 'react-aria-ColorWheelTrack',
+    values: {
+      isDisabled: state.isDisabled,
+      state
+    }
+  });
+
+  return (
+    <div
+      {...props}
+      {...renderProps}
+      ref={ref}
+      data-disabled={state.isDisabled || undefined} />
+  );
+}
+
+/**
+ * A color wheel track renders a circular gradient track.
+ */
+const _ColorWheelTrack = forwardRef(ColorWheelTrack);
+export {_ColorWheelTrack as ColorWheelTrack};

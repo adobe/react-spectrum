@@ -26,7 +26,7 @@ export interface ColorSliderRenderProps {
   state: ColorSliderState
 }
 
-export interface ColorSliderProps extends AriaColorSliderProps, RenderProps<ColorSliderRenderProps>, SlotProps {}
+export interface ColorSliderProps extends Omit<AriaColorSliderProps, 'label'>, RenderProps<ColorSliderRenderProps>, SlotProps {}
 
 export const ColorSliderContext = createContext<ContextValue<Partial<ColorSliderProps>, HTMLDivElement>>(null);
 export const ColorSliderStateContext = createContext<ColorSliderState | null>(null);

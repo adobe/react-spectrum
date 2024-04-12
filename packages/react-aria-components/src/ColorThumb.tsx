@@ -66,7 +66,10 @@ function ColorThumb(props: ColorThumbProps, ref: ForwardedRef<HTMLDivElement>) {
   let renderProps = useRenderProps({
     ...props,
     defaultClassName: 'react-aria-ColorThumb',
-    defaultStyle: thumbProps.style,
+    defaultStyle: {
+      ...thumbProps.style,
+      backgroundColor: state.getDisplayColor().toString()
+    },
     values: {
       color: state.getDisplayColor(),
       isHovered,

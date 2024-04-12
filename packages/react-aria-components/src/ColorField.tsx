@@ -23,17 +23,17 @@ import {TextContext} from './Text';
 
 export interface ColorFieldRenderProps {
   /**
-   * Whether the number field is disabled.
+   * Whether the color field is disabled.
    * @selector [data-disabled]
    */
   isDisabled: boolean,
   /**
-   * Whether the number field is invalid.
+   * Whether the color field is invalid.
    * @selector [data-invalid]
    */
   isInvalid: boolean,
   /**
-   * State of the number field.
+   * State of the color field.
    */
   state: ColorFieldState
 }

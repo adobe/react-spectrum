@@ -328,7 +328,10 @@ export function useColorWheel(props: AriaColorWheelOptions, state: ColorWheelSta
         onChange: (e: ChangeEvent<HTMLInputElement>) => {
           state.setHue(parseFloat(e.target.value));
         },
-        style: visuallyHiddenProps.style
+        style: visuallyHiddenProps.style,
+        'aria-errormessage': props['aria-errormessage'],
+        'aria-describedby': props['aria-describedby'],
+        'aria-details': props['aria-details']
       }
     )
   };
