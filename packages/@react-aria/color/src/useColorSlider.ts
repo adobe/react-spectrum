@@ -76,7 +76,6 @@ export function useColorSlider(props: AriaColorSliderOptions, state: ColorSlider
     }
     switch (channel) {
       case 'hue': {
-        // return `linear-gradient(to ${to}, rgb(255, 0, 0) 0%, rgb(255, 255, 0) 17%, rgb(0, 255, 0) 33%, rgb(0, 255, 255) 50%, rgb(0, 0, 255) 67%, rgb(255, 0, 255) 83%, rgb(255, 0, 0) 100%)`;
         let stops = [0, 60, 120, 180, 240, 300, 360].map(hue => value.withChannelValue('hue', hue).toString('css')).join(', ');
         return `linear-gradient(to ${to}, ${stops})`;
       }
