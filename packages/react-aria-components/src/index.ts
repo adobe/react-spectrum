@@ -21,6 +21,7 @@ export {Checkbox, CheckboxGroup, CheckboxGroupContext, CheckboxContext, Checkbox
 export {ColorArea, ColorAreaContext, ColorAreaStateContext} from './ColorArea';
 export {ColorField, ColorFieldContext, ColorFieldStateContext} from './ColorField';
 export {ColorSlider, ColorSliderContext, ColorSliderStateContext} from './ColorSlider';
+export {ColorSwatch, ColorSwatchContext} from './ColorSwatch';
 export {ColorThumb} from './ColorThumb';
 export {ColorWheel, ColorWheelTrack, ColorWheelContext, ColorWheelTrackContext, ColorWheelStateContext} from './ColorWheel';
 export {ComboBox, ComboBoxContext, ComboBoxStateContext} from './ComboBox';
@@ -77,6 +78,7 @@ export type {CheckboxGroupProps, CheckboxGroupRenderProps, CheckboxRenderProps, 
 export type {ColorAreaProps, ColorAreaRenderProps} from './ColorArea';
 export type {ColorFieldProps, ColorFieldRenderProps} from './ColorField';
 export type {ColorSliderProps, ColorSliderRenderProps} from './ColorSlider';
+export type {ColorSwatchProps, ColorSwatchRenderProps} from './ColorSwatch';
 export type {ColorThumbProps, ColorThumbRenderProps} from './ColorThumb';
 export type {ColorWheelProps, ColorWheelRenderProps, ColorWheelTrackProps, ColorWheelTrackRenderProps} from './ColorWheel';
 export type {ComboBoxProps, ComboBoxRenderProps} from './ComboBox';
