@@ -43,7 +43,8 @@ export interface ColorSwatchAria {
  * A color swatch displays a preview of a selected color.
  */
 export function useColorSwatch(props: AriaColorSwatchProps): ColorSwatchAria {
-  let {color: value = '#fff0', colorName} = props;
+  let {color: value, colorName} = props;
+  value ||= '#fff0';
   let color = useMemo(() => typeof value === 'string' ? parseColor(value) : value, [value]);
   let {locale} = useLocale();
   let DOMProps = filterDOMProps(props, {labelable: true});
