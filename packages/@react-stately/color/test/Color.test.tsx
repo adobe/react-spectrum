@@ -267,4 +267,31 @@ describe('Color', function () {
       expect(parseColor('hsb(0, 1%, 0%)').toString('hsl')).toBe('hsl(0, 0%, 0%)');
     });
   });
+
+  describe('#getColorName', function () {
+    it('should return localized color name', function () {
+      let color = parseColor('hsl(30, 0%, 22.5%)');
+      expect(color.getColorName('en-US')).toBe('dark gray');
+      color = parseColor('hsl(30, 50%, 100%)');
+      expect(color.getColorName('en-US')).toBe('white');
+      color = parseColor('hsl(30, 100%, 0%)');
+      expect(color.getColorName('en-US')).toBe('black');
+      color = parseColor('#E78B8B');
+      expect(color.getColorName('en-US')).toBe('light red');
+      color = parseColor('#E7E7B8');
+      expect(color.getColorName('en-US')).toBe('very light pale yellow');
+      color = parseColor('hsl(30, 39%, 25%)');
+      expect(color.getColorName('en-US')).toBe('dark grayish brown');
+      color = parseColor('hsl(30, 100%, 50%)');
+      expect(color.getColorName('en-US')).toBe('vibrant orange');
+      color = parseColor('hsl(30, 100%, 80%)');
+      expect(color.getColorName('en-US')).toBe('light pale orange');
+      color = parseColor('hsb(200, 60%, 62%)');
+      expect(color.getColorName('en-US')).toBe('grayish cyan blue');
+      color = parseColor('hsb(0, 100%, 100%)');
+      expect(color.getColorName('en-US')).toBe('vibrant red');
+      color = parseColor('hsba(0, 100%, 100%, 0.2)');
+      expect(color.getColorName('en-US')).toBe('80% transparent vibrant red');
+    });
+  });
 });
