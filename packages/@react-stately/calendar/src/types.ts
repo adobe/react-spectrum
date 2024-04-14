@@ -118,7 +118,7 @@ export interface RangeCalendarState extends CalendarStateBase {
   /** Sets the anchor date that the user clicked on to begin range selection. */
   setAnchorDate(date: CalendarDate | null): void,
   /** The currently highlighted date range. */
-  readonly highlightedRange: RangeValue<CalendarDate>,
+  readonly highlightedRange: RangeValue<CalendarDate> | null,
   /** Whether the user is currently dragging over the calendar. */
   readonly isDragging: boolean,
   /** Sets whether the user is dragging over the calendar. */
