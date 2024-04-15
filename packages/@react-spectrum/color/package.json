@@ -43,6 +43,7 @@
     "@react-aria/utils": "^3.23.2",
     "@react-spectrum/form": "^3.7.4",
     "@react-spectrum/label": "^3.16.4",
+    "@react-spectrum/style-macro-s1": "^3.5.3",
     "@react-spectrum/textfield": "^3.11.4",
     "@react-spectrum/utils": "^3.11.5",
     "@react-stately/color": "^3.5.3",

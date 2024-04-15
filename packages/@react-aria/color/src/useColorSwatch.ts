@@ -44,8 +44,8 @@ export interface ColorSwatchAria {
  */
 export function useColorSwatch(props: AriaColorSwatchProps): ColorSwatchAria {
   let {color: value, colorName} = props;
-  value ||= '#fff0';
-  let color = useMemo(() => typeof value === 'string' ? parseColor(value) : value, [value]);
+  let nonNullValue = value || '#fff0';
+  let color = useMemo(() => typeof nonNullValue === 'string' ? parseColor(nonNullValue) : nonNullValue, [nonNullValue]);
   let {locale} = useLocale();
   let DOMProps = filterDOMProps(props, {labelable: true});
   let stringFormatter = useLocalizedStringFormatter(intlMessages, '@react-aria/color');

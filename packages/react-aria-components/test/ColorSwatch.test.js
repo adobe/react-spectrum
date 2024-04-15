@@ -44,7 +44,7 @@ describe('ColorSwatch', () => {
         )}
       </ColorSwatch>
     );
-    expect(getByTestId('wrapper')).toHaveStyle({background: '#f00'})
+    expect(getByTestId('wrapper')).toHaveStyle({background: '#f00'});
   });
 
   it('should support slot', () => {

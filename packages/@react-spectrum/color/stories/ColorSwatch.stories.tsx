@@ -39,7 +39,7 @@ Default.args = {
   color: 'rgb(255, 0, 0)'
 };
 
-export const NoValue = (args) => <ColorSwatch {...args} />
+export const NoValue = (args) => <ColorSwatch {...args} />;
 
 export const CustomWidth = (args) => <ColorSwatch {...args} width="size-1000" />;
 CustomWidth.args = Default.args;

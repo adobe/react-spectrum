@@ -57,9 +57,9 @@ A color swatch consists of a color preview, which is exposed to assistive techno
 This example renders a color swatch component, with a checkerboard pattern behind partially transparent colors.
 
 ```tsx example export=true
-import {useColorSwatch, ColorSwatchProps} from '@react-aria/color';
+import {useColorSwatch, AriaColorSwatchProps} from '@react-aria/color';
 
-function ColorSwatch(props: ColorSwatchProps) {
+function ColorSwatch(props: AriaColorSwatchProps) {
   let {colorSwatchProps, color} = useColorSwatch(props);
 
   return (

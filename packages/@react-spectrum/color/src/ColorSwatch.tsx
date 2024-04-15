@@ -11,10 +11,10 @@
  */
 
 import {AriaColorSwatchProps, useColorSwatch} from '@react-aria/color';
-import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
-import {useDOMRef, useStyleProps} from '@react-spectrum/utils';
 import {DOMRef, StyleProps} from '@react-types/shared';
 import React, {forwardRef} from 'react';
+import {style} from '@react-spectrum/style-macro-s1' with {type: 'macro'};
+import {useDOMRef, useStyleProps} from '@react-spectrum/utils';
 
 export interface SpectrumColorSwatchProps extends AriaColorSwatchProps, StyleProps {
   size?: 'XS' | 'S' | 'M' | 'L',
