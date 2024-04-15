@@ -27,9 +27,10 @@ describe('useToast', () => {
   };
 
   it('handles defaults', function () {
-    let {closeButtonProps, toastProps, titleProps} = renderToastHook({}, {close});
+    let {closeButtonProps, toastProps, contentProps, titleProps} = renderToastHook({}, {close});
 
-    expect(toastProps.role).toBe('alert');
+    expect(toastProps.role).toBe('alertdialog');
+    expect(contentProps.role).toBe('alert');
     expect(closeButtonProps['aria-label']).toBe('Close');
     expect(typeof closeButtonProps.onPress).toBe('function');
     expect(titleProps.id).toEqual(toastProps['aria-labelledby']);

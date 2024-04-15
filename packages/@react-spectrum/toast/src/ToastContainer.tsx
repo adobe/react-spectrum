@@ -11,8 +11,10 @@
  */
 
 import {AriaToastRegionProps} from '@react-aria/toast';
+import {classNames} from '@react-spectrum/utils';
 import React, {ReactElement, useEffect, useRef} from 'react';
 import {SpectrumToastValue, Toast} from './Toast';
+import toastContainerStyles from './toastContainer.css';
 import {Toaster} from './Toaster';
 import {ToastOptions, ToastQueue, useToastQueue} from '@react-stately/toast';
 import {useSyncExternalStore} from 'use-sync-external-store/shim/index.js';
@@ -103,15 +105,21 @@ export function ToastContainer(props: SpectrumToastContainerProps): ReactElement
   // Only render if this is the active toast provider instance, and there are visible toasts.
   let activeToastContainer = useActiveToastContainer();
   let state = useToastQueue(getGlobalToastQueue());
+
   if (ref === activeToastContainer && state.visibleToasts.length > 0) {
     return (
       <Toaster state={state} {...props}>
-        {state.visibleToasts.map((toast) => (
-          <Toast
-            key={toast.key}
-            toast={toast}
-            state={state} />
-        ))}
+        <ol reversed className={classNames(toastContainerStyles, 'spectrum-ToastContainer-list')}>
+          {state.visibleToasts.map((toast) => (
+            <li
+              key={toast.key}
+              className={classNames(toastContainerStyles, 'spectrum-ToastContainer-listitem')}>
+              <Toast
+                toast={toast}
+                state={state} />
+            </li>
+          ))}
+        </ol>
       </Toaster>
     );
   }
