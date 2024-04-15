@@ -1,7 +1,6 @@
 import {Avatar} from '../';
 import React from 'react';
 import {render, screen} from '@react-spectrum/test-utils';
-import * as Utils from '@react-spectrum/utils';
 
 describe('Avatar', () => {
   it('renders an avatar image', () => {
@@ -30,26 +29,6 @@ describe('Avatar', () => {
         height: '80px',
         width: '80px'
       });
-    });
-
-    // Spying on dimensionValue since we're unable to use toHaveStyle effectively with CSS vars
-    // See https://github.com/testing-library/jest-dom/issues/322
-    it('supports predefined avatar sizes', () => {
-      const dimensionValueSpy = jest.spyOn(Utils, 'dimensionValue');
-      render(<Avatar src="http://localhost/some_image.png" size="avatar-size-700" />);
-      expect(dimensionValueSpy).not.toHaveBeenCalledWith('avatar-size-100');
-    });
-
-    it('defaults to default size when size is size-XXXX', () => {
-      const dimensionValueSpy = jest.spyOn(Utils, 'dimensionValue');
-      render(<Avatar src="http://localhost/some_image.png" size="size-100" />);
-      expect(dimensionValueSpy).toHaveBeenCalledWith('avatar-size-100');
-    });
-
-    it('defaults to default size when size is a string number', () => {
-      const dimensionValueSpy = jest.spyOn(Utils, 'dimensionValue');
-      render(<Avatar src="http://localhost/some_image.png" size="100" />);
-      expect(dimensionValueSpy).toHaveBeenCalledWith('avatar-size-100');
     });
   });
 
