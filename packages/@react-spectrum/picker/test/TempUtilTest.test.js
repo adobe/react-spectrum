@@ -19,10 +19,6 @@ import {theme} from '@react-spectrum/theme-default';
 import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
-// TODO: update to use new user object
-// TODO: also update to import from internal test utils
-
-// TODO: replace all of these exported utils
 describe('Picker/Select ', function () {
   let testUtilUser = new User();
   let onSelectionChange = jest.fn();
