@@ -10,20 +10,21 @@
  * governing permissions and limitations under the License.
  */
 
-import {installMouseEvent, installPointerEvent, pointerMap} from './';
+import {pointerMap} from './';
 import {SelectTester} from './select';
 import userEvent from '@testing-library/user-event';
 
 interface UserOpts {
-
+  interactionType?: 'mouse' | 'touch' | 'keyboard'
 }
 
 export class User {
   select: SelectTester;
 
-  constructor() {
+  constructor(opts: UserOpts = {}) {
+    let {interactionType} = opts;
     let user = userEvent.setup({delay: null, pointerMap});
-    this.select = new SelectTester({user});
+    this.select = new SelectTester({user, interactionType});
 
     // TODO: calling these two will cause user.click to detected as a virtual click
     // resulting in unexcepted behaviors (focus moves to picker's listbox option on open instad of focusing the listbox as awhole)
@@ -39,11 +40,11 @@ export class User {
 
   // TODO: provide the below so the user can call the stuff that installMouseEvent/installPointerEvent at the specific part of the test where they need it?
   // Have it also return a cleanup function?
-  setupMouseMock() {
+  // setupMouseMock() {
 
-  }
+  // }
 
-  setupPointerMock() {
+  // setupPointerMock() {
 
-  }
+  // }
 }
