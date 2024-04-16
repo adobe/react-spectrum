@@ -12,6 +12,7 @@
 
 import {pointerMap} from './';
 import {SelectTester} from './select';
+import {TableTester} from './table';
 import userEvent from '@testing-library/user-event';
 
 interface UserOpts {
@@ -20,11 +21,13 @@ interface UserOpts {
 
 export class User {
   select: SelectTester;
+  table: TableTester;
 
   constructor(opts: UserOpts = {}) {
     let {interactionType} = opts;
     let user = userEvent.setup({delay: null, pointerMap});
     this.select = new SelectTester({user, interactionType});
+    this.table = new TableTester({user, interactionType});
 
     // TODO: calling these two will cause user.click to detected as a virtual click
     // resulting in unexcepted behaviors (focus moves to picker's listbox option on open instad of focusing the listbox as awhole)

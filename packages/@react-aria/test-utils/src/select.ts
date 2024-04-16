@@ -11,11 +11,16 @@
  */
 
 import {act, waitFor, within} from '@testing-library/react';
+import {UserEvent} from '@testing-library/user-event/dist/types/setup/setup';
 
 type InteractionType = 'mouse' | 'touch' | 'keyboard'
 
+interface SelectOptions {
+  user: UserEvent,
+  interactionType?: InteractionType
+}
 export class SelectTester {
-  private user;
+  private user: UserEvent;
   private _interactionType: InteractionType;
   // TODO: Potential problem with tracking these internally is that the user might perform some interactions
   // themselves and thus we won't update them... I've tried to mitigate this by making the getters update these values
@@ -31,7 +36,7 @@ export class SelectTester {
   // provided. Also since those aren't always kept up to date since it is grabbed by document.getElementById,
   // it would be better for the user to not look for the specific node
 
-  constructor(opts) {
+  constructor(opts: SelectOptions) {
     this.user = opts.user;
     this._interactionType = opts.interactionType || 'mouse';
   }
@@ -135,6 +140,7 @@ export class SelectTester {
   // since we should already be testing them
 
   // TODO: perhaps these should be getElement/getTrigger/etc. That way the user could destruct them from the class without explicitlly triggering the getter
+  // TODO: name element here to just be picker perhaps
   get element() {
     if (!this._element) {
       console.error('Select element hasn\'t been set yet. Did you call `setElement()` yet?');
