@@ -164,14 +164,13 @@ function enforceExports({Yarn}) {
 
       let exportsRequire = workspace.manifest?.exports?.require;
       let exportsImport = workspace.manifest?.exports?.import;
-      if (workspace.manifest.exports['.']) {
-        // TODO contribute to yarn? lodash toPath can handle it, but yarn appears to break
-        // for (let key in workspace.manifest.exports) {
-        //   let subExportsRequire = workspace.manifest.exports[key].require;
-        //   let subExportsImport = workspace.manifest.exports[key].import;
-        //   workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire));
-        //   workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
-        // }
+      if (workspace.manifest.exports?.['.']) {
+        for (let key in workspace.manifest.exports) {
+          let subExportsRequire = workspace.manifest.exports[key].require;
+          let subExportsImport = workspace.manifest.exports[key].import;
+          workspace.set(`exports["${key}"].require`, setExtension(subExportsRequire));
+          workspace.set(`exports["${key}"].import`, setExtension(subExportsImport, '.mjs'));
+        }
       } else {
         workspace.set('exports.require', setExtension(exportsRequire));
         workspace.set('exports.import', setExtension(exportsImport, '.mjs'));

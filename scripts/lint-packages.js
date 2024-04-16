@@ -98,12 +98,12 @@ for (let pkg of packagePaths) {
     // softAssert(json.main.endsWith('.js'), `${pkg}#main should be a .js file but got "${json.main}"`);
     // softAssert(json.module, `${pkg} did not have "module"`);
     // softAssert(json.module.endsWith('.js'), `${pkg}#module should be a .js file but got "${json.module}"`);
-    if (json.exports['.']) { // TODO migrate eventually when yarn can handle the '.' key
-      for (let key in json.exports) {
-        softAssert(json.exports[key].require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports[key].require}"`);
-        softAssert(json.exports[key].import.endsWith('.mjs'), `${pkg}#exports#import should be a .mjs file but got "${json.exports[key].import}"`);
-      }
-    }
+    // if (json.exports['.']) {
+    //   for (let key in json.exports) {
+    //     softAssert(json.exports[key].require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports[key].require}"`);
+    //     softAssert(json.exports[key].import.endsWith('.mjs'), `${pkg}#exports#import should be a .mjs file but got "${json.exports[key].import}"`);
+    //   }
+    // }
     // yarn enforceExports constraint
     // else {
     //   softAssert(json.exports.require.endsWith('.js'), `${pkg}#exports#require should be a .js file but got "${json.exports.require}"`);
