@@ -57,7 +57,7 @@ describe('Select', () => {
     expect(label).toHaveAttribute('class', 'react-aria-Label');
     expect(label).toHaveTextContent('Favorite Animal');
 
-    let valueOrPlaceholder = selectUtil.valueElement;
+    let valueOrPlaceholder = document.getElementById(trigger.getAttribute('aria-labelledby').split(' ')[0]);
     expect(valueOrPlaceholder).toHaveAttribute('class', 'react-aria-SelectValue');
     expect(valueOrPlaceholder).toHaveTextContent('Select an item');
 

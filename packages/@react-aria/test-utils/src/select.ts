@@ -17,23 +17,21 @@ type InteractionType = 'mouse' | 'touch' | 'keyboard'
 export class SelectTester {
   private user;
   private _interactionType: InteractionType;
+  // TODO: Potential problem with tracking these internally is that the user might perform some interactions
+  // themselves and thus we won't update them... I've tried to mitigate this by making the getters update these values
+  // when called but I wonder if it is worth even exposing these getters
   private _element: HTMLElement;
   private _trigger: HTMLElement;
-  private _valueElement: HTMLElement;
   private _listbox: HTMLElement;
   private _options: HTMLElement[];
+  private _sections: HTMLElement[];
   // TODO: should we find the label/field error/etc for the user
   // what about value placeholder? Not entirely sure that there is a ton of value in helping the
   // user find those when they can be queried by getByText or by looking up the labeledby that the user already
-  // provided
+  // provided. Also since those aren't always kept up to date since it is grabbed by document.getElementById,
+  // it would be better for the user to not look for the specific node
 
   constructor(opts) {
-    // let {
-    //   element,
-    //   timerType = 'fake'
-    // } = opts;
-    // this.element = element;
-    // this.timerType = timerType;
     this.user = opts.user;
     this._interactionType = opts.interactionType || 'mouse';
   }
@@ -46,10 +44,10 @@ export class SelectTester {
       triggerButton = this._element;
     }
     this._trigger = triggerButton;
-    this._valueElement = document.getElementById(triggerButton.getAttribute('aria-labelledby').split(' ')[0]);
     // Reset the previously obtained elements since we may be interacting with a different element now
     this._listbox = undefined;
     this._options = undefined;
+    this._sections = undefined;
   }
 
   setInteractionType(type: InteractionType) {
@@ -78,19 +76,18 @@ export class SelectTester {
     await waitFor(() => expect(this._trigger).toHaveAttribute('aria-controls'));
     let listBoxId = this._trigger.getAttribute('aria-controls');
     await waitFor(() => expect(document.getElementById(listBoxId)).toBeInTheDocument());
-    this._listbox = document.getElementById(listBoxId);
     this.getOptions();
   }
 
   getOptions() {
     if (!this._trigger.getAttribute('aria-controls')) {
       console.error('Select listbox hasn\'t been set yet. Did you call `open()` yet?');
-    } else if (!this._listbox) {
-      let listBoxId = this._trigger.getAttribute('aria-controls');
-      this._listbox = document.getElementById(listBoxId);
     }
+    let listBoxId = this._trigger.getAttribute('aria-controls');
+    this._listbox = document.getElementById(listBoxId);
 
     this._options = within(this._listbox).getAllByRole('option');
+    this._sections = within(this._listbox).queryAllByRole('group');
     return;
   }
 
@@ -106,6 +103,8 @@ export class SelectTester {
         act(() => this._listbox.focus());
       }
 
+      // TODO: this simulates typeahead, do we want to add a helper util for that? Not sure if users would really need that for
+      // their test
       await this.user.keyboard(optionText);
       await this.user.keyboard('[Enter]');
     } else {
@@ -131,6 +130,10 @@ export class SelectTester {
     expect(this._listbox).not.toBeInTheDocument();
   }
 
+  // TODO is it valuable to add support for a utility for pressing ArrowLeft/ArrowRight when the picker is closed to cycle through the options?
+  // Doesn't really feel that useful since it isn't very complicated and I don't think people really need access to every single supported interaction
+  // since we should already be testing them
+
   // TODO: perhaps these should be getElement/getTrigger/etc. That way the user could destruct them from the class without explicitlly triggering the getter
   get element() {
     if (!this._element) {
@@ -148,14 +151,6 @@ export class SelectTester {
     return this._trigger;
   }
 
-  get valueElement() {
-    if (!this._valueElement) {
-      console.error('Select value/placeholder element hasn\'t been set yet. Did you call `setElement()` yet?');
-    }
-
-    return this._valueElement;
-  }
-
   get listbox() {
     // If user has triggered open the select themseleves, then grab the options and set the listbox element
     if (this._trigger.getAttribute('aria-controls')) {
@@ -168,17 +163,26 @@ export class SelectTester {
   }
 
   get options() {
-    if (!this._options) {
+    if (this._trigger.getAttribute('aria-controls')) {
+      this.getOptions();
+    } else if (!this._options) {
       console.error('Select options hasn\'t been set yet. Did you call `open()` yet?');
     }
 
     return this._options;
   }
 
+  get sections() {
+    if (this._trigger.getAttribute('aria-controls')) {
+      this.getOptions();
+    } else if (!this._sections) {
+      console.error('Select sections hasn\'t been set yet. Did you call `open()` yet? Are there sections available?');
+    }
+
+    return this._sections;
+  }
+
   get interactionType() {
     return this._interactionType;
   }
-
-  // TODO: various getters? getHiddenSelect, getOption, getLabel, getTriggerElement? Or just have user access them via picker.trigger and stuff
-  // TODO: what about assertions like picker.hasText? Or just rely on user using `expect(picker.trigger).toHaveTextContent('Three');`
 }
