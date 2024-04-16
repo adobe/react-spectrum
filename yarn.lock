@@ -7173,7 +7173,6 @@ __metadata:
   resolution: "@react-aria/utils@workspace:packages/@react-aria/utils"
   dependencies:
     "@react-aria/ssr": "workspace:^"
-    "@react-spectrum/badge": "workspace:^"
     "@react-stately/utils": "workspace:^"
     "@react-types/shared": "workspace:^"
     "@swc/helpers": "npm:^0.5.0"
