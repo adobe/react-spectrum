@@ -15,6 +15,7 @@ import {Button, Cell, Checkbox, Collection, Column, ColumnResizer, DropIndicator
 import React, {useMemo, useState} from 'react';
 import {resizingTests} from '@react-aria/table/test/tableResizingTests';
 import {setInteractionModality} from '@react-aria/interactions';
+import {User} from '@react-aria/test-utils';
 import userEvent from '@testing-library/user-event';
 
 function MyColumn(props) {
@@ -168,37 +169,40 @@ let renderTable = (props) => render(<TestTable {...props} />);
 
 describe('Table', () => {
   let user;
+  let tableUtil;
   beforeAll(() => {
     user = userEvent.setup({delay: null, pointerMap});
   });
 
   beforeEach(() => {
+    tableUtil = new User().table;
     jest.useFakeTimers();
   });
 
-  it('should render with default classes', () => {
-    let {getByRole, getAllByRole} = renderTable();
-    let table = getByRole('grid');
+  it('should render with default classes', async () => {
+    let {getByRole} = renderTable();
+    tableUtil.setTable(getByRole('grid'));
+    let table = tableUtil.table;
     expect(table).toHaveAttribute('class', 'react-aria-Table');
 
-    for (let row of getAllByRole('row').slice(1)) {
+    for (let row of tableUtil.rows) {
       expect(row).toHaveAttribute('class', 'react-aria-Row');
     }
 
-    let rowGroups = getAllByRole('rowgroup');
+    let rowGroups = tableUtil.rowgroups;
     expect(rowGroups).toHaveLength(2);
     expect(rowGroups[0]).toHaveAttribute('class', 'react-aria-TableHeader');
     expect(rowGroups[1]).toHaveAttribute('class', 'react-aria-TableBody');
 
-    for (let cell of getAllByRole('columnheader')) {
+    for (let cell of tableUtil.columns) {
       expect(cell).toHaveAttribute('class', 'react-aria-Column');
     }
 
-    for (let cell of getAllByRole('rowheader')) {
+    for (let cell of tableUtil.rowheaders) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
 
-    for (let cell of getAllByRole('gridcell')) {
+    for (let cell of tableUtil.cells) {
       expect(cell).toHaveAttribute('class', 'react-aria-Cell');
     }
   });
@@ -535,7 +539,7 @@ describe('Table', () => {
 
   it('should support onAction on items', async () => {
     let onAction = jest.fn();
-    let {getAllByRole} = render(
+    let {getByRole} = render(
       <Table aria-label="Table" selectionMode="multiple" disabledBehavior="all">
         <MyTableHeader>
           <Column isRowHeader>Foo</Column>
@@ -556,24 +560,32 @@ describe('Table', () => {
         </TableBody>
       </Table>
     );
-    let items = getAllByRole('row');
-    await user.click(items[1]);
+
+    tableUtil.setTable(getByRole('grid'));
+    await tableUtil.triggerRowAction({index: 0});
     expect(onAction).toHaveBeenCalled();
   });
 
-  it('should support sorting', () => {
-    let {getAllByRole} = renderTable({
-      tableProps: {sortDescriptor: {column: 'name', direction: 'ascending'}, onSortChange: jest.fn()},
+  it('should support sorting', async () => {
+    let onSortChange = jest.fn();
+    let {getByRole} = renderTable({
+      tableProps: {sortDescriptor: {column: 'name', direction: 'ascending'}, onSortChange},
       columnProps: {allowsSorting: true}
     });
 
-    let columns = getAllByRole('columnheader');
+    tableUtil.setTable(getByRole('grid'));
+
+    let columns = tableUtil.columns;
     expect(columns[0]).toHaveAttribute('aria-sort', 'ascending');
     expect(columns[0]).toHaveTextContent('▲');
     expect(columns[1]).toHaveAttribute('aria-sort', 'none');
     expect(columns[1]).not.toHaveTextContent('▲');
     expect(columns[2]).toHaveAttribute('aria-sort', 'none');
     expect(columns[2]).not.toHaveTextContent('▲');
+
+    await tableUtil.toggleSort({index: 0});
+    expect(onSortChange).toHaveBeenCalledTimes(1);
+    expect(onSortChange).toHaveBeenCalledWith({column: 'name', direction: 'descending'});
   });
 
   it('should support empty state', () => {
@@ -596,16 +608,16 @@ describe('Table', () => {
   });
 
   it('supports removing rows', async () => {
-    let {getAllByRole, rerender} = render(<DynamicTable tableBodyProps={{rows}} />);
+    let {rerender, getByRole} = render(<DynamicTable tableBodyProps={{rows}} />);
 
+    tableUtil.setTable(getByRole('grid'));
     await user.tab();
     fireEvent.keyDown(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowDown'});
     fireEvent.keyDown(document.activeElement, {key: 'ArrowRight'});
     fireEvent.keyUp(document.activeElement, {key: 'ArrowRight'});
 
-    let body = getAllByRole('rowgroup')[1];
-    let gridRows = within(body).getAllByRole('row');
+    let gridRows = tableUtil.rows;
     expect(gridRows).toHaveLength(4);
     let cell = within(gridRows[1]).getAllByRole('rowheader')[0];
     expect(cell).toHaveTextContent('Program Files');
@@ -613,7 +625,7 @@ describe('Table', () => {
 
     rerender(<DynamicTable tableBodyProps={{items: [rows[0], ...rows.slice(2)]}} />);
 
-    gridRows = within(body).getAllByRole('row');
+    gridRows = tableUtil.rows;
     expect(gridRows).toHaveLength(3);
     cell = within(gridRows[1]).getAllByRole('rowheader')[0];
     expect(cell).toHaveTextContent('bootmgr');

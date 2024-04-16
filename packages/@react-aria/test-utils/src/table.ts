@@ -112,10 +112,9 @@ export class TableTester {
     } = opts;
 
     let columnheader;
-
-    if (index) {
+    if (index != null) {
       columnheader = this.columns[index];
-    } else if (text) {
+    } else if (text != null) {
       columnheader = within(this.rowgroups[0]).getByText(text);
       while (columnheader && !/columnheader/.test(columnheader.getAttribute('role'))) {
         columnheader = columnheader.parentElement;
@@ -127,13 +126,7 @@ export class TableTester {
     if (menuButton) {
       let currentSort = columnheader.getAttribute('aria-sort');
       await this.user.click(menuButton);
-      // TODO: check the below if we still need timers
-
-      // if (this.timerType === 'fake') {
-      //   act(() => jest.runAllTimers());
-      // } else {
       await waitFor(() => expect(menuButton).toHaveAttribute('aria-controls'));
-      // }
 
       let menuId = menuButton.getAttribute('aria-controls');
       await waitFor(() => expect(document.getElementById(menuId)).toBeInTheDocument());
@@ -144,17 +137,41 @@ export class TableTester {
         await this.user.click(within(menu).getAllByRole('menuitem')[0]);
       }
 
-      // TODO check if we still need
-      // if (this.timerType === 'fake') {
-      //   act(() => jest.runAllTimers());
-      // }
-
       await waitFor(() => expect(document.activeElement).toBe(menuButton));
       expect(menu).not.toBeInTheDocument();
     } else {
       await this.user.click(columnheader);
     }
   }
+  // TODO: should there be a util for triggering a row action? Perhaps there should be but it would rely on the user teling us the config of the
+  // table. Maybe we could rely on the user knowing to trigger a press/double click? We could have the user pass in "needsDoubleClick"
+  async triggerRowAction(opts: {index?: number, text?: string}) {
+    let {
+      index,
+      text
+    } = opts;
+
+    let row;
+    if (index != null) {
+      row = this.rows[index];
+    } else if (text != null) {
+      row = within(this.rowgroups[1]).getByText(text);
+      while (row && !/gridcell|rowheader|columnheader/.test(row.getAttribute('role'))) {
+        row = row.parentElement;
+      }
+    }
+
+    if (row) {
+      await this.user.click(row);
+    }
+
+    // For the keyboard flow, I wonder if it would be reasonable to just do fireEvent directly on the obtained row node or if we should
+    // stick to simulting an actual user's keyboard operations as closely as possible
+  }
+
+  // TODO: should there be utils for drag and drop and column resizing? For column resizing, I'm not entirely convinced that users will be doing that in their tests.
+  // For DnD, it might be tricky to do for keyboard DnD since we wouldn't know what valid drop zones there are... Similarly, for simulating mouse drag and drop the coordinates depend
+  // on the mocks the user sets up for their row height/etc.
 
   async toggleSelectAll() {
     let checkbox = within(this._table).getByLabelText('Select All');
@@ -180,5 +197,13 @@ export class TableTester {
 
   get rows() {
     return within(this.rowgroups[1]).getAllByRole('row');
+  }
+
+  get rowheaders() {
+    return within(this._table).getAllByRole('rowheader');
+  }
+
+  get cells() {
+    return within(this._table).getAllByRole('gridcell');
   }
 }

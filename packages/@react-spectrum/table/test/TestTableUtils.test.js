@@ -10,13 +10,12 @@
  * governing permissions and limitations under the License.
  */
 
-import {act, pointerMap, render, screen} from '@react-spectrum/test-utils-internal';
+import {act, render, screen} from '@react-spectrum/test-utils-internal';
 import {Cell, Column, Row, TableBody, TableHeader, TableView} from '../';
 import {Provider} from '@react-spectrum/provider';
 import React, {useState} from 'react';
 import {theme} from '@react-spectrum/theme-default';
 import {User} from '@react-aria/test-utils';
-import userEvent from '@testing-library/user-event';
 
 let manyItems = [];
 for (let i = 1; i <= 100; i++) {
@@ -203,6 +202,4 @@ describe('Table ', function () {
       expect(onSortChange).toHaveBeenLastCalledWith({column: 'foo', direction: 'descending'});
     });
   });
-
-  // TODO: add RAC version of the above tests
 });
