@@ -29,7 +29,7 @@
     "build": "make build",
     "test:ssr": "cross-env STRICT_MODE=1 yarn jest --config jest.ssr.config.js",
     "ci-test": "cross-env STRICT_MODE=1 yarn jest --maxWorkers=2 && cross-env STRICT_MODE=1 yarn test:ssr --runInBand",
-    "lint": "yarn check-types & eslint packages --ext .js,.ts,.tsx & yarn constraints",
+    "lint": "yarn check-types & eslint packages --ext .js,.ts,.tsx & yarn constraints & node scripts/lint-packages.js",
     "jest": "node scripts/jest.js",
     "copyrights": "babel-node --presets @babel/env ./scripts/addHeaders.js",
     "build:icons": "babel-node --presets @babel/env ./scripts/buildIcons.js",

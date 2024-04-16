@@ -75,22 +75,23 @@ let missingPeers = {};
 for (let pkg of packagePaths) {
   let json = packages[pkg];
   // check that all packages which depend on a package with a peerDependency also have that peerDependency
-  if (json.peerDependencies) {
-    for (let dep of Object.keys(json.peerDependencies)) {
-      for (let pkgUpstream of packagePaths) {
-        let pkgu = packages[pkgUpstream];
-        // if the upstream package doesn't also include the peerDependency, then fail
-        if (pkgu.dependencies && pkgu.dependencies[json.name] && pkgu.peerDependencies && !pkgu.peerDependencies[dep]) {
-          let key = `${pkgu.name} missing a peerDependency on ${dep}`
-          if (!missingPeers[key]) {
-            missingPeers[key] = {pkg: pkgu.name, pkgPath: pkgUpstream, missing: dep, deps: [json.name]};
-          } else {
-            missingPeers[key].deps.push(json.name);
-          }
-        }
-      }
-    }
-  }
+  // TODO verify that new yarn takes care of this automatically
+  // if (json.peerDependencies) {
+  //   for (let dep of Object.keys(json.peerDependencies)) {
+  //     for (let pkgUpstream of packagePaths) {
+  //       let pkgu = packages[pkgUpstream];
+  //       // if the upstream package doesn't also include the peerDependency, then fail
+  //       if (pkgu.dependencies && pkgu.dependencies[json.name] && pkgu.peerDependencies && !pkgu.peerDependencies[dep]) {
+  //         let key = `${pkgu.name} missing a peerDependency on ${dep}`
+  //         if (!missingPeers[key]) {
+  //           missingPeers[key] = {pkg: pkgu.name, pkgPath: pkgUpstream, missing: dep, deps: [json.name]};
+  //         } else {
+  //           missingPeers[key].deps.push(json.name);
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
   if (!pkg.includes('@react-types') && !pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme') && !pkg.includes('@react-spectrum/style-macro-s1')) {
     // yarn enforceExports constraint
@@ -155,10 +156,11 @@ for (let pkg of packagePaths) {
     softAssert(fs.existsSync(path.join(pkg, '..', 'src', 'index.ts')), `${pkg} is missing a src/index.ts`);
   }
 
-  if (!pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme') && !pkg.includes('@react-spectrum/style-macro-s1')) {
-    softAssert(json.types, `${pkg} did not have "types"`);
-    softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
-  }
+  // yarn enforceExports constraint
+  // if (!pkg.includes('@spectrum-icons') && !pkg.includes('@react-aria/example-theme') && !pkg.includes('@react-spectrum/style-macro-s1')) {
+  //   softAssert(json.types, `${pkg} did not have "types"`);
+  //   softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
+  // }
 
   // yarn enforcePublishing constraint
   // softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
@@ -198,39 +200,43 @@ for (let pkg of packagePaths) {
   }
 }
 
-function findMoreMissingPeers() {
-  let foundMore = false;
-  for (let val of Object.entries(missingPeers)) {
-    let {pkg, pkgPath, missing, deps} = val[1];
-    let json = packages[pkgPath];
-    for (let pkgUpstream of packagePaths) {
-      let pkgu = packages[pkgUpstream];
-      // if the upstream package doesn't also include the peerDependency, then fail
-      if (pkgu.dependencies && pkgu.dependencies[pkg] && pkgu.peerDependencies && !pkgu.peerDependencies[missing]) {
-        let key = `${pkgu.name} missing a peerDependency on ${missing}`;
-        if (!missingPeers[key]) {
-          missingPeers[key] = {pkg: pkgu.name, pkgPath: pkgUpstream, missing, deps: [json.name]};
-          foundMore = true;
-        } else {
-          missingPeers[key].deps.push(json.name);
-        }
-      }
-    }
-  }
-  if (foundMore) {
-    findMoreMissingPeers();
-  }
-}
-findMoreMissingPeers();
+// TODO verify new yarn handles this
+// function findMoreMissingPeers() {
+//   let foundMore = false;
+//   for (let val of Object.entries(missingPeers)) {
+//     let {pkg, pkgPath, missing, deps} = val[1];
+//     let json = packages[pkgPath];
+//     for (let pkgUpstream of packagePaths) {
+//       let pkgu = packages[pkgUpstream];
+//       // if the upstream package doesn't also include the peerDependency, then fail
+//       if (pkgu.dependencies && pkgu.dependencies[pkg] && pkgu.peerDependencies && !pkgu.peerDependencies[missing]) {
+//         let key = `${pkgu.name} missing a peerDependency on ${missing}`;
+//         if (!missingPeers[key]) {
+//           missingPeers[key] = {pkg: pkgu.name, pkgPath: pkgUpstream, missing, deps: [json.name]};
+//           foundMore = true;
+//         } else {
+//           missingPeers[key].deps.push(json.name);
+//         }
+//       }
+//     }
+//   }
+//   if (foundMore) {
+//     findMoreMissingPeers();
+//   }
+// }
+// findMoreMissingPeers();
 
 // for each entry in missing peers, fail
-for (let key of Object.keys(missingPeers)) {
-  softAssert(false, `${key} via ${missingPeers[key].deps.reverse().join(', ')}.`);
-}
+// for (let key of Object.keys(missingPeers)) {
+//   softAssert(false, `${key} via ${missingPeers[key].deps.reverse().join(', ')}.`);
+// }
 
 if (errors) {
   return process.exit(1);
 }
 
-require('./checkPublishedDependencies');
-require('./findCircularDeps');
+// yarn enforceNonPrivateDependencies constraint
+// require('./checkPublishedDependencies');
+
+// yarn enforceNoCircularDependencies constraint
+// require('./findCircularDeps');

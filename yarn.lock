@@ -133,7 +133,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@adobe/spectrum-css-temp@npm:3.0.0-alpha.1, @adobe/spectrum-css-temp@npm:^3.0.0-alpha.1, @adobe/spectrum-css-temp@workspace:packages/@adobe/spectrum-css-temp":
+"@adobe/spectrum-css-temp@npm:3.0.0-alpha.1, @adobe/spectrum-css-temp@workspace:packages/@adobe/spectrum-css-temp":
   version: 0.0.0-use.local
   resolution: "@adobe/spectrum-css-temp@workspace:packages/@adobe/spectrum-css-temp"
   languageName: unknown
@@ -7173,6 +7173,7 @@ __metadata:
   resolution: "@react-aria/utils@workspace:packages/@react-aria/utils"
   dependencies:
     "@react-aria/ssr": "workspace:^"
+    "@react-spectrum/badge": "workspace:^"
     "@react-stately/utils": "workspace:^"
     "@react-types/shared": "workspace:^"
     "@swc/helpers": "npm:^0.5.0"
@@ -7905,7 +7906,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/list@workspace:packages/@react-spectrum/list"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/button": "workspace:^"
     "@react-aria/dnd": "workspace:^"
     "@react-aria/focus": "workspace:^"
@@ -8262,7 +8263,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/steplist@workspace:packages/@react-spectrum/steplist"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/focus": "workspace:^"
     "@react-aria/i18n": "workspace:^"
     "@react-aria/interactions": "workspace:^"
@@ -8286,7 +8287,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-spectrum/story-utils@workspace:packages/@react-spectrum/story-utils"
   dependencies:
-    "@adobe/spectrum-css-temp": "npm:^3.0.0-alpha.1"
+    "@adobe/spectrum-css-temp": "npm:3.0.0-alpha.1"
     "@react-aria/utils": "workspace:^"
     "@swc/helpers": "npm:^0.5.0"
   peerDependencies:
@@ -8752,7 +8753,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@react-stately/flags@workspace:packages/@react-stately/flags"
   dependencies:
-    "@swc/helpers": "npm:^0.4.14"
+    "@swc/helpers": "npm:^0.5.0"
   languageName: unknown
   linkType: soft
 
@@ -9729,7 +9730,7 @@ __metadata:
   resolution: "@spectrum-icons/build-tools@workspace:packages/@spectrum-icons/build-tools"
   dependencies:
     "@svgr/core": "npm:^6.2.0"
-    fs-extra: "npm:^8.0.1"
+    fs-extra: "npm:^10.0.0"
   languageName: unknown
   linkType: soft
 
@@ -11281,15 +11282,6 @@ __metadata:
     "@swc/core-win32-x64-msvc":
       optional: true
   checksum: 10c0/26e0aa2acc11ff3abebbd3725a21d2ac634062a87adc9bfe79c789763eb4c6fedd545a0577032945a9a3035b4de33edab5f98b4fdfef74c0c5c562e48fb74eb0
-  languageName: node
-  linkType: hard
-
-"@swc/helpers@npm:^0.4.14":
-  version: 0.4.14
-  resolution: "@swc/helpers@npm:0.4.14"
-  dependencies:
-    tslib: "npm:^2.4.0"
-  checksum: 10c0/a8bd2e291fca73aa35ff316fb1aa9fb9554856518c8bf64ab5a355fb587d79d04d67f95033012fcdc94f507d22484871d95dc72efdd9ff13cc5d0ac68dfba999
   languageName: node
   linkType: hard
 
@@ -20136,7 +20128,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^8.0.1, fs-extra@npm:^8.1.0":
+"fs-extra@npm:^8.1.0":
   version: 8.1.0
   resolution: "fs-extra@npm:8.1.0"
   dependencies:

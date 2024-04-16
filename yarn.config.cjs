@@ -14,6 +14,7 @@ const {defineConfig} = require(`@yarnpkg/types`);
  * @param {Context} context
  */
 function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
+  // enforce react/react-dom version
   for (const dependency of Yarn.dependencies()) {
     if (dependency.type === `peerDependencies`) {
       if (dependency.ident === 'react' || dependency.ident === 'react-dom') {
@@ -23,18 +24,18 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
           dependency.update('^16.8.0 || ^17.0.0-rc.1 || ^18.0.0');
         }
       }
-      continue;
     }
 
-    for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
-      if (otherDependency.type === `peerDependencies`)
-        continue;
-
-      // useful, however, i haven't quite made it relaxed enough
-      // dependency.update(otherDependency.range);
-    }
+    // for (const otherDependency of Yarn.dependencies({ident: dependency.ident})) {
+    //   if (otherDependency.type === `peerDependencies`)
+    //     continue;
+    //
+    //   // useful, however, i haven't quite made it relaxed enough
+    //   // dependency.update(otherDependency.range);
+    // }
   }
 
+  // enforce swc helpers version, spectrum-css-temp, and where they are placed in the package.json
   for (const workspace of Yarn.workspaces()) {
     if (isPublishing(workspace)
       // should these be included in the requirement?
@@ -43,6 +44,7 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
       && workspace.ident !== 'react-stately'
       && workspace.ident !== '@internationalized/string-compiler'
       && workspace.ident !== 'tailwindcss-react-aria-components') {
+
       workspace.set('dependencies.@swc/helpers', '^0.5.0');
       workspace.set('dependencies.@adobe/spectrum-css-temp');
       if (workspace.ident.startsWith('@react-spectrum') && !workspace.ident.endsWith('/utils')) {
@@ -54,6 +56,52 @@ function enforceConsistentDependenciesAcrossTheProject({Yarn}) {
       workspace.set('dependencies.react');
       workspace.set('dependencies.react-dom');
     }
+  }
+}
+
+/** @param {Context} context */
+function enforceNonPrivateDependencies({Yarn}) {
+  // enforce that public packages do not depend on private packages
+  for (const workspace of Yarn.workspaces()) {
+    if (workspace.manifest.private) {
+      for (const dependency of Yarn.dependencies({ident: workspace.ident})) {
+        if (dependency.type !== 'devDependencies' && !dependency.workspace.manifest.private) {
+          dependency.workspace.set('private', true);
+          workspace.set('private', false);
+        }
+      }
+    }
+  }
+}
+
+/** @param {Context} context */
+function enforceNoCircularDependencies({Yarn}) {
+  // enforce that there are no circular dependencies between our packages
+  function addDep(workspace, seen = new Set()) {
+    if (seen.has(workspace.ident)) {
+      let arr = [...seen];
+      let index = arr.indexOf(workspace.ident);
+      // ok for pkg to depend on itself
+      if (arr.slice(index).length > 1) {
+        // better to error the constraints early for this for a more meaningful error message
+        throw new Error(`Circular dependency detected: ${arr.slice(index).join(' -> ')} -> ${workspace.ident}`)
+      } else {
+        return;
+      }
+    }
+
+    seen.add(workspace.ident);
+
+    for (let d of Yarn.dependencies({ident: workspace.ident})) {
+      addDep(d.workspace, seen);
+    }
+
+    seen.delete(workspace.ident);
+  }
+
+
+  for (const workspace of Yarn.workspaces()) {
+    addDep(workspace)
   }
 }
 
@@ -105,7 +153,7 @@ function enforceCSS({Yarn}) {
 /** @param {Workspace} workspace */
 function isPublishing(workspace) {
   let name = workspace.ident;
-  // should whitelist instead?
+  // should whitelist instead? workspace.manifest.private?
   return !name.includes('@react-types')
     && !name.includes('@spectrum-icons')
     && !name.includes('@react-aria/example-theme')
@@ -121,6 +169,7 @@ function isPublishing(workspace) {
 
 /** @param {Context} context */
 function enforcePublishing({Yarn}) {
+  // make sure fields required for publishing have been set
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
     if (isPublishing(workspace)) {
@@ -149,6 +198,7 @@ function setExtension(filepath, ext = '.js') {
 
 /** @param {Context} context */
 function enforceExports({Yarn}) {
+  // make sure build fields are correctly set
   for (const workspace of Yarn.workspaces()) {
     let name = workspace.ident;
     if (isPublishing(workspace)) {
@@ -174,6 +224,10 @@ function enforceExports({Yarn}) {
       } else {
         workspace.set('exports.require', setExtension(exportsRequire));
         workspace.set('exports.import', setExtension(exportsImport, '.mjs'));
+      }
+
+      if (!workspace.manifest.types || !workspace.manifest.types.endsWith('.d.ts')) {
+        workspace.set('types', 'dist/types.d.ts');
       }
 
       if (name !== '@adobe/react-spectrum' && name !== 'react-aria' && name !== 'react-stately' && name !== '@internationalized/string-compiler' && name !== 'tailwindcss-react-aria-components') {
@@ -209,5 +263,7 @@ module.exports = defineConfig({
     enforceCSS(ctx);
     enforcePublishing(ctx);
     enforceExports(ctx);
+    enforceNonPrivateDependencies(ctx);
+    enforceNoCircularDependencies(ctx);
   },
 });
