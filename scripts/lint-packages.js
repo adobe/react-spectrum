@@ -128,16 +128,17 @@ for (let pkg of packagePaths) {
       softAssert.equal(json.peerDependencies['react-dom'], '^16.8.0 || ^17.0.0-rc.1 || ^18.0.0', `${pkg} has wrong react-dom peer dep`);
     }
 
-    if (json.name.startsWith('@react-spectrum') && json.devDependencies && json.devDependencies['@adobe/spectrum-css-temp']) {
-      softAssert.deepEqual(json.targets, {
-        main: {
-          includeNodeModules: ['@adobe/spectrum-css-temp']
-        },
-        module: {
-          includeNodeModules: ['@adobe/spectrum-css-temp']
-        }
-      }, `${pkg} did not match "targets"`);
-    }
+    // yarn enforceCSS constraint
+    // if (json.name.startsWith('@react-spectrum') && json.devDependencies && json.devDependencies['@adobe/spectrum-css-temp']) {
+    //   softAssert.deepEqual(json.targets, {
+    //     main: {
+    //       includeNodeModules: ['@adobe/spectrum-css-temp']
+    //     },
+    //     module: {
+    //       includeNodeModules: ['@adobe/spectrum-css-temp']
+    //     }
+    //   }, `${pkg} did not match "targets"`);
+    // }
 
     let topIndexExists = fs.existsSync(path.join(pkg, '..', 'index.ts'));
     if (topIndexExists) {
@@ -153,9 +154,10 @@ for (let pkg of packagePaths) {
     softAssert(json.types.endsWith('.d.ts'), `${pkg}#types should be a .d.ts file but got "${json.types}"`);
   }
 
-  softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
-  softAssert.equal(json.license, 'Apache-2.0', `${pkg} has an incorrect license`);
-  softAssert.deepEqual(json.repository, {type: 'git', url: 'https://github.com/adobe/react-spectrum'}, `${pkg} has incorrect or missing repository url`);
+  // yarn enforcePublishing constraint
+  // softAssert(json.publishConfig && json.publishConfig.access === 'public', `${pkg} has missing or incorrect publishConfig`);
+  // softAssert.equal(json.license, 'Apache-2.0', `${pkg} has an incorrect license`);
+  // softAssert.deepEqual(json.repository, {type: 'git', url: 'https://github.com/adobe/react-spectrum'}, `${pkg} has incorrect or missing repository url`);
 
   let readme = path.join(path.dirname(pkg), 'README.md');
   if (!fs.existsSync(readme)) {

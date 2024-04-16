@@ -23,8 +23,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-aria/i18n": "^3.1.0",
-    "@react-stately/pagination": "3.0.0-alpha.1",
+    "@react-aria/i18n": "workspace:^",
+    "@react-stately/pagination": "workspace:^",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

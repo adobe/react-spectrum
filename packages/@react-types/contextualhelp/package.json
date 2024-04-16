@@ -9,8 +9,8 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-types/overlays": "^3.8.5",
-    "@react-types/shared": "^3.22.1"
+    "@react-types/overlays": "workspace:^",
+    "@react-types/shared": "workspace:^"
   },
   "publishConfig": {
     "access": "public"

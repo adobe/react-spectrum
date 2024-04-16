@@ -22,14 +22,14 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@react-stately/collections": "^3.10.5",
-    "@react-stately/form": "^3.0.1",
-    "@react-stately/list": "^3.10.3",
-    "@react-stately/overlays": "^3.6.5",
-    "@react-stately/select": "^3.6.2",
-    "@react-stately/utils": "^3.9.1",
-    "@react-types/combobox": "^3.10.1",
-    "@react-types/shared": "^3.22.1",
+    "@react-stately/collections": "workspace:^",
+    "@react-stately/form": "workspace:^",
+    "@react-stately/list": "workspace:^",
+    "@react-stately/overlays": "workspace:^",
+    "@react-stately/select": "workspace:^",
+    "@react-stately/utils": "workspace:^",
+    "@react-types/combobox": "workspace:^",
+    "@react-types/shared": "workspace:^",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {

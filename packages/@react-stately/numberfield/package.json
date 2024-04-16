@@ -22,10 +22,10 @@
     "url": "https://github.com/adobe/react-spectrum"
   },
   "dependencies": {
-    "@internationalized/number": "^3.5.1",
-    "@react-stately/form": "^3.0.1",
-    "@react-stately/utils": "^3.9.1",
-    "@react-types/numberfield": "^3.8.1",
+    "@internationalized/number": "workspace:^",
+    "@react-stately/form": "workspace:^",
+    "@react-stately/utils": "workspace:^",
+    "@react-types/numberfield": "workspace:^",
     "@swc/helpers": "^0.5.0"
   },
   "peerDependencies": {
