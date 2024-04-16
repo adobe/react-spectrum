@@ -51,19 +51,28 @@ async function run() {
 
   let sortedCommits = [...commits.values()].sort((a, b) => a[1] < b[1] ? -1 : 1);
 
+  let categories = {
+    'enhancements': ['Enhancements'],
+    'fixes': ['Fixes'],
+    'docs': ['Docs'],
+    'construction': ['Under Construction'],
+    'other': ['Other']
+  };
+
   for (let commit of sortedCommits) {
+
     let message = '';
     let user = '';
     let pr;
 
-    //look for commits with pr #
+    // look for commits with pr #
     let m = commit[3].match(/(.*?) \(#(\d+)\)$/);
 
     if (m) {
       let prId = m[2];
       message = m[1];
 
-      let res = await octokit.request('GET /repos/adobe/react-spectrum/pulls/{pull}', { pull: prId });
+      let res = await octokit.request('GET /repos/adobe/react-spectrum/pulls/{pull}', {pull: prId});
       user = `[@${res.data.user.login}](${res.data.user.html_url})`;
       pr = `https://github.com/adobe/react-spectrum/pull/${prId}`;
 
@@ -71,6 +80,34 @@ async function run() {
       message = commit[3];
       user = commit[2];
     }
-    console.log(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
+
+
+    if ((/docs?|documents?|examples?|descriptions?/i).test(message)) {
+      categories.docs.push(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
+    } else if ((/fix(es)?|remove|bump|refactor/i).test(message)) {
+      categories.fixes.push(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
+    } else if ((/adds?|support|feat(ure)?/i).test(message)) {
+      categories.enhancements.push(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
+    } else if ((/(pre-release)/i).test(message)) {
+      categories.construction.push(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
+    } else {
+      categories.other.push(`* ${message} - ${user}` + (pr ? ` - [PR](${pr})` : ''));
+    }
+  }
+
+  for (let enhancement of categories.enhancements) {
+    console.log(enhancement);
+  }
+
+  for (let fix of categories.fixes) {
+    console.log(fix);
+  }
+
+  for (let doc of categories.docs) {
+    console.log(doc);
+  }
+
+  for (let other of categories.other) {
+    console.log(other);
   }
 }
