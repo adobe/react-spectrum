@@ -63,7 +63,7 @@ jobs:
 
       - run:
           name: Corepack
-          command: corepack enable
+          command: corepack enable --install-directory ~/bin
 
       - run:
           name: build
@@ -89,7 +89,7 @@ jobs:
 
       - run:
           name: Corepack
-          command: corepack enable
+          command: corepack enable --install-directory ~/bin
 
       - run:
           name: build
@@ -115,7 +115,7 @@ jobs:
 
       - run:
           name: Corepack
-          command: corepack enable
+          command: corepack enable --install-directory ~/bin
 
       - run:
           name: build
@@ -141,7 +141,7 @@ jobs:
 
       - run:
           name: Corepack
-          command: corepack enable
+          command: corepack enable --install-directory ~/bin
 
       - run:
           name: build
