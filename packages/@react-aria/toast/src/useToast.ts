@@ -68,6 +68,16 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   // focused the toast region.
   let focusOnUnmount = useRef(null);
   useLayoutEffect(() => {
+    // Move focus to an adjacent Toast when there is one. At this point,
+    // state.visibleToasts still includes Toast being removed.
+    if (animation === 'exiting' && ref.current.contains(document.activeElement) && state.visibleToasts.length > 1) {
+      const from = document.activeElement?.closest('[role="alertdialog"]') || document.activeElement;
+      const accept = (node:Element) => node.getAttribute('role') === 'alertdialog';
+      let nextItemFocused = focusManager.focusNext({from, accept});
+      if (!nextItemFocused || Object.keys(nextItemFocused).length === 0) {
+        focusManager.focusPrevious({from, accept});
+      }
+    }
     let container = ref.current.closest('[role=region]') as HTMLElement;
     return () => {
       if (container && container.contains(document.activeElement) && state.visibleToasts.filter(t => t.animation !== 'exiting').length < 1) {
@@ -76,7 +86,15 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
         focusOnUnmount.current = container;
       }
     };
-  }, [ref, state.visibleToasts]);
+  }, [ref, state.visibleToasts, animation, focusManager]);
+
+  useEffect(() => {
+    return () => {
+      if (focusOnUnmount.current) {
+        focusOnUnmount.current.focus();
+      }
+    };
+  }, [ref]);
 
   useEffect(() => {
     return () => {
@@ -90,14 +108,14 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
   // we use aria-hidden="true" to hide the toast content
   // briefly while it is animating in.
   const [isBusy, setIsBusy] = useState(true);
+  const timeoutIdRef = useRef<ReturnType<typeof requestAnimationFrame>>();
   useLayoutEffect(() => {
-    let timeoutId:ReturnType<typeof setTimeout>;
     if (isBusy && ref.current) {
-      timeoutId = setTimeout(() => setIsBusy(false), 50);
+      timeoutIdRef.current = requestAnimationFrame(() => setIsBusy(false));
     }
     return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
+      if (timeoutIdRef.current) {
+        cancelAnimationFrame(timeoutIdRef.current);
       }
     };
   }, [ref, isBusy]);
@@ -108,16 +126,6 @@ export function useToast<T>(props: AriaToastProps<T>, state: ToastState<T>, ref:
 
   let onClosePress = () => {
     state.close(key);
-    // Only move focus when there is another Toast. At this point,
-    // state.visibleToasts still includes Toast being removed.
-    if (state.visibleToasts?.length > 1) {
-      const from = document.activeElement?.closest('[role="alertdialog"]') || document.activeElement;
-      const accept = (node:Element) => node.getAttribute('role') === 'alertdialog';
-      let nextItemFocused = focusManager.focusNext({from, accept});
-      if (!nextItemFocused || Object.keys(nextItemFocused).length === 0) {
-        focusManager.focusPrevious({from, accept});
-      }
-    }
   };
 
   return {

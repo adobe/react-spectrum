@@ -39,7 +39,7 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   });
 
   let lastFocused = useRef(null);
-  let timeoutId:ReturnType<typeof setTimeout>;
+  const timeoutIdRef = useRef<ReturnType<typeof setTimeout>>();
   let {focusWithinProps} = useFocusWithin({
     onFocusWithin: (e) => {
       state.pauseAll();
@@ -47,11 +47,11 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
       if (ref.current?.contains(document.activeElement)) {
         let count: number = state.visibleToasts.length || 0;
         let announcement = stringFormatter.format('countAnnouncement', {count});
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-          timeoutId = undefined;
+        if (timeoutIdRef.current) {
+          clearTimeout(timeoutIdRef.current);
+          timeoutIdRef.current = undefined;
         }
-        timeoutId = setTimeout(() => announce(announcement, 'polite'), 750);
+        timeoutIdRef.current = setTimeout(() => announce(announcement, 'polite'), 600);
       }
     },
     onBlurWithin: () => {
@@ -66,6 +66,10 @@ export function useToastRegion<T>(props: AriaToastRegionProps, state: ToastState
   // eslint-disable-next-line arrow-body-style
   useEffect(() => {
     return () => {
+      if (timeoutIdRef.current) {
+        clearTimeout(timeoutIdRef.current);
+        timeoutIdRef.current = undefined;
+      }
       if (lastFocused.current && document.body.contains(lastFocused.current)) {
         if (getInteractionModality() === 'pointer') {
           focusWithoutScrolling(lastFocused.current);
